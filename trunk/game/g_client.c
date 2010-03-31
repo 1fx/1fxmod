@@ -1300,6 +1300,11 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 
 	// get and distribute relevent paramters
 	G_LogPrintf( "ClientConnect: %i\n", clientNum );
+	// Boe!Man 3/31/10: First off we search in the Country database.
+	if(CheckIP(ent) != qtrue){ // not found in list so search ip database
+	HENK_COUNTRY(ent); // will store in sess.country and sess.countryext
+	}
+
 	// Boe!Man 3/30/10: We use this for several things.. Including MOTD and Admin.
 	if ( !isBot && firstTime )
 	{

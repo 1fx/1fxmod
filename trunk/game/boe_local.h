@@ -13,7 +13,7 @@
 
 // Infiltration
 // Developed by: Boe!Man
-// Codename: BOEMODV2
+// Codename: BoeMODV2
 // Modname: 1fx. Infiltration
 // Project started: 3/30/10
 // 
@@ -22,6 +22,7 @@
 // Mod			Ver		Status of Rel.		Date
 // --------------------------------------------------
 // Infiltration	0.01	Alpha				3/30/10
+// Infiltration 0.02	Alpha				3/31/10
 //
 //
 // Hide&Seek	0.02	Trunk Build			12/17/09

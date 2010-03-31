@@ -9,6 +9,77 @@ int AcceptBotCommand(char *cmd, gentity_t *pl);
 
 void EvenTeams (gentity_t *adm)
 {
+	int			team, i, j, a =0, autoEven;
+	int			bCount = 0, rCount = 0;
+	qboolean	dead = qfalse;
+
+	if(autoEven == 0)
+		return;
+
+	bCount = TeamCount(-1, TEAM_BLUE, NULL );
+	rCount = TeamCount(-1, TEAM_RED, NULL );
+
+	if(rCount - bCount > 1){
+		a = (rCount - bCount)/2;
+		team = TEAM_BLUE;
+	}
+	else if(bCount - rCount > 1){
+		a = (bCount - rCount)/2;
+		team = TEAM_RED;
+	}
+	else {
+		if(autoEven == 2) return;
+		else if(adm != NULL)	trap_SendServerCommand(adm-g_entities, va("print \"^3[Info] ^7Teams are as even as possible.\n\""));
+		else Com_Printf("Teams are as even as possible.\n");
+		return;
+	}
+	
+	for(i = 0; i < a; i++){
+		gentity_t	*tent = NULL, *ent = NULL;
+		for ( j = 0 ; j < level.numConnectedClients ; j++ )	{
+			ent = &g_entities[level.sortedClients[j]];
+			if ( ent->client->pers.connected != CON_CONNECTED && ent->client->pers.connected != CON_CONNECTING ) continue;
+			if(ent->client->sess.team != TEAM_RED && ent->client->sess.team != TEAM_BLUE) continue;
+			if(ent->client->sess.team == team)	continue;
+			if(ent->s.gametypeitems > 0) continue;
+			if(ent->client->sess.admin) continue;
+			tent = ent;
+		} 
+
+		if((!tent || !tent->client) ){
+			if(autoEven == 2) return;
+			if(adm != NULL)	trap_SendServerCommand(adm-g_entities, va("print \"^3[Info] ^7Teams cannot be evened [all admin or item holders].\n\""));
+			else Com_Printf("Teams cannot be evened [all admin or item holders]\n");
+			return;
+		}
+		if(!dead){
+			tent->client->ps.stats[STAT_WEAPONS] = 0;
+			TossClientItems( tent );
+			G_StartGhosting( tent );
+		}		
+		if (tent->r.svFlags & SVF_BOT)	{
+			char	userinfo[MAX_INFO_STRING];
+			trap_GetUserinfo( tent->s.number, userinfo, sizeof( userinfo ) );
+			Info_SetValueForKey( userinfo, "team", tent->client->sess.team == TEAM_RED?"blue":"red");
+			trap_SetUserinfo( tent->s.number, userinfo );
+		}
+
+		if(team == TEAM_RED) tent->client->sess.team = TEAM_RED;
+		else				 tent->client->sess.team = TEAM_BLUE;
+
+		tent->client->pers.identity = NULL;
+
+		ClientUserinfoChanged( tent->s.number );
+
+		if(!dead){
+			G_StopFollowing(tent);
+			G_StopGhosting( tent );
+			trap_UnlinkEntity ( tent );
+			ClientSpawn (tent);
+		}
+	}
+
+	// Boe!Man 3/31/10: We tell 'em what happened.
 	Boe_GlobalSound (G_SoundIndex("sound/misc/events/tut_lift02.mp3"));
 			
 	if(adm && adm->client) {
@@ -51,6 +122,9 @@ void DeathmatchScoreboardMessage( gentity_t *ent )
 		else 
 		{
 			ping = cl->ps.ping < 999 ? cl->ps.ping : 999;
+			if(ping != 999){
+			ping = ping*0.5;
+			}
 		}
 	
 		Com_sprintf (entry, sizeof(entry),
@@ -2729,6 +2803,185 @@ void Cmd_SetViewpos_f( gentity_t *ent )
 	angles[YAW] = atof( buffer );
 
 	TeleportPlayer( ent, origin, angles );
+}
+
+/*
+====================
+IP2Country by Henkie
+4/1/10 - 12:04 AM
+====================
+*/
+
+void AddIPList(char ip[24], char country[128], char ext[6])
+{
+	int				len;
+	fileHandle_t	f;
+	char			*file;
+	char			*string;
+	Com_Printf("Adding ip to list...\n");
+	file = va("country\\IP.known");
+	len = trap_FS_FOpenFile( file, &f, FS_APPEND_TEXT );
+	if (!f)
+	{
+		Com_Printf("^1Error opening File\n");
+		return;
+	}
+	string = va("1\n{\nip \"%s\"\ncountry \"%s\"\next \"%s\"\n}\n", ip, country, ext);
+
+	trap_FS_Write(string, strlen(string), f);
+	trap_FS_Write("\n", 1, f);
+	trap_FS_FCloseFile(f);
+
+}
+
+qboolean CheckIP(gentity_t *ent){
+	void	*GP2, *group;
+	char	*filePtr, *file, Files[1024];
+	char	ip[24], country[128], ext[6];
+	int		fileCount;
+	//Com_Printf("Checking in known list\n");
+	fileCount = trap_FS_GetFileList( "country", ".known", Files, 1024 );
+	filePtr = Files;
+	file = va("country\\%s", filePtr);
+	GP2 = trap_GP_ParseFile(file, qtrue, qfalse);
+	if (!GP2)
+	{
+		G_LogPrintf("Error in file: \"%s\" or file not found.\n", file);
+		return qfalse;
+	}
+		group = trap_GPG_GetSubGroups(GP2);
+
+		while(group)
+		{
+			trap_GPG_FindPairValue(group, "ip", "0", ip);
+			if(strstr(ip, ent->client->pers.ip)){
+				trap_GPG_FindPairValue(group, "country", "", country);
+				trap_GPG_FindPairValue(group, "ext", "", ext);
+				trap_GP_Delete(&GP2);
+				strcpy(ent->client->sess.country, country);
+				strcpy(ent->client->sess.countryext, ext);
+				//Com_Printf("Found in known list\n");
+				return qtrue;
+				break; // stop searching
+			}
+			group = trap_GPG_GetNext(group);
+		}
+		strcpy(ent->client->sess.countryext, "??");
+		trap_GP_Delete(&GP2);
+		//Com_Printf("Not found in known list\n");
+		return qfalse;
+}
+
+void HENK_COUNTRY(gentity_t *ent){
+	void	*GP2, *group;
+	char	*filePtr, *file, Files[1024];
+	int		fileCount;
+	char	*IP;
+	int		count = 0;
+	int		iIP, i, z, countx[4], loops = 0;
+	char	begin_ip[24], end_ip[24], country[128], ext[6];
+	int		begin_ipi, end_ipi;
+
+	char	octet[4][4], octetx[4][4];
+	int		RealOctet[4];
+	int		IPnum;
+
+	//Com_sprintf(IP, 24, ent->client->pers.ip);
+	IP = va("%s", ent->client->pers.ip);
+	//Com_Printf("IP is: %s\n", ent->client->pers.ip);
+	// Set countx to zero, when you do not set the variable you get weird ass results.
+	countx[0] = 0;
+	countx[1] = 0;
+	countx[2] = 0;
+	countx[3] = 0;
+	// End
+	while(*IP){
+		if(*IP == '.')
+		{
+			for(i=0;i<count;i++){
+				if(loops == 0){
+				octet[0][i] = *--IP;
+				countx[0] += 1;
+				}else if(loops == 1){
+				octet[1][i] = *--IP;
+				countx[1] += 1;
+				}else if(loops == 2){
+				octet[2][i] = *--IP;
+				countx[2] += 1;
+				}
+			}
+			for(i=0;i<count;i++){
+				*++IP;
+			}
+			loops += 1;
+			count = 0;
+		}else{
+		count += 1;
+		}
+		IP++;
+		if(*IP == '\0'){
+			for(i=0;i<3;i++){
+				if(*--IP != '.'){
+				octet[3][i] = *IP;
+				countx[3] += 1;
+				}
+			}
+			break;
+		}
+	}
+	for(i=0;i<=3;i++){ // 4 octets
+		for(z=0;z<countx[i];z++){
+		//Com_Printf("octet[%i][%i] -> trying\n", i, countx[i]-(z+1));
+		octetx[i][z] = octet[i][countx[i]-(z+1)];
+		}
+		octetx[i][countx[i]] = '\0';
+	}
+	// End
+
+	fileCount = trap_FS_GetFileList( "country", va(".%s", octetx[0]), Files, 1024 );
+	filePtr = Files;
+	file = va("country\\%s", filePtr);
+	GP2 = trap_GP_ParseFile(file, qtrue, qfalse);
+	if (!GP2)
+	{
+		G_LogPrintf("Error in file: \"%s\" or file not found.\n", file);
+	}
+
+	RealOctet[0] = atoi(octetx[0]);
+	RealOctet[1] = atoi(octetx[1]);
+	RealOctet[2] = atoi(octetx[2]);
+	RealOctet[3] = atoi(octetx[3]);
+	//Com_Printf("Octet1: %i\n", RealOctet[0]);
+	//Com_Printf("Octet2: %i\n", RealOctet[1]);
+	//Com_Printf("Octet3: %i\n", RealOctet[2]);
+	//Com_Printf("Octet4: %i\n", RealOctet[3]);
+	IPnum = (RealOctet[0] * 16777216) + (RealOctet[1] * 65536) + (RealOctet[2] * 256) + (RealOctet[3]);
+	//Com_Printf("IPnum: %i\n", IPnum);
+
+		group = trap_GPG_GetSubGroups(GP2);
+
+		while(group)
+		{
+			trap_GPG_FindPairValue(group, "begin_ip", "0", begin_ip);
+			begin_ipi = atoi(begin_ip);
+			trap_GPG_FindPairValue(group, "end_ip", "", end_ip);
+			end_ipi = atoi(end_ip);
+			trap_GPG_FindPairValue(group, "country", "", country);
+			trap_GPG_FindPairValue(group, "ext", "", ext);
+			if(IPnum > begin_ipi && IPnum < end_ipi){
+				// found entry
+				trap_GP_Delete(&GP2);
+				strcpy(ent->client->sess.country, country);
+				strcpy(ent->client->sess.countryext, ext);
+				AddIPList(ent->client->pers.ip, country, ext);
+				return;
+				break; // stop searching
+			}
+			group = trap_GPG_GetNext(group);
+		}
+		strcpy(ent->client->sess.countryext, "??");
+		trap_GP_Delete(&GP2);
+		return;
 }
 
 /*
