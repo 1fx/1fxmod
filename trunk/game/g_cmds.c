@@ -2849,7 +2849,18 @@ void ClientCommand( int clientNum ) {
 	else if (Q_stricmp (cmd, "adm") == 0)
 		Boe_adm_f( ent );
 	else if (Q_stricmp (cmd, "about") == 0)
-		Boe_About (ent );
+		Boe_About ( ent );
+	// Boe!Man 3/31/10
+	else if (Q_stricmp (cmd, "players") == 0)
+		Boe_Players ( ent );
+	else if (Q_stricmp (cmd, "stats") == 0)
+		Boe_Stats ( ent );
+	else if (Q_stricmp (cmd, "sounds") == 0)
+		Boe_Display_Sounds( ent );
+	else if (Q_stricmp (cmd, "sounds2") == 0)
+		Boe_Display_Sounds2( ent );
+	else if (Q_stricmp (cmd, "extrasounds") == 0)
+		Boe_Display_ExtraSounds( ent );
 
 #ifdef _SOF2_BOTS
 	else if (Q_stricmp (cmd, "addbot") == 0)

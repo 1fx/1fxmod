@@ -621,6 +621,14 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\boe_admcmds.c"
+				>
+			</File>
+			<File
+				RelativePath=".\boe_utils.c"
+				>
+			</File>
+			<File
 				RelativePath="g_active.c"
 				>
 				<FileConfiguration
@@ -1396,6 +1404,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\boe_local.h"
+				>
+			</File>
+			<File
 				RelativePath="botlib.h"
 				>
 			</File>
@@ -1478,4 +1490,6 @@
 			>
 		</File>
 	</Files>
+	<Globals>
+	</Globals>
 </VisualStudioProject>
