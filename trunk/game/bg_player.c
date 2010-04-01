@@ -1482,7 +1482,7 @@ void BG_DecompressOutfitting ( const char* compressed, goutfitting_t* outfitting
 		if ( bg_itemlist[bg_outfittingGroups[group][item]].giType == IT_WEAPON )
 		{
 			origitem = item;
-			while ( !BG_IsWeaponAvailableForOutfitting ( bg_itemlist[bg_outfittingGroups[group][item]].giTag, 2 ) )
+			while ( !BG_IsWeaponAvailableForOutfitting ( bg_itemlist[bg_outfittingGroups[group][item]].giTag, 1 ) ) // Fix for nades with /outfitting AAFFA -> level to 1
 			{
 				item++;
 				if ( bg_outfittingGroups[group][item] == -1 )
