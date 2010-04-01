@@ -132,6 +132,9 @@ vmCvar_t	g_forceteam;					// Admin CVAR.
 vmCvar_t	Owner;
 vmCvar_t	Clan;
 vmCvar_t	ClanURL;
+// Boe!Man 4/1/10
+vmCvar_t	server_redteamprefix;
+vmCvar_t	server_blueteamprefix;
 
 static cvarTable_t gameCvarTable[] = 
 {
@@ -180,7 +183,7 @@ static cvarTable_t gameCvarTable[] =
 
 	{ &g_dedicated, "dedicated", "0", 0, 0.0, 0.0, 0, qfalse  },
 
-	{ &g_speed, "g_speed", "280", 0, 0.0, 0.0, 0, qtrue  },
+	{ &g_speed, "g_speed", "300", 0, 0.0, 0.0, 0, qtrue  },
 	{ &g_gravity, "g_gravity", "800", 0, 0.0, 0.0, 0, qtrue  },
 	{ &g_knockback, "g_knockback", "700", 0, 0.0, 0.0, 0, qtrue  },
 	{ &g_weaponRespawn, "g_weaponrespawn", "15", 0, 0.0, 0.0, 0, qtrue  },
@@ -288,6 +291,9 @@ static cvarTable_t gameCvarTable[] =
 	{ &Owner, "Owner", "v1servers.net", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &Clan, "Clan", "0", CVAR_ARCHIVE | CVAR_LOCK_RANGE, 0.0, 1.0 },
 	{ &ClanURL, "ClanURL", "0", CVAR_ARCHIVE, 0.0, 1.0 },
+
+	{ &server_redteamprefix, "server_redteamprefix", "^$R^Te^Hd", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
+	{ &server_blueteamprefix, "server_blueteamprefix", "^yB^Il^fu^+e", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 
 };
 

@@ -617,11 +617,11 @@ void BroadcastTeamChange( gclient_t *client, int oldTeam )
 	switch ( client->sess.team )
 	{
 		case TEAM_RED:
-			trap_SendServerCommand( -1, va("cp \"%s" S_COLOR_WHITE " joined the red team.\n\"", client->pers.netname) );
+			trap_SendServerCommand( -1, va("cp \"%s" S_COLOR_WHITE "\njoined the %s ^7team.\n\"", client->pers.netname, server_redteamprefix.string) );
 			break;
 
 		case TEAM_BLUE:
-			trap_SendServerCommand( -1, va("cp \"%s" S_COLOR_WHITE " joined the blue team.\n\"", client->pers.netname));
+			trap_SendServerCommand( -1, va("cp \"%s" S_COLOR_WHITE "\njoined the %s ^7team.\n\"", client->pers.netname, server_blueteamprefix.string));
 			break;
 
 		case TEAM_SPECTATOR:
