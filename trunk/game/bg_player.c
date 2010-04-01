@@ -1442,10 +1442,12 @@ void BG_DecompressOutfitting ( const char* compressed, goutfitting_t* outfitting
 	int	group;
 	int origitem;
 	int MaxItems;
+	char nade[12];
 	// Henk 01/04/10
-	if(g_disablenades.integer == 1){
+	trap_Cvar_VariableStringBuffer ( "g_disablenades", nade, MAX_QPATH );
+	if (strstr(nade, "1"))
 		MaxItems = OUTFITTING_GROUP_MAX-1;
-	}else{
+	else{
 		MaxItems = OUTFITTING_GROUP_MAX;
 	}
 	// End
