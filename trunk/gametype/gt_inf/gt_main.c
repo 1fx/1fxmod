@@ -182,7 +182,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 			switch ( arg0 )
 			{
 				case TEAM_RED:
-					trap_Cmd_TextMessage ( -1, "Red team eliminated!" );
+					trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("Red team eliminated!");
 					trap_Cmd_AddTeamScore ( TEAM_BLUE, 1 );
 					trap_Cmd_Restart ( 5 );
 					break;
