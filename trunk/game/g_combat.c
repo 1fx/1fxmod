@@ -370,6 +370,12 @@ void player_die(
 
 	Cmd_Score_f( self );
 
+	// Henk 01/04/10 -> Hp/armor message if you are killed
+	if(attacker->client && ent->client){ // if the attacker and target are both clients
+		trap_SendServerCommand( self->s.number, va("print \"^3[Info] ^7%s ^7had ^3%i ^7health and ^3%i ^7armor left.\n\"", attacker->client->pers.netname, attacker->health, attacker->client->ps.stats[STAT_ARMOR]));
+	}
+	// End
+
 	// send updated scores to any clients that are following this one,
 	// or they would get stale scoreboards
 	for ( i = 0 ; i < level.numConnectedClients; i++ ) 
