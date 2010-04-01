@@ -135,6 +135,8 @@ vmCvar_t	ClanURL;
 // Boe!Man 4/1/10
 vmCvar_t	server_redteamprefix;
 vmCvar_t	server_blueteamprefix;
+// Henk 01/04/10 -> Add g_disablenades
+vmCvar_t	g_disablenades;
 
 static cvarTable_t gameCvarTable[] = 
 {
@@ -219,7 +221,9 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_roundstartdelay,	"g_roundstartdelay", "5",		CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 
 	{ &g_availableWeapons,	"g_availableWeapons", "2222222222211", CVAR_ARCHIVE|CVAR_SERVERINFO|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
-
+	// Henk 01/04/10
+	{ &g_disablenades,	"g_disablenades", "1", CVAR_ARCHIVE|CVAR_SERVERINFO|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
+	// End
 	{ &g_forceFollow,		"g_forceFollow",	 "0",			  CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 	{ &g_followEnemy,		"g_followEnemy",	 "1",			  CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 

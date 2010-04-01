@@ -1441,10 +1441,17 @@ void BG_DecompressOutfitting ( const char* compressed, goutfitting_t* outfitting
 {
 	int	group;
 	int origitem;
-
+	int MaxItems;
+	// Henk 01/04/10
+	if(g_disablenades.integer == 1){
+		MaxItems = OUTFITTING_GROUP_MAX-1;
+	}else{
+		MaxItems = OUTFITTING_GROUP_MAX;
+	}
+	// End
 	memset ( outfitting->items, 0, sizeof(outfitting->items) );
 
-	for ( group = 0; group < OUTFITTING_GROUP_MAX; group ++ )
+	for ( group = 0; group < MaxItems; group ++ ) // max -1 = no nades
 	{
 		int item;
 
@@ -1482,7 +1489,7 @@ void BG_DecompressOutfitting ( const char* compressed, goutfitting_t* outfitting
 		if ( bg_itemlist[bg_outfittingGroups[group][item]].giType == IT_WEAPON )
 		{
 			origitem = item;
-			while ( !BG_IsWeaponAvailableForOutfitting ( bg_itemlist[bg_outfittingGroups[group][item]].giTag, 1 ) ) // Fix for nades with /outfitting AAFFA -> level to 1
+			while ( !BG_IsWeaponAvailableForOutfitting ( bg_itemlist[bg_outfittingGroups[group][item]].giTag, 2 ) ) // Fix for nades with /outfitting AAFFA
 			{
 				item++;
 				if ( bg_outfittingGroups[group][item] == -1 )

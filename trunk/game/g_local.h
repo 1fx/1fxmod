@@ -926,6 +926,7 @@ extern  vmCvar_t	g_roundtimelimit;
 extern  vmCvar_t	g_timeextension;
 extern  vmCvar_t	g_roundstartdelay;
 extern  vmCvar_t	g_availableWeapons;
+extern  vmCvar_t	g_disablenades; // Henk 01/04/10
 extern	vmCvar_t	g_forceFollow;
 extern	vmCvar_t	g_followEnemy;
 extern  vmCvar_t	g_mapcycle;
