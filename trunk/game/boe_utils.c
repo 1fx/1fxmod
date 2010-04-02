@@ -1162,3 +1162,34 @@ void Boe_About( gentity_t *ent )
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Mod date^7]    %s\n", INF_VERSION_DATE));
 	trap_SendServerCommand( ent-g_entities, va("print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\""));
 }
+
+/*
+===================
+Boe_crashLog by boe
+4/2/10 - 1:48 PM
+===================
+*/
+
+void QDECL Boe_crashLog( const char *text, ... )
+{
+	char		string[1024] = "";
+	va_list		argptr;
+	qtime_t		q;
+	fileHandle_t	f;
+
+	trap_RealTime (&q);
+
+	Com_sprintf( string, sizeof(string), "%02i/%02i/%i %02i:%02i\n", 1+q.tm_mon,q.tm_mday, q.tm_year+1900,q.tm_hour,q.tm_min);
+	va_start( argptr, text );
+	vsprintf( string + 19, text, argptr );
+	va_end( argptr );
+		
+	trap_FS_FOpenFile("logs/crashlog.txt", &f, FS_APPEND_TEXT);
+	
+	if ( !f )
+		return;
+
+	trap_FS_Write( string, strlen( string ), f );
+	trap_FS_Write( "\n", 1, f);
+	trap_FS_FCloseFile(f);
+}
