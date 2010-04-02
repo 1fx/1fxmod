@@ -803,7 +803,9 @@ void QDECL Com_Printf( const char *msg, ... )
 	va_start (argptr, msg);
 	vsprintf (text, msg, argptr);
 	va_end (argptr);
-
+	if (strstr(text, "ERROR: ")){
+		// Boe!Man 4/2/10: We log the crash.
+		Boe_crashLog (va("%s", text));}
 	trap_Printf( text );
 }
 
