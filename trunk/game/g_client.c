@@ -1815,6 +1815,8 @@ void ClientDisconnect( int clientNum )
 
 	// Boe!Man 12/27/09: Resetting the Admin 'status' for the disconnected client here, so a future client with the same ID doesn't get his Admin status..
 	ent->client->sess.admin = 0;
+	// Boe!Man 4/4/10: We reset the Developer as well.
+	ent->client->sess.dev = 0;
 
 	trap_SetConfigstring( CS_PLAYERS + clientNum, "");
 
