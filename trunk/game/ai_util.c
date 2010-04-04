@@ -614,6 +614,8 @@ int ReadChatGroups(bot_state_t *bs, char *buf)
 }
 
 char personalityBuffer[131072];
+// Henk 1/14/10
+char *buffer = personalityBuffer;
 
 void BotUtilizePersonality(bot_state_t *bs)
 {
