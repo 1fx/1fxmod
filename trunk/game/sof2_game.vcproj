@@ -1259,6 +1259,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\henkENT.c"
+				>
+			</File>
+			<File
 				RelativePath="q_math.c"
 				>
 				<FileConfiguration

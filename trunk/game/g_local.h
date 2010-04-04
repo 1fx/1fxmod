@@ -156,6 +156,9 @@ struct gentity_s
 	int			delay;
 
 	gitem_t		*item;			// for bonus items
+
+	vec3_t		apos1;
+	vec3_t		apos2;
 };
 
 typedef struct gspawn_s
@@ -244,6 +247,9 @@ typedef struct
 	int					lastIdentityChange;		// Used for limiting the Identity change for x seconds.
 	float				boemodClient;			// Client side mod.
 	qboolean			fileChecked;			// Used for checking if the client is an Admin at connect and/or name change.
+
+	// Boe!Man 4/3/10
+	int					dev;					// If this is set to 1, the client is a Developer.
 
 	// (c) Henk -> Ip2Country
 	char				country[128]; // Netherlands,Unites States, United Kingdom etc..
@@ -1167,3 +1173,11 @@ void G_UpdateClientAntiLag	( gentity_t* ent );
 void G_UndoAntiLag			( void );
 void G_ApplyAntiLag			( gentity_t* ref, qboolean enlargeHitBox );
 
+// 1/14/10: Henk ent files
+#ifdef _spMaps
+qboolean G_LoadEntFile(void);
+qboolean G_ReadingFromEntFile(qboolean inSubBSP);
+char *G_GetEntFileToken(void);
+#endif
+
+void SP_func_door_rotating( gentity_t *ent );

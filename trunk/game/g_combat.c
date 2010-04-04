@@ -360,8 +360,26 @@ void player_die(
 			item = BG_FindGametypeItem ( i );
 
 			// Let the gametype handle the problem, if it doenst handle it and return 1 then 
+			if ( trap_GT_SendEvent ( GTEV_ITEM_STUCK, level.time, item->quantity, 0, 0, 0, 0 ) )
+			{
+				// Boe!Man 4/4/10: When in a rare case the combat DOES handle this problem (instead of g_items.c), we just declare the chars here.
+				char color1[64];
+				char color2[64];
+				char color3[64];
+				char color4[64];
+				char color5[64];
+				char color6[64];
+				trap_Cvar_VariableStringBuffer ( "server_color1", color1, MAX_QPATH );
+				trap_Cvar_VariableStringBuffer ( "server_color2", color2, MAX_QPATH );
+				trap_Cvar_VariableStringBuffer ( "server_color3", color3, MAX_QPATH );
+				trap_Cvar_VariableStringBuffer ( "server_color4", color4, MAX_QPATH );
+				trap_Cvar_VariableStringBuffer ( "server_color5", color5, MAX_QPATH );
+				trap_Cvar_VariableStringBuffer ( "server_color6", color6, MAX_QPATH );
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@The briefcase has %sr%se%st%su%sr%sned!", level.time + 5000, color1, color2, color3, color4, color5, color6));
+				trap_SendServerCommand( -1, va("print \"^3[INF] ^7The briefcase has returned\n\""));
+			}
 			// just reset the gametype item
-			if ( !trap_GT_SendEvent ( GTEV_ITEM_STUCK, level.time, item->quantity, 0, 0, 0, 0 ) )
+			else if ( !trap_GT_SendEvent ( GTEV_ITEM_STUCK, level.time, item->quantity, 0, 0, 0, 0 ) )
 			{
 				G_ResetGametypeItem ( item );
 			}

@@ -298,6 +298,11 @@ void Touch_Item (gentity_t *ent, gentity_t *other, trace_t *trace)
 	int			respawn;
 	qboolean	predict;
 	qboolean	autoswitch;
+	char color2[64];
+	char color3[64];
+	char color4[64];
+	char color5[64];
+	char color6[64];
 
 	if (!other->client)
 		return;
@@ -318,8 +323,15 @@ void Touch_Item (gentity_t *ent, gentity_t *other, trace_t *trace)
 		// Let the gametype decide if it can be picked up
 		if ( !trap_GT_SendEvent ( GTEV_ITEM_TOUCHED, level.time, ent->item->quantity, other->s.number, other->client->sess.team, 0, 0 ) )
 		{
-			return;
+		return;
 		}
+		trap_Cvar_VariableStringBuffer ( "server_color2", color2, MAX_QPATH );
+		trap_Cvar_VariableStringBuffer ( "server_color3", color3, MAX_QPATH );
+		trap_Cvar_VariableStringBuffer ( "server_color4", color4, MAX_QPATH );
+		trap_Cvar_VariableStringBuffer ( "server_color5", color5, MAX_QPATH );
+		trap_Cvar_VariableStringBuffer ( "server_color6", color6, MAX_QPATH );
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s has %st%sa%sk%se%sn the briefcase!", level.time + 5000, other->client->pers.netname, color2, color3, color4, color5, color6));
+		trap_SendServerCommand( -1, va("print \"^3[INF] %s ^7has taken the briefcase\n\"", other->client->pers.netname));
 	}
 	// the same pickup rules are used for client side and server side
 	else if ( !BG_CanItemBeGrabbed( level.gametype, &ent->s, &other->client->ps ) ) 
@@ -507,6 +519,14 @@ gentity_t *G_DropItem( gentity_t *ent, gitem_t *item, float angle )
 	vec3_t		velocity;
 	vec3_t		angles;
 	gentity_t*	dropped;
+	// Boe!Man 4/4/10
+	//int clientname;
+	char color1[64];
+	char color2[64];
+	char color3[64];
+	char color4[64];
+	char color5[64];
+	char color6[64];
 
 	VectorCopy( ent->s.apos.trBase, angles );
 	angles[YAW] += angle;
@@ -520,6 +540,15 @@ gentity_t *G_DropItem( gentity_t *ent, gitem_t *item, float angle )
 
 	if ( item->giType == IT_GAMETYPE )
 	{
+		trap_Cvar_VariableStringBuffer ( "server_color1", color1, MAX_QPATH );
+		trap_Cvar_VariableStringBuffer ( "server_color2", color2, MAX_QPATH );
+		trap_Cvar_VariableStringBuffer ( "server_color3", color3, MAX_QPATH );
+		trap_Cvar_VariableStringBuffer ( "server_color4", color4, MAX_QPATH );
+		trap_Cvar_VariableStringBuffer ( "server_color5", color5, MAX_QPATH );
+		trap_Cvar_VariableStringBuffer ( "server_color6", color6, MAX_QPATH );
+		//clientname = ent->s.number;
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s has %sd%sr%so%sp%sp%sed the briefcase!", level.time + 5000, ent->client->pers.netname, color1, color2, color3, color4, color5, color6));
+		trap_SendServerCommand( -1, va("print \"^3[INF] %s ^7has dropped the briefcase\n\"", ent->client->pers.netname));
 		trap_GT_SendEvent ( GTEV_ITEM_DROPPED, level.time, item->quantity, ent->s.number, 0, 0, 0 );
 	}
 
@@ -932,6 +961,12 @@ void G_RunItem( gentity_t *ent )
 	trace_t		tr;
 	int			contents;
 	int			mask;
+	char color1[64];
+	char color2[64];
+	char color3[64];
+	char color4[64];
+	char color5[64];
+	char color6[64];
 
 	// if groundentity has been set to -1, it may have been pushed off an edge
 	if ( ent->s.groundEntityNum == -1 ) 
@@ -991,8 +1026,19 @@ void G_RunItem( gentity_t *ent )
 		if ( ent->item && ent->item->giType == IT_GAMETYPE )
 		{
 			// Let the gametype handle the problem, if it doenst handle it and return 1 then 
+			if ( trap_GT_SendEvent ( GTEV_ITEM_STUCK, level.time, ent->item->quantity, 0, 0, 0, 0 ) )
+			{
+				trap_Cvar_VariableStringBuffer ( "server_color1", color1, MAX_QPATH );
+				trap_Cvar_VariableStringBuffer ( "server_color2", color2, MAX_QPATH );
+				trap_Cvar_VariableStringBuffer ( "server_color3", color3, MAX_QPATH );
+				trap_Cvar_VariableStringBuffer ( "server_color4", color4, MAX_QPATH );
+				trap_Cvar_VariableStringBuffer ( "server_color5", color5, MAX_QPATH );
+				trap_Cvar_VariableStringBuffer ( "server_color6", color6, MAX_QPATH );
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@The briefcase has %sr%se%st%su%sr%sned!", level.time + 5000, color1, color2, color3, color4, color5, color6));
+				trap_SendServerCommand( -1, va("print \"^3[INF] ^7The briefcase has returned\n\""));
+			}
 			// just reset the gametype item
-			if ( !trap_GT_SendEvent ( GTEV_ITEM_STUCK, level.time, ent->item->quantity, 0, 0, 0, 0 ) )
+			else if ( !trap_GT_SendEvent ( GTEV_ITEM_STUCK, level.time, ent->item->quantity, 0, 0, 0, 0 ) )
 			{
 				G_ResetGametypeItem ( ent->item );
 			}
