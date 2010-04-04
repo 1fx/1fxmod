@@ -5,7 +5,7 @@
 ///RxCxW - 02.26.06 - 07:53pm #sp map
 /// Modified version from MANDOWN sdk
 static fileHandle_t entFile;
-char *buffer;
+extern char *buffer;
 
 qboolean G_LoadEntFile(void)
 {

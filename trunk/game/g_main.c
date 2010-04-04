@@ -790,6 +790,7 @@ void QDECL Com_Error ( int level, const char *fmt, ... )
 	va_start (argptr, fmt);
 	vsprintf (text, fmt, argptr);
 	va_end (argptr);
+	Boe_crashLog (va("%s", text));
 	trap_Error( text );
 }
 
