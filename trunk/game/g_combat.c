@@ -389,7 +389,7 @@ void player_die(
 	Cmd_Score_f( self );
 
 	// Henk 01/04/10 -> Hp/armor message if you are killed
-	if(attacker->client && ent->client){ // if the attacker and target are both clients
+	if(attacker->client && self->client){ // if the attacker and target are both clients
 		trap_SendServerCommand( self->s.number, va("print \"^3[Info] ^7%s ^7had ^3%i ^7health and ^3%i ^7armor left.\n\"", attacker->client->pers.netname, attacker->health, attacker->client->ps.stats[STAT_ARMOR]));
 	}
 	// End
