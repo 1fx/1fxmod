@@ -1281,6 +1281,8 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 	{
 		type = ("^7[^Cs^7]");
 	}
+	// Boe!Man 4/5/10: We delete the team prefixes.
+	/*
 	else if ( ent->client->sess.team == TEAM_RED )
 	{
 		type = "^7[^1h^7]";
@@ -1289,6 +1291,7 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 	{
 		type = "^7[^ys^7]";
 	}
+	*/
 
 	// Boe!Man 1/17/10: Admin Talk/Chat.
 	if(mode == ADM_TALK || mode == ADM_CHAT || mode == CADM_CHAT){

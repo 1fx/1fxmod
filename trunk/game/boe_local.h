@@ -130,6 +130,8 @@ extern	vmCvar_t	g_maxIPConnections;
 extern	vmCvar_t	server_redteamprefix;
 extern	vmCvar_t	server_blueteamprefix;
 
+// Boe!Man 4/5/10
+extern	vmCvar_t	g_scorelimit;
 
 //==============================================
 // boe_utils.c

@@ -94,7 +94,10 @@ void Boe_adm_f ( gentity_t *ent )
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   et  eventeams                  ^7[^3Make the teams even^7]\n\"", g_eventeams.integer));
 		}
 	if (adm >= g_333.integer && g_333.integer != 5){
-		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   333 333                        ^7[^3Enable/Disable 333 FPS jumps^7]\n\"", g_eventeams.integer));
+		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   333 333                        ^7[^3Enable/Disable 333 FPS jumps^7]\n\"", g_333.integer));
+		}
+	if (adm >= g_scorelimit.integer && g_scorelimit.integer != 5){
+		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   sl  scorelimit   <time>        ^7[^Change the scorelimit^7]\n\"", g_scorelimit.integer));
 		}
 	trap_SendServerCommand( ent-g_entities, va("print \"    [^32^7] B-Admin          ^7[^33^7] Admin          ^7[^34^7] S-Admin\n\""));
 	trap_SendServerCommand( ent-g_entities, va("print \" \n^7Use ^3[Page Up]^7 and ^3[Page Down]^7 keys to scroll.\n\""));

@@ -137,6 +137,7 @@ vmCvar_t	server_redteamprefix;
 vmCvar_t	server_blueteamprefix;
 // Henk 01/04/10 -> Add g_disablenades
 vmCvar_t	g_disablenades;
+vmCvar_t	g_scorelimit;					// Admin CVAR.
 
 static cvarTable_t gameCvarTable[] = 
 {
@@ -272,6 +273,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_eventeams,					"g_eventeams",			"2",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_333,						"g_333",				"3",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_forceteam,					"g_forceteam",			"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
+	{ &g_scorelimit,				"g_scorelimit",			"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 
 	{ &g_banlist,			"g_banlist",			"users/bans.txt",			CVAR_ARCHIVE,	0.0,	0.0,	0, qfalse  },
 	{ &g_subnetbanlist,		"g_subnetbanlist",		"users/subnetbans.txt",		CVAR_ARCHIVE,	0.0,	0.0,	0, qfalse  },
