@@ -1292,6 +1292,9 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 		type = "^7[^ys^7]";
 	}
 	*/
+	// Boe!Man 4/6/10: And replace the type with something, well nothing.
+	else
+		type = "";
 
 	// Boe!Man 1/17/10: Admin Talk/Chat.
 	if(mode == ADM_TALK || mode == ADM_CHAT || mode == CADM_CHAT){
