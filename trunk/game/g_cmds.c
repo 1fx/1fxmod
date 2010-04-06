@@ -2185,10 +2185,16 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		if (ent->client->sess.admin >= g_forceteam.integer){
 			if(level.nolower1 == qtrue){
 				level.nolower1 = qfalse;
+				if (strstr(level.mapname, "mp_kam2")){
+				// cage kwap
+				}
 				trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7No lower has been disabled by %s.\n\"", ent->client->pers.netname));
 				Boe_adminLog (va("%s - NOLOWER DISABLED", ent->client->pers.cleanName)) ;
 			}else{
 				level.nolower1 = qtrue;
+				if (strstr(level.mapname, "mp_kam2")){
+				// remove cage kwap
+				}
 				trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7No lower has been enabled by %s.\n\"", ent->client->pers.netname));
 				Boe_adminLog (va("%s - NOLOWER ENABLED", ent->client->pers.cleanName)) ;
 			}
@@ -2198,6 +2204,15 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		}
 		G_Say( ent, NULL, mode, p);
 		return;
+	}
+	else if(strstr(lwrP, "!nn")){
+		if(ent->client->sess.admin >= g_forceteam.integer){
+			if(g_disablenades.integer == 1){
+				g_disablenades.integer = 1;
+			}else{
+				g_disablenades = 0;
+			}
+		}
 	}
 	else if ((strstr(lwrP, "!fl ")) || (strstr(lwrP, "!flash "))){
 		if (ent->client->sess.admin >= g_flash.integer){

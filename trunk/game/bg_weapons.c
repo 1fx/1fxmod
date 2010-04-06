@@ -355,8 +355,14 @@ qboolean BG_InitWeaponStats(void)
 	void		*GP2, *topGroup, *topSubs;
 	char		name[256];
 	int			i;
-
-	GP2 = trap_GP_ParseFile("ext_data/sof2.wpn", qtrue, qfalse);
+	char WpnFile[64];
+	
+	// Henk 06/04/10 -> Different wpn files(H&S, Real Damage, Normal Damage)
+	WpnFile = "ext_data/sof2.wpn";
+	//WpnFile = "ext_data/nd.wpn";
+	//WpnFile = "ext_data/rd.wpn";
+	//WpnFile = "ext_data/h&s.wpn";?
+	GP2 = trap_GP_ParseFile(WpnFile, qtrue, qfalse);
 	if (!GP2)
 	{
 		return qfalse;
