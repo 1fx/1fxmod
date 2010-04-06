@@ -1444,7 +1444,7 @@ void BG_DecompressOutfitting ( const char* compressed, goutfitting_t* outfitting
 
 	memset ( outfitting->items, 0, sizeof(outfitting->items) );
 
-	for ( group = 0; group < OUTFITTING_GROUP_MAX; group ++ ) // max -1 = no nades
+	for ( group = 0; group < OUTFITTING_GROUP_MAX; group ++ )
 	{
 		int item;
 
