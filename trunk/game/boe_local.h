@@ -5,10 +5,10 @@
 //==================================================================
 
 // Boe!Man 3/30/10
-#define INF_VERSION_STRING "0.06"
+#define INF_VERSION_STRING "0.10"
 #define INF_STRING "1fx. Infiltration"
 #define INF_VERSION_STRING_COLORED "^71fx^1. ^3Infiltration"
-#define INF_VERSION_DATE "6/4/10"
+#define INF_VERSION_DATE "4/7/10"
 
 
 // Infiltration
@@ -23,24 +23,8 @@
 // --------------------------------------------------
 // Infiltration	0.01	Alpha				3/30/10
 // Infiltration 0.02	Alpha				3/31/10
-//
-//
-// Hide&Seek	0.02	Trunk Build			12/17/09
-// Hide&Seek	0.03	Trunk Build			12/20/09
-// Hide&Seek	0.04	Trunk Build			12/24/09
-// Hide&Seek	0.05	Alpha				12/30/09
-// Hide&Seek	0.06	Alpha				1/4/10
-// Hide&Seek	0.07a	Alpha				1/7/10
-// Hide&Seek	0.07b	Alpha				1/7/10
-// Hide&Seek	0.08	Alpha				1/15/10
-// Hide&Seek	0.09	Alpha				1/18/10
-// Hide&Seek	0.10	Open Alpha			1/19/10
-// Hide&Seek	0.11	Open Alpha			1/24/10
-// Hide&Seek	0.12	Beta				1/30/10
-// Hide&Seek	0.13	Beta				2/8/10
-// Hide&Seek	0.20	Release				2/25/10
-// Hide&Seek	0.21	Release				2/27/10
-// Hide&Seek	0.22	Release				3/20/10
+// Infiltration 0.05	Beta				4/4/10	
+// Infiltration 0.10	Beta				4/7/10
 
 //===================================================================
 
