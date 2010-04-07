@@ -255,6 +255,9 @@ typedef struct
 	char				country[128]; // Netherlands,Unites States, United Kingdom etc..
 	char				countryext[4]; // NL,US,UK etc..
 
+	// Henk 06/04/10 -> Rpm scoreboard compatibility
+	float				rpmClient;
+
 } clientSession_t;
 
 // Boe!Man 3/30/10

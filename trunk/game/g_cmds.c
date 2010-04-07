@@ -225,18 +225,54 @@ void DeathmatchScoreboardMessage( gentity_t *ent )
 			}
 		}
 	
-		Com_sprintf (entry, sizeof(entry),
-			" %i %i %i %i %i %i %i %i %i", 
+		//Ryan may 12 2004
+		//Add some info for client-side users
+		//RxCxW - 1.20.2005 - NOT compatible with 0.5. #Version
+		if(ent->client->sess.rpmClient > 0.5)
+		{
+			Com_sprintf (entry, sizeof(entry),
+				" %i %i %i %i %i %i %i %i %i %.2f %i",
+				level.sortedClients[i],
+				cl->sess.score,
+				cl->sess.kills,
+				cl->sess.deaths,
+				ping,
+				(level.time - cl->pers.enterTime)/60000,
+				(cl->sess.ghost || cl->ps.pm_type == PM_DEAD) ? qtrue : qfalse,
+				g_entities[level.sortedClients[i]].s.gametypeitems,
+				g_teamkillDamageMax.integer ? 100 * cl->sess.teamkillDamage / g_teamkillDamageMax.integer : 0,
+				cl->pers.statinfo.accuracy,
+				cl->pers.statinfo.headShotKills
+				);
+		}else if(ent->client->sess.rpmClient == 1.1){
+			Com_sprintf (entry, sizeof(entry),
+			" %i %i %i %i %i %i %i %i %i",
 			level.sortedClients[i],
-			cl->sess.score, 
-			cl->sess.kills, 
-			cl->sess.deaths, 
-			ping, 
+			cl->sess.score,
+			cl->sess.kills,
+			cl->sess.deaths,
+			ping,
 			(level.time - cl->pers.enterTime)/60000,
 			(cl->sess.ghost || cl->ps.pm_type == PM_DEAD) ? qtrue : qfalse,
 			g_entities[level.sortedClients[i]].s.gametypeitems,
 			g_teamkillDamageMax.integer ? 100 * cl->sess.teamkillDamage / g_teamkillDamageMax.integer : 0
 			);
+		}
+		else
+		{
+			Com_sprintf (entry, sizeof(entry),
+			" %i %i %i %i %i %i %i %i %i",
+			level.sortedClients[i],
+			cl->sess.score,
+			cl->sess.kills,
+			cl->sess.deaths,
+			ping,
+			(level.time - cl->pers.enterTime)/60000,
+			(cl->sess.ghost ||cl->ps.pm_type == PM_DEAD) ? qtrue : qfalse, 
+			g_entities[level.sortedClients[i]].s.gametypeitems,
+			g_teamkillDamageMax.integer ? 100 * cl->sess.teamkillDamage / g_teamkillDamageMax.integer : 0
+			);
+		}
 
 		j = strlen(entry);
 		if (stringlength + j > 1022 )

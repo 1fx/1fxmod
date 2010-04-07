@@ -1001,6 +1001,29 @@ void ClientUserinfoChanged( int clientNum )
 		client->ps.pm_flags &= ~PMF_AUTORELOAD;
 	}
 
+	// Ryan Dec 21 2004
+	// detect older client mods so we don't detect the version as 2.0, might really mess up
+	// players using older versions.
+	// client versions previous to 0.6 have a cg_rpm cvar thats sent to the server
+	// if the client has that set their version to 0.5 so there won't be any trouble
+	s = Info_ValueForKey (userinfo, "cg_rpm");
+	if(*s)
+	{
+		client->sess.rpmClient = 0.5;
+	}
+	// not using older client so lets test for new client
+	else
+	{
+		s = Info_ValueForKey (userinfo, "cg_rpmClient");
+		if(*s)
+		{
+			// new client sends the version of the client mod eg. 0.6
+			client->sess.rpmClient = atof(s);
+		}
+	}
+	//Ryan
+
+
 	// set name
 	Q_strncpyz ( oldname, client->pers.netname, sizeof( oldname ) );
 	s = Info_ValueForKey (userinfo, "name");
