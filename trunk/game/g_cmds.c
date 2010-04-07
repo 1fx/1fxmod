@@ -7,6 +7,104 @@
 
 int AcceptBotCommand(char *cmd, gentity_t *pl);
 
+// Henk 07/04/10 -> Copied from RPM to make scoreboard from RPM client working
+/*
+=================
+RPM_UpdateTMI
+
+//Used to only send teammate info hence "TMI" but I have decided to
+//send all player infos so specs can see health etc.. of both teams
+//and its also kinda cool in deathmatches to see the health of the enemy
+=================
+*/
+void RPM_UpdateTMI(void)
+{
+	int			i, j;
+	char		entry[1024];
+	char		infoString[2048];
+	int			infoStringLength;
+	gclient_t	*cl;
+	int			numAdded, location;
+	gentity_t	*bestLoc;
+	int			adm = 0;
+	int			thirdperson;
+/*	if (!level.gametypeData->teams)
+	{	// only bother if a league game with teams
+		return;
+	}
+*/
+	// if we are waiting for the level to restart, do nothing, even if forced
+	if (level.restarted){
+		return;
+	}
+
+	//if(level.pause) // Henk 06/04/10 -> No pause functionality yet
+	//	return;
+
+	if (level.time - level.lastTMIupdate < 1000) // Henk 06/04/10 -> Increase to reduce lagg
+	{
+		return;
+	}
+
+	level.lastTMIupdate = level.time;
+
+	entry[0] = 0;
+	infoString[0] = 0;
+	infoStringLength = 0;
+	numAdded = 0;
+	
+	for (i = 0; i < level.numConnectedClients; i++)
+	{
+		cl = &level.clients[level.sortedClients[i]];
+		//if (G_IsClientSpectating(cl) || G_IsClientDead (cl)) // Henk 06/04/10 -> Also send to death/specs
+		//{
+		//	continue;
+		//}
+
+		bestLoc = Team_GetLocation(&g_entities[i]);
+
+		location = 0;
+		if (bestLoc)
+		{
+			location = bestLoc->health;
+		}
+
+			adm = cl->sess.admin;
+			thirdperson = 1;
+			Com_sprintf (entry, sizeof(entry),
+				" %i %i %i %i %i %i %i %i %i",
+				level.sortedClients[i],
+				cl->ps.stats[STAT_HEALTH],
+				cl->ps.stats[STAT_ARMOR],
+				location,
+				thirdperson, // 1 = third | 0 = first | 2 = n/a, aka no client
+				adm, // Henkie test -> Dont know?
+				cl->ps.weapon,
+				cl->sess.mute,		// Henkie test -> Dont know?
+				0//cl->sess.clanMember	// Henkie test -> Dont know and not added yet
+				);
+
+		j = strlen(entry);
+
+		if (infoStringLength + j > 2046)
+		{
+			break;
+		}
+		strcpy (infoString + infoStringLength, entry);
+		infoStringLength += j;
+		numAdded++;
+	}
+	for (i = 0 ; i < level.numConnectedClients; i++)
+	{
+		cl = &level.clients[level.sortedClients[i]];
+		
+
+//RxCxW - 1.20.2005 - #scoreboard #Version compatiblity
+		if(cl->sess.rpmClient > 0.6)	
+			trap_SendServerCommand(level.sortedClients[i], va("tmi %i%s", numAdded, infoString));
+	}
+}
+
 void EvenTeams (gentity_t *adm)
 {
 	int			team, i, j, a =0, autoEven;
@@ -3138,7 +3236,9 @@ void ClientCommand( int clientNum ) {
 	// Boe!Man 4/3/10
 	else if (Q_stricmp (cmd, "dev") == 0)
 		Boe_dev_f( ent );
-
+	// Henk 07/04/10 -> Send info to all players(for RPM scoreboard)
+	else if (Q_stricmp (cmd, "tmi") == 0)
+		RPM_UpdateTMI();
 #ifdef _SOF2_BOTS
 	else if (Q_stricmp (cmd, "addbot") == 0)
 		trap_SendServerCommand( clientNum, va("print \"ADDBOT command can only be used via RCON\n\"" ) );

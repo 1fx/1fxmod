@@ -533,6 +533,8 @@ typedef struct
 	char			mapname[64];
 	vec3_t			nolower; // location of nolower
 	qboolean		nolower1; // true for nolower
+	// Henk 06/04/10 -> Add TMI for RPM scoreboard compatiblity
+	int				lastTMIupdate;
 } level_locals_t;
 
 //
@@ -1181,3 +1183,6 @@ char *G_GetEntFileToken(void);
 #endif
 
 void SP_func_door_rotating( gentity_t *ent );
+
+// Henk 07/04/10 -> Add RPM_UpdateTMI()
+void RPM_UpdateTMI(void);
