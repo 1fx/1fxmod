@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="SoF2game"
 	ProjectGUID="{E586A388-89BA-4529-AC84-B4CE65BAF91E}"
 	TargetFrameworkVersion="0"

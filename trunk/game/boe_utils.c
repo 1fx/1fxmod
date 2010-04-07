@@ -20,7 +20,7 @@ void Boe_Motd (gentity_t *ent)
 	char	*gs = gmotd;
 	char	*name = ent->client->pers.netname;
 	char	*header1 = va("@%s ^7%s ^7- %s\n", INF_VERSION_STRING_COLORED, INF_VERSION_STRING, INF_VERSION_DATE );
-	char	*header2 = va("Developed by ^GBoe!Man ^7& ^6Henkie\nv1servers.net ^3| ^71fx.ipbfree.com\n\n");
+	char	*header2 = va("Developed by ^GBoe!Man ^7& ^6Henkie\nv1servers.com ^3| ^71fx.ipbfree.com\n\n");
 	Com_sprintf(gmotd, 1024, "%s%s%s\n%s\n%s\n%s\n%s\n%s\n",
 		header1,
 		header2,
@@ -841,9 +841,9 @@ void Boe_Players (gentity_t *ent)
 	trap_SendServerCommand( ent-g_entities, va("print \"\n\""));
 	trap_SendServerCommand( ent-g_entities, va("print \"^3Id#  Name                                  Ping  Coun Adm Cln Mut Ver\n\""));
 	trap_SendServerCommand( ent-g_entities, va("print \"^7------------------------------------------------------------------------\n\""));
-	for ( i = 0; i < level.numConnectedClients; i ++ )
+	for ( i = 0; i < 64; i ++ )
 	{
-		if(level.clients[i].pers.connected == CON_DISCONNECTED )
+		if(level.clients[i].pers.connected != CON_CONNECTED)
 		{
 			continue;
 		}

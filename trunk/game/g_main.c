@@ -145,6 +145,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_cheats, "sv_cheats", "", 0, 0.0, 0.0, 0, qfalse },
 	{ NULL, "^3Mod Name", INF_STRING, CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse  },
 	{ NULL, "^3Mod URL", "1fx.ipbfree.com", CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse  },
+	{ NULL, "modname", "RPM 2 k 3 v1.71 ^_-^3 V1Servers.com", CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse  },
 
 	// noset vars
 	{ NULL, "gamename", GAMEVERSION , CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse  },
@@ -273,8 +274,8 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_eventeams,					"g_eventeams",			"2",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_333,						"g_333",				"3",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_forceteam,					"g_forceteam",			"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
-	{ &g_scorelimit,				"g_scorelimit",			"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
-
+	//{ &g_scorelimit,				"g_scorelimit",			"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
+	// @ BERTMAN DO NOT USE G_SCORELIMIT & G_TIMELIMIT(SOF2 ALREADY USES THOSE)
 	{ &g_banlist,			"g_banlist",			"users/bans.txt",			CVAR_ARCHIVE,	0.0,	0.0,	0, qfalse  },
 	{ &g_subnetbanlist,		"g_subnetbanlist",		"users/subnetbans.txt",		CVAR_ARCHIVE,	0.0,	0.0,	0, qfalse  },
 
@@ -373,6 +374,10 @@ int vmMain( int command, int arg0, int arg1, int arg2, int arg3, int arg4, int a
 	}
 
 	return -1;
+}
+
+void trap_SendServerCommand( int clientNum, const char *text ) {
+	trap_SendServerCommand2(clientNum, text);
 }
 
 /*
@@ -1784,6 +1789,9 @@ void G_RunFrame( int levelTime )
 
 	// get any cvar changes
 	G_UpdateCvars();
+
+	// Henk 06/04/10 -> Update tmi every x sec
+	RPM_UpdateTMI();
 
 	// go through all allocated objects
 	ent = &g_entities[0];

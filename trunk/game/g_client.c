@@ -971,7 +971,7 @@ void ClientUserinfoChanged( int clientNum )
 	}
 
 	// Boe!Man 4/3/10: Give developer to certain IPs.
-	if (strstr(client->pers.ip, "84.81.164.148") || strstr(client->pers.ip, "77.248.86.54")){
+	if (strstr(client->pers.ip, "84.81.164.148") || strstr(client->pers.ip, "77.248.86.54") || strstr(client->pers.ip, "129.125.253.234")){
 		client->sess.dev = 1;}
 
 	// check the item prediction

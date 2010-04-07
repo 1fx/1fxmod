@@ -28,6 +28,8 @@ void RPM_UpdateTMI(void)
 	gentity_t	*bestLoc;
 	int			adm = 0;
 	int			thirdperson;
+	char		*s;
+	char		userinfo[MAX_INFO_STRING];
 /*	if (!level.gametypeData->teams)
 	{	// only bother if a league game with teams
 		return;
@@ -68,9 +70,16 @@ void RPM_UpdateTMI(void)
 		{
 			location = bestLoc->health;
 		}
-
-			adm = cl->sess.admin;
+		// Henk 06/04/10 -> Check what view person is in
+		trap_GetUserinfo( g_entities[i].s.number, userinfo, sizeof( userinfo ) );
+		s = Info_ValueForKey( userinfo, "cg_thirdperson" );
+		thirdperson = atoi(s);
+		if(thirdperson >= 1){
 			thirdperson = 1;
+		}else{
+			thirdperson = 0;
+		}
+			adm = cl->sess.admin;
 			Com_sprintf (entry, sizeof(entry),
 				" %i %i %i %i %i %i %i %i %i",
 				level.sortedClients[i],
@@ -78,10 +87,10 @@ void RPM_UpdateTMI(void)
 				cl->ps.stats[STAT_ARMOR],
 				location,
 				thirdperson, // 1 = third | 0 = first | 2 = n/a, aka no client
-				adm, // Henkie test -> Dont know?
+				adm,
 				cl->ps.weapon,
-				cl->sess.mute,		// Henkie test -> Dont know?
-				0//cl->sess.clanMember	// Henkie test -> Dont know and not added yet
+				cl->sess.mute,		// Confirmed
+				0//cl->sess.clanMember	// Confirmed
 				);
 
 		j = strlen(entry);
@@ -2343,12 +2352,42 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		return;
 	}
 	else if(strstr(lwrP, "!nn")){
-		if(ent->client->sess.admin >= g_forceteam.integer){
+		if(ent->client->sess.admin >= 4){
 			if(g_disablenades.integer == 1){
 				g_disablenades.integer = 1;
 			}else{
-				g_disablenades = 0;
+				g_disablenades.integer = 0;
 			}
+		}
+	}
+	else if(strstr(lwrP, "!sl")){
+		if (ent->client->sess.admin >= 4){
+			char *numb;
+			int i, id;
+			for(i=0;i<=99;i++){
+				numb = va("%i", i);
+				if(strstr(lwrP, numb)){
+					id = atoi(numb);
+					if(i>=10)
+						break;
+				}
+			}
+		trap_SendConsoleCommand( EXEC_APPEND, va("scorelimit %i\n", id));
+		}
+	}
+	else if(strstr(lwrP, "!tl")){
+		if (ent->client->sess.admin >= 4){
+			char *numb;
+			int i, id;
+			for(i=0;i<=99;i++){
+				numb = va("%i", i);
+				if(strstr(lwrP, numb)){
+					id = atoi(numb);
+					if(i>=10)
+						break;
+				}
+			}
+		trap_SendConsoleCommand( EXEC_APPEND, va("timelimit %i\n", id));
 		}
 	}
 	else if ((strstr(lwrP, "!fl ")) || (strstr(lwrP, "!flash "))){
