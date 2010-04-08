@@ -7,6 +7,450 @@
 
 int AcceptBotCommand(char *cmd, gentity_t *pl);
 
+/*
+================
+RPM_Refresh
+================
+*/
+void RPM_Refresh(gentity_t *ent)
+{
+	if (!G_IsClientSpectating ( ent->client ) )
+	{
+		ent->flags &= ~FL_GODMODE;
+		ent->client->ps.stats[STAT_HEALTH] = ent->health = -999;
+		player_die (ent, ent, ent, 100000, MOD_REFRESH, HL_NONE, vec3_origin );
+	}
+	
+	memset(&ent->client->pers.statinfo, 0, sizeof(ent->client->pers.statinfo));
+	ent->client->pers.enterTime = level.time;
+	ent->client->ps.persistant[PERS_SCORE] = 0;
+	ent->client->sess.score = 0;
+	ent->client->sess.deaths = 0;
+	ent->client->sess.kills = 0;
+	ent->client->sess.teamkillDamage      = 0;
+	ent->client->sess.teamkillForgiveTime = 0;
+}
+
+void RPM_Obituary ( gentity_t *target, gentity_t *attacker, int mod, attackType_t attack, int hitLocation ) 
+{
+	int				targ, killer, gender, attackt, weapon;
+	char			targetName[64];
+	char			killerName[64];
+	const char		*targetColor;
+	const char		*killerColor;
+	char			*message;
+	char			*message2;
+	char			*message3;
+	qboolean		headShot = qfalse;
+	qboolean		statOk = qfalse;
+	statinfo_t		*atrstat = &attacker->client->pers.statinfo;
+	gentity_t *tent;
+
+	killerColor = S_COLOR_WHITE;
+	targetColor   = S_COLOR_WHITE;
+	message2 = "";
+	message3 = "";
+	///RxCxW - 01.08.06 - 09:14pm
+	///attackt = attacker->client->pers.statinfo.attack;
+	///weapon = attacker->client->pers.statinfo.weapon;
+
+	if(!level.gametypeData->teams || (level.gametypeData->teams && !OnSameTeam ( target, attacker )))
+	{
+		statOk = qtrue;
+	}
+
+	//was the kill hit a HEADSHOT?
+	hitLocation = hitLocation & (~HL_DISMEMBERBIT);
+	if (hitLocation == HL_HEAD && statOk)
+	{
+		headShot = qtrue;
+		//add to the total headshot count for this player
+		atrstat->headShotKills++;
+	}
+
+	targ = target->s.number;
+
+	if ( targ < 0 || targ >= MAX_CLIENTS ) 
+	{
+		Com_Error( ERR_FATAL, "RPM_Obituary: target out of range" );
+	}
+	Q_strncpyz( targetName, target->client->pers.netname, sizeof(targetName));
+	strcat( targetName, S_COLOR_WHITE );
+
+	//find out who or what killed the client
+	if ( attacker->client ) 
+	{
+		killer = attacker->s.number;
+		Q_strncpyz( killerName, attacker->client->pers.netname, sizeof(killerName));
+		strcat( killerName, S_COLOR_WHITE );
+	}	
+	else
+	{
+		killer = ENTITYNUM_WORLD;
+	}
+	
+	// Play the death sound, water if they drowned
+	if ( mod == MOD_WATER )
+	{
+		Boe_ClientSound(target, G_SoundIndex("sound/pain_death/mullins/drown_dead.mp3"));
+	}
+	else		//play a random death sound out of 3 possible sounds
+	{
+		switch(level.time % 3)
+		{
+		case 0:
+			Boe_ClientSound(target, G_SoundIndex("sound/pain_death/male/die01.mp3"));
+			break;
+
+		case 1:
+			Boe_ClientSound(target, G_SoundIndex("sound/pain_death/male/die04.mp3"));
+			break;
+
+		case 2:
+			Boe_ClientSound(target, G_SoundIndex("sound/pain_death/male/die05.mp3"));
+			break;
+
+		default:
+			Boe_ClientSound(target, G_SoundIndex("sound/pain_death/male/die01.mp3"));
+			break;
+		}
+	}
+	// Play the frag sound, and make sure its not played more than every 250ms
+	if ( attacker->client && level.time - attacker->client->lastKillTime > 250 )
+	{
+		//If the attacker killed themselves play the selffrag sound
+		if ( killer == targ )
+		{
+			Boe_ClientSound(target, G_SoundIndex("sound/self_frag.mp3"));
+		}
+		//Or if they killed a teammate
+		/*else if(level.gametypeData->teams && OnSameTeam ( target, attacker ))
+		{
+			Boe_ClientSound(attacker, G_SoundIndex("sound/self_frag.mp3"));
+			if(g_showTkMessage.integer)
+			{
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,%s ^1killed ^7a ^3teamate!", level.time + 3000, killerName ) );
+			}
+		}*/
+		else if(headShot)
+		{
+			//if they use rpm client-side the client will 
+			//handle the sound etc...
+			if(attacker->client->sess.rpmClient)
+			{
+				trap_SendServerCommand( attacker->s.number, va("headshot \"%s\n\"", "Headshot"));//g_headShotMessage.string));
+			}
+			//if not we'll send them the sound etc..
+			else// if(g_allowDeathMessages.integer)
+			{
+				trap_SendServerCommand( attacker->s.number, va("cp \"%s\n\"", "Headshot"));//g_headShotMessage.string));
+				Boe_ClientSound(attacker, G_SoundIndex("sound/npc/col8/blakely/niceshot.mp3"));
+			}
+			
+			//if(g_allowDeathMessages.integer)
+			//{
+				//if we can show kills we'll display the 
+				//heashot message with the "you killed" message
+				if ( level.gametypeData->showKills )
+				{	
+					message2 = va("%s\n", "Headshot");//g_headShotMessage.string );
+				}
+
+				//We'll tack this on to the end of the kill broadcast to all
+				message3 = "{^3HeaDShoT^7}";
+			//}
+			
+		}
+		//if not headshot, suicide or tk just play the normal sound
+		else
+		{	
+			Boe_ClientSound(attacker, G_SoundIndex("sound/frag.mp3"));
+		}
+		
+		//set the time here now 
+		attacker->client->lastKillTime = level.time;
+	}	
+	//set the teamcolor of the killed client
+	switch ( target->client->sess.team )
+	{
+		case TEAM_RED:
+			targetColor = S_COLOR_RED;
+			break;
+
+		case TEAM_BLUE:
+			targetColor = S_COLOR_BLUE;
+			break;
+	}
+
+	gender = GENDER_MALE;
+	// HENKIE CRASH FIX
+	//is the client female?, check the name of the model they're using
+	if ( strstr ( target->client->pers.identity->mCharacter->mModel, "female" ) )
+	{
+		gender = GENDER_FEMALE;
+	}
+	switch( mod ) 
+	{
+		case MOD_SUICIDE:
+			message = "suicides";
+			break;
+		case MOD_FALLING:
+			if ( gender == GENDER_FEMALE )
+				message = "fell to her death";
+			else
+				message = "fell to his death";
+			break;
+		case MOD_CRUSH:
+			message = "was squished";
+			break;
+		case MOD_WATER:
+			message = "sank like a rock";
+			break;
+		case MOD_TARGET_LASER:
+			message = "saw the light";
+			break;
+		case MOD_TRIGGER_HURT:
+			message = "was in the wrong place";
+			break;
+		case MOD_TEAMCHANGE:
+			return;
+		case MOD_CAR:
+			message = "was killed in a terrible car accident";
+			break;
+		case MOD_POP:
+			return;
+//RxCxW - 1.13.2005	- Dugup (Unplant) #MOD
+		case MOD_DUGUP:
+			message = "Looks like someone Dug too deep!";
+			break;
+		case MOD_BURN:
+			message = "was BURNT to a Crisp!";
+			break;
+//End
+		default:
+			message = NULL;
+			break;
+	}
+	// Attacker killed themselves.  Ridicule them for it.
+	if (killer == targ) 
+	{
+		switch (mod) 
+		{
+			case MOD_MM1_GRENADE_LAUNCHER:    
+			case MOD_RPG7_LAUNCHER:           
+			case MOD_M67_GRENADE:            
+			case MOD_M84_GRENADE:
+			case MOD_F1_GRENADE:
+			case MOD_L2A2_GRENADE:
+			case MOD_MDN11_GRENADE:
+			case MOD_SMOHG92_GRENADE:
+			case MOD_ANM14_GRENADE:
+			case MOD_M15_GRENADE:
+				if ( gender == GENDER_FEMALE )
+					message = "blew herself up";
+				else if ( gender == GENDER_NEUTER )
+					message = "blew itself up";
+				else
+					message = "blew himself up";
+				break;
+
+			case MOD_REFRESH:
+				message = "Refreshed";
+				break;
+
+			default:
+				if ( gender == GENDER_FEMALE )
+					message = "killed herself";
+				else if ( gender == GENDER_NEUTER )
+					message = "killed itself";
+				else
+					message = "killed himself";
+				break;
+		}
+	}
+	if (message) 
+	{
+		trap_SendServerCommand( -1, va("print \"%s%s %s.\n\"", targetColor, targetName, message));
+		return;
+	}
+	// check for kill messages
+	if ( level.gametypeData->showKills )
+	{
+		if ( attacker && attacker->client ) 
+		{
+			//if not a team game display the kill and the rank
+			if ( !level.gametypeData->teams ) 
+			{
+				trap_SendServerCommand( attacker->s.number, va("cp \"%sYou killed %s%s\n place with %i\n\"", // %s after \n
+				message2,
+				targetColor,
+				targetName, 
+				//G_PlaceString( attacker->client->ps.persistant[PERS_RANK] + 1 ),
+				attacker->client->ps.persistant[PERS_SCORE] ));
+			} 
+			else //if team just display the kill
+			{
+				trap_SendServerCommand( attacker->s.number, va("cp \"%sYou killed %s%s\n\"", message2, targetColor, targetName ));
+			}
+		}
+	}
+	// check for double client messages
+	message2 = "";
+
+	///RxCxW - 01.08.06 - 09:22pm - Used if/else if instead of switch which gave errors in dll game
+		//switch ( attacker->client->sess.team )
+		//{
+		//	case TEAM_RED:
+		//		killerColor = S_COLOR_RED;
+		//		break;
+
+		//	case TEAM_BLUE:
+		//		killerColor = S_COLOR_BLUE;
+		//		break;
+		//}
+	///End  - 01.08.06 - 09:31pm
+			
+	if ( killer != ENTITYNUM_WORLD ) 
+	{
+		///RxCxW - 01.08.06 - 09:31pm
+		switch ( attacker->client->sess.team )
+		{
+			case TEAM_RED:
+				killerColor = S_COLOR_RED;
+				break;
+
+			case TEAM_BLUE:
+				killerColor = S_COLOR_BLUE;
+				break;
+		}
+		///End  - 01.08.06 - 09:31pm
+
+		switch (mod) 
+		{
+			case MOD_KNIFE:
+				message = "was sliced by";
+				if(statOk)
+				{
+					//atrstat->knifeKills++;
+				}
+				break;
+
+			case MOD_USAS_12_SHOTGUN:
+			case MOD_M590_SHOTGUN:
+				if ( attack == ATTACK_ALTERNATE )
+				{
+					message = "was bludgeoned by";
+					message2 = va("'s %s", weaponParseInfo[mod].mName );
+				}
+				else
+				{
+					message = "was pumped full of lead by";
+					message2 = va("'s %s", weaponParseInfo[mod].mName );
+				}
+				break;
+
+			case MOD_M1911A1_PISTOL:
+			case MOD_USSOCOM_PISTOL: 
+				if ( attack == ATTACK_ALTERNATE )
+				{
+					message = "was pistol whipped by";
+					message2 = va("'s %s", weaponParseInfo[mod].mName );
+				}
+				else
+				{
+					message = "was shot by";
+					message2 = va("'s %s", weaponParseInfo[mod].mName );
+				}
+				break;
+
+			case MOD_AK74_ASSAULT_RIFLE:
+				if ( attack == ATTACK_ALTERNATE )
+				{
+					message = "was stabbed by";
+					message2 = va("'s %s", weaponParseInfo[mod].mName );
+				}
+				else
+				{
+					message = "was shot by";
+					message2 = va("'s %s", weaponParseInfo[mod].mName );
+				}
+				break;
+
+			case MOD_M4_ASSAULT_RIFLE:
+				if ( attack == ATTACK_ALTERNATE )
+				{
+					message = "was detonated by";
+					message2 = "'s M203";
+
+					if(statOk)
+					{
+						//atrstat->explosiveKills++;
+					}
+				}
+				else
+				{
+					message = "was shot by";
+					message2 = va("'s %s", weaponParseInfo[mod].mName );
+				}
+				break;
+
+			case MOD_M60_MACHINEGUN:
+			case MOD_MICRO_UZI_SUBMACHINEGUN:
+			case MOD_M3A1_SUBMACHINEGUN:
+				message = "was shot by";
+				message2 = va("'s %s", weaponParseInfo[mod].mName );
+				break;
+
+			case MOD_MSG90A1_SNIPER_RIFLE:    
+				message = "was sniped by";
+				message2 = va("'s %s", weaponParseInfo[mod].mName );
+				break;
+
+			case MOD_MM1_GRENADE_LAUNCHER:    
+			case MOD_RPG7_LAUNCHER:           
+			case MOD_M67_GRENADE:            
+			case MOD_M84_GRENADE:
+			case MOD_F1_GRENADE:
+			case MOD_L2A2_GRENADE:
+			case MOD_MDN11_GRENADE:
+			case MOD_SMOHG92_GRENADE:
+			case MOD_ANM14_GRENADE:
+			case MOD_M15_GRENADE:
+				message = "was detonated by";
+				message2 = va("'s %s", weaponParseInfo[mod].mName );
+				if(statOk)
+				{
+					if(mod == MOD_ANM14_GRENADE)
+					{
+						atrstat->hitcount++;
+						atrstat->accuracy = (float)atrstat->hitcount / (float)atrstat->shotcount * 100;
+						//atrstat->weapon_hits[ATTACK_NORMAL][mod]++;
+					}
+
+					//atrstat->explosiveKills++;
+				}
+				break;
+
+			case MOD_TELEFRAG:
+				message = "tried to invade";
+				message2 = "'s personal space";
+				break;
+
+			default:
+				message = "was killed by";
+				break;
+		}
+
+		if (message) {
+			trap_SendServerCommand( -1, va("print \"%s%s %s %s%s%s %s\n\"", targetColor, targetName, message, killerColor, killerName, message2, message3));
+			return;
+		}
+	}
+
+	// we don't know what it was
+	trap_SendServerCommand( -1, va("print \"%s%s died.\n\"", targetColor, targetName ));
+}
+
 // Henk 07/04/10 -> Copied from RPM to make scoreboard from RPM client working
 /*
 =================
@@ -2358,26 +2802,41 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			}else{
 				g_disablenades.integer = 0;
 			}
+		}else if (ent->client->sess.admin < 4){
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
 		}
+		G_Say( ent, NULL, mode, p);
+		return;
 	}
 	else if(strstr(lwrP, "!sl")){
 		if (ent->client->sess.admin >= 4){
 			char *numb;
 			int number;
-			numb = va("%c%c%c", p[4], p[5], p[6]);
-			number = atoi(numb);
-			trap_SendConsoleCommand( EXEC_APPEND, va("say %s\n", numb));
-			trap_SendConsoleCommand( EXEC_APPEND, va("scorelimit %i\n", number));
+			if(strlen(p) >= 5){
+				numb = va("%c%c%c", p[4], p[5], p[6]);
+				number = atoi(numb);
+				trap_SendConsoleCommand( EXEC_APPEND, va("scorelimit %i\n", number));
+			}
+		}else if (ent->client->sess.admin < 4){
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
 		}
+		G_Say( ent, NULL, mode, p);
+		return;
 	}
 	else if(strstr(lwrP, "!tl")){
 		if (ent->client->sess.admin >= 4){
 			char *numb;
 			int number;
-			numb = va("%c%c%c", p[4], p[5], p[6]);
-			number = atoi(numb);
-			trap_SendConsoleCommand( EXEC_APPEND, va("timelimit %i\n", number));
+			if(strlen(p) >= 5){
+				numb = va("%c%c%c", p[4], p[5], p[6]);
+				number = atoi(numb);
+				trap_SendConsoleCommand( EXEC_APPEND, va("timelimit %i\n", number));
+			}
+		}else if (ent->client->sess.admin < 4){
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
 		}
+		G_Say( ent, NULL, mode, p);
+		return;
 	}
 	else if ((strstr(lwrP, "!fl ")) || (strstr(lwrP, "!flash "))){
 		if (ent->client->sess.admin >= g_flash.integer){
@@ -2392,12 +2851,23 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			y = 100 * sin( DEG2RAD(nadeDir * it));
 			VectorSet( dir, x, y, 100 );
 			dir[2] = 300;	
+			if(strstr(p, "all")){
+				for(it=0;it<level.numConnectedClients;it++){
+				missile = NV_projectile( &g_entities[level.sortedClients[i]], g_entities[level.sortedClients[i]].r.currentOrigin, dir, weapon, 0 );
+				missile->nextthink = level.time + 250;
+				}
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7Everyone has been %sf%sl%sa%ss%sh%sed by %s", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, ent->client->pers.netname));
+				trap_SendServerCommand(-1, va("print\"^3[Admin Action] Everyone has been flashed by %s.\n\"", ent->client->pers.netname));
+				Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+				Boe_adminLog (va("%s - FLASH ALL", ent->client->pers.cleanName)) ;
+			}else{
 			missile = NV_projectile( targ, targ->r.currentOrigin, dir, weapon, 0 );
 			missile->nextthink = level.time + 250;
 			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7was %sf%sl%sa%ss%sh%sed by %s", level.time + 5000, g_entities[id].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, ent->client->pers.netname));
 			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s ^7was flashed by %s.\n\"", g_entities[id].client->pers.netname,ent->client->pers.netname));
 			Boe_adminLog (va("%s - FLASH: %s", ent->client->pers.cleanName, g_entities[id].client->pers.cleanName  )) ;
+			}	
 			}
 		}
 		else if (ent->client->sess.admin < g_flash.integer){
@@ -3303,6 +3773,8 @@ void ClientCommand( int clientNum ) {
 	// Henk 07/04/10 -> Send info to all players(for RPM scoreboard)
 	else if (Q_stricmp (cmd, "tmi") == 0)
 		RPM_UpdateTMI();
+	else if (Q_stricmp (cmd, "refresh") == 0)
+		RPM_Refresh( ent );
 #ifdef _SOF2_BOTS
 	else if (Q_stricmp (cmd, "addbot") == 0)
 		trap_SendServerCommand( clientNum, va("print \"ADDBOT command can only be used via RCON\n\"" ) );

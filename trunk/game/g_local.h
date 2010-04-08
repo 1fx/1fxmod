@@ -1189,3 +1189,6 @@ void SP_func_door_rotating( gentity_t *ent );
 
 // Henk 07/04/10 -> Add RPM_UpdateTMI()
 void RPM_UpdateTMI(void);
+
+// Henk 08/04/10 -> Add RPM_Obituary()
+void	RPM_Obituary( gentity_t *target, gentity_t *attacker, int mod, attackType_t attack, int hitLocation);

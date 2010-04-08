@@ -522,5 +522,7 @@ typedef struct statinfo_s
 	int			lastclient_hurt;
 	int			lasthurtby;
 	float		accuracy;
+	int			hitcount;
+	int			shotcount;
 	int			headShotKills;
 } statinfo_t;

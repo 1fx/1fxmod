@@ -339,7 +339,25 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace )
 			{
 				gentity_t *tent;
 				vec3_t hitdir;
+				//Ryan may 16 2004
+				//log the hit into our stats
+				statinfo_t *stat = &g_entities[ent->r.ownerNum].client->pers.statinfo;
 
+				if(!level.gametypeData->teams || (level.gametypeData->teams && !OnSameTeam ( &g_entities[ent->r.ownerNum], other )))
+				{
+					stat->hitcount++;
+					stat->accuracy = (float)stat->hitcount / (float)stat->shotcount * 100;
+
+					if(ent->s.weapon == WP_M4_ASSAULT_RIFLE)
+					{
+						//stat->weapon_hits[ATTACK_ALTERNATE][WP_M4_ASSAULT_RIFLE]++;
+					}
+					else
+					{
+						//stat->weapon_hits[ATTACK_NORMAL][ent->s.weapon]++;
+					}
+				}
+				//Ryan
 				// Put some procedural gore on the target.
 				tent = G_TempEntity( ent->r.currentOrigin, EV_EXPLOSION_HIT_FLESH );
 				

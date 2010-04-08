@@ -49,15 +49,16 @@ typedef enum
 	MOD_TEAMCHANGE,
 	MOD_TARGET_LASER,
 	MOD_TRIGGER_HURT,
+	//Ryan april 6 2003
+	MOD_CAR,
+	MOD_POP,
+	MOD_REFRESH,
+	//Ryan
+	//RxCxW - #MOD
+	MOD_DUGUP,
+	MOD_BURN
 
-	// Boe!Man 1/17/10
-	MOD_CAR,					// We need this in order to run someone over with a car.
-
-	// Boe!Man 1/30/10
-	MOD_POP,					// We need this in order to pop clients.
-	MOD_BURN,					// We need this in order to burn clients.
-	MOD_DUGUP,					// We need this in order to unplant clients.
-
+	//END
 } meansOfDeath_t;
 
 typedef enum 

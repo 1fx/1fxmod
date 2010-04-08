@@ -292,11 +292,17 @@ void player_die(
 		self->client->pers.netname, obit );
 
 	// broadcast the death event to everyone
-	ent = G_TempEntity( self->r.currentOrigin, EV_OBITUARY );
+	//Ryan april 18 2003
+	//Don't let the client print the obituary messages anymore. This will now be handled
+	//by the server so we can change them.
+
+/*	ent = G_TempEntity( self->r.currentOrigin, EV_OBITUARY );
 	ent->s.eventParm = mod;
 	ent->s.otherEntityNum = self->s.number;
 	ent->s.otherEntityNum2 = killer;
 	ent->r.svFlags = SVF_BROADCAST;	// send to everyone
+	//Ryan
+*/
 
 	self->enemy = attacker;
 
@@ -330,6 +336,10 @@ void player_die(
 	{
 		G_AddScore( self, g_suicidePenalty.integer );
 	}
+
+	//This is where the server handles the obituary functions now (after the scores are done)
+	RPM_Obituary (self, attacker, meansOfDeath, attack, hitLocation);
+	//Ryan
 
 	// If client is in a nodrop area, don't drop anything
 	contents = trap_PointContents( self->r.currentOrigin, -1 );
@@ -389,7 +399,7 @@ void player_die(
 	Cmd_Score_f( self );
 
 	// Henk 01/04/10 -> Hp/armor message if you are killed
-	if(attacker->client && self->client){ // if the attacker and target are both clients
+	if(attacker->client && self->client && attacker->s.number != self->s.number){ // if the attacker and target are both clients
 		trap_SendServerCommand( self->s.number, va("print \"^3[Info] ^7%s ^7had ^3%i ^7health and ^3%i ^7armor left.\n\"", attacker->client->pers.netname, attacker->health, attacker->client->ps.stats[STAT_ARMOR]));
 	}
 	// End

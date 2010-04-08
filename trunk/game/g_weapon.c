@@ -223,7 +223,9 @@ void G_FireBullet ( gentity_t* ent, int weapon, int attack )
 	int				seed;
 
 	gbullethit_t	hit[MAX_HITS];
-
+	//Ryan
+	statinfo_t     *stat = &ent->client->pers.statinfo;
+	//Ryan
 	// Grab the firing info
 	weaponDat = &weaponData[ent->s.weapon];
 	attackDat = &weaponDat->attack[attack];
@@ -279,7 +281,7 @@ void G_FireBullet ( gentity_t* ent, int weapon, int attack )
 	for (i = 0; i < attackDat->pellets; i++) 
 	{
 		int location = HL_NONE;
-
+		stat->shotcount++;
 		// Determine the endpoint for the bullet
 		BG_CalculateBulletEndpoint ( muzzlePoint, fireAngs, inaccuracy, attackDat->rV.range + 15, end, &seed );
 
@@ -312,7 +314,7 @@ void G_FireBullet ( gentity_t* ent, int weapon, int attack )
 					VectorNormalize ( dir );
 
 					location = G_GetHitLocation ( traceEnt, muzzlePoint, dir );
-
+					stat->hitcount++;
 					switch ( location )
 					{
 						case HL_FOOT_RT:
@@ -536,7 +538,7 @@ void G_FireBullet ( gentity_t* ent, int weapon, int attack )
 	// before damaging the client so the real bounding box and location are stored in
 	// the body
 	G_UndoAntiLag ( );
-
+	stat->accuracy = (float)stat->hitcount / (float)stat->shotcount * 100;
 	if ( hitcount )
 	{
 		int flags;
@@ -620,6 +622,11 @@ gentity_t* G_FireProjectile ( gentity_t *ent, weapon_t weapon, attackType_t atta
 	for (i = 0; i < attackDat->pellets; i++) 
 	{
 		vec3_t		dir;
+
+		statinfo_t     *stat = &ent->client->pers.statinfo;
+		stat->shotcount++;
+		stat->accuracy = (float)stat->hitcount / (float)stat->shotcount * 100;
+
 		VectorCopy( fwd, dir );
 		if ( inaccuracy != 0)
 		{	// add in some spread / scatter
