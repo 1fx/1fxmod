@@ -303,7 +303,7 @@ static cvarTable_t gameCvarTable[] =
 
 	{ &server_redteamprefix, "server_redteamprefix", "^$R^Te^Hd", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_blueteamprefix, "server_blueteamprefix", "^yB^Il^fu^+e", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
-	{ &g_instagib, "g_instagib", "1", CVAR_ARCHIVE|CVAR_SERVERINFO, 0.0, 0.0, 0,  qfalse },
+	{ &g_instagib, "g_instagib", "0", CVAR_ARCHIVE|CVAR_SERVERINFO, 0.0, 0.0, 0,  qfalse },
 	{ &g_weaponModFlags, "g_weaponModFlags", "0", CVAR_ARCHIVE|CVAR_SERVERINFO, 0.0, 0.0, 0,  qfalse },
 /*
 	switch (g_weaponModFlags.integer){
