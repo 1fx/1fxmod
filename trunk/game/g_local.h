@@ -257,6 +257,7 @@ typedef struct
 
 	// Henk 06/04/10 -> Rpm scoreboard compatibility
 	float				rpmClient;
+	qboolean			spectatorFirstPerson;
 
 } clientSession_t;
 
@@ -938,6 +939,8 @@ extern  vmCvar_t	g_timeextension;
 extern  vmCvar_t	g_roundstartdelay;
 extern  vmCvar_t	g_availableWeapons;
 extern  vmCvar_t	g_disablenades; // Henk 01/04/10
+extern  vmCvar_t	g_instagib; // Henk 08/04/10
+extern  vmCvar_t	g_weaponModFlags; // Henk 08/04/10
 extern	vmCvar_t	g_forceFollow;
 extern	vmCvar_t	g_followEnemy;
 extern  vmCvar_t	g_mapcycle;

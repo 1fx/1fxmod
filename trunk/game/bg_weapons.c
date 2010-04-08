@@ -358,7 +358,11 @@ qboolean BG_InitWeaponStats(void)
 	char WpnFile[64];
 	
 	// Henk 06/04/10 -> Different wpn files(H&S, Real Damage, Normal Damage)
+	if(g_instagib.integer == 1){
+	strcpy(WpnFile, "ext_data/rd.wpn");
+	}else{
 	strcpy(WpnFile, "ext_data/sof2.wpn");
+	}
 	//WpnFile = "ext_data/nd.wpn";
 	//WpnFile = "ext_data/rd.wpn";
 	//WpnFile = "ext_data/h&s.wpn";?

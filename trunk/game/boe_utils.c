@@ -1095,7 +1095,6 @@ void Boe_Stats ( gentity_t *ent )
 		trap_GetUserinfo( g_entities[idnum].s.number, userinfo, sizeof( userinfo ) );
 		rate	= Info_ValueForKey ( userinfo, "rate" );
 		snaps	= Info_ValueForKey ( userinfo, "snaps" );
-		fps	= Info_ValueForKey ( userinfo, "com_maxfps" );
 		country = g_entities[idnum].client->sess.country;
 		if (ent->client->sess.boemodClient >= 0.1){
 			client = g_entities[idnum].client->sess.boemodClient;}
@@ -1123,7 +1122,6 @@ void Boe_Stats ( gentity_t *ent )
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Client^7]      %.1f\n", client));}
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Rate^7]        %s\n", rate));
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Snaps^7]       %s\n", snaps));
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3MaxFPS^7]       %s\n", fps));
 	trap_SendServerCommand( ent-g_entities, va("print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\""));
 }
 //==============================================================================================================================

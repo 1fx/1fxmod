@@ -40,9 +40,9 @@
 
 //#define SPECIAL_PRE_CACHE	1
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
 #define _SOF2_BOTS
-#endif
+//#endif
 #define _spMaps
 
 #define MAX_TEAMNAME 32

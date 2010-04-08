@@ -2808,7 +2808,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		G_Say( ent, NULL, mode, p);
 		return;
 	}
-	else if(strstr(lwrP, "!sl")){
+	else if(strstr(lwrP, "!sl ")){
 		if (ent->client->sess.admin >= 4){
 			char *numb;
 			int number;
@@ -2823,7 +2823,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		G_Say( ent, NULL, mode, p);
 		return;
 	}
-	else if(strstr(lwrP, "!tl")){
+	else if(strstr(lwrP, "!tl ")){
 		if (ent->client->sess.admin >= 4){
 			char *numb;
 			int number;
@@ -2832,6 +2832,39 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 				number = atoi(numb);
 				trap_SendConsoleCommand( EXEC_APPEND, va("timelimit %i\n", number));
 			}
+		}else if (ent->client->sess.admin < 4){
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
+		}
+		G_Say( ent, NULL, mode, p);
+		return;
+	}
+	else if(strstr(lwrP, "!ri ")){
+		if (ent->client->sess.admin >= 4){
+			char *numb;
+			int number;
+			if(strlen(p) >= 5){
+				numb = va("%c%c%c", p[4], p[5], p[6]);
+				number = atoi(numb);
+				trap_SendConsoleCommand( EXEC_APPEND, va("g_respawninterval %i\n", number));
+			}
+		}else if (ent->client->sess.admin < 4){
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
+		}
+		G_Say( ent, NULL, mode, p);
+		return;
+	}
+	else if(strstr(lwrP, "!rd")){
+		if (ent->client->sess.admin >= 4){
+			g_instagib.integer = 1;
+		}else if (ent->client->sess.admin < 4){
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
+		}
+		G_Say( ent, NULL, mode, p);
+		return;
+	}
+	else if(strstr(lwrP, "!nd")){
+		if (ent->client->sess.admin >= 4){
+			g_instagib.integer = 0;
 		}else if (ent->client->sess.admin < 4){
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
 		}
@@ -2851,8 +2884,9 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			y = 100 * sin( DEG2RAD(nadeDir * it));
 			VectorSet( dir, x, y, 100 );
 			dir[2] = 300;	
+			}
 			if(strstr(p, "all")){
-				for(it=0;it<level.numConnectedClients;it++){
+				for(it=0;it<=level.numConnectedClients;it++){
 				missile = NV_projectile( &g_entities[level.sortedClients[i]], g_entities[level.sortedClients[i]].r.currentOrigin, dir, weapon, 0 );
 				missile->nextthink = level.time + 250;
 				}
@@ -2867,7 +2901,6 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7was %sf%sl%sa%ss%sh%sed by %s", level.time + 5000, g_entities[id].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, ent->client->pers.netname));
 			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s ^7was flashed by %s.\n\"", g_entities[id].client->pers.netname,ent->client->pers.netname));
 			Boe_adminLog (va("%s - FLASH: %s", ent->client->pers.cleanName, g_entities[id].client->pers.cleanName  )) ;
-			}	
 			}
 		}
 		else if (ent->client->sess.admin < g_flash.integer){

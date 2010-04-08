@@ -137,7 +137,9 @@ vmCvar_t	server_redteamprefix;
 vmCvar_t	server_blueteamprefix;
 // Henk 01/04/10 -> Add g_disablenades
 vmCvar_t	g_disablenades;
-vmCvar_t	g_scorelimit;					// Admin CVAR.
+vmCvar_t	g_instagib;
+vmCvar_t	g_weaponModFlags;
+
 
 static cvarTable_t gameCvarTable[] = 
 {
@@ -301,7 +303,27 @@ static cvarTable_t gameCvarTable[] =
 
 	{ &server_redteamprefix, "server_redteamprefix", "^$R^Te^Hd", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_blueteamprefix, "server_blueteamprefix", "^yB^Il^fu^+e", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
-
+	{ &g_instagib, "g_instagib", "1", CVAR_ARCHIVE|CVAR_SERVERINFO, 0.0, 0.0, 0,  qfalse },
+	{ &g_weaponModFlags, "g_weaponModFlags", "0", CVAR_ARCHIVE|CVAR_SERVERINFO, 0.0, 0.0, 0,  qfalse },
+/*
+	switch (g_weaponModFlags.integer){
+		case AMMO_MOD: 0x1
+			ammo = "ENABLED ";
+			damage = "DISABLED";
+			break;
+		case DAMAGE_MOD: 0x2
+			ammo = "DISABLED";
+			damage = "ENABLED ";
+			break;
+		case 3:
+			ammo = "ENABLED ";
+			damage = "ENABLED ";
+			break;
+		default:
+			ammo = "DISABLED";
+			damage = "DISABLED";
+	}
+*/
 };
 
 // bk001129 - made static to avoid aliasing
