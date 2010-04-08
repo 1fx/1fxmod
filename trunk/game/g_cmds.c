@@ -2778,14 +2778,14 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 				if (strstr(level.mapname, "mp_kam2")){
 				// cage kwap
 				}
-				trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7No lower has been disabled by %s.\n\"", ent->client->pers.netname));
+				trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7No lower has been disabled by %s.\n\"", ent->client->pers.netname));
 				Boe_adminLog (va("%s - NOLOWER DISABLED", ent->client->pers.cleanName)) ;
 			}else{
 				level.nolower1 = qtrue;
 				if (strstr(level.mapname, "mp_kam2")){
 				// remove cage kwap
 				}
-				trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7No lower has been enabled by %s.\n\"", ent->client->pers.netname));
+				trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7No lower has been enabled by %s.\n\"", ent->client->pers.netname));
 				Boe_adminLog (va("%s - NOLOWER ENABLED", ent->client->pers.cleanName)) ;
 			}
 		}
@@ -2816,6 +2816,9 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 				numb = va("%c%c%c", p[4], p[5], p[6]);
 				number = atoi(numb);
 				trap_SendConsoleCommand( EXEC_APPEND, va("scorelimit %i\n", number));
+				trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Scorelimit changed to %i by %s.\n\"", number, ent->client->pers.netname));
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sS%sc%so%sr%se%slimit %i!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, number));
+				Boe_adminLog (va("%s - SCORELIMIT %i", ent->client->pers.cleanName, number)) ;
 			}
 		}else if (ent->client->sess.admin < 4){
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));

@@ -1,7 +1,9 @@
 @set include=
 
+del /q vm
+mkdir vm
 cd vm
-set cc=sof2lcc -A -DQ3_VM -DMISSIONPACK -S -Wf-target=bytecode -Wf-g -I..\..\cgame -I..\..\game -I..\..\ui %1
+set cc=..\..\..\bin\sof2lcc -A -DQ3_VM -DMISSIONPACK -S -Wf-target=bytecode -Wf-g -I..\..\cgame -I..\..\game -I..\..\ui %1
 
 %cc%  ../g_main.c
 @if errorlevel 1 goto quit
@@ -80,11 +82,12 @@ set cc=sof2lcc -A -DQ3_VM -DMISSIONPACK -S -Wf-target=bytecode -Wf-g -I..\..\cga
 %cc% ../henkENT.c
 @if errorlevel 1 goto quit
 
-sof2asm -f ../game
+..\..\..\bin\sof2asm -f ../game
 @if errorlevel 1 goto quit
 
-del *.map
-del *.asm
+mkdir "..\..\..\base\vm"
+copy *.map "..\..\..\base\vm"
+copy *.qvm "..\..\..\base\vm"
 
 :quit
 cd ..
