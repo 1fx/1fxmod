@@ -537,6 +537,20 @@ void SpectatorThink( gentity_t *ent, usercmd_t *ucmd )
 	else if ( !g_forceFollow.integer && ucmd->upmove > 0 && (client->ps.pm_flags & PMF_FOLLOW) )
 	{
 		G_StopFollowing( ent );
+	}else if ( client->sess.rpmClient && (((client->buttons & BUTTON_ZOOMIN) && !( client->oldbuttons & BUTTON_ZOOMIN ))  || ((client->buttons & BUTTON_RELOAD) && !( client->oldbuttons & BUTTON_RELOAD )))) {
+		// If not following then go to either third or first
+		if ( client->sess.spectatorState != SPECTATOR_FOLLOW ) {
+			client->sess.spectatorFirstPerson = qtrue;
+			Cmd_FollowCycle_f( ent, -1 );
+		}
+		// If in first person then either go to free float or third person
+		else if ( client->sess.spectatorFirstPerson ) {
+			client->sess.spectatorFirstPerson = qfalse;	
+		}
+		// Must be in third person so just go to first
+		else {
+			client->sess.spectatorFirstPerson = qtrue;
+		}
 	}
 }
 
@@ -1308,6 +1322,10 @@ void SpectatorClientEndFrame( gentity_t *ent )
 
 				ent->client->ps = cl->ps;
 				ent->client->ps.pm_flags |= PMF_FOLLOW;
+				if ( ent->client->sess.spectatorFirstPerson ) 
+				{
+					ent->client->ps.pm_flags |= PMF_FIRSTPERSONSPEC;
+				}
 				ent->client->ps.eFlags = flags;
 				ent->client->ps.persistant[PERS_SPAWN_COUNT] = count;
 				ent->client->ps.ping = ping;
