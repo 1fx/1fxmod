@@ -561,7 +561,9 @@ qboolean ClientInactivityTimer( gclient_t *client ) {
 		client->inactivityWarning = qfalse;
 	} else if ( !client->pers.localClient ) {
 		if ( level.time > client->inactivityTime ) {
-			trap_DropClient( client - level.clients, "Dropped due to inactivity" );
+			//bertman add msg here
+			SetTeam(&g_entities[client-level.clients], "s", NULL); // Henk 08/04/10 -> Force ppl to spec instead of kicking them when afk
+			//trap_DropClient( client - level.clients, "Dropped due to inactivity" );
 			return qfalse;
 		}
 		if ( level.time > client->inactivityTime - 10000 && !client->inactivityWarning ) {

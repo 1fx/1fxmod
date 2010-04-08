@@ -58,10 +58,10 @@ void RPM_UpdateTMI(void)
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
 		cl = &level.clients[level.sortedClients[i]];
-		//if (G_IsClientSpectating(cl) || G_IsClientDead (cl)) // Henk 06/04/10 -> Also send to death/specs
-		//{
-		//	continue;
-		//}
+		if (G_IsClientSpectating(cl) || G_IsClientDead (cl)) 
+		{
+			continue;
+		}
 
 		bestLoc = Team_GetLocation(&g_entities[i]);
 
@@ -71,7 +71,7 @@ void RPM_UpdateTMI(void)
 			location = bestLoc->health;
 		}
 		// Henk 06/04/10 -> Check what view person is in
-		trap_GetUserinfo( g_entities[i].s.number, userinfo, sizeof( userinfo ) );
+		trap_GetUserinfo( g_entities[level.sortedClients[i]].s.number, userinfo, sizeof( userinfo ) );
 		s = Info_ValueForKey( userinfo, "cg_thirdperson" );
 		thirdperson = atoi(s);
 		if(thirdperson >= 1){
@@ -2363,31 +2363,20 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	else if(strstr(lwrP, "!sl")){
 		if (ent->client->sess.admin >= 4){
 			char *numb;
-			int i, id;
-			for(i=0;i<=99;i++){
-				numb = va("%i", i);
-				if(strstr(lwrP, numb)){
-					id = atoi(numb);
-					if(i>=10)
-						break;
-				}
-			}
-		trap_SendConsoleCommand( EXEC_APPEND, va("scorelimit %i\n", id));
+			int number;
+			numb = va("%c%c%c", p[4], p[5], p[6]);
+			number = atoi(numb);
+			trap_SendConsoleCommand( EXEC_APPEND, va("say %s\n", numb));
+			trap_SendConsoleCommand( EXEC_APPEND, va("scorelimit %i\n", number));
 		}
 	}
 	else if(strstr(lwrP, "!tl")){
 		if (ent->client->sess.admin >= 4){
 			char *numb;
-			int i, id;
-			for(i=0;i<=99;i++){
-				numb = va("%i", i);
-				if(strstr(lwrP, numb)){
-					id = atoi(numb);
-					if(i>=10)
-						break;
-				}
-			}
-		trap_SendConsoleCommand( EXEC_APPEND, va("timelimit %i\n", id));
+			int number;
+			numb = va("%c%c%c", p[4], p[5], p[6]);
+			number = atoi(numb);
+			trap_SendConsoleCommand( EXEC_APPEND, va("timelimit %i\n", number));
 		}
 	}
 	else if ((strstr(lwrP, "!fl ")) || (strstr(lwrP, "!flash "))){
