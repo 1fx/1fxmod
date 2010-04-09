@@ -856,6 +856,9 @@ void G_UpdateOutfitting ( int clientNum )
 			continue; // start loop again(at group == 5)
 		}
 		// End
+		if(!BG_IsWeaponAvailableForOutfitting(bg_itemlist[bg_outfittingGroups[group][item->giTag]].giTag, 2)){ // henk test
+			continue; // disabled weapon
+		}
 
 		// Grab the item that represents the weapon
 		item = &bg_itemlist[bg_outfittingGroups[group][client->pers.outfitting.items[group]]];

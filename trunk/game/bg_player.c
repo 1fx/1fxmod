@@ -1421,12 +1421,10 @@ qboolean BG_IsWeaponAvailableForOutfitting ( weapon_t weapon, int level )
 	{
 		return qtrue;
 	}
-	
 	if ( bg_availableOutfitting[weapon-1] - '0' >= level )
 	{
 		return qtrue;
 	}
-
 	return qfalse;
 }
 
