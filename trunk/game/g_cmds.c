@@ -507,7 +507,7 @@ void RPM_UpdateTMI(void)
 			continue;
 		}
 
-		bestLoc = Team_GetLocation(&g_entities[i]);
+		bestLoc = Team_GetLocation(&g_entities[level.sortedClients[i]]);
 
 		location = 0;
 		if (bestLoc)
