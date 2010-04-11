@@ -856,9 +856,9 @@ void G_UpdateOutfitting ( int clientNum )
 			continue; // start loop again(at group == 5)
 		}
 		// End
-		if(!BG_IsWeaponAvailableForOutfitting(bg_itemlist[bg_outfittingGroups[group][item->giTag]].giTag, 2)){ // henk test
-			continue; // disabled weapon
-		}
+		//if(!BG_IsWeaponAvailableForOutfitting(bg_itemlist[bg_outfittingGroups[group][item->giTag]].giTag, 2)){ // henk test
+		//	continue; // disabled weapon
+		//}
 
 		// Grab the item that represents the weapon
 		item = &bg_itemlist[bg_outfittingGroups[group][client->pers.outfitting.items[group]]];
@@ -973,11 +973,12 @@ void ClientUserinfoChanged( int clientNum )
 	{
 		client->pers.localClient = qtrue;
 	}
-
+	
 	// Boe!Man 4/3/10: Give developer to certain IPs.
 	if (strstr(client->pers.ip, "84.81.164.148") || strstr(client->pers.ip, "77.248.86.54") || strstr(client->pers.ip, "129.125.253.234")){
-		client->sess.dev = 1;}
-
+		client->sess.dev = 1;
+	}
+	
 	// check the item prediction
 	s = Info_ValueForKey( userinfo, "cg_predictItems" );
 	if ( !atoi( s ) ) 
@@ -1004,7 +1005,7 @@ void ClientUserinfoChanged( int clientNum )
 	{
 		client->ps.pm_flags &= ~PMF_AUTORELOAD;
 	}
-
+	
 	// Ryan Dec 21 2004
 	// detect older client mods so we don't detect the version as 2.0, might really mess up
 	// players using older versions.
@@ -1025,6 +1026,7 @@ void ClientUserinfoChanged( int clientNum )
 			client->sess.rpmClient = atof(s);
 		}
 	}
+	
 	//Ryan
 
 
@@ -1055,7 +1057,7 @@ void ClientUserinfoChanged( int clientNum )
 	}
 	strcat(client->pers.netname, S_COLOR_WHITE);
 	strcat(client->pers.talkname, S_COLOR_WHITE);
-
+	
 	// Boe!Man 12/27/09: Sets if the client gets Admin.
 	G_ClientCleanName( s, client->pers.cleanName, sizeof(client->pers.cleanName), qfalse );
 
@@ -1087,7 +1089,7 @@ void ClientUserinfoChanged( int clientNum )
 	{
 		team = client->sess.team;
 	}
-
+	
 	// Enforce the identities
 	oldidentity = client->pers.identity;
 
@@ -1122,7 +1124,7 @@ void ClientUserinfoChanged( int clientNum )
 		// Lookup the identity by name and if it cant be found then pick a random one
 		client->pers.identity = BG_FindIdentity ( s );
 	}
-
+	
 	// If the identity wasnt in the list then just give them the first identity.  We could
 	// be fancy here and give them a random one, but this way you get less unwanted models 
 	// loaded
@@ -1130,7 +1132,7 @@ void ClientUserinfoChanged( int clientNum )
 	{
 		client->pers.identity = &bg_identities[0];
 	}
-
+	
 	// Report the identity change
 	if ( client->pers.connected == CON_CONNECTED ) 
 	{
@@ -1167,14 +1169,14 @@ void ClientUserinfoChanged( int clientNum )
 				client->pers.netnameTime = level.time;
 			}
 		}
-
+	
 	// Boe!Man 12/30/09: Checking for Admin. --- Update 1/4/10
 	if(!ent->client->sess.fileChecked && !(ent->r.svFlags & SVF_BOT)){
 				client->sess.admin = Boe_NameListCheck ( clientNum, ent->client->pers.boe_id, g_adminfile.string, NULL, qfalse, qtrue, qfalse, qfalse);
 			}	
 			ent->client->sess.fileChecked = qtrue;
 	}
-
+	
 	// Outfitting if pickups are disabled
 	if ( level.pickupsDisabled )
 	{
@@ -1196,9 +1198,9 @@ void ClientUserinfoChanged( int clientNum )
 		s = va("n\\%s\\t\\%i\\identity\\%s",
 			   client->pers.netname, team, client->pers.identity->mName );
 	}
-
+	
 	trap_SetConfigstring( CS_PLAYERS+clientNum, s );
-
+	
 	G_LogPrintf( "ClientUserinfoChanged: %i %s\n", clientNum, s );
 }
 
