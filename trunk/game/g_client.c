@@ -1171,11 +1171,11 @@ void ClientUserinfoChanged( int clientNum )
 		}
 	
 	// Boe!Man 12/30/09: Checking for Admin. --- Update 1/4/10
-	if(!ent->client->sess.fileChecked && !(ent->r.svFlags & SVF_BOT)){
+	//if(!ent->client->sess.fileChecked && !(ent->r.svFlags & SVF_BOT)){
 				client->sess.admin = Boe_NameListCheck ( clientNum, ent->client->pers.boe_id, g_adminfile.string, NULL, qfalse, qtrue, qfalse, qfalse);
 			}	
-			ent->client->sess.fileChecked = qtrue;
-	}
+			//ent->client->sess.fileChecked = qtrue;
+	//}
 	
 	// Outfitting if pickups are disabled
 	if ( level.pickupsDisabled )

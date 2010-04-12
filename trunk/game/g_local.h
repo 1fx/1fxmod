@@ -941,6 +941,8 @@ extern  vmCvar_t	g_availableWeapons;
 extern  vmCvar_t	g_disablenades; // Henk 01/04/10
 extern  vmCvar_t	g_instagib; // Henk 08/04/10
 extern  vmCvar_t	g_weaponModFlags; // Henk 08/04/10
+extern  vmCvar_t	g_allowthirdperson;
+extern  vmCvar_t	g_weaponswitch;
 extern	vmCvar_t	g_forceFollow;
 extern	vmCvar_t	g_followEnemy;
 extern  vmCvar_t	g_mapcycle;
@@ -1195,3 +1197,5 @@ void RPM_UpdateTMI(void);
 
 // Henk 08/04/10 -> Add RPM_Obituary()
 void	RPM_Obituary( gentity_t *target, gentity_t *attacker, int mod, attackType_t attack, int hitLocation);
+
+void	RPM_UpdateLoadScreenMessage (void);

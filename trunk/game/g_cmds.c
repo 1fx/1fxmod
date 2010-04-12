@@ -7,6 +7,32 @@
 
 int AcceptBotCommand(char *cmd, gentity_t *pl);
 
+void RPM_UpdateLoadScreenMessage (void)
+{
+	char	*ammo, *damage;
+
+	switch (g_weaponModFlags.integer)
+	{
+		case 1:
+			ammo = "ON";
+			damage = "OFF";
+			break;
+		case 2:
+			ammo = "OFF";
+			damage = "ON";
+			break;
+		case 3:
+			ammo = "ON";
+			damage = "ON";
+			break;
+		default:
+			ammo = "OFF";
+			damage = "OFF";
+	}
+
+	trap_SetConfigstring( CS_MESSAGE, va(" Modified Damage: %s  Modified Ammo: %s\n", damage, ammo));
+}
+
 /*
 ================
 RPM_Refresh
@@ -674,7 +700,7 @@ void DeathmatchScoreboardMessage( gentity_t *ent )
 		{
 			ping = cl->ps.ping < 999 ? cl->ps.ping : 999;
 			if(ping != 999){
-			ping = ping*0.5;
+			ping = ping*0.4;
 			}
 		}
 	
@@ -2547,7 +2573,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	}
 	else if ((strstr(lwrP, "!p ")) || (strstr(lwrP, "!pop "))) {
 		if (ent->client->sess.admin >= g_pop.integer){
-			id = CheckAdmin(ent, p, qtrue);
+			id = CheckAdmin(ent, p, qfalse);
 			targ = g_entities+id;
 			if ( targ->client->sess.ghost ){ // Boe!Man 1/24/10: We cannot do this to a Ghost.
 				trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You cannot pop a Ghost.\n\""));
@@ -2799,8 +2825,21 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		if(ent->client->sess.admin >= 4){
 			if(g_disablenades.integer == 1){
 				g_disablenades.integer = 0;
+				trap_Cvar_Set("g_availableweapons", "20020000200000000000");
+				BG_SetAvailableOutfitting(g_availableWeapons.string);
+				for(i=0;i<=level.numConnectedClients;i++){
+				level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
+				G_UpdateOutfitting(g_entities[level.sortedClients[i]].s.number);
+				}
 			}else{
 				g_disablenades.integer = 1;
+				// change g_available
+				trap_Cvar_Set("g_availableweapons", "20020000200000002222");
+				BG_SetAvailableOutfitting(g_availableWeapons.string);
+				for(i=0;i<=level.numConnectedClients;i++){
+				level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
+				G_UpdateOutfitting(g_entities[level.sortedClients[i]].s.number);
+				}
 			}
 		}else if (ent->client->sess.admin < 4){
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
@@ -2863,6 +2902,11 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	else if(strstr(lwrP, "!rd")){
 		if (ent->client->sess.admin >= 4){
 			g_instagib.integer = 1;
+			BG_InitWeaponStats();
+			for(i=0;i<=level.numConnectedClients;i++){
+			level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
+			G_UpdateOutfitting(g_entities[level.sortedClients[i]].s.number);
+			}
 		}else if (ent->client->sess.admin < 4){
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
 		}
@@ -2872,6 +2916,11 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	else if(strstr(lwrP, "!nd")){
 		if (ent->client->sess.admin >= 4){
 			g_instagib.integer = 0;
+			BG_InitWeaponStats();
+			for(i=0;i<=level.numConnectedClients;i++){
+			level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
+			G_UpdateOutfitting(g_entities[level.sortedClients[i]].s.number);
+			}
 		}else if (ent->client->sess.admin < 4){
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
 		}

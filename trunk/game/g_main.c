@@ -139,7 +139,8 @@ vmCvar_t	server_blueteamprefix;
 vmCvar_t	g_disablenades;
 vmCvar_t	g_instagib;
 vmCvar_t	g_weaponModFlags;
-
+vmCvar_t	g_allowthirdperson;
+vmCvar_t	g_weaponswitch;
 
 static cvarTable_t gameCvarTable[] = 
 {
@@ -303,8 +304,10 @@ static cvarTable_t gameCvarTable[] =
 
 	{ &server_redteamprefix, "server_redteamprefix", "^$R^Te^Hd", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_blueteamprefix, "server_blueteamprefix", "^yB^Il^fu^+e", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
-	{ &g_instagib, "g_instagib", "0", CVAR_ARCHIVE|CVAR_SERVERINFO, 0.0, 0.0, 0,  qfalse },
-	{ &g_weaponModFlags, "g_weaponModFlags", "0", CVAR_ARCHIVE|CVAR_SERVERINFO, 0.0, 0.0, 0,  qfalse },
+	{ &g_instagib, "g_instagib", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
+	{ &g_weaponModFlags, "g_weaponModFlags", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
+	{ &g_allowthirdperson, "g_allowThirdPerson", "1", CVAR_ARCHIVE|CVAR_SERVERINFO, 0.0, 0.0, 0,  qfalse },
+	{ &g_weaponswitch, "g_weaponswitch", "3", CVAR_ARCHIVE|CVAR_SERVERINFO, 0.0, 0.0, 0,  qfalse },
 /*
 	switch (g_weaponModFlags.integer){
 		case AMMO_MOD: 0x1

@@ -322,7 +322,7 @@ void Boe_Tokens(gentity_t *ent, char *chatText, int mode)
 					chatText--;
 			}
 		}
-		if((*chatText == '@' || *chatText == '!') && !playedSound) {
+		if((*chatText == '@'/* || *chatText == '!'*/) && !playedSound) {
 			if ( g_voiceFloodCount.integer ) {
 				if ( ent->client->voiceFloodPenalty ) {
 					if ( ent->client->voiceFloodPenalty > level.time ) {
@@ -341,9 +341,9 @@ void Boe_Tokens(gentity_t *ent, char *chatText, int mode)
 					continue;
 				}
 			}
-			if(*chatText == '!') {
-				text = qfalse;
-			}
+			//if(*chatText == '!') {
+			//	text = qfalse;
+			//}
 			chatText++;
 			i = 0;
 			n = atoi(chatText) - 1;
@@ -862,7 +862,7 @@ void Boe_Players (gentity_t *ent)
 		}
 		
 		ping = level.clients[i].ps.ping;
-		ping = ping*0.5;
+		ping = ping*0.4;
 		if(ping <= 9){
 			column3[0] = test;
 			column3[1] = test;

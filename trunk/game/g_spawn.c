@@ -1006,9 +1006,12 @@ void SP_worldspawn( void )
 		trap_SetConfigstring( CS_GAMETYPE_BLUETEAM, level.gametypeTeam[TEAM_BLUE] );
 	}
 
+	/*
 	G_SpawnString( "message", "", &text );
 	trap_SetConfigstring( CS_MESSAGE, text );				// map specific message
+	*/
 
+	RPM_UpdateLoadScreenMessage();
 	trap_SetConfigstring( CS_MOTD, g_motd.string );		// message of the day
 
 	G_SpawnString( "gravity", "800", &text );
@@ -1033,6 +1036,11 @@ void SP_worldspawn( void )
 		level.warmupTime = -1;
 		trap_SetConfigstring( CS_WARMUP, va("%i", level.warmupTime) );
 		G_LogPrintf( "Warmup:\n" );
+	}
+
+	if(g_compMode.integer)
+	{
+		level.specsLocked = 1;
 	}
 
 	trap_SetConfigstring(CS_LIGHT_STYLES+(LS_STYLES_START*3)+0, defaultStyles[0][0]);

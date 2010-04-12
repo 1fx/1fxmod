@@ -2298,9 +2298,9 @@ static void PM_FinishWeaponChange( void )
 
 	PM_HandleWeaponAction(WACT_READY);
 
-	pm->ps->weaponTime = min(500,pm->ps->weaponTime);
+	pm->ps->weaponTime = min(150,pm->ps->weaponTime);
 
-	PM_StartTorsoAnim( pm->ps, weaponData[pm->ps->weapon].animRaise, pm->ps->weaponAnimTime );
+	PM_StartTorsoAnim( pm->ps, weaponData[pm->ps->weapon].animRaise, pm->ps->weaponAnimTime ); // Henk 12/04/10 -> Faster weapon switch
 }
 
 /*
