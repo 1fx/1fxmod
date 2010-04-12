@@ -2978,20 +2978,22 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		if(ent->client->sess.admin >= 4){
 			if(g_disablenades.integer == 1){
 				g_disablenades.integer = 0;
-				trap_Cvar_Set("g_availableweapons", "20020000200000000000");
+				trap_Cvar_Set("g_availableweapons", "2002000020000000002222");
 				BG_SetAvailableOutfitting(g_availableWeapons.string);
 				for(i=0;i<=level.numConnectedClients;i++){
 				level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
 				G_UpdateOutfitting(g_entities[level.sortedClients[i]].s.number);
+				level.clients[level.sortedClients[i]].ps.ammo[weaponData[WP_KNIFE].attack[ATTACK_NORMAL].ammoIndex]=weaponData[WP_KNIFE].attack->extraClips;
 				}
 			}else{
 				g_disablenades.integer = 1;
 				// change g_available
-				trap_Cvar_Set("g_availableweapons", "20020000200000002222");
+				trap_Cvar_Set("g_availableweapons", "2002000020000000000000");
 				BG_SetAvailableOutfitting(g_availableWeapons.string);
 				for(i=0;i<=level.numConnectedClients;i++){
 				level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
 				G_UpdateOutfitting(g_entities[level.sortedClients[i]].s.number);
+				level.clients[level.sortedClients[i]].ps.ammo[weaponData[WP_KNIFE].attack[ATTACK_NORMAL].ammoIndex]=weaponData[WP_KNIFE].attack->extraClips;
 				}
 			}
 		}else if (ent->client->sess.admin < 4){
@@ -3103,7 +3105,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		G_Say( ent, NULL, mode, p);
 		return;
 	}
-	else if(strstr(lwrP, "!acl ") || strstr(lwrP, "!acl ")){
+	else if(strstr(lwrP, "!addclan ") || strstr(lwrP, "!acl ")){
 		if (ent->client->sess.admin >= 4){
 			int onlist;
 			id = CheckAdmin(ent, p, qtrue);
@@ -3132,7 +3134,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		G_Say( ent, NULL, mode, p);
 		return;
 	}
-	else if(strstr(lwrP, "!rc ") || strstr(lwrP, "!rcl ")){
+	else if(strstr(lwrP, "!rc ") || strstr(lwrP, "!rcl ") || strstr(lwrP, "!removeclan ")){
 		if (ent->client->sess.admin >= 4){
 			int onlist;
 			id = CheckAdmin(ent, p, qtrue);
@@ -3167,7 +3169,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			dir[2] = 300;	
 			}
 			if(strstr(p, "all")){
-				for(it=0;it<=level.numConnectedClients;it++){
+				for(it=0;it<level.numConnectedClients;it++){
 				missile = NV_projectile( &g_entities[level.sortedClients[it]], g_entities[level.sortedClients[it]].r.currentOrigin, dir, weapon, 0 );
 				missile->nextthink = level.time + 250;
 				}
