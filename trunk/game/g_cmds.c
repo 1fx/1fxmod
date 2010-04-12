@@ -4072,6 +4072,8 @@ void ClientCommand( int clientNum ) {
 		Boe_adm_f( ent );
 	else if (Q_stricmp (cmd, "about") == 0)
 		Boe_About ( ent );
+	else if (Q_stricmp (cmd, "info") == 0)
+		Boe_About ( ent );
 	// Boe!Man 3/31/10
 	else if (Q_stricmp (cmd, "players") == 0)
 		Boe_Players ( ent );
