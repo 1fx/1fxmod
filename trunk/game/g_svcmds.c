@@ -527,6 +527,21 @@ qboolean ConsoleCommand( void )
 		Boe_Add_sAdmin_f(1, NULL);
 		return qtrue;
 	}
+	if (Q_stricmp (cmd, "addclan" ) == 0 )
+	{
+		Boe_Add_Clan_Member(1, NULL);
+		return qtrue;
+	}
+	if (Q_stricmp (cmd, "removeclan" ) == 0 )
+	{
+		Boe_Remove_Clan_Member(1, NULL);
+		return qtrue;
+	}
+	if (Q_stricmp (cmd, "clanvsall" ) == 0 )
+	{
+		RPM_Clan_Vs_All(1, NULL);
+		return qtrue;
+	}
 	if (Q_stricmp (cmd, "ban" ) == 0 )
 	{
 		Boe_Ban_f(1, NULL);

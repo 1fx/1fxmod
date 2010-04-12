@@ -259,6 +259,10 @@ typedef struct
 	float				rpmClient;
 	qboolean			spectatorFirstPerson;
 
+	qboolean			invitedByRed;
+	qboolean			invitedByBlue;
+	int					referee;
+	qboolean			clanMember;
 } clientSession_t;
 
 // Boe!Man 3/30/10
@@ -406,6 +410,8 @@ struct gclient_s
 	vec3_t			ghoulHeadAngles;
 
 	gentity_t		*siameseTwin;
+
+	qboolean		adminspec;
 };
 
 
@@ -539,6 +545,11 @@ typedef struct
 	qboolean		nolower1; // true for nolower
 	// Henk 06/04/10 -> Add TMI for RPM scoreboard compatiblity
 	int				lastTMIupdate;
+
+	int			redLocked;				// when set to 1 no one will be allowed to join team
+	int			blueLocked;
+	int			specsLocked;
+
 } level_locals_t;
 
 //
@@ -943,6 +954,8 @@ extern  vmCvar_t	g_instagib; // Henk 08/04/10
 extern  vmCvar_t	g_weaponModFlags; // Henk 08/04/10
 extern  vmCvar_t	g_allowthirdperson;
 extern  vmCvar_t	g_weaponswitch;
+extern	vmCvar_t	g_compMode;
+extern  vmCvar_t	g_clanfile;
 extern	vmCvar_t	g_forceFollow;
 extern	vmCvar_t	g_followEnemy;
 extern  vmCvar_t	g_mapcycle;

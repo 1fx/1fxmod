@@ -197,6 +197,7 @@ static qboolean BG_ParseAttackStats ( int weaponNum, attackData_t* attack, void 
 	attack->extraClips = atoi ( tmpStr );
 
 	// max ammo is the combination of all guns that share the ammo
+	//ammoData[attack->ammoIndex].max += attack->clipSize * attack->extraClips;
 	ammoData[attack->ammoIndex].max += attack->clipSize * attack->extraClips;
 
 	trap_GPG_FindPairValue(attacksub,"mp_kickAngles||kickAngles", "0 0 0 0 0 0", tmpStr);

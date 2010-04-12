@@ -5,6 +5,87 @@
 #include "g_local.h"
 #include "boe_local.h"
 
+void Boe_Add_Clan_Member(int argNum, gentity_t *adm)
+{
+	int             idnum, onlist;
+	char			*id;
+
+	idnum = Boe_ClientNumFromArg(adm, argNum, "addclan <idnumber>", "do this to", qfalse, qtrue);
+
+	if(idnum < 0)
+		return;
+
+	g_entities[idnum].client->sess.clanMember = 1;
+
+	id = g_entities[idnum].client->pers.boe_id;
+
+	onlist = Boe_NameListCheck (0, id, g_clanfile.string, NULL, qfalse, qfalse, qfalse);
+
+	if(onlist) {
+		Com_Printf("%s is already a ^6Clan Member.\n", g_entities[idnum].client->pers.netname);
+		return;
+	}
+	if(onlist == -1)
+		return;
+
+	if(Boe_AddToList(id, g_clanfile.string, "Clan", NULL))
+	{
+		if(adm && adm->client)	{
+			if(Boe_AddToList(id, g_clanfile.string, "Clan", NULL)) {
+			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is now a Clan member!!", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s is now a Clan member.\n\"", g_entities[idnum].client->pers.netname));
+			Boe_adminLog (va("%s - ADD CLAN: %s", adm->client->pers.cleanName, g_entities[idnum].client->pers.cleanName  )) ;
+			}
+		}else {
+			if(Boe_AddToList(id, g_clanfile.string, "Clan", NULL)) {
+			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is now a Clan member!", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+			trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s is now a Clan member.\n\"", g_entities[idnum].client->pers.netname));
+			Boe_adminLog (va("%s - ADD CLAN: %s", "RCON", g_entities[idnum].client->pers.cleanName  )) ;
+			}
+		}
+	}
+}
+/*
+======================
+RPM_Remove_Clan_Member
+
+======================
+*/
+
+void Boe_Remove_Clan_Member(int argNum, gentity_t *adm)
+{
+	int			idnum;
+	char		*id;
+
+	idnum = Boe_ClientNumFromArg(adm, argNum, "removeclan <idnumber>", "remove", qfalse, qtrue);
+
+	///if invalid client etc.. idnum will == -1 and we abort
+	if(idnum < 0)
+		return;
+
+	///make sure they are not admins even if not on list
+	g_entities[idnum].client->sess.clanMember = 0;
+
+	id = g_entities[idnum].client->pers.boe_id;
+
+	if(Boe_Remove_from_list(id, g_clanfile.string, "Clan", NULL, qfalse, qfalse, qfalse))
+	{
+		if(adm && adm->client)	{
+			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is no longer a Clan member!", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s is no longer a Clan member.\n\"", g_entities[idnum].client->pers.netname));
+			Boe_adminLog (va("%s - REMOVE CLAN: %s", adm->client->pers.cleanName, g_entities[idnum].client->pers.cleanName  )) ;
+		}else {
+			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is no longer a Clan member!", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+			trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s is no longer a Clan member.\n\"", g_entities[idnum].client->pers.netname));
+			Boe_adminLog (va("%s - REMOVE CLAN: %s", "RCON", g_entities[idnum].client->pers.cleanName  )) ;
+		}
+	}
+}
+
 /*
 ==========
 Boe_Adm_f
@@ -139,6 +220,14 @@ void Boe_adm_f ( gentity_t *ent )
 	}
 	if (!Q_stricmp ( arg1, "addsadmin" ) && ent->client->sess.admin >= g_addsadmin.integer){
 		Boe_Add_sAdmin_f(2, ent);
+		return;
+	}
+	if (!Q_stricmp ( arg1, "addclan" ) && ent->client->sess.admin >= g_addsadmin.integer){
+		Boe_Add_Clan_Member(2, ent);
+		return;
+	}
+	if (!Q_stricmp ( arg1, "removeclan" ) && ent->client->sess.admin >= g_addsadmin.integer){
+		Boe_Remove_Clan_Member(2, ent);
 		return;
 	}
 	else if (!Q_stricmp ( arg1, "addsadmin" ) && ent->client->sess.admin < g_addsadmin.integer){

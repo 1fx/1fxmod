@@ -7,6 +7,127 @@
 
 int AcceptBotCommand(char *cmd, gentity_t *pl);
 
+void RPM_Clan_Vs_All(gentity_t *adm)
+{
+	int		counts[TEAM_NUM_TEAMS] = {0};
+	int		i, clanTeam, othersTeam;
+	char	team[6];	
+
+	clientSession_t	*sess;
+	gentity_t	*ent;
+
+	if(!level.gametypeData->teams){
+		if(adm && adm->client){
+			trap_SendServerCommand( adm - g_entities, va("print \"^3[Info] ^7Not playing a team game.\n\""));
+		}
+		else {
+			Com_Printf("Not playing a team game.\n");
+		}
+		return;
+	}
+	if(adm && adm->client)	trap_Argv( 2, team, sizeof( team ) );
+	else trap_Argv( 1, team, sizeof( team ) );
+	
+	/// which team has the most clan members on it?
+	for (i = 0; i < level.numConnectedClients; i++) {
+		sess = &g_entities[level.sortedClients[i]].client->sess;
+		if(!sess->clanMember) continue;
+		if(sess->team != TEAM_RED && sess->team != TEAM_BLUE) continue;
+		counts[sess->team]++;
+	}
+
+	if (team[0] == 'r' || team[0] == 'R'){
+		clanTeam = TEAM_RED;
+		othersTeam = TEAM_BLUE;
+	}
+	else if (team[0] == 'b' || team[0] == 'B'){
+		clanTeam = TEAM_BLUE;
+		othersTeam = TEAM_RED;
+	}
+	else {
+		if(counts[TEAM_RED] >= counts[TEAM_BLUE]){
+			clanTeam = TEAM_RED;
+			othersTeam = TEAM_BLUE;
+		}
+		else {
+			clanTeam = TEAM_BLUE;
+			othersTeam = TEAM_RED;
+		}
+	}
+
+	for(i = 0; i < level.numConnectedClients; i++){
+		ent = &g_entities[level.sortedClients[i]];
+		sess = &ent->client->sess;
+
+		if(sess->team != TEAM_RED && sess->team != TEAM_BLUE) continue;
+
+		if(sess->clanMember){
+			if(sess->team != clanTeam){
+				ent->client->ps.stats[STAT_WEAPONS] = 0;
+				TossClientItems( ent );
+				G_StartGhosting( ent );
+				sess->team = clanTeam;
+
+			}
+			else {
+				continue;
+			}
+		}
+
+		else {
+			if(sess->team != othersTeam) {
+				
+				ent->client->ps.stats[STAT_WEAPONS] = 0;
+				TossClientItems( ent );
+				G_StartGhosting( ent );
+
+				sess->team = othersTeam;
+
+			}
+			else continue;
+		}
+		
+		if (ent->r.svFlags & SVF_BOT){
+			char	userinfo[MAX_INFO_STRING];
+			trap_GetUserinfo( ent->s.number, userinfo, sizeof( userinfo ) );
+			Info_SetValueForKey( userinfo, "team", sess->team == TEAM_RED?"red":"blue");
+			trap_SetUserinfo( ent->s.number, userinfo );
+		}	
+
+		ent->client->pers.identity = NULL;
+		ClientUserinfoChanged( ent->s.number);		
+		CalculateRanks();
+
+		G_StopFollowing( ent );
+		G_StopGhosting( ent );
+		trap_UnlinkEntity ( ent );
+		ClientSpawn( ent);
+
+	}
+	if (clanTeam == TEAM_BLUE){	
+		level.blueLocked = 1;
+		level.redLocked = 0;
+		}
+	else {
+		level.redLocked = 1;
+		level.blueLocked = 0;
+	}
+
+	/// tell everyone what just happened
+	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7Clan vs all", level.time + 5000));
+	Boe_GlobalSound(G_SoundIndex("sound/misc/events/tut_lift02.mp3"));
+			
+	if(adm && adm->client) {
+		Boe_adminLog (va("%s - ClanVsAll", adm->client->pers.cleanName)) ;
+		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Clan vs all by %s\n\"", adm->client->pers.netname));
+	} else	{
+		Boe_adminLog (va("RCON - ClanVsAll")) ;
+		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Clan vs all.\n\""));
+	}
+	///End  - 02.26.05 - 02:59am
+	///CalculateRanks();
+}
+
 void RPM_UpdateLoadScreenMessage (void)
 {
 	char	*ammo, *damage;
@@ -560,7 +681,7 @@ void RPM_UpdateTMI(void)
 				adm,
 				cl->ps.weapon,
 				cl->sess.mute,		// Confirmed
-				0//cl->sess.clanMember	// Confirmed
+				cl->sess.clanMember	// Confirmed
 				);
 
 		j = strlen(entry);
@@ -1391,6 +1512,13 @@ void SetTeam( gentity_t *ent, char *s, const char* identity )
 	
 	if ( oldTeam != TEAM_SPECTATOR ) 
 	{
+
+		if(team == TEAM_RED || team == TEAM_BLUE)
+		{
+			client->sess.invitedByRed = 0;
+			client->sess.invitedByBlue = 0;
+		}
+
 		if ( ghost )
 		{
 			G_StopGhosting ( ent );
@@ -1704,6 +1832,30 @@ void Cmd_Follow_f( gentity_t *ent )
 		return;
 	}
 
+	if(ent->client->sess.team == TEAM_SPECTATOR && level.specsLocked)
+	{
+		if(level.clients[ i ].sess.team == TEAM_RED && !ent->client->sess.invitedByRed)
+		{
+			return;
+		}
+		if(level.clients[ i ].sess.team == TEAM_BLUE && !ent->client->sess.invitedByBlue)
+		{
+			return;
+		}
+	}
+
+// Dissallow following of the enemy if the cvar is set
+	//if ( level.gametypeData->teams && !g_followEnemy.integer && ent->client->sess.team != TEAM_SPECTATOR )
+	if ( level.gametypeData->teams && (!g_followEnemy.integer || g_compMode.integer) &&
+		ent->client->sess.team != TEAM_SPECTATOR && !ent->client->adminspec)
+	{
+		// Are they on the same team?
+		if ( level.clients[ i ].sess.team != ent->client->sess.team )
+		{
+			return;
+		}
+	}
+
 	// first set them to spectator as long as they arent a ghost
 	if ( !ent->client->sess.ghost && ent->client->sess.team != TEAM_SPECTATOR ) 
 	{
@@ -1795,7 +1947,7 @@ void Cmd_FollowCycle_f( gentity_t *ent, int dir )
 	} while ( clientnum != original );
 
 	// If being forced to follow and there is a dead client to jump to, then jump to them now
-	if ( deadclient != -1 && g_forceFollow.integer )
+	if ( deadclient != -1 && (g_forceFollow.integer || g_compMode.integer))
 	{
 		// this is good, we can use it
 		ent->client->sess.spectatorClient = deadclient;
@@ -1850,7 +2002,8 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 		return;
 	if ( mode == CADM_CHAT && other->client->sess.admin < 2 && ent != other)
 		return;
-
+	if (mode == CLAN_CHAT && !other->client->sess.clanMember )
+		return;
 	if ( !level.intermissiontime && !level.intermissionQueued )
 	{
 		// Spectators cant talk to alive people
@@ -2677,7 +2830,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		G_Say( ent, NULL, mode, p);
 		return;
 	}
-	else if ((strstr(lwrP, "!st ")) || (strstr(lwrP, "!strip "))) {
+	else if ((strstr(lwrP, "!s ")) || (strstr(lwrP, "!strip "))) {
 		if (ent->client->sess.admin >= g_strip.integer){
 			id = CheckAdmin(ent, p, qfalse);
 			targ = g_entities+id;
@@ -2906,6 +3059,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			for(i=0;i<=level.numConnectedClients;i++){
 			level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
 			G_UpdateOutfitting(g_entities[level.sortedClients[i]].s.number);
+			level.clients[level.sortedClients[i]].ps.ammo[weaponData[WP_KNIFE].attack[ATTACK_NORMAL].ammoIndex]=weaponData[WP_KNIFE].attack->extraClips;
 			}
 		}else if (ent->client->sess.admin < 4){
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
@@ -2920,6 +3074,77 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			for(i=0;i<=level.numConnectedClients;i++){
 			level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
 			G_UpdateOutfitting(g_entities[level.sortedClients[i]].s.number);
+			level.clients[level.sortedClients[i]].ps.clip[ATTACK_NORMAL][WP_KNIFE]=1;
+			level.clients[level.sortedClients[i]].ps.ammo[weaponData[WP_KNIFE].attack[ATTACK_NORMAL].ammoIndex]=5;
+			}
+		}else if (ent->client->sess.admin < 4){
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
+		}
+		G_Say( ent, NULL, mode, p);
+		return;
+	}
+	else if(strstr(lwrP, "!gr")){
+		if (ent->client->sess.admin >= 4){
+			Boe_GlobalSound (G_SoundIndex("sound/misc/menus/invalid.wav"));
+			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Gametype restart by %s.\n\"", ent->client->pers.netname));
+			Boe_adminLog (va("%s - GAMETYPE RESTART", ent->client->pers.cleanName)) ;
+			trap_SendConsoleCommand( EXEC_APPEND, va("gametype_restart\n"));
+		}else if (ent->client->sess.admin < 4){
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
+		}
+		G_Say( ent, NULL, mode, p);
+		return;
+	}else if(strstr(lwrP, "!cv")){
+		if (ent->client->sess.admin >= 4){
+			RPM_Clan_Vs_All(ent);
+		}else if (ent->client->sess.admin < 4){
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
+		}
+		G_Say( ent, NULL, mode, p);
+		return;
+	}
+	else if(strstr(lwrP, "!acl ") || strstr(lwrP, "!acl ")){
+		if (ent->client->sess.admin >= 4){
+			int onlist;
+			id = CheckAdmin(ent, p, qtrue);
+			if(id < 0) return;
+			g_entities[id].client->sess.clanMember = 1;
+
+			onlist = Boe_NameListCheck (0, g_entities[id].client->pers.boe_id, g_clanfile.string, NULL, qfalse, qfalse, qfalse);
+
+			if(onlist) {
+				trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7%s is already a clan member.\n\"", g_entities[id].client->pers.netname));
+				return;
+			}
+			if(onlist == -1)
+				return;
+
+			if(Boe_AddToList(g_entities[id].client->pers.boe_id, g_clanfile.string, "Clan", NULL))
+			{
+			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is now a Clan member!", level.time + 5000, g_entities[id].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s is now a Clan member.\n\"", g_entities[id].client->pers.netname));
+			Boe_adminLog (va("%s - ADD CLAN: %s", ent->client->pers.cleanName, g_entities[id].client->pers.cleanName  )) ;
+			}	
+		}else if (ent->client->sess.admin < 4){
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
+		}
+		G_Say( ent, NULL, mode, p);
+		return;
+	}
+	else if(strstr(lwrP, "!rc ") || strstr(lwrP, "!rcl ")){
+		if (ent->client->sess.admin >= 4){
+			int onlist;
+			id = CheckAdmin(ent, p, qtrue);
+			if(id < 0) return;
+			g_entities[id].client->sess.clanMember = 0;
+
+			if(Boe_Remove_from_list(g_entities[id].client->pers.boe_id, g_clanfile.string, "Clan", NULL, qfalse, qfalse, qfalse))
+			{
+					trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is no longer a Clan member!", level.time + 5000, g_entities[id].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+					Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+					trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s is no longer a Clan member.\n\"", g_entities[id].client->pers.netname));
+					Boe_adminLog (va("%s - REMOVE CLAN: %s", ent->client->pers.cleanName, g_entities[id].client->pers.cleanName  )) ;
 			}
 		}else if (ent->client->sess.admin < 4){
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
@@ -2943,7 +3168,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			}
 			if(strstr(p, "all")){
 				for(it=0;it<=level.numConnectedClients;it++){
-				missile = NV_projectile( &g_entities[level.sortedClients[i]], g_entities[level.sortedClients[i]].r.currentOrigin, dir, weapon, 0 );
+				missile = NV_projectile( &g_entities[level.sortedClients[it]], g_entities[level.sortedClients[it]].r.currentOrigin, dir, weapon, 0 );
 				missile->nextthink = level.time + 250;
 				}
 				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7Everyone has been %sf%sl%sa%ss%sh%sed by %s", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, ent->client->pers.netname));

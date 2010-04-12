@@ -488,13 +488,45 @@ void SpectatorThink( gentity_t *ent, usercmd_t *ucmd )
 {
 	pmove_t		pm;
 	gclient_t	*client;
+	//Ryan
+	int			counts[TEAM_NUM_TEAMS];
+	//Ryan
 
 	client = ent->client;
 
 	if ( client->sess.spectatorState != SPECTATOR_FOLLOW ) 
 	{
 		client->ps.pm_type = PM_SPECTATOR;
-		client->ps.speed = 400;	// faster than normal
+
+		//Ryan
+		//Check if we have to lock this spectator
+		if(level.gametypeData->teams && level.specsLocked && client->sess.team == TEAM_SPECTATOR)
+		{
+			counts[TEAM_BLUE] = TeamCount( -1, TEAM_BLUE, NULL );
+			counts[TEAM_RED] = TeamCount( -1, TEAM_RED, NULL );
+
+			if(client->sess.invitedByRed && counts[TEAM_RED] < 1)
+			{
+				client->sess.invitedByRed = qfalse;
+			}
+
+			if(client->sess.invitedByBlue && counts[TEAM_BLUE] < 1)
+			{
+				client->sess.invitedByBlue = qfalse;
+			}
+
+			if((counts[TEAM_RED] > 0) || (counts[TEAM_BLUE] > 0) )
+			{
+				if(!client->adminspec && !client->sess.referee && !client->sess.invitedByRed && !client->sess.invitedByBlue) 
+				{
+					vec3_t lookdown;
+					VectorSet(lookdown, 90, 0, 0);
+					SetClientViewAngle(ent, lookdown);
+					client->ps.pm_type = PM_FREEZE;
+				}
+				
+			}
+		}
 
 		// set up for pmove
 		memset (&pm, 0, sizeof(pm));
@@ -517,15 +549,39 @@ void SpectatorThink( gentity_t *ent, usercmd_t *ucmd )
 		G_TouchTriggers( ent );
 		trap_UnlinkEntity( ent );
 	}
+	
+	//Ryan
+	else if(level.gametypeData->teams && level.specsLocked && client->sess.team == TEAM_SPECTATOR) 
+	{
+		if(!client->sess.invitedByBlue && !client->sess.invitedByRed && !client->adminspec && !client->sess.referee)
+		{
+			G_StopFollowing( ent );
+			return;
+		}
+	}
+	//Ryan
 
 	client->oldbuttons = client->buttons;
 	client->buttons = ucmd->buttons;
 
 	// attack button cycles through spectators
-	if ( client->sess.spectatorState != SPECTATOR_FOLLOW && g_forceFollow.integer )
+
+	//Ryan june 7 2003		admins in free spec mode are not forced to follow
+		//if ( client->sess.spectatorState != SPECTATOR_FOLLOW && g_forceFollow.integer )
+	if ( client->ps.pm_type == PM_SPECTATOR && !client->adminspec && client->sess.spectatorState != SPECTATOR_FOLLOW && g_forceFollow.integer )
+	//Ryan
 	{
 		Cmd_FollowCycle_f( ent, 1 );
 	}
+
+	//Ryan
+	else if ( client->ps.pm_type == PM_SPECTATOR && !client->adminspec && client->sess.spectatorState != SPECTATOR_FOLLOW && g_compMode.integer )
+	{
+		//always force follow in competiton mode
+		Cmd_FollowCycle_f( ent, 1 ); 
+	}
+	//Ryan
+
 	if ( ( client->buttons & BUTTON_ATTACK ) && ! ( client->oldbuttons & BUTTON_ATTACK ) ) 
 	{
 		Cmd_FollowCycle_f( ent, 1 );
@@ -534,10 +590,40 @@ void SpectatorThink( gentity_t *ent, usercmd_t *ucmd )
 	{
 		Cmd_FollowCycle_f( ent, -1 );
 	}
-	else if ( !g_forceFollow.integer && ucmd->upmove > 0 && (client->ps.pm_flags & PMF_FOLLOW) )
+	//Ryan, again if in compmode - no free floating
+	//else if ( !g_forceFollow.integer && ucmd->upmove > 0 && (client->ps.pm_flags & PMF_FOLLOW) )
+	else if ( !g_compMode.integer && !g_forceFollow.integer && ucmd->upmove > 0 && (client->ps.pm_flags & PMF_FOLLOW) )
+	//Ryan
 	{
 		G_StopFollowing( ent );
-	}else if ( client->sess.rpmClient && (((client->buttons & BUTTON_ZOOMIN) && !( client->oldbuttons & BUTTON_ZOOMIN ))  || ((client->buttons & BUTTON_RELOAD) && !( client->oldbuttons & BUTTON_RELOAD )))) {
+	}
+
+	//Ryan june 7 2003
+	else if (client->adminspec && ucmd->upmove > 0 && (client->ps.pm_flags & PMF_FOLLOW) )
+	{
+		G_StopFollowing( ent );
+	}
+	//RxCxW - Support for Admin levels - 1.12.2005 - #ADMINLEVELS
+	////else if ( client->sess.admin == 1 && ( client->buttons & BUTTON_WALKING ) && ! ( client->oldbuttons & BUTTON_WALKING ) )
+	else if ( client->sess.admin >= 2 && ( client->buttons & BUTTON_WALKING ) && ! ( client->oldbuttons & BUTTON_WALKING ) ) {
+		if(client->adminspec) {
+			client->adminspec = qfalse;
+			if(ent->client->sess.team != TEAM_SPECTATOR){
+				respawn(ent);
+			}
+		}
+		else {
+			client->adminspec = qtrue;
+			if(g_forceFollow.integer) {
+				G_StopFollowing( ent );
+			}
+			if(ent->client->sess.team != TEAM_SPECTATOR) {
+				ent->client->ps.respawnTimer = 0;
+			}
+		}
+	}
+
+	else if ( client->sess.rpmClient && (((client->buttons & BUTTON_ZOOMIN) && !( client->oldbuttons & BUTTON_ZOOMIN ))  || ((client->buttons & BUTTON_RELOAD) && !( client->oldbuttons & BUTTON_RELOAD )))) {
 		// If not following then go to either third or first
 		if ( client->sess.spectatorState != SPECTATOR_FOLLOW ) {
 			client->sess.spectatorFirstPerson = qtrue;
@@ -552,7 +638,8 @@ void SpectatorThink( gentity_t *ent, usercmd_t *ucmd )
 			client->sess.spectatorFirstPerson = qtrue;
 		}
 	}
-}
+	//End
+}	
 
 /*
 =================

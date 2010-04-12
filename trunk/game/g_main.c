@@ -141,6 +141,8 @@ vmCvar_t	g_instagib;
 vmCvar_t	g_weaponModFlags;
 vmCvar_t	g_allowthirdperson;
 vmCvar_t	g_weaponswitch;
+vmCvar_t	g_compMode;	
+vmCvar_t	g_clanfile;
 
 static cvarTable_t gameCvarTable[] = 
 {
@@ -281,6 +283,7 @@ static cvarTable_t gameCvarTable[] =
 	// @ BERTMAN DO NOT USE G_SCORELIMIT & G_TIMELIMIT(SOF2 ALREADY USES THOSE)
 	{ &g_banlist,			"g_banlist",			"users/bans.txt",			CVAR_ARCHIVE,	0.0,	0.0,	0, qfalse  },
 	{ &g_subnetbanlist,		"g_subnetbanlist",		"users/subnetbans.txt",		CVAR_ARCHIVE,	0.0,	0.0,	0, qfalse  },
+	{ &g_clanfile,			"g_clanfile",			"users/clanmembers.txt",	CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  },
 
 	{ &server_color1, "server_color1", "^G", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_color2, "server_color2", "^<", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
@@ -305,9 +308,9 @@ static cvarTable_t gameCvarTable[] =
 	{ &server_redteamprefix, "server_redteamprefix", "^$R^Te^Hd", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_blueteamprefix, "server_blueteamprefix", "^yB^Il^fu^+e", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &g_instagib, "g_instagib", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
-	{ &g_weaponModFlags, "g_weaponModFlags", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
+	{ &g_weaponModFlags, "g_weaponModFlags", "3", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_allowthirdperson, "g_allowThirdPerson", "1", CVAR_ARCHIVE|CVAR_SERVERINFO, 0.0, 0.0, 0,  qfalse },
-	{ &g_weaponswitch, "g_weaponswitch", "3", CVAR_ARCHIVE|CVAR_SERVERINFO, 0.0, 0.0, 0,  qfalse },
+	{ &g_compMode, "g_compMode", "0", CVAR_ARCHIVE|CVAR_SERVERINFO, 0.0, 0.0, 0, qtrue  },
 /*
 	switch (g_weaponModFlags.integer){
 		case AMMO_MOD: 0x1

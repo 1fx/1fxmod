@@ -1172,8 +1172,11 @@ void ClientUserinfoChanged( int clientNum )
 	
 	// Boe!Man 12/30/09: Checking for Admin. --- Update 1/4/10
 	//if(!ent->client->sess.fileChecked && !(ent->r.svFlags & SVF_BOT)){
-				client->sess.admin = Boe_NameListCheck ( clientNum, ent->client->pers.boe_id, g_adminfile.string, NULL, qfalse, qtrue, qfalse, qfalse);
-			}	
+			client->sess.admin = Boe_NameListCheck ( clientNum, ent->client->pers.boe_id, g_adminfile.string, NULL, qfalse, qtrue, qfalse, qfalse);
+			if(!client->sess.clanMember)
+			client->sess.clanMember = Boe_NameListCheck (clientNum, ent->client->pers.boe_id, g_clanfile.string, NULL, qfalse, qfalse, qfalse);
+		
+	}	
 			//ent->client->sess.fileChecked = qtrue;
 	//}
 	
@@ -1849,6 +1852,7 @@ void ClientDisconnect( int clientNum )
 
 	// Boe!Man 12/27/09: Resetting the Admin 'status' for the disconnected client here, so a future client with the same ID doesn't get his Admin status..
 	ent->client->sess.admin = 0;
+	ent->client->sess.clanMember = 0;
 	// Boe!Man 4/4/10: We reset the Developer as well.
 	ent->client->sess.dev = 0;
 
