@@ -231,7 +231,7 @@ static cvarTable_t gameCvarTable[] =
 	// Henk 01/04/10
 	{ &g_disablenades,	"g_disablenades", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 	// End
-	{ &g_forceFollow,		"g_forceFollow",	 "0",			  CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
+	{ &g_forceFollow,		"g_forceFollow",	 "1",			  CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 	{ &g_followEnemy,		"g_followEnemy",	 "1",			  CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 
 	{ &g_mapcycle,			"sv_mapcycle",		 "none",		CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },

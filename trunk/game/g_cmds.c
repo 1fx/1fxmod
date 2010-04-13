@@ -2979,7 +2979,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			if(g_disablenades.integer == 1){
 				g_disablenades.integer = 0;
 				trap_Cvar_Set("g_disablenades", "0");
-				trap_Cvar_Set("g_availableweapons", "2002000020000000002222");
+				trap_Cvar_Set("g_availableweapons", "200200002200000000200");
 				BG_SetAvailableOutfitting(g_availableWeapons.string);
 				for(i=0;i<=level.numConnectedClients;i++){
 				level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
@@ -2992,7 +2992,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 				g_disablenades.integer = 1;
 				trap_Cvar_Set("g_disablenades", "1");
 				// change g_available
-				trap_Cvar_Set("g_availableweapons", "2002000020000000000000");
+				trap_Cvar_Set("g_availableweapons", "200200002200000000000");
 				BG_SetAvailableOutfitting(g_availableWeapons.string);
 				for(i=0;i<=level.numConnectedClients;i++){
 				level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
