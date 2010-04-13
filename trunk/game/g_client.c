@@ -930,6 +930,7 @@ void G_UpdateOutfitting ( int clientNum )
 
 	// Stuff which grenade is being used into stats for later use by
 	// the backpack code
+	client->ps.ammo[weaponData[WP_KNIFE].attack[ATTACK_NORMAL].ammoIndex]=weaponData[WP_KNIFE].attack->extraClips;
 	client->ps.stats[STAT_OUTFIT_GRENADE] = bg_itemlist[bg_outfittingGroups[OUTFITTING_GROUP_GRENADE][client->pers.outfitting.items[OUTFITTING_GROUP_GRENADE]]].giTag;
 }
 
@@ -1171,14 +1172,14 @@ void ClientUserinfoChanged( int clientNum )
 		}
 	
 	// Boe!Man 12/30/09: Checking for Admin. --- Update 1/4/10
-	//if(!ent->client->sess.fileChecked && !(ent->r.svFlags & SVF_BOT)){
+	if(!ent->client->sess.fileChecked && !(ent->r.svFlags & SVF_BOT)){
 			client->sess.admin = Boe_NameListCheck ( clientNum, ent->client->pers.boe_id, g_adminfile.string, NULL, qfalse, qtrue, qfalse, qfalse);
 			if(!client->sess.clanMember)
 			client->sess.clanMember = Boe_NameListCheck (clientNum, ent->client->pers.boe_id, g_clanfile.string, NULL, qfalse, qfalse, qfalse);
 		
 	}	
-			//ent->client->sess.fileChecked = qtrue;
-	//}
+			ent->client->sess.fileChecked = qtrue;
+	}
 	
 	// Outfitting if pickups are disabled
 	if ( level.pickupsDisabled )

@@ -1,5 +1,3 @@
-// Copyright (C) 2001-2002 Raven Software
-//
 #include "g_local.h"
 
 /*
@@ -21,8 +19,14 @@ void G_WriteClientSessionData( gclient_t *client )
 {
 	const char	*s;
 	const char	*var;
+	//Ryan june 7 2003
+//RxCxW - #ClanList - Modded From RPM GOLD - 1.04.2005
+// We want to save our special status so we dont have to check again when the map starts
+//RM	s = va("%i %i %i", client->sess.team, client->sess.admin, client->sess.referee );
+	s = va("%i %i %i %i", client->sess.team, client->sess.admin, client->sess.referee, client->sess.clanMember);
+	//s = va("%i", client->sess.team );
 
-	s = va("%i", client->sess.team );
+	//Ryan
 
 	var = va( "session%i", client - level.clients );
 
@@ -41,14 +45,28 @@ void G_ReadSessionData( gclient_t *client )
 	char		s[MAX_STRING_CHARS];
 	const char	*var;
 	int			sessionTeam;
+	///Ryan june 7 2003
+	int			adminSess;
+	int			refSess;
+	///RxCxW - #ClanList - 1.04.2005
+	int			clanSess;
+	///End
+	///Ryan
 
 	var = va( "session%i", client - level.clients );
 	trap_Cvar_VariableStringBuffer( var, s, sizeof(s) );
 
-	sscanf( s, "%i", &sessionTeam );
+	///Ryan june 7 2003
+	///sscanf( s, "%i %i %i", &sessionTeam, &adminSess, &refSess );
+	sscanf( s, "%i %i %i %i", &sessionTeam, &adminSess, &refSess, &clanSess); //RxCxW - 04.2005 #Clan
+	///Ryan
 
-	// bk001205 - format issues
+	/// bk001205 - format issues
 	client->sess.team = (team_t)sessionTeam;
+	///Ryan june 7 2003
+	client->sess.admin = adminSess;
+	client->sess.referee = refSess;
+	client->sess.clanMember = clanSess;		//RxCxW - 1.04.2005 - #ClanList
 }
 
 
@@ -63,6 +81,7 @@ void G_InitSessionData( gclient_t *client, char *userinfo )
 {
 	clientSession_t	*sess;
 	const char		*value;
+	
 
 	sess = &client->sess;
 
@@ -72,7 +91,9 @@ void G_InitSessionData( gclient_t *client, char *userinfo )
 		if ( g_teamAutoJoin.integer ) 
 		{
 			sess->team = PickTeam( -1 );
-			BroadcastTeamChange( client, -1 );
+			//Ryan We'll do this later 
+			//BroadcastTeamChange( client, -1 );
+			//Ryan
 		} 
 		else 
 		{

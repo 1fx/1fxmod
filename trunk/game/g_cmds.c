@@ -2984,7 +2984,6 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 				for(i=0;i<=level.numConnectedClients;i++){
 				level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
 				G_UpdateOutfitting(g_entities[level.sortedClients[i]].s.number);
-				level.clients[level.sortedClients[i]].ps.ammo[weaponData[WP_KNIFE].attack[ATTACK_NORMAL].ammoIndex]=weaponData[WP_KNIFE].attack->extraClips;
 				}
 				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sN%sa%sd%se%ss %senabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 				trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Nades enabled by %s.\n\"", ent->client->pers.netname));
@@ -2998,7 +2997,6 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 				for(i=0;i<=level.numConnectedClients;i++){
 				level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
 				G_UpdateOutfitting(g_entities[level.sortedClients[i]].s.number);
-				level.clients[level.sortedClients[i]].ps.ammo[weaponData[WP_KNIFE].attack[ATTACK_NORMAL].ammoIndex]=weaponData[WP_KNIFE].attack->extraClips;
 				}
 				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sN%sa%sd%se%ss %sdisabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 				trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Nades disabled by %s.\n\"", ent->client->pers.netname));
@@ -3071,7 +3069,6 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			for(i=0;i<=level.numConnectedClients;i++){
 			level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
 			G_UpdateOutfitting(g_entities[level.sortedClients[i]].s.number);
-			level.clients[level.sortedClients[i]].ps.ammo[weaponData[WP_KNIFE].attack[ATTACK_NORMAL].ammoIndex]=weaponData[WP_KNIFE].attack->extraClips;
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sR%se%sa%sl %sd%samage!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Real damage by %s.\n\"", ent->client->pers.netname));
 			}
@@ -3088,8 +3085,6 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			for(i=0;i<=level.numConnectedClients;i++){
 			level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
 			G_UpdateOutfitting(g_entities[level.sortedClients[i]].s.number);
-			level.clients[level.sortedClients[i]].ps.clip[ATTACK_NORMAL][WP_KNIFE]=1;
-			level.clients[level.sortedClients[i]].ps.ammo[weaponData[WP_KNIFE].attack[ATTACK_NORMAL].ammoIndex]=5;
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sN%so%sr%sm%sa%sl damage!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Normal damage by %s.\n\"", ent->client->pers.netname));
 			}

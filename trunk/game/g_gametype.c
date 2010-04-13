@@ -733,8 +733,8 @@ int G_GametypeCommand ( int cmd, int arg0, int arg1, int arg2, int arg3, int arg
 			G_Voice ( &g_entities[arg0], NULL, SAY_TEAM, (const char*) arg1, qfalse );
 			break;
 
-		//case GTCMD_REGISTERGLOBALSOUND:
-		//	return G_SoundIndex ( (char*) arg0 );
+		case GTCMD_REGISTERSOUND:
+			return G_SoundIndex ( (char*) arg0 );
 
 		case GTCMD_STARTGLOBALSOUND:
 		{
