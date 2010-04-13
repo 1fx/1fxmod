@@ -2978,20 +2978,8 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		if(ent->client->sess.admin >= 4){
 			if(g_disablenades.integer == 1){
 				g_disablenades.integer = 0;
+				trap_Cvar_Set("g_disablenades", "0");
 				trap_Cvar_Set("g_availableweapons", "2002000020000000002222");
-				BG_SetAvailableOutfitting(g_availableWeapons.string);
-				for(i=0;i<=level.numConnectedClients;i++){
-				level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
-				G_UpdateOutfitting(g_entities[level.sortedClients[i]].s.number);
-				level.clients[level.sortedClients[i]].ps.ammo[weaponData[WP_KNIFE].attack[ATTACK_NORMAL].ammoIndex]=weaponData[WP_KNIFE].attack->extraClips;
-				}
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sN%sa%sd%se%ss %sdisabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-				trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Nades disabled by %s.\n\"", ent->client->pers.netname));
-				Boe_adminLog (va("%s - NADES DISABLED", ent->client->pers.cleanName)) ;
-			}else{
-				g_disablenades.integer = 1;
-				// change g_available
-				trap_Cvar_Set("g_availableweapons", "2002000020000000000000");
 				BG_SetAvailableOutfitting(g_availableWeapons.string);
 				for(i=0;i<=level.numConnectedClients;i++){
 				level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
@@ -3001,6 +2989,20 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sN%sa%sd%se%ss %senabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 				trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Nades enabled by %s.\n\"", ent->client->pers.netname));
 				Boe_adminLog (va("%s - NADES ENABLED", ent->client->pers.cleanName)) ;
+			}else{
+				g_disablenades.integer = 1;
+				trap_Cvar_Set("g_disablenades", "1");
+				// change g_available
+				trap_Cvar_Set("g_availableweapons", "2002000020000000000000");
+				BG_SetAvailableOutfitting(g_availableWeapons.string);
+				for(i=0;i<=level.numConnectedClients;i++){
+				level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
+				G_UpdateOutfitting(g_entities[level.sortedClients[i]].s.number);
+				level.clients[level.sortedClients[i]].ps.ammo[weaponData[WP_KNIFE].attack[ATTACK_NORMAL].ammoIndex]=weaponData[WP_KNIFE].attack->extraClips;
+				}
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sN%sa%sd%se%ss %sdisabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+				trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Nades disabled by %s.\n\"", ent->client->pers.netname));
+				Boe_adminLog (va("%s - NADES DISABLED", ent->client->pers.cleanName)) ;
 			}
 		}else if (ent->client->sess.admin < 4){
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
