@@ -1067,12 +1067,20 @@ int G_Damage (
 		}
 	}
 
-	if (targ->client) 
+	if (targ->client)
 	{
 		// set the last client who damaged the target
 		targ->client->lasthurt_client = attacker->s.number;
 		targ->client->lasthurt_time = level.time;
 		targ->client->lasthurt_mod = mod;
+
+		//Ryan april 28 2003
+		targ->client->pers.statinfo.lasthurtby = attacker->s.number;
+		if(attacker->client)
+		{
+			attacker->client->pers.statinfo.lastclient_hurt = targ->s.number;
+		}
+		//Ryan
 	}
 
 	// do the damage
