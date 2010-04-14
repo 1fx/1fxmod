@@ -13,6 +13,8 @@ bg_slidemove
 bg_weapons
 boe_admcmds
 boe_utils
+rpm_tcmds
+rpm_refcmds
 g_active
 g_antilag
 g_bot

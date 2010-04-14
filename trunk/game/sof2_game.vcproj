@@ -1323,6 +1323,14 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\rpm_refcmds.c"
+				>
+			</File>
+			<File
+				RelativePath=".\rpm_tcmds.c"
+				>
+			</File>
+			<File
 				RelativePath="SoF2_game.def"
 				>
 				<FileConfiguration
