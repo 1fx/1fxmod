@@ -1662,6 +1662,37 @@ void SetTeam( gentity_t *ent, char *s, const char* identity )
 		return;
 	}
 
+	if (level.gametypeData->teams)
+	{
+		///RxCxW - 03.05.05 - 07:19am
+		///if ((team == TEAM_RED) && level.redLocked)
+		if ((team == TEAM_RED) && level.redLocked && client->sess.admin < 2) {
+			trap_SendServerCommand(clientNum, "cp \"^1Red ^7team has been ^3locked.\n\"" );
+			return;
+		}
+		///else if ((team == TEAM_BLUE) && level.blueLocked)
+		else if ((team == TEAM_BLUE) && level.blueLocked && client->sess.admin < 2) {
+			trap_SendServerCommand(clientNum, "cp \"^4Blue ^7team has been ^3locked.\n\"" );
+			return;
+		}
+	}
+
+	if(oldTeam == TEAM_SPECTATOR)
+	{
+		//Ryan march 28 2004 3:24pm
+		//keep track of how much time the player spent spectating
+		//we'll subtract this later from the players time for awards
+		//client->sess.totalSpectatorTime += level.time - client->sess.spectatorTime;
+		//Ryan
+
+		//clear the invites if we are joining game play
+		if(team == TEAM_RED || team == TEAM_BLUE)
+		{
+			client->sess.invitedByRed = 0;
+			client->sess.invitedByBlue = 0;
+		}
+	}
+
    	noOutfittingChange = ent->client->noOutfittingChange;
 
 	// he starts at 'base'
@@ -2889,7 +2920,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp %sr%se%sstart!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 			Boe_GlobalSound (G_SoundIndex("sound/misc/menus/invalid.wav"));
 			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Map restarted by %s.\n\"", ent->client->pers.netname));
-			Boe_adminLog (va("%s - MAP RESTART: %s", ent->client->pers.cleanName, g_entities[id].client->pers.cleanName  )) ;
+			Boe_adminLog (va("%s - MAP RESTART", ent->client->pers.cleanName)) ;
 		}
 		else if ( ent->client->sess.admin < g_maprestart.integer){
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
@@ -3085,7 +3116,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		G_Say( ent, NULL, mode, p);
 		return;
 	}
-	else if ((strstr(lwrP, "!333"))) {
+	/*else if ((strstr(lwrP, "!333"))) {
 		if (ent->client->sess.admin >= g_333.integer){
 			// disable 333
 			if(pmove_fixed.value == 0){
@@ -3106,7 +3137,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		}
 		G_Say( ent, NULL, mode, p);
 		return;
-	}
+	}*/
 	else if ((strstr(lwrP, "!ft ")) || (strstr(lwrP, "!forceteam "))){
 		if (ent->client->sess.admin >= g_forceteam.integer){
 			id = CheckAdmin(ent, p, qtrue);
@@ -3154,8 +3185,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 				g_disablenades.integer = 0;
 				trap_Cvar_Set("g_disablenades", "0");
 				trap_Cvar_Set("g_availableweapons", "200200002200000000200");
-				strcpy(g_availableWeapons.string,"200200002200000000200"); // trap_cvar_set is latched?
-				BG_SetAvailableOutfitting(g_availableWeapons.string);
+				BG_SetAvailableOutfitting("200200002200000000200");
 				for(i=0;i<=level.numConnectedClients;i++){
 				level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
 				G_UpdateOutfitting(g_entities[level.sortedClients[i]].s.number);
@@ -3168,8 +3198,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 				trap_Cvar_Set("g_disablenades", "1");
 				// change g_available
 				trap_Cvar_Set("g_availableweapons", "200200002200000000000");
-				strcpy(g_availableWeapons.string, "200200002200000000000"); //trap_cvar_set is latched?
-				BG_SetAvailableOutfitting(g_availableWeapons.string);
+				BG_SetAvailableOutfitting("200200002200000000000");
 				for(i=0;i<=level.numConnectedClients;i++){
 				level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
 				G_UpdateOutfitting(g_entities[level.sortedClients[i]].s.number);

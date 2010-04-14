@@ -670,6 +670,20 @@ team_t PickTeam( int ignoreClientNum )
 {
 	int		counts[TEAM_NUM_TEAMS];
 
+	if(level.redLocked && level.blueLocked)
+	{
+		return TEAM_SPECTATOR;
+	}
+	if(level.redLocked  && !level.blueLocked)
+	{
+		return TEAM_BLUE;
+	}
+
+	if(level.blueLocked  && !level.redLocked )
+	{
+		return TEAM_RED;
+	}
+
 	counts[TEAM_BLUE] = TeamCount( ignoreClientNum, TEAM_BLUE, NULL );
 	counts[TEAM_RED] = TeamCount( ignoreClientNum, TEAM_RED, NULL );
 
@@ -852,13 +866,10 @@ void G_UpdateOutfitting ( int clientNum )
 		}
 
 		// Henk 06/04/10 -> Disable nades outfitting
-		if(group == 3 && g_disablenades.integer == 1){
-			continue; // start loop again(at group == 5)
-		}
-		// End
-		//if(!BG_IsWeaponAvailableForOutfitting(bg_itemlist[bg_outfittingGroups[group][item->giTag]].giTag, 2)){ // henk test
-		//	continue; // disabled weapon
+		//if(group == 3 && g_disablenades.integer == 1){
+		//	continue; // start loop again(at group == 5)
 		//}
+		// End
 
 		// Grab the item that represents the weapon
 		item = &bg_itemlist[bg_outfittingGroups[group][client->pers.outfitting.items[group]]];

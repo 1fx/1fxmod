@@ -215,12 +215,6 @@ void RPM_lockTeam(gentity_t *ent, qboolean referee, char *team)
 	///}
 	///End - 1.14.2005
 
-	if ((ent->client->sess.team != TEAM_RED) && (ent->client->sess.team != TEAM_BLUE) && !referee)
-	{
-		trap_SendServerCommand( ent-g_entities, "print \"Not on a valid team.\n\"");
-		return;
-	}
-	
 	if(referee)
 	{
 		if (team[0] == 'r' || team[0] == 'R')

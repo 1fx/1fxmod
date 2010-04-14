@@ -804,6 +804,7 @@ void G_ShutdownGame( int restart )
 	{
 		G_LogPrintf("ShutdownGame:\n" );
 		G_LogPrintf("------------------------------------------------------------\n" );
+		trap_SendConsoleCommand( EXEC_APPEND, va("map mp_shop\n")); // reboot after crash
 		trap_FS_FCloseFile( level.logFile );
 	}
 	
