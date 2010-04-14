@@ -173,6 +173,8 @@ void	QDECL Boe_crashLog	(const char *text, ... );
 // Henk 28/01/10 -> Add eventeams
 void	EvenTeams (gentity_t *adm);
 
+void	Boe_SwapTeams(gentity_t *adm);
+
 extern	vmCvar_t	server_badminprefix;
 extern	vmCvar_t	server_adminprefix;
 extern	vmCvar_t	server_sadminprefix;

@@ -82,7 +82,6 @@ void trap_Cvar_VariableStringBuffer( const char *var_name, char *buffer, int buf
 	syscall( G_CVAR_VARIABLE_STRING_BUFFER, var_name, buffer, bufsize );
 }
 
-
 void trap_LocateGameData( gentity_t *gEnts, int numGEntities, int sizeofGEntity_t,
 						 playerState_t *clients, int sizeofGClient ) {
 	syscall( G_LOCATE_GAME_DATA, gEnts, numGEntities, sizeofGEntity_t, clients, sizeofGClient );
@@ -97,7 +96,7 @@ void trap_DropClient( int clientNum, const char *reason ) {
 	syscall( G_DROP_CLIENT, clientNum, reason );
 }
 
-void trap_SendServerCommand( int clientNum, const char *text ) {
+void trap_SendServerCommand2( int clientNum, const char *text ) {
 	syscall( G_SEND_SERVER_COMMAND, clientNum, text );
 }
 

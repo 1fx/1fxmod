@@ -623,6 +623,17 @@ qboolean ConsoleCommand( void )
 		EvenTeams(NULL);
 		return qtrue;
 	}
+	if ((Q_stricmp (cmd, "swapteams" ) == 0 ))
+	{
+		Boe_SwapTeams(NULL);
+		return qtrue;
+	}
+
+	if ((Q_stricmp (cmd, "lock" ) == 0 ))
+	{
+		RPM_lockTeam(NULL, qfalse, ConcatArgs(1) );
+		return qtrue;
+	}
 	if (g_dedicated.integer) 
 	{
 		if (Q_stricmp (cmd, "say") == 0) 

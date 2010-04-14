@@ -654,16 +654,28 @@ qboolean ClientInactivityTimer( gclient_t *client ) {
 		// gameplay, everyone isn't kicked
 		client->inactivityTime = level.time + 60 * 1000;
 		client->inactivityWarning = qfalse;
+	}
+	else if ( level.pause ||
+		client->sess.admin ||
+		client->pers.cmd.forwardmove || 
+		client->pers.cmd.rightmove || 
+		client->pers.cmd.upmove ||
+		(client->pers.cmd.buttons & (BUTTON_ATTACK|BUTTON_ALT_ATTACK)) ) {
+		client->inactivityTime = level.time + g_inactivity.integer * 1000;
+		client->inactivityWarning = qfalse;
+		/*
 	} else if ( client->pers.cmd.forwardmove || 
 		client->pers.cmd.rightmove || 
 		client->pers.cmd.upmove ||
 		(client->pers.cmd.buttons & (BUTTON_ATTACK|BUTTON_ALT_ATTACK)) ) {
 		client->inactivityTime = level.time + g_inactivity.integer * 1000;
 		client->inactivityWarning = qfalse;
+		*/
 	} else if ( !client->pers.localClient ) {
 		if ( level.time > client->inactivityTime ) {
 			//bertman add msg here
 			SetTeam(&g_entities[client-level.clients], "s", NULL); // Henk 08/04/10 -> Force ppl to spec instead of kicking them when afk
+			trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s ^7was forced to spectator for being AFK.\n\"", g_entities[client-level.clients].client->pers.netname));
 			//trap_DropClient( client - level.clients, "Dropped due to inactivity" );
 			return qfalse;
 		}
@@ -1035,6 +1047,19 @@ void ClientThink_real( gentity_t *ent )
 		ClientIntermissionThink( client );
 		return;
 	}
+
+	if(level.pause)		//if paused stop here
+	{
+		///RxCxW - 08.28.06 - 03:51pm - #paused - reset inactivity counter so we dont get kicked
+		if ( g_inactivity.integer )
+			client->inactivityTime = level.time + g_inactivity.integer * 1000;
+		else 
+			client->inactivityTime = level.time + 60 * 1000;
+		client->inactivityWarning = qfalse;
+		///End  - 08.28.06 - 03:52pm
+		return;
+	}
+
 	// Boe!Man 3/30/10: We wait for the motd.
 	if(client->sess.firstTime && !client->sess.motdStartTime && !level.intermissionQueued)
 	{
@@ -1234,6 +1259,16 @@ void ClientThink_real( gentity_t *ent )
 
 		return;
 	}
+
+	//Ryan
+	if(g_doWarmup.integer == 2) 
+	{
+		if(!client->sess.firstTime && level.warmupTime < 0)
+		{
+			RPM_ReadyCheck(ent);
+		}
+	}
+	//Ryan
 
 	// perform once-a-second actions
 	ClientTimerActions( ent, msec );
@@ -1475,7 +1510,8 @@ void ClientEndFrame( gentity_t *ent )
 	// If the end of unit layout is displayed, don't give
 	// the player any normal movement attributes
 	//
-	if ( level.intermissiontime ) 
+	if ( level.intermissiontime || level.pause )
+	//Ryan
 	{
 		return;
 	}

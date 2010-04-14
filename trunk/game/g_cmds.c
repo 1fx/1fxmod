@@ -7,6 +7,158 @@
 
 int AcceptBotCommand(char *cmd, gentity_t *pl);
 
+void RPM_ReadyCheck (gentity_t *ent)
+{
+#ifdef _SOF2_BOTS
+	if (ent->r.svFlags & SVF_BOT)
+	{
+		if(!ent->client->pers.ready)
+		{
+			ent->client->pers.ready = 1;
+		}
+		return;
+	}
+#endif
+	if(level.time < ent->client->pers.readyMessageTime + 3000)
+	{
+		return;
+	}
+
+	if(g_doWarmup.integer == 2 && !ent->client->pers.ready)
+	{
+		trap_SendServerCommand( ent-g_entities, va("cp \"@You are not ready for the match\nPlease type ^1/ready ^7in console\n\""));
+		ent->client->pers.readyMessageTime = level.time;
+	}
+}
+
+void RPM_ReadyUp (gentity_t *ent)
+{
+	if(ent->client->pers.ready)
+	{
+		return;
+	}
+
+	if(level.warmupTime > -1)
+	{
+		return;
+	}
+
+	ent->client->pers.ready = 1;
+	trap_SendServerCommand( ent-g_entities, va("cp \"@ \n\"")); //send a blank message to clear the readyup message
+}
+/*
+================
+RPM_ReadyAll
+================
+*/
+void RPM_ReadyAll (void)
+{
+	int i;
+	gentity_t *ent;
+
+	for ( i = 0; i < level.numPlayingClients; i ++ )
+	{
+		ent = &g_entities[level.sortedClients[i]];
+		ent->client->pers.ready = 1;
+	}
+}
+
+/*
+=============
+RPM_Pause
+=============
+*/
+void RPM_Pause (gentity_t *adm)
+{
+	int			i;
+	gentity_t	*ent;
+//	gentity_t	*tent;
+
+	if ( level.intermissiontime || level.pause || level.intermissionQueued)
+	{
+		return;
+	}
+
+	level.pause = 6;
+
+	for (i=0 ; i< level.maxclients ; i++)
+	{
+		ent = g_entities + i;
+		if (!ent->inuse)
+		{
+			continue;
+		}
+		ent->client->ps.pm_type = PM_INTERMISSION;
+	}
+	// send the current scoring to all clients
+	SendScoreboardMessageToAllClients();
+
+	Boe_GlobalSound(G_SoundIndex("sound/misc/events/buzz02.wav"));
+/*	tent = G_TempEntity( vec3_origin, EV_GLOBAL_SOUND );
+	tent->s.eventParm = G_SoundIndex("sound/misc/events/buzz02.wav");
+	tent->r.svFlags = SVF_BROADCAST;
+*/
+}
+
+/*
+============
+RPM_Unpause
+============
+*/
+void RPM_Unpause (gentity_t *adm)
+{
+	int			i;
+	gentity_t	*ent;
+//	gentity_t	*tent;
+
+	if(!level.pause)
+	{
+		trap_SendServerCommand( adm-g_entities, va("print \"The game is not currently paused.\n\"") );
+		return;
+	}
+
+	if(level.time >= level.unpausetime + 1000)
+	{
+		level.unpausetime = level.time;
+		level.pause--;
+
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^1Resume ^7game in: %d ^4seconds", level.time + 2000, level.pause ) );
+
+		Boe_GlobalSound(G_SoundIndex("sound/misc/events/buzz02.wav"));
+/*		tent = G_TempEntity( vec3_origin, EV_GLOBAL_SOUND );
+		tent->s.eventParm = G_SoundIndex("sound/misc/events/buzz02.wav");
+		tent->r.svFlags = SVF_BROADCAST;
+*/
+		if(!level.pause)
+		{
+			level.unpausetime = 0;
+			
+			///RxCxW - 08.30.06 - 03:06pm #reset clients (scoreboard) display time
+			trap_SetConfigstring( CS_LEVEL_START_TIME, va("%i", level.startTime ) );
+			trap_SetConfigstring ( CS_GAMETYPE_TIMER, va("%i", level.gametypeRoundTime) );
+			///End  - 08.30.06 - 03:06pm
+
+			if( level.gametypeData->respawnType == RT_INTERVAL)
+			{
+				level.gametypeRespawnTime[TEAM_RED]  = level.time + g_respawnInterval.integer * 1000;
+				level.gametypeRespawnTime[TEAM_BLUE] = level.time + g_respawnInterval.integer * 1000;
+				level.gametypeRespawnTime[TEAM_FREE] = level.time + g_respawnInterval.integer * 1000;
+			}
+
+			for (i=0 ; i< level.maxclients ; i++)
+			{
+				ent = g_entities + i;
+				if (!ent->inuse)
+				{
+					continue;
+				}
+				ent->client->ps.pm_type = PM_NORMAL;
+			}
+			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@GO!", level.time + 2000) );
+		}
+	}
+}
+
 void RPM_Clan_Vs_All(gentity_t *adm)
 {
 	int		counts[TEAM_NUM_TEAMS] = {0};
@@ -208,8 +360,12 @@ void RPM_Obituary ( gentity_t *target, gentity_t *attacker, int mod, attackType_
 
 	//was the kill hit a HEADSHOT?
 	hitLocation = hitLocation & (~HL_DISMEMBERBIT);
-	if (hitLocation == HL_HEAD && statOk)
+	if (hitLocation == HL_HEAD)// && statOk)
 	{
+		//trap_SendServerCommand( -1, va("print \"^3[Debug]^7Headshot\n\""));
+		message3 = "{^3HeaDShoT^7}";
+		//Boe_ClientSound(attacker, G_SoundIndex("sound/npc/col8/blakely/niceshot.mp3"));
+		//trap_SendServerCommand( attacker->s.number, va("cp \"Headshot!\n\""));//g_headShotMessage.string));
 		headShot = qtrue;
 		//add to the total headshot count for this player
 		atrstat->headShotKills++;
@@ -263,7 +419,7 @@ void RPM_Obituary ( gentity_t *target, gentity_t *attacker, int mod, attackType_
 		}
 	}
 	// Play the frag sound, and make sure its not played more than every 250ms
-	if ( attacker->client && level.time - attacker->client->lastKillTime > 250 )
+	if ( attacker->client)// && level.time - attacker->client->lastKillTime > 250 )
 	{
 		//If the attacker killed themselves play the selffrag sound
 		if ( killer == targ )
@@ -285,12 +441,13 @@ void RPM_Obituary ( gentity_t *target, gentity_t *attacker, int mod, attackType_
 			//handle the sound etc...
 			if(attacker->client->sess.rpmClient)
 			{
-				trap_SendServerCommand( attacker->s.number, va("headshot \"%s\n\"", "Headshot"));//g_headShotMessage.string));
+				trap_SendServerCommand( attacker->s.number, va("headshot \"TEST\n\""));
+				Boe_ClientSound(attacker, G_SoundIndex("sound/npc/col8/blakely/niceshot.mp3"));
 			}
 			//if not we'll send them the sound etc..
 			else// if(g_allowDeathMessages.integer)
 			{
-				trap_SendServerCommand( attacker->s.number, va("cp \"%s\n\"", "Headshot"));//g_headShotMessage.string));
+				trap_SendServerCommand( attacker->s.number, va("cp \"Headshot\n\""));//g_headShotMessage.string));
 				Boe_ClientSound(attacker, G_SoundIndex("sound/npc/col8/blakely/niceshot.mp3"));
 			}
 			
@@ -300,7 +457,7 @@ void RPM_Obituary ( gentity_t *target, gentity_t *attacker, int mod, attackType_
 				//heashot message with the "you killed" message
 				if ( level.gametypeData->showKills )
 				{	
-					message2 = va("%s\n", "Headshot");//g_headShotMessage.string );
+					message2 = va("HEADSHOT\n");//g_headShotMessage.string );
 				}
 
 				//We'll tack this on to the end of the kill broadcast to all
@@ -1551,12 +1708,21 @@ void SetTeam( gentity_t *ent, char *s, const char* identity )
 	client->sess.spectatorClient = specClient;
 
 	// Always spawn into a ctf game using a respawn timer.
-	if ( team != TEAM_SPECTATOR && level.gametypeData->respawnType == RT_INTERVAL )
+	if(!level.pause)
 	{
-		G_SetRespawnTimer ( ent );
-		ghost = qtrue;
+		if ( team != TEAM_SPECTATOR && level.gametypeData->respawnType == RT_INTERVAL )
+		{
+			G_SetRespawnTimer ( ent );
+			ghost = qtrue;
+		}
 	}
-
+	//Ryan
+	//Ryan june 15 2003
+	if(!level.pause && !client->sess.firstTime)
+	{
+		BroadcastTeamChange( client, oldTeam );
+	}
+	//Ryan
 	BroadcastTeamChange( client, oldTeam );
 
 	// See if we should spawn as a ghost
@@ -2063,7 +2229,7 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 		type = "";
 
 	// Boe!Man 1/17/10: Admin Talk/Chat.
-	if(mode == ADM_TALK || mode == ADM_CHAT || mode == CADM_CHAT){
+	if(mode == ADM_TALK || mode == ADM_CHAT || mode == CADM_CHAT || mode == REF_TALK || mode == REF_CHAT){
 	star = va("%s", server_starprefix.string);
 	admin = "";
 	}else{
@@ -2083,6 +2249,14 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 	// Boe!Man 1/17/10: Different kinds of Talking 'Modes'.
 	switch(mode)
 	{
+	case REF_CHAT:
+		type = "^7Ref chat";
+		Boe_ClientSound(other, G_SoundIndex("sound/misc/menus/invalid.wav"));
+		break;
+	case REF_TALK:
+		type =  "^7Ref talk";
+		Boe_ClientSound(other, G_SoundIndex("sound/misc/menus/invalid.wav"));
+		break;
 	case ADM_CHAT:
 		type = server_acprefix.string;
 		Boe_ClientSound(other, G_SoundIndex("sound/misc/menus/invalid.wav"));
@@ -2980,6 +3154,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 				g_disablenades.integer = 0;
 				trap_Cvar_Set("g_disablenades", "0");
 				trap_Cvar_Set("g_availableweapons", "200200002200000000200");
+				strcpy(g_availableWeapons.string,"200200002200000000200"); // trap_cvar_set is latched?
 				BG_SetAvailableOutfitting(g_availableWeapons.string);
 				for(i=0;i<=level.numConnectedClients;i++){
 				level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
@@ -2993,6 +3168,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 				trap_Cvar_Set("g_disablenades", "1");
 				// change g_available
 				trap_Cvar_Set("g_availableweapons", "200200002200000000000");
+				strcpy(g_availableWeapons.string, "200200002200000000000"); //trap_cvar_set is latched?
 				BG_SetAvailableOutfitting(g_availableWeapons.string);
 				for(i=0;i<=level.numConnectedClients;i++){
 				level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
@@ -3069,9 +3245,10 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			for(i=0;i<=level.numConnectedClients;i++){
 			level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
 			G_UpdateOutfitting(g_entities[level.sortedClients[i]].s.number);
+			}
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sR%se%sa%sl %sd%samage!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Real damage by %s.\n\"", ent->client->pers.netname));
-			}
+			
 		}else if (ent->client->sess.admin < 4){
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
 		}
@@ -3085,9 +3262,9 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			for(i=0;i<=level.numConnectedClients;i++){
 			level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
 			G_UpdateOutfitting(g_entities[level.sortedClients[i]].s.number);
+			}
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sN%so%sr%sm%sa%sl damage!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Normal damage by %s.\n\"", ent->client->pers.netname));
-			}
 		}else if (ent->client->sess.admin < 4){
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
 		}
@@ -3107,9 +3284,33 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		}
 		G_Say( ent, NULL, mode, p);
 		return;
-	}else if(strstr(lwrP, "!cv")){
+	}else if(strstr(lwrP, "!cva")){
 		if (ent->client->sess.admin >= 4){
 			RPM_Clan_Vs_All(ent);
+		}else if (ent->client->sess.admin < 4){
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
+		}
+		G_Say( ent, NULL, mode, p);
+		return;
+	}
+	else if(strstr(lwrP, "!st") || strstr(lwrP, "!swapteams")){
+		if (ent->client->sess.admin >= 4){
+			Boe_SwapTeams(ent);
+		}else if (ent->client->sess.admin < 4){
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
+		}
+		G_Say( ent, NULL, mode, p);
+		return;
+	}
+	else if(strstr(lwrP, "!l ") || strstr(lwrP, "!lock ")){
+		if (ent->client->sess.admin >= 4){
+			if(strstr(lwrP, "b") || strstr(lwrP, "blue")){
+				RPM_lockTeam(ent, qfalse, "b");
+			}else if(strstr(lwrP, "r") || strstr(lwrP, "red")){
+				RPM_lockTeam(ent, qfalse, "r");
+			}else if(strstr(lwrP, "s") || strstr(lwrP, "spec")){
+				RPM_lockTeam(ent, qfalse, "s");
+			}
 		}else if (ent->client->sess.admin < 4){
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
 		}
@@ -4104,6 +4305,12 @@ void ClientCommand( int clientNum ) {
 		RPM_UpdateTMI();
 	else if (Q_stricmp (cmd, "refresh") == 0)
 		RPM_Refresh( ent );
+	else if (Q_stricmp (cmd, "ready") == 0)
+		RPM_ReadyUp( ent );
+	else if (Q_stricmp (cmd, "tcmd") == 0)
+		RPM_Tcmd( ent );
+	else if (Q_stricmp (cmd, "ref") == 0)
+		RPM_ref_cmd( ent );
 #ifdef _SOF2_BOTS
 	else if (Q_stricmp (cmd, "addbot") == 0)
 		trap_SendServerCommand( clientNum, va("print \"ADDBOT command can only be used via RCON\n\"" ) );

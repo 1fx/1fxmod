@@ -143,6 +143,8 @@ vmCvar_t	g_allowthirdperson;
 vmCvar_t	g_weaponswitch;
 vmCvar_t	g_compMode;	
 vmCvar_t	g_clanfile;
+vmCvar_t	g_enableTeamCmds;
+vmCvar_t	g_refpassword;
 
 static cvarTable_t gameCvarTable[] = 
 {
@@ -310,7 +312,9 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_instagib, "g_instagib", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 	{ &g_weaponModFlags, "g_weaponModFlags", "3", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_allowthirdperson, "g_allowThirdPerson", "1", CVAR_ARCHIVE|CVAR_SERVERINFO, 0.0, 0.0, 0,  qfalse },
-	{ &g_compMode, "g_compMode", "0", CVAR_ARCHIVE|CVAR_SERVERINFO, 0.0, 0.0, 0, qtrue  },
+	{ &g_compMode, "g_compMode", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
+	{ &g_enableTeamCmds, "g_enableTeamCmds", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
+	{ &g_refpassword, "g_refpassword", "none", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 /*
 	switch (g_weaponModFlags.integer){
 		case AMMO_MOD: 0x1
@@ -1053,7 +1057,8 @@ void CalculateRanks( void )
 	CheckExitRules();
 
 	// if we are at the intermission, send the new info to everyone
-	if ( level.intermissiontime ) 
+	if ( level.intermissiontime || level.pause)
+	//Ryan
 	{
 		SendScoreboardMessageToAllClients();
 	}
@@ -1584,69 +1589,98 @@ void CheckExitRules( void )
 	}
 }
 
-/*
-=============
-CheckWarmup
-=============
-*/
-void CheckWarmup ( void ) 
+void CheckWarmup ( void )
 {
 	int			counts[TEAM_NUM_TEAMS];
 	qboolean	notEnough = qfalse;
 
 	// check because we run 3 game frames before calling Connect and/or ClientBegin
 	// for clients on a map_restart
-	if ( level.numPlayingClients == 0 ) 
+	if ( level.numPlayingClients == 0 )
 	{
 		return;
 	}
 
-	if ( !level.warmupTime  ) 
+	if ( !level.warmupTime  )
 	{
 		return;
 	}
 
-	if ( level.gametypeData->teams ) 
+	//Ryan   if there are any players that are not ready do no start the warmup countdown untill they are
+	if (g_doWarmup.integer == 2 && level.warmupTime < 0)
+	{
+		int		i, ready = 0;
+
+		for ( i = 0; i < level.numPlayingClients; i ++ )
+		{
+			if (g_entities[level.sortedClients[i]].client->sess.team == TEAM_SPECTATOR)
+			{
+				continue;
+			}
+
+			if ( g_entities[level.sortedClients[i]].client->pers.connected != CON_CONNECTED )
+			{
+				continue;
+			}
+
+			if (!g_entities[level.sortedClients[i]].client->pers.ready)
+			{
+				continue;
+			}
+
+			ready++;
+		}
+	}
+	//Ryan
+
+	if ( level.gametypeData->teams )
 	{
 		counts[TEAM_BLUE] = TeamCount( -1, TEAM_BLUE, NULL );
 		counts[TEAM_RED] = TeamCount( -1, TEAM_RED, NULL );
 
-		if (counts[TEAM_RED] < 1 || counts[TEAM_BLUE] < 1) 
+		if (counts[TEAM_RED] < 1 || counts[TEAM_BLUE] < 1)
 		{
 			notEnough = qtrue;
 		}
-	} 
-	else if ( level.numPlayingClients < 2 ) 
+	}
+	else if ( level.numPlayingClients < 2 )
 	{
 		notEnough = qtrue;
 	}
 
-	if ( notEnough ) 
+	//Ryan if only 1 player and the swap_teams vote passes let it execute
+	if(level.swapteams)
 	{
-		if ( level.warmupTime != -1 ) 
+		notEnough = qfalse;
+	}
+	//Ryan
+
+	if ( notEnough )
+	{
+		if ( level.warmupTime != -1 )
 		{
 			level.warmupTime = -1;
 			trap_SetConfigstring( CS_WARMUP, va("%i", level.warmupTime) );
 			G_LogPrintf( "Warmup:\n" );
 		}
-		
+
 		return; // still waiting for team members
 	}
 
-	if ( level.warmupTime == 0 ) 
+	if ( level.warmupTime == 0 )
 	{
 		return;
 	}
 
 	// if the warmup is changed at the console, restart it
-	if ( g_warmup.modificationCount != level.warmupModificationCount ) 
+	if ( g_warmup.modificationCount != level.warmupModificationCount )
 	{
 		level.warmupModificationCount = g_warmup.modificationCount;
 		level.warmupTime = -1;
 	}
 
 	// if all players have arrived, start the countdown
-	if ( level.warmupTime < 0 ) 
+	if ( level.warmupTime < 0 )
 	{
 		// fudge by -1 to account for extra delays
 		level.warmupTime = level.time + ( g_warmup.integer - 1 ) * 1000;
@@ -1655,7 +1689,7 @@ void CheckWarmup ( void )
 	}
 
 	// if the warmup time has counted down, restart
-	if ( level.time > level.warmupTime ) 
+	if ( level.time > level.warmupTime )
 	{
 		level.warmupTime += 10000;
 		trap_Cvar_Set( "g_restarted", "1" );
@@ -1814,6 +1848,20 @@ void G_RunFrame( int levelTime )
 	level.previousTime = level.time;
 	level.time = levelTime;
 	msec = level.time - level.previousTime;
+
+	if(level.pause)
+	{
+		///RxCxW - 08.30.06 - 03:33pm #paused - add to level.startTime so pausing wont take away from timelimit
+		level.startTime += msec;
+		if(level.gametypeRoundTime)
+			level.gametypeRoundTime += msec;
+		///End  - 08.30.06 - 03:34pm
+
+		if(level.unpausetime)
+		{
+			RPM_Unpause(NULL);
+		}
+	}
 
 	// get any cvar changes
 	G_UpdateCvars();

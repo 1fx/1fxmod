@@ -158,7 +158,7 @@ void Boe_adm_f ( gentity_t *ent )
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   p   pop          <id>          ^7[^3Pop a player^7]\n\"", g_pop.integer));
 		}
 	if (adm >= g_strip.integer && g_strip.integer != 5){
-		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   st  strip        <id>          ^7[^3Remove weapons from a player^7]\n\"", g_strip.integer));
+		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   s  strip        <id>          ^7[^3Remove weapons from a player^7]\n\"", g_strip.integer));
 		}
 	if (adm >= g_mute.integer && g_mute.integer != 5){
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   m   mute         <id>          ^7[^3Mute a player^7]\n\"", g_mute.integer));
@@ -434,6 +434,26 @@ void Boe_adm_f ( gentity_t *ent )
 		return;
 	}
 	else if ((!Q_stricmp ( arg1, "forceteam" )) && ent->client->sess.admin < g_forceteam.integer) {
+		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\"", arg1));
+		return;
+	}
+	if ((!Q_stricmp ( arg1, "swapteams" )) && ent->client->sess.admin >= 4) {
+		Boe_SwapTeams(ent);
+	}else if ((!Q_stricmp ( arg1, "swapteams" )) && ent->client->sess.admin < 4) {
+		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\"", arg1));
+		return;
+	}
+
+	if ((!Q_stricmp ( arg1, "lock" )) && ent->client->sess.admin >= 4) {
+		RPM_lockTeam(ent, qfalse, arg2);
+	}else if ((!Q_stricmp ( arg1, "lock" )) && ent->client->sess.admin < 4) {
+		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\"", arg1));
+		return;
+	}
+
+	if ((!Q_stricmp ( arg1, "unlock" )) && ent->client->sess.admin >= 4) {
+		RPM_lockTeam(ent, qfalse, arg2);
+	}else if ((!Q_stricmp ( arg1, "unlock" )) && ent->client->sess.admin < 4) {
 		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\"", arg1));
 		return;
 	}
@@ -1845,4 +1865,119 @@ void Boe_dev_f ( gentity_t *ent )
 		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Unknown command %s. Usage: dev <command>\n\"", arg1));
 		return;
 	}
+}
+
+void Boe_SwapTeams(gentity_t *adm)
+{
+	int		i;
+	///RxCxW - 04.22.05 - 02:56am - #swapScore
+	int		rs = level.teamScores[TEAM_RED];
+	int		bs = level.teamScores[TEAM_BLUE];
+	int		rl = level.redLocked;
+	int		bl = level.blueLocked;
+	char	score[2];
+	///End  - 04.22.05 - 02:57am
+
+	clientSession_t	*sess;
+	gentity_t *ent, *find;
+
+	if(!level.gametypeData->teams) {
+		if(adm && adm->client) {
+			trap_SendServerCommand( adm - g_entities, va("print \"Not playing a team game.\n\"") );
+			} else {
+			Com_Printf("Not playing a team game.\n");}
+		return;
+	}
+
+	/// used to swap scores (or not)
+	if(adm && adm->client) trap_Argv( 2, score, sizeof( score ) );
+	else trap_Argv( 1, score, sizeof( score ) );
+
+	for(i = 0; i < level.numConnectedClients; i++){
+		ent = &g_entities[level.sortedClients[i]];
+		sess = &ent->client->sess;
+		
+		///Do the team changing
+		if (ent->client->sess.team == TEAM_SPECTATOR)	    continue;
+		if (ent->client->pers.connected != CON_CONNECTED )	continue;
+
+
+		/// drop any gt items they might have
+		if(ent->s.gametypeitems > 0){
+				G_DropGametypeItems ( ent, 0 );
+		}
+
+		///01.24.06e - 07:42pm - remove their weapons
+		///and set them as a ghost
+		ent->client->ps.stats[STAT_WEAPONS] = 0;
+		TossClientItems( ent );
+		G_StartGhosting( ent );
+		///End  - 01.24.06 - 07:43pm
+
+		if (ent->client->sess.team == TEAM_RED) 	   ent->client->sess.team = TEAM_BLUE;
+		else if(ent->client->sess.team == TEAM_BLUE)   ent->client->sess.team = TEAM_RED;
+
+		///Take care of the bots
+		if (ent->r.svFlags & SVF_BOT){
+			char	userinfo[MAX_INFO_STRING];
+			trap_GetUserinfo( ent->s.number, userinfo, sizeof( userinfo ) );
+			Info_SetValueForKey( userinfo, "team", sess->team == TEAM_RED?"red":"blue");
+			trap_SetUserinfo( ent->s.number, userinfo );
+		}
+		
+		///Prepare the clients for team change then repawn
+		///01.24.06 - 07:43pm
+		ent->client->pers.identity = NULL;
+		ClientUserinfoChanged( ent->s.number);		
+		CalculateRanks();
+
+		G_StopFollowing( ent );
+		G_StopGhosting( ent );
+		trap_UnlinkEntity ( ent );
+		ClientSpawn( ent);
+
+		///ent->client->pers.identity = NULL;
+		///ClientUserinfoChanged( ent->s.number );
+		///ent->client->sess.ghost = qfalse;
+		///ClientBegin( ent->s.number, qfalse );
+		///End  - 01.24.06 - 07:45pm
+	}
+
+	///Reset #Gametype Item
+	find = NULL;
+	while ( NULL != (find = G_Find ( find, FOFS(classname), "gametype_item" ) ) ){
+		G_ResetGametypeItem ( find->item );	
+	}
+	
+	///04.22.05 - 02:44am - swap scores & locks
+	if (!score[0]){
+	level.teamScores[TEAM_BLUE] = rs;
+	level.teamScores[TEAM_RED] = bs;
+	}
+	level.redLocked = bl;
+	level.blueLocked = rl;
+	///End  - 04.22.05 - 02:45am
+
+	///Enable roundtime for Gametypes w/out respawn intervals	
+	if (level.gametypeData->respawnType != RT_INTERVAL ){
+		level.gametypeDelayTime = level.time + g_roundstartdelay.integer * 1000;
+		level.gametypeRoundTime = level.time + (g_roundtimelimit.integer * 60000);
+		if ( level.gametypeDelayTime != level.time ){
+			trap_SetConfigstring ( CS_GAMETYPE_TIMER, va("%i", level.gametypeRoundTime) );
+		}
+	}
+	///Tell Everyone what happend
+	trap_SendServerCommand( -1, va("cp \"^_**^7Admin Action^_**\n^3Swap Teams\n\"") );
+	Boe_GlobalSound(G_SoundIndex("sound/misc/events/tut_lift02.mp3"));
+	
+	///RxCxW - 02.26.05 - 02:59am #adminLog	
+	if(adm && adm->client) {
+		trap_SendServerCommand( -1, va("print \"^3Swap Teams ^7- ^3%s\n\"", adm->client->pers.netname));
+		//SC_adminLog (va("%s - SwapTeams", adm->client->pers.cleanName )) ;
+	} else	{
+		trap_SendServerCommand( -1, va("print \"^3Swap Teams ^7- ^6Admin\n\""));
+		//SC_adminLog (va("%s - SwapTeams", "RCON" )) ;
+	}
+	///End  - 02.26.05 - 02:59am
+	///CalculateRanks();
 }

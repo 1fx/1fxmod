@@ -556,6 +556,72 @@ qboolean G_ParseGametypeFile ( void )
 	return qtrue;
 }
 
+/*G_EnableGametypeItemPickup
+
+Drops all of the gametype items held by the player
+=================
+*/
+void G_EnableGametypeItemPickup ( gentity_t* ent )
+{
+	ent->s.eFlags &= ~EF_NOPICKUP;
+}
+
+/*
+=================
+G_DropGametypeItems
+
+Drops all of the gametype items held by the player
+=================
+*/
+void G_DropGametypeItems ( gentity_t* self, int delayPickup )
+{
+	float		angle;
+	int			i;
+	gentity_t	*drop;
+	gitem_t		*item;
+
+	// drop all custom gametype items
+	angle = 0;
+	for ( i = 0 ; i < MAX_GAMETYPE_ITEMS ; i++ ) 
+	{
+		// skip this gametype item if the client doenst have it
+		if ( !(self->client->ps.stats[STAT_GAMETYPE_ITEMS] & (1<<i)) ) 
+		{
+			continue;
+		}
+
+		item = BG_FindGametypeItem ( i );
+		if ( !item ) 
+		{
+			continue;
+		}
+
+		drop = G_DropItem( self, item, angle );
+		drop->count = 1;
+		angle += 45;
+
+		if ( delayPickup )
+		{
+			drop->nextthink = level.time + delayPickup;	
+			drop->s.eFlags |= EF_NOPICKUP;
+			drop->think = G_EnableGametypeItemPickup;
+		}
+		
+		// TAke it away from the client just in case
+		self->client->ps.stats[STAT_GAMETYPE_ITEMS] &= ~(1<<i);
+
+		if ( self->enemy && self->enemy->client && !OnSameTeam ( self->enemy, self ) )
+		{	//05.07.05 - 07:15pm
+			//trap_GT_SendEvent ( GTEV_ITEM_DEFEND, level.time, level.gametypeItems[item->giTag].id, self->enemy->s.clientNum, self->enemy->client->sess.team, 0, 0  );
+			trap_GT_SendEvent ( GTEV_ITEM_DEFEND, level.time, item->quantity, self->enemy->s.clientNum, self->enemy->client->sess.team, 0, 0  );
+			//End  - 05.07.05 - 07:15pm
+		}
+	}
+
+	self->client->ps.stats[STAT_GAMETYPE_ITEMS] = 0;
+}
+//End - 02.03.05 - 11:31am
+
 /*
 =================
 CheckGametype
@@ -573,7 +639,8 @@ void CheckGametype ( void )
 	char color6[64];
 
 	// If the level is over then forget checking gametype stuff.
-	if ( level.intermissiontime )
+	if ( level.intermissiontime || level.pause )
+	//End Ryan
 	{
 		return;
 	}
@@ -733,7 +800,7 @@ int G_GametypeCommand ( int cmd, int arg0, int arg1, int arg2, int arg3, int arg
 			G_Voice ( &g_entities[arg0], NULL, SAY_TEAM, (const char*) arg1, qfalse );
 			break;
 
-		case GTCMD_REGISTERSOUND:
+		case GTCMD_REGISTERGLOBALSOUND:
 			return G_SoundIndex ( (char*) arg0 );
 
 		case GTCMD_STARTGLOBALSOUND:

@@ -931,7 +931,11 @@ void G_UpdateOutfitting ( int clientNum )
 	// Stuff which grenade is being used into stats for later use by
 	// the backpack code
 	client->ps.ammo[weaponData[WP_KNIFE].attack[ATTACK_NORMAL].ammoIndex]=weaponData[WP_KNIFE].attack->extraClips;
-	client->ps.stats[STAT_OUTFIT_GRENADE] = bg_itemlist[bg_outfittingGroups[OUTFITTING_GROUP_GRENADE][client->pers.outfitting.items[OUTFITTING_GROUP_GRENADE]]].giTag;
+	if(g_disablenades.integer == 0){
+		client->ps.stats[STAT_OUTFIT_GRENADE] = bg_itemlist[bg_outfittingGroups[OUTFITTING_GROUP_GRENADE][3]].giTag;
+	}else{
+		client->ps.stats[STAT_OUTFIT_GRENADE] = bg_itemlist[bg_outfittingGroups[OUTFITTING_GROUP_GRENADE][client->pers.outfitting.items[OUTFITTING_GROUP_GRENADE]]].giTag;
+	}
 }
 
 
@@ -1738,6 +1742,11 @@ void ClientSpawn(gentity_t *ent)
 	{
 		MoveClientToIntermission( ent );
 	} 
+
+	if(level.pause)
+	{
+		ent->client->ps.pm_type = PM_INTERMISSION;
+	}
 
 	// run a client frame to drop exactly to the floor,
 	// initialize animations and other things

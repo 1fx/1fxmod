@@ -302,6 +302,9 @@ typedef struct
 	char				boe_id[MAX_BOE_ID];
 	char				ip[MAX_IP];
 	qboolean			planted;					// As soon a player gets planted, this is set to qtrue, to avoid further plants/unplant a non-planted player.
+	int					ready;
+	int					readyMessageTime;			// used for displaying the please ready up message every 3 seconds
+
 
 } clientPersistant_t;
 
@@ -549,6 +552,13 @@ typedef struct
 	int			redLocked;				// when set to 1 no one will be allowed to join team
 	int			blueLocked;
 	int			specsLocked;
+
+	int			redtimeouts;
+	int			bluetimeouts;
+	int			timeout;
+	qboolean	swapteams;
+	int			pause; // when 1 all players in intermission type state
+	int			unpausetime;			// time for the restart countdown sequence
 
 } level_locals_t;
 
@@ -956,6 +966,8 @@ extern  vmCvar_t	g_allowthirdperson;
 extern  vmCvar_t	g_weaponswitch;
 extern	vmCvar_t	g_compMode;
 extern  vmCvar_t	g_clanfile;
+extern  vmCvar_t	g_enableTeamCmds;
+extern  vmCvar_t	g_refpassword;
 extern	vmCvar_t	g_forceFollow;
 extern	vmCvar_t	g_followEnemy;
 extern  vmCvar_t	g_mapcycle;
@@ -1212,3 +1224,17 @@ void RPM_UpdateTMI(void);
 void	RPM_Obituary( gentity_t *target, gentity_t *attacker, int mod, attackType_t attack, int hitLocation);
 
 void	RPM_UpdateLoadScreenMessage (void);
+void	RPM_ReadyCheck (gentity_t *ent);
+void	RPM_Tcmd ( gentity_t *ent );
+void	RPM_ReadyTeam(gentity_t *ent, qboolean referee, char *team);
+void	RPM_TeamInfo (gentity_t *ent, char *team);
+void	RPM_lockTeam(gentity_t *ent, qboolean referee, char *team);
+void	RPM_ref_cmd( gentity_t *ent);
+void	RPM_Invite_Spec(gentity_t *ent, char *arg2);
+void	RPM_Team_Reset(gentity_t *ent, qboolean referee, char *team);
+void	RPM_Timeout(gentity_t *ent, qboolean referee);
+void	RPM_Timein (gentity_t *ent);
+void	RPM_ReadyAll (void);
+void	RPM_Pause (gentity_t *adm);
+void	RPM_Unpause (gentity_t *adm);
+
