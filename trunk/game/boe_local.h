@@ -5,10 +5,10 @@
 //==================================================================
 
 // Boe!Man 3/30/10
-#define INF_VERSION_STRING "0.15"
+#define INF_VERSION_STRING "0.16t"
 #define INF_STRING "1fx. Mod"
-#define INF_VERSION_STRING_COLORED "^71fx^1. ^3Infiltration"
-#define INF_VERSION_DATE "4/14/10"
+#define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod"
+#define INF_VERSION_DATE "4/15/10"
 
 
 // Infiltration
@@ -116,7 +116,20 @@ extern	vmCvar_t	server_redteamprefix;
 extern	vmCvar_t	server_blueteamprefix;
 
 // Boe!Man 4/5/10
-extern	vmCvar_t	g_scorelimit;
+// EMPTY
+
+// Boe!Man 4/15/10
+extern	vmCvar_t	g_nolower;
+extern	vmCvar_t	g_nades;
+extern	vmCvar_t	g_sl;
+extern	vmCvar_t	g_tl;
+extern	vmCvar_t	g_respawninterval;
+extern	vmCvar_t	g_damage;
+extern	vmCvar_t	g_gr;
+extern	vmCvar_t	g_clanvsall;
+extern	vmCvar_t	g_swapteams;
+extern	vmCvar_t	g_lock;
+extern	vmCvar_t	g_clan;
 
 //==============================================
 // boe_utils.c

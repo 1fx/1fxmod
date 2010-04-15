@@ -197,14 +197,14 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 			{
 				case TEAM_RED:
 					trap_Cvar_VariableStringBuffer ( "server_redteamprefix", msg, MAX_QPATH );
-					trap_Cmd_TextMessage ( -1, va("%s ^7team eliminated!", msg ) );
+					trap_Cmd_TextMessage ( -1, va("@%s ^7team eliminated!", msg ) );
 					trap_Cmd_AddTeamScore ( TEAM_BLUE, 1 );
 					trap_Cmd_Restart ( 5 );
 					break;
 
 				case TEAM_BLUE:
 					trap_Cvar_VariableStringBuffer ( "server_blueteamprefix", msg, MAX_QPATH );
-					trap_Cmd_TextMessage ( -1, va("%s ^7team eliminated!", msg ) );
+					trap_Cmd_TextMessage ( -1, va("@%s ^7team eliminated!", msg ) );
 					trap_Cmd_AddTeamScore ( TEAM_RED, 1 );
 					trap_Cmd_Restart ( 5 );
 					break;

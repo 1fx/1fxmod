@@ -146,6 +146,19 @@ vmCvar_t	g_clanfile;
 vmCvar_t	g_enableTeamCmds;
 vmCvar_t	g_refpassword;
 
+// Boe!Man 4/15/10: Some level commands (Admin).
+vmCvar_t	g_nolower;
+vmCvar_t	g_nades;
+vmCvar_t	g_sl;
+vmCvar_t	g_tl;
+vmCvar_t	g_respawninterval;
+vmCvar_t	g_damage;
+vmCvar_t	g_gr;
+vmCvar_t	g_clanvsall;
+vmCvar_t	g_swapteams;
+vmCvar_t	g_lock;
+vmCvar_t	g_clan;
+
 static cvarTable_t gameCvarTable[] = 
 {
 	// don't override the cheat state set by the system
@@ -281,8 +294,19 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_eventeams,					"g_eventeams",			"2",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_333,						"g_333",				"3",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_forceteam,					"g_forceteam",			"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
-	//{ &g_scorelimit,				"g_scorelimit",			"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
-	// @ BERTMAN DO NOT USE G_SCORELIMIT & G_TIMELIMIT(SOF2 ALREADY USES THOSE)
+	{ &g_nolower,					"g_nolower",			"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
+	{ &g_nades,						"g_nades",				"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
+	{ &g_sl,						"g_sl",					"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
+	{ &g_tl,						"g_tl",					"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
+	{ &g_respawninterval,			"g_respawninterval",	"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
+	{ &g_gr,						"g_gr",					"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
+	{ &g_clanvsall,					"g_clanvsall",			"3",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
+	{ &g_swapteams,					"g_swapteams",			"3",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
+	{ &g_lock,						"g_lock",				"3",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
+	{ &g_clan,						"g_clan",				"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
+
+
+
 	{ &g_banlist,			"g_banlist",			"users/bans.txt",			CVAR_ARCHIVE,	0.0,	0.0,	0, qfalse  },
 	{ &g_subnetbanlist,		"g_subnetbanlist",		"users/subnetbans.txt",		CVAR_ARCHIVE,	0.0,	0.0,	0, qfalse  },
 	{ &g_clanfile,			"g_clanfile",			"users/clanmembers.txt",	CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  },
