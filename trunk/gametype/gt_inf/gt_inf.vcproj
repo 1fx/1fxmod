@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="gt_inf"
 	ProjectGUID="{70330A3B-09C9-4850-B13B-FB7B0E4CA000}"
 	TargetFrameworkVersion="0"

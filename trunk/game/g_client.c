@@ -866,9 +866,9 @@ void G_UpdateOutfitting ( int clientNum )
 		}
 
 		// Henk 06/04/10 -> Disable nades outfitting
-		//if(group == 3 && g_disablenades.integer == 1){
-		//	continue; // start loop again(at group == 5)
-		//}
+		if(group == 3 && g_disablenades.integer == 1){
+			continue; // start loop again(at group == 5)
+		}
 		// End
 
 		// Grab the item that represents the weapon

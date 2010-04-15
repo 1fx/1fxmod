@@ -408,9 +408,9 @@ int vmMain( int command, int arg0, int arg1, int arg2, int arg3, int arg4, int a
 	return -1;
 }
 
-void trap_SendServerCommand( int clientNum, const char *text ) {
+/*void trap_SendServerCommand( int clientNum, const char *text ) {
 	trap_SendServerCommand2(clientNum, text);
-}
+}*/
 
 /*
 ================
@@ -804,7 +804,6 @@ void G_ShutdownGame( int restart )
 	{
 		G_LogPrintf("ShutdownGame:\n" );
 		G_LogPrintf("------------------------------------------------------------\n" );
-		trap_SendConsoleCommand( EXEC_APPEND, va("map mp_shop\n")); // reboot after crash
 		trap_FS_FCloseFile( level.logFile );
 	}
 	

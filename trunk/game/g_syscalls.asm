@@ -19,7 +19,7 @@ equ trap_Cvar_VariableStringBuffer			  -8	; G_CVAR_VARIABLE_STRING_BUFFER
 equ trap_LocateGameData						 -16	; G_LOCATE_GAME_DATA 
 equ trap_RMG_Init							 -18	; G_RMG_INIT 
 equ trap_DropClient							 -19	; G_DROP_CLIENT 
-equ trap_SendServerCommand2					 -20	; G_SEND_SERVER_COMMAND 
+equ trap_SendServerCommand					 -20	; G_SEND_SERVER_COMMAND 
 equ trap_SetConfigstring					 -21	; G_SET_CONFIGSTRING 
 equ trap_GetConfigstring					 -22	; G_GET_CONFIGSTRING 
 equ trap_GetUserinfo						 -23	; G_GET_USERINFO 
@@ -244,6 +244,7 @@ equ trap_GT_RunFrame						-636	; G_GT_RUNFRAME
 equ trap_GT_Start							-637	; G_GT_START 
 equ trap_GT_SendEvent						-638	; G_GT_SENDEVENT 
 
+
 ; hardcoded functions
 equ memset									-101	; G_MEMSET 
 equ memcpy									-102	; G_MEMCPY 
@@ -259,4 +260,3 @@ equ floor									-110	; G_FLOOR
 equ ceil									-111	; G_CEIL 
 equ acos									-114	; G_ACOS 
 equ asin									-115	; G_ASIN 
-
