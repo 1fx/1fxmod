@@ -6,9 +6,9 @@
 
 // Boe!Man 3/30/10
 #define INF_VERSION_STRING "0.15"
-#define INF_STRING "1fx. Infiltration"
+#define INF_STRING "1fx. Mod"
 #define INF_VERSION_STRING_COLORED "^71fx^1. ^3Infiltration"
-#define INF_VERSION_DATE "4/12/10"
+#define INF_VERSION_DATE "4/14/10"
 
 
 // Infiltration
@@ -25,7 +25,7 @@
 // Infiltration 0.02	Alpha				3/31/10
 // Infiltration 0.05	Beta				4/4/10	
 // Infiltration 0.10	Beta				4/7/10
-// Infiltration 0.15	Release				4/12/10
+// Mod			0.15	Release				4/14/10
 
 //===================================================================
 
