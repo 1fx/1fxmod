@@ -3147,6 +3147,8 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 				SetTeam( &g_entities[id], "b", NULL );
 			}else if(strstr(p, "r")){
 				SetTeam( &g_entities[id], "r", NULL );
+			}else if(strstr(p, "s")){
+				SetTeam( &g_entities[id], "s", NULL );
 			}
 		}
 		else if (ent->client->sess.admin < g_forceteam.integer){
