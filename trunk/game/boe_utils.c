@@ -821,6 +821,9 @@ void Boe_Players (gentity_t *ent)
 	char admin1;
 	char admin2;
 	char admin3;
+	char clan1;
+	char clan2;
+	char clan3;
 	char color;
 	char *column = "";
 	char column1[3];
@@ -905,6 +908,16 @@ void Boe_Players (gentity_t *ent)
 			admin2 = ' ';
 			admin3 = ' ';
 		}
+
+		if(level.clients[i].sess.clanMember == qtrue){
+			clan1 = '[';
+			clan2 = 'C';
+			clan3 = ']';
+		}else{
+			clan1 = ' ';
+			clan2 = ' ';
+			clan3 = ' ';
+		}
 		switch ( level.clients[i].sess.team )
 		{
 			case TEAM_RED:
@@ -930,16 +943,16 @@ void Boe_Players (gentity_t *ent)
 			mute2 = ' ';
 			mute3 = ' ';
 		}
-		if(level.clients[i].sess.boemodClient >= 0.1){
+		if(level.clients[i].sess.rpmClient >= 0.1){
 		client = qtrue;
 		client0 = '[';
-		client1 = level.clients[i].sess.boemodClient;
+		client1 = level.clients[i].sess.rpmClient;
 		client2 = ']';
 		}
 		else{
 		client = qfalse;
 		}
-		trap_SendServerCommand( ent-g_entities, va("print \"[^3%d^7]%s[^%c%s^7]%s[^3%d^7]%s[^3%s^7] %c^3%c^7%c     %c^3%c^7%c \"", // c = single character
+		trap_SendServerCommand( ent-g_entities, va("print \"[^3%d^7]%s[^%c%s^7]%s[^3%d^7]%s[^3%s^7] %c^3%c^7%c %c^3%c^7%c %c^3%c^7%c \"", // c = single character
 		i,
 		column1,
 		color,
@@ -951,9 +964,9 @@ void Boe_Players (gentity_t *ent)
 		admin1,
 		admin2,
 		admin3,
-		//clan1,
-		//clan2,
-		//clan3,
+		clan1,
+		clan2,
+		clan3,
 		mute1,
 		mute2,
 		mute3));

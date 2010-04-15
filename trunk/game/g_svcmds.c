@@ -631,7 +631,7 @@ qboolean ConsoleCommand( void )
 
 	if ((Q_stricmp (cmd, "lock" ) == 0 ))
 	{
-		RPM_lockTeam(NULL, qfalse, ConcatArgs(1) );
+		RPM_lockTeam(NULL, qtrue, ConcatArgs(1) );
 		return qtrue;
 	}
 	if (g_dedicated.integer) 

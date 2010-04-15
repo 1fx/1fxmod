@@ -445,14 +445,14 @@ void Boe_adm_f ( gentity_t *ent )
 	}
 
 	if ((!Q_stricmp ( arg1, "lock" )) && ent->client->sess.admin >= 4) {
-		RPM_lockTeam(ent, qfalse, arg2);
+		RPM_lockTeam(ent, qtrue, arg2);
 	}else if ((!Q_stricmp ( arg1, "lock" )) && ent->client->sess.admin < 4) {
 		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\"", arg1));
 		return;
 	}
 
 	if ((!Q_stricmp ( arg1, "unlock" )) && ent->client->sess.admin >= 4) {
-		RPM_lockTeam(ent, qfalse, arg2);
+		RPM_lockTeam(ent, qtrue, arg2);
 	}else if ((!Q_stricmp ( arg1, "unlock" )) && ent->client->sess.admin < 4) {
 		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\"", arg1));
 		return;

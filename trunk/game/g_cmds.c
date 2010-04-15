@@ -3339,11 +3339,11 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	else if(strstr(lwrP, "!l ") || strstr(lwrP, "!lock ")){
 		if (ent->client->sess.admin >= 4){
 			if(strstr(lwrP, "b") || strstr(lwrP, "blue")){
-				RPM_lockTeam(ent, qfalse, "b");
+				RPM_lockTeam(ent, qtrue, "blue");
 			}else if(strstr(lwrP, "r") || strstr(lwrP, "red")){
-				RPM_lockTeam(ent, qfalse, "r");
+				RPM_lockTeam(ent, qtrue, "red");
 			}else if(strstr(lwrP, "s") || strstr(lwrP, "spec")){
-				RPM_lockTeam(ent, qfalse, "s");
+				RPM_lockTeam(ent, qtrue, "spec");
 			}
 		}else if (ent->client->sess.admin < 4){
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
