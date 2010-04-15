@@ -3204,6 +3204,9 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 				for(i=0;i<=level.numConnectedClients;i++){
 				level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
 				G_UpdateOutfitting(g_entities[level.sortedClients[i]].s.number);
+				level.clients[level.sortedClients[i]].ps.ammo[weaponData[WP_SMOHG92_GRENADE].attack[ATTACK_NORMAL].ammoIndex]=1;
+				level.clients[level.sortedClients[i]].ps.stats[STAT_WEAPONS] |= ( 1 << WP_SMOHG92_GRENADE );
+				level.clients[level.sortedClients[i]].ps.clip[ATTACK_NORMAL][WP_SMOHG92_GRENADE]=1;
 				}
 				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sN%sa%sd%se%ss %sdisabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 				trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Nades disabled by %s.\n\"", ent->client->pers.netname));
