@@ -525,4 +525,5 @@ typedef struct statinfo_s
 	int			hitcount;
 	int			shotcount;
 	int			headShotKills;
+	int			damageDone;
 } statinfo_t;

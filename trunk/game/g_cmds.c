@@ -999,7 +999,8 @@ void DeathmatchScoreboardMessage( gentity_t *ent )
 				g_entities[level.sortedClients[i]].s.gametypeitems,
 				g_teamkillDamageMax.integer ? 100 * cl->sess.teamkillDamage / g_teamkillDamageMax.integer : 0,
 				cl->pers.statinfo.accuracy,
-				cl->pers.statinfo.headShotKills
+				cl->pers.statinfo.headShotKills,
+				cl->pers.statinfo.damageDone
 				);
 		}else if(ent->client->sess.rpmClient == 1.1){
 			Com_sprintf (entry, sizeof(entry),

@@ -1078,6 +1078,7 @@ int G_Damage (
 		targ->client->pers.statinfo.lasthurtby = attacker->s.number;
 		if(attacker->client)
 		{
+			attacker->client->pers.statinfo.damageDone += damage;
 			attacker->client->pers.statinfo.lastclient_hurt = targ->s.number;
 		}
 		//Ryan
