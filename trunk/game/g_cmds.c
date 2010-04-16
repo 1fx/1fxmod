@@ -3483,11 +3483,12 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	}else if(strstr(lwrP, "!cm")){
 		if (ent->client->sess.admin >= 4){
 			if(g_compMode.integer == 0){
-				//trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sT%si%sm%se%sl%simit %i!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, number));
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sC%so%sm%sp%se%stition mode enabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 				trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Competition mode enabled by %s.\n\"", ent->client->pers.netname));
 				g_compMode.integer = 1;
 				//Boe_adminLog (va("%s - TIMELIMIT %i", ent->client->pers.cleanName, number)) ;
 			}else{
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sC%so%sm%sp%se%stition mode disabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 				trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Competition mode disabled by %s.\n\"", ent->client->pers.netname));
 				g_compMode.integer = 0;
 			}
@@ -3499,12 +3500,13 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	}else if(strstr(lwrP, "!3rd")){
 		if (ent->client->sess.admin >= 4){
 			if(g_allowthirdperson.integer == 0){
-				//trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sT%si%sm%se%sl%simit %i!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, number));
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sT%sh%si%sr%sd%sperson enabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 				trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Thirdperson enabled by %s.\n\"", ent->client->pers.netname));
 				g_allowthirdperson.integer = 1;
 				//Boe_adminLog (va("%s - TIMELIMIT %i", ent->client->pers.cleanName, number)) ;
 			}else{
-				trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7CThirdperson disabled by %s.\n\"", ent->client->pers.netname));
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sT%sh%si%sr%sd%sperson disabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+				trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Thirdperson disabled by %s.\n\"", ent->client->pers.netname));
 				g_allowthirdperson.integer = 0;
 			}
 		}else if (ent->client->sess.admin < 4){

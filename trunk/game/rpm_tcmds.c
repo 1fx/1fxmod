@@ -17,6 +17,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 #include "g_local.h"
+#include "boe_local.h"
 
 /*
 ===========
@@ -207,13 +208,6 @@ RPM_lockTeam
 */
 void RPM_lockTeam(gentity_t *ent, qboolean referee, char *team)
 {
-	///RxCxW - 1.14.2005 - #compMode check - dont need
-	///if (!g_compMode.integer)
-	///{
-	///	trap_SendServerCommand( ent-g_entities, "print \"Competition mode is not enabled on this server.\n\"");
-	///	return;
-	///}
-	///End - 1.14.2005
 
 	if(referee)
 	{
@@ -224,7 +218,7 @@ void RPM_lockTeam(gentity_t *ent, qboolean referee, char *team)
 				level.redLocked = 0;
 				///RxCxW - 09.18.06 - 04:47pm #lock,unlock
 				///trap_SendServerCommand(-1, va("cp \"^3Referee ^7has UNLOCKED the ^1Red ^7team\n\""));
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s has UNLOCKED the ^1Red ^7team", level.time + 5000, ent->client->pers.netname ) );
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7has un%sl%so%sc%sk%se%sd the %s ^7team", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, server_redteamprefix.string ) );
 				///End  - 09.18.06 - 04:47pm
 			}
 			else
@@ -232,7 +226,7 @@ void RPM_lockTeam(gentity_t *ent, qboolean referee, char *team)
 				level.redLocked = 1;
 				///RxCxW - 09.18.06 - 04:47pm #lock,unlock
 				///trap_SendServerCommand(-1, va("cp \"^3Referee ^7has LOCKED the ^1Red ^7team\n\""));
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s has LOCKED the ^1Red ^7team", level.time + 5000, ent->client->pers.netname ) );
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7has %sl%so%sc%sk%se%sd the %s ^7team", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, server_redteamprefix.string ) );
 				///End  - 09.18.06 - 04:47pm
 			}
 		}
@@ -243,7 +237,7 @@ void RPM_lockTeam(gentity_t *ent, qboolean referee, char *team)
 				level.blueLocked = 0;
 				///RxCxW - 09.18.06 - 04:47pm #lock,unlock
 				///trap_SendServerCommand(-1, va("cp \"^3Referee ^7has UNLOCKED the ^4Blue ^7team\n\""));
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s has UNLOCKED the ^4Blue ^7team", level.time + 5000, ent->client->pers.netname ) );
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7has un%sl%so%sc%sk%se%sd the %s ^7team", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, server_blueteamprefix.string) );
 				///End  - 09.18.06 - 04:47pm
 			}
 			else
@@ -251,7 +245,7 @@ void RPM_lockTeam(gentity_t *ent, qboolean referee, char *team)
 				level.blueLocked = 1;
 				///RxCxW - 09.18.06 - 04:47pm #lock,unlock
 				///trap_SendServerCommand(-1, va("cp \"^3Referee ^7has LOCKED the ^4Blue ^7team\n\""));
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s has LOCKED the ^4Blue ^7team", level.time + 5000, ent->client->pers.netname ) );
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7has %sl%so%sc%sk%se%sd the %s ^7team", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, server_blueteamprefix.string) );
 				///End  - 09.18.06 - 04:47pm
 			}
 		}
@@ -262,7 +256,7 @@ void RPM_lockTeam(gentity_t *ent, qboolean referee, char *team)
 				level.specsLocked = 0;
 				///RxCxW - 09.18.06 - 04:47pm #lock,unlock
 				///trap_SendServerCommand(-1, va("cp \"^3Referee ^7has UNLOCKED the Spectators\n\""));
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7has UNLOCKED the ^3Spectators", level.time + 5000, ent->client->pers.netname ) );
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7has un%sl%so%sc%sk%se%sd the spectators", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string) );
 				///End  - 09.18.06 - 04:47pm
 			}
 			else
@@ -270,7 +264,7 @@ void RPM_lockTeam(gentity_t *ent, qboolean referee, char *team)
 				level.specsLocked = 1;
 				///RxCxW - 09.18.06 - 04:47pm #lock,unlock
 				///trap_SendServerCommand(-1, va("cp \"^3Referee ^7has LOCKED the Spectators\n\""));
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7has LOCKED the ^3Spectators", level.time + 5000, ent->client->pers.netname ) );
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7has %sl%so%sc%sk%se%sd the spectators", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string) );
 				///End  - 09.18.06 - 04:47pm
 			}
 		}
@@ -286,23 +280,23 @@ void RPM_lockTeam(gentity_t *ent, qboolean referee, char *team)
 		case TEAM_RED:
 			if(level.redLocked)	{
 				level.redLocked = 0;
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s has UNLOCKED the ^1Red ^7team", level.time + 5000, ent->client->pers.netname ) );
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7has un%sl%so%sc%sk%se%sd the %s ^7team", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, server_redteamprefix.string ) );
 				break;
 			}
 			else {
 				level.redLocked = 1;
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s has LOCKED the ^1Red ^7team", level.time + 5000, ent->client->pers.netname ) );
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7has %sl%so%sc%sk%se%sd the %s ^7team", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, server_redteamprefix.string ) );
 				break;
 			}
 		case TEAM_BLUE:
 			if(level.blueLocked) {
 				level.blueLocked = 0;
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s has UNLOCKED the ^4Blue ^7team", level.time + 5000, ent->client->pers.netname ) );
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7has un%sl%so%sc%sk%se%sd the %s ^7team", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, server_blueteamprefix.string) );
 				break;
 			}
 			else {
 				level.blueLocked = 1;
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s has LOCKED the ^4Blue ^7team", level.time + 5000, ent->client->pers.netname ) );
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7has %sl%so%sc%sk%se%sd the %s ^7team", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, server_blueteamprefix.string) );
 				break;
 			}
 		}

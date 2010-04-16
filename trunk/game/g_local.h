@@ -562,6 +562,8 @@ typedef struct
 	int			pause; // when 1 all players in intermission type state
 	int			unpausetime;			// time for the restart countdown sequence
 
+	int			redMsgCount;
+
 } level_locals_t;
 
 //

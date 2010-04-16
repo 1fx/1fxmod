@@ -6,6 +6,7 @@
 #include "q_shared.h"
 #include "g_team.h"
 #include "inv.h"
+#include "boe_local.h"
 
 #define	MAX_GAMETYPE_SPAWN_POINTS	32
 

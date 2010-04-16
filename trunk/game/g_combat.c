@@ -3,6 +3,7 @@
 // g_combat.c
 
 #include "g_local.h"
+#include "boe_local.h"
 
 void BotDamageNotification	( gclient_t *bot, gentity_t *attacker );
 
@@ -348,8 +349,14 @@ void player_die(
 	}
 
 	if(attacker->client->pers.statinfo.killsinarow >= 3){
-		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7is on a ^1Killing Spree ^7 with ^1%i ^7kills in a row.",
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7is %so%sn %sf%si%sr%se ^7with ^1%i ^7kills in a row.",
 				level.time + 5000,
+				server_color1.integer,
+				server_color2.integer,
+				server_color3.integer,
+				server_color4.integer,
+				server_color5.integer,
+				server_color6.integer,
 				attacker->client->pers.netname,
 				attacker->client->pers.statinfo.killsinarow));
 	}
@@ -388,20 +395,6 @@ void player_die(
 			// Let the gametype handle the problem, if it doenst handle it and return 1 then 
 			if ( trap_GT_SendEvent ( GTEV_ITEM_STUCK, level.time, item->quantity, 0, 0, 0, 0 ) )
 			{
-				// Boe!Man 4/4/10: When in a rare case the combat DOES handle this problem (instead of g_items.c), we just declare the chars here.
-				char color1[64];
-				char color2[64];
-				char color3[64];
-				char color4[64];
-				char color5[64];
-				char color6[64];
-				trap_Cvar_VariableStringBuffer ( "server_color1", color1, MAX_QPATH );
-				trap_Cvar_VariableStringBuffer ( "server_color2", color2, MAX_QPATH );
-				trap_Cvar_VariableStringBuffer ( "server_color3", color3, MAX_QPATH );
-				trap_Cvar_VariableStringBuffer ( "server_color4", color4, MAX_QPATH );
-				trap_Cvar_VariableStringBuffer ( "server_color5", color5, MAX_QPATH );
-				trap_Cvar_VariableStringBuffer ( "server_color6", color6, MAX_QPATH );
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@The briefcase has %sr%se%st%su%sr%sned!", level.time + 5000, color1, color2, color3, color4, color5, color6));
 				trap_SendServerCommand( -1, va("print \"^3[INF] ^7The briefcase has returned\n\""));
 			}
 			// just reset the gametype item
