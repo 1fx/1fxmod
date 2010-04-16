@@ -526,4 +526,5 @@ typedef struct statinfo_s
 	int			shotcount;
 	int			headShotKills;
 	int			damageDone;
+	int			killsinarow;
 } statinfo_t;

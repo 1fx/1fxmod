@@ -228,7 +228,16 @@ void player_die(
 		trap_GT_SendEvent ( GTEV_CLIENT_DEATH, level.time, self->s.number, self->client->sess.team, -1, -1, 0 ); 
 	}
 
+	/*if(g_showKillStreak.integer && attacker != self && attacker->client && self->client->pers.statinfo.killsinarow >= 3)
+	{
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s's ^1Killing Spree ^7was ended by ^3%s",
+				level.time + 5000,
+				self->client->pers.netname,
+				attacker->client->pers.netname));
+	}*/
+
 	// Add to the number of deaths for this player
+	self->client->pers.statinfo.killsinarow = 0;
 	self->client->sess.deaths++;
 
 	// This is just to ensure that the player wont render for even a single frame
@@ -328,6 +337,7 @@ void player_die(
 		{
 			G_AddScore( attacker, 1 );
 			attacker->client->sess.kills++;
+			attacker->client->pers.statinfo.killsinarow++;
 	
 			attacker->client->lastKillTime = level.time;
 		}
@@ -337,6 +347,12 @@ void player_die(
 		G_AddScore( self, g_suicidePenalty.integer );
 	}
 
+	if(attacker->client->pers.statinfo.killsinarow >= 3){
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7is on a ^1Killing Spree ^7 with ^1%i ^7kills in a row.",
+				level.time + 5000,
+				attacker->client->pers.netname,
+				attacker->client->pers.statinfo.killsinarow));
+	}
 	//This is where the server handles the obituary functions now (after the scores are done)
 	RPM_Obituary (self, attacker, meansOfDeath, attack, hitLocation);
 	//Ryan

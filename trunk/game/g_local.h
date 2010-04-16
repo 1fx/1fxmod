@@ -263,6 +263,8 @@ typedef struct
 	qboolean			invitedByBlue;
 	int					referee;
 	qboolean			clanMember;
+	qboolean			fairplay;
+	char				fpGuid[10];
 } clientSession_t;
 
 // Boe!Man 3/30/10

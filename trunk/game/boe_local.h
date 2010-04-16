@@ -171,6 +171,7 @@ void	Boe_Motd (gentity_t *ent);
 
 void	HENK_COUNTRY(gentity_t *ent);
 qboolean CheckIP(gentity_t *ent);
+void	HENK_CHECKFP(gentity_t *ent);
 
 void	Boe_Players (gentity_t *ent);
 

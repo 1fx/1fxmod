@@ -1310,10 +1310,10 @@ void QDECL G_LogPrintf( const char *fmt, ... ) {
 	tens = sec / 10;
 	sec -= tens * 10;
 
-	Com_sprintf( string, sizeof(string), "%fi:%i%i ", min, tens, sec );
+	//Com_sprintf( string, sizeof(string), "%i:%i%i ", min, tens, sec );
 
 	va_start( argptr, fmt );
-	vsprintf( string +8 , fmt,argptr );
+	vsprintf( string , fmt,argptr );
 	va_end( argptr );
 
 #ifndef _DEBUG

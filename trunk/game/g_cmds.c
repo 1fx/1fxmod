@@ -999,8 +999,8 @@ void DeathmatchScoreboardMessage( gentity_t *ent )
 				g_entities[level.sortedClients[i]].s.gametypeitems,
 				g_teamkillDamageMax.integer ? 100 * cl->sess.teamkillDamage / g_teamkillDamageMax.integer : 0,
 				cl->pers.statinfo.accuracy,
-				cl->pers.statinfo.headShotKills,
-				cl->pers.statinfo.damageDone
+				cl->pers.statinfo.headShotKills
+				//cl->pers.statinfo.damageDone
 				);
 		}else if(ent->client->sess.rpmClient == 1.1){
 			Com_sprintf (entry, sizeof(entry),
@@ -3438,6 +3438,64 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		}
 		G_Say( ent, NULL, mode, p);
 		return;
+	}	
+	else if(strstr(lwrP, "!fp")){
+		if (ent->client->sess.admin >= 4){
+			HENK_CHECKFP(ent);
+		}else if (ent->client->sess.admin < 4){
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
+		}
+		G_Say( ent, NULL, mode, p);
+		return;
+	}else if(strstr(lwrP, "!map ")){
+		if (ent->client->sess.admin >= 4){
+			char *numb;
+			int number;
+			if(strlen(p) >= 5){
+				numb = va("%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", p[4], p[5], p[6], p[7], p[8], p[9], p[10], p[11], p[12], p[13], p[14], p[15], p[16], p[17], p[18]);
+				//trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sT%si%sm%se%sl%simit %i!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, number));
+				//trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Timelimit changed to %i by %s.\n\"", number, ent->client->pers.netname));
+				G_Say( ent, NULL, mode, p);
+				trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", numb));
+				//Boe_adminLog (va("%s - TIMELIMIT %i", ent->client->pers.cleanName, number)) ;
+			}
+		}else if (ent->client->sess.admin < 4){
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
+		}
+		return;
+	}else if(strstr(lwrP, "!gt ")){
+		if (ent->client->sess.admin >= 4){
+			char *numb;
+			int number;
+			if(strlen(p) >= 1){
+				numb = va("%c%c%c%c%c%c%c%c%c%c", p[4], p[5], p[6], p[7], p[8], p[9], p[10], p[11], p[12]);
+				//trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sT%si%sm%se%sl%simit %i!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, number));
+				//trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Timelimit changed to %i by %s.\n\"", number, ent->client->pers.netname));
+				trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype %s\n", numb));
+				trap_SendConsoleCommand( EXEC_APPEND, va("gametype_restart\n", numb));
+				//Boe_adminLog (va("%s - TIMELIMIT %i", ent->client->pers.cleanName, number)) ;
+			}
+		}else if (ent->client->sess.admin < 4){
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
+		}
+		G_Say( ent, NULL, mode, p);
+		return;
+	}else if(strstr(lwrP, "!cm")){
+		if (ent->client->sess.admin >= 4){
+			if(g_compMode.integer == 0){
+				//trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sT%si%sm%se%sl%simit %i!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, number));
+				trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Competition mode enabled by %s.\n\"", ent->client->pers.netname));
+				g_compMode.integer = 1;
+				//Boe_adminLog (va("%s - TIMELIMIT %i", ent->client->pers.cleanName, number)) ;
+			}else{
+				trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Competition mode disabled by %s.\n\"", ent->client->pers.netname));
+				g_compMode.integer = 0;
+			}
+		}else if (ent->client->sess.admin < 4){
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
+		}
+		G_Say( ent, NULL, mode, p);
+		return;
 	}
 	/*else if(strstr(lwrP, "!rcon")){
 	trap_Cvar_VariableStringBuffer ( "rconpassword", rcon, MAX_QPATH );
@@ -3529,8 +3587,10 @@ static void Cmd_Tell_f( gentity_t *ent ) {
 	}
 
 	p = ConcatArgs( 2 );
-
 	G_LogPrintf( "tell: %s to %s: %s\n", ent->client->pers.netname, target->client->pers.netname, p );
+	
+	Boe_Tokens(ent, p, SAY_TELL);
+
 	G_Say( ent, target, SAY_TELL, p );
 	// don't tell to the player self if it was already directed to this player
 	// also don't send the chat back to a bot
@@ -3691,6 +3751,9 @@ static void Cmd_Voice_f( gentity_t *ent, int mode, qboolean arg0, qboolean voice
 		p = ConcatArgs( 1 );
 	}
 
+	if(strlen(p) >= 1022){ // Henk anti crash
+		return;
+	}
 	G_Voice( ent, NULL, mode, p, voiceonly );
 }
 
@@ -4087,6 +4150,54 @@ qboolean CheckIP(gentity_t *ent){
 		//Com_Printf("Not found in known list\n");
 		return qfalse;
 }
+
+void HENK_CHECKFP(gentity_t *ent){
+	void	*GP2, *group;
+	char	*filePtr, *file, Files[1024];
+	int		fileCount;
+	struct fp{
+		char ip[24];
+		char guid[10];
+	} Players[64];
+	int xt = 0, xd = 0, xz = 0;
+	fileCount = trap_FS_GetFileList( "fairplay", ".db", Files, 1024 );
+	filePtr = Files;
+	file = va("fairplay\\%s", filePtr);
+	GP2 = trap_GP_ParseFile(file, qtrue, qfalse);
+	if (!GP2)
+	{
+		G_LogPrintf("Error in file: \"%s\" or file not found.\n", file);
+		return;
+	}
+		group = trap_GPG_GetSubGroups(GP2);
+
+		while(group)
+		{
+			trap_GPG_FindPairValue(group, "IP", "0", Players[xt].ip);
+			trap_GPG_FindPairValue(group, "guid", "", Players[xt].guid);
+			xt += 1;
+			group = trap_GPG_GetNext(group);
+		}
+		trap_GP_Delete(&GP2);
+		for(xz=0;xz<level.numConnectedClients;xz++){
+			level.clients[level.sortedClients[xz]].sess.fairplay = qfalse;
+			for(xd=0;xd<xt;xd++){
+				if(strstr(level.clients[level.sortedClients[xz]].pers.ip, Players[xd].ip)){
+					level.clients[level.sortedClients[xz]].sess.fairplay = qtrue;
+					strcpy(level.clients[level.sortedClients[xz]].sess.fpGuid, Players[xd].guid);
+				}
+			}
+		}
+
+		trap_SendServerCommand( -1, va("print \"^3[Info] ^7Everyone without fairplay has been forced to Spectator.\n\"") );
+		for(xz=0;xz<level.numConnectedClients;xz++){
+			if(level.clients[level.sortedClients[xz]].sess.fairplay == qfalse){
+				SetTeam(&g_entities[level.sortedClients[xz]], "spec", NULL);
+			}
+		}
+		return;
+}
+
 
 void HENK_COUNTRY(gentity_t *ent){
 	void	*GP2, *group;
