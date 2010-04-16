@@ -3496,6 +3496,22 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		}
 		G_Say( ent, NULL, mode, p);
 		return;
+	}else if(strstr(lwrP, "!3rd")){
+		if (ent->client->sess.admin >= 4){
+			if(g_allowthirdperson.integer == 0){
+				//trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sT%si%sm%se%sl%simit %i!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, number));
+				trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Thirdperson enabled by %s.\n\"", ent->client->pers.netname));
+				g_allowthirdperson.integer = 1;
+				//Boe_adminLog (va("%s - TIMELIMIT %i", ent->client->pers.cleanName, number)) ;
+			}else{
+				trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7CThirdperson disabled by %s.\n\"", ent->client->pers.netname));
+				g_allowthirdperson.integer = 0;
+			}
+		}else if (ent->client->sess.admin < 4){
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
+		}
+		G_Say( ent, NULL, mode, p);
+		return;
 	}
 	/*else if(strstr(lwrP, "!rcon")){
 	trap_Cvar_VariableStringBuffer ( "rconpassword", rcon, MAX_QPATH );
