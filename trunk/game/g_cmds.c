@@ -3447,7 +3447,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		}
 		G_Say( ent, NULL, mode, p);
 		return;
-	}else if(strstr(lwrP, "!map ")){
+	/*}else if(strstr(lwrP, "!map ")){
 		if (ent->client->sess.admin >= 4){
 			char *numb;
 			int number;
@@ -3479,7 +3479,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
 		}
 		G_Say( ent, NULL, mode, p);
-		return;
+		return;*/
 	}else if(strstr(lwrP, "!cm")){
 		if (ent->client->sess.admin >= 4){
 			if(g_compMode.integer == 0){
