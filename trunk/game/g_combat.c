@@ -229,7 +229,7 @@ void player_die(
 		trap_GT_SendEvent ( GTEV_CLIENT_DEATH, level.time, self->s.number, self->client->sess.team, -1, -1, 0 ); 
 	}
 
-	/*if(g_showKillStreak.integer && attacker != self && attacker->client && self->client->pers.statinfo.killsinarow >= 3)
+	if(attacker != self && attacker->client && self->client->pers.statinfo.killsinarow >= 3)
 	{
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s's ^1Killing Spree ^7was ended by ^3%s",
 				level.time + 5000,

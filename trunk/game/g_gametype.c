@@ -86,15 +86,16 @@ void gametype_trigger_touch ( gentity_t *self, gentity_t *other, trace_t *trace 
 	{
 		return;
 	}
+	// Henk parse gametype events
+		if(self->health == 200){ // TRIGGER_EXTRACTION
+			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7has %sc%sa%sp%st%su%sred the briefcase!", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+			trap_SendServerCommand( -1, va("print \"^3[INF] %s ^7has captured the briefcase\n\"", ent->client->pers.netname));
+		}
+	// End
+
 	if ( trap_GT_SendEvent ( GTEV_TRIGGER_TOUCHED, level.time, self->health, other->s.number, other->client->sess.team, 0, 0 ) )
 	{
 		G_UseTargets ( self, other );
-		/*trap_Cvar_VariableStringBuffer ( "g_gametype", gametype, 7 );
-		if (strstr(gametype, "inf"))
-		{
-		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7has %sc%sa%sp%st%su%sred the briefcase!", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-		trap_SendServerCommand( -1, va("print \"^3[INF] %s ^7has captured the briefcase\n\"", ent->client->pers.netname));
-		}*/
 	}
 }
 
