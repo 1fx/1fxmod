@@ -349,15 +349,16 @@ void player_die(
 	}
 
 	if(attacker->client->pers.statinfo.killsinarow >= 3){
-		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7is %so%sn %sf%si%sr%se ^7with ^1%i ^7kills in a row.",
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7is %so%sn %sf%si%sr%se ^7with %s%i ^7kills in a row.",
 				level.time + 5000,
-				server_color1.integer,
-				server_color2.integer,
-				server_color3.integer,
-				server_color4.integer,
-				server_color5.integer,
-				server_color6.integer,
 				attacker->client->pers.netname,
+				server_color1.string,
+				server_color2.string,
+				server_color3.string,
+				server_color4.string,
+				server_color5.string,
+				server_color6.string,
+				server_color4.string,
 				attacker->client->pers.statinfo.killsinarow));
 	}
 	//This is where the server handles the obituary functions now (after the scores are done)

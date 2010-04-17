@@ -5,10 +5,10 @@
 //==================================================================
 
 // Boe!Man 3/30/10
-#define INF_VERSION_STRING "0.17t"
+#define INF_VERSION_STRING "0.18t"
 #define INF_STRING "1fx. Mod"
 #define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod"
-#define INF_VERSION_DATE "4/15/10"
+#define INF_VERSION_DATE "4/17/10"
 
 
 // Infiltration
@@ -194,6 +194,7 @@ extern	vmCvar_t	server_adminprefix;
 extern	vmCvar_t	server_sadminprefix;
 extern	vmCvar_t	server_acprefix;
 extern	vmCvar_t	server_caprefix;
+extern	vmCvar_t	server_ccprefix;
 extern	vmCvar_t	server_starprefix;
 
 extern	vmCvar_t	Owner;

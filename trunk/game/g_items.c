@@ -1,6 +1,7 @@
 // Copyright (C) 2001-2002 Raven Software
 //
 #include "g_local.h"
+#include "boe_local.h"
 
 /*
 
@@ -519,14 +520,6 @@ gentity_t *G_DropItem( gentity_t *ent, gitem_t *item, float angle )
 	vec3_t		velocity;
 	vec3_t		angles;
 	gentity_t*	dropped;
-	// Boe!Man 4/4/10
-	//int clientname;
-	char color1[64];
-	char color2[64];
-	char color3[64];
-	char color4[64];
-	char color5[64];
-	char color6[64];
 
 	VectorCopy( ent->s.apos.trBase, angles );
 	angles[YAW] += angle;
@@ -540,14 +533,7 @@ gentity_t *G_DropItem( gentity_t *ent, gitem_t *item, float angle )
 
 	if ( item->giType == IT_GAMETYPE )
 	{
-		trap_Cvar_VariableStringBuffer ( "server_color1", color1, MAX_QPATH );
-		trap_Cvar_VariableStringBuffer ( "server_color2", color2, MAX_QPATH );
-		trap_Cvar_VariableStringBuffer ( "server_color3", color3, MAX_QPATH );
-		trap_Cvar_VariableStringBuffer ( "server_color4", color4, MAX_QPATH );
-		trap_Cvar_VariableStringBuffer ( "server_color5", color5, MAX_QPATH );
-		trap_Cvar_VariableStringBuffer ( "server_color6", color6, MAX_QPATH );
-		//clientname = ent->s.number;
-		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s has %sd%sr%so%sp%sp%sed the briefcase!", level.time + 5000, ent->client->pers.netname, color1, color2, color3, color4, color5, color6));
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s has %sd%sr%so%sp%sp%sed the briefcase!", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		trap_SendServerCommand( -1, va("print \"^3[INF] %s ^7has dropped the briefcase\n\"", ent->client->pers.netname));
 		trap_GT_SendEvent ( GTEV_ITEM_DROPPED, level.time, item->quantity, ent->s.number, 0, 0, 0 );
 	}
@@ -961,12 +947,6 @@ void G_RunItem( gentity_t *ent )
 	trace_t		tr;
 	int			contents;
 	int			mask;
-	char color1[64];
-	char color2[64];
-	char color3[64];
-	char color4[64];
-	char color5[64];
-	char color6[64];
 
 	// if groundentity has been set to -1, it may have been pushed off an edge
 	if ( ent->s.groundEntityNum == -1 ) 
@@ -1028,13 +1008,7 @@ void G_RunItem( gentity_t *ent )
 			// Let the gametype handle the problem, if it doenst handle it and return 1 then 
 			if ( trap_GT_SendEvent ( GTEV_ITEM_STUCK, level.time, ent->item->quantity, 0, 0, 0, 0 ) )
 			{
-				trap_Cvar_VariableStringBuffer ( "server_color1", color1, MAX_QPATH );
-				trap_Cvar_VariableStringBuffer ( "server_color2", color2, MAX_QPATH );
-				trap_Cvar_VariableStringBuffer ( "server_color3", color3, MAX_QPATH );
-				trap_Cvar_VariableStringBuffer ( "server_color4", color4, MAX_QPATH );
-				trap_Cvar_VariableStringBuffer ( "server_color5", color5, MAX_QPATH );
-				trap_Cvar_VariableStringBuffer ( "server_color6", color6, MAX_QPATH );
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@The briefcase has %sr%se%st%su%sr%sned!", level.time + 5000, color1, color2, color3, color4, color5, color6));
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@The briefcase has %sr%se%st%su%sr%sned!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 				trap_SendServerCommand( -1, va("print \"^3[INF] ^7The briefcase has returned\n\""));
 			}
 			// just reset the gametype item

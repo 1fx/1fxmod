@@ -336,7 +336,7 @@ void Boe_Tokens(gentity_t *ent, char *chatText, int mode)
 					ent->client->voiceFloodTimer = 0;
 					ent->client->voiceFloodPenalty = level.time + g_voiceFloodPenalty.integer * 1000;
 					// Boe!Man 12/20/09 - Update 12/22/09 [Yellow color instead of Red].
-					trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Voice chat flooded, you will be able use voice chats again in (%d) seconds.\n\"", g_voiceFloodPenalty.integer ) );
+					trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Voice chat flooded, you will be able use voice chats again in %d seconds.\n\"", g_voiceFloodPenalty.integer ) );
 					playedSound = qtrue;
 					continue;
 				}

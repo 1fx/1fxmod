@@ -117,6 +117,7 @@ vmCvar_t	server_adminprefix;
 vmCvar_t	server_sadminprefix;
 vmCvar_t	server_acprefix;
 vmCvar_t	server_caprefix;
+vmCvar_t	server_ccprefix;
 vmCvar_t	server_starprefix;
 vmCvar_t	g_maprestart;					// Admin CVAR.
 vmCvar_t	g_flash;						// Admin CVAR.
@@ -323,6 +324,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &server_sadminprefix, "server_sadminprefix", "^GS^7-^<A^jd^gm^Ki^7n", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_acprefix, "server_acprefix", "^GS^7-^<A^jd^gm^Ki^7n Only", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_caprefix, "server_caprefix", "^GH^<e^jy ^gA^Kd^7min!", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
+	{ &server_ccprefix, "server_ccprefix", "^GC^<l^ja^gn ^gO^Kn^7ly", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_starprefix, "server_starprefix", "^<*", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 
 	{ &g_maxIPConnections,			"g_maxIPConnections",	"3",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse},

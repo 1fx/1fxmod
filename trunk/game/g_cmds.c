@@ -2261,7 +2261,7 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 		type = "";
 
 	// Boe!Man 1/17/10: Admin Talk/Chat.
-	if(mode == ADM_TALK || mode == ADM_CHAT || mode == CADM_CHAT || mode == REF_TALK || mode == REF_CHAT){
+	if(mode == ADM_TALK || mode == ADM_CHAT || mode == CADM_CHAT || mode == REF_TALK || mode == REF_CHAT || mode == CLAN_CHAT){
 	star = va("%s", server_starprefix.string);
 	admin = "";
 	}else{
@@ -2308,7 +2308,7 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 		Boe_ClientSound(other, G_SoundIndex("sound/misc/menus/invalid.wav"));
 		break;
 	case CLAN_CHAT:
-		type = "^7Clan chat";
+		type = server_ccprefix.string;
 		Boe_ClientSound(other, G_SoundIndex("sound/misc/menus/invalid.wav"));
 		break;
 	default:
@@ -3572,6 +3572,21 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			}
 			ent->
 			mode = ADM_CHAT;
+		}else{
+			p = ConcatArgs(1);
+			G_Say( ent, NULL, mode, p );
+			return;
+		}
+	}
+	// Boe!Man 4/17/10: Clan chat.
+	else if ((strstr(lwrP, "!cc ")) || (strstr(lwrP, "!clanchat "))) {
+		if (ent->client->sess.clanMember == 1){
+			p = ConcatArgs(1);
+			for(i=4;i<=strlen(p);i++){
+			p[a] = p[i];
+			a += 1;
+			}
+			mode = CLAN_CHAT;
 		}else{
 			p = ConcatArgs(1);
 			G_Say( ent, NULL, mode, p );

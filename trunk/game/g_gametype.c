@@ -79,14 +79,22 @@ void gametype_trigger_use ( gentity_t *self, gentity_t *other, gentity_t *activa
 
 void gametype_trigger_touch ( gentity_t *self, gentity_t *other, trace_t *trace ) 
 {
+	gentity_t *ent;
+	char gametype[8];
+
 	if ( level.gametypeResetTime )
 	{
 		return;
 	}
-
 	if ( trap_GT_SendEvent ( GTEV_TRIGGER_TOUCHED, level.time, self->health, other->s.number, other->client->sess.team, 0, 0 ) )
 	{
 		G_UseTargets ( self, other );
+		/*trap_Cvar_VariableStringBuffer ( "g_gametype", gametype, 7 );
+		if (strstr(gametype, "inf"))
+		{
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7has %sc%sa%sp%st%su%sred the briefcase!", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+		trap_SendServerCommand( -1, va("print \"^3[INF] %s ^7has captured the briefcase\n\"", ent->client->pers.netname));
+		}*/
 	}
 }
 
@@ -372,13 +380,6 @@ G_ResetGametype
 */
 void G_ResetGametype ( void )
 {
-	char color1[64];
-	char color2[64];
-	char color3[64];
-	char color4[64];
-	char color5[64];
-	char color6[64];
-
 	gentity_t*	tent;
 
 	// Reset the glass in the level
@@ -405,13 +406,7 @@ void G_ResetGametype ( void )
 
 			if ( level.gametypeDelayTime != level.time )
 			{
-				trap_Cvar_VariableStringBuffer ( "server_color1", color1, MAX_QPATH );
-				trap_Cvar_VariableStringBuffer ( "server_color2", color2, MAX_QPATH );
-				trap_Cvar_VariableStringBuffer ( "server_color3", color3, MAX_QPATH );
-				trap_Cvar_VariableStringBuffer ( "server_color4", color4, MAX_QPATH );
-				trap_Cvar_VariableStringBuffer ( "server_color5", color5, MAX_QPATH );
-				trap_Cvar_VariableStringBuffer ( "server_color6", color6, MAX_QPATH );
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sG%se%st %sR%se%sady", level.gametypeDelayTime, color1, color2, color3, color4, color5, color6 ) );
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sG%se%st %sr%se%sa%sdy", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 			}
 
 			trap_SetConfigstring ( CS_GAMETYPE_TIMER, va("%i", level.gametypeRoundTime) );
@@ -630,15 +625,6 @@ CheckGametype
 */
 void CheckGametype ( void )
 {
-	// Boe!Man 4/4/10
-	char buffer[64];
-	char color1[64];
-	char color2[64];
-	char color3[64];
-	char color4[64];
-	char color5[64];
-	char color6[64];
-
 	// If the level is over then forget checking gametype stuff.
 	if ( level.intermissiontime || level.pause )
 	//End Ryan
@@ -743,9 +729,7 @@ void CheckGametype ( void )
 				gentity_t* ent = &g_entities[level.sortedClients[i]];
 				if ( ent->client->sess.team == TEAM_RED && alive[TEAM_RED] == 1 &&
 					!G_IsClientDead ( ent->client ) && !level.redMsgCount){
-						//Q_strncpyz(ent->client->sess.msgReason,"^7You are the\n^_LAST ALIVE ^7on the ^_Hiders!", sizeof(ent->client->sess.msgReason));
-						trap_SendServerCommand( ent->s.number, va("cp \"@You are the last player alive!\n\"") );
-						//trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@You are the last player alive!", level.time + 5000));
+						trap_SetConfigstring ( ent->s.number, va("cp\"@You are the %sl%sa%ss%st %sp%sl%sayer alive!", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color4.string, server_color5.string, server_color6.string));
 						trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s is the last alive player in the red team.\n\"", ent->client->pers.netname));
 						Boe_ClientSound(ent, G_SoundIndex("sound/misc/events/tut_door01.mp3"));
 						level.redMsgCount++;
@@ -756,32 +740,32 @@ void CheckGametype ( void )
 		// If everyone is dead on a team then reset the gametype, but only if 
 		// there was someone on that team to begin with.
 		if ( !alive[TEAM_RED] && dead[TEAM_RED] )
-		{			
-			trap_Cvar_VariableStringBuffer ( "server_redteamprefix", buffer, MAX_QPATH );
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7team eliminated!", level.time + 5000, buffer));
+		{	
+			char gametype[8];
+			trap_Cvar_VariableStringBuffer ( "g_gametype", gametype, 7 );
+			if (strstr(gametype, "inf")){
+			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7team eliminated!", level.time + 5000, server_redteamprefix.string));
 			trap_SendServerCommand( -1, va("print \"^3[INF] ^7Red team eliminated\n\""));
-			trap_GT_SendEvent ( GTEV_TEAM_ELIMINATED, level.time, TEAM_RED, 0, 0, 0, 0 );
+			trap_GT_SendEvent ( GTEV_TEAM_ELIMINATED, level.time, TEAM_RED, 0, 0, 0, 0 );}
 		}
 		else if ( !alive[TEAM_BLUE] && dead[TEAM_BLUE] )
 		{		
-			trap_Cvar_VariableStringBuffer ( "server_blueteamprefix", buffer, MAX_QPATH );
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7team eliminated!", level.time + 5000, buffer));
+			char gametype[8];
+			trap_Cvar_VariableStringBuffer ( "g_gametype", gametype, 7 );
+			if (strstr(gametype, "inf")){
+			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7team eliminated!", level.time + 5000, server_blueteamprefix.string));
 			trap_SendServerCommand( -1, va("print \"^3[INF] ^7Blue team eliminated\n\""));
-			trap_GT_SendEvent ( GTEV_TEAM_ELIMINATED, level.time, TEAM_BLUE, 0, 0, 0, 0 );
+			trap_GT_SendEvent ( GTEV_TEAM_ELIMINATED, level.time, TEAM_BLUE, 0, 0, 0, 0 );}
 		}
 		// See if the time has expired
 		if ( level.time > level.gametypeRoundTime )
 		{
-			trap_Cvar_VariableStringBuffer ( "server_redteamprefix", buffer, MAX_QPATH );
-			trap_Cvar_VariableStringBuffer ( "server_color1", color1, MAX_QPATH );
-			trap_Cvar_VariableStringBuffer ( "server_color2", color2, MAX_QPATH );
-			trap_Cvar_VariableStringBuffer ( "server_color3", color3, MAX_QPATH );
-			trap_Cvar_VariableStringBuffer ( "server_color4", color4, MAX_QPATH );
-			trap_Cvar_VariableStringBuffer ( "server_color5", color5, MAX_QPATH );
-			trap_Cvar_VariableStringBuffer ( "server_color6", color6, MAX_QPATH );
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7team has %sd%se%sf%se%sn%sded the briefcase!", level.time + 5000, buffer, color1, color2, color3, color4, color5, color6));
+			char gametype[8];
+			trap_Cvar_VariableStringBuffer ( "g_gametype", gametype, 7 );
+			if (strstr(gametype, "inf")){
+			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7team has %sd%se%sf%se%sn%sded the briefcase!", level.time + 5000, server_redteamprefix.string, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 			trap_SendServerCommand( -1, va("print \"^3[INF] ^7Red team has defended the briefcase\n\""));
-			trap_GT_SendEvent ( GTEV_TIME_EXPIRED, level.time, 0, 0, 0, 0, 0 );
+			trap_GT_SendEvent ( GTEV_TIME_EXPIRED, level.time, 0, 0, 0, 0, 0 );}
 		} 
 	}
 }
