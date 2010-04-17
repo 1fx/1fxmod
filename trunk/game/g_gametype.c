@@ -744,7 +744,8 @@ void CheckGametype ( void )
 				if ( ent->client->sess.team == TEAM_RED && alive[TEAM_RED] == 1 &&
 					!G_IsClientDead ( ent->client ) && !level.redMsgCount){
 						//Q_strncpyz(ent->client->sess.msgReason,"^7You are the\n^_LAST ALIVE ^7on the ^_Hiders!", sizeof(ent->client->sess.msgReason));
-						trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@You are the last player alive!", level.time + 5000));
+						trap_SendServerCommand( ent->s.number, va("cp \"@You are the last player alive!\n\"") );
+						//trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@You are the last player alive!", level.time + 5000));
 						trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s is the last alive player in the red team.\n\"", ent->client->pers.netname));
 						Boe_ClientSound(ent, G_SoundIndex("sound/misc/events/tut_door01.mp3"));
 						level.redMsgCount++;

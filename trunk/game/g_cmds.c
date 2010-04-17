@@ -836,7 +836,7 @@ void RPM_UpdateTMI(void)
 				location,
 				thirdperson, // 1 = third | 0 = first | 2 = n/a, aka no client
 				adm,
-				cl->ps.weapon,
+				cl->ps.weapon, //cl->pers.statinfo.damageDone
 				cl->sess.mute,		// Confirmed
 				cl->sess.clanMember	// Confirmed
 				);
@@ -3447,16 +3447,15 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		}
 		G_Say( ent, NULL, mode, p);
 		return;
-	/*}else if(strstr(lwrP, "!map ")){
+	}else if(strstr(lwrP, "!map ")){
 		if (ent->client->sess.admin >= 4){
 			char *numb;
-			int number;
 			if(strlen(p) >= 5){
 				numb = va("%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", p[4], p[5], p[6], p[7], p[8], p[9], p[10], p[11], p[12], p[13], p[14], p[15], p[16], p[17], p[18]);
 				//trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sT%si%sm%se%sl%simit %i!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, number));
 				//trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Timelimit changed to %i by %s.\n\"", number, ent->client->pers.netname));
+				trap_SendConsoleCommand( EXEC_APPEND, va("wait 5;map %s\n", numb));
 				G_Say( ent, NULL, mode, p);
-				trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", numb));
 				//Boe_adminLog (va("%s - TIMELIMIT %i", ent->client->pers.cleanName, number)) ;
 			}
 		}else if (ent->client->sess.admin < 4){
@@ -3467,19 +3466,24 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		if (ent->client->sess.admin >= 4){
 			char *numb;
 			int number;
-			if(strlen(p) >= 1){
-				numb = va("%c%c%c%c%c%c%c%c%c%c", p[4], p[5], p[6], p[7], p[8], p[9], p[10], p[11], p[12]);
+			if(strstr(lwrP, "ctf")){
+				trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype ctf\n"));
+			}else if(strstr(lwrP, "inf")){
+				trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype inf\n"));
+			}else if(strstr(lwrP, "dm")){
+				trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype dm\n"));
+			}else if(strstr(lwrP, "tdm")){
+				trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype tdm\n"));
+			}
 				//trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sT%si%sm%se%sl%simit %i!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, number));
 				//trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Timelimit changed to %i by %s.\n\"", number, ent->client->pers.netname));
-				trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype %s\n", numb));
-				trap_SendConsoleCommand( EXEC_APPEND, va("gametype_restart\n", numb));
 				//Boe_adminLog (va("%s - TIMELIMIT %i", ent->client->pers.cleanName, number)) ;
 			}
-		}else if (ent->client->sess.admin < 4){
+		else if (ent->client->sess.admin < 4){
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
 		}
 		G_Say( ent, NULL, mode, p);
-		return;*/
+		return;
 	}else if(strstr(lwrP, "!cm")){
 		if (ent->client->sess.admin >= 4){
 			if(g_compMode.integer == 0){
@@ -3542,9 +3546,17 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			}
 			mode = ADM_TALK;
 		}else{
+			/*
 			p = ConcatArgs(1);
 			G_Say( ent, NULL, mode, p );
 			return;
+			*/
+			p = ConcatArgs(1);
+			for(i=4;i<=strlen(p);i++){
+			p[a] = p[i];
+			a += 1;
+			}
+			mode = CADM_CHAT;
 		}
 	}
 	else if ((strstr(lwrP, "!ac ")) || (strstr(lwrP, "!adminchat "))) {
@@ -3554,6 +3566,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			p[a] = p[i];
 			a += 1;
 			}
+			ent->
 			mode = ADM_CHAT;
 		}else{
 			p = ConcatArgs(1);
@@ -3568,6 +3581,19 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			a += 1;
 			}
 			mode = CADM_CHAT;
+	}else if ((strstr(lwrP, "!cc ")) || (strstr(lwrP, "!clanchat "))) {
+		if (ent->client->sess.clanMember){
+			p = ConcatArgs(1);
+			for(i=4;i<=strlen(p);i++){
+			p[a] = p[i];
+			a += 1;
+			}
+			mode = CLAN_CHAT;
+		}else{
+			p = ConcatArgs(1);
+			G_Say( ent, NULL, mode, p );
+			return;
+		}
 	}
 
 

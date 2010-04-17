@@ -971,7 +971,7 @@ void Boe_Players (gentity_t *ent)
 		mute2,
 		mute3));
 		if(client == qtrue){
-		trap_SendServerCommand( ent-g_entities, va("print \"%c^3%.1f^7%c\n\"",
+		trap_SendServerCommand( ent-g_entities, va("print \"%c^3%.2f^7%c\n\"",
 		client0,
 		client1,
 		client2));
