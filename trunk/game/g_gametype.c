@@ -730,7 +730,7 @@ void CheckGametype ( void )
 				gentity_t* ent = &g_entities[level.sortedClients[i]];
 				if ( ent->client->sess.team == TEAM_RED && alive[TEAM_RED] == 1 &&
 					!G_IsClientDead ( ent->client ) && !level.redMsgCount){
-						trap_SetConfigstring ( ent->s.number, va("cp\"@You are the %sl%sa%ss%st %sp%sl%sayer alive!", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color4.string, server_color5.string, server_color6.string));
+						trap_SendServerCommand ( ent->s.number, va("cp\"@You are the %sl%sa%ss%st %sp%sl%sayer alive!", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color4.string, server_color5.string, server_color6.string));
 						trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s is the last alive player in the red team.\n\"", ent->client->pers.netname));
 						Boe_ClientSound(ent, G_SoundIndex("sound/misc/events/tut_door01.mp3"));
 						level.redMsgCount++;
