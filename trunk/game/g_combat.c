@@ -236,7 +236,7 @@ void player_die(
 				level.time + 5000,
 				self->client->pers.netname,
 				attacker->client->pers.netname));
-	}*/
+	}
 
 	// Add to the number of deaths for this player
 	self->client->pers.statinfo.killsinarow = 0;
