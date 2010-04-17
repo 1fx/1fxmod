@@ -2307,6 +2307,10 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 		type = server_caprefix.string;
 		Boe_ClientSound(other, G_SoundIndex("sound/misc/menus/invalid.wav"));
 		break;
+	case CLAN_CHAT:
+		type = "^7Clan chat";
+		Boe_ClientSound(other, G_SoundIndex("sound/misc/menus/invalid.wav"));
+		break;
 	default:
 		break;
 	}
