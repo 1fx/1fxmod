@@ -285,7 +285,6 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 						}
 
 						trap_Cmd_Restart ( 5 );
-						return 1;
 					}
 					break;
 			}
