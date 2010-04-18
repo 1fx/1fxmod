@@ -190,7 +190,7 @@ void Boe_adm_f ( gentity_t *ent )
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   nd  normaldamage               ^7[^3Toggle Normal damage^7]\n\"", g_nades.integer));
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   rd  realdamage                 ^7[^3Toggle Real damage^7]\n\"", g_nades.integer));
 		}
-	if (adm >= g_respawninterval.integer && g_ri.integer != 5){
+	if (adm >= g_ri.integer && g_ri.integer != 5){
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   ri  ri           <time>        ^7[^3Change the respawn interval^7]\n\"", g_ri.integer));
 		}
 	if (adm >= g_gr.integer && g_gr.integer != 5){

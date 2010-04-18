@@ -123,6 +123,7 @@ extern	vmCvar_t	g_nolower;
 extern	vmCvar_t	g_nades;
 extern	vmCvar_t	g_sl;
 extern	vmCvar_t	g_tl;
+extern	vmCvar_t	g_ri;
 extern	vmCvar_t	g_respawninterval;
 extern	vmCvar_t	g_damage;
 extern	vmCvar_t	g_gr;
