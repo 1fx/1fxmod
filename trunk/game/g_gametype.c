@@ -763,6 +763,10 @@ void CheckGametype ( void )
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7team eliminated!", level.time + 5000, server_redteamprefix.string));
 			trap_SendServerCommand( -1, va("print \"^3[INF] ^7Red team eliminated\n\""));
 			trap_GT_SendEvent ( GTEV_TEAM_ELIMINATED, level.time, TEAM_RED, 0, 0, 0, 0 );}
+			else if(strstr(gametype, "elim")){
+			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7team eliminated!", level.time + 5000, server_redteamprefix.string));
+			trap_SendServerCommand( -1, va("print \"^3[ELIM] ^7Red team eliminated\n\""));
+			trap_GT_SendEvent ( GTEV_TEAM_ELIMINATED, level.time, TEAM_RED, 0, 0, 0, 0 );}
 		}
 		else if ( !alive[TEAM_BLUE] && dead[TEAM_BLUE] )
 		{		
@@ -771,6 +775,10 @@ void CheckGametype ( void )
 			if (strstr(gametype, "inf")){
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7team eliminated!", level.time + 5000, server_blueteamprefix.string));
 			trap_SendServerCommand( -1, va("print \"^3[INF] ^7Blue team eliminated\n\""));
+			trap_GT_SendEvent ( GTEV_TEAM_ELIMINATED, level.time, TEAM_BLUE, 0, 0, 0, 0 );}
+			else if (strstr(gametype, "elim")){
+			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7team eliminated!", level.time + 5000, server_blueteamprefix.string));
+			trap_SendServerCommand( -1, va("print \"^3[ELIM] ^7Blue team eliminated\n\""));
 			trap_GT_SendEvent ( GTEV_TEAM_ELIMINATED, level.time, TEAM_BLUE, 0, 0, 0, 0 );}
 		}
 		// See if the time has expired
