@@ -299,11 +299,6 @@ void Touch_Item (gentity_t *ent, gentity_t *other, trace_t *trace)
 	int			respawn;
 	qboolean	predict;
 	qboolean	autoswitch;
-	char color2[64];
-	char color3[64];
-	char color4[64];
-	char color5[64];
-	char color6[64];
 
 	if (!other->client)
 		return;
@@ -326,13 +321,11 @@ void Touch_Item (gentity_t *ent, gentity_t *other, trace_t *trace)
 		{
 		return;
 		}
-		trap_Cvar_VariableStringBuffer ( "server_color2", color2, MAX_QPATH );
-		trap_Cvar_VariableStringBuffer ( "server_color3", color3, MAX_QPATH );
-		trap_Cvar_VariableStringBuffer ( "server_color4", color4, MAX_QPATH );
-		trap_Cvar_VariableStringBuffer ( "server_color5", color5, MAX_QPATH );
-		trap_Cvar_VariableStringBuffer ( "server_color6", color6, MAX_QPATH );
+		char gametype[8];
+		trap_Cvar_VariableStringBuffer ( "g_gametype", gametype, 7 );
+		if (strstr(gametype, "inf")){
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s has %st%sa%sk%se%sn the briefcase!", level.time + 5000, other->client->pers.netname, color2, color3, color4, color5, color6));
-		trap_SendServerCommand( -1, va("print \"^3[INF] %s ^7has taken the briefcase\n\"", other->client->pers.netname));
+		trap_SendServerCommand( -1, va("print \"^3[INF] %s ^7has taken the briefcase\n\"", other->client->pers.netname));}
 	}
 	// the same pickup rules are used for client side and server side
 	else if ( !BG_CanItemBeGrabbed( level.gametype, &ent->s, &other->client->ps ) ) 
@@ -533,6 +526,8 @@ gentity_t *G_DropItem( gentity_t *ent, gitem_t *item, float angle )
 
 	if ( item->giType == IT_GAMETYPE )
 	{
+		char gametype[8];
+		trap_Cvar_VariableStringBuffer ( "g_gametype", gametype, 7 );
 		if (strstr(gametype, "inf")){
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s has %sd%sr%so%sp%sp%sed the briefcase!", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		trap_SendServerCommand( -1, va("print \"^3[INF] %s ^7has dropped the briefcase\n\"", ent->client->pers.netname));
@@ -544,7 +539,6 @@ gentity_t *G_DropItem( gentity_t *ent, gitem_t *item, float angle )
 			}else if(item->quantity == 100){ // red
 
 			}
-		// Boe!Man: hoe doe ik hier of hijITEM_BLUEFLAG of REDFLAG pakt? Check gt_main.c van CTF
 		}
 
 	}
