@@ -790,6 +790,8 @@ void RPM_UpdateTMI(void)
 	int			thirdperson;
 	char		*s;
 	char		userinfo[MAX_INFO_STRING];
+	int			damage;
+	char		*string;
 /*	if (!level.gametypeData->teams)
 	{	// only bother if a league game with teams
 		return;
@@ -832,6 +834,7 @@ void RPM_UpdateTMI(void)
 		}
 		// Henk 06/04/10 -> Check what view person is in
 		trap_GetUserinfo( g_entities[level.sortedClients[i]].s.number, userinfo, sizeof( userinfo ) );
+		if(g_entities[level.sortedClients[i]].client->sess.rpmClient >= 0.7){
 		s = Info_ValueForKey( userinfo, "cg_thirdperson" );
 		thirdperson = atoi(s);
 		if(thirdperson >= 1){
@@ -839,16 +842,26 @@ void RPM_UpdateTMI(void)
 		}else{
 			thirdperson = 0;
 		}
+		}else{
+			thirdperson = 2;
+		}
 			adm = cl->sess.admin;
+			damage = cl->pers.statinfo.damageDone/100;
+			if(damage < 10){
+				string = va("%i", cl->ps.weapon);
+			}else{
+				string = va("%.0i%i", damage, cl->ps.weapon);
+			}									
 			Com_sprintf (entry, sizeof(entry),
-				" %i %i %i %i %i %i %i %i %i",
+				" %i %i %i %i %i %i %s %i %i",
 				level.sortedClients[i],
 				cl->ps.stats[STAT_HEALTH],
 				cl->ps.stats[STAT_ARMOR],
 				location,
 				thirdperson, // 1 = third | 0 = first | 2 = n/a, aka no client
 				adm,
-				cl->ps.weapon, //cl->pers.statinfo.damageDone
+				string,
+				//cl->ps.weapon, //cl->pers.statinfo.damageDone
 				cl->sess.mute,		// Confirmed
 				cl->sess.clanMember	// Confirmed
 				);
@@ -4522,7 +4535,6 @@ void ClientCommand( int clientNum ) {
 		Boe_dev_f( ent );
 	// Henk 07/04/10 -> Send info to all players(for RPM scoreboard)
 	else if (Q_stricmp (cmd, "tmi") == 0){
-		trap_SendServerCommand(-1, va("print \"[Debug]Info from client requested\n\"" ) );
 		RPM_UpdateTMI();
 	}else if (Q_stricmp (cmd, "refresh") == 0)
 		RPM_Refresh( ent );

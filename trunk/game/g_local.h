@@ -563,7 +563,7 @@ typedef struct
 	int			unpausetime;			// time for the restart countdown sequence
 
 	int			redMsgCount;
-
+	int			blueMsgCount;
 } level_locals_t;
 
 //

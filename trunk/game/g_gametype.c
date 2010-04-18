@@ -86,12 +86,6 @@ void gametype_trigger_touch ( gentity_t *self, gentity_t *other, trace_t *trace 
 	{
 		return;
 	}
-	// Henk parse gametype events
-		if(self->health == 200){ // TRIGGER_EXTRACTION
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7has %sc%sa%sp%st%su%sred the briefcase!", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-			trap_SendServerCommand( -1, va("print \"^3[INF] %s ^7has captured the briefcase\n\"", ent->client->pers.netname));
-		}
-	// End
 
 	if ( trap_GT_SendEvent ( GTEV_TRIGGER_TOUCHED, level.time, self->health, other->s.number, other->client->sess.team, 0, 0 ) )
 	{
@@ -109,6 +103,14 @@ void SP_gametype_trigger ( gentity_t* ent )
 	{
 		if ( ent->targetname )
 			ent->targetname = strchr ( ent->targetname, '-' ) + 1;
+	}
+
+	///RxCxW - 09.30.06 - 08:17pm #spMaps
+	if(!Q_stricmp(ent->model, "NV_MODEL")){
+		ent->r.contents = CONTENTS_TRIGGER;
+		ent->r.svFlags = SVF_NOCLIENT;
+		//ent->s.eType = ET_GAMETYPE_TRIGGER;
+		return;
 	}
 
 	InitTrigger (ent);
@@ -738,6 +740,19 @@ void CheckGametype ( void )
 			}
 		}
 
+		if(alive[TEAM_BLUE] == 1 && level.blueMsgCount == 0){
+			for ( i = 0; i < level.numConnectedClients; i ++ ){
+				gentity_t* ent = &g_entities[level.sortedClients[i]];
+				if ( ent->client->sess.team == TEAM_BLUE && alive[TEAM_BLUE] == 1 &&
+					!G_IsClientDead ( ent->client ) && !level.blueMsgCount){
+						trap_SendServerCommand ( ent->s.number, va("cp\"@You are the %sl%sa%ss%st %sp%sl%sayer alive!", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color4.string, server_color5.string, server_color6.string));
+						trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s is the last alive player in the blue team.\n\"", ent->client->pers.netname));
+						Boe_ClientSound(ent, G_SoundIndex("sound/misc/events/tut_door01.mp3"));
+						level.blueMsgCount++;
+				}
+			}
+		}
+
 		// If everyone is dead on a team then reset the gametype, but only if 
 		// there was someone on that team to begin with.
 		if ( !alive[TEAM_RED] && dead[TEAM_RED] )
@@ -794,7 +809,11 @@ int G_GametypeCommand ( int cmd, int arg0, int arg1, int arg2, int arg3, int arg
 			break;
 
 		case GTCMD_TEXTMESSAGE:
+			if(strstr((const char*)arg1, "[INF]")){
+				trap_SendServerCommand( -1, va("print \"%s\n\"", (const char*)arg1));
+			}else{
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,%s", level.time + 5000, (const char*)arg1 ) );
+			}
 			break;		
 
 		case GTCMD_RADIOMESSAGE:

@@ -166,6 +166,7 @@ void SP_misc_bsp					(gentity_t *ent);
 void SP_terrain						(gentity_t *ent);
 
 void SP_model_static				(gentity_t* ent);
+void NV_model						(gentity_t *ent );
 
 void SP_gametype_item				(gentity_t* ent);
 void SP_gametype_trigger			(gentity_t* ent);
@@ -233,6 +234,7 @@ spawn_t	spawns[] =
 	{"terrain",						SP_terrain},
 
 	{"model_static",				SP_model_static },
+	{"nv_model",					NV_model },
 
 	{"gametype_item",				SP_gametype_item },
 	{"gametype_trigger",			SP_gametype_trigger },
@@ -1126,6 +1128,18 @@ void G_SpawnEntitiesFromString( qboolean inSubBSP )
 		level.spawning = qfalse;			// any future calls to G_Spawn*() will be errors
 	}
 }
+
+void NV_model( gentity_t *ent ) 
+{
+	ent->s.modelindex = G_ModelIndex( ent->model );
+	VectorSet (ent->r.mins, -16, -16, -16);
+	VectorSet (ent->r.maxs, 16, 16, 16);
+	trap_LinkEntity (ent);
+
+	G_SetOrigin( ent, ent->s.origin );
+	VectorCopy( ent->s.angles, ent->s.apos.trBase );
+}
+
 
 /*QUAKED model_static (1 0 0) (-16 -16 -16) (16 16 16) NO_MP
 "model"		arbitrary .md3 file to display
