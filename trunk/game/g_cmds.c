@@ -3320,7 +3320,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		return;
 	}
 	else if(strstr(lwrP, "!ri ")){
-		if (ent->client->sess.admin >= g_respawninterval.integer){
+		if (ent->client->sess.admin >= g_ri.integer){
 			char *numb;
 			int number;
 			if(strlen(p) >= 5){
@@ -3331,7 +3331,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 				Boe_adminLog (va("%s - RESPAWN INTERVAL %i", ent->client->pers.cleanName, number)) ;
 				trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Respawn interval changed to %i by %s.\n\"", number, ent->client->pers.netname));
 			}
-		}else if (ent->client->sess.admin < g_respawninterval.integer){
+		}else if (ent->client->sess.admin < g_ri.integer){
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
 		}
 		G_Say( ent, NULL, mode, p);

@@ -152,7 +152,7 @@ vmCvar_t	g_nolower;
 vmCvar_t	g_nades;
 vmCvar_t	g_sl;
 vmCvar_t	g_tl;
-vmCvar_t	g_respawninterval;
+vmCvar_t	g_ri;
 vmCvar_t	g_damage;
 vmCvar_t	g_gr;
 vmCvar_t	g_clanvsall;
@@ -299,7 +299,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_nades,						"g_nades",				"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_sl,						"g_sl",					"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_tl,						"g_tl",					"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
-	{ &g_respawninterval,			"g_respawninterval",	"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
+	{ &g_ri,						"g_ri",					"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_gr,						"g_gr",					"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_clanvsall,					"g_clanvsall",			"3",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_swapteams,					"g_swapteams",			"3",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
