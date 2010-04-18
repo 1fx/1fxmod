@@ -5,6 +5,9 @@
 #include "g_local.h"
 #include "boe_local.h"
 
+// --- BOE PROTOTYPE WARNINGS FIXES --- \\
+// I'm lazy so I just 'fix' them here. I'll fix them fo'real later.
+
 void Boe_Add_Clan_Member(int argNum, gentity_t *adm)
 {
 	int             idnum, onlist;

@@ -5,10 +5,10 @@
 //==================================================================
 
 // Boe!Man 3/30/10
-#define INF_VERSION_STRING "0.18t"
+#define INF_VERSION_STRING "0.19t"
 #define INF_STRING "1fx. Mod"
 #define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod"
-#define INF_VERSION_DATE "4/17/10"
+#define INF_VERSION_DATE "4/18/10"
 
 
 // Infiltration

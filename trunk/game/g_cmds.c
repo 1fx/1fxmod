@@ -53,13 +53,30 @@ for (i = 0; i < MAX_GENTITIES; i++)
 void SpawnFence(int choice) // big cage
 {
 	AddSpawnField("classname", "misc_bsp"); // blocker
+	if (choice == 1){
 	AddSpawnField("bspmodel",	"instances/Generic/fence01");
-	if(choice == 1){ // blue side
-	AddSpawnField("origin",		"-346 -309 -87");
 	}else if(choice == 2){
-	AddSpawnField("origin",		"-346 -309 -87");
-	}
+	AddSpawnField("bspmodel",	"instances/Generic/fence01");
+	}else if (choice == 3){
+	AddSpawnField("bspmodel",	"instances/Colombia/npc_jump1");
+	}else if(choice == 4){
+	AddSpawnField("bspmodel",	"instances/Colombia/npc_jump1");
+	}if(choice == 1){ // blue side
+	AddSpawnField("origin",		"-346 -309 -275");
+	}else if(choice == 2){ // red side
+	AddSpawnField("origin",		"-4073 -710 -275");
+	}else if(choice == 3){ // blue box
+	AddSpawnField("origin",		"-1813 -295 0");
+	}else if(choice == 4){ // red box
+	AddSpawnField("origin",		"-2607 -775 0"); // BUGGED, fix ik morgen.
+	}if (choice == 1){
 	AddSpawnField("angles",		"0 270 0");
+	}else if(choice == 2){
+	AddSpawnField("angles",		"0 90 0");
+	}else if(choice == 3){
+	AddSpawnField("angles",		"0 0 0");
+	}else if(choice == 4){
+	AddSpawnField("angles",		"0 0 0");}
 	AddSpawnField("model",		"trigger_hurt"); //blocked_trigger
 	AddSpawnField("count",		 "1");
 
@@ -3269,7 +3286,10 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			}else{
 				level.nolower1 = qtrue;
 				if (strstr(level.mapname, "mp_kam2")){
-				SpawnFence();
+				SpawnFence(1);
+				SpawnFence(2);
+				SpawnFence(3);
+				SpawnFence(4);
 				}
 				trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7No lower has been enabled by %s.\n\"", ent->client->pers.netname));
 				Boe_adminLog (va("%s - NOLOWER ENABLED", ent->client->pers.cleanName)) ;
