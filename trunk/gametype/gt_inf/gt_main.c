@@ -201,7 +201,12 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 			break;
 
 		case GTEV_TIME_EXPIRED:
-			/*
+			char color1[5];
+			char color2[5];
+			char color3[5];
+			char color4[5];
+			char color5[5];
+			char color6[5];
 			trap_Cvar_VariableStringBuffer ( "server_redteamprefix", msg, 4 );
 			trap_Cvar_VariableStringBuffer ( "server_color1", color1, 4 );
 			trap_Cvar_VariableStringBuffer ( "server_color2", color2, 4 );
@@ -209,15 +214,20 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 			trap_Cvar_VariableStringBuffer ( "server_color4", color4, 4 );
 			trap_Cvar_VariableStringBuffer ( "server_color5", color5, 4 );
 			trap_Cvar_VariableStringBuffer ( "server_color6", color6, 4 );
-			trap_Cmd_TextMessage ( -1, va("@%s ^7team has %sd%se%sf%se%sn%sded the briefcase!", msg, color1, color2, color3, color4, color5, color6 )); // defended*/
+			trap_Cmd_TextMessage ( -1, va("@%s ^7team has %sd%se%sf%se%sn%sded the briefcase!", msg, color1, color2, color3, color4, color5, color6 )); // defended
 			trap_Cmd_AddTeamScore ( TEAM_RED, 1 );
 			trap_Cmd_Restart ( 5 );
 			break;
 
 		case GTEV_ITEM_DROPPED:
 		{
-			/*
 			char clientname[MAX_QPATH];
+			char color1[5];
+			char color2[5];
+			char color3[5];
+			char color4[5];
+			char color5[5];
+			char color6[5];
 			trap_Cvar_VariableStringBuffer ( "server_color1", color1, 4 );
 			trap_Cvar_VariableStringBuffer ( "server_color2", color2, 4 );
 			trap_Cvar_VariableStringBuffer ( "server_color3", color3, 4 );
@@ -225,7 +235,8 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 			trap_Cvar_VariableStringBuffer ( "server_color5", color5, 4 );
 			trap_Cvar_VariableStringBuffer ( "server_color6", color6, 4 );
 			trap_Cmd_GetClientName ( arg1, clientname, MAX_QPATH );
-			trap_Cmd_TextMessage ( -1, va("@%s ^7has %sd%sr%so%sp%sp%sed the briefcase!", clientname, color1, color2, color3, color4, color5, color6 ) ); // dropped*/
+			trap_Cmd_TextMessage ( -1, va("@%s ^7has %sd%sr%so%sp%sp%sed the briefcase!", clientname, color1, color2, color3, color4, color5, color6 ) ); // dropped
+			trap_Cmd_TextMessage( -1, va("^3[INF] %s ^7has dropped the briefcase\n\"", clientname));
 			break;
 		}
 
@@ -236,14 +247,20 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 				case ITEM_BRIEFCASE:
 					if ( arg2 == TEAM_BLUE )
 					{
-						/*char clientname[MAX_QPATH];
+						char clientname[MAX_QPATH];
+						char color2[5];
+						char color3[5];
+						char color4[5];
+						char color5[5];
+						char color6[5];
 						trap_Cmd_GetClientName ( arg1, clientname, MAX_QPATH );
 						trap_Cvar_VariableStringBuffer ( "server_color2", color2, 4 );
 						trap_Cvar_VariableStringBuffer ( "server_color3", color3, 4 );
 						trap_Cvar_VariableStringBuffer ( "server_color4", color4, 4 );
 						trap_Cvar_VariableStringBuffer ( "server_color5", color5, 4 );
 						trap_Cvar_VariableStringBuffer ( "server_color6", color6, 4 );
-						trap_Cmd_TextMessage (GTCMD_TEXTMESSAGE, va("@%s ^7has %st%sa%sk%se%sn the briefcase!", clientname, color2, color3, color4, color5, color6 ) ); // taken*/
+						trap_Cmd_TextMessage (-1, va("@%s ^7has %st%sa%sk%se%sn the briefcase!", clientname, color2, color3, color4, color5, color6 ) ); // taken
+						trap_Cmd_TextMessage( -1, va("^3[INF] %s ^7has taken the briefcase\n\"", clientname));
 						trap_Cmd_StartGlobalSound ( gametype.caseTakenSound );
 						trap_Cmd_RadioMessage ( arg1, "got_it" );
 						return 1;
@@ -259,15 +276,14 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 				case TRIGGER_EXTRACTION:
 					if ( trap_Cmd_DoesClientHaveItem ( arg1, ITEM_BRIEFCASE ) )
 					{
-						// BOE FIX ME
 						char clientname[MAX_QPATH];
+						char color1[5];
+						char color2[5];
+						char color3[5];
+						char color4[5];
+						char color5[5];
+						char color6[5];
 						trap_Cmd_GetClientName ( arg1, clientname, MAX_QPATH );
-						char color1[8];
-						char color2[8];
-						char color3[8];
-						char color4[8];
-						char color5[8];
-						char color6[8];
 						trap_Cvar_VariableStringBuffer ( "server_color1", color1, 4 );
 						trap_Cvar_VariableStringBuffer ( "server_color2", color2, 4 );
 						trap_Cvar_VariableStringBuffer ( "server_color3", color3, 4 );
@@ -275,7 +291,6 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 						trap_Cvar_VariableStringBuffer ( "server_color5", color5, 4 );
 						trap_Cvar_VariableStringBuffer ( "server_color6", color6, 4 );
 						trap_Cmd_TextMessage ( -1, va("@%s ^7has %sc%sa%sp%st%su%sred the briefcase!", clientname, color1, color2, color3, color4, color5, color6 ) );
-						
 						trap_Cmd_TextMessage( -1, va("^3[INF] %s ^7has captured the briefcase\n\"", clientname));
 						trap_Cmd_StartGlobalSound ( gametype.caseCaptureSound );
 						trap_Cmd_AddTeamScore ( arg2, 1 );
