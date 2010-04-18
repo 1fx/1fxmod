@@ -758,39 +758,16 @@ void CheckGametype ( void )
 		// there was someone on that team to begin with.
 		if ( !alive[TEAM_RED] && dead[TEAM_RED] )
 		{	
-			char gametype[8];
-			trap_Cvar_VariableStringBuffer ( "g_gametype", gametype, 7 );
-			if (strstr(gametype, "inf")){
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7team eliminated!", level.time + 5000, server_redteamprefix.string));
-			trap_SendServerCommand( -1, va("print \"^3[INF] ^7Red team eliminated\n\""));
-			trap_GT_SendEvent ( GTEV_TEAM_ELIMINATED, level.time, TEAM_RED, 0, 0, 0, 0 );}
-			else if(strstr(gametype, "elim")){
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7team eliminated!", level.time + 5000, server_redteamprefix.string));
-			trap_SendServerCommand( -1, va("print \"^3[ELIM] ^7Red team eliminated\n\""));
-			trap_GT_SendEvent ( GTEV_TEAM_ELIMINATED, level.time, TEAM_RED, 0, 0, 0, 0 );}
+			trap_GT_SendEvent ( GTEV_TEAM_ELIMINATED, level.time, TEAM_RED, 0, 0, 0, 0 );
 		}
 		else if ( !alive[TEAM_BLUE] && dead[TEAM_BLUE] )
 		{		
-			char gametype[8];
-			trap_Cvar_VariableStringBuffer ( "g_gametype", gametype, 7 );
-			if (strstr(gametype, "inf")){
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7team eliminated!", level.time + 5000, server_blueteamprefix.string));
-			trap_SendServerCommand( -1, va("print \"^3[INF] ^7Blue team eliminated\n\""));
-			trap_GT_SendEvent ( GTEV_TEAM_ELIMINATED, level.time, TEAM_BLUE, 0, 0, 0, 0 );}
-			else if (strstr(gametype, "elim")){
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7team eliminated!", level.time + 5000, server_blueteamprefix.string));
-			trap_SendServerCommand( -1, va("print \"^3[ELIM] ^7Blue team eliminated\n\""));
-			trap_GT_SendEvent ( GTEV_TEAM_ELIMINATED, level.time, TEAM_BLUE, 0, 0, 0, 0 );}
+			trap_GT_SendEvent ( GTEV_TEAM_ELIMINATED, level.time, TEAM_BLUE, 0, 0, 0, 0 );
 		}
 		// See if the time has expired
 		if ( level.time > level.gametypeRoundTime )
 		{
-			char gametype[8];
-			trap_Cvar_VariableStringBuffer ( "g_gametype", gametype, 7 );
-			if (strstr(gametype, "inf")){
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7team has %sd%se%sf%se%sn%sded the briefcase!", level.time + 5000, server_redteamprefix.string, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-			trap_SendServerCommand( -1, va("print \"^3[INF] ^7Red team has defended the briefcase\n\""));
-			trap_GT_SendEvent ( GTEV_TIME_EXPIRED, level.time, 0, 0, 0, 0, 0 );}
+			trap_GT_SendEvent ( GTEV_TIME_EXPIRED, level.time, 0, 0, 0, 0, 0 );
 		} 
 	}
 }

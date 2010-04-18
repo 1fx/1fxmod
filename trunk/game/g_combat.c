@@ -397,7 +397,7 @@ void player_die(
 			// Let the gametype handle the problem, if it doenst handle it and return 1 then 
 			if ( trap_GT_SendEvent ( GTEV_ITEM_STUCK, level.time, item->quantity, 0, 0, 0, 0 ) )
 			{
-				trap_SendServerCommand( -1, va("print \"^3[INF] ^7The briefcase has returned\n\""));
+
 			}
 			// just reset the gametype item
 			else if ( !trap_GT_SendEvent ( GTEV_ITEM_STUCK, level.time, item->quantity, 0, 0, 0, 0 ) )

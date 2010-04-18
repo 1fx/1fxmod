@@ -520,21 +520,7 @@ gentity_t *G_DropItem( gentity_t *ent, gitem_t *item, float angle )
 
 	if ( item->giType == IT_GAMETYPE )
 	{
-		char gametype[8];
-		trap_Cvar_VariableStringBuffer ( "g_gametype", gametype, 7 );
-		if (strstr(gametype, "inf")){
-		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s has %sd%sr%so%sp%sp%sed the briefcase!", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-		trap_SendServerCommand( -1, va("print \"^3[INF] %s ^7has dropped the briefcase\n\"", ent->client->pers.netname));
 		trap_GT_SendEvent ( GTEV_ITEM_DROPPED, level.time, item->quantity, ent->s.number, 0, 0, 0 );
-		}
-		else if (strstr(gametype, "ctf")){
-			if(item->quantity == 101){ // blue
-
-			}else if(item->quantity == 100){ // red
-
-			}
-		}
-
 	}
 
 	return dropped;
@@ -1007,8 +993,7 @@ void G_RunItem( gentity_t *ent )
 			// Let the gametype handle the problem, if it doenst handle it and return 1 then 
 			if ( trap_GT_SendEvent ( GTEV_ITEM_STUCK, level.time, ent->item->quantity, 0, 0, 0, 0 ) )
 			{
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@The briefcase has %sr%se%st%su%sr%sned!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-				trap_SendServerCommand( -1, va("print \"^3[INF] ^7The briefcase has returned\n\""));
+
 			}
 			// just reset the gametype item
 			else if ( !trap_GT_SendEvent ( GTEV_ITEM_STUCK, level.time, ent->item->quantity, 0, 0, 0, 0 ) )
