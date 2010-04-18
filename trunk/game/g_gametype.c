@@ -394,6 +394,8 @@ void G_ResetGametype ( void )
 	// Reset the gametype itself
 	G_ResetGametypeEntities ( );
 
+	trap_Cvar_VariableStringBuffer ( "mapname", level.mapname, MAX_QPATH );
+
 	// Initialize the respawn interval since this is a interval gametype
 	switch ( level.gametypeData->respawnType )
 	{
@@ -434,7 +436,6 @@ void G_ResetGametype ( void )
 	// Reset the clients local effects
 	tent = G_TempEntity( vec3_origin, EV_GAMETYPE_RESTART );
 	tent->r.svFlags |= SVF_BROADCAST;
-	trap_Cvar_VariableStringBuffer ( "mapname", level.mapname, MAX_QPATH );
 	// Start the gametype
 	trap_GT_Start ( level.gametypeStartTime );
 }
@@ -818,6 +819,14 @@ int G_GametypeCommand ( int cmd, int arg0, int arg1, int arg2, int arg3, int arg
 
 		case GTCMD_TEXTMESSAGE:
 			if(strstr((const char*)arg1, "[INF]")){
+				trap_SendServerCommand( -1, va("print \"%s\n\"", (const char*)arg1));
+			}else if(strstr((const char*)arg1, "[CTF]")){
+				trap_SendServerCommand( -1, va("print \"%s\n\"", (const char*)arg1));
+			}else if(strstr((const char*)arg1, "[ELIM]")){
+				trap_SendServerCommand( -1, va("print \"%s\n\"", (const char*)arg1));
+			}else if(strstr((const char*)arg1, "[DM]")){
+				trap_SendServerCommand( -1, va("print \"%s\n\"", (const char*)arg1));
+			}else if(strstr((const char*)arg1, "[TDM]")){
 				trap_SendServerCommand( -1, va("print \"%s\n\"", (const char*)arg1));
 			}else{
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,%s", level.time + 5000, (const char*)arg1 ) );

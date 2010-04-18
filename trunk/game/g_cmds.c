@@ -865,8 +865,32 @@ void RPM_UpdateTMI(void)
 			if(damage < 10){
 				string = va("%i", cl->ps.weapon);
 			}else{
-				string = va("%.0i%i", damage, cl->ps.weapon);
-			}									
+				if(damage >= 10 && damage < 20){
+					damage = 10;
+				}else if(damage >= 20 && damage < 30){
+					damage = 20;
+				}else if(damage >= 30 && damage < 40){
+					damage = 30;
+				}else if(damage >= 40 && damage < 50){
+					damage = 40;
+				}else if(damage >= 50 && damage < 60){
+					damage = 50;
+				}else if(damage >= 60 && damage < 70){
+					damage = 60;
+				}else if(damage >= 70 && damage < 80){
+					damage = 70;
+				}else if(damage >= 80 && damage < 90){
+					damage = 80;
+				}else if(damage >= 90 && damage < 100){
+					damage = 90;
+				}else if(damage >= 100 && damage < 110){
+					damage = 100;
+				}else{
+					damage = 100;
+				}
+				string = va("%i%i", damage, cl->ps.weapon);	
+			}
+			
 			Com_sprintf (entry, sizeof(entry),
 				" %i %i %i %i %i %i %s %i %i",
 				level.sortedClients[i],
@@ -2886,12 +2910,8 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		return;
 	}
 	else if ((strstr(lwrP, "!ro ")) || (strstr(lwrP, "!runover "))){
-		if (ent->client->sess.admin >= g_runover.integer && (strstr(level.mapname, "col9"))){
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Cross the bridge] ^7You cannot runover anyone in this mini game.\n\""));
-			id = -1;
-		}
 		// Boe!Man 3/20/10: Fix for runover working for S-Admin only.
-		else if (ent->client->sess.admin >= g_runover.integer){
+		if (ent->client->sess.admin >= g_runover.integer){
 			id = CheckAdmin(ent, p, qtrue);
 			targ = g_entities+id;
 			if ( targ->client->sess.ghost ){ // Boe!Man 1/17/10: We cannot runover a Ghost.
