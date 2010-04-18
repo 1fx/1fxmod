@@ -205,7 +205,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 					trap_Cvar_VariableStringBuffer ( "server_color5", color5, 4 );
 					trap_Cvar_VariableStringBuffer ( "server_color6", color6, 4 );
 					trap_Cmd_TextMessage ( -1, va("@%s ^7team %se%sl%si%sm%si%snated!", msg, color1, color2, color3, color4, color5, color6 )); // r team eliminated
-					trap_Cmd_TextMessage( -1, va("^3[INF] Red team eliminated\n\""));
+					trap_Cmd_TextMessage( -1, va("^3[INF] ^7Red team eliminated\n\""));
 					trap_Cmd_AddTeamScore ( TEAM_BLUE, 1 );
 					trap_Cmd_Restart ( 5 );
 					break;
@@ -219,7 +219,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 					trap_Cvar_VariableStringBuffer ( "server_color5", color5, 4 );
 					trap_Cvar_VariableStringBuffer ( "server_color6", color6, 4 );
 					trap_Cmd_TextMessage ( -1, va("@%s ^7team %se%sl%si%sm%si%snated!", msg, color1, color2, color3, color4, color5, color6 )); // blue team eliminated
-					trap_Cmd_TextMessage( -1, va("^3[INF] Blue team eliminated\n\""));
+					trap_Cmd_TextMessage( -1, va("^3[INF] ^7Blue team eliminated\n\""));
 					trap_Cmd_AddTeamScore ( TEAM_RED, 1 );
 					trap_Cmd_Restart ( 5 );
 					break;
