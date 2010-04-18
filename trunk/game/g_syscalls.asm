@@ -19,7 +19,7 @@ equ trap_Cvar_VariableStringBuffer			  -8	; G_CVAR_VARIABLE_STRING_BUFFER
 equ trap_LocateGameData						 -16	; G_LOCATE_GAME_DATA 
 equ trap_RMG_Init							 -18	; G_RMG_INIT 
 equ trap_DropClient							 -19	; G_DROP_CLIENT 
-equ trap_SendServerCommand					 -20	; G_SEND_SERVER_COMMAND 
+equ trap_SendServerCommand2					 -20	; G_SEND_SERVER_COMMAND 
 equ trap_SetConfigstring					 -21	; G_SET_CONFIGSTRING 
 equ trap_GetConfigstring					 -22	; G_GET_CONFIGSTRING 
 equ trap_GetUserinfo						 -23	; G_GET_USERINFO 
@@ -194,6 +194,8 @@ equ trap_G2_ListModelSurfaces				-586	; G_G2_LISTSURFACES
 equ trap_G2_ListModelBones					-585	; G_G2_LISTBONES 
 equ trap_G2_SetGhoul2ModelIndexes			-588	; G_G2_SETMODELS 
 equ trap_G2_HaveWeGhoul2Models				-587	; G_G2_HAVEWEGHOULMODELS 
+equ trap_G2API_AddBolt						-591	; G_G2_ADDBOLT 
+equ trap_G2API_SetBoltInfo					-592	; G_G2_SETBOLTINFO 
 equ trap_G2API_GetBoltMatrix				-589	; G_G2_GETBOLT 
 equ trap_G2API_InitGhoul2Model				-590	; G_G2_INITGHOUL2MODEL 
 equ trap_G2API_CleanGhoul2Models			-600	; G_G2_CLEANMODELS 
@@ -243,7 +245,6 @@ equ trap_GT_Init							-635	; G_GT_INIT
 equ trap_GT_RunFrame						-636	; G_GT_RUNFRAME 
 equ trap_GT_Start							-637	; G_GT_START 
 equ trap_GT_SendEvent						-638	; G_GT_SENDEVENT 
-
 
 ; hardcoded functions
 equ memset									-101	; G_MEMSET 

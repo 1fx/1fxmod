@@ -82,6 +82,7 @@ void trap_Cvar_VariableStringBuffer( const char *var_name, char *buffer, int buf
 	syscall( G_CVAR_VARIABLE_STRING_BUFFER, var_name, buffer, bufsize );
 }
 
+
 void trap_LocateGameData( gentity_t *gEnts, int numGEntities, int sizeofGEntity_t,
 						 playerState_t *clients, int sizeofGClient ) {
 	syscall( G_LOCATE_GAME_DATA, gEnts, numGEntities, sizeofGEntity_t, clients, sizeofGClient );
@@ -822,6 +823,16 @@ void trap_G2_SetGhoul2ModelIndexes(void *ghoul2, qhandle_t *modelList, qhandle_t
 qboolean trap_G2_HaveWeGhoul2Models(	void *ghoul2)
 {
 	return (qboolean)(syscall(G_G2_HAVEWEGHOULMODELS, ghoul2));
+}
+
+int	trap_G2API_AddBolt(void *ghoul2, const int modelIndex, const char *boneName)
+{
+	return (int) (syscall(G_G2_ADDBOLT, ghoul2, modelIndex, boneName));
+}
+
+void trap_G2API_SetBoltInfo(void *ghoul2, int modelIndex, int boltInfo)
+{
+	syscall(G_G2_SETBOLTINFO, ghoul2, modelIndex, boltInfo);
 }
 
 qboolean trap_G2API_GetBoltMatrix(void *ghoul2, const int modelIndex, const int boltIndex, mdxaBone_t *matrix,

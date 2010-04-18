@@ -7,6 +7,18 @@
 
 int AcceptBotCommand(char *cmd, gentity_t *pl);
 
+void trap_SendServerCommand2( int clientNum, const char *text );
+void trap_SendServerCommand( int clientNum, const char *text ) {
+        if( strlen( text ) > 1022 ) {
+			char a[100]; 
+			Q_strncpyz (a, text, 100);
+			trap_SendServerCommand2(clientNum, a);
+			Boe_crashLog(va("overflow: name:[%s]",g_entities[clientNum].client->pers.netname)) ;
+            return;
+        }
+		trap_SendServerCommand2(clientNum, text);
+} 
+
 void RPM_ReadyCheck (gentity_t *ent)
 {
 #ifdef _SOF2_BOTS
@@ -806,7 +818,7 @@ void RPM_UpdateTMI(void)
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
 		cl = &level.clients[level.sortedClients[i]];
-		if (G_IsClientSpectating(cl) || G_IsClientDead (cl)) 
+		if (G_IsClientSpectating(cl))// || G_IsClientDead (cl)) 
 		{
 			continue;
 		}
@@ -4509,9 +4521,10 @@ void ClientCommand( int clientNum ) {
 	else if (Q_stricmp (cmd, "dev") == 0)
 		Boe_dev_f( ent );
 	// Henk 07/04/10 -> Send info to all players(for RPM scoreboard)
-	else if (Q_stricmp (cmd, "tmi") == 0)
+	else if (Q_stricmp (cmd, "tmi") == 0){
+		trap_SendServerCommand(-1, va("print \"[Debug]Info from client requested\n\"" ) );
 		RPM_UpdateTMI();
-	else if (Q_stricmp (cmd, "refresh") == 0)
+	}else if (Q_stricmp (cmd, "refresh") == 0)
 		RPM_Refresh( ent );
 	else if (Q_stricmp (cmd, "ready") == 0)
 		RPM_ReadyUp( ent );
