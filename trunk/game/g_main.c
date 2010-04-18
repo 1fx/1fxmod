@@ -723,6 +723,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 
 	G_InitWorldSession();
 
+	InitSpawn(1);
 	// initialize all entities for this game
 	memset( g_entities, 0, MAX_GENTITIES * sizeof(g_entities[0]) );
 	level.gentities = g_entities;

@@ -233,18 +233,17 @@ void SP_misc_bsp(gentity_t *ent)
 	float	newAngle;
 	int		tempint;
 
-	G_SpawnFloat( "angle", "0", &newAngle );
+	G_SpawnFloat( "angles", "0", &newAngle );
 	if (newAngle != 0.0)
 	{
+		ent->s.angles[0] = newAngle;
 		ent->s.angles[1] = newAngle;
+		ent->s.angles[2] = newAngle;
 	}
-	// don't support rotation any other way
-	ent->s.angles[0] = 0.0;
-	ent->s.angles[2] = 0.0;
 	
 	G_SpawnString("bspmodel", "", &out);
 
-	ent->s.eFlags = EF_PERMANENT;
+	//ent->s.eFlags = EF_PERMANENT; //EF_TELEPORT_BIT;
 
 	// Mainly for debugging
 	G_SpawnInt( "spacing", "0", &tempint);
@@ -274,6 +273,7 @@ void SP_misc_bsp(gentity_t *ent)
 	VectorCopy( ent->s.angles, ent->r.currentAngles );
 
 	ent->s.eType = ET_MOVER;
+	///ent->s.eType = ET_WALL;
 
 	trap_LinkEntity (ent);
 

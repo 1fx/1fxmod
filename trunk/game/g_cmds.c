@@ -19,6 +19,25 @@ void trap_SendServerCommand( int clientNum, const char *text ) {
 		trap_SendServerCommand2(clientNum, text);
 } 
 
+void InitSpawn(int choice) // load bsp models before players loads a map(SOF2 clients cannot load a bsp model INGAME)
+{
+	AddSpawnField("classname", "misc_bsp"); // blocker
+	if(choice == 1){
+	AddSpawnField("bspmodel",	"instances/Generic/fence01");
+	}else{
+	AddSpawnField("bspmodel",	"instances/Colombia/npc_jump1");
+	}
+	AddSpawnField("origin",		"-4841 -4396 1252");
+	AddSpawnField("angles",		"0 90 0");
+	AddSpawnField("model",		"trigger_hurt"); //blocked_trigger
+	AddSpawnField("count",		 "1");
+
+	G_SpawnGEntityFromSpawnVars(qtrue);
+
+	level.numSpawnVars = 0;
+	level.numSpawnVarChars = 0;
+}	
+
 void SpawnFence(void) // big cage
 {
 	AddSpawnField("classname", "misc_bsp"); // blocker
@@ -28,7 +47,7 @@ void SpawnFence(void) // big cage
 	AddSpawnField("model",		"trigger_hurt"); //blocked_trigger
 	AddSpawnField("count",		 "1");
 
-	G_SpawnGEntityFromSpawnVars(qtrue);
+	G_SpawnGEntityFromSpawnVars(qfalse);
 
 	level.numSpawnVars = 0;
 	level.numSpawnVarChars = 0;
@@ -3226,7 +3245,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		if (ent->client->sess.admin >= g_nolower.integer){
 			if(level.nolower1 == qtrue){
 				level.nolower1 = qfalse;
-				if (strstr(level.mapname, "mp_kam2")){
+				if (strstr(g_gametype.string, "ctf")){
 				SpawnFence();
 				}
 				trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7No lower has been disabled by %s.\n\"", ent->client->pers.netname));
@@ -3256,6 +3275,9 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 				for(i=0;i<=level.numConnectedClients;i++){
 				level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
 				G_UpdateOutfitting(g_entities[level.sortedClients[i]].s.number);
+				level.clients[level.sortedClients[i]].ps.ammo[weaponData[WP_SMOHG92_GRENADE].attack[ATTACK_NORMAL].ammoIndex]=1;
+				level.clients[level.sortedClients[i]].ps.stats[STAT_WEAPONS] |= ( 1 << WP_SMOHG92_GRENADE );
+				level.clients[level.sortedClients[i]].ps.clip[ATTACK_NORMAL][WP_SMOHG92_GRENADE]=1;
 				}
 				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sN%sa%sd%se%ss %senabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 				trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Nades enabled by %s.\n\"", ent->client->pers.netname));
@@ -3269,9 +3291,6 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 				for(i=0;i<=level.numConnectedClients;i++){
 				level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
 				G_UpdateOutfitting(g_entities[level.sortedClients[i]].s.number);
-				level.clients[level.sortedClients[i]].ps.ammo[weaponData[WP_SMOHG92_GRENADE].attack[ATTACK_NORMAL].ammoIndex]=1;
-				level.clients[level.sortedClients[i]].ps.stats[STAT_WEAPONS] |= ( 1 << WP_SMOHG92_GRENADE );
-				level.clients[level.sortedClients[i]].ps.clip[ATTACK_NORMAL][WP_SMOHG92_GRENADE]=1;
 				}
 				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sN%sa%sd%se%ss %sdisabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 				trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Nades disabled by %s.\n\"", ent->client->pers.netname));
@@ -3392,7 +3411,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		G_Say( ent, NULL, mode, p);
 		return;
 	}
-	else if(strstr(lwrP, "!st") || strstr(lwrP, "!swapteams")){
+	else if(strstr(lwrP, "!sw") || strstr(lwrP, "!swapteams")){
 		if (ent->client->sess.admin >= g_swapteams.integer){
 			Boe_SwapTeams(ent);
 		}else if (ent->client->sess.admin < g_swapteams.integer){

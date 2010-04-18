@@ -954,7 +954,7 @@ extern	vmCvar_t	g_smoothClients;
 extern	vmCvar_t	pmove_fixed;
 extern	vmCvar_t	pmove_msec;
 extern	vmCvar_t	g_rankings;
-extern	vmCvar_t	g_ri;
+extern	vmCvar_t	g_respawnInterval;
 extern	vmCvar_t	g_respawnInvulnerability;
 extern	vmCvar_t	RMG;
 extern  vmCvar_t	g_debugRMG;
