@@ -50,11 +50,15 @@ for (i = 0; i < MAX_GENTITIES; i++)
 	}
 }
 
-void SpawnFence(void) // big cage
+void SpawnFence(int choice) // big cage
 {
 	AddSpawnField("classname", "misc_bsp"); // blocker
 	AddSpawnField("bspmodel",	"instances/Generic/fence01");
+	if(choice == 1){ // blue side
 	AddSpawnField("origin",		"-346 -309 -87");
+	}else if(choice == 2){
+	AddSpawnField("origin",		"-346 -309 -87");
+	}
 	AddSpawnField("angles",		"0 270 0");
 	AddSpawnField("model",		"trigger_hurt"); //blocked_trigger
 	AddSpawnField("count",		 "1");
