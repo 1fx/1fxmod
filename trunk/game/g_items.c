@@ -299,7 +299,7 @@ void Touch_Item (gentity_t *ent, gentity_t *other, trace_t *trace)
 	int			respawn;
 	qboolean	predict;
 	qboolean	autoswitch;
-
+	char gametype[8];
 	if (!other->client)
 		return;
 
@@ -321,7 +321,6 @@ void Touch_Item (gentity_t *ent, gentity_t *other, trace_t *trace)
 		{
 		return;
 		}
-		char gametype[8];
 		trap_Cvar_VariableStringBuffer ( "g_gametype", gametype, 7 );
 		if (strstr(gametype, "inf")){
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s has %st%sa%sk%se%sn the briefcase!", level.time + 5000, other->client->pers.netname, color2, color3, color4, color5, color6));
