@@ -434,7 +434,7 @@ void G_ResetGametype ( void )
 	// Reset the clients local effects
 	tent = G_TempEntity( vec3_origin, EV_GAMETYPE_RESTART );
 	tent->r.svFlags |= SVF_BROADCAST;
-
+	trap_Cvar_VariableStringBuffer ( "mapname", level.mapname, MAX_QPATH );
 	// Start the gametype
 	trap_GT_Start ( level.gametypeStartTime );
 }

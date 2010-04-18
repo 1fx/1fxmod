@@ -19,6 +19,21 @@ void trap_SendServerCommand( int clientNum, const char *text ) {
 		trap_SendServerCommand2(clientNum, text);
 } 
 
+void SpawnFence(void) // big cage
+{
+	AddSpawnField("classname", "misc_bsp"); // blocker
+	AddSpawnField("bspmodel",	"instances/Generic/fence01");
+	AddSpawnField("origin",		"-346 -309 -87");
+	AddSpawnField("angles",		"0 180 0");
+	AddSpawnField("model",		"trigger_hurt"); //blocked_trigger
+	AddSpawnField("count",		 "1");
+
+	G_SpawnGEntityFromSpawnVars(qtrue);
+
+	level.numSpawnVars = 0;
+	level.numSpawnVarChars = 0;
+}
+
 void RPM_ReadyCheck (gentity_t *ent)
 {
 #ifdef _SOF2_BOTS
@@ -3192,16 +3207,16 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			if(level.nolower1 == qtrue){
 				level.nolower1 = qfalse;
 				if (strstr(level.mapname, "mp_kam2")){
-				// cage kwap
+				SpawnFence();
 				}
-				trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7No lower has been disabled by %s.\n\"", ent->client->pers.netname));
+				trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7No lower has been disabled by %s.\n\"", ent->client->pers.netname));
 				Boe_adminLog (va("%s - NOLOWER DISABLED", ent->client->pers.cleanName)) ;
 			}else{
 				level.nolower1 = qtrue;
 				if (strstr(level.mapname, "mp_kam2")){
 				// remove cage kwap
 				}
-				trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7No lower has been enabled by %s.\n\"", ent->client->pers.netname));
+				trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7No lower has been enabled by %s.\n\"", ent->client->pers.netname));
 				Boe_adminLog (va("%s - NOLOWER ENABLED", ent->client->pers.cleanName)) ;
 			}
 		}
