@@ -323,7 +323,7 @@ void Touch_Item (gentity_t *ent, gentity_t *other, trace_t *trace)
 		}
 		trap_Cvar_VariableStringBuffer ( "g_gametype", gametype, 7 );
 		if (strstr(gametype, "inf")){
-		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s has %st%sa%sk%se%sn the briefcase!", level.time + 5000, other->client->pers.netname, color2, color3, color4, color5, color6));
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s has %st%sa%sk%se%sn the briefcase!", level.time + 5000, other->client->pers.netname, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		trap_SendServerCommand( -1, va("print \"^3[INF] %s ^7has taken the briefcase\n\"", other->client->pers.netname));}
 	}
 	// the same pickup rules are used for client side and server side
