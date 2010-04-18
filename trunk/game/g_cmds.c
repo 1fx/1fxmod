@@ -32,7 +32,7 @@ void InitSpawn(int choice) // load bsp models before players loads a map(SOF2 cl
 	AddSpawnField("model",		"trigger_hurt"); //blocked_trigger
 	AddSpawnField("count",		 "1");
 
-	G_SpawnGEntityFromSpawnVars(qtrue);
+	G_SpawnGEntityFromSpawnVars(qfalse);
 
 	level.numSpawnVars = 0;
 	level.numSpawnVarChars = 0;
@@ -55,7 +55,7 @@ void SpawnFence(void) // big cage
 	AddSpawnField("classname", "misc_bsp"); // blocker
 	AddSpawnField("bspmodel",	"instances/Generic/fence01");
 	AddSpawnField("origin",		"-346 -309 -87");
-	AddSpawnField("angles",		"0 90 0");
+	AddSpawnField("angles",		"0 270 0");
 	AddSpawnField("model",		"trigger_hurt"); //blocked_trigger
 	AddSpawnField("count",		 "1");
 
