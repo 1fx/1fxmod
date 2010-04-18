@@ -1169,8 +1169,8 @@ void Boe_About( gentity_t *ent )
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Clan URL^7]    None\n\n"));
 	else
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Clan URL^7]    %s\n\n", ClanURL));
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Hosted by^7]   v1servers.net\n"));
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Mod used^7]    1fx. Infiltration\n"));
+	trap_SendServerCommand( ent-g_entities, va("print \"[^3Hosted by^7]   v1servers.com\n"));
+	trap_SendServerCommand( ent-g_entities, va("print \"[^3Mod used^7]    1fx. Mod\n"));
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Mod URL^7]     1fx.ipbfree.com\n"));
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Mod version^7] %s\n", INF_VERSION_STRING));
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Mod date^7]    %s\n", INF_VERSION_DATE));
