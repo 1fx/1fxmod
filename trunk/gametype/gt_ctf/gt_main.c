@@ -190,6 +190,14 @@ Handles all events sent to the gametype
 */
 int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int arg4 )
 {
+	char color1[5];
+	char color2[5];
+	char color3[5];
+	char color4[5];
+	char color5[5];
+	char color6[5];
+	char msg[20];
+	char clientname[MAX_QPATH];
 	switch ( cmd )
 	{
 		case GTEV_ITEM_DEFEND:
@@ -204,14 +212,30 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 			{
 				case ITEM_REDFLAG:
 					trap_Cmd_ResetItem ( ITEM_REDFLAG );
-					trap_Cmd_TextMessage ( -1, "The Red Flag has returned!" );
+					trap_Cvar_VariableStringBuffer ( "server_redteamprefix", msg, 19 );
+					trap_Cvar_VariableStringBuffer ( "server_color1", color1, 4 );
+					trap_Cvar_VariableStringBuffer ( "server_color2", color2, 4 );
+					trap_Cvar_VariableStringBuffer ( "server_color3", color3, 4 );
+					trap_Cvar_VariableStringBuffer ( "server_color4", color4, 4 );
+					trap_Cvar_VariableStringBuffer ( "server_color5", color5, 4 );
+					trap_Cvar_VariableStringBuffer ( "server_color6", color6, 4 );
+					trap_Cmd_TextMessage ( -1, "@The %s ^7Flag has %sr%se%st%su%sr%sned!", msg, color1, color2, color3, color4, color5, color6 );
+					trap_Cmd_TextMessage( -1, va("^3[CTF] ^7The Red Flag has returned\n\""));
 					trap_Cmd_StartGlobalSound ( gametype.flagReturnSound );
 					gametype.redFlagDropTime = 0;
 					return 1;
 
 				case ITEM_BLUEFLAG:
 					trap_Cmd_ResetItem ( ITEM_BLUEFLAG );
-					trap_Cmd_TextMessage ( -1, "The Blue Flag has returned!" );
+					trap_Cvar_VariableStringBuffer ( "server_blueteamprefix", msg, 19 );
+					trap_Cvar_VariableStringBuffer ( "server_color1", color1, 4 );
+					trap_Cvar_VariableStringBuffer ( "server_color2", color2, 4 );
+					trap_Cvar_VariableStringBuffer ( "server_color3", color3, 4 );
+					trap_Cvar_VariableStringBuffer ( "server_color4", color4, 4 );
+					trap_Cvar_VariableStringBuffer ( "server_color5", color5, 4 );
+					trap_Cvar_VariableStringBuffer ( "server_color6", color6, 4 );
+					trap_Cmd_TextMessage ( -1, "@The %s ^7Flag has %sr%se%st%su%sr%sned!", msg, color1, color2, color3, color4, color5, color6 );
+					trap_Cmd_TextMessage( -1, va("^3[CTF] ^7The Blue Flag has returned\n\""));
 					trap_Cmd_StartGlobalSound ( gametype.flagReturnSound );
 					gametype.blueFlagDropTime = 0;
 					return 1;
@@ -228,12 +252,28 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 			switch ( arg0 )
 			{
 				case ITEM_BLUEFLAG:
-					trap_Cmd_TextMessage ( -1, va("%s has dropped the Blue Flag!", clientname ) );
+					trap_Cvar_VariableStringBuffer ( "server_blueteamprefix", msg, 19 );
+					trap_Cvar_VariableStringBuffer ( "server_color1", color1, 4 );
+					trap_Cvar_VariableStringBuffer ( "server_color2", color2, 4 );
+					trap_Cvar_VariableStringBuffer ( "server_color3", color3, 4 );
+					trap_Cvar_VariableStringBuffer ( "server_color4", color4, 4 );
+					trap_Cvar_VariableStringBuffer ( "server_color5", color5, 4 );
+					trap_Cvar_VariableStringBuffer ( "server_color6", color6, 4 );
+					trap_Cmd_TextMessage ( -1, va("@%s has %sd%sr%so%sp%sp%sed the %s ^7Flag!", clientname, color1, color2, color3, color4, color5, color6, msg ) );
+					trap_Cmd_TextMessage( -1, va("^3[CTF] %s ^7has dropped the Blue Flag\n\"", clientname));
 					gametype.blueFlagDropTime = time;
 					break;
 				
 				case ITEM_REDFLAG:
-					trap_Cmd_TextMessage ( -1, va("%s has dropped the Red Flag!", clientname ) );
+					trap_Cvar_VariableStringBuffer ( "server_redteamprefix", msg, 19 );
+					trap_Cvar_VariableStringBuffer ( "server_color1", color1, 4 );
+					trap_Cvar_VariableStringBuffer ( "server_color2", color2, 4 );
+					trap_Cvar_VariableStringBuffer ( "server_color3", color3, 4 );
+					trap_Cvar_VariableStringBuffer ( "server_color4", color4, 4 );
+					trap_Cvar_VariableStringBuffer ( "server_color5", color5, 4 );
+					trap_Cvar_VariableStringBuffer ( "server_color6", color6, 4 );
+					trap_Cmd_TextMessage ( -1, va("@%s has %sd%sr%so%sp%sp%sed the %s ^7Flag!", clientname, color1, color2, color3, color4, color5, color6, msg ) );
+					trap_Cmd_TextMessage( -1, va("^3[CTF] %s ^7has dropped the Red Flag\n\"", clientname));
 					gametype.redFlagDropTime = time;
 					break;
 			}
@@ -249,7 +289,14 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 					{
 						char clientname[MAX_QPATH];
 						trap_Cmd_GetClientName ( arg1, clientname, MAX_QPATH );
-						trap_Cmd_TextMessage ( -1, va("%s has taken the Blue Flag!", clientname ) );
+						trap_Cvar_VariableStringBuffer ( "server_blueteamprefix", msg, 19 );
+						trap_Cvar_VariableStringBuffer ( "server_color2", color2, 4 );
+						trap_Cvar_VariableStringBuffer ( "server_color3", color3, 4 );
+						trap_Cvar_VariableStringBuffer ( "server_color4", color4, 4 );
+						trap_Cvar_VariableStringBuffer ( "server_color5", color5, 4 );
+						trap_Cvar_VariableStringBuffer ( "server_color6", color6, 4 );
+						trap_Cmd_TextMessage ( -1, va("@%s has %st%sa%sk%se%sn the %s ^7Flag!", clientname, color2, color3, color4, color5, color6, msg ) );
+						trap_Cmd_TextMessage( -1, va("^3[CTF] %s ^7has taken the Blue Flag\n\"", clientname));
 						trap_Cmd_StartGlobalSound ( gametype.flagTakenSound );
 						trap_Cmd_RadioMessage ( arg1, "got_it" );
 						gametype.blueFlagDropTime = 0;
@@ -263,7 +310,14 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 					{
 						char clientname[MAX_QPATH];
 						trap_Cmd_GetClientName ( arg1, clientname, MAX_QPATH );
-						trap_Cmd_TextMessage ( -1, va("%s has taken the Red Flag!", clientname ) );
+						trap_Cvar_VariableStringBuffer ( "server_redteamprefix", msg, 19 );
+						trap_Cvar_VariableStringBuffer ( "server_color2", color2, 4 );
+						trap_Cvar_VariableStringBuffer ( "server_color3", color3, 4 );
+						trap_Cvar_VariableStringBuffer ( "server_color4", color4, 4 );
+						trap_Cvar_VariableStringBuffer ( "server_color5", color5, 4 );
+						trap_Cvar_VariableStringBuffer ( "server_color6", color6, 4 );
+						trap_Cmd_TextMessage ( -1, va("@%s has %st%sa%sk%se%sn the %s ^7Flag!", clientname, color2, color3, color4, color5, color6, msg ) );
+						trap_Cmd_TextMessage( -1, va("^3[CTF] %s ^7has taken the Red Flag\n\"", clientname));
 						trap_Cmd_StartGlobalSound ( gametype.flagTakenSound );
 						trap_Cmd_RadioMessage ( arg1, "got_it" );
 						gametype.redFlagDropTime = 0;
@@ -283,7 +337,15 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 					{
 						char clientname[MAX_QPATH];
 						trap_Cmd_GetClientName ( arg1, clientname, MAX_QPATH );
-						trap_Cmd_TextMessage ( -1, va("%s has captured the Red Flag!", clientname ) );
+						trap_Cvar_VariableStringBuffer ( "server_redteamprefix", msg, 19 );
+						trap_Cvar_VariableStringBuffer ( "server_color1", color2, 4 );
+						trap_Cvar_VariableStringBuffer ( "server_color2", color2, 4 );
+						trap_Cvar_VariableStringBuffer ( "server_color3", color3, 4 );
+						trap_Cvar_VariableStringBuffer ( "server_color4", color4, 4 );
+						trap_Cvar_VariableStringBuffer ( "server_color5", color5, 4 );
+						trap_Cvar_VariableStringBuffer ( "server_color6", color6, 4 );
+						trap_Cmd_TextMessage ( -1, va("@%s has %sc%sa%sp%st%su%sred the %s ^7Flag!", clientname , color1, color2, color3, color4, color5, color6, msg) );
+						trap_Cmd_TextMessage( -1, va("^3[CTF] %s ^7has captured the Red Flag\n\"", clientname));
 						trap_Cmd_ResetItem ( ITEM_REDFLAG );
 						trap_Cmd_StartGlobalSound ( gametype.flagCaptureSound );
 						trap_Cmd_AddTeamScore ( arg2, 1 );
@@ -302,7 +364,15 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 					{
 						char clientname[MAX_QPATH];
 						trap_Cmd_GetClientName ( arg1, clientname, MAX_QPATH );
-						trap_Cmd_TextMessage ( -1, va("%s has captured the Blue Flag!", clientname ) );
+						trap_Cvar_VariableStringBuffer ( "server_blueteamprefix", msg, 19 );
+						trap_Cvar_VariableStringBuffer ( "server_color1", color2, 4 );
+						trap_Cvar_VariableStringBuffer ( "server_color2", color2, 4 );
+						trap_Cvar_VariableStringBuffer ( "server_color3", color3, 4 );
+						trap_Cvar_VariableStringBuffer ( "server_color4", color4, 4 );
+						trap_Cvar_VariableStringBuffer ( "server_color5", color5, 4 );
+						trap_Cvar_VariableStringBuffer ( "server_color6", color6, 4 );
+						trap_Cmd_TextMessage ( -1, va("@%s has %sc%sa%sp%st%su%sred the %s ^7Flag!", clientname , color1, color2, color3, color4, color5, color6, msg) );
+						trap_Cmd_TextMessage( -1, va("^3[CTF] %s ^7has captured the Blue Flag\n\"", clientname));
 						trap_Cmd_ResetItem ( ITEM_BLUEFLAG );
 						trap_Cmd_StartGlobalSound ( gametype.flagCaptureSound );
 						trap_Cmd_AddTeamScore ( arg2, 1 );
