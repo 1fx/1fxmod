@@ -262,7 +262,6 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 						// BOE FIX ME
 						char clientname[MAX_QPATH];
 						trap_Cmd_GetClientName ( arg1, clientname, MAX_QPATH );
-						/*
 						char color1[8];
 						char color2[8];
 						char color3[8];
@@ -276,7 +275,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 						trap_Cvar_VariableStringBuffer ( "server_color5", color5, 4 );
 						trap_Cvar_VariableStringBuffer ( "server_color6", color6, 4 );
 						trap_Cmd_TextMessage ( -1, va("@%s ^7has %sc%sa%sp%st%su%sred the briefcase!", clientname, color1, color2, color3, color4, color5, color6 ) );
-						*/
+						
 						trap_Cmd_TextMessage( -1, va("^3[INF] %s ^7has captured the briefcase\n\"", clientname));
 						trap_Cmd_StartGlobalSound ( gametype.caseCaptureSound );
 						trap_Cmd_AddTeamScore ( arg2, 1 );
