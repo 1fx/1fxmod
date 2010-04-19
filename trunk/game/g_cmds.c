@@ -40,12 +40,12 @@ void InitSpawn(int choice) // load bsp models before players loads a map(SOF2 cl
 
 void RemoveFence(void){
 	int i;
-for (i = 0; i < MAX_GENTITIES; i++)
-{
-	if(g_entities[i].classname != NULL)
+	for (i = 0; i < MAX_GENTITIES; i++)
 	{
-		if(!strcmp(g_entities[i].classname, "misc_bsp") )
-			G_FreeEntity( &g_entities[i] );
+		if(g_entities[i].classname != NULL)
+		{
+			if(!strcmp(g_entities[i].classname, "misc_bsp") )
+				G_FreeEntity( &g_entities[i] );
 		}
 	}
 }
@@ -72,7 +72,7 @@ void SpawnFence(int choice) // big cage
 	AddSpawnField("angles",		"0 0 0");
 	}else if(choice == 4){ // red box
 	AddSpawnField("origin",		"-2607 -775 0"); // BUGGED, fix ik morgen.
-	AddSpawnField("angles",		"0 0 0");
+	AddSpawnField("angles",		"0 0 0");}
 	}	
 	AddSpawnField("model",		"trigger_hurt"); //blocked_trigger
 	AddSpawnField("count",		 "1");
