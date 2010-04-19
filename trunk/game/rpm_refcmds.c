@@ -17,6 +17,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 #include "g_local.h"
+#include "boe_local.h"
 
 void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 );
 
@@ -146,7 +147,7 @@ void RPM_ref_cmd( gentity_t *ent)
 	else if (!Q_stricmp ( arg1, "kick" ) /*&& sc_allowRefKick.integer*/) {
 		int id;
 
-		id = Boe_ClientNumFromArg(ent, 2, "kick <idnumber> <reason>", "Kick", qfalse);
+		id = Boe_ClientNumFromArg(ent, 2, "kick <idnumber> <reason>", "Kick", qfalse, qfalse);
 
 		if(id < 0)
 		{

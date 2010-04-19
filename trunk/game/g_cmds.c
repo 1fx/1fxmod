@@ -3478,7 +3478,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			if(id < 0) return;
 			g_entities[id].client->sess.clanMember = 1;
 
-			onlist = Boe_NameListCheck (0, g_entities[id].client->pers.boe_id, g_clanfile.string, NULL, qfalse, qfalse, qfalse);
+			onlist = Boe_NameListCheck (0, g_entities[id].client->pers.boe_id, g_clanfile.string, NULL, qfalse, qfalse, qfalse, qfalse);
 
 			if(onlist) {
 				trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7%s is already a clan member.\n\"", g_entities[id].client->pers.netname));
@@ -4415,7 +4415,7 @@ void HENK_COUNTRY(gentity_t *ent){
 				}
 			}
 			for(i=0;i<count;i++){
-				*++IP;
+				*++IP; // ignore this error, compiler says it does not have an effect
 			}
 			loops += 1;
 			count = 0;

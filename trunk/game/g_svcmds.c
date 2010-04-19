@@ -4,7 +4,7 @@
 // this file holds commands that can be executed by the server console, but not remote clients
 
 #include "g_local.h"
-
+#include "boe_local.h"
 
 /*
 ==============================================================================
@@ -539,7 +539,7 @@ qboolean ConsoleCommand( void )
 	}
 	if (Q_stricmp (cmd, "clanvsall" ) == 0 )
 	{
-		RPM_Clan_Vs_All(1, NULL);
+		RPM_Clan_Vs_All(NULL);
 		return qtrue;
 	}
 	if (Q_stricmp (cmd, "ban" ) == 0 )

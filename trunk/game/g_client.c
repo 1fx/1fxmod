@@ -1190,7 +1190,7 @@ void ClientUserinfoChanged( int clientNum )
 	if(!ent->client->sess.fileChecked && !(ent->r.svFlags & SVF_BOT)){
 			client->sess.admin = Boe_NameListCheck ( clientNum, ent->client->pers.boe_id, g_adminfile.string, NULL, qfalse, qtrue, qfalse, qfalse);
 			if(!client->sess.clanMember)
-			client->sess.clanMember = Boe_NameListCheck (clientNum, ent->client->pers.boe_id, g_clanfile.string, NULL, qfalse, qfalse, qfalse);
+			client->sess.clanMember = Boe_NameListCheck (clientNum, ent->client->pers.boe_id, g_clanfile.string, NULL, qfalse, qfalse, qfalse, qfalse);
 		
 	}	
 			ent->client->sess.fileChecked = qtrue;

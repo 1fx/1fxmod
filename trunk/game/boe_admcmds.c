@@ -7,6 +7,7 @@
 
 // --- BOE PROTOTYPE WARNINGS FIXES --- \\
 // I'm lazy so I just 'fix' them here. I'll fix them fo'real later.
+// ALREADY DONE LAZY BITCH -.-'' HENK
 
 void Boe_Add_Clan_Member(int argNum, gentity_t *adm)
 {
@@ -22,7 +23,7 @@ void Boe_Add_Clan_Member(int argNum, gentity_t *adm)
 
 	id = g_entities[idnum].client->pers.boe_id;
 
-	onlist = Boe_NameListCheck (0, id, g_clanfile.string, NULL, qfalse, qfalse, qfalse);
+	onlist = Boe_NameListCheck (0, id, g_clanfile.string, NULL, qfalse, qfalse, qfalse, qfalse);
 
 	if(onlist) {
 		Com_Printf("%s is already a ^6Clan Member.\n", g_entities[idnum].client->pers.netname);

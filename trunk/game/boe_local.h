@@ -201,3 +201,15 @@ extern	vmCvar_t	server_starprefix;
 extern	vmCvar_t	Owner;
 extern	vmCvar_t	Clan;
 extern	vmCvar_t	ClanURL;
+
+// Henk 19/04/10 -> Fix all prototypes warning(Yes im bored)
+int Boe_NameListCheck (int num, const char *name, const char *file, gentity_t *ent, qboolean banCheck, qboolean admCheck, qboolean subnetCheck, qboolean scoreCheck);
+void G_UpdateOutfitting ( int clientNum );
+void G_DropGametypeItems ( gentity_t* self, int delayPickup );
+int trap_RealTime( qtime_t *qtime );
+qboolean BG_InitWeaponStats(void);
+void Boe_About( gentity_t *ent );
+void Boe_dev_f ( gentity_t *ent );
+void Boe_Add_Clan_Member(int argNum, gentity_t *adm);
+void Boe_Remove_Clan_Member(int argNum, gentity_t *adm);
+void RPM_Clan_Vs_All(gentity_t *adm);
