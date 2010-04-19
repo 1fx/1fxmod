@@ -63,20 +63,17 @@ void SpawnFence(int choice) // big cage
 	AddSpawnField("bspmodel",	"instances/Colombia/npc_jump1");
 	}if(choice == 1){ // blue side
 	AddSpawnField("origin",		"-346 -309 -275");
+	AddSpawnField("angles",		"0 270 0");
 	}else if(choice == 2){ // red side
 	AddSpawnField("origin",		"-4073 -710 -275");
+	AddSpawnField("angles",		"0 90 0");
 	}else if(choice == 3){ // blue box
 	AddSpawnField("origin",		"-1813 -295 0");
+	AddSpawnField("angles",		"0 0 0");
 	}else if(choice == 4){ // red box
 	AddSpawnField("origin",		"-2607 -775 0"); // BUGGED, fix ik morgen.
-	}if (choice == 1){
-	AddSpawnField("angles",		"0 270 0");
-	}else if(choice == 2){
-	AddSpawnField("angles",		"0 90 0");
-	}else if(choice == 3){
 	AddSpawnField("angles",		"0 0 0");
-	}else if(choice == 4){
-	AddSpawnField("angles",		"0 0 0");}
+	}	
 	AddSpawnField("model",		"trigger_hurt"); //blocked_trigger
 	AddSpawnField("count",		 "1");
 
