@@ -95,7 +95,7 @@ typedef enum
 
 	GTCMD_REGISTEREFFECT,			// int	( const char* name );
 	GTCMD_PLAYEFFECT,				// void ( int effect, vec3_t origin, vec3_t angles );
-	GTCMD_HENKPRO,
+
 } gametypeCommand_t;
 
 
