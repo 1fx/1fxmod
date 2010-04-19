@@ -55,25 +55,21 @@ void SpawnFence(int choice) // big cage
 	AddSpawnField("classname", "misc_bsp"); // blocker
 	if (choice == 1){
 	AddSpawnField("bspmodel",	"instances/Generic/fence01");
-	}else if(choice == 2){
-	AddSpawnField("bspmodel",	"instances/Generic/fence01");
-	}else if (choice == 3){
-	AddSpawnField("bspmodel",	"instances/Colombia/npc_jump1");
-	}else if(choice == 4){
-	AddSpawnField("bspmodel",	"instances/Colombia/npc_jump1");
-	}if(choice == 1){ // blue side
 	AddSpawnField("origin",		"-346 -309 -275");
 	AddSpawnField("angles",		"0 270 0");
-	}else if(choice == 2){ // red side
+	}else if(choice == 2){
+	AddSpawnField("bspmodel",	"instances/Generic/fence01");
 	AddSpawnField("origin",		"-4073 -710 -275");
 	AddSpawnField("angles",		"0 90 0");
-	}else if(choice == 3){ // blue box
+	}else if (choice == 3){
+	AddSpawnField("bspmodel",	"instances/Colombia/npc_jump1");
 	AddSpawnField("origin",		"-1813 -295 0");
 	AddSpawnField("angles",		"0 0 0");
-	}else if(choice == 4){ // red box
+	}else if(choice == 4){
+	AddSpawnField("bspmodel",	"instances/Colombia/npc_jump1");
 	AddSpawnField("origin",		"-2607 -775 0"); // BUGGED, fix ik morgen.
-	AddSpawnField("angles",		"0 0 0");}
-	}	
+	AddSpawnField("angles",		"0 0 0");
+	}
 	AddSpawnField("model",		"trigger_hurt"); //blocked_trigger
 	AddSpawnField("count",		 "1");
 
