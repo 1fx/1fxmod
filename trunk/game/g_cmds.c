@@ -3855,6 +3855,13 @@ void G_Voice( gentity_t *ent, gentity_t *target, int mode, const char *id, qbool
 	gentity_t	*other;
 	char		name[MAX_SAY_TEXT];
 
+	if(strlen(id) > 64){
+		char	text[32] = "";
+		Q_strncpyz(text, id, sizeof(text));
+		Boe_crashLog(va("%s - %s - vsay_team: %s", ent->client->pers.cleanName, ent->client->pers.ip, text)) ;
+		return;
+	}
+
 	// Spectators and ghosts dont talk
 	if ( ent->client->ps.pm_type == PM_DEAD || G_IsClientSpectating ( ent->client ) )
 	{
@@ -3928,9 +3935,6 @@ static void Cmd_Voice_f( gentity_t *ent, int mode, qboolean arg0, qboolean voice
 		p = ConcatArgs( 1 );
 	}
 
-	if(strlen(p) >= 1022){ // Henk anti crash
-		return;
-	}
 	G_Voice( ent, NULL, mode, p, voiceonly );
 }
 
