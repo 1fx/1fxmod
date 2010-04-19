@@ -3569,11 +3569,19 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	}else if(strstr(lwrP, "!map ")){
 		if (ent->client->sess.admin >= 4){
 			char *numb;
+			fileHandle_t	f;
 			if(strlen(p) >= 5){
 				numb = va("%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", p[4], p[5], p[6], p[7], p[8], p[9], p[10], p[11], p[12], p[13], p[14], p[15], p[16], p[17], p[18]);
+				trap_FS_FOpenFile( va("maps\\%s.bsp", numb), &f, FS_READ );
+				if ( !f ){
+					trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Map not found.\n\""));
+					return;
+				}	
+				trap_FS_FCloseFile(f);
+				
 				//trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sT%si%sm%se%sl%simit %i!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, number));
 				//trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Timelimit changed to %i by %s.\n\"", number, ent->client->pers.netname));
-				trap_SendConsoleCommand( EXEC_APPEND, va("wait 5;map %s\n", numb));
+				trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", numb));
 				G_Say( ent, NULL, mode, p);
 				//Boe_adminLog (va("%s - TIMELIMIT %i", ent->client->pers.cleanName, number)) ;
 			}
@@ -3585,17 +3593,29 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		if (ent->client->sess.admin >= 4){
 			char *numb;
 			int number;
+			char gametype[8];
 			if(strstr(lwrP, "ctf")){
 				trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype ctf\n"));
+				strcpy(gametype, "ctf");
 			}else if(strstr(lwrP, "inf")){
 				trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype inf\n"));
+				strcpy(gametype, "inf");
 			}else if(strstr(lwrP, "dm")){
 				trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype dm\n"));
+				strcpy(gametype, "dm");
 			}else if(strstr(lwrP, "tdm")){
 				trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype tdm\n"));
+				strcpy(gametype, "tdm");
+			}else if(strstr(lwrP, "elim")){
+				trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype tdm\n"));
+				strcpy(gametype, "elim");
+			}else{
+				trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Unkown gametype.\n\""));
+				G_Say( ent, NULL, mode, p);
+				return;
 			}
 				//trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sT%si%sm%se%sl%simit %i!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, number));
-				//trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Timelimit changed to %i by %s.\n\"", number, ent->client->pers.netname));
+				trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Gametype changed to %s by %s.\n\"", gametype, ent->client->pers.netname));
 				//Boe_adminLog (va("%s - TIMELIMIT %i", ent->client->pers.cleanName, number)) ;
 			}
 		else if (ent->client->sess.admin < 4){
