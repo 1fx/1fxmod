@@ -816,7 +816,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	// Boe!Man 3/30/10
 	Boe_ParseChatSounds();
 
-	//InitSpawn(1);
+	InitSpawn(1);
 }
 
 /*

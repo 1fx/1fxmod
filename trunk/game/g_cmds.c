@@ -3565,12 +3565,12 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			fileHandle_t	f;
 			if(strlen(p) >= 5){
 				numb = va("%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", p[4], p[5], p[6], p[7], p[8], p[9], p[10], p[11], p[12], p[13], p[14], p[15], p[16], p[17], p[18]);
-				trap_FS_FOpenFile( va("maps\\%s.bsp", numb), &f, FS_READ );
-				if ( !f ){
-					trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Map not found.\n\""));
-					return;
-				}	
-				trap_FS_FCloseFile(f);
+				//trap_FS_FOpenFile( va("maps\\%s.bsp", numb), &f, FS_READ );
+				//if ( !f ){
+				//	trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Map not found.\n\""));
+				//	return;
+				//}	
+				//trap_FS_FCloseFile(f);
 				
 				//trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sT%si%sm%se%sl%simit %i!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, number));
 				//trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Timelimit changed to %i by %s.\n\"", number, ent->client->pers.netname));
