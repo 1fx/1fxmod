@@ -3562,7 +3562,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	}else if(strstr(lwrP, "!map ")){
 		if (ent->client->sess.admin >= 4){
 			char *numb;
-			fileHandle_t	f;
+			//fileHandle_t	f;
 			if(strlen(p) >= 5){
 				numb = va("%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", p[4], p[5], p[6], p[7], p[8], p[9], p[10], p[11], p[12], p[13], p[14], p[15], p[16], p[17], p[18]);
 				//trap_FS_FOpenFile( va("maps\\%s.bsp", numb), &f, FS_READ );
@@ -3645,6 +3645,26 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 				trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Thirdperson disabled by %s.\n\"", ent->client->pers.netname));
 				trap_Cvar_Set("g_allowthirdperson", "0");
 			}
+		}else if (ent->client->sess.admin < 4){
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
+		}
+		G_Say( ent, NULL, mode, p);
+		return;
+	}else if(strstr(lwrP, "!pa")){
+		if (ent->client->sess.admin >= 4){
+				//trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sT%sh%si%sr%sd%sperson enabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+				trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Paused by %s.\n\"", ent->client->pers.netname));
+				RPM_Pause(ent);
+		}else if (ent->client->sess.admin < 4){
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
+		}
+		G_Say( ent, NULL, mode, p);
+		return;
+	}else if(strstr(lwrP, "!up")){
+		if (ent->client->sess.admin >= 4){
+				//trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sT%sh%si%sr%sd%sperson enabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+				trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Unpaused by %s.\n\"", ent->client->pers.netname));
+				RPM_Unpause(ent);
 		}else if (ent->client->sess.admin < 4){
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
 		}

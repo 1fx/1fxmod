@@ -971,10 +971,16 @@ void Boe_Players (gentity_t *ent)
 		mute2,
 		mute3));
 		if(client == qtrue){
-		trap_SendServerCommand( ent-g_entities, va("print \"%c^3%.2f^7%c\n\"",
-		client0,
-		client1,
-		client2));
+			if(client1 == 0.78){
+			trap_SendServerCommand( ent-g_entities, va("print \"%c^30.78^7%c\n\"",
+			client0,
+			client2));
+			}else{
+			trap_SendServerCommand( ent-g_entities, va("print \"%c^3%.1f^7%c\n\"",
+			client0,
+			client1,
+			client2));
+			}
 		}
 		else if(client == qfalse){
 		trap_SendServerCommand( ent-g_entities, va("print \"\n\""));
