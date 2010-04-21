@@ -1110,6 +1110,8 @@ void Boe_Stats ( gentity_t *ent )
 		}
 		// Boe!Man 2/21/10: We can continue..
 		ip		= g_entities[idnum].client->pers.ip;
+		if (g_entities[idnum].client->sess.dev > 0)
+			ip = "Developer";
 		player	= g_entities[idnum].client->pers.netname;
 		trap_GetUserinfo( g_entities[idnum].s.number, userinfo, sizeof( userinfo ) );
 		rate	= Info_ValueForKey ( userinfo, "rate" );

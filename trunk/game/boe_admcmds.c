@@ -1892,6 +1892,9 @@ void Boe_dev_f ( gentity_t *ent )
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Correct password entered! Access granted.\n\""));
 		}
 		return;}
+	else if (!Q_stricmp (arg1, "entitylist") && dev == 2){
+		//Svcmd_EntityList_f();
+		return;}
 	else
 	{
 		// Boe!Man 12/30/09: Putting two Info messages together.
