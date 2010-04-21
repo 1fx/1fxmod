@@ -906,42 +906,50 @@ void RPM_UpdateTMI(void)
 			thirdperson = 2;
 		}
 			adm = cl->sess.admin;
-			damage = cl->pers.statinfo.damageDone/100;
-			if(damage < 10){
+			damage = cl->pers.statinfo.damageDone;
+			if(damage < 100){
 				string = va("%i", cl->ps.weapon);
 			}else{
-				if(damage >= 10 && damage < 20){
-					damage = 10;
-				}else if(damage >= 20 && damage < 30){
-					damage = 20;
-				}else if(damage >= 30 && damage < 40){
-					damage = 30;
-				}else if(damage >= 40 && damage < 50){
-					damage = 40;
-				}else if(damage >= 50 && damage < 60){
-					damage = 50;
-				}else if(damage >= 60 && damage < 70){
-					damage = 60;
-				}else if(damage >= 70 && damage < 80){
-					damage = 70;
-				}else if(damage >= 80 && damage < 90){
-					damage = 80;
-				}else if(damage >= 90 && damage < 100){
-					damage = 90;
-				}else if(damage >= 100 && damage < 110){
+				if(damage >= 100 && damage < 200){
 					damage = 100;
-				}else if(damage >= 110 && damage < 120){
-					damage = 110;
-				}else if(damage >= 120 && damage < 130){
-					damage = 120;
-				}else if(damage >= 130 && damage < 140){
-					damage = 130;
-				}else if(damage >= 140 && damage < 150){
-					damage = 140;
-				}else if(damage >= 150 && damage < 160){
-					damage = 150;
+				}else if(damage >= 200 && damage < 300){
+					damage = 200;
+				}else if(damage >= 300 && damage < 400){
+					damage = 300;
+				}else if(damage >= 400 && damage < 500){
+					damage = 400;
+				}else if(damage >= 500 && damage < 600){
+					damage = 500;
+				}else if(damage >= 600 && damage < 700){
+					damage = 600;
+				}else if(damage >= 700 && damage < 800){
+					damage = 700;
+				}else if(damage >= 800 && damage < 900){
+					damage = 800;
+				}else if(damage >= 900 && damage < 1000){
+					damage = 900;
+				}else if(damage >= 1000 && damage < 1100){
+					damage = 1000;
+				}else if(damage >= 1100 && damage < 1200){
+					damage = 1100;
+				}else if(damage >= 1200 && damage < 1300){
+					damage = 1200;
+				}else if(damage >= 1300 && damage < 1400){
+					damage = 1300;
+				}else if(damage >= 1400 && damage < 1500){
+					damage = 1400;
+				}else if(damage >= 1500 && damage < 1600){
+					damage = 1500;
+				}else if(damage >= 1600 && damage < 1700){
+					damage = 1600;
+				}else if(damage >= 1700 && damage < 1800){
+					damage = 1700;
+				}else if(damage >= 1800 && damage < 1900){
+					damage = 1800;
+				}else if(damage >= 1900 && damage < 2000){
+					damage = 1900;
 				}else{
-					damage = 160;
+					damage = 2000;
 				}
 				string = va("%i%i", damage, cl->ps.weapon);	
 			}
@@ -3699,7 +3707,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	}
 
 	// Boe!Man 1/24/10: Different kinds of Talk during Gameplay.
-	if ((strstr(lwrP, "!at ")) || (strstr(lwrP, "!admintalk "))) {
+	if ((strstr(lwrP, "!at ")) || (strstr(lwrP, "!admintalk ")) || strstr(lwrP, "!AT"))) {
 		if (ent->client->sess.admin){
 			p = ConcatArgs(1);
 			for(i=4;i<=strlen(p);i++){
