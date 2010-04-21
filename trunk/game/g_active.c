@@ -1067,8 +1067,13 @@ void ClientThink_real( gentity_t *ent )
 		{
 			client->sess.motdStartTime = level.time;
 			client->sess.motdStopTime = level.time + 7000;
+			if(!client->sess.admin){
 			trap_SendServerCommand( ent - g_entities, va("chat -1 \"%sI%sn%sf%so%s: This server is running %s ^7%s - ^3V1Servers.com\n\"", server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, INF_VERSION_STRING_COLORED, INF_VERSION_STRING));
 			trap_SendServerCommand( ent - g_entities, va("chat -1 \"%sI%sn%sf%so%s: Please report any bugs to support@v1servers.com\n\"", server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+			}else{
+			trap_SendServerCommand( ent - g_entities, va("chat -1 \"%sI%sn%sf%so%s: This server is running %s ^7%s - ^3V1Servers.com\n\"", server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, INF_VERSION_STRING_COLORED, INF_VERSION_STRING));
+			trap_SendServerCommand( ent - g_entities, va("chat -1 \"%sI%sn%sf%so%s: Hello admin, we log all your admin activity so do NOT abuse.\n\"", server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+			}
 			Boe_Motd(ent);
 		}
 	}

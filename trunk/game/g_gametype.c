@@ -706,7 +706,7 @@ void CheckGametype ( void )
 		int i;
 		int alive[TEAM_NUM_TEAMS];
 		int dead[TEAM_NUM_TEAMS];
-
+		int players[TEAM_NUM_TEAMS];
 		memset ( &alive[0], 0, sizeof(alive) );
 		memset ( &dead[0], 0, sizeof(dead) );
 		for ( i = 0; i < level.numConnectedClients; i ++ )
@@ -718,6 +718,8 @@ void CheckGametype ( void )
 				continue;
 			}
 
+			players[ent->client->sess.team] ++;
+
 			if ( G_IsClientDead ( ent->client ) )
 			{
 				dead[ent->client->sess.team] ++;
@@ -728,7 +730,7 @@ void CheckGametype ( void )
 			}
 		}
 
-		if(alive[TEAM_RED] == 1 && level.redMsgCount == 0){
+		if(alive[TEAM_RED] == 1 && level.redMsgCount == 0 && players[TEAM_RED] >= 2){
 			for ( i = 0; i < level.numConnectedClients; i ++ ){
 				gentity_t* ent = &g_entities[level.sortedClients[i]];
 				if ( ent->client->sess.team == TEAM_RED && alive[TEAM_RED] == 1 &&
@@ -741,7 +743,7 @@ void CheckGametype ( void )
 			}
 		}
 
-		if(alive[TEAM_BLUE] == 1 && level.blueMsgCount == 0){
+		if(alive[TEAM_BLUE] == 1 && level.blueMsgCount == 0 && players[TEAM_BLUE] >= 2){
 			for ( i = 0; i < level.numConnectedClients; i ++ ){
 				gentity_t* ent = &g_entities[level.sortedClients[i]];
 				if ( ent->client->sess.team == TEAM_BLUE && alive[TEAM_BLUE] == 1 &&

@@ -1073,12 +1073,12 @@ int Boe_NameListCheck (int num, const char *name, const char *file, gentity_t *e
 		*listP = '\0';
 		listP = listName;			
 		if (admCheck){
-			for(count=0;count<=20;count++){
-			strcpy(a, va("%s:%i", name, count ));
-			if (!Q_stricmp(listName, a)) {
-				return count;
-			}
-			}
+			//for(count=0;count<=20;count++){
+			//strcpy(a, va("%s:%i", name, count ));
+			//if (!Q_stricmp(listName, a)) {
+			//	return count;
+			//}
+			//}
 			strcpy(a, va("%s:2", name ));
 			if (!Q_stricmp(listName, a)) {
 				return 2;

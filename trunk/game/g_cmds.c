@@ -513,7 +513,7 @@ void RPM_Obituary ( gentity_t *target, gentity_t *attacker, int mod, attackType_
 			//handle the sound etc...
 			if(attacker->client->sess.rpmClient)
 			{
-				trap_SendServerCommand( attacker->s.number, va("headshot \"TEST\n\""));
+				trap_SendServerCommand( attacker->s.number, va("headshot \"Headshot\n\""));
 				Boe_ClientSound(attacker, G_SoundIndex("sound/npc/col8/blakely/niceshot.mp3"));
 			}
 			//if not we'll send them the sound etc..
@@ -4520,6 +4520,38 @@ void HENK_COUNTRY(gentity_t *ent){
 			}
 			group = trap_GPG_GetNext(group);
 		}
+		
+		// Start checking other file
+		fileCount = trap_FS_GetFileList( "country", ".overig", Files, 1024 );
+		filePtr = Files;
+		file = va("country\\%s", filePtr);
+		GP2 = trap_GP_ParseFile(file, qtrue, qfalse);
+		if (!GP2)
+		{
+			G_LogPrintf("Error in file: \"%s\" or file not found.\n", file);
+		}
+		group = trap_GPG_GetSubGroups(GP2);
+
+		while(group)
+		{
+			trap_GPG_FindPairValue(group, "begin_ip", "0", begin_ip);
+			begin_ipi = atoi(begin_ip);
+			trap_GPG_FindPairValue(group, "end_ip", "", end_ip);
+			end_ipi = atoi(end_ip);
+			trap_GPG_FindPairValue(group, "country", "", country);
+			trap_GPG_FindPairValue(group, "ext", "", ext);
+			if(IPnum > begin_ipi && IPnum < end_ipi){
+				// found entry
+				trap_GP_Delete(&GP2);
+				strcpy(ent->client->sess.country, country);
+				strcpy(ent->client->sess.countryext, ext);
+				AddIPList(ent->client->pers.ip, country, ext);
+				return;
+				break; // stop searching
+			}
+			group = trap_GPG_GetNext(group);
+		}
+		// End other file
 		strcpy(ent->client->sess.countryext, "??");
 		trap_GP_Delete(&GP2);
 		return;
