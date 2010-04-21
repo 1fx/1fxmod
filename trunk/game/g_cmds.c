@@ -930,8 +930,18 @@ void RPM_UpdateTMI(void)
 					damage = 90;
 				}else if(damage >= 100 && damage < 110){
 					damage = 100;
+				}else if(damage >= 110 && damage < 120){
+					damage = 110;
+				}else if(damage >= 120 && damage < 130){
+					damage = 120;
+				}else if(damage >= 130 && damage < 140){
+					damage = 130;
+				}else if(damage >= 140 && damage < 150){
+					damage = 140;
+				}else if(damage >= 150 && damage < 160){
+					damage = 150;
 				}else{
-					damage = 100;
+					damage = 160;
 				}
 				string = va("%i%i", damage, cl->ps.weapon);	
 			}
