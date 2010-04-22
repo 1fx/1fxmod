@@ -1088,16 +1088,17 @@ int G_Damage (
 		//Ryan april 28 2003
 		targ->client->pers.statinfo.lasthurtby = attacker->s.number;
 		if(attacker->client)
-		{
-			attacker->client->pers.statinfo.damageDone += damage;
-			attacker->client->pers.statinfo.lastclient_hurt = targ->s.number;
-		}
+		attacker->client->pers.statinfo.lastclient_hurt = targ->s.number;
 		//Ryan
 	}
 
 	// do the damage
 	if (take)
 	{
+		if(attacker->client)
+		{
+			attacker->client->pers.statinfo.damageDone += take;
+		}
 		targ->health = targ->health - take;
 
 		if ( targ->client )

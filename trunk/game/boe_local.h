@@ -5,10 +5,10 @@
 //==================================================================
 
 // Boe!Man 3/30/10
-#define INF_VERSION_STRING "0.20"
+#define INF_VERSION_STRING "0.21"
 #define INF_STRING "1fx. Mod"
 #define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod"
-#define INF_VERSION_DATE "4/20/10"
+#define INF_VERSION_DATE "4/22/10"
 
 
 // Infiltration
@@ -166,6 +166,24 @@ extern	vmCvar_t	server_color4;
 extern	vmCvar_t	server_color5;
 extern	vmCvar_t	server_color6;
 
+extern  void		*DB195;
+extern  void		*DB194;
+extern  void		*DB212;
+extern  void		*DB62;
+extern  void		*DB193;
+extern  void		*DB213;
+extern  void		*DB217;
+extern  void		*DB192;
+extern  void		*DB216;
+extern  void		*DB91;
+extern  void		*DB209;
+extern  void		*DB80;
+extern  void		*DB64;
+extern  void		*DB202;
+extern  void		*DB66;
+extern  void		*DB203;
+extern  int			Preloaded;
+
 void	Boe_GlobalSound (int soundIndex);
 
 void	Boe_Motd (gentity_t *ent);
@@ -213,3 +231,4 @@ void Boe_dev_f ( gentity_t *ent );
 void Boe_Add_Clan_Member(int argNum, gentity_t *adm);
 void Boe_Remove_Clan_Member(int argNum, gentity_t *adm);
 void RPM_Clan_Vs_All(gentity_t *adm);
+void Preload(void);

@@ -160,6 +160,24 @@ vmCvar_t	g_swapteams;
 vmCvar_t	g_lock;
 vmCvar_t	g_clan;
 
+void		*DB195;
+void		*DB194;
+void		*DB212;
+void		*DB62;
+void		*DB193;
+void		*DB213;
+void		*DB217;
+void		*DB192;
+void		*DB216;
+void		*DB91;
+void		*DB209;
+void		*DB80;
+void		*DB64;
+void		*DB202;
+void		*DB66;
+void		*DB203;
+int			Preloaded;
+
 static cvarTable_t gameCvarTable[] = 
 {
 	// don't override the cheat state set by the system
@@ -835,6 +853,13 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 
 	InitSpawn(1);
 	InitSpawn(2);
+
+	if(Preloaded != 1 && restart == 0){
+		G_LogPrintf("Preloading IP2Country database..\n");
+		Preload();
+		G_LogPrintf("Done preloading.\n");
+		Preloaded = 1;
+	}
 }
 
 /*

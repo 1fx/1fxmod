@@ -709,6 +709,7 @@ void CheckGametype ( void )
 		int players[TEAM_NUM_TEAMS];
 		memset ( &alive[0], 0, sizeof(alive) );
 		memset ( &dead[0], 0, sizeof(dead) );
+		memset ( &players[0], 0, sizeof(players) );
 		for ( i = 0; i < level.numConnectedClients; i ++ )
 		{
 			gentity_t* ent = &g_entities[level.sortedClients[i]];

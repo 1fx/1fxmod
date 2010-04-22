@@ -1078,8 +1078,8 @@ void Boe_Stats ( gentity_t *ent )
 		rate	= Info_ValueForKey ( userinfo, "rate" );
 		snaps	= Info_ValueForKey ( userinfo, "snaps" );
 		country = ent->client->sess.country;
-		if (ent->client->sess.boemodClient >= 0.1){
-			client = ent->client->sess.boemodClient;}
+		if (ent->client->sess.rpmClient >= 0.1){
+			client = ent->client->sess.rpmClient;}
 		else{
 			client0 = "N/A";
 			client1 = qtrue;}
@@ -1117,8 +1117,8 @@ void Boe_Stats ( gentity_t *ent )
 		rate	= Info_ValueForKey ( userinfo, "rate" );
 		snaps	= Info_ValueForKey ( userinfo, "snaps" );
 		country = g_entities[idnum].client->sess.country;
-		if (ent->client->sess.boemodClient >= 0.1){
-			client = g_entities[idnum].client->sess.boemodClient;}
+		if (g_entities[idnum].client->sess.rpmClient >= 0.1){
+			client = g_entities[idnum].client->sess.rpmClient;}
 		else{
 			client0 = "N/A";
 			client1 = qtrue;}
@@ -1138,9 +1138,14 @@ void Boe_Stats ( gentity_t *ent )
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3IP^7]          %s\n", ip));
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Country^7]     %s\n", country));
 	if (client1 == qtrue){
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Client^7]      %s\n", client0));}
-	else{
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Client^7]      %.1f\n", client));}
+	trap_SendServerCommand( ent-g_entities, va("print \"[^3Client^7]      %s\n", client0));
+	}else{
+		if(client == 0.78){
+	trap_SendServerCommand( ent-g_entities, va("print \"[^3Client^7]      0.78\n"));
+		}else{
+	trap_SendServerCommand( ent-g_entities, va("print \"[^3Client^7]      %.1f\n", client));
+		}
+	}
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Rate^7]        %s\n", rate));
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Snaps^7]       %s\n", snaps));
 	trap_SendServerCommand( ent-g_entities, va("print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\""));

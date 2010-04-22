@@ -19,6 +19,24 @@ void trap_SendServerCommand( int clientNum, const char *text ) {
 		trap_SendServerCommand2(clientNum, text);
 } 
 
+void Preload(void){
+	DB195 = trap_GP_ParseFile("country\\IPs.194", qtrue, qfalse);
+	DB212 = trap_GP_ParseFile("country\\IPs.212", qtrue, qfalse);
+	DB62 = trap_GP_ParseFile("country\\IPs.62", qtrue, qfalse);
+	DB193 = trap_GP_ParseFile("country\\IPs.193", qtrue, qfalse);
+	DB213 = trap_GP_ParseFile("country\\IPs.213", qtrue, qfalse);
+	DB217 = trap_GP_ParseFile("country\\IPs.217", qtrue, qfalse);
+	DB192 = trap_GP_ParseFile("country\\IPs.192", qtrue, qfalse);
+	DB216 = trap_GP_ParseFile("country\\IPs.216", qtrue, qfalse);
+	DB91 = trap_GP_ParseFile("country\\IPs.91", qtrue, qfalse);
+	DB209 = trap_GP_ParseFile("country\\IPs.209", qtrue, qfalse);
+	DB80 = trap_GP_ParseFile("country\\IPs.80", qtrue, qfalse);
+	DB64 = trap_GP_ParseFile("country\\IPs.64", qtrue, qfalse);
+	DB202 = trap_GP_ParseFile("country\\IPs.202", qtrue, qfalse);
+	DB66 = trap_GP_ParseFile("country\\IPs.66", qtrue, qfalse);
+	DB203 = trap_GP_ParseFile("country\\IPs.203", qtrue, qfalse);
+}
+
 void InitSpawn(int choice) // load bsp models before players loads a map(SOF2 clients cannot load a bsp model INGAME)
 {
 	AddSpawnField("classname", "misc_bsp"); // blocker
@@ -951,6 +969,7 @@ void RPM_UpdateTMI(void)
 				}else{
 					damage = 2000;
 				}
+				damage = damage/10;
 				string = va("%i%i", damage, cl->ps.weapon);	
 			}
 			
@@ -3707,7 +3726,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	}
 
 	// Boe!Man 1/24/10: Different kinds of Talk during Gameplay.
-	if ((strstr(lwrP, "!at ")) || (strstr(lwrP, "!admintalk ")) || strstr(lwrP, "!AT"))) {
+	if ((strstr(lwrP, "!at ")) || (strstr(lwrP, "!admintalk ")) || (strstr(lwrP, "!AT"))) {
 		if (ent->client->sess.admin){
 			p = ConcatArgs(1);
 			for(i=4;i<=strlen(p);i++){
@@ -4496,14 +4515,50 @@ void HENK_COUNTRY(gentity_t *ent){
 		octetx[i][countx[i]] = '\0';
 	}
 	// End
+	
+	// Handle the preloaded country files
+	if(strstr(va("%s", octetx[0]), "195")){
+		GP2 = DB195;
+	}else if(strstr(va("%s", octetx[0]), "212")){
+		GP2 = DB212;
+	}else if(strstr(va("%s", octetx[0]), "62")){
+		GP2 = DB62;
+	}else if(strstr(va("%s", octetx[0]), "193")){
+		GP2 = DB193;
+	}else if(strstr(va("%s", octetx[0]), "213")){
+		GP2 = DB213;
+	}else if(strstr(va("%s", octetx[0]), "217")){
+		GP2 = DB217;
+	}else if(strstr(va("%s", octetx[0]), "192")){
+		GP2 = DB192;
+	}else if(strstr(va("%s", octetx[0]), "216")){
+		GP2 = DB216;
+	}else if(strstr(va("%s", octetx[0]), "91")){
+		GP2 = DB91;
+	}else if(strstr(va("%s", octetx[0]), "209")){
+		GP2 = DB209;
+	}else if(strstr(va("%s", octetx[0]), "80")){
+		GP2 = DB80;
+	}else if(strstr(va("%s", octetx[0]), "64")){
+		GP2 = DB64;
+	}else if(strstr(va("%s", octetx[0]), "202")){
+		GP2 = DB202;
+	}else if(strstr(va("%s", octetx[0]), "66")){
+		GP2 = DB66;
+	}else if(strstr(va("%s", octetx[0]), "203")){
+		GP2 = DB203;
+	}else{
+	// End
 
-	fileCount = trap_FS_GetFileList( "country", va(".%s", octetx[0]), Files, 1024 );
-	filePtr = Files;
-	file = va("country\\%s", filePtr);
-	GP2 = trap_GP_ParseFile(file, qtrue, qfalse);
-	if (!GP2)
-	{
-		G_LogPrintf("Error in file: \"%s\" or file not found.\n", file);
+
+		fileCount = trap_FS_GetFileList( "country", va(".%s", octetx[0]), Files, 1024 );
+		filePtr = Files;
+		file = va("country\\%s", filePtr);
+		GP2 = trap_GP_ParseFile(file, qtrue, qfalse);
+		if (!GP2)
+		{
+			G_LogPrintf("Error in file: \"%s\" or file not found.\n", file);
+		}
 	}
 
 	RealOctet[0] = atoi(octetx[0]);
