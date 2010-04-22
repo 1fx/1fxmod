@@ -833,6 +833,9 @@ void G_UpdateOutfitting ( int clientNum )
 	{
 		return;
 	}
+	if(ent->client->sess.monkey){
+		return;
+	}
 
 	// Clear all ammo, clips, and weapons
 	client->ps.stats[STAT_WEAPONS] = 0;

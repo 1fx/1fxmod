@@ -3707,6 +3707,28 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		}
 		G_Say( ent, NULL, mode, p);
 		return;
+	}else if(strstr(lwrP, "!mo ")){
+		if (ent->client->sess.admin >= 4){
+			id = CheckAdmin(ent, p, qtrue);
+			targ = g_entities+id;
+			if(id < 0) return;
+				//trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sT%sh%si%sr%sd%sperson enabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+			if(targ->client->sess.monkey == qtrue){
+				targ->client->sess.monkey = qfalse;
+				targ->client->noOutfittingChange = qfalse;
+				G_UpdateOutfitting(targ->s.number);
+				trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Monkey disabled on %s.\n\"", targ->client->pers.netname));
+			}else{
+				targ->client->sess.monkey = qtrue;
+				SetTeam( targ, "s", NULL );
+				SetTeam( targ, "r", NULL );
+				trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Monkey enabled on %s.\n\"", targ->client->pers.netname));
+			}
+		}else if (ent->client->sess.admin < 4){
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
+		}
+		G_Say( ent, NULL, mode, p);
+		return;
 	}
 	/*else if(strstr(lwrP, "!rcon")){
 	trap_Cvar_VariableStringBuffer ( "rconpassword", rcon, MAX_QPATH );

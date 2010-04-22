@@ -265,6 +265,7 @@ typedef struct
 	qboolean			clanMember;
 	qboolean			fairplay;
 	char				fpGuid[10];
+	qboolean			monkey;
 } clientSession_t;
 
 // Boe!Man 3/30/10
