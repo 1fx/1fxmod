@@ -3423,7 +3423,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		return;
 	}
 	else if(strstr(lwrP, "!rd")){
-		if (ent->client->sess.admin >= g_damage.integer){
+		if (ent->client->sess.admin >= g_damagemode.integer){
 			g_instagib.integer = 1;
 			BG_InitWeaponStats();
 			for(i=0;i<=level.numConnectedClients;i++){
@@ -3440,7 +3440,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		return;
 	}
 	else if(strstr(lwrP, "!nd")){
-		if (ent->client->sess.admin >= g_damage.integer){
+		if (ent->client->sess.admin >= g_damagemode.integer){
 			g_instagib.integer = 0;
 			BG_InitWeaponStats();
 			for(i=0;i<=level.numConnectedClients;i++){

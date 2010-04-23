@@ -125,7 +125,7 @@ extern	vmCvar_t	g_sl;
 extern	vmCvar_t	g_tl;
 extern	vmCvar_t	g_ri;
 extern	vmCvar_t	g_respawninterval;
-extern	vmCvar_t	g_damage;
+extern	vmCvar_t	g_damagemode;
 extern	vmCvar_t	g_gr;
 extern	vmCvar_t	g_clanvsall;
 extern	vmCvar_t	g_swapteams;

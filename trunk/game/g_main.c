@@ -153,7 +153,7 @@ vmCvar_t	g_nades;
 vmCvar_t	g_sl;
 vmCvar_t	g_tl;
 vmCvar_t	g_ri;
-vmCvar_t	g_damage;
+vmCvar_t	g_damagemode;
 vmCvar_t	g_gr;
 vmCvar_t	g_clanvsall;
 vmCvar_t	g_swapteams;
@@ -323,7 +323,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_swapteams,					"g_swapteams",			"3",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_lock,						"g_lock",				"3",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_clan,						"g_clan",				"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
-	{ &g_damage,					"g_damage",				"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
+	{ &g_damage,					"g_damagemode",			"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 
 
 	{ &g_banlist,			"g_banlist",			"users/bans.txt",			CVAR_ARCHIVE,	0.0,	0.0,	0, qfalse  },

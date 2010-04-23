@@ -188,7 +188,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 			trap_Cvar_VariableStringBuffer ( "server_color5", color5, 4 );
 			trap_Cvar_VariableStringBuffer ( "server_color6", color6, 4 );
 			trap_Cmd_TextMessage ( -1, va("@The Briefcase has %sr%se%st%su%sr%sned!", color1, color2, color3, color4, color5, color6 ));
-			trap_Cmd_TextMessage( -1, va("^3[INF] The briefcase has returned\n\""));
+			trap_Cmd_TextMessage( -1, va("^3[INF] ^7The briefcase has returned\n\""));
 			trap_Cmd_ResetItem ( ITEM_BRIEFCASE );
 			trap_Cmd_StartGlobalSound ( gametype.caseReturnSound );
 			return 1;
