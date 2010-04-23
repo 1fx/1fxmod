@@ -707,6 +707,11 @@ void CheckGametype ( void )
 		int alive[TEAM_NUM_TEAMS];
 		int dead[TEAM_NUM_TEAMS];
 		int players[TEAM_NUM_TEAMS];
+
+		//Ryan & Dragon
+		memset ( &level.teamAliveCount[0], 0, sizeof(level.teamAliveCount) );
+		//Ryan & Dragon
+
 		memset ( &alive[0], 0, sizeof(alive) );
 		memset ( &dead[0], 0, sizeof(dead) );
 		memset ( &players[0], 0, sizeof(players) );
@@ -728,6 +733,7 @@ void CheckGametype ( void )
 			else
 			{
 				alive[ent->client->sess.team] ++;
+				level.teamAliveCount[ent->client->sess.team] ++;
 			}
 		}
 

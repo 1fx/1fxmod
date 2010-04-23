@@ -565,6 +565,11 @@ typedef struct
 
 	int			redMsgCount;
 	int			blueMsgCount;
+
+	//Ryan & Dragon
+	int			teamAliveCount[TEAM_NUM_TEAMS];
+	//Ryan & Dragon
+
 } level_locals_t;
 
 //

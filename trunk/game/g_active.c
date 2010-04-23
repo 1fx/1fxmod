@@ -458,6 +458,11 @@ void G_UpdatePlayerStateScores ( gentity_t* ent )
 	{
 		ent->client->ps.persistant[PERS_RED_SCORE] = level.teamScores[TEAM_RED];
 		ent->client->ps.persistant[PERS_BLUE_SCORE] = level.teamScores[TEAM_BLUE];
+
+		//Ryan & Dragon
+		ent->client->ps.persistant[PERS_BLUE_ALIVE_COUNT] = level.teamAliveCount[TEAM_BLUE];
+		ent->client->ps.persistant[PERS_RED_ALIVE_COUNT] = level.teamAliveCount[TEAM_RED];
+		//Ryan & Dragon
 	} 
 	else 
 	{

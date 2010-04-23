@@ -523,6 +523,11 @@ typedef enum
 	PERS_RED_SCORE,					// Blue team score
 	PERS_BLUE_SCORE,				// red team score
 
+	//Ryan & Dragon dec 3 2003
+	PERS_RED_ALIVE_COUNT,			// number of alive people on the red team 
+	PERS_BLUE_ALIVE_COUNT,			// number of alive people on the blue team
+    //Ryan & Dragon
+
 } persEnum_t;
 
 
