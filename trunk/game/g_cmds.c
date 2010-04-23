@@ -442,7 +442,7 @@ void RPM_Obituary ( gentity_t *target, gentity_t *attacker, int mod, attackType_
 	///RxCxW - 01.08.06 - 09:14pm
 	///attackt = attacker->client->pers.statinfo.attack;
 	///weapon = attacker->client->pers.statinfo.weapon;
-
+	G_LogPrintf("Starting Obituary..\n");
 	if(!level.gametypeData->teams || (level.gametypeData->teams && !OnSameTeam ( target, attacker )))
 	{
 		statOk = qtrue;
@@ -898,7 +898,7 @@ void RPM_UpdateTMI(void)
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
 		cl = &level.clients[level.sortedClients[i]];
-		if (G_IsClientSpectating(cl))// || G_IsClientDead (cl)) 
+		if (G_IsClientSpectating(cl) || G_IsClientDead (cl)) 
 		{
 			continue;
 		}
@@ -2313,9 +2313,9 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 {
 	qboolean	 ghost = qfalse;
 	qboolean	 spec  = qfalse;
-	const char	*type;
-	char		*admin;
-	char 		*star;
+	char	type[10];
+	char	admin[10];
+	char 	star[10];
 
 	if (!other) 
 	{
@@ -2380,16 +2380,16 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 		}
 	}
 
-	admin = ""; // Boe!Man 1/18/10: Clean the Admin data.
+	strcpy(admin, ""); // Boe!Man 1/18/10: Clean the Admin data.
 	
 	// Boe!Man 1/7/10: Team prefixes.
 	if ( ghost )
 	{
-		type = "^7[^Cg^7]";
+		strcpy(type, "^7[^Cg^7]");
 	}
 	else if ( spec )
 	{
-		type = ("^7[^Cs^7]");
+		strcpy(type, "^7[^Cs^7]");
 	}
 	// Boe!Man 4/5/10: We delete the team prefixes.
 	/*
@@ -2404,30 +2404,30 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 	*/
 	// Boe!Man 4/6/10: And replace the type with something, well nothing.
 	else
-		type = "";
+		strcpy(type, "");
 
 	// Boe!Man 1/17/10: Admin Talk/Chat.
 	if(mode == ADM_TALK || mode == ADM_CHAT || mode == CADM_CHAT || mode == REF_TALK || mode == REF_CHAT || mode == CLAN_CHAT){
-	star = va("%s", server_starprefix.string);
-	admin = "";
+	strcpy(star, va("%s", server_starprefix.string));
+	strcpy(admin, "");
 	}else{
-	star = "";
+	strcpy(star, "");
 	// Boe!Man 1/6/10: Admin prefixes. - Update 1/18/10: New CVARs for prefixes if the hoster wishes to change the values.
 	if(ent->client->sess.admin == 2){
-		admin = va("%s ", server_badminprefix.string);
+		strcpy(admin, va("%s ", server_badminprefix.string));
 	}else if(ent->client->sess.admin == 3){
-		admin = va("%s ", server_adminprefix.string);
+		strcpy(admin, va("%s ", server_adminprefix.string));
 	}else if(ent->client->sess.admin == 4){
-		admin = va("%s ", server_sadminprefix.string);
+		strcpy(admin, va("%s ", server_sadminprefix.string));
 	}else{
-		admin = "";
+		strcpy(admin, "");
 	}
 	}
 	
 	// Boe!Man 1/17/10: Different kinds of Talking 'Modes'.
 	switch(mode)
 	{
-	case REF_CHAT:
+/*	case REF_CHAT:
 		type = "^7Ref chat";
 		Boe_ClientSound(other, G_SoundIndex("sound/misc/menus/invalid.wav"));
 		break;
@@ -2435,26 +2435,27 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 		type =  "^7Ref talk";
 		Boe_ClientSound(other, G_SoundIndex("sound/misc/menus/invalid.wav"));
 		break;
+		*/
 	case ADM_CHAT:
-		type = server_acprefix.string;
+		strcpy(type, server_acprefix.string);
 		Boe_ClientSound(other, G_SoundIndex("sound/misc/menus/invalid.wav"));
 		break;
 	case ADM_TALK:
 		if(ent->client->sess.admin == 2){
-		type = server_badminprefix.string;
+		strcpy(type, server_badminprefix.string);
 		}else if(ent->client->sess.admin == 3){
-		type = server_adminprefix.string;
+		strcpy(type, server_adminprefix.string);
 		}else if(ent->client->sess.admin == 4){
-		type = server_sadminprefix.string;
+		strcpy(type, server_sadminprefix.string);
 		}
 		Boe_ClientSound(other, G_SoundIndex("sound/misc/menus/invalid.wav"));
 		break;
 	case CADM_CHAT:
-		type = server_caprefix.string;
+		strcpy(type, server_caprefix.string);
 		Boe_ClientSound(other, G_SoundIndex("sound/misc/menus/invalid.wav"));
 		break;
 	case CLAN_CHAT:
-		type = server_ccprefix.string;
+		strcpy(type, server_ccprefix.string);
 		Boe_ClientSound(other, G_SoundIndex("sound/misc/menus/invalid.wav"));
 		break;
 	default:
@@ -4392,6 +4393,7 @@ qboolean CheckIP(gentity_t *ent){
 	char	ip[24], country[128], ext[6];
 	int		fileCount;
 	//Com_Printf("Checking in known list\n");
+		G_LogPrintf("Checking ip..\n");
 	fileCount = trap_FS_GetFileList( "country", ".known", Files, 1024 );
 	filePtr = Files;
 	file = va("country\\%s", filePtr);

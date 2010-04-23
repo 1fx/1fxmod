@@ -18,9 +18,12 @@ void Boe_Motd (gentity_t *ent)
 	char	motd[1024] = "\0";
 	char	*s = motd;
 	char	*gs = gmotd;
-	char	*name = ent->client->pers.netname;
+	char	name[36];
 	char	*header1 = va("@%s ^7%s ^7- %s\n", INF_VERSION_STRING_COLORED, INF_VERSION_STRING, INF_VERSION_DATE );
 	char	*header2 = va("Developed by ^GBoe!Man ^7& ^6Henkie\nv1servers.com ^3| ^71fx.ipbfree.com\n\n");
+
+	strcpy(name, ent->client->pers.netname);
+
 	Com_sprintf(gmotd, 1024, "%s%s%s\n%s\n%s\n%s\n%s\n%s\n",
 		header1,
 		header2,
@@ -1206,7 +1209,7 @@ void QDECL Boe_crashLog( const char *text, ... )
 
 	trap_RealTime (&q);
 
-	Com_sprintf( string, sizeof(string), "%02i/%02i/%i %02i:%02i\n", 1+q.tm_mon,q.tm_mday, q.tm_year+1900,q.tm_hour,q.tm_min);
+	Com_sprintf( string, sizeof(string), "%02i/%02i/%i %02i:%02i\n%s", 1+q.tm_mon,q.tm_mday, q.tm_year+1900,q.tm_hour,q.tm_min, text);
 	va_start( argptr, text );
 	vsprintf( string + 19, text, argptr );
 	va_end( argptr );

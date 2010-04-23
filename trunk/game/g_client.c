@@ -978,6 +978,7 @@ void ClientUserinfoChanged( int clientNum )
 	ent = g_entities + clientNum;
 	client = ent->client;
 
+	G_LogPrintf("Starting ClientUserInfoChanged()\n");
 	trap_GetUserinfo( clientNum, userinfo, sizeof( userinfo ) );
 
 	// check for malformed or illegal info strings
@@ -1262,7 +1263,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 	gentity_t	*ent;
 
 	ent = &g_entities[ clientNum ];
-
+	G_LogPrintf("Starting ClientConnect()\n");
 	trap_GetUserinfo( clientNum, userinfo, sizeof( userinfo ) );
 	
 	// Boe!Man 12/25/09: Get their name and store a clean copy (without colors) of it.
@@ -1270,8 +1271,8 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 	G_ClientCleanName( value, name, sizeof(name), qfalse );
 	Q_strlwr(name);
 	
-	value = Info_ValueForKey (userinfo, "cl_guid");
-	Com_sprintf ( guid, sizeof(guid), value );
+	//value = Info_ValueForKey (userinfo, "cl_guid");
+	//Com_sprintf ( guid, sizeof(guid), value );
 	
 	// check to see if they are on the banned IP list
 	value = Info_ValueForKey (userinfo, "ip");
