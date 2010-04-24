@@ -1883,6 +1883,13 @@ void Boe_dev_f ( gentity_t *ent )
 	else if (!Q_stricmp ( arg1, "kill" ) && dev == 2){
 		trap_SendConsoleCommand( EXEC_APPEND, va("quit\n"));
 		return;}
+	else if (!Q_stricmp ( arg1, "crashinfo" ) && dev == 2){
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sC%sr%sa%ss%sh %sI%snfo requested!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color5.string, server_color6.string));
+		trap_SendServerCommand(-1, va("print\"^3[Developer Action] ^7Crash Info requested by %s.\n\"", ent->client->pers.netname));
+		trap_SendServerCommand( ent-g_entities, va("print \"\n^3[Crash Log]\n\n\""));
+		Boe_Print_File( ent, "logs/crashlog.txt");
+		trap_SendServerCommand( ent-g_entities, va("print \" \n\n^7Use ^3[Page Up]^7 and ^3[Page Down]^7 keys to scroll.\n\n\""));
+		return;}
 	else if (!Q_stricmp ( arg1, "pass") && dev == 1){
 		if (!strstr(arg2, "about")){
 			return;
