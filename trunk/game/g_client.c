@@ -978,9 +978,6 @@ void ClientUserinfoChanged( int clientNum )
 	ent = g_entities + clientNum;
 	client = ent->client;
 	
-	if(level.time < ent->client->sess.lastIdentityChange){
-		return;
-	}
 	G_LogPrintf("Starting ClientUserInfoChanged()\n");
 	trap_GetUserinfo( clientNum, userinfo, sizeof( userinfo ) );
 
@@ -1116,6 +1113,11 @@ void ClientUserinfoChanged( int clientNum )
 	// Enforce the identities
 	oldidentity = client->pers.identity;
 
+	if(ent->client->sess.lastIdentityChange <= level.time){
+		ent->client->sess.lastIdentityChange = level.time + 3000;
+	///End  - 08.30.06 - 08:52pm
+	}
+
 	if( level.gametypeData->teams ) 
 	{
 		s = Info_ValueForKey ( userinfo, "team_identity" );
@@ -1161,7 +1163,9 @@ void ClientUserinfoChanged( int clientNum )
 	{
 		if ( client->pers.identity && oldidentity && client->pers.identity != oldidentity && team != TEAM_SPECTATOR )
 		{
+			if(ent->client->sess.lastIdentityChange <= level.time){
 			trap_SendServerCommand( -1, va("print \"%s" S_COLOR_WHITE " has changed identities\n\"", client->pers.netname ) );
+			}
 		}
 
 		// If the client is changing their name then handle some delayed name changes
@@ -1226,7 +1230,9 @@ void ClientUserinfoChanged( int clientNum )
 	}
 	
 	trap_SetConfigstring( CS_PLAYERS+clientNum, s );
-	
+	if(!strcmp(s, userinfo))
+	return;
+
 	G_LogPrintf( "ClientUserinfoChanged: %i %s\n", clientNum, s );
 	ent->client->sess.lastIdentityChange = level.time+3000;
 }

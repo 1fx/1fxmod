@@ -19,6 +19,595 @@ void trap_SendServerCommand( int clientNum, const char *text ) {
 		trap_SendServerCommand2(clientNum, text);
 } 
 
+int FormatDamage(int damage){ // lol fix me au3 script ftw
+	if(damage >= 100 && damage < 200){
+		damage = 100;
+	}else if(damage >= 200 && damage < 300){
+		damage = 200;
+	}else if(damage >= 300 && damage < 400){
+		damage = 300;
+	}else if(damage >= 400 && damage < 500){
+		damage = 400;
+	}else if(damage >= 500 && damage < 600){
+		damage = 500;
+	}else if(damage >= 600 && damage < 700){
+		damage = 600;
+	}else if(damage >= 700 && damage < 800){
+		damage = 700;
+	}else if(damage >= 800 && damage < 900){
+		damage = 800;
+	}else if(damage >= 900 && damage < 1000){
+		damage = 900;
+	}else if(damage >= 1000 && damage < 1100){
+		damage = 1000;
+	}else if(damage >= 1100 && damage < 1200){
+		damage = 1100;
+	}else if(damage >= 1200 && damage < 1300){
+		damage = 1200;
+	}else if(damage >= 1300 && damage < 1400){
+		damage = 1300;
+	}else if(damage >= 1400 && damage < 1500){
+		damage = 1400;
+	}else if(damage >= 1500 && damage < 1600){
+		damage = 1500;
+	}else if(damage >= 1600 && damage < 1700){
+		damage = 1600;
+	}else if(damage >= 1700 && damage < 1800){
+		damage = 1700;
+	}else if(damage >= 1800 && damage < 1900){
+		damage = 1800;
+	}else if(damage >= 1900 && damage < 2000){
+		damage = 1900;
+	}else if(damage >= 2000 && damage < 2100){
+	damage = 2000;
+}
+else if(damage >= 2100 && damage < 2200){
+	damage = 2100;
+}
+else if(damage >= 2200 && damage < 2300){
+	damage = 2200;
+}
+else if(damage >= 2300 && damage < 2400){
+	damage = 2300;
+}
+else if(damage >= 2400 && damage < 2500){
+	damage = 2400;
+}
+else if(damage >= 2500 && damage < 2600){
+	damage = 2500;
+}
+else if(damage >= 2600 && damage < 2700){
+	damage = 2600;
+}
+else if(damage >= 2700 && damage < 2800){
+	damage = 2700;
+}
+else if(damage >= 2800 && damage < 2900){
+	damage = 2800;
+}
+else if(damage >= 2900 && damage < 3000){
+	damage = 2900;
+}
+else if(damage >= 3000 && damage < 3100){
+	damage = 3000;
+}
+else if(damage >= 3100 && damage < 3200){
+	damage = 3100;
+}
+else if(damage >= 3200 && damage < 3300){
+	damage = 3200;
+}
+else if(damage >= 3300 && damage < 3400){
+	damage = 3300;
+}
+else if(damage >= 3400 && damage < 3500){
+	damage = 3400;
+}
+else if(damage >= 3500 && damage < 3600){
+	damage = 3500;
+}
+else if(damage >= 3600 && damage < 3700){
+	damage = 3600;
+}
+else if(damage >= 3700 && damage < 3800){
+	damage = 3700;
+}
+else if(damage >= 3800 && damage < 3900){
+	damage = 3800;
+}
+else if(damage >= 3900 && damage < 4000){
+	damage = 3900;
+}
+else if(damage >= 4000 && damage < 4100){
+	damage = 4000;
+}
+else if(damage >= 4100 && damage < 4200){
+	damage = 4100;
+}
+else if(damage >= 4200 && damage < 4300){
+	damage = 4200;
+}
+else if(damage >= 4300 && damage < 4400){
+	damage = 4300;
+}
+else if(damage >= 4400 && damage < 4500){
+	damage = 4400;
+}
+else if(damage >= 4500 && damage < 4600){
+	damage = 4500;
+}
+else if(damage >= 4600 && damage < 4700){
+	damage = 4600;
+}
+else if(damage >= 4700 && damage < 4800){
+	damage = 4700;
+}
+else if(damage >= 4800 && damage < 4900){
+	damage = 4800;
+}
+else if(damage >= 4900 && damage < 5000){
+	damage = 4900;
+}
+else if(damage >= 5000 && damage < 5100){
+	damage = 5000;
+}
+else if(damage >= 5100 && damage < 5200){
+	damage = 5100;
+}
+else if(damage >= 5200 && damage < 5300){
+	damage = 5200;
+}
+else if(damage >= 5300 && damage < 5400){
+	damage = 5300;
+}
+else if(damage >= 5400 && damage < 5500){
+	damage = 5400;
+}
+else if(damage >= 5500 && damage < 5600){
+	damage = 5500;
+}
+else if(damage >= 5600 && damage < 5700){
+	damage = 5600;
+}
+else if(damage >= 5700 && damage < 5800){
+	damage = 5700;
+}
+else if(damage >= 5800 && damage < 5900){
+	damage = 5800;
+}
+else if(damage >= 5900 && damage < 6000){
+	damage = 5900;
+}
+else if(damage >= 6000 && damage < 6100){
+	damage = 6000;
+}
+else if(damage >= 6100 && damage < 6200){
+	damage = 6100;
+}
+else if(damage >= 6200 && damage < 6300){
+	damage = 6200;
+}
+else if(damage >= 6300 && damage < 6400){
+	damage = 6300;
+}
+else if(damage >= 6400 && damage < 6500){
+	damage = 6400;
+}
+else if(damage >= 6500 && damage < 6600){
+	damage = 6500;
+}
+else if(damage >= 6600 && damage < 6700){
+	damage = 6600;
+}
+else if(damage >= 6700 && damage < 6800){
+	damage = 6700;
+}
+else if(damage >= 6800 && damage < 6900){
+	damage = 6800;
+}
+else if(damage >= 6900 && damage < 7000){
+	damage = 6900;
+}
+else if(damage >= 7000 && damage < 7100){
+	damage = 7000;
+}
+else if(damage >= 7100 && damage < 7200){
+	damage = 7100;
+}
+else if(damage >= 7200 && damage < 7300){
+	damage = 7200;
+}
+else if(damage >= 7300 && damage < 7400){
+	damage = 7300;
+}
+else if(damage >= 7400 && damage < 7500){
+	damage = 7400;
+}
+else if(damage >= 7500 && damage < 7600){
+	damage = 7500;
+}
+else if(damage >= 7600 && damage < 7700){
+	damage = 7600;
+}
+else if(damage >= 7700 && damage < 7800){
+	damage = 7700;
+}
+else if(damage >= 7800 && damage < 7900){
+	damage = 7800;
+}
+else if(damage >= 7900 && damage < 8000){
+	damage = 7900;
+}
+else if(damage >= 8000 && damage < 8100){
+	damage = 8000;
+}
+else if(damage >= 8100 && damage < 8200){
+	damage = 8100;
+}
+else if(damage >= 8200 && damage < 8300){
+	damage = 8200;
+}
+else if(damage >= 8300 && damage < 8400){
+	damage = 8300;
+}
+else if(damage >= 8400 && damage < 8500){
+	damage = 8400;
+}
+else if(damage >= 8500 && damage < 8600){
+	damage = 8500;
+}
+else if(damage >= 8600 && damage < 8700){
+	damage = 8600;
+}
+else if(damage >= 8700 && damage < 8800){
+	damage = 8700;
+}
+else if(damage >= 8800 && damage < 8900){
+	damage = 8800;
+}
+else if(damage >= 8900 && damage < 9000){
+	damage = 8900;
+}
+else if(damage >= 9000 && damage < 9100){
+	damage = 9000;
+}
+else if(damage >= 9100 && damage < 9200){
+	damage = 9100;
+}
+else if(damage >= 9200 && damage < 9300){
+	damage = 9200;
+}
+else if(damage >= 9300 && damage < 9400){
+	damage = 9300;
+}
+else if(damage >= 9400 && damage < 9500){
+	damage = 9400;
+}
+else if(damage >= 9500 && damage < 9600){
+	damage = 9500;
+}
+else if(damage >= 9600 && damage < 9700){
+	damage = 9600;
+}
+else if(damage >= 9700 && damage < 9800){
+	damage = 9700;
+}
+else if(damage >= 9800 && damage < 9900){
+	damage = 9800;
+}
+else if(damage >= 9900 && damage < 10000){
+	damage = 9900;
+}
+else if(damage >= 10000 && damage < 10100){
+	damage = 10000;
+}
+else if(damage >= 10100 && damage < 10200){
+	damage = 10100;
+}
+else if(damage >= 10200 && damage < 10300){
+	damage = 10200;
+}
+else if(damage >= 10300 && damage < 10400){
+	damage = 10300;
+}
+else if(damage >= 10400 && damage < 10500){
+	damage = 10400;
+}
+else if(damage >= 10500 && damage < 10600){
+	damage = 10500;
+}
+else if(damage >= 10600 && damage < 10700){
+	damage = 10600;
+}
+else if(damage >= 10700 && damage < 10800){
+	damage = 10700;
+}
+else if(damage >= 10800 && damage < 10900){
+	damage = 10800;
+}
+else if(damage >= 10900 && damage < 11000){
+	damage = 10900;
+}
+else if(damage >= 11000 && damage < 11100){
+	damage = 11000;
+}
+else if(damage >= 11100 && damage < 11200){
+	damage = 11100;
+}
+else if(damage >= 11200 && damage < 11300){
+	damage = 11200;
+}
+else if(damage >= 11300 && damage < 11400){
+	damage = 11300;
+}
+else if(damage >= 11400 && damage < 11500){
+	damage = 11400;
+}
+else if(damage >= 11500 && damage < 11600){
+	damage = 11500;
+}
+else if(damage >= 11600 && damage < 11700){
+	damage = 11600;
+}
+else if(damage >= 11700 && damage < 11800){
+	damage = 11700;
+}
+else if(damage >= 11800 && damage < 11900){
+	damage = 11800;
+}
+else if(damage >= 11900 && damage < 12000){
+	damage = 11900;
+}
+else if(damage >= 12000 && damage < 12100){
+	damage = 12000;
+}
+else if(damage >= 12100 && damage < 12200){
+	damage = 12100;
+}
+else if(damage >= 12200 && damage < 12300){
+	damage = 12200;
+}
+else if(damage >= 12300 && damage < 12400){
+	damage = 12300;
+}
+else if(damage >= 12400 && damage < 12500){
+	damage = 12400;
+}
+else if(damage >= 12500 && damage < 12600){
+	damage = 12500;
+}
+else if(damage >= 12600 && damage < 12700){
+	damage = 12600;
+}
+else if(damage >= 12700 && damage < 12800){
+	damage = 12700;
+}
+else if(damage >= 12800 && damage < 12900){
+	damage = 12800;
+}
+else if(damage >= 12900 && damage < 13000){
+	damage = 12900;
+}
+else if(damage >= 13000 && damage < 13100){
+	damage = 13000;
+}
+else if(damage >= 13100 && damage < 13200){
+	damage = 13100;
+}
+else if(damage >= 13200 && damage < 13300){
+	damage = 13200;
+}
+else if(damage >= 13300 && damage < 13400){
+	damage = 13300;
+}
+else if(damage >= 13400 && damage < 13500){
+	damage = 13400;
+}
+else if(damage >= 13500 && damage < 13600){
+	damage = 13500;
+}
+else if(damage >= 13600 && damage < 13700){
+	damage = 13600;
+}
+else if(damage >= 13700 && damage < 13800){
+	damage = 13700;
+}
+else if(damage >= 13800 && damage < 13900){
+	damage = 13800;
+}
+else if(damage >= 13900 && damage < 14000){
+	damage = 13900;
+}
+else if(damage >= 14000 && damage < 14100){
+	damage = 14000;
+}
+else if(damage >= 14100 && damage < 14200){
+	damage = 14100;
+}
+else if(damage >= 14200 && damage < 14300){
+	damage = 14200;
+}
+else if(damage >= 14300 && damage < 14400){
+	damage = 14300;
+}
+else if(damage >= 14400 && damage < 14500){
+	damage = 14400;
+}
+else if(damage >= 14500 && damage < 14600){
+	damage = 14500;
+}
+else if(damage >= 14600 && damage < 14700){
+	damage = 14600;
+}
+else if(damage >= 14700 && damage < 14800){
+	damage = 14700;
+}
+else if(damage >= 14800 && damage < 14900){
+	damage = 14800;
+}
+else if(damage >= 14900 && damage < 15000){
+	damage = 14900;
+}
+else if(damage >= 15000 && damage < 15100){
+	damage = 15000;
+}
+else if(damage >= 15100 && damage < 15200){
+	damage = 15100;
+}
+else if(damage >= 15200 && damage < 15300){
+	damage = 15200;
+}
+else if(damage >= 15300 && damage < 15400){
+	damage = 15300;
+}
+else if(damage >= 15400 && damage < 15500){
+	damage = 15400;
+}
+else if(damage >= 15500 && damage < 15600){
+	damage = 15500;
+}
+else if(damage >= 15600 && damage < 15700){
+	damage = 15600;
+}
+else if(damage >= 15700 && damage < 15800){
+	damage = 15700;
+}
+else if(damage >= 15800 && damage < 15900){
+	damage = 15800;
+}
+else if(damage >= 15900 && damage < 16000){
+	damage = 15900;
+}
+else if(damage >= 16000 && damage < 16100){
+	damage = 16000;
+}
+else if(damage >= 16100 && damage < 16200){
+	damage = 16100;
+}
+else if(damage >= 16200 && damage < 16300){
+	damage = 16200;
+}
+else if(damage >= 16300 && damage < 16400){
+	damage = 16300;
+}
+else if(damage >= 16400 && damage < 16500){
+	damage = 16400;
+}
+else if(damage >= 16500 && damage < 16600){
+	damage = 16500;
+}
+else if(damage >= 16600 && damage < 16700){
+	damage = 16600;
+}
+else if(damage >= 16700 && damage < 16800){
+	damage = 16700;
+}
+else if(damage >= 16800 && damage < 16900){
+	damage = 16800;
+}
+else if(damage >= 16900 && damage < 17000){
+	damage = 16900;
+}
+else if(damage >= 17000 && damage < 17100){
+	damage = 17000;
+}
+else if(damage >= 17100 && damage < 17200){
+	damage = 17100;
+}
+else if(damage >= 17200 && damage < 17300){
+	damage = 17200;
+}
+else if(damage >= 17300 && damage < 17400){
+	damage = 17300;
+}
+else if(damage >= 17400 && damage < 17500){
+	damage = 17400;
+}
+else if(damage >= 17500 && damage < 17600){
+	damage = 17500;
+}
+else if(damage >= 17600 && damage < 17700){
+	damage = 17600;
+}
+else if(damage >= 17700 && damage < 17800){
+	damage = 17700;
+}
+else if(damage >= 17800 && damage < 17900){
+	damage = 17800;
+}
+else if(damage >= 17900 && damage < 18000){
+	damage = 17900;
+}
+else if(damage >= 18000 && damage < 18100){
+	damage = 18000;
+}
+else if(damage >= 18100 && damage < 18200){
+	damage = 18100;
+}
+else if(damage >= 18200 && damage < 18300){
+	damage = 18200;
+}
+else if(damage >= 18300 && damage < 18400){
+	damage = 18300;
+}
+else if(damage >= 18400 && damage < 18500){
+	damage = 18400;
+}
+else if(damage >= 18500 && damage < 18600){
+	damage = 18500;
+}
+else if(damage >= 18600 && damage < 18700){
+	damage = 18600;
+}
+else if(damage >= 18700 && damage < 18800){
+	damage = 18700;
+}
+else if(damage >= 18800 && damage < 18900){
+	damage = 18800;
+}
+else if(damage >= 18900 && damage < 19000){
+	damage = 18900;
+}
+else if(damage >= 19000 && damage < 19100){
+	damage = 19000;
+}
+else if(damage >= 19100 && damage < 19200){
+	damage = 19100;
+}
+else if(damage >= 19200 && damage < 19300){
+	damage = 19200;
+}
+else if(damage >= 19300 && damage < 19400){
+	damage = 19300;
+}
+else if(damage >= 19400 && damage < 19500){
+	damage = 19400;
+}
+else if(damage >= 19500 && damage < 19600){
+	damage = 19500;
+}
+else if(damage >= 19600 && damage < 19700){
+	damage = 19600;
+}
+else if(damage >= 19700 && damage < 19800){
+	damage = 19700;
+}
+else if(damage >= 19800 && damage < 19900){
+	damage = 19800;
+}
+else if(damage >= 19900 && damage < 20000){
+	damage = 19900;
+}
+else if(damage >= 20000 && damage < 20100){
+	damage = 20000;
+}
+else{
+		damage = 2000;
+	}
+	damage = damage/10;
+return damage;
+}
+
 void Preload(void){
 	DB195 = trap_GP_ParseFile("country\\IPs.194", qtrue, qfalse);
 	DB212 = trap_GP_ParseFile("country\\IPs.212", qtrue, qfalse);
@@ -465,6 +1054,7 @@ void RPM_Obituary ( gentity_t *target, gentity_t *attacker, int mod, attackType_
 
 	if ( targ < 0 || targ >= MAX_CLIENTS ) 
 	{
+		G_LogPrintf("Out of range..\n");
 		Com_Error( ERR_FATAL, "RPM_Obituary: target out of range" );
 	}
 	Q_strncpyz( targetName, target->client->pers.netname, sizeof(targetName));
@@ -842,12 +1432,13 @@ void RPM_Obituary ( gentity_t *target, gentity_t *attacker, int mod, attackType_
 	}
 
 	// we don't know what it was
+	G_LogPrintf("Done with RPM_Obituary..\n");
 	trap_SendServerCommand( -1, va("print \"%s%s died.\n\"", targetColor, targetName ));
 }
 
 // Henk 07/04/10 -> Copied from RPM to make scoreboard from RPM client working
 /*
-=================
+=================	
 RPM_UpdateTMI
 
 //Used to only send teammate info hence "TMI" but I have decided to
@@ -928,48 +1519,7 @@ void RPM_UpdateTMI(void)
 			if(damage < 100){
 				string = va("%i", cl->ps.weapon);
 			}else{
-				if(damage >= 100 && damage < 200){
-					damage = 100;
-				}else if(damage >= 200 && damage < 300){
-					damage = 200;
-				}else if(damage >= 300 && damage < 400){
-					damage = 300;
-				}else if(damage >= 400 && damage < 500){
-					damage = 400;
-				}else if(damage >= 500 && damage < 600){
-					damage = 500;
-				}else if(damage >= 600 && damage < 700){
-					damage = 600;
-				}else if(damage >= 700 && damage < 800){
-					damage = 700;
-				}else if(damage >= 800 && damage < 900){
-					damage = 800;
-				}else if(damage >= 900 && damage < 1000){
-					damage = 900;
-				}else if(damage >= 1000 && damage < 1100){
-					damage = 1000;
-				}else if(damage >= 1100 && damage < 1200){
-					damage = 1100;
-				}else if(damage >= 1200 && damage < 1300){
-					damage = 1200;
-				}else if(damage >= 1300 && damage < 1400){
-					damage = 1300;
-				}else if(damage >= 1400 && damage < 1500){
-					damage = 1400;
-				}else if(damage >= 1500 && damage < 1600){
-					damage = 1500;
-				}else if(damage >= 1600 && damage < 1700){
-					damage = 1600;
-				}else if(damage >= 1700 && damage < 1800){
-					damage = 1700;
-				}else if(damage >= 1800 && damage < 1900){
-					damage = 1800;
-				}else if(damage >= 1900 && damage < 2000){
-					damage = 1900;
-				}else{
-					damage = 2000;
-				}
-				damage = damage/10;
+				damage = FormatDamage(damage);
 				string = va("%i%i", damage, cl->ps.weapon);	
 			}
 			
@@ -1704,6 +2254,9 @@ void SetTeam( gentity_t *ent, char *s, const char* identity )
 	if ( identity )
 	{
 		char userinfo[MAX_INFO_STRING];
+		
+		ent->client->sess.lastIdentityChange = level.time;
+
 		trap_GetUserinfo( clientNum, userinfo, sizeof( userinfo ) );
 
 		if ( Q_stricmp ( identity, Info_ValueForKey ( userinfo, "identity" ) ) )
@@ -3951,6 +4504,7 @@ void G_Voice( gentity_t *ent, gentity_t *target, int mode, const char *id, qbool
 	if(strlen(id) > 64){
 		char	text[32] = "";
 		Q_strncpyz(text, id, sizeof(text));
+		trap_SendServerCommand( ent-g_entities, va("print \"You have a very small penis.\n\"" ) );
 		Boe_crashLog(va("%s - %s - vsay_team: %s", ent->client->pers.cleanName, ent->client->pers.ip, text)) ;
 		return;
 	}
