@@ -602,10 +602,9 @@ else if(damage >= 20000 && damage < 20100){
 	damage = 20000;
 }
 else{
-		damage = 2000;
-	}
-	damage = damage/10;
-return damage;
+	damage = 0;
+}
+return damage/10;
 }
 
 void Preload(void){
@@ -1489,7 +1488,7 @@ void RPM_UpdateTMI(void)
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
 		cl = &level.clients[level.sortedClients[i]];
-		if (G_IsClientSpectating(cl) || G_IsClientDead (cl)) 
+		if (G_IsClientSpectating(cl))// || G_IsClientDead (cl)) 
 		{
 			continue;
 		}
@@ -5059,6 +5058,7 @@ void HENK_COUNTRY(gentity_t *ent){
 	countx[2] = 0;
 	countx[3] = 0;
 	// End
+	G_LogPrintf( "HENK_COUNTRY: 1\n" );
 	while(*IP){
 		if(*IP == '.')
 		{
@@ -5093,6 +5093,7 @@ void HENK_COUNTRY(gentity_t *ent){
 			break;
 		}
 	}
+	G_LogPrintf( "HENK_COUNTRY: 2\n" );
 	for(i=0;i<=3;i++){ // 4 octets
 		for(z=0;z<countx[i];z++){
 		//Com_Printf("octet[%i][%i] -> trying\n", i, countx[i]-(z+1));
@@ -5100,6 +5101,7 @@ void HENK_COUNTRY(gentity_t *ent){
 		}
 		octetx[i][countx[i]] = '\0';
 	}
+	G_LogPrintf( "HENK_COUNTRY: 3\n" );
 	// End
 	
 	// Handle the preloaded country files
@@ -5135,7 +5137,7 @@ void HENK_COUNTRY(gentity_t *ent){
 		GP2 = DB203;
 	}else{
 	// End
-
+	G_LogPrintf( "HENK_COUNTRY: else check\n" );
 
 		fileCount = trap_FS_GetFileList( "country", va(".%s", octetx[0]), Files, 1024 );
 		filePtr = Files;
@@ -5146,7 +5148,7 @@ void HENK_COUNTRY(gentity_t *ent){
 			G_LogPrintf("Error in file: \"%s\" or file not found.\n", file);
 		}
 	}
-
+	G_LogPrintf( "HENK_COUNTRY: 4\n" );
 	RealOctet[0] = atoi(octetx[0]);
 	RealOctet[1] = atoi(octetx[1]);
 	RealOctet[2] = atoi(octetx[2]);
@@ -5157,9 +5159,9 @@ void HENK_COUNTRY(gentity_t *ent){
 	//Com_Printf("Octet4: %i\n", RealOctet[3]);
 	IPnum = (RealOctet[0] * 16777216) + (RealOctet[1] * 65536) + (RealOctet[2] * 256) + (RealOctet[3]);
 	//Com_Printf("IPnum: %i\n", IPnum);
-
+	G_LogPrintf( "HENK_COUNTRY: 5\n" );
 		group = trap_GPG_GetSubGroups(GP2);
-
+	G_LogPrintf( "HENK_COUNTRY: 6\n" );
 		while(group)
 		{
 			trap_GPG_FindPairValue(group, "begin_ip", "0", begin_ip);
@@ -5170,27 +5172,30 @@ void HENK_COUNTRY(gentity_t *ent){
 			trap_GPG_FindPairValue(group, "ext", "", ext);
 			if(IPnum > begin_ipi && IPnum < end_ipi){
 				// found entry
+				G_LogPrintf( "HENK_COUNTRY: 7\n" );
 				trap_GP_Delete(&GP2);
 				strcpy(ent->client->sess.country, country);
 				strcpy(ent->client->sess.countryext, ext);
 				AddIPList(ent->client->pers.ip, country, ext);
+				G_LogPrintf( "HENK_COUNTRY: 8\n" );
 				return;
 				break; // stop searching
 			}
 			group = trap_GPG_GetNext(group);
 		}
-		
+		G_LogPrintf( "HENK_COUNTRY: 9\n" );
 		// Start checking other file
 		fileCount = trap_FS_GetFileList( "country", ".overig", Files, 1024 );
 		filePtr = Files;
 		file = va("country\\%s", filePtr);
 		GP2 = trap_GP_ParseFile(file, qtrue, qfalse);
+		G_LogPrintf( "HENK_COUNTRY: 10\n" );
 		if (!GP2)
 		{
 			G_LogPrintf("Error in file: \"%s\" or file not found.\n", file);
 		}
 		group = trap_GPG_GetSubGroups(GP2);
-
+	G_LogPrintf( "HENK_COUNTRY: 11\n" );
 		while(group)
 		{
 			trap_GPG_FindPairValue(group, "begin_ip", "0", begin_ip);
@@ -5201,18 +5206,22 @@ void HENK_COUNTRY(gentity_t *ent){
 			trap_GPG_FindPairValue(group, "ext", "", ext);
 			if(IPnum > begin_ipi && IPnum < end_ipi){
 				// found entry
+				G_LogPrintf( "HENK_COUNTRY: 12\n" );
 				trap_GP_Delete(&GP2);
 				strcpy(ent->client->sess.country, country);
 				strcpy(ent->client->sess.countryext, ext);
 				AddIPList(ent->client->pers.ip, country, ext);
+				G_LogPrintf( "HENK_COUNTRY: 13\n" );
 				return;
 				break; // stop searching
 			}
 			group = trap_GPG_GetNext(group);
+			G_LogPrintf( "HENK_COUNTRY: 14\n" );
 		}
 		// End other file
 		strcpy(ent->client->sess.countryext, "??");
 		trap_GP_Delete(&GP2);
+		G_LogPrintf( "HENK_COUNTRY: Done\n" );
 		return;
 }
 
