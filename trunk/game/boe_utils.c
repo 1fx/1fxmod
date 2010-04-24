@@ -1200,7 +1200,7 @@ Boe_crashLog by boe
 ===================
 */
 
-void QDECL Boe_crashLog( const char *text, ... )
+void QDECL Boe_crashLog( const char *text)
 {
 	char		string[1024] = "";
 	va_list		argptr;
@@ -1210,9 +1210,6 @@ void QDECL Boe_crashLog( const char *text, ... )
 	trap_RealTime (&q);
 
 	Com_sprintf( string, sizeof(string), "%02i/%02i/%i %02i:%02i\n%s", 1+q.tm_mon,q.tm_mday, q.tm_year+1900,q.tm_hour,q.tm_min, text);
-	va_start( argptr, text );
-	vsprintf( string + 19, text, argptr );
-	va_end( argptr );
 		
 	trap_FS_FOpenFile("logs/crashlog.txt", &f, FS_APPEND_TEXT);
 	

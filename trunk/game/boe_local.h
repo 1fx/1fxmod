@@ -201,7 +201,7 @@ void	Boe_Stats( gentity_t *ent );
 void	QDECL Boe_adminLog	(const char *text, ... );
 
 // Boe!Man 4/2/10: Crash log.
-void	QDECL Boe_crashLog	(const char *text, ... );
+void	QDECL Boe_crashLog	(const char *text);
 
 // Henk 28/01/10 -> Add eventeams
 void	EvenTeams (gentity_t *adm);
