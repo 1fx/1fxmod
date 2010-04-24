@@ -900,7 +900,7 @@ void QDECL Com_Error ( int level, const char *fmt, ... )
 	va_start (argptr, fmt);
 	vsprintf (text, fmt, argptr);
 	va_end (argptr);
-
+	G_LogPrintf("I noticed an error.. dunno what though\n");
 	trap_Error( text );
 }
 

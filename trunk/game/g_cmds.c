@@ -2869,7 +2869,8 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 	char	type[10];
 	char	admin[36];
 	char 	star[10];
-
+	
+	G_LogPrintf("Starting with chat\n");
 	if (!other) 
 	{
 		return;
@@ -2932,7 +2933,7 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 			}
 		}
 	}
-
+	G_LogPrintf("Setting typess\n");
 	strcpy(admin, ""); // Boe!Man 1/18/10: Clean the Admin data.
 	
 	// Boe!Man 1/7/10: Team prefixes.
@@ -2958,7 +2959,7 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 	// Boe!Man 4/6/10: And replace the type with something, well nothing.
 	else
 		strcpy(type, "");
-
+	G_LogPrintf("Checking prefix\n");
 	// Boe!Man 1/17/10: Admin Talk/Chat.
 	if(mode == ADM_TALK || mode == ADM_CHAT || mode == CADM_CHAT || mode == REF_TALK || mode == REF_CHAT || mode == CLAN_CHAT){
 	strcpy(star, va("%s", server_starprefix.string));
@@ -2978,6 +2979,7 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 	}
 	
 	// Boe!Man 1/17/10: Different kinds of Talking 'Modes'.
+	G_LogPrintf("Checking modes\n");
 	switch(mode)
 	{
 /*	case REF_CHAT:
@@ -3021,6 +3023,7 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 							ent->s.number,
 							// Boe!Man 1/6/10: Adding the Admin prefix in front of the chat. - Update 1/17/10.
 							star, type, admin, name, message, star)); // Boe!Man 1/17/10: Adding stars.
+	G_LogPrintf("Chat sended(if you see this at end of crash its NOT chat)\n");
 }
 
 /*
@@ -3145,10 +3148,12 @@ void G_Say ( gentity_t *ent, gentity_t *target, int mode, const char *chatText )
 			G_LogPrintf( "sayteam: %s: %s\n", ent->client->pers.netname, chatText );
 			break;
 	}
-
+	
+	G_LogPrintf("Getting prefix..\n");
 	// Generate the chat prefix
 	G_GetChatPrefix ( ent, target, mode, name, sizeof(name) );
 
+	G_LogPrintf("Copying..\n");
 	// Save off the chat text
 	Q_strncpyz( text, chatText, sizeof(text) );
 
@@ -3157,7 +3162,7 @@ void G_Say ( gentity_t *ent, gentity_t *target, int mode, const char *chatText )
 		G_SayTo( ent, target, mode, name, text );
 		return;
 	}
-
+	G_LogPrintf("Printing..\n");
 	// echo the text to the console
 	if ( g_dedicated.integer ) 
 	{
@@ -3170,6 +3175,7 @@ void G_Say ( gentity_t *ent, gentity_t *target, int mode, const char *chatText )
 		other = &g_entities[level.sortedClients[j]];
 		G_SayTo( ent, other, mode, name, text );
 	}
+	G_LogPrintf("Done..\n");
 }
 
 
@@ -4290,6 +4296,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	}*/
 
 	// Henk 08/02/10 -> Fix for not showing uppercase
+	G_LogPrintf("Switching to uppercase\n");
 	if (arg0)
 	{
 		p = ConcatArgs( 0 );
@@ -4300,6 +4307,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	{
 		p = ConcatArgs( 1 );
 	}
+	G_LogPrintf("Done with switching to uppercase..\n");
 
 	// Boe!Man 1/24/10: Different kinds of Talk during Gameplay.
 	if ((strstr(lwrP, "!at ")) || (strstr(lwrP, "!admintalk ")) || (strstr(lwrP, "!AT"))) {
