@@ -895,7 +895,7 @@ void G_ShutdownGame( int restart )
 void QDECL Com_Error ( int level, const char *fmt, ... ) 
 {
 	va_list		argptr;
-	char		text[1024];
+	char		text[512];
 
 	va_start (argptr, fmt);
 	vsprintf (text, fmt, argptr);
@@ -907,12 +907,11 @@ void QDECL Com_Error ( int level, const char *fmt, ... )
 void QDECL Com_Printf( const char *msg, ... ) 
 {
 	va_list		argptr;
-	char		text[1024];
+	char		text[512];
 
 	va_start (argptr, msg);
 	vsprintf (text, msg, argptr);
 	va_end (argptr);
-
 	trap_Printf( text );
 }
 
@@ -1344,7 +1343,7 @@ Print to the logfile with a time stamp if it is open
 */
 void QDECL G_LogPrintf( const char *fmt, ... ) {
 	va_list		argptr;
-	char		string[1024];
+	char		string[512];
 	int			min, tens, sec;
 
 	sec = level.time / 1000;
@@ -1363,7 +1362,7 @@ void QDECL G_LogPrintf( const char *fmt, ... ) {
 #ifndef _DEBUG
 	if ( g_dedicated.integer ) {
 #endif
-		Com_Printf( "%s", string + 8 );
+		Com_Printf( "%s", string);
 #ifndef _DEBUG
 	}
 #endif

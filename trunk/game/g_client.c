@@ -977,7 +977,10 @@ void ClientUserinfoChanged( int clientNum )
 
 	ent = g_entities + clientNum;
 	client = ent->client;
-
+	
+	if(level.time < ent->client->sess.lastIdentityChange){
+		return;
+	}
 	G_LogPrintf("Starting ClientUserInfoChanged()\n");
 	trap_GetUserinfo( clientNum, userinfo, sizeof( userinfo ) );
 
@@ -1225,6 +1228,7 @@ void ClientUserinfoChanged( int clientNum )
 	trap_SetConfigstring( CS_PLAYERS+clientNum, s );
 	
 	G_LogPrintf( "ClientUserinfoChanged: %i %s\n", clientNum, s );
+	ent->client->sess.lastIdentityChange = level.time+3000;
 }
 
 
@@ -1365,7 +1369,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 	if(CheckIP(ent) != qtrue){ // not found in list so search ip database
 	HENK_COUNTRY(ent); // will store in sess.country and sess.countryext
 	}
-
+	G_LogPrintf( "HENK_COUNTRY done..\n" );
 	// Boe!Man 3/30/10: We use this for several things.. Including MOTD and Admin.
 	if ( !isBot && firstTime )
 	{
@@ -1390,7 +1394,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 
 	// Make sure they are unlinked
 	trap_UnlinkEntity ( ent );
-
+	G_LogPrintf( "Client connected\n" );
 	return NULL;
 }
 

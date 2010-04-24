@@ -2314,7 +2314,7 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 	qboolean	 ghost = qfalse;
 	qboolean	 spec  = qfalse;
 	char	type[10];
-	char	admin[10];
+	char	admin[36];
 	char 	star[10];
 
 	if (!other) 
@@ -2442,20 +2442,20 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 		break;
 	case ADM_TALK:
 		if(ent->client->sess.admin == 2){
-		strcpy(type, server_badminprefix.string);
+		strcpy(type, va("%s ", server_badminprefix.string));
 		}else if(ent->client->sess.admin == 3){
-		strcpy(type, server_adminprefix.string);
+		strcpy(type, va("%s ", server_adminprefix.string));
 		}else if(ent->client->sess.admin == 4){
-		strcpy(type, server_sadminprefix.string);
+		strcpy(type, va("%s ", server_sadminprefix.string));
 		}
 		Boe_ClientSound(other, G_SoundIndex("sound/misc/menus/invalid.wav"));
 		break;
 	case CADM_CHAT:
-		strcpy(type, server_caprefix.string);
+		strcpy(type, va("%s ", server_caprefix.string));
 		Boe_ClientSound(other, G_SoundIndex("sound/misc/menus/invalid.wav"));
 		break;
 	case CLAN_CHAT:
-		strcpy(type, server_ccprefix.string);
+		strcpy(type, va("%s ", server_ccprefix.string));
 		Boe_ClientSound(other, G_SoundIndex("sound/misc/menus/invalid.wav"));
 		break;
 	default:
@@ -4487,7 +4487,7 @@ void HENK_COUNTRY(gentity_t *ent){
 	char	octet[4][4], octetx[4][4];
 	int		RealOctet[4];
 	int		IPnum;
-
+	G_LogPrintf( "HENK_COUNTRY starting...\n" );
 	//Com_sprintf(IP, 24, ent->client->pers.ip);
 	IP = va("%s", ent->client->pers.ip);
 	//Com_Printf("IP is: %s\n", ent->client->pers.ip);
