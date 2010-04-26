@@ -325,7 +325,7 @@ void Boe_Tokens(gentity_t *ent, char *chatText, int mode)
 					chatText--;
 			}
 		}
-		if((*chatText == '@' || *chatText == '!') && !playedSound) { // fix me henk remove '!'
+		if((*chatText == '@') /*|| *chatText == '!')*/ && !playedSound) { // fix me henk remove '!'
 			if ( g_voiceFloodCount.integer ) {
 				if ( ent->client->voiceFloodPenalty ) {
 					if ( ent->client->voiceFloodPenalty > level.time ) {
@@ -344,9 +344,9 @@ void Boe_Tokens(gentity_t *ent, char *chatText, int mode)
 					continue;
 				}
 			}
-			if(*chatText == '!') { // fix me henk
-				text = qfalse;
-			}
+			//if(*chatText == '!') { // fix me henk
+			//	text = qfalse;
+			//}
 			chatText++;
 			i = 0;
 			n = atoi(chatText) - 1;

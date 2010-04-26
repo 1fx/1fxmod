@@ -2894,13 +2894,21 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 	{
 		return;
 	}
+	G_LogPrintf("Chat 1\n");
 	// Boe!Man 1/17/10: We do not wish to send the chat when it's Admin/Clan only..
 	if ( mode == ADM_CHAT  && !other->client->sess.admin )
 		return;
-	if ( mode == CADM_CHAT && other->client->sess.admin < 2 && ent != other)
+	if (mode == REF_CHAT && !other->client->sess.referee && !other->client->sess.admin)
+		return;
+
+	if ( mode == SADM_CHAT  && other->client->sess.admin != 4 )
 		return;
 	if (mode == CLAN_CHAT && !other->client->sess.clanMember )
 		return;
+	if (mode == CADM_CHAT && other->client->sess.admin < 2 )
+		return;
+
+	G_LogPrintf("Chat 2\n");
 	if ( !level.intermissiontime && !level.intermissionQueued )
 	{
 		// Spectators cant talk to alive people
@@ -2908,7 +2916,7 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 		{
 			spec = qtrue;
 		}
-
+	G_LogPrintf("Chat 3\n");
 		if ( level.gametypeData->respawnType == RT_NONE )
 		{
 			// Dead people cant talk to alive people
@@ -2923,14 +2931,16 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 				ghost = qfalse;
 				spec = qfalse;
 			}
-
+	G_LogPrintf("Chat 4\n");
 			// If the client we are talking to is alive then a check
 			// must be made to see if this talker is alowed to speak to this person
 			if ( ent->s.number != other->s.number && !G_IsClientDead ( other->client ) && !G_IsClientSpectating( other->client) && (ghost || spec))
 			{
 				return;
 			}
+			G_LogPrintf("Chat 5\n");
 		}
+		G_LogPrintf("Chat 6\n");
 	}
 	G_LogPrintf("Setting typess\n");
 	strcpy(admin, ""); // Boe!Man 1/18/10: Clean the Admin data.
@@ -5096,45 +5106,44 @@ void HENK_COUNTRY(gentity_t *ent){
 	G_LogPrintf( "HENK_COUNTRY: 2\n" );
 	for(i=0;i<=3;i++){ // 4 octets
 		for(z=0;z<countx[i];z++){
-		//Com_Printf("octet[%i][%i] -> trying\n", i, countx[i]-(z+1));
 		octetx[i][z] = octet[i][countx[i]-(z+1)];
 		}
 		octetx[i][countx[i]] = '\0';
 	}
-	G_LogPrintf( "HENK_COUNTRY: 3\n" );
+	G_LogPrintf( "HENK_COUNTRY: 3(Octet: %s)\n", octetx[0]);
 	// End
 	
 	// Handle the preloaded country files
 	if(strstr(va("%s", octetx[0]), "195")){
-		GP2 = DB195;
+		group = trap_GPG_GetSubGroups(DB195);
 	}else if(strstr(va("%s", octetx[0]), "212")){
-		GP2 = DB212;
+		group = trap_GPG_GetSubGroups(DB212);
 	}else if(strstr(va("%s", octetx[0]), "62")){
-		GP2 = DB62;
+		group = trap_GPG_GetSubGroups(DB62);
 	}else if(strstr(va("%s", octetx[0]), "193")){
-		GP2 = DB193;
+		group = trap_GPG_GetSubGroups(DB193);
 	}else if(strstr(va("%s", octetx[0]), "213")){
-		GP2 = DB213;
+		group = trap_GPG_GetSubGroups(DB213);
 	}else if(strstr(va("%s", octetx[0]), "217")){
-		GP2 = DB217;
+		group = trap_GPG_GetSubGroups(DB217);
 	}else if(strstr(va("%s", octetx[0]), "192")){
-		GP2 = DB192;
+		group = trap_GPG_GetSubGroups(DB192);
 	}else if(strstr(va("%s", octetx[0]), "216")){
-		GP2 = DB216;
+		group = trap_GPG_GetSubGroups(DB216);
 	}else if(strstr(va("%s", octetx[0]), "91")){
-		GP2 = DB91;
+		group = trap_GPG_GetSubGroups(DB91);
 	}else if(strstr(va("%s", octetx[0]), "209")){
-		GP2 = DB209;
+		group = trap_GPG_GetSubGroups(DB209);
 	}else if(strstr(va("%s", octetx[0]), "80")){
-		GP2 = DB80;
+		group = trap_GPG_GetSubGroups(DB80);
 	}else if(strstr(va("%s", octetx[0]), "64")){
-		GP2 = DB64;
+		group = trap_GPG_GetSubGroups(DB64);
 	}else if(strstr(va("%s", octetx[0]), "202")){
-		GP2 = DB202;
+		group = trap_GPG_GetSubGroups(DB202);
 	}else if(strstr(va("%s", octetx[0]), "66")){
-		GP2 = DB66;
+		group = trap_GPG_GetSubGroups(DB66);
 	}else if(strstr(va("%s", octetx[0]), "203")){
-		GP2 = DB203;
+		group = trap_GPG_GetSubGroups(DB203);
 	}else{
 	// End
 	G_LogPrintf( "HENK_COUNTRY: else check\n" );
@@ -5147,21 +5156,19 @@ void HENK_COUNTRY(gentity_t *ent){
 		{
 			G_LogPrintf("Error in file: \"%s\" or file not found.\n", file);
 		}
+		G_LogPrintf( "HENK_COUNTRY: 123\n" );
+		group = trap_GPG_GetSubGroups(GP2);
+		G_LogPrintf( "HENK_COUNTRY: 1234\n" );
 	}
 	G_LogPrintf( "HENK_COUNTRY: 4\n" );
 	RealOctet[0] = atoi(octetx[0]);
 	RealOctet[1] = atoi(octetx[1]);
 	RealOctet[2] = atoi(octetx[2]);
 	RealOctet[3] = atoi(octetx[3]);
-	//Com_Printf("Octet1: %i\n", RealOctet[0]);
-	//Com_Printf("Octet2: %i\n", RealOctet[1]);
-	//Com_Printf("Octet3: %i\n", RealOctet[2]);
-	//Com_Printf("Octet4: %i\n", RealOctet[3]);
+
 	IPnum = (RealOctet[0] * 16777216) + (RealOctet[1] * 65536) + (RealOctet[2] * 256) + (RealOctet[3]);
-	//Com_Printf("IPnum: %i\n", IPnum);
 	G_LogPrintf( "HENK_COUNTRY: 5\n" );
-		group = trap_GPG_GetSubGroups(GP2);
-	G_LogPrintf( "HENK_COUNTRY: 6\n" );
+	if(GP2){ // henk check if group is correct
 		while(group)
 		{
 			trap_GPG_FindPairValue(group, "begin_ip", "0", begin_ip);
@@ -5183,6 +5190,7 @@ void HENK_COUNTRY(gentity_t *ent){
 			}
 			group = trap_GPG_GetNext(group);
 		}
+	}
 		G_LogPrintf( "HENK_COUNTRY: 9\n" );
 		// Start checking other file
 		fileCount = trap_FS_GetFileList( "country", ".overig", Files, 1024 );

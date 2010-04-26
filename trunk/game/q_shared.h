@@ -1687,10 +1687,12 @@ typedef enum {
 // Boe!Man 3/30/10
 #define ADM_TALK	3
 #define ADM_CHAT	4
-#define CLAN_CHAT   5
-#define REF_TALK	6
-#define REF_CHAT    7
-#define CADM_CHAT	8
+#define REF_TALK	5
+#define REF_CHAT    6
+#define SADM_CHAT	7
+#define CLAN_TALK	8
+#define CLAN_CHAT   9
+#define CADM_CHAT   10
 
 #define CDKEY_LEN 16
 #define CDCHKSUM_LEN 2
