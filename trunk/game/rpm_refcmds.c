@@ -111,7 +111,7 @@ void RPM_ref_cmd( gentity_t *ent)
 		return;
 	}
 
-	/*if (!Q_stricmp ( arg1, "chat" ))
+	if (!Q_stricmp ( arg1, "chat" ))
 	{
 		if(ent->client->sess.mute)
 		{
@@ -127,12 +127,12 @@ void RPM_ref_cmd( gentity_t *ent)
 			}
 			if(tent->client->sess.admin || tent->client->sess.referee)
 			{
-				Boe_GlobalSound(tent, G_SoundIndex("sound/misc/c4/beep.mp3"));
+				Boe_GlobalSound(G_SoundIndex("sound/misc/c4/beep.mp3"));
 			}
 		}
 		Cmd_Say_f (ent, REF_CHAT, qfalse);
 	}
-	else */if (!Q_stricmp ( arg1, "talk" ))
+	else if (!Q_stricmp ( arg1, "talk" ))
 	{
 		if(ent->client->sess.mute){
 		trap_SendServerCommand( ent-g_entities, va("print \"You are currently muted by admin.\n\"") );

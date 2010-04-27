@@ -213,6 +213,10 @@ void Boe_adm_f ( gentity_t *ent )
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   acl addclan      <id>          ^7[^3Add a clan member^7]\n\"", g_clan.integer));
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   rcl removeclan   <id>          ^7[^3Remove a clan member^7]\n\"", g_clan.integer));
 		}
+
+	if (adm >= 4){
+		trap_SendServerCommand( ent-g_entities, va("print \" [^34^7]   ??? adminspec		          ^7[^3Allows you to spec enemy^7]\n\""));
+	}
 	trap_SendServerCommand( ent-g_entities, va("print \"    [^32^7] B-Admin          ^7[^33^7] Admin          ^7[^34^7] S-Admin\n\""));
 	trap_SendServerCommand( ent-g_entities, va("print \" \n^7Use ^3[Page Up]^7 and ^3[Page Down]^7 keys to scroll.\n\""));
 	}
@@ -487,6 +491,16 @@ void Boe_adm_f ( gentity_t *ent )
 	if ((!Q_stricmp ( arg1, "unlock" )) && ent->client->sess.admin >= g_lock.integer) {
 		RPM_lockTeam(ent, qtrue, arg2);
 	}else if ((!Q_stricmp ( arg1, "unlock" )) && ent->client->sess.admin < g_lock.integer) {
+		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\"", arg1));
+		return;
+	}
+	if ((!Q_stricmp ( arg1, "adminspec" )) && ent->client->sess.admin >= 4) {
+		if(ent->client->adminspec == qtrue){
+		ent->client->adminspec = qfalse;
+		}else{
+		ent->client->adminspec = qtrue;
+		}
+	}else if ((!Q_stricmp ( arg1, "adminspec" )) && ent->client->sess.admin < 4) {
 		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\"", arg1));
 		return;
 	}

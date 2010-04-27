@@ -842,6 +842,10 @@ void G_UpdateOutfitting ( int clientNum )
 	memset ( client->ps.ammo, 0, sizeof(client->ps.ammo) );
 	memset ( client->ps.clip, 0, sizeof(client->ps.clip) );
 
+	// Henkie -> Put zoom off!
+	client->ps.zoomFov = 0;
+	client->ps.pm_flags &= ~(PMF_GOGGLES_ON|PMF_ZOOM_FLAGS);
+
 	// Everyone gets some knives
 	client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_KNIFE );
 	ammoIndex=weaponData[WP_KNIFE].attack[ATTACK_NORMAL].ammoIndex;

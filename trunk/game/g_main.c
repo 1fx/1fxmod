@@ -854,12 +854,12 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	InitSpawn(1);
 	InitSpawn(2);
 	
-	if(Preloaded != 1 && restart == 0){
-		G_LogPrintf("Preloading IP2Country database..\n");
-		Preload();
-		G_LogPrintf("Done preloading.\n");
-		Preloaded = 1;
-	}
+	//if(Preloaded != 1 && restart == 0){
+	//	G_LogPrintf("Preloading IP2Country database..\n");
+	//	Preload();
+	//	G_LogPrintf("Done preloading.\n");
+	//	Preloaded = 1;
+	//}
 }
 
 /*

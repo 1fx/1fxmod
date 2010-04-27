@@ -301,306 +301,6 @@ else if(damage >= 9900 && damage < 10000){
 else if(damage >= 10000 && damage < 10100){
 	damage = 10000;
 }
-else if(damage >= 10100 && damage < 10200){
-	damage = 10100;
-}
-else if(damage >= 10200 && damage < 10300){
-	damage = 10200;
-}
-else if(damage >= 10300 && damage < 10400){
-	damage = 10300;
-}
-else if(damage >= 10400 && damage < 10500){
-	damage = 10400;
-}
-else if(damage >= 10500 && damage < 10600){
-	damage = 10500;
-}
-else if(damage >= 10600 && damage < 10700){
-	damage = 10600;
-}
-else if(damage >= 10700 && damage < 10800){
-	damage = 10700;
-}
-else if(damage >= 10800 && damage < 10900){
-	damage = 10800;
-}
-else if(damage >= 10900 && damage < 11000){
-	damage = 10900;
-}
-else if(damage >= 11000 && damage < 11100){
-	damage = 11000;
-}
-else if(damage >= 11100 && damage < 11200){
-	damage = 11100;
-}
-else if(damage >= 11200 && damage < 11300){
-	damage = 11200;
-}
-else if(damage >= 11300 && damage < 11400){
-	damage = 11300;
-}
-else if(damage >= 11400 && damage < 11500){
-	damage = 11400;
-}
-else if(damage >= 11500 && damage < 11600){
-	damage = 11500;
-}
-else if(damage >= 11600 && damage < 11700){
-	damage = 11600;
-}
-else if(damage >= 11700 && damage < 11800){
-	damage = 11700;
-}
-else if(damage >= 11800 && damage < 11900){
-	damage = 11800;
-}
-else if(damage >= 11900 && damage < 12000){
-	damage = 11900;
-}
-else if(damage >= 12000 && damage < 12100){
-	damage = 12000;
-}
-else if(damage >= 12100 && damage < 12200){
-	damage = 12100;
-}
-else if(damage >= 12200 && damage < 12300){
-	damage = 12200;
-}
-else if(damage >= 12300 && damage < 12400){
-	damage = 12300;
-}
-else if(damage >= 12400 && damage < 12500){
-	damage = 12400;
-}
-else if(damage >= 12500 && damage < 12600){
-	damage = 12500;
-}
-else if(damage >= 12600 && damage < 12700){
-	damage = 12600;
-}
-else if(damage >= 12700 && damage < 12800){
-	damage = 12700;
-}
-else if(damage >= 12800 && damage < 12900){
-	damage = 12800;
-}
-else if(damage >= 12900 && damage < 13000){
-	damage = 12900;
-}
-else if(damage >= 13000 && damage < 13100){
-	damage = 13000;
-}
-else if(damage >= 13100 && damage < 13200){
-	damage = 13100;
-}
-else if(damage >= 13200 && damage < 13300){
-	damage = 13200;
-}
-else if(damage >= 13300 && damage < 13400){
-	damage = 13300;
-}
-else if(damage >= 13400 && damage < 13500){
-	damage = 13400;
-}
-else if(damage >= 13500 && damage < 13600){
-	damage = 13500;
-}
-else if(damage >= 13600 && damage < 13700){
-	damage = 13600;
-}
-else if(damage >= 13700 && damage < 13800){
-	damage = 13700;
-}
-else if(damage >= 13800 && damage < 13900){
-	damage = 13800;
-}
-else if(damage >= 13900 && damage < 14000){
-	damage = 13900;
-}
-else if(damage >= 14000 && damage < 14100){
-	damage = 14000;
-}
-else if(damage >= 14100 && damage < 14200){
-	damage = 14100;
-}
-else if(damage >= 14200 && damage < 14300){
-	damage = 14200;
-}
-else if(damage >= 14300 && damage < 14400){
-	damage = 14300;
-}
-else if(damage >= 14400 && damage < 14500){
-	damage = 14400;
-}
-else if(damage >= 14500 && damage < 14600){
-	damage = 14500;
-}
-else if(damage >= 14600 && damage < 14700){
-	damage = 14600;
-}
-else if(damage >= 14700 && damage < 14800){
-	damage = 14700;
-}
-else if(damage >= 14800 && damage < 14900){
-	damage = 14800;
-}
-else if(damage >= 14900 && damage < 15000){
-	damage = 14900;
-}
-else if(damage >= 15000 && damage < 15100){
-	damage = 15000;
-}
-else if(damage >= 15100 && damage < 15200){
-	damage = 15100;
-}
-else if(damage >= 15200 && damage < 15300){
-	damage = 15200;
-}
-else if(damage >= 15300 && damage < 15400){
-	damage = 15300;
-}
-else if(damage >= 15400 && damage < 15500){
-	damage = 15400;
-}
-else if(damage >= 15500 && damage < 15600){
-	damage = 15500;
-}
-else if(damage >= 15600 && damage < 15700){
-	damage = 15600;
-}
-else if(damage >= 15700 && damage < 15800){
-	damage = 15700;
-}
-else if(damage >= 15800 && damage < 15900){
-	damage = 15800;
-}
-else if(damage >= 15900 && damage < 16000){
-	damage = 15900;
-}
-else if(damage >= 16000 && damage < 16100){
-	damage = 16000;
-}
-else if(damage >= 16100 && damage < 16200){
-	damage = 16100;
-}
-else if(damage >= 16200 && damage < 16300){
-	damage = 16200;
-}
-else if(damage >= 16300 && damage < 16400){
-	damage = 16300;
-}
-else if(damage >= 16400 && damage < 16500){
-	damage = 16400;
-}
-else if(damage >= 16500 && damage < 16600){
-	damage = 16500;
-}
-else if(damage >= 16600 && damage < 16700){
-	damage = 16600;
-}
-else if(damage >= 16700 && damage < 16800){
-	damage = 16700;
-}
-else if(damage >= 16800 && damage < 16900){
-	damage = 16800;
-}
-else if(damage >= 16900 && damage < 17000){
-	damage = 16900;
-}
-else if(damage >= 17000 && damage < 17100){
-	damage = 17000;
-}
-else if(damage >= 17100 && damage < 17200){
-	damage = 17100;
-}
-else if(damage >= 17200 && damage < 17300){
-	damage = 17200;
-}
-else if(damage >= 17300 && damage < 17400){
-	damage = 17300;
-}
-else if(damage >= 17400 && damage < 17500){
-	damage = 17400;
-}
-else if(damage >= 17500 && damage < 17600){
-	damage = 17500;
-}
-else if(damage >= 17600 && damage < 17700){
-	damage = 17600;
-}
-else if(damage >= 17700 && damage < 17800){
-	damage = 17700;
-}
-else if(damage >= 17800 && damage < 17900){
-	damage = 17800;
-}
-else if(damage >= 17900 && damage < 18000){
-	damage = 17900;
-}
-else if(damage >= 18000 && damage < 18100){
-	damage = 18000;
-}
-else if(damage >= 18100 && damage < 18200){
-	damage = 18100;
-}
-else if(damage >= 18200 && damage < 18300){
-	damage = 18200;
-}
-else if(damage >= 18300 && damage < 18400){
-	damage = 18300;
-}
-else if(damage >= 18400 && damage < 18500){
-	damage = 18400;
-}
-else if(damage >= 18500 && damage < 18600){
-	damage = 18500;
-}
-else if(damage >= 18600 && damage < 18700){
-	damage = 18600;
-}
-else if(damage >= 18700 && damage < 18800){
-	damage = 18700;
-}
-else if(damage >= 18800 && damage < 18900){
-	damage = 18800;
-}
-else if(damage >= 18900 && damage < 19000){
-	damage = 18900;
-}
-else if(damage >= 19000 && damage < 19100){
-	damage = 19000;
-}
-else if(damage >= 19100 && damage < 19200){
-	damage = 19100;
-}
-else if(damage >= 19200 && damage < 19300){
-	damage = 19200;
-}
-else if(damage >= 19300 && damage < 19400){
-	damage = 19300;
-}
-else if(damage >= 19400 && damage < 19500){
-	damage = 19400;
-}
-else if(damage >= 19500 && damage < 19600){
-	damage = 19500;
-}
-else if(damage >= 19600 && damage < 19700){
-	damage = 19600;
-}
-else if(damage >= 19700 && damage < 19800){
-	damage = 19700;
-}
-else if(damage >= 19800 && damage < 19900){
-	damage = 19800;
-}
-else if(damage >= 19900 && damage < 20000){
-	damage = 19900;
-}
-else if(damage >= 20000 && damage < 20100){
-	damage = 20000;
-}
 else{
 	damage = 0;
 }
@@ -1519,6 +1219,9 @@ void RPM_UpdateTMI(void)
 				string = va("%i", cl->ps.weapon);
 			}else{
 				damage = FormatDamage(damage);
+				if(cl->ps.weapon >= 10){ // fix for large weapon string = damage *10 on scoreboard
+					damage = damage/10;
+				}
 				string = va("%i%i", damage, cl->ps.weapon);	
 			}
 			
@@ -2826,7 +2529,7 @@ void Cmd_FollowCycle_f( gentity_t *ent, int dir )
 		}
 
 		// Dissallow following of the enemy if the cvar is set
-		if ( level.gametypeData->teams && !g_followEnemy.integer && ent->client->sess.team != TEAM_SPECTATOR )
+		if ( level.gametypeData->teams && !g_followEnemy.integer && ent->client->sess.team != TEAM_SPECTATOR && !ent->client->adminspec )
 		{
 			// Are they on the same team?
 			if ( level.clients[ clientnum ].sess.team != ent->client->sess.team )
@@ -2872,24 +2575,27 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 	G_LogPrintf("Starting with chat\n");
 	if (!other) 
 	{
+		G_LogPrintf("1\n");
 		return;
 	}
+	G_LogPrintf("2\n");
 
 	if (!other->inuse) 
 	{
 		return;
 	}
+	G_LogPrintf("3\n");
 
 	if (!other->client) 
 	{
 		return;
 	}
-
+	G_LogPrintf("4\n");
 	if ( other->client->pers.connected != CON_CONNECTED ) 
 	{
 		return;
 	}
-
+	G_LogPrintf("5\n");
 	if ( mode == SAY_TEAM  && !OnSameTeam(ent, other) ) 
 	{
 		return;
@@ -2971,17 +2677,17 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 	G_LogPrintf("Checking prefix\n");
 	// Boe!Man 1/17/10: Admin Talk/Chat.
 	if(mode == ADM_TALK || mode == ADM_CHAT || mode == CADM_CHAT || mode == REF_TALK || mode == REF_CHAT || mode == CLAN_CHAT){
-	strcpy(star, va("%s", server_starprefix.string));
+	strcpy(star, server_starprefix.string);
 	strcpy(admin, "");
 	}else{
 	strcpy(star, "");
 	// Boe!Man 1/6/10: Admin prefixes. - Update 1/18/10: New CVARs for prefixes if the hoster wishes to change the values.
 	if(ent->client->sess.admin == 2){
-		strcpy(admin, va("%s ", server_badminprefix.string));
+		strcpy(admin, server_badminprefix.string);
 	}else if(ent->client->sess.admin == 3){
-		strcpy(admin, va("%s ", server_adminprefix.string));
+		strcpy(admin, server_adminprefix.string);
 	}else if(ent->client->sess.admin == 4){
-		strcpy(admin, va("%s ", server_sadminprefix.string));
+		strcpy(admin, server_sadminprefix.string);
 	}else{
 		strcpy(admin, "");
 	}
@@ -3006,20 +2712,20 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 		break;
 	case ADM_TALK:
 		if(ent->client->sess.admin == 2){
-		strcpy(type, va("%s ", server_badminprefix.string));
+		strcpy(type, server_badminprefix.string);
 		}else if(ent->client->sess.admin == 3){
-		strcpy(type, va("%s ", server_adminprefix.string));
+		strcpy(type, server_adminprefix.string);
 		}else if(ent->client->sess.admin == 4){
-		strcpy(type, va("%s ", server_sadminprefix.string));
+		strcpy(type, server_sadminprefix.string);
 		}
 		Boe_ClientSound(other, G_SoundIndex("sound/misc/menus/invalid.wav"));
 		break;
 	case CADM_CHAT:
-		strcpy(type, va("%s ", server_caprefix.string));
+		strcpy(type, server_caprefix.string);
 		Boe_ClientSound(other, G_SoundIndex("sound/misc/menus/invalid.wav"));
 		break;
 	case CLAN_CHAT:
-		strcpy(type, va("%s ", server_ccprefix.string));
+		strcpy(type, server_ccprefix.string);
 		Boe_ClientSound(other, G_SoundIndex("sound/misc/menus/invalid.wav"));
 		break;
 	default:
@@ -3168,6 +2874,7 @@ void G_Say ( gentity_t *ent, gentity_t *target, int mode, const char *chatText )
 
 	if ( target ) 
 	{
+		G_LogPrintf("Too target?..\n");
 		G_SayTo( ent, target, mode, name, text );
 		return;
 	}
@@ -5114,7 +4821,7 @@ void HENK_COUNTRY(gentity_t *ent){
 	// End
 	
 	// Handle the preloaded country files
-	if(strstr(va("%s", octetx[0]), "195")){
+	/*if(strstr(va("%s", octetx[0]), "195")){
 		group = trap_GPG_GetSubGroups(DB195);
 	}else if(strstr(va("%s", octetx[0]), "212")){
 		group = trap_GPG_GetSubGroups(DB212);
@@ -5144,7 +4851,7 @@ void HENK_COUNTRY(gentity_t *ent){
 		group = trap_GPG_GetSubGroups(DB66);
 	}else if(strstr(va("%s", octetx[0]), "203")){
 		group = trap_GPG_GetSubGroups(DB203);
-	}else{
+	}else{*/
 	// End
 	G_LogPrintf( "HENK_COUNTRY: else check\n" );
 
@@ -5159,7 +4866,7 @@ void HENK_COUNTRY(gentity_t *ent){
 		G_LogPrintf( "HENK_COUNTRY: 123\n" );
 		group = trap_GPG_GetSubGroups(GP2);
 		G_LogPrintf( "HENK_COUNTRY: 1234\n" );
-	}
+	//}
 	G_LogPrintf( "HENK_COUNTRY: 4\n" );
 	RealOctet[0] = atoi(octetx[0]);
 	RealOctet[1] = atoi(octetx[1]);
