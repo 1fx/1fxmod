@@ -146,6 +146,7 @@ vmCvar_t	g_compMode;
 vmCvar_t	g_clanfile;
 vmCvar_t	g_enableTeamCmds;
 vmCvar_t	g_refpassword;
+vmCvar_t	g_checkcountry;
 
 // Boe!Man 4/15/10: Some level commands (Admin).
 vmCvar_t	g_nolower;
@@ -359,6 +360,8 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_compMode, "g_compMode", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 	{ &g_enableTeamCmds, "g_enableTeamCmds", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 	{ &g_refpassword, "g_refpassword", "none", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
+	{ &g_checkcountry, "g_checkcountry", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
+
 /*
 	switch (g_weaponModFlags.integer){
 		case AMMO_MOD: 0x1

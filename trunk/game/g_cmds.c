@@ -2575,32 +2575,29 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 	G_LogPrintf("Starting with chat\n");
 	if (!other) 
 	{
-		G_LogPrintf("1\n");
 		return;
 	}
-	G_LogPrintf("2\n");
 
 	if (!other->inuse) 
 	{
 		return;
 	}
-	G_LogPrintf("3\n");
 
 	if (!other->client) 
 	{
 		return;
 	}
-	G_LogPrintf("4\n");
+
 	if ( other->client->pers.connected != CON_CONNECTED ) 
 	{
 		return;
 	}
-	G_LogPrintf("5\n");
+
 	if ( mode == SAY_TEAM  && !OnSameTeam(ent, other) ) 
 	{
 		return;
 	}
-	G_LogPrintf("Chat 1\n");
+
 	// Boe!Man 1/17/10: We do not wish to send the chat when it's Admin/Clan only..
 	if ( mode == ADM_CHAT  && !other->client->sess.admin )
 		return;
@@ -2614,7 +2611,7 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 	if (mode == CADM_CHAT && other->client->sess.admin < 2 )
 		return;
 
-	G_LogPrintf("Chat 2\n");
+
 	if ( !level.intermissiontime && !level.intermissionQueued )
 	{
 		// Spectators cant talk to alive people
@@ -2622,7 +2619,7 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 		{
 			spec = qtrue;
 		}
-	G_LogPrintf("Chat 3\n");
+
 		if ( level.gametypeData->respawnType == RT_NONE )
 		{
 			// Dead people cant talk to alive people
@@ -2637,18 +2634,17 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 				ghost = qfalse;
 				spec = qfalse;
 			}
-	G_LogPrintf("Chat 4\n");
+
 			// If the client we are talking to is alive then a check
 			// must be made to see if this talker is alowed to speak to this person
 			if ( ent->s.number != other->s.number && !G_IsClientDead ( other->client ) && !G_IsClientSpectating( other->client) && (ghost || spec))
 			{
 				return;
 			}
-			G_LogPrintf("Chat 5\n");
+
 		}
-		G_LogPrintf("Chat 6\n");
 	}
-	G_LogPrintf("Setting typess\n");
+
 	strcpy(admin, ""); // Boe!Man 1/18/10: Clean the Admin data.
 	
 	// Boe!Man 1/7/10: Team prefixes.
@@ -2674,7 +2670,7 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 	// Boe!Man 4/6/10: And replace the type with something, well nothing.
 	else
 		strcpy(type, "");
-	G_LogPrintf("Checking prefix\n");
+
 	// Boe!Man 1/17/10: Admin Talk/Chat.
 	if(mode == ADM_TALK || mode == ADM_CHAT || mode == CADM_CHAT || mode == REF_TALK || mode == REF_CHAT || mode == CLAN_CHAT){
 	strcpy(star, server_starprefix.string);
@@ -2694,7 +2690,7 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 	}
 	
 	// Boe!Man 1/17/10: Different kinds of Talking 'Modes'.
-	G_LogPrintf("Checking modes\n");
+
 	switch(mode)
 	{
 /*	case REF_CHAT:
@@ -2738,7 +2734,6 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 							ent->s.number,
 							// Boe!Man 1/6/10: Adding the Admin prefix in front of the chat. - Update 1/17/10.
 							star, type, admin, name, message, star)); // Boe!Man 1/17/10: Adding stars.
-	G_LogPrintf("Chat sended(if you see this at end of crash its NOT chat)\n");
 }
 
 /*
@@ -2872,7 +2867,7 @@ void G_Say ( gentity_t *ent, gentity_t *target, int mode, const char *chatText )
 	// Save off the chat text
 	Q_strncpyz( text, chatText, sizeof(text) );
 
-	if ( target ) 
+	if ( target && target->inuse) 
 	{
 		G_LogPrintf("Too target?..\n");
 		G_SayTo( ent, target, mode, name, text );
@@ -2966,11 +2961,9 @@ for(i=0;i<=g_maxclients.integer;i++){
 void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	char		*p;
 	// Boe!Man 1/10/10
-	char		*status;
 	int			id;
 	gentity_t	*targ;
 	char		id2[64];
-	char		*id1;
 	int			i;
 	int			a = 0;
 	// Boe!Man 1/17/10
@@ -2980,33 +2973,25 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	float		knockback = 400.0;
 	vec3_t		dir;
 	// Boe!Man 1/30/10
-	gentity_t	*tent, *other;
+	gentity_t	*tent;
 	gclient_t	*client;
 	int			idle;
-	char		*lwrP;
-	char		rcon[64];
 	// Boe!Man 3/20/10
 	int			it, nadeDir, weapon;
 	float		x, y;
 	gentity_t	*missile;
 
-	if ( trap_Argc () < 2 && !arg0 ) {
+	if ( trap_Argc () < 2 && !arg0 )
 		return;
-	}
-
 	if (arg0)
-	{
 		p = ConcatArgs( 0 );
-	}
 	else if(mode >= ADM_TALK && mode <= CADM_CHAT)
 		p = ConcatArgs( 2 );
 	else
-	{
 		p = ConcatArgs( 1 );
-	}
-	lwrP = Q_strlwr(p);
+
 	// Boe!Man 1/10/10: Chat Admin command tokens.
-	if ((strstr(lwrP, "!k ")) || (strstr(lwrP, "!kick "))) {	
+	if ((strstr(p, "!k ")) || (strstr(p, "!kick "))) {	
 		if ( ent->client->sess.admin >= g_kick.integer){
 			id = CheckAdmin(ent, p, qfalse);
 			if(id < 0) return;
@@ -3022,16 +3007,15 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		}
 	}
 	// Boe!Man 1/15/10: More Chat Admin command tokens.
-	else if ((strstr(lwrP, "!ab ")) || (strstr(lwrP, "!addbadmin "))) {
+	else if ((strstr(p, "!ab ")) || (strstr(p, "!addbadmin "))) {
 		if (ent->client->sess.admin >= g_addbadmin.integer){
 			id = CheckAdmin(ent, p, qfalse);
 			targ = g_entities+id;
-			id1 = targ->client->pers.boe_id;
 			if(targ->client->sess.admin >= 1){
 				id = -1;
 			}if(id != -1){;
 			g_entities[id].client->sess.admin = 2;
-			Q_strncpyz (id2, id1, 64);
+			Q_strncpyz (id2, targ->client->pers.boe_id, 64);
 			strcat ( id2, ":2" );
 			if(Boe_AddToList(id2, g_adminfile.string, "Admin", NULL)){
 			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
@@ -3049,17 +3033,16 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		G_Say( ent, NULL, mode, p );
 		return;
 		}
-	else if ((strstr(lwrP, "!aa ")) || (strstr(lwrP, "!addadmin "))) {
+	else if ((strstr(p, "!aa ")) || (strstr(p, "!addadmin "))) {
 		if (ent->client->sess.admin >= g_addadmin.integer){
 			id = CheckAdmin(ent, p, qfalse);
 			targ = g_entities+id;
-			id1 = targ->client->pers.boe_id;
 			if(targ->client->sess.admin >= 1){
 				id = -1;
 			}if(id != -1){;
 			// Boe!Man 1/21/10: In the session the client also has to be an Admin.
 			g_entities[id].client->sess.admin = 3;
-			Q_strncpyz (id2, id1, 64);
+			Q_strncpyz (id2, targ->client->pers.boe_id, 64);
 			strcat ( id2, ":3" );
 			if(Boe_AddToList(id2, g_adminfile.string, "Admin", NULL)){
 			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
@@ -3077,17 +3060,16 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		G_Say( ent, NULL, mode, p );
 		return;
 		}
-	else if ((strstr(lwrP, "!as ")) || (strstr(lwrP, "!addsadmin "))) {
+	else if ((strstr(p, "!as ")) || (strstr(p, "!addsadmin "))) {
 		if (ent->client->sess.admin >= g_addsadmin.integer){
 			id = CheckAdmin(ent, p, qfalse);
 			targ = g_entities+id;
-			id1 = targ->client->pers.boe_id;
 			if(targ->client->sess.admin >= 1){
 				id = -1;
 			}if(id != -1){;
 			// Boe!Man 1/17/10: Fix for getting B-Admin when adding S-Admin.
 			g_entities[id].client->sess.admin = 4;
-			Q_strncpyz (id2, id1, 64);
+			Q_strncpyz (id2, targ->client->pers.boe_id, 64);
 			// Boe!Man 1/17/10: Fix for getting B-Admin when adding S-Admin.
 			strcat ( id2, ":4" );
 			if(Boe_AddToList(id2, g_adminfile.string, "Admin", NULL)){
@@ -3106,7 +3088,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		G_Say( ent, NULL, mode, p );
 		return;
 	}
-	else if ((strstr(lwrP, "!tw ")) || (strstr(lwrP, "!twist "))){
+	else if ((strstr(p, "!tw ")) || (strstr(p, "!twist "))){
 		if (ent->client->sess.admin >= g_twist.integer){
 			id = CheckAdmin(ent, p, qtrue);
 			targ = g_entities+id;
@@ -3135,7 +3117,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		G_Say( ent, NULL, mode ,p);
 		return;
 	}
-	else if ((strstr(lwrP, "!utw ")) || (strstr(lwrP, "!untwist "))){
+	else if ((strstr(p, "!utw ")) || (strstr(p, "!untwist "))){
 	if (ent->client->sess.admin >= g_twist.integer){
 			id = CheckAdmin(ent, p, qtrue);
 			targ = g_entities+id;
@@ -3164,7 +3146,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		G_Say( ent, NULL, mode ,p);
 		return;
 	}
-	else if ((strstr(lwrP, "!pl ")) || (strstr(lwrP, "!plant "))){
+	else if ((strstr(p, "!pl ")) || (strstr(p, "!plant "))){
 		if (ent->client->sess.admin >= g_plant.integer){
 			id = CheckAdmin(ent, p, qtrue);
 			targ = g_entities+id;
@@ -3201,7 +3183,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		G_Say( ent, NULL, mode ,p);
 		return;
 	}
-	else if ((strstr(lwrP, "!upl ")) || (strstr(lwrP, "!unplant "))){
+	else if ((strstr(p, "!upl ")) || (strstr(p, "!unplant "))){
 		if (ent->client->sess.admin >= g_plant.integer){
 			id = CheckAdmin(ent, p, qtrue);
 			targ = g_entities+id;
@@ -3237,7 +3219,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		G_Say( ent, NULL, mode ,p);
 		return;
 	}
-	else if ((strstr(lwrP, "!u ")) || (strstr(lwrP, "!uc ")) || (strstr(lwrP, "!uppercut "))) {
+	else if ((strstr(p, "!u ")) || (strstr(p, "!uc ")) || (strstr(p, "!uppercut "))) {
 		if (ent->client->sess.admin >= g_uppercut.integer){
 			id = CheckAdmin(ent, p, qtrue);
 			targ = g_entities+id;
@@ -3267,7 +3249,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		G_Say( ent, NULL, mode, p );
 		return;
 	}
-	else if ((strstr(lwrP, "!ro ")) || (strstr(lwrP, "!runover "))){
+	else if ((strstr(p, "!ro ")) || (strstr(p, "!runover "))){
 		// Boe!Man 3/20/10: Fix for runover working for S-Admin only.
 		if (ent->client->sess.admin >= g_runover.integer){
 			id = CheckAdmin(ent, p, qtrue);
@@ -3307,7 +3289,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		G_Say( ent, NULL, mode, p );
 		return;
 	}
-	else if ((strstr(lwrP, "!r ")) || (strstr(lwrP, "!rs ")) || (strstr(lwrP, "!respawn "))) {
+	else if ((strstr(p, "!r ")) || (strstr(p, "!rs ")) || (strstr(p, "!respawn "))) {
 		if (ent->client->sess.admin >= g_respawn.integer){
 			id = CheckAdmin(ent, p, qtrue);
 			targ = g_entities+id;
@@ -3337,7 +3319,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		G_Say( ent, NULL, mode, p );
 		return;
 	}
-	else if ((strstr(lwrP, "!mr")) || (strstr(lwrP, "!maprestart"))) { // Boe!Man 1/21/10: No need for a space when we're restarting the map.
+	else if ((strstr(p, "!mr")) || (strstr(p, "!maprestart"))) { // Boe!Man 1/21/10: No need for a space when we're restarting the map.
 		if (ent->client->sess.admin >= g_maprestart.integer){
 			trap_SendConsoleCommand( EXEC_APPEND, va("map_restart 5\n"));
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp %sr%se%sstart!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
@@ -3352,7 +3334,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		G_Say( ent, NULL, mode, p );
 		return;
 	}
-	else if ((strstr(lwrP, "!p ")) || (strstr(lwrP, "!pop "))) {
+	else if ((strstr(p, "!p ")) || (strstr(p, "!pop "))) {
 		if (ent->client->sess.admin >= g_pop.integer){
 			id = CheckAdmin(ent, p, qfalse);
 			targ = g_entities+id;
@@ -3380,7 +3362,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		G_Say( ent, NULL, mode, p);
 		return;
 	}
-	else if ((strstr(lwrP, "!b ")) || (strstr(lwrP, "!burn "))) {
+	else if ((strstr(p, "!b ")) || (strstr(p, "!burn "))) {
 		if (ent->client->sess.admin >= g_burn.integer){
 			id = CheckAdmin(ent, p, qtrue);
 			targ = g_entities+id;
@@ -3414,7 +3396,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		G_Say( ent, NULL, mode, p);
 		return;
 	}
-	else if ((strstr(lwrP, "!m ")) || (strstr(lwrP, "!mute "))) {
+	else if ((strstr(p, "!m ")) || (strstr(p, "!mute "))) {
 		if (ent->client->sess.admin >= g_mute.integer){
 			id = CheckAdmin(ent, p, qfalse);
 			targ = g_entities+id;
@@ -3436,7 +3418,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		G_Say( ent, NULL, mode, p);
 		return;
 	}
-	else if ((strstr(lwrP, "!um ")) || (strstr(lwrP, "!unmute "))) {
+	else if ((strstr(p, "!um ")) || (strstr(p, "!unmute "))) {
 		if (ent->client->sess.admin >= g_mute.integer){
 			id = CheckAdmin(ent, p, qfalse);
 			targ = g_entities+id;
@@ -3458,7 +3440,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		G_Say( ent, NULL, mode, p);
 		return;
 	}
-	else if ((strstr(lwrP, "!s ")) || (strstr(lwrP, "!strip "))) {
+	else if ((strstr(p, "!s ")) || (strstr(p, "!strip "))) {
 		if (ent->client->sess.admin >= g_strip.integer){
 			id = CheckAdmin(ent, p, qfalse);
 			targ = g_entities+id;
@@ -3501,11 +3483,10 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		G_Say( ent, NULL, mode, p);
 		return;
 	}
-	else if ((strstr(lwrP, "!ra ")) || (strstr(lwrP, "!removeadmin "))) {
+	else if ((strstr(p, "!ra ")) || (strstr(p, "!removeadmin "))) {
 		if (ent->client->sess.admin >= g_removeadmin.integer){
 			id = CheckAdmin(ent, p, qtrue);
 			targ = g_entities+id;
-			id1 = targ->client->pers.boe_id;
 			if(targ->client->sess.admin < 2){
 				id = -1;
 			}
@@ -3513,7 +3494,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 				id = -1;
 			}
 			if(id != -1){
-			Boe_Remove_from_list(id1, g_adminfile.string, "admin", NULL, qfalse, qtrue, qfalse);
+			Boe_Remove_from_list(targ->client->pers.boe_id, g_adminfile.string, "admin", NULL, qfalse, qtrue, qfalse);
 			targ->client->sess.admin = 0;
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7is no longer an %sA%sd%sm%si%sn", level.time + 5000, g_entities[id].client->pers.netname, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s ^7was removed as Admin by %s.\n\"", g_entities[id].client->pers.netname,ent->client->pers.netname));
@@ -3528,7 +3509,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		G_Say( ent, NULL, mode, p);
 		return;
 	}
-	else if ((strstr(lwrP, "!et")) || (strstr(lwrP, "!eventeams"))) {
+	else if ((strstr(p, "!et")) || (strstr(p, "!eventeams"))) {
 		if (ent->client->sess.admin >= g_eventeams.integer){
 			EvenTeams(ent);
 			Boe_adminLog (va("%s - EVENTEAMS", ent->client->pers.cleanName)) ;
@@ -3539,7 +3520,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		G_Say( ent, NULL, mode, p);
 		return;
 	}
-	/*else if ((strstr(lwrP, "!333"))) {
+	/*else if ((strstr(p, "!333"))) {
 		if (ent->client->sess.admin >= g_333.integer){
 			// disable 333
 			if(pmove_fixed.value == 0){
@@ -3561,7 +3542,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		G_Say( ent, NULL, mode, p);
 		return;
 	}*/
-	else if ((strstr(lwrP, "!ft ")) || (strstr(lwrP, "!forceteam "))){
+	else if ((strstr(p, "!ft ")) || (strstr(p, "!forceteam "))){
 		if (ent->client->sess.admin >= g_forceteam.integer){
 			id = CheckAdmin(ent, p, qtrue);
 			if(id < 0) return;
@@ -3580,7 +3561,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		G_Say ( ent, NULL, mode, p);
 		return;
 	}
-	else if ((strstr(lwrP, "!nl")) || (strstr(lwrP, "!nolower"))) {
+	else if ((strstr(p, "!nl")) || (strstr(p, "!nolower"))) {
 		if (ent->client->sess.admin >= g_nolower.integer){
 			if(level.nolower1 == qtrue){
 				level.nolower1 = qfalse;
@@ -3607,7 +3588,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		G_Say( ent, NULL, mode, p);
 		return;
 	}
-	else if(strstr(lwrP, "!nn")){
+	else if(strstr(p, "!nn")){
 		if(ent->client->sess.admin >= g_nades.integer){
 			if(g_disablenades.integer == 1){
 				g_disablenades.integer = 0;
@@ -3644,7 +3625,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		G_Say( ent, NULL, mode, p);
 		return;
 	}
-	else if(strstr(lwrP, "!sl ")){
+	else if(strstr(p, "!sl ")){
 		if (ent->client->sess.admin >= g_sl.integer){
 			char *numb;
 			int number;
@@ -3662,7 +3643,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		G_Say( ent, NULL, mode, p);
 		return;
 	}
-	else if(strstr(lwrP, "!tl ")){
+	else if(strstr(p, "!tl ")){
 		if (ent->client->sess.admin >= g_tl.integer){
 			char *numb;
 			int number;
@@ -3680,7 +3661,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		G_Say( ent, NULL, mode, p);
 		return;
 	}
-	else if(strstr(lwrP, "!ri ")){
+	else if(strstr(p, "!ri ")){
 		if (ent->client->sess.admin >= g_ri.integer){
 			char *numb;
 			int number;
@@ -3698,7 +3679,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		G_Say( ent, NULL, mode, p);
 		return;
 	}
-	else if(strstr(lwrP, "!rd")){
+	else if(strstr(p, "!rd")){
 		if (ent->client->sess.admin >= g_damage.integer){
 			g_instagib.integer = 1;
 			BG_InitWeaponStats();
@@ -3715,7 +3696,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		G_Say( ent, NULL, mode, p);
 		return;
 	}
-	else if(strstr(lwrP, "!nd")){
+	else if(strstr(p, "!nd")){
 		if (ent->client->sess.admin >= g_damage.integer){
 			g_instagib.integer = 0;
 			BG_InitWeaponStats();
@@ -3731,7 +3712,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		G_Say( ent, NULL, mode, p);
 		return;
 	}
-	else if(strstr(lwrP, "!gr")){
+	else if(strstr(p, "!gr")){
 		if (ent->client->sess.admin >= g_gr.integer){
 			Boe_GlobalSound (G_SoundIndex("sound/misc/menus/invalid.wav"));
 			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Gametype restart by %s.\n\"", ent->client->pers.netname));
@@ -3744,7 +3725,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		}
 		G_Say( ent, NULL, mode, p);
 		return;
-	}else if(strstr(lwrP, "!cva")){
+	}else if(strstr(p, "!cva")){
 		if (ent->client->sess.admin >= g_clanvsall.integer){
 			RPM_Clan_Vs_All(ent);
 		}else if (ent->client->sess.admin < g_clanvsall.integer){
@@ -3753,7 +3734,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		G_Say( ent, NULL, mode, p);
 		return;
 	}
-	else if(strstr(lwrP, "!sw") || strstr(lwrP, "!swapteams")){
+	else if(strstr(p, "!sw") || strstr(p, "!swapteams")){
 		if (ent->client->sess.admin >= g_swapteams.integer){
 			Boe_SwapTeams(ent);
 		}else if (ent->client->sess.admin < g_swapteams.integer){
@@ -3762,13 +3743,13 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		G_Say( ent, NULL, mode, p);
 		return;
 	}
-	else if(strstr(lwrP, "!l ") || strstr(lwrP, "!lock ")){
+	else if(strstr(p, "!l ") || strstr(p, "!lock ")){
 		if (ent->client->sess.admin >= g_lock.integer){
-			if(strstr(lwrP, "b") || strstr(lwrP, "blue")){
+			if(strstr(p, "b") || strstr(p, "blue")){
 				RPM_lockTeam(ent, qtrue, "blue");
-			}else if(strstr(lwrP, "r") || strstr(lwrP, "red")){
+			}else if(strstr(p, "r") || strstr(p, "red")){
 				RPM_lockTeam(ent, qtrue, "red");
-			}else if(strstr(lwrP, "s") || strstr(lwrP, "spec")){
+			}else if(strstr(p, "s") || strstr(p, "spec")){
 				RPM_lockTeam(ent, qtrue, "spec");
 			}
 		}else if (ent->client->sess.admin < g_lock.integer){
@@ -3777,7 +3758,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		G_Say( ent, NULL, mode, p);
 		return;
 	}
-	else if(strstr(lwrP, "!addclan ") || strstr(lwrP, "!acl ")){
+	else if(strstr(p, "!addclan ") || strstr(p, "!acl ")){
 		if (ent->client->sess.admin >= g_clan.integer){
 			int onlist;
 			id = CheckAdmin(ent, p, qtrue);
@@ -3806,7 +3787,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		G_Say( ent, NULL, mode, p);
 		return;
 	}
-	else if(strstr(lwrP, "!rc ") || strstr(lwrP, "!rcl ") || strstr(lwrP, "!removeclan ")){
+	else if(strstr(p, "!rc ") || strstr(p, "!rcl ") || strstr(p, "!removeclan ")){
 		if (ent->client->sess.admin >= g_clan.integer){
 			int onlist;
 			id = CheckAdmin(ent, p, qtrue);
@@ -3826,7 +3807,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		G_Say( ent, NULL, mode, p);
 		return;
 	}
-	else if ((strstr(lwrP, "!fl ")) || (strstr(lwrP, "!flash "))){
+	else if ((strstr(p, "!fl ")) || (strstr(p, "!flash "))){
 		if (ent->client->sess.admin >= g_flash.integer){
 			id = CheckAdmin(ent, p, qtrue);
 			targ = g_entities+id;
@@ -3864,7 +3845,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		G_Say( ent, NULL, mode, p);
 		return;
 	}	
-	else if(strstr(lwrP, "!fp")){
+	else if(strstr(p, "!fp")){
 		if (ent->client->sess.admin >= 4){
 			HENK_CHECKFP(ent);
 		}else if (ent->client->sess.admin < 4){
@@ -3872,7 +3853,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		}
 		G_Say( ent, NULL, mode, p);
 		return;
-	}else if(strstr(lwrP, "!map ")){
+	}else if(strstr(p, "!map ")){
 		if (ent->client->sess.admin >= 4){
 			char *numb;
 			//fileHandle_t	f;
@@ -3895,24 +3876,24 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
 		}
 		return;
-	}else if(strstr(lwrP, "!gt ")){
+	}else if(strstr(p, "!gt ")){
 		if (ent->client->sess.admin >= 4){
 			char *numb;
 			int number;
 			char gametype[8];
-			if(strstr(lwrP, "ctf")){
+			if(strstr(p, "ctf")){
 				trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype ctf\n"));
 				strcpy(gametype, "ctf");
-			}else if(strstr(lwrP, "inf")){
+			}else if(strstr(p, "inf")){
 				trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype inf\n"));
 				strcpy(gametype, "inf");
-			}else if(strstr(lwrP, "dm")){
+			}else if(strstr(p, "dm")){
 				trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype dm\n"));
 				strcpy(gametype, "dm");
-			}else if(strstr(lwrP, "tdm")){
+			}else if(strstr(p, "tdm")){
 				trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype tdm\n"));
 				strcpy(gametype, "tdm");
-			}else if(strstr(lwrP, "elim")){
+			}else if(strstr(p, "elim")){
 				trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype tdm\n"));
 				strcpy(gametype, "elim");
 			}else{
@@ -3929,7 +3910,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		}
 		G_Say( ent, NULL, mode, p);
 		return;
-	}else if(strstr(lwrP, "!cm")){
+	}else if(strstr(p, "!cm")){
 		if (ent->client->sess.admin >= 4){
 			if(g_compMode.integer == 0){
 				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sC%so%sm%sp%se%stition mode enabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
@@ -3946,7 +3927,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		}
 		G_Say( ent, NULL, mode, p);
 		return;
-	}else if(strstr(lwrP, "!3rd")){
+	}else if(strstr(p, "!3rd")){
 		if (ent->client->sess.admin >= 4){
 			if(g_allowthirdperson.integer == 0){
 				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sT%sh%si%sr%sd%sperson enabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
@@ -3963,7 +3944,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		}
 		G_Say( ent, NULL, mode, p);
 		return;
-	}else if(strstr(lwrP, "!pa")){
+	}else if(strstr(p, "!pa")){
 		if (ent->client->sess.admin >= 4){
 				//trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sT%sh%si%sr%sd%sperson enabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 				trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Paused by %s.\n\"", ent->client->pers.netname));
@@ -3973,7 +3954,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		}
 		G_Say( ent, NULL, mode, p);
 		return;
-	}else if(strstr(lwrP, "!up")){
+	}else if(strstr(p, "!up")){
 		if (ent->client->sess.admin >= 4){
 				//trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sT%sh%si%sr%sd%sperson enabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 				trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Unpaused by %s.\n\"", ent->client->pers.netname));
@@ -3983,7 +3964,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		}
 		G_Say( ent, NULL, mode, p);
 		return;
-	}else if(strstr(lwrP, "!mo ")){
+	}else if(strstr(p, "!mo ")){
 		if (ent->client->sess.admin >= 4){
 			id = CheckAdmin(ent, p, qtrue);
 			targ = g_entities+id;
@@ -4006,27 +3987,13 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		G_Say( ent, NULL, mode, p);
 		return;
 	}
-	/*else if(strstr(lwrP, "!rcon")){
+	/*else if(strstr(p, "!rcon")){
 	trap_Cvar_VariableStringBuffer ( "rconpassword", rcon, MAX_QPATH );
 	trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Rconpassword is: %s.\n\"", rcon));
 	}*/
 
-	// Henk 08/02/10 -> Fix for not showing uppercase
-	G_LogPrintf("Switching to uppercase\n");
-	if (arg0)
-	{
-		p = ConcatArgs( 0 );
-	}
-	else if(mode >= ADM_TALK && mode <= CADM_CHAT)
-		p = ConcatArgs( 2 );
-	else
-	{
-		p = ConcatArgs( 1 );
-	}
-	G_LogPrintf("Done with switching to uppercase..\n");
-
 	// Boe!Man 1/24/10: Different kinds of Talk during Gameplay.
-	if ((strstr(lwrP, "!at ")) || (strstr(lwrP, "!admintalk ")) || (strstr(lwrP, "!AT"))) {
+	if ((strstr(p, "!at ")) || (strstr(p, "!admintalk ")) || (strstr(p, "!AT"))) {
 		if (ent->client->sess.admin){
 			p = ConcatArgs(1);
 			for(i=4;i<=strlen(p);i++){
@@ -4048,7 +4015,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			mode = CADM_CHAT;
 		}
 	}
-	else if ((strstr(lwrP, "!ac ")) || (strstr(lwrP, "!adminchat "))) {
+	else if ((strstr(p, "!ac ")) || (strstr(p, "!adminchat "))) {
 		if (ent->client->sess.admin){
 			p = ConcatArgs(1);
 			for(i=4;i<=strlen(p);i++){
@@ -4063,7 +4030,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		}
 	}
 	// Boe!Man 4/17/10: Clan chat.
-	else if ((strstr(lwrP, "!cc ")) || (strstr(lwrP, "!clanchat "))) {
+	else if ((strstr(p, "!cc ")) || (strstr(p, "!clanchat "))) {
 		if (ent->client->sess.clanMember == 1){
 			p = ConcatArgs(1);
 			for(i=4;i<=strlen(p);i++){
@@ -4077,14 +4044,14 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			return;
 		}
 	}
-	else if ((strstr(lwrP, "!ca "))) {
+	else if ((strstr(p, "!ca "))) {
 			p = ConcatArgs(1);
 			for(i=4;i<=strlen(p);i++){
 			p[a] = p[i];
 			a += 1;
 			}
 			mode = CADM_CHAT;
-	}else if ((strstr(lwrP, "!cc ")) || (strstr(lwrP, "!clanchat "))) {
+	}else if ((strstr(p, "!cc ")) || (strstr(p, "!clanchat "))) {
 		if (ent->client->sess.clanMember){
 			p = ConcatArgs(1);
 			for(i=4;i<=strlen(p);i++){

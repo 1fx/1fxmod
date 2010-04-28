@@ -978,6 +978,7 @@ extern	vmCvar_t	g_compMode;
 extern  vmCvar_t	g_clanfile;
 extern  vmCvar_t	g_enableTeamCmds;
 extern  vmCvar_t	g_refpassword;
+extern  vmCvar_t	g_checkcountry;
 extern	vmCvar_t	g_forceFollow;
 extern	vmCvar_t	g_followEnemy;
 extern  vmCvar_t	g_mapcycle;

@@ -1379,7 +1379,9 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 	G_LogPrintf( "ClientConnect: %i\n", clientNum );
 	// Boe!Man 3/31/10: First off we search in the Country database.
 	if(CheckIP(ent) != qtrue){ // not found in list so search ip database
+	if(g_checkcountry.integer == 1){
 	HENK_COUNTRY(ent); // will store in sess.country and sess.countryext
+	}
 	}
 	G_LogPrintf( "HENK_COUNTRY done..\n" );
 	// Boe!Man 3/30/10: We use this for several things.. Including MOTD and Admin.
