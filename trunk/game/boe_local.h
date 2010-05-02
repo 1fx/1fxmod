@@ -5,10 +5,10 @@
 //==================================================================
 
 // Boe!Man 3/30/10
-#define INF_VERSION_STRING "0.22"
+#define INF_VERSION_STRING "0.25"
 #define INF_STRING "1fx. Mod"
 #define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod"
-#define INF_VERSION_DATE "4/22/10"
+#define INF_VERSION_DATE "5/3/10"
 
 
 // Infiltration
@@ -17,16 +17,9 @@
 // Modname: 1fx. Infiltration
 // Project started: 3/30/10
 // 
-// --- VERSION LOG BELOW
+// --- VERSION LOG 
 //
-// Mod			Ver		Status of Rel.		Date
-// --------------------------------------------------
-// Infiltration	0.01	Alpha				3/30/10
-// Infiltration 0.02	Alpha				3/31/10
-// Infiltration 0.05	Beta				4/4/10	
-// Infiltration 0.10	Beta				4/7/10
-// Mod			0.15	Release				4/14/10
-
+// http://1fx.ipbfree.com/index.php?showtopic=115
 //===================================================================
 
 //==============================================
