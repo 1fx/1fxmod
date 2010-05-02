@@ -208,8 +208,7 @@ RPM_lockTeam
 */
 void RPM_lockTeam(gentity_t *ent, qboolean referee, char *team)
 {
-
-	if(referee)
+	if(referee || ent->client->sess.admin > 1)
 	{
 		if (team[0] == 'r' || team[0] == 'R')
 		{
@@ -219,6 +218,10 @@ void RPM_lockTeam(gentity_t *ent, qboolean referee, char *team)
 				///RxCxW - 09.18.06 - 04:47pm #lock,unlock
 				///trap_SendServerCommand(-1, va("cp \"^3Referee ^7has UNLOCKED the ^1Red ^7team\n\""));
 				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7has un%sl%so%sc%sk%se%sd the %s ^7team", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, server_redteamprefix.string ) );
+				if (ent->client->sess.admin > 1)
+				trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7%s has unlocked the Red team.\n\"", ent->client->pers.netname));
+				else
+				trap_SendServerCommand( ent-g_entities, va("print \"^3[Referee Action] ^7%s has unlocked the Red team.\n\"", ent->client->pers.netname));
 				///End  - 09.18.06 - 04:47pm
 			}
 			else
@@ -227,6 +230,10 @@ void RPM_lockTeam(gentity_t *ent, qboolean referee, char *team)
 				///RxCxW - 09.18.06 - 04:47pm #lock,unlock
 				///trap_SendServerCommand(-1, va("cp \"^3Referee ^7has LOCKED the ^1Red ^7team\n\""));
 				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7has %sl%so%sc%sk%se%sd the %s ^7team", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, server_redteamprefix.string ) );
+				if (ent->client->sess.admin > 1)
+				trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7%s has locked the Red team.\n\"", ent->client->pers.netname));
+				else
+				trap_SendServerCommand( ent-g_entities, va("print \"^3[Referee Action] ^7%s has locked the Red team.\n\"", ent->client->pers.netname));
 				///End  - 09.18.06 - 04:47pm
 			}
 		}
@@ -238,6 +245,10 @@ void RPM_lockTeam(gentity_t *ent, qboolean referee, char *team)
 				///RxCxW - 09.18.06 - 04:47pm #lock,unlock
 				///trap_SendServerCommand(-1, va("cp \"^3Referee ^7has UNLOCKED the ^4Blue ^7team\n\""));
 				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7has un%sl%so%sc%sk%se%sd the %s ^7team", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, server_blueteamprefix.string) );
+				if (ent->client->sess.admin > 1)
+				trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7%s has unlocked the Blue team.\n\"", ent->client->pers.netname));
+				else
+				trap_SendServerCommand( ent-g_entities, va("print \"^3[Referee Action] ^7%s has unlocked the Blue team.\n\"", ent->client->pers.netname));
 				///End  - 09.18.06 - 04:47pm
 			}
 			else
@@ -246,6 +257,10 @@ void RPM_lockTeam(gentity_t *ent, qboolean referee, char *team)
 				///RxCxW - 09.18.06 - 04:47pm #lock,unlock
 				///trap_SendServerCommand(-1, va("cp \"^3Referee ^7has LOCKED the ^4Blue ^7team\n\""));
 				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7has %sl%so%sc%sk%se%sd the %s ^7team", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, server_blueteamprefix.string) );
+				if (ent->client->sess.admin > 1)
+				trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7%s has locked the Blue team.\n\"", ent->client->pers.netname));
+				else
+				trap_SendServerCommand( ent-g_entities, va("print \"^3[Referee Action] ^7%s has locked the Blue team.\n\"", ent->client->pers.netname));
 				///End  - 09.18.06 - 04:47pm
 			}
 		}
@@ -257,6 +272,10 @@ void RPM_lockTeam(gentity_t *ent, qboolean referee, char *team)
 				///RxCxW - 09.18.06 - 04:47pm #lock,unlock
 				///trap_SendServerCommand(-1, va("cp \"^3Referee ^7has UNLOCKED the Spectators\n\""));
 				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7has un%sl%so%sc%sk%se%sd the spectators", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string) );
+				if (ent->client->sess.admin > 1)
+				trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7%s has unlocked the Spectators.\n\"", ent->client->pers.netname));
+				else
+				trap_SendServerCommand( ent-g_entities, va("print \"^3[Referee Action] ^7%s has unlocked the Spectators.\n\"", ent->client->pers.netname));
 				///End  - 09.18.06 - 04:47pm
 			}
 			else
@@ -265,16 +284,22 @@ void RPM_lockTeam(gentity_t *ent, qboolean referee, char *team)
 				///RxCxW - 09.18.06 - 04:47pm #lock,unlock
 				///trap_SendServerCommand(-1, va("cp \"^3Referee ^7has LOCKED the Spectators\n\""));
 				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7has %sl%so%sc%sk%se%sd the spectators", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string) );
+				if (ent->client->sess.admin > 1)
+				trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7%s has locked the Specators.\n\"", ent->client->pers.netname));
+				else
+				trap_SendServerCommand( ent-g_entities, va("print \"^3[Referee Action] ^7%s has locked the Spectators.\n\"", ent->client->pers.netname));
 				///End  - 09.18.06 - 04:47pm
 			}
 		}
+		// Boe!Man 5/3/10: We don't need this anymore because the function checks for the correct team.
+		/*
 		else
 		{
 			trap_SendServerCommand(ent - g_entities, va("print \"Invalid Command string.\n\""));
 			trap_SendServerCommand(ent - g_entities, va("print \"Usage: ref lock/unlock <team>\n\""));
-		}
+		}*/
 	}
-	else 
+	/*else 
 	{
 	switch (ent->client->sess.team)	{
 		case TEAM_RED:
@@ -301,6 +326,7 @@ void RPM_lockTeam(gentity_t *ent, qboolean referee, char *team)
 			}
 		}
 	}
+	*/
 }
 /*
 ===============

@@ -1296,7 +1296,8 @@ void Boe_Uppercut (int argNum, gentity_t *adm)
 	ent = g_entities + idnum;
 	ent->client->ps.pm_flags |= PMF_JUMPING;
 	ent->client->ps.groundEntityNum = ENTITYNUM_NONE;
-	ent->client->ps.velocity[2] = 1000;
+	// Boe!Man 5/3/10: We higher the uppercut.
+	ent->client->ps.velocity[2] = 1400;
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 	
 	if(g_entities[idnum].client->sess.lastIdentityChange)	{

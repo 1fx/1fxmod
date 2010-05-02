@@ -367,14 +367,15 @@ void SpawnFence(int choice) // big cage
 	AddSpawnField("bspmodel",	"instances/Generic/fence01");
 	AddSpawnField("origin",		"-4073 -710 -275");
 	AddSpawnField("angles",		"0 90 0");
+	// Boe!Man 5/3/10: The solid walls.
 	}else if (choice == 3){
-	AddSpawnField("bspmodel",	"instances/Colombia/npc_jump1");
-	AddSpawnField("origin",		"-1813 -295 0");
+	AddSpawnField("bspmodel",	"instances/Kamchatka/wall01");
+	AddSpawnField("origin",		"-1813 -210 -10");
 	AddSpawnField("angles",		"0 0 0");
 	}else if(choice == 4){
-	AddSpawnField("bspmodel",	"instances/Colombia/npc_jump1");
-	AddSpawnField("origin",		"-2607 -775 0"); // BUGGED, fix ik morgen.
-	AddSpawnField("angles",		"0 0 0");
+	AddSpawnField("bspmodel",	"instances/Kamchatka/wall01");
+	AddSpawnField("origin",		"-2607 -825 -10");
+	AddSpawnField("angles",		"0 180 0");
 	}
 	AddSpawnField("model",		"trigger_hurt"); //blocked_trigger
 	AddSpawnField("count",		 "1");
@@ -2704,7 +2705,7 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 		*/
 	case ADM_CHAT:
 		strcpy(type, server_acprefix.string);
-		Boe_ClientSound(other, G_SoundIndex("sound/misc/menus/invalid.wav"));
+		Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3"));
 		break;
 	case ADM_TALK:
 		if(ent->client->sess.admin == 2){
@@ -2714,15 +2715,17 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 		}else if(ent->client->sess.admin == 4){
 		strcpy(type, server_sadminprefix.string);
 		}
-		Boe_ClientSound(other, G_SoundIndex("sound/misc/menus/invalid.wav"));
+		//Boe_ClientSound(other, G_SoundIndex("sound/misc/menus/invalid.wav"));
+		Boe_GlobalSound(G_SoundIndex("sound/misc/c4/beep.mp3"));
 		break;
 	case CADM_CHAT:
 		strcpy(type, server_caprefix.string);
-		Boe_ClientSound(other, G_SoundIndex("sound/misc/menus/invalid.wav"));
+		//Boe_ClientSound(other, G_SoundIndex("sound/misc/menus/invalid.wav"));
+		Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3"));
 		break;
 	case CLAN_CHAT:
 		strcpy(type, server_ccprefix.string);
-		Boe_ClientSound(other, G_SoundIndex("sound/misc/menus/invalid.wav"));
+		Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3"));
 		break;
 	default:
 		break;
@@ -2980,6 +2983,8 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	int			it, nadeDir, weapon;
 	float		x, y;
 	gentity_t	*missile;
+	// HENK FIX ME: RPM kwap heeft pointer to dynamic char nodig, heb geen zin om alles nu een statische array te maken.. Fix jij?
+	char *team;
 
 	if ( trap_Argc () < 2 && !arg0 )
 		return;
@@ -3234,7 +3239,8 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			if(id != -1){
 			targ->client->ps.pm_flags |= PMF_JUMPING;
 			targ->client->ps.groundEntityNum = ENTITYNUM_NONE;
-			targ->client->ps.velocity[2] = 1000;
+			// Boe!Man 5/3/10: We higher the uppercut.
+			targ->client->ps.velocity[2] = 1400;
 			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s was %su%sp%sp%se%sr%scut by %s", level.time + 5000, g_entities[id].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, ent->client->pers.netname));
 			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was uppercut by %s.\n\"", g_entities[id].client->pers.netname,ent->client->pers.netname));
@@ -3744,14 +3750,18 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		return;
 	}
 	else if(strstr(p, "!l ") || strstr(p, "!lock ")){
-		if (ent->client->sess.admin >= g_lock.integer){
+		//if (ent->client->sess.admin >= g_lock.integer){
+		if (ent->client->sess.admin >= g_lock.integer || ent->client->sess.referee == 1){
 			if(strstr(p, "b") || strstr(p, "blue")){
 				RPM_lockTeam(ent, qtrue, "blue");
 			}else if(strstr(p, "r") || strstr(p, "red")){
 				RPM_lockTeam(ent, qtrue, "red");
 			}else if(strstr(p, "s") || strstr(p, "spec")){
 				RPM_lockTeam(ent, qtrue, "spec");
-			}
+			}else{
+				trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Unknown team entered.\n\""));
+				return;}
+			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 		}else if (ent->client->sess.admin < g_lock.integer){
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
 		}
@@ -3915,11 +3925,13 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			if(g_compMode.integer == 0){
 				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sC%so%sm%sp%se%stition mode enabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 				trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Competition mode enabled by %s.\n\"", ent->client->pers.netname));
+				Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 				g_compMode.integer = 1;
 				//Boe_adminLog (va("%s - TIMELIMIT %i", ent->client->pers.cleanName, number)) ;
 			}else{
 				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sC%so%sm%sp%se%stition mode disabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 				trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Competition mode disabled by %s.\n\"", ent->client->pers.netname));
+				Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 				g_compMode.integer = 0;
 			}
 		}else if (ent->client->sess.admin < 4){
@@ -3932,11 +3944,13 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			if(g_allowthirdperson.integer == 0){
 				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sT%sh%si%sr%sd%sperson enabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 				trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Thirdperson enabled by %s.\n\"", ent->client->pers.netname));
+				Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 				trap_Cvar_Set("g_allowthirdperson", "1");
 				//Boe_adminLog (va("%s - TIMELIMIT %i", ent->client->pers.cleanName, number)) ;
 			}else{
 				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sT%sh%si%sr%sd%sperson disabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 				trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Thirdperson disabled by %s.\n\"", ent->client->pers.netname));
+				Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 				trap_Cvar_Set("g_allowthirdperson", "0");
 			}
 		}else if (ent->client->sess.admin < 4){
@@ -3975,11 +3989,13 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 				targ->client->noOutfittingChange = qfalse;
 				G_UpdateOutfitting(targ->s.number);
 				trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Monkey disabled on %s.\n\"", targ->client->pers.netname));
+				Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 			}else{
 				targ->client->sess.monkey = qtrue;
 				SetTeam( targ, "s", NULL );
 				SetTeam( targ, "r", NULL );
 				trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Monkey enabled on %s.\n\"", targ->client->pers.netname));
+				Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 			}
 		}else if (ent->client->sess.admin < 4){
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
@@ -3987,6 +4003,52 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		G_Say( ent, NULL, mode, p);
 		return;
 	}
+	// Boe!Man 5/2/10: The Referee tokens. I think we're actually the first with this... (:
+	else if(strstr(p, "i ")){
+		if(ent->client->sess.admin > 1){
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Use /adm suspend or !su to become a Referee!\n\""));
+		}else if(ent->client->sess.referee == 1){
+			if (!level.gametypeData->teams){
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Not playing a team game!\n\""));
+			return;}
+			if (strstr(p, "b")){
+			team = "b";
+			RPM_TeamInfo(ent, team);}
+			else if(strstr(p, "r")){
+			team = "r";
+			RPM_TeamInfo(ent, team);}
+			else{
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Unknown team specified!\n\""));
+			return;}
+		}
+		G_Say( ent, NULL, mode, p);
+		return;
+	}
+	else if(strstr(p, "rt")){
+		if(ent->client->sess.admin > 1){
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Use /adm suspend or !su to become a Referee!\n\""));
+		}else if(ent->client->sess.referee == 1){
+			if(level.warmupTime == 0 || g_doWarmup.integer != 2){
+			trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7Server is currently not in Ready-up mode.\n\""));
+			return;}
+			if (!level.gametypeData->teams){
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Not playing a team game!\n\""));
+			return;}
+			if(strlen(p) == 3){
+			//RPM_ReadyAll();
+			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@Teams %sr%se%sa%sd%si%sed by %s", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, ent->client->pers.netname));
+			trap_SendServerCommand( -1, va("cp \"^3[Referee Action] ^7Teams readied by %s.\n\"", ent->client->pers.netname));
+			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+			}
+		}
+		//else
+		//{
+			//RPM_ReadyTeam(ent, qtrue, arg2);
+		//}
+		G_Say( ent, NULL, mode, p);
+		return;
+	}
+
 	/*else if(strstr(p, "!rcon")){
 	trap_Cvar_VariableStringBuffer ( "rconpassword", rcon, MAX_QPATH );
 	trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Rconpassword is: %s.\n\"", rcon));
