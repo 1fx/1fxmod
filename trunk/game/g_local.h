@@ -549,6 +549,7 @@ typedef struct
 	char			mapname[64];
 	vec3_t			nolower; // location of nolower
 	qboolean		nolower1; // true for nolower
+	qboolean		nolower2; // true for nolower
 	// Henk 06/04/10 -> Add TMI for RPM scoreboard compatiblity
 	int				lastTMIupdate;
 

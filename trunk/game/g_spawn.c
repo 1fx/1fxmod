@@ -461,7 +461,7 @@ void G_SpawnGEntityFromSpawnVars( qboolean inSubBSP )
 
 	// get the next free entity
 	ent = G_Spawn();
-
+	level.nolower1 = qfalse;
 	for ( i = 0 ; i < level.numSpawnVars ; i++ ) 
 	{
 		G_ParseField( level.spawnVars[i][0], level.spawnVars[i][1], ent );
@@ -471,7 +471,9 @@ void G_SpawnGEntityFromSpawnVars( qboolean inSubBSP )
 		}
 
 	}
-
+	if(level.nolower1 == qfalse){
+		level.nolower[2] = 0;
+	}
 
 	// check for "notteam" flag (GT_DM)
 	if ( level.gametypeData->teams ) 
