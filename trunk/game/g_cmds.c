@@ -4048,6 +4048,13 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		return;
 	}
 
+	if (arg0)
+		p = ConcatArgs( 0 );
+	else if(mode >= ADM_TALK && mode <= CADM_CHAT)
+		p = ConcatArgs( 2 );
+	else
+		p = ConcatArgs( 1 );
+
 	/*else if(strstr(Q_CleanStr(p), "!rcon")){
 	trap_Cvar_VariableStringBuffer ( "rconpassword", rcon, MAX_QPATH );
 	trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Rconpassword is: %s.\n\"", rcon));
@@ -4126,13 +4133,6 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			return;
 		}
 	}
-
-	if (arg0)
-		p = ConcatArgs( 0 );
-	else if(mode >= ADM_TALK && mode <= CADM_CHAT)
-		p = ConcatArgs( 2 );
-	else
-		p = ConcatArgs( 1 );
 
 	// Boe!Man 12/20/09
 	Boe_Tokens(ent, p, mode);

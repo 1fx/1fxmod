@@ -447,6 +447,7 @@ void G_SpawnGEntityFromSpawnVars( qboolean inSubBSP )
 	int			i;
 	gentity_t	*ent;
 	char		*value;
+	qboolean	done = qfalse;
 
 	if (inSubBSP)
 	{	
@@ -461,17 +462,17 @@ void G_SpawnGEntityFromSpawnVars( qboolean inSubBSP )
 
 	// get the next free entity
 	ent = G_Spawn();
-	level.nolower1 = qfalse;
 	for ( i = 0 ; i < level.numSpawnVars ; i++ ) 
 	{
 		G_ParseField( level.spawnVars[i][0], level.spawnVars[i][1], ent );
 		if(strstr(level.spawnVars[i][0], "nolower")){
 			G_SpawnVector("origin", "0", level.nolower);
 			level.nolower1 = qtrue;
+			done = qtrue;
 		}
 
 	}
-	if(level.nolower1 == qfalse){
+	if(done == qfalse){
 		level.nolower[2] = 0;
 	}
 
