@@ -205,7 +205,6 @@ int Pickup_Backpack ( gentity_t* ent, gentity_t* other )
 			ps->stats[STAT_ARMOR] = MAX_ARMOR;
 		}
 	}
-
 	// Give them some ammo
 	for ( i = 0; i < MAX_AMMO; i ++ )
 	{
@@ -224,9 +223,8 @@ int Pickup_Backpack ( gentity_t* ent, gentity_t* other )
 			ps->ammo[i] = maxammo;
 		}
 	}
-
 	// Make sure you alwasy get grenades
-	if ( level.pickupsDisabled )
+	if ( level.pickupsDisabled && g_disablenades.integer == 0 )
 	{
 		weapon_t weapon = ps->stats[STAT_OUTFIT_GRENADE];
 
@@ -244,7 +242,6 @@ int Pickup_Backpack ( gentity_t* ent, gentity_t* other )
 			ps->clip[ATTACK_NORMAL][weapon] = weaponData[weapon].attack[ATTACK_NORMAL].clipSize;
 		}
 	}
-
 	return g_backpackRespawn.integer;
 }
 
@@ -326,6 +323,7 @@ void Touch_Item (gentity_t *ent, gentity_t *other, trace_t *trace)
 	{
 		return;
 	}
+
 
 #ifdef _DEBUG
 	G_LogPrintf( "Item: %i %s\n", other->s.number, ent->item->classname );
@@ -435,6 +433,7 @@ void Touch_Item (gentity_t *ent, gentity_t *other, trace_t *trace)
 	}
 
 	trap_LinkEntity( ent );
+
 }
 
 

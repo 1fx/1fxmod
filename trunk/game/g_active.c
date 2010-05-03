@@ -608,25 +608,6 @@ void SpectatorThink( gentity_t *ent, usercmd_t *ucmd )
 	{
 		G_StopFollowing( ent );
 	}
-	//RxCxW - Support for Admin levels - 1.12.2005 - #ADMINLEVELS
-	////else if ( client->sess.admin == 1 && ( client->buttons & BUTTON_WALKING ) && ! ( client->oldbuttons & BUTTON_WALKING ) )
-	else if ( client->sess.admin >= 2 && ( client->buttons & BUTTON_WALKING ) && ! ( client->oldbuttons & BUTTON_WALKING ) ) {
-		if(client->adminspec) {
-			client->adminspec = qfalse;
-			if(ent->client->sess.team != TEAM_SPECTATOR){
-				respawn(ent);
-			}
-		}
-		else {
-			client->adminspec = qtrue;
-			if(g_forceFollow.integer) {
-				G_StopFollowing( ent );
-			}
-			if(ent->client->sess.team != TEAM_SPECTATOR) {
-				ent->client->ps.respawnTimer = 0;
-			}
-		}
-	}
 
 	else if ( client->sess.rpmClient && (((client->buttons & BUTTON_ZOOMIN) && !( client->oldbuttons & BUTTON_ZOOMIN ))  || ((client->buttons & BUTTON_RELOAD) && !( client->oldbuttons & BUTTON_RELOAD )))) {
 		// If not following then go to either third or first
