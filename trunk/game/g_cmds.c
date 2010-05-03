@@ -2699,7 +2699,7 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 		*/
 	case ADM_CHAT:
 		strcpy(type, server_acprefix.string);
-		Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3"));
+		Boe_ClientSound(other, G_SoundIndex("sound/misc/menus/invalid.wav"));
 		break;
 	case ADM_TALK:
 		if(ent->client->sess.admin == 2){
@@ -2709,17 +2709,15 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 		}else if(ent->client->sess.admin == 4){
 		strcpy(type, server_sadminprefix.string);
 		}
-		//Boe_ClientSound(other, G_SoundIndex("sound/misc/menus/invalid.wav"));
-		Boe_GlobalSound(G_SoundIndex("sound/misc/c4/beep.mp3"));
+		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/invalid.wav"));
 		break;
 	case CADM_CHAT:
 		strcpy(type, server_caprefix.string);
-		//Boe_ClientSound(other, G_SoundIndex("sound/misc/menus/invalid.wav"));
-		Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3"));
+		Boe_ClientSound(other, G_SoundIndex("sound/misc/menus/invalid.wav"));
 		break;
 	case CLAN_CHAT:
 		strcpy(type, server_ccprefix.string);
-		Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3"));
+		Boe_ClientSound(other, G_SoundIndex("sound/misc/menus/invalid.wav"));
 		break;
 	default:
 		break;
