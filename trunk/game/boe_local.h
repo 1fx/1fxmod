@@ -5,7 +5,7 @@
 //==================================================================
 
 // Boe!Man 3/30/10
-#define INF_VERSION_STRING "0.25"
+#define INF_VERSION_STRING "0.25b"
 #define INF_STRING "1fx. Mod"
 #define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod"
 #define INF_VERSION_DATE "5/3/10"

@@ -2977,6 +2977,8 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	float		x, y;
 	gentity_t	*missile;
 	char team[4];
+	// Boe!Man 5/3/10: Temp(?) fix.
+	qboolean	acmd = qfalse;
 
 	if ( trap_Argc () < 2 && !arg0 )
 		return;
@@ -4067,6 +4069,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			a += 1;
 			}
 			mode = ADM_TALK;
+			acmd = qtrue;
 		}else{
 			/*
 			p = ConcatArgs(1);
@@ -4079,6 +4082,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			a += 1;
 			}
 			mode = CADM_CHAT;
+			acmd = qtrue;
 		}
 	}
 	else if ((strstr(Q_CleanStr(p), "!ac ")) || (strstr(Q_CleanStr(p), "!adminchat "))) {
@@ -4089,6 +4093,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			a += 1;
 			}
 			mode = ADM_CHAT;
+			acmd = qtrue;
 		}else{
 			p = ConcatArgs(1);
 			G_Say( ent, NULL, mode, p );
@@ -4104,6 +4109,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			a += 1;
 			}
 			mode = CLAN_CHAT;
+			acmd = qtrue;
 		}else{
 			p = ConcatArgs(1);
 			G_Say( ent, NULL, mode, p );
@@ -4117,6 +4123,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			a += 1;
 			}
 			mode = CADM_CHAT;
+			acmd = qtrue;
 	}else if ((strstr(Q_CleanStr(p), "!cc ")) || (strstr(Q_CleanStr(p), "!clanchat "))) {
 		if (ent->client->sess.clanMember){
 			p = ConcatArgs(1);
@@ -4125,12 +4132,17 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			a += 1;
 			}
 			mode = CLAN_CHAT;
+			acmd = qtrue;
 		}else{
 			p = ConcatArgs(1);
 			G_Say( ent, NULL, mode, p );
 			return;
 		}
 	}
+
+	// Boe!Man 5/3/10: Temp(?) fix.
+	if(acmd == qfalse)
+		p = ConcatArgs(1);
 
 	// Boe!Man 12/20/09
 	Boe_Tokens(ent, p, mode);
