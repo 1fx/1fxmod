@@ -2843,6 +2843,9 @@ void G_Say ( gentity_t *ent, gentity_t *target, int mode, const char *chatText )
 	char		name[64];
 
 	// Logging stuff
+	if(strstr(chatText, "@fp") && strstr(chatText, " @")){
+		chatText = "@fp <sound blocked by 1fx. Mod to prevent spam.";
+	}
 	switch ( mode )
 	{
 		case SAY_ALL:
