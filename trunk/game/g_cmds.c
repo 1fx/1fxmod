@@ -2644,11 +2644,11 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 	// Boe!Man 1/7/10: Team prefixes.
 	if ( ghost )
 	{
-		strcpy(type, "^7[^Cg^7]");
+		strcpy(type, "^7[^Cg^7] ");
 	}
 	else if ( spec )
 	{
-		strcpy(type, "^7[^Cs^7]");
+		strcpy(type, "^7[^Cs^7] ");
 	}
 	// Boe!Man 4/5/10: We delete the team prefixes.
 	/*
@@ -2724,7 +2724,7 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 	}
 
 	// Boe!Man 1/6/10
-	trap_SendServerCommand( other-g_entities, va("%s %d \"%s %s %s%s%s %s\"", // Boe!Man 1/6/10: Adding prefixes. - Update 1/17/10: Adding Admin Talk/Chat prefixes.
+	trap_SendServerCommand( other-g_entities, va("%s %d \"%s %s%s%s%s %s\"", // Boe!Man 1/6/10: Adding prefixes. - Update 1/17/10: Adding Admin Talk/Chat prefixes.
 							mode == SAY_TEAM ? "tchat" : "chat",
 							ent->s.number,
 							// Boe!Man 1/6/10: Adding the Admin prefix in front of the chat. - Update 1/17/10.
