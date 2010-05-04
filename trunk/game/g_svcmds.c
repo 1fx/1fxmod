@@ -514,27 +514,27 @@ qboolean ConsoleCommand( void )
 	// Boe!Man 3/30/10
 	if (Q_stricmp (cmd, "addbadmin" ) == 0 )
 	{
-		Boe_Add_bAdmin_f(1, NULL);
+		Boe_Add_bAdmin_f(1, NULL, qfalse);
 		return qtrue;
 	}
 	if (Q_stricmp (cmd, "addadmin" ) == 0 )
 	{
-		Boe_Add_Admin_f(1, NULL);
+		Boe_Add_Admin_f(1, NULL, qfalse);
 		return qtrue;
 	}
 	if (Q_stricmp (cmd, "addsadmin" ) == 0 )
 	{
-		Boe_Add_sAdmin_f(1, NULL);
+		Boe_Add_sAdmin_f(1, NULL, qfalse);
 		return qtrue;
 	}
 	if (Q_stricmp (cmd, "addclan" ) == 0 )
 	{
-		Boe_Add_Clan_Member(1, NULL);
+		Boe_Add_Clan_Member(1, NULL, qfalse);
 		return qtrue;
 	}
 	if (Q_stricmp (cmd, "removeclan" ) == 0 )
 	{
-		Boe_Remove_Clan_Member(1, NULL);
+		Boe_Remove_Clan_Member(1, NULL, qfalse);
 		return qtrue;
 	}
 	if (Q_stricmp (cmd, "clanvsall" ) == 0 )
@@ -544,77 +544,77 @@ qboolean ConsoleCommand( void )
 	}
 	if (Q_stricmp (cmd, "ban" ) == 0 )
 	{
-		Boe_Ban_f(1, NULL);
+		Boe_Ban_f(1, NULL, qfalse);
 		return qtrue;
 	}
 	if (Q_stricmp (cmd, "runover" ) == 0 )
 	{
-		Boe_Runover(1, NULL);
+		Boe_Runover(1, NULL, qfalse);
 		return qtrue;
 	}
 	if (Q_stricmp (cmd, "twist" ) == 0 )
 	{
-		Boe_Twist(1, NULL);
+		Boe_Twist(1, NULL, qfalse);
 		return qtrue;
 	}
 	if (Q_stricmp (cmd, "untwist" ) == 0 )
 	{
-		Boe_unTwist(1, NULL);
+		Boe_unTwist(1, NULL, qfalse);
 		return qtrue;
 	}
 	if (Q_stricmp (cmd, "respawn" ) == 0 )
 	{
-		Boe_Respawn(1, NULL);
+		Boe_Respawn(1, NULL, qfalse);
 		return qtrue;
 	}
 	if ((Q_stricmp (cmd, "uppercut" ) == 0 )  || (Q_stricmp (cmd, "uc" ) == 0 ))
 	{
-		Boe_Uppercut(1, NULL);
+		Boe_Uppercut(1, NULL, qfalse);
 		return qtrue;
 	}
 	if ((Q_stricmp (cmd, "removeadmin" ) == 0))
 	{
-		Boe_Remove_Admin_f(1, NULL);
+		Boe_Remove_Admin_f(1, NULL, qfalse);
 		return qtrue;
 	}
 	if ((Q_stricmp (cmd, "flash" ) == 0))
 	{
-		Boe_Flash(1, NULL);
+		Boe_Flash(1, NULL, qfalse);
 		return qtrue;
 	}
 	if (Q_stricmp (cmd, "plant" ) == 0 )
 	{
-		Boe_Plant(1, NULL);
+		Boe_Plant(1, NULL, qfalse);
 		return qtrue;
 	}
 	if (Q_stricmp (cmd, "unplant" ) == 0 )
 	{
-		Boe_unPlant(1, NULL);
+		Boe_unPlant(1, NULL, qfalse);
 		return qtrue;
 	}
 	if (Q_stricmp (cmd, "pop" ) == 0 )
 	{
-		Boe_pop(1, NULL);
+		Boe_pop(1, NULL, qfalse);
 		return qtrue;
 	}
 	if (Q_stricmp (cmd, "burn" ) == 0 )
 	{
-		Boe_Burn(1, NULL);
+		Boe_Burn(1, NULL, qfalse);
 		return qtrue;
 	}
 	if (Q_stricmp (cmd, "mute" ) == 0 )
 	{
-		Boe_Mute(1, NULL, qtrue);
+		Boe_Mute(1, NULL, qtrue, qfalse);
 		return qtrue;
 	}
 	if (Q_stricmp (cmd, "unmute" ) == 0 )
 	{
-		Boe_Mute(1, NULL, qfalse);
+		Boe_Mute(1, NULL, qfalse, qfalse);
 		return qtrue;
 	}
 	if (Q_stricmp (cmd, "strip" ) == 0 )
 	{
-		Boe_Strip(1, NULL);
+		Boe_Strip(1, NULL, qfalse);
 		return qtrue;
 	}
 	// Henk 28/01/10 -> Add eventeams for rcon

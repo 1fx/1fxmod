@@ -9,12 +9,12 @@
 // I'm lazy so I just 'fix' them here. I'll fix them fo'real later.
 // ALREADY DONE LAZY BITCH -.-'' HENK
 
-void Boe_Add_Clan_Member(int argNum, gentity_t *adm)
+void Boe_Add_Clan_Member(int argNum, gentity_t *adm, qboolean shortCmd)
 {
 	int             idnum, onlist;
 	char			*id;
 
-	idnum = Boe_ClientNumFromArg(adm, argNum, "addclan <idnumber>", "do this to", qfalse, qtrue);
+	idnum = Boe_ClientNumFromArg(adm, argNum, "addclan <idnumber>", "do this to", qfalse, qtrue, shortCmd);
 
 	if(idnum < 0)
 		return;
@@ -58,12 +58,12 @@ RPM_Remove_Clan_Member
 ======================
 */
 
-void Boe_Remove_Clan_Member(int argNum, gentity_t *adm)
+void Boe_Remove_Clan_Member(int argNum, gentity_t *adm, qboolean shortCmd)
 {
 	int			idnum;
 	char		*id;
 
-	idnum = Boe_ClientNumFromArg(adm, argNum, "removeclan <idnumber>", "remove", qfalse, qtrue);
+	idnum = Boe_ClientNumFromArg(adm, argNum, "removeclan <idnumber>", "remove", qfalse, qtrue, shortCmd);
 
 	///if invalid client etc.. idnum will == -1 and we abort
 	if(idnum < 0)
@@ -227,7 +227,7 @@ void Boe_adm_f ( gentity_t *ent )
 		return;
 	}
 	if (!Q_stricmp ( arg1, "kick" ) && ent->client->sess.admin >= g_kick.integer){
-		id = Boe_ClientNumFromArg(ent, 2, "kick <id> <reason>", "Kick", qfalse, qfalse);
+		id = Boe_ClientNumFromArg(ent, 2, "kick <id> <reason>", "Kick", qfalse, qfalse, qfalse);
 		if(id < 0) return;
 		trap_Argv( 3, arg3, sizeof( arg3 ) );
 		trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"%s\"\n", id, arg3));
@@ -240,7 +240,7 @@ void Boe_adm_f ( gentity_t *ent )
 		return;
 	}
 	if (!Q_stricmp ( arg1, "addbadmin" ) && ent->client->sess.admin >= g_addbadmin.integer){
-		Boe_Add_bAdmin_f(2, ent);
+		Boe_Add_bAdmin_f(2, ent, qfalse);
 		return;
 	}
 	else if (!Q_stricmp ( arg1, "addbadmin" ) && ent->client->sess.admin < g_addbadmin.integer){
@@ -248,7 +248,7 @@ void Boe_adm_f ( gentity_t *ent )
 		return;
 	}
 	if (!Q_stricmp ( arg1, "addadmin" ) && ent->client->sess.admin >= g_addadmin.integer){
-		Boe_Add_Admin_f(2, ent);
+		Boe_Add_Admin_f(2, ent, qfalse);
 		return;
 	}
 	else if (!Q_stricmp ( arg1, "addadmin" ) && ent->client->sess.admin < g_addadmin.integer){
@@ -256,15 +256,15 @@ void Boe_adm_f ( gentity_t *ent )
 		return;
 	}
 	if (!Q_stricmp ( arg1, "addsadmin" ) && ent->client->sess.admin >= g_addsadmin.integer){
-		Boe_Add_sAdmin_f(2, ent);
+		Boe_Add_sAdmin_f(2, ent, qfalse);
 		return;
 	}
 	if (!Q_stricmp ( arg1, "addclan" ) && ent->client->sess.admin >= g_addsadmin.integer){
-		Boe_Add_Clan_Member(2, ent);
+		Boe_Add_Clan_Member(2, ent, qfalse);
 		return;
 	}
 	if (!Q_stricmp ( arg1, "removeclan" ) && ent->client->sess.admin >= g_addsadmin.integer){
-		Boe_Remove_Clan_Member(2, ent);
+		Boe_Remove_Clan_Member(2, ent, qfalse);
 		return;
 	}
 	else if (!Q_stricmp ( arg1, "addsadmin" ) && ent->client->sess.admin < g_addsadmin.integer){
@@ -273,7 +273,7 @@ void Boe_adm_f ( gentity_t *ent )
 	}
 	// Boe!Man 1/4/10
 	if (!Q_stricmp ( arg1, "removeadmin" ) && ent->client->sess.admin >= g_removeadmin.integer){
-		Boe_Remove_Admin_f(2, ent);
+		Boe_Remove_Admin_f(2, ent, qfalse);
 		return;
 	}
 	else if (!Q_stricmp ( arg1, "removeadmin" ) && ent->client->sess.admin < g_removeadmin.integer){
@@ -281,7 +281,7 @@ void Boe_adm_f ( gentity_t *ent )
 		return;
 	}
 	if (!Q_stricmp ( arg1, "ban" ) && ent->client->sess.admin >= g_ban.integer){
-		Boe_Ban_f(2, ent);
+		Boe_Ban_f(2, ent, qfalse);
 		return;
 	}
 	else if (!Q_stricmp ( arg1, "ban" ) && ent->client->sess.admin < g_ban.integer){
@@ -298,7 +298,7 @@ void Boe_adm_f ( gentity_t *ent )
 		return;
 	}
 	if (!Q_stricmp ( arg1, "subnetban" ) && ent->client->sess.admin >= g_subnetban.integer){
-		Boe_subnetBan(2, ent);
+		Boe_subnetBan(2, ent, qfalse);
 		return;
 	}
 	else if (!Q_stricmp ( arg1, "subnetban" ) && ent->client->sess.admin < g_subnetban.integer){
@@ -315,11 +315,11 @@ void Boe_adm_f ( gentity_t *ent )
 		return;
 	}
 	if (!Q_stricmp ( arg1, "uppercut" ) && ent->client->sess.admin >= g_uppercut.integer){
-		Boe_Uppercut(2, ent);
+		Boe_Uppercut(2, ent, qfalse);
 		return;
 	}
 	else if (!Q_stricmp ( arg1, "uc" ) && ent->client->sess.admin >= g_uppercut.integer){
-		Boe_Uppercut(2, ent);
+		Boe_Uppercut(2, ent, qfalse);
 		return;
 	}
 	else if (!Q_stricmp ( arg1, "uppercut" ) && ent->client->sess.admin < g_uppercut.integer){
@@ -331,7 +331,7 @@ void Boe_adm_f ( gentity_t *ent )
 		return;
 	}
 	if ((!Q_stricmp ( arg1, "twist" )) && ent->client->sess.admin >= g_twist.integer) {
-		Boe_Twist(2, ent);
+		Boe_Twist(2, ent, qfalse);
 		return;
 	}
 	else if ((!Q_stricmp ( arg1, "twist" )) && ent->client->sess.admin < g_twist.integer) {
@@ -339,7 +339,7 @@ void Boe_adm_f ( gentity_t *ent )
 		return;
 	}
 	if ((!Q_stricmp ( arg1, "untwist" )) && ent->client->sess.admin >= g_twist.integer) {
-		Boe_unTwist(2, ent);
+		Boe_unTwist(2, ent, qfalse);
 		return;
 	}
 	else if ((!Q_stricmp ( arg1, "untwist" )) && ent->client->sess.admin < g_twist.integer) {
@@ -347,7 +347,7 @@ void Boe_adm_f ( gentity_t *ent )
 		return;
 	}
 	if ((!Q_stricmp ( arg1, "respawn" )) && ent->client->sess.admin >= g_respawn.integer) {
-		Boe_Respawn(2, ent);
+		Boe_Respawn(2, ent, qfalse);
 		return;
 	}
 	else if ((!Q_stricmp ( arg1, "respawn" )) && ent->client->sess.admin < g_respawn.integer) {
@@ -355,7 +355,7 @@ void Boe_adm_f ( gentity_t *ent )
 		return;
 	}
 	if ((!Q_stricmp ( arg1, "runover" )) && ent->client->sess.admin >= g_runover.integer) {
-		Boe_Runover(2, ent);
+		Boe_Runover(2, ent, qfalse);
 		return;
 	}
 	else if ((!Q_stricmp ( arg1, "runover" )) && ent->client->sess.admin < g_runover.integer) {
@@ -363,7 +363,7 @@ void Boe_adm_f ( gentity_t *ent )
 		return;
 	}
 	if ((!Q_stricmp ( arg1, "flash" )) && ent->client->sess.admin >= g_flash.integer) {
-		Boe_Flash(2, ent);
+		Boe_Flash(2, ent, qfalse);
 		return;
 	}
 	else if ((!Q_stricmp ( arg1, "flash" )) && ent->client->sess.admin < g_flash.integer) {
@@ -386,7 +386,7 @@ void Boe_adm_f ( gentity_t *ent )
 		return;
 	}
 	if ((!Q_stricmp ( arg1, "plant" )) && ent->client->sess.admin >= g_plant.integer) {
-		Boe_Plant(2, ent);
+		Boe_Plant(2, ent, qfalse);
 		return;
 	}
 	else if ((!Q_stricmp ( arg1, "plant" )) && ent->client->sess.admin < g_plant.integer) {
@@ -394,7 +394,7 @@ void Boe_adm_f ( gentity_t *ent )
 		return;
 	}
 	if ((!Q_stricmp ( arg1, "unplant" )) && ent->client->sess.admin >= g_plant.integer) {
-		Boe_unPlant(2, ent);
+		Boe_unPlant(2, ent, qfalse);
 		return;
 	}
 	else if ((!Q_stricmp ( arg1, "unplant" )) && ent->client->sess.admin < g_plant.integer) {
@@ -402,7 +402,7 @@ void Boe_adm_f ( gentity_t *ent )
 		return;
 	}
 	if ((!Q_stricmp ( arg1, "pop" )) && ent->client->sess.admin >= g_pop.integer) {
-		Boe_pop(2, ent);
+		Boe_pop(2, ent, qfalse);
 		return;
 	}
 	else if ((!Q_stricmp ( arg1, "pop" )) && ent->client->sess.admin < g_pop.integer) {
@@ -410,7 +410,7 @@ void Boe_adm_f ( gentity_t *ent )
 		return;
 	}
 	if ((!Q_stricmp ( arg1, "burn" )) && ent->client->sess.admin >= g_burn.integer) {
-		Boe_Burn(2, ent);
+		Boe_Burn(2, ent, qfalse);
 		return;
 	}
 	else if ((!Q_stricmp ( arg1, "burn" )) && ent->client->sess.admin < g_burn.integer) {
@@ -418,7 +418,7 @@ void Boe_adm_f ( gentity_t *ent )
 		return;
 	}
 	if ((!Q_stricmp ( arg1, "mute" )) && ent->client->sess.admin >= g_mute.integer) {
-		Boe_Mute(2, ent, qtrue);
+		Boe_Mute(2, ent, qtrue, qfalse);
 		return;
 	}
 	else if ((!Q_stricmp ( arg1, "mute" )) && ent->client->sess.admin < g_mute.integer) {
@@ -426,7 +426,7 @@ void Boe_adm_f ( gentity_t *ent )
 		return;
 	}
 	if ((!Q_stricmp ( arg1, "unmute" )) && ent->client->sess.admin >= g_mute.integer) {
-		Boe_Mute(2, ent, qfalse);
+		Boe_Mute(2, ent, qfalse, qfalse);
 		return;
 	}
 	else if ((!Q_stricmp ( arg1, "unmute" )) && ent->client->sess.admin < g_mute.integer) {
@@ -434,7 +434,7 @@ void Boe_adm_f ( gentity_t *ent )
 		return;
 	}
 	if ((!Q_stricmp ( arg1, "strip" )) && ent->client->sess.admin >= g_strip.integer) {
-		Boe_Strip(2, ent);
+		Boe_Strip(2, ent, qfalse);
 		return;
 	}
 	else if ((!Q_stricmp ( arg1, "strip" )) && ent->client->sess.admin < g_strip.integer) {
@@ -467,7 +467,7 @@ void Boe_adm_f ( gentity_t *ent )
 		return;
 	}
 	if ((!Q_stricmp ( arg1, "forceteam" )) && ent->client->sess.admin >= g_forceteam.integer) {
-		Adm_ForceTeam(ent);
+		Adm_ForceTeam(ent, qfalse);
 		return;
 	}
 	else if ((!Q_stricmp ( arg1, "forceteam" )) && ent->client->sess.admin < g_forceteam.integer) {
@@ -518,28 +518,44 @@ Boe_ClientNumFromArg
 ====================
 */
 
-int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const char* action, qboolean aliveOnly, qboolean otheradmins)
+int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const char* action, qboolean aliveOnly, qboolean otheradmins, qboolean shortCmd)
 {
-	char	arg[8] = "\0";
+	char	arg[16] = "\0"; // increase buffer so we can process more commands
 	int		num = -1;
-
+	int i;
 	trap_Argv( argNum, arg, sizeof( arg ) );
+	if(shortCmd){ // Henk 04/05/10 -> Handle the short admin commands.
+		num = 0;
+		for(i=0;i<16;i++){
+			if(arg[i] == ' '){
+			num = atoi(va("%c%c", arg[i+1], arg[i+2]));
+			//trap_SendServerCommand( -1, va("print \"^3[Debug] ^7Client: %i(%s)\n\"", num, arg));
+			break;
+			}
+		}
+		if(num == 0){ // Get second argument because they use it from the console
+			trap_Argv( 2, arg, sizeof( arg ) );
+			num = atoi(arg);
+			//trap_SendServerCommand( -1, va("print \"^3[Debug 2] ^7Client: %i(%s)\n\"", num, arg));
+		}
 
-	if (arg[0] >= '0' && arg[0] <= '9')
-	{
-		num = atoi( arg );
-	}
-	else if(ent && ent->client)
-	{
-		// Boe!Man 1/4/10: Putting two Info messages together.
-		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Bad client slot: %s. ^7Usage: adm %s\n\"", arg, usage));
-		return -1;
-	}
-	else
-	{
-		Com_Printf("Bad client slot: %s\n", arg);
-		Com_Printf("Usage: rcon %s\n", usage);
-		return -1;
+	}else{
+		if (arg[0] >= '0' && arg[0] <= '9')
+		{
+			num = atoi( arg );
+		}
+		else if(ent && ent->client)
+		{
+			// Boe!Man 1/4/10: Putting two Info messages together.
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Bad client slot: %s. ^7Usage: adm %s\n\"", arg, usage));
+			return -1;
+		}
+		else
+		{
+			Com_Printf("Bad client slot: %s\n", arg);
+			Com_Printf("Usage: rcon %s\n", usage);
+			return -1;
+		}
 	}
 
 	if ( num < 0 || num >= g_maxclients.integer )
@@ -836,13 +852,13 @@ Boe_Add_bAdmin_f
 ================
 */
 
-void Boe_Add_bAdmin_f(int argNum, gentity_t *adm)
+void Boe_Add_bAdmin_f(int argNum, gentity_t *adm, qboolean shortCmd)
 {
 	int             idnum;
 	char			*id;
 	char			id2[64];
 
-	idnum = Boe_ClientNumFromArg(adm, argNum, "addbadmin <idnumber>", "do this to", qfalse, qfalse);
+	idnum = Boe_ClientNumFromArg(adm, argNum, "addbadmin <idnumber>", "do this to", qfalse, qfalse, shortCmd);
 	if(idnum < 0) return;
 
 	id = g_entities[idnum].client->pers.boe_id;
@@ -878,13 +894,13 @@ Boe_Add_Admin_f
 ===============
 */
 
-void Boe_Add_Admin_f(int argNum, gentity_t *adm)
+void Boe_Add_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd)
 {
 	int             idnum;
 	char			*id;
 	char			id2[64];
 
-	idnum = Boe_ClientNumFromArg(adm, argNum, "addadmin <idnumber>", "do this to", qfalse, qfalse);
+	idnum = Boe_ClientNumFromArg(adm, argNum, "addadmin <idnumber>", "do this to", qfalse, qfalse, shortCmd);
 	if(idnum < 0) return;
 
 	id = g_entities[idnum].client->pers.boe_id; 
@@ -920,13 +936,13 @@ Boe_Add_sAdmin_f
 ================
 */
 
-void Boe_Add_sAdmin_f(int argNum, gentity_t *adm)
+void Boe_Add_sAdmin_f(int argNum, gentity_t *adm, qboolean shortCmd)
 {
 	int             idnum;
 	char			*id;
 	char			id2[64];
 
-	idnum = Boe_ClientNumFromArg(adm, argNum, "addsadmin <idnumber>", "do this to", qfalse, qfalse);
+	idnum = Boe_ClientNumFromArg(adm, argNum, "addsadmin <idnumber>", "do this to", qfalse, qfalse, shortCmd);
 	if(idnum < 0) return;
 
 	id = g_entities[idnum].client->pers.boe_id; 
@@ -1143,7 +1159,7 @@ Boe_subnetBan
 =================
 */
 
-void Boe_subnetBan (int argNum, gentity_t *adm)  
+void Boe_subnetBan (int argNum, gentity_t *adm, qboolean shortCmd)  
 {
 	gentity_t		*ent;
 	char			ip[16];
@@ -1155,7 +1171,7 @@ void Boe_subnetBan (int argNum, gentity_t *adm)
 	if(adm && adm->client) argNum = 2;
 	else argNum = 1;
 
-	idnum = Boe_ClientNumFromArg(adm, argNum, "subnetban <id> <size> <reason>", "subnetban", qfalse, qfalse);
+	idnum = Boe_ClientNumFromArg(adm, argNum, "subnetban <id> <size> <reason>", "subnetban", qfalse, qfalse, shortCmd);
 	if(idnum < 0) return;
 	ent = g_entities + idnum;
 
@@ -1200,13 +1216,13 @@ Boe_Remove_Admin_f
 ==================
 */
 
-void Boe_Remove_Admin_f (int argNum, gentity_t *adm)
+void Boe_Remove_Admin_f (int argNum, gentity_t *adm, qboolean shortCmd)
 
 {
 	int				idnum;
 	char			*id;
 
-	idnum = Boe_ClientNumFromArg(adm, argNum, "removeadmin <idnumer>", "do this to", qfalse, qtrue);
+	idnum = Boe_ClientNumFromArg(adm, argNum, "removeadmin <idnumer>", "do this to", qfalse, qtrue, shortCmd);
 	if(idnum < 0) return;
 
 	id = g_entities[idnum].client->pers.boe_id;
@@ -1237,13 +1253,13 @@ Boe_Ban_f
 =========
 */
 
-void Boe_Ban_f (int argNum, gentity_t *adm)
+void Boe_Ban_f (int argNum, gentity_t *adm, qboolean shortCmd)
 {
 	int				idnum;
 	char            banid[128];
 	char			reason[MAX_STRING_TOKENS] = "\0";
 
-	idnum = Boe_ClientNumFromArg(adm, argNum, "ban <idnumber> <reason>", "ban", qfalse, qfalse);
+	idnum = Boe_ClientNumFromArg(adm, argNum, "ban <idnumber> <reason>", "ban", qfalse, qfalse, shortCmd);
 
 	if(idnum < 0)
 		return;
@@ -1284,13 +1300,13 @@ Boe_Uppercut
 ============
 */
 
-void Boe_Uppercut (int argNum, gentity_t *adm)
+void Boe_Uppercut (int argNum, gentity_t *adm, qboolean shortCmd)
 {
 	gentity_t		*ent;
 	int				idnum;
 	char			*status;
 
-	idnum = Boe_ClientNumFromArg(adm, argNum, "uppercut <idnumber>", "uppercut", qtrue, qtrue);
+	idnum = Boe_ClientNumFromArg(adm, argNum, "uppercut <idnumber>", "uppercut", qtrue, qtrue, shortCmd);
 	if(idnum < 0) return;
 	
 	ent = g_entities + idnum;
@@ -1327,7 +1343,7 @@ Boe_Twist
 =========
 */
 
-void Boe_Twist (int argNum, gentity_t *adm)
+void Boe_Twist (int argNum, gentity_t *adm, qboolean shortCmd)
 {
 	gentity_t		*ent;
 	int				idnum, i;
@@ -1336,7 +1352,7 @@ void Boe_Twist (int argNum, gentity_t *adm)
 	char			a[4], b[4], c[4];
 
 
-	idnum = Boe_ClientNumFromArg(adm, argNum, "twist <idnumber>", "twist", qtrue, qtrue);
+	idnum = Boe_ClientNumFromArg(adm, argNum, "twist <idnumber>", "twist", qtrue, qtrue, shortCmd);
 	if(idnum < 0)  return;
 
 	ent = g_entities + idnum;
@@ -1384,13 +1400,13 @@ Boe_unTwist
 ===========
 */
 
-void Boe_unTwist (int argNum, gentity_t *adm)
+void Boe_unTwist (int argNum, gentity_t *adm, qboolean shortCmd)
 {
 	gentity_t	*ent;
 	int			idnum;
 	vec3_t		lookdown;
 
-	idnum = Boe_ClientNumFromArg(adm, argNum, "untwist <idnumber>", "untwist", qtrue, qtrue);
+	idnum = Boe_ClientNumFromArg(adm, argNum, "untwist <idnumber>", "untwist", qtrue, qtrue, shortCmd);
 	if(idnum < 0) {	return;	}
 
 	ent = g_entities + idnum;
@@ -1417,14 +1433,14 @@ Boe_Respawn
 ===========
 */
 
-void Boe_Respawn (int argNum, gentity_t *adm)
+void Boe_Respawn (int argNum, gentity_t *adm, qboolean shortCmd)
 {
 	gentity_t		*ent;
 	qboolean		ghost;
 	int				idnum;
 	char	*status;
 
-	idnum = Boe_ClientNumFromArg(adm, argNum, "respawn <idnumber>", "respawn", qfalse, qtrue);
+	idnum = Boe_ClientNumFromArg(adm, argNum, "respawn <idnumber>", "respawn", qfalse, qtrue, shortCmd);
 	if(idnum < 0) return;
 	
 	ent = g_entities + idnum;
@@ -1475,7 +1491,7 @@ void Boe_Respawn (int argNum, gentity_t *adm)
 Boe_Runover
 ======================
 */
-void Boe_Runover (int argNum, gentity_t *adm)
+void Boe_Runover (int argNum, gentity_t *adm, qboolean shortCmd)
 {
 	gentity_t	*ent;
 	vec3_t	dir;
@@ -1484,7 +1500,7 @@ void Boe_Runover (int argNum, gentity_t *adm)
 	int		idnum;
 	int		anim = 0;
 	
-	idnum = Boe_ClientNumFromArg(adm, argNum, "runover <idnumber>", "runover", qtrue, qtrue);
+	idnum = Boe_ClientNumFromArg(adm, argNum, "runover <idnumber>", "runover", qtrue, qtrue, shortCmd);
 	if(idnum < 0)
 	{
 		return;
@@ -1525,7 +1541,7 @@ Boe_Flash
 =========
 */
 
-void Boe_Flash (int argNum, gentity_t *adm)
+void Boe_Flash (int argNum, gentity_t *adm, qboolean shortCmd)
 {
 	gentity_t		*ent;
 	int				idnum;
@@ -1533,7 +1549,7 @@ void Boe_Flash (int argNum, gentity_t *adm)
 	int it, nadeDir, weapon;
 	float x, y;
 	gentity_t *missile;
-	idnum = Boe_ClientNumFromArg(adm, argNum, "flash <idnumber>", "flash", qtrue, qtrue);
+	idnum = Boe_ClientNumFromArg(adm, argNum, "flash <idnumber>", "flash", qtrue, qtrue, shortCmd);
 	if(idnum < 0) return;
 	ent = g_entities + idnum;
 	weapon = WP_M84_GRENADE;
@@ -1565,7 +1581,7 @@ Boe_Plant
 =========
 */
 
-void Boe_Plant (int argNum, gentity_t *adm)
+void Boe_Plant (int argNum, gentity_t *adm, qboolean shortCmd)
 {
 	gentity_t	*ent;
 	int			idnum;
@@ -1574,7 +1590,7 @@ void Boe_Plant (int argNum, gentity_t *adm)
 	float x, y;
 	gentity_t *missile;
 
-	idnum = Boe_ClientNumFromArg(adm, argNum, "plant <idnumber>", "Plant", qtrue, qtrue);
+	idnum = Boe_ClientNumFromArg(adm, argNum, "plant <idnumber>", "Plant", qtrue, qtrue, shortCmd);
 
 	if(idnum < 0)
 		return;
@@ -1619,7 +1635,7 @@ Boe_unPlant
 ===========
 */
 
-void Boe_unPlant (int argNum, gentity_t *adm)
+void Boe_unPlant (int argNum, gentity_t *adm, qboolean shortCmd)
 {
 	gentity_t	*ent;
 	int			idnum;
@@ -1628,7 +1644,7 @@ void Boe_unPlant (int argNum, gentity_t *adm)
 	float x, y;
 	gentity_t *missile;
 
-	idnum = Boe_ClientNumFromArg(adm, argNum, "unplant <idnumber>", "unplant", qtrue, qtrue);
+	idnum = Boe_ClientNumFromArg(adm, argNum, "unplant <idnumber>", "unplant", qtrue, qtrue, shortCmd);
 
 	if(idnum < 0){return;}
 	ent = g_entities + idnum;
@@ -1668,13 +1684,13 @@ Boe_pop
 =======
 */
 
-void Boe_pop (int argNum, gentity_t *adm)
+void Boe_pop (int argNum, gentity_t *adm, qboolean shortCmd)
 {
 	gentity_t		*ent;
 	int				idnum;
 	int				anim = 0;
 
-	idnum = Boe_ClientNumFromArg(adm, argNum, "pop <idnumber>", "pop", qtrue, qtrue);
+	idnum = Boe_ClientNumFromArg(adm, argNum, "pop <idnumber>", "pop", qtrue, qtrue, shortCmd);
 	if(idnum < 0){return;}
 	ent = g_entities + idnum;
 	
@@ -1700,13 +1716,13 @@ void Boe_pop (int argNum, gentity_t *adm)
 Boe_Burn
 ========
 */
-void Boe_Burn (int argNum, gentity_t *adm)
+void Boe_Burn (int argNum, gentity_t *adm, qboolean shortCmd)
 {
 	gentity_t		*ent;
 	int				idnum;
 	gentity_t *tent; 
 
-	idnum = Boe_ClientNumFromArg(adm, argNum, "burn <idnumber>", "burn", qtrue, qtrue);
+	idnum = Boe_ClientNumFromArg(adm, argNum, "burn <idnumber>", "burn", qtrue, qtrue, shortCmd);
 	if(idnum < 0) return;
 	ent = g_entities + idnum;
 	ent->client->sess.burnSeconds = 6;
@@ -1733,13 +1749,13 @@ void Boe_Burn (int argNum, gentity_t *adm)
 	}
 }
 
-void Adm_ForceTeam(gentity_t *adm)
+void Adm_ForceTeam(gentity_t *adm, qboolean shortCmd)
 {
 	char		str[MAX_TOKEN_CHARS];
 	int			idnum;
 
 	// find the player
-	idnum = Boe_ClientNumFromArg(adm, 2, "forceteam <idnumber>", "forceteam", qfalse, qtrue);
+	idnum = Boe_ClientNumFromArg(adm, 2, "forceteam <idnumber>", "forceteam", qfalse, qtrue, shortCmd);
 	if(idnum < 0) return;
 
 	// set the team
@@ -1753,13 +1769,13 @@ Boe_Mute
 ========
 */
 
-void Boe_Mute (int argNum, gentity_t *adm, qboolean mute)
+void Boe_Mute (int argNum, gentity_t *adm, qboolean mute, qboolean shortCmd)
 {
 	int		idnum;
 	char	*status;
 	char	*status2;
 
-	idnum = Boe_ClientNumFromArg(adm, argNum, "mute/unmute <idnumber>", "mute/unmute", qfalse, qfalse);
+	idnum = Boe_ClientNumFromArg(adm, argNum, "mute/unmute <idnumber>", "mute/unmute", qfalse, qfalse, shortCmd);
 
 	if(idnum < 0) return;
 
@@ -1806,14 +1822,14 @@ Boe_Strip
 =========
 */
 
-void Boe_Strip (int argNum, gentity_t *adm)
+void Boe_Strip (int argNum, gentity_t *adm, qboolean shortCmd)
 {
 	gentity_t	*ent;
 	gclient_t	*client;
 	int			idnum;
 	int			idle;
 
-	idnum = Boe_ClientNumFromArg(adm, argNum, "strip <idnumber>", "strip", qtrue, qtrue);
+	idnum = Boe_ClientNumFromArg(adm, argNum, "strip <idnumber>", "strip", qtrue, qtrue, shortCmd);
 	if(idnum < 0)
 		return;
 

@@ -28,7 +28,7 @@
 
 // Boe!Man 3/30/10
 void	Boe_adm_f ( gentity_t *ent );
-int		Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const char* type, qboolean aliveOnly, qboolean otheradmins);
+int		Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const char* type, qboolean aliveOnly, qboolean otheradmins, qboolean shortCmd);
 
 extern	vmCvar_t	g_kick;
 
@@ -43,8 +43,8 @@ int		Boe_AddToList(const char *string, const char* file, const char* type, genti
 int		Boe_Remove_from_list( char *key, const char *file, const char* type, gentity_t *ent, qboolean unban, qboolean removeAdmin, qboolean scoreCheck);
 void	Boe_Unban(gentity_t *adm, char *ip, qboolean subnet);
 
-void	Boe_subnetBan(int argNum, gentity_t *adm);
-void	Boe_Remove_Admin_f(int argNum, gentity_t *adm);
+void	Boe_subnetBan(int argNum, gentity_t *adm, qboolean shortCmd);
+void	Boe_Remove_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd);
 
 extern	vmCvar_t	g_ban;
 extern	vmCvar_t	g_subnetban;
@@ -59,37 +59,37 @@ extern	vmCvar_t	server_color4;
 extern	vmCvar_t	server_color5;
 extern	vmCvar_t	server_color6;
 
-void	Boe_Add_bAdmin_f (int argNum, gentity_t *adm);		// Prototype warnings.
-void	Boe_Add_Admin_f (int argNum, gentity_t *adm);		// Prototype warnings.
-void	Boe_Add_sAdmin_f (int argNum, gentity_t *adm);		// Prototype warnings.
-void	Boe_Ban_f (int argNum, gentity_t *adm);				// Prototype warnings.
-void	Boe_Uppercut (int argNum, gentity_t *adm);
+void	Boe_Add_bAdmin_f (int argNum, gentity_t *adm, qboolean shortCmd);		// Prototype warnings.
+void	Boe_Add_Admin_f (int argNum, gentity_t *adm, qboolean shortCmd);		// Prototype warnings.
+void	Boe_Add_sAdmin_f (int argNum, gentity_t *adm, qboolean shortCmd);		// Prototype warnings.
+void	Boe_Ban_f (int argNum, gentity_t *adm, qboolean shortCmd);				// Prototype warnings.
+void	Boe_Uppercut (int argNum, gentity_t *adm, qboolean shortCmd);
 extern	vmCvar_t	g_uppercut;
 
-void	Boe_Twist (int argNum, gentity_t *adm);
-void	Boe_unTwist (int argNum, gentity_t *adm);
+void	Boe_Twist (int argNum, gentity_t *adm, qboolean shortCmd);
+void	Boe_unTwist (int argNum, gentity_t *adm, qboolean shortCmd);
 extern	vmCvar_t	g_twist;
-void	Boe_Respawn (int argNum, gentity_t *adm);
+void	Boe_Respawn (int argNum, gentity_t *adm, qboolean shortCmd);
 extern	vmCvar_t	g_respawn;
 extern	vmCvar_t	g_runover;
-void	Boe_Runover (int argNum, gentity_t *adm);
+void	Boe_Runover (int argNum, gentity_t *adm, qboolean shortCmd);
 
 void	G_ApplyKnockback( gentity_t *targ, vec3_t newDir, float knockback );	// Prototype warnings.
 
 extern	vmCvar_t	g_maprestart;
 
-void	Boe_Flash(int argNum, gentity_t *ent);
+void	Boe_Flash(int argNum, gentity_t *ent, qboolean shortCmd);
 extern	vmCvar_t	g_flash;
 
-void	Boe_unPlant (int argNum, gentity_t *adm);
-void	Boe_Plant (int argNum, gentity_t *adm);
+void	Boe_unPlant (int argNum, gentity_t *adm, qboolean shortCmd);
+void	Boe_Plant (int argNum, gentity_t *adm, qboolean shortCmd);
 extern	vmCvar_t	g_plant;
 
-void	Boe_pop (int argNum, gentity_t *adm);
-void	Boe_Burn (int argNum, gentity_t *adm);
-void	Boe_Mute (int argNum, gentity_t *adm, qboolean mute);
-void	Boe_Strip (int argNum, gentity_t *adm);
-void	Adm_ForceTeam(gentity_t *adm);
+void	Boe_pop (int argNum, gentity_t *adm, qboolean shortCmd);
+void	Boe_Burn (int argNum, gentity_t *adm, qboolean shortCmd);
+void	Boe_Mute (int argNum, gentity_t *adm, qboolean mute, qboolean shortCmd);
+void	Boe_Strip (int argNum, gentity_t *adm, qboolean shortCmd);
+void	Adm_ForceTeam(gentity_t *adm, qboolean shortCmd);
 extern	vmCvar_t	g_pop;
 extern	vmCvar_t	g_burn;
 extern	vmCvar_t	g_mute;
@@ -221,7 +221,7 @@ int trap_RealTime( qtime_t *qtime );
 qboolean BG_InitWeaponStats(void);
 void Boe_About( gentity_t *ent );
 void Boe_dev_f ( gentity_t *ent );
-void Boe_Add_Clan_Member(int argNum, gentity_t *adm);
-void Boe_Remove_Clan_Member(int argNum, gentity_t *adm);
+void Boe_Add_Clan_Member(int argNum, gentity_t *adm, qboolean shortCmd);
+void Boe_Remove_Clan_Member(int argNum, gentity_t *adm, qboolean shortCmd);
 void RPM_Clan_Vs_All(gentity_t *adm);
 void Preload(void);
