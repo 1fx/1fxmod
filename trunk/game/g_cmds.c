@@ -5,6 +5,17 @@
 
 #include "../../ui/menudef.h"
 
+// Henk 04/05/10 -> New command system
+typedef struct 
+{
+	char	*shortCmd;
+	char	*adminCmd;
+	int		adminLevel;
+	void	(*Function)(); // store pointer to the given function so we can call it later
+} admCmd_t;
+extern  admCmd_t AdminCommands[] = {"!uc ", "uppercut", 4, &Boe_Uppercut};
+
+// End
 int AcceptBotCommand(char *cmd, gentity_t *pl);
 
 void trap_SendServerCommand2( int clientNum, const char *text );
@@ -3737,8 +3748,9 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		//}
 		G_Say( ent, NULL, mode, p);
 		return;
+	}else if(strstr(p, "!test")){
+		AdminCommands[0].Function(1, ent, qtrue);
 	}
-
 	// Boe!Man 1/24/10: Different kinds of Talk during Gameplay.
 	if ((strstr(p, "!at ")) || (strstr(p, "!admintalk ")) || (strstr(p, "!AT"))) {
 		if (ent->client->sess.admin){
