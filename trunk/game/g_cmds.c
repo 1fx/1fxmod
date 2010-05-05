@@ -2720,7 +2720,7 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 		}else if(ent->client->sess.admin == 4){
 		strcpy(type, server_sadminprefix.string);
 		}
-		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/invalid.wav"));
+		Boe_ClientSound(ent, G_SoundIndex("sound/misc/menus/invalid.wav"));
 		break;
 	case CADM_CHAT:
 		strcpy(type, server_caprefix.string);
