@@ -33,6 +33,25 @@ void trap_SendServerCommand( int clientNum, const char *text ) {
 		trap_SendServerCommand2(clientNum, text);
 } 
 
+int GetArgument(void){
+	char	arg[16] = "\0"; // increase buffer so we can process more commands
+	int		num;
+	int i;
+	trap_Argv( 1, arg, sizeof( arg ) );
+		num = 0;
+		for(i=0;i<16;i++){
+			if(arg[i] == ' '){
+			num = atoi(va("%c%c%c", arg[i+1], arg[i+2], arg[i+3]));
+			break;
+			}
+		}
+		if(num == 0){ // Get second argument because they use it from the console
+			trap_Argv( 2, arg, sizeof( arg ) );
+			num = atoi(arg);
+		}
+	return num;
+}
+
 int FormatDamage(int damage){ // lol fix me au3 script ftw
 	if(damage >= 100 && damage < 200){
 		damage = 100;
@@ -3383,8 +3402,9 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			char *numb;
 			int number;
 			if(strlen(p) >= 5){
-				numb = va("%c%c%c", p[4], p[5], p[6]);
-				number = atoi(numb);
+				//numb = va("%c%c%c", p[4], p[5], p[6]);
+				//number = atoi(numb);
+				number = GetArgument();
 				trap_SendConsoleCommand( EXEC_APPEND, va("scorelimit %i\n", number));
 				trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Scorelimit changed to %i by %s.\n\"", number, ent->client->pers.netname));
 				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sS%sc%so%sr%se%slimit %i!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, number));
@@ -3401,8 +3421,9 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			char *numb;
 			int number;
 			if(strlen(p) >= 5){
-				numb = va("%c%c%c", p[4], p[5], p[6]);
-				number = atoi(numb);
+				//numb = va("%c%c%c", p[4], p[5], p[6]);
+				//number = atoi(numb);
+				number = GetArgument();
 				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sT%si%sm%se%sl%simit %i!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, number));
 				trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Timelimit changed to %i by %s.\n\"", number, ent->client->pers.netname));
 				trap_SendConsoleCommand( EXEC_APPEND, va("timelimit %i\n", number));
@@ -3419,8 +3440,9 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			char *numb;
 			int number;
 			if(strlen(p) >= 5){
-				numb = va("%c%c%c", p[4], p[5], p[6]);
-				number = atoi(numb);
+				//numb = va("%c%c%c", p[4], p[5], p[6]);
+				//number = atoi(numb);
+				number = GetArgument();
 				trap_SendConsoleCommand( EXEC_APPEND, va("g_respawninterval %i\n", number));
 				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sR%se%ss%sp%sa%swn interval %i!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, number));
 				Boe_adminLog (va("%s - RESPAWN INTERVAL %i", ent->client->pers.cleanName, number)) ;
