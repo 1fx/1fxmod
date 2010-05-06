@@ -8,13 +8,16 @@
 // Henk 04/05/10 -> New command system
 typedef struct 
 {
-	char	*shortCmd;
-	char	*adminCmd;
-	int		adminLevel;
+	char	*shortCmd; // short admin command, ex: !uc, !p(with space) -> HENK FIX ME: Need more entries here for uppercase.
+	char	*adminCmd; // full adm command for /adm and rcon
+	int		*adminLevel; // pointer to cvar value because we can't store a non constant value, so we store a pointer :).
 	void	(*Function)(); // store pointer to the given function so we can call it later
 } admCmd_t;
-extern  admCmd_t AdminCommands[] = {"!uc ", "uppercut", 4, &Boe_Uppercut};
-
+extern  admCmd_t AdminCommands[] = 
+{
+	{"!uc ", "uppercut", &g_uppercut.integer, &Boe_Uppercut},
+	{"!p ", "pop", &g_pop.integer, &Boe_pop}
+};
 // End
 int AcceptBotCommand(char *cmd, gentity_t *pl);
 
@@ -3749,7 +3752,9 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		G_Say( ent, NULL, mode, p);
 		return;
 	}else if(strstr(p, "!test")){
-		AdminCommands[0].Function(1, ent, qtrue);
+		AdminCommands[1].Function(1, ent, qtrue);
+		trap_SendServerCommand( -1, va("print \"^3[Debug] ^7%s level is %i.\n\"", AdminCommands[1].adminCmd, *AdminCommands[1].adminLevel));
+
 	}
 	// Boe!Man 1/24/10: Different kinds of Talk during Gameplay.
 	if ((strstr(p, "!at ")) || (strstr(p, "!admintalk ")) || (strstr(p, "!AT"))) {

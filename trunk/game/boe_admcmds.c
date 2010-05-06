@@ -1759,7 +1759,18 @@ void Adm_ForceTeam(gentity_t *adm, qboolean shortCmd)
 	if(idnum < 0) return;
 
 	// set the team
-	trap_Argv( 3, str, sizeof( str ) );
+	if(shortCmd == qtrue){
+		trap_Argv(1, str, sizeof(str));
+		if(strstr(Q_CleanStr(str), "s")){
+			strcpy(str, "s");
+		}else if(strstr(Q_CleanStr(str), "r")){
+			strcpy(str, "r");
+		}else if(strstr(Q_CleanStr(str), "b")){
+			strcpy(str, "b");
+		}
+	}else{
+		trap_Argv( 3, str, sizeof( str ) );
+	}
 	SetTeam( &g_entities[idnum], str, NULL );
 }
 

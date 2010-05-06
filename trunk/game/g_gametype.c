@@ -426,6 +426,22 @@ void G_ResetGametype ( void )
 		level.gametypeJoinTime = level.time;
 	}
 
+	if(g_disablelower.integer == 1){
+		level.nolower1 = qtrue;
+		if (strstr(level.mapname, "mp_kam2")){
+			SpawnFence(1);
+			SpawnFence(2);
+			SpawnFence(3);
+			SpawnFence(4);
+		}
+	}else{
+		level.nolower1 = qfalse;
+		if (strstr(level.mapname, "mp_kam2")){
+			RemoveFence();
+		}
+	}
+
+
 	// Respawn all clients
 	G_RespawnClients ( qtrue, TEAM_RED );
 	G_RespawnClients ( qtrue, TEAM_BLUE );
