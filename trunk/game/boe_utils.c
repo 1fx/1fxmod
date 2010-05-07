@@ -1151,6 +1151,9 @@ void Boe_Stats ( gentity_t *ent )
 	}
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Rate^7]        %s\n", rate));
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Snaps^7]       %s\n", snaps));
+	trap_SendServerCommand( ent-g_entities, va("print \"\n"));
+	trap_SendServerCommand( ent-g_entities, va("print \"[^3Total kills^7] [^3Total death^7] [^3Damage done^7] [^3Damage take^7]\n"));
+	trap_SendServerCommand( ent-g_entities, va("print \"     0		0		0		0\n")); // random spaces -.-''
 	trap_SendServerCommand( ent-g_entities, va("print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\""));
 }
 //==============================================================================================================================
