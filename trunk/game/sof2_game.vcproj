@@ -1492,6 +1492,10 @@
 			Name="Resource Files"
 			Filter="ico;cur;bmp;dlg;rc2;rct;bin;cnt;rtf;gif;jpg;jpeg;jpe"
 			>
+			<File
+				RelativePath="..\INF_DefaultConfig.cfg"
+				>
+			</File>
 		</Filter>
 		<File
 			RelativePath="game.q3asm"

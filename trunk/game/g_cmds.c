@@ -1953,7 +1953,7 @@ void BroadcastTeamChange( gclient_t *client, int oldTeam )
 		case TEAM_SPECTATOR:
 			if ( oldTeam != TEAM_SPECTATOR )
 			{
-				trap_SendServerCommand( -1, va("cp \"%s" S_COLOR_WHITE " joined the spectators.\n\"", client->pers.netname));
+				trap_SendServerCommand( -1, va("cp \"%s" S_COLOR_WHITE "\njoined the spectators\n\"", client->pers.netname));
 			}
 			break;
 
