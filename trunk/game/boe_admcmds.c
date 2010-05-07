@@ -1755,7 +1755,11 @@ void Adm_ForceTeam(gentity_t *adm, qboolean shortCmd)
 	int			idnum;
 
 	// find the player
-	idnum = Boe_ClientNumFromArg(adm, 2, "forceteam <idnumber>", "forceteam", qfalse, qtrue, shortCmd);
+	if(shortCmd == qtrue){
+		idnum = Boe_ClientNumFromArg(adm, 1, "forceteam <idnumber>", "forceteam", qfalse, qtrue, shortCmd);
+	}else{
+		idnum = Boe_ClientNumFromArg(adm, 2, "forceteam <idnumber>", "forceteam", qfalse, qtrue, shortCmd);
+	}
 	if(idnum < 0) return;
 
 	// set the team
@@ -1767,6 +1771,8 @@ void Adm_ForceTeam(gentity_t *adm, qboolean shortCmd)
 			strcpy(str, "r");
 		}else if(strstr(Q_CleanStr(str), "b")){
 			strcpy(str, "b");
+		}else{
+			trap_SendServerCommand(adm->s.number, va("print\"^3[Info] Wrong team: %s.\n\"", str));
 		}
 	}else{
 		trap_Argv( 3, str, sizeof( str ) );
