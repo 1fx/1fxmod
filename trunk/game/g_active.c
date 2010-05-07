@@ -596,7 +596,7 @@ void SpectatorThink( gentity_t *ent, usercmd_t *ucmd )
 
 	if ( ( client->buttons & BUTTON_ATTACK ) && ! ( client->oldbuttons & BUTTON_ATTACK ) ) 
 	{
-		if(client->sess.team == TEAM_SPEC && level.specsLocked){
+		if(client->sess.team == TEAM_SPECTATOR && level.specsLocked){
 
 		}else{
 		Cmd_FollowCycle_f( ent, 1 );
