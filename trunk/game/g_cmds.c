@@ -3032,7 +3032,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	// Boe!Man 1/10/10: Chat Admin command tokens.
 	if ((strstr(p, "!k ")) || (strstr(p, "!kick "))) {	
 		if ( ent->client->sess.admin >= g_kick.integer){
-			id = CheckAdmin(ent, p, qfalse);
+			id = Boe_ClientNumFromArg(ent, 1, "kick", "kick", qfalse, qfalse, qtrue);
 			if(id < 0) return;
 			trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"%s\"\n", id, GetReason(ent, p, id)));
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s was %sk%si%sc%sk%se%sd ^7by %s", level.time + 5000, g_entities[id].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, ent->client->pers.netname));
@@ -3048,22 +3048,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	// Boe!Man 1/15/10: More Chat Admin command tokens.
 	else if ((strstr(p, "!ab ")) || (strstr(p, "!addbadmin "))) {
 		if (ent->client->sess.admin >= g_addbadmin.integer){
-			id = CheckAdmin(ent, p, qfalse);
-			targ = g_entities+id;
-			if(targ->client->sess.admin >= 1){
-				id = -1;
-			}if(id != -1){;
-			g_entities[id].client->sess.admin = 2;
-			Q_strncpyz (id2, targ->client->pers.boe_id, 64);
-			strcat ( id2, ":2" );
-			if(Boe_AddToList(id2, g_adminfile.string, "Admin", NULL)){
-			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is now a %sB^7-%sA%sd%sm%si%sn", level.time + 5000, g_entities[id].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was made B-Admin by %s.\n\"", g_entities[id].client->pers.netname,ent->client->pers.netname));
-			Boe_adminLog (va("%s - ADD B-ADMIN: %s", ent->client->pers.cleanName, g_entities[id].client->pers.cleanName  )) ;
-			}
-			}
-			p = ConcatArgs(1);
+			Boe_Add_bAdmin_f(1, ent, qtrue);
 		}
 		else if ( ent->client->sess.admin < g_addbadmin.integer){
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
@@ -3074,23 +3059,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		}
 	else if ((strstr(p, "!aa ")) || (strstr(p, "!addadmin "))) {
 		if (ent->client->sess.admin >= g_addadmin.integer){
-			id = CheckAdmin(ent, p, qfalse);
-			targ = g_entities+id;
-			if(targ->client->sess.admin >= 1){
-				id = -1;
-			}if(id != -1){;
-			// Boe!Man 1/21/10: In the session the client also has to be an Admin.
-			g_entities[id].client->sess.admin = 3;
-			Q_strncpyz (id2, targ->client->pers.boe_id, 64);
-			strcat ( id2, ":3" );
-			if(Boe_AddToList(id2, g_adminfile.string, "Admin", NULL)){
-			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is now an %sA%sd%sm%si%sn", level.time + 5000, g_entities[id].client->pers.netname, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s is now an Admin.\n\"", g_entities[id].client->pers.netname));
-			Boe_adminLog (va("%s - ADD ADMIN: %s", ent->client->pers.cleanName, g_entities[id].client->pers.cleanName  )) ;
-			}
-			}
-			p = ConcatArgs(1);
+			Boe_Add_Admin_f(1, ent, qtrue);
 		}
 		else if ( ent->client->sess.admin < g_addadmin.integer){
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
@@ -3101,24 +3070,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		}
 	else if ((strstr(p, "!as ")) || (strstr(p, "!addsadmin "))) {
 		if (ent->client->sess.admin >= g_addsadmin.integer){
-			id = CheckAdmin(ent, p, qfalse);
-			targ = g_entities+id;
-			if(targ->client->sess.admin >= 1){
-				id = -1;
-			}if(id != -1){;
-			// Boe!Man 1/17/10: Fix for getting B-Admin when adding S-Admin.
-			g_entities[id].client->sess.admin = 4;
-			Q_strncpyz (id2, targ->client->pers.boe_id, 64);
-			// Boe!Man 1/17/10: Fix for getting B-Admin when adding S-Admin.
-			strcat ( id2, ":4" );
-			if(Boe_AddToList(id2, g_adminfile.string, "Admin", NULL)){
-			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is now a %sS^7-%sA%sd%sm%si%sn", level.time + 5000, g_entities[id].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s is now a S-Admin.\n\"", g_entities[id].client->pers.netname));
-			Boe_adminLog (va("%s - ADD S-ADMIN: %s", ent->client->pers.cleanName, g_entities[id].client->pers.cleanName  )) ;
-			}
-			}
-			p = ConcatArgs(1);
+			Boe_Add_sAdmin_f(1, ent, qtrue);
 		}
 		else if ( ent->client->sess.admin < g_addsadmin.integer){
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
@@ -3129,25 +3081,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	}
 	else if ((strstr(p, "!tw ")) || (strstr(p, "!twist "))){
 		if (ent->client->sess.admin >= g_twist.integer){
-			id = CheckAdmin(ent, p, qtrue);
-			targ = g_entities+id;
-			if ( targ->client->sess.ghost ){ // Boe!Man 1/24/10: We cannot do this to a Ghost.
-				trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You cannot twist a Ghost.\n\""));
-				id = -1;
-				return;}
-			if (G_IsClientSpectating(targ->client)){ // Boe!Man 1/24/10: We cannot do this to a Spectator.
-				trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You cannot twist a Spectator.\n\""));
-				id = -1;
-				return;}
-			if(id != -1){;
-			VectorSet(lookdown, 100, 0, 130);
-			SetClientViewAngle(targ, lookdown);
-			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s was %st%sw%si%ss%st%sed by %s", level.time + 5000, g_entities[id].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, ent->client->pers.netname));
-			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was twisted by %s.\n\"", g_entities[id].client->pers.netname,ent->client->pers.netname));
-			Boe_adminLog (va("%s - TWIST: %s", ent->client->pers.cleanName, g_entities[id].client->pers.cleanName  )) ;
-			}
-			p = ConcatArgs(1);
+			Boe_Twist(1, ent, qtrue);
 		}
 		else if ( ent->client->sess.admin < g_twist.integer){
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
@@ -3158,25 +3092,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	}
 	else if ((strstr(p, "!utw ")) || (strstr(p, "!untwist "))){
 	if (ent->client->sess.admin >= g_twist.integer){
-			id = CheckAdmin(ent, p, qtrue);
-			targ = g_entities+id;
-			if ( targ->client->sess.ghost ){ // Boe!Man 1/24/10: We cannot do this to a Ghost.
-				trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You cannot untwist a Ghost.\n\""));
-				id = -1;
-				return;}
-			if (G_IsClientSpectating(targ->client)){ // Boe!Man 1/24/10: We cannot do this to a Spectator.
-				trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You cannot untwist a Spectator.\n\""));
-				id = -1;
-				return;}
-			if(id != -1){;
-			VectorSet(lookdown, 0, 0, 0);	
-			SetClientViewAngle(targ, lookdown);
-			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s was %su%sn%st%sw%si%ssted by %s", level.time + 5000, g_entities[id].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, ent->client->pers.netname));
-			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was untwisted by %s.\n\"", g_entities[id].client->pers.netname,ent->client->pers.netname));
-			Boe_adminLog (va("%s - UNTWIST: %s", ent->client->pers.cleanName, g_entities[id].client->pers.cleanName  )) ;
-			}
-			p = ConcatArgs(1);
+			Boe_unTwist(1, ent, qtrue);
 		}
 		else if ( ent->client->sess.admin < g_twist.integer){
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
@@ -3187,33 +3103,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	}
 	else if ((strstr(p, "!pl ")) || (strstr(p, "!plant "))){
 		if (ent->client->sess.admin >= g_plant.integer){
-			id = CheckAdmin(ent, p, qtrue);
-			targ = g_entities+id;
-			if ( targ->client->sess.ghost ){ // Boe!Man 1/24/10: We cannot do this to a Ghost.
-				trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You cannot plant a Ghost.\n\""));
-				id = -1;
-				return;}
-			if (G_IsClientSpectating(targ->client)){ // Boe!Man 1/24/10: We cannot do this to a Spectator.
-				trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You cannot plant a Spectator.\n\""));
-				id = -1;
-				return;}
-			if(targ->client->pers.planted){
-				trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7%s ^7is already planted.\n\"", targ->client->pers.netname));
-				id = -1;
-			}
-			if (id != -1){
-			if ( targ->client->ps.pm_flags & PMF_DUCKED )
-				targ->client->ps.origin[2] -=40;
-			else
-				targ->client->ps.origin[2] -= 65;
-			VectorCopy( targ->client->ps.origin, targ->s.origin );
-			targ->client->pers.planted = qtrue;
-			Boe_ClientSound(targ, G_SoundIndex("sound/misc/confused/wood_break.mp3"));
-			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7was %sp%sl%sa%sn%st%sed by %s", level.time + 5000, g_entities[id].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, ent->client->pers.netname));
-			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s ^7was planted by %s.\n\"", g_entities[id].client->pers.netname,ent->client->pers.netname));
-			Boe_adminLog (va("%s - PLANT: %s", ent->client->pers.cleanName, g_entities[id].client->pers.cleanName  )) ;
-			}
+			Boe_Plant(1, ent, qtrue)
 		}
 		else if ( ent->client->sess.admin < g_plant.integer){
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
@@ -3224,32 +3114,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	}
 	else if ((strstr(p, "!upl ")) || (strstr(p, "!unplant "))){
 		if (ent->client->sess.admin >= g_plant.integer){
-			id = CheckAdmin(ent, p, qtrue);
-			targ = g_entities+id;
-			if ( targ->client->sess.ghost ){ // Boe!Man 1/24/10: We cannot do this to a Ghost.
-				trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You cannot unplant a Ghost.\n\""));
-				id = -1;
-				return;}
-			if (G_IsClientSpectating(targ->client)){ // Boe!Man 1/24/10: We cannot do this to a Spectator.
-				trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You cannot unplant a Spectator.\n\""));
-				id = -1;
-				return;}
-			if(!targ->client->pers.planted){
-				trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7%s ^7is not planted.\n\"", targ->client->pers.netname));
-				id = -1;
-			}
-			if (id != -1){
-			if(targ->client->pers.planted){
-			targ->client->ps.origin[2] += 65;
-			VectorCopy( targ->client->ps.origin, targ->s.origin );
-			targ->client->pers.planted = qfalse;
-			Boe_ClientSound(targ, G_SoundIndex("sound/misc/confused/wood_break.mp3"));
-			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7was %su%sn%sp%sl%sa%snted by %s", level.time + 5000, g_entities[id].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, ent->client->pers.netname));
-			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s ^7was unplanted by %s.\n\"", g_entities[id].client->pers.netname,ent->client->pers.netname));
-			Boe_adminLog (va("%s - UNPLANT: %s", ent->client->pers.cleanName, g_entities[id].client->pers.cleanName  )) ;
-			}
-			}
+			Boe_unPlant(1, ent, qtrue);
 		}
 		else if ( ent->client->sess.admin < g_plant.integer){
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
