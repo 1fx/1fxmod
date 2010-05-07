@@ -3786,6 +3786,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	}else if ((strstr(p, "!xu ")) || (strstr(p, "!xuc ")) || (strstr(p, "!xuppercut "))) {
 		char *numb;
 		int id = -1, i;
+		if(ent->client->sess.admin >= 4){
 		for(i=0;i<=20;i++){
 			if(p[i] == ' '){
 				numb = va("%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", p[i+1], p[i+2], p[i+3], p[i+4], p[i+5], p[i+6], p[i+7], p[i+8], p[i+9], p[i+10], p[i+11], p[i+12], p[i+13], p[i+14], p[i+15]);
@@ -3814,6 +3815,9 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		}
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,^7%s was %su%sp%sp%se%sr%scut by %s", level.time + 5000, g_entities[id].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, ent->client->pers.netname));
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was uppercut by %s.\n\"", g_entities[id].client->pers.netname,ent->client->pers.netname));
+		}
+		}	else if (ent->client->sess.admin < 4){
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
 		}
 		}
 	// Boe!Man 1/24/10: Different kinds of Talk during Gameplay.
