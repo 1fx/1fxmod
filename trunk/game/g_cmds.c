@@ -3259,13 +3259,19 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		return;
 	}
 	else if ((strstr(p, "!u ")) || (strstr(p, "!uc ")) || (strstr(p, "!uppercut "))) {
-		Boe_Uppercut(1, ent, qtrue);
+		if (ent->client->sess.admin >= g_uppercut.integer){
+			Boe_Uppercut(1, ent, qtrue);
+		}
 	}
 	else if ((strstr(p, "!ro ")) || (strstr(p, "!runover "))){
-		Boe_Runover(1, ent, qtrue);
+		if (ent->client->sess.admin >= g_runover.integer){
+			Boe_Runover(1, ent, qtrue);
+		}
 	}
 	else if ((strstr(p, "!r ")) || (strstr(p, "!rs ")) || (strstr(p, "!respawn "))) {
-		Boe_Respawn(1, ent, qtrue);
+		if (ent->client->sess.admin >= g_respawn.integer){
+			Boe_Respawn(1, ent, qtrue);
+		}
 	}
 	else if ((strstr(p, "!mr")) || (strstr(p, "!maprestart"))) { // Boe!Man 1/21/10: No need for a space when we're restarting the map.
 		if (ent->client->sess.admin >= g_maprestart.integer){
@@ -3283,29 +3289,38 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		return;
 	}
 	else if ((strstr(p, "!p ")) || (strstr(p, "!pop "))) {
-		Boe_pop(1, ent, qtrue);
+		if (ent->client->sess.admin >= g_pop.integer){
+			Boe_pop(1, ent, qtrue);
+		}
 	}
 	else if ((strstr(p, "!b ")) || (strstr(p, "!burn "))) {
-		Boe_Burn(1, ent, qtrue);
+		if (ent->client->sess.admin >= g_burn.integer){
+			Boe_Burn(1, ent, qtrue);
+		}
 	}
 	else if ((strstr(p, "!m ")) || (strstr(p, "!mute "))) {
-		Boe_Mute(1, ent, qtrue, qtrue);
+		if (ent->client->sess.admin >= g_mute.integer){
+			Boe_Mute(1, ent, qtrue, qtrue);
+		}
 	}
 	else if ((strstr(p, "!um ")) || (strstr(p, "!unmute "))) {
-		Boe_Mute(1, ent, qfalse, qtrue);
+		if (ent->client->sess.admin >= g_mute.integer){
+			Boe_Mute(1, ent, qfalse, qtrue);
+		}
 	}
 	else if ((strstr(p, "!s ")) || (strstr(p, "!st "))) {
+		if (ent->client->sess.admin >= g_strip.integer){
 		Boe_Strip(1, ent, qtrue);
+		}
 	}
 	else if ((strstr(p, "!ra ")) || (strstr(p, "!removeadmin "))) {
-		Boe_Remove_Admin_f(1, ent, qtrue);
+		if (ent->client->sess.admin >= g_removeadmin.integer){
+			Boe_Remove_Admin_f(1, ent, qtrue);
+		}
 	}
 	else if ((strstr(p, "!et")) || (strstr(p, "!eventeams"))) {
 		if (ent->client->sess.admin >= g_eventeams.integer){
 			EvenTeams(ent);
-		}
-		else if (ent->client->sess.admin < g_eventeams.integer){
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
 		}
 		G_Say( ent, NULL, mode, p);
 		return;
