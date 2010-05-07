@@ -3354,6 +3354,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		if (ent->client->sess.admin >= g_nolower.integer){
 			if(level.nolower1 == qtrue){
 				level.nolower1 = qfalse;
+				trap_Cvar_Set("g_disablelower", "0");
 				if (strstr(level.mapname, "mp_kam2")){
 				RemoveFence();
 				}
@@ -3361,6 +3362,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 				Boe_adminLog (va("%s - NOLOWER DISABLED", ent->client->pers.cleanName)) ;
 			}else{
 				level.nolower1 = qtrue;
+				trap_Cvar_Set("g_disablelower", "1");
 				if (strstr(level.mapname, "mp_kam2")){
 				SpawnFence(1);
 				SpawnFence(2);
@@ -3371,6 +3373,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 				Boe_adminLog (va("%s - NOLOWER ENABLED", ent->client->pers.cleanName)) ;
 			}
 		}
+		trap_Cvar_Update(&g_disablelower);
 		else if (ent->client->sess.admin < g_nolower.integer){
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
 		}
