@@ -1416,8 +1416,8 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 			client->sess.admin = Boe_NameListCheck ( clientNum, ent->client->pers.boe_id, g_adminfile.string, NULL, qfalse, qtrue, qfalse, qfalse);
 			if(!client->sess.clanMember)
 				client->sess.clanMember = Boe_NameListCheck (clientNum, ent->client->pers.boe_id, g_clanfile.string, NULL, qfalse, qfalse, qfalse, qfalse);
+			ent->client->sess.fileChecked = qtrue;
 	}
-	ent->client->sess.fileChecked = qtrue;
 	return NULL;
 }
 
