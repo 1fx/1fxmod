@@ -343,7 +343,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &server_badminprefix, "server_badminprefix", "^GB^7-^<A^jd^gm^Ki^7n", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_adminprefix, "server_adminprefix", "^<A^jd^gm^Ki^7n", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_sadminprefix, "server_sadminprefix", "^GS^7-^<A^jd^gm^Ki^7n", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
-	{ &server_acprefix, "server_acprefix", "^GS^7-^<A^jd^gm^Ki^7n Only", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
+	{ &server_acprefix, "server_acprefix", "^<A^jd^gm^Ki^7n Only", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_caprefix, "server_caprefix", "^GH^<e^jy ^gA^Kd^7min!", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_ccprefix, "server_ccprefix", "^GC^<l^ja^gn ^gO^Kn^7ly", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_starprefix, "server_starprefix", "^<*", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
