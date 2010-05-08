@@ -2759,7 +2759,7 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 	}
 
 	// Boe!Man 1/6/10
-	trap_SendServerCommand( other-g_entities, va("%s %d \"%s %s%s%s%s %s\"", // Boe!Man 1/6/10: Adding prefixes. - Update 1/17/10: Adding Admin Talk/Chat prefixes.
+	trap_SendServerCommand( other-g_entities, va("%s %d \"%s %s%s %s%s %s\"", // Boe!Man 1/6/10: Adding prefixes. - Update 1/17/10: Adding Admin Talk/Chat prefixes. - Update 5/8/10: Solved message problem.
 							mode == SAY_TEAM ? "tchat" : "chat",
 							ent->s.number,
 							// Boe!Man 1/6/10: Adding the Admin prefix in front of the chat. - Update 1/17/10.
@@ -3032,6 +3032,8 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	// Boe!Man 1/10/10: Chat Admin command tokens.
 	if ((strstr(p, "!k ")) || (strstr(p, "!kick "))) {	
 		if ( ent->client->sess.admin >= g_kick.integer){
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Msg by boe] ^7Temp disabled. Use /adm kick <id> <reason>\n\""));
+			/*
 			id = Boe_ClientNumFromArg(ent, 1, "kick", "kick", qfalse, qfalse, qtrue);
 			if(id < 0) return;
 			trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"%s\"\n", id, GetReason(ent, p, id)));
@@ -3039,6 +3041,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was kicked by %s.\n\"", g_entities[id].client->pers.netname,ent->client->pers.netname));
 			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 			Boe_adminLog (va("%s - KICK: %s", ent->client->pers.cleanName, g_entities[id].client->pers.cleanName  )) ;
+			*/
 		}
 		else if ( ent->client->sess.admin < g_kick.integer){
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
