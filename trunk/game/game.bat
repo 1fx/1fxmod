@@ -41,6 +41,12 @@ set cc=..\..\..\bin\sof2lcc -A -DQ3_VM -DMISSIONPACK -S -Wf-target=bytecode -Wf-
 @if errorlevel 1 goto quit
 %cc%  ../boe_utils.c
 @if errorlevel 1 goto quit
+
+%cc%  ../rpm_tcmds.c
+@if errorlevel 1 goto quit
+%cc%  ../rpm_refcmds.c
+@if errorlevel 1 goto quit
+
 %cc%  ../g_active.c
 @if errorlevel 1 goto quit
 %cc%  ../g_antilag.c
