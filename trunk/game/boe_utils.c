@@ -221,12 +221,12 @@ void Boe_Tokens(gentity_t *ent, char *chatText, int mode)
 	gentity_t *tent;
 	qboolean text = qtrue;
 	gitem_t* item;		
-	/*
+	
 	if(ent->client->sess.mute)
 	{
 		return;
 	}
-	*/
+	
 	newTextp = newText;
 	chatTextS = chatText;
 	while(*chatText && newTextp < newText + MAX_SAY_TEXT )
