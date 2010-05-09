@@ -232,9 +232,10 @@ void player_die(
 	if(attacker != self && attacker->client && self->client->pers.statinfo.killsinarow >= 3)
 	{
 		//trap_SendServerCommand( -1, va("cp \"^3[INF] ^7%s's Killing Spree was ended by ^3%s.\n\"", self->client->pers.netname, attacker->client->pers.netname));
-		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s's Killing Spree was ended by ^3%s",
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s's %sk%si%sl%sl%si%sng spree was ended by ^3%s",
 				level.time + 5000,
 				self->client->pers.netname,
+				server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, 
 				attacker->client->pers.netname));
 	}
 

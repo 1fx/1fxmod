@@ -237,6 +237,16 @@ void Boe_Tokens(gentity_t *ent, char *chatText, int mode)
 
 			switch(*chatText)
 			{
+				case 'b':	// Boe!Man 5/9/10: Health bar in stat format.
+					Q_strcat(newText, MAX_SAY_TEXT, va("^1%s^2", Boe_BarStat(ent->health)));
+					chatText++;
+					continue;
+
+				case 'B':	// Boe!Man 5/9/10: Armor bar in stat format.
+					Q_strcat(newText, MAX_SAY_TEXT, va("^-%s^2", Boe_BarStat(ent->client->ps.stats[STAT_ARMOR])));
+					chatText++;
+					continue;
+
 				case 'h':
 					Q_strcat(newText, MAX_SAY_TEXT, va("%s%d^2",Boe_StatColor(ent->health), ent->health));
 					chatText++;
@@ -1222,4 +1232,58 @@ void QDECL Boe_crashLog( const char *text)
 	trap_FS_Write( string, strlen( string ), f );
 	trap_FS_Write( "\n", 1, f);
 	trap_FS_FCloseFile(f);
+}
+
+/*
+==================
+Boe_BarStat
+5/9/10 - 11:08 AM
+==================
+*/
+
+char *Boe_BarStat(int stat)
+{
+	char	*bar;
+
+	stat /= 10;
+
+	if(stat >= 10)
+	{
+		bar = "----------";
+		return bar;
+	}
+
+	switch(stat)
+	{
+		case 9:
+			bar = "---------^0-";
+			break;
+		case 8:
+			bar = "--------^0--";
+			break;
+		case 7:
+			bar = "-------^0---";
+			break;
+		case 6:
+			bar = "------^0----";
+			break;
+		case 5:
+			bar = "-----^0-----";
+			break;
+		case 4:
+			bar = "----^0------";
+			break;
+		case 3:
+			bar = "---^0-------";
+			break;
+		case 2:
+			bar= "--^0--------";
+			break;
+		case 1:
+			bar = "-^0---------";
+			break;
+		default:
+			bar = "^0----------";
+	}
+	return bar;
 }

@@ -3053,20 +3053,12 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		if (ent->client->sess.admin >= g_addbadmin.integer){
 			Boe_Add_bAdmin_f(1, ent, qtrue);
 		}
-		else if ( ent->client->sess.admin < g_addbadmin.integer){
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
-			id = -1;
-		}
 		G_Say( ent, NULL, mode, p );
 		return;
 		}
 	else if ((strstr(p, "!aa ")) || (strstr(p, "!addadmin "))) {
 		if (ent->client->sess.admin >= g_addadmin.integer){
 			Boe_Add_Admin_f(1, ent, qtrue);
-		}
-		else if ( ent->client->sess.admin < g_addadmin.integer){
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
-			id = -1;
 		}
 		G_Say( ent, NULL, mode, p );
 		return;
@@ -3075,20 +3067,12 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		if (ent->client->sess.admin >= g_addsadmin.integer){
 			Boe_Add_sAdmin_f(1, ent, qtrue);
 		}
-		else if ( ent->client->sess.admin < g_addsadmin.integer){
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
-			id = -1;
-		}
 		G_Say( ent, NULL, mode, p );
 		return;
 	}
 	else if ((strstr(p, "!tw ")) || (strstr(p, "!twist "))){
 		if (ent->client->sess.admin >= g_twist.integer){
 			Boe_Twist(1, ent, qtrue);
-		}
-		else if ( ent->client->sess.admin < g_twist.integer){
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
-			id = -1;
 		}
 		G_Say( ent, NULL, mode ,p);
 		return;
@@ -3097,10 +3081,6 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	if (ent->client->sess.admin >= g_twist.integer){
 			Boe_unTwist(1, ent, qtrue);
 		}
-		else if ( ent->client->sess.admin < g_twist.integer){
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
-			id = -1;
-		}
 		G_Say( ent, NULL, mode ,p);
 		return;
 	}
@@ -3108,20 +3088,12 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		if (ent->client->sess.admin >= g_plant.integer){
 			Boe_Plant(1, ent, qtrue);
 		}
-		else if ( ent->client->sess.admin < g_plant.integer){
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
-			id = -1;
-		}
 		G_Say( ent, NULL, mode ,p);
 		return;
 	}
 	else if ((strstr(p, "!upl ")) || (strstr(p, "!unplant "))){
 		if (ent->client->sess.admin >= g_plant.integer){
 			Boe_unPlant(1, ent, qtrue);
-		}
-		else if ( ent->client->sess.admin < g_plant.integer){
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
-			id = -1;
 		}
 		G_Say( ent, NULL, mode ,p);
 		return;
@@ -3427,10 +3399,14 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		return;
 	}
 	else if(strstr(p, "!addclan ") || strstr(p, "!acl ")){
+		if (ent->client->sess.admin >= g_clan.integer){
 		Boe_Add_Clan_Member(1, ent, qtrue);
+		}
 	}
 	else if(strstr(p, "!rc ") || strstr(p, "!rcl ") || strstr(p, "!removeclan ")){
+		if (ent->client->sess.admin >= g_clan.integer){
 		Boe_Remove_Clan_Member(1, ent, qtrue);
+		}
 	}
 	else if ((strstr(p, "!fl ")) || (strstr(p, "!flash "))){
 		if (ent->client->sess.admin >= g_flash.integer){

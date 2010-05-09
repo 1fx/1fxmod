@@ -470,13 +470,15 @@ qboolean ConsoleCommand( void )
 
 	if (Q_stricmp (cmd, "addbot") == 0) 
 	{
-		Svcmd_AddBot_f();
+		trap_Printf("^3[Info] ^7This command has been temporary disabled by the Mod Developers.\n");
+		//Svcmd_AddBot_f();
 		return qtrue;
 	}
 
 	if (Q_stricmp (cmd, "botlist") == 0) 
 	{
-		Svcmd_BotList_f();
+		trap_Printf("^3[Info] ^7This command has been temporary disabled by the Mod Developers.\n");
+		//Svcmd_BotList_f();
 		return qtrue;
 	}
 
