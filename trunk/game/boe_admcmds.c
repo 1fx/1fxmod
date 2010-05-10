@@ -2288,15 +2288,20 @@ void Boe_SwapTeams(gentity_t *adm)
 	///Tell Everyone what happend
 	trap_SendServerCommand( -1, va("cp \"^_**^7Admin Action^_**\n^3Swap Teams\n\"") );
 	Boe_GlobalSound(G_SoundIndex("sound/misc/events/tut_lift02.mp3"));
-	
+	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sS%sw%sa%sp %st%se%sams!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color4.string, server_color5.string, server_color6.string));
+	trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Swap teams by %s.\n\"", ent->client->pers.netname));
+
+
+	// BOE FIX ME
+
 	///RxCxW - 02.26.05 - 02:59am #adminLog	
-	if(adm && adm->client) {
-		trap_SendServerCommand( -1, va("print \"^3Swap Teams ^7- ^3%s\n\"", adm->client->pers.netname));
+	//if(adm && adm->client) {
+		//trap_SendServerCommand( -1, va("print \"^3Swap Teams ^7- ^3%s\n\"", adm->client->pers.netname));
 		//SC_adminLog (va("%s - SwapTeams", adm->client->pers.cleanName )) ;
-	} else	{
-		trap_SendServerCommand( -1, va("print \"^3Swap Teams ^7- ^6Admin\n\""));
+	//} else	{
+		//trap_SendServerCommand( -1, va("print \"^3Swap Teams ^7- ^6Admin\n\""));
 		//SC_adminLog (va("%s - SwapTeams", "RCON" )) ;
-	}
+	//}
 	///End  - 02.26.05 - 02:59am
 	///CalculateRanks();
 }
