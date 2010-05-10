@@ -506,6 +506,7 @@ gentity_t *G_DropItem( gentity_t *ent, gitem_t *item, float angle )
 	vec3_t		velocity;
 	vec3_t		angles;
 	gentity_t*	dropped;
+	gentity_t  *test;
 
 	VectorCopy( ent->s.apos.trBase, angles );
 	angles[YAW] += angle;
@@ -519,6 +520,14 @@ gentity_t *G_DropItem( gentity_t *ent, gitem_t *item, float angle )
 
 	if ( item->giType == IT_GAMETYPE )
 	{
+		if(item->quantity == 101){ // blue flag
+			test = Team_GetLocation(dropped);
+			trap_SendServerCommand( -1, va("print \"^3[CTF] %s ^7has dropped the Blue Flag at %s.\n\"", ent->client->pers.cleanName, test->message));
+		}
+		if(item->quantity == 100){ // red flag
+			test = Team_GetLocation(dropped);
+			trap_SendServerCommand( -1, va("print \"^3[CTF] %s ^7has dropped the Red Flag at %s.\n\"", ent->client->pers.cleanName, test->message));
+		}
 		trap_GT_SendEvent ( GTEV_ITEM_DROPPED, level.time, item->quantity, ent->s.number, 0, 0, 0 );
 	}
 

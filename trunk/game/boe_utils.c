@@ -210,7 +210,7 @@ char* defaultChatSounds[][2] =
 Boe_Tokens
 ==============
 */
-void Boe_Tokens(gentity_t *ent, char *chatText, int mode)
+void Boe_Tokens(gentity_t *ent, char *chatText, int mode, qboolean CheckSounds)
 {
 	int  i = 0, n = 0;
 	qboolean playedSound = qfalse, ghost = qfalse;
@@ -335,7 +335,7 @@ void Boe_Tokens(gentity_t *ent, char *chatText, int mode)
 					chatText--;
 			}
 		}
-		if((*chatText == '@') /*|| *chatText == '!')*/ && !playedSound) { // fix me henk remove '!'
+		if((*chatText == '@') /*|| *chatText == '!')*/ && !playedSound && CheckSounds) { // fix me henk remove '!'
 			if ( g_voiceFloodCount.integer ) {
 				if ( ent->client->voiceFloodPenalty ) {
 					if ( ent->client->voiceFloodPenalty > level.time ) {
@@ -366,8 +366,9 @@ void Boe_Tokens(gentity_t *ent, char *chatText, int mode)
 					Q_strcat(newText, MAX_SAY_TEXT, chatSounds[n].text);
 				chatText++;
 			}
-			else
+			else{		
 				return;
+			}
 			if(i) {
 				if( level.gametypeData->respawnType == RT_NONE)	{
 					if ( G_IsClientDead ( ent->client ) )

@@ -89,7 +89,7 @@ void	Boe_pop (int argNum, gentity_t *adm, qboolean shortCmd);
 void	Boe_Burn (int argNum, gentity_t *adm, qboolean shortCmd);
 void	Boe_Mute (int argNum, gentity_t *adm, qboolean mute, qboolean shortCmd);
 void	Boe_Strip (int argNum, gentity_t *adm, qboolean shortCmd);
-void	Adm_ForceTeam(gentity_t *adm, qboolean shortCmd);
+void	Adm_ForceTeam(int argNum, gentity_t *adm, qboolean shortCmd);
 extern	vmCvar_t	g_pop;
 extern	vmCvar_t	g_burn;
 extern	vmCvar_t	g_mute;
@@ -141,7 +141,7 @@ char	*Boe_StatColor(int stat);
 int		Boe_FindClosestTeammate(gentity_t *ent, qboolean bot);
 int		Boe_FindClosestEnemy(gentity_t *ent, qboolean bot);
 void	Boe_ParseChatSounds (void);
-void	Boe_Tokens(gentity_t *ent, char *chatText, int mode);
+void	Boe_Tokens(gentity_t *ent, char *chatText, int mode, qboolean CheckSounds);
 
 extern	chatSounds_t chatSounds[MAX_BOE_CHATS];
 
@@ -228,5 +228,22 @@ void Preload(void);
 
 extern  vmCvar_t	g_disablelower;
 
+char *GetReason(void);
+
 // Boe!Man 5/9/10
 char	*Boe_BarStat(int stat);
+void	Boe_Kick(int argNum, gentity_t *ent, qboolean ShortCmd);
+void	Boe_XMute(int argNum, gentity_t *ent, qboolean ShortCmd);
+void	Boe_UnMute(int argNum, gentity_t *ent, qboolean ShortCmd);
+void	Boe_MapRestart(int argNum, gentity_t *ent, qboolean ShortCmd);
+void	Boe_NoLower(int argNum, gentity_t *ent, qboolean ShortCmd);
+void	Boe_NoNades(int argNum, gentity_t *ent, qboolean ShortCmd);
+void	Boe_TimeLimit(int argNum, gentity_t *ent, qboolean ShortCmd);
+void	Boe_ScoreLimit(int argNum, gentity_t *ent, qboolean ShortCmd);
+void	Boe_RespawnInterval(int argNum, gentity_t *ent, qboolean ShortCmd);
+void	Boe_RealDamage(int argNum, gentity_t *ent, qboolean ShortCmd);
+void	Boe_NormalDamage(int argNum, gentity_t *ent, qboolean ShortCmd);
+void	Boe_GametypeRestart(int argNum, gentity_t *ent, qboolean ShortCmd);
+void	Boe_Third(int argNum, gentity_t *ent, qboolean ShortCmd);
+void	Boe_CompMode(int argNum, gentity_t *ent, qboolean ShortCmd);
+

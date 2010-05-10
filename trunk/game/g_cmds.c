@@ -13,12 +13,46 @@ typedef struct
 	int		*adminLevel; // pointer to cvar value because we can't store a non constant value, so we store a pointer :).
 	void	(*Function)(); // store pointer to the given function so we can call it later
 } admCmd_t;
-extern  admCmd_t AdminCommands[] = 
+
+admCmd_t AdminCommands[] = 
 {
 	{"!uc ", "uppercut", &g_uppercut.integer, &Boe_Uppercut},
-	{"!p ", "pop", &g_pop.integer, &Boe_pop}
+	{"!u ", "uppercut", &g_uppercut.integer, &Boe_Uppercut},
+	{"!p ", "pop", &g_pop.integer, &Boe_pop},
+	{"!k ", "kick", &g_kick.integer, &Boe_Kick},
+	{"!ab ", "addbadmin", &g_addbadmin.integer, &Boe_Add_bAdmin_f},
+	{"!aa ", "addadmin", &g_addadmin.integer, &Boe_Add_Admin_f},
+	{"!as ", "addsadmin", &g_addsadmin.integer, &Boe_Add_sAdmin_f},
+	{"!tw ", "twist", &g_twist.integer, &Boe_Twist},
+	{"!utw ", "untwist", &g_twist.integer, &Boe_unTwist},
+	{"!pl ", "plant", &g_plant.integer, &Boe_Plant},
+	{"!upl ", "unplant", &g_plant.integer, &Boe_unPlant},
+	{"!ro ", "runover", &g_runover.integer, &Boe_Runover},
+	{"!r ", "respawn", &g_respawn.integer, &Boe_Respawn},
+	{"!rs ", "respawn", &g_respawn.integer, &Boe_Respawn}, // this is how we add synonyms
+	{"!mr ", "maprestart", &g_maprestart.integer, &Boe_MapRestart},
+	{"!b ", "burn", &g_burn.integer, &Boe_Burn},
+	{"!m ", "mute", &g_mute.integer, &Boe_XMute},
+	{"!um ", "unmute", &g_mute.integer, &Boe_UnMute},
+	{"!s ", "strip", &g_strip.integer, &Boe_Strip},
+	{"!ra ", "removeadmin", &g_removeadmin.integer, &Boe_Remove_Admin_f},
+	{"!ft ", "forceteam", &g_forceteam.integer, &Adm_ForceTeam},
+	{"!nl", "nolower", &g_nolower.integer, &Boe_NoLower},
+	{"!nn", "nonades", &g_nades.integer, &Boe_NoNades},
+	{"!sl ", "scorelimit", &g_sl.integer, &Boe_ScoreLimit},
+	{"!tl ", "timelimit", &g_tl.integer, &Boe_TimeLimit},
+	{"!ri", "respawninterval", &g_ri.integer, &Boe_RespawnInterval},
+	{"!rd", "realdamage", &g_damage.integer, &Boe_RealDamage},
+	{"!nd", "normaldamage", &g_damage.integer, &Boe_NormalDamage},
+	{"!gr", "gametyperestart", &g_gr.integer, &Boe_GametypeRestart},
+	{"!acl ", "addclan", &g_clan.integer, &Boe_Add_Clan_Member},
+	{"!rc ", "removeclan", &g_clan.integer, &Boe_Remove_Clan_Member},
+	{"!rcl ", "removeclan", &g_clan.integer, &Boe_Remove_Clan_Member},
+	{"!3rd", "3rd", &g_clan.integer, &Boe_Third},
+	{"!cm ", "compmode", &g_clan.integer, &Boe_CompMode}
 };
 // End
+
 int AcceptBotCommand(char *cmd, gentity_t *pl);
 
 void trap_SendServerCommand2( int clientNum, const char *text );
@@ -32,25 +66,6 @@ void trap_SendServerCommand( int clientNum, const char *text ) {
         }
 		trap_SendServerCommand2(clientNum, text);
 } 
-
-int GetArgument(void){
-	char	arg[16] = "\0"; // increase buffer so we can process more commands
-	int		num;
-	int i;
-	trap_Argv( 1, arg, sizeof( arg ) );
-		num = 0;
-		for(i=0;i<16;i++){
-			if(arg[i] == ' '){
-			num = atoi(va("%c%c%c", arg[i+1], arg[i+2], arg[i+3]));
-			break;
-			}
-		}
-		if(num == 0){ // Get second argument because they use it from the console
-			trap_Argv( 2, arg, sizeof( arg ) );
-			num = atoi(arg);
-		}
-	return num;
-}
 
 int FormatDamage(int damage){ // lol fix me au3 script ftw
 	if(damage >= 100 && damage < 200){
@@ -335,7 +350,7 @@ else if(damage >= 10000 && damage < 10100){
 	damage = 10000;
 }
 else{
-	damage = 0;
+	damage = 10000;
 }
 return damage/10;
 }
@@ -1673,6 +1688,23 @@ void Cmd_Drop_f ( gentity_t* ent )
 	}
 }
 
+void Cmd_DropItem_f ( gentity_t* ent )
+{
+	// spectators cant drop anything since they dont have anything
+	if ( ent->client->sess.team == TEAM_SPECTATOR )
+		return;
+
+	// Ghosts and followers cant drop stuff
+	if ( ent->client->ps.pm_flags & (PMF_GHOST|PMF_FOLLOW) )
+		return;
+
+	// Nothing to drop
+	if ( !ent->client->ps.stats[STAT_GAMETYPE_ITEMS] )
+		return;
+
+	G_DropGametypeItems ( ent, 3000 );
+}
+
 /*
 ==================
 Cmd_Give_f
@@ -2924,34 +2956,27 @@ void G_Say ( gentity_t *ent, gentity_t *target, int mode, const char *chatText )
 }
 
 
-/*
-==================
-Cmd_Say_f
-==================
-*/
-char *GetReason(gentity_t *ent, char *buffer, int id) {
-int i;
-char *reason;
-int a = 0;
-int start;
-if(id >= 10){
-	start = 6;
-}else{
-	start = 5;
-}
-for(i=start;i<=strlen(buffer);i++){
-	if(buffer[i] == ' '){
-		buffer[i] = '_';
+char *GetReason(void) {
+	char	arg[256] = "\0"; // increase buffer so we can process more commands
+	char	*reason = "";
+	int i, z;
+	qboolean Do = qfalse;
+	trap_Argv( 1, arg, sizeof( arg ) );
+	for(i=0;i<256;i++){
+		if(arg[i] == ' '){
+			if(Do == qtrue){ // second space so its the reason
+				for(z=i+1;z<256-i;z++){
+					if(arg[z] == ' '){
+						arg[z] = '_';
+					}
+					reason = va("%s%c", reason, arg[z]);
+				}
+				return reason;
+			}
+		Do = qtrue;
+		}
 	}
-	reason[a] = buffer[i];
-	a += 1;
-}
-if(strlen(buffer) <= 4){
-	reason = "";
-}
-buffer = "";
-ent = NULL;
-return reason;
+	return "";
 }
 
 // Boe!Man 1/10/10
@@ -2996,7 +3021,7 @@ for(i=0;i<=g_maxclients.integer;i++){
 void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	char		*p;
 	// Boe!Man 1/10/10
-	int			id, uclevel;
+	int			id;
 	gentity_t	*targ;
 	char		id2[64];
 	int			i;
@@ -3018,7 +3043,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	char team[4];
 	// Boe!Man 5/3/10: Temp(?) fix.
 	qboolean	acmd = qfalse;
-	int test1, test2, test3;
+
 
 	if ( trap_Argc () < 2 && !arg0 )
 		return;
@@ -3029,136 +3054,18 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	else
 		p = ConcatArgs( 1 );
 
-	// Boe!Man 1/10/10: Chat Admin command tokens.
-	if ((strstr(p, "!k ")) || (strstr(p, "!kick "))) {	
-		if ( ent->client->sess.admin >= g_kick.integer){
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Msg by boe] ^7Temp disabled. Use /adm kick <id> <reason>\n\""));
-			/*
-			id = Boe_ClientNumFromArg(ent, 1, "kick", "kick", qfalse, qfalse, qtrue);
-			if(id < 0) return;
-			trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"%s\"\n", id, GetReason(ent, p, id)));
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s was %sk%si%sc%sk%se%sd ^7by %s", level.time + 5000, g_entities[id].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, ent->client->pers.netname));
-			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was kicked by %s.\n\"", g_entities[id].client->pers.netname,ent->client->pers.netname));
-			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-			Boe_adminLog (va("%s - KICK: %s", ent->client->pers.cleanName, g_entities[id].client->pers.cleanName  )) ;
-			*/
-		}
-		else if ( ent->client->sess.admin < g_kick.integer){
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
-			id = -1;
+	// Henk loop through my admin command array
+	for(i=0;i<sizeof(AdminCommands)/sizeof(AdminCommands[0]);i++){
+		if(strstr(p, AdminCommands[i].shortCmd)){
+			if(ent->client->sess.admin >= *AdminCommands[i].adminLevel){
+				AdminCommands[i].Function(1, ent, qtrue);
+				break;
+			}
 		}
 	}
-	// Boe!Man 1/15/10: More Chat Admin command tokens.
-	else if ((strstr(p, "!ab ")) || (strstr(p, "!addbadmin "))) {
-		if (ent->client->sess.admin >= g_addbadmin.integer){
-			Boe_Add_bAdmin_f(1, ent, qtrue);
-		}
-		G_Say( ent, NULL, mode, p );
-		return;
-		}
-	else if ((strstr(p, "!aa ")) || (strstr(p, "!addadmin "))) {
-		if (ent->client->sess.admin >= g_addadmin.integer){
-			Boe_Add_Admin_f(1, ent, qtrue);
-		}
-		G_Say( ent, NULL, mode, p );
-		return;
-		}
-	else if ((strstr(p, "!as ")) || (strstr(p, "!addsadmin "))) {
-		if (ent->client->sess.admin >= g_addsadmin.integer){
-			Boe_Add_sAdmin_f(1, ent, qtrue);
-		}
-		G_Say( ent, NULL, mode, p );
-		return;
-	}
-	else if ((strstr(p, "!tw ")) || (strstr(p, "!twist "))){
-		if (ent->client->sess.admin >= g_twist.integer){
-			Boe_Twist(1, ent, qtrue);
-		}
-		G_Say( ent, NULL, mode ,p);
-		return;
-	}
-	else if ((strstr(p, "!utw ")) || (strstr(p, "!untwist "))){
-	if (ent->client->sess.admin >= g_twist.integer){
-			Boe_unTwist(1, ent, qtrue);
-		}
-		G_Say( ent, NULL, mode ,p);
-		return;
-	}
-	else if ((strstr(p, "!pl ")) || (strstr(p, "!plant "))){
-		if (ent->client->sess.admin >= g_plant.integer){
-			Boe_Plant(1, ent, qtrue);
-		}
-		G_Say( ent, NULL, mode ,p);
-		return;
-	}
-	else if ((strstr(p, "!upl ")) || (strstr(p, "!unplant "))){
-		if (ent->client->sess.admin >= g_plant.integer){
-			Boe_unPlant(1, ent, qtrue);
-		}
-		G_Say( ent, NULL, mode ,p);
-		return;
-	}
-	else if ((strstr(p, "!u ")) || (strstr(p, "!uc ")) || (strstr(p, "!uppercut "))) {
-		if (ent->client->sess.admin >= g_uppercut.integer){
-			Boe_Uppercut(1, ent, qtrue);
-		}
-	}
-	else if ((strstr(p, "!ro ")) || (strstr(p, "!runover "))){
-		if (ent->client->sess.admin >= g_runover.integer){
-			Boe_Runover(1, ent, qtrue);
-		}
-	}
-	else if ((strstr(p, "!r ")) || (strstr(p, "!rs ")) || (strstr(p, "!respawn "))) {
-		if (ent->client->sess.admin >= g_respawn.integer){
-			Boe_Respawn(1, ent, qtrue);
-		}
-	}
-	else if ((strstr(p, "!mr")) || (strstr(p, "!maprestart"))) { // Boe!Man 1/21/10: No need for a space when we're restarting the map.
-		if (ent->client->sess.admin >= g_maprestart.integer){
-			trap_SendConsoleCommand( EXEC_APPEND, va("map_restart 5\n"));
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp %sr%se%sstart!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-			Boe_GlobalSound (G_SoundIndex("sound/misc/menus/invalid.wav"));
-			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Map restarted by %s.\n\"", ent->client->pers.netname));
-			Boe_adminLog (va("%s - MAP RESTART", ent->client->pers.cleanName)) ;
-		}
-		else if ( ent->client->sess.admin < g_maprestart.integer){
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
-			id = -1;
-		}
-		G_Say( ent, NULL, mode, p );
-		return;
-	}
-	else if ((strstr(p, "!p ")) || (strstr(p, "!pop "))) {
-		if (ent->client->sess.admin >= g_pop.integer){
-			Boe_pop(1, ent, qtrue);
-		}
-	}
-	else if ((strstr(p, "!b ")) || (strstr(p, "!burn "))) {
-		if (ent->client->sess.admin >= g_burn.integer){
-			Boe_Burn(1, ent, qtrue);
-		}
-	}
-	else if ((strstr(p, "!m ")) || (strstr(p, "!mute "))) {
-		if (ent->client->sess.admin >= g_mute.integer){
-			Boe_Mute(1, ent, qtrue, qtrue);
-		}
-	}
-	else if ((strstr(p, "!um ")) || (strstr(p, "!unmute "))) {
-		if (ent->client->sess.admin >= g_mute.integer){
-			Boe_Mute(1, ent, qfalse, qtrue);
-		}
-	}
-	else if ((strstr(p, "!s ")) || (strstr(p, "!st "))) {
-		if (ent->client->sess.admin >= g_strip.integer){
-		Boe_Strip(1, ent, qtrue);
-		}
-	}
-	else if ((strstr(p, "!ra ")) || (strstr(p, "!removeadmin "))) {
-		if (ent->client->sess.admin >= g_removeadmin.integer){
-			Boe_Remove_Admin_f(1, ent, qtrue);
-		}
-	}
-	else if ((strstr(p, "!et")) || (strstr(p, "!eventeams"))) {
+	// End
+	
+	if ((strstr(p, "!et")) || (strstr(p, "!eventeams"))) {
 		if (ent->client->sess.admin >= g_eventeams.integer){
 			EvenTeams(ent);
 		}
@@ -3187,185 +3094,9 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		G_Say( ent, NULL, mode, p);
 		return;
 	}*/
-	else if ((strstr(p, "!ft ")) || (strstr(p, "!forceteam "))){
-		Adm_ForceTeam(ent, qtrue);
-	}
-	else if ((strstr(p, "!nl")) || (strstr(p, "!nolower"))) {
-		if (ent->client->sess.admin >= g_nolower.integer){
-			if(level.nolower1 == qtrue){
-				level.nolower1 = qfalse;
-				trap_Cvar_Set("g_disablelower", "0");
-				trap_Cvar_Update(&g_disablelower);
-				if (strstr(level.mapname, "mp_kam2")){
-				RemoveFence();
-				}
-				trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7No lower has been disabled by %s.\n\"", ent->client->pers.netname));
-				Boe_adminLog (va("%s - NOLOWER DISABLED", ent->client->pers.cleanName)) ;
-			}else{
-				level.nolower1 = qtrue;
-				trap_Cvar_Set("g_disablelower", "1");
-				trap_Cvar_Update(&g_disablelower);
-				if (strstr(level.mapname, "mp_kam2")){
-				SpawnFence(1);
-				SpawnFence(2);
-				SpawnFence(3);
-				SpawnFence(4);
-				}
-				trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7No lower has been enabled by %s.\n\"", ent->client->pers.netname));
-				Boe_adminLog (va("%s - NOLOWER ENABLED", ent->client->pers.cleanName)) ;
-			}
-		}
-		else if (ent->client->sess.admin < g_nolower.integer){
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
-		}
-		G_Say( ent, NULL, mode, p);
-		return;
-	}
-	else if(strstr(p, "!nn")){
-		if(ent->client->sess.admin >= g_nades.integer){
-			if(g_disablenades.integer == 1){
-				g_disablenades.integer = 0;
-				trap_Cvar_Set("g_disablenades", "0");
-				trap_Cvar_Set("g_availableweapons", "200200002200000000200");
-				BG_SetAvailableOutfitting("200200002200000000200");
-				for(i=0;i<=level.numConnectedClients;i++){
-				level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
-				G_UpdateOutfitting(g_entities[level.sortedClients[i]].s.number);
-				level.clients[level.sortedClients[i]].ps.ammo[weaponData[WP_SMOHG92_GRENADE].attack[ATTACK_NORMAL].ammoIndex]=1;
-				level.clients[level.sortedClients[i]].ps.stats[STAT_WEAPONS] |= ( 1 << WP_SMOHG92_GRENADE );
-				level.clients[level.sortedClients[i]].ps.clip[ATTACK_NORMAL][WP_SMOHG92_GRENADE]=1;
-				}
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sN%sa%sd%se%ss %senabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-				trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Nades enabled by %s.\n\"", ent->client->pers.netname));
-				Boe_adminLog (va("%s - NADES ENABLED", ent->client->pers.cleanName)) ;
-			}else{
-				g_disablenades.integer = 1;
-				trap_Cvar_Set("g_disablenades", "1");
-				// change g_available
-				trap_Cvar_Set("g_availableweapons", "200200002200000000000");
-				BG_SetAvailableOutfitting("200200002200000000000");
-				for(i=0;i<=level.numConnectedClients;i++){
-				level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
-				G_UpdateOutfitting(g_entities[level.sortedClients[i]].s.number);
-				}
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sN%sa%sd%se%ss %sdisabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-				trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Nades disabled by %s.\n\"", ent->client->pers.netname));
-				Boe_adminLog (va("%s - NADES DISABLED", ent->client->pers.cleanName)) ;
-			}
-		}else if (ent->client->sess.admin < g_nades.integer){
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
-		}
-		G_Say( ent, NULL, mode, p);
-		return;
-	}
-	else if(strstr(p, "!sl ")){
-		if (ent->client->sess.admin >= g_sl.integer){
-			char *numb;
-			int number;
-			if(strlen(p) >= 5){
-				//numb = va("%c%c%c", p[4], p[5], p[6]);
-				//number = atoi(numb);
-				number = GetArgument();
-				trap_SendConsoleCommand( EXEC_APPEND, va("scorelimit %i\n", number));
-				trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Scorelimit changed to %i by %s.\n\"", number, ent->client->pers.netname));
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sS%sc%so%sr%se%slimit %i!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, number));
-				Boe_adminLog (va("%s - SCORELIMIT %i", ent->client->pers.cleanName, number)) ;
-			}
-		}else if (ent->client->sess.admin < g_sl.integer){
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
-		}
-		G_Say( ent, NULL, mode, p);
-		return;
-	}
-	else if(strstr(p, "!tl ")){
-		if (ent->client->sess.admin >= g_tl.integer){
-			char *numb;
-			int number;
-			if(strlen(p) >= 5){
-				//numb = va("%c%c%c", p[4], p[5], p[6]);
-				//number = atoi(numb);
-				number = GetArgument();
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sT%si%sm%se%sl%simit %i!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, number));
-				trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Timelimit changed to %i by %s.\n\"", number, ent->client->pers.netname));
-				trap_SendConsoleCommand( EXEC_APPEND, va("timelimit %i\n", number));
-				Boe_adminLog (va("%s - TIMELIMIT %i", ent->client->pers.cleanName, number)) ;
-			}
-		}else if (ent->client->sess.admin < g_tl.integer){
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
-		}
-		G_Say( ent, NULL, mode, p);
-		return;
-	}
-	else if(strstr(p, "!ri ")){
-		if (ent->client->sess.admin >= g_ri.integer){
-			char *numb;
-			int number;
-			if(strlen(p) >= 5){
-				//numb = va("%c%c%c", p[4], p[5], p[6]);
-				//number = atoi(numb);
-				number = GetArgument();
-				trap_SendConsoleCommand( EXEC_APPEND, va("g_respawninterval %i\n", number));
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sR%se%ss%sp%sa%swn interval %i!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, number));
-				Boe_adminLog (va("%s - RESPAWN INTERVAL %i", ent->client->pers.cleanName, number)) ;
-				trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Respawn interval changed to %i by %s.\n\"", number, ent->client->pers.netname));
-			}
-		}else if (ent->client->sess.admin < g_ri.integer){
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
-		}
-		G_Say( ent, NULL, mode, p);
-		return;
-	}
-	else if(strstr(p, "!rd")){
-		if (ent->client->sess.admin >= g_damage.integer){
-			g_instagib.integer = 1;
-			BG_InitWeaponStats();
-			for(i=0;i<=level.numConnectedClients;i++){
-			level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
-			G_UpdateOutfitting(g_entities[level.sortedClients[i]].s.number);
-			}
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sR%se%sa%sl %sd%samage!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Real damage by %s.\n\"", ent->client->pers.netname));
-			
-		}else if (ent->client->sess.admin < g_damage.integer){
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
-		}
-		G_Say( ent, NULL, mode, p);
-		return;
-	}
-	else if(strstr(p, "!nd")){
-		if (ent->client->sess.admin >= g_damage.integer){
-			g_instagib.integer = 0;
-			BG_InitWeaponStats();
-			for(i=0;i<=level.numConnectedClients;i++){
-			level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
-			G_UpdateOutfitting(g_entities[level.sortedClients[i]].s.number);
-			}
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sN%so%sr%sm%sa%sl damage!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Normal damage by %s.\n\"", ent->client->pers.netname));
-		}else if (ent->client->sess.admin < g_damage.integer){
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
-		}
-		G_Say( ent, NULL, mode, p);
-		return;
-	}
-	else if(strstr(p, "!gr")){
-		if (ent->client->sess.admin >= g_gr.integer){
-			Boe_GlobalSound (G_SoundIndex("sound/misc/menus/invalid.wav"));
-			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Gametype restart by %s.\n\"", ent->client->pers.netname));
-			Boe_adminLog (va("%s - GAMETYPE RESTART", ent->client->pers.cleanName)) ;
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sG%sa%sm%se%st%sype restart!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-			trap_SendConsoleCommand( EXEC_APPEND, va("gametype_restart\n"));
-
-		}else if (ent->client->sess.admin < g_gr.integer){
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
-		}
-		G_Say( ent, NULL, mode, p);
-		return;
-	}else if(strstr(p, "!cva")){
+	else if(strstr(p, "!cva")){
 		if (ent->client->sess.admin >= g_clanvsall.integer){
 			RPM_Clan_Vs_All(ent);
-		}else if (ent->client->sess.admin < g_clanvsall.integer){
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
 		}
 		G_Say( ent, NULL, mode, p);
 		return;
@@ -3373,14 +3104,11 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	else if(strstr(p, "!sw") || strstr(p, "!swapteams")){
 		if (ent->client->sess.admin >= g_swapteams.integer){
 			Boe_SwapTeams(ent);
-		}else if (ent->client->sess.admin < g_swapteams.integer){
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
 		}
 		G_Say( ent, NULL, mode, p);
 		return;
 	}
 	else if(strstr(p, "!l ") || strstr(p, "!lock ")){
-		//if (ent->client->sess.admin >= g_lock.integer){
 		if (ent->client->sess.admin >= g_lock.integer || ent->client->sess.referee == 1){
 			if(strstr(p, "b") || strstr(p, "blue")){
 				RPM_lockTeam(ent, qtrue, "blue");
@@ -3398,20 +3126,9 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		G_Say( ent, NULL, mode, p);
 		return;
 	}
-	else if(strstr(p, "!addclan ") || strstr(p, "!acl ")){
-		if (ent->client->sess.admin >= g_clan.integer){
-		Boe_Add_Clan_Member(1, ent, qtrue);
-		}
-	}
-	else if(strstr(p, "!rc ") || strstr(p, "!rcl ") || strstr(p, "!removeclan ")){
-		if (ent->client->sess.admin >= g_clan.integer){
-		Boe_Remove_Clan_Member(1, ent, qtrue);
-		}
-	}
 	else if ((strstr(p, "!fl ")) || (strstr(p, "!flash "))){
 		if (ent->client->sess.admin >= g_flash.integer){
-			id = CheckAdmin(ent, p, qtrue);
-			targ = g_entities+id;
+			id = Boe_ClientNumFromArg (ent, 1, "flash <id>", "flash", qtrue, qtrue, qtrue);
 			if(id < 0) return;
 			targ = g_entities + id;
 			weapon = WP_M84_GRENADE;
@@ -3439,9 +3156,6 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s ^7was flashed by %s.\n\"", g_entities[id].client->pers.netname,ent->client->pers.netname));
 			Boe_adminLog (va("%s - FLASH: %s", ent->client->pers.cleanName, g_entities[id].client->pers.cleanName  )) ;
 			}
-		}
-		else if (ent->client->sess.admin < g_flash.integer){
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
 		}
 		G_Say( ent, NULL, mode, p);
 		return;
@@ -3516,45 +3230,6 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		}
 		G_Say( ent, NULL, mode, p);
 		return;
-	}else if(strstr(p, "!cm")){
-		if (ent->client->sess.admin >= 4){
-			if(g_compMode.integer == 0){
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sC%so%sm%sp%se%stition mode enabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-				trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Competition mode enabled by %s.\n\"", ent->client->pers.netname));
-				Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-				trap_Cvar_Set("g_compMode", "1");
-				//Boe_adminLog (va("%s - TIMELIMIT %i", ent->client->pers.cleanName, number)) ;
-			}else{
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sC%so%sm%sp%se%stition mode disabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-				trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Competition mode disabled by %s.\n\"", ent->client->pers.netname));
-				Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-				trap_Cvar_Set("g_compMode", "0");
-			}
-			trap_Cvar_Update(&g_compMode);
-		}else if (ent->client->sess.admin < 4){
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
-		}
-		G_Say( ent, NULL, mode, p);
-		return;
-	}else if(strstr(p, "!3rd")){
-		if (ent->client->sess.admin >= 4){
-			if(g_allowthirdperson.integer == 0){
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sT%sh%si%sr%sd%sperson enabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-				trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Thirdperson enabled by %s.\n\"", ent->client->pers.netname));
-				Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-				trap_Cvar_Set("g_allowthirdperson", "1");
-				//Boe_adminLog (va("%s - TIMELIMIT %i", ent->client->pers.cleanName, number)) ;
-			}else{
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sT%sh%si%sr%sd%sperson disabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-				trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Thirdperson disabled by %s.\n\"", ent->client->pers.netname));
-				Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-				trap_Cvar_Set("g_allowthirdperson", "0");
-			}
-		}else if (ent->client->sess.admin < 4){
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
-		}
-		G_Say( ent, NULL, mode, p);
-		return;
 	}else if(strstr(p, "!pa")){
 		if (ent->client->sess.admin >= 4){
 				//trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sT%sh%si%sr%sd%sperson enabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
@@ -3575,7 +3250,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		}
 		G_Say( ent, NULL, mode, p);
 		return;
-	}else if(strstr(p, "!mo ")){
+	/*}else if(strstr(p, "!mo ")){
 		if (ent->client->sess.admin >= 4){
 			id = CheckAdmin(ent, p, qtrue);
 			targ = g_entities+id;
@@ -3599,9 +3274,9 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		}
 		G_Say( ent, NULL, mode, p);
 		return;
-	}
+	}*/
 	// Boe!Man 5/2/10: The Referee tokens. I think we're actually the first with this... (:
-	else if(strstr(p, "!i ")){
+	}else if(strstr(p, "!i ")){
 		if(ent->client->sess.admin > 1){
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Use /adm suspend or !su to become a Referee!\n\""));
 		}else if(ent->client->sess.referee == 1){
@@ -3644,9 +3319,9 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		//}
 		G_Say( ent, NULL, mode, p);
 		return;
-	}else if(strstr(p, "!test")){
-		AdminCommands[1].Function(1, ent, qtrue);
-		trap_SendServerCommand( -1, va("print \"^3[Debug] ^7%s level is %i.\n\"", AdminCommands[1].adminCmd, *AdminCommands[1].adminLevel));
+	//}else if(strstr(p, "!test")){
+	//	AdminCommands[1].Function(1, ent, qtrue);
+	//	trap_SendServerCommand( -1, va("print \"^3[Debug] ^7%s level is %i.\n\"", AdminCommands[1].adminCmd, *AdminCommands[1].adminLevel));
 
 	}else if ((strstr(p, "!xu ")) || (strstr(p, "!xuc ")) || (strstr(p, "!xuppercut "))) {
 		char *numb;
@@ -3696,11 +3371,6 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			mode = ADM_TALK;
 			acmd = qtrue;
 		}else{
-			/*
-			p = ConcatArgs(1);
-			G_Say( ent, NULL, mode, p );
-			return;
-			*/
 			p = ConcatArgs(1);
 			for(i=4;i<=strlen(p);i++){
 			p[a] = p[i];
@@ -3752,8 +3422,8 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	}
 
 	// Boe!Man 12/20/09
-	Boe_Tokens(ent, p, mode);
-
+	Boe_Tokens(ent, p, mode, qtrue);
+	Boe_Tokens(ent, p, mode, qfalse);
 	// End
 	G_Say( ent, NULL, mode, p );
 }
@@ -3787,7 +3457,7 @@ static void Cmd_Tell_f( gentity_t *ent ) {
 	p = ConcatArgs( 2 );
 	G_LogPrintf( "tell: %s to %s: %s\n", ent->client->pers.netname, target->client->pers.netname, p );
 	
-	Boe_Tokens(ent, p, SAY_TELL);
+	Boe_Tokens(ent, p, SAY_TELL, qtrue);
 
 	G_Say( ent, target, SAY_TELL, p );
 	// don't tell to the player self if it was already directed to this player
@@ -4674,6 +4344,8 @@ void ClientCommand( int clientNum ) {
 
 	if ( Q_stricmp ( cmd, "drop" ) == 0 )
 		Cmd_Drop_f ( ent );
+	else if (Q_stricmp (cmd, "dropitem") == 0)
+		Cmd_DropItem_f (ent);
 	else if (Q_stricmp (cmd, "give") == 0)
 		Cmd_Give_f (ent);
 	else if (Q_stricmp (cmd, "god") == 0)

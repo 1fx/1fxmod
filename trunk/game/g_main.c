@@ -389,7 +389,6 @@ static cvarTable_t gameCvarTable[] =
 // bk001129 - made static to avoid aliasing
 static int gameCvarTableSize = sizeof( gameCvarTable ) / sizeof( gameCvarTable[0] );
 
-
 void G_InitGame					( int levelTime, int randomSeed, int restart );
 void G_RunFrame					( int levelTime );
 void G_ShutdownGame				( int restart );
