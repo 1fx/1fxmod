@@ -3186,8 +3186,8 @@ static void Cmd_Tell_f( gentity_t *ent ) {
 	p = ConcatArgs( 2 );
 	G_LogPrintf( "tell: %s to %s: %s\n", ent->client->pers.netname, target->client->pers.netname, p );
 	
-	Boe_Tokens(ent, p, mode, qtrue);
-	Boe_Tokens(ent, p, mode, qfalse);
+	Boe_Tokens(ent, p, SAY_TELL, qtrue);
+	Boe_Tokens(ent, p, SAY_TELL, qfalse);
 
 	G_Say( ent, target, SAY_TELL, p );
 	// don't tell to the player self if it was already directed to this player

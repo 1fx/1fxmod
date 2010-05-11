@@ -235,6 +235,7 @@ spawn_t	spawns[] =
 
 	{"model_static",				SP_model_static },
 	{"nv_model",					NV_model },
+	{"blocker",						SP_misc_bsp },
 
 	{"gametype_item",				SP_gametype_item },
 	{"gametype_trigger",			SP_gametype_trigger },
