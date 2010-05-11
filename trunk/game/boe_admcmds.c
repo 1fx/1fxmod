@@ -9,6 +9,12 @@
 // I'm lazy so I just 'fix' them here. I'll fix them fo'real later.
 // ALREADY DONE LAZY BITCH -.-'' HENK
 
+/*
+==========
+GetArgument
+==========
+*/
+
 int GetArgument(int argNum){
 	char	arg[16] = "\0"; // increase buffer so we can process more commands
 	int		num;
@@ -28,6 +34,12 @@ int GetArgument(int argNum){
 	return num;
 }
 
+/*
+==========
+Boe_Mute
+==========
+*/
+
 void Boe_UnMute(int argNum, gentity_t *ent, qboolean shortCmd){
 	Boe_Mute (argNum, ent, qfalse, shortCmd);
 }
@@ -35,6 +47,12 @@ void Boe_UnMute(int argNum, gentity_t *ent, qboolean shortCmd){
 void Boe_XMute(int argNum, gentity_t *ent, qboolean shortCmd){
 	Boe_Mute (argNum, ent, qtrue, shortCmd);
 }
+
+/*
+==========
+Boe_Compmode
+==========
+*/
 
 void Boe_CompMode(int argNum, gentity_t *ent, qboolean shotCmd){
 	if(g_compMode.integer == 0){
@@ -52,6 +70,12 @@ void Boe_CompMode(int argNum, gentity_t *ent, qboolean shotCmd){
 	trap_Cvar_Update(&g_compMode);
 }
 
+/*
+==========
+Boe_Third
+==========
+*/
+
 void Boe_Third(int argNum, gentity_t *ent, qboolean shortCmd){
 	if(g_allowthirdperson.integer == 0){
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sT%sh%si%sr%sd%sperson enabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
@@ -67,6 +91,12 @@ void Boe_Third(int argNum, gentity_t *ent, qboolean shortCmd){
 	}
 }
 
+/*
+==========
+Boe_GametypeRestart
+==========
+*/
+
 void Boe_GametypeRestart(int argNum, gentity_t *ent, qboolean shortCmd){
 	Boe_GlobalSound (G_SoundIndex("sound/misc/menus/invalid.wav"));
 	trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Gametype restart by %s.\n\"", ent->client->pers.netname));
@@ -74,6 +104,12 @@ void Boe_GametypeRestart(int argNum, gentity_t *ent, qboolean shortCmd){
 	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sG%sa%sm%se%st%sype restart!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 	trap_SendConsoleCommand( EXEC_APPEND, va("gametype_restart\n"));
 }
+
+/*
+==========
+Boe_Normaldamage
+==========
+*/
 
 void Boe_NormalDamage(int argNum, gentity_t *ent, qboolean shortCmd){
 	int i;
@@ -87,6 +123,12 @@ void Boe_NormalDamage(int argNum, gentity_t *ent, qboolean shortCmd){
 	trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Normal damage by %s.\n\"", ent->client->pers.netname));
 }
 
+/*
+==========
+Boe_Realdamage
+==========
+*/
+
 void Boe_RealDamage(int argNum, gentity_t *ent, qboolean shortCmd){
 	int i;
 	g_instagib.integer = 1;
@@ -99,6 +141,12 @@ void Boe_RealDamage(int argNum, gentity_t *ent, qboolean shortCmd){
 	trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Real damage by %s.\n\"", ent->client->pers.netname));
 }
 
+/*
+==========
+Boe_RespawnInterval
+==========
+*/
+
 void Boe_RespawnInterval(int argNum, gentity_t *ent, qboolean shortCmd){
 	int number;
 	number = GetArgument(argNum);
@@ -109,6 +157,12 @@ void Boe_RespawnInterval(int argNum, gentity_t *ent, qboolean shortCmd){
 	Boe_adminLog (va("%s - RESPAWN INTERVAL %i", ent->client->pers.cleanName, number)) ;
 	trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Respawn interval changed to %i by %s.\n\"", number, ent->client->pers.netname));
 }
+
+/*
+==========
+Boe_Timelimit
+==========
+*/
 
 void Boe_TimeLimit(int argNum, gentity_t *ent, qboolean shortCmd){
 	int number;
@@ -121,6 +175,12 @@ void Boe_TimeLimit(int argNum, gentity_t *ent, qboolean shortCmd){
 	Boe_adminLog (va("%s - TIMELIMIT %i", ent->client->pers.cleanName, number)) ;
 }
 
+/*
+==========
+Boe_ScoreLimit
+==========
+*/
+
 void Boe_ScoreLimit(int argNum, gentity_t *ent, qboolean shortCmd){
 	int number;
 	number = GetArgument(argNum);
@@ -131,6 +191,12 @@ void Boe_ScoreLimit(int argNum, gentity_t *ent, qboolean shortCmd){
 	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sS%sc%so%sr%se%slimit %i!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, number));
 	Boe_adminLog (va("%s - SCORELIMIT %i", ent->client->pers.cleanName, number)) ;
 }
+
+/*
+==========
+Boe_NoNades
+==========
+*/
 
 void Boe_NoNades(int argNum, gentity_t *ent, qboolean shortCmd){
 	int i;
@@ -169,6 +235,12 @@ void Boe_NoNades(int argNum, gentity_t *ent, qboolean shortCmd){
 	}
 }
 
+/*
+==========
+Boe_NoLower
+==========
+*/
+
 void Boe_NoLower(int argNum, gentity_t *ent, qboolean shortCmd){
 	if(level.nolower1 == qtrue){
 		level.nolower1 = qfalse;
@@ -194,6 +266,12 @@ void Boe_NoLower(int argNum, gentity_t *ent, qboolean shortCmd){
 	}
 }
 
+/*
+==========
+Boe_MapRestart
+==========
+*/
+
 void Boe_MapRestart(int argNum, gentity_t *ent, qboolean shortCmd){
 	trap_SendConsoleCommand( EXEC_APPEND, va("map_restart 5\n"));
 	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp %sr%se%sstart!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
@@ -201,6 +279,12 @@ void Boe_MapRestart(int argNum, gentity_t *ent, qboolean shortCmd){
 	trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Map restarted by %s.\n\"", ent->client->pers.netname));
 	Boe_adminLog (va("%s - MAP RESTART", ent->client->pers.cleanName)) ;
 }
+
+/*
+==========
+Boe_Kick
+==========
+*/
 
 void Boe_Kick(int argNum, gentity_t *ent, qboolean shortCmd){
 	int id;
@@ -222,6 +306,12 @@ void Boe_Kick(int argNum, gentity_t *ent, qboolean shortCmd){
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was kicked by %s.\n\"", g_entities[id].client->pers.netname,ent->client->pers.netname));
 	}
 }
+
+/*
+==========
+Boe_Add_Clan_Member
+==========
+*/
 
 void Boe_Add_Clan_Member(int argNum, gentity_t *adm, qboolean shortCmd)
 {
@@ -267,7 +357,7 @@ void Boe_Add_Clan_Member(int argNum, gentity_t *adm, qboolean shortCmd)
 }
 /*
 ======================
-RPM_Remove_Clan_Member
+Boe_Remove_Clan_Member
 ======================
 */
 
@@ -2186,6 +2276,12 @@ void Boe_dev_f ( gentity_t *ent )
 	}
 }
 
+/*
+==========
+Boe_Swapteams
+==========
+*/
+
 void Boe_SwapTeams(gentity_t *adm)
 {
 	int		i;
@@ -2291,17 +2387,10 @@ void Boe_SwapTeams(gentity_t *adm)
 	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sS%sw%sa%sp %st%se%sams!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color4.string, server_color5.string, server_color6.string));
 	trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Swap teams by %s.\n\"", ent->client->pers.netname));
 
-
-	// BOE FIX ME
-
-	///RxCxW - 02.26.05 - 02:59am #adminLog	
-	//if(adm && adm->client) {
-		//trap_SendServerCommand( -1, va("print \"^3Swap Teams ^7- ^3%s\n\"", adm->client->pers.netname));
-		//SC_adminLog (va("%s - SwapTeams", adm->client->pers.cleanName )) ;
-	//} else	{
-		//trap_SendServerCommand( -1, va("print \"^3Swap Teams ^7- ^6Admin\n\""));
-		//SC_adminLog (va("%s - SwapTeams", "RCON" )) ;
-	//}
-	///End  - 02.26.05 - 02:59am
+	if(adm && adm->client) { // Admin Action
+		Boe_adminLog (va("%s - SwapTeams", adm->client->pers.cleanName )) ;
+	} else{ // Rcon must've done it. ;]
+		Boe_adminLog (va("%s - SwapTeams", "RCON" )) ;
+	}
 	///CalculateRanks();
 }
