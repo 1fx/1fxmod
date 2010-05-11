@@ -30,7 +30,7 @@ admCmd_t AdminCommands[] =
 	{"!ro ", "runover", &g_runover.integer, &Boe_Runover},
 	{"!r ", "respawn", &g_respawn.integer, &Boe_Respawn},
 	{"!rs ", "respawn", &g_respawn.integer, &Boe_Respawn}, // this is how we add synonyms
-	{"!mr ", "maprestart", &g_maprestart.integer, &Boe_MapRestart},
+	{"!mr", "maprestart", &g_maprestart.integer, &Boe_MapRestart},
 	{"!b ", "burn", &g_burn.integer, &Boe_Burn},
 	{"!m ", "mute", &g_mute.integer, &Boe_XMute},
 	{"!um ", "unmute", &g_mute.integer, &Boe_UnMute},
@@ -41,7 +41,7 @@ admCmd_t AdminCommands[] =
 	{"!nn", "nonades", &g_nades.integer, &Boe_NoNades},
 	{"!sl ", "scorelimit", &g_sl.integer, &Boe_ScoreLimit},
 	{"!tl ", "timelimit", &g_tl.integer, &Boe_TimeLimit},
-	{"!ri", "respawninterval", &g_ri.integer, &Boe_RespawnInterval},
+	{"!ri ", "respawninterval", &g_ri.integer, &Boe_RespawnInterval},
 	{"!rd", "realdamage", &g_damage.integer, &Boe_RealDamage},
 	{"!nd", "normaldamage", &g_damage.integer, &Boe_NormalDamage},
 	{"!gr", "gametyperestart", &g_gr.integer, &Boe_GametypeRestart},
@@ -49,7 +49,7 @@ admCmd_t AdminCommands[] =
 	{"!rc ", "removeclan", &g_clan.integer, &Boe_Remove_Clan_Member},
 	{"!rcl ", "removeclan", &g_clan.integer, &Boe_Remove_Clan_Member},
 	{"!3rd", "3rd", &g_clan.integer, &Boe_Third},
-	{"!cm ", "compmode", &g_clan.integer, &Boe_CompMode}
+	{"!cm", "compmode", &g_clan.integer, &Boe_CompMode}
 };
 // End
 
@@ -68,290 +68,19 @@ void trap_SendServerCommand( int clientNum, const char *text ) {
 } 
 
 int FormatDamage(int damage){ // lol fix me au3 script ftw
-	if(damage >= 100 && damage < 200){
-		damage = 100;
-	}else if(damage >= 200 && damage < 300){
-		damage = 200;
-	}else if(damage >= 300 && damage < 400){
-		damage = 300;
-	}else if(damage >= 400 && damage < 500){
-		damage = 400;
-	}else if(damage >= 500 && damage < 600){
-		damage = 500;
-	}else if(damage >= 600 && damage < 700){
-		damage = 600;
-	}else if(damage >= 700 && damage < 800){
-		damage = 700;
-	}else if(damage >= 800 && damage < 900){
-		damage = 800;
-	}else if(damage >= 900 && damage < 1000){
-		damage = 900;
-	}else if(damage >= 1000 && damage < 1100){
-		damage = 1000;
-	}else if(damage >= 1100 && damage < 1200){
-		damage = 1100;
-	}else if(damage >= 1200 && damage < 1300){
-		damage = 1200;
-	}else if(damage >= 1300 && damage < 1400){
-		damage = 1300;
-	}else if(damage >= 1400 && damage < 1500){
-		damage = 1400;
-	}else if(damage >= 1500 && damage < 1600){
-		damage = 1500;
-	}else if(damage >= 1600 && damage < 1700){
-		damage = 1600;
-	}else if(damage >= 1700 && damage < 1800){
-		damage = 1700;
-	}else if(damage >= 1800 && damage < 1900){
-		damage = 1800;
-	}else if(damage >= 1900 && damage < 2000){
-		damage = 1900;
-	}else if(damage >= 2000 && damage < 2100){
-	damage = 2000;
-}
-else if(damage >= 2100 && damage < 2200){
-	damage = 2100;
-}
-else if(damage >= 2200 && damage < 2300){
-	damage = 2200;
-}
-else if(damage >= 2300 && damage < 2400){
-	damage = 2300;
-}
-else if(damage >= 2400 && damage < 2500){
-	damage = 2400;
-}
-else if(damage >= 2500 && damage < 2600){
-	damage = 2500;
-}
-else if(damage >= 2600 && damage < 2700){
-	damage = 2600;
-}
-else if(damage >= 2700 && damage < 2800){
-	damage = 2700;
-}
-else if(damage >= 2800 && damage < 2900){
-	damage = 2800;
-}
-else if(damage >= 2900 && damage < 3000){
-	damage = 2900;
-}
-else if(damage >= 3000 && damage < 3100){
-	damage = 3000;
-}
-else if(damage >= 3100 && damage < 3200){
-	damage = 3100;
-}
-else if(damage >= 3200 && damage < 3300){
-	damage = 3200;
-}
-else if(damage >= 3300 && damage < 3400){
-	damage = 3300;
-}
-else if(damage >= 3400 && damage < 3500){
-	damage = 3400;
-}
-else if(damage >= 3500 && damage < 3600){
-	damage = 3500;
-}
-else if(damage >= 3600 && damage < 3700){
-	damage = 3600;
-}
-else if(damage >= 3700 && damage < 3800){
-	damage = 3700;
-}
-else if(damage >= 3800 && damage < 3900){
-	damage = 3800;
-}
-else if(damage >= 3900 && damage < 4000){
-	damage = 3900;
-}
-else if(damage >= 4000 && damage < 4100){
-	damage = 4000;
-}
-else if(damage >= 4100 && damage < 4200){
-	damage = 4100;
-}
-else if(damage >= 4200 && damage < 4300){
-	damage = 4200;
-}
-else if(damage >= 4300 && damage < 4400){
-	damage = 4300;
-}
-else if(damage >= 4400 && damage < 4500){
-	damage = 4400;
-}
-else if(damage >= 4500 && damage < 4600){
-	damage = 4500;
-}
-else if(damage >= 4600 && damage < 4700){
-	damage = 4600;
-}
-else if(damage >= 4700 && damage < 4800){
-	damage = 4700;
-}
-else if(damage >= 4800 && damage < 4900){
-	damage = 4800;
-}
-else if(damage >= 4900 && damage < 5000){
-	damage = 4900;
-}
-else if(damage >= 5000 && damage < 5100){
-	damage = 5000;
-}
-else if(damage >= 5100 && damage < 5200){
-	damage = 5100;
-}
-else if(damage >= 5200 && damage < 5300){
-	damage = 5200;
-}
-else if(damage >= 5300 && damage < 5400){
-	damage = 5300;
-}
-else if(damage >= 5400 && damage < 5500){
-	damage = 5400;
-}
-else if(damage >= 5500 && damage < 5600){
-	damage = 5500;
-}
-else if(damage >= 5600 && damage < 5700){
-	damage = 5600;
-}
-else if(damage >= 5700 && damage < 5800){
-	damage = 5700;
-}
-else if(damage >= 5800 && damage < 5900){
-	damage = 5800;
-}
-else if(damage >= 5900 && damage < 6000){
-	damage = 5900;
-}
-else if(damage >= 6000 && damage < 6100){
-	damage = 6000;
-}
-else if(damage >= 6100 && damage < 6200){
-	damage = 6100;
-}
-else if(damage >= 6200 && damage < 6300){
-	damage = 6200;
-}
-else if(damage >= 6300 && damage < 6400){
-	damage = 6300;
-}
-else if(damage >= 6400 && damage < 6500){
-	damage = 6400;
-}
-else if(damage >= 6500 && damage < 6600){
-	damage = 6500;
-}
-else if(damage >= 6600 && damage < 6700){
-	damage = 6600;
-}
-else if(damage >= 6700 && damage < 6800){
-	damage = 6700;
-}
-else if(damage >= 6800 && damage < 6900){
-	damage = 6800;
-}
-else if(damage >= 6900 && damage < 7000){
-	damage = 6900;
-}
-else if(damage >= 7000 && damage < 7100){
-	damage = 7000;
-}
-else if(damage >= 7100 && damage < 7200){
-	damage = 7100;
-}
-else if(damage >= 7200 && damage < 7300){
-	damage = 7200;
-}
-else if(damage >= 7300 && damage < 7400){
-	damage = 7300;
-}
-else if(damage >= 7400 && damage < 7500){
-	damage = 7400;
-}
-else if(damage >= 7500 && damage < 7600){
-	damage = 7500;
-}
-else if(damage >= 7600 && damage < 7700){
-	damage = 7600;
-}
-else if(damage >= 7700 && damage < 7800){
-	damage = 7700;
-}
-else if(damage >= 7800 && damage < 7900){
-	damage = 7800;
-}
-else if(damage >= 7900 && damage < 8000){
-	damage = 7900;
-}
-else if(damage >= 8000 && damage < 8100){
-	damage = 8000;
-}
-else if(damage >= 8100 && damage < 8200){
-	damage = 8100;
-}
-else if(damage >= 8200 && damage < 8300){
-	damage = 8200;
-}
-else if(damage >= 8300 && damage < 8400){
-	damage = 8300;
-}
-else if(damage >= 8400 && damage < 8500){
-	damage = 8400;
-}
-else if(damage >= 8500 && damage < 8600){
-	damage = 8500;
-}
-else if(damage >= 8600 && damage < 8700){
-	damage = 8600;
-}
-else if(damage >= 8700 && damage < 8800){
-	damage = 8700;
-}
-else if(damage >= 8800 && damage < 8900){
-	damage = 8800;
-}
-else if(damage >= 8900 && damage < 9000){
-	damage = 8900;
-}
-else if(damage >= 9000 && damage < 9100){
-	damage = 9000;
-}
-else if(damage >= 9100 && damage < 9200){
-	damage = 9100;
-}
-else if(damage >= 9200 && damage < 9300){
-	damage = 9200;
-}
-else if(damage >= 9300 && damage < 9400){
-	damage = 9300;
-}
-else if(damage >= 9400 && damage < 9500){
-	damage = 9400;
-}
-else if(damage >= 9500 && damage < 9600){
-	damage = 9500;
-}
-else if(damage >= 9600 && damage < 9700){
-	damage = 9600;
-}
-else if(damage >= 9700 && damage < 9800){
-	damage = 9700;
-}
-else if(damage >= 9800 && damage < 9900){
-	damage = 9800;
-}
-else if(damage >= 9900 && damage < 10000){
-	damage = 9900;
-}
-else if(damage >= 10000 && damage < 10100){
-	damage = 10000;
-}
-else{
-	damage = 10000;
-}
+	char test[10];
+	char *test1;
+	strcpy(test, va("%i", damage));
+	if(damage >= 100 && damage < 1000){
+	test1 = va("%c00", test[0]);
+	damage = atoi(test1);
+	}else if(damage >= 1000 && damage < 10000){
+	test1 = va("%c%c00", test[0], test[1]);
+	damage = atoi(test1);
+	}else if(damage >= 10000 && damage < 100000){
+	test1 = va("%c%c%c00", test[0], test[1], test[2]);
+	damage = atoi(test1);
+	}
 return damage/10;
 }
 
