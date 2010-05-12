@@ -1409,17 +1409,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 	// Make sure they are unlinked
 	trap_UnlinkEntity ( ent );
 	G_LogPrintf( "Client connected\n" );
-	
-	// TEST: IF THIS LAGS A LOT (be sure it's this and not the known list lmao), you can remove it for now.
-	// Boe!Man 12/30/09: Checking for Admin. --- Update 1/4/10 -- 
-	// Boe!Man 5/5/10:   Whenever a map restarts, or an Admin stays in spec, his Admin will not return. Putting this at ClientConnect as well simply fixes this.
-	if(!ent->client->sess.fileChecked && !(ent->r.svFlags & SVF_BOT)){
-			client->sess.admin = Boe_NameListCheck ( clientNum, ent->client->pers.boe_id, g_adminfile.string, NULL, qfalse, qtrue, qfalse, qfalse);
-			if(!client->sess.clanMember)
-				client->sess.clanMember = Boe_NameListCheck (clientNum, ent->client->pers.boe_id, g_clanfile.string, NULL, qfalse, qfalse, qfalse, qfalse);
-			// Boe!Man 5/12/10: We do not mark the file as read, a.k.a., it gets read again when clientinfouserchanged is called.
-			//ent->client->sess.fileChecked = qtrue;
-	}
+
 	return NULL;
 }
 
