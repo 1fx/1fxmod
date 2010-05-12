@@ -1445,75 +1445,39 @@ If one or more players have not acknowledged the continue, the game will
 wait 10 seconds before going on.
 =================
 */
-void CheckIntermissionExit( void ) 
+void CheckIntermissionExit( void )
 {
-	int			ready, notReady;
-	int			i;
-	gclient_t	*cl;
-	int			readyMask;
+//Ryan
 
-	// see which players are ready
-	ready = 0;
-	notReady = 0;
-	readyMask = 0;
-	for (i=0 ; i< g_maxclients.integer ; i++) {
-		cl = level.clients + i;
-		if ( cl->pers.connected != CON_CONNECTED ) {
-			continue;
-		}
-		if ( g_entities[cl->ps.clientNum].r.svFlags & SVF_BOT ) {
-			continue;
-		}
-
-		if ( cl->readyToExit ) {
-			ready++;
-			if ( i < 16 ) {
-				readyMask |= 1 << i;
-			}
-		} else {
-			notReady++;
-		}
-	}
-
-	// copy the readyMask to each player's stats so
-	// it can be displayed on the scoreboard
-	for (i=0 ; i< g_maxclients.integer ; i++) {
-		cl = level.clients + i;
-		if ( cl->pers.connected != CON_CONNECTED ) {
-			continue;
-		}
-		cl->ps.stats[STAT_CLIENTS_READY] = readyMask;
-	}
-
-	// never exit in less than five seconds
-	if ( level.time < level.intermissiontime + 5000 ) {
-		return;
-	}
-
-	// if nobody wants to go, clear timer
-	if ( !ready ) {
-		level.readyToExit = qfalse;
-		return;
-	}
-
-	// if everyone wants to go, go now
-	if ( !notReady ) {
-		ExitLevel();
-		return;
-	}
-
-	// the first person to ready starts the ten second timeout
-	if ( !level.readyToExit ) {
-		level.readyToExit = qtrue;
+	if ( !level.exitTime )
+	{
 		level.exitTime = level.time;
 	}
 
-	// if we have waited ten seconds since at least one player
-	// wanted to exit, go ahead
-	if ( level.time < level.exitTime + 10000 ) {
+	if ( level.time < level.exitTime + 5000 )
+	{
 		return;
 	}
 
+	if(!level.awardTime)
+	{
+		RPM_Awards();
+		level.awardTime = level.time;
+		level.lastAwardSent = level.time;
+		return;
+	}
+
+	if(level.awardTime && (level.time > level.lastAwardSent + 3000))
+	{
+		RPM_Awards();
+		level.lastAwardSent = level.time;
+	}
+
+	if(level.time < level.awardTime + 15000)
+	{
+		return;
+	}
+	//RPM_LogAwards();
 	ExitLevel();
 }
 
@@ -1578,7 +1542,7 @@ void CheckExitRules( void )
 	}
 
 	// check for sudden death
-	if ( ScoreIsTied() ) 
+	if ( ScoreIsTied() ) // HENK FIX ME -> Add allow tie variable? 
 	{
 		// always wait for sudden death
 		return;

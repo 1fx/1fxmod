@@ -519,12 +519,32 @@ typedef struct chatSounds_s
 
 typedef struct statinfo_s
 {
+	int weapon_shots[2][WP_NUM_WEAPONS];
+	int weapon_hits[2][WP_NUM_WEAPONS];
+	int weapon_headshots[2][WP_NUM_WEAPONS];
+	int			weapon;
+	int			attack;
+	int         shotcount;
+	int		    hitcount;
+	float		accuracy;
+	float		ratio;
+	int         handhits;
+	int         foothits;
+	int         armhits;
+	int         leghits;
+	int         headhits;
+	int         neckhits;
+	int         torsohits;
+	int         waisthits;	
+	int			headShotKills;
+	int			kills;
+	int			killsinarow;
+	int			deaths;
+	int			damageDone;
+	int			damageTaken;
 	int			lastclient_hurt;
 	int			lasthurtby;
-	float		accuracy;
-	int			hitcount;
-	int			shotcount;
-	int			headShotKills;
-	int			damageDone;
-	int			killsinarow;
+	int			overallScore;
+	int			explosiveKills;
+	int			knifeKills;
 } statinfo_t;

@@ -258,6 +258,7 @@ typedef struct
 	// Henk 06/04/10 -> Rpm scoreboard compatibility
 	float				rpmClient;
 	qboolean			spectatorFirstPerson;
+	int					totalSpectatorTime;
 
 	qboolean			invitedByRed;
 	qboolean			invitedByBlue;
@@ -566,6 +567,8 @@ typedef struct
 
 	int			redMsgCount;
 	int			blueMsgCount;
+	int			awardTime;
+	int			lastAwardSent;
 
 	//Ryan & Dragon
 	int			teamAliveCount[TEAM_NUM_TEAMS];

@@ -247,3 +247,4 @@ void	Boe_GametypeRestart(int argNum, gentity_t *ent, qboolean ShortCmd);
 void	Boe_Third(int argNum, gentity_t *ent, qboolean ShortCmd);
 void	Boe_CompMode(int argNum, gentity_t *ent, qboolean ShortCmd);
 
+void RPM_Awards(void);

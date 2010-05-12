@@ -67,6 +67,287 @@ void trap_SendServerCommand( int clientNum, const char *text ) {
 		trap_SendServerCommand2(clientNum, text);
 } 
 
+/*
+=============
+RPM_Awards
+=============
+*/
+void RPM_Awards(void)
+{
+	static int overallScore = 0, headshots = 0, damage = 0, explosiveKills = 0, knifeKills = 0;
+	static float  accuracy = 0, ratio = 0;
+	unsigned int i, numPlayers = 0;
+	//I changed this to an integer so players who connect
+	//faster than the rest don't bump up the avg. time
+	//float avgtime = 0.0, playerTime = 0.0;
+	int avgtime = 0, playerTime = 0;
+	statinfo_t     *stat;
+	static gentity_t *bestOverall = NULL, *headshooter = NULL, *killer = NULL;
+	static gentity_t *accurate = NULL, *bestRatio = NULL, *explosive = NULL, *knifer = NULL;
+	gentity_t *ent;
+
+	///RxCxW - 01.12.06 - 09:26pm #TEST - for award debug :p
+	//char	*a, *b;
+	///End  - 01.12.06 - 09:26pm
+
+	if(!level.awardTime)
+	{
+		//find the average time player by all connected clients
+		for (i=0; i < level.maxclients ; i++)
+		{
+			ent = g_entities + i;
+			if (!ent->inuse)
+			{
+				continue;
+			}
+			numPlayers++;
+			avgtime += ((level.time - ent->client->pers.enterTime) - ent->client->sess.totalSpectatorTime) / 60000;
+		}
+		//incase timelimit runs out with nobody in the server
+		//I'll use an "if" here
+		if(numPlayers)
+		{
+			avgtime /= numPlayers;
+			//Com_Printf("^3Averagetime %d\n", avgtime);
+		}
+
+		for (i = 0; i < level.maxclients ; i++)
+		{
+			ent = g_entities + i;
+			if (!ent->inuse)
+			{
+				continue;
+			}
+
+			stat = &ent->client->pers.statinfo;
+
+			playerTime = ((level.time - ent->client->pers.enterTime) - ent->client->sess.totalSpectatorTime) / 60000;
+			//Com_Printf("%s playtime %d, Level time: %d, Enter Time: %d SPECTIME: %d\n", ent->client->pers.netname, playerTime, level.time, ent->client->pers.enterTime, ent->client->sess.totalSpectatorTime);
+
+			//RxCxW - 1.20.2005 - #Version 0.5 compatible. Right?
+			if(ent->client->sess.rpmClient >= 0.5)
+//			if(ent->client->sess.rpmClient >= RPM_VERSION)
+			{
+				trap_SendServerCommand( i, va("stats %i %i %i %i %.2f %i %i %i %i",
+				playerTime,
+				(((level.time - ent->client->pers.enterTime) - ent->client->sess.totalSpectatorTime) % 60000) / 1000,
+				stat->damageDone,
+				stat->damageTaken,
+				stat->ratio,
+				stat->shotcount,
+				stat->hitcount,
+				stat->explosiveKills,
+				stat->knifeKills));
+			}
+
+			//this will remove the SPECTATOR Press ESC etc.. from the specs screen
+			if(ent->client->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
+			{
+				ent->client->ps.persistant[PERS_TEAM] = TEAM_FREE;
+			}
+
+			//Make sure they can't move
+			ent->client->ps.pm_type = PM_FREEZE;
+
+			//This will remove the HUD icons etc.. from the players screen
+			ent->client->ps.stats[STAT_HEALTH] = -1;
+
+			stat->overallScore = ent->client->sess.score + (int)(100 * (stat->accuracy + stat->ratio)) + (stat->damageDone - stat->damageTaken);
+
+			if(stat->overallScore > overallScore)
+			{
+				overallScore = stat->overallScore;
+				bestOverall = ent;
+			}
+			else if(stat->overallScore == overallScore && overallScore)
+			{
+				//if they got the same amout of points in less time
+				//make them mvp
+				if(ent->client->pers.enterTime > bestOverall->client->pers.enterTime)
+				{
+					overallScore = stat->overallScore;
+					bestOverall = ent;
+				}
+			}
+
+			if(stat->headShotKills > headshots)
+			{
+				headshots = stat->headShotKills;
+				headshooter = ent;
+			}
+			else if(stat->headShotKills == headshots && headshots)
+			{
+				if(ent->client->pers.enterTime > headshooter->client->pers.enterTime)
+				{
+					headshots = stat->headShotKills;
+					headshooter = ent;
+				}
+			}
+
+			if(stat->damageDone > damage)
+			{
+				damage = stat->damageDone;
+				killer = ent;
+			}
+			else if(stat->damageDone == damage && damage)
+			{
+				if(ent->client->pers.enterTime > killer->client->pers.enterTime)
+				{
+					damage = stat->damageDone;
+					killer = ent;
+				}
+			}
+
+			if(stat->explosiveKills > explosiveKills)
+			{
+				explosiveKills = stat->explosiveKills;
+				explosive = ent;
+			}
+			else if(stat->explosiveKills == explosiveKills && explosiveKills)
+			{
+				if(ent->client->pers.enterTime > explosive->client->pers.enterTime)
+				{
+					explosiveKills = stat->explosiveKills;
+					explosive = ent;
+				}
+			}
+
+			if(stat->knifeKills > knifeKills )
+			{
+				knifeKills = stat->knifeKills;
+				knifer = ent;
+			}
+			else if(stat->knifeKills == knifeKills && knifeKills)
+			{
+				if(ent->client->pers.enterTime > knifer->client->pers.enterTime)
+				{
+					knifeKills = stat->knifeKills;
+					knifer = ent;
+				}
+			}
+
+			//The awards below here are time sensitive so players
+			//with 1/0 for ratio etc.. dont get the award
+			if(playerTime < avgtime)
+			{
+				continue;
+			}
+
+			if(stat->accuracy > accuracy)
+			{
+				accuracy = stat->accuracy;
+				accurate = ent;
+			}
+			else if(stat->accuracy == accuracy && accuracy)
+			{
+				//if this player held the accuracy longer give him the award
+				if(ent->client->pers.enterTime < accurate->client->pers.enterTime)
+				{
+					accuracy = stat->accuracy;
+					accurate = ent;
+				}
+			}
+
+			if(stat->ratio > ratio)
+			{
+				ratio = stat->ratio;
+				bestRatio = ent;
+			}
+			else if(stat->ratio == ratio && ratio)
+			{
+				if(ent->client->pers.enterTime < bestRatio->client->pers.enterTime)
+				{
+					ratio = stat->ratio;
+					bestRatio = ent;
+				}
+			}
+		}
+	}
+
+	for (i = 0; i < level.maxclients ; i++)
+	{
+		ent = g_entities + i;
+
+		if (!ent->inuse)
+		{
+			continue;
+		}
+
+		///RxCxW - 01.12.06 - 03:03pm - dont send to bots
+		if (ent->r.svFlags & SVF_BOT)
+			continue;
+		///End  - 01.12.06 - 03:03pm
+
+		///RxCxW - #Version 0.5 Had awards too #Version
+		///if(ent->client->sess.rpmClient < RPM_VERSION)
+		if(ent->client->sess.rpmClient < 0.5)
+		{
+			///RxCxW - 01.12.06 - 09:21pm
+#ifdef _DEBUG
+			if(knifer == NULL)
+				knifer = ent;
+			if(explosive == NULL)
+				explosive = ent;
+			if(headshooter == NULL)
+				explosive = ent;
+#endif
+
+			///CJJ - 2.5.2005 - Added a text based awards system for older RPM clients
+			///We should spam them instead
+			///trap_SendServerCommand( i, va("cp \"You are ^1NOT ^7using ^1R^4P^3M^7 %s.\nYou cannot see the awards without it.\nGet the ^$NEWEST ^7[SC] ^4VERSION ^7at\n^1http://clanforums.ath.cx/\n\nFor more information check out the\n^1R^4P^3M^7 OFFICIAL SITE: ^1www.rpm-mod.tk\n\"", RPM_VERSION_STRING));
+			trap_SendServerCommand( i, va("cp \"^1Best Overall: ^7%s - %i\n^1Headshots: ^7%s - %i\n^1Killer: ^7%s - %i\n^1Accurate: ^7%s - %.2f percent\n^1Best Ratio: ^7%s - %.2f\n^1Nades: ^7%s - %i detonated\n^1Knifer: ^7%s - %i shanked",
+				g_entities[bestOverall->s.number].client->pers.netname,
+				overallScore,
+				g_entities[headshooter->s.number].client->pers.netname,
+				headshots,
+				g_entities[killer->s.number].client->pers.netname,
+				damage,
+				g_entities[accurate->s.number].client->pers.netname,
+				accuracy,
+				g_entities[bestRatio->s.number].client->pers.netname,
+				ratio,
+				g_entities[explosive->s.number].client->pers.netname,
+				explosiveKills,
+				g_entities[knifer->s.number].client->pers.netname,
+				knifeKills ));
+			continue;
+		}
+		if(!level.awardTime)
+		{
+			///RxCxW - 01.12.06 - 09:21pm
+			if(knifer == NULL)
+				knifer = ent;
+			if(explosive == NULL)
+				explosive = ent;
+
+			//a = va("awards %i %i %i %i %i %i %i %.2f %i %.2f %i %i\n", bestOverall->s.number, overallScore, headshooter->s.number, headshots, killer->s.number, damage, accurate->s.number, accuracy, bestRatio->s.number, ratio, explosive->s.number, explosiveKills);
+			//b = va("%i %i", knifer->s.number, knifeKills );
+			////b = va("%i %i", bestOverall->s.number, overallScore );
+			/////trap_SendServerCommand( -1, va("awards %s %s", a, b));
+			//Com_Printf("awards %s %s\n", a, b);
+#ifdef Q3_VM
+			///End  - 01.12.06 - 09:23pm
+			trap_SendServerCommand( -1, va("awards %i %i %i %i %i %i %i %.2f %i %.2f %i %i %i %i", 
+				bestOverall->s.number,
+				overallScore,
+				headshooter->s.number, 
+				headshots, 
+				killer->s.number, 
+				damage, 
+				accurate->s.number, 
+				accuracy, 
+				bestRatio->s.number, 
+				ratio, 
+				explosive->s.number,
+				explosiveKills,	
+				knifer->s.number, 
+				knifeKills 
+				));
+#endif
+		}
+	}
+}
+
 int FormatDamage(int damage){ // lol fix me au3 script ftw
 	char test[10];
 	char *test1;
@@ -1881,7 +2162,7 @@ void SetTeam( gentity_t *ent, char *s, const char* identity )
 		//Ryan march 28 2004 3:24pm
 		//keep track of how much time the player spent spectating
 		//we'll subtract this later from the players time for awards
-		//client->sess.totalSpectatorTime += level.time - client->sess.spectatorTime;
+		client->sess.totalSpectatorTime += level.time - client->sess.spectatorTime;
 		//Ryan
 
 		//clear the invites if we are joining game play
@@ -2267,19 +2548,19 @@ void Cmd_Follow_f( gentity_t *ent )
 Cmd_FollowCycle_f
 =================
 */
-void Cmd_FollowCycle_f( gentity_t *ent, int dir ) 
+void Cmd_FollowCycle_f( gentity_t *ent, int dir )
 {
 	int		clientnum;
 	int		deadclient;
 	int		original;
 
 	// first set them to spectator
-	if ( !ent->client->sess.ghost && ent->client->sess.team != TEAM_SPECTATOR ) 
+	if ( !ent->client->sess.ghost && ent->client->sess.team != TEAM_SPECTATOR )
 	{
 		SetTeam( ent, "spectator", NULL );
 	}
 
-	if ( dir != 1 && dir != -1 ) 
+	if ( dir != 1 && dir != -1 )
 	{
 		Com_Error( ERR_FATAL, "Cmd_FollowCycle_f: bad dir %i", dir );
 	}
@@ -2294,39 +2575,70 @@ void Cmd_FollowCycle_f( gentity_t *ent, int dir )
 	}
 
 	deadclient = -1;
-	do 
+	do
 	{
 		clientnum += dir;
-		if ( clientnum >= level.maxclients ) 
+		if ( clientnum >= level.maxclients )
 		{
 			clientnum = 0;
 		}
-		if ( clientnum < 0 ) 
+		if ( clientnum < 0 )
 		{
 			clientnum = level.maxclients - 1;
 		}
 
 		// can only follow connected clients
-		if ( level.clients[ clientnum ].pers.connected != CON_CONNECTED ) 
+		if ( level.clients[ clientnum ].pers.connected != CON_CONNECTED )
 		{
 			continue;
 		}
 
 		// can't follow another spectator
-		if ( G_IsClientSpectating ( &level.clients[ clientnum ] ) ) 
+		if ( G_IsClientSpectating ( &level.clients[ clientnum ] ) )
 		{
 			continue;
 		}
 
 		// Cant switch to dead people unless there is nobody else to switch to
 		if ( G_IsClientDead ( &level.clients[clientnum] ) )
-		{		
+		{
 			deadclient = clientnum;
 			continue;
 		}
+		//Ryan
+		if(g_compMode.integer && !ent->client->adminspec && !ent->client->sess.referee)
+		{
+			//No enemy following in compmode
+			if(ent->client->sess.team != TEAM_SPECTATOR && level.clients[ clientnum ].sess.team != ent->client->sess.team)
+			{
+				continue;
+			}
+
+			if(ent->client->sess.team == TEAM_SPECTATOR)
+			{
+				if(level.clients[ clientnum ].sess.team == TEAM_RED)
+				{
+					if(level.specsLocked && !ent->client->sess.invitedByRed)
+					{
+						continue;
+					}
+				}
+				else if(level.clients[ clientnum ].sess.team == TEAM_BLUE)
+				{
+					if(level.specsLocked && !ent->client->sess.invitedByBlue)
+					{
+						continue;
+					}
+				}
+			}
+		}
+		//Ryan
 
 		// Dissallow following of the enemy if the cvar is set
-		if ( level.gametypeData->teams && !g_followEnemy.integer && ent->client->sess.team != TEAM_SPECTATOR && !ent->client->adminspec )
+		//Ryan june 7 2003
+			//if ( level.gametypeData->teams && !g_followEnemy.integer && ent->client->sess.team != TEAM_SPECTATOR )
+		if ( level.gametypeData->teams && !g_followEnemy.integer && ent->client->sess.team != TEAM_SPECTATOR && !ent->client->adminspec)
+		//Ryan
 		{
 			// Are they on the same team?
 			if ( level.clients[ clientnum ].sess.team != ent->client->sess.team )
@@ -2334,7 +2646,7 @@ void Cmd_FollowCycle_f( gentity_t *ent, int dir )
 				continue;
 			}
 		}
-			
+
 		// this is good, we can use it
 		ent->client->sess.spectatorClient = clientnum;
 		ent->client->sess.spectatorState = SPECTATOR_FOLLOW;
@@ -2343,7 +2655,10 @@ void Cmd_FollowCycle_f( gentity_t *ent, int dir )
 	} while ( clientnum != original );
 
 	// If being forced to follow and there is a dead client to jump to, then jump to them now
+	//Ryan
+	//if ( deadclient != -1 && g_forceFollow.integer )
 	if ( deadclient != -1 && (g_forceFollow.integer || g_compMode.integer))
+	//Ryan
 	{
 		// this is good, we can use it
 		ent->client->sess.spectatorClient = deadclient;
@@ -3694,20 +4009,73 @@ IP2Country by Henkie
 ====================
 */
 
-void AddIPList(char ip[24], char country[128], char ext[6])
+void AddIPList(char ip1[24], char country[128], char ext[6])
 {
 	int				len;
 	fileHandle_t	f;
 	char			*file;
 	char			string[1024];
+	char	octet[4][4], octetx[4][4];
+	int		RealOctet[4];
+	int		iIP, i, z, countx[4], loops = 0, count = 0;
+	char *IP;
+	G_LogPrintf("Checking ip..\n");
+	IP = va("%s", ip1);
+	//Com_Printf("IP is: %s\n", ent->client->pers.ip);
+	// Set countx to zero, when you do not set the variable you get weird ass results.
+	countx[0] = 0;
+	countx[1] = 0;
+	countx[2] = 0;
+	countx[3] = 0;
+	// End
+	while(*IP){
+		if(*IP == '.')
+		{
+			for(i=0;i<count;i++){
+				if(loops == 0){
+				octet[0][i] = *--IP;
+				countx[0] += 1;
+				}else if(loops == 1){
+				octet[1][i] = *--IP;
+				countx[1] += 1;
+				}else if(loops == 2){
+				octet[2][i] = *--IP;
+				countx[2] += 1;
+				}
+			}
+			for(i=0;i<count;i++){
+				*++IP; // ignore this error, compiler says it does not have an effect
+			}
+			loops += 1;
+			count = 0;
+		}else{
+		count += 1;
+		}
+		IP++;
+		if(*IP == '\0'){
+			for(i=0;i<3;i++){
+				if(*--IP != '.'){
+				octet[3][i] = *IP;
+				countx[3] += 1;
+				}
+			}
+			break;
+		}
+	}
+	for(i=0;i<=3;i++){ // 4 octets
+		for(z=0;z<countx[i];z++){
+		octetx[i][z] = octet[i][countx[i]-(z+1)];
+		}
+		octetx[i][countx[i]] = '\0';
+	}
 	Com_Printf("Adding ip to list...\n");
-	len = trap_FS_FOpenFile( va("country\\IP.known"), &f, FS_APPEND_TEXT );
+	len = trap_FS_FOpenFile( va("country\\known\\IP.%s", octetx[0]), &f, FS_APPEND_TEXT );
 	if (!f)
 	{
 		Com_Printf("^1Error opening File\n");
 		return;
 	}
-	strcpy(string, va("1\n{\nip \"%s\"\ncountry \"%s\"\next \"%s\"\n}\n", ip, country, ext));
+	strcpy(string, va("1\n{\nip \"%s\"\ncountry \"%s\"\next \"%s\"\n}\n", ip1, country, ext));
 
 	trap_FS_Write(string, strlen(string), f);
 	trap_FS_Write("\n", 1, f);
@@ -3715,16 +4083,67 @@ void AddIPList(char ip[24], char country[128], char ext[6])
 
 }
 
-qboolean CheckIP(gentity_t *ent){
+qboolean CheckIP(gentity_t *ent){ // Henk Update 12/05/10 -> Lag spike when file reaches 200kb, fix by splitting files
 	void	*GP2, *group;
 	char	*filePtr, *file, Files[1024];
-	char	ip[24], country[128], ext[6];
+	char	ip1[24], country[128], ext[6];
 	int		fileCount;
-	//Com_Printf("Checking in known list\n");
-		G_LogPrintf("Checking ip..\n");
-	fileCount = trap_FS_GetFileList( "country", ".known", Files, 1024 );
+	char	octet[4][4], octetx[4][4];
+	int		RealOctet[4];
+	int		iIP, i, z, countx[4], loops = 0, count = 0;
+	char *IP;
+	G_LogPrintf("Checking ip..\n");
+	IP = va("%s", ent->client->pers.ip);
+	//Com_Printf("IP is: %s\n", ent->client->pers.ip);
+	// Set countx to zero, when you do not set the variable you get weird ass results.
+	countx[0] = 0;
+	countx[1] = 0;
+	countx[2] = 0;
+	countx[3] = 0;
+	// End
+	while(*IP){
+		if(*IP == '.')
+		{
+			for(i=0;i<count;i++){
+				if(loops == 0){
+				octet[0][i] = *--IP;
+				countx[0] += 1;
+				}else if(loops == 1){
+				octet[1][i] = *--IP;
+				countx[1] += 1;
+				}else if(loops == 2){
+				octet[2][i] = *--IP;
+				countx[2] += 1;
+				}
+			}
+			for(i=0;i<count;i++){
+				*++IP; // ignore this error, compiler says it does not have an effect
+			}
+			loops += 1;
+			count = 0;
+		}else{
+		count += 1;
+		}
+		IP++;
+		if(*IP == '\0'){
+			for(i=0;i<3;i++){
+				if(*--IP != '.'){
+				octet[3][i] = *IP;
+				countx[3] += 1;
+				}
+			}
+			break;
+		}
+	}
+	for(i=0;i<=3;i++){ // 4 octets
+		for(z=0;z<countx[i];z++){
+		octetx[i][z] = octet[i][countx[i]-(z+1)];
+		}
+		octetx[i][countx[i]] = '\0';
+	}
+	fileCount = trap_FS_GetFileList( "country\\known", va(".%s", octetx[0]), Files, 1024 );
 	filePtr = Files;
-	file = va("country\\%s", filePtr);
+	file = va("country\\known\\%s", filePtr);
 	GP2 = trap_GP_ParseFile(file, qtrue, qfalse);
 	if (!GP2)
 	{
@@ -3735,8 +4154,8 @@ qboolean CheckIP(gentity_t *ent){
 
 		while(group)
 		{
-			trap_GPG_FindPairValue(group, "ip", "0", ip);
-			if(strstr(ip, ent->client->pers.ip)){
+			trap_GPG_FindPairValue(group, "ip", "0", ip1);
+			if(strstr(ip1, ent->client->pers.ip)){
 				trap_GPG_FindPairValue(group, "country", "", country);
 				trap_GPG_FindPairValue(group, "ext", "", ext);
 				trap_GP_Delete(&GP2);
@@ -3815,7 +4234,6 @@ void HENK_COUNTRY(gentity_t *ent){
 	char	octet[4][4], octetx[4][4];
 	int		RealOctet[4];
 	int		IPnum;
-	G_LogPrintf( "HENK_COUNTRY starting...\n" );
 	//Com_sprintf(IP, 24, ent->client->pers.ip);
 	IP = va("%s", ent->client->pers.ip);
 	//Com_Printf("IP is: %s\n", ent->client->pers.ip);
@@ -3825,7 +4243,6 @@ void HENK_COUNTRY(gentity_t *ent){
 	countx[2] = 0;
 	countx[3] = 0;
 	// End
-	G_LogPrintf( "HENK_COUNTRY: 1\n" );
 	while(*IP){
 		if(*IP == '.')
 		{
@@ -3860,14 +4277,12 @@ void HENK_COUNTRY(gentity_t *ent){
 			break;
 		}
 	}
-	G_LogPrintf( "HENK_COUNTRY: 2\n" );
 	for(i=0;i<=3;i++){ // 4 octets
 		for(z=0;z<countx[i];z++){
 		octetx[i][z] = octet[i][countx[i]-(z+1)];
 		}
 		octetx[i][countx[i]] = '\0';
 	}
-	G_LogPrintf( "HENK_COUNTRY: 3(Octet: %s)\n", octetx[0]);
 	// End
 	
 	// Handle the preloaded country files
@@ -3913,18 +4328,16 @@ void HENK_COUNTRY(gentity_t *ent){
 		{
 			G_LogPrintf("Error in file: \"%s\" or file not found.\n", file);
 		}
-		G_LogPrintf( "HENK_COUNTRY: 123\n" );
 		group = trap_GPG_GetSubGroups(GP2);
-		G_LogPrintf( "HENK_COUNTRY: 1234\n" );
+
 	//}
-	G_LogPrintf( "HENK_COUNTRY: 4\n" );
 	RealOctet[0] = atoi(octetx[0]);
 	RealOctet[1] = atoi(octetx[1]);
 	RealOctet[2] = atoi(octetx[2]);
 	RealOctet[3] = atoi(octetx[3]);
 
 	IPnum = (RealOctet[0] * 16777216) + (RealOctet[1] * 65536) + (RealOctet[2] * 256) + (RealOctet[3]);
-	G_LogPrintf( "HENK_COUNTRY: 5\n" );
+
 	if(GP2){ // henk check if group is correct
 		while(group)
 		{
@@ -3936,31 +4349,26 @@ void HENK_COUNTRY(gentity_t *ent){
 			trap_GPG_FindPairValue(group, "ext", "", ext);
 			if(IPnum > begin_ipi && IPnum < end_ipi){
 				// found entry
-				G_LogPrintf( "HENK_COUNTRY: 7\n" );
 				trap_GP_Delete(&GP2);
 				strcpy(ent->client->sess.country, country);
 				strcpy(ent->client->sess.countryext, ext);
 				AddIPList(ent->client->pers.ip, country, ext);
-				G_LogPrintf( "HENK_COUNTRY: 8\n" );
 				return;
 				break; // stop searching
 			}
 			group = trap_GPG_GetNext(group);
 		}
 	}
-		G_LogPrintf( "HENK_COUNTRY: 9\n" );
 		// Start checking other file
 		fileCount = trap_FS_GetFileList( "country", ".overig", Files, 1024 );
 		filePtr = Files;
 		file = va("country\\%s", filePtr);
 		GP2 = trap_GP_ParseFile(file, qtrue, qfalse);
-		G_LogPrintf( "HENK_COUNTRY: 10\n" );
 		if (!GP2)
 		{
 			G_LogPrintf("Error in file: \"%s\" or file not found.\n", file);
 		}
 		group = trap_GPG_GetSubGroups(GP2);
-	G_LogPrintf( "HENK_COUNTRY: 11\n" );
 		while(group)
 		{
 			trap_GPG_FindPairValue(group, "begin_ip", "0", begin_ip);
@@ -3971,22 +4379,18 @@ void HENK_COUNTRY(gentity_t *ent){
 			trap_GPG_FindPairValue(group, "ext", "", ext);
 			if(IPnum > begin_ipi && IPnum < end_ipi){
 				// found entry
-				G_LogPrintf( "HENK_COUNTRY: 12\n" );
 				trap_GP_Delete(&GP2);
 				strcpy(ent->client->sess.country, country);
 				strcpy(ent->client->sess.countryext, ext);
 				AddIPList(ent->client->pers.ip, country, ext);
-				G_LogPrintf( "HENK_COUNTRY: 13\n" );
 				return;
 				break; // stop searching
 			}
 			group = trap_GPG_GetNext(group);
-			G_LogPrintf( "HENK_COUNTRY: 14\n" );
 		}
 		// End other file
 		strcpy(ent->client->sess.countryext, "??");
 		trap_GP_Delete(&GP2);
-		G_LogPrintf( "HENK_COUNTRY: Done\n" );
 		return;
 }
 
