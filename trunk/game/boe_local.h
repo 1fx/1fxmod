@@ -10,8 +10,6 @@
 #define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod"
 #define INF_VERSION_DATE "5/12/10"
 
-//test
-
 
 // Infiltration
 // Developed by: Boe!Man
