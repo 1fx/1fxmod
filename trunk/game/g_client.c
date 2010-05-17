@@ -1050,6 +1050,13 @@ void ClientUserinfoChanged( int clientNum )
 			client->sess.rpmClient = atof(s);
 		}
 	}
+
+	s = Info_ValueForKey (userinfo, "cg_proClient");
+	if(*s)
+	{
+		// new client sends the version of the client mod eg. 0.6
+		client->sess.proClient = atof(s);
+	}
 	
 	//Ryan
 

@@ -257,6 +257,7 @@ typedef struct
 
 	// Henk 06/04/10 -> Rpm scoreboard compatibility
 	float				rpmClient;
+	float				proClient;
 	qboolean			spectatorFirstPerson;
 	int					totalSpectatorTime;
 

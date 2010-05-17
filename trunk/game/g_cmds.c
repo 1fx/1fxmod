@@ -1284,6 +1284,7 @@ void RPM_UpdateTMI(void)
 				string = va("%i%i", damage, cl->ps.weapon);	
 			}
 			
+			if(cl->sess.rpmClient > 0.6){
 			Com_sprintf (entry, sizeof(entry),
 				" %i %i %i %i %i %i %s %i %i",
 				level.sortedClients[i],
@@ -1297,6 +1298,17 @@ void RPM_UpdateTMI(void)
 				cl->sess.mute,		// Confirmed
 				cl->sess.clanMember	// Confirmed
 				);
+			}else if(cl->sess.proClient > 4.0){
+			Com_sprintf (entry, sizeof(entry),
+				" %i %i %i %i %i %i %s %i %i",
+				level.sortedClients[i],
+				cl->ps.stats[STAT_HEALTH],
+				cl->ps.stats[STAT_ARMOR],
+				cl->ps.weapon,
+				location,
+				adm
+				);
+			}
 
 		j = strlen(entry);
 
@@ -1315,6 +1327,8 @@ void RPM_UpdateTMI(void)
 
 //RxCxW - 1.20.2005 - #scoreboard #Version compatiblity
 		if(cl->sess.rpmClient > 0.6)	
+			trap_SendServerCommand(level.sortedClients[i], va("tmi %i%s", numAdded, infoString));
+		else if(cl->sess.proClient > 4.0)
 			trap_SendServerCommand(level.sortedClients[i], va("tmi %i%s", numAdded, infoString));
 	}
 }
@@ -1474,6 +1488,19 @@ void DeathmatchScoreboardMessage( gentity_t *ent )
 			g_entities[level.sortedClients[i]].s.gametypeitems,
 			g_teamkillDamageMax.integer ? 100 * cl->sess.teamkillDamage / g_teamkillDamageMax.integer : 0
 			);
+		}else if(ent->client->sess.proClient == 4.00){
+			Com_sprintf (entry, sizeof(entry),
+			" %i %i %i %i %i %i %i %i %i",
+			level.sortedClients[i],
+			cl->sess.score,
+			cl->sess.kills,
+			cl->sess.deaths,
+			ping,
+			(level.time - cl->pers.enterTime)/60000,
+			(cl->sess.ghost || cl->ps.pm_type == PM_DEAD) ? qtrue : qfalse,
+			g_entities[level.sortedClients[i]].s.gametypeitems,
+			g_teamkillDamageMax.integer ? 100 * cl->sess.teamkillDamage / g_teamkillDamageMax.integer : 0
+			);
 		}
 		else
 		{
@@ -1505,6 +1532,9 @@ void DeathmatchScoreboardMessage( gentity_t *ent )
 							level.teamScores[TEAM_RED], 
 							level.teamScores[TEAM_BLUE],
 							string ) );
+	if(cl->sess.proClient == 4.00){
+		trap_SendServerCommand( ent-g_entities, va("scores2 0 0 0.00 0 0 0 0 0 0") );
+	}
 }
 
 
