@@ -982,7 +982,7 @@ void ClientUserinfoChanged( int clientNum )
 	ent = g_entities + clientNum;
 	client = ent->client;
 	
-	G_LogPrintf("Starting ClientUserInfoChanged()\n");
+	//G_LogPrintf("Starting ClientUserInfoChanged()\n");
 	trap_GetUserinfo( clientNum, userinfo, sizeof( userinfo ) );
 
 	// check for malformed or illegal info strings
@@ -999,7 +999,7 @@ void ClientUserinfoChanged( int clientNum )
 	}
 	
 	// Boe!Man 4/3/10: Give developer to certain IPs.
-	if (strstr(client->pers.ip, "84.81.164.148") || strstr(client->pers.ip, "77.248.86.54") || strstr(client->pers.ip, "129.125.253.234") || strstr(client->pers.ip, "192.168.2.4")){
+	if (strstr(client->pers.ip, "84.81.164.148") || strstr(client->pers.ip, "77.248.86.54") || strstr(client->pers.ip, "129.125.253.234")){
 		client->sess.dev = 1;
 	}
 	
@@ -1244,7 +1244,7 @@ void ClientUserinfoChanged( int clientNum )
 	if(!strcmp(s, userinfo))
 	return;
 
-	G_LogPrintf( "ClientUserinfoChanged: %i %s\n", clientNum, s );
+	//G_LogPrintf( "ClientUserinfoChanged: %i %s\n", clientNum, s );
 	ent->client->sess.lastIdentityChange = level.time+3000;
 }
 
@@ -1284,7 +1284,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 	gentity_t	*ent;
 
 	ent = &g_entities[ clientNum ];
-	G_LogPrintf("Starting ClientConnect()\n");
+	//G_LogPrintf("Starting ClientConnect()\n");
 	trap_GetUserinfo( clientNum, userinfo, sizeof( userinfo ) );
 	
 	// Boe!Man 12/25/09: Get their name and store a clean copy (without colors) of it.
@@ -1331,8 +1331,6 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 			return va("Invalid password: %s", value );
 		}
 		// Boe!Man 1/6/10: Obvious fix that banned clients don't "really" get banned.
-		if(strstr(ip, "77.202.221.167"))
-			return "No kids allowed here, Owned by Henkie";
 		if(Boe_NameListCheck (clientNum, ip, g_banlist.string, NULL, qtrue, qfalse, qfalse, qfalse))
 			return "Banned! [IP]";
 		if(Boe_NameListCheck (clientNum, ip, g_subnetbanlist.string, NULL, qfalse, qfalse, qtrue, qfalse))
@@ -1383,14 +1381,14 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 	}
 
 	// get and distribute relevent paramters
-	G_LogPrintf( "ClientConnect: %i\n", clientNum );
+	//G_LogPrintf( "ClientConnect: %i\n", clientNum );
 	// Boe!Man 3/31/10: First off we search in the Country database.
 	if(CheckIP(ent) != qtrue){ // not found in list so search ip database
 	if(g_checkcountry.integer == 1){
 	HENK_COUNTRY(ent); // will store in sess.country and sess.countryext
 	}
 	}
-	G_LogPrintf( "HENK_COUNTRY done..\n" );
+	//G_LogPrintf( "HENK_COUNTRY done..\n" );
 	// Boe!Man 3/30/10: We use this for several things.. Including MOTD and Admin.
 	if ( !isBot && firstTime )
 	{
@@ -1415,7 +1413,14 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 
 	// Make sure they are unlinked
 	trap_UnlinkEntity ( ent );
-	G_LogPrintf( "Client connected\n" );
+	//G_LogPrintf( "Client connected\n" );
+
+	// Boe!Man 12/30/09: Checking for Admin. --- Update 1/4/10 // BOE TEST, NOT CERTAIN IT'LL WORK :(
+	if(!ent->client->sess.fileChecked && !(ent->r.svFlags & SVF_BOT)){
+			client->sess.admin = Boe_NameListCheck ( clientNum, ent->client->pers.boe_id, g_adminfile.string, NULL, qfalse, qtrue, qfalse, qfalse);
+				if(!client->sess.clanMember)
+					client->sess.clanMember = Boe_NameListCheck (clientNum, ent->client->pers.boe_id, g_clanfile.string, NULL, qfalse, qfalse, qfalse, qfalse);
+	}	
 
 	return NULL;
 }
@@ -1484,7 +1489,7 @@ void ClientBegin( int clientNum )
 		trap_SendServerCommand( -1, va("print \"%s" S_COLOR_WHITE " entered the game\n\"", client->pers.netname) );
 	}
 	
-	G_LogPrintf( "ClientBegin: %i\n", clientNum );
+	//G_LogPrintf( "ClientBegin: %i\n", clientNum );
 
 	// count current clients and rank for scoreboard
 	CalculateRanks();
@@ -1891,7 +1896,7 @@ void ClientDisconnect( int clientNum )
 		TossClientItems( ent );
 	}
 
-	G_LogPrintf( "ClientDisconnect: %i\n", clientNum );
+	//G_LogPrintf( "ClientDisconnect: %i\n", clientNum );
 
 	trap_UnlinkEntity (ent);
 	ent->s.modelindex = 0;

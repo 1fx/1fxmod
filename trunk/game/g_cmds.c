@@ -789,7 +789,7 @@ void RPM_Obituary ( gentity_t *target, gentity_t *attacker, int mod, attackType_
 	///RxCxW - 01.08.06 - 09:14pm
 	///attackt = attacker->client->pers.statinfo.attack;
 	///weapon = attacker->client->pers.statinfo.weapon;
-	G_LogPrintf("Starting Obituary..\n");
+	//G_LogPrintf("Starting Obituary..\n");
 	if(!level.gametypeData->teams || (level.gametypeData->teams && !OnSameTeam ( target, attacker )))
 	{
 		statOk = qtrue;
@@ -1190,7 +1190,7 @@ void RPM_Obituary ( gentity_t *target, gentity_t *attacker, int mod, attackType_
 	}
 
 	// we don't know what it was
-	G_LogPrintf("Done with RPM_Obituary..\n");
+	//G_LogPrintf("Done with RPM_Obituary..\n");
 	trap_SendServerCommand( -1, va("print \"%s%s died.\n\"", targetColor, targetName ));
 }
 
@@ -2841,7 +2841,7 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 	char	admin[36];
 	char 	star[10];
 	
-	G_LogPrintf("Starting with chat\n");
+	//G_LogPrintf("Starting with chat\n");
 	if (!other) 
 	{
 		return;
@@ -3126,21 +3126,21 @@ void G_Say ( gentity_t *ent, gentity_t *target, int mode, const char *chatText )
 			break;
 	}
 	
-	G_LogPrintf("Getting prefix..\n");
+	//G_LogPrintf("Getting prefix..\n");
 	// Generate the chat prefix
 	G_GetChatPrefix ( ent, target, mode, name, sizeof(name) );
 
-	G_LogPrintf("Copying..\n");
+	//G_LogPrintf("Copying..\n");
 	// Save off the chat text
 	Q_strncpyz( text, chatText, sizeof(text) );
 
 	if ( target && target->inuse) 
 	{
-		G_LogPrintf("Too target?..\n");
+		//G_LogPrintf("Too target?..\n");
 		G_SayTo( ent, target, mode, name, text );
 		return;
 	}
-	G_LogPrintf("Printing..\n");
+	//G_LogPrintf("Printing..\n");
 	// echo the text to the console
 	if ( g_dedicated.integer ) 
 	{
@@ -3153,7 +3153,7 @@ void G_Say ( gentity_t *ent, gentity_t *target, int mode, const char *chatText )
 		other = &g_entities[level.sortedClients[j]];
 		G_SayTo( ent, other, mode, name, text );
 	}
-	G_LogPrintf("Done..\n");
+	//G_LogPrintf("Done..\n");
 }
 
 
@@ -4176,7 +4176,7 @@ void AddIPList(char ip1[24], char country[128], char ext[6])
 	int		RealOctet[4];
 	int		iIP, i, z, countx[4], loops = 0, count = 0;
 	char *IP;
-	G_LogPrintf("Checking ip..\n");
+	//G_LogPrintf("Checking ip..\n");
 	IP = va("%s", ip1);
 	//Com_Printf("IP is: %s\n", ent->client->pers.ip);
 	// Set countx to zero, when you do not set the variable you get weird ass results.
@@ -4249,7 +4249,7 @@ qboolean CheckIP(gentity_t *ent){ // Henk Update 12/05/10 -> Lag spike when file
 	int		RealOctet[4];
 	int		iIP, i, z, countx[4], loops = 0, count = 0;
 	char *IP;
-	G_LogPrintf("Checking ip..\n");
+	//G_LogPrintf("Checking ip..\n");
 	IP = va("%s", ent->client->pers.ip);
 	//Com_Printf("IP is: %s\n", ent->client->pers.ip);
 	// Set countx to zero, when you do not set the variable you get weird ass results.
@@ -4345,7 +4345,7 @@ void HENK_CHECKFP(gentity_t *ent){
 	GP2 = trap_GP_ParseFile(file, qtrue, qfalse);
 	if (!GP2)
 	{
-		G_LogPrintf("Error in file: \"%s\" or file not found.\n", file);
+		//G_LogPrintf("Error in file: \"%s\" or file not found.\n", file);
 		return;
 	}
 		group = trap_GPG_GetSubGroups(GP2);
@@ -4475,7 +4475,7 @@ void HENK_COUNTRY(gentity_t *ent){
 		group = trap_GPG_GetSubGroups(DB203);
 	}else{*/
 	// End
-	G_LogPrintf( "HENK_COUNTRY: else check\n" );
+	//G_LogPrintf( "HENK_COUNTRY: else check\n" );
 
 		fileCount = trap_FS_GetFileList( "country", va(".%s", octetx[0]), Files, 1024 );
 		filePtr = Files;

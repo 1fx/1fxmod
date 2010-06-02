@@ -20,7 +20,13 @@ void Boe_Motd (gentity_t *ent)
 	char	*gs = gmotd;
 	char	name[36];
 	char	*header1 = va("@%s ^7%s ^7- %s\n", INF_VERSION_STRING_COLORED, INF_VERSION_STRING, INF_VERSION_DATE );
-	char	*header2 = va("Developed by ^GBoe!Man ^7& ^6Henkie\nv1servers.com ^3| ^71fx.ipbfree.com\n\n");
+	//char	*header2 = va("Developed by ^GBoe!Man ^7& ^6Henkie\nv1servers.com ^3| ^71fx.ipbfree.com\n\n");
+	char *header2;
+
+	if(strstr(INF_VERSION_STRING, "t"))
+		header2 = va("Developed by ^GBoe!Man ^7& ^6Henkie\n^1Running a Test version of the Mod\n\n");
+	else
+		header2 = va("Developed by ^GBoe!Man ^7& ^6Henkie\nv1servers.com ^3| ^71fx.ipbfree.com\n\n");
 
 	strcpy(name, ent->client->pers.netname);
 
@@ -1079,9 +1085,11 @@ void Boe_Stats ( gentity_t *ent )
 	char		*country;
 	qboolean	client1 = qfalse;
 	char		userinfo[MAX_INFO_STRING];
-	int			idnum;
+	int			idnum, n;
+	char		*altname;
 	char		*fps;
 	qboolean	devmode = qfalse;
+	float		accuracy = 0;
 
 	trap_Argv( 1, arg1, sizeof( arg1 ) );  // Boe!Man 2/21/10: Getting the client ID.
 
@@ -1272,6 +1280,72 @@ void Boe_Stats ( gentity_t *ent )
 	trap_SendServerCommand( ent-g_entities, va("print \"      %d", stat->waisthits));
 	// Boe!Man 6/2/10: Tier 2 - End.
 
+	// Boe!Man 6/2/10: Tier 3: Weapon Stats - Start.
+	if(stat->shotcount)
+		{
+		trap_SendServerCommand( ent-g_entities, va("print \"\n\n[^3Weapon^7]      [^3Shot^7] [^3Hits^7] [^3Head^7] [^3Accu^7]\n\""));
+		for(n = 0; n < WP_NUM_WEAPONS; n++)
+			{
+			if(stat->weapon_shots[ATTACK_NORMAL][n] <= 0 && stat->weapon_shots[ATTACK_ALTERNATE][n] <=0)
+				{
+					continue;
+				}
+				accuracy = 0;
+				if(stat->weapon_shots[ATTACK_NORMAL][n])
+					{
+						accuracy = (float)stat->weapon_hits[ATTACK_NORMAL][n] / (float)stat->weapon_shots[ATTACK_NORMAL][n] * 100;
+					}
+				trap_SendServerCommand( ent-g_entities, va("print \"^3%11s  ^7%5d  ^7%5d  ^7%5d  ^7%3.2f\n\"",
+				bg_weaponNames[n], 
+				stat->weapon_shots[ATTACK_NORMAL][n], 
+				stat->weapon_hits[ATTACK_NORMAL][n], 
+				stat->weapon_headshots[ATTACK_NORMAL][n],
+				accuracy));
+				
+				if(stat->weapon_shots[ATTACK_ALTERNATE][n])
+				{
+					switch(n)
+					{
+					case WP_AK74_ASSAULT_RIFLE:
+						altname = "Bayonette";
+						break;
+
+					case WP_M4_ASSAULT_RIFLE:
+						altname = "M203";
+						break;
+
+					case WP_M590_SHOTGUN:
+						altname = "Bludgeon";
+						break;
+
+					case WP_M1911A1_PISTOL:          
+					case WP_USSOCOM_PISTOL: 
+						altname = "Pistol Whip";
+						break;
+
+					default:
+						altname = "none";
+						break;
+					}
+					if(Q_stricmp (altname, "none") != 0)
+						{
+						accuracy = 0;
+						if(stat->weapon_hits[ATTACK_ALTERNATE][n])
+						{
+							accuracy = (float)stat->weapon_hits[ATTACK_ALTERNATE][n] / (float)stat->weapon_shots[ATTACK_ALTERNATE][n] * 100;
+						}
+				trap_SendServerCommand( ent-g_entities, va("print \"^3%11s  ^7%5d  ^7%5d  ^7%5d  ^7%3.2f\n\"",
+				altname, 
+				stat->weapon_shots[ATTACK_ALTERNATE][n], 
+				stat->weapon_hits[ATTACK_ALTERNATE][n], 
+				stat->weapon_headshots[ATTACK_ALTERNATE][n],
+				accuracy));
+				}
+			}
+		}
+	}
+					
+
 	// Henk's useless crap :P - boe
 	//trap_SendServerCommand( ent-g_entities, va("print \"\n"));
 	//trap_SendServerCommand( ent-g_entities, va("print \"[^3Total kills^7] [^3Total death^7] [^3Damage done^7] [^3Damage take^7]\n"));
@@ -1398,4 +1472,47 @@ char *Boe_BarStat(int stat)
 			bar = "^0----------";
 	}
 	return bar;
+}
+
+/*
+================
+Boe_serverMsg
+6/2/10 - 9:54 PM
+================
+*/
+
+void Boe_serverMsg (void)
+{
+	char	*message;
+	
+	level.serverMsgCount++;
+
+	switch (level.serverMsgCount){
+		case 1:
+			message = server_message1.string;
+			break;
+		case 2:
+			message = server_message2.string;
+			break;
+		case 3:
+			message = server_message3.string;
+			break;
+		case 4:
+			message = server_message4.string;
+			break;
+		case 5:
+			message = server_message5.string;
+			break;
+		default:
+			message = "";
+			level.serverMsgCount = 0;
+			level.serverMsg = level.time + (server_msgInterval.integer * 60000);
+			break;
+	}
+	if ( message[0] == '\0' )
+		return;
+
+	level.serverMsg = level.time + (server_msgDelay.integer * 1000);
+	trap_SendServerCommand( -1, va("chat -1 \"%sM%se%ss%ss%sa%sge: %s\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, message ) );
+
 }

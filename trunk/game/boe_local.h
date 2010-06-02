@@ -5,7 +5,7 @@
 //==================================================================
 
 // Boe!Man 3/30/10
-#define INF_VERSION_STRING "0.30t"
+#define INF_VERSION_STRING "0.30"
 #define INF_STRING "1fx. Mod"
 #define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod"
 #define INF_VERSION_DATE "6/2/10"
@@ -251,3 +251,11 @@ void RPM_Awards(void);
 
 // Boe!Man 6/2/10
 extern	vmCvar_t	g_autoeventeams;
+extern	vmCvar_t	server_msgInterval;
+extern	vmCvar_t	server_enableServerMsgs;
+extern	vmCvar_t	server_message1;
+extern	vmCvar_t	server_message2;
+extern	vmCvar_t	server_message3;
+extern	vmCvar_t	server_message4;
+extern	vmCvar_t	server_message5;
+extern	vmCvar_t	server_msgDelay;

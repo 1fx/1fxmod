@@ -575,6 +575,10 @@ typedef struct
 	int			teamAliveCount[TEAM_NUM_TEAMS];
 	//Ryan & Dragon
 
+	// Boe!Man 6/2/10
+	int				serverMsg;
+	int				serverMsgCount;
+
 } level_locals_t;
 
 //

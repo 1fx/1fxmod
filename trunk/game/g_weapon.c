@@ -282,6 +282,8 @@ void G_FireBullet ( gentity_t* ent, int weapon, int attack )
 	{
 		int location = HL_NONE;
 		stat->shotcount++;
+		// Boe!Man 6/2/10: We add this to our stat system as well.
+		stat->weapon_shots[attack][weapon]++; 
 		// Determine the endpoint for the bullet
 		BG_CalculateBulletEndpoint ( muzzlePoint, fireAngs, inaccuracy, attackDat->rV.range + 15, end, &seed );
 
@@ -471,6 +473,62 @@ void G_FireBullet ( gentity_t* ent, int weapon, int attack )
 				VectorCopy ( tr.endpos, hit[hitcount].origin );
 
 				hitcount++;
+				// Boe!Man 6/2/10: Used for the obiturary and the stats.
+				stat->weapon = weapon; 
+				stat->attack = attack; 
+
+				if (!level.gametypeData->teams || !OnSameTeam(ent,traceEnt))
+				{
+					stat->weapon_hits[attack][weapon]++;
+					stat->hitcount++;
+					
+					switch ( location )
+					{
+						case HL_FOOT_RT:
+						case HL_FOOT_LT:
+							 stat->foothits++;
+							break;
+
+						case HL_HAND_RT:
+						case HL_HAND_LT:
+							 stat->handhits++;
+							break;
+
+						case HL_ARM_RT:
+						case HL_ARM_LT:
+							 stat->armhits++;
+							break;
+
+						case HL_LEG_UPPER_RT:
+						case HL_LEG_UPPER_LT:
+						case HL_LEG_LOWER_RT:
+						case HL_LEG_LOWER_LT:
+							stat->leghits++;
+							break;
+
+						case HL_HEAD:
+							 stat->headhits++;
+							break;
+
+						case HL_NECK:
+							 stat->neckhits++;
+							break;
+
+						case HL_BACK_RT:
+						case HL_BACK_LT:
+						case HL_BACK:
+						case HL_CHEST_RT:
+						case HL_CHEST_LT:
+						case HL_CHEST:
+							 stat->torsohits++;
+							break;
+
+						case HL_WAIST:
+							 stat->waisthits++;
+							break;
+					}
+				}
+				// Boe!Man End.
 			}
 		}
 
@@ -625,6 +683,17 @@ gentity_t* G_FireProjectile ( gentity_t *ent, weapon_t weapon, attackType_t atta
 
 		statinfo_t     *stat = &ent->client->pers.statinfo;
 		stat->shotcount++;
+		
+		// Boe!Man 6/2/10: The Weapon stats get updated/added here.
+		if(weapon == WP_M4_ASSAULT_RIFLE)
+		{
+			stat->weapon_shots[ATTACK_ALTERNATE][weapon]++;
+		}
+		else
+		{
+			stat->weapon_shots[ATTACK_NORMAL][weapon]++;
+		}
+		// Boe!Man End.
 		stat->accuracy = (float)stat->hitcount / (float)stat->shotcount * 100;
 
 		VectorCopy( fwd, dir );
