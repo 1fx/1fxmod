@@ -622,7 +622,7 @@ qboolean ConsoleCommand( void )
 	// Henk 28/01/10 -> Add eventeams for rcon
 	if ((Q_stricmp (cmd, "eventeams" ) == 0 ))
 	{
-		EvenTeams(NULL);
+		EvenTeams(NULL, qfalse);
 		return qtrue;
 	}
 	if ((Q_stricmp (cmd, "swapteams" ) == 0 ))

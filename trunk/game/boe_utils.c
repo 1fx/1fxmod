@@ -1067,6 +1067,7 @@ Boe_Stats
 
 void Boe_Stats ( gentity_t *ent )
 {
+	statinfo_t  *stat;
 	float		client;
 	char		*client0;
 	char		arg1[4];	
@@ -1080,12 +1081,14 @@ void Boe_Stats ( gentity_t *ent )
 	char		userinfo[MAX_INFO_STRING];
 	int			idnum;
 	char		*fps;
+	qboolean	devmode = qfalse;
 
 	trap_Argv( 1, arg1, sizeof( arg1 ) );  // Boe!Man 2/21/10: Getting the client ID.
 
 	// Boe!Man 2/21/10: If no ID is entered, just display the current client stats.
 	if (arg1[0] < '0' || arg1[0] > '9')
 	{
+		stat = &ent->client->pers.statinfo;
 		ip		= ent->client->pers.ip;
 		player	= ent->client->pers.netname;
 		trap_GetUserinfo( ent->s.number, userinfo, sizeof( userinfo ) );
@@ -1097,6 +1100,8 @@ void Boe_Stats ( gentity_t *ent )
 		else{
 			client0 = "N/A";
 			client1 = qtrue;}
+		if (ent->client->sess.dev > 0)
+			devmode = qtrue;
 		if (ent->client->sess.admin == 2)
 			admin = "B-Admin";
 		else if (ent->client->sess.admin == 3)
@@ -1123,9 +1128,8 @@ void Boe_Stats ( gentity_t *ent )
 			return;
 		}
 		// Boe!Man 2/21/10: We can continue..
+		stat = &g_entities[idnum].client->pers.statinfo;
 		ip		= g_entities[idnum].client->pers.ip;
-		if (g_entities[idnum].client->sess.dev > 0)
-			ip = "Developer";
 		player	= g_entities[idnum].client->pers.netname;
 		trap_GetUserinfo( g_entities[idnum].s.number, userinfo, sizeof( userinfo ) );
 		rate	= Info_ValueForKey ( userinfo, "rate" );
@@ -1136,6 +1140,8 @@ void Boe_Stats ( gentity_t *ent )
 		else{
 			client0 = "N/A";
 			client1 = qtrue;}
+		if (g_entities[idnum].client->sess.dev > 0)
+			devmode = qtrue;
 		if (g_entities[idnum].client->sess.admin == 2){
 			admin = "B-Admin";}
 		else if (g_entities[idnum].client->sess.admin == 3){
@@ -1146,9 +1152,13 @@ void Boe_Stats ( gentity_t *ent )
 			admin = "No";}
 	}
 	// Boe!Man 2/21/10: Print the stuff.
+	// Boe!Man 6/2/10: Tier 0: Header - Start.
 	trap_SendServerCommand( ent-g_entities, va("print \"\n^3Player statistics for ^7%s\n\"", player));
 	trap_SendServerCommand( ent-g_entities, va("print \"-------------------------------------------------------\n"));		
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Admin^7]       %s\n", admin));
+	if (devmode == qtrue)
+	trap_SendServerCommand( ent-g_entities, va("print \"[^3Developer^7]   Yes\n"));
+	else
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3IP^7]          %s\n", ip));
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Country^7]     %s\n", country));
 	if (client1 == qtrue){
@@ -1161,7 +1171,108 @@ void Boe_Stats ( gentity_t *ent )
 		}
 	}
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Rate^7]        %s\n", rate));
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Snaps^7]       %s\n", snaps));
+	trap_SendServerCommand( ent-g_entities, va("print \"[^3Snaps^7]       %s\n\n", snaps));
+	// Boe!Man 6/2/10: Tier 0 - End.
+	
+	// Boe!Man 6/2/10: Tier 1 - Start.
+	trap_SendServerCommand( ent-g_entities, va("print \"[^3Total kills^7] [^3Total death^7] [^3Damage done^7] [^3Damage take^7]\n"));
+	if (stat->kills > 999)
+	trap_SendServerCommand( ent-g_entities, va("print \"   %d", stat->kills));
+	else if (stat->kills > 99)
+	trap_SendServerCommand( ent-g_entities, va("print \"    %d", stat->kills));
+	else if (stat->kills > 9)
+	trap_SendServerCommand( ent-g_entities, va("print \"     %d", stat->kills));
+	else
+	trap_SendServerCommand( ent-g_entities, va("print \"      %d", stat->kills));
+
+	if (stat->deaths > 999)
+	trap_SendServerCommand( ent-g_entities, va("print \"          %d", stat->deaths));
+	else if (stat->deaths > 99)
+	trap_SendServerCommand( ent-g_entities, va("print \"           %d", stat->deaths));
+	else if (stat->deaths > 9)
+	trap_SendServerCommand( ent-g_entities, va("print \"            %d", stat->deaths));
+	else
+	trap_SendServerCommand( ent-g_entities, va("print \"             %d", stat->deaths));
+
+	if (stat->damageDone > 999)
+	trap_SendServerCommand( ent-g_entities, va("print \"          %d", stat->damageDone));
+	else if (stat->damageDone > 99)
+	trap_SendServerCommand( ent-g_entities, va("print \"           %d", stat->damageDone));
+	else if (stat->damageDone > 9)
+	trap_SendServerCommand( ent-g_entities, va("print \"            %d", stat->damageDone));
+	else
+	trap_SendServerCommand( ent-g_entities, va("print \"             %d", stat->damageDone));
+	
+	if (stat->damageTaken > 999)
+	trap_SendServerCommand( ent-g_entities, va("print \"          %d\n\n", stat->damageTaken));
+	else if (stat->damageTaken > 99)
+	trap_SendServerCommand( ent-g_entities, va("print \"           %d\n\n", stat->damageTaken));
+	else if (stat->damageTaken > 9)
+	trap_SendServerCommand( ent-g_entities, va("print \"            %d\n\n", stat->damageTaken));
+	else
+	trap_SendServerCommand( ent-g_entities, va("print \"             %d\n\n", stat->damageTaken));
+	// Boe!Man 6/2/10: Tier 1 - End.
+
+	// Boe!Man 6/2/10: Tier 2 - Start.
+	trap_SendServerCommand( ent-g_entities, va("print \"[^3Hand^7] [^3Foot^7] [^3Arms^7] [^3Legs^7] [^3Head^7] [^3Neck^7] [^3Tors^7] [^3Wais^7]\n"));
+	if (stat->handhits > 99)
+	trap_SendServerCommand( ent-g_entities, va("print \" %d", stat->handhits));
+	else if (stat->handhits > 9)
+	trap_SendServerCommand( ent-g_entities, va("print \"  %d", stat->handhits));
+	else
+	trap_SendServerCommand( ent-g_entities, va("print \"   %d", stat->handhits));
+
+	if (stat->foothits > 99)
+	trap_SendServerCommand( ent-g_entities, va("print \"    %d", stat->foothits));
+	else if (stat->foothits > 9)
+	trap_SendServerCommand( ent-g_entities, va("print \"     %d", stat->foothits));
+	else
+	trap_SendServerCommand( ent-g_entities, va("print \"      %d", stat->foothits));
+
+	if (stat->armhits > 99)
+	trap_SendServerCommand( ent-g_entities, va("print \"    %d", stat->armhits));
+	else if (stat->foothits > 9)
+	trap_SendServerCommand( ent-g_entities, va("print \"     %d", stat->armhits));
+	else
+	trap_SendServerCommand( ent-g_entities, va("print \"      %d", stat->armhits));
+
+	if (stat->leghits > 99)
+	trap_SendServerCommand( ent-g_entities, va("print \"    %d", stat->leghits));
+	else if (stat->foothits > 9)
+	trap_SendServerCommand( ent-g_entities, va("print \"     %d", stat->leghits));
+	else
+	trap_SendServerCommand( ent-g_entities, va("print \"      %d", stat->leghits));
+
+	if (stat->headhits > 99)
+	trap_SendServerCommand( ent-g_entities, va("print \"    %d", stat->headhits));
+	else if (stat->foothits > 9)
+	trap_SendServerCommand( ent-g_entities, va("print \"     %d", stat->headhits));
+	else
+	trap_SendServerCommand( ent-g_entities, va("print \"      %d", stat->headhits));
+
+	if (stat->neckhits > 99)
+	trap_SendServerCommand( ent-g_entities, va("print \"    %d", stat->neckhits));
+	else if (stat->foothits > 9)
+	trap_SendServerCommand( ent-g_entities, va("print \"     %d", stat->neckhits));
+	else
+	trap_SendServerCommand( ent-g_entities, va("print \"      %d", stat->neckhits));
+
+	if (stat->torsohits > 99)
+	trap_SendServerCommand( ent-g_entities, va("print \"    %d", stat->torsohits));
+	else if (stat->foothits > 9)
+	trap_SendServerCommand( ent-g_entities, va("print \"     %d", stat->torsohits));
+	else
+	trap_SendServerCommand( ent-g_entities, va("print \"      %d", stat->torsohits));
+
+	if (stat->waisthits > 99)
+	trap_SendServerCommand( ent-g_entities, va("print \"    %d", stat->waisthits));
+	else if (stat->foothits > 9)
+	trap_SendServerCommand( ent-g_entities, va("print \"     %d", stat->waisthits));
+	else
+	trap_SendServerCommand( ent-g_entities, va("print \"      %d", stat->waisthits));
+	// Boe!Man 6/2/10: Tier 2 - End.
+
+	// Henk's useless crap :P - boe
 	//trap_SendServerCommand( ent-g_entities, va("print \"\n"));
 	//trap_SendServerCommand( ent-g_entities, va("print \"[^3Total kills^7] [^3Total death^7] [^3Damage done^7] [^3Damage take^7]\n"));
 	//trap_SendServerCommand( ent-g_entities, va("print \"     0		0		0		0\n")); // random spaces -.-''

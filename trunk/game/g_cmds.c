@@ -1333,6 +1333,7 @@ void RPM_UpdateTMI(void)
 	}
 }
 
+/*
 void EvenTeams (gentity_t *adm)
 {
 	int			team, i, j, a =0, autoEven;
@@ -1415,6 +1416,132 @@ void EvenTeams (gentity_t *adm)
 		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Eventeams.\n\""));
 		Boe_adminLog (va("RCON - EVENTEAMS")) ;
 	}
+}
+*/
+
+void EvenTeams (gentity_t *adm, qboolean aet)
+{
+	int		counts[TEAM_NUM_TEAMS];
+	int		diff = 0;
+	int		highTeam, i, j, lastConnectedTime;
+	gentity_t *lastConnected, *ent;
+	clientSession_t	*sess;
+	qboolean canBeMoved = qfalse;
+
+	if(level.intermissiontime)
+		return;
+
+	if(!level.gametypeData->teams){
+		if(adm && adm->client)
+			trap_SendServerCommand( adm - g_entities, va("print \"^3[Info] ^7Not playing a team game.\n\"") );
+		else if (aet == qfalse)
+			Com_Printf("Not playing a team game.\n");
+		return;
+	}
+
+	if(level.blueLocked || level.redLocked){
+		if(adm && adm->client)
+			trap_SendServerCommand( adm - g_entities, va("print \"^3[Info] ^7Teams are Locked.\n\"") );
+		else if (aet == qfalse)
+			Com_Printf("Teams are Locked.\n");
+		return;
+
+	}
+
+	counts[TEAM_BLUE] = TeamCount(-1, TEAM_BLUE, NULL );
+	counts[TEAM_RED] = TeamCount(-1, TEAM_RED, NULL );
+
+	if(counts[TEAM_BLUE] > counts[TEAM_RED]){
+		highTeam = TEAM_BLUE;
+		diff = (counts[TEAM_BLUE] - counts[TEAM_RED]);
+	}
+	else if(counts[TEAM_BLUE] < counts[TEAM_RED]){
+		highTeam = TEAM_RED;
+		diff = (counts[TEAM_RED] - counts[TEAM_BLUE]);
+	}
+	else {
+		if(adm && adm->client)
+			trap_SendServerCommand( adm - g_entities, va("print \"^3[Info] ^7Teams are as even as possible.\n\"") );
+		else if (aet == qfalse)
+			Com_Printf("Teams are as even as possible.\n");
+		return;
+	}
+
+	if(diff < 2){
+		if(adm && adm->client)
+			trap_SendServerCommand( adm - g_entities, va("print \"^3[Info] ^7Teams are as even as possible.\n\"") );
+		else if (aet == qfalse)
+			Com_Printf("Teams are as even as possible.\n");
+		return;
+	}
+	diff /= 2;
+	for(i = 0; i < diff; i++){
+		lastConnectedTime = 0;
+		for ( j = 0; j < level.numConnectedClients ; j++ )	{
+			ent = &g_entities[level.sortedClients[j]];
+			sess = &ent->client->sess;
+
+
+			if ( ent->client->pers.connected != CON_CONNECTED 
+				&& ent->client->pers.connected != CON_CONNECTING )
+				continue;
+			if(sess->team != TEAM_RED && sess->team != TEAM_BLUE)
+				continue;
+			if(sess->team != highTeam)
+				continue;
+			if(sess->admin)
+				continue;
+			if(ent->s.gametypeitems)
+				continue;
+
+			if(ent->client->pers.enterTime > lastConnectedTime)	{
+				lastConnectedTime = ent->client->pers.enterTime;
+				lastConnected = ent;
+			}
+			canBeMoved = qtrue;
+		} 
+
+		if(!canBeMoved || !highTeam){
+			if(adm != NULL)	trap_SendServerCommand( adm->s.number, va("print \"^3[Info] ^7Teams cannot be evened [all admin or item holders].\n\"") );
+			else if (aet == qfalse) Com_Printf("Teams cannot be evened [all admin or item holders]\n");
+			return;
+		}
+		lastConnected->client->ps.stats[STAT_WEAPONS] = 0;
+		TossClientItems( lastConnected );
+		G_StartGhosting( lastConnected );
+
+		if(highTeam == TEAM_RED) lastConnected->client->sess.team = TEAM_BLUE;
+		else lastConnected->client->sess.team = TEAM_RED;
+
+		if (lastConnected->r.svFlags & SVF_BOT)	{
+			char	userinfo[MAX_INFO_STRING];
+			trap_GetUserinfo( lastConnected->s.number, userinfo, sizeof( userinfo ) );
+			Info_SetValueForKey( userinfo, "team", lastConnected->client->sess.team == TEAM_RED?"red":"blue");
+			trap_SetUserinfo( lastConnected->s.number, userinfo );
+		}
+
+		lastConnected->client->pers.identity = NULL;
+		ClientUserinfoChanged( lastConnected->s.number );		
+		CalculateRanks();
+
+		G_StopFollowing( lastConnected );
+		G_StopGhosting( lastConnected );
+		trap_UnlinkEntity ( lastConnected );
+		ClientSpawn( lastConnected);
+	}
+
+
+	// Boe!Man 3/31/10: We tell 'em what happened.
+	Boe_GlobalSound (G_SoundIndex("sound/misc/events/tut_lift02.mp3"));
+	
+	if(adm && adm->client) {
+		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Eventeams by %s.\n\"", adm->client->pers.netname));
+		Boe_adminLog (va("%s - EVENTEAMS", adm->client->pers.cleanName)) ;
+	} else if (aet == qfalse){
+		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Eventeams.\n\""));
+		Boe_adminLog (va("RCON - EVENTEAMS")) ;
+	} else
+		trap_SendServerCommand(-1, va("print\"^3[Auto Action] ^7Eventeams.\n\""));
 }
 
 /*
@@ -3141,7 +3268,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	
 	if ((strstr(p, "!et")) || (strstr(p, "!eventeams"))) {
 		if (ent->client->sess.admin >= g_eventeams.integer){
-			EvenTeams(ent);
+			EvenTeams(ent, qfalse);
 		}
 		G_Say( ent, NULL, mode, p);
 		return;

@@ -8,7 +8,7 @@
 #define INF_VERSION_STRING "0.30t"
 #define INF_STRING "1fx. Mod"
 #define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod"
-#define INF_VERSION_DATE "5/12/10"
+#define INF_VERSION_DATE "6/2/10"
 
 
 // Infiltration
@@ -197,7 +197,7 @@ void	QDECL Boe_adminLog	(const char *text, ... );
 void	QDECL Boe_crashLog	(const char *text);
 
 // Henk 28/01/10 -> Add eventeams
-void	EvenTeams (gentity_t *adm);
+void	EvenTeams (gentity_t *adm, qboolean aet);
 
 void	Boe_SwapTeams(gentity_t *adm);
 
@@ -248,3 +248,6 @@ void	Boe_Third(int argNum, gentity_t *ent, qboolean ShortCmd);
 void	Boe_CompMode(int argNum, gentity_t *ent, qboolean ShortCmd);
 
 void RPM_Awards(void);
+
+// Boe!Man 6/2/10
+extern	vmCvar_t	g_autoeventeams;

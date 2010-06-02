@@ -162,6 +162,9 @@ vmCvar_t	g_swapteams;
 vmCvar_t	g_lock;
 vmCvar_t	g_clan;
 
+// Boe!Man 6/2/10
+vmCvar_t	g_autoeventeams;
+
 void		*DB195;
 void		*DB194;
 void		*DB212;
@@ -362,8 +365,10 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_compMode, "g_compMode", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 	{ &g_enableTeamCmds, "g_enableTeamCmds", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 	{ &g_refpassword, "g_refpassword", "none", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
-	{ &g_checkcountry, "g_checkcountry", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
+	// Boe!Man 6/2/10: Set this temporarily to 0.
+	{ &g_checkcountry, "g_checkcountry", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 	{ &g_disablelower, "g_disablelower", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
+	{ &g_autoeventeams, "g_autoeventeams", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 
 /*
 	switch (g_weaponModFlags.integer){

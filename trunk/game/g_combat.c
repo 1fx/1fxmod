@@ -241,7 +241,7 @@ void player_die(
 
 	// Add to the number of deaths for this player
 	self->client->pers.statinfo.killsinarow = 0;
-	self->client->sess.deaths++;
+	self->client->pers.statinfo.deaths++;
 
 	// This is just to ensure that the player wont render for even a single frame
 	self->s.eFlags |= EF_DEAD;
@@ -341,6 +341,8 @@ void player_die(
 			G_AddScore( attacker, 1 );
 			attacker->client->sess.kills++;
 			attacker->client->pers.statinfo.killsinarow++;
+			// Boe!Man 6/2/10: Add it to our own stats list.
+			attacker->client->pers.statinfo.kills++;
 	
 			attacker->client->lastKillTime = level.time;
 		}

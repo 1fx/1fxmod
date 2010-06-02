@@ -755,7 +755,7 @@ void Boe_adm_f ( gentity_t *ent )
 		return;
 	}
 	if ((!Q_stricmp ( arg1, "eventeams" )) && ent->client->sess.admin >= g_eventeams.integer) {
-		EvenTeams(ent);
+		EvenTeams(ent, qfalse);
 	}
 	else if ((!Q_stricmp ( arg1, "eventeams" )) && ent->client->sess.admin < g_eventeams.integer) {
 		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\"", arg1));
