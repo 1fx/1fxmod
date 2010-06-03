@@ -242,6 +242,8 @@ void player_die(
 	// Add to the number of deaths for this player
 	self->client->pers.statinfo.killsinarow = 0;
 	self->client->pers.statinfo.deaths++;
+	// Boe!Man 6/3/10: Fix for not showing deaths in scoreboard.
+	self->client->sess.deaths++;
 
 	// This is just to ensure that the player wont render for even a single frame
 	self->s.eFlags |= EF_DEAD;
