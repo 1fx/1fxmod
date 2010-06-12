@@ -90,6 +90,9 @@ void RPM_Awards(void)
 	//char	*a, *b;
 	///End  - 01.12.06 - 09:26pm
 
+	if(boe_log.integer == 1)
+	G_LogPrintf("3\n");
+
 	if(!level.awardTime)
 	{
 		//find the average time player by all connected clients
@@ -325,6 +328,8 @@ void RPM_Awards(void)
 			////b = va("%i %i", bestOverall->s.number, overallScore );
 			/////trap_SendServerCommand( -1, va("awards %s %s", a, b));
 			//Com_Printf("awards %s %s\n", a, b);
+			if(boe_log.integer == 1)
+	G_LogPrintf("4\n");
 #ifdef Q3_VM
 			///End  - 01.12.06 - 09:23pm
 			trap_SendServerCommand( -1, va("awards %i %i %i %i %i %i %i %.2f %i %.2f %i %i %i %i", 
@@ -1284,7 +1289,7 @@ void RPM_UpdateTMI(void)
 				string = va("%i%i", damage, cl->ps.weapon);	
 			}
 			
-			if(cl->sess.rpmClient > 0.6){
+			//if(cl->sess.rpmClient > 0.6){
 			Com_sprintf (entry, sizeof(entry),
 				" %i %i %i %i %i %i %s %i %i",
 				level.sortedClients[i],
@@ -1298,7 +1303,7 @@ void RPM_UpdateTMI(void)
 				cl->sess.mute,		// Confirmed
 				cl->sess.clanMember	// Confirmed
 				);
-			}else if(cl->sess.proClient > 4.0){
+			/*}else if(cl->sess.proClient > 4.0){
 			Com_sprintf (entry, sizeof(entry),
 				" %i %i %i %i %i %i %s %i %i",
 				level.sortedClients[i],
@@ -1308,7 +1313,7 @@ void RPM_UpdateTMI(void)
 				location,
 				adm
 				);
-			}
+			}*/
 
 		j = strlen(entry);
 

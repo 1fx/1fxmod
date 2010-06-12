@@ -982,8 +982,11 @@ void ClientUserinfoChanged( int clientNum )
 	ent = g_entities + clientNum;
 	client = ent->client;
 	
-	//G_LogPrintf("Starting ClientUserInfoChanged()\n");
+	if(boe_log.integer == 1)
+	G_LogPrintf("9\n");
+
 	trap_GetUserinfo( clientNum, userinfo, sizeof( userinfo ) );
+
 
 	// check for malformed or illegal info strings
 	if ( !Info_Validate(userinfo) ) 
@@ -1051,6 +1054,7 @@ void ClientUserinfoChanged( int clientNum )
 		}
 	}
 
+	/*
 	s = Info_ValueForKey (userinfo, "cg_proClient");
 	if(*s)
 	{
@@ -1058,7 +1062,7 @@ void ClientUserinfoChanged( int clientNum )
 		client->sess.proClient = atof(s);
 	}
 	
-	//Ryan
+	//Ryan*/
 
 
 	// set name
@@ -1244,7 +1248,9 @@ void ClientUserinfoChanged( int clientNum )
 	if(!strcmp(s, userinfo))
 	return;
 
-	//G_LogPrintf( "ClientUserinfoChanged: %i %s\n", clientNum, s );
+	if(boe_log.integer == 1)
+	G_LogPrintf("10\n");
+
 	ent->client->sess.lastIdentityChange = level.time+3000;
 }
 
@@ -1294,7 +1300,9 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 	
 	//value = Info_ValueForKey (userinfo, "cl_guid");
 	//Com_sprintf ( guid, sizeof(guid), value );
-	
+		if(boe_log.integer == 1)
+	G_LogPrintf("5\n");
+
 	// check to see if they are on the banned IP list
 	value = Info_ValueForKey (userinfo, "ip");
 	Com_sprintf ( ip, sizeof(ip), value );
@@ -1421,6 +1429,9 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 				if(!client->sess.clanMember)
 					client->sess.clanMember = Boe_NameListCheck (clientNum, ent->client->pers.boe_id, g_clanfile.string, NULL, qfalse, qfalse, qfalse, qfalse);
 	}	
+	if(boe_log.integer == 1)
+	G_LogPrintf("6\n");
+
 
 	return NULL;
 }
@@ -1445,6 +1456,10 @@ void ClientBegin( int clientNum )
 	ent = g_entities + clientNum;
 
 	client = level.clients + clientNum;
+
+	if(boe_log.integer == 1)
+	G_LogPrintf("7\n");
+
 
 	if ( ent->r.linked ) 
 	{
@@ -1493,6 +1508,9 @@ void ClientBegin( int clientNum )
 
 	// count current clients and rank for scoreboard
 	CalculateRanks();
+
+		if(boe_log.integer == 1)
+	G_LogPrintf("8\n");
 }
 
 /*

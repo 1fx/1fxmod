@@ -173,6 +173,8 @@ vmCvar_t	server_message4;
 vmCvar_t	server_message5;
 vmCvar_t	server_msgDelay;
 
+vmCvar_t	boe_log;
+
 void		*DB195;
 void		*DB194;
 void		*DB212;
@@ -386,6 +388,9 @@ static cvarTable_t gameCvarTable[] =
 	{ &server_message3, "server_message3", "Have fun!", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_message4, "server_message4", "", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_message5, "server_message5", "", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
+
+	// boe: Debug CVAR
+	{ &boe_log, "boe_log", "1", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 
 /*
 	switch (g_weaponModFlags.integer){

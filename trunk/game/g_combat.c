@@ -208,6 +208,9 @@ void player_die(
 	attack		 = (mod >> 8) & 0xFF;
 	meansOfDeath = mod & 0xFF;
 
+	if(boe_log.integer == 1)
+	G_LogPrintf("1\n");
+
 	if ( self->client->ps.pm_type == PM_DEAD ) 
 	{
 		return;
@@ -244,6 +247,8 @@ void player_die(
 	self->client->pers.statinfo.deaths++;
 	// Boe!Man 6/3/10: Fix for not showing deaths in scoreboard.
 	self->client->sess.deaths++;
+	// Boe!Man 6/11/10: Unplanting players when they die.
+	self->client->pers.planted = qfalse;
 
 	// This is just to ensure that the player wont render for even a single frame
 	self->s.eFlags |= EF_DEAD;
@@ -577,6 +582,9 @@ void player_die(
 	self->die = body_die;
 
 	trap_LinkEntity (self);
+
+	if(boe_log.integer == 1)
+	G_LogPrintf("2\n");
 }
 
 /*

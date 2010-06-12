@@ -1259,3 +1259,5 @@ void	RPM_ReadyAll (void);
 void	RPM_Pause (gentity_t *adm);
 void	RPM_Unpause (gentity_t *adm);
 
+// temp
+extern vmCvar_t	boe_log;

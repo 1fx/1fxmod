@@ -515,9 +515,9 @@ void Boe_adm_f ( gentity_t *ent )
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   acl addclan      <id>          ^7[^3Add a clan member^7]\n\"", g_clan.integer));
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   rcl removeclan   <id>          ^7[^3Remove a clan member^7]\n\"", g_clan.integer));
 		}
-
+	// temp entry
 	if (adm >= 4){
-		trap_SendServerCommand( ent-g_entities, va("print \" [^34^7]   ??? adminspec		          ^7[^3Allows you to spec enemy^7]\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \" [^34^7]       adminspec                  ^7[^3Allows you to spec an enemy player^7]\n\""));
 	}
 	trap_SendServerCommand( ent-g_entities, va("print \"    [^32^7] B-Admin          ^7[^33^7] Admin          ^7[^34^7] S-Admin\n\""));
 	trap_SendServerCommand( ent-g_entities, va("print \" \n^7Use ^3[Page Up]^7 and ^3[Page Down]^7 keys to scroll.\n\""));
@@ -1737,7 +1737,8 @@ void Boe_unTwist (int argNum, gentity_t *adm, qboolean shortCmd)
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 
 	if(adm && adm->client){
-		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,^7%s was %st%sw%si%ss%st%sed by %s", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, adm->client->pers.netname));
+		// Boe!Man 6/11/10: Double "Twisted" message bug fixed.
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,^7%s was %su%sn%st%sw%si%ssted by %s", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, adm->client->pers.netname));
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was untwisted by %s.\n\"", g_entities[idnum].client->pers.netname,adm->client->pers.netname));
 		Boe_adminLog (va("%s - UNTWIST: %s", adm->client->pers.cleanName, g_entities[idnum].client->pers.cleanName  )) ;
 	}
