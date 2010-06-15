@@ -81,10 +81,10 @@ void RPM_Awards(void)
 	//faster than the rest don't bump up the avg. time
 	//float avgtime = 0.0, playerTime = 0.0;
 	int avgtime = 0, playerTime = 0;
-	statinfo_t     stat[64];
-	static gentity_t bestOverall[64] = NULL, headshooter[64] = NULL, killer[64] = NULL;
-	static gentity_t accurate[64] = NULL, bestRatio[64] = NULL, explosive[64] = NULL, knifer[64] = NULL;
-	gentity_t ent[64];
+	statinfo_t     *stat;
+	static gentity_t *bestOverall = NULL, *headshooter = NULL, *killer = NULL;
+	static gentity_t *accurate = NULL, *bestRatio = NULL, *explosive = NULL, *knifer = NULL;
+	gentity_t *ent;
 
 	///RxCxW - 01.12.06 - 09:26pm #TEST - for award debug :p
 	//char	*a, *b;
