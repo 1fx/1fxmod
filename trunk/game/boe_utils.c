@@ -1486,7 +1486,8 @@ Boe_serverMsg
 void Boe_serverMsg (void)
 {
 	char	*message;
-	
+	if(boe_log.integer == 1)
+	G_LogPrintf("SMs\n");
 	level.serverMsgCount++;
 
 	switch (level.serverMsgCount){
@@ -1516,5 +1517,6 @@ void Boe_serverMsg (void)
 
 	level.serverMsg = level.time + (server_msgDelay.integer * 1000);
 	trap_SendServerCommand( -1, va("chat -1 \"%sM%se%ss%ss%sa%sge: %s\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, message ) );
-
+	if(boe_log.integer == 1)
+	G_LogPrintf("SMe\n");
 }

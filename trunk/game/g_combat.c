@@ -584,7 +584,7 @@ void player_die(
 	trap_LinkEntity (self);
 
 	if(boe_log.integer == 1)
-	G_LogPrintf("2\n");
+	G_LogPrintf("1e\n");
 }
 
 /*

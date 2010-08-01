@@ -1249,7 +1249,7 @@ void ClientUserinfoChanged( int clientNum )
 	return;
 
 	if(boe_log.integer == 1)
-	G_LogPrintf("10\n");
+	G_LogPrintf("9e\n");
 
 	ent->client->sess.lastIdentityChange = level.time+3000;
 }
@@ -1430,7 +1430,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 					client->sess.clanMember = Boe_NameListCheck (clientNum, ent->client->pers.boe_id, g_clanfile.string, NULL, qfalse, qfalse, qfalse, qfalse);
 	}	
 	if(boe_log.integer == 1)
-	G_LogPrintf("6\n");
+	G_LogPrintf("5e\n");
 
 
 	return NULL;
@@ -1510,7 +1510,7 @@ void ClientBegin( int clientNum )
 	CalculateRanks();
 
 		if(boe_log.integer == 1)
-	G_LogPrintf("8\n");
+	G_LogPrintf("7e\n");
 }
 
 /*

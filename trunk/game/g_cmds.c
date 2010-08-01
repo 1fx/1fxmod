@@ -329,7 +329,7 @@ void RPM_Awards(void)
 			/////trap_SendServerCommand( -1, va("awards %s %s", a, b));
 			//Com_Printf("awards %s %s\n", a, b);
 			if(boe_log.integer == 1)
-	G_LogPrintf("4\n");
+	G_LogPrintf("3e\n");
 #ifdef Q3_VM
 			///End  - 01.12.06 - 09:23pm
 			trap_SendServerCommand( -1, va("awards %i %i %i %i %i %i %i %.2f %i %.2f %i %i %i %i", 
@@ -4691,8 +4691,8 @@ void ClientCommand( int clientNum ) {
 	else if (Q_stricmp (cmd, "extrasounds") == 0)
 		Boe_Display_ExtraSounds( ent );
 	// Boe!Man 4/3/10
-	else if (Q_stricmp (cmd, "dev") == 0)
-		Boe_dev_f( ent );
+	//else if (Q_stricmp (cmd, "dev") == 0)
+	//	Boe_dev_f( ent );
 	// Henk 07/04/10 -> Send info to all players(for RPM scoreboard)
 	else if (Q_stricmp (cmd, "tmi") == 0){
 		RPM_UpdateTMI();
