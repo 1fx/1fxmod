@@ -384,13 +384,13 @@ static cvarTable_t gameCvarTable[] =
 	{ &server_msgInterval, "server_msgInterval", "5", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_msgDelay, "server_msgDelay", "2", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_message1, "server_message1", "Welcome to 1fx. Mod.", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
-	{ &server_message2, "server_message2", "Forums can be found on 1fx.ipbfree.com.", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
+	{ &server_message2, "server_message2", "Development forums can be found on 1fx.uk.to.", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_message3, "server_message3", "Have fun!", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_message4, "server_message4", "", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_message5, "server_message5", "", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 
 	// boe: Debug CVAR
-	{ &boe_log, "boe_log", "1", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
+	{ &boe_log, "boe_log", "0", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 
 /*
 	switch (g_weaponModFlags.integer){
