@@ -413,11 +413,13 @@ void G_ResetGametype ( void )
 			{
 				// Get Ready
 				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sG%se%st %sr%se%sa%sdy", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-				/*if (g_autoeventeams.integer == 1){
-					EvenTeams(NULL, qtrue);}
-				*/
 			}
-
+			if(boe_log.integer == 1){
+				G_LogPrintf("AETs");}
+			if (g_autoeventeams.integer == 1){
+				EvenTeams(NULL, qtrue);}
+			if(boe_log.integer == 1){
+				G_LogPrintf("AETe\n");}
 			trap_SetConfigstring ( CS_GAMETYPE_TIMER, va("%i", level.gametypeRoundTime) );
 			break;
 	}

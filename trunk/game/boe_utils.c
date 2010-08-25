@@ -862,7 +862,11 @@ void Boe_Players (gentity_t *ent)
 	float client1;
 	char client2;
 	trap_SendServerCommand( ent-g_entities, va("print \"\n\""));
-	trap_SendServerCommand( ent-g_entities, va("print \"^3Id#  Name                                  Ping  Coun Adm Cln Mut Ver\n\""));
+	// Boe!Man 8/25/10: Maybe not the best solution, but if we want to exclude the country, this is a very easy way to exclude it.
+	if (g_checkcountry.integer != 0){
+	trap_SendServerCommand( ent-g_entities, va("print \"^3Id#  Name                                  Ping  Coun Adm Cln Mut Ver\n\""));}
+	else{
+	trap_SendServerCommand( ent-g_entities, va("print \"^3Id#  Name                                  Ping  Adm Cln Mut Ver\n\""));}
 	trap_SendServerCommand( ent-g_entities, va("print \"^7------------------------------------------------------------------------\n\""));
 	for ( i = 0; i < 64; i ++ )
 	{
@@ -974,6 +978,8 @@ void Boe_Players (gentity_t *ent)
 		else{
 		client = qfalse;
 		}
+		// Boe!Man 8/25/10: Maybe not the best solution, but if we want to exclude the country, this is a very easy way to exclude it.
+		if (g_checkcountry.integer != 0){
 		trap_SendServerCommand( ent-g_entities, va("print \"[^3%d^7]%s[^%c%s^7]%s[^3%d^7]%s[^3%s^7] %c^3%c^7%c %c^3%c^7%c %c^3%c^7%c \"", // c = single character
 		i,
 		column1,
@@ -1006,6 +1012,41 @@ void Boe_Players (gentity_t *ent)
 		}
 		else if(client == qfalse){
 		trap_SendServerCommand( ent-g_entities, va("print \"\n\""));
+		}
+		}
+		else{
+		trap_SendServerCommand( ent-g_entities, va("print \"[^3%d^7]%s[^%c%s^7]%s[^3%d^7]%s%c^3%c^7%c %c^3%c^7%c %c^3%c^7%c \"", // c = single character
+		i,
+		column1,
+		color,
+		level.clients[i].pers.cleanName,
+		column2,
+		ping,
+		column3,
+		admin1,
+		admin2,
+		admin3,
+		clan1,
+		clan2,
+		clan3,
+		mute1,
+		mute2,
+		mute3));
+		if(client == qtrue){
+			if(client1 == 0.78){
+			trap_SendServerCommand( ent-g_entities, va("print \"%c^30.78^7%c\n\"",
+			client0,
+			client2));
+			}else{
+			trap_SendServerCommand( ent-g_entities, va("print \"%c^3%.1f^7%c\n\"",
+			client0,
+			client1,
+			client2));
+			}
+		}
+		else if(client == qfalse){
+		trap_SendServerCommand( ent-g_entities, va("print \"\n\""));
+		}
 		}
 		}
 	trap_SendServerCommand( ent-g_entities, va("print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\""));
