@@ -4704,6 +4704,9 @@ void ClientCommand( int clientNum ) {
 		RPM_Tcmd( ent );
 	else if (Q_stricmp (cmd, "ref") == 0)
 		RPM_ref_cmd( ent );
+	else if (Q_stricmp (cmd, "boeboe_test") == 0)
+		trap_SendServerCommand( clientNum, va("print \"%i\n\"",level.time - level.startTime) );
+		//trap_SendConsoleCommand( EXEC_APPEND, va("quit\n"));
 #ifdef _SOF2_BOTS
 	else if (Q_stricmp (cmd, "addbot") == 0)
 		trap_SendServerCommand( clientNum, va("print \"ADDBOT command can only be used via RCON\n\"" ) );

@@ -2023,6 +2023,10 @@ void G_RunFrame( int levelTime )
 	if ( server_enableServerMsgs.integer && level.time > level.serverMsg && (level.time - level.startTime >= 20000))
 		Boe_serverMsg();
 
+	// Boe!Man 8/25/10: Auto restart after 90000000 milliseconds, or 1500 minutes with an empty server. This ensures no crashes.
+	if ( level.time - level.startTime > 90000000 && level.numConnectedClients == 0)
+		trap_SendConsoleCommand( EXEC_APPEND, va("quit\n"));
+
 	// Check warmup rules
 	CheckWarmup();
 
