@@ -1423,7 +1423,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 	trap_UnlinkEntity ( ent );
 	//G_LogPrintf( "Client connected\n" );
 
-	// Boe!Man 12/30/09: Checking for Admin. --- Update 1/4/10 // BOE TEST, NOT CERTAIN IT'LL WORK :(
+	// Boe!Man 12/30/09: Checking for Admin.
 	if(!ent->client->sess.fileChecked && !(ent->r.svFlags & SVF_BOT)){
 			client->sess.admin = Boe_NameListCheck ( clientNum, ent->client->pers.boe_id, g_adminfile.string, NULL, qfalse, qtrue, qfalse, qfalse);
 				if(!client->sess.clanMember)
