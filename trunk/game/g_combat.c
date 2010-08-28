@@ -347,6 +347,7 @@ void player_die(
 		{
 			G_AddScore( attacker, 1 );
 			attacker->client->sess.kills++;
+			attacker->client->sess.exp += 2;
 			attacker->client->pers.statinfo.killsinarow++;
 			// Boe!Man 6/2/10: Add it to our own stats list.
 			attacker->client->pers.statinfo.kills++;

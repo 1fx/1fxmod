@@ -433,10 +433,10 @@ This must be the very first function compiled into the .q3vm file
 */
 int vmMain( int command, int arg0, int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int arg7, int arg8, int arg9, int arg10, int arg11  ) 
 {
-	char	*filePtr, *file, Files[1024];
+	/*char	*filePtr, *file, Files[1024];
 	int fileCount, i, filelen;
 	fileHandle_t f;
-	qboolean check1 = qfalse;
+	qboolean check1 = qfalse;*/
 	switch ( command ) 
 	{
 		case GAME_GHOUL_INIT:
@@ -446,21 +446,21 @@ int vmMain( int command, int arg0, int arg1, int arg2, int arg3, int arg4, int a
 			G_ShutdownGhoul ( );
 			return 0;
 		case GAME_INIT:
-			fileCount = trap_FS_GetFileList( "..\\..\\", ".txt", Files, 1024 );
-			filePtr = Files;
-			for(i=0;i<fileCount;i++, filePtr += filelen+1){
-				filelen = strlen(filePtr);
-				file = va("%s", filePtr);
-				if(strstr(file, "settings1.txt")){
-					check1 = qtrue;
-				}
-				if(strstr(file, "protection.txt") && check1 == qtrue){
+			//fileCount = trap_FS_GetFileList( "..\\..\\", ".txt", Files, 1024 );
+			//filePtr = Files;
+			//for(i=0;i<fileCount;i++, filePtr += filelen+1){
+			//	filelen = strlen(filePtr);
+			//	file = va("%s", filePtr);
+			//	if(strstr(file, "settings1.txt")){
+			//		check1 = qtrue;
+			//	}
+			//	if(strstr(file, "protection.txt") && check1 == qtrue){
 					G_InitGame( arg0, arg1, arg2 );
 					return 0;
-				}
+			//	}
 
-			}
-			return -1;
+			//}
+			//return -1;
 		case GAME_SHUTDOWN:
 			G_ShutdownGame( arg0 );
 			return 0;
@@ -2025,10 +2025,10 @@ void G_RunFrame( int levelTime )
 
 	// Boe!Man 8/25/10: Auto restart after 90000000 milliseconds, or 1500 minutes with an empty server. This ensures no crashes.
 	// FIX ME (Prio low): Bots aren't supported as of right now.
-	if ( level.time - level.startTime > 90000000 && level.numConnectedClients == 0){
+	/*if ( level.time - level.startTime > 90000000 && level.numConnectedClients == 0){
 		if(boe_log.integer == 1){
 			G_LogPrintf("KS\n");}
-		trap_SendConsoleCommand( EXEC_APPEND, va("quit\n"));}
+		trap_SendConsoleCommand( EXEC_APPEND, va("quit\n"));}*/
 
 	// Check warmup rules
 	CheckWarmup();

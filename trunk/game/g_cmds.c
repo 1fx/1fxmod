@@ -353,7 +353,7 @@ void RPM_Awards(void)
 	}
 }
 
-int FormatDamage(int damage){ // lol fix me au3 script ftw
+int FormatDamage(int damage){
 	char test[10];
 	char *test1;
 	strcpy(test, va("%i", damage));
@@ -370,7 +370,7 @@ int FormatDamage(int damage){ // lol fix me au3 script ftw
 return damage/10;
 }
 
-void Preload(void){
+void Preload(void){ // causes memory leaks lol
 	DB195 = trap_GP_ParseFile("country\\IPs.194", qtrue, qfalse);
 	DB212 = trap_GP_ParseFile("country\\IPs.212", qtrue, qfalse);
 	DB62 = trap_GP_ParseFile("country\\IPs.62", qtrue, qfalse);
@@ -811,6 +811,7 @@ void RPM_Obituary ( gentity_t *target, gentity_t *attacker, int mod, attackType_
 		headShot = qtrue;
 		//add to the total headshot count for this player
 		atrstat->headShotKills++;
+		attacker->client->sess.exp += 3;
 	}
 
 	targ = target->s.number;
@@ -4704,6 +4705,9 @@ void ClientCommand( int clientNum ) {
 		RPM_Tcmd( ent );
 	else if (Q_stricmp (cmd, "ref") == 0)
 		RPM_ref_cmd( ent );
+	else if (Q_stricmp (cmd, "exp") == 0){
+		trap_SendServerCommand( clientNum, va("print \"Exp: %i\nMax Exp: %i\nLevel: %i\n\"", ent->client->sess.exp, ent->client->sess.maxexp, ent->client->sess.level) );
+	}
 	//else if (Q_stricmp (cmd, "boeboe_test") == 0)
 	//	trap_SendServerCommand( clientNum, va("print \"%i\n\"",level.time - level.startTime) );
 		//trap_SendConsoleCommand( EXEC_APPEND, va("quit\n"));
