@@ -5,8 +5,6 @@
 #include "g_local.h"
 #include "boe_local.h"
 
-int LevelExp[] = {10,50,100,150,200,250}; // first value should be unused
-
 void P_SetTwitchInfo(gclient_t	*client)
 {
 	client->ps.painTime = level.time;
@@ -1113,33 +1111,6 @@ void ClientThink_real( gentity_t *ent )
 
 	// set speed
 	client->ps.speed = g_speed.value;
-
-	// Henk 28/08/10 -> See if clients have enough exp to level up
-	// Broadcast this with print and heads up broadcast and flare(and hp bonus?) for client who levels.
-	if(client->sess.level == 0){
-		client->sess.level = 1; // default level = 1
-		client->sess.maxexp = LevelExp[client->sess.level];
-	}
-
-	if(client->sess.maxexp == 0) // if they dont have maxexp assigned change it to default
-		client->sess.maxexp = 50;
-	else if(client->sess.exp >= client->sess.maxexp){
-		client->sess.exp = client->sess.exp-client->sess.maxexp;
-		client->sess.maxexp = LevelExp[client->sess.level];
-		client->sess.level += 1;
-		// Start broadcasting
-		trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s grew to level %i.\n\"", client->pers.cleanName, client->sess.level));
-		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, You have gained a %sl%se%sv%se%sl%s!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-
-		AddSpawnField("classname", "fx_play_effect");
-		AddSpawnField("effect",	"flare_red");
-		AddSpawnField("origin",		va("%.0f %.0f %.0f", ent->r.currentOrigin[0], ent->r.currentOrigin[1], ent->r.currentOrigin[2]));
-		AddSpawnField("wait",		"3");
-		AddSpawnField("count",		 "1");
-		G_SpawnGEntityFromSpawnVars(qtrue);
-		level.numSpawnVars = 0;
-		level.numSpawnVarChars = 0;
-	}
 
 	// set up for pmove
 	oldEventSequence = client->ps.eventSequence;

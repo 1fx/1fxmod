@@ -268,14 +268,6 @@ typedef struct
 	qboolean			fairplay;
 	char				fpGuid[10];
 	qboolean			monkey;
-
-	// Henk 28/08/10 -> User variables for class,level,exp
-	// FIX ME -> Exp variable could reach overflow limit(2147483647)
-	int					class;
-	int					level;
-	int					exp;
-	int					maxexp;
-	
 } clientSession_t;
 
 // Boe!Man 3/30/10
