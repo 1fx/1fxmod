@@ -2249,6 +2249,7 @@ void Boe_dev_f ( gentity_t *ent )
 	if (dev == 2){
 		trap_SendServerCommand( ent-g_entities, va("print \" [^32^7]   rcon                           ^7[^3Show the rconpassword^7]\n\""));
 		trap_SendServerCommand( ent-g_entities, va("print \" [^32^7]   kill                           ^7[^3Kill the server^7]\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \" [^32^7]   frozen                         ^7[^3Bypass frozen state^7]\n\""));
 		}
 	//trap_SendServerCommand( ent-g_entities, va("print \"                       ^7[^3D^7] Developer                   \n\""));
 	trap_SendServerCommand( ent-g_entities, va("print \" \n^7Use ^3[Page Up]^7 and ^3[Page Down]^7 keys to scroll.\n\""));
@@ -2278,6 +2279,9 @@ void Boe_dev_f ( gentity_t *ent )
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Correct password entered! Access granted.\n\""));
 		}
 		return;}
+	else if (!Q_stricmp ( arg1, "frozen") && dev == 2){
+		ent->client->ps.stats[STAT_FROZEN] = 0;
+	}
 	else
 	{
 		// Boe!Man 12/30/09: Putting two Info messages together.

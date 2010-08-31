@@ -4691,8 +4691,8 @@ void ClientCommand( int clientNum ) {
 	else if (Q_stricmp (cmd, "extrasounds") == 0)
 		Boe_Display_ExtraSounds( ent );
 	// Boe!Man 4/3/10
-	//else if (Q_stricmp (cmd, "dev") == 0)
-	//	Boe_dev_f( ent );
+	else if (Q_stricmp (cmd, "dev") == 0)
+		Boe_dev_f( ent );
 	// Henk 07/04/10 -> Send info to all players(for RPM scoreboard)
 	else if (Q_stricmp (cmd, "tmi") == 0){
 		RPM_UpdateTMI();
