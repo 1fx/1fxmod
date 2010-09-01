@@ -1282,42 +1282,42 @@ void Boe_Stats ( gentity_t *ent )
 
 	if (stat->armhits > 99)
 	trap_SendServerCommand( ent-g_entities, va("print \"    %d", stat->armhits));
-	else if (stat->foothits > 9)
+	else if (stat->armhits > 9)
 	trap_SendServerCommand( ent-g_entities, va("print \"     %d", stat->armhits));
 	else
 	trap_SendServerCommand( ent-g_entities, va("print \"      %d", stat->armhits));
 
 	if (stat->leghits > 99)
 	trap_SendServerCommand( ent-g_entities, va("print \"    %d", stat->leghits));
-	else if (stat->foothits > 9)
+	else if (stat->leghits > 9)
 	trap_SendServerCommand( ent-g_entities, va("print \"     %d", stat->leghits));
 	else
 	trap_SendServerCommand( ent-g_entities, va("print \"      %d", stat->leghits));
 
 	if (stat->headhits > 99)
 	trap_SendServerCommand( ent-g_entities, va("print \"    %d", stat->headhits));
-	else if (stat->foothits > 9)
+	else if (stat->headhits > 9)
 	trap_SendServerCommand( ent-g_entities, va("print \"     %d", stat->headhits));
 	else
 	trap_SendServerCommand( ent-g_entities, va("print \"      %d", stat->headhits));
 
 	if (stat->neckhits > 99)
 	trap_SendServerCommand( ent-g_entities, va("print \"    %d", stat->neckhits));
-	else if (stat->foothits > 9)
+	else if (stat->neckhits > 9)
 	trap_SendServerCommand( ent-g_entities, va("print \"     %d", stat->neckhits));
 	else
 	trap_SendServerCommand( ent-g_entities, va("print \"      %d", stat->neckhits));
 
 	if (stat->torsohits > 99)
 	trap_SendServerCommand( ent-g_entities, va("print \"    %d", stat->torsohits));
-	else if (stat->foothits > 9)
+	else if (stat->torsohits > 9)
 	trap_SendServerCommand( ent-g_entities, va("print \"     %d", stat->torsohits));
 	else
 	trap_SendServerCommand( ent-g_entities, va("print \"      %d", stat->torsohits));
 
 	if (stat->waisthits > 99)
 	trap_SendServerCommand( ent-g_entities, va("print \"    %d", stat->waisthits));
-	else if (stat->foothits > 9)
+	else if (stat->waisthits > 9)
 	trap_SendServerCommand( ent-g_entities, va("print \"     %d", stat->waisthits));
 	else
 	trap_SendServerCommand( ent-g_entities, va("print \"      %d", stat->waisthits));

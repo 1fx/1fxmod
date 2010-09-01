@@ -861,6 +861,7 @@ int G_Damage (
 	int				save;
 	int				asave;
 	int				knockback;
+	int				actualtake;
 
 	if (!targ->takedamage) 
 	{
@@ -1008,6 +1009,8 @@ int G_Damage (
 	asave = CheckArmor (targ, take, dflags);
 	take -= asave;
 
+	actualtake = Com_Clamp ( 0, targ->health, take );
+
 	// Teamkill dmage thats not caused by a telefrag?
 	if ( g_teamkillDamageMax.integer && mod != MOD_TELEFRAG )
 	{
@@ -1117,7 +1120,23 @@ int G_Damage (
 		if ( targ->client )
 		{
 			targ->client->ps.stats[STAT_HEALTH] = targ->health;
-
+			// Boe!Man 9/1/10: Update various stats.
+			// If they get shot, make sure it adds to their damageTaken.
+			if(targ == attacker)
+			{
+				targ->client->pers.statinfo.damageTaken += actualtake;
+			}
+			// If team killing, be sure to NOT calculate this to the victim's damageTaken.
+			else if(level.gametypeData->teams && OnSameTeam(targ,attacker))
+			{
+				attacker->client->pers.statinfo.damageDone -= actualtake;
+			}
+			// If a general event occurs, e.g. a player gets shot by an enemy, update the damageTaken.
+			else if(attacker && attacker->client){
+				attacker->client->pers.statinfo.damageDone += actualtake;
+				targ->client->pers.statinfo.damageTaken += actualtake;	
+			}
+			// Boe!Man 9/1/10: End.
 			if ( targ->health > 0 )
 			{
 				// Slow down the client at bit when they get hit

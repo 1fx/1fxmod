@@ -2021,7 +2021,7 @@ void Boe_pop (int argNum, gentity_t *adm, qboolean shortCmd)
 	int				idnum;
 	int				anim = 0;
 
-	idnum = Boe_ClientNumFromArg(adm, argNum, "pop <idnumber>", "pop", qtrue, qtrue, shortCmd);
+	idnum = Boe_ClientNumFromArg(adm, argNum, "pop <idnumber>", "pop", qtrue, qfalse, shortCmd);
 	if(idnum < 0){return;}
 	ent = g_entities + idnum;
 	
