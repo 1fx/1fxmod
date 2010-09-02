@@ -175,24 +175,6 @@ vmCvar_t	server_msgDelay;
 
 vmCvar_t	boe_log;
 
-void		*DB195;
-void		*DB194;
-void		*DB212;
-void		*DB62;
-void		*DB193;
-void		*DB213;
-void		*DB217;
-void		*DB192;
-void		*DB216;
-void		*DB91;
-void		*DB209;
-void		*DB80;
-void		*DB64;
-void		*DB202;
-void		*DB66;
-void		*DB203;
-int			Preloaded;
-
 static cvarTable_t gameCvarTable[] = 
 {
 	// don't override the cheat state set by the system

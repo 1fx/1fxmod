@@ -370,24 +370,6 @@ int FormatDamage(int damage){ // lol fix me au3 script ftw
 return damage/10;
 }
 
-void Preload(void){
-	DB195 = trap_GP_ParseFile("country\\IPs.194", qtrue, qfalse);
-	DB212 = trap_GP_ParseFile("country\\IPs.212", qtrue, qfalse);
-	DB62 = trap_GP_ParseFile("country\\IPs.62", qtrue, qfalse);
-	DB193 = trap_GP_ParseFile("country\\IPs.193", qtrue, qfalse);
-	DB213 = trap_GP_ParseFile("country\\IPs.213", qtrue, qfalse);
-	DB217 = trap_GP_ParseFile("country\\IPs.217", qtrue, qfalse);
-	DB192 = trap_GP_ParseFile("country\\IPs.192", qtrue, qfalse);
-	DB216 = trap_GP_ParseFile("country\\IPs.216", qtrue, qfalse);
-	DB91 = trap_GP_ParseFile("country\\IPs.91", qtrue, qfalse);
-	DB209 = trap_GP_ParseFile("country\\IPs.209", qtrue, qfalse);
-	DB80 = trap_GP_ParseFile("country\\IPs.80", qtrue, qfalse);
-	DB64 = trap_GP_ParseFile("country\\IPs.64", qtrue, qfalse);
-	DB202 = trap_GP_ParseFile("country\\IPs.202", qtrue, qfalse);
-	DB66 = trap_GP_ParseFile("country\\IPs.66", qtrue, qfalse);
-	DB203 = trap_GP_ParseFile("country\\IPs.203", qtrue, qfalse);
-}
-
 void InitSpawn(int choice) // load bsp models before players loads a map(SOF2 clients cannot load a bsp model INGAME)
 {
 	AddSpawnField("classname", "misc_bsp"); // blocker
@@ -4303,9 +4285,9 @@ qboolean CheckIP(gentity_t *ent){ // Henk Update 12/05/10 -> Lag spike when file
 		}
 		octetx[i][countx[i]] = '\0';
 	}
-	fileCount = trap_FS_GetFileList( "country\\known", va(".%s", octetx[0]), Files, 1024 );
+	fileCount = trap_FS_GetFileList( "country\\", va("IP.%s", octetx[0]), Files, 1024 );
 	filePtr = Files;
-	file = va("country\\known\\%s", filePtr);
+	file = va("country\\%s", filePtr);
 	GP2 = trap_GP_ParseFile(file, qtrue, qfalse);
 	if (!GP2)
 	{
@@ -4446,41 +4428,6 @@ void HENK_COUNTRY(gentity_t *ent){
 		octetx[i][countx[i]] = '\0';
 	}
 	// End
-	
-	// Handle the preloaded country files
-	/*if(strstr(va("%s", octetx[0]), "195")){
-		group = trap_GPG_GetSubGroups(DB195);
-	}else if(strstr(va("%s", octetx[0]), "212")){
-		group = trap_GPG_GetSubGroups(DB212);
-	}else if(strstr(va("%s", octetx[0]), "62")){
-		group = trap_GPG_GetSubGroups(DB62);
-	}else if(strstr(va("%s", octetx[0]), "193")){
-		group = trap_GPG_GetSubGroups(DB193);
-	}else if(strstr(va("%s", octetx[0]), "213")){
-		group = trap_GPG_GetSubGroups(DB213);
-	}else if(strstr(va("%s", octetx[0]), "217")){
-		group = trap_GPG_GetSubGroups(DB217);
-	}else if(strstr(va("%s", octetx[0]), "192")){
-		group = trap_GPG_GetSubGroups(DB192);
-	}else if(strstr(va("%s", octetx[0]), "216")){
-		group = trap_GPG_GetSubGroups(DB216);
-	}else if(strstr(va("%s", octetx[0]), "91")){
-		group = trap_GPG_GetSubGroups(DB91);
-	}else if(strstr(va("%s", octetx[0]), "209")){
-		group = trap_GPG_GetSubGroups(DB209);
-	}else if(strstr(va("%s", octetx[0]), "80")){
-		group = trap_GPG_GetSubGroups(DB80);
-	}else if(strstr(va("%s", octetx[0]), "64")){
-		group = trap_GPG_GetSubGroups(DB64);
-	}else if(strstr(va("%s", octetx[0]), "202")){
-		group = trap_GPG_GetSubGroups(DB202);
-	}else if(strstr(va("%s", octetx[0]), "66")){
-		group = trap_GPG_GetSubGroups(DB66);
-	}else if(strstr(va("%s", octetx[0]), "203")){
-		group = trap_GPG_GetSubGroups(DB203);
-	}else{*/
-	// End
-	//G_LogPrintf( "HENK_COUNTRY: else check\n" );
 
 		fileCount = trap_FS_GetFileList( "country", va(".%s", octetx[0]), Files, 1024 );
 		filePtr = Files;
