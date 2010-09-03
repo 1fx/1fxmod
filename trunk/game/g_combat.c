@@ -1111,12 +1111,14 @@ int G_Damage (
 	// do the damage
 	if (take)
 	{
+		/*
 		if(attacker->client)
 		{
 			attacker->client->pers.statinfo.damageDone += take;
-		}
-		targ->health = targ->health - take;
+		}*/
 
+		targ->health = targ->health - take;
+		
 		if ( targ->client )
 		{
 			targ->client->ps.stats[STAT_HEALTH] = targ->health;
@@ -1136,6 +1138,9 @@ int G_Damage (
 				attacker->client->pers.statinfo.damageDone += actualtake;
 				targ->client->pers.statinfo.damageTaken += actualtake;	
 			}
+
+			targ->client->ps.stats[STAT_HEALTH] = targ->health;
+
 			// Boe!Man 9/1/10: End.
 			if ( targ->health > 0 )
 			{
