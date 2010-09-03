@@ -8,7 +8,7 @@
 #define INF_VERSION_STRING "0.42t"
 #define INF_STRING "1fx. Mod"
 #define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod"
-#define INF_VERSION_DATE "9/1/10"
+#define INF_VERSION_DATE "9/3/10"
 
 
 // Infiltration
