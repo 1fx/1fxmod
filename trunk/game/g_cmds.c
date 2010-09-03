@@ -353,7 +353,7 @@ void RPM_Awards(void)
 	}
 }
 
-int FormatDamage(int damage){ // lol fix me au3 script ftw
+int FormatDamage(int damage){
 	char test[10];
 	char *test1;
 	strcpy(test, va("%i", damage));
@@ -1602,19 +1602,6 @@ void DeathmatchScoreboardMessage( gentity_t *ent )
 			g_entities[level.sortedClients[i]].s.gametypeitems,
 			g_teamkillDamageMax.integer ? 100 * cl->sess.teamkillDamage / g_teamkillDamageMax.integer : 0
 			);
-		}else if(ent->client->sess.proClient == 4.00){
-			Com_sprintf (entry, sizeof(entry),
-			" %i %i %i %i %i %i %i %i %i",
-			level.sortedClients[i],
-			cl->sess.score,
-			cl->sess.kills,
-			cl->sess.deaths,
-			ping,
-			(level.time - cl->pers.enterTime)/60000,
-			(cl->sess.ghost || cl->ps.pm_type == PM_DEAD) ? qtrue : qfalse,
-			g_entities[level.sortedClients[i]].s.gametypeitems,
-			g_teamkillDamageMax.integer ? 100 * cl->sess.teamkillDamage / g_teamkillDamageMax.integer : 0
-			);
 		}
 		else
 		{
@@ -1646,9 +1633,6 @@ void DeathmatchScoreboardMessage( gentity_t *ent )
 							level.teamScores[TEAM_RED], 
 							level.teamScores[TEAM_BLUE],
 							string ) );
-	if(cl->sess.proClient == 4.00){
-		trap_SendServerCommand( ent-g_entities, va("scores2 0 0 0.00 0 0 0 0 0 0") );
-	}
 }
 
 
@@ -4651,6 +4635,8 @@ void ClientCommand( int clientNum ) {
 		RPM_Tcmd( ent );
 	else if (Q_stricmp (cmd, "ref") == 0)
 		RPM_ref_cmd( ent );
+	else if (Q_stricmp (cmd, "testftw") == 0)
+		ent->client->pers.statinfo.damageDone += 10000;
 	//else if (Q_stricmp (cmd, "boeboe_test") == 0)
 	//	trap_SendServerCommand( clientNum, va("print \"%i\n\"",level.time - level.startTime) );
 		//trap_SendConsoleCommand( EXEC_APPEND, va("quit\n"));

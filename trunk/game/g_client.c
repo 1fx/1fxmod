@@ -1288,8 +1288,10 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 	char		guid[64];
 	char		a[64] = "\0";
 	gentity_t	*ent;
-	int				len;
+
+		int             len;
 	fileHandle_t	f;
+	char			str[64];
 
 	ent = &g_entities[ clientNum ];
 	//G_LogPrintf("Starting ClientConnect()\n");
@@ -1394,14 +1396,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 	//G_LogPrintf( "ClientConnect: %i\n", clientNum );
 	// Boe!Man 3/31/10: First off we search in the Country database.
 	if(CheckIP(ent) != qtrue){ // not found in list so search ip database
-		if(g_checkcountry.integer == 1){
-		//HENK_COUNTRY(ent); // will store in sess.country and sess.countryext
-		// Henk 02/09/10 -> Store ip in a file.
-		// Ip2Country will be done on a seperate server(to get rid of the lag spikes)
-			len = trap_FS_FOpenFile( va("country\\IPs"), &f, FS_APPEND_TEXT );
-			trap_FS_Write(va("%s\n", ent->client->pers.ip), strlen(va("%s\n", ent->client->pers.ip)), f);
-			trap_FS_FCloseFile(f);
-		}
+			// store ip
 	}
 	//G_LogPrintf( "HENK_COUNTRY done..\n" );
 	// Boe!Man 3/30/10: We use this for several things.. Including MOTD and Admin.
