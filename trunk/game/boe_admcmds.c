@@ -112,12 +112,14 @@ Boe_Normaldamage
 */
 
 void Boe_NormalDamage(int argNum, gentity_t *ent, qboolean shortCmd){
-	int i;
+	int i, ammoindex;
 	g_instagib.integer = 0;
 	BG_InitWeaponStats();
 	for(i=0;i<=level.numConnectedClients;i++){
 		level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
 		G_UpdateOutfitting(g_entities[level.sortedClients[i]].s.number);
+		ammoindex = weaponData[WP_KNIFE].attack[ATTACK_ALTERNATE].ammoIndex;
+		ammoData[ammoindex].max = 5; 
 	}
 	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sN%so%sr%sm%sa%sl damage!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 	trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Normal damage by %s.\n\"", ent->client->pers.netname));
