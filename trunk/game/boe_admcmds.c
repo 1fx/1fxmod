@@ -1614,9 +1614,20 @@ void Boe_Ban_f (int argNum, gentity_t *adm, qboolean shortCmd)
 
 	trap_Argv( argNum + 1, reason, sizeof( reason ) );
 
-	Com_sprintf (banid, sizeof(banid), "%s\\%s",
+	// Boe!Man 9/7/10: Example of ban.
+	if (adm && adm->client){
+		Com_sprintf (banid, sizeof(banid), "%s\\%s\\%s\\%s",
 		g_entities[idnum].client->pers.ip,
-		g_entities[idnum].client->pers.cleanName);
+		g_entities[idnum].client->pers.cleanName,
+		reason,
+		adm->client->pers.cleanName);}
+	else{
+		Com_sprintf (banid, sizeof(banid), "%s\\%s\\%s\\%s",
+		g_entities[idnum].client->pers.ip,
+		g_entities[idnum].client->pers.cleanName,
+		reason,
+		"RCON");}
+
 
 	if(Boe_AddToList(banid, g_banlist.string, "Ban", adm)){
 		if(adm && adm->client)	{
