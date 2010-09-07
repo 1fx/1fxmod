@@ -17,6 +17,7 @@ typedef struct
 admCmd_t AdminCommands[] = 
 {
 	{"!uc ", "uppercut", &g_uppercut.integer, &Boe_Uppercut},
+	{"!Uc ", "uppercut", &g_uppercut.integer, &Boe_Uppercut},
 	{"!u ", "uppercut", &g_uppercut.integer, &Boe_Uppercut},
 	{"!p ", "pop", &g_pop.integer, &Boe_pop},
 	{"!k ", "kick", &g_kick.integer, &Boe_Kick},
@@ -49,7 +50,11 @@ admCmd_t AdminCommands[] =
 	{"!rc ", "removeclan", &g_clan.integer, &Boe_Remove_Clan_Member},
 	{"!rcl ", "removeclan", &g_clan.integer, &Boe_Remove_Clan_Member},
 	{"!3rd", "3rd", &g_clan.integer, &Boe_Third},
-	{"!cm", "compmode", &g_clan.integer, &Boe_CompMode}
+	{"!cm", "compmode", &g_clan.integer, &Boe_CompMode},
+	{"!bl", "banlist", &g_ban.integer, &Boe_BanList},
+	{"!ba ", "ban", &g_ban.integer, &Boe_Ban_f},
+	{"!BA ", "ban", &g_ban.integer, &Boe_Ban_f},
+	{"!Ba ", "ban", &g_ban.integer, &Boe_Ban_f},
 };
 // End
 
@@ -59,9 +64,10 @@ void trap_SendServerCommand2( int clientNum, const char *text );
 void trap_SendServerCommand( int clientNum, const char *text ) {
         if( strlen( text ) > 1022 ) {
 			char a[100]; 
+			Boe_crashLog(va("overflow: name:[%s]",g_entities[clientNum].client->pers.netname)); // save this first incase of crash while copying memory
 			Q_strncpyz (a, text, 100);
+			Boe_crashLog(va("Data:[%s]", a)); // extra information
 			trap_SendServerCommand2(clientNum, a);
-			Boe_crashLog(va("overflow: name:[%s]\nData:[%s]",g_entities[clientNum].client->pers.netname, a)) ;
             return;
         }
 		trap_SendServerCommand2(clientNum, text);
@@ -1206,6 +1212,7 @@ void RPM_UpdateTMI(void)
 	char		userinfo[MAX_INFO_STRING];
 	int			damage;
 	char		*string;
+	int			UpdateTime;
 /*	if (!level.gametypeData->teams)
 	{	// only bother if a league game with teams
 		return;
@@ -1219,7 +1226,14 @@ void RPM_UpdateTMI(void)
 	if(level.pause) // Henk 06/04/10 -> No pause functionality yet
 		return;
 
-	if (level.time - level.lastTMIupdate < 5000) // Henk 06/04/10 -> Increase to reduce lagg
+	if(level.numConnectedClients >= 0 && level.numConnectedClients <= 10)
+		UpdateTime = 1000;
+	else if(level.numConnectedClients > 11 && level.numConnectedClients <= 20)
+		UpdateTime = 2500;
+	else if(level.numConnectedClients > 20)
+		UpdateTime = 4000;
+
+	if (level.time - level.lastTMIupdate < UpdateTime) // Henk 06/04/10 -> Increase to reduce lagg
 	{
 		return;
 	}
@@ -3086,11 +3100,11 @@ void G_Say ( gentity_t *ent, gentity_t *target, int mode, const char *chatText )
 	// FIX ME: Protection for overflows/fails etc..
 	if((strstr(chatText, "@fp") || strstr(chatText, "@FP") || strstr(chatText, "@Fp") || strstr(chatText, "@fP"))){
 		for(i=0;i<=strlen(chatText);i++){
-			if(chatText[i] == '@' && (chatText[i+1] != 'f' || chatText[i+1] != 'F')){
+			if(chatText[i] == '@' && chatText[i+1] != 'f'){
 				trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Sound blocked to prevent spam.\n\"") );
+				return;
 			}
 		}
-		return;
 	}
 	switch ( mode )
 	{
@@ -3238,6 +3252,8 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			if(ent->client->sess.admin >= *AdminCommands[i].adminLevel){
 				AdminCommands[i].Function(1, ent, qtrue);
 				break;
+			}else{
+				trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
 			}
 		}
 	}
@@ -3501,43 +3517,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	//	AdminCommands[1].Function(1, ent, qtrue);
 	//	trap_SendServerCommand( -1, va("print \"^3[Debug] ^7%s level is %i.\n\"", AdminCommands[1].adminCmd, *AdminCommands[1].adminLevel));
 
-	}else if ((strstr(p, "!xu ")) || (strstr(p, "!xuc ")) || (strstr(p, "!xuppercut "))) {
-		char *numb;
-		int id = -1, i;
-		if(ent->client->sess.admin >= 4){
-		for(i=0;i<=20;i++){
-			if(p[i] == ' '){
-				numb = va("%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", p[i+1], p[i+2], p[i+3], p[i+4], p[i+5], p[i+6], p[i+7], p[i+8], p[i+9], p[i+10], p[i+11], p[i+12], p[i+13], p[i+14], p[i+15]);
-				break;
-			}
-		}
-		for(i=0;i<=level.numConnectedClients;i++){
-			//trap_SendServerCommand(-1, va("print\"^3[Debug] ^7%s comparing with %s.\n\"", g_entities[level.sortedClients[i]].client->pers.cleanName,numb));
-			if(strstr(Q_strlwr(g_entities[level.sortedClients[i]].client->pers.cleanName), Q_strlwr(numb))){
-				id = level.sortedClients[i];
-				break;
-			}
-		}
-		if(id != -1){
-		g_entities[id].client->ps.pm_flags |= PMF_JUMPING;
-		g_entities[id].client->ps.groundEntityNum = ENTITYNUM_NONE;
-		// Boe!Man 5/3/10: We higher the uppercut.
-		g_entities[id].client->ps.velocity[2] = 1400;
-		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-		
-		if(g_entities[id].client->sess.lastIdentityChange)	{
-			g_entities[id].client->sess.lastIdentityChange = qfalse;
-		}
-		else {
-			g_entities[id].client->sess.lastIdentityChange = qtrue;
-		}
-		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,^7%s was %su%sp%sp%se%sr%scut by %s", level.time + 5000, g_entities[id].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, ent->client->pers.netname));
-		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was uppercut by %s.\n\"", g_entities[id].client->pers.netname,ent->client->pers.netname));
-		}
-		}	else if (ent->client->sess.admin < 4){
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
-		}
-		}
+	}
 	// Boe!Man 1/24/10: Different kinds of Talk during Gameplay.
 	if ((strstr(p, "!at ")) || (strstr(p, "!admintalk ")) || (strstr(p, "!AT"))) {
 		if (ent->client->sess.admin){

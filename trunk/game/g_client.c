@@ -1347,8 +1347,8 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 			return "Banned! [IP]";
 		if(Boe_NameListCheck (clientNum, ip, g_subnetbanlist.string, NULL, qfalse, qfalse, qtrue, qfalse))
 			return "Banned! [Subnet]";
-		if(Boe_NameListCheck (clientNum, name, g_banlist.string, NULL, qtrue, qfalse, qfalse, qfalse))
-			return "Banned! [Name]";
+		//if(Boe_NameListCheck (clientNum, name, g_banlist.string, NULL, qtrue, qfalse, qfalse, qfalse))
+		//	return "Banned! [Name]";
 		// Boe!Man 2/8/10: Limiting the connections.
 		if ( ipCount > g_maxIPConnections.integer ) 
 			return "Too many connections from your IP!";

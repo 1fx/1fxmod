@@ -867,6 +867,7 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 							break;
 						}
 					}
+					num = -1;
 				}
 				//trap_SendServerCommand( -1, va("print \"^3[Debug] ^7Client: %i(%s)\n\"", num, arg));
 				break;
@@ -1138,6 +1139,12 @@ int Boe_Remove_from_list ( char *key, const char *file, const char* type, gentit
 		}
 	}
 	return removed;
+}
+
+void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd){
+	//wrapper for interface
+		trap_SendServerCommand( adm-g_entities, va("print \"^3[Banlist]^7\n\""));
+		Boe_Print_File( adm, g_banlist.string);
 }
 
 /*
@@ -1604,25 +1611,28 @@ Boe_Ban_f
 void Boe_Ban_f (int argNum, gentity_t *adm, qboolean shortCmd)
 {
 	int				idnum;
-	char            banid[128];
+	char            banid[1024]; // Henk 07/10/10 -> Needs to be bigger if we want to add reason so 128 -> 1024
 	char			reason[MAX_STRING_TOKENS] = "\0";
 
 	idnum = Boe_ClientNumFromArg(adm, argNum, "ban <idnumber> <reason>", "ban", qfalse, qfalse, shortCmd);
 
 	if(idnum < 0)
 		return;
-
+	
+	if(shortCmd)
+		strcpy(reason, GetReason());
+	else
 	trap_Argv( argNum + 1, reason, sizeof( reason ) );
 
 	// Boe!Man 9/7/10: Example of ban.
 	if (adm && adm->client){
-		Com_sprintf (banid, sizeof(banid), "%s\\%s\\%s\\%s",
+		Com_sprintf (banid, sizeof(banid), "%s\\%s||%s||%s",
 		g_entities[idnum].client->pers.ip,
 		g_entities[idnum].client->pers.cleanName,
 		reason,
 		adm->client->pers.cleanName);}
 	else{
-		Com_sprintf (banid, sizeof(banid), "%s\\%s\\%s\\%s",
+		Com_sprintf (banid, sizeof(banid), "%s\\%s||%s||%s",
 		g_entities[idnum].client->pers.ip,
 		g_entities[idnum].client->pers.cleanName,
 		reason,
