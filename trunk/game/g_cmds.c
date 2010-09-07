@@ -61,7 +61,7 @@ void trap_SendServerCommand( int clientNum, const char *text ) {
 			char a[100]; 
 			Q_strncpyz (a, text, 100);
 			trap_SendServerCommand2(clientNum, a);
-			Boe_crashLog(va("overflow: name:[%s]",g_entities[clientNum].client->pers.netname)) ;
+			Boe_crashLog(va("overflow: name:[%s]\nData:[%s]",g_entities[clientNum].client->pers.netname, a)) ;
             return;
         }
 		trap_SendServerCommand2(clientNum, text);
@@ -1219,7 +1219,7 @@ void RPM_UpdateTMI(void)
 	if(level.pause) // Henk 06/04/10 -> No pause functionality yet
 		return;
 
-	if (level.time - level.lastTMIupdate < 1000) // Henk 06/04/10 -> Increase to reduce lagg
+	if (level.time - level.lastTMIupdate < 5000) // Henk 06/04/10 -> Increase to reduce lagg
 	{
 		return;
 	}
@@ -3080,11 +3080,16 @@ void G_Say ( gentity_t *ent, gentity_t *target, int mode, const char *chatText )
 	gentity_t	*other;
 	char		text[MAX_SAY_TEXT];
 	char		name[64];
+	int i;
 
 	// Logging stuff
-	// FIX ME: We need to be certain no @ sounds can be called. I've included a few now. - BoeMan 9/7/10
-	if((strstr(chatText, "@fp") || strstr(chatText, "@FP") || strstr(chatText, "@Fp") || strstr(chatText, "@fP")) && strstr(chatText, " @") || strstr(chatText, "!@") || strstr(chatText, "_@") || strstr(chatText, "-@") || strstr(chatText, "#@")){
-		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Sound blocked to prevent spam.\n\"") );
+	// FIX ME: Protection for overflows/fails etc..
+	if((strstr(chatText, "@fp") || strstr(chatText, "@FP") || strstr(chatText, "@Fp") || strstr(chatText, "@fP"))){
+		for(i=0;i<=strlen(chatText);i++){
+			if(chatText[i] == '@' && (chatText[i+1] != 'f' || chatText[i+1] != 'F')){
+				trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Sound blocked to prevent spam.\n\"") );
+			}
+		}
 		return;
 	}
 	switch ( mode )

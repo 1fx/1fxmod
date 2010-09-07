@@ -827,25 +827,49 @@ void Boe_adm_f ( gentity_t *ent )
 	}
 }
 
+qboolean isdigit(char c){ // by henk
+	if(c >= 48 && c <= 57){
+		return qtrue;
+	}else{
+		return qfalse;
+	}
+}
+
 /*
 ====================
 Boe_ClientNumFromArg
 ====================
 */
-
 int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const char* action, qboolean aliveOnly, qboolean otheradmins, qboolean shortCmd)
 {
 	char	arg[16] = "\0"; // increase buffer so we can process more commands
 	int		num = -1;
 	int i;
+	char *numb;
 	trap_Argv( argNum, arg, sizeof( arg ) );
 	if(shortCmd){ // Henk 04/05/10 -> Handle the short admin commands.
 		num = 0;
-		for(i=0;i<16;i++){
+		for(i=0;i<16;i++){ // import from Boe_Uppercut -> Bug: id's return when good?
 			if(arg[i] == ' '){
-			num = atoi(va("%c%c", arg[i+1], arg[i+2]));
-			//trap_SendServerCommand( -1, va("print \"^3[Debug] ^7Client: %i(%s)\n\"", num, arg));
-			break;
+				if(isdigit(arg[i+1])){
+				num = atoi(va("%c%c", arg[i+1], arg[i+2]));
+				}else{
+					for(i=0;i<=20;i++){
+						if(arg[i] == ' '){
+							numb = va("%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", arg[i+1], arg[i+2], arg[i+3], arg[i+4], arg[i+5], arg[i+6], arg[i+7], arg[i+8], arg[i+9], arg[i+10], arg[i+11], arg[i+12], arg[i+13], arg[i+14], arg[i+15]);
+							break;
+						}
+					}
+					for(i=0;i<=level.numConnectedClients;i++){
+						//trap_SendServerCommand(-1, va("print\"^3[Debug] ^7%s comparing with %s.\n\"", g_entities[level.sortedClients[i]].client->pers.cleanName,numb));
+						if(strstr(Q_strlwr(g_entities[level.sortedClients[i]].client->pers.cleanName), Q_strlwr(numb))){
+							num = level.sortedClients[i];
+							break;
+						}
+					}
+				}
+				//trap_SendServerCommand( -1, va("print \"^3[Debug] ^7Client: %i(%s)\n\"", num, arg));
+				break;
 			}
 		}
 		if(num == 0){ // Get second argument because they use it from the console

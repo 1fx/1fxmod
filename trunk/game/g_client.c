@@ -1397,6 +1397,13 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 	// Boe!Man 3/31/10: First off we search in the Country database.
 	if(CheckIP(ent) != qtrue){ // not found in list so search ip database
 			// store ip
+		if(ent->client->pers.ip != "bot"){
+			trap_FS_FOpenFile("country/IP.all", &f, FS_APPEND_TEXT);
+			strcpy(str, va("%s", ent->client->pers.ip));
+			trap_FS_Write( str, strlen( str ), f );
+			trap_FS_Write( "\n", 1, f);
+			trap_FS_FCloseFile(f);
+		}
 	}
 	//G_LogPrintf( "HENK_COUNTRY done..\n" );
 	// Boe!Man 3/30/10: We use this for several things.. Including MOTD and Admin.
