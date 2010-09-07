@@ -3082,7 +3082,8 @@ void G_Say ( gentity_t *ent, gentity_t *target, int mode, const char *chatText )
 	char		name[64];
 
 	// Logging stuff
-	if((strstr(chatText, "@fp") || strstr(chatText, "@FP") || strstr(chatText, "@Fp") || strstr(chatText, "@fP")) && strstr(chatText, " @")){
+	// FIX ME: We need to be certain no @ sounds can be called. I've included a few now. - BoeMan 9/7/10
+	if((strstr(chatText, "@fp") || strstr(chatText, "@FP") || strstr(chatText, "@Fp") || strstr(chatText, "@fP")) && strstr(chatText, " @") || strstr(chatText, "!@") || strstr(chatText, "_@") || strstr(chatText, "-@") || strstr(chatText, "#@")){
 		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Sound blocked to prevent spam.\n\"") );
 		return;
 	}
