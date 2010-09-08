@@ -844,8 +844,10 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 {
 	char	arg[16] = "\0"; // increase buffer so we can process more commands
 	int		num = -1;
-	int i;
+	int i, y;
 	char *numb;
+	qboolean first = qtrue;
+	qboolean space = qfalse;
 	trap_Argv( argNum, arg, sizeof( arg ) );
 	if(shortCmd){ // Henk 04/05/10 -> Handle the short admin commands.
 		num = 0;
@@ -856,7 +858,24 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 				}else{
 					for(i=0;i<=20;i++){
 						if(arg[i] == ' '){
+							// Henk 08/09/10 -> Check for another arg in this.
+							for(y=1;y<=sizeof(arg);y++){
+								if(arg[i+y] == ' '){
+									space = qtrue;
+									break;
+								}else{
+									if(first){
+										numb = va("%c", arg[i+y]);
+										first = qfalse;
+									}else{
+										numb = va("%s%c", numb, arg[i+y]);
+									}
+									//Com_Printf("%s\n", numb);
+								}
+							}
+							if(space == qfalse){
 							numb = va("%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", arg[i+1], arg[i+2], arg[i+3], arg[i+4], arg[i+5], arg[i+6], arg[i+7], arg[i+8], arg[i+9], arg[i+10], arg[i+11], arg[i+12], arg[i+13], arg[i+14], arg[i+15]);
+							}
 							break;
 						}
 					}
@@ -866,8 +885,8 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 							num = level.sortedClients[i];
 							break;
 						}
+						num = -1;
 					}
-					num = -1;
 				}
 				//trap_SendServerCommand( -1, va("print \"^3[Debug] ^7Client: %i(%s)\n\"", num, arg));
 				break;

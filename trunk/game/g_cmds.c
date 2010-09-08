@@ -3235,6 +3235,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	char team[4];
 	// Boe!Man 5/3/10: Temp(?) fix.
 	qboolean	acmd = qfalse;
+	char		test[128];
 
 
 	if ( trap_Argc () < 2 && !arg0 )
@@ -3246,9 +3247,10 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	else
 		p = ConcatArgs( 1 );
 
+	strcpy(test, p); // Henk 08/09/10 -> Copy p to static buffer to prevent unwanted changes by other functions
 	// Henk loop through my admin command array
 	for(i=0;i<sizeof(AdminCommands)/sizeof(AdminCommands[0]);i++){
-		if(strstr(p, AdminCommands[i].shortCmd)){
+		if(strstr(Q_strlwr(test), Q_strlwr(AdminCommands[i].shortCmd))){
 			if(ent->client->sess.admin >= *AdminCommands[i].adminLevel){
 				AdminCommands[i].Function(1, ent, qtrue);
 				break;
