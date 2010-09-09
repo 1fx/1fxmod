@@ -5,12 +5,14 @@
 #include "g_local.h"
 #include "boe_local.h"
 
+//RxCxW - 05-09-05 #SpawnPoint
+gspawn_t	*G_SelectClientSpawnPoint ( gentity_t* ent,  qboolean plantsk );
+//End
 void P_SetTwitchInfo(gclient_t	*client)
 {
 	client->ps.painTime = level.time;
 	client->ps.painDirection ^= 1;
 }
-
 /*
 ===============
 G_DamageFeedback
@@ -72,6 +74,7 @@ void P_DamageFeedback( gentity_t *player )
 		{
 			return;
 		}
+		
 
 		P_SetTwitchInfo(client);
 		player->pain_debounce_time = level.time + 700;
@@ -465,7 +468,7 @@ void G_UpdatePlayerStateScores ( gentity_t* ent )
 	{
 		ent->client->ps.persistant[PERS_RED_SCORE] = level.teamScores[TEAM_RED];
 		ent->client->ps.persistant[PERS_BLUE_SCORE] = level.teamScores[TEAM_BLUE];
-
+		
 		//Ryan & Dragon
 		ent->client->ps.persistant[PERS_BLUE_ALIVE_COUNT] = level.teamAliveCount[TEAM_BLUE];
 		ent->client->ps.persistant[PERS_RED_ALIVE_COUNT] = level.teamAliveCount[TEAM_RED];
@@ -650,8 +653,11 @@ qboolean ClientInactivityTimer( gclient_t *client ) {
 		// give everyone some time, so if the operator sets g_inactivity during
 		// gameplay, everyone isn't kicked
 		client->inactivityTime = level.time + 60 * 1000;
-		client->inactivityWarning = qfalse;
+		client->inactivityWarning = qfalse;	
 	}
+
+	//Ryan, fixed so if we pause then unpause the incativity doesnt
+	//drop everyone, also admins can't be dropped
 	else if ( level.pause ||
 		client->sess.admin ||
 		client->pers.cmd.forwardmove || 
@@ -660,14 +666,14 @@ qboolean ClientInactivityTimer( gclient_t *client ) {
 		(client->pers.cmd.buttons & (BUTTON_ATTACK|BUTTON_ALT_ATTACK)) ) {
 		client->inactivityTime = level.time + g_inactivity.integer * 1000;
 		client->inactivityWarning = qfalse;
-		/*
-	} else if ( client->pers.cmd.forwardmove || 
+	/*else if ( client->pers.cmd.forwardmove || 
 		client->pers.cmd.rightmove || 
 		client->pers.cmd.upmove ||
 		(client->pers.cmd.buttons & (BUTTON_ATTACK|BUTTON_ALT_ATTACK)) ) {
 		client->inactivityTime = level.time + g_inactivity.integer * 1000;
-		client->inactivityWarning = qfalse;
-		*/
+		client->inactivityWarning = qfalse;*/ 
+	//Ryan
+
 	} else if ( !client->pers.localClient ) {
 		if ( level.time > client->inactivityTime ) {
 			//bertman add msg here
@@ -846,7 +852,7 @@ void ClientEvents( gentity_t *ent, int oldEventSequence )
 					break;		// not in the player model
 				}
 				
-				if ( g_dmflags.integer & DF_NO_FALLING ) 
+				if ( (g_dmflags.integer & DF_NO_FALLING)) 
 				{
 					break;
 				}		
@@ -940,6 +946,7 @@ SendPendingPredictableEvents
 */
 void SendPendingPredictableEvents( playerState_t *ps ) {
 	gentity_t *t;
+
 	int event, seq;
 	int extEvent, number;
 
@@ -987,6 +994,19 @@ void ClientThink_real( gentity_t *ent )
 	int			msec;
 	usercmd_t	*ucmd;
 
+	///RxCxW - 2.04.05 - 05:04am
+	int			warnings;
+	gspawn_t	*G_SelectClientSpawnPoint ( gentity_t* ent,  qboolean plantsk );
+
+	///05.20.05 - 02:42pm #antiCamp
+	int		distance;
+	vec3_t 	diff;
+	///End  - 05.20.05 - 02:42pm
+
+	vec3_t	dir;
+	//vec3_t  fireAngs;
+	float   knockback = 600.0;
+	
 	client = ent->client;
 
 	// don't think if the client is not yet connected (and thus not yet spawned in)
@@ -1036,15 +1056,28 @@ void ClientThink_real( gentity_t *ent )
 		ucmd->serverTime = ((ucmd->serverTime + pmove_msec.integer-1) / pmove_msec.integer) * pmove_msec.integer;
 	}
 
+	//Ryan march 21 9:10am
+	if(level.awardTime)
+	{
+		ent->client->ps.pm_type = PM_FREEZE;
+		memset (&pm, 0, sizeof(pm));
+		pm.ps = &client->ps;
+		pm.cmd = *ucmd;
+		Pmove (&pm);
+		return;
+	}
+	//Ryan
+
 	//
 	// check for exiting intermission
 	//
-	if ( level.intermissiontime ) 
+	if( level.intermissiontime )
 	{
 		ClientIntermissionThink( client );
 		return;
 	}
 
+	//Ryan june 15 2003
 	if(level.pause)		//if paused stop here
 	{
 		///RxCxW - 08.28.06 - 03:51pm - #paused - reset inactivity counter so we dont get kicked
@@ -1056,6 +1089,7 @@ void ClientThink_real( gentity_t *ent )
 		///End  - 08.28.06 - 03:52pm
 		return;
 	}
+	//Ryan
 
 	// Boe!Man 3/30/10: We wait for the motd.
 	if(client->sess.firstTime && !client->sess.motdStartTime && !level.intermissionQueued)
@@ -1077,13 +1111,44 @@ void ClientThink_real( gentity_t *ent )
 			Boe_Motd(ent);
 		}
 	}
+	//Ryan
+
+	//Ryan july 1 2003
+	if(client->sess.motdStartTime)
+	{	
+		if (level.time >= client->sess.motdStartTime + 3000 
+		&& level.time <= client->sess.motdStopTime)
+		{
+			client->sess.motdStartTime += 3000;
+			Boe_Motd(ent);
+		}
+
+	}
+		///03.30.05 - 12:52pm #Burn
+		if ( client->sess.burnSeconds ){
+			client->sess.burnSeconds--;
+			if (ent->client->ps.stats[STAT_HEALTH] >= 35)
+				G_Damage (ent, NULL, NULL, NULL, NULL, 48, 0, MOD_BURN, HL_NONE );
+			G_ApplyKnockback ( ent, dir, 10 );	//knock them back
+		}
 	// spectators don't do much
 	if ( G_IsClientSpectating ( client ) ) 
 	{
+		//Ryan march 7 2004 12:13AM  
+		//Prevent the 999 ping on respawn
+#ifdef _SOF2_BOTS
+		if (ent->r.svFlags & SVF_BOT)
+		{
+			return;
+		}	
+#endif
+		//Ryan
+
 		if ( client->sess.spectatorState == SPECTATOR_SCOREBOARD ) 
 		{
 			return;
 		}
+		
 		SpectatorThink( ent, ucmd );
 		return;
 	}
@@ -1119,6 +1184,7 @@ void ClientThink_real( gentity_t *ent )
 
 	pm.ps = &client->ps;
 	pm.cmd = *ucmd;
+	
 	if ( pm.ps->pm_type == PM_DEAD ) 
 	{
 		pm.tracemask = MASK_PLAYERSOLID & ~CONTENTS_BODY;
@@ -1157,7 +1223,7 @@ void ClientThink_real( gentity_t *ent )
 
 	pm.animations = NULL;
 
-#if _Debug
+#ifdef _DEBUG
 	pm.isClient=0;
 #endif
 
@@ -1174,7 +1240,7 @@ void ClientThink_real( gentity_t *ent )
 	}
 	
 	// See if the invulnerable flag should be removed for this client
-	if ( ent->client->ps.eFlags & EF_INVULNERABLE )
+	if ( ent->client->ps.eFlags & EF_INVULNERABLE) 
 	{
 		if ( level.time - ent->client->invulnerableTime >= g_respawnInvulnerability.integer * 1000 )
 		{
@@ -1246,12 +1312,25 @@ void ClientThink_real( gentity_t *ent )
 
 	// check for respawning
 	if ( client->ps.stats[STAT_HEALTH] <= 0 ) 
-	{			
+	{
 		// wait for the attack button to be pressed
 		if ( level.time > client->respawnTime ) 
 		{
+			//Ryan june 7 2003							//admins are not forced to respawn
+				//if ( g_forcerespawn.integer > 0 && 
+				//( level.time - client->respawnTime ) > g_forcerespawn.integer * 1000 )
+//RxCxW - 1.12.2005 - Added Support for other #AdminLevels
+		/*
 			if ( g_forcerespawn.integer > 0 && 
-				( level.time - client->respawnTime ) > g_forcerespawn.integer * 1000 ) 
+				( level.time - client->respawnTime ) > g_forcerespawn.integer * 1000 && 
+				client->sess.admin != 1) 
+		*/
+			////04.03.05 - 08.05pm - #Fixed admin being forced to respawn
+			if ( g_forcerespawn.integer > 0 && 
+				( level.time - client->respawnTime ) > g_forcerespawn.integer * 1000 && 
+				!client->sess.admin >= 2) 
+//End
+			//Ryan
 			{
 				respawn( ent );
 				return;
@@ -1266,7 +1345,6 @@ void ClientThink_real( gentity_t *ent )
 
 		return;
 	}
-
 	//Ryan
 	if(g_doWarmup.integer == 2) 
 	{
@@ -1295,6 +1373,18 @@ void G_CheckClientTeamkill ( gentity_t* ent )
 	{
 		return;
 	}
+	//#REMOVED
+	//Ryan june 7 2003
+	//RxCxW - 1.12.2005 - Support for #AdminLevels - Cant be kicked
+	//admins & clan members can't be kicked for teamkilling
+	/*
+	//RM	if (ent->client->sess.admin == 1)
+	if (ent->client->sess.admin >= 2){
+		return;
+	}
+	*/
+	//End
+				
 	// See if they crossed the max team kill damage
 	else if ( ent->client->sess.teamkillDamage < g_teamkillDamageMax.integer )
 	{	
@@ -1322,8 +1412,10 @@ void G_CheckClientTeamkill ( gentity_t* ent )
 	ent->client->sess.teamkillDamage      = 0;
 	ent->client->sess.teamkillForgiveTime = 0;
 
+
 	// Buh bye
-	trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"team killing\"\n", ent->s.number ) );
+	//trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"team killing\"\n", ent->s.number ) );
+	//End - 03.01.05 - 09:45pm 
 }
 
 /*
@@ -1390,7 +1482,6 @@ void ClientThink( int clientNum )
 		ClientThink_real( ent );
 	}
 }
-
 /*
 ==================
 G_RunClient
@@ -1517,6 +1608,9 @@ void ClientEndFrame( gentity_t *ent )
 	// If the end of unit layout is displayed, don't give
 	// the player any normal movement attributes
 	//
+
+	//Ryan june 15 2003
+		//if ( level.intermissiontime ) 
 	if ( level.intermissiontime || level.pause )
 	//Ryan
 	{

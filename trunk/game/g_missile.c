@@ -4,6 +4,10 @@
 
 int G_MultipleDamageLocations(int hitLocation);
 
+// KRIS 7/08/2003 11:03AM
+static int last_showBBoxMissile = 0;
+// KRIS
+
 #define	MISSILE_PRESTEP_TIME	50
 
 /*
@@ -324,6 +328,13 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace )
 			if ( other->client )
 			{
 				VectorNormalize ( velocity );
+				// KRIS 12/08/2003 11:14AM
+				if (ent->s.otherEntityNum2)
+				{
+					location = ent->s.otherEntityNum2;
+				}
+				else
+				// KRIS
 				location = G_GetHitLocation ( other, ent->r.currentOrigin, velocity );
 				if ( ent->splashDamage ) 
 				{
@@ -339,6 +350,7 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace )
 			{
 				gentity_t *tent;
 				vec3_t hitdir;
+
 				//Ryan may 16 2004
 				//log the hit into our stats
 				statinfo_t *stat = &g_entities[ent->r.ownerNum].client->pers.statinfo;
@@ -350,14 +362,15 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace )
 
 					if(ent->s.weapon == WP_M4_ASSAULT_RIFLE)
 					{
-						//stat->weapon_hits[ATTACK_ALTERNATE][WP_M4_ASSAULT_RIFLE]++;
+						stat->weapon_hits[ATTACK_ALTERNATE][WP_M4_ASSAULT_RIFLE]++;
 					}
 					else
 					{
-						//stat->weapon_hits[ATTACK_NORMAL][ent->s.weapon]++;
+						stat->weapon_hits[ATTACK_NORMAL][ent->s.weapon]++;
 					}
 				}
 				//Ryan
+
 				// Put some procedural gore on the target.
 				tent = G_TempEntity( ent->r.currentOrigin, EV_EXPLOSION_HIT_FLESH );
 				
@@ -388,7 +401,10 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace )
 		G_AddEvent( ent, EV_MISSILE_HIT, 
 					(DirToByte( trace->plane.normal ) << MATERIAL_BITS) | (trace->surfaceFlags & MATERIAL_MASK));
 		ent->s.otherEntityNum = other->s.number;
-		if( ent->damage )
+		// KRIS 12/08/2003 11:14AM
+		//if( ent->damage )
+		if (!ent->s.otherEntityNum2 && ent->damage)
+		// KRIS
 		{
 			// FIXME: might be able to use the value from inside G_Damage to avoid recalc???
 			ent->s.otherEntityNum2 = G_GetHitLocation ( other, g_entities[ent->r.ownerNum].r.currentOrigin, velocity );
@@ -463,7 +479,7 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace )
 			// do damage over time rather than instantly
 			G_CreateDamageArea ( trace->endpos, ent->parent, ent->splashDamage*0.10f,ent->splashRadius*2, 8000,ent->methodOfDeath );
 
-			// do some instant damage
+			//do some instant damage
 			G_RadiusDamage( trace->endpos, ent->parent, ent->damage, ent->splashRadius, other, 
 							1, ent->splashMethodOfDeath );
 		}
@@ -541,6 +557,208 @@ void G_RunMissile( gentity_t *ent )
 		// Run the same test again because the condition may have changed as a result
 		// of the greande falling below the sky again
 		// Loop this trace so we can break windows
+		// KRIS 7/08/2003 11:00AM
+		int loopStopper;
+			
+		loopStopper = 0;
+
+		// enlarge bboxs
+		G_AdjustClientBBoxs();
+
+		ent->s.otherEntityNum2 = 0;
+
+		while ( 1 )
+		{
+			loopStopper++;
+			if (loopStopper > 128)
+			{
+				Com_Printf(S_COLOR_YELLOW"G_RunMissile(): - loop fucked up\n");
+				break;
+			}
+				
+			// trace a line from the previous position to the current position
+			trap_Trace( &tr, ent->r.currentOrigin, ent->r.mins, ent->r.maxs, origin, passent, ent->clipmask );
+
+			// If its glass then redo the trace after breaking the glass
+			if ( tr.fraction != 1 && !Q_stricmp ( g_entities[tr.entityNum].classname, "func_glass" ) )
+			{
+				g_entities[tr.entityNum].use ( &g_entities[tr.entityNum], ent, ent );
+				continue;
+			}
+
+			if (tr.fraction != 1 && g_entities[ tr.entityNum ].client && (g_entities[ tr.entityNum ].client->ps.pm_flags & PMF_LEANING))
+			{
+				gentity_t *other;
+				vec3_t rOrigin;
+
+				// ok, we've hit someone who is leaning...
+				//Com_Printf(S_COLOR_YELLOW"G_RunMissile(): - hit client %i who is leaning\n", tr.entityNum);
+				
+				other = &g_entities[tr.entityNum];
+				
+				// adjust the standard bbox to compensate for
+				// different head position and trace against that
+				G_UndoAdjustedClientBBox(other);
+				
+				// adjust bbox and origin while leaning
+				G_SetClientPreLeaningBBox(other);
+
+/*				if (g_debugAdjBBox.integer && (level.time - last_showBBoxMissile > 500))
+				{
+					G_ShowClientBBox(other);
+				}
+*/
+				trap_LinkEntity ( other );
+
+				// trace against slightly adjust bbox (head gone)
+				trap_Trace( &tr, ent->r.currentOrigin, ent->r.mins, ent->r.maxs, origin, passent, ent->clipmask );
+
+				// we hit the adjusted bbox, stop here
+				if (tr.entityNum == other->s.number)
+				{
+					// KRIS 17/06/2003 2:33AM
+/*					if (g_debugAdjBBox.integer && (level.time - last_showBBoxMissile > 500))
+					{
+						last_showBBoxMissile = level.time;
+					}
+					// KRIS
+*/
+					//Ryan april 6 2004 
+					//these are all wrong r.currentOrigin always is at a certain height
+					//above th4e ground the player is on and if he's duckin it stays the
+					//same so these hit locations will be way off
+				/*	if (tr.endpos[2] > other->r.currentOrigin[2] + 4)
+					{
+						ent->s.otherEntityNum2 = HL_WAIST;
+					}
+					else if (tr.endpos[2] > other->r.currentOrigin[2] - 24)
+					{
+						ent->s.otherEntityNum2 = HL_FOOT_LT;
+					}
+					else if (tr.endpos[2] > other->r.currentOrigin[2] - 10)
+					{
+						ent->s.otherEntityNum2 = HL_LEG_LOWER_LT;
+					}
+					else
+					{
+						ent->s.otherEntityNum2 = HL_LEG_UPPER_LT;
+					}*/
+
+					if (other->client->ps.pm_flags & PMF_DUCKED)
+					{
+						if (tr.endpos[2] > (other->r.currentOrigin[2] + other->r.maxs[2]) - 5)
+						{
+							ent->s.otherEntityNum2 = HL_WAIST;
+						}
+						else if (tr.endpos[2] > (other->r.currentOrigin[2] + other->r.maxs[2]) - 17)
+						{
+							ent->s.otherEntityNum2 = HL_LEG_UPPER_LT;
+						}
+						else if (tr.endpos[2] > (other->r.currentOrigin[2] + other->r.maxs[2]) - 23)
+						{
+							ent->s.otherEntityNum2 = HL_LEG_LOWER_LT;
+						}
+						else
+						{
+							ent->s.otherEntityNum2 = HL_FOOT_LT;
+						}
+					}
+					else
+					{
+						if (tr.endpos[2] > (other->r.currentOrigin[2] + other->r.maxs[2]) - 10)
+						{
+							ent->s.otherEntityNum2 = HL_WAIST;
+						}
+						else if (tr.endpos[2] > (other->r.currentOrigin[2] + other->r.maxs[2]) - 20)
+						{
+							ent->s.otherEntityNum2 = HL_LEG_UPPER_LT;
+						}
+						else if (tr.endpos[2] > (other->r.currentOrigin[2] + other->r.maxs[2]) - 38)
+						{
+							ent->s.otherEntityNum2 = HL_LEG_LOWER_LT;
+						}
+						else
+						{
+							ent->s.otherEntityNum2 = HL_FOOT_LT;
+						}
+					}
+					//Ryan
+
+					//Com_Printf(S_COLOR_YELLOW"G_RunMissile(): - we hit the adjusted bbox, stop here\n");
+					break;
+				}
+
+				// failing the first check, move the bbox origin in
+				// the direction of the lean and make it smaller
+				VectorCopy (other->r.currentOrigin, rOrigin);
+				G_UndoAdjustedClientBBox(other);
+
+				// adjust bbox and origin while leaning
+				G_SetClientLeaningBBox(other);
+				
+/*				if (g_debugAdjBBox.integer && (level.time - last_showBBoxMissile > 500))
+				{
+					G_ShowClientBBox(other);
+				}
+*/				
+				trap_LinkEntity ( other );
+
+				// trace against smaller, offset bbox
+				trap_Trace( &tr, ent->r.currentOrigin, ent->r.mins, ent->r.maxs, origin, passent, ent->clipmask );
+
+				// reset origin
+				VectorCopy (rOrigin, other->r.currentOrigin);
+
+				// KRIS 17/06/2003 2:33AM
+/*				if (g_debugAdjBBox.integer && (level.time - last_showBBoxMissile > 500))
+				{
+					last_showBBoxMissile = level.time;
+				}
+				// KRIS
+*/			
+				// good leaning hit, stop here
+				if (tr.entityNum == other->s.number)
+				{	
+					//Com_Printf(S_COLOR_YELLOW"G_RunMissile(): - good leaning hit, stop here\n");
+					//Ryan this is off to for the same reason as above
+				/*	if (tr.endpos[2] > other->r.currentOrigin[2] + 8)
+					{
+						ent->s.otherEntityNum2 = HL_HEAD;
+					}
+					else
+					{
+						ent->s.otherEntityNum2 = HL_WAIST;
+					}*/
+					if (tr.endpos[2] > (other->r.currentOrigin[2] + other->r.maxs[2]) - 10)
+					{
+						ent->s.otherEntityNum2 = HL_HEAD;
+					}
+					else
+					{
+						ent->s.otherEntityNum2 = HL_CHEST;
+					}
+					//Ryan
+					break;
+				}
+				
+				// bad hit, ignore them and move on
+				//Com_Printf(S_COLOR_YELLOW"G_RunMissile(): - bad hit, ignore them and move on\n");
+
+				passent = other->s.number;
+				continue;
+			}
+			break;
+		}
+
+		// return bboxs to normal
+		G_UndoAdjustedClientBBoxs();
+
+		// set final position
+		VectorCopy( tr.endpos, ent->r.currentOrigin );
+		// KRIS
+
+		//Ryan Old code commented out for above code
+/*
 		while ( 1 )
 		{
 			// trace a line from the previous position to the current position
@@ -566,7 +784,8 @@ void G_RunMissile( gentity_t *ent )
 		{
 			VectorCopy( tr.endpos, ent->r.currentOrigin );
 		}
-
+*/
+		//Ryan
 		trap_LinkEntity( ent );
 
 		if ( tr.fraction != 1 ) 

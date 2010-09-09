@@ -36,7 +36,7 @@ char					bg_availableOutfitting[WP_NUM_WEAPONS] = {-1};
 
 int bg_outfittingGroups[OUTFITTING_GROUP_MAX][MAX_OUTFITTING_GROUPITEM] = 
 {
-	{ MODELINDEX_WEAPON_AK74,		MODELINDEX_WEAPON_M4,		MODELINDEX_WEAPON_USAS12, MODELINDEX_WEAPON_MSG90A1,	MODELINDEX_WEAPON_M60,		MODELINDEX_WEAPON_RPG7,	 MODELINDEX_WEAPON_MM1,	-1, -1, -1 },
+	{ MODELINDEX_WEAPON_AK74,		MODELINDEX_WEAPON_M4,		MODELINDEX_WEAPON_USAS12, MODELINDEX_WEAPON_MSG90A1,	MODELINDEX_WEAPON_M60,		MODELINDEX_WEAPON_RPG7,	 MODELINDEX_WEAPON_MM1, -1, -1, -1 },
 	{ MODELINDEX_WEAPON_M590,		MODELINDEX_WEAPON_MICROUZI,	MODELINDEX_WEAPON_M3A1,		-1, -1, -1, -1, -1, -1, - 1 },
 	{ MODELINDEX_WEAPON_M19,		MODELINDEX_WEAPON_SOCOM,	-1,							-1,							-1, -1, -1, -1, -1, -1 },
 	{ MODELINDEX_WEAPON_SMOHG92,	MODELINDEX_WEAPON_M84,		MODELINDEX_WEAPON_M15,		MODELINDEX_WEAPON_ANM14,	-1, -1, -1, -1, -1, -1 },
@@ -1291,8 +1291,17 @@ qboolean BG_ParseAnimationFile ( const char *filename, animation_t* animations )
 
 	// load the file
 	len = trap_FS_FOpenFile( filename, &f, FS_READ );
+
+	///RxCxW - 09.10.06 - 12:21am #fileHandles
+	if(!f)
+		return qfalse;
+	///End  - 09.10.06 - 12:21am
+
 	if ( len <= 0 || len >= sizeof( text ) - 1 ) 
 	{
+		///RxCxW - 09.10.06 - 12:21am #fileHandles
+		trap_FS_FCloseFile( f );
+		///End  - 09.10.06 - 12:21am
 		return qfalse;
 	}
 
@@ -1421,10 +1430,12 @@ qboolean BG_IsWeaponAvailableForOutfitting ( weapon_t weapon, int level )
 	{
 		return qtrue;
 	}
+	
 	if ( bg_availableOutfitting[weapon-1] - '0' >= level )
 	{
 		return qtrue;
 	}
+
 	return qfalse;
 }
 

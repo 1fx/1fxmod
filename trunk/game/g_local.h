@@ -17,7 +17,7 @@
 #define BODY_QUEUE_SIZE				8
 
 #define INFINITE					1000000
-#define Q3_INFINITE					16777216 
+#define Q3_INFINITE					16777216
 
 #define	FRAMETIME					100					// msec
 
@@ -35,7 +35,7 @@
 #define	MAX_SPAWNS					128
 
 // movers are things like doors, plats, buttons, etc
-typedef enum 
+typedef enum
 {
 	MOVER_POS1,
 	MOVER_POS2,
@@ -47,7 +47,7 @@ typedef enum
 typedef struct gentity_s gentity_t;
 typedef struct gclient_s gclient_t;
 
-struct gentity_s 
+struct gentity_s
 {
 	entityState_t	s;				// communicated by server to clients
 	entityShared_t	r;				// shared by both the server system and game
@@ -71,13 +71,13 @@ struct gentity_s
 	char		*model;
 	char		*model2;
 	int			freetime;			// level.time when the object was freed
-	
+
 	int			eventTime;			// events will be cleared EVENT_VALID_MSEC after set
 	qboolean	freeAfterEvent;
 	qboolean	unlinkAfterEvent;
 
 	qboolean	physicsObject;		// if true, it can be pushed by movers and fall off edges
-									// all game items are physicsObjects, 
+									// all game items are physicsObjects,
 	float		physicsBounce;		// 1.0 = continuous bounce, 0.0 = no bounce
 	int			clipmask;			// brushes with this content value will be collided against
 									// when moving.  items and corpses do not collide against
@@ -169,7 +169,7 @@ typedef struct gspawn_s
 
 } gspawn_t;
 
-typedef enum 
+typedef enum
 {
 	CON_DISCONNECTED,
 	CON_CONNECTING,
@@ -177,7 +177,7 @@ typedef enum
 
 } clientConnected_t;
 
-typedef enum 
+typedef enum
 {
 	SPECTATOR_NOT,
 	SPECTATOR_FREE,
@@ -186,14 +186,14 @@ typedef enum
 
 } spectatorState_t;
 
-typedef enum 
+typedef enum
 {
 	TEAM_BEGIN,		// Beginning a team game, spawn at base
 	TEAM_ACTIVE		// Now actively playing
 
 } playerTeamStateState_t;
 
-typedef struct 
+typedef struct
 {
 	playerTeamStateState_t	state;
 
@@ -222,11 +222,11 @@ typedef struct
 // this is achieved by writing all the data to cvar strings at game shutdown
 // time and reading them back at connection time.  Anything added here
 // MUST be dealt with in G_InitSessionData() / G_ReadSessionData() / G_WriteSessionData()
-typedef struct 
+typedef struct
 {
 	team_t				team;					// current team
 	int					spectatorTime;			// for determining next-in-line to play
-	spectatorState_t	spectatorState;			
+	spectatorState_t	spectatorState;
 	int					spectatorClient;		// for chasecam and follow mode
 	int					score;					// total score
 	int					kills;					// number of kills
@@ -241,7 +241,6 @@ typedef struct
 	int					motdStartTime;			// The time the message of the day will start being sent.
 	int					motdStopTime;			// The time the message of the day will stop being sent.
 	int					admin;					// If this is set to 1, the client is an Admin.
-	int					burnSeconds;			// We use this for buring clients with knockdown.
 	qboolean			mute;					// If this is set to 1, the client is muted.
 	int					oneSecChecks;			// Check specific entries every second.
 	int					lastIdentityChange;		// Used for limiting the Identity change for x seconds.
@@ -260,6 +259,8 @@ typedef struct
 	float				proClient;
 	qboolean			spectatorFirstPerson;
 	int					totalSpectatorTime;
+	int					ghostStartTime;
+	int					burnSeconds;			//used for burning them w/knockback
 
 	qboolean			invitedByRed;
 	qboolean			invitedByBlue;
@@ -280,9 +281,9 @@ typedef struct
 
 // client data that stays across multiple respawns, but is cleared
 // on each level change or team change at ClientBegin()
-typedef struct 
+typedef struct
 {
-	clientConnected_t	connected;	
+	clientConnected_t	connected;
 	usercmd_t			cmd;						// we would lose angles if not persistant
 	qboolean			localClient;				// true if "ip" info key is "localhost"
 	qboolean			initialSpawn;				// the first spawn should be at a cool location
@@ -342,7 +343,7 @@ typedef struct gantilag_s
 
 // this structure is cleared on each ClientSpawn(),
 // except for 'client->pers' and 'client->sess'
-struct gclient_s 
+struct gclient_s
 {
 	// ps MUST be the first element, because the server expects it
 	playerState_t	ps;				// communicated by server to clients
@@ -371,7 +372,7 @@ struct gclient_s
 	int			damage_knockback;	// impact damage
 	vec3_t		damage_from;		// origin for vector calculation
 	qboolean	damage_fromWorld;	// if true, don't use the damage_from vector
-	
+
 	int			accurateCount;		// for "impressive" reward sound
 
 	//
@@ -420,6 +421,10 @@ struct gclient_s
 	gentity_t		*siameseTwin;
 
 	qboolean		adminspec;
+	vec3_t			maxSave;
+	vec3_t			minSave;
+	//Ryan
+
 };
 
 
@@ -429,7 +434,7 @@ struct gclient_s
 #define	MAX_SPAWN_VARS			64
 #define	MAX_SPAWN_VARS_CHARS	4096
 
-typedef struct 
+typedef struct
 {
 	struct gclient_s	*clients;		// [maxclients]
 
@@ -454,12 +459,17 @@ typedef struct
 	int			framenum;
 	int			time;					// in msec
 	int			previousTime;			// so movers can back up when blocked
-	int			frameStartTime;			
+	int			frameStartTime;
 
 	int			startTime;				// level.time the map was started
 	int			globalVoiceTime;		// last global voice
 
 	int			teamScores[TEAM_NUM_TEAMS];
+
+	//Ryan & Dragon
+	int			teamAliveCount[TEAM_NUM_TEAMS];
+	//Ryan & Dragon
+
 	int			lastTeamLocationTime;		// last time of client team location update
 
 	qboolean	newSession;				// don't use any old session data, because
@@ -505,6 +515,15 @@ typedef struct
 	vec3_t		intermission_origin;	// also used for spectator spawns
 	vec3_t		intermission_angle;
 
+
+
+#ifdef _SOF2_BOTS
+	// GRIM 10/06/2002 6:20PM
+	int			gtItemCount;
+	char		entExt[MAX_QPATH];
+	// GRIM
+#endif
+
 	qboolean	locationLinked;			// target_locations get linked
 	gentity_t	*locationHead;			// head of the location list
 
@@ -534,7 +553,7 @@ typedef struct
 	int				gametypeRespawnTime[TEAM_NUM_TEAMS];
 	int				gametypeDelayTime;
 	const char*		gametypeTeam[TEAM_NUM_TEAMS];
-	
+
 	void*			serverGhoul2;
 	animation_t		ghoulAnimations[MAX_ANIMATIONS];
 
@@ -570,10 +589,6 @@ typedef struct
 	int			blueMsgCount;
 	int			awardTime;
 	int			lastAwardSent;
-
-	//Ryan & Dragon
-	int			teamAliveCount[TEAM_NUM_TEAMS];
-	//Ryan & Dragon
 
 	// Boe!Man 6/2/10
 	int				serverMsg;
@@ -645,7 +660,7 @@ void SaveRegisteredItems( void );
 //
 int		G_ModelIndex		( char *name );
 int		G_SoundIndex		( char *name );
-int		G_AmbientSoundSetIndex( char *name ); 
+int		G_AmbientSoundSetIndex( char *name );
 int		G_BSPIndex			( char *name );
 int		G_IconIndex			( char *name );
 int		G_EffectIndex		( char *name );
@@ -846,7 +861,10 @@ void		CheckGametype						( void );
 char*		ClientConnect						( int clientNum, qboolean firstTime, qboolean isBot );
 void		ClientUserinfoChanged				( int clientNum );
 void		ClientDisconnect					( int clientNum );
-void		ClientBegin							( int clientNum );
+//Ryan april 10 2004 10:05am
+//void		ClientBegin							( int clientNum );
+void		ClientBegin							( int clientNum, qboolean setTime );
+//Ryan
 void		ClientCommand						( int clientNum );
 gspawn_t*	G_SelectRandomSpawnPoint			( team_t team );
 int			G_GametypeCommand					( int cmd, int arg0, int arg1, int arg2, int arg3, int arg4 );
@@ -888,6 +906,9 @@ void Svcmd_AddBot_f( void );
 void Svcmd_BotList_f( void );
 void BotInterbreedEndMatch( void );
 qboolean G_DoesMapSupportGametype ( const char* gametype );
+//Ryan
+qboolean G_DoesMapExist				( const char* mapname );
+//Ryan
 void G_LoadArenas ( void );
 
 //
@@ -901,6 +922,10 @@ qboolean	G_ExecuteGametypeScript				( gentity_t* activator, const char* name );
 void		G_ResetGametype						( void );
 qboolean	G_CanGametypeTriggerBeUsed			( gentity_t* self, gentity_t* activator );
 void		G_ResetGametypeItem					( gitem_t* item );
+//RxCxW - 02.03.05 - 11:32am #DropGTItems
+void		G_DropGametypeItems					( gentity_t* self, int delayPickup );
+void		G_FreeEnitityChildren				( gentity_t* ent );		
+//End - 02.03.05 - 11:32am
 
 // ai_main.c
 #define MAX_FILEPATH			144
@@ -1022,6 +1047,7 @@ void	trap_LocateGameData( gentity_t *gEnts, int numGEntities, int sizeofGEntity_
 void	trap_RMG_Init(int terrainID);
 void	trap_DropClient( int clientNum, const char *reason );
 void	trap_SendServerCommand( int clientNum, const char *text );
+//void	trap_SendServerCommand2( int clientNum, const char *text );
 void	trap_SetConfigstring( int num, const char *string );
 void	trap_GetConfigstring( int num, char *buffer, int bufferSize );
 void	trap_GetUserinfo( int num, char *buffer, int bufferSize );

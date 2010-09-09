@@ -9,6 +9,12 @@
 #include "boe_local.h"
 
 #define	MAX_GAMETYPE_SPAWN_POINTS	32
+///RxCxW - 01.18.06 - 07:34pm #logging
+///CJJ - 1.1.2005 - Logging Flag Captures
+#define TRIGGER_REDFLAGCAPTURE      200
+#define TRIGGER_BLUEFLAGCAPTURE      201
+#define TRIGGER_CASECAPTURE      200
+///CJJ - 1.1.2005 #END
 
 int			g_gametypeItemCount = 0;
 vec3_t		g_effectOrigin;
@@ -79,9 +85,6 @@ void gametype_trigger_use ( gentity_t *self, gentity_t *other, gentity_t *activa
 
 void gametype_trigger_touch ( gentity_t *self, gentity_t *other, trace_t *trace ) 
 {
-	gentity_t *ent;
-	char gametype[8];
-
 	if ( level.gametypeResetTime )
 	{
 		return;
@@ -92,7 +95,6 @@ void gametype_trigger_touch ( gentity_t *self, gentity_t *other, trace_t *trace 
 		G_UseTargets ( self, other );
 	}
 }
-
 /*QUAKED gametype_trigger (0 0 .8) ? 
 */
 void SP_gametype_trigger ( gentity_t* ent )
@@ -288,6 +290,13 @@ void G_RespawnClients ( qboolean force, team_t team )
 			continue;
 		}
 
+		//Ryan june 7 2003    dont respawn them if they are admins and using the adminspec feature
+		if(ent->client->adminspec && !force)
+		{
+			continue;
+		}
+		//Ryan
+
 		// Save the entire player state so certain things
 		// can be maintained across rounds
 		ps = ent->client->ps;
@@ -316,6 +325,15 @@ void G_RespawnClients ( qboolean force, team_t team )
 			ent->client->ps.pm_flags &= ~PMF_GHOST;
 			ent->client->ps.pm_type = PM_NORMAL;
 			ent->client->sess.ghost = qfalse;
+
+			//Ryan april 10 2004
+			//make sure we add up the ghost time in inf, elim games
+			if(force && ent->client->sess.ghostStartTime)
+			{
+				ent->client->sess.totalSpectatorTime += level.time - ent->client->sess.ghostStartTime;
+				ent->client->sess.ghostStartTime = 0;
+			}
+			//Ryan
 		}
 		
 		ent->client->sess.noTeamChange = qfalse;
@@ -395,6 +413,13 @@ void G_ResetGametype ( void )
 	G_ResetGametypeEntities ( );
 
 	trap_Cvar_VariableStringBuffer ( "mapname", level.mapname, MAX_QPATH );
+	// Cant have a 0 roundtimelimit
+	if ( g_roundtimelimit.integer < 1 )
+	{
+		trap_Cvar_Set ( "g_roundtimelimit", "1" );
+		trap_Cvar_Update ( &g_roundtimelimit );
+	}
+	///End  - 09.09.06 - 11:24pm
 
 	// Initialize the respawn interval since this is a interval gametype
 	switch ( level.gametypeData->respawnType )
@@ -447,7 +472,6 @@ void G_ResetGametype ( void )
 		}
 	}
 
-
 	// Respawn all clients
 	G_RespawnClients ( qtrue, TEAM_RED );
 	G_RespawnClients ( qtrue, TEAM_BLUE );
@@ -458,8 +482,10 @@ void G_ResetGametype ( void )
 	// Reset the clients local effects
 	tent = G_TempEntity( vec3_origin, EV_GAMETYPE_RESTART );
 	tent->r.svFlags |= SVF_BROADCAST;
+
 	// Start the gametype
 	trap_GT_Start ( level.gametypeStartTime );
+
 }
 
 /*
@@ -520,6 +546,12 @@ qboolean G_ParseGametypeItems ( TGPGroup* itemsGroup )
 		itemGroup = trap_GPG_GetNext(itemGroup);
 	}
 
+#ifdef _SOF2_BOTS
+	// GRIM 10/06/2002 6:18PM
+	level.gtItemCount = itemCount;
+	// GRIM
+#endif
+
 	return qtrue;
 }
 
@@ -578,7 +610,10 @@ qboolean G_ParseGametypeFile ( void )
 	return qtrue;
 }
 
-/*G_EnableGametypeItemPickup
+//RxCxW - 02.03.05 - 11:30am - #DropGametypeItems #GOLD
+/*
+=================
+G_EnableGametypeItemPickup
 
 Drops all of the gametype items held by the player
 =================
@@ -587,7 +622,6 @@ void G_EnableGametypeItemPickup ( gentity_t* ent )
 {
 	ent->s.eFlags &= ~EF_NOPICKUP;
 }
-
 /*
 =================
 G_DropGametypeItems
@@ -651,7 +685,10 @@ CheckGametype
 */
 void CheckGametype ( void )
 {
+
 	// If the level is over then forget checking gametype stuff.
+	//Ryan june 15 2003
+	//if ( level.intermissiontime )
 	if ( level.intermissiontime || level.pause )
 	//End Ryan
 	{
@@ -720,6 +757,7 @@ void CheckGametype ( void )
 				level.gametypeRespawnTime[team] = 0;
 			}
 		}
+
 	}
 
 	// If we are in RT_NONE respawn mode then we need to look for everyone being dead
@@ -839,23 +877,30 @@ int G_GametypeCommand ( int cmd, int arg0, int arg1, int arg2, int arg3, int arg
 			}else{
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,%s", level.time + 5000, (const char*)arg1 ) );
 			}
+			//Ryan
 			break;		
 
 		case GTCMD_RADIOMESSAGE:
-			G_Voice ( &g_entities[arg0], NULL, SAY_TEAM, (const char*) arg1, qfalse );
+				G_Voice ( &g_entities[arg0], NULL, SAY_TEAM, (const char*) arg1, qfalse );
 			break;
 
 		case GTCMD_REGISTERGLOBALSOUND:
 			return G_SoundIndex ( (char*) arg0 );
 
 		case GTCMD_STARTGLOBALSOUND:
+		//Ryan
+		//Dont play any sounds for the gametype stuff if we are ending the round
+		if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime)
 		{
-			gentity_t* tent;
-			tent = G_TempEntity( vec3_origin, EV_GLOBAL_SOUND );
-			tent->s.eventParm = arg0;
-			tent->r.svFlags = SVF_BROADCAST;	
-			break;
-		}	
+			{
+				gentity_t* tent;
+				tent = G_TempEntity( vec3_origin, EV_GLOBAL_SOUND );
+				tent->s.eventParm = arg0;
+				tent->r.svFlags = SVF_BROADCAST;	
+				break;
+			}	
+		}
+		//Ryan
 
 		case GTCMD_REGISTEREFFECT:
 			return G_EffectIndex ( (char*) arg0 );

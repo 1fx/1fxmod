@@ -72,6 +72,283 @@ void trap_SendServerCommand( int clientNum, const char *text ) {
 } 
 
 /*
+================
+G_AdjustClientBBox
+================
+*/
+void G_AdjustClientBBox(gentity_t *other)
+{
+	other->client->minSave[0] = other->r.mins[0];
+	other->client->minSave[1] = other->r.mins[1];
+	other->client->minSave[2] = other->r.mins[2];
+
+	other->client->maxSave[0] = other->r.maxs[0];
+	other->client->maxSave[1] = other->r.maxs[1];
+	other->client->maxSave[2] = other->r.maxs[2];
+
+	// Adjust the hit box to account for hands and such 
+	// that are sticking out of the normal bounding box
+	if (other->client->ps.pm_flags & PMF_LEANING)
+	{
+		other->r.maxs[0] *= 3.0f;
+		other->r.maxs[1] *= 3.0f;
+		other->r.mins[0] *= 3.0f;
+		other->r.mins[1] *= 3.0f;
+		other->r.svFlags |= SVF_DOUBLED_BBOX;
+	}
+
+	// Relink the entity into the world
+	trap_LinkEntity (other);
+}
+
+
+/*
+================
+G_AdjustClientBBoxs
+
+Inflates every clients bbox to take leaning/jumping etc into account this frame.
+This is all very nasty really...
+================
+*/
+void G_AdjustClientBBoxs(void)
+{
+	int i;
+
+	// Move all the clients back into the reference clients time frame.
+	for (i = 0; i < level.numConnectedClients; i++)
+	{
+		gentity_t* other = &g_entities[level.sortedClients[i]];
+
+		if (other->client->pers.connected != CON_CONNECTED)
+		{
+			continue;
+		}
+
+		// Skip entities not in use
+		if (!other->inuse)
+		{
+			continue;
+		}
+
+		// Skip clients that are spectating
+		if (G_IsClientSpectating(other->client) || G_IsClientDead(other->client))
+		{
+			continue;
+		}
+
+		G_AdjustClientBBox(other);
+	}	
+}
+
+
+
+/*
+================
+G_UndoAdjustedClientBBox
+================
+*/
+void G_UndoAdjustedClientBBox(gentity_t *other)
+{
+	// Put the hitbox back the way it was
+	other->r.maxs[0] = other->client->maxSave[0];
+	other->r.maxs[1] = other->client->maxSave[1];
+	other->r.maxs[2] = other->client->maxSave[2];
+
+	other->r.mins[0] = other->client->minSave[0];
+	other->r.mins[1] = other->client->minSave[1];
+	other->r.mins[2] = other->client->minSave[2];
+
+	other->r.svFlags &= (~SVF_DOUBLED_BBOX);
+}
+
+
+/*
+================
+G_UndoAdjustedClientBBoxs
+================
+*/
+void G_UndoAdjustedClientBBoxs(void)
+{
+	int i;
+
+	for ( i = 0; i < level.numConnectedClients; i ++ )
+	{
+		gentity_t* other = &g_entities[level.sortedClients[i]];
+		
+		if ( other->client->pers.connected != CON_CONNECTED )
+		{
+			continue;
+		}
+
+		// Skip clients that are spectating
+		if ( G_IsClientSpectating ( other->client ) || G_IsClientDead ( other->client ) )
+		{
+			continue;
+		}
+
+		G_UndoAdjustedClientBBox(other);
+
+		// Relink the entity into the world
+		trap_LinkEntity ( other );
+	}
+}
+
+/*
+================
+G_SetClientPreLeaningBBox
+================
+*/
+void G_SetClientPreLeaningBBox(gentity_t *ent)
+{
+	//Ryan
+	//ent->r.maxs[2] += g_adjPLBMaxsZ.value;
+	ent->r.maxs[2] += PLB_MAXZ;
+	//Ryan
+}
+
+/*
+================
+G_SetClientLeaningBBox
+================
+*/
+
+void G_SetClientLeaningBBox(gentity_t *ent)
+{
+	float	leanOffset;
+	vec3_t	up;
+	vec3_t	right;
+	
+	// adjust origin for leaning
+	//BG_ApplyLeanOffset(&ent->client->ps, org);//ent->r.currentOrigin);
+	leanOffset = (float)(ent->client->ps.leanTime - LEAN_TIME) / LEAN_TIME * LEAN_OFFSET;
+	
+	//Ryan
+	//leanOffset *= g_adjLeanOffset.value;
+	leanOffset *= BBOX_LEAN_OFFSET;
+	//Ryan
+
+	AngleVectors( ent->client->ps.viewangles, NULL, right, up);
+	VectorMA(ent->r.currentOrigin, leanOffset, right, ent->r.currentOrigin);
+	VectorMA(ent->r.currentOrigin, Q_fabs(leanOffset) * -0.20f, up, ent->r.currentOrigin);
+
+	//Ryan
+	//ent->r.maxs[2] += g_adjLBMaxsZ.value;
+	ent->r.maxs[2] += LB_MAXZ;
+	//Ryan
+	
+	if (ent->client->ps.pm_flags & PMF_DUCKED)
+	{
+		//Ryan
+		//ent->r.mins[2] += g_adjDuckedLBMinsZ.value;
+		ent->r.mins[2] += DUCKED_LB_MINZ;
+		//Ryan
+	}
+	else
+	{
+		//Ryan
+		//ent->r.mins[2] += g_adjLBMinsZ.value;
+		ent->r.mins[2] += LB_MINZ;
+		//Ryan
+	}
+}				
+
+///RxCxW - 01.10.06 - 03:09am #bbox
+//Ryan
+/*
+================
+G_ShowClientBBox
+
+Ripped from unlagged code by Neil “haste” Toronto 
+================
+
+void G_ShowClientBBox(gentity_t *ent)
+{
+	vec3_t corners[8];
+	float extx, exty, extz;
+	gentity_t *tent;
+	int i;
+
+	// get the extents (size)
+	extx = ent->r.maxs[0] - ent->r.mins[0];
+	exty = ent->r.maxs[1] - ent->r.mins[1];
+	extz = ent->r.maxs[2] - ent->r.mins[2];
+
+	VectorAdd(ent->r.currentOrigin, ent->r.maxs, corners[3]);
+
+	VectorCopy(corners[3], corners[2]);
+	corners[2][0] -= extx;
+
+	VectorCopy(corners[2], corners[1]);
+	corners[1][1] -= exty;
+
+	VectorCopy(corners[1], corners[0]);
+	corners[0][0] += extx;
+
+	for (i = 0; i < 4; i++)
+	{
+		VectorCopy(corners[i], corners[i + 4]);
+		corners[i + 4][2] -= extz;
+	}
+
+/*	corners[0][2] = ent->r.currentOrigin[2] + g_adjPLBMaxsZ.value;
+	corners[1][2] = ent->r.currentOrigin[2] + g_adjPLBMaxsZ.value;
+	Com_Printf("^3corners0 Z: %.2f\n", corners[0][2]);
+	Com_Printf("^3corners1 Z: %.2f\n", corners[1][2]);*/
+/*
+	// top
+	tent = G_TempEntity(corners[0], EV_BOTWAYPOINT);
+	VectorCopy(corners[1], tent->s.angles);
+	tent->r.svFlags |= SVF_BROADCAST;
+
+	tent = G_TempEntity(corners[2], EV_BOTWAYPOINT);
+	VectorCopy(corners[3], tent->s.angles);
+	tent->r.svFlags |= SVF_BROADCAST;
+
+	tent = G_TempEntity(corners[2], EV_BOTWAYPOINT);
+	VectorCopy(corners[1], tent->s.angles);
+	tent->r.svFlags |= SVF_BROADCAST;
+
+	tent = G_TempEntity(corners[0], EV_BOTWAYPOINT);
+	VectorCopy(corners[3], tent->s.angles);
+	tent->r.svFlags |= SVF_BROADCAST;
+
+	// bottom
+	tent = G_TempEntity(corners[7], EV_BOTWAYPOINT);
+	VectorCopy(corners[6], tent->s.angles);
+	tent->r.svFlags |= SVF_BROADCAST;
+
+	tent = G_TempEntity(corners[5], EV_BOTWAYPOINT);
+	VectorCopy(corners[4], tent->s.angles);
+	tent->r.svFlags |= SVF_BROADCAST;
+
+	tent = G_TempEntity(corners[5], EV_BOTWAYPOINT);
+	VectorCopy(corners[6], tent->s.angles);
+	tent->r.svFlags |= SVF_BROADCAST;
+
+	tent = G_TempEntity(corners[7], EV_BOTWAYPOINT);
+	VectorCopy(corners[4], tent->s.angles);
+	tent->r.svFlags |= SVF_BROADCAST;
+}
+/*	
+	gentity_t *tent;
+	int i, j;
+	vec3_t start, end;
+	
+	VectorAdd(ent->r.currentOrigin, other->r.maxs, start);
+
+	for(i = 0; i <= 2; i++)
+	{
+		for(j = 0; j <= 2; j++)
+		{
+		}
+	}
+	tent = G_TempEntity(muzzlePoint, EV_BOTWAYPOINT);
+	VectorCopy(tr.endpos, tent->s.angles);
+	tent->r.svFlags |= SVF_BROADCAST;
+*/
+
+
+/*
 =============
 RPM_Awards
 =============
@@ -382,7 +659,7 @@ void InitSpawn(int choice) // load bsp models before players loads a map(SOF2 cl
 	}else{
 	AddSpawnField("bspmodel",	"instances/Kamchatka/wall01");
 	}
-	AddSpawnField("origin",		"-4841 -4396 1252");
+	AddSpawnField("origin",		"-4841 -4396 5000");
 	AddSpawnField("angles",		"0 90 0");
 	AddSpawnField("model",		"trigger_hurt"); //blocked_trigger
 	AddSpawnField("count",		 "1");
@@ -1548,32 +1825,43 @@ void EvenTeams (gentity_t *adm, qboolean aet)
 DeathmatchScoreboardMessage
 ==================
 */
-void DeathmatchScoreboardMessage( gentity_t *ent ) 
+void DeathmatchScoreboardMessage( gentity_t *ent )
 {
 	char		entry[1024];
-	char		string[1400];
+	//Ryan
+	//char		string[1400];
+	char		string[2048];
+	//Ryan
 	int			stringlength;
 	int			i, j;
 	gclient_t	*cl;
 	int			numSorted;
+
+	//Ryan may 15 2004
+	//dont let the scores update duing the awards
+	if(level.awardTime)
+	{
+		return;
+	}
+	//Ryan
 
 	// send the latest information on all clients
 	string[0]    = 0;
 	stringlength = 0;
 
 	numSorted = level.numConnectedClients;
-	
-	for (i=0 ; i < numSorted ; i++) 
+
+	for (i=0 ; i < numSorted ; i++)
 	{
 		int	ping;
 
 		cl = &level.clients[level.sortedClients[i]];
 
-		if ( cl->pers.connected == CON_CONNECTING ) 
+		if ( cl->pers.connected == CON_CONNECTING )
 		{
 			ping = -1;
-		} 
-		else 
+		}
+		else
 		{
 			ping = cl->ps.ping < 999 ? cl->ps.ping : 999;
 			if(ping != 999){
@@ -1641,8 +1929,8 @@ void DeathmatchScoreboardMessage( gentity_t *ent )
 		stringlength += j;
 	}
 
-	trap_SendServerCommand( ent-g_entities, va("scores %i %i %i%s", i, 
-							level.teamScores[TEAM_RED], 
+	trap_SendServerCommand( ent-g_entities, va("scores %i %i %i%s", i,
+							level.teamScores[TEAM_RED],
 							level.teamScores[TEAM_BLUE],
 							string ) );
 }
@@ -2418,7 +2706,7 @@ void SetTeam( gentity_t *ent, char *s, const char* identity )
 	CalculateRanks();
 
 	// Begin the clients new life on the their new team
-	ClientBegin( clientNum );
+	ClientBegin( clientNum, qfalse );
 }
 
 /*
@@ -3434,7 +3722,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		}
 		G_Say( ent, NULL, mode, p);
 		return;
-	}else if(strstr(p, "!up")){
+	}else if(strstr(p, "!upa")){
 		if (ent->client->sess.admin >= 4){
 				//trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sT%sh%si%sr%sd%sperson enabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 				trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Unpaused by %s.\n\"", ent->client->pers.netname));

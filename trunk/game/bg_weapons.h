@@ -25,7 +25,7 @@ typedef enum
 	// Primaries
 	MOD_USAS_12_SHOTGUN,         
 	MOD_M4_ASSAULT_RIFLE,        
-	MOD_AK74_ASSAULT_RIFLE,      
+	MOD_AK74_ASSAULT_RIFLE, 
 	MOD_MSG90A1_SNIPER_RIFLE,    
 	MOD_M60_MACHINEGUN,          
 	MOD_MM1_GRENADE_LAUNCHER,    
@@ -201,6 +201,13 @@ typedef struct attackData_s
 	int			animFire;
 	int			animFireZoomed;
 
+	//Ryan april 25 2004 8:41pm
+	//needed somewhere to save the default ammo and damage values
+	int			defaultClipSize;
+	int			defaultExtraClips;
+	int			defaultDamage;
+	//Ryan
+
 } attackData_t;
 
 typedef struct weaponData_s
@@ -229,6 +236,9 @@ typedef struct  ammoData_s
 	char	*name;				// name of ammo
 	char	icon[32];			// Name of ammo icon file
 	int		max;				// Max amount player can hold of ammo
+	//Ryan 
+	int		defaultMax;			// save a copy of the default max value
+	//Ryan
 	float	goreScale;
 
 } ammoData_t;

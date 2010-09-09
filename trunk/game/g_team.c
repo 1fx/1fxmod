@@ -28,10 +28,8 @@ const char *TeamName(team_t team)
 	{
 		case TEAM_RED:
 			return "RED";
-
 		case TEAM_BLUE:
 			return "BLUE";
-
 		case TEAM_FREE:
 			return "FREE";
 
@@ -143,7 +141,6 @@ qboolean OnSameTeam( gentity_t *ent1, gentity_t *ent2 )
 
 	return qfalse;
 }
-
 /*
 ===========
 Team_GetLocation

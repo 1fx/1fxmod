@@ -1,5 +1,5 @@
 // Copyright (C) 2001-2002 Raven Software
-//
+
 
 #include "g_local.h"
 

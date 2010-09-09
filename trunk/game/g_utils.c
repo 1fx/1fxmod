@@ -65,10 +65,20 @@ int G_FindConfigstringIndex( char *name, int start, int max, qboolean create )
 	int		i;
 	char	s[MAX_STRING_CHARS];
 
+	///RxCxW - 09.01.06 - 12:30am #FIX
+	/// Debugger barfs - this shouldnt cause any problems.
+	/// Might check to see if the qvm needs this modification aswell 
+#ifdef _DEBUG
+	if ( !name || name[0] == 0) 
+		return 0;
+#else
+	///original
 	if ( !name || !name[0] ) 
 	{
 		return 0;
 	}
+#endif
+	///End  - 09.01.06 - 12:30am
 
 	for ( i=1 ; i<max ; i++ ) 
 	{
@@ -91,6 +101,7 @@ int G_FindConfigstringIndex( char *name, int start, int max, qboolean create )
 	if ( i == max ) 
 	{
 		Com_Error( ERR_FATAL, "G_FindConfigstringIndex: overflow" );
+		return 0;			/// ROCmod - RxCxW - 01.27.06 - 09:51pm
 	}
 
 	trap_SetConfigstring( start + i, name );
@@ -467,7 +478,6 @@ gentity_t* G_Spawn( void )
 	// let the server system know that there are more entities
 	trap_LocateGameData( level.gentities, level.num_entities, sizeof( gentity_t ), 
 						 &level.clients[0].ps, sizeof( level.clients[0] ) );
-
 	G_InitGentity( e );
 	return e;
 }
@@ -517,6 +527,35 @@ void G_FreeEntity( gentity_t *ed )
 	ed->freetime = level.time;
 	ed->inuse = qfalse;
 }
+
+//RxCxW - 02.04.05 - 09:14am #GOLD #FreeEntity
+/*
+=================
+G_FreeEnitityChildren
+
+Frees any entity that is a child of the given entity
+=================
+*/
+void G_FreeEnitityChildren( gentity_t* ent )
+{
+	gentity_t* from;
+
+	for ( from = g_entities; from < &g_entities[level.num_entities] ; from++)
+	{
+		if ( !from->inuse )
+		{
+			continue;
+		}
+
+		if ( from->parent != ent )
+		{
+			continue;
+		}
+
+		G_FreeEntity ( from );
+	}
+}
+//End - 02.04.05 - 09:14am
 
 /*
 =================

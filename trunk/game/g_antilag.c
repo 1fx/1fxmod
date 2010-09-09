@@ -232,7 +232,23 @@ void G_UndoAntiLag ( void )
 			continue;
 		}
 
+		//Ryan april 6 2004 9:05pm
+		//Taken from gold code, for fixing leaning player hits
 		if ( other->r.svFlags & SVF_DOUBLED_BBOX )
+		{
+			// Put the hitbox back the way it was
+			other->r.maxs[0] = other->client->maxSave[0];
+			other->r.maxs[1] = other->client->maxSave[1];
+			other->r.maxs[2] = other->client->maxSave[2];
+
+			other->r.mins[0] = other->client->minSave[0];
+			other->r.mins[1] = other->client->minSave[1];
+			other->r.mins[2] = other->client->minSave[2];
+
+			other->r.svFlags &= (~SVF_DOUBLED_BBOX);
+		}
+		
+		/*if ( other->r.svFlags & SVF_DOUBLED_BBOX )
 		{
 			// Put the hitbox back the way it was
 			other->r.maxs[0] /= 2;
@@ -241,7 +257,8 @@ void G_UndoAntiLag ( void )
 			other->r.mins[1] /= 2;
 
 			other->r.svFlags &= (~SVF_DOUBLED_BBOX);
-		}
+		}*/
+		//Ryan
 
 		G_UndoClientAntiLag ( other );
 
@@ -302,7 +319,44 @@ void G_ApplyAntiLag ( gentity_t* ref, qboolean enlargeHitBox )
 			G_ApplyClientAntiLag ( other, reftime );
 		}
 
+		//Ryan april 6 2004 9:01pm   
+		//took this from gold code, its much better for hitting leaning players
 		if ( enlargeHitBox )
+		{
+			other->client->minSave[0] = other->r.mins[0];
+			other->client->minSave[1] = other->r.mins[1];
+			other->client->minSave[2] = other->r.mins[2];
+
+			other->client->maxSave[0] = other->r.maxs[0];
+			other->client->maxSave[1] = other->r.maxs[1];
+			other->client->maxSave[2] = other->r.maxs[2];
+
+			if ( other->client->ps.pm_flags & PMF_DUCKED )
+			{
+				other->r.maxs[2] += 10;
+			}
+
+			// Adjust the hit box to account for hands and such 
+			// that are sticking out of the normal bounding box
+
+			if ( other->client->ps.pm_flags & PMF_LEANING )
+			{
+				other->r.maxs[0] *= 3.0f;
+				other->r.maxs[1] *= 3.0f;
+				other->r.mins[0] *= 3.0f;
+				other->r.mins[1] *= 3.0f;
+			}
+			else
+			{
+				other->r.maxs[0] *= 2.0f;
+				other->r.maxs[1] *= 2.0f;
+				other->r.mins[0] *= 2.0f;
+				other->r.mins[1] *= 2.0f;
+			}
+
+			other->r.svFlags |= SVF_DOUBLED_BBOX;
+		}
+		/*if ( enlargeHitBox )
 		{
 			// Adjust the hit box to account for hands and such 
 			// that are sticking out of the normal bounding box
@@ -311,7 +365,8 @@ void G_ApplyAntiLag ( gentity_t* ref, qboolean enlargeHitBox )
 			other->r.mins[0] *= 2;
 			other->r.mins[1] *= 2;
 			other->r.svFlags |= SVF_DOUBLED_BBOX;
-		}
+		}*/
+		//Ryan
 
 		// Relink the entity into the world
 		trap_LinkEntity ( other );

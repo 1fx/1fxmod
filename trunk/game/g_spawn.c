@@ -435,6 +435,38 @@ void G_ParseField( const char *key, const char *value, gentity_t *ent ) {
 	}
 }
 
+// Ryan Dec 5 2004
+// Added from gold fro gametype fixing
+/*
+===================
+G_IsGametypeInList
+
+Determines if the given gametype is in the given list.
+===================
+*/
+qboolean G_IsGametypeInList ( const char* gametype, const char* list )
+{
+	const char* buf = (char*) list;
+	char* token;
+
+	while ( 1 )
+	{
+		token = COM_Parse ( &buf );
+		if ( !token || !token[0] )
+		{
+			break;
+		}
+
+		if ( Q_stricmp ( token, gametype ) == 0 )
+		{
+			return qtrue;
+		}
+	}
+
+	return qfalse;
+}	
+// Ryan
+
 /*
 ===================
 G_SpawnGEntityFromSpawnVars
@@ -498,7 +530,28 @@ void G_SpawnGEntityFromSpawnVars( qboolean inSubBSP )
 	}
 
 	// Only spawn this entity in the specified gametype
-	if( G_SpawnString( "gametype", NULL, &value ) ) 
+	// Ryan Dec 5 2004
+	// More code from gold to fix gametypes
+	if( G_SpawnString( "gametype", NULL, &value ) && value ) 
+	{
+		if ( !G_IsGametypeInList ( level.gametypeData->name, value ) )
+		{
+			if ( level.gametypeData->basegametype )
+			{
+				if ( !G_IsGametypeInList ( level.gametypeData->basegametype, value ) )
+				{
+					G_FreeEntity ( ent );
+					return;
+				}
+			}
+			else
+			{
+				G_FreeEntity ( ent );
+				return;
+			}
+		} 
+	}
+/*	if( G_SpawnString( "gametype", NULL, &value ) ) 
 	{
 		// Has to be a case match
 		if ( value && !strstr ( value, level.gametypeData->name ) )
@@ -507,6 +560,8 @@ void G_SpawnGEntityFromSpawnVars( qboolean inSubBSP )
 			return;
 		}
 	}
+*/
+	// Ryan
 
 	// move editor origin to pos
 	VectorCopy( ent->s.origin, ent->s.pos.trBase );
@@ -1021,7 +1076,7 @@ void SP_worldspawn( void )
 	/*
 	G_SpawnString( "message", "", &text );
 	trap_SetConfigstring( CS_MESSAGE, text );				// map specific message
-	*/
+*/
 
 	RPM_UpdateLoadScreenMessage();
 	trap_SetConfigstring( CS_MOTD, g_motd.string );		// message of the day
@@ -1049,11 +1104,12 @@ void SP_worldspawn( void )
 		trap_SetConfigstring( CS_WARMUP, va("%i", level.warmupTime) );
 		G_LogPrintf( "Warmup:\n" );
 	}
-
+	//Ryan if in competition mode auto set the spectators to locked
 	if(g_compMode.integer)
 	{
 		level.specsLocked = 1;
 	}
+	//Ryan
 
 	trap_SetConfigstring(CS_LIGHT_STYLES+(LS_STYLES_START*3)+0, defaultStyles[0][0]);
 	trap_SetConfigstring(CS_LIGHT_STYLES+(LS_STYLES_START*3)+1, defaultStyles[0][1]);
@@ -1150,12 +1206,16 @@ void NV_model( gentity_t *ent )
 	VectorCopy( ent->s.angles, ent->s.apos.trBase );
 }
 
-
 /*QUAKED model_static (1 0 0) (-16 -16 -16) (16 16 16) NO_MP
 "model"		arbitrary .md3 file to display
 */
 void SP_model_static ( gentity_t* ent )
 {
+	if (ent->spawnflags & 1)
+	{	// NO_MULTIPLAYER
+		G_FreeEntity( ent );
+	}
+
 	G_SetOrigin( ent, ent->s.origin );
 	
 	VectorCopy(ent->s.angles, ent->r.currentAngles);
@@ -1175,5 +1235,4 @@ void SP_model_static ( gentity_t* ent )
 
 	trap_LinkEntity ( ent );
 }
-
 

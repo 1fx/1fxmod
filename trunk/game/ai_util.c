@@ -638,6 +638,9 @@ void BotUtilizePersonality(bot_state_t *bs)
 	if (len >= 131072)
 	{
 		Com_Printf(S_COLOR_RED "Personality file exceeds maximum length\n");
+		///RxCxW - 08.26.06 - 12:34am - #File handle - Close this beotch!
+		trap_FS_FCloseFile(f);
+		///End  - 08.26.06 - 12:34am
 		return;
 	}
 

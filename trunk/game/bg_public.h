@@ -135,7 +135,6 @@ enum
 	CS_ICONS				= CS_LIGHT_STYLES + (MAX_LIGHT_STYLES*3),
 	CS_TEAM_INFO			= CS_ICONS + MAX_ICONS,
 	CS_AMBIENT_SOUNDSETS	= CS_TEAM_INFO + TEAM_NUM_TEAMS,
-
 	CS_MAX					= CS_AMBIENT_SOUNDSETS + MAX_AMBIENT_SOUNDSETS
 };
 	
@@ -402,7 +401,6 @@ typedef enum {
 #define	PMF_AUTORELOAD			0x00400000		// autoreloading enabled
 
 #define	PMF_SIAMESETWINS		0x00800000	
-
 //Ryan
 #define	PMF_FIRSTPERSONSPEC		0x01000000
 //Ryan
@@ -464,7 +462,7 @@ typedef struct {
 	int			weaponAnimIdx;
 	char		weaponAnim[MAX_QPATH];
 	char		weaponEndAnim[MAX_QPATH];
-#if _Debug
+#ifdef _DEBUG
 	int			isClient;
 #endif
 } pmove_t;
@@ -952,6 +950,10 @@ typedef struct gametypeData_s
 	const char*		displayName;
 	const char*		script;
 	const char*		description;
+	// Ryan Dec 5 2004
+	// Make it like gold
+	const char*		basegametype;
+	// Ryan
 
 	respawnType_t	respawnType;
 	qboolean		pickupsDisabled;

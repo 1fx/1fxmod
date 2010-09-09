@@ -707,6 +707,9 @@ static void PM_WalkMove( void ) {
 		PM_WaterMove();
 		return;
 	}
+	//RxCxW - 05.22.06 - 04:17pm #Debug $FIX //RxCxW - 05.22.06 - 04:17pm 
+	//Com_Printf("^1current origin: %.2f %.2f %.2f\n", pm->ps->origin[0], pm->ps->origin[1],pm->ps->origin[2]);
+	//End  - 05.22.06 - 04:17pm
 
 
 	if ( PM_CheckJump () )

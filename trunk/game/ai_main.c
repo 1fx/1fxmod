@@ -7,10 +7,10 @@
  * desc:		Quake3 bot AI
  *
  * $Archive: /MissionPack/code/game/ai_main.c $
- * $Author: Mrelusive $ 
- * $Revision: 35 $
+ * $Author: chris $ 
+ * $Revision: 1.1.1.1 $
  * $Modtime: 6/06/01 1:11p $
- * $Date: 6/06/01 12:06p $
+ * $Date: 2004/12/29 14:26:27 $
  *
  *****************************************************************************/
 
@@ -4603,7 +4603,7 @@ void StandardBotAI(bot_state_t *bs, float thinktime)
 
 	trap_Cvar_Update(&bot_pause);
 
-	if (gDeactivated || bot_pause.integer )
+	if (gDeactivated || bot_pause.integer /*|| g_botLean.integer*/)
 	{
 		bs->wpCurrent = NULL;
 		bs->currentEnemy = NULL;

@@ -1566,6 +1566,9 @@ int LoadPathData(const char *filename)
 	if (len >= 524288)
 	{
 		Com_Printf(S_COLOR_RED "Route file exceeds maximum length\n");
+		///RxCxW - 09.10.06 - 12:23am #fileHandles
+		trap_FS_FCloseFile(f);
+		///End  - 09.10.06 - 12:23am
 		return 0;
 	}
 

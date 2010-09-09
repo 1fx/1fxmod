@@ -248,6 +248,18 @@ void	Boe_Third(int argNum, gentity_t *ent, qboolean ShortCmd);
 void	Boe_CompMode(int argNum, gentity_t *ent, qboolean ShortCmd);
 
 void RPM_Awards(void);
+void G_AdjustClientBBox(gentity_t *other);
+void G_AdjustClientBBoxs(void);
+void G_UndoAdjustedClientBBox(gentity_t *other);
+void G_UndoAdjustedClientBBoxs(void);
+void G_SetClientPreLeaningBBox(gentity_t *ent);
+void G_SetClientLeaningBBox(gentity_t *ent);
+
+#define BBOX_LEAN_OFFSET	0.65f
+#define LB_MAXZ				-3
+#define LB_MINZ				54
+#define DUCKED_LB_MINZ		25
+#define PLB_MAXZ			-39
 
 // Boe!Man 6/2/10
 extern	vmCvar_t	g_autoeventeams;

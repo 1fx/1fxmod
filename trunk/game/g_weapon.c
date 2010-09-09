@@ -7,7 +7,12 @@
 #include "be_aas.h"
 
 extern qboolean G_BoxInBounds( vec3_t point, vec3_t mins, vec3_t maxs, vec3_t boundsMins, vec3_t boundsMaxs );
+// KRIS 7/08/2003 11:03AM
+//#define	SHOTGUN_JUMP_AIMCHANGE		2.5f
 
+//static int last_show = 0;
+//static int last_showBBox = 0;
+// KRIS
 typedef struct hitLocationConversion_s
 {
 	int		SOF2poses;
@@ -105,6 +110,9 @@ void G_TraceBullet ( weapon_t weapon, trace_t* tr, G2Trace_t G2Trace, vec3_t sta
 	unlinkCount = 0;
 
 	G2Trace[0].mEntityNum = -1;
+	// KRIS 9/08/2003 11:59AM
+	G2Trace[0].mLocation = 0;
+	// KRIS
 
 	while ( 1 )
 	{
@@ -127,7 +135,6 @@ void G_TraceBullet ( weapon_t weapon, trace_t* tr, G2Trace_t G2Trace, vec3_t sta
 			trace_t			vtr;
 
 			traceEnt = &g_entities[ tr->entityNum ];
-
 			anim = &level.ghoulAnimations[traceEnt->client->legs.anim&(~ANIM_TOGGLEBIT)];
 			trap_G2API_SetBoneAnim(level.serverGhoul2, 0, "model_root", anim->firstFrame, anim->firstFrame + anim->numFrames, BONE_ANIM_OVERRIDE_LOOP, 50.0f / anim->frameLerp, traceEnt->client->legs.animTime, -1, 0);
 
@@ -137,9 +144,9 @@ void G_TraceBullet ( weapon_t weapon, trace_t* tr, G2Trace_t G2Trace, vec3_t sta
 			trap_G2API_SetBoneAngles( level.serverGhoul2, 0, "upper_lumbar", traceEnt->client->ghoulUpperTorsoAngles, BONE_ANGLES_POSTMULT, POSITIVE_X, NEGATIVE_Y, NEGATIVE_Z, 0, 0, level.time ); 
 			trap_G2API_SetBoneAngles( level.serverGhoul2, 0, "lower_lumbar", traceEnt->client->ghoulLowerTorsoAngles, BONE_ANGLES_POSTMULT, POSITIVE_X, NEGATIVE_Y, NEGATIVE_Z, 0, 0, level.time ); 
 			trap_G2API_SetBoneAngles( level.serverGhoul2, 0, "cranium",		 traceEnt->client->ghoulHeadAngles, BONE_ANGLES_POSTMULT, POSITIVE_Z, NEGATIVE_Y, POSITIVE_X, 0,0, level.time ); 
-
+			
 			trap_G2API_CollisionDetect ( G2Trace, level.serverGhoul2, traceEnt->client->ghoulLegsAngles, traceEnt->r.currentOrigin, level.time, traceEnt->s.number, start, end, vec3_identity, 0, 2 );
-
+		
 			// Check to see if anyone should yell SNIPER!
 			G_CheckSniperCall ( weapon, &g_entities[passent], traceEnt, G2Trace[0].mEntityNum != traceEnt->s.number ? qtrue : qfalse );
 
@@ -172,6 +179,174 @@ void G_TraceBullet ( weapon_t weapon, trace_t* tr, G2Trace_t G2Trace, vec3_t sta
 
 			trap_LinkEntity ( traceEnt );
 		}
+		// KRIS 17/07/2003 10:18AM
+		else if (tr->fraction != 1 && g_entities[ tr->entityNum ].client && (g_entities[ tr->entityNum ].client->ps.pm_flags & PMF_LEANING))
+		{
+			gentity_t *other;
+			vec3_t rOrigin;
+
+			// ok, we've hit someone who is leaning...
+			//Com_Printf(S_COLOR_YELLOW"G_TraceBullet(): - hit client %i who is leaning\n", tr->entityNum);
+					
+			other = &g_entities[tr->entityNum];
+					
+			// adjust the standard bbox to compensate for
+			// different head position and trace against that
+			G_UndoAdjustedClientBBox(other);
+
+			G_SetClientPreLeaningBBox(other);
+
+		/*	if (g_debugAdjBBox.integer && (level.time - last_showBBox > 500))
+			{
+				G_ShowClientBBox(other);
+			}
+	*/
+			trap_LinkEntity ( other );
+
+			// trace against slightly adjusted bbox (torso and head gone)
+			trap_Trace ( tr, start, NULL, NULL, end, passent, mask );
+
+			// we hit the adjusted bbox, stop here
+			if (tr->entityNum == other->s.number)
+			{
+				// KRIS 17/06/2003 2:33AM
+			/*	if (g_debugAdjBBox.integer && (level.time - last_showBBox > 500))
+				{
+					last_showBBox = level.time;
+				}
+				// KRIS
+			*/	
+				//Ryan april 6 2004 
+				//these are all wrong r.currentOrigin always is at a certain height
+				//above the ground the player is on and if he's ducking it stays the
+				//same so these hit locations will be way off
+				/*
+				if (tr->endpos[2] > other->r.currentOrigin[2] + 4)
+				{
+					G2Trace[0].mLocation = HL_WAIST;
+				}
+				else if (tr->endpos[2] > other->r.currentOrigin[2] - 24)
+				{
+					G2Trace[0].mLocation = HL_FOOT_LT;
+				}
+				else if (tr->endpos[2] > other->r.currentOrigin[2] - 10)
+				{
+					G2Trace[0].mLocation = HL_LEG_LOWER_LT;
+				}
+				else
+				{
+					G2Trace[0].mLocation = HL_LEG_UPPER_LT;
+				}
+				*/
+
+				if (other->client->ps.pm_flags & PMF_DUCKED)
+				{
+					if (tr->endpos[2] > (other->r.currentOrigin[2] + other->r.maxs[2]) - 5)
+					{
+						G2Trace[0].mLocation = HL_WAIST;
+					}
+					else if (tr->endpos[2] > (other->r.currentOrigin[2] + other->r.maxs[2]) - 17)
+					{
+						G2Trace[0].mLocation = HL_LEG_UPPER_LT;
+					}
+					else if (tr->endpos[2] > (other->r.currentOrigin[2] + other->r.maxs[2]) - 23)
+					{
+						G2Trace[0].mLocation = HL_LEG_LOWER_LT;
+					}
+					else
+					{
+						G2Trace[0].mLocation = HL_FOOT_LT;
+					}
+				}
+				else
+				{
+					if (tr->endpos[2] > (other->r.currentOrigin[2] + other->r.maxs[2]) - 10)
+					{
+						G2Trace[0].mLocation = HL_WAIST;
+					}
+					else if (tr->endpos[2] > (other->r.currentOrigin[2] + other->r.maxs[2]) - 20)
+					{
+						G2Trace[0].mLocation = HL_LEG_UPPER_LT;
+					}
+					else if (tr->endpos[2] > (other->r.currentOrigin[2] + other->r.maxs[2]) - 38)
+					{
+						G2Trace[0].mLocation = HL_LEG_LOWER_LT;
+					}
+					else
+					{
+						G2Trace[0].mLocation = HL_FOOT_LT;
+					}
+				}
+				//Ryan
+				//Com_Printf(S_COLOR_YELLOW"G_TraceBullet(): - we hit the adjusted bbox, stop here\n");
+				break;
+			}
+
+			// failing the first check, move the bbox origin in
+			// the direction of the lean and make it smaller
+			VectorCopy (other->r.currentOrigin, rOrigin);
+
+			G_UndoAdjustedClientBBox(other);
+
+			// adjust bbox and origin while leaning
+			G_SetClientLeaningBBox(other);
+
+		/*	if (g_debugAdjBBox.integer && (level.time - last_showBBox > 500))
+			{
+				G_ShowClientBBox(other);
+			}
+		*/	
+			trap_LinkEntity ( other );
+
+			// trace against smaller, offset bbox
+			trap_Trace ( tr, start, NULL, NULL, end, passent, mask );
+
+			// KRIS 17/06/2003 2:33AM
+		/*	if (g_debugAdjBBox.integer && (level.time - last_showBBox > 500))
+			{
+				last_showBBox = level.time;
+			}
+		*/	// KRIS
+
+			// good leaning hit, stop here
+			if (tr->entityNum == other->s.number)
+			{	
+				//Com_Printf(S_COLOR_YELLOW"G_TraceBullet(): - good leaning hit, stop here\n");
+				//Ryan this is off to for the same reason as above
+				/*if (tr->endpos[2] > other->r.currentOrigin[2] + 8)
+				{
+					G2Trace[0].mLocation = HL_HEAD;
+				}
+				else
+				{
+					G2Trace[0].mLocation = HL_WAIST;
+				}*/
+				
+				if (tr->endpos[2] > (other->r.currentOrigin[2] + other->r.maxs[2]) - 10)
+				{
+					G2Trace[0].mLocation = HL_HEAD;
+				}
+				else
+				{
+					G2Trace[0].mLocation = HL_CHEST;
+				}
+				//Ryan
+				
+				// reset origins
+				VectorCopy (rOrigin, other->r.currentOrigin);
+				break;
+			}
+
+			// reset origins
+			VectorCopy (rOrigin, other->r.currentOrigin);
+					
+			// bad hit, ignore them and move on
+			//Com_Printf(S_COLOR_YELLOW"G_TraceBullet(): - bad hit, ignore them and move on\n");
+			unlinked[unlinkCount++] = other;
+			trap_UnlinkEntity (other);
+			continue;
+		}
+		// KRIS
 
 		break;
 	}
@@ -223,9 +398,11 @@ void G_FireBullet ( gentity_t* ent, int weapon, int attack )
 	int				seed;
 
 	gbullethit_t	hit[MAX_HITS];
+
 	//Ryan
 	statinfo_t     *stat = &ent->client->pers.statinfo;
 	//Ryan
+
 	// Grab the firing info
 	weaponDat = &weaponData[ent->s.weapon];
 	attackDat = &weaponDat->attack[attack];
@@ -239,6 +416,7 @@ void G_FireBullet ( gentity_t* ent, int weapon, int attack )
 
 	// Current inaccuracy
 	inaccuracy = (float)ent->client->ps.inaccuracy / 1000.0f;
+
 	if ( detailed )
 	{
 		if ( ent->client->ps.pm_flags & PMF_DUCKED )
@@ -277,25 +455,62 @@ void G_FireBullet ( gentity_t* ent, int weapon, int attack )
 
 	seed = ent->client->ps.stats[STAT_SEED];
 
+	// KRIS 15/07/2003 8:38AM
+	// Rather than adjust shotgun spread when jumping, we put the aim slightly off...
+/*	if ((ent->client->ps.pm_flags & PMF_JUMPING) && ((weapon == WP_M590_SHOTGUN) || (weapon == WP_USAS_12_SHOTGUN)))
+	{
+		BG_CalculateBulletEndpoint(muzzlePoint, fireAngs, SHOTGUN_JUMP_AIMCHANGE, attackDat->rV.range + 15, end, &seed);
+		VectorSubtract(end, muzzlePoint, fwd);
+		vectoangles(fwd, fireAngs);
+	}
+*/	// KRIS
+
 	// Run a trace for each pellet being fired
 	for (i = 0; i < attackDat->pellets; i++) 
 	{
 		int location = HL_NONE;
-		stat->shotcount++;
-		// Boe!Man 6/2/10: We add this to our stat system as well.
+
+		//Ryan april 7 2003
+		//add to the number of shots this client has made
 		stat->weapon_shots[attack][weapon]++; 
+		stat->shotcount++;
+		//Ryan
+
 		// Determine the endpoint for the bullet
 		BG_CalculateBulletEndpoint ( muzzlePoint, fireAngs, inaccuracy, attackDat->rV.range + 15, end, &seed );
 
+		// KRIS 7/08/2003 11:07AM
+		if (!detailed)
+		{
+			G_AdjustClientBBoxs();
+		}
+		// KRIS
+
 		// Trace the bullet
 		G_TraceBullet ( weapon, &tr, G2Trace, muzzlePoint, end, ent->s.number, MASK_SHOT, detailed );
+
+		// KRIS 7/08/2003 11:07AM
+		if (!detailed)
+		{
+			G_UndoAdjustedClientBBoxs();
+		}
+		// KRIS
+
+		// KRIS 17/06/2003 2:33AM
+/*		if (g_debugWeapons.integer && (level.time - last_show > 500))
+		{
+			tent = G_TempEntity(muzzlePoint, EV_BOTWAYPOINT);
+			VectorCopy(tr.endpos, tent->s.angles);
+			tent->r.svFlags |= SVF_BROADCAST;
+		}
+	*/	// KRIS
 
 		if ( (tr.surfaceFlags & SURF_NOIMPACT) || tr.entityNum == ENTITYNUM_NONE ) 
 		{	
 			// a big miss
 			continue;
 		}
-
+		
 		traceEnt = &g_entities[ tr.entityNum ];
 
 		// snap the endpos to integers, but nudged towards the line
@@ -303,7 +518,7 @@ void G_FireBullet ( gentity_t* ent, int weapon, int attack )
 
 		damageMult = 1.0f;
 		if ( traceEnt->takedamage ) 
-		{	
+		{
 			// Where did the bullet hit?
 			if ( ent->client && traceEnt->client )
 			{
@@ -315,8 +530,15 @@ void G_FireBullet ( gentity_t* ent, int weapon, int attack )
 					VectorSubtract ( end, muzzlePoint, dir );
 					VectorNormalize ( dir );
 
+					// KRIS 9/08/2003 11:59AM
+					if (G2Trace[0].mLocation != 0)
+					{
+						location = G2Trace[0].mLocation;
+					}
+					else
+					// KRIS
 					location = G_GetHitLocation ( traceEnt, muzzlePoint, dir );
-					stat->hitcount++;
+					
 					switch ( location )
 					{
 						case HL_FOOT_RT:
@@ -355,6 +577,25 @@ void G_FireBullet ( gentity_t* ent, int weapon, int attack )
 							damageMult = 0.0f;
 							break;
 					}
+					// KRIS 17/07/2003 12:35PM
+				/*	if (((weapon == WP_M590_SHOTGUN) || (weapon == WP_USAS_12_SHOTGUN))
+					 && (damageMult > 1.0f) && !(traceEnt->client->ps.pm_flags & PMF_LEANING))
+					{
+						vec3_t diff;
+						float dist;
+
+						VectorSubtract(muzzlePoint, tr.endpos, diff);
+
+						dist = VectorLength(diff);
+
+						// no headshots beyond close range
+						if (dist > 128)
+						{
+							Com_Printf(S_COLOR_YELLOW"G_FireBullet():- no headshots beyond close range\n");
+							damageMult = 1.0f;
+						}
+					}
+				*/	// KRIS
 				}
 				else
 				{
@@ -475,11 +716,15 @@ void G_FireBullet ( gentity_t* ent, int weapon, int attack )
 				hitcount++;
 				// Boe!Man 6/2/10: Used for the obiturary and the stats.
 				stat->weapon = weapon; 
+				//set the weapons attack used (for RPM_Obituary)
 				stat->attack = attack; 
 
+				//Add to the number of hits for this client, If it was a teamate dont count it
 				if (!level.gametypeData->teams || !OnSameTeam(ent,traceEnt))
 				{
+					//add the total for the weapon
 					stat->weapon_hits[attack][weapon]++;
+					//add to the hit total
 					stat->hitcount++;
 					
 					switch ( location )
@@ -555,7 +800,7 @@ void G_FireBullet ( gentity_t* ent, int weapon, int attack )
 
 			// If it was a client that was hit and it wasnt by a teammate when friendly fire is off then send blood!
 			if ( flesh  ) 
-			{			
+			{
 				tent = G_TempEntity( tr.endpos, EV_BULLET_HIT_FLESH );
 				
 				// send entity and direction
@@ -596,7 +841,20 @@ void G_FireBullet ( gentity_t* ent, int weapon, int attack )
 	// before damaging the client so the real bounding box and location are stored in
 	// the body
 	G_UndoAntiLag ( );
+
+	// KRIS 17/06/2003 2:33AM
+/*	if (g_debugWeapons.integer && (level.time - last_show > 500))
+	{
+		last_show = level.time;
+	}
+	// KRIS
+*/
+	//Ryan
+	//We'll calculate the accuracy here, no need to do it after
+	//each pellet with the rest of the stats
 	stat->accuracy = (float)stat->hitcount / (float)stat->shotcount * 100;
+	//Ryan
+
 	if ( hitcount )
 	{
 		int flags;
@@ -609,12 +867,12 @@ void G_FireBullet ( gentity_t* ent, int weapon, int attack )
 
 		for ( h = 0; h < hitcount; h ++ )
 		{	
-			// We wann all pellets counting towards team damage		
+			// We want all pellets counting towards team damage		
 			if ( ent->client )
 			{
 				ent->client->sess.teamkillForgiveTime = 0;
 			}
-
+	
 			G_Damage( hit[h].ent, ent, ent, fwd, hit[h].origin, hit[h].damage, flags, attackDat->mod + (attack<<8), hit[h].location );
 		}
 	}
@@ -640,7 +898,6 @@ gentity_t* G_FireProjectile ( gentity_t *ent, weapon_t weapon, attackType_t atta
 	// Grab the firing info
 	weaponDat = &weaponData[ent->s.weapon];
 	attackDat = &weaponDat->attack[attack];
-
 	inaccuracy = attackDat->inaccuracy / 1000.0f;
 
 	// where is gun muzzle?
@@ -682,8 +939,8 @@ gentity_t* G_FireProjectile ( gentity_t *ent, weapon_t weapon, attackType_t atta
 		vec3_t		dir;
 
 		statinfo_t     *stat = &ent->client->pers.statinfo;
+
 		stat->shotcount++;
-		
 		// Boe!Man 6/2/10: The Weapon stats get updated/added here.
 		if(weapon == WP_M4_ASSAULT_RIFLE)
 		{
@@ -697,6 +954,7 @@ gentity_t* G_FireProjectile ( gentity_t *ent, weapon_t weapon, attackType_t atta
 		stat->accuracy = (float)stat->hitcount / (float)stat->shotcount * 100;
 
 		VectorCopy( fwd, dir );
+		
 		if ( inaccuracy != 0)
 		{	// add in some spread / scatter
 			dir[0] += flrand(-0.1 * inaccuracy, 0.1 * inaccuracy);

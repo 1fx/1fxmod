@@ -184,23 +184,6 @@ const char *G_GetArenaInfoByMap( const char *map )
 
 /*
 ===============
-G_DoesMapExist
-
-determines whether or not the given map exists on the server
-===============
-*/
-qboolean G_DoesMapExist ( const char* mapname )
-{
-	if ( G_GetArenaInfoByMap ( mapname ) )
-	{
-		return qtrue;
-	}
-
-	return qfalse;
-}
-
-/*
-===============
 G_DoesMapSupportGametype
 
 determines whether or not the current map supports the given gametype
@@ -388,7 +371,7 @@ G_RemoveRandomBot
 int G_RemoveRandomBot( int team ) 
 {
 	int			i;
-	char		netname[36];
+	//char		netname[36];	///RxCxW - 09.09.06 - 11:55pm #REMOVED #kickBot
 	gclient_t	*cl;
 
 	for ( i=0 ; i< g_maxclients.integer ; i++ ) 
@@ -410,9 +393,12 @@ int G_RemoveRandomBot( int team )
 			continue;
 		}
 	
-		strcpy(netname, cl->pers.netname);
-		Q_CleanStr(netname);
-		trap_SendConsoleCommand( EXEC_INSERT, va("kick \"%s\"\n", netname) );
+		///RxCxW - 09.03.06 - 03:59pm #kickBot
+		///strcpy(netname, cl->pers.netname);
+		///Q_CleanStr(netname);
+		///trap_SendConsoleCommand( EXEC_INSERT, va("kick \"%s\"\n", netname) );
+		trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%i\"\n", cl->ps.clientNum) );
+		///End  - 09.03.06 - 03:59pm
 		return qtrue;
 	}
 
@@ -617,7 +603,10 @@ void G_CheckBotSpawn( void )
 		{
 			continue;
 		}
-		ClientBegin( botSpawnQueue[n].clientNum );
+		//Ryan april 10 2004 10:07am
+		//ClientBegin( botSpawnQueue[n].clientNum );
+		ClientBegin( botSpawnQueue[n].clientNum, qtrue );
+		//Ryan
 		botSpawnQueue[n].spawnTime = 0;
 	}
 }
@@ -643,7 +632,10 @@ static void AddBotToSpawnQueue( int clientNum, int delay )
 	}
 
 	Com_Printf( S_COLOR_YELLOW "Unable to delay spawn\n" );
-	ClientBegin( clientNum );
+	//Ryan april 10 2004 10:08am
+	//ClientBegin( clientNum );
+	ClientBegin( clientNum, qtrue );
+	//Ryan
 }
 
 /*
@@ -817,7 +809,10 @@ static void G_AddBot( const char *name, float skill, const char *team, int delay
 	}
 
 	if( delay == 0 ) {
-		ClientBegin( clientNum );
+		//Ryan april 10 2004 10:09am
+		//ClientBegin( clientNum );
+		ClientBegin( clientNum, qtrue );
+		//Ryan
 		return;
 	}
 
@@ -1097,3 +1092,92 @@ void G_InitBots( qboolean restart )
 	//rww - new bot route stuff
 	LoadPath_ThisLevel();
 }
+
+//Ryan march 8 2004 7:24
+//Got this from v1.01 source code
+/*
+===============
+G_DoesMapExist
+
+determines whether or not the given map exists on the server
+===============
+*/
+qboolean G_DoesMapExist ( const char* mapname )
+{
+	if ( G_GetArenaInfoByMap ( mapname ) )
+	{
+		return qtrue;
+	}
+
+	return qfalse;
+}
+
+// GRIM 15/04/2003 11:33PM
+/* Taken from mandown, just to make the compiler stfu for now
+==============
+G_RandomlyChooseOutfitting
+==============
+*/
+void G_RandomlyChooseOutfitting(gentity_t *ent, goutfitting_t *outfitting)
+{
+#ifdef _SOF2_BOTS
+	int count;
+	int i, j, k;
+
+	if (ent->client->sess.team == TEAM_SPECTATOR)
+	{
+		return;
+	}
+
+	for(i = OUTFITTING_GROUP_PRIMARY; i < OUTFITTING_GROUP_MAX; i++)
+	{
+		outfitting->items[i] = 0;
+		count = 0;
+		
+		// only ever choose armor - the rest is worthless
+		if (i == OUTFITTING_GROUP_ACCESSORY)
+		{
+			outfitting->items[i] = 0;
+			continue;
+		}
+		
+		for(j = 0; j < MAX_OUTFITTING_GROUPITEM; j++)
+		{
+			// selecting nothing = 0, which doesn't count as a selection
+			if (bg_outfittingGroups[i][j] == -1)
+				break;
+
+			count++;
+		}
+
+		// make sure we actually have a weapon in this group
+		// (no no, I never devided by zero!! I swear!!!)
+		if (count > 0)
+		{
+			// I hate loops...
+			for(k = 0; k < 128; k++)
+			{
+				j = rand() % count;
+			/*	// HACK - temp fix for shitty g_availableWeaponsString
+				// just don't use MM1 or RPG
+				if ((bg_itemlist[bg_outfittingGroups[i][j]].giTag == WP_MM1_GRENADE_LAUNCHER)
+				 || (bg_itemlist[bg_outfittingGroups[i][j]].giTag == WP_RPG7_LAUNCHER))
+				{
+					continue;
+				}
+*/
+				// FIX ME - g_availableWeaponsString doesn't work for server!!!
+				if (BG_IsWeaponAvailableForOutfitting ( bg_itemlist[bg_outfittingGroups[i][j]].giTag, 2 ))
+				{
+					break;
+				}
+			}
+			outfitting->items[i] = j;
+		}
+	}
+#else
+	return;
+#endif
+}
+// GRIM
+

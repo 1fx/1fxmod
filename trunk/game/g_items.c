@@ -196,8 +196,11 @@ int Pickup_Backpack ( gentity_t* ent, gentity_t* other )
 	}
 	other->health = ps->stats[STAT_HEALTH];
 
-	// Cant get armor when you have goggles
-	if ( !ps->stats[STAT_GOGGLES] )
+	// Cant get armor when you have goggles -  Ahh but yes you can ... AND WILL!!
+	//RxCxW - 1.30.2005 - #Armor
+	if ( !ps->stats[STAT_GOGGLES])
+//	if ( !ps->stats[STAT_GOGGLES] )
+	//End
 	{
 		ps->stats[STAT_ARMOR] += MAX_HEALTH * percent;
 		if ( ps->stats[STAT_ARMOR] > MAX_ARMOR )
@@ -205,6 +208,7 @@ int Pickup_Backpack ( gentity_t* ent, gentity_t* other )
 			ps->stats[STAT_ARMOR] = MAX_ARMOR;
 		}
 	}
+
 	// Give them some ammo
 	for ( i = 0; i < MAX_AMMO; i ++ )
 	{
@@ -223,6 +227,7 @@ int Pickup_Backpack ( gentity_t* ent, gentity_t* other )
 			ps->ammo[i] = maxammo;
 		}
 	}
+
 	// Make sure you alwasy get grenades
 	if ( level.pickupsDisabled && g_disablenades.integer == 0 )
 	{
@@ -242,6 +247,7 @@ int Pickup_Backpack ( gentity_t* ent, gentity_t* other )
 			ps->clip[ATTACK_NORMAL][weapon] = weaponData[weapon].attack[ATTACK_NORMAL].clipSize;
 		}
 	}
+
 	return g_backpackRespawn.integer;
 }
 
@@ -296,12 +302,13 @@ void Touch_Item (gentity_t *ent, gentity_t *other, trace_t *trace)
 	int			respawn;
 	qboolean	predict;
 	qboolean	autoswitch;
+
 	if (!other->client)
 		return;
 
 	// dead people can't pickup
 	if (other->health < 1)
-		return;		
+		return;	
 
 	// See if teh item can be picked up
 	if( ent->s.eFlags & EF_NOPICKUP )
@@ -315,7 +322,7 @@ void Touch_Item (gentity_t *ent, gentity_t *other, trace_t *trace)
 		// Let the gametype decide if it can be picked up
 		if ( !trap_GT_SendEvent ( GTEV_ITEM_TOUCHED, level.time, ent->item->quantity, other->s.number, other->client->sess.team, 0, 0 ) )
 		{
-		return;
+			return;
 		}
 	}
 	// the same pickup rules are used for client side and server side
@@ -323,7 +330,6 @@ void Touch_Item (gentity_t *ent, gentity_t *other, trace_t *trace)
 	{
 		return;
 	}
-
 
 #ifdef _DEBUG
 	G_LogPrintf( "Item: %i %s\n", other->s.number, ent->item->classname );
@@ -433,7 +439,6 @@ void Touch_Item (gentity_t *ent, gentity_t *other, trace_t *trace)
 	}
 
 	trap_LinkEntity( ent );
-
 }
 
 
@@ -1003,11 +1008,9 @@ void G_RunItem( gentity_t *ent )
 		if ( ent->item && ent->item->giType == IT_GAMETYPE )
 		{
 			// Let the gametype handle the problem, if it doenst handle it and return 1 then 
-			if ( trap_GT_SendEvent ( GTEV_ITEM_STUCK, level.time, ent->item->quantity, 0, 0, 0, 0 ) )
-			{
-
-			}
+			if ( trap_GT_SendEvent ( GTEV_ITEM_STUCK, level.time, ent->item->quantity, 0, 0, 0, 0 ) ){
 			// just reset the gametype item
+			}
 			else if ( !trap_GT_SendEvent ( GTEV_ITEM_STUCK, level.time, ent->item->quantity, 0, 0, 0, 0 ) )
 			{
 				G_ResetGametypeItem ( ent->item );

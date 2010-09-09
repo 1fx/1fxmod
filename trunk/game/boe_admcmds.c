@@ -2110,12 +2110,20 @@ void Boe_pop (int argNum, gentity_t *adm, qboolean shortCmd)
 
 void Boe_Broadcast(int argNum, gentity_t *adm, qboolean shortCmd){
 	char buffer[512];
-	if(shortCmd)
+	char buffer1[512];
+	int i;
+	if(shortCmd){
 		trap_Argv(1, buffer, sizeof(buffer));
-	else
+		for(i=4;i<=strlen(buffer);i++){
+			strcpy(buffer1, va("%s%c", buffer1, buffer[i]));
+		}
+		buffer[i+1] = '\0';
+	}else{
 		trap_Argv(2, buffer, sizeof(buffer));
+	}
 
-	trap_SendServerCommand( -1, va("cp \"%s\n\"", buffer) );
+	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s", level.time + 5000, buffer1));
+	//trap_SendServerCommand( -1, va("cp \"%s\n\"", buffer) );
 }
 
 /*

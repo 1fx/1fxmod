@@ -14,15 +14,15 @@ G_AddScore
 Adds score to both the client and his team
 ============
 */
-void G_AddScore( gentity_t *ent, int score ) 
+void G_AddScore( gentity_t *ent, int score )
 {
-	if ( !ent->client ) 
+	if ( !ent->client )
 	{
 		return;
 	}
-	
+
 	// no scoring during pre-match warmup
-	if ( level.warmupTime ) 
+	if ( level.warmupTime )
 	{
 		return;
 	}
@@ -40,7 +40,7 @@ TossClientItems
 Toss the weapon and custom gametype items for the killed player
 =================
 */
-void TossClientItems( gentity_t *self ) 
+void TossClientItems( gentity_t *self )
 {
 	gitem_t		*item;
 	int			weapon;
@@ -55,35 +55,35 @@ void TossClientItems( gentity_t *self )
 	// weapon that isn't the mg or gauntlet.  Without this, a client
 	// can pick up a weapon, be killed, and not drop the weapon because
 	// their weapon change hasn't completed yet and they are still holding the MG.
-	if ( self->client->ps.weaponstate == WEAPON_DROPPING ) 
+	if ( self->client->ps.weaponstate == WEAPON_DROPPING )
 	{
 		weapon = self->client->pers.cmd.weapon;
 	}
-		
-	if ( !( self->client->ps.stats[STAT_WEAPONS] & ( 1 << weapon ) ) ) 
+
+	if ( !( self->client->ps.stats[STAT_WEAPONS] & ( 1 << weapon ) ) )
 	{
 		weapon = WP_NONE;
 	}
-	
+
 	// If we have a valid weapon to drop and it has ammo then drop it
 	if ( weapon > WP_KNIFE && weapon < WP_NUM_WEAPONS &&
-		 (self->client->ps.ammo[ weaponData[weapon].attack[ATTACK_NORMAL].ammoIndex ] + self->client->ps.clip[weapon]) ) 
+		 (self->client->ps.ammo[ weaponData[weapon].attack[ATTACK_NORMAL].ammoIndex ] + self->client->ps.clip[weapon]) )
 	{
 		G_DropWeapon ( self, weapon, 0 );
 	}
 
 	// drop all custom gametype items
 	angle = 45;
-	for ( i = 0 ; i < MAX_GAMETYPE_ITEMS ; i++ ) 
+	for ( i = 0 ; i < MAX_GAMETYPE_ITEMS ; i++ )
 	{
 		// skip this gametype item if the client doenst have it
-		if ( !(self->client->ps.stats[STAT_GAMETYPE_ITEMS] & (1<<i)) ) 
+		if ( !(self->client->ps.stats[STAT_GAMETYPE_ITEMS] & (1<<i)) )
 		{
 			continue;
 		}
 
 		item = BG_FindGametypeItem ( i );
-		if ( !item ) 
+		if ( !item )
 		{
 			continue;
 		}
@@ -91,7 +91,7 @@ void TossClientItems( gentity_t *self )
 		drop = G_DropItem( self, item, angle );
 		drop->count = 1;
 		angle += 45;
-		
+
 		// TAke it away from the client just in case
 		self->client->ps.stats[STAT_GAMETYPE_ITEMS] &= ~(1<<i);
 
@@ -125,7 +125,7 @@ void LookAtKiller( gentity_t *self, gentity_t *inflictor, gentity_t *attacker ) 
 	self->client->ps.stats[STAT_DEAD_YAW] = vectoyaw ( dir );
 
 	angles[YAW] = vectoyaw ( dir );
-	angles[PITCH] = 0; 
+	angles[PITCH] = 0;
 	angles[ROLL] = 0;
 }
 
@@ -134,35 +134,35 @@ void LookAtKiller( gentity_t *self, gentity_t *inflictor, gentity_t *attacker ) 
 body_die
 ==================
 */
-void body_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, int meansOfDeath, int hitLocation, vec3_t hitDir ) 
+void body_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, int meansOfDeath, int hitLocation, vec3_t hitDir )
 {
 	return;
 }
 
 
 // these are just for logging, the client prints its own messages
-char *modNames[] = 
+char *modNames[] =
 {
 	"MOD_UNKNOWN",
 
 	"MOD_KNIFE",
 
 	"MOD_M1911A1_PISTOL",
-	"MOD_US_SOCOM_PISTOL",         
+	"MOD_US_SOCOM_PISTOL",
 
-	"MOD_M590_SHOTGUN",            
-	"MOD_MICRO_UZI_SUBMACHINEGUN", 
-	"MOD_M3A1_SUBMACHINEGUN",      
+	"MOD_M590_SHOTGUN",
+	"MOD_MICRO_UZI_SUBMACHINEGUN",
+	"MOD_M3A1_SUBMACHINEGUN",
 
-	"MOD_USAS_12_SHOTGUN",         
-	"MOD_M4_ASSAULT_RIFLE",        
-	"MOD_AK74_ASSAULT_RIFLE",      
-	"MOD_MSG90A1_SNIPER_RIFLE",    
-	"MOD_M60_MACHINEGUN",          
-	"MOD_MM1_GRENADE_LAUNCHER",    
-	"MOD_RPG7_LAUNCHER",           
+	"MOD_USAS_12_SHOTGUN",
+	"MOD_M4_ASSAULT_RIFLE",
+	"MOD_AK74_ASSAULT_RIFLE",
+	"MOD_MSG90A1_SNIPER_RIFLE",
+	"MOD_M60_MACHINEGUN",
+	"MOD_MM1_GRENADE_LAUNCHER",
+	"MOD_RPG7_LAUNCHER",
 
-	"MOD_M67_GRENADE",             
+	"MOD_M67_GRENADE",
 	"MOD_M84_GRENADE",
 	"MOD_F1_GRENADE",
 	"MOD_L2A2_GRENADE",
@@ -178,7 +178,17 @@ char *modNames[] =
 	"MOD_SUICIDE",
 	"MOD_TEAMCHANGE",
 	"MOD_TARGET_LASER",
-	"MOD_TRIGGER_HURT"
+	"MOD_TRIGGER_HURT",
+	//Ryan
+	"MOD_CAR",
+	"MOD_POP",
+	"MOD_REFRESH",
+	//Ryan
+	//RxCxW #MOD
+	"MOD_DUGUP",
+	"MOD_BURN"
+
+	//End
 };
 
 /*
@@ -186,17 +196,16 @@ char *modNames[] =
 player_die
 ==================
 */
-void player_die( 
-	gentity_t	*self, 
-	gentity_t	*inflictor, 
-	gentity_t	*attacker, 
-	int			damage, 
-	int			mod, 
+void player_die(
+	gentity_t	*self,
+	gentity_t	*inflictor,
+	gentity_t	*attacker,
+	int			damage,
+	int			mod,
 	int			hitLocation,
 	vec3_t		hitDir
-	) 
+	)
 {
-	gentity_t		*ent;
 	int				anim;
 	int				contents;
 	int				killer;
@@ -216,7 +225,7 @@ void player_die(
 		return;
 	}
 
-	if ( level.intermissiontime ) 
+	if ( level.intermissiontime)
 	{
 		return;
 	}
@@ -225,20 +234,21 @@ void player_die(
 	// it needs to adjust
 	if ( attacker && attacker->client )
 	{
-		trap_GT_SendEvent ( GTEV_CLIENT_DEATH, level.time, self->s.number, self->client->sess.team, attacker->s.number, attacker->client->sess.team, 0 ); 
+		trap_GT_SendEvent ( GTEV_CLIENT_DEATH, level.time, self->s.number, self->client->sess.team, attacker->s.number, attacker->client->sess.team, 0 );
 	}
 	else
 	{
-		trap_GT_SendEvent ( GTEV_CLIENT_DEATH, level.time, self->s.number, self->client->sess.team, -1, -1, 0 ); 
+		trap_GT_SendEvent ( GTEV_CLIENT_DEATH, level.time, self->s.number, self->client->sess.team, -1, -1, 0 );
 	}
 
+	// Add to the number of deaths for this player
+
+	//Ryan March 30 2004 5:28pm
 	if(attacker != self && attacker->client && self->client->pers.statinfo.killsinarow >= 3)
 	{
-		//trap_SendServerCommand( -1, va("cp \"^3[INF] ^7%s's Killing Spree was ended by ^3%s.\n\"", self->client->pers.netname, attacker->client->pers.netname));
-		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s's %sk%si%sl%sl%si%sng spree was ended by ^3%s",
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s's ^1Killing Spree ^7was ended by ^3%s",
 				level.time + 5000,
 				self->client->pers.netname,
-				server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, 
 				attacker->client->pers.netname));
 	}
 
@@ -247,43 +257,51 @@ void player_die(
 	self->client->pers.statinfo.deaths++;
 	// Boe!Man 6/3/10: Fix for not showing deaths in scoreboard.
 	self->client->sess.deaths++;
-	// Boe!Man 6/11/10: Unplanting players when they die.
-	self->client->pers.planted = qfalse;
+
+	//Ryan april 22 2003
+	//If they are planted unplant them before we kill them
+	if(self->client->pers.planted)
+	{
+		self->client->ps.origin[2] += 65;
+		VectorCopy( self->client->ps.origin, self->s.origin );
+		self->client->pers.planted = qfalse;
+	}
+	//Ryan
 
 	// This is just to ensure that the player wont render for even a single frame
 	self->s.eFlags |= EF_DEAD;
 
 	self->client->ps.pm_type = PM_DEAD;
 
-	if ( attacker ) 
+	if ( attacker )
 	{
 		killer = attacker->s.number;
-		if ( attacker->client ) 
+		if ( attacker->client )
 		{
 			killerName = attacker->client->pers.netname;
-		} 
-		else 
+		}
+		else
 		{
 			killerName = "<non-client>";
 		}
-	} 
-	else 
+	}
+	else
 	{
 		killer = ENTITYNUM_WORLD;
 		killerName = "<world>";
 	}
 
-	if ( killer < 0 || killer >= MAX_CLIENTS ) 
+	if ( killer < 0 || killer >= MAX_CLIENTS )
 	{
 		killer = ENTITYNUM_WORLD;
 		killerName = "<world>";
 	}
 
-	if ( meansOfDeath < 0 || meansOfDeath >= sizeof( modNames ) / sizeof( modNames[0] ) ) 
+	if ( meansOfDeath < 0 || meansOfDeath >= sizeof( modNames ) / sizeof( modNames[0] ) )
 	{
 		obit = "<bad obituary>";
-	} 
-	else 
+	}
+	else
 	{
 		if ( attack == ATTACK_ALTERNATE )
 		{
@@ -306,8 +324,8 @@ void player_die(
 		}
 	}
 
-	G_LogPrintf("Kill: %i %i %i: %s killed %s by %s\n", 
-		killer, self->s.number, meansOfDeath, killerName, 
+	G_LogPrintf("Kill: %i %i %i: %s killed %s by %s\n",
+		killer, self->s.number, meansOfDeath, killerName,
 		self->client->pers.netname, obit );
 
 	// broadcast the death event to everyone
@@ -322,10 +340,9 @@ void player_die(
 	ent->r.svFlags = SVF_BROADCAST;	// send to everyone
 	//Ryan
 */
-
 	self->enemy = attacker;
 
-	if (attacker && attacker->client) 
+	if (attacker && attacker->client)
 	{
 		attacker->client->lastkilled_client = self->s.number;
 
@@ -335,15 +352,15 @@ void player_die(
 			{
 				G_AddScore( attacker, g_suicidePenalty.integer );
 			}
-		} 
-		else if ( OnSameTeam ( self, attacker ) ) 
+		}
+		else if ( OnSameTeam ( self, attacker ) )
 		{
 			if ( mod != MOD_TELEFRAG )
 			{
 				G_AddScore( attacker, g_teamkillPenalty.integer );
 			}
 		}
-		else 
+		else
 		{
 			G_AddScore( attacker, 1 );
 			attacker->client->sess.kills++;
@@ -376,9 +393,35 @@ void player_die(
 	RPM_Obituary (self, attacker, meansOfDeath, attack, hitLocation);
 	//Ryan
 
+	//Ryan march 22 2004 9:20pm   calculate ratio's
+	if(attacker && attacker->client && attacker != self)
+	{
+		if(attacker->client->pers.statinfo.deaths)
+		{
+			attacker->client->pers.statinfo.ratio = (float)attacker->client->pers.statinfo.kills / (float)attacker->client->pers.statinfo.deaths;
+		}
+		else
+		{
+			attacker->client->pers.statinfo.ratio = attacker->client->pers.statinfo.kills;
+		}
+	}
+	//Careful if this "if" isnt here and they die from changing teams
+	//before they have any other deaths we will divide by 0 since
+	//we dont add deaths incurred from changing teams
+	if(self->client->pers.statinfo.deaths)
+	{
+		self->client->pers.statinfo.ratio = (float)self->client->pers.statinfo.kills / (float)self->client->pers.statinfo.deaths;
+	}
+	else
+	{
+		self->client->pers.statinfo.ratio = (float)self->client->pers.statinfo.kills;
+	}
+	//Ryan
+
+
 	// If client is in a nodrop area, don't drop anything
 	contents = trap_PointContents( self->r.currentOrigin, -1 );
-	if ( !( contents & CONTENTS_NODROP ) ) 
+	if ( !( contents & CONTENTS_NODROP ) )
 	{
 		// People who kill themselves dont drop guns
 		if ( attacker == self )
@@ -388,23 +431,23 @@ void player_die(
 
 		TossClientItems( self );
 	}
-	else 
+	else
 	{
 		// Any gametype items that are dropped into a no drop area need to be reported
 		// to the gametype so it can handle it accordingly
-		for ( i = 0 ; i < MAX_GAMETYPE_ITEMS ; i++ ) 
+		for ( i = 0 ; i < MAX_GAMETYPE_ITEMS ; i++ )
 		{
 			gitem_t* item;
 
 			// skip this gametype item if the client doenst have it
-			if ( !(self->client->ps.stats[STAT_GAMETYPE_ITEMS] & (1<<i)) ) 
+			if ( !(self->client->ps.stats[STAT_GAMETYPE_ITEMS] & (1<<i)) )
 			{
 				continue;
 			}
 
 			item = BG_FindGametypeItem ( i );
 
-			// Let the gametype handle the problem, if it doenst handle it and return 1 then 
+			// Let the gametype handle the problem, if it doenst handle it and return 1 then
 			if ( trap_GT_SendEvent ( GTEV_ITEM_STUCK, level.time, item->quantity, 0, 0, 0, 0 ) )
 			{
 
@@ -427,7 +470,7 @@ void player_die(
 
 	// send updated scores to any clients that are following this one,
 	// or they would get stale scoreboards
-	for ( i = 0 ; i < level.numConnectedClients; i++ ) 
+	for ( i = 0 ; i < level.numConnectedClients; i++ )
 	{
 		gclient_t	*client;
 
@@ -437,13 +480,13 @@ void player_die(
 		{
 			continue;
 		}
-		
-		if ( !G_IsClientSpectating ( client ) ) 
+
+		if ( !G_IsClientSpectating ( client ) )
 		{
 			continue;
 		}
-		
-		if ( client->sess.spectatorClient == self->s.number ) 
+
+		if ( client->sess.spectatorClient == self->s.number )
 		{
 			Cmd_Score_f( g_entities + i );
 		}
@@ -473,8 +516,8 @@ void player_die(
 
 	// don't allow respawn until the death anim is done
 	// g_forcerespawn may force spawning at some later time
-	self->client->respawnTime = level.time + 1700;	
-					
+	self->client->respawnTime = level.time + 1700;
+
 	switch ( hitLocation & (~HL_DISMEMBERBIT) )
 	{
 		case HL_WAIST:
@@ -488,7 +531,7 @@ void player_die(
 			}
 			break;
 
-		default:			
+		default:
 		case HL_CHEST:
 			anim = BOTH_DEATH_CHEST_1 + (rand()%2);
 			break;
@@ -562,9 +605,9 @@ void player_die(
 			break;
 	}
 
-	self->client->ps.legsAnim = 
+	self->client->ps.legsAnim =
 		( ( self->client->ps.legsAnim & ANIM_TOGGLEBIT ) ^ ANIM_TOGGLEBIT ) | anim;
-	self->client->ps.torsoAnim = 
+	self->client->ps.torsoAnim =
 		( ( self->client->ps.torsoAnim & ANIM_TOGGLEBIT ) ^ ANIM_TOGGLEBIT ) | anim;
 
 	// If the dismember bit is set then make sure the body queue dismembers
@@ -582,9 +625,10 @@ void player_die(
 	self->die = body_die;
 
 	trap_LinkEntity (self);
-
 	if(boe_log.integer == 1)
+
 	G_LogPrintf("1e\n");
+	return;
 }
 
 /*
@@ -657,7 +701,7 @@ void G_ApplyKnockback( gentity_t *targ, vec3_t newDir, float knockback )
 
 	// set the timer so that the other client can't cancel
 	// out the movement immediately
-	if ( targ->client && !targ->client->ps.pm_time ) 
+	if ( targ->client && !targ->client->ps.pm_time )
 	{
 		int		t;
 
@@ -844,26 +888,28 @@ dflags		these flags are used to control how T_Damage works
 ============
 */
 
-int G_Damage ( 
-	gentity_t		*targ, 
-	gentity_t		*inflictor, 
+int G_Damage (
+	gentity_t		*targ,
+	gentity_t		*inflictor,
 	gentity_t		*attacker,
-	vec3_t			dir, 
+	vec3_t			dir,
 	vec3_t			point,
 	int				damage,
 	int				dflags,
 	int				mod,
 	int				location
-	) 
+	)
 {
 	gclient_t		*client;
 	int				take;
 	int				save;
 	int				asave;
 	int				knockback;
+	//Ryan
 	int				actualtake;
+	//Ryan
 
-	if (!targ->takedamage) 
+	if (!targ->takedamage)
 	{
 		return 0;
 	}
@@ -879,7 +925,7 @@ int G_Damage (
 
 	// the intermission has allready been qualified for, so don't
 	// allow any extra scoring
-	if ( level.intermissionQueued ) 
+	if ( level.intermissionQueued )
 	{
 		return 0;
 	}
@@ -890,19 +936,19 @@ int G_Damage (
 		targ->client->noOutfittingChange = qtrue;
 	}
 
-	if ( !inflictor ) 
+	if ( !inflictor )
 	{
 		inflictor = &g_entities[ENTITYNUM_WORLD];
 	}
-	if ( !attacker ) 
+	if ( !attacker )
 	{
 		attacker = &g_entities[ENTITYNUM_WORLD];
 	}
 
 	// shootable doors / buttons don't actually have any health
-	if ( targ->s.eType == ET_MOVER ) 
+	if ( targ->s.eType == ET_MOVER )
 	{
-		if ( targ->use && targ->moverState == MOVER_POS1 ) 
+		if ( targ->use && targ->moverState == MOVER_POS1 )
 		{
 			targ->use( targ, inflictor, attacker );
 		}
@@ -911,28 +957,29 @@ int G_Damage (
 
 	client = targ->client;
 
-	if ( client ) 
+	if ( client )
 	{
-		if ( client->noclip ) 
+		if ( client->noclip )
 		{
 			return 0;
 		}
 	}
 
-	if ( !dir ) 
+	if ( !dir )
 	{
 		dflags |= DAMAGE_NO_KNOCKBACK;
-	} 
-	else 
+	}
+	else
 	{
 		VectorNormalize(dir);
 	}
 
 	knockback = damage;
-	if ( knockback > 200 ) 
+	if ( knockback > 200 )
 	{
 		knockback = 200;
 	}
+
 	if ( targ->flags & FL_NO_KNOCKBACK ) {
 		knockback = 0;
 	}
@@ -942,7 +989,7 @@ int G_Damage (
 
 /*
 	// figure momentum add, even if the damage won't be taken
-	if ( knockback && targ->client ) 
+	if ( knockback && targ->client )
 	{
 		G_ApplyKnockback ( targ, dir, knockback );
 		vec3_t	kvel;
@@ -976,22 +1023,22 @@ int G_Damage (
 
 		// if TF_NO_FRIENDLY_FIRE is set, don't do damage to the target
 		// if the attacker was on the same team
-		if ( targ != attacker && OnSameTeam (targ, attacker)  ) 
+		if ( targ != attacker && OnSameTeam (targ, attacker)  )
 		{
-			if ( !g_friendlyFire.integer ) 
+			if ( !g_friendlyFire.integer )
 			{
 				return 0;
 			}
 		}
 
 		// check for godmode
-		if ( targ->flags & FL_GODMODE ) 
+		if ( targ->flags & FL_GODMODE )
 		{
 			return 0;
 		}
 	}
 
-	if ( damage < 1 ) 
+	if ( damage < 1 )
 	{
 		damage = 1;
 	}
@@ -1009,7 +1056,9 @@ int G_Damage (
 	asave = CheckArmor (targ, take, dflags);
 	take -= asave;
 
+	//Ryan
 	actualtake = Com_Clamp ( 0, targ->health, take );
+	//Ryan
 
 	// Teamkill dmage thats not caused by a telefrag?
 	if ( g_teamkillDamageMax.integer && mod != MOD_TELEFRAG )
@@ -1022,8 +1071,21 @@ int G_Damage (
 				// Dont count more than one damage call per frame (grenades!)
 				if ( level.time != attacker->client->sess.teamkillForgiveTime )
 				{
-					int actualtake = Com_Clamp ( 0, targ->health, take );
-
+					/*
+					//Ryan june 7 2003
+					//admins are not effected by tk damage
+					//RxCxW - 03.01.05 - 10:13pm - Decided to let admin have tk but use pBox.. no kick still.
+					//if(attacker->client->sess.admin != 1)
+					//if(attacker->client->sess.admin < 2) //03.01.05 - 10:13pm 
+					{										
+						attacker->client->sess.teamkillDamage	   += actualtake;
+						attacker->client->sess.teamkillForgiveTime  = level.time;
+					}
+					//Ryan
+					*/
+					//RxCxW - 03.01.05 - 10:13pm #pBoxTeamKill
+					//Decided to let admin have tk and use pBox to punish abusers
+					//Admins will NOT get kicked!
 					attacker->client->sess.teamkillDamage	   += actualtake;
 					attacker->client->sess.teamkillForgiveTime  = level.time;
 				}
@@ -1046,7 +1108,7 @@ int G_Damage (
 						  (int)((float)take) );
 	}
 
-	if ( g_debugDamage.integer ) 
+	if ( g_debugDamage.integer )
 	{
 		Com_Printf( "%i: client:%i health:%i damage:%i armor:%i\n", level.time, targ->s.number, targ->health, take, asave );
 	}
@@ -1054,13 +1116,13 @@ int G_Damage (
 	// add to the damage inflicted on a player this frame
 	// the total will be turned into screen blends and view angle kicks
 	// at the end of the frame
-	if ( client ) 
+	if ( client )
 	{
-		if ( attacker ) 
+		if ( attacker )
 		{
 			client->ps.persistant[PERS_ATTACKER] = attacker->s.number;
-		} 
-		else 
+		}
+		else
 		{
 			client->ps.persistant[PERS_ATTACKER] = ENTITYNUM_WORLD;
 		}
@@ -1072,13 +1134,13 @@ int G_Damage (
 		}
 
 		client->damage_knockback += knockback;
-		
-		if ( dir ) 
+
+		if ( dir )
 		{
 			VectorCopy ( dir, client->damage_from );
 			client->damage_fromWorld = qfalse;
-		} 
-		else 
+		}
+		else
 		{
 			VectorCopy ( targ->r.currentOrigin, client->damage_from );
 			client->damage_fromWorld = qtrue;
@@ -1104,44 +1166,55 @@ int G_Damage (
 		//Ryan april 28 2003
 		targ->client->pers.statinfo.lasthurtby = attacker->s.number;
 		if(attacker->client)
-		attacker->client->pers.statinfo.lastclient_hurt = targ->s.number;
+		{
+			attacker->client->pers.statinfo.lastclient_hurt = targ->s.number;
+		}
 		//Ryan
 	}
 
 	// do the damage
 	if (take)
 	{
-		/*
-		if(attacker->client)
-		{
-			attacker->client->pers.statinfo.damageDone += take;
-		}*/
-
 		targ->health = targ->health - take;
-		
+
 		if ( targ->client )
 		{
-			targ->client->ps.stats[STAT_HEALTH] = targ->health;
-			// Boe!Man 9/1/10: Update various stats.
-			// If they get shot, make sure it adds to their damageTaken.
+			//Ryan
+			//Punish them for killing themselves by not adding to
+			//their damagedone
 			if(targ == attacker)
 			{
 				targ->client->pers.statinfo.damageTaken += actualtake;
 			}
-			// If team killing, be sure to NOT calculate this to the victim's damageTaken.
+			////Punish them for killing a teammate and dont add to the
+			////victims damage taken
+			///RxCxW - 11.01.05 - 06:21am - #DLL barfs on this
 			else if(level.gametypeData->teams && OnSameTeam(targ,attacker))
 			{
 				attacker->client->pers.statinfo.damageDone -= actualtake;
 			}
-			// If a general event occurs, e.g. a player gets shot by an enemy, update the damageTaken.
+			///RxCxW - 01.08.06 - 09:50pm - all below as added by me
+			///else if (attacker && attacker->s.number != ENTITYNUM_WORLD)
+			///{
+			///Com_Printf("DAMAGEDONE: %i, AT: %i, D+AT: %i\n", attacker->client->pers.statinfo.damageDone, actualtake, attacker->client->pers.statinfo.damageDone += actualtake);
 			else if(attacker && attacker->client){
+			///else { //RPM 0.6 ELSE
+			///End  - 01.10.06 - 02:26pm
 				attacker->client->pers.statinfo.damageDone += actualtake;
-				targ->client->pers.statinfo.damageTaken += actualtake;	
+				targ->client->pers.statinfo.damageTaken += actualtake;
+				
 			}
+
+			///else
+			///{
+			///	attacker->client->pers.statinfo.damageDone += actualtake;
+			///	targ->client->pers.statinfo.damageTaken += actualtake;
+			///}
+			///End  - 11.01.05 - 06:21am
+			//End - R
 
 			targ->client->ps.stats[STAT_HEALTH] = targ->health;
 
-			// Boe!Man 9/1/10: End.
 			if ( targ->health > 0 )
 			{
 				// Slow down the client at bit when they get hit
@@ -1149,7 +1222,7 @@ int G_Damage (
 				targ->client->ps.velocity[1] *= 0.25f;
 
 				// figure momentum add, even if the damage won't be taken
-				if ( knockback ) 
+				if ( knockback )
 				{
 					G_ApplyKnockback ( targ, dir, knockback );
 				}
@@ -1158,7 +1231,7 @@ int G_Damage (
 				if ( g_friendlyFire.integer && targ != attacker && OnSameTeam ( targ, attacker ) )
 				{
 					vec3_t diff;
-					
+
 					// Make sure the attacker is close enough to hear the guy whining
 					VectorSubtract ( targ->r.currentOrigin, attacker->r.currentOrigin, diff );
 					if ( VectorLengthSquared ( diff ) < 800 * 800 )
@@ -1184,8 +1257,8 @@ int G_Damage (
 				targ->health = -999;
 
 			targ->enemy = attacker;
-			targ->die (targ, inflictor, attacker, take, mod, location, dir );
-		} 
+			targ->die(targ, inflictor, attacker, take, mod, location, dir );
+		}
 		else if ( targ->pain )
 		{
 			targ->pain (targ, attacker, take);
@@ -1218,7 +1291,7 @@ qboolean CanDamage (gentity_t *targ, vec3_t origin) {
 	if (tr.fraction == 1.0 || tr.entityNum == targ->s.number)
 		return qtrue;
 
-	// this should probably check in the plane of projection, 
+	// this should probably check in the plane of projection,
 	// rather than in world coordinate, and also include Z
 	VectorCopy (midpoint, dest);
 	dest[0] += 15.0;
@@ -1362,15 +1435,15 @@ int G_MultipleDamageLocations(int hitLocation)
 G_RadiusDamage
 ============
 */
-qboolean G_RadiusDamage ( 
-	vec3_t		origin, 
-	gentity_t*	attacker, 
-	float		damage, 
+qboolean G_RadiusDamage (
+	vec3_t		origin,
+	gentity_t*	attacker,
+	float		damage,
 	float		radius,
-	gentity_t*	ignore, 
-	int			power, 
+	gentity_t*	ignore,
+	int			power,
 	int			mod
-	) 
+	)
 {
 	float		points, dist;
 	gentity_t	*ent, *tent;
@@ -1382,12 +1455,12 @@ qboolean G_RadiusDamage (
 	int			i, e;
 	qboolean	hitClient = qfalse;
 
-	if ( radius < 1 ) 
+	if ( radius < 1 )
 	{
 		radius = 1;
 	}
 
-	for ( i = 0 ; i < 3 ; i++ ) 
+	for ( i = 0 ; i < 3 ; i++ )
 	{
 		mins[i] = origin[i] - radius;
 		maxs[i] = origin[i] + radius;
@@ -1395,7 +1468,7 @@ qboolean G_RadiusDamage (
 
 	numListedEntities = trap_EntitiesInBox( mins, maxs, entityList, MAX_GENTITIES );
 
-	for ( e = 0 ; e < numListedEntities ; e++ ) 
+	for ( e = 0 ; e < numListedEntities ; e++ )
 	{
 		ent = &g_entities[entityList[ e ]];
 
@@ -1403,38 +1476,38 @@ qboolean G_RadiusDamage (
 		{
 			continue;
 		}
-		
+
 		if (!ent->takedamage)
 		{
 			continue;
 		}
 
 		// find the distance from the edge of the bounding box
-		for ( i = 0 ; i < 3 ; i++ ) 
+		for ( i = 0 ; i < 3 ; i++ )
 		{
-			if ( origin[i] < ent->r.absmin[i] ) 
+			if ( origin[i] < ent->r.absmin[i] )
 			{
 				v[i] = ent->r.absmin[i] - origin[i];
-			} 
-			else if ( origin[i] > ent->r.absmax[i] ) 
+			}
+			else if ( origin[i] > ent->r.absmax[i] )
 			{
 				v[i] = origin[i] - ent->r.absmax[i];
-			} 
-			else 
+			}
+			else
 			{
 				v[i] = 0;
 			}
 		}
 
 		dist = VectorLength( v );
-		if ( dist >= radius ) 
+		if ( dist >= radius )
 		{
 			continue;
 		}
 
 		points = damage * ( 1.0 - powf((dist / radius), power));
 
-		if( CanDamage (ent, origin) ) 
+		if( CanDamage (ent, origin) )
 		{
 			int		location;
 			int		weapon;
@@ -1448,7 +1521,7 @@ qboolean G_RadiusDamage (
 			location = HL_NONE;
 			if ( ent->client )
 			{
-				VectorNormalize ( dir );								
+				VectorNormalize ( dir );
 				VectorCopy(dir, hitdir);
 				dir[2] = 0;
 				location = G_GetHitLocation ( ent, origin, dir );
@@ -1459,9 +1532,30 @@ qboolean G_RadiusDamage (
 
 			if ( d && ent->client )
 			{
+				//Ryan may 16 2004
+				//log the hit into our stats
+				statinfo_t *stat = &attacker->client->pers.statinfo;
+
+				//Fire nades only count a hit if they kill
+				if(mod != MOD_ANM14_GRENADE && (!level.gametypeData->teams || (level.gametypeData->teams && !OnSameTeam ( attacker, ent ))))
+				{
+					stat->hitcount++;
+					stat->accuracy = (float)stat->hitcount / (float)stat->shotcount * 100;
+
+					if(mod - 256 == MOD_M4_ASSAULT_RIFLE)
+					{
+						stat->weapon_hits[ATTACK_ALTERNATE][WP_M4_ASSAULT_RIFLE]++;
+					}
+					else
+					{
+						stat->weapon_hits[ATTACK_NORMAL][mod]++;
+					}
+				}
+				//Ryan
+
 				// Put some procedural gore on the target.
 				tent = G_TempEntity( origin, EV_EXPLOSION_HIT_FLESH );
-				
+
 				// send entity and direction
 				tent->s.eventParm = DirToByte( hitdir );
 				if (ignore && ignore->s.weapon)
@@ -1479,7 +1573,7 @@ qboolean G_RadiusDamage (
 				tent->s.otherEntityNum2 = ent->s.number;			// Victim entity number
 
 				// Pack the shot info into the temp end for gore
-				tent->s.time  = weapon + ((((int)ent->s.apos.trBase[YAW]&0x7FFF) % 360) << 16);		
+				tent->s.time  = weapon + ((((int)ent->s.apos.trBase[YAW]&0x7FFF) % 360) << 16);
 				if ( attacker->s.eFlags & EF_ALT_FIRING )
 				{
 					tent->s.time += (ATTACK_ALTERNATE<<8);

@@ -138,6 +138,16 @@ static qboolean BG_ParseGametypeInfo ( int gametypeIndex )
 		gametype->respawnType = RT_NORMAL;
 	}
 
+	// Ryan Dec 5 2004
+	// Stolen from gold edition code
+	// A gametype can be based off another gametype which means it uses all the gametypes entities
+	trap_GPG_FindPairValue ( gtGroup, "basegametype", "", temp );
+	if ( temp[0] )
+	{
+		gametype->basegametype = trap_VM_LocalStringAlloc ( temp );
+	}
+	// Ryan
+
 	// What percentage doest he backpack replenish?
 	trap_GPG_FindPairValue ( gtGroup, "backpack", "0", temp );
 	gametype->backpack = atoi(temp);

@@ -10,7 +10,7 @@
 ==============================================================================
 
 PACKET FILTERING
- 
+
 
 You can add or remove addresses from the filter list with:
 
@@ -62,13 +62,13 @@ static qboolean StringToFilter (char *s, ipFilter_t *f)
 	int		i, j;
 	byte	b[4];
 	byte	m[4];
-	
+
 	for (i=0 ; i<4 ; i++)
 	{
 		b[i] = 0;
 		m[i] = 0;
 	}
-	
+
 	for (i=0 ; i<4 ; i++)
 	{
 		if (*s < '0' || *s > '9')
@@ -76,7 +76,7 @@ static qboolean StringToFilter (char *s, ipFilter_t *f)
 			Com_Printf( "Bad filter address: %s\n", s );
 			return qfalse;
 		}
-		
+
 		j = 0;
 		while (*s >= '0' && *s <= '9')
 		{
@@ -91,10 +91,10 @@ static qboolean StringToFilter (char *s, ipFilter_t *f)
 			break;
 		s++;
 	}
-	
+
 	f->mask = *(unsigned *)m;
 	f->compare = *(unsigned *)b;
-	
+
 	return qtrue;
 }
 
@@ -116,7 +116,7 @@ static void UpdateIPBans (void)
 			continue;
 
 		*(unsigned *)b = ipFilters[i].compare;
-		Com_sprintf( iplist + strlen(iplist), sizeof(iplist) - strlen(iplist), 
+		Com_sprintf( iplist + strlen(iplist), sizeof(iplist) - strlen(iplist),
 			"%i.%i.%i.%i ", b[0], b[1], b[2], b[3]);
 	}
 
@@ -148,7 +148,7 @@ qboolean G_FilterPacket (char *from)
 			break;
 		i++, p++;
 	}
-	
+
 	in = *(unsigned *)m;
 
 	for (i=0 ; i<numIPFilters ; i++)
@@ -184,7 +184,7 @@ static void AddIP( char *str )
 		}
 		numIPFilters++;
 	}
-	
+
 	if (!StringToFilter (str, &ipFilters[i]))
 	{
 		ipFilters[i].compare = 0xffffffffu;
@@ -198,7 +198,7 @@ static void AddIP( char *str )
 G_ProcessIPBans
 =================
 */
-void G_ProcessIPBans(void) 
+void G_ProcessIPBans(void)
 {
 	char *s, *t;
 	char		str[MAX_TOKEN_CHARS];
@@ -338,12 +338,12 @@ void	Svcmd_EntityList_f (void) {
 }
 
 
-void Svcmd_ExtendTime_f (void) 
+void Svcmd_ExtendTime_f (void)
 {
 	char str[MAX_TOKEN_CHARS];
 	int	 time;
 
-	if ( trap_Argc() < 2 ) 
+	if ( trap_Argc() < 2 )
 	{
 		Com_Printf("Usage:  extendtime <minutes>\n");
 		return;
@@ -403,7 +403,7 @@ Svcmd_ForceTeam_f
 forceteam <player> <team>
 ===================
 */
-void Svcmd_ForceTeam_f( void ) 
+void Svcmd_ForceTeam_f( void )
 {
 	gclient_t	*cl;
 	char		str[MAX_TOKEN_CHARS];
@@ -411,7 +411,7 @@ void Svcmd_ForceTeam_f( void )
 	// find the player
 	trap_Argv( 1, str, sizeof( str ) );
 	cl = ClientForString( str );
-	if ( !cl ) 
+	if ( !cl )
 	{
 		return;
 	}
@@ -432,7 +432,7 @@ void Svcmd_CancelVote_f ( void )
 {
 	level.voteTime = 0;
 
-	trap_SetConfigstring( CS_VOTE_TIME, "" );	
+	trap_SetConfigstring( CS_VOTE_TIME, "" );
 
 	trap_SendServerCommand( -1, "print \"Vote cancelled by admin.\n\"" );
 }
@@ -442,19 +442,22 @@ void Svcmd_CancelVote_f ( void )
 ConsoleCommand
 =================
 */
-qboolean ConsoleCommand( void ) 
+qboolean ConsoleCommand( void )
 {
 	char cmd[MAX_TOKEN_CHARS];
+	//Ryan
+	char arg1[64];
+	//Ryan
 
 	trap_Argv( 0, cmd, sizeof( cmd ) );
 
-	if ( Q_stricmp (cmd, "entitylist") == 0 ) 
+	if ( Q_stricmp (cmd, "entitylist") == 0 )
 	{
 		Svcmd_EntityList_f();
 		return qtrue;
 	}
 
-	if ( Q_stricmp (cmd, "forceteam") == 0 ) 
+	if ( Q_stricmp (cmd, "forceteam") == 0 )
 	{
 		Svcmd_ForceTeam_f();
 		return qtrue;
@@ -468,7 +471,7 @@ qboolean ConsoleCommand( void )
 
 #ifdef _SOF2_BOTS
 
-	if (Q_stricmp (cmd, "addbot") == 0) 
+	if (Q_stricmp (cmd, "addbot") == 0)
 	{
 		//trap_Printf("^3[Info] ^7This command has been temporary disabled by the Mod Developers.\n");
 		Svcmd_AddBot_f();
@@ -484,19 +487,19 @@ qboolean ConsoleCommand( void )
 
 #endif
 
-	if (Q_stricmp (cmd, "addip") == 0) 
+	if (Q_stricmp (cmd, "addip") == 0)
 	{
 		Svcmd_AddIP_f();
 		return qtrue;
 	}
 
-	if (Q_stricmp (cmd, "removeip") == 0) 
+	if (Q_stricmp (cmd, "removeip") == 0)
 	{
 		Svcmd_RemoveIP_f();
 		return qtrue;
 	}
 
-	if (Q_stricmp (cmd, "listip") == 0) 
+	if (Q_stricmp (cmd, "listip") == 0)
 	{
 		trap_SendConsoleCommand( EXEC_NOW, "g_banIPs\n" );
 		return qtrue;
