@@ -101,6 +101,7 @@ vmCvar_t	g_subnetbanlist;				// Stores the subnetbans on the server.
 vmCvar_t	g_banlist;						// Stores the bans on the server.
 vmCvar_t	g_subnetban;					// Admin CVAR.
 vmCvar_t	g_ban;							// Admin CVAR.
+vmCvar_t	g_broadcast;
 vmCvar_t	g_removeadmin;					// Admin CVAR.
 vmCvar_t	server_color1;					// Server color 1-6.
 vmCvar_t	server_color2;					// Used for displaying colors.
@@ -295,6 +296,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_addadmin,					"g_addadmin",           "4",				CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
 	{ &g_addsadmin,					"g_addsadmin",          "4",				CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
 	{ &g_ban,						"g_ban",				"4",				CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
+	{ &g_broadcast,					"g_broadcast",			"4",				CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
 	{ &g_subnetban,					"g_subnetban",			"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_removeadmin,				"g_removeadmin",		"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_uppercut,					"g_uppercut",			"3",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },

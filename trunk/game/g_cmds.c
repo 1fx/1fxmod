@@ -17,7 +17,6 @@ typedef struct
 admCmd_t AdminCommands[] = 
 {
 	{"!uc ", "uppercut", &g_uppercut.integer, &Boe_Uppercut},
-	{"!Uc ", "uppercut", &g_uppercut.integer, &Boe_Uppercut},
 	{"!u ", "uppercut", &g_uppercut.integer, &Boe_Uppercut},
 	{"!p ", "pop", &g_pop.integer, &Boe_pop},
 	{"!k ", "kick", &g_kick.integer, &Boe_Kick},
@@ -53,8 +52,7 @@ admCmd_t AdminCommands[] =
 	{"!cm", "compmode", &g_clan.integer, &Boe_CompMode},
 	{"!bl", "banlist", &g_ban.integer, &Boe_BanList},
 	{"!ba ", "ban", &g_ban.integer, &Boe_Ban_f},
-	{"!BA ", "ban", &g_ban.integer, &Boe_Ban_f},
-	{"!Ba ", "ban", &g_ban.integer, &Boe_Ban_f},
+	{"!br ", "broadcast", &g_broadcast.integer, &Boe_Broadcast}
 };
 // End
 

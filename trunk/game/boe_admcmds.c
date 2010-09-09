@@ -2108,6 +2108,16 @@ void Boe_pop (int argNum, gentity_t *adm, qboolean shortCmd)
 	G_Damage (ent, NULL, NULL, NULL, NULL, 10000, 0, MOD_POP, HL_HEAD|HL_FOOT_RT|HL_FOOT_LT|HL_LEG_UPPER_RT|HL_LEG_UPPER_LT|HL_HAND_RT|HL_HAND_LT|HL_WAIST|HL_CHEST|HL_NECK);
 }
 
+void Boe_Broadcast(int argNum, gentity_t *adm, qboolean shortCmd){
+	char buffer[512];
+	if(shortCmd)
+		trap_Argv(1, buffer, sizeof(buffer));
+	else
+		trap_Argv(2, buffer, sizeof(buffer));
+
+	trap_SendServerCommand( -1, va("cp \"%s\n\"", buffer) );
+}
+
 /*
 ========
 Boe_Burn

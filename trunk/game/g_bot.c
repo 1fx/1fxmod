@@ -184,6 +184,23 @@ const char *G_GetArenaInfoByMap( const char *map )
 
 /*
 ===============
+G_DoesMapExist
+
+determines whether or not the given map exists on the server
+===============
+*/
+qboolean G_DoesMapExist ( const char* mapname )
+{
+	if ( G_GetArenaInfoByMap ( mapname ) )
+	{
+		return qtrue;
+	}
+
+	return qfalse;
+}
+
+/*
+===============
 G_DoesMapSupportGametype
 
 determines whether or not the current map supports the given gametype

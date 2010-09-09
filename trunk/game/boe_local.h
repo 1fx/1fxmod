@@ -48,6 +48,7 @@ extern	vmCvar_t	g_subnetban;
 extern	vmCvar_t	g_subnetbanlist;
 extern	vmCvar_t	g_banlist;
 extern	vmCvar_t	g_removeadmin;
+extern	vmCvar_t	g_broadcast;
 
 extern	vmCvar_t	server_color1;
 extern	vmCvar_t	server_color2;
@@ -85,6 +86,7 @@ extern	vmCvar_t	g_plant;
 
 void	Boe_pop (int argNum, gentity_t *adm, qboolean shortCmd);
 void	Boe_Burn (int argNum, gentity_t *adm, qboolean shortCmd);
+void	Boe_Broadcast(int argNum, gentity_t *adm, qboolean shortCmd);
 void	Boe_Mute (int argNum, gentity_t *adm, qboolean mute, qboolean shortCmd);
 void	Boe_Strip (int argNum, gentity_t *adm, qboolean shortCmd);
 void	Adm_ForceTeam(int argNum, gentity_t *adm, qboolean shortCmd);
