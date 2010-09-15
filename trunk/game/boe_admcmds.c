@@ -1161,9 +1161,27 @@ int Boe_Remove_from_list ( char *key, const char *file, const char* type, gentit
 }
 
 void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd){
+	void	*GP2, *group;
+	char	ip[64], name[64], reason[64], by[64];
 	//wrapper for interface
-		trap_SendServerCommand( adm-g_entities, va("print \"^3[Banlist]^7\n\""));
-		Boe_Print_File( adm, g_banlist.string);
+	trap_SendServerCommand( adm-g_entities, va("print \"^3[Banlist]^7\n\""));
+	GP2 = trap_GP_ParseFile(g_banlist1.string, qtrue, qfalse);
+	if (!GP2)
+	{
+		G_LogPrintf("Error in file: \"%s\" or file not found.\n", g_banlist1.string);
+	}
+	group = trap_GPG_GetSubGroups(GP2);
+	while(group)
+	{
+		trap_GPG_FindPairValue(group, "ip", "0", ip);
+		trap_GPG_FindPairValue(group, "name", "", name);
+		trap_GPG_FindPairValue(group, "reason", "", reason);
+		trap_GPG_FindPairValue(group, "by", "", by);
+		group = trap_GPG_GetNext(group);
+	}
+	trap_GP_Delete(&GP2);
+	trap_SendServerCommand( adm-g_entities, va("print \"%s\n%s\n%s\n%s\n\"", ip, name, reason, by));
+	return;
 }
 
 /*
@@ -1632,6 +1650,8 @@ void Boe_Ban_f (int argNum, gentity_t *adm, qboolean shortCmd)
 	int				idnum;
 	char            banid[1024]; // Henk 07/10/10 -> Needs to be bigger if we want to add reason so 128 -> 1024
 	char			reason[MAX_STRING_TOKENS] = "\0";
+	fileHandle_t	f;
+	char			string[1024];
 
 	idnum = Boe_ClientNumFromArg(adm, argNum, "ban <idnumber> <reason>", "ban", qfalse, qfalse, shortCmd);
 
@@ -1645,6 +1665,19 @@ void Boe_Ban_f (int argNum, gentity_t *adm, qboolean shortCmd)
 
 	// Boe!Man 9/7/10: Example of ban.
 	if (adm && adm->client){
+
+		trap_FS_FOpenFile( g_banlist1.string, &f, FS_APPEND_TEXT );
+		if (!f)
+		{
+			Com_Printf("^1Error opening File\n");
+			return;
+		}
+		strcpy(string, va("1\n{\nip \"%s\"\nname \"%s\"\nreason \"%s\"\nby \"%s\"\n}\n", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName, reason, adm->client->pers.cleanName));
+
+		trap_FS_Write(string, strlen(string), f);
+		trap_FS_Write("\n", 1, f);
+		trap_FS_FCloseFile(f);
+
 		Com_sprintf (banid, sizeof(banid), "%s\\%s||%s||%s",
 		g_entities[idnum].client->pers.ip,
 		g_entities[idnum].client->pers.cleanName,
