@@ -3657,19 +3657,20 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		if (ent->client->sess.admin >= 4){
 			char *numb;
 			int i;
-			//fileHandle_t	f;
+			fileHandle_t	f;
 			if(strlen(p) >= 5){
 				for(i=0;i<=20;i++){
 					if(p[i] == ' '){
 						numb = va("%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", p[i+1], p[i+2], p[i+3], p[i+4], p[i+5], p[i+6], p[i+7], p[i+8], p[i+9], p[i+10], p[i+11], p[i+12], p[i+13], p[i+14], p[i+15]);
 						break;
 					}
-				}//trap_FS_FOpenFile( va("maps\\%s.bsp", numb), &f, FS_READ );
-				//if ( !f ){
-				//	trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Map not found.\n\""));
-				//	return;
-				//}	
-				//trap_FS_FCloseFile(f);
+				}
+				trap_FS_FOpenFile( va("maps\\%s.bsp", numb), &f, FS_READ );
+				if ( !f ){
+					trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Map not found.\n\""));
+					return;
+				}	
+				trap_FS_FCloseFile(f);
 				
 				//trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sT%si%sm%se%sl%simit %i!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, number));
 				//trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Timelimit changed to %i by %s.\n\"", number, ent->client->pers.netname));
