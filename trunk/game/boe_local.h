@@ -10,7 +10,6 @@
 #define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod"
 #define INF_VERSION_DATE "9/9/10"
 
-
 // Infiltration
 // Developed by: Boe!Man
 // Codename: BoeMODV2
@@ -28,6 +27,7 @@ void	Boe_adm_f ( gentity_t *ent );
 int		Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const char* type, qboolean aliveOnly, qboolean otheradmins, qboolean shortCmd);
 
 extern	vmCvar_t	g_kick;
+//extern	admCmd_t AdminCommands[124];
 
 extern  vmCvar_t	g_adminfile;
 extern	vmCvar_t	g_addbadmin;

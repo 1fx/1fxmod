@@ -1124,13 +1124,15 @@ void ClientThink_real( gentity_t *ent )
 		}
 
 	}
-		///03.30.05 - 12:52pm #Burn
+	if(level.time > client->sess.oneSecChecks){
+		client->sess.oneSecChecks = level.time + 1000;
 		if ( client->sess.burnSeconds ){
 			client->sess.burnSeconds--;
 			if (ent->client->ps.stats[STAT_HEALTH] >= 35)
 				G_Damage (ent, NULL, NULL, NULL, NULL, 48, 0, MOD_BURN, HL_NONE );
 			G_ApplyKnockback ( ent, dir, 10 );	//knock them back
 		}
+	}
 	// spectators don't do much
 	if ( G_IsClientSpectating ( client ) ) 
 	{
