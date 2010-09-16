@@ -727,16 +727,26 @@ int Boe_Remove_from_list ( char *key, const char *file, const char* type, gentit
 	return removed;
 }
 
+/*
+=============
+Boe_BanList
+=============
+*/
+
 void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd){
 	void	*GP2, *group;
-	char	ip[64], name[64], reason[64], by[64];
-	//wrapper for interface
-	trap_SendServerCommand( adm-g_entities, va("print \"^3[Banlist]^7\n\""));
+	char	ip[64], name[64], reason[64], by[64], test = ' ', column[64];
+	int		spaces = 0, length = 0, z;
+
 	GP2 = trap_GP_ParseFile(g_banlist1.string, qtrue, qfalse);
 	if (!GP2)
 	{
 		G_LogPrintf("Error in file: \"%s\" or file not found.\n", g_banlist1.string);
 	}
+	//wrapper for interface
+	trap_SendServerCommand( adm-g_entities, va("print \"^3[Banlist]^7\n\n\""));
+	trap_SendServerCommand( adm-g_entities, va("print \"^3IP              Name            Reason          By\n\""));
+	trap_SendServerCommand( adm-g_entities, va("print \"^7------------------------------------------------------------------------\n\""));
 	group = trap_GPG_GetSubGroups(GP2);
 	while(group)
 	{
@@ -747,11 +757,36 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd){
 		// FIXED(lul) ME: We need to add a check here if ip exists in banfile, because this banlist will not delete unbanned people
 		if(Boe_NameListCheck (adm->s.number, ip, g_banlist.string, NULL, qtrue, qfalse, qfalse, qfalse)){
 			// exists so print
-			trap_SendServerCommand( adm-g_entities, va("print \"%s\n%s\n%s\n%s\n\"", ip, name, reason, by)); // print result
+			length = strlen(ip);
+			spaces = 16-length;
+			for(z=0;z<spaces;z++){
+			column[z] = test;
+			}
+			trap_SendServerCommand( adm-g_entities, va("print \"%s%s", ip, column)); // Boe!Man 9/16/10: Print tier 1.
+			length = strlen(name);
+			spaces = 16-length;
+			for(z=0;z<spaces;z++){
+			column[z] = test;
+			}
+			trap_SendServerCommand( adm-g_entities, va("print \"%s%s", name, column)); // Boe!Man 9/16/10: Print tier 2.
+			length = strlen(reason);
+			spaces = 16-length;
+			for(z=0;z<spaces;z++){
+			column[z] = test;
+			}
+			trap_SendServerCommand( adm-g_entities, va("print \"%s%s", reason, column)); // Boe!Man 9/16/10: Print tier 3.
+			length = strlen(by);
+			spaces = 16-length;
+			for(z=0;z<spaces;z++){
+			column[z] = test;
+			}
+			trap_SendServerCommand( adm-g_entities, va("print \"%s%s\n", by, column)); // Boe!Man 9/16/10: Print tier 4.
+			//trap_SendServerCommand( adm-g_entities, va("print \"%s\n%s\n%s\n%s\n\"", ip, name, reason, by)); // print result
 		}
 		group = trap_GPG_GetNext(group); // switch to next group and loop again
 	}
 	trap_GP_Delete(&GP2);
+	trap_SendServerCommand( adm-g_entities, va("print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\""));
 	return;
 }
 
