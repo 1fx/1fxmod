@@ -1072,11 +1072,14 @@ void RPM_Obituary ( gentity_t *target, gentity_t *attacker, int mod, attackType_
 	{
 		//trap_SendServerCommand( -1, va("print \"^3[Debug]^7Headshot\n\""));
 		message3 = "{^3HeaDShoT^7}";
+		attackt = attacker->client->pers.statinfo.attack;
+		weapon = attacker->client->pers.statinfo.weapon;
 		//Boe_ClientSound(attacker, G_SoundIndex("sound/npc/col8/blakely/niceshot.mp3"));
 		//trap_SendServerCommand( attacker->s.number, va("cp \"Headshot!\n\""));//g_headShotMessage.string));
 		headShot = qtrue;
 		//add to the total headshot count for this player
 		atrstat->headShotKills++;
+		atrstat->weapon_headshots[attackt][weapon]++;
 	}
 
 	targ = target->s.number;
