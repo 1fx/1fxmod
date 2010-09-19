@@ -5015,9 +5015,9 @@ void Boe_adm_f ( gentity_t *ent )
 	if (adm >= g_eventeams.integer && g_eventeams.integer != 5){
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   et  eventeams                  ^7[^3Make the teams even^7]\n\"", g_eventeams.integer));
 		}
-	if (adm >= g_333.integer && g_333.integer != 5){
+	/*if (adm >= g_333.integer && g_333.integer != 5){
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   333 333                        ^7[^3Enable/Disable 333 FPS jumps^7]\n\"", g_333.integer));
-		}
+		}*/
 	if (adm >= g_sl.integer && g_sl.integer != 5){
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   sl  scorelimit   <time>        ^7[^3Change the scorelimit^7]\n\"", g_sl.integer));
 		}
@@ -5049,6 +5049,9 @@ void Boe_adm_f ( gentity_t *ent )
 	if (adm >= g_clan.integer && g_clan.integer != 5){
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   acl addclan      <id>          ^7[^3Add a clan member^7]\n\"", g_clan.integer));
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   rcl removeclan   <id>          ^7[^3Remove a clan member^7]\n\"", g_clan.integer));
+		}
+	if (adm >= g_clan.integer && g_clan.integer != 5){
+		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   br  broadcast    <message>     ^7[^3Broadcast a message^7]\n\"", g_broadcast.integer));
 		}
 	// temp entry
 	if (adm >= 4){

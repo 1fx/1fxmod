@@ -8,7 +8,7 @@
 #define INF_VERSION_STRING "0.51t"
 #define INF_STRING "1fx. Mod"
 #define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod"
-#define INF_VERSION_DATE "9/18/10"
+#define INF_VERSION_DATE "9/19/10"
 
 // Infiltration
 // Developed by: Boe!Man
@@ -97,7 +97,7 @@ extern	vmCvar_t	g_mute;
 extern	vmCvar_t	g_strip;
 extern	vmCvar_t	g_eventeams;
 
-extern	vmCvar_t	g_333;
+//extern	vmCvar_t	g_333;
 
 extern	vmCvar_t	g_forceteam;
 

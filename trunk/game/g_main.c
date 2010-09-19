@@ -130,7 +130,7 @@ vmCvar_t	g_mute;							// Admin CVAR.
 vmCvar_t	g_strip;						// Admin CVAR.
 vmCvar_t	g_eventeams;					// Admin CVAR.
 vmCvar_t	g_maxIPConnections;
-vmCvar_t	g_333;							// Admin CVAR.
+//vmCvar_t	g_333;							// Admin CVAR.
 vmCvar_t	g_forceteam;					// Admin CVAR.
 vmCvar_t	Owner;
 vmCvar_t	Clan;
@@ -312,7 +312,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_mute,						"g_mute",				"2",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_strip,						"g_strip",				"2",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_eventeams,					"g_eventeams",			"2",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
-	{ &g_333,						"g_333",				"3",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
+	//{ &g_333,						"g_333",				"3",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_forceteam,					"g_forceteam",			"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_nolower,					"g_nolower",			"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_nades,						"g_nades",				"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
