@@ -4936,7 +4936,7 @@ Boe_Adm_f
 
 void Boe_adm_f ( gentity_t *ent )
 {
-	int		id, i, adm;
+	int		id, i, adm, level;
 	char	arg1[MAX_STRING_TOKENS];
 	char	arg2[MAX_STRING_TOKENS];
 	char	arg3[MAX_STRING_TOKENS];
@@ -4947,7 +4947,7 @@ void Boe_adm_f ( gentity_t *ent )
 	
 	adm = ent->client->sess.admin;
 	if(!adm){
-		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You do not have admin powers!\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Access denied: You don't have Admin powers!\n\""));
 		return;
 	}
 	if (!Q_stricmp ( arg1, "?" )||!Q_stricmp ( arg1, "" ))
@@ -4955,116 +4955,116 @@ void Boe_adm_f ( gentity_t *ent )
 	if (adm > 1){
 		trap_SendServerCommand( ent-g_entities, va("print \" \n ^3Lvl   Commands         Arguments     Explanation\n\""));
 		trap_SendServerCommand( ent-g_entities, va("print \" ----------------------------------------------------------\n\""));
-	if (adm >= g_kick.integer && g_kick.integer != 5){
+	// Boe!Man 9/21/10: We loop the print process and make sure they get in proper order.
+	for(level=0;level<5;level++){
+	if (adm >= g_kick.integer && g_kick.integer != 5 && g_kick.integer == level){
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   k   kick         <id> <reason> ^7[^3Kick a player^7]\n\"", g_kick.integer));
 		}
-	if (adm >= g_addbadmin.integer && g_addbadmin.integer != 5){
+	if (adm >= g_addbadmin.integer && g_addbadmin.integer != 5 && g_addbadmin.integer == level){
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   ab  addbadmin    <id>          ^7[^3Add a Basic Admin^7]\n\"", g_addbadmin.integer));
 		}
-	if (adm >= g_addadmin.integer && g_addadmin.integer != 5){
+	if (adm >= g_addadmin.integer && g_addadmin.integer != 5 && g_addadmin.integer == level){
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   aa  addadmin     <id>          ^7[^3Add an Admin^7]\n\"", g_addadmin.integer));
 		}
 	// Boe!Man 1/4/10: Fix with using Tab in the Admin list.
-	if (adm >= g_addsadmin.integer && g_addsadmin.integer != 5){
+	if (adm >= g_addsadmin.integer && g_addsadmin.integer != 5 && g_addsadmin.integer == level){
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   as  addsadmin    <id>          ^7[^3Add a Server Admin^7]\n\"", g_addsadmin.integer));
 		}
-	if (adm >= g_ban.integer && g_ban.integer != 5){
+	if (adm >= g_ban.integer && g_ban.integer != 5 && g_ban.integer == level){
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   ba  ban          <id> <reason> ^7[^3Ban a player^7]\n\"", g_ban.integer));
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   uba unban        <ip>          ^7[^3Unban a banned IP^7]\n\"", g_ban.integer));
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   bl  banlist                    ^7[^3Shows the current banlist^7]\n\"", g_ban.integer));
 		}
-	if (adm >= g_subnetban.integer && g_subnetban.integer != 5){
+	if (adm >= g_subnetban.integer && g_subnetban.integer != 5 && g_subnetban.integer == level){
 		// Boe!Man 1/6/10: Reason added to the Subnetban command.
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   sb  subnetban    <id> <reason> ^7[^3Ban a players' subnet^7]\n\"", g_subnetban.integer));
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   sub subnetunban  <ip>          ^7[^3Unban a banned subnet^7]\n\"", g_subnetban.integer));
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   sbl subnetbanlist              ^7[^3Shows the current subnetbanlist^7]\n\"", g_subnetban.integer));
 		}
-	if (adm >= g_uppercut.integer && g_uppercut.integer != 5){
+	if (adm >= g_uppercut.integer && g_uppercut.integer != 5 && g_uppercut.integer == level){
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   uc  uppercut     <id>          ^7[^3Launch a player upwards^7]\n\"", g_uppercut.integer));
 		}
-	if (adm >= g_twist.integer && g_twist.integer != 5){
+	if (adm >= g_twist.integer && g_twist.integer != 5 && g_twist.integer == level){
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   tw  twist        <id>          ^7[^3Twist a player^7]\n\"", g_twist.integer));
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   utw untwist      <id>          ^7[^3Untwist a twisted player^7]\n\"", g_twist.integer));
 		}
-	if (adm >= g_runover.integer && g_runover.integer != 5){
+	if (adm >= g_runover.integer && g_runover.integer != 5 && g_runover.integer == level){
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   ro  runover      <id>          ^7[^3Boost a player backwards^7]\n\"", g_runover.integer));
 		}
-	if (adm >= g_maprestart.integer && g_maprestart.integer != 5){
-		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   mr  maprestart   <id>          ^7[^3Restart the current map^7]\n\"", g_runover.integer));
+	if (adm >= g_maprestart.integer && g_maprestart.integer != 5 && g_maprestart.integer == level){
+		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   mr  maprestart   <id>          ^7[^3Restart the current map^7]\n\"", g_maprestart.integer));
 		}
-	if (adm >= g_flash.integer && g_flash.integer != 5){
+	if (adm >= g_flash.integer && g_flash.integer != 5 && g_flash.integer == level){
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   fl  flash        <id>          ^7[^3Flash a player^7]\n\"", g_flash.integer));
 		}
-	if (adm >= g_pop.integer && g_pop.integer != 5){
+	if (adm >= g_pop.integer && g_pop.integer != 5 && g_pop.integer == level){
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   p   pop          <id>          ^7[^3Pop a player^7]\n\"", g_pop.integer));
 		}
-	if (adm >= g_strip.integer && g_strip.integer != 5){
+	if (adm >= g_strip.integer && g_strip.integer != 5 && g_strip.integer == level){
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   s  strip         <id>          ^7[^3Remove weapons from a player^7]\n\"", g_strip.integer));
 		}
-	if (adm >= g_mute.integer && g_mute.integer != 5){
+	if (adm >= g_mute.integer && g_mute.integer != 5 && g_mute.integer == level){
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   m   mute         <id>          ^7[^3Mute a player^7]\n\"", g_mute.integer));
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   um  unmute       <id>          ^7[^3Unmute a player^7]\n\"", g_mute.integer));
 		}
-	if (adm >= g_plant.integer && g_plant.integer != 5){
+	if (adm >= g_plant.integer && g_plant.integer != 5 && g_plant.integer == level){
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   pl  plant        <id>          ^7[^3Plant a player in the ground^7]\n\"", g_plant.integer));
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   upl unplant      <id>          ^7[^3Unplant a planted player^7]\n\"", g_plant.integer));
 		}
-	if (adm >= g_burn.integer && g_burn.integer != 5){
+	if (adm >= g_burn.integer && g_burn.integer != 5 && g_burn.integer == level){
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   b   burn         <id>          ^7[^3Burn a player^7]\n\"", g_burn.integer));
 		}
-	if (adm >= g_eventeams.integer && g_eventeams.integer != 5){
+	if (adm >= g_eventeams.integer && g_eventeams.integer != 5 && g_eventeams.integer == level){
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   et  eventeams                  ^7[^3Make the teams even^7]\n\"", g_eventeams.integer));
 		}
 	/*if (adm >= g_333.integer && g_333.integer != 5){
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   333 333                        ^7[^3Enable/Disable 333 FPS jumps^7]\n\"", g_333.integer));
 		}*/
-	if (adm >= g_sl.integer && g_sl.integer != 5){
+	if (adm >= g_sl.integer && g_sl.integer != 5 && g_sl.integer == level){
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   sl  scorelimit   <time>        ^7[^3Change the scorelimit^7]\n\"", g_sl.integer));
 		}
-	if (adm >= g_tl.integer && g_tl.integer != 5){
+	if (adm >= g_tl.integer && g_tl.integer != 5 && g_tl.integer == level){
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   tl  timelimit    <time>        ^7[^3Change the timelimit^7]\n\"", g_tl.integer));
 		}
-	if (adm >= g_nolower.integer && g_nolower.integer != 5){
+	if (adm >= g_nolower.integer && g_nolower.integer != 5 && g_nolower.integer == level){
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   nl  nolower                    ^7[^3Enable/Disable Nolower^7]\n\"", g_nolower.integer));
 		}
-	if (adm >= g_nades.integer && g_nades.integer != 5){
+	if (adm >= g_nades.integer && g_nades.integer != 5 && g_nades.integer == level){
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   nd  normaldamage               ^7[^3Toggle Normal damage^7]\n\"", g_nades.integer));
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   rd  realdamage                 ^7[^3Toggle Real damage^7]\n\"", g_nades.integer));
 		}
-	if (adm >= g_ri.integer && g_ri.integer != 5){
+	if (adm >= g_ri.integer && g_ri.integer != 5 && g_ri.integer == level){
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   ri  ri           <time>        ^7[^3Change the respawn interval^7]\n\"", g_ri.integer));
 		}
-	if (adm >= g_gr.integer && g_gr.integer != 5){
+	if (adm >= g_gr.integer && g_gr.integer != 5 && g_gr.integer == level){
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   gr  gametyperestart            ^7[^3Restart the current gametype^7]\n\"", g_gr.integer));
 		}
-	if (adm >= g_clanvsall.integer && g_clanvsall.integer != 5){
+	if (adm >= g_clanvsall.integer && g_clanvsall.integer != 5 && g_clanvsall.integer == level){
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   cva clanvsall                  ^7[^3Clan versus other players^7]\n\"", g_clanvsall.integer));
 		}
-	if (adm >= g_swapteams.integer && g_swapteams.integer != 5){
+	if (adm >= g_swapteams.integer && g_swapteams.integer != 5 && g_swapteams.integer == level){
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   sw  swapteams                  ^7[^3Swap the players from both teams^7]\n\"", g_swapteams.integer));
 		}
-	if (adm >= g_lock.integer && g_lock.integer != 5){
+	if (adm >= g_lock.integer && g_lock.integer != 5 && g_lock.integer == level){
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   l   lock         <team>        ^7[^3Lock a team^7]\n\"", g_lock.integer));
 		}
-	if (adm >= g_clan.integer && g_clan.integer != 5){
+	if (adm >= g_clan.integer && g_clan.integer != 5 && g_clan.integer == level){
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   acl addclan      <id>          ^7[^3Add a clan member^7]\n\"", g_clan.integer));
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   rcl removeclan   <id>          ^7[^3Remove a clan member^7]\n\"", g_clan.integer));
 		}
-	if (adm >= g_clan.integer && g_clan.integer != 5){
+	if (adm >= g_broadcast.integer && g_broadcast.integer != 5 && g_broadcast.integer == level){
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   br  broadcast    <message>     ^7[^3Broadcast a message^7]\n\"", g_broadcast.integer));
 		}
 	// temp entry
-	if (adm >= 4){
+	if (adm >= 4 && level == 4){
 		trap_SendServerCommand( ent-g_entities, va("print \" [^34^7]       adminspec                  ^7[^3Allows you to spec an enemy player^7]\n\""));
+	}
+	// Boe!Man 9/21/10: End of Loop.
 	}
 	trap_SendServerCommand( ent-g_entities, va("print \"    [^32^7] B-Admin          ^7[^33^7] Admin          ^7[^34^7] S-Admin\n\""));
 	trap_SendServerCommand( ent-g_entities, va("print \" \n^7Use ^3[Page Up]^7 and ^3[Page Down]^7 keys to scroll.\n\""));
 	}
 	return;
-	}
-	if(!ent->client->sess.admin){
-		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Access denied: You don't have Admin powers!\n\""));
-		return;
 	}
 	
 	// Henk loop through my admin command array
