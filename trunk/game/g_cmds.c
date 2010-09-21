@@ -4956,7 +4956,7 @@ void Boe_adm_f ( gentity_t *ent )
 		trap_SendServerCommand( ent-g_entities, va("print \" \n ^3Lvl   Commands         Arguments     Explanation\n\""));
 		trap_SendServerCommand( ent-g_entities, va("print \" ----------------------------------------------------------\n\""));
 	// Boe!Man 9/21/10: We loop the print process and make sure they get in proper order.
-	for(level=0;level<5;level++){
+	for(level=2;level<=adm;level++){
 	if (adm >= g_kick.integer && g_kick.integer != 5 && g_kick.integer == level){
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   k   kick         <id> <reason> ^7[^3Kick a player^7]\n\"", g_kick.integer));
 		}
