@@ -109,11 +109,12 @@ void P_WorldEffects( gentity_t *ent )
 		return;
 	}
 
-	if(level.nolower1 == qtrue && !strstr(level.mapname, "mp_kam2") && !strstr(level.mapname, "mp_finca")){ // if enabled
+	// Disable Nolower (TEMP->CLIENTCRASH)
+	/*if(level.nolower1 == qtrue && !strstr(level.mapname, "mp_kam2") && !strstr(level.mapname, "mp_finca")){ // if enabled
 		if(ent->r.currentOrigin[2] <= level.nolower[2] && !G_IsClientDead(ent->client)){
 			G_Damage(ent, NULL, NULL, NULL, NULL, 10000, 0, MOD_TRIGGER_HURT, 0);
 		}
-	}
+	}*/
 
 
 	waterlevel = ent->waterlevel;

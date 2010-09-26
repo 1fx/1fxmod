@@ -152,7 +152,7 @@ vmCvar_t	g_checkcountry;
 vmCvar_t	g_disablelower;
 
 // Boe!Man 4/15/10: Some level commands (Admin).
-vmCvar_t	g_nolower;
+//vmCvar_t	g_nolower; (TEMP->CLIENTCRASH)
 vmCvar_t	g_nades;
 vmCvar_t	g_sl;
 vmCvar_t	g_tl;
@@ -314,7 +314,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_eventeams,					"g_eventeams",			"2",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	//{ &g_333,						"g_333",				"3",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_forceteam,					"g_forceteam",			"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
-	{ &g_nolower,					"g_nolower",			"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
+	//{ &g_nolower,					"g_nolower",			"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse }, (TEMP->CLIENTCRASH)
 	{ &g_nades,						"g_nades",				"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_sl,						"g_sl",					"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_tl,						"g_tl",					"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
@@ -881,8 +881,10 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	// Boe!Man 3/30/10
 	Boe_ParseChatSounds();
 
+	if (strstr(g_gametype.string, "ctf")){
 	InitSpawn(1);
 	InitSpawn(2);
+	}
 	
 	//if(Preloaded != 1 && restart == 0){
 	//	G_LogPrintf("Preloading IP2Country database..\n");

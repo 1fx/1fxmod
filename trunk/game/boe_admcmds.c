@@ -240,7 +240,7 @@ void Boe_NoNades(int argNum, gentity_t *ent, qboolean shortCmd){
 ==========
 Boe_NoLower
 ==========
-*/
+// (TEMP->CLIENTCRASH)
 
 void Boe_NoLower(int argNum, gentity_t *ent, qboolean shortCmd){
 	if(level.nolower1 == qtrue){
@@ -266,6 +266,7 @@ void Boe_NoLower(int argNum, gentity_t *ent, qboolean shortCmd){
 		Boe_adminLog (va("%s - NOLOWER ENABLED", ent->client->pers.cleanName)) ;
 	}
 }
+*/ // (TEMP->CLIENTCRASH)
 
 /*
 ==========

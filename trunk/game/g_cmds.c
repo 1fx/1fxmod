@@ -38,7 +38,7 @@ static admCmd_t AdminCommands[] =
 	{"!s ", "strip", &g_strip.integer, &Boe_Strip},
 	{"!ra ", "removeadmin", &g_removeadmin.integer, &Boe_Remove_Admin_f},
 	{"!ft ", "forceteam", &g_forceteam.integer, &Adm_ForceTeam},
-	{"!nl", "nolower", &g_nolower.integer, &Boe_NoLower},
+	/*{"!nl", "nolower", &g_nolower.integer, &Boe_NoLower},*/ // Disable !nl cmd. (TEMP->CLIENTCRASH)
 	{"!nn", "nonades", &g_nades.integer, &Boe_NoNades},
 	{"!sl ", "scorelimit", &g_sl.integer, &Boe_ScoreLimit},
 	{"!tl ", "timelimit", &g_tl.integer, &Boe_TimeLimit},
@@ -5026,9 +5026,10 @@ void Boe_adm_f ( gentity_t *ent )
 	if (adm >= g_tl.integer && g_tl.integer != 5 && g_tl.integer == level){
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   tl  timelimit    <time>        ^7[^3Change the timelimit^7]\n\"", g_tl.integer));
 		}
+	/*
 	if (adm >= g_nolower.integer && g_nolower.integer != 5 && g_nolower.integer == level){
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   nl  nolower                    ^7[^3Enable/Disable Nolower^7]\n\"", g_nolower.integer));
-		}
+		}*/ // (TEMP->CLIENTCRASH)
 	if (adm >= g_nades.integer && g_nades.integer != 5 && g_nades.integer == level){
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   nd  normaldamage               ^7[^3Toggle Normal damage^7]\n\"", g_nades.integer));
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   rd  realdamage                 ^7[^3Toggle Real damage^7]\n\"", g_nades.integer));
