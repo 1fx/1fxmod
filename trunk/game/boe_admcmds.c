@@ -1480,6 +1480,14 @@ void Boe_Respawn (int argNum, gentity_t *adm, qboolean shortCmd)
 	
 	ent = g_entities + idnum;
 
+	if ( ent->client->sess.team == TEAM_SPECTATOR ){
+		if (adm && adm->client)
+			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7You cannot respawn a spectator.\n\""));
+		else
+			Com_Printf("You cannot respawn a spectator.\n");
+		return;
+	}
+
 	if ( ent->client->sess.ghost ){
 			G_StopFollowing ( ent );
 			ent->client->ps.pm_flags &= ~PMF_GHOST;
@@ -1761,6 +1769,7 @@ void Boe_Broadcast(int argNum, gentity_t *adm, qboolean shortCmd){
 	}
 
 	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s", level.time + 5000, buffer1));
+	Boe_GlobalSound (G_SoundIndex("sound/misc/menus/invalid.wav"));
 	//trap_SendServerCommand( -1, va("cp \"%s\n\"", buffer) );
 }
 
