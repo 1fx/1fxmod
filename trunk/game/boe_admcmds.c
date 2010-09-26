@@ -330,7 +330,10 @@ void Boe_Add_Clan_Member(int argNum, gentity_t *adm, qboolean shortCmd)
 
 	onlist = Boe_NameListCheck (0, id, g_clanfile.string, NULL, qfalse, qfalse, qfalse, qfalse);
 
-	if(onlist) {
+	if(onlist){
+		if (adm && adm->client)
+			trap_SendServerCommand(adm-g_entities, va("print\"^3[Info] ^7%s is already a Clan Member.\n\"", g_entities[idnum].client->pers.netname));
+		else
 		Com_Printf("^3[Info] ^7%s ^7is already a Clan Member.\n", g_entities[idnum].client->pers.netname);
 		return;
 	}

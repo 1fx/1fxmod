@@ -8,7 +8,7 @@
 #define INF_VERSION_STRING "0.51t"
 #define INF_STRING "1fx. Mod"
 #define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod"
-#define INF_VERSION_DATE "9/19/10"
+#define INF_VERSION_DATE "9/26/10"
 
 // Infiltration
 // Developed by: Boe!Man
