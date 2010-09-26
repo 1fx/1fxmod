@@ -1432,6 +1432,7 @@ void Boe_About( gentity_t *ent )
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Mod URL^7]     1fx.uk.to\n"));
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Mod version^7] %s\n", INF_VERSION_STRING));
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Mod date^7]    %s\n", INF_VERSION_DATE));
+	trap_SendServerCommand( ent-g_entities, va("print \"\n^1Massive thanks to Stoppbiel ^7for his continuous bug reports.\n"));
 	trap_SendServerCommand( ent-g_entities, va("print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\""));
 }
 
