@@ -374,8 +374,10 @@ void RPM_Awards(void)
 	//char	*a, *b;
 	///End  - 01.12.06 - 09:26pm
 
-	if(boe_log.integer == 1)
-	G_LogPrintf("3\n");
+#ifdef _BOE_DBG
+	if (strstr(boe_log.string, "1"))
+		G_LogPrintf("1s\n");
+#endif
 
 	if(!level.awardTime)
 	{
@@ -612,8 +614,12 @@ void RPM_Awards(void)
 			////b = va("%i %i", bestOverall->s.number, overallScore );
 			/////trap_SendServerCommand( -1, va("awards %s %s", a, b));
 			//Com_Printf("awards %s %s\n", a, b);
-			if(boe_log.integer == 1)
-	G_LogPrintf("3e\n");
+
+#ifdef _BOE_DBG
+	if (strstr(boe_log.string, "1"))
+		G_LogPrintf("1e\n");
+#endif
+
 #ifdef Q3_VM
 			///End  - 01.12.06 - 09:23pm
 			trap_SendServerCommand( -1, va("awards %i %i %i %i %i %i %i %.2f %i %.2f %i %i %i %i", 
@@ -3147,7 +3153,8 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 		return;
 	else if (mode == CLAN_CHAT && !other->client->sess.clanMember )
 		return;
-	else if (mode == CADM_CHAT && other->client->sess.admin < 2 )
+	// Boe!Man 9/26/10: Hey Admin! chat needs to be visible for admins AND the one saying it.
+	else if (mode == CADM_CHAT && ent->s.number != other->s.number && other->client->sess.admin < 2)
 		return;
 
 
@@ -3830,6 +3837,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			a += 1;
 			}
 			mode = CADM_CHAT;
+			ent->client->sess.monkey = qtrue; // TEST
 			acmd = qtrue;
 		}
 	}

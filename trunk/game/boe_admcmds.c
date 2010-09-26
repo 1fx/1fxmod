@@ -1214,19 +1214,20 @@ void Boe_Remove_Admin_f (int argNum, gentity_t *adm, qboolean shortCmd)
 	int				idnum;
 	char			*id;
 
+#ifdef _BOE_DBG
+	if (strstr(boe_log.string, "1"))
+		G_LogPrintf("4s\n");
+#endif
+
 	idnum = Boe_ClientNumFromArg(adm, argNum, "removeadmin <idnumer>", "do this to", qfalse, qtrue, shortCmd);
 	if(idnum < 0) return;
 
 	id = g_entities[idnum].client->pers.boe_id;
 	
 	// Boe!Man 8/22/10: If the user's not an Admin we can safely skip this.
-	if(boe_log.integer == 1)
-	G_LogPrintf("RAs\n");
 	if (g_entities[idnum].client->sess.admin == 0){
 		trap_SendServerCommand(adm-g_entities, va("print\"^3[Info] ^7%s is not an Admin!\n\"", g_entities[idnum].client->pers.netname));
 		return;}
-	if(boe_log.integer == 1)
-	G_LogPrintf("RAe\n");
 	
 	// Boe!Man 1/6/10: Fix, succesfully writes the Admin out of the file.
 	if(Boe_Remove_from_list(id, g_adminfile.string, "admin", NULL, qfalse, qtrue, qfalse)){
@@ -1246,6 +1247,10 @@ void Boe_Remove_Admin_f (int argNum, gentity_t *adm, qboolean shortCmd)
 		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s ^7was removed as Admin.\n\"", g_entities[idnum].client->pers.netname));
 		Boe_adminLog (va("%s - REMOVE ADMIN: %s", "RCON", g_entities[idnum].client->pers.cleanName  )) ;
 	}
+#ifdef _BOE_DBG
+	if (strstr(boe_log.string, "1"))
+		G_LogPrintf("4e\n");
+#endif
 }
 
 /*

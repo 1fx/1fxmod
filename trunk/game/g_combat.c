@@ -217,8 +217,10 @@ void player_die(
 	attack		 = (mod >> 8) & 0xFF;
 	meansOfDeath = mod & 0xFF;
 
-	if(boe_log.integer == 1)
-	G_LogPrintf("1\n");
+#ifdef _BOE_DBG
+	if (strstr(boe_log.string, "1"))
+		G_LogPrintf("9s\n");
+#endif
 
 	if ( self->client->ps.pm_type == PM_DEAD ) 
 	{
@@ -626,10 +628,10 @@ void player_die(
 	self->die = body_die;
 
 	trap_LinkEntity (self);
-	if(boe_log.integer == 1)
-
-	G_LogPrintf("1e\n");
-	return;
+#ifdef _BOE_DBG
+	if (strstr(boe_log.string, "1"))
+		G_LogPrintf("9e\n");
+#endif
 }
 
 /*

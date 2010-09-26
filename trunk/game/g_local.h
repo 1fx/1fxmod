@@ -1285,5 +1285,7 @@ void	RPM_ReadyAll (void);
 void	RPM_Pause (gentity_t *adm);
 void	RPM_Unpause (gentity_t *adm);
 
-// temp
+#ifdef _BOE_DBG
+// Boe!Man: Debug CVAR.
 extern vmCvar_t	boe_log;
+#endif

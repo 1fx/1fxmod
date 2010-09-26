@@ -175,7 +175,9 @@ vmCvar_t	server_message4;
 vmCvar_t	server_message5;
 vmCvar_t	server_msgDelay;
 
+#ifdef _BOE_DBG
 vmCvar_t	boe_log;
+#endif
 
 static cvarTable_t gameCvarTable[] = 
 {
@@ -375,8 +377,10 @@ static cvarTable_t gameCvarTable[] =
 	{ &server_message4, "server_message4", "", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_message5, "server_message5", "", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 
-	// boe: Debug CVAR
+#ifdef _BOE_DBG
+	// Boe!Man: Debug CVAR.
 	{ &boe_log, "boe_log", "1", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
+#endif
 
 /*
 	switch (g_weaponModFlags.integer){
@@ -2135,8 +2139,10 @@ void G_RunFrame( int levelTime )
 	// Boe!Man 8/25/10: Auto restart after 90000000 milliseconds, or 1500 minutes with an empty server. This ensures no crashes.
 	// FIX ME (Prio low): Bots aren't supported as of right now.
 	if ( level.time - level.startTime > 90000000 && level.numConnectedClients == 0){
-		if(boe_log.integer == 1){
-			G_LogPrintf("KS\n");}
+		#ifdef _BOE_DBG
+			if (strstr(boe_log.string, "1"))
+				G_LogPrintf("2\n");
+		#endif
 		trap_SendConsoleCommand( EXEC_APPEND, va("quit\n"));}
 
 	// Check warmup rules

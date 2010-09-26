@@ -998,8 +998,10 @@ void ClientUserinfoChanged( int clientNum )
 	ent = g_entities + clientNum;
 	client = ent->client;
 	
-	if(boe_log.integer == 1)
-	G_LogPrintf("9\n");
+#ifdef _BOE_DBG
+	if (strstr(boe_log.string, "1"))
+		G_LogPrintf("6s\n");
+#endif
 
 	trap_GetUserinfo( clientNum, userinfo, sizeof( userinfo ) );
 	// check for malformed or illegal info strings
@@ -1268,8 +1270,11 @@ void ClientUserinfoChanged( int clientNum )
 	//if(!strcmp(s, userinfo))
 	//return;
 
-	if(boe_log.integer == 1)
-	G_LogPrintf("9e\n");
+#ifdef _BOE_DBG
+	if (strstr(boe_log.string, "1"))
+		G_LogPrintf("6e\n");
+#endif
+
 
 	ent->client->sess.lastIdentityChange = level.time+3000;
 }
@@ -1315,7 +1320,10 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 	char			str[64];
 
 	ent = &g_entities[ clientNum ];
-	//G_LogPrintf("Starting ClientConnect()\n");
+#ifdef _BOE_DBG
+	if (strstr(boe_log.string, "1"))
+		G_LogPrintf("7s\n");
+#endif
 	trap_GetUserinfo( clientNum, userinfo, sizeof( userinfo ) );
 	
 	// Boe!Man 12/25/09: Get their name and store a clean copy (without colors) of it.
@@ -1325,8 +1333,6 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 	
 	//value = Info_ValueForKey (userinfo, "cl_guid");
 	//Com_sprintf ( guid, sizeof(guid), value );
-		if(boe_log.integer == 1)
-	G_LogPrintf("5\n");
 
 	// check to see if they are on the banned IP list
 	value = Info_ValueForKey (userinfo, "ip");
@@ -1460,9 +1466,11 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 			client->sess.admin = Boe_NameListCheck ( clientNum, ent->client->pers.boe_id, g_adminfile.string, NULL, qfalse, qtrue, qfalse, qfalse);
 				if(!client->sess.clanMember)
 					client->sess.clanMember = Boe_NameListCheck (clientNum, ent->client->pers.boe_id, g_clanfile.string, NULL, qfalse, qfalse, qfalse, qfalse);
-	}	
-	if(boe_log.integer == 1)
-	G_LogPrintf("5e\n");
+	}
+#ifdef _BOE_DBG
+	if (strstr(boe_log.string, "1"))
+		G_LogPrintf("7e\n");
+#endif
 
 	return NULL;
 }
@@ -1493,8 +1501,10 @@ void ClientBegin( int clientNum, qboolean setTime )
 
 	client = level.clients + clientNum;
 
-	if(boe_log.integer == 1)
-	G_LogPrintf("7\n");
+#ifdef _BOE_DBG
+	if (strstr(boe_log.string, "1"))
+		G_LogPrintf("8s\n");
+#endif
 
 
 	if ( ent->r.linked ) 
@@ -1557,8 +1567,10 @@ void ClientBegin( int clientNum, qboolean setTime )
 
 	// count current clients and rank for scoreboard
 	CalculateRanks();
-		if(boe_log.integer == 1)
-	G_LogPrintf("7e\n");
+#ifdef _BOE_DBG
+	if (strstr(boe_log.string, "1"))
+		G_LogPrintf("8e\n");
+#endif
 }
 
 /*
