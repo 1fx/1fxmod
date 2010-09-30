@@ -5336,7 +5336,7 @@ void Boe_adm_f ( gentity_t *ent )
 		return;
 	}
 	*/
-	if ((!Q_stricmp ( arg1, "adminspec" )) && ent->client->sess.admin >= 4) {
+	if ((!Q_stricmp ( arg1, "adminspec" )) && ent->client->sess.admin >= 4 && g_compmode.integer == 0) {
 		if(ent->client->adminspec == qtrue){
 		ent->client->adminspec = qfalse;
 		}else{
