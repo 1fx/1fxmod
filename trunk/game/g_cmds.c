@@ -3837,7 +3837,6 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			a += 1;
 			}
 			mode = CADM_CHAT;
-			ent->client->sess.monkey = qtrue; // TEST
 			acmd = qtrue;
 		}
 	}
