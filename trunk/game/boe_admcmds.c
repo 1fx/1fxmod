@@ -421,7 +421,7 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 	qboolean space = qfalse;
 	trap_Argv( argNum, arg, sizeof( arg ) );
 	if(shortCmd){ // Henk 04/05/10 -> Handle the short admin commands.
-		num = 0;
+		num = -1;
 		for(i=0;i<16;i++){ // import from Boe_Uppercut -> Bug: id's return when good?
 			if(arg[i] == ' '){
 				if(isdigit(arg[i+1])){
@@ -463,10 +463,13 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 				break;
 			}
 		}
-		if(num == 0){ // Get second argument because they use it from the console
+		if(num == -1){ // Get second argument because they use it from the console
 			trap_Argv( 2, arg, sizeof( arg ) );
+			if(strlen(arg) >= 1){
 			num = atoi(arg);
-			//trap_SendServerCommand( -1, va("print \"^3[Debug 2] ^7Client: %i(%s)\n\"", num, arg));
+			}else{
+				num = -1;
+			}
 		}
 
 	}else{

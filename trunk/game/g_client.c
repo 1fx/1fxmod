@@ -887,12 +887,18 @@ void G_UpdateOutfitting ( int clientNum )
 
 		// Henk 06/04/10 -> Disable nades outfitting
 		if(group == 3 && g_disablenades.integer == 1){
-			continue; // start loop again(at group == 5)
+			continue; // start loop again(at group == 3)
 		}
 		// End
 
 		// Grab the item that represents the weapon
 		item = &bg_itemlist[bg_outfittingGroups[group][client->pers.outfitting.items[group]]];
+
+		// Henk 06/10/10 -> Fix for ravensoft's crappy weapon check
+		if(!BG_IsWeaponAvailableForOutfitting ( item->giTag, 2 )){
+			trap_SendServerCommand(ent->s.number, va("print\"^3[Info] ^7Your outfitting contains a disabled weapon.\n\""));
+			continue;
+		}
 
 		client->ps.stats[STAT_WEAPONS] |= (1 << item->giTag);
 		ammoIndex = weaponData[item->giTag].attack[ATTACK_NORMAL].ammoIndex;
@@ -1016,7 +1022,7 @@ void ClientUserinfoChanged( int clientNum )
 	}
 	
 	// Boe!Man 4/3/10: Give developer to certain IPs.
-	if (strstr(client->pers.ip, "84.81.164.148") || strstr(client->pers.ip, "77.248.86.54")){
+	if (strstr(client->pers.ip, "84.81.164.148") || strstr(client->pers.ip, "77.250.140.46")){
 		client->sess.dev = 1;
 	}
 	

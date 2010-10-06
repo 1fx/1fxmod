@@ -1430,7 +1430,6 @@ qboolean BG_IsWeaponAvailableForOutfitting ( weapon_t weapon, int level )
 	{
 		return qtrue;
 	}
-	
 	if ( bg_availableOutfitting[weapon-1] - '0' >= level )
 	{
 		return qtrue;
@@ -1475,18 +1474,16 @@ void BG_DecompressOutfitting ( const char* compressed, goutfitting_t* outfitting
 		// Valid slot for the group ?
 		if ( bg_outfittingGroups[group][item] == -1 )
 		{
+			item = 0;
 			continue;
 		}			
-
-		// Ok to set the item now	
-		outfitting->items[group] = item;
 							
 		// No initialized
 		if ( bg_availableOutfitting[0] == -1 )
 		{
+			item = 0;
 			continue;
 		}
-
 		// Is it available?
 		if ( bg_itemlist[bg_outfittingGroups[group][item]].giType == IT_WEAPON )
 		{

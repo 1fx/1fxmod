@@ -3666,6 +3666,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	}else if(strstr(p, "!map ")){
 		if (ent->client->sess.admin >= 4){
 			char *numb;
+			char map[64];
 			int i;
 			fileHandle_t	f;
 			if(strlen(p) >= 5){
@@ -3675,7 +3676,8 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 						break;
 					}
 				}
-				trap_FS_FOpenFile( va("maps\\%s.bsp", numb), &f, FS_READ );
+				strcpy(map, va("%s", numb)); // copy to static
+				trap_FS_FOpenFile( va("maps\\%s.bsp", map), &f, FS_READ );
 				if ( !f ){
 					trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Map not found.\n\""));
 					return;
@@ -3684,7 +3686,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 				
 				//trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sT%si%sm%se%sl%simit %i!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, number));
 				//trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Timelimit changed to %i by %s.\n\"", number, ent->client->pers.netname));
-				trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", numb));
+				trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", map));
 				G_Say( ent, NULL, mode, p);
 				//Boe_adminLog (va("%s - TIMELIMIT %i", ent->client->pers.cleanName, number)) ;
 			}
@@ -4923,9 +4925,6 @@ void ClientCommand( int clientNum ) {
 		RPM_Tcmd( ent );
 	else if (Q_stricmp (cmd, "ref") == 0)
 		RPM_ref_cmd( ent );
-	//else if (Q_stricmp (cmd, "boeboe_test") == 0)
-	//	trap_SendServerCommand( clientNum, va("print \"%i\n\"",level.time - level.startTime) );
-		//trap_SendConsoleCommand( EXEC_APPEND, va("quit\n"));
 #ifdef _SOF2_BOTS
 	else if (Q_stricmp (cmd, "addbot") == 0)
 		trap_SendServerCommand( clientNum, va("print \"ADDBOT command can only be used via RCON\n\"" ) );
@@ -5081,7 +5080,7 @@ void Boe_adm_f ( gentity_t *ent )
 		//Com_Printf("Checking %s with %s\n", arg1, AdminCommands[i].adminCmd);
 		if(!Q_stricmp(arg1, AdminCommands[i].adminCmd)){
 			if(ent->client->sess.admin >= *AdminCommands[i].adminLevel){
-				AdminCommands[i].Function(2, ent, qtrue);
+				AdminCommands[i].Function(2, ent, qfalse);
 				return;
 			}else{
 			// Boe!Man 12/30/09: Putting two Info messages together.

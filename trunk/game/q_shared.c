@@ -932,6 +932,7 @@ int QDECL Com_sprintf( char *dest, int size, const char *fmt, ...)
 	}
 	if (len >= size) {
 		Com_Printf ("Com_sprintf: overflow of %i in %i for '%s'\n", len, size, fmt);
+		return; // Henkie 06/10/10 don't parse this potential dangerous data.
 #ifdef	_DEBUG
 		__asm {
 			int 3;
