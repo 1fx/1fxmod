@@ -364,7 +364,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_enableTeamCmds, "g_enableTeamCmds", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 	{ &g_refpassword, "g_refpassword", "none", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 	// Boe!Man 6/2/10: I set this temporarily to 0.
-	{ &g_checkcountry, "g_checkcountry", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
+	{ &g_checkcountry, "g_checkcountry", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 	{ &g_disablelower, "g_disablelower", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 	{ &g_autoeventeams, "g_autoeventeams", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 
