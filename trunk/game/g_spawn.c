@@ -498,18 +498,16 @@ void G_SpawnGEntityFromSpawnVars( qboolean inSubBSP )
 	for ( i = 0 ; i < level.numSpawnVars ; i++ ) 
 	{
 		G_ParseField( level.spawnVars[i][0], level.spawnVars[i][1], ent );
-		/*
 		if(strstr(level.spawnVars[i][0], "nolower")){
 			G_SpawnVector("origin", "0", level.nolower);
 			level.nolower1 = qtrue;
 			done = qtrue;
-		}*/ // (TEMP->CLIENTCRASH)
+		}
 
 	}
-	/*
 	if(done == qfalse){
 		level.nolower[2] = 0;
-	}*/ // (TEMP->CLIENTCRASH)
+	}
 
 	// check for "notteam" flag (GT_DM)
 	if ( level.gametypeData->teams ) 

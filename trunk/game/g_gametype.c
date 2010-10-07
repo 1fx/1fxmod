@@ -461,7 +461,7 @@ void G_ResetGametype ( void )
 		level.gametypeJoinTime = level.time;
 	}
 
-	/*if(g_disablelower.integer == 1){
+	if(g_disablelower.integer == 1){
 		level.nolower1 = qtrue;
 		if (strstr(level.mapname, "mp_kam2")){
 			SpawnFence(1);
@@ -474,7 +474,7 @@ void G_ResetGametype ( void )
 		if (strstr(level.mapname, "mp_kam2")){
 			RemoveFence();
 		}
-	}*/ // (TEMP->CLIENTCRASH)
+	}
 
 	// Respawn all clients
 	G_RespawnClients ( qtrue, TEAM_RED );

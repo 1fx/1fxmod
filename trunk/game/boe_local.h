@@ -5,10 +5,10 @@
 //==================================================================
 
 // Boe!Man 3/30/10
-#define INF_VERSION_STRING "0.51t"
+#define INF_VERSION_STRING "0.51"
 #define INF_STRING "1fx. Mod"
 #define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod"
-#define INF_VERSION_DATE "9/30/10"
+#define INF_VERSION_DATE "10/7/10"
 
 // Infiltration
 // Developed by: Boe!Man
@@ -144,7 +144,7 @@ extern	vmCvar_t	server_blueteamprefix;
 // EMPTY
 
 // Boe!Man 4/15/10
-//extern	vmCvar_t	g_nolower; (TEMP->CLIENTCRASH)
+extern	vmCvar_t	g_nolower;
 extern	vmCvar_t	g_nades;
 extern	vmCvar_t	g_sl;
 extern	vmCvar_t	g_tl;
@@ -268,7 +268,7 @@ void	Boe_Kick(int argNum, gentity_t *ent, qboolean ShortCmd);
 void	Boe_XMute(int argNum, gentity_t *ent, qboolean ShortCmd);
 void	Boe_UnMute(int argNum, gentity_t *ent, qboolean ShortCmd);
 void	Boe_MapRestart(int argNum, gentity_t *ent, qboolean ShortCmd);
-// void	Boe_NoLower(int argNum, gentity_t *ent, qboolean ShortCmd); (TEMP->CLIENTCRASH)
+void	Boe_NoLower(int argNum, gentity_t *ent, qboolean ShortCmd);
 void	Boe_NoNades(int argNum, gentity_t *ent, qboolean ShortCmd);
 void	Boe_TimeLimit(int argNum, gentity_t *ent, qboolean ShortCmd);
 void	Boe_ScoreLimit(int argNum, gentity_t *ent, qboolean ShortCmd);
