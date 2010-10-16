@@ -1470,6 +1470,13 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 				if(!client->sess.clanMember)
 					client->sess.clanMember = Boe_NameListCheck (clientNum, ent->client->pers.boe_id, g_clanfile.string, NULL, qfalse, qfalse, qfalse, qfalse);
 	}
+	// Boe!Man 10/16/10: If Admins are allowed to spec the opposite team..
+	if (client->sess.admin >= g_adminspec.integer && g_compMode.integer == 0){
+		client->sess.adminspec = qtrue;}
+	/*if(client->sess.admin == 4 && g_sadminspec.integer == 1)
+		client->sess.adminspec = qtrue;*/
+
+
 #ifdef _BOE_DBG
 	if (strstr(boe_log.string, "1"))
 		G_LogPrintf("7e\n");

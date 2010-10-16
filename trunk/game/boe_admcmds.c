@@ -880,6 +880,9 @@ void Boe_Add_bAdmin_f(int argNum, gentity_t *adm, qboolean shortCmd)
 		Boe_adminLog (va("%s - ADD B-ADMIN: %s", "RCON", g_entities[idnum].client->pers.cleanName  )) ;
 		}
 	}
+	// Boe!Man 10/16/10: Is the Admin level allowed to spec the opposite team?
+	if (g_adminspec.integer <= 2)
+		g_entities[idnum].client->sess.adminspec = qtrue;
 }
 
 /*
@@ -922,6 +925,9 @@ void Boe_Add_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd)
 		Boe_adminLog (va("%s - ADD ADMIN: %s", "RCON", g_entities[idnum].client->pers.cleanName  )) ;
 		}
 	}
+	// Boe!Man 10/16/10: Is the Admin level allowed to spec the opposite team?
+	if (g_adminspec.integer <= 3)
+		g_entities[idnum].client->sess.adminspec = qtrue;
 }
 
 /*
@@ -964,6 +970,10 @@ void Boe_Add_sAdmin_f(int argNum, gentity_t *adm, qboolean shortCmd)
 		Boe_adminLog (va("%s - ADD S-ADMIN: %s", "RCON", g_entities[idnum].client->pers.cleanName  )) ;
 		}
 	}
+
+	// Boe!Man 10/16/10: Is the Admin level allowed to spec the opposite team?
+	if (g_adminspec.integer <= 4)
+		g_entities[idnum].client->sess.adminspec = qtrue;
 }
 		/*
 		if(adm && adm->client)
@@ -1249,6 +1259,10 @@ void Boe_Remove_Admin_f (int argNum, gentity_t *adm, qboolean shortCmd)
 		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s ^7was removed as Admin.\n\"", g_entities[idnum].client->pers.netname));
 		Boe_adminLog (va("%s - REMOVE ADMIN: %s", "RCON", g_entities[idnum].client->pers.cleanName  )) ;
 	}
+
+	// Boe!Man 10/16/10: He's not an Admin anymore so it doesn't matter if he was a B-Admin, Admin or S-Admin: either way he shouldn't be allowed to spec the opposite team.
+	g_entities[idnum].client->sess.adminspec = qfalse;
+
 #ifdef _BOE_DBG
 	if (strstr(boe_log.string, "1"))
 		G_LogPrintf("4e\n");

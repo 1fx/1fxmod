@@ -2964,7 +2964,7 @@ void Cmd_Follow_f( gentity_t *ent )
 // Dissallow following of the enemy if the cvar is set
 	//if ( level.gametypeData->teams && !g_followEnemy.integer && ent->client->sess.team != TEAM_SPECTATOR )
 	if ( level.gametypeData->teams && (!g_followEnemy.integer || g_compMode.integer) &&
-		ent->client->sess.team != TEAM_SPECTATOR && !ent->client->adminspec)
+		ent->client->sess.team != TEAM_SPECTATOR && !ent->client->sess.adminspec)
 	{
 		// Are they on the same team?
 		if ( level.clients[ i ].sess.team != ent->client->sess.team )
@@ -3046,7 +3046,7 @@ void Cmd_FollowCycle_f( gentity_t *ent, int dir )
 			continue;
 		}
 		//Ryan
-		if(g_compMode.integer && !ent->client->adminspec && !ent->client->sess.referee)
+		if(g_compMode.integer && !ent->client->sess.adminspec && !ent->client->sess.referee)
 		{
 			//No enemy following in compmode
 			if(ent->client->sess.team != TEAM_SPECTATOR && level.clients[ clientnum ].sess.team != ent->client->sess.team)
@@ -3077,7 +3077,7 @@ void Cmd_FollowCycle_f( gentity_t *ent, int dir )
 		// Dissallow following of the enemy if the cvar is set
 		//Ryan june 7 2003
 			//if ( level.gametypeData->teams && !g_followEnemy.integer && ent->client->sess.team != TEAM_SPECTATOR )
-		if ( level.gametypeData->teams && !g_followEnemy.integer && ent->client->sess.team != TEAM_SPECTATOR && !ent->client->adminspec)
+		if ( level.gametypeData->teams && !g_followEnemy.integer && ent->client->sess.team != TEAM_SPECTATOR && !ent->client->sess.adminspec)
 		//Ryan
 		{
 			// Are they on the same team?
@@ -5062,9 +5062,9 @@ void Boe_adm_f ( gentity_t *ent )
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   br  broadcast    <message>     ^7[^3Broadcast a message^7]\n\"", g_broadcast.integer));
 		}
 	// temp entry
-	if (adm >= 4 && level == 4){
+	/*if (adm >= 4 && level == 4){
 		trap_SendServerCommand( ent-g_entities, va("print \" [^34^7]       adminspec                  ^7[^3Allows you to spec an enemy player^7]\n\""));
-	}
+	}*/
 	// Boe!Man 9/21/10: End of Loop.
 	}
 	trap_SendServerCommand( ent-g_entities, va("print \"    [^32^7] B-Admin          ^7[^33^7] Admin          ^7[^34^7] S-Admin\n\""));
@@ -5333,7 +5333,7 @@ void Boe_adm_f ( gentity_t *ent )
 		return;
 	}
 	*/
-	if ((!Q_stricmp ( arg1, "adminspec" )) && ent->client->sess.admin >= 4 && g_compMode.integer == 0) {
+	/*if ((!Q_stricmp ( arg1, "adminspec" )) && ent->client->sess.admin >= 4 && g_compMode.integer == 0) {
 		if(ent->client->adminspec == qtrue){
 		ent->client->adminspec = qfalse;
 		}else{
@@ -5342,7 +5342,7 @@ void Boe_adm_f ( gentity_t *ent )
 	}else if ((!Q_stricmp ( arg1, "adminspec" )) && ent->client->sess.admin < 4) {
 		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\"", arg1));
 		return;
-	}else if (!Q_stricmp ( arg1, "unban" ) && ent->client->sess.admin >= g_ban.integer){
+	}else */if (!Q_stricmp ( arg1, "unban" ) && ent->client->sess.admin >= g_ban.integer){
 		trap_Argv( 2, arg2, sizeof( arg2 ) );
 		Boe_Unban(ent, arg2, qfalse);
 		return;

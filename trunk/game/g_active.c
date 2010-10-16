@@ -533,7 +533,7 @@ void SpectatorThink( gentity_t *ent, usercmd_t *ucmd )
 
 			if((counts[TEAM_RED] > 0) || (counts[TEAM_BLUE] > 0) )
 			{
-				if(!client->adminspec && !client->sess.referee && !client->sess.invitedByRed && !client->sess.invitedByBlue) 
+				if(!client->sess.adminspec && !client->sess.referee && !client->sess.invitedByRed && !client->sess.invitedByBlue) 
 				{
 					vec3_t lookdown;
 					VectorSet(lookdown, 90, 0, 0);
@@ -569,7 +569,7 @@ void SpectatorThink( gentity_t *ent, usercmd_t *ucmd )
 	//Ryan
 	else if(level.gametypeData->teams && level.specsLocked && client->sess.team == TEAM_SPECTATOR) 
 	{
-		if(!client->sess.invitedByBlue && !client->sess.invitedByRed && !client->adminspec && !client->sess.referee)
+		if(!client->sess.invitedByBlue && !client->sess.invitedByRed && !client->sess.adminspec && !client->sess.referee)
 		{
 			G_StopFollowing( ent );
 			return;
@@ -584,14 +584,14 @@ void SpectatorThink( gentity_t *ent, usercmd_t *ucmd )
 
 	//Ryan june 7 2003		admins in free spec mode are not forced to follow
 		//if ( client->sess.spectatorState != SPECTATOR_FOLLOW && g_forceFollow.integer )
-	if ( client->ps.pm_type == PM_SPECTATOR && !client->adminspec && client->sess.spectatorState != SPECTATOR_FOLLOW && g_forceFollow.integer )
+	if ( client->ps.pm_type == PM_SPECTATOR && !client->sess.adminspec && client->sess.spectatorState != SPECTATOR_FOLLOW && g_forceFollow.integer )
 	//Ryan
 	{
 		Cmd_FollowCycle_f( ent, 1 );
 	}
 
 	//Ryan
-	else if ( client->ps.pm_type == PM_SPECTATOR && !client->adminspec && client->sess.spectatorState != SPECTATOR_FOLLOW && g_compMode.integer )
+	else if ( client->ps.pm_type == PM_SPECTATOR && !client->sess.adminspec && client->sess.spectatorState != SPECTATOR_FOLLOW && g_compMode.integer )
 	{
 		//always force follow in competiton mode
 		Cmd_FollowCycle_f( ent, 1 ); 
@@ -619,7 +619,7 @@ void SpectatorThink( gentity_t *ent, usercmd_t *ucmd )
 	}
 
 	//Ryan june 7 2003
-	else if (client->adminspec && ucmd->upmove > 0 && (client->ps.pm_flags & PMF_FOLLOW) )
+	else if (client->sess.adminspec && ucmd->upmove > 0 && (client->ps.pm_flags & PMF_FOLLOW) )
 	{
 		G_StopFollowing( ent );
 	}

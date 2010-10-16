@@ -5,10 +5,10 @@
 //==================================================================
 
 // Boe!Man 3/30/10
-#define INF_VERSION_STRING "0.51"
+#define INF_VERSION_STRING "0.52t"
 #define INF_STRING "1fx. Mod"
 #define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod"
-#define INF_VERSION_DATE "10/7/10"
+#define INF_VERSION_DATE "10/16/10"
 
 // Infiltration
 // Developed by: Boe!Man
@@ -303,3 +303,6 @@ extern	vmCvar_t	server_message3;
 extern	vmCvar_t	server_message4;
 extern	vmCvar_t	server_message5;
 extern	vmCvar_t	server_msgDelay;
+
+// Boe!Man 10/16/10
+extern	vmCvar_t	g_adminspec;

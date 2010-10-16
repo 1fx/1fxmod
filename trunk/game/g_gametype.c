@@ -291,7 +291,7 @@ void G_RespawnClients ( qboolean force, team_t team )
 		}
 
 		//Ryan june 7 2003    dont respawn them if they are admins and using the adminspec feature
-		if(ent->client->adminspec && !force)
+		if(ent->client->sess.adminspec && !force)
 		{
 			continue;
 		}

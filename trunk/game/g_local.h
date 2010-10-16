@@ -268,6 +268,9 @@ typedef struct
 	qboolean			clanMember;
 	qboolean			fairplay;
 	char				fpGuid[10];
+
+	// Boe!Man 10/16/10: Adminspec shouldn't be cleared everytime a spawn gets triggered.
+	qboolean			adminspec;
 } clientSession_t;
 
 // Boe!Man 3/30/10
@@ -419,7 +422,8 @@ struct gclient_s
 
 	gentity_t		*siameseTwin;
 
-	qboolean		adminspec;
+	// Boe!Man 10/16/10: We don't want the adminspec boolean to be cleared every spawn (moved to session struct).
+	//qboolean		adminspec;
 	vec3_t			maxSave;
 	vec3_t			minSave;
 	//Ryan

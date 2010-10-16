@@ -175,6 +175,9 @@ vmCvar_t	server_message4;
 vmCvar_t	server_message5;
 vmCvar_t	server_msgDelay;
 
+// Boe!Man 10/16/10
+vmCvar_t	g_adminspec;
+
 #ifdef _BOE_DBG
 vmCvar_t	boe_log;
 #endif
@@ -363,7 +366,6 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_compMode, "g_compMode", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 	{ &g_enableTeamCmds, "g_enableTeamCmds", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 	{ &g_refpassword, "g_refpassword", "none", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
-	// Boe!Man 6/2/10: I set this temporarily to 0.
 	{ &g_checkcountry, "g_checkcountry", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 	{ &g_disablelower, "g_disablelower", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 	{ &g_autoeventeams, "g_autoeventeams", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
@@ -376,6 +378,9 @@ static cvarTable_t gameCvarTable[] =
 	{ &server_message3, "server_message3", "Have fun!", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_message4, "server_message4", "", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_message5, "server_message5", "", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
+
+	// Boe!Man 10/16/10
+	{ &g_adminspec, "g_adminspec", "4", CVAR_ARCHIVE | CVAR_LATCH, 0.0, 0.0, 0,  qfalse },
 
 #ifdef _BOE_DBG
 	// Boe!Man: Debug CVAR.
