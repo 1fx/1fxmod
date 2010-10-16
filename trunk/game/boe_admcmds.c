@@ -770,22 +770,22 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd){
 			column1[z] = test;
 			}
 			column1[spaces] = '\0';
-			trap_SendServerCommand( adm-g_entities, va("print \"%s%s", ip, column1)); // Boe!Man 9/16/10: Print tier 1.
+			//trap_SendServerCommand( adm-g_entities, va("print \"%s%s", ip, column1)); // Boe!Man 9/16/10: Print tier 1.
 			length = strlen(name);
 			spaces = 20-length;
 			for(z=0;z<spaces;z++){
 			column2[z] = test;
 			}
 			column2[spaces] = '\0';
-			trap_SendServerCommand( adm-g_entities, va("print \"%s%s", name, column2)); // Boe!Man 9/16/10: Print tier 2.
+			//trap_SendServerCommand( adm-g_entities, va("print \"%s%s", name, column2)); // Boe!Man 9/16/10: Print tier 2.
 			length = strlen(reason);
 			spaces = 19-length;
 			for(z=0;z<spaces;z++){
 			column3[z] = test;
 			}
 			column3[spaces] = '\0';
-			trap_SendServerCommand( adm-g_entities, va("print \"%s%s", reason, column3)); // Boe!Man 9/16/10: Print tier 3.
-			trap_SendServerCommand( adm-g_entities, va("print \"%s\n", by)); // Boe!Man 9/16/10: Print tier 4.
+			trap_SendServerCommand( adm-g_entities, va("print \"%s%s%s%s%s%s%s", ip, column1, name, column2, reason, column3, by)); // Boe!Man 9/16/10: Print ban.
+			//trap_SendServerCommand( adm-g_entities, va("print \"%s\n", by)); // Boe!Man 9/16/10: Print tier 4.
 			//trap_SendServerCommand( adm-g_entities, va("print \"%s\n%s\n%s\n%s\n\"", ip, name, reason, by)); // print result
 		}
 		group = trap_GPG_GetNext(group); // switch to next group and loop again
