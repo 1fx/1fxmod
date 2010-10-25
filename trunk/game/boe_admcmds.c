@@ -765,6 +765,10 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd){
 		if(Boe_NameListCheck (adm->s.number, ip, g_banlist.string, NULL, qtrue, qfalse, qfalse, qfalse)){
 			// exists so print
 			length = strlen(ip);
+			if(length > 15){
+				ip[15] = '\0';
+				length = 15;
+			}
 			spaces = 16-length;
 			for(z=0;z<spaces;z++){
 			column1[z] = test;
@@ -772,6 +776,10 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd){
 			column1[spaces] = '\0';
 			//trap_SendServerCommand( adm-g_entities, va("print \"%s%s", ip, column1)); // Boe!Man 9/16/10: Print tier 1.
 			length = strlen(name);
+			if(length > 19){
+				name[19] = '\0';
+				length = 19;
+			}
 			spaces = 20-length;
 			for(z=0;z<spaces;z++){
 			column2[z] = test;
@@ -779,12 +787,20 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd){
 			column2[spaces] = '\0';
 			//trap_SendServerCommand( adm-g_entities, va("print \"%s%s", name, column2)); // Boe!Man 9/16/10: Print tier 2.
 			length = strlen(reason);
+			if(length > 18){
+				reason[18] = '\0';
+				length = 18;
+			}
 			spaces = 19-length;
 			for(z=0;z<spaces;z++){
 			column3[z] = test;
 			}
 			column3[spaces] = '\0';
-			trap_SendServerCommand( adm-g_entities, va("print \"%s%s%s%s%s%s%s", ip, column1, name, column2, reason, column3, by)); // Boe!Man 9/16/10: Print ban.
+			length = strlen(by);
+			if(length > 20){
+				by[20] = '\0';
+			}
+			trap_SendServerCommand( adm-g_entities, va("print \"%s%s%s%s%s%s%s\n", ip, column1, name, column2, reason, column3, by)); // Boe!Man 9/16/10: Print ban.
 			//trap_SendServerCommand( adm-g_entities, va("print \"%s\n", by)); // Boe!Man 9/16/10: Print tier 4.
 			//trap_SendServerCommand( adm-g_entities, va("print \"%s\n%s\n%s\n%s\n\"", ip, name, reason, by)); // print result
 		}
