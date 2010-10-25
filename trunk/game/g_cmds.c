@@ -5061,6 +5061,9 @@ void Boe_adm_f ( gentity_t *ent )
 	if (adm >= g_broadcast.integer && g_broadcast.integer != 5 && g_broadcast.integer == level){
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   br  broadcast    <message>     ^7[^3Broadcast a message^7]\n\"", g_broadcast.integer));
 		}
+	if (adm >= g_forceteam.integer && g_forceteam.integer != 5 && g_forceteam.integer == level){
+		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   ft  forceteam    <team>        ^7[^3Force a player to join a team^7]\n\"", g_forceteam.integer));
+		}
 	// temp entry
 	/*if (adm >= 4 && level == 4){
 		trap_SendServerCommand( ent-g_entities, va("print \" [^34^7]       adminspec                  ^7[^3Allows you to spec an enemy player^7]\n\""));

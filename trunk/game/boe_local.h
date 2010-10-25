@@ -219,7 +219,7 @@ void	HENK_CHECKFP(gentity_t *ent);
 
 void	Boe_Players (gentity_t *ent);
 
-void	Boe_Print_File (gentity_t *ent, char *file);
+void	Boe_Print_File (gentity_t *ent, char *file, qboolean clonecheckstats);
 
 void	Boe_Stats( gentity_t *ent );
 
@@ -246,7 +246,7 @@ extern	vmCvar_t	Clan;
 extern	vmCvar_t	ClanURL;
 
 // Henk 19/04/10 -> Fix all prototypes warning(Yes im bored)
-int Boe_NameListCheck (int num, const char *name, const char *file, gentity_t *ent, qboolean banCheck, qboolean admCheck, qboolean subnetCheck, qboolean scoreCheck);
+int Boe_NameListCheck (int num, const char *name, const char *file, gentity_t *ent, qboolean banCheck, qboolean admCheck, qboolean subnetCheck, qboolean scoreCheck, qboolean cloneCheck);
 void G_UpdateOutfitting ( int clientNum );
 void G_DropGametypeItems ( gentity_t* self, int delayPickup );
 int trap_RealTime( qtime_t *qtime );

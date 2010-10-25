@@ -1058,13 +1058,15 @@ Boe_Print_File
 ==============
 */
 
-void Boe_Print_File (gentity_t *ent, char *file)
+void Boe_Print_File (gentity_t *ent, char *file, qboolean clonecheckstats)
 {
 	int             len = 0;
+	int				i, j, x, y, z;
 	fileHandle_t	f;
 	char            buf[15000] = "\0";
 	char			packet[512];
 	char			*bufP = buf;
+	char			packet2[512];
 
 	len = trap_FS_FOpenFile( file, &f, FS_READ_TEXT);
 
@@ -1099,11 +1101,46 @@ void Boe_Print_File (gentity_t *ent, char *file)
 	buf[len] = '\0';
 	trap_FS_FCloseFile( f );
 
+	if(clonecheckstats == qfalse){
 	while(bufP <= &buf[len + 500])
 	{
 		Q_strncpyz(packet, bufP, 501);
 		trap_SendServerCommand( ent-g_entities, va("print \"%s\"", packet));
 		bufP += 500;
+	}
+	// Boe!Man 10/25/10: If clonecheckstatus is true we loop through the aliases progress for /stats.
+	}else{
+	while(bufP <= &buf[len + 500])
+	{
+		Q_strncpyz(packet, bufP, 501);
+		j = strlen(packet);
+		x = 0;
+		y = 0;
+		clonecheckstats = qfalse;
+		if (j != 0){
+		for(i = 0; i<=j; i++){
+			if(packet[i] == '\n'){
+				if(clonecheckstats == qfalse){
+					trap_SendServerCommand( ent-g_entities, va("print \"%s\"", packet2));
+					clonecheckstats = qtrue;
+				}
+				else{
+					trap_SendServerCommand( ent-g_entities, va("print \"\n              %s\"", packet2));
+				}
+				z = strlen(packet2);
+				for(y = 0; y < z; y++){ 
+					packet2[y] = '\0';
+					x = 0;
+				}
+			}
+			else{
+					packet2[x] = packet[i];
+					x += 1;
+			}
+		}
+		}
+		bufP += 500;
+	}
 	}
 	return;
 }
@@ -1133,6 +1170,7 @@ void Boe_Stats ( gentity_t *ent )
 	char		*fps;
 	qboolean	devmode = qfalse;
 	float		accuracy = 0;
+	char		*clonecheckfile;
 
 	trap_Argv( 1, arg1, sizeof( arg1 ) );  // Boe!Man 2/21/10: Getting the client ID.
 
@@ -1205,8 +1243,11 @@ void Boe_Stats ( gentity_t *ent )
 	// Boe!Man 2/21/10: Print the stuff.
 	// Boe!Man 6/2/10: Tier 0: Header - Start.
 	trap_SendServerCommand( ent-g_entities, va("print \"\n^3Player statistics for ^7%s\n\"", player));
-	trap_SendServerCommand( ent-g_entities, va("print \"-------------------------------------------------------\n"));		
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Admin^7]       %s\n", admin));
+	trap_SendServerCommand( ent-g_entities, va("print \"-------------------------------------------------------\n"));
+	trap_SendServerCommand( ent-g_entities, va("print \"[^3Aliases^7]     "));
+	clonecheckfile = va("users/clonechecks/%s.ip", ip);
+	Boe_Print_File(ent, clonecheckfile, qtrue);
+	trap_SendServerCommand( ent-g_entities, va("print \"\n[^3Admin^7]       %s\n", admin));
 	if (devmode == qtrue)
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Developer^7]   Yes\n"));
 	else

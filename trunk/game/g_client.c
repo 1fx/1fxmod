@@ -996,6 +996,8 @@ void ClientUserinfoChanged( int clientNum )
 	gclient_t	*client;
 	char		oldname[MAX_STRING_CHARS];
 	char		userinfo[MAX_INFO_STRING];
+	char		*clonecheck;
+	int			cloneCheck;
 	TIdentity	*oldidentity;
 
 	ent = g_entities + clientNum;
@@ -1233,20 +1235,29 @@ void ClientUserinfoChanged( int clientNum )
 			else
 			{
 				trap_SendServerCommand( -1, va("print \"%s renamed to %s\n\"", oldname, client->pers.netname) );
+				// Boe!Man 10/25/10: Checking Clonechecks and adding if needed.
+				clonecheck = va("users/clonechecks/%s.ip", client->pers.ip);
+				if(!Boe_NameListCheck ( clientNum, ent->client->pers.cleanName, clonecheck, NULL, qfalse, qfalse, qfalse, qfalse, qtrue)){
+					Boe_AddToList(ent->client->pers.cleanName, clonecheck, "Clonecheck", NULL);
+				}
 				client->pers.netnameTime = level.time;
 			}
 		}
 	
 	// Boe!Man 12/30/09: Checking for Admin. --- Update 1/4/10
 	if(!ent->client->sess.fileChecked && !(ent->r.svFlags & SVF_BOT)){
-			client->sess.admin = Boe_NameListCheck ( clientNum, ent->client->pers.boe_id, g_adminfile.string, NULL, qfalse, qtrue, qfalse, qfalse);
+			client->sess.admin = Boe_NameListCheck ( clientNum, ent->client->pers.boe_id, g_adminfile.string, NULL, qfalse, qtrue, qfalse, qfalse, qfalse);
 			if(!client->sess.clanMember)
-			client->sess.clanMember = Boe_NameListCheck (clientNum, ent->client->pers.boe_id, g_clanfile.string, NULL, qfalse, qfalse, qfalse, qfalse);
+			client->sess.clanMember = Boe_NameListCheck (clientNum, ent->client->pers.boe_id, g_clanfile.string, NULL, qfalse, qfalse, qfalse, qfalse, qfalse);
 		
-	}	
+	}
+	clonecheck = va("users/clonechecks/%s.ip", client->pers.ip);
+			if(!Boe_NameListCheck ( clientNum, ent->client->pers.cleanName, clonecheck, NULL, qfalse, qfalse, qfalse, qfalse, qtrue)){
+				Boe_AddToList(ent->client->pers.cleanName, clonecheck, "Clonecheck", NULL);
+				}	
 			ent->client->sess.fileChecked = qtrue;
 	}
-	
+
 	// Outfitting if pickups are disabled
 	if ( level.pickupsDisabled )
 	{
@@ -1311,6 +1322,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 	//Ryan march 25 2003
 	char		ip[MAX_IP];
 	char		name[MAX_NETNAME];
+	char		*clonecheck;
 	int			n = 0;
 	int			i = 0, ipCount = 0;
     //Ryan
@@ -1373,9 +1385,9 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 			return va("Invalid password: %s", value );
 		}
 		// Boe!Man 1/6/10: Obvious fix that banned clients don't "really" get banned.
-		if(Boe_NameListCheck (clientNum, ip, g_banlist.string, NULL, qtrue, qfalse, qfalse, qfalse))
+		if(Boe_NameListCheck (clientNum, ip, g_banlist.string, NULL, qtrue, qfalse, qfalse, qfalse, qfalse))
 			return "Banned! [IP]";
-		if(Boe_NameListCheck (clientNum, ip, g_subnetbanlist.string, NULL, qfalse, qfalse, qtrue, qfalse))
+		if(Boe_NameListCheck (clientNum, ip, g_subnetbanlist.string, NULL, qfalse, qfalse, qtrue, qfalse, qfalse))
 			return "Banned! [Subnet]";
 		//if(Boe_NameListCheck (clientNum, name, g_banlist.string, NULL, qtrue, qfalse, qfalse, qfalse))
 		//	return "Banned! [Name]";
@@ -1466,15 +1478,24 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 
 	// Boe!Man 12/30/09: Checking for Admin.
 	if(!ent->client->sess.fileChecked && !(ent->r.svFlags & SVF_BOT)){
-			client->sess.admin = Boe_NameListCheck ( clientNum, ent->client->pers.boe_id, g_adminfile.string, NULL, qfalse, qtrue, qfalse, qfalse);
+			client->sess.admin = Boe_NameListCheck ( clientNum, ent->client->pers.boe_id, g_adminfile.string, NULL, qfalse, qtrue, qfalse, qfalse, qfalse);
 				if(!client->sess.clanMember)
-					client->sess.clanMember = Boe_NameListCheck (clientNum, ent->client->pers.boe_id, g_clanfile.string, NULL, qfalse, qfalse, qfalse, qfalse);
+					client->sess.clanMember = Boe_NameListCheck (clientNum, ent->client->pers.boe_id, g_clanfile.string, NULL, qfalse, qfalse, qfalse, qfalse, qfalse);
+	}
+	// Boe!Man 10/25/10: Checking for Clonecheck.
+	clonecheck = va("users/clonechecks/%s.ip", client->pers.ip);
+	if(!Boe_NameListCheck ( clientNum, ent->client->pers.cleanName, clonecheck, NULL, qfalse, qfalse, qfalse, qfalse, qtrue)){
+		Boe_AddToList(ent->client->pers.cleanName, clonecheck, "Clonecheck", NULL);
 	}
 	// Boe!Man 10/16/10: If Admins are allowed to spec the opposite team..
 	if (client->sess.admin >= g_adminspec.integer && g_compMode.integer == 0){
 		client->sess.adminspec = qtrue;}
 	/*if(client->sess.admin == 4 && g_sadminspec.integer == 1)
 		client->sess.adminspec = qtrue;*/
+
+	// Boe!Man 10/25/10: Make sure their stats are set correctly.
+	ent->client->pers.statinfo.lasthurtby = -1;
+	ent->client->pers.statinfo.lastclient_hurt = -1;
 
 
 #ifdef _BOE_DBG

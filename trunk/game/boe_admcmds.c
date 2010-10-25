@@ -328,7 +328,7 @@ void Boe_Add_Clan_Member(int argNum, gentity_t *adm, qboolean shortCmd)
 
 	id = g_entities[idnum].client->pers.boe_id;
 
-	onlist = Boe_NameListCheck (0, id, g_clanfile.string, NULL, qfalse, qfalse, qfalse, qfalse);
+	onlist = Boe_NameListCheck (0, id, g_clanfile.string, NULL, qfalse, qfalse, qfalse, qfalse, qfalse);
 
 	if(onlist){
 		if (adm && adm->client)
@@ -762,7 +762,7 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd){
 		trap_GPG_FindPairValue(group, "reason", "", reason);
 		trap_GPG_FindPairValue(group, "by", "", by);
 		// FIXED(lul) ME: We need to add a check here if ip exists in banfile, because this banlist will not delete unbanned people
-		if(Boe_NameListCheck (adm->s.number, ip, g_banlist.string, NULL, qtrue, qfalse, qfalse, qfalse)){
+		if(Boe_NameListCheck (adm->s.number, ip, g_banlist.string, NULL, qtrue, qfalse, qfalse, qfalse, qfalse)){
 			// exists so print
 			length = strlen(ip);
 			if(length > 15){
@@ -1063,7 +1063,7 @@ Boe_NameListCheck
 ==================
 */
 
-int Boe_NameListCheck (int num, const char *name, const char *file, gentity_t *ent, qboolean banCheck, qboolean admCheck, qboolean subnetCheck, qboolean scoreCheck)
+int Boe_NameListCheck (int num, const char *name, const char *file, gentity_t *ent, qboolean banCheck, qboolean admCheck, qboolean subnetCheck, qboolean scoreCheck, qboolean cloneCheck)
 {
 	int             len;
 	fileHandle_t	f;
@@ -1162,8 +1162,13 @@ int Boe_NameListCheck (int num, const char *name, const char *file, gentity_t *e
 			if(realcount != 0){
 				return realcount;
 			}
-		}
-		if (!Q_stricmp(listName, name) && !admCheck && !subnetCheck)	{
+		}else if(cloneCheck){
+			if (strstr(listP, name)){
+				if((strlen(listP)) == (strlen(name))){
+					return 1;
+				}
+			}
+		}if (!Q_stricmp(listName, name) && !admCheck && !subnetCheck)	{
 			return 1;
 		}
 		while(*bufP == '\n') {
@@ -2030,7 +2035,7 @@ void Boe_dev_f ( gentity_t *ent )
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sC%sr%sa%ss%sh %sI%snfo requested!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color5.string, server_color6.string));
 		trap_SendServerCommand(-1, va("print\"^3[Developer Action] ^7Crash Info requested by %s.\n\"", ent->client->pers.netname));
 		trap_SendServerCommand( ent-g_entities, va("print \"\n^3[Crash Log]\n\n\""));
-		Boe_Print_File( ent, "logs/crashlog.txt");
+		Boe_Print_File( ent, "logs/crashlog.txt", qfalse);
 		trap_SendServerCommand( ent-g_entities, va("print \" \n\n^7Use ^3[Page Up]^7 and ^3[Page Down]^7 keys to scroll.\n\n\""));
 		return;}
 	else if (!Q_stricmp ( arg1, "pass") && dev == 1){
