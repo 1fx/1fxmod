@@ -233,6 +233,79 @@ void SP_misc_bsp(gentity_t *ent)
 	float	newAngle;
 	int		tempint;
 
+	G_SpawnFloat( "angles", "0", &newAngle );
+	if (newAngle != 0.0)
+	{
+		ent->s.angles[0] = newAngle;
+		ent->s.angles[1] = newAngle;
+		ent->s.angles[2] = newAngle;
+	}
+	
+	G_SpawnString("bspmodel", "", &out);
+
+	//ent->s.eFlags = EF_PERMANENT; //EF_TELEPORT_BIT;
+
+	// Mainly for debugging
+	G_SpawnInt( "spacing", "0", &tempint);
+	ent->s.time2 = tempint;
+	G_SpawnInt( "flatten", "0", &tempint);
+	ent->s.time = tempint;
+
+	Com_sprintf(temp, MAX_QPATH, "#%s", out);
+	trap_SetBrushModel( ent, temp );  // SV_SetBrushModel -- sets mins and maxs
+	G_BSPIndex(temp);
+
+	level.mNumBSPInstances++;
+	Com_sprintf(temp, MAX_QPATH, "%d-", level.mNumBSPInstances);
+	VectorCopy(ent->s.origin, level.mOriginAdjust);
+	level.mRotationAdjust = ent->s.angles[1];
+	level.mTargetAdjust = temp;
+	level.hasBspInstances = qtrue;
+	level.mBSPInstanceDepth++;
+	G_SpawnString("filter", "", &out);
+	strcpy(level.mFilter, out);
+	G_SpawnString("teamfilter", "", &out);
+	strcpy(level.mTeamFilter, out);
+
+	VectorCopy( ent->s.origin, ent->s.pos.trBase );
+	VectorCopy( ent->s.origin, ent->r.currentOrigin );
+	VectorCopy( ent->s.angles, ent->s.apos.trBase );
+	VectorCopy( ent->s.angles, ent->r.currentAngles );
+
+	ent->s.eType = ET_MOVER;
+	///ent->s.eType = ET_WALL;
+
+	trap_LinkEntity (ent);
+
+	trap_SetActiveSubBSP(ent->s.modelindex);
+	G_SpawnEntitiesFromString(qtrue);
+	trap_SetActiveSubBSP(-1);
+
+	level.mBSPInstanceDepth--;
+	level.mFilter[0] = level.mTeamFilter[0] = 0;
+
+	if ( g_debugRMG.integer )
+	{
+		G_SpawnDebugCylinder ( ent->s.origin, ent->s.time2, &g_entities[0], 2000, COLOR_WHITE );
+
+		if ( ent->s.time )
+		{
+			G_SpawnDebugCylinder ( ent->s.origin, ent->s.time, &g_entities[0], 2000, COLOR_RED );
+		}
+	}
+}
+
+// ORIGINAL DATA BELOW 
+/*QUAKED misc_bsp (1 0 0) (-16 -16 -16) (16 16 16)
+"bspmodel"		arbitrary .bsp file to display
+*/
+/*void SP_misc_bsp(gentity_t *ent) 
+{
+	char	temp[MAX_QPATH];
+	char	*out;
+	float	newAngle;
+	int		tempint;
+
 	G_SpawnFloat( "angle", "0", &newAngle );
 	if (newAngle != 0.0)
 	{
