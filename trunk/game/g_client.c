@@ -1251,10 +1251,10 @@ void ClientUserinfoChanged( int clientNum )
 			client->sess.clanMember = Boe_NameListCheck (clientNum, ent->client->pers.boe_id, g_clanfile.string, NULL, qfalse, qfalse, qfalse, qfalse, qfalse);
 		
 	}
-	clonecheck = va("users/clonechecks/%s.ip", client->pers.ip);
+			clonecheck = va("users/clonechecks/%s.ip", client->pers.ip);
 			if(!Boe_NameListCheck ( clientNum, ent->client->pers.cleanName, clonecheck, NULL, qfalse, qfalse, qfalse, qfalse, qtrue)){
 				Boe_AddToList(ent->client->pers.cleanName, clonecheck, "Clonecheck", NULL);
-				}	
+			}	
 			ent->client->sess.fileChecked = qtrue;
 	}
 
