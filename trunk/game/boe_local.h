@@ -16,6 +16,48 @@
 // Modname: 1fx. Infiltration
 // Project started: 3/30/10
 //
+// --- VERSION LOG BELOW
+//
+// Version		Status of Release				Date
+// ----------------------------------------------------------------
+// 0.01			Alpha							3/30/10
+// 0.02			Alpha							3/31/10
+// 0.05			Beta							4/4/10
+// 0.06			Beta							4/6/10
+// 0.10			Beta							4/7/10
+// 0.11a		1st Beta						4/8/10
+// 0.11b		2nd Beta						4/8/10
+// 0.15a		Release Candidate				4/12/10
+// 0.15b		Release							4/14/10
+// 0.16			Beta							4/15/10
+// 0.17			Beta							4/16/10
+// 0.18			Beta							4/17/10
+// 0.19			Beta							4/18/10
+// 0.20			Release							4/20/10
+// 0.21			Release							4/22/10
+// 0.22			Release							4/23/10
+// 0.25a		Release							5/3/10
+// 0.25b		Release							5/3/10
+// 0.30t		Beta							5/7/10
+// 0.30			Release							6/2/10
+// 0.31			Release							6/3/10
+// 0.40t		Beta							6/11/10
+// 0.40t		Release Candidate				7/24/10
+// 0.40			Release							8/2/10
+// 0.41t		Beta							8/22/10
+// 0.41			Release							8/25/10
+// 0.42t		Beta							9/1/10
+// 0.42			Release							9/3/10
+// 0.50t		Beta							9/9/10
+// 0.50			Release							9/17/10
+// 0.51t		Alpha							9/18/10
+// 0.51t		Beta							9/19/10
+// 0.51t		1st Release Candidate			9/26/10
+// 0.51t		2nd Release Candidate			9/30/10
+// 0.51			Release							10/7/10
+// 0.52t		Beta							10/16/10
+// 0.52			Release							10/25/10
+
 //===================================================================
 
 /*
