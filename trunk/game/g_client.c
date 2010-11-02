@@ -1258,6 +1258,11 @@ void ClientUserinfoChanged( int clientNum )
 			ent->client->sess.fileChecked = qtrue;
 	}
 
+	// Boe!Man 10/16/10: If Admins are allowed to spec the opposite team..
+	if (client->sess.admin >= g_adminspec.integer && g_compMode.integer == 0){
+		client->sess.adminspec = qtrue;
+	}
+
 	// Outfitting if pickups are disabled
 	if ( level.pickupsDisabled )
 	{

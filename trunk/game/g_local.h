@@ -594,8 +594,14 @@ typedef struct
 	int			lastAwardSent;
 
 	// Boe!Man 6/2/10
-	int				serverMsg;
-	int				serverMsgCount;
+	int			serverMsg;
+	int			serverMsgCount;
+
+	// Boe!Man 11/2/10
+	qboolean	mapSwitch;
+	int			mapAction;
+	int			mapSwitchCount;
+	char		mapSwitchName[64];
 
 } level_locals_t;
 

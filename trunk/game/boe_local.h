@@ -5,13 +5,13 @@
 //==================================================================
 
 // Boe!Man 3/30/10
-#define INF_VERSION_STRING "0.52"
+#define INF_VERSION_STRING "0.53"
 #define INF_STRING "1fx. Mod"
 #define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod"
-#define INF_VERSION_DATE "10/25/10"
+#define INF_VERSION_DATE "11/2/10"
 
-// Infiltration
-// Developed by: Boe!Man
+// 1fx. Mod
+// Developed by: Boe!Man & Henkie
 // Codename: BoeMODV2
 // Modname: 1fx. Infiltration
 // Project started: 3/30/10
@@ -57,6 +57,7 @@
 // 0.51			Release							10/7/10
 // 0.52t		Beta							10/16/10
 // 0.52			Release							10/25/10
+// 0.53			Release							11/2/10
 
 //===================================================================
 

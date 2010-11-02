@@ -2141,14 +2141,45 @@ void G_RunFrame( int levelTime )
 	if ( server_enableServerMsgs.integer && level.time > level.serverMsg && (level.time - level.startTime >= 20000))
 		Boe_serverMsg();
 
-	// Boe!Man 8/25/10: Auto restart after 90000000 milliseconds, or 1500 minutes with an empty server. This ensures no crashes.
+	// Boe!Man 8/25/10: Auto restart after 60000000 milliseconds, or 1000 minutes with an empty server. This ensures no crashes.
 	// FIX ME (Prio low): Bots aren't supported as of right now.
-	if ( level.time - level.startTime > 90000000 && level.numConnectedClients == 0){
+	if ( level.time - level.startTime >= 60000000 && level.numConnectedClients == 0){
 		#ifdef _BOE_DBG
 			if (strstr(boe_log.string, "1"))
 				G_LogPrintf("2\n");
 		#endif
 		trap_SendConsoleCommand( EXEC_APPEND, va("quit\n"));}
+
+	// Boe!Man 11/2/10: New Map Switch/Restart system.
+	// FIX ME (Prio low): Optimize for faster CPU calc. in the future.
+	if (level.mapSwitch == qtrue /* && level.mapSwitchCount == level.time */){
+		if(level.mapAction == 1){
+			if(level.time == level.mapSwitchCount + 1000){
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp %sr%se%sstart in 4!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));}
+			else if(level.time == level.mapSwitchCount + 2000){
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp %sr%se%sstart in 3!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));}
+			else if(level.time == level.mapSwitchCount + 3000){
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp %sr%se%sstart in 2!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));}
+			else if(level.time == level.mapSwitchCount + 4000){
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp %sr%se%sstart in 1!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));}
+			else if(level.time == level.mapSwitchCount + 5000){
+				trap_SendConsoleCommand( EXEC_APPEND, va("map_restart 0\n"));
+			}
+		}
+		else if(level.mapAction == 2){
+			if(level.time == level.mapSwitchCount + 1000){
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp ^7%s in 4!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, level.mapSwitchName));}
+			else if(level.time == level.mapSwitchCount + 2000){
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp ^7%s in 3!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, level.mapSwitchName));}
+			else if(level.time == level.mapSwitchCount + 3000){
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp ^7%s in 2!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, level.mapSwitchName));}
+			else if(level.time == level.mapSwitchCount + 4000){
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp ^7%s in 1!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, level.mapSwitchName));}
+			else if(level.time == level.mapSwitchCount + 5000){
+				trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", level.mapSwitchName));}
+		}
+	}
+
 
 	// Check warmup rules
 	CheckWarmup();

@@ -3686,7 +3686,25 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 				
 				//trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sT%si%sm%se%sl%simit %i!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, number));
 				//trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Timelimit changed to %i by %s.\n\"", number, ent->client->pers.netname));
-				trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", map));
+				// Boe!Man 11/2/10: New Map Switch/Restart system.
+				if(level.mapSwitch == qfalse){
+				level.mapSwitch = qtrue;
+				level.mapAction = 2;
+				level.mapSwitchCount = level.time;
+				strcpy(level.mapSwitchName, map);
+				Boe_GlobalSound (G_SoundIndex("sound/misc/menus/invalid.wav"));
+				trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Map switch to %s by %s.\n\"", map, ent->client->pers.netname));
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp ^7%s in 5!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, map));
+				Boe_adminLog (va("%s - MAP CHANGE TO %s", ent->client->pers.cleanName, map)) ;
+				}else{
+					if(level.mapAction == 1){
+						trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7A map restart is already in progress.\n\""));}
+					else if(level.mapAction == 2){
+						trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7A map switch is already in progress.\n\""));}
+					else{
+						trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7Something appears to be wrong. Please report to a developer using this error code: 2L\n\""));}
+				}
+				//trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", map));
 				G_Say( ent, NULL, mode, p);
 				//Boe_adminLog (va("%s - TIMELIMIT %i", ent->client->pers.cleanName, number)) ;
 			}

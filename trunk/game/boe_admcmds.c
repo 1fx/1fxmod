@@ -274,11 +274,24 @@ Boe_MapRestart
 */
 
 void Boe_MapRestart(int argNum, gentity_t *ent, qboolean shortCmd){
-	trap_SendConsoleCommand( EXEC_APPEND, va("map_restart 5\n"));
-	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp %sr%se%sstart!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+	// Boe!Man 11/2/10: New Map Switch/Restart system.
+	//trap_SendConsoleCommand( EXEC_APPEND, va("map_restart 5\n"));
+	if(level.mapSwitch == qfalse){
+	level.mapSwitch = qtrue;
+	level.mapAction = 1;
+	level.mapSwitchCount = level.time;
+	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp %sr%se%sstart in 5!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 	Boe_GlobalSound (G_SoundIndex("sound/misc/menus/invalid.wav"));
 	trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Map restarted by %s.\n\"", ent->client->pers.netname));
 	Boe_adminLog (va("%s - MAP RESTART", ent->client->pers.cleanName)) ;
+	}else{
+		if(level.mapAction == 1){
+			trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7A map restart is already in progress.\n\""));}
+		else if(level.mapAction == 2){
+			trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7A map switch is already in progress.\n\""));}
+		else{
+			trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7Something appears to be wrong. Please report to an developer using this error code: 2L\n\""));}
+	}
 }
 
 /*
@@ -1386,6 +1399,8 @@ void Boe_Uppercut (int argNum, gentity_t *adm, qboolean shortCmd)
 		ent->client->ps.velocity[2] = 1400;
 	}
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+	// Boe!Man 11/2/10: Added client sound.
+	Boe_ClientSound(ent, G_SoundIndex("sound/weapons/rpg7/fire01.mp3"));
 	
 	if(g_entities[idnum].client->sess.lastIdentityChange)	{
 		status = ".";
