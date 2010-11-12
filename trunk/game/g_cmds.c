@@ -4583,7 +4583,8 @@ qboolean CheckIP(gentity_t *ent){ // Henk Update 12/05/10 -> Lag spike when file
 	GP2 = trap_GP_ParseFile(file, qtrue, qfalse);
 	if (!GP2)
 	{
-		G_LogPrintf("Error in file: \"%s\" or file not found.\n", file);
+		// Boe!Man 11/12/10: Ignore file warnings!
+		//G_LogPrintf("Error in file: \"%s\" or file not found.\n", file);
 		return qfalse;
 	}
 		group = trap_GPG_GetSubGroups(GP2);
@@ -4727,7 +4728,8 @@ void HENK_COUNTRY(gentity_t *ent){
 		GP2 = trap_GP_ParseFile(file, qtrue, qfalse);
 		if (!GP2)
 		{
-			G_LogPrintf("Error in file: \"%s\" or file not found.\n", file);
+			// Boe!Man 11/12/10: Ignore file warnings!
+			//G_LogPrintf("Error in file: \"%s\" or file not found.\n", file);
 		}
 		group = trap_GPG_GetSubGroups(GP2);
 
@@ -4767,7 +4769,8 @@ void HENK_COUNTRY(gentity_t *ent){
 		GP2 = trap_GP_ParseFile(file, qtrue, qfalse);
 		if (!GP2)
 		{
-			G_LogPrintf("Error in file: \"%s\" or file not found.\n", file);
+			// Boe!Man 11/12/10: Ignore file warnings!
+			//G_LogPrintf("Error in file: \"%s\" or file not found.\n", file);
 		}
 		group = trap_GPG_GetSubGroups(GP2);
 		while(group)
