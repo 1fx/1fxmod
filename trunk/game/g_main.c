@@ -186,9 +186,9 @@ static cvarTable_t gameCvarTable[] =
 {
 	// don't override the cheat state set by the system
 	{ &g_cheats, "sv_cheats", "", 0, 0.0, 0.0, 0, qfalse },
-	{ NULL, "^3mod name", INF_STRING, CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse  },
-	{ NULL, "^3mod version", INF_VERSION_STRING, CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse  },
-	{ NULL, "^3mod url", "1fx.uk.to", CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse  },
+	{ NULL, "^3Mod Name", INF_STRING, CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse  },
+	{ NULL, "^3Mod Version", INF_VERSION_STRING, CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse  },
+	{ NULL, "^3Mod URL", "1fx.uk.to", CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse  },
 	{ NULL, "current_gametype", "3", CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qtrue  },
 	{ NULL, "modname", "RPM 2 k 3 v1.71 ^_-^3 V1Servers.com", CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse  },
 
