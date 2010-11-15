@@ -1067,6 +1067,10 @@ void Boe_Print_File (gentity_t *ent, char *file, qboolean clonecheckstats)
 	char			packet[512];
 	char			*bufP = buf;
 	char			packet2[512];
+	// Boe!Man 11/15/10: Needed for aliases.
+	int				aliasCount = 0;
+	int				nameLength;
+	qboolean		anAlias;
 
 	len = trap_FS_FOpenFile( file, &f, FS_READ_TEXT);
 
@@ -1110,22 +1114,52 @@ void Boe_Print_File (gentity_t *ent, char *file, qboolean clonecheckstats)
 	}
 	// Boe!Man 10/25/10: If clonecheckstatus is true we loop through the aliases progress for /stats.
 	}else{
+	nameLength = strlen(ent->client->pers.cleanName);
 	while(bufP <= &buf[len + 500])
 	{
 		Q_strncpyz(packet, bufP, 501);
 		j = strlen(packet);
 		x = 0;
 		y = 0;
-		clonecheckstats = qfalse;
+		clonecheckstats = qfalse; // Boe!Man 10/25/10: Re-use clonecheckstatus to determine wether it's the first run or not.
+		anAlias = qfalse;
 		if (j != 0){
 		for(i = 0; i<=j; i++){
 			if(packet[i] == '\n'){
 				if(clonecheckstats == qfalse){
-					trap_SendServerCommand( ent-g_entities, va("print \"%s\"", packet2));
-					clonecheckstats = qtrue;
+					// Boe!Man 11/15/10: Is the alias string not as long?
+					if(strlen(packet2) != nameLength){
+						trap_SendServerCommand( ent-g_entities, va("print \"%s\"", packet2));
+						clonecheckstats = qtrue;
+						anAlias = qtrue;
+						aliasCount += 1;
+					}
+					// Boe!Man 11/15/10: If it is as long as the cleanName, does it contain the same?
+					else if(strlen(packet2) == nameLength){
+						if(!strstr(ent->client->pers.cleanName, packet2)){
+							trap_SendServerCommand( ent-g_entities, va("print \"%s\"", packet2));
+							clonecheckstats = qtrue;
+							anAlias = qtrue; 
+							aliasCount += 1;
+						}
+					}	
 				}
 				else{
-					trap_SendServerCommand( ent-g_entities, va("print \"\n              %s\"", packet2));
+					// Boe!Man 11/15/10: Is the alias string not as long?
+					if(strlen(packet2) != nameLength){
+						trap_SendServerCommand( ent-g_entities, va("print \"\n              %s\"", packet2));
+						anAlias = qtrue;
+						aliasCount += 1;
+					}
+					// Boe!Man 11/15/10: If it is as long as the cleanName, does it contain the same?
+					else if(strlen(packet2) == nameLength){
+						if(!strstr(ent->client->pers.cleanName, packet2)){
+							trap_SendServerCommand( ent-g_entities, va("print \"\n              %s\"", packet2));
+							anAlias = qtrue; 
+							aliasCount += 1;
+						}
+					}	
+					
 				}
 				z = strlen(packet2);
 				for(y = 0; y < z; y++){ 
@@ -1141,6 +1175,9 @@ void Boe_Print_File (gentity_t *ent, char *file, qboolean clonecheckstats)
 		}
 		bufP += 500;
 	}
+	// Boe!Man 11/15/10: Is there not an Alias found?
+	if(anAlias == qfalse && aliasCount == 0){
+		trap_SendServerCommand( ent-g_entities, va("print \"None\""));}
 	}
 	return;
 }
@@ -1356,18 +1393,18 @@ void Boe_Stats ( gentity_t *ent )
 	else
 	trap_SendServerCommand( ent-g_entities, va("print \"      %d", stat->torsohits));
 
-	if (stat->waisthits > 99)
-	trap_SendServerCommand( ent-g_entities, va("print \"    %d", stat->waisthits));
+	if (stat->waisthits > 99) // Boe!Man 11/15/10: Solve missing space at the eof.
+	trap_SendServerCommand( ent-g_entities, va("print \"    %d\n", stat->waisthits));
 	else if (stat->waisthits > 9)
-	trap_SendServerCommand( ent-g_entities, va("print \"     %d", stat->waisthits));
+	trap_SendServerCommand( ent-g_entities, va("print \"     %d\n", stat->waisthits));
 	else
-	trap_SendServerCommand( ent-g_entities, va("print \"      %d", stat->waisthits));
+	trap_SendServerCommand( ent-g_entities, va("print \"      %d\n", stat->waisthits));
 	// Boe!Man 6/2/10: Tier 2 - End.
 
 	// Boe!Man 6/2/10: Tier 3: Weapon Stats - Start.
 	if(stat->shotcount)
 		{
-		trap_SendServerCommand( ent-g_entities, va("print \"\n\n[^3Weapon^7]      [^3Shot^7] [^3Hits^7] [^3Head^7] [^3Accu^7]\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \"\n[^3Weapon^7]      [^3Shot^7] [^3Hits^7] [^3Head^7] [^3Accu^7]\n\""));
 		for(n = 0; n < WP_NUM_WEAPONS; n++)
 			{
 			if(stat->weapon_shots[ATTACK_NORMAL][n] <= 0 && stat->weapon_shots[ATTACK_ALTERNATE][n] <=0)
