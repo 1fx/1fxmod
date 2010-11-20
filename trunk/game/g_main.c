@@ -1751,11 +1751,6 @@ void CheckExitRules( void )
  	int			i;
 	gclient_t	*cl;
 
-	#ifdef _BOE_DBG
-	if (strstr(boe_log.string, "2"))
-		G_LogPrintf("5s\n");
-	#endif
-
 	// if at the intermission, wait for all non-bots to
 	// signal ready, then go to next level
 	if ( level.intermissiontime )
@@ -1803,6 +1798,10 @@ void CheckExitRules( void )
 	{
 		if ( level.gametypeData->teams )
 		{
+			#ifdef _BOE_DBG
+			if (strstr(boe_log.string, "2"))
+				G_LogPrintf("5\n");
+			#endif
 			if ( level.teamScores[TEAM_RED] >= g_scorelimit.integer ) 
 			{
 				gentity_t* tent;
@@ -1919,12 +1918,7 @@ void CheckExitRules( void )
 				}
 			}
 		}
-
 	}
-	#ifdef _BOE_DBG
-	if (strstr(boe_log.string, "2"))
-		G_LogPrintf("5e\n");
-	#endif
 }
 
 /*

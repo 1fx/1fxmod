@@ -1516,7 +1516,7 @@ void Boe_About( gentity_t *ent )
 
 	#ifdef _BOE_DBG
 	if (strstr(boe_log.string, "2"))
-		G_LogPrintf("5s\n");
+		G_LogPrintf("8s\n");
 	#endif
 	
 	// Boe!Man 3/30/10
