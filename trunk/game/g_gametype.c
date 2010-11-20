@@ -434,6 +434,11 @@ void G_ResetGametype ( void )
 			level.gametypeDelayTime = level.time + g_roundstartdelay.integer * 1000;
 			level.gametypeRoundTime = level.time + (g_roundtimelimit.integer * 60000);
 
+		#ifdef _BOE_DBG
+			if (strstr(boe_log.string, "2"))
+				G_LogPrintf("6s\n");
+		#endif
+
 			if ( level.gametypeDelayTime != level.time )
 			{
 				// Boe!Man 11/19/10: Messages and actions for the two rounds.
@@ -475,16 +480,21 @@ void G_ResetGametype ( void )
 					trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sG%se%st %sr%se%sa%sdy", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 				}
 			}
-#ifdef _BOE_DBG
+			#ifdef _BOE_DBG
+				if (strstr(boe_log.string, "2"))
+					G_LogPrintf("6e\n");
+			#endif
+
+			#ifdef _BOE_DBG
 			if (strstr(boe_log.string, "1"))
 				G_LogPrintf("5s\n");
-#endif
+			#endif
 			if (g_autoeventeams.integer == 1){
 				EvenTeams(NULL, qtrue);}
-#ifdef _BOE_DBG
+			#ifdef _BOE_DBG
 			if (strstr(boe_log.string, "1"))
 				G_LogPrintf("5e\n");
-#endif
+			#endif
 			trap_SetConfigstring ( CS_GAMETYPE_TIMER, va("%i", level.gametypeRoundTime) );
 			break;
 	}

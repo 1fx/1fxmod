@@ -1513,6 +1513,11 @@ void Boe_About( gentity_t *ent )
 	char Clan[64];
 	char ClanURL[64];
 	char Owner[64];
+
+	#ifdef _BOE_DBG
+	if (strstr(boe_log.string, "2"))
+		G_LogPrintf("5s\n");
+	#endif
 	
 	// Boe!Man 3/30/10
 	trap_Cvar_VariableStringBuffer ( "Clan", Clan, MAX_QPATH );
@@ -1573,6 +1578,10 @@ void Boe_About( gentity_t *ent )
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Clan URL^7]            %s\n", ClanURL));
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Hosted by^7]           v1servers.com\n"));
 	trap_SendServerCommand( ent-g_entities, va("print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\""));
+	#ifdef _BOE_DBG
+	if (strstr(boe_log.string, "2"))
+		G_LogPrintf("8e\n");
+	#endif
 }
 
 /*
@@ -1667,10 +1676,10 @@ Boe_serverMsg
 void Boe_serverMsg (void)
 {
 	char	*message;
-#ifdef _BOE_DBG
+	#ifdef _BOE_DBG
 	if (strstr(boe_log.string, "1"))
 		G_LogPrintf("3s\n");
-#endif
+	#endif
 	level.serverMsgCount++;
 
 	switch (level.serverMsgCount){
@@ -1700,10 +1709,10 @@ void Boe_serverMsg (void)
 
 	level.serverMsg = level.time + (server_msgDelay.integer * 1000);
 	trap_SendServerCommand( -1, va("chat -1 \"%sM%se%ss%ss%sa%sge: %s\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, message ) );
-#ifdef _BOE_DBG
+	#ifdef _BOE_DBG
 	if (strstr(boe_log.string, "1"))
 		G_LogPrintf("3e\n");
-#endif
+	#endif
 }
 
 /*
@@ -1715,6 +1724,10 @@ Boe_calcMatchScores
 
 void Boe_calcMatchScores (void)
 {
+	#ifdef _BOE_DBG
+	if (strstr(boe_log.string, "2"))
+		G_LogPrintf("7s\n");
+	#endif
 	if (cm_sr.integer + level.teamScores[TEAM_RED] > cm_sb.integer + level.teamScores[TEAM_BLUE]){
 		if (cm_aswap.integer == 1)
 		trap_SendServerCommand(-1, va("print\"^3[Info] ^7Red team wins the match with %i - %i.\n\"", level.teamScores[TEAM_RED]+cm_sr.integer, level.teamScores[TEAM_BLUE]+cm_sb.integer ));
@@ -1729,4 +1742,8 @@ void Boe_calcMatchScores (void)
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sM%sa%st%sc%sh draw with %i - %i!", level.time + 10000, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, level.teamScores[TEAM_BLUE]+cm_sb.integer, level.teamScores[TEAM_RED]+cm_sr.integer));
 		LogExit("Match draw.");
 	}
+	#ifdef _BOE_DBG
+	if (strstr(boe_log.string, "2"))
+		G_LogPrintf("7e\n");
+	#endif
 }

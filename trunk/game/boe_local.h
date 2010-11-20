@@ -8,7 +8,7 @@
 #define INF_VERSION_STRING "0.54t"
 #define INF_STRING "1fx. Mod"
 #define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod"
-#define INF_VERSION_DATE "11/17/10"
+#define INF_VERSION_DATE "11/21/10"
 
 // 1fx. Mod
 // Developed by: Boe!Man & Henkie
@@ -58,6 +58,7 @@
 // 0.52t		Beta							10/16/10
 // 0.52			Release							10/25/10
 // 0.53			Release							11/2/10
+// 0.54			Release Candidate				11/21/10
 
 //===================================================================
 
@@ -89,6 +90,16 @@ For '1' in the boe_log CVAR:
 8 = ClientBegin.
 9 = player_die.
 
+For '2' in the boe_log CVAR:
+NOTE: This log is primarily based around compMode.
+1 = RPM_Tcmd.
+2 = RPM_TeamInfo.
+3 = G_InitGame (g_compMode check).
+4 = ExitLevel.
+5 = CheckExitRules.
+6 = G_ResetGametype (RT_NONE check).
+7 = Boe_calcMatchScores.
+8 = Boe_About.
 
 */
 

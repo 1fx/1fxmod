@@ -934,6 +934,10 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 
 	// Boe!Man 11/16/10: Scrim settings.
 	if (g_compMode.integer > 0){
+		#ifdef _BOE_DBG
+		if (strstr(boe_log.string, "2"))
+			G_LogPrintf("3s\n");
+		#endif
 		level.compMsgCount = level.time + 6000;
 		// Boe!Man 11/16/10: Scrim already initialized and map restarted? Start the actual scrim.
 		if (cm_enabled.integer == 1){
@@ -953,6 +957,10 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 			trap_Cvar_Set("scorelimit", cm_oldsl.string);
 			trap_Cvar_Set("timelimit", cm_oldtl.string);
 		}
+		#ifdef _BOE_DBG
+		if (strstr(boe_log.string, "2"))
+			G_LogPrintf("3e\n");
+		#endif
 	}
 	
 	//if(Preloaded != 1 && restart == 0){
@@ -1418,14 +1426,28 @@ void ExitLevel (void)
 {
 	int			i;
 	gclient_t	*cl;
+
+	#ifdef _BOE_DBG
+		if (strstr(boe_log.string, "2"))
+			G_LogPrintf("4s\n");
+	#endif
+
 	///Ryan march 21 2004 9:19am
 	if ((!*g_mapcycle.string || !Q_stricmp ( g_mapcycle.string, "none" )))
 	{
 		trap_SendServerCommand( -1, va("cp \"@ \n\""));
 		if (g_compMode.integer > 0 && cm_enabled.integer == 5){
+			#ifdef _BOE_DBG
+			if (strstr(boe_log.string, "2"))
+				G_LogPrintf("4 - 1\n");
+			#endif
 			trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", level.mapname ));
 		}
 		else{
+			#ifdef _BOE_DBG
+			if (strstr(boe_log.string, "2"))
+				G_LogPrintf("4 - 2\n");
+			#endif
 			trap_SendConsoleCommand( EXEC_APPEND, "map_restart 0\n" );
 		}
 		return;
@@ -1464,6 +1486,11 @@ void ExitLevel (void)
 			level.clients[i].pers.connected = CON_CONNECTING;
 		}
 	}
+
+	#ifdef _BOE_DBG
+		if (strstr(boe_log.string, "2"))
+			G_LogPrintf("4e\n");
+	#endif
 
 }
 
@@ -1724,6 +1751,11 @@ void CheckExitRules( void )
  	int			i;
 	gclient_t	*cl;
 
+	#ifdef _BOE_DBG
+	if (strstr(boe_log.string, "2"))
+		G_LogPrintf("5s\n");
+	#endif
+
 	// if at the intermission, wait for all non-bots to
 	// signal ready, then go to next level
 	if ( level.intermissiontime )
@@ -1889,6 +1921,10 @@ void CheckExitRules( void )
 		}
 
 	}
+	#ifdef _BOE_DBG
+	if (strstr(boe_log.string, "2"))
+		G_LogPrintf("5e\n");
+	#endif
 }
 
 /*
