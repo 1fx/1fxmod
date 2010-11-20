@@ -603,6 +603,8 @@ typedef struct
 	int			mapSwitchCount;
 	char		mapSwitchName[64];
 
+	// Boe!Man 11/16/10
+	int			compMsgCount;
 } level_locals_t;
 
 //

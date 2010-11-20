@@ -436,8 +436,44 @@ void G_ResetGametype ( void )
 
 			if ( level.gametypeDelayTime != level.time )
 			{
-				// Get Ready
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sG%se%st %sr%se%sa%sdy", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+				// Boe!Man 11/19/10: Messages and actions for the two rounds.
+				if (g_compMode.integer > 0 && cm_enabled.integer > 1){
+					// Boe!Man 11/19/10: Did the round just start?
+					if (level.teamScores[TEAM_RED] == level.teamScores[TEAM_BLUE] && level.teamScores[TEAM_RED] == 0){
+						// Boe!Man 11/17/10: Lock the teams again because we just performed a map restart.	
+						trap_SendServerCommand(-1, va("print \"^3[Auto Action] ^7Teams have been locked.\n\""));
+						if (cm_slock.integer == 1){
+							level.specsLocked = 1;
+						}
+						level.blueLocked = 1;
+						level.redLocked = 1;
+					}
+					// Boe!Man 11/19/10: Messages for round one.
+					if (cm_enabled.integer <= 3){
+						if (level.teamScores[TEAM_RED] == level.teamScores[TEAM_BLUE]){
+							trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sS%sc%so%sr%se tied with %i - %i!", level.time + 5000, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE]));
+						}
+						else if (level.teamScores[TEAM_RED] > level.teamScores[TEAM_BLUE]){
+							trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7team leads with %i - %i!", level.time + 5000, server_redteamprefix.string, level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE]));}
+						else if (level.teamScores[TEAM_BLUE] > level.teamScores[TEAM_RED]){
+							trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7team leads with %i - %i!", level.time + 5000, server_blueteamprefix.string, level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]));}
+					}
+					// Boe!Man 11/19/10: Messages for round two.
+					else if(cm_enabled.integer > 3){
+						if (level.teamScores[TEAM_RED]+cm_sr.integer == level.teamScores[TEAM_BLUE]+cm_sb.integer){
+							trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sS%sc%so%sr%se tied with %i - %i!", level.time + 5000, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, level.teamScores[TEAM_RED]+cm_sr.integer, level.teamScores[TEAM_BLUE]+cm_sb.integer));
+						}
+						else if (level.teamScores[TEAM_RED]+cm_sr.integer > level.teamScores[TEAM_BLUE]+cm_sb.integer){
+							trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7team leads with %i - %i!", level.time + 5000, server_redteamprefix.string, level.teamScores[TEAM_RED]+cm_sr.integer, level.teamScores[TEAM_BLUE]+cm_sb.integer));}
+						else if (level.teamScores[TEAM_BLUE]+cm_sb.integer > level.teamScores[TEAM_RED]+cm_sr.integer){
+							trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7team leads with %i - %i!", level.time + 5000, server_blueteamprefix.string, level.teamScores[TEAM_BLUE]+cm_sb.integer, level.teamScores[TEAM_RED]+cm_sr.integer));}
+					}
+				}
+				// Boe!Man 11/19/10: Not in compMode. Just switch to the regular Get Ready msg.
+				else{
+					// Get Ready
+					trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sG%se%st %sr%se%sa%sdy", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+				}
 			}
 #ifdef _BOE_DBG
 			if (strstr(boe_log.string, "1"))
@@ -693,7 +729,7 @@ void CheckGametype ( void )
 	// If the level is over then forget checking gametype stuff.
 	//Ryan june 15 2003
 	//if ( level.intermissiontime )
-	if ( level.intermissiontime || level.pause )
+	if ( level.intermissiontime || level.pause || cm_enabled.integer == 3)
 	//End Ryan
 	{
 		return;

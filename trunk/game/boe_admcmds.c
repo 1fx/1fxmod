@@ -49,7 +49,7 @@ void Boe_XMute(int argNum, gentity_t *ent, qboolean shortCmd){
 
 /*
 ==========
-Boe_Compmode
+Boe_CompMode
 ==========
 */
 
@@ -59,12 +59,26 @@ void Boe_CompMode(int argNum, gentity_t *ent, qboolean shotCmd){
 		trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Competition mode enabled by %s.\n\"", ent->client->pers.netname));
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 		trap_Cvar_Set("g_compMode", "1");
+		// Boe!Man 11/16/10: Set the temporary CVARs.
+		trap_Cvar_Set("cm_enabled", "1");
+		trap_Cvar_Set("cm_sl", g_matchScoreLimit.string);
+		trap_Cvar_Set("cm_sl", g_matchTimeLimit.string);
+		trap_Cvar_Set("cm_slock", g_autoLockSpec.string);
+		trap_Cvar_Set("cm_aswap", g_autoSwapTeams.string);
+		trap_Cvar_Set("cm_dsounds", g_matchDisableSounds.string);
+		// Boe!Man 11/16/10: Set the current timelimit in the temp CVARs so we can restore them after the scrim has ended.
+		trap_Cvar_Set("cm_oldsl", g_scorelimit.string);
+		trap_Cvar_Set("cm_oldtl", g_timelimit.string);
+		level.compMsgCount = level.time + 3000;
 		//Boe_adminLog (va("%s - TIMELIMIT %i", ent->client->pers.cleanName, number)) ;
 	}else{
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sC%so%sm%sp%se%stition mode disabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Competition mode disabled by %s.\n\"", ent->client->pers.netname));
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 		trap_Cvar_Set("g_compMode", "0");
+		trap_Cvar_Set("cm_enabled", "0");
+		trap_Cvar_Set("scorelimit", cm_oldsl.string);
+		trap_Cvar_Set("timelimit", cm_oldtl.string);
 	}
 	trap_Cvar_Update(&g_compMode);
 }
@@ -170,9 +184,21 @@ void Boe_TimeLimit(int argNum, gentity_t *ent, qboolean shortCmd){
 	number = GetArgument(argNum);
 	if(number < 0)
 		return;
+	// Boe!Man 11/16/10: Is Competition Mode active so we can update the scrim setting vs. the global one?
+	if (g_compMode.integer > 0){
+		if (cm_enabled.integer == 1){
+			trap_Cvar_Set("cm_tl", va("%i", number));
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Match timelimit changed to %i by %s.\n\"", number, ent->client->pers.netname));
+		}else if(cm_enabled.integer > 1 && cm_enabled.integer < 5){
+			trap_Cvar_Set("cm_tl", va("%i", number));
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Match timelimit changed to %i by %s.\n\"", number, ent->client->pers.netname));
+			trap_Cvar_Set("timelimit", va("%i", number));
+		}
+	}else{
+		trap_SendConsoleCommand( EXEC_APPEND, va("timelimit %i\n", number));
+		trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Timelimit changed to %i by %s.\n\"", number, ent->client->pers.netname));
+	}
 	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sT%si%sm%se%sl%simit %i!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, number));
-	trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Timelimit changed to %i by %s.\n\"", number, ent->client->pers.netname));
-	trap_SendConsoleCommand( EXEC_APPEND, va("timelimit %i\n", number));
 	Boe_adminLog (va("%s - TIMELIMIT %i", ent->client->pers.cleanName, number)) ;
 }
 
@@ -187,8 +213,20 @@ void Boe_ScoreLimit(int argNum, gentity_t *ent, qboolean shortCmd){
 	number = GetArgument(argNum);
 	if(number < 0)
 		return;
-	trap_SendConsoleCommand( EXEC_APPEND, va("scorelimit %i\n", number));
-	trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Scorelimit changed to %i by %s.\n\"", number, ent->client->pers.netname));
+	// Boe!Man 11/16/10: Is Competition Mode active so we can update the scrim setting vs. the global one?
+	if (g_compMode.integer > 0){
+		if (cm_enabled.integer == 1){
+			trap_Cvar_Set("cm_sl", va("%i", number));
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Match scorelimit changed to %i by %s.\n\"", number, ent->client->pers.netname));
+		}else if(cm_enabled.integer > 1 && cm_enabled.integer < 5){
+			trap_Cvar_Set("cm_sl", va("%i", number));
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Match scorelimit changed to %i by %s.\n\"", number, ent->client->pers.netname));
+			trap_Cvar_Set("scorelimit", va("%i", number));
+		}
+	}else{
+		trap_SendConsoleCommand( EXEC_APPEND, va("scorelimit %i\n", number));
+		trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Scorelimit changed to %i by %s.\n\"", number, ent->client->pers.netname));
+	}
 	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sS%sc%so%sr%se%slimit %i!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, number));
 	Boe_adminLog (va("%s - SCORELIMIT %i", ent->client->pers.cleanName, number)) ;
 }
@@ -280,9 +318,19 @@ void Boe_MapRestart(int argNum, gentity_t *ent, qboolean shortCmd){
 	level.mapSwitch = qtrue;
 	level.mapAction = 1;
 	level.mapSwitchCount = level.time;
-	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp %sr%se%sstart in 5!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+	if (g_compMode.integer == 0){
+		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Map restarted by %s.\n\"", ent->client->pers.netname));
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp %sr%se%sstart in 5!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+	}else if (g_compMode.integer > 0 && cm_enabled.integer == 1){
+		trap_SendServerCommand(-1, va("print \"^3[Info] ^7First round started.\n\""));
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sF%si%sr%ss%st round started!", level.time + 3000, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+		level.compMsgCount = -1;
+	}else if (g_compMode.integer > 0 && cm_enabled.integer == 3){
+		trap_SendServerCommand(-1, va("print \"^3[Info] ^7Second round started.\n\""));
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sS%se%sc%so%sn%sd round started!", level.time + 3000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+		level.compMsgCount = -1;
+	}
 	Boe_GlobalSound (G_SoundIndex("sound/misc/menus/invalid.wav"));
-	trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Map restarted by %s.\n\"", ent->client->pers.netname));
 	Boe_adminLog (va("%s - MAP RESTART", ent->client->pers.cleanName)) ;
 	}else{
 		if(level.mapAction == 1){
@@ -2050,7 +2098,7 @@ void Boe_dev_f ( gentity_t *ent )
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sC%sr%sa%ss%sh %sI%snfo requested!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color5.string, server_color6.string));
 		trap_SendServerCommand(-1, va("print\"^3[Developer Action] ^7Crash Info requested by %s.\n\"", ent->client->pers.netname));
 		trap_SendServerCommand( ent-g_entities, va("print \"\n^3[Crash Log]\n\n\""));
-		Boe_Print_File( ent, "logs/crashlog.txt", qfalse);
+		Boe_Print_File( ent, "logs/crashlog.txt", qfalse, 0);
 		trap_SendServerCommand( ent-g_entities, va("print \" \n\n^7Use ^3[Page Up]^7 and ^3[Page Down]^7 keys to scroll.\n\n\""));
 		return;}
 	else if (!Q_stricmp ( arg1, "pass") && dev == 1){
@@ -2179,15 +2227,23 @@ void Boe_SwapTeams(gentity_t *adm)
 		}
 	}
 	///Tell Everyone what happend
-	trap_SendServerCommand( -1, va("cp \"^_**^7Admin Action^_**\n^3Swap Teams\n\"") );
+	//trap_SendServerCommand( -1, va("cp \"^_**^7Admin Action^_**\n^3Swap Teams\n\"") );
+	if(adm && adm->client){
 	Boe_GlobalSound(G_SoundIndex("sound/misc/events/tut_lift02.mp3"));
 	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sS%sw%sa%sp %st%se%sams!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color4.string, server_color5.string, server_color6.string));
 	trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Swap teams by %s.\n\"", adm->client->pers.netname));
-
-	if(adm && adm->client) { // Admin Action
-		Boe_adminLog (va("%s - SwapTeams", adm->client->pers.cleanName )) ;
-	} else{ // Rcon must've done it. ;]
-		Boe_adminLog (va("%s - SwapTeams", "RCON" )) ;
+	Boe_adminLog (va("%s - SwapTeams", adm->client->pers.cleanName )) ;}
+	
+	else{
+	Boe_GlobalSound(G_SoundIndex("sound/misc/events/tut_lift02.mp3"));
+	Boe_adminLog (va("%s - SwapTeams", "RCON" )) ;
+	// Boe!Man 11/17/10: Auto swap in compmode.
+	if (g_compMode.integer > 0 && cm_enabled.integer == 3){
+		trap_SendServerCommand(-1, va("print\"^3[Auto Action] ^7Swap teams.\n\""));
 	}
-	///CalculateRanks();
+	else{
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sS%sw%sa%sp %st%se%sams!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color4.string, server_color5.string, server_color6.string));
+		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Swap teams.\n\""));
+	}
+	}
 }

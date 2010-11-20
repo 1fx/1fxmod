@@ -178,6 +178,23 @@ vmCvar_t	server_msgDelay;
 // Boe!Man 10/16/10
 vmCvar_t	g_adminspec;
 
+// Boe!Man 11/16/10: Default scrim settings.
+vmCvar_t	g_autoLockSpec;
+vmCvar_t	g_autoSwapTeams;
+vmCvar_t	g_matchTimeLimit;
+vmCvar_t	g_matchScoreLimit;
+vmCvar_t	g_matchDisableSounds;
+vmCvar_t	cm_enabled;
+vmCvar_t	cm_sl;
+vmCvar_t	cm_tl;
+vmCvar_t	cm_slock;
+vmCvar_t	cm_aswap;
+vmCvar_t	cm_dsounds;
+vmCvar_t	cm_oldsl;
+vmCvar_t	cm_oldtl;
+vmCvar_t	cm_sr;
+vmCvar_t	cm_sb;
+
 #ifdef _BOE_DBG
 vmCvar_t	boe_log;
 #endif
@@ -355,7 +372,7 @@ static cvarTable_t gameCvarTable[] =
 
 	{ &g_maxIPConnections,			"g_maxIPConnections",	"3",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse},
 	// Boe!Man 3/30/10: This info is used for the /about menu.
-	{ &Owner, "Owner", "v1servers.net", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
+	{ &Owner, "Owner", "Unknown", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &Clan, "Clan", "0", CVAR_ARCHIVE | CVAR_LOCK_RANGE, 0.0, 1.0 },
 	{ &ClanURL, "ClanURL", "0", CVAR_ARCHIVE, 0.0, 1.0 },
 
@@ -364,11 +381,11 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_instagib, "g_instagib", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 	{ &g_weaponModFlags, "g_weaponModFlags", "3", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_allowthirdperson, "g_allowThirdPerson", "1", CVAR_ARCHIVE|CVAR_SERVERINFO, 0.0, 0.0, 0,  qfalse },
-	{ &g_compMode, "g_compMode", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
+	{ &g_compMode, "g_compMode", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_enableTeamCmds, "g_enableTeamCmds", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 	{ &g_refpassword, "g_refpassword", "none", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 	{ &g_checkcountry, "g_checkcountry", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
-	{ &g_disablelower, "g_disablelower", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
+	{ &g_disablelower, "g_disablelower", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_autoeventeams, "g_autoeventeams", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 
 	{ &server_enableServerMsgs, "server_enableServerMsgs", "1", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
@@ -382,6 +399,25 @@ static cvarTable_t gameCvarTable[] =
 
 	// Boe!Man 10/16/10
 	{ &g_adminspec, "g_adminspec", "4", CVAR_ARCHIVE | CVAR_LATCH, 0.0, 0.0, 0,  qfalse },
+
+	// Boe!Man 11/16/10: Default scrim settings.
+	{ &g_autoLockSpec, "g_autoLockSpec", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
+	{ &g_autoSwapTeams, "g_autoSwapTeams", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
+	{ &g_matchTimeLimit, "g_matchTimeLimit", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
+	{ &g_matchScoreLimit, "g_matchScoreLimit", "10", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
+	{ &g_matchDisableSounds, "g_matchDisableSounds", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
+
+	// Boe!Man 11/16/10: For Compmode. As most structures get cleared during shut down, and writing everything to temp CVARs will be more time/resource consuming, we'll simply use a couple of CVARs to update everything.
+	{ &cm_enabled, "cm_enabled", "0", CVAR_ROM|CVAR_INTERNAL, 0.0, 0.0, 0, qfalse  },
+	{ &cm_sl, "cm_sl", "0", CVAR_ROM|CVAR_INTERNAL, 0.0, 0.0, 0, qfalse  },
+	{ &cm_tl, "cm_tl", "0", CVAR_ROM|CVAR_INTERNAL, 0.0, 0.0, 0, qfalse  },
+	{ &cm_slock, "cm_slock", "0", CVAR_ROM|CVAR_INTERNAL, 0.0, 0.0, 0, qfalse  },
+	{ &cm_aswap, "cm_aswap", "0", CVAR_ROM|CVAR_INTERNAL, 0.0, 0.0, 0, qfalse  },
+	{ &cm_dsounds, "cm_dsounds", "0", CVAR_ROM|CVAR_INTERNAL, 0.0, 0.0, 0, qfalse  },
+	{ &cm_oldsl, "cm_oldsl", "0", CVAR_ROM|CVAR_INTERNAL, 0.0, 0.0, 0, qfalse  },
+	{ &cm_oldtl, "cm_oldtl", "0", CVAR_ROM|CVAR_INTERNAL, 0.0, 0.0, 0, qfalse  },
+	{ &cm_sr, "cm_sr", "0", CVAR_ROM|CVAR_INTERNAL, 0.0, 0.0, 0, qfalse  }, // Boe!Man 11/18/10: These two are used to log the 1st round results.
+	{ &cm_sb, "cm_sb", "0", CVAR_ROM|CVAR_INTERNAL, 0.0, 0.0, 0, qfalse  },
 
 #ifdef _BOE_DBG
 	// Boe!Man: Debug CVAR.
@@ -895,6 +931,29 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	InitSpawn(1);
 	InitSpawn(2);
 	}
+
+	// Boe!Man 11/16/10: Scrim settings.
+	if (g_compMode.integer > 0){
+		level.compMsgCount = level.time + 6000;
+		// Boe!Man 11/16/10: Scrim already initialized and map restarted? Start the actual scrim.
+		if (cm_enabled.integer == 1){
+			trap_Cvar_Set("cm_enabled", "2"); // This is set to 2 - The scrim initialized and it just hit the first round.
+			trap_Cvar_Set("scorelimit", cm_sl.string); // Set the scorelimit the same as the previously mentioned scrim setting.
+			trap_Cvar_Set("timelimit", cm_tl.string); // And the timelimit as well..
+		}
+		if (cm_enabled.integer == 3){
+			trap_Cvar_Set("cm_enabled", "4"); // This is set to 4 - The scrim resumed and it just hit the second round.
+			trap_Cvar_Set("scorelimit", cm_sl.string); // Set the scorelimit the same as the previously mentioned scrim setting.
+			trap_Cvar_Set("timelimit", cm_tl.string); // And the timelimit as well..
+		}
+		if (cm_enabled.integer == 2 || cm_enabled.integer == 4 || cm_enabled.integer == 5){ // Boe!Man 11/19/10: This is bad, meaning they warped out of the scrim during a match. 
+																							// Or, in the case of '5', the scrim already ended.
+			trap_Cvar_Set("g_compMode", "0");
+			trap_Cvar_Set("cm_enabled", "0");
+			trap_Cvar_Set("scorelimit", cm_oldsl.string);
+			trap_Cvar_Set("timelimit", cm_oldtl.string);
+		}
+	}
 	
 	//if(Preloaded != 1 && restart == 0){
 	//	G_LogPrintf("Preloading IP2Country database..\n");
@@ -1363,7 +1422,12 @@ void ExitLevel (void)
 	if ((!*g_mapcycle.string || !Q_stricmp ( g_mapcycle.string, "none" )))
 	{
 		trap_SendServerCommand( -1, va("cp \"@ \n\""));
-		trap_SendConsoleCommand( EXEC_APPEND, "map_restart 0\n" );
+		if (g_compMode.integer > 0 && cm_enabled.integer == 5){
+			trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", level.mapname ));
+		}
+		else{
+			trap_SendConsoleCommand( EXEC_APPEND, "map_restart 0\n" );
+		}
 		return;
 	}
 	///Ryan
@@ -1711,11 +1775,42 @@ void CheckExitRules( void )
 			{
 				gentity_t* tent;
 				tent = G_TempEntity( vec3_origin, EV_GAME_OVER );
-				tent->s.eventParm = GAME_OVER_SCORELIMIT;
+				if (cm_enabled.integer < 4){
+					tent->s.eventParm = GAME_OVER_SCORELIMIT;
+				}else{
+					tent->s.eventParm = LEEG;
+				}
 				tent->r.svFlags = SVF_BROADCAST;	
 				tent->s.otherEntityNum = TEAM_RED;
-
-				LogExit( "Red team hit the score limit." );
+				if (g_compMode.integer > 0 && cm_enabled.integer == 2){
+					//LogExit(va("%s ^7team wins 1st round with %i - %i", server_redteamprefix, level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE] ));
+					trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7team wins 1st round with %i - %i!", level.time + 5000, server_redteamprefix.string, level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE]));
+					// Boe!Man 11/18/10: Set the scores right (for logging purposes).
+					if (cm_aswap.integer == 0){
+						trap_Cvar_Set("cm_sr", va("%i", level.teamScores[TEAM_RED]));
+						trap_Cvar_Set("cm_sb", va("%i", level.teamScores[TEAM_BLUE]));
+					}else{
+						// Boe!Man 11/19/10: Log the scores the other way around as the teams will get swapped the next round.
+						trap_Cvar_Set("cm_sr", va("%i", level.teamScores[TEAM_BLUE]));
+						trap_Cvar_Set("cm_sb", va("%i", level.teamScores[TEAM_RED]));
+					}
+					trap_SendServerCommand(-1, va("print\"^3[Info] ^7Red team wins 1st round with %i - %i.\n\"", level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE] ));
+					trap_Cvar_Set("cm_enabled", "3");
+					// Boe!Man 11/17/10: Display the Match screen again, and set the scorelimit temporary to 0 in order to get rid of the "hit the scorelimit" msg.
+					level.compMsgCount = level.time + 2000;
+					g_scorelimit.integer = 0;
+				}else if (g_compMode.integer > 0 && cm_enabled.integer == 4){
+					if (cm_sr.integer > cm_sb.integer){
+						trap_SendServerCommand(-1, va("print\"^3[Info] ^7Red team won 1st round with %i - %i.\n\"", cm_sr.integer, cm_sb.integer));
+					}else{
+						trap_SendServerCommand(-1, va("print\"^3[Info] ^7Blue team won 1st round with %i - %i.\n\"", cm_sb.integer, cm_sr.integer));
+					}
+					trap_SendServerCommand(-1, va("print\"^3[Info] ^7Red team won the 2nd round with %i - %i.\n\"", level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE] ));
+					trap_Cvar_Set("cm_enabled", "5"); // Boe!Man 11/18/10: 5 - Scrim Ended.
+					Boe_calcMatchScores();
+				}else{
+					LogExit( "Red team hit the score limit." );
+				}
 				return;
 			}
 
@@ -1723,11 +1818,42 @@ void CheckExitRules( void )
 			{
 				gentity_t* tent;
 				tent = G_TempEntity( vec3_origin, EV_GAME_OVER );
-				tent->s.eventParm = GAME_OVER_SCORELIMIT;
+				if (cm_enabled.integer < 4){
+					tent->s.eventParm = GAME_OVER_SCORELIMIT;
+				}else{
+					tent->s.eventParm = LEEG;
+				}
 				tent->r.svFlags = SVF_BROADCAST;	
 				tent->s.otherEntityNum = TEAM_BLUE;
-
-				LogExit( "Blue team hit the score limit." );
+				if (g_compMode.integer > 0 && cm_enabled.integer == 2){
+					trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7team wins 1st round with %i - %i!", level.time + 5000, server_blueteamprefix.string, level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]));
+					// Boe!Man 11/18/10: Set the scores right (for logging purposes).
+					if (cm_aswap.integer == 0){
+						trap_Cvar_Set("cm_sr", va("%i", level.teamScores[TEAM_RED]));
+						trap_Cvar_Set("cm_sb", va("%i", level.teamScores[TEAM_BLUE]));
+					}else{
+						// Boe!Man 11/19/10: Log the scores the other way around as the teams will get swapped the next round.
+						trap_Cvar_Set("cm_sr", va("%i", level.teamScores[TEAM_BLUE]));
+						trap_Cvar_Set("cm_sb", va("%i", level.teamScores[TEAM_RED]));
+					}
+					trap_SendServerCommand(-1, va("print\"^3[Info] ^7Blue team wins 1st round with %i - %i.\n\"", level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED] ));
+					trap_Cvar_Set("cm_enabled", "3");
+					// Boe!Man 11/17/10: Display the Match screen again, and set the scorelimit temporary to 0 in order to get rid of the "hit the scorelimit" msg.
+					level.compMsgCount = level.time + 2000;
+					g_scorelimit.integer = 0;
+				}else if (g_compMode.integer > 0 && cm_enabled.integer == 4){
+					if (cm_sr.integer > cm_sb.integer){
+						trap_SendServerCommand(-1, va("print\"^3[Info] ^7Red team won 1st round with %i - %i.\n\"", cm_sr.integer, cm_sb.integer));
+					}else{
+						trap_SendServerCommand(-1, va("print\"^3[Info] ^7Blue team won 1st round with %i - %i.\n\"", cm_sb.integer, cm_sr.integer));
+					}
+					trap_SendServerCommand(-1, va("print\"^3[Info] ^7Blue team won the 2nd round with %i - %i.\n\"", level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED] ));
+					trap_Cvar_Set("cm_enabled", "5"); // Boe!Man 11/18/10: 5 - Scrim Ended.
+					Boe_calcMatchScores();
+				}
+				else{
+					LogExit( "Blue team hit the score limit." );
+				}
 				return;
 			}
 		}
@@ -2152,9 +2278,22 @@ void G_RunFrame( int levelTime )
 		trap_SendConsoleCommand( EXEC_APPEND, va("quit\n"));}
 
 	// Boe!Man 11/2/10: New Map Switch/Restart system.
-	// FIX ME (Prio low): Optimize for faster CPU calc. in the future.
 	if (level.mapSwitch == qtrue /* && level.mapSwitchCount == level.time */){
 		if(level.mapAction == 1){
+			if (g_compMode.integer > 0 && cm_enabled.integer == 1){
+				if(level.time == level.mapSwitchCount + 2000){
+					trap_SendConsoleCommand( EXEC_APPEND, va("map_restart 0\n"));
+				}
+			}
+			else if (g_compMode.integer > 0 && cm_enabled.integer == 3){
+				if(level.time == level.mapSwitchCount + 2000){
+					// Boe!Man 11/17/10: Is auto swap enabled?
+					if (cm_aswap.integer > 0){
+						Boe_SwapTeams(NULL);}
+					trap_SendConsoleCommand( EXEC_APPEND, va("map_restart 0\n"));
+				}
+			}
+			else{
 			if(level.time == level.mapSwitchCount + 1000){
 				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp %sr%se%sstart in 4!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));}
 			else if(level.time == level.mapSwitchCount + 2000){
@@ -2165,6 +2304,7 @@ void G_RunFrame( int levelTime )
 				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp %sr%se%sstart in 1!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));}
 			else if(level.time == level.mapSwitchCount + 5000){
 				trap_SendConsoleCommand( EXEC_APPEND, va("map_restart 0\n"));
+			}
 			}
 		}
 		else if(level.mapAction == 2){
@@ -2178,6 +2318,40 @@ void G_RunFrame( int levelTime )
 				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp ^7%s in 1!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, level.mapSwitchName));}
 			else if(level.time == level.mapSwitchCount + 5000){
 				trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", level.mapSwitchName));}
+		}
+	}
+
+	// Boe!Man 11/16/10: Is compmode enabled?
+	if (g_compMode.integer > 0){
+		// Boe!Man 11/16/10: Keep displaying the scrim settings.
+		if(cm_enabled.integer == 1 && level.compMsgCount == level.time){
+			char *sl;
+			char *as;
+			char *ds;
+			if (strstr(cm_slock.string, "1"))
+				sl = "Yes";
+			else
+				sl = "No";
+			if (strstr(cm_aswap.string, "1"))
+				as = "Yes";
+			else
+				as = "No";
+			if (strstr(cm_dsounds.string, "1"))
+				ds = "Yes";
+			else
+				ds = "No";
+			trap_SendServerCommand(-1, va("cp \"@%sMatch settings\n\n^7[^3Gametype^7]  %s%s %s\n^7[^3Scorelimit^7]  %s%i\n^7[^3Timelimit^7]  %s%i\n^7[^3Specs locked^7] %s%s\n^7[^3Auto swap^7] %s%s\n^7[^3Disable sounds^7] %s%s\n\n%sRestart map to start the first round!\"", 
+				server_color3.string, server_color3.string, level.mapname, g_gametype.string, server_color3.string, cm_sl.integer, server_color3.string, cm_tl.integer, server_color3.string, sl, server_color3.string, as, server_color3.string, ds, server_color3.string));
+			level.compMsgCount = level.time + 3000;
+			}
+		else if(cm_enabled.integer == 3 && level.compMsgCount == level.time){
+			if (level.teamScores[TEAM_RED] > level.teamScores[TEAM_BLUE]){
+				trap_SendServerCommand(-1, va("cp \"@%sFirst round ended!\n\n^7[^3Red team^7] %sleads with %i - %i\n\n%sRestart map to start the second round!",
+					server_color3.string, server_color3.string, level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE], server_color3.string));}
+			else if (level.teamScores[TEAM_BLUE] > level.teamScores[TEAM_RED]){
+				trap_SendServerCommand(-1, va("cp \"@%sFirst round ended!\n\n^7[^3Blue team^7] %sleads with %i - %i\n\n%sRestart map to start the second round!",
+					server_color3.string, server_color3.string, level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED], server_color3.string));}
+			level.compMsgCount = level.time + 3000;
 		}
 	}
 

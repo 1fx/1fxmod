@@ -8,7 +8,7 @@
 #define INF_VERSION_STRING "0.54t"
 #define INF_STRING "1fx. Mod"
 #define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod"
-#define INF_VERSION_DATE "11/14/10"
+#define INF_VERSION_DATE "11/17/10"
 
 // 1fx. Mod
 // Developed by: Boe!Man & Henkie
@@ -262,7 +262,7 @@ void	HENK_CHECKFP(gentity_t *ent);
 
 void	Boe_Players (gentity_t *ent);
 
-void	Boe_Print_File (gentity_t *ent, char *file, qboolean clonecheckstats);
+void	Boe_Print_File (gentity_t *ent, char *file, qboolean clonecheckstats, int idnum);
 
 void	Boe_Stats( gentity_t *ent );
 
@@ -349,3 +349,24 @@ extern	vmCvar_t	server_msgDelay;
 
 // Boe!Man 10/16/10
 extern	vmCvar_t	g_adminspec;
+
+// Boe!Man 11/16/10: Default scrim settings.
+extern	vmCvar_t	g_autoLockSpec;
+extern	vmCvar_t	g_autoSwapTeams;
+extern	vmCvar_t	g_matchTimeLimit;
+extern	vmCvar_t	g_matchScoreLimit;
+extern	vmCvar_t	g_matchDisableSounds;
+
+extern vmCvar_t	cm_enabled;
+extern vmCvar_t	cm_sl;
+extern vmCvar_t	cm_tl;
+extern vmCvar_t	cm_slock;
+extern vmCvar_t	cm_aswap;
+extern vmCvar_t	cm_dsounds;
+extern vmCvar_t	cm_oldsl;
+extern vmCvar_t	cm_oldtl;
+extern vmCvar_t	cm_sr;
+extern vmCvar_t	cm_sb;
+
+// Boe!Man 11/18/10
+void Boe_calcMatchScores (void);

@@ -359,6 +359,13 @@ void Boe_Tokens(gentity_t *ent, char *chatText, int mode, qboolean CheckSounds)
 					playedSound = qtrue;
 					continue;
 				}
+				if (g_compMode.integer > 0 && cm_enabled.integer > 1){ // Boe!Man 11/20/10: Meaning the scrim already started..
+					if (cm_dsounds.integer == 1){
+						trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Sounds are currently disabled in Competition Mode.\n\"" ) );
+						playedSound = qtrue;
+						continue;
+					}
+				}
 			}
 			//if(*chatText == '!') { // fix me henk
 			//	text = qfalse;
@@ -1055,10 +1062,11 @@ void Boe_Players (gentity_t *ent)
 /*
 ==============
 Boe_Print_File
+Updated 11/20/10 - 11:32 PM
 ==============
 */
 
-void Boe_Print_File (gentity_t *ent, char *file, qboolean clonecheckstats)
+void Boe_Print_File (gentity_t *ent, char *file, qboolean clonecheckstats, int idnum)
 {
 	int             len = 0;
 	int				i, j, x, y, z;
@@ -1071,6 +1079,8 @@ void Boe_Print_File (gentity_t *ent, char *file, qboolean clonecheckstats)
 	int				aliasCount = 0;
 	int				nameLength;
 	qboolean		anAlias;
+	// Boe!Man 11/20/10
+	char			*cleanName;
 
 	len = trap_FS_FOpenFile( file, &f, FS_READ_TEXT);
 
@@ -1114,7 +1124,14 @@ void Boe_Print_File (gentity_t *ent, char *file, qboolean clonecheckstats)
 	}
 	// Boe!Man 10/25/10: If clonecheckstatus is true we loop through the aliases progress for /stats.
 	}else{
-	nameLength = strlen(ent->client->pers.cleanName);
+	// Boe!Man 11/20/10: Is he requesting information from another player?
+	if(idnum != -1){
+		nameLength = strlen(g_entities[idnum].client->pers.cleanName);
+		cleanName = g_entities[idnum].client->pers.cleanName;
+	}else{
+		nameLength = strlen(ent->client->pers.cleanName);
+		cleanName = ent->client->pers.cleanName;
+	}
 	while(bufP <= &buf[len + 500])
 	{
 		Q_strncpyz(packet, bufP, 501);
@@ -1136,7 +1153,7 @@ void Boe_Print_File (gentity_t *ent, char *file, qboolean clonecheckstats)
 					}
 					// Boe!Man 11/15/10: If it is as long as the cleanName, does it contain the same?
 					else if(strlen(packet2) == nameLength){
-						if(!strstr(ent->client->pers.cleanName, packet2)){
+						if(!strstr(cleanName, packet2)){
 							trap_SendServerCommand( ent-g_entities, va("print \"%s\"", packet2));
 							clonecheckstats = qtrue;
 							anAlias = qtrue; 
@@ -1153,7 +1170,7 @@ void Boe_Print_File (gentity_t *ent, char *file, qboolean clonecheckstats)
 					}
 					// Boe!Man 11/15/10: If it is as long as the cleanName, does it contain the same?
 					else if(strlen(packet2) == nameLength){
-						if(!strstr(ent->client->pers.cleanName, packet2)){
+						if(!strstr(cleanName, packet2)){
 							trap_SendServerCommand( ent-g_entities, va("print \"\n              %s\"", packet2));
 							anAlias = qtrue; 
 							aliasCount += 1;
@@ -1185,6 +1202,7 @@ void Boe_Print_File (gentity_t *ent, char *file, qboolean clonecheckstats)
 /*
 =========
 Boe_Stats
+Updated 11/20/10 - 11:32 PM
 =========
 */
 
@@ -1208,6 +1226,7 @@ void Boe_Stats ( gentity_t *ent )
 	qboolean	devmode = qfalse;
 	float		accuracy = 0;
 	char		*clonecheckfile;
+	qboolean	otherClient = qfalse;
 
 	trap_Argv( 1, arg1, sizeof( arg1 ) );  // Boe!Man 2/21/10: Getting the client ID.
 
@@ -1241,6 +1260,7 @@ void Boe_Stats ( gentity_t *ent )
 	else
 	{
 		idnum = atoi (arg1);
+		otherClient = qtrue;
 		// Boe!Man 2/21/10: The client number needs to be valid.
 		if ( idnum < 0 || idnum >= g_maxclients.integer )
 		{
@@ -1283,7 +1303,11 @@ void Boe_Stats ( gentity_t *ent )
 	trap_SendServerCommand( ent-g_entities, va("print \"-------------------------------------------------------\n"));
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Aliases^7]     "));
 	clonecheckfile = va("users/clonechecks/%s.ip", ip);
-	Boe_Print_File(ent, clonecheckfile, qtrue);
+	if (otherClient == qfalse){
+		Boe_Print_File(ent, clonecheckfile, qtrue, -1);
+	}else{
+		Boe_Print_File(ent, clonecheckfile, qtrue, idnum);
+	}
 	trap_SendServerCommand( ent-g_entities, va("print \"\n[^3Admin^7]       %s\n", admin));
 	if (devmode == qtrue)
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Developer^7]   Yes\n"));
@@ -1480,6 +1504,7 @@ void Boe_Stats ( gentity_t *ent )
 ==================
 Boe_About by boe
 3/30/10 - 2:19 PM
+Updated 11/20/10 - 11:17 PM
 ==================
 */
 
@@ -1494,6 +1519,29 @@ void Boe_About( gentity_t *ent )
 	trap_Cvar_VariableStringBuffer ( "ClanURL", ClanURL, MAX_QPATH );
 	trap_Cvar_VariableStringBuffer ( "Owner", Owner, MAX_QPATH );
 
+	trap_SendServerCommand( ent-g_entities, va("print \"\n^3Server settings\n\""));
+	trap_SendServerCommand( ent-g_entities, va("print \"--------------------------------------\n\""));
+	trap_SendServerCommand( ent-g_entities, va("print \"[^3Mod used^7]            %s %s\n", INF_STRING, INF_VERSION_STRING));
+	if (g_compMode.integer > 0){
+		trap_SendServerCommand( ent-g_entities, va("print \"[^3Competition Mode^7]    Yes\n"));
+	}else{
+		trap_SendServerCommand( ent-g_entities, va("print \"[^3Competition Mode^7]    No\n"));
+	}
+	trap_SendServerCommand( ent-g_entities, va("print \"[^3Scorelimit^7]          %i\n", g_scorelimit.integer));
+	trap_SendServerCommand( ent-g_entities, va("print \"[^3Timelimit^7]           %i\n", g_timelimit.integer));
+	if(strstr(g_gametype.string, "ctf")){
+		trap_SendServerCommand( ent-g_entities, va("print \"[^3Respawn interval^7]    %i\n", g_respawnInterval.integer));
+	}
+	if (g_allowthirdperson.integer > 0){
+		trap_SendServerCommand( ent-g_entities, va("print \"[^3Third person^7]        Yes\n"));
+	}else{
+		trap_SendServerCommand( ent-g_entities, va("print \"[^3Third person^7]        No\n"));
+	}
+	trap_SendServerCommand( ent-g_entities, va("print \"[^3Speed^7]               %i\n", g_speed.integer));
+	trap_SendServerCommand( ent-g_entities, va("print \"[^3Gravity^7]             %i\n", g_gravity.integer));
+	trap_SendServerCommand( ent-g_entities, va("print \"[^3Total clients^7]       %i\n", level.numConnectedClients));
+
+	/*
 	trap_SendServerCommand( ent-g_entities, va("print \"^3\nAbout this server\n"));
 	trap_SendServerCommand( ent-g_entities, va("print \"-------------------------------------------------------\n"));
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Owner^7]       %s\n", Owner));
@@ -1511,6 +1559,19 @@ void Boe_About( gentity_t *ent )
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Mod version^7] %s\n", INF_VERSION_STRING));
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Mod date^7]    %s\n", INF_VERSION_DATE));
 	trap_SendServerCommand( ent-g_entities, va("print \"\n^1Massive thanks to Stoppbiel ^7for his continuous bug reports.\n"));
+	*/
+	trap_SendServerCommand( ent-g_entities, va("print \"\n^3Owner settings\n\""));
+	trap_SendServerCommand( ent-g_entities, va("print \"--------------------------------------\n\""));
+	trap_SendServerCommand( ent-g_entities, va("print \"[^3Owner^7]               %s\n", Owner));
+	if (strstr(Clan, "0"))
+		trap_SendServerCommand( ent-g_entities, va("print \"[^3Active clan^7]         No\n"));
+	else
+		trap_SendServerCommand( ent-g_entities, va("print \"[^3Active clan^7]         Yes\n"));
+	if (strstr(ClanURL, "0"))
+		trap_SendServerCommand( ent-g_entities, va("print \"[^3Clan URL^7]            None\n"));
+	else
+	trap_SendServerCommand( ent-g_entities, va("print \"[^3Clan URL^7]            %s\n", ClanURL));
+	trap_SendServerCommand( ent-g_entities, va("print \"[^3Hosted by^7]           v1servers.com\n"));
 	trap_SendServerCommand( ent-g_entities, va("print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\""));
 }
 
@@ -1643,4 +1704,29 @@ void Boe_serverMsg (void)
 	if (strstr(boe_log.string, "1"))
 		G_LogPrintf("3e\n");
 #endif
+}
+
+/*
+================
+Boe_calcMatchScores
+11/18/10 - 3:46 PM
+================
+*/
+
+void Boe_calcMatchScores (void)
+{
+	if (cm_sr.integer + level.teamScores[TEAM_RED] > cm_sb.integer + level.teamScores[TEAM_BLUE]){
+		if (cm_aswap.integer == 1)
+		trap_SendServerCommand(-1, va("print\"^3[Info] ^7Red team wins the match with %i - %i.\n\"", level.teamScores[TEAM_RED]+cm_sr.integer, level.teamScores[TEAM_BLUE]+cm_sb.integer ));
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7team wins the match with %i - %i!", level.time + 10000, server_redteamprefix.string, level.teamScores[TEAM_RED]+cm_sr.integer, level.teamScores[TEAM_BLUE]+cm_sb.integer));
+		LogExit("Red team wins the match.");
+	}else if(cm_sb.integer + level.teamScores[TEAM_BLUE] > cm_sr.integer + level.teamScores[TEAM_RED]){
+		trap_SendServerCommand(-1, va("print\"^3[Info] ^7Blue team wins the match with %i - %i.\n\"", level.teamScores[TEAM_BLUE]+cm_sb.integer, level.teamScores[TEAM_RED]+cm_sr.integer ));
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7team wins the match with %i - %i!", level.time + 10000, server_blueteamprefix.string, level.teamScores[TEAM_BLUE]+cm_sb.integer, level.teamScores[TEAM_RED]+cm_sr.integer));
+		LogExit("Blue team wins the match.");
+	}else if (cm_sb.integer + level.teamScores[TEAM_BLUE] == cm_sr.integer + level.teamScores[TEAM_RED]){
+		trap_SendServerCommand(-1, va("print\"^3[Info] ^7Match draw with %i - %i.\n\"", level.teamScores[TEAM_BLUE]+cm_sb.integer, level.teamScores[TEAM_RED]+cm_sr.integer ));
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sM%sa%st%sc%sh draw with %i - %i!", level.time + 10000, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, level.teamScores[TEAM_BLUE]+cm_sb.integer, level.teamScores[TEAM_RED]+cm_sr.integer));
+		LogExit("Match draw.");
+	}
 }

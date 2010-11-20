@@ -22,6 +22,7 @@
 /*
 ===========
 RPM_Tcmd
+Heavily modified version by Boe!Man, 11/16/10
 ===========
 */
 void RPM_Tcmd ( gentity_t *ent )
@@ -32,7 +33,30 @@ void RPM_Tcmd ( gentity_t *ent )
 	trap_Argv( 1, arg1, sizeof( arg1 ) );
 	trap_Argv( 2, arg2, sizeof( arg2 ) );
 
-	if (!Q_stricmp ( arg1, "?" )){
+	if ( !level.gametypeData->teams )
+	{
+		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Not playing a team game!\n\""));
+		return;
+	}
+	
+	if(!g_enableTeamCmds.integer)
+	{
+		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Team Commands are disabled on this server!\n\""));
+		return;
+	}
+
+	///RxCxW - 09.18.06 - 04:57pm #compmode needed for tcmds no matter what
+	///if (g_enableTeamCmds.integer == 1 && !g_compMode.integer)
+	if (!g_compMode.integer)
+	///End  - 09.18.06 - 04:58pm
+	{
+		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Competition Mode must be enabled to use team commands!\n\""));
+		return;
+	}
+
+	// Boe!Man 11/16/10: Updated /tcmd help screen.
+	if (!Q_stricmp ( arg1, "?" )||!Q_stricmp ( arg1, "" )){
+		/*
 		trap_SendServerCommand( ent-g_entities, va("print \"\n [^3Team commands^7]\n\""));
 		trap_SendServerCommand( ent-g_entities, va("print \" ** All commands must start with a ^3/tcmd ^7in front of them! **\n\""));
 		trap_SendServerCommand( ent-g_entities, va("print \" [^4info         ^7displays your teams info (whos ready whos specing you etc)]\n\""));
@@ -45,39 +69,32 @@ void RPM_Tcmd ( gentity_t *ent )
 		trap_SendServerCommand( ent-g_entities, va("print \" [^4timeout      ^7pauses the game for a timeout                             ]\n\""));
 		trap_SendServerCommand( ent-g_entities, va("print \" [^4timein       ^7starts the match from a timeout                           ]\n\""));
 		trap_SendServerCommand( ent-g_entities, va("print \" ^3** Press PgUp and PgDn keys to scroll up and down the list in console! **\n\""));
+		*/
+		trap_SendServerCommand( ent-g_entities, va("print \"\n ^3Commands         Lvl         Arguments     Explanation\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \" ----------------------------------------------------------\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \" info                         <team>        ^7[^3Shows your team's info^7]   \n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \" invite                       <id>          ^7[^3Invites a spectator^7]   \n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \" uninvite                     <id>          ^7[^3Un-invites a spectator^7]   \n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \" lock                                       ^7[^3Locks your team^7]   \n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \" unlock                                     ^7[^3Unlocks your team^7]   \n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \" timeout          ^7[^3L^7]                       [^3Request a pause^7]   \n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \" timein           ^7[^3L^7]                       [^3End a pause^7]   \n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \" kick             ^7[^3L^7]         <id>          [^3Kick a team member^7]   \n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \" \n^7Use ^3[Page Up]^7 and ^3[Page Down]^7 keys to scroll.\n\""));
 		return;
 	}
 
-	if ( !level.gametypeData->teams )
-	{
-		trap_SendServerCommand( ent-g_entities, va("print \"Not playing a team game!\n\""));
-		return;
-	}
-
+	
 	if (!Q_stricmp ( arg1, "info" ))
 	{
 		RPM_TeamInfo(ent, arg2);
 		return;
 	}
-	
-	if(!g_enableTeamCmds.integer)
-	{
-		trap_SendServerCommand( ent-g_entities, va("print \"Team Commands are disabled on this server!\n\""));
-		return;
-	}
-
-	///RxCxW - 09.18.06 - 04:57pm #compmode needed for tcmds no matter what
-	///if (g_enableTeamCmds.integer == 1 && !g_compMode.integer)
-	if (!g_compMode.integer)
-	///End  - 09.18.06 - 04:58pm
-	{
-		trap_SendServerCommand( ent-g_entities, va("print \"Server must be in Competetion Mode to use Team Commands!\n\""));
-		return;
-	}
-
-	if (!Q_stricmp ( arg1, "ready" )){
+	// Boe!Man 11/16/10: We do NOT use this!
+	/*
+	else if (!Q_stricmp ( arg1, "ready" )){
 		RPM_ReadyTeam(ent, qfalse, arg2);
-	}
+	}*/ 
 	else if (!Q_stricmp ( arg1, "invite" )){
 		RPM_Invite_Spec(ent, arg2);
 	}
@@ -107,98 +124,90 @@ void RPM_Tcmd ( gentity_t *ent )
 /*
 ================
 RPM_TeamInfo
+Recoded by Boe!Man, 11/16/10 3:11 PM
 ================
 */
 void RPM_TeamInfo (gentity_t *ent, char *team)
 {
-	int		i, t;
-	char	*ready = "";
-	char    *teamName = "";
+	int t;
+	char *teamName;
 
-	if(team[0] == 'r' || team[0] == 'R')
-	{
-		t = TEAM_RED;
+	t = ent->client->sess.team; // Boe!Man 11/16/10: 1 - Red, 2 - Blue, 3 - Spec.
+	if (t == 1){
+		teamName = "Red";
 	}
-	else if(team[0] == 'b'|| team[0] == 'B')
-	{
-		t = TEAM_BLUE;
-	}
-	else
-	{
-		t = ent->client->sess.team;
+	else if (t == 2){
+		teamName = "Blue";
+	}else{
+		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You must be in a team to use team commands!\n\""));
+		return;
 	}
 
-	switch(t)
-	{
-		case TEAM_RED:
-			teamName = "^1RED";
-			break;
-		case TEAM_BLUE:
-			teamName = "^4BLUE";
-			break;
-		default:
-			trap_SendServerCommand( ent-g_entities, va("print \"Not a valid Team!\n\""));
-			return;
+	trap_SendServerCommand( ent-g_entities, va("print \"\n^3Server settings\n\""));
+	trap_SendServerCommand( ent-g_entities, va("print \"--------------------------------------\n\""));
+	trap_SendServerCommand( ent-g_entities, va("print \"[^3Mod used^7]            %s %s\n", INF_STRING, INF_VERSION_STRING));
+	if (g_compMode.integer > 0){
+		trap_SendServerCommand( ent-g_entities, va("print \"[^3Competition Mode^7]    Yes\n"));
+	}else{
+		trap_SendServerCommand( ent-g_entities, va("print \"[^3Competition Mode^7]    No\n"));
 	}
-
-	trap_SendServerCommand( ent-g_entities, va("print \"%s ^3Team Info\n\"", teamName));
-	trap_SendServerCommand( ent-g_entities, va("print \"========================================\n\""));
+	trap_SendServerCommand( ent-g_entities, va("print \"[^3Scorelimit^7]          %i\n", g_scorelimit.integer));
+	trap_SendServerCommand( ent-g_entities, va("print \"[^3Timelimit^7]           %i\n", g_timelimit.integer));
+	if(strstr(g_gametype.string, "ctf")){
+		trap_SendServerCommand( ent-g_entities, va("print \"[^3Respawn interval^7]    %i\n", g_respawnInterval.integer));
+	}
+	if (g_allowthirdperson.integer > 0){
+		trap_SendServerCommand( ent-g_entities, va("print \"[^3Third person^7]        Yes\n"));
+	}else{
+		trap_SendServerCommand( ent-g_entities, va("print \"[^3Third person^7]        No\n"));
+	}
+	trap_SendServerCommand( ent-g_entities, va("print \"[^3Speed^7]               %i\n", g_speed.integer));
+	trap_SendServerCommand( ent-g_entities, va("print \"[^3Gravity^7]             %i\n", g_gravity.integer));
+	trap_SendServerCommand( ent-g_entities, va("print \"[^3Total clients^7]       %i\n", level.numConnectedClients));
 	
-	if(t == TEAM_RED && level.redLocked)
-	{
-		trap_SendServerCommand( ent-g_entities, va("print \"^1Red ^3team is currently locked!\n\""));
+	trap_SendServerCommand( ent-g_entities, va("print \"\n^3%s team\n\"", teamName));
+	trap_SendServerCommand( ent-g_entities, va("print \"--------------------------------------\n\""));
+	if (t == 1 && level.redLocked){
+		trap_SendServerCommand( ent-g_entities, va("print \"[^3Locked^7]              Yes\n"));
+	}else if (t == 2 && level.blueLocked){
+		trap_SendServerCommand( ent-g_entities, va("print \"[^3Locked^7]              Yes\n"));
+	}else{
+		trap_SendServerCommand( ent-g_entities, va("print \"[^3Locked^7]              No\n"));
+	}
+	if (cm_enabled.integer == 2 || cm_enabled.integer == 3){
+		trap_SendServerCommand( ent-g_entities, va("print \"[^3Round^7]               1st\n"));
+	}else if (cm_enabled.integer == 4){
+		trap_SendServerCommand( ent-g_entities, va("print \"[^3Round^7]               2nd\n"));
+	}else if (cm_enabled.integer == 5){
+		trap_SendServerCommand( ent-g_entities, va("print \"[^3Round^7]               Finished\n"));
+	}else{
+		trap_SendServerCommand( ent-g_entities, va("print \"[^3Round^7]               N/A\n"));
 	}
 
-	else if( t == TEAM_BLUE && level.blueLocked)
-	{
-		trap_SendServerCommand( ent-g_entities, va("print \"^4Blue ^3team is currently locked!\n\""));
+	// Boe!Man 11/18/10: Print scores as well when the scrim's started.
+	if (cm_enabled.integer > 1){
+		trap_SendServerCommand( ent-g_entities, va("print \"\n^3Scores\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \"-------------------------------\n\""));
+		if (cm_enabled.integer == 2 || cm_enabled.integer == 3){
+			if (t == 1){
+				trap_SendServerCommand( ent-g_entities, va("print \"[^31st Round^7]           %i - %i\n", level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE]));
+			}else if (t == 2){
+				trap_SendServerCommand( ent-g_entities, va("print \"[^31st Round^7]           %i - %i\n", level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]));
+			}
+		}
+		else if (cm_enabled.integer == 4 || cm_enabled.integer == 5){
+			if (t == 1){
+				trap_SendServerCommand( ent-g_entities, va("print \"[^31st Round^7]           %i - %i\n", cm_sr.integer, cm_sb.integer));
+				trap_SendServerCommand( ent-g_entities, va("print \"[^32nd Round^7]           %i - %i\n", level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE]));
+				trap_SendServerCommand( ent-g_entities, va("print \"[^3Total^7]               %i - %i\n", level.teamScores[TEAM_RED]+cm_sr.integer, level.teamScores[TEAM_BLUE]+cm_sb.integer));
+			}else if (t == 2){
+				trap_SendServerCommand( ent-g_entities, va("print \"[^31st Round^7]           %i - %i\n", cm_sb.integer, cm_sr.integer));
+				trap_SendServerCommand( ent-g_entities, va("print \"[^32nd Round^7]           %i - %i\n", level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]));
+				trap_SendServerCommand( ent-g_entities, va("print \"[^3Total^7]               %i - %i\n", level.teamScores[TEAM_BLUE]+cm_sb.integer, level.teamScores[TEAM_RED]+cm_sr.integer));
+			}
+		}
 	}
-
-	trap_SendServerCommand( ent-g_entities, va("print \"^2These people are invited to spectate the %s ^2team:\n\"", t==TEAM_RED ? "^1Red" : "^4Blue"));
-	trap_SendServerCommand( ent-g_entities, va("print \"  ^6Id#   Name\n\""));
-	for ( i = 0; i < level.maxclients; i ++ )
-	{
-		if(g_entities[i].client->pers.connected == CON_DISCONNECTED )
-		{
-			continue;
-		}
-		if(g_entities[i].client->sess.team != TEAM_SPECTATOR)
-		{
-			continue;
-		}
-		if(t == TEAM_RED && !g_entities[i].client->sess.invitedByRed)
-		{
-			continue;
-		}
-		if(t == TEAM_BLUE && !g_entities[i].client->sess.invitedByBlue)
-		{
-			continue;
-		}
-		trap_SendServerCommand( ent-g_entities, va("print \"[%3d   %25s^7 ]\n\"", i, g_entities[i].client->pers.cleanName));
-	}
-
-	trap_SendServerCommand( ent-g_entities, va("print \"\n%s ^2team roster and ready status:\n\"", t==TEAM_RED ? "^1Red" : "^4Blue"));
-	trap_SendServerCommand( ent-g_entities, va("print \"  ^6Id#   Name\n\""));
-	for ( i = 0; i < level.maxclients; i ++ )
-	{
-		ready = "";	
-
-		if(g_entities[i].client->pers.connected == CON_DISCONNECTED )
-		{
-			continue;
-		}
-		if(g_entities[i].client->sess.team != t)
-		{
-			continue;
-		}
-		if(g_entities[i].client->pers.ready)
-		{
-			ready = "^7<-^1Ready";
-		}
-
-		trap_SendServerCommand( ent-g_entities, va("print \"[%3d   %25s ^7] %s\n\"", i, g_entities[i].client->pers.cleanName, ready));
-	}
-	trap_SendServerCommand( ent-g_entities, va("print \"^3**Press Pgup(page up) and Pgdn(page down) keys to scroll up and down.**\n\""));
+	trap_SendServerCommand( ent-g_entities, va("print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\""));
 }
 
 /*
@@ -328,11 +337,13 @@ void RPM_lockTeam(gentity_t *ent, qboolean referee, char *team)
 	}
 	*/
 }
+
+// Boe!Man 11/16/10: We don't need this function. Fate: Removed.
 /*
 ===============
 RPM_ReadyTeam
 ===============
-*/
+
 void RPM_ReadyTeam(gentity_t *ent, qboolean referee, char *team)
 {
 	int		i, t;
@@ -387,6 +398,8 @@ void RPM_ReadyTeam(gentity_t *ent, qboolean referee, char *team)
 
 	trap_SendServerCommand( -1, va("cp \"%s ^7Team Readied by ^3%s\n\"", t == TEAM_RED ? "^1Red" : "^4Blue",  referee ? "Referee" : ent->client->pers.netname));
 }
+/*
+
 /*
 =================
 RPM_Invite_Spec
