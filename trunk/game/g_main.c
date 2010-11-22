@@ -1010,10 +1010,16 @@ void QDECL Com_Error ( int level, const char *fmt, ... )
 	// Boe!Man 11/22/10: Appending the date & time.
 	qtime_t			q;
 	trap_RealTime	(&q);
-	Com_sprintf( text, sizeof(text), "%02i/%02i/%i %02i:%02i - ", 1+q.tm_mon,q.tm_mday, q.tm_year+1900,q.tm_hour,q.tm_min);
+	// Boe!Man 11/22/10: For level inter is:
+	//					 - 0: ERR_FATAL				// exit the entire game with a popup window
+	//					 - 1: ERR_DROP				// print to console and disconnect from game
+	//					 - 2: ERR_SERVERDISCONNECT	// don't kill server
+	//					 - 3: ERR_DISCONNECT		// client disconnected from the server
+	//					 - 4: ERR_NEED_CD			// pop up the need-cd dialog
+	Com_sprintf( text, sizeof(text), "%02i/%02i/%i %02i:%02i - [%i] - ", 1+q.tm_mon,q.tm_mday, q.tm_year+1900,q.tm_hour,q.tm_min, level);
 
 	va_start (argptr, fmt);
-	vsprintf (text + 19, fmt, argptr);
+	vsprintf (text + 25, fmt, argptr);
 	va_end (argptr);
 
 	// Boe!Man 11/22/10: Open and write to the crashinfo file.
