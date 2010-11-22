@@ -62,7 +62,7 @@ void Boe_CompMode(int argNum, gentity_t *ent, qboolean shotCmd){
 		// Boe!Man 11/16/10: Set the temporary CVARs.
 		trap_Cvar_Set("cm_enabled", "1");
 		trap_Cvar_Set("cm_sl", g_matchScoreLimit.string);
-		trap_Cvar_Set("cm_sl", g_matchTimeLimit.string);
+		trap_Cvar_Set("cm_tl", g_matchTimeLimit.string);
 		trap_Cvar_Set("cm_slock", g_autoLockSpec.string);
 		trap_Cvar_Set("cm_aswap", g_autoSwapTeams.string);
 		trap_Cvar_Set("cm_dsounds", g_matchDisableSounds.string);
@@ -81,6 +81,10 @@ void Boe_CompMode(int argNum, gentity_t *ent, qboolean shotCmd){
 		trap_Cvar_Set("timelimit", cm_oldtl.string);
 	}
 	trap_Cvar_Update(&g_compMode);
+	trap_Cvar_Update(&cm_sl);
+	trap_Cvar_Update(&cm_tl);
+	trap_Cvar_Update(&g_scorelimit);
+	trap_Cvar_Update(&g_timelimit);
 }
 
 /*

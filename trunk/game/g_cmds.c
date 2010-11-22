@@ -4030,8 +4030,8 @@ void G_Voice( gentity_t *ent, gentity_t *target, int mode, const char *id, qbool
 	if(strlen(id) > 64){
 		char	text[32] = "";
 		Q_strncpyz(text, id, sizeof(text));
-		trap_SendServerCommand( ent-g_entities, va("print \"You have a very small penis.\n\"" ) );
-		Boe_crashLog(va("%s - %s - vsay_team: %s", ent->client->pers.cleanName, ent->client->pers.ip, text)) ;
+		//trap_SendServerCommand( ent-g_entities, va("print \"You have a very small penis.\n\"" ) ); // boe - lol'd
+		//Boe_crashLog(va("%s - %s - vsay_team: %s", ent->client->pers.cleanName, ent->client->pers.ip, text)) ;
 		return;
 	}
 

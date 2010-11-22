@@ -1588,6 +1588,7 @@ void Boe_About( gentity_t *ent )
 ===================
 Boe_crashLog by boe
 4/2/10 - 1:48 PM
+Partly replaced by Com_Error system on 11/22/10 - 3:32 PM.
 ===================
 */
 

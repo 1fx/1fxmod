@@ -1005,10 +1005,27 @@ void QDECL Com_Error ( int level, const char *fmt, ... )
 {
 	va_list		argptr;
 	char		text[1024];
+	fileHandle_t	crashFile;
+
+	// Boe!Man 11/22/10: Appending the date & time.
+	qtime_t			q;
+	trap_RealTime	(&q);
+	Com_sprintf( text, sizeof(text), "%02i/%02i/%i %02i:%02i - ", 1+q.tm_mon,q.tm_mday, q.tm_year+1900,q.tm_hour,q.tm_min);
 
 	va_start (argptr, fmt);
-	vsprintf (text, fmt, argptr);
+	vsprintf (text + 19, fmt, argptr);
 	va_end (argptr);
+
+	// Boe!Man 11/22/10: Open and write to the crashinfo file.
+	trap_FS_FOpenFile( "logs/crashlog.txt", &crashFile, FS_APPEND_TEXT );
+
+	if (!crashFile){
+		return;
+	}
+
+	trap_FS_Write( text, strlen( text ), crashFile);
+	trap_FS_Write("\n", 1, crashFile);
+	trap_FS_FCloseFile(crashFile);
 
 	trap_Error( text );
 }
@@ -1798,10 +1815,6 @@ void CheckExitRules( void )
 	{
 		if ( level.gametypeData->teams )
 		{
-			#ifdef _BOE_DBG
-			if (strstr(boe_log.string, "2"))
-				G_LogPrintf("5\n");
-			#endif
 			if ( level.teamScores[TEAM_RED] >= g_scorelimit.integer ) 
 			{
 				gentity_t* tent;
@@ -1813,6 +1826,10 @@ void CheckExitRules( void )
 				}
 				tent->r.svFlags = SVF_BROADCAST;	
 				tent->s.otherEntityNum = TEAM_RED;
+				#ifdef _BOE_DBG
+				if (strstr(boe_log.string, "2"))
+					G_LogPrintf("5\n");
+				#endif
 				if (g_compMode.integer > 0 && cm_enabled.integer == 2){
 					//LogExit(va("%s ^7team wins 1st round with %i - %i", server_redteamprefix, level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE] ));
 					trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7team wins 1st round with %i - %i!", level.time + 5000, server_redteamprefix.string, level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE]));
@@ -1856,6 +1873,10 @@ void CheckExitRules( void )
 				}
 				tent->r.svFlags = SVF_BROADCAST;	
 				tent->s.otherEntityNum = TEAM_BLUE;
+				#ifdef _BOE_DBG
+				if (strstr(boe_log.string, "2"))
+					G_LogPrintf("5\n");
+				#endif
 				if (g_compMode.integer > 0 && cm_enabled.integer == 2){
 					trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7team wins 1st round with %i - %i!", level.time + 5000, server_blueteamprefix.string, level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]));
 					// Boe!Man 11/18/10: Set the scores right (for logging purposes).
