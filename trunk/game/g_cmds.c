@@ -53,7 +53,8 @@ static admCmd_t AdminCommands[] =
 	{"!cm", "compmode", &g_clan.integer, &Boe_CompMode},
 	{"!bl", "banlist", &g_ban.integer, &Boe_BanList},
 	{"!ba ", "ban", &g_ban.integer, &Boe_Ban_f},
-	{"!br ", "broadcast", &g_broadcast.integer, &Boe_Broadcast}
+	{"!br ", "broadcast", &g_broadcast.integer, &Boe_Broadcast},
+	{"!sbl", "subnetbanlist", &g_subnetban.integer, &Boe_SubnetBanlist}
 };
 
 static int AdminCommandsSize = sizeof( AdminCommands ) / sizeof( AdminCommands[0] );
@@ -5084,6 +5085,9 @@ void Boe_adm_f ( gentity_t *ent )
 		}
 	if (adm >= g_forceteam.integer && g_forceteam.integer != 5 && g_forceteam.integer == level){
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   ft  forceteam    <team>        ^7[^3Force a player to join a team^7]\n\"", g_forceteam.integer));
+		}
+	if (adm >= g_nades.integer && g_nades.integer != 5 && g_nades.integer == level){
+		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   nn  nonades                    ^7[^3Enable or disable nades^7]\n\"", g_forceteam.integer));
 		}
 	// temp entry
 	/*if (adm >= 4 && level == 4){

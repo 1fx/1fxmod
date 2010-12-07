@@ -1869,7 +1869,7 @@ void Boe_Broadcast(int argNum, gentity_t *adm, qboolean shortCmd){
 		}
 		buffer[i+1] = '\0';
 	}else{
-		trap_Argv(2, buffer, sizeof(buffer));
+		trap_Argv(2, buffer1, sizeof(buffer));
 	}
 
 	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s", level.time + 5000, buffer1));
@@ -2250,4 +2250,18 @@ void Boe_SwapTeams(gentity_t *adm)
 		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Swap teams.\n\""));
 	}
 	}
+}
+
+/*
+=========
+Boe_SubnetBanlist
+=========
+*/
+
+void Boe_SubnetBanlist (int argNum, gentity_t *adm, qboolean shortCmd)
+{
+	trap_SendServerCommand( adm-g_entities, va("print \"\n^3[Subnetbanlist]^7\n\""));
+	Boe_Print_File( adm, g_subnetbanlist.string, qfalse, 0);
+	trap_SendServerCommand( adm-g_entities, va("print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\""));
+	return;
 }

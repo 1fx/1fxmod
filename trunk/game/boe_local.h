@@ -8,7 +8,7 @@
 #define INF_VERSION_STRING "0.54t"
 #define INF_STRING "1fx. Mod"
 #define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod"
-#define INF_VERSION_DATE "11/21/10"
+#define INF_VERSION_DATE "12/7/10"
 
 // 1fx. Mod
 // Developed by: Boe!Man & Henkie
@@ -210,6 +210,9 @@ extern	vmCvar_t	g_clanvsall;
 extern	vmCvar_t	g_swapteams;
 extern	vmCvar_t	g_lock;
 extern	vmCvar_t	g_clan;
+
+// Boe!Man 12/7/10
+void Boe_SubnetBanlist (int argNum, gentity_t *adm, qboolean shortCmd);
 
 //==============================================
 // boe_utils.c

@@ -639,6 +639,12 @@ qboolean ConsoleCommand( void )
 		RPM_lockTeam(NULL, qtrue, ConcatArgs(1) );
 		return qtrue;
 	}
+	// Boe!Man 12/7/10: Temporary adding banlist here until you add it in the new admin system. -.-''
+	if ((Q_stricmp (cmd, "banlist" ) == 0 ))
+	{
+		Boe_BanList(1, NULL, qfalse);
+		return qtrue;
+	}
 	if (g_dedicated.integer) 
 	{
 		if (Q_stricmp (cmd, "say") == 0) 
