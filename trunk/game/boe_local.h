@@ -8,7 +8,7 @@
 #define INF_VERSION_STRING "0.54t"
 #define INF_STRING "1fx. Mod"
 #define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod"
-#define INF_VERSION_DATE "12/7/10"
+#define INF_VERSION_DATE "12/13/10"
 
 // 1fx. Mod
 // Developed by: Boe!Man & Henkie
@@ -58,7 +58,8 @@
 // 0.52t		Beta							10/16/10
 // 0.52			Release							10/25/10
 // 0.53			Release							11/2/10
-// 0.54t		Release Candidate				11/21/10
+// 0.54t		Beta							11/21/10
+// 0.54t		Release Candidate				12/13/10
 
 //===================================================================
 
@@ -384,3 +385,6 @@ extern vmCvar_t	cm_sb;
 
 // Boe!Man 11/18/10
 void Boe_calcMatchScores (void);
+
+// Boe!Man 12/13/10
+extern vmCvar_t	g_aliasCheck;

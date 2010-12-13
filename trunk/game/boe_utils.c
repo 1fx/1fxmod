@@ -1143,6 +1143,10 @@ void Boe_Print_File (gentity_t *ent, char *file, qboolean clonecheckstats, int i
 		if (j != 0){
 		for(i = 0; i<=j; i++){
 			if(packet[i] == '\n'){
+				// Boe!Man 12/13/10: FIX ME - add g_aliasLines x & display from new to old till x
+				if (aliasCount >= 10){
+					return;
+				}
 				if(clonecheckstats == qfalse){
 					// Boe!Man 11/15/10: Is the alias string not as long?
 					if(strlen(packet2) != nameLength){
@@ -1301,14 +1305,18 @@ void Boe_Stats ( gentity_t *ent )
 	// Boe!Man 6/2/10: Tier 0: Header - Start.
 	trap_SendServerCommand( ent-g_entities, va("print \"\n^3Player statistics for ^7%s\n\"", player));
 	trap_SendServerCommand( ent-g_entities, va("print \"-------------------------------------------------------\n"));
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Aliases^7]     "));
-	clonecheckfile = va("users/clonechecks/%s.ip", ip);
-	if (otherClient == qfalse){
-		Boe_Print_File(ent, clonecheckfile, qtrue, -1);
-	}else{
-		Boe_Print_File(ent, clonecheckfile, qtrue, idnum);
+	if(g_aliasCheck.integer > 0){ // Boe!Man 12/13/10: Only log when the Aliases are enabled.
+		trap_SendServerCommand( ent-g_entities, va("print \"[^3Aliases^7]     "));
+		clonecheckfile = va("users/aliases/%s.ip", ip);
+		if (otherClient == qfalse){
+			Boe_Print_File(ent, clonecheckfile, qtrue, -1);
+		}else{
+			Boe_Print_File(ent, clonecheckfile, qtrue, idnum);
+		}
+		trap_SendServerCommand( ent-g_entities, va("print \"\n[^3Admin^7]       %s\n", admin));}
+	else{
+		trap_SendServerCommand( ent-g_entities, va("print \"[^3Admin^7]       %s\n", admin));
 	}
-	trap_SendServerCommand( ent-g_entities, va("print \"\n[^3Admin^7]       %s\n", admin));
 	if (devmode == qtrue)
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Developer^7]   Yes\n"));
 	else

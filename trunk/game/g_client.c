@@ -1236,26 +1236,30 @@ void ClientUserinfoChanged( int clientNum )
 			{
 				trap_SendServerCommand( -1, va("print \"%s renamed to %s\n\"", oldname, client->pers.netname) );
 				// Boe!Man 10/25/10: Checking Clonechecks and adding if needed.
-				clonecheck = va("users/clonechecks/%s.ip", client->pers.ip);
-				if(!Boe_NameListCheck ( clientNum, ent->client->pers.cleanName, clonecheck, NULL, qfalse, qfalse, qfalse, qfalse, qtrue)){
-					Boe_AddToList(ent->client->pers.cleanName, clonecheck, "Clonecheck", NULL);
+				if (g_aliasCheck.integer > 1){
+					clonecheck = va("users/aliases/%s.ip", client->pers.ip);
+					if(!Boe_NameListCheck ( clientNum, ent->client->pers.cleanName, clonecheck, NULL, qfalse, qfalse, qfalse, qfalse, qtrue)){
+						Boe_AddToList(ent->client->pers.cleanName, clonecheck, "Clonecheck", NULL);
+					}
 				}
 				client->pers.netnameTime = level.time;
 			}
 		}
 	
-	// Boe!Man 12/30/09: Checking for Admin. --- Update 1/4/10
+	// Boe!Man 12/30/09: Checking for Admin. --- Update 12/13/10
 	if(!ent->client->sess.fileChecked && !(ent->r.svFlags & SVF_BOT)){
 			client->sess.admin = Boe_NameListCheck ( clientNum, ent->client->pers.boe_id, g_adminfile.string, NULL, qfalse, qtrue, qfalse, qfalse, qfalse);
-			if(!client->sess.clanMember)
+			if(!client->sess.clanMember){
 			client->sess.clanMember = Boe_NameListCheck (clientNum, ent->client->pers.boe_id, g_clanfile.string, NULL, qfalse, qfalse, qfalse, qfalse, qfalse);
-		
-	}
-			clonecheck = va("users/clonechecks/%s.ip", client->pers.ip);
-			if(!Boe_NameListCheck ( clientNum, ent->client->pers.cleanName, clonecheck, NULL, qfalse, qfalse, qfalse, qfalse, qtrue)){
-				Boe_AddToList(ent->client->pers.cleanName, clonecheck, "Clonecheck", NULL);
-			}	
+			}
+			if (g_aliasCheck.integer > 0){
+				clonecheck = va("users/aliases/%s.ip", client->pers.ip);
+				if(!Boe_NameListCheck ( clientNum, ent->client->pers.cleanName, clonecheck, NULL, qfalse, qfalse, qfalse, qfalse, qtrue)){
+					Boe_AddToList(ent->client->pers.cleanName, clonecheck, "Clonecheck", NULL);
+				}
+			}
 			ent->client->sess.fileChecked = qtrue;
+		}
 	}
 
 	// Boe!Man 10/16/10: If Admins are allowed to spec the opposite team..
@@ -1488,9 +1492,11 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 					client->sess.clanMember = Boe_NameListCheck (clientNum, ent->client->pers.boe_id, g_clanfile.string, NULL, qfalse, qfalse, qfalse, qfalse, qfalse);
 	}
 	// Boe!Man 10/25/10: Checking for Clonecheck.
-	clonecheck = va("users/clonechecks/%s.ip", client->pers.ip);
-	if(!Boe_NameListCheck ( clientNum, ent->client->pers.cleanName, clonecheck, NULL, qfalse, qfalse, qfalse, qfalse, qtrue)){
-		Boe_AddToList(ent->client->pers.cleanName, clonecheck, "Clonecheck", NULL);
+	if (g_aliasCheck.integer > 1){
+		clonecheck = va("users/aliases/%s.ip", client->pers.ip);
+		if(!Boe_NameListCheck ( clientNum, ent->client->pers.cleanName, clonecheck, NULL, qfalse, qfalse, qfalse, qfalse, qtrue)){
+			Boe_AddToList(ent->client->pers.cleanName, clonecheck, "Clonecheck", NULL);
+		}
 	}
 	// Boe!Man 10/16/10: If Admins are allowed to spec the opposite team..
 	if (client->sess.admin >= g_adminspec.integer && g_compMode.integer == 0){

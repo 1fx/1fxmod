@@ -195,6 +195,9 @@ vmCvar_t	cm_oldtl;
 vmCvar_t	cm_sr;
 vmCvar_t	cm_sb;
 
+// Boe!Man 12/13/10: Clonecheck CVARs.
+vmCvar_t	g_aliasCheck;
+
 #ifdef _BOE_DBG
 vmCvar_t	boe_log;
 #endif
@@ -418,6 +421,10 @@ static cvarTable_t gameCvarTable[] =
 	{ &cm_oldtl, "cm_oldtl", "0", CVAR_ROM|CVAR_INTERNAL, 0.0, 0.0, 0, qfalse  },
 	{ &cm_sr, "cm_sr", "0", CVAR_ROM|CVAR_INTERNAL, 0.0, 0.0, 0, qfalse  }, // Boe!Man 11/18/10: These two are used to log the 1st round results.
 	{ &cm_sb, "cm_sb", "0", CVAR_ROM|CVAR_INTERNAL, 0.0, 0.0, 0, qfalse  },
+
+	// Boe!Man 12/13/10
+	{ &g_aliasCheck, "g_aliasCheck", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
+
 
 #ifdef _BOE_DBG
 	// Boe!Man: Debug CVAR.
