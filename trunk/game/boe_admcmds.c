@@ -26,9 +26,21 @@ int GetArgument(int argNum){
 			break;
 			}
 		}
-		if(num == 0){ // Get second argument because they use it from the console
-			trap_Argv( 2, arg, sizeof( arg ) );
-			num = atoi(arg);
+		if(num == 0){
+			if(strstr(arg, "0")){ // Boe!Man 12/14/10: The first arg wasn't empty, thus the purpose must've been to set it to 0.
+				return num;
+			}else{ // Get second argument because they use it from the console
+				trap_Argv( 2, arg, sizeof( arg ) );
+				num = atoi(arg);
+			}
+			if(num == 0){ // Boe!Man 12/14/10: If it's still 0, check if indeed the argument was nothing, if so, return -1.
+				if(strstr(arg, "0")){
+					return num;
+				}
+				else{
+					return -1;
+				}
+			}
 		}
 	return num;
 }
@@ -186,21 +198,29 @@ Boe_Timelimit
 void Boe_TimeLimit(int argNum, gentity_t *ent, qboolean shortCmd){
 	int number;
 	number = GetArgument(argNum);
-	if(number < 0)
+	if(number < 0){
+		// Boe!Man 12/14/10: Show current (match) timelimit if there's no arg.
+		if (g_compMode.integer > 0){
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Match timelimit is %i.\n\"", cm_tl.integer));
+		}
+		else{
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Timelimit is %i.\n\"", g_timelimit.integer));
+		}
 		return;
+	}
 	// Boe!Man 11/16/10: Is Competition Mode active so we can update the scrim setting vs. the global one?
 	if (g_compMode.integer > 0){
 		if (cm_enabled.integer == 1){
 			trap_Cvar_Set("cm_tl", va("%i", number));
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Match timelimit changed to %i by %s.\n\"", number, ent->client->pers.netname));
+			trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Match timelimit changed to %i by %s.\n\"", number, ent->client->pers.netname));
 		}else if(cm_enabled.integer > 1 && cm_enabled.integer < 5){
 			trap_Cvar_Set("cm_tl", va("%i", number));
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Match timelimit changed to %i by %s.\n\"", number, ent->client->pers.netname));
+			trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Match timelimit changed to %i by %s.\n\"", number, ent->client->pers.netname));
 			trap_Cvar_Set("timelimit", va("%i", number));
 		}
 	}else{
 		trap_SendConsoleCommand( EXEC_APPEND, va("timelimit %i\n", number));
-		trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Timelimit changed to %i by %s.\n\"", number, ent->client->pers.netname));
+		trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Timelimit changed to %i by %s.\n\"", number, ent->client->pers.netname));
 	}
 	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sT%si%sm%se%sl%simit %i!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, number));
 	Boe_adminLog (va("%s - TIMELIMIT %i", ent->client->pers.cleanName, number)) ;
@@ -215,21 +235,29 @@ Boe_ScoreLimit
 void Boe_ScoreLimit(int argNum, gentity_t *ent, qboolean shortCmd){
 	int number;
 	number = GetArgument(argNum);
-	if(number < 0)
+	if(number < 0){
+		// Boe!Man 12/14/10: Show current (match) scorelimit if there's no arg.
+		if (g_compMode.integer > 0){
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Match scorelimit is %i.\n\"", cm_sl.integer));
+		}
+		else{
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Scorelimit is %i.\n\"", g_scorelimit.integer));
+		}
 		return;
+	}
 	// Boe!Man 11/16/10: Is Competition Mode active so we can update the scrim setting vs. the global one?
 	if (g_compMode.integer > 0){
 		if (cm_enabled.integer == 1){
 			trap_Cvar_Set("cm_sl", va("%i", number));
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Match scorelimit changed to %i by %s.\n\"", number, ent->client->pers.netname));
+			trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Match scorelimit changed to %i by %s.\n\"", number, ent->client->pers.netname));
 		}else if(cm_enabled.integer > 1 && cm_enabled.integer < 5){
 			trap_Cvar_Set("cm_sl", va("%i", number));
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Match scorelimit changed to %i by %s.\n\"", number, ent->client->pers.netname));
+			trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Match scorelimit changed to %i by %s.\n\"", number, ent->client->pers.netname));
 			trap_Cvar_Set("scorelimit", va("%i", number));
 		}
 	}else{
 		trap_SendConsoleCommand( EXEC_APPEND, va("scorelimit %i\n", number));
-		trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Scorelimit changed to %i by %s.\n\"", number, ent->client->pers.netname));
+		trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Scorelimit changed to %i by %s.\n\"", number, ent->client->pers.netname));
 	}
 	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sS%sc%so%sr%se%slimit %i!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, number));
 	Boe_adminLog (va("%s - SCORELIMIT %i", ent->client->pers.cleanName, number)) ;

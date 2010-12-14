@@ -981,7 +981,7 @@ void RPM_Clan_Vs_All(gentity_t *adm)
 	}
 
 	/// tell everyone what just happened
-	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7Clan vs all", level.time + 5000));
+	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sC%sl%sa%sn vs all!", level.time + 5000, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 	Boe_GlobalSound(G_SoundIndex("sound/misc/events/tut_lift02.mp3"));
 			
 	if(adm && adm->client) {
@@ -2588,12 +2588,16 @@ void SetTeam( gentity_t *ent, char *s, const char* identity )
 		///RxCxW - 03.05.05 - 07:19am
 		///if ((team == TEAM_RED) && level.redLocked)
 		if ((team == TEAM_RED) && level.redLocked && client->sess.admin < 2) {
-			trap_SendServerCommand(clientNum, "cp \"^1Red ^7team has been ^3locked.\n\"" );
+			// Boe!Man 12/14/10
+			trap_SendServerCommand(clientNum, va("cp \"@%s ^7team is currently %sl%so%sc%sk%se%sd!\n\"", server_redteamprefix.string, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string ));
+			trap_SendServerCommand(clientNum, va("print \"^3[Info] ^7Red team is currently locked.\n\"") );
 			return;
 		}
 		///else if ((team == TEAM_BLUE) && level.blueLocked)
 		else if ((team == TEAM_BLUE) && level.blueLocked && client->sess.admin < 2) {
-			trap_SendServerCommand(clientNum, "cp \"^4Blue ^7team has been ^3locked.\n\"" );
+			// Boe!Man 12/14/10
+			trap_SendServerCommand(clientNum, va("cp \"@%s ^7team is currently %sl%so%sc%sk%se%sd!\n\"", server_blueteamprefix.string, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string ));
+			trap_SendServerCommand(clientNum, va("print \"^3[Info] ^7Blue team is currently locked.\n\"") );
 			return;
 		}
 	}
