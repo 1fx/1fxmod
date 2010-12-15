@@ -287,6 +287,7 @@ void Boe_NoNades(int argNum, gentity_t *ent, qboolean shortCmd){
 		}
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sN%sa%sd%se%ss %senabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Nades enabled by %s.\n\"", ent->client->pers.netname));
+		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 		Boe_adminLog (va("%s - NADES ENABLED", ent->client->pers.cleanName)) ;
 	}else{
 		g_disablenades.integer = 1;
@@ -302,6 +303,7 @@ void Boe_NoNades(int argNum, gentity_t *ent, qboolean shortCmd){
 		}
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sN%sa%sd%se%ss %sdisabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Nades disabled by %s.\n\"", ent->client->pers.netname));
+		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 		Boe_adminLog (va("%s - NADES DISABLED", ent->client->pers.cleanName)) ;
 	}
 }
@@ -320,7 +322,9 @@ void Boe_NoLower(int argNum, gentity_t *ent, qboolean shortCmd){
 		if (strstr(level.mapname, "mp_kam2")){
 			RemoveFence();
 		}
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sN%so%sl%so%sw%ser disabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7No lower has been disabled by %s.\n\"", ent->client->pers.netname));
+		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 		Boe_adminLog (va("%s - NOLOWER DISABLED", ent->client->pers.cleanName)) ;
 	}else{
 		level.nolower1 = qtrue;
@@ -332,7 +336,9 @@ void Boe_NoLower(int argNum, gentity_t *ent, qboolean shortCmd){
 			SpawnFence(3);
 			SpawnFence(4);
 		}
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sN%so%sl%so%sw%ser enabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7No lower has been enabled by %s.\n\"", ent->client->pers.netname));
+		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 		Boe_adminLog (va("%s - NOLOWER ENABLED", ent->client->pers.cleanName)) ;
 	}
 }
