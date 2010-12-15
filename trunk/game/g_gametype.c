@@ -927,7 +927,7 @@ int G_GametypeCommand ( int cmd, int arg0, int arg1, int arg2, int arg3, int arg
 			}else{
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,%s", level.time + 5000, (const char*)arg1 ) );
 			}
-			//Ryan
+			
 			break;		
 
 		case GTCMD_RADIOMESSAGE:

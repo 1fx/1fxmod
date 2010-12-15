@@ -40,8 +40,8 @@ static admCmd_t AdminCommands[] =
 	{"!ft ", "forceteam", &g_forceteam.integer, &Adm_ForceTeam},
 	{"!nl", "nolower", &g_nolower.integer, &Boe_NoLower},
 	{"!nn", "nonades", &g_nades.integer, &Boe_NoNades},
-	{"!sl ", "scorelimit", &g_sl.integer, &Boe_ScoreLimit},
-	{"!tl ", "timelimit", &g_tl.integer, &Boe_TimeLimit},
+	{"!sl", "scorelimit", &g_sl.integer, &Boe_ScoreLimit},
+	{"!tl", "timelimit", &g_tl.integer, &Boe_TimeLimit},
 	{"!ri ", "respawninterval", &g_ri.integer, &Boe_RespawnInterval},
 	{"!rd", "realdamage", &g_damage.integer, &Boe_RealDamage},
 	{"!nd", "normaldamage", &g_damage.integer, &Boe_NormalDamage},
@@ -2426,22 +2426,26 @@ void BroadcastTeamChange( gclient_t *client, int oldTeam )
 	switch ( client->sess.team )
 	{
 		case TEAM_RED:
-			trap_SendServerCommand( -1, va("cp \"%s" S_COLOR_WHITE "\njoined the %s ^7team\n\"", client->pers.netname, server_redteamprefix.string) );
+			trap_SendServerCommand( -1, va("cp \"@%s" S_COLOR_WHITE "\njoined the %s ^7team\n\"", client->pers.netname, server_redteamprefix.string) );
+			trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s has joined the red team.\n\"", client->pers.cleanName));
 			break;
 
 		case TEAM_BLUE:
-			trap_SendServerCommand( -1, va("cp \"%s" S_COLOR_WHITE "\njoined the %s ^7team\n\"", client->pers.netname, server_blueteamprefix.string));
+			trap_SendServerCommand( -1, va("cp \"@%s" S_COLOR_WHITE "\njoined the %s ^7team\n\"", client->pers.netname, server_blueteamprefix.string));
+				trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s has joined the blue team.\n\"", client->pers.cleanName));
 			break;
 
 		case TEAM_SPECTATOR:
 			if ( oldTeam != TEAM_SPECTATOR )
 			{
-				trap_SendServerCommand( -1, va("cp \"%s" S_COLOR_WHITE "\njoined the spectators\n\"", client->pers.netname));
+				trap_SendServerCommand( -1, va("cp \"@%s" S_COLOR_WHITE "\njoined the spectators\n\"", client->pers.netname));
+					trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s has joined the spectators.\n\"", client->pers.cleanName));
 			}
 			break;
 
 		case TEAM_FREE:
-			trap_SendServerCommand( -1, va("cp \"%s" S_COLOR_WHITE " joined the battle.\n\"", client->pers.netname));
+			trap_SendServerCommand( -1, va("cp \"@%s" S_COLOR_WHITE " joined the battle.\n\"", client->pers.netname));
+				trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s has joined the battle.\n\"", client->pers.cleanName));
 			break;
 	}
 }
@@ -2679,7 +2683,7 @@ void SetTeam( gentity_t *ent, char *s, const char* identity )
 		BroadcastTeamChange( client, oldTeam );
 	}
 	//Ryan
-	BroadcastTeamChange( client, oldTeam );
+	//BroadcastTeamChange( client, oldTeam );
 
 	// See if we should spawn as a ghost
 	if ( team != TEAM_SPECTATOR && level.gametypeData->respawnType == RT_NONE )

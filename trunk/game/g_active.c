@@ -1004,7 +1004,7 @@ void ClientThink_real( gentity_t *ent )
 	vec3_t 	diff;
 	///End  - 05.20.05 - 02:42pm
 
-	vec3_t	dir;
+	vec3_t	dir, fireAngs;
 	//vec3_t  fireAngs;
 	float   knockback = 600.0;
 	
@@ -1131,6 +1131,13 @@ void ClientThink_real( gentity_t *ent )
 			client->sess.burnSeconds--;
 			if (ent->client->ps.stats[STAT_HEALTH] >= 35)
 				G_Damage (ent, NULL, NULL, NULL, NULL, 48, 0, MOD_BURN, HL_NONE );
+
+			VectorCopy(ent->client->ps.viewangles, fireAngs);
+			AngleVectors( fireAngs, dir, NULL, NULL );	
+			dir[0] *= -1.0;
+			dir[1] *= -1.0;
+			dir[2] = 0.0;
+			VectorNormalize ( dir );
 			G_ApplyKnockback ( ent, dir, 10 );	//knock them back
 		}
 	}

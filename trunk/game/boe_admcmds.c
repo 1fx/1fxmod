@@ -509,11 +509,21 @@ qboolean isdigit(char c){ // by henk
 Boe_ClientNumFromArg
 ====================
 */
+qboolean ischar(char c){
+	if(c >= 97 && c <= 122){ // a-z lowercase
+		return qtrue;
+	}else if(c >= 65 && c <= 90){ // a-z uppercase
+		return qtrue;
+	}else{
+		return qfalse;
+	}
+}
+
 int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const char* action, qboolean aliveOnly, qboolean otheradmins, qboolean shortCmd)
 {
 	char	arg[16] = "\0"; // increase buffer so we can process more commands
 	int		num = -1;
-	int i, y;
+	int i, y;	
 	char *numb;
 	qboolean first = qtrue;
 	qboolean space = qfalse;
@@ -543,6 +553,11 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 								}
 							}
 							if(space == qfalse){
+								if(!ischar(arg[i+1])){
+									//trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You haven't entered a valid player ID/player name.\n\"", arg, usage));
+									num = -1;
+									break;
+								}
 							numb = va("%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", arg[i+1], arg[i+2], arg[i+3], arg[i+4], arg[i+5], arg[i+6], arg[i+7], arg[i+8], arg[i+9], arg[i+10], arg[i+11], arg[i+12], arg[i+13], arg[i+14], arg[i+15]);
 							}
 							break;
@@ -593,7 +608,7 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 	{
 		if(ent && ent->client)
 		{
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Invalid client number %d.\n\"", num));
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You haven't entered a valid player ID/player name.\n\""));
 		}
 		else
 		{
