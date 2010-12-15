@@ -3397,7 +3397,7 @@ void G_Say ( gentity_t *ent, gentity_t *target, int mode, const char *chatText )
 	int			j;
 	gentity_t	*other;
 	char		text[MAX_SAY_TEXT];
-	char		name[64];
+	char		name[128]; // Henk 15/12/2010 -> Increased from 64 -> 128; Will fix the name dissapearing.
 	int i;
 
 	// Logging stuff
