@@ -2427,25 +2427,25 @@ void BroadcastTeamChange( gclient_t *client, int oldTeam )
 	{
 		case TEAM_RED:
 			trap_SendServerCommand( -1, va("cp \"@%s" S_COLOR_WHITE "\njoined the %s ^7team\n\"", client->pers.netname, server_redteamprefix.string) );
-			trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s has joined the red team.\n\"", client->pers.cleanName));
+			trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s ^7joined the red team.\n\"", client->pers.cleanName));
 			break;
 
 		case TEAM_BLUE:
 			trap_SendServerCommand( -1, va("cp \"@%s" S_COLOR_WHITE "\njoined the %s ^7team\n\"", client->pers.netname, server_blueteamprefix.string));
-				trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s has joined the blue team.\n\"", client->pers.cleanName));
+			trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s ^7joined the blue team.\n\"", client->pers.cleanName));
 			break;
 
 		case TEAM_SPECTATOR:
 			if ( oldTeam != TEAM_SPECTATOR )
 			{
 				trap_SendServerCommand( -1, va("cp \"@%s" S_COLOR_WHITE "\njoined the spectators\n\"", client->pers.netname));
-					trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s has joined the spectators.\n\"", client->pers.cleanName));
+					trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s ^7joined the spectators.\n\"", client->pers.cleanName));
 			}
 			break;
 
 		case TEAM_FREE:
 			trap_SendServerCommand( -1, va("cp \"@%s" S_COLOR_WHITE " joined the battle.\n\"", client->pers.netname));
-				trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s has joined the battle.\n\"", client->pers.cleanName));
+				trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s ^7joined the battle.\n\"", client->pers.cleanName));
 			break;
 	}
 }

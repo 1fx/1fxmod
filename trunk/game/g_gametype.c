@@ -508,17 +508,18 @@ void G_ResetGametype ( void )
 	}
 
 	if(g_disablelower.integer == 1){
-		level.nolower1 = qtrue;
+		// Boe!Man 12/16/10: level.nolower1 is NOT true unless there's valid data found.
 		if (strstr(level.mapname, "mp_kam2")){
 			SpawnFence(1);
 			SpawnFence(2);
 			SpawnFence(3);
 			SpawnFence(4);
+			level.nolower1 = qtrue;
 		}
 	}else{
-		level.nolower1 = qfalse;
 		if (strstr(level.mapname, "mp_kam2")){
 			RemoveFence();
+			level.nolower1 = qfalse;
 		}
 	}
 
