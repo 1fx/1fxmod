@@ -506,7 +506,8 @@ void G_SpawnGEntityFromSpawnVars( qboolean inSubBSP )
 
 	}
 	if(done == qfalse){
-		level.nolower[2] = 0;
+		// Boe!Man 12/16/10: Fix nolower's default data.
+		level.nolower[2] = -100000;
 	}
 
 	// check for "notteam" flag (GT_DM)
