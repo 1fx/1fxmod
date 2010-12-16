@@ -2385,7 +2385,7 @@ void G_RunFrame( int levelTime )
 		}
 		else if(level.mapAction == 3){
 			if(level.time == level.mapSwitchCount + 3000){
-				trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", mapname.string));
+				trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", level.mapname)); // nub fix eerst je errors voordat je op repo gooit
 			}
 		}
 	}
