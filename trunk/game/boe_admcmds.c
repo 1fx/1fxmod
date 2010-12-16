@@ -1417,17 +1417,30 @@ void Boe_Ban_f (int argNum, gentity_t *adm, qboolean shortCmd)
 	char			reason[MAX_STRING_TOKENS] = "\0";
 	fileHandle_t	f;
 	char			string[1024];
-
+	int i;
+	char arg[64];
+	char *temp = "";
+	qboolean first = qfalse;
 	idnum = Boe_ClientNumFromArg(adm, argNum, "ban <idnumber> <reason>", "ban", qfalse, qfalse, shortCmd);
 
 	if(idnum < 0)
 		return;
 	
-	if(shortCmd)
+	if(shortCmd){
 		strcpy(reason, GetReason());
-	else
-	trap_Argv( argNum + 1, reason, sizeof( reason ) );
-
+	}else{
+	//trap_Argv( argNum + 1, reason, sizeof( reason ) );
+		for(i=0;i<=25;i++){
+		trap_Argv( (argNum+1)+i, arg, sizeof( arg ) );
+			if(first)
+				temp = va("%s %s", temp, arg); // we fill this array up with 25 arguments
+			else{
+				temp = va("%s", arg);
+				first = qtrue;
+			}
+		}
+		strcpy(reason, temp);
+	}
 	// Boe!Man 9/7/10: Example of ban.
 	if (adm && adm->client){
 

@@ -1354,7 +1354,7 @@ void RPM_Obituary ( gentity_t *target, gentity_t *attacker, int mod, attackType_
 				message = "was sliced by";
 				if(statOk)
 				{
-					//atrstat->knifeKills++;
+					atrstat->knifeKills++;
 				}
 				break;
 
@@ -1407,7 +1407,7 @@ void RPM_Obituary ( gentity_t *target, gentity_t *attacker, int mod, attackType_
 
 					if(statOk)
 					{
-						//atrstat->explosiveKills++;
+						atrstat->explosiveKills++;
 					}
 				}
 				else
@@ -1447,10 +1447,10 @@ void RPM_Obituary ( gentity_t *target, gentity_t *attacker, int mod, attackType_
 					{
 						atrstat->hitcount++;
 						atrstat->accuracy = (float)atrstat->hitcount / (float)atrstat->shotcount * 100;
-						//atrstat->weapon_hits[ATTACK_NORMAL][mod]++;
+						atrstat->weapon_hits[ATTACK_NORMAL][mod]++; // MIGHT BE BUG
 					}
 
-					//atrstat->explosiveKills++;
+					atrstat->explosiveKills++;
 				}
 				break;
 
@@ -3851,7 +3851,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 
 	}
 	// Boe!Man 1/24/10: Different kinds of Talk during Gameplay.
-	if ((strstr(p, "!at ")) || (strstr(p, "!admintalk ")) || (strstr(p, "!AT"))) {
+	if ((strstr(p, "!at ")) || (strstr(p, "!admintalk ")) || (strstr(p, "!AT")) || (strstr(p, "!aT ")) || (strstr(p, "!At "))) {
 		if (ent->client->sess.admin){
 			p = ConcatArgs(1);
 			for(i=4;i<=strlen(p);i++){
@@ -3870,7 +3870,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			acmd = qtrue;
 		}
 	}
-	else if ((strstr(p, "!ac ")) || (strstr(p, "!AC "))) {
+	else if ((strstr(p, "!ac ")) || (strstr(p, "!AC ")) || (strstr(p, "!aC ")) || (strstr(p, "!Ac "))) {
 		if (ent->client->sess.admin){
 			p = ConcatArgs(1);
 			for(i=4;i<=strlen(p);i++){
@@ -3886,7 +3886,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		}
 	}
 	// Boe!Man 4/17/10: Clan chat.
-	else if ((strstr(p, "!cc ")) || (strstr(p, "!CC "))) {
+	else if ((strstr(p, "!cc ")) || (strstr(p, "!CC ")) || (strstr(p, "!Cc ")) || (strstr(p, "!cC "))) {
 		if (ent->client->sess.clanMember == 1){
 			p = ConcatArgs(1);
 			for(i=4;i<=strlen(p);i++){
@@ -3901,7 +3901,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			return;
 		}
 	}
-	else if ((strstr(p, "!ca "))) {
+	else if ((strstr(p, "!ca ")) || (strstr(p, "!Ca ")) || (strstr(p, "!cA ")) || (strstr(p, "!CA "))) {
 			p = ConcatArgs(1);
 			for(i=4;i<=strlen(p);i++){
 			p[a] = p[i];
