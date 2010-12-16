@@ -1992,7 +1992,8 @@ void Adm_ForceTeam(int argNum, gentity_t *adm, qboolean shortCmd)
 	}else{
 		trap_Argv( 3, str, sizeof( str ) );
 	}
-	SetTeam( &g_entities[idnum], str, NULL);
+<<<<<<< .mine
+	SetTeam( &g_entities[idnum], str, NULL, qtrue );
 	trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s ^7was forceteamed by %s.\n\"", g_entities[idnum].client->pers.netname,adm->client->pers.netname));
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 }

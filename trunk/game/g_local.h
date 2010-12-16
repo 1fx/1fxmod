@@ -630,7 +630,7 @@ void		G_StopGhosting		( gentity_t* ent );
 void		G_StartGhosting		( gentity_t* ent );
 
 void		BroadcastTeamChange( gclient_t *client, int oldTeam );
-void		SetTeam( gentity_t *ent, char *s, const char* identity );
+void		SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced );
 void		Cmd_FollowCycle_f( gentity_t *ent, int dir );
 qboolean	CheatsOk				( gentity_t *ent );
 void		G_SpawnDebugCylinder	( vec3_t origin, float radius, gentity_t* clientent, float viewRadius, int colorIndex );

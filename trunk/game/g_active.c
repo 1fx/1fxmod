@@ -678,7 +678,7 @@ qboolean ClientInactivityTimer( gclient_t *client ) {
 	} else if ( !client->pers.localClient ) {
 		if ( level.time > client->inactivityTime ) {
 			//bertman add msg here
-			SetTeam(&g_entities[client-level.clients], "s", NULL); // Henk 08/04/10 -> Force ppl to spec instead of kicking them when afk
+			SetTeam(&g_entities[client-level.clients], "s", NULL, qfalse); // Henk 08/04/10 -> Force ppl to spec instead of kicking them when afk
 			trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s ^7was forced to spectator for being AFK.\n\"", g_entities[client-level.clients].client->pers.netname));
 			//trap_DropClient( client - level.clients, "Dropped due to inactivity" );
 			return qfalse;
@@ -1465,7 +1465,7 @@ void G_CheckClientTimeouts ( gentity_t *ent )
 	// longer than the timeout to spectator then force this client into spectator mode
 	if ( level.time - ent->client->pers.cmd.serverTime > g_timeouttospec.integer * 1000 )
 	{
-		SetTeam ( ent, "spectator", NULL );
+		SetTeam ( ent, "spectator", NULL, qfalse );
 	}
 }
 
