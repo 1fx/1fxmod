@@ -4965,10 +4965,6 @@ void ClientCommand( int clientNum ) {
 	// Boe!Man 4/3/10
 	else if (Q_stricmp (cmd, "dev") == 0)
 		Boe_dev_f( ent );
-	else if (Q_stricmp (cmd, "asd") == 0)
-		ent->client->sess.team = TEAM_BLUE;
-	else if (Q_stricmp (cmd, "fix") == 0)
-		ClientUserinfoChanged(ent->s.number);
 	// Henk 07/04/10 -> Send info to all players(for RPM scoreboard)
 	else if (Q_stricmp (cmd, "tmi") == 0){
 		RPM_UpdateTMI();
