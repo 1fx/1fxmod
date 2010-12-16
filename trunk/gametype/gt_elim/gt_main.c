@@ -141,19 +141,42 @@ Handles all events sent to the gametype
 */
 int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int arg4 )
 {
+	char color1[5];
+	char color2[5];
+	char color3[5];
+	char color4[5];
+	char color5[5];
+	char color6[5];
+	char msg[20];
 	switch ( cmd )
 	{
 		case GTEV_TEAM_ELIMINATED:
 			switch ( arg0 )
 			{
 				case TEAM_RED:
-					trap_Cmd_TextMessage ( -1, "Red team eliminated!" );
+					trap_Cvar_VariableStringBuffer ( "server_redteamprefix", msg, 19 );
+					trap_Cvar_VariableStringBuffer ( "server_color1", color1, 4 );
+					trap_Cvar_VariableStringBuffer ( "server_color2", color2, 4 );
+					trap_Cvar_VariableStringBuffer ( "server_color3", color3, 4 );
+					trap_Cvar_VariableStringBuffer ( "server_color4", color4, 4 );
+					trap_Cvar_VariableStringBuffer ( "server_color5", color5, 4 );
+					trap_Cvar_VariableStringBuffer ( "server_color6", color6, 4 );
+					trap_Cmd_TextMessage ( -1, va("@%s ^7team %se%sl%si%sm%si%snated!", msg, color1, color2, color3, color4, color5, color6 )); // red team eliminated
+					trap_Cmd_TextMessage( -1, va("^3[ELIM] ^7Red team eliminated\n\""));
 					trap_Cmd_AddTeamScore ( TEAM_BLUE, 1 );
 					trap_Cmd_Restart ( 5 );
 					break;
 
 				case TEAM_BLUE:
-					trap_Cmd_TextMessage ( -1, "Blue team eliminated!" );
+					trap_Cvar_VariableStringBuffer ( "server_blueteamprefix", msg, 19 );
+					trap_Cvar_VariableStringBuffer ( "server_color1", color1, 4 );
+					trap_Cvar_VariableStringBuffer ( "server_color2", color2, 4 );
+					trap_Cvar_VariableStringBuffer ( "server_color3", color3, 4 );
+					trap_Cvar_VariableStringBuffer ( "server_color4", color4, 4 );
+					trap_Cvar_VariableStringBuffer ( "server_color5", color5, 4 );
+					trap_Cvar_VariableStringBuffer ( "server_color6", color6, 4 );
+					trap_Cmd_TextMessage ( -1, va("@%s ^7team %se%sl%si%sm%si%snated!", msg, color1, color2, color3, color4, color5, color6 )); // blue team eliminated
+					trap_Cmd_TextMessage( -1, va("^3[ELIM] ^7Blue team eliminated\n\""));
 					trap_Cmd_AddTeamScore ( TEAM_RED, 1 );
 					trap_Cmd_Restart ( 5 );
 					break;
@@ -161,7 +184,14 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 			break;
 
 		case GTEV_TIME_EXPIRED:
-			trap_Cmd_TextMessage ( -1, "Round Draw!" );
+			trap_Cvar_VariableStringBuffer ( "server_color1", color1, 4 );
+			trap_Cvar_VariableStringBuffer ( "server_color2", color2, 4 );
+			trap_Cvar_VariableStringBuffer ( "server_color3", color3, 4 );
+			trap_Cvar_VariableStringBuffer ( "server_color4", color4, 4 );
+			trap_Cvar_VariableStringBuffer ( "server_color5", color5, 4 );
+			trap_Cvar_VariableStringBuffer ( "server_color6", color6, 4 );
+			trap_Cmd_TextMessage ( -1, va("@%sR%so%su%sn%sd %sD%sraw!", color1, color2, color3, color4, color5, color5, color6 )); // round draw
+			trap_Cmd_TextMessage( -1, va("^3[ELIM] ^7Round Draw\n\""));
 			trap_Cmd_Restart ( 5 );
 			break;
 	}
