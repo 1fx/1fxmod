@@ -2383,6 +2383,11 @@ void G_RunFrame( int levelTime )
 			else if(level.time == level.mapSwitchCount + 5000){
 				trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", level.mapSwitchName));}
 		}
+		else if(level.mapAction == 3){
+			if(level.time == level.mapSwitchCount + 3000){
+				trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", mapname.string));
+			}
+		}
 	}
 
 	// Boe!Man 11/16/10: Is compmode enabled?

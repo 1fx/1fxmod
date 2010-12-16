@@ -3702,7 +3702,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 				level.mapAction = 2;
 				level.mapSwitchCount = level.time;
 				strcpy(level.mapSwitchName, map);
-				Boe_GlobalSound (G_SoundIndex("sound/misc/menus/invalid.wav"));
+				Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 				trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Map switch to %s by %s.\n\"", map, ent->client->pers.netname));
 				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp ^7%s in 5!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, map));
 				Boe_adminLog (va("%s - MAP CHANGE TO %s", ent->client->pers.cleanName, map)) ;
@@ -3723,33 +3723,53 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		}
 		return;
 	}else if(strstr(p, "!gt ")){
+		// Boe!Man 12/16/10: New Gametype Switch system.
 		if (ent->client->sess.admin >= 4){
 			char *numb;
 			int number;
 			char gametype[8];
+			if(level.mapSwitch == qfalse){
 			if(strstr(p, "ctf")){
 				trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype ctf\n"));
 				strcpy(gametype, "ctf");
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sG%sa%sm%se%st%sype ^7Capture the Flag!", level.time + 3500, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 			}else if(strstr(p, "inf")){
 				trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype inf\n"));
 				strcpy(gametype, "inf");
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sG%sa%sm%se%st%sype ^7Infiltration!", level.time + 3500, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 			}else if(strstr(p, "dm")){
 				trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype dm\n"));
 				strcpy(gametype, "dm");
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sG%sa%sm%se%st%sype ^7Deathmatch!", level.time + 3500, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 			}else if(strstr(p, "tdm")){
 				trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype tdm\n"));
 				strcpy(gametype, "tdm");
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sG%sa%sm%se%st%sype ^7Team Deathmatch!", level.time + 3500, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 			}else if(strstr(p, "elim")){
-				trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype tdm\n"));
+				trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype elim\n"));
 				strcpy(gametype, "elim");
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sG%sa%sm%se%st%sype ^7Elimination!", level.time + 3500, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 			}else{
-				trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Unkown gametype.\n\""));
+				trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Unknown gametype.\n\""));
 				G_Say( ent, NULL, mode, p);
 				return;
 			}
-				//trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sT%si%sm%se%sl%simit %i!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, number));
+			}else{
+				if(level.mapAction == 1 || level.mapAction == 3){
+					trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7A map restart is already in progress.\n\""));}
+				else if(level.mapAction == 2){
+					trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7A map switch is already in progress.\n\""));}
+				else{
+					trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7Something appears to be wrong. Please report to a developer using this error code: 2J\n\""));}
+				G_Say( ent, NULL, mode, p);
+				return;
+			}
 				trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Gametype changed to %s by %s.\n\"", gametype, ent->client->pers.netname));
-				//Boe_adminLog (va("%s - TIMELIMIT %i", ent->client->pers.cleanName, number)) ;
+				Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+				level.mapSwitch = qtrue;
+				level.mapAction = 3;
+				level.mapSwitchCount = level.time;
+				Boe_adminLog (va("%s - GAMETYPE SWITCH - %s", ent->client->pers.cleanName, gametype)) ;
 			}
 		else if (ent->client->sess.admin < 4){
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
