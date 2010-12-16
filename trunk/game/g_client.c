@@ -2024,6 +2024,11 @@ void ClientSpawn(gentity_t *ent)
 		ClientUserinfoChanged ( client->ps.clientNum );
 	}
 
+	if(!strstr(level.gametypeTeam[client->sess.team], client->pers.identity->mTeam)){ // this skin does not belong to this team so change their Identity
+		trap_SendServerCommand(ent->s.number, va("print \"^3[Info] ^7Your skin has been changed because it did not match your team.\n\"") );
+		ClientUserinfoChanged ( client->ps.clientNum );
+	}
+
 	// Update the time when other people can join the game
 	if ( !level.gametypeJoinTime && level.gametypeData->teams )
 	{
