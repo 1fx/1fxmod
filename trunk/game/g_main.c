@@ -2385,6 +2385,7 @@ void G_RunFrame( int levelTime )
 		}
 		else if(level.mapAction == 3){
 			if(level.time == level.mapSwitchCount + 3000){
+				trap_Cvar_VariableStringBuffer ( "mapname", level.mapname, MAX_QPATH );
 				trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", level.mapname)); // nub fix eerst je errors voordat je op repo gooit
 			}
 		}

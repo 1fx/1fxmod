@@ -648,8 +648,8 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 			return -1;
 			}
 			else{
-				Com_Printf("You cannot use this command on other Admins.\n");
-				return -1;
+				//Com_Printf("You cannot use this command on other Admins.\n"); // Henk -> Rcon has to be able to pop everyone.
+				//return -1;
 			}
 		}
 	}

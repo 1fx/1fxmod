@@ -1515,9 +1515,9 @@ void RPM_UpdateTMI(void)
 		return;
 
 	if(level.numConnectedClients >= 0 && level.numConnectedClients <= 10)
-		UpdateTime = 1000;
+		UpdateTime = 2000;
 	else if(level.numConnectedClients > 11 && level.numConnectedClients <= 20)
-		UpdateTime = 2500;
+		UpdateTime = 3000;
 	else if(level.numConnectedClients > 20)
 		UpdateTime = 4000;
 
@@ -3737,14 +3737,14 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 				trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype inf\n"));
 				strcpy(gametype, "inf");
 				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sG%sa%sm%se%st%sype ^7Infiltration!", level.time + 3500, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-			}else if(strstr(p, "dm")){
-				trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype dm\n"));
-				strcpy(gametype, "dm");
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sG%sa%sm%se%st%sype ^7Deathmatch!", level.time + 3500, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 			}else if(strstr(p, "tdm")){
 				trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype tdm\n"));
 				strcpy(gametype, "tdm");
 				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sG%sa%sm%se%st%sype ^7Team Deathmatch!", level.time + 3500, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+			}else if(strstr(p, "dm")){
+				trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype dm\n"));
+				strcpy(gametype, "dm");
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sG%sa%sm%se%st%sype ^7Deathmatch!", level.time + 3500, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 			}else if(strstr(p, "elim")){
 				trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype elim\n"));
 				strcpy(gametype, "elim");
@@ -4835,6 +4835,7 @@ ClientCommand
 */
 void ClientCommand( int clientNum ) {
 	gentity_t *ent;
+	int i;
 	char	cmd[MAX_TOKEN_CHARS];
 
 	ent = g_entities + clientNum;

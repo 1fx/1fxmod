@@ -1337,8 +1337,7 @@ void ClientThink_real( gentity_t *ent )
 		*/
 			////04.03.05 - 08.05pm - #Fixed admin being forced to respawn
 			if ( g_forcerespawn.integer > 0 && 
-				( level.time - client->respawnTime ) > g_forcerespawn.integer * 1000 && 
-				!client->sess.admin >= 2) 
+				( level.time - client->respawnTime ) > g_forcerespawn.integer * 1000) 
 //End
 			//Ryan
 			{
@@ -1607,7 +1606,7 @@ void ClientEndFrame( gentity_t *ent )
 
 	// save network bandwidth
 #if 0
-	if ( !g_synchronousClients->integer && ent->client->ps.pm_type == PM_NORMAL ) 
+	if ( !g_synchronousClients.integer && ent->client->ps.pm_type == PM_NORMAL ) 
 	{
 		// FIXME: this must change eventually for non-sync demo recording
 		VectorClear( ent->client->ps.viewangles );
