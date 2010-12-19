@@ -3722,7 +3722,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
 		}
 		return;
-	}else if(strstr(p, "!gt ")){
+	}else if(strstr(p, "!gt ") || strstr(p, "!g ")){
 		// Boe!Man 12/16/10: New Gametype Switch system.
 		if (ent->client->sess.admin >= 4){
 			char *numb;

@@ -504,21 +504,22 @@ qboolean isdigit(char c){ // by henk
 	}
 }
 
-/*
-====================
-Boe_ClientNumFromArg
-====================
-*/
+
 qboolean ischar(char c){
 	if(c >= 97 && c <= 122){ // a-z lowercase
 		return qtrue;
-	}else if(c >= 65 && c <= 90){ // a-z uppercase
+	}else if(c >= 65 && c <= 90){ // A-Z uppercase
 		return qtrue;
 	}else{
 		return qfalse;
 	}
 }
 
+/*
+====================
+Boe_ClientNumFromArg
+====================
+*/
 int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const char* action, qboolean aliveOnly, qboolean otheradmins, qboolean shortCmd)
 {
 	char	arg[16] = "\0"; // increase buffer so we can process more commands
