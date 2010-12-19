@@ -368,7 +368,7 @@ void Boe_MapRestart(int argNum, gentity_t *ent, qboolean shortCmd){
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sS%se%sc%so%sn%sd round started!", level.time + 3000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		level.compMsgCount = -1;
 	}
-	Boe_GlobalSound (G_SoundIndex("sound/misc/menus/invalid.wav"));
+	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 	Boe_adminLog (va("%s - MAP RESTART", ent->client->pers.cleanName)) ;
 	}else{
 		if(level.mapAction == 1){
