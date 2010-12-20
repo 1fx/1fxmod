@@ -112,6 +112,7 @@ void P_WorldEffects( gentity_t *ent )
 	// Disable Nolower
 	if(level.nolower1 == qtrue && !strstr(level.mapname, "mp_kam2")){ // if enabled
 		if(ent->r.currentOrigin[2] <= level.nolower[2] && !G_IsClientDead(ent->client)){
+			//trap_SendServerCommand( ent->s.number, va("print \"nolower = %.2f.\n\"", level.nolower[2]) );
 			G_Damage(ent, NULL, NULL, NULL, NULL, 10000, 0, MOD_TRIGGER_HURT, 0);
 		}
 	}

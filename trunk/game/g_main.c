@@ -785,14 +785,14 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	Com_Printf ("------- Game Initialization -------\n");
 	Com_Printf ("Mod: %s %s\n", INF_STRING, INF_VERSION_STRING);
 	Com_Printf ("Date: %s\n", INF_VERSION_DATE);
-
+	
 	srand( randomSeed );
 
 	// set some level globals
 	memset( &level, 0, sizeof( level ) );
 	level.time = levelTime;
 	level.startTime = levelTime;
-
+	level.nolower[2] = -10000000;
 	G_RegisterCvars();
 
 	G_ProcessIPBans();

@@ -174,6 +174,7 @@ void SP_gametype_player				(gentity_t* ent);
 void SP_mission_player				(gentity_t* ent);
 									
 void SP_fx_play_effect				(gentity_t* ent);
+void nolower						(gentity_t* ent);
 
 spawn_t	spawns[] = 
 {
@@ -245,7 +246,7 @@ spawn_t	spawns[] =
 	// stuff from SP emulated
 	{"func_breakable_brush",		SP_func_static},
 	{"fx_play_effect",				SP_fx_play_effect},
-
+	{"nolower",				nolower},
 	// The following classnames are instantly removed when spawned.  The RMG 
 	// shares instances with single player which is what causes these things
 	// to attempt to spawn
@@ -480,7 +481,6 @@ void G_SpawnGEntityFromSpawnVars( qboolean inSubBSP )
 	int			i;
 	gentity_t	*ent;
 	char		*value;
-	qboolean	done = qfalse;
 
 	if (inSubBSP)
 	{	
@@ -498,18 +498,7 @@ void G_SpawnGEntityFromSpawnVars( qboolean inSubBSP )
 	for ( i = 0 ; i < level.numSpawnVars ; i++ ) 
 	{
 		G_ParseField( level.spawnVars[i][0], level.spawnVars[i][1], ent );
-		if(strstr(level.spawnVars[i][0], "nolower")){
-			G_SpawnVector("origin", "0", level.nolower);
-			level.nolower1 = qtrue;
-			done = qtrue;
-		}
-
 	}
-	if(done == qfalse){
-		// Boe!Man 12/16/10: Fix nolower's default data.
-		level.nolower[2] = -100000;
-	}
-
 	// check for "notteam" flag (GT_DM)
 	if ( level.gametypeData->teams ) 
 	{

@@ -623,6 +623,12 @@ void fx_think( gentity_t *ent )
 }
 
 
+void nolower(gentity_t *ent)
+{
+	G_SpawnVector("origin", "0", level.nolower);
+	level.nolower1 = qtrue;
+}
+
 /*QUAKED fx_play_effect (.2 .5 .8) (-8 -8 -8) (8 8 8) START_OFF
 Plays specified effect file
 
