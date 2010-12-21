@@ -1100,7 +1100,7 @@ void SP_worldspawn( void )
 		level.specsLocked = 1;
 	}
 	//Ryan
-	/* Henk -> We don't need this for now..
+
 	trap_SetConfigstring(CS_LIGHT_STYLES+(LS_STYLES_START*3)+0, defaultStyles[0][0]);
 	trap_SetConfigstring(CS_LIGHT_STYLES+(LS_STYLES_START*3)+1, defaultStyles[0][1]);
 	trap_SetConfigstring(CS_LIGHT_STYLES+(LS_STYLES_START*3)+2, defaultStyles[0][2]);
@@ -1128,7 +1128,7 @@ void SP_worldspawn( void )
 				i, lengthRed, lengthGreen, lengthBlue);
 		}
 	}		
-	*/
+	
 }
 
 
