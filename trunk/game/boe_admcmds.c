@@ -1927,7 +1927,7 @@ void Boe_Broadcast(int argNum, gentity_t *adm, qboolean shortCmd){
 	int i;
 	if(shortCmd){
 		trap_Argv(1, buffer, sizeof(buffer));
-		for(i=4;i<=strlen(buffer);i++){
+		for(i=StartAfterCommand(va("%s", buffer));i<=strlen(buffer);i++){
 			strcpy(buffer1, va("%s%c", buffer1, buffer[i]));
 		}
 		buffer[i+1] = '\0';
