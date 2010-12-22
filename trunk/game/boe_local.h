@@ -250,22 +250,6 @@ extern	vmCvar_t	server_color4;
 extern	vmCvar_t	server_color5;
 extern	vmCvar_t	server_color6;
 
-extern  void		*DB195;
-extern  void		*DB194;
-extern  void		*DB212;
-extern  void		*DB62;
-extern  void		*DB193;
-extern  void		*DB213;
-extern  void		*DB217;
-extern  void		*DB192;
-extern  void		*DB216;
-extern  void		*DB91;
-extern  void		*DB209;
-extern  void		*DB80;
-extern  void		*DB64;
-extern  void		*DB202;
-extern  void		*DB66;
-extern  void		*DB203;
 extern  int			Preloaded;
 
 void	Boe_GlobalSound (int soundIndex);
@@ -274,7 +258,6 @@ void	Boe_Motd (gentity_t *ent);
 
 void	HENK_COUNTRY(gentity_t *ent);
 qboolean CheckIP(gentity_t *ent);
-void	HENK_CHECKFP(gentity_t *ent);
 
 void	Boe_Players (gentity_t *ent);
 

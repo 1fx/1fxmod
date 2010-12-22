@@ -1446,15 +1446,8 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 	// get and distribute relevent paramters
 	//G_LogPrintf( "ClientConnect: %i\n", clientNum );
 	// Boe!Man 3/31/10: First off we search in the Country database.
-	if(CheckIP(ent) != qtrue){ // not found in list so search ip database
-			// store ip
-		if(ent->client->pers.ip != "bot"){
-			trap_FS_FOpenFile("country/IP.all", &f, FS_APPEND_TEXT);
-			strcpy(str, va("%s", ent->client->pers.ip));
-			trap_FS_Write( str, strlen( str ), f );
-			trap_FS_Write( "\n", 1, f);
-			trap_FS_FCloseFile(f);
-		}
+	if(g_checkcountry.integer == 1){
+	HENK_COUNTRY(ent);
 	}
 	//G_LogPrintf( "HENK_COUNTRY done..\n" );
 	// Boe!Man 3/30/10: We use this for several things.. Including MOTD and Admin.
