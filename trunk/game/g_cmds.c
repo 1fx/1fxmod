@@ -5009,7 +5009,9 @@ void HENK_COUNTRY(gentity_t *ent){
 			group = trap_GPG_GetNext(group);
 		}
 	}else{
-		trap_SendServerCommand( -1, va("print \"^3[Debug]^7 File not found\n\"") );
+		//trap_SendServerCommand( -1, va("print \"^3[Debug]^7 File not found\n\"") );
+		G_LogPrintf("IP2Country Debug: File not found\n"); // Boe 12/23/10: Append to console & log to file rather than sending debug information to all clients.
+		
 	}
 		// End other file
 		strcpy(ent->client->sess.countryext, "??");

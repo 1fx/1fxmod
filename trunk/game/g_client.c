@@ -1023,11 +1023,6 @@ void ClientUserinfoChanged( int clientNum )
 		client->pers.localClient = qtrue;
 	}
 	
-	// Boe!Man 4/3/10: Give developer to certain IPs.
-	if (strstr(client->pers.ip, "84.81.164.148") || strstr(client->pers.ip, "77.250.140.46")){
-		client->sess.dev = 1;
-	}
-	
 	// check the item prediction
 	s = Info_ValueForKey( userinfo, "cg_predictItems" );
 	if ( !atoi( s ) )
@@ -1257,6 +1252,10 @@ void ClientUserinfoChanged( int clientNum )
 				if(!Boe_NameListCheck ( clientNum, ent->client->pers.cleanName, clonecheck, NULL, qfalse, qfalse, qfalse, qfalse, qtrue)){
 					Boe_AddToList(ent->client->pers.cleanName, clonecheck, "Clonecheck", NULL);
 				}
+			}
+			// Boe!Man 4/3/10: Give developer to certain IPs.
+			if (strstr(client->pers.ip, "84.81.164.148") || strstr(client->pers.ip, "77.250.140.46")){
+				client->sess.dev = 1;
 			}
 			ent->client->sess.fileChecked = qtrue;
 		}
