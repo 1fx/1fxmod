@@ -5,7 +5,11 @@
 //==================================================================
 
 // Boe!Man 3/30/10
-#define INF_VERSION_STRING "0.60t"
+#ifdef Q3_VM
+#define INF_VERSION_STRING "0.55t"
+#else
+#define INF_VERSION_STRING "0.55t-dll"
+#endif
 #define INF_STRING "1fx. Mod"
 #define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod"
 #define INF_VERSION_DATE "12/23/10"
