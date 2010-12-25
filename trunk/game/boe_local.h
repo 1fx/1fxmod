@@ -5,7 +5,7 @@
 //==================================================================
 
 // Boe!Man 3/30/10
-#define INF_VERSION_STRING "0.55t"
+#define INF_VERSION_STRING "0.60t"
 #define INF_STRING "1fx. Mod"
 #define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod"
 #define INF_VERSION_DATE "12/23/10"
@@ -321,7 +321,10 @@ void	Boe_NormalDamage(int argNum, gentity_t *ent, qboolean ShortCmd);
 void	Boe_GametypeRestart(int argNum, gentity_t *ent, qboolean ShortCmd);
 void	Boe_Third(int argNum, gentity_t *ent, qboolean ShortCmd);
 void	Boe_CompMode(int argNum, gentity_t *ent, qboolean ShortCmd);
-
+void	RemoveFence();
+void	SpawnFence(int arg);
+qboolean henk_isdigit(char c);
+qboolean henk_ischar(char c);
 void RPM_Awards(void);
 void G_AdjustClientBBox(gentity_t *other);
 void G_AdjustClientBBoxs(void);

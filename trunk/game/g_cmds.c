@@ -75,6 +75,70 @@ void trap_SendServerCommand( int clientNum, const char *text ) {
 		trap_SendServerCommand2(clientNum, text);
 } 
 
+qboolean henk_isdigit(char c){ // by henk
+	if(c >= 48 && c <= 57){
+		return qtrue;
+	}else{
+		return qfalse;
+	}
+}
+
+
+qboolean henk_ischar(char c){
+	if(c >= 97 && c <= 122){ // a-z lowercase
+		return qtrue;
+	}else if(c >= 65 && c <= 90){ // A-Z uppercase
+		return qtrue;
+	}else{
+		return qfalse;
+	}
+}
+
+unsigned int henk_atoi( const char *string ) {
+	unsigned int		sign;
+	unsigned int		value;
+	unsigned int		c;
+
+
+	// skip whitespace
+	while ( *string <= ' ' ) {
+		if ( !*string ) {
+			return 0;
+		}
+		string++;
+	}
+
+	// check sign
+	switch ( *string ) {
+	case '+':
+		string++;
+		sign = 1;
+		break;
+	case '-':
+		string++;
+		sign = -1;
+		break;
+	default:
+		sign = 1;
+		break;
+	}
+
+	// read digits
+	value = 0;
+	do {
+		c = *string++;
+		if ( c < '0' || c > '9' ) {
+			break;
+		}
+		c -= '0';
+		value = value * 10 + c;
+	} while ( 1 );
+
+	// not handling 10e10 notation...
+
+	return value * sign;
+}
+
 /*
 ================
 G_AdjustClientBBox
@@ -3130,7 +3194,7 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 {
 	qboolean	 ghost = qfalse;
 	qboolean	 spec  = qfalse;
-	char	type[10];
+	char	type[48];
 	char	admin[36];
 	char 	star[10];
 	

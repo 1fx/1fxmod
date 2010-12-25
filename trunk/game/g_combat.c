@@ -379,6 +379,7 @@ void player_die(
 		G_AddScore( self, g_suicidePenalty.integer );
 	}
 
+	if(attacker->client){
 	if(attacker->client->pers.statinfo.killsinarow >= 3){
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7is %so%sn %sf%si%sr%se ^7with %s%i ^7kills in a row.",
 				level.time + 5000,
@@ -391,6 +392,7 @@ void player_die(
 				server_color6.string,
 				server_color4.string,
 				attacker->client->pers.statinfo.killsinarow));
+	}
 	}
 	//This is where the server handles the obituary functions now (after the scores are done)
 	RPM_Obituary (self, attacker, meansOfDeath, attack, hitLocation);

@@ -496,25 +496,6 @@ void Boe_Remove_Clan_Member(int argNum, gentity_t *adm, qboolean shortCmd)
 	}
 }
 
-qboolean isdigit(char c){ // by henk
-	if(c >= 48 && c <= 57){
-		return qtrue;
-	}else{
-		return qfalse;
-	}
-}
-
-
-qboolean ischar(char c){
-	if(c >= 97 && c <= 122){ // a-z lowercase
-		return qtrue;
-	}else if(c >= 65 && c <= 90){ // A-Z uppercase
-		return qtrue;
-	}else{
-		return qfalse;
-	}
-}
-
 /*
 ====================
 Boe_ClientNumFromArg
@@ -533,7 +514,7 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 		num = -1;
 		for(i=0;i<16;i++){ // import from Boe_Uppercut -> Bug: id's return when good?
 			if(arg[i] == ' '){
-				if(isdigit(arg[i+1])){
+				if(henk_isdigit(arg[i+1])){
 				num = atoi(va("%c%c", arg[i+1], arg[i+2]));
 				}else{
 					for(i=0;i<=20;i++){
@@ -554,7 +535,7 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 								}
 							}
 							if(space == qfalse){
-								if(!ischar(arg[i+1])){
+								if(!henk_ischar(arg[i+1])){
 									//trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You haven't entered a valid player ID/player name.\n\"", arg, usage));
 									num = -1;
 									break;
@@ -747,7 +728,7 @@ int Boe_Remove_from_list ( char *key, const char *file, const char* type, gentit
 	char			*bufP, *listP;
 	fileHandle_t	f;
 	char			a[64] = "\0";
-	int				count;
+//	int				count;
 
 	while(*key == ' '){
 		if(*key == '\0'){
@@ -1547,7 +1528,7 @@ Boe_Twist
 void Boe_Twist (int argNum, gentity_t *adm, qboolean shortCmd)
 {
 	gentity_t		*ent;
-	int				idnum, i;
+	int				idnum;
 	vec3_t			lookdown;
 	//char			*a, *b, *c;
 	char			a[4], b[4], c[4];
@@ -1638,7 +1619,7 @@ Boe_Respawn
 void Boe_Respawn (int argNum, gentity_t *adm, qboolean shortCmd)
 {
 	gentity_t		*ent;
-	qboolean		ghost;
+//	qboolean		ghost;
 	int				idnum;
 	char	*status;
 
@@ -1708,7 +1689,7 @@ void Boe_Runover (int argNum, gentity_t *adm, qboolean shortCmd)
 	vec3_t  fireAngs;
 	float   knockback = 400.0;
 	int		idnum;
-	int		anim = 0;
+//	int		anim = 0;
 	
 	idnum = Boe_ClientNumFromArg(adm, argNum, "runover <idnumber>", "runover", qtrue, qtrue, shortCmd);
 	if(idnum < 0)
@@ -1796,9 +1777,7 @@ void Boe_Plant (int argNum, gentity_t *adm, qboolean shortCmd)
 	gentity_t	*ent;
 	int			idnum;
 	vec3_t dir;
-	int it, nadeDir, weapon;
-	float x, y;
-	gentity_t *missile;
+	int nadeDir, weapon;
 
 	idnum = Boe_ClientNumFromArg(adm, argNum, "plant <idnumber>", "Plant", qtrue, qtrue, shortCmd);
 

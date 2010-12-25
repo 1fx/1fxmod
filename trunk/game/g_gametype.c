@@ -786,6 +786,7 @@ void CheckGametype ( void )
 	}
 
 	// Handle respawn interval spawning
+	if(level.gametypeData){
 	if ( level.gametypeData->respawnType == RT_INTERVAL )
 	{
 		team_t team;
@@ -801,6 +802,7 @@ void CheckGametype ( void )
 			}
 		}
 
+	}
 	}
 
 	// If we are in RT_NONE respawn mode then we need to look for everyone being dead

@@ -485,21 +485,8 @@ int vmMain( int command, int arg0, int arg1, int arg2, int arg3, int arg4, int a
 			G_ShutdownGhoul ( );
 			return 0;
 		case GAME_INIT:
-			fileCount = trap_FS_GetFileList( "..\\..\\", ".txt", Files, 1024 );
-			filePtr = Files;
-			for(i=0;i<fileCount;i++, filePtr += filelen+1){
-				filelen = strlen(filePtr);
-				file = va("%s", filePtr);
-				if(strstr(file, "settings1.txt")){
-					check1 = qtrue;
-				}
-				if(strstr(file, "protection.txt") && check1 == qtrue){
-					G_InitGame( arg0, arg1, arg2 );
-					return 0;
-				}
-
-			}
-			return -1;
+			G_InitGame( arg0, arg1, arg2 );
+			return 0;
 		case GAME_SHUTDOWN:
 			G_ShutdownGame( arg0 );
 			return 0;

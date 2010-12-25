@@ -1236,7 +1236,7 @@ void Boe_Stats ( gentity_t *ent )
 	trap_Argv( 1, arg1, sizeof( arg1 ) );  // Boe!Man 2/21/10: Getting the client ID.
 
 	// Boe!Man 2/21/10: If no ID is entered, just display the current client stats.
-	if ((arg1[0] < '0' || arg1[0] > '9') && !ischar(arg1[0]))
+	if ((arg1[0] < '0' || arg1[0] > '9') && !henk_ischar(arg1[0]))
 	{
 		stat = &ent->client->pers.statinfo;
 		ip		= ent->client->pers.ip;
@@ -1264,7 +1264,7 @@ void Boe_Stats ( gentity_t *ent )
 	// Boe!Man 2/21/10: If a ID is entered, we're going to display that users' status.
 	else
 	{
-		if(ischar(arg1[0])){
+		if(henk_ischar(arg1[0])){
 			for(i=0;i<=level.numConnectedClients;i++){
 				//trap_SendServerCommand(-1, va("print\"^3[Debug] ^7%s comparing with %s.\n\"", g_entities[level.sortedClients[i]].client->pers.cleanName,numb));
 				if(strstr(Q_strlwr(g_entities[level.sortedClients[i]].client->pers.cleanName), Q_strlwr(arg1))){

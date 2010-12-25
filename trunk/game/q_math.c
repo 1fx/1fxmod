@@ -1428,7 +1428,7 @@ int irand(int min, int max)
 	result = ((result * (max - min)) >> 15) + min;
 	return(result);
 }
-
+#ifdef Q3_VM 
 float powf ( float x, int y )
 {
 	float r = x;
@@ -1436,6 +1436,7 @@ float powf ( float x, int y )
 		r = r * r;
 	return r;
 }
+#endif
 
 #ifdef Q3_VM 
 

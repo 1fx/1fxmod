@@ -75,7 +75,6 @@
 #define max(x,y) ((x)>(y)?(x):(y))
 
 #else
-
 #include <assert.h>
 #include <math.h>
 #include <stdio.h>
@@ -687,9 +686,9 @@ float Q_rsqrt( float f );		// reciprocal square root
 
 signed char ClampChar( int i );
 signed short ClampShort( int i );
-
+#ifdef Q3_VM 
 float powf ( float x, int y );
-
+#endif
 // this isn't a real cheap function to call!
 int DirToByte( vec3_t dir );
 void ByteToDir( int b, vec3_t dir );

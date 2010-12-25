@@ -839,6 +839,7 @@ int Q_stricmp (const char *s1, const char *s2) {
 
 
 char *Q_strlwr( char *s1 ) {
+#ifdef Q3_VM
     char	*s;
 
     s = s1;
@@ -846,7 +847,12 @@ char *Q_strlwr( char *s1 ) {
 		*s = tolower(*s);
 		s++;
 	}
+	#else
+	s1 = strlwr(s1);
+#endif
     return s1;
+
+	
 }
 
 char *Q_strupr( char *s1 ) {
@@ -932,7 +938,7 @@ int QDECL Com_sprintf( char *dest, int size, const char *fmt, ...)
 	}
 	if (len >= size) {
 		Com_Printf ("Com_sprintf: overflow of %i in %i for '%s'\n", len, size, fmt);
-		return; // Henkie 06/10/10 don't parse this potential dangerous data.
+		return 0; // Henkie 06/10/10 don't parse this potential dangerous data.
 #ifdef	_DEBUG
 		__asm {
 			int 3;

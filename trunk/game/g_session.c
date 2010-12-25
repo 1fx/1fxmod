@@ -162,6 +162,7 @@ void G_WriteSessionData( void )
 {
 	int		i;
 
+	if(level.gametypeData)
 	trap_Cvar_Set( "session", level.gametypeData->name );
 
 	for ( i = 0 ; i < level.maxclients ; i++ ) 
