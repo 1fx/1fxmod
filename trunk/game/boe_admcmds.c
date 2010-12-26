@@ -514,6 +514,7 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 		num = -1;
 		for(i=0;i<16;i++){ // import from Boe_Uppercut -> Bug: id's return when good?
 			if(arg[i] == ' '){
+				//trap_SendServerCommand( -1, va("print \"^3[Debug] ^7Arg[%i] = %s.\n\"", i, arg[i]));
 				if(henk_isdigit(arg[i+1])){
 				num = atoi(va("%c%c", arg[i+1], arg[i+2]));
 				}else{
@@ -540,6 +541,7 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 									num = -1;
 									break;
 								}
+							//trap_SendServerCommand( -1, va("print \"^3[Debug] ^7%s.\n\"", numb));
 							numb = va("%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", arg[i+1], arg[i+2], arg[i+3], arg[i+4], arg[i+5], arg[i+6], arg[i+7], arg[i+8], arg[i+9], arg[i+10], arg[i+11], arg[i+12], arg[i+13], arg[i+14], arg[i+15]);
 							}
 							break;
@@ -554,14 +556,24 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 						num = -1;
 					}
 				}
-				//trap_SendServerCommand( -1, va("print \"^3[Debug] ^7Client: %i(%s)\n\"", num, arg));
 				break;
 			}
 		}
 		if(num == -1){ // Get second argument because they use it from the console
 			trap_Argv( 2, arg, sizeof( arg ) );
 			if(strlen(arg) >= 1){
-			num = atoi(arg);
+				if(henk_isdigit(arg[0])){
+					num = atoi(arg);
+				}else{
+					for(i=0;i<=level.numConnectedClients;i++){
+						//trap_SendServerCommand(-1, va("print\"^3[Debug] ^7%s comparing with %s.\n\"", g_entities[level.sortedClients[i]].client->pers.cleanName,numb));
+						if(strstr(Q_strlwr(g_entities[level.sortedClients[i]].client->pers.cleanName), Q_strlwr(arg))){
+							num = level.sortedClients[i];
+							break;
+						}
+						num = -1;
+					}
+				}
 			}else{
 				num = -1;
 			}
@@ -1102,7 +1114,7 @@ Boe_Unban
 
 void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 {
-	int		count = 0, count2 = 0;
+	/*int		count = 0, count2 = 0;
 
 	while (ip[count] != '\0'){
 		if(ip[count] == ' '){
@@ -1119,13 +1131,13 @@ void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 			return;
 		}
 		count++;
-	}
+	}*/
 
 	if(!subnet){
-		if(count2 < 3){
-			trap_SendServerCommand( adm-g_entities, va("print \"^3%s ^7is an invalid ip address\n\"", ip));
-			return;
-		}
+		//if(count2 < 3){
+		//	trap_SendServerCommand( adm-g_entities, va("print \"^3%s ^7is an invalid ip address\n\"", ip));
+		//	return;
+		//}
 			if(Boe_Remove_from_list(ip, g_banlist.string, "Ban", adm, qtrue, qfalse, qfalse )){
 				trap_SendServerCommand( adm-g_entities, va("print \"^3%s ^7has been Unbanned.\n\"", ip));
 				/*
@@ -1138,10 +1150,10 @@ void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 			}
 	}
 	else {
-		if(count2 < 1){
-			trap_SendServerCommand( adm-g_entities, va("print \"^3%s ^7is an invalid ip address\n\"", ip));
-			return;
-		}
+		//if(count2 < 1){
+		//	trap_SendServerCommand( adm-g_entities, va("print \"^3%s ^7is an invalid ip address\n\"", ip));
+		//	return;
+		//}
 		if(Boe_Remove_from_list(ip, g_subnetbanlist.string, "SubnetBan", adm, qtrue, qfalse, qfalse )){
 			trap_SendServerCommand( adm-g_entities, va("print \"^3%s's Subnet ^7has been Unbanned.\n\"", ip));
 			if(adm && adm->client)
@@ -1477,7 +1489,7 @@ void Boe_Uppercut (int argNum, gentity_t *adm, qboolean shortCmd)
 	int				idnum;
 	char			*status;
 	int				uclevel;
-
+	char			arg[64] = "\0";
 	idnum = Boe_ClientNumFromArg(adm, argNum, "uppercut <idnumber>", "uppercut", qtrue, qtrue, shortCmd);
 	if(idnum < 0) return;
 	
@@ -1487,6 +1499,10 @@ void Boe_Uppercut (int argNum, gentity_t *adm, qboolean shortCmd)
 	// Boe!Man 5/3/10: We higher the uppercut.
 	if(shortCmd){
 	uclevel = atoi(GetReason());
+	//if(uclevel == 0){
+	//trap_Argv( 3, arg, sizeof( arg ) );
+	//uclevel = atoi(arg);
+	//}
 	if(uclevel == 0)
 		ent->client->ps.velocity[2] = 1400;
 	else

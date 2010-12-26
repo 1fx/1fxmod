@@ -1796,16 +1796,21 @@ void CheckExitRules( void )
 	}
 
 	// Check to see if the timelimit was hit
-	if ( g_timelimit.integer && !level.warmupTime ) 
+	if ( g_timelimit.integer && !level.warmupTime && level.timelimithit != qtrue ) 
 	{
 		if ( level.time - level.startTime >= (g_timelimit.integer + level.timeExtension)*60000 ) 
 		{
-			gentity_t* tent;
-			tent = G_TempEntity( vec3_origin, EV_GAME_OVER );
-			tent->s.eventParm = GAME_OVER_TIMELIMIT;
-			tent->r.svFlags = SVF_BROADCAST;
+			if(strstr(g_gametype.string, "inf") || strstr(g_gametype.string, "elim")){
+			trap_SendServerCommand( -1, va("print \"^3[Info] ^7Timelimit hit, waiting for round to finish.\n\"") );
+			level.timelimithit = qtrue;
+			}else{
+				gentity_t*	tent;
+				tent = G_TempEntity( vec3_origin, EV_GAME_OVER );
+				tent->s.eventParm = GAME_OVER_TIMELIMIT;
+				tent->r.svFlags = SVF_BROADCAST;
 
-			LogExit( "Timelimit hit." );
+				LogExit( "Timelimit hit." );
+			}
 			return;
 		}
 	}

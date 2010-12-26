@@ -3536,10 +3536,18 @@ char *GetReason(void) {
 					}
 					reason = va("%s%c", reason, arg[z]);
 				}
+				if(strlen(reason) < 1){
+					trap_Argv( 3, arg, sizeof( arg ) );
+					return arg;
+				}
 				return reason;
 			}
 		Do = qtrue;
 		}
+	}
+	if(strlen(reason) < 1){
+		trap_Argv( 3, arg, sizeof( arg ) );
+		return arg;
 	}
 	return "";
 }

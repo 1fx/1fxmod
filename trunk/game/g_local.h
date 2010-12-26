@@ -605,6 +605,9 @@ typedef struct
 
 	// Boe!Man 11/16/10
 	int			compMsgCount;
+
+	//Henk 26/12/10
+	qboolean	timelimithit;
 } level_locals_t;
 
 //

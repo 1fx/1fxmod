@@ -872,16 +872,41 @@ void CheckGametype ( void )
 		// there was someone on that team to begin with.
 		if ( !alive[TEAM_RED] && dead[TEAM_RED] )
 		{	
+			if(level.timelimithit == qtrue){
+				gentity_t*	tent;
+				tent = G_TempEntity( vec3_origin, EV_GAME_OVER );
+				tent->s.eventParm = GAME_OVER_TIMELIMIT;
+				tent->r.svFlags = SVF_BROADCAST;
+				level.timelimithit = qfalse;
+				LogExit( "Timelimit hit." );
+			}
 			trap_GT_SendEvent ( GTEV_TEAM_ELIMINATED, level.time, TEAM_RED, 0, 0, 0, 0 );
 		}
 		else if ( !alive[TEAM_BLUE] && dead[TEAM_BLUE] )
 		{		
+			if(level.timelimithit == qtrue){
+				gentity_t*	tent;
+				tent = G_TempEntity( vec3_origin, EV_GAME_OVER );
+				tent->s.eventParm = GAME_OVER_TIMELIMIT;
+				tent->r.svFlags = SVF_BROADCAST;
+				level.timelimithit = qfalse;
+				LogExit( "Timelimit hit." );
+			}
 			trap_GT_SendEvent ( GTEV_TEAM_ELIMINATED, level.time, TEAM_BLUE, 0, 0, 0, 0 );
 		}
 		// See if the time has expired
 		if ( level.time > level.gametypeRoundTime )
 		{
+
 			trap_GT_SendEvent ( GTEV_TIME_EXPIRED, level.time, 0, 0, 0, 0, 0 );
+			if(level.timelimithit == qtrue){
+				gentity_t*	tent;
+				tent = G_TempEntity( vec3_origin, EV_GAME_OVER );
+				tent->s.eventParm = GAME_OVER_TIMELIMIT;
+				tent->r.svFlags = SVF_BROADCAST;
+				level.timelimithit = qfalse;
+				LogExit( "Timelimit hit." );
+			}
 		} 
 	}
 }
