@@ -1941,9 +1941,6 @@ void DeathmatchScoreboardMessage( gentity_t *ent )
 		else
 		{
 			ping = cl->ps.ping < 999 ? cl->ps.ping : 999;
-			if(ping != 999){
-			ping = ping*0.4;
-			}
 		}
 	
 		//Ryan may 12 2004

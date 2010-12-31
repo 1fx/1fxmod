@@ -896,9 +896,6 @@ void Boe_Players (gentity_t *ent)
 		}
 		
 		ping = level.clients[i].ps.ping;
-		// Boe!Man 6/11/10: Players can't know we hide their pings.
-		if(ping != 999){
-			ping = ping*0.4;}
 		if(ping <= 9){
 			column3[0] = test;
 			column3[1] = test;
