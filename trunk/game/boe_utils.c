@@ -26,7 +26,7 @@ void Boe_Motd (gentity_t *ent)
 	if(strstr(INF_VERSION_STRING, "t"))
 		header2 = va("Developed by ^GBoe!Man ^7& ^6Henkie\n^1Running a Test version of the Mod\n\n");
 	else
-		header2 = va("Developed by ^GBoe!Man ^7& ^6Henkie\n1fx.uk.to ^3| ^7v1servers.com\n\n");
+		header2 = va("Developed by ^GBoe!Man ^7& ^6Henkie\n1fx.uk.to ^3| ^7i3D.net\n\n");
 
 	strcpy(name, ent->client->pers.netname);
 
@@ -1594,7 +1594,7 @@ void Boe_About( gentity_t *ent )
 		trap_SendServerCommand( ent-g_entities, va("print \"[^3Clan URL^7]            None\n"));
 	else
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Clan URL^7]            %s\n", ClanURL));
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Hosted by^7]           v1servers.com\n"));
+	trap_SendServerCommand( ent-g_entities, va("print \"[^3Hosted by^7]           i3D.net\n"));
 	trap_SendServerCommand( ent-g_entities, va("print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\""));
 	#ifdef _BOE_DBG
 	if (strstr(boe_log.string, "2"))
