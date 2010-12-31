@@ -2327,7 +2327,8 @@ void G_RunFrame( int levelTime )
 			if (strstr(boe_log.string, "1"))
 				G_LogPrintf("2\n");
 		#endif
-		trap_SendConsoleCommand( EXEC_APPEND, va("quit\n"));}
+		trap_Cvar_VariableStringBuffer ( "mapname", level.mapname, MAX_QPATH );
+		trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", level.mapname));}
 
 	// Boe!Man 11/2/10: New Map Switch/Restart system.
 	if (level.mapSwitch == qtrue /* && level.mapSwitchCount == level.time */){
