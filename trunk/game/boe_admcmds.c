@@ -512,7 +512,7 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 	trap_Argv( argNum, arg, sizeof( arg ) );
 	if(shortCmd){ // Henk 04/05/10 -> Handle the short admin commands.
 		num = -1;
-		for(i=0;i<16;i++){ // import from Boe_Uppercut -> Bug: id's return when good?
+		for(i=0;i<16;i++){
 			if(arg[i] == ' '){
 				//trap_SendServerCommand( -1, va("print \"^3[Debug] ^7Arg[%i] = %s.\n\"", i, arg[i]));
 				if(henk_isdigit(arg[i+1])){
