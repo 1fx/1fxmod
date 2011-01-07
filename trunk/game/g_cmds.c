@@ -1107,6 +1107,8 @@ void RPM_Refresh(gentity_t *ent)
 	ent->client->sess.kills = 0;
 	ent->client->sess.teamkillDamage      = 0;
 	ent->client->sess.teamkillForgiveTime = 0;
+	ent->client->pers.statinfo.lastclient_hurt = -1;
+	ent->client->pers.statinfo.lasthurtby = -1;
 }
 
 void RPM_Obituary ( gentity_t *target, gentity_t *attacker, int mod, attackType_t attack, int hitLocation ) 

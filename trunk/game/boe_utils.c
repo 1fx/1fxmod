@@ -271,11 +271,17 @@ void Boe_Tokens(gentity_t *ent, char *chatText, int mode, qboolean CheckSounds)
 					continue;
 				case 'd':
 				case 'D':
+					if(ent->client->pers.statinfo.lasthurtby == -1)
+						Q_strcat(newText, MAX_SAY_TEXT, va("none"));
+					else
 					Q_strcat(newText, MAX_SAY_TEXT, va("%s", g_entities[ent->client->pers.statinfo.lasthurtby].client->pers.netname));
 					chatText++;
 					continue;
 				case 't':
 				case 'T':
+					if(ent->client->pers.statinfo.lastclient_hurt == -1)
+						Q_strcat(newText, MAX_SAY_TEXT, va("none"));
+					else
 					Q_strcat(newText, MAX_SAY_TEXT, va("%s", g_entities[ent->client->pers.statinfo.lastclient_hurt].client->pers.netname));
 					chatText++;
 					continue;

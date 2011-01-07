@@ -869,7 +869,7 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd){
 		trap_GPG_FindPairValue(group, "name", "", name);
 		trap_GPG_FindPairValue(group, "reason", "", reason);
 		trap_GPG_FindPairValue(group, "by", "", by);
-		// FIXED(lul) ME: We need to add a check here if ip exists in banfile, because this banlist will not delete unbanned people
+		// this banlist will not delete unbanned people
 		if(Boe_NameListCheck (adm->s.number, ip, g_banlist.string, NULL, qtrue, qfalse, qfalse, qfalse, qfalse)){
 			// exists so print
 			length = strlen(ip);
