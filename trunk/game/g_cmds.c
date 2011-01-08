@@ -3639,6 +3639,8 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 
 	strcpy(test, p); // Henk 08/09/10 -> Copy p to static buffer to prevent unwanted changes by other functions
 	// Henk loop through my admin command array
+	// Boe!Man 1/8/11: Only go through this cycle if the client indeed has admin powers. If not, save on resources.
+	if(ent->client->sess.admin > 0){
 	for(i=0;i<AdminCommandsSize;i++){
 		if(strstr(Q_strlwr(test), Q_strlwr(AdminCommands[i].shortCmd))){
 			if(ent->client->sess.admin >= *AdminCommands[i].adminLevel){
@@ -3942,6 +3944,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	//	AdminCommands[1].Function(1, ent, qtrue);
 	//	trap_SendServerCommand( -1, va("print \"^3[Debug] ^7%s level is %i.\n\"", AdminCommands[1].adminCmd, *AdminCommands[1].adminLevel));
 
+	}
 	}
 	// Boe!Man 1/24/10: Different kinds of Talk during Gameplay.
 	if ((strstr(p, "!at ")) || (strstr(p, "!admintalk ")) || (strstr(p, "!AT")) || (strstr(p, "!aT ")) || (strstr(p, "!At "))) {
@@ -5599,6 +5602,7 @@ void Boe_adm_f ( gentity_t *ent )
 		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\"", arg1));
 		return;
 	}
+	*/
 	if ((!Q_stricmp ( arg1, "eventeams" )) && ent->client->sess.admin >= g_eventeams.integer) {
 		EvenTeams(ent, qfalse);
 	}
@@ -5606,6 +5610,7 @@ void Boe_adm_f ( gentity_t *ent )
 		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\"", arg1));
 		return;
 	}
+	/*
 	if ((!Q_stricmp ( arg1, "banlist" )) && ent->client->sess.admin >= g_ban.integer) {
 		trap_SendServerCommand( ent-g_entities, va("print \"^3[Banlist]^7\n\""));
 		Boe_Print_File( ent, g_banlist.string);
@@ -5662,7 +5667,7 @@ void Boe_adm_f ( gentity_t *ent )
 	}else if ((!Q_stricmp ( arg1, "adminspec" )) && ent->client->sess.admin < 4) {
 		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\"", arg1));
 		return;
-	}else */if (!Q_stricmp ( arg1, "unban" ) && ent->client->sess.admin >= g_ban.integer){
+	}*/else if (!Q_stricmp ( arg1, "unban" ) && ent->client->sess.admin >= g_ban.integer){
 		trap_Argv( 2, arg2, sizeof( arg2 ) );
 		Boe_Unban(ent, arg2, qfalse);
 		return;

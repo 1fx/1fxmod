@@ -12,7 +12,7 @@
 #endif
 #define INF_STRING "1fx. Mod"
 #define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod"
-#define INF_VERSION_DATE "1/1/11"
+#define INF_VERSION_DATE "1/8/11"
 
 // 1fx. Mod
 // Developed by: Boe!Man & Henkie
@@ -68,6 +68,7 @@
 // 0.55t		Beta							12/23/10
 // 0.55			Release							12/31/10
 // 0.56t		Alpha							1/1/11
+// 0.56t		Beta							1/8/11
 
 //===================================================================
 
