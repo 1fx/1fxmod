@@ -328,7 +328,7 @@ void	Boe_NormalDamage(int argNum, gentity_t *ent, qboolean ShortCmd);
 void	Boe_GametypeRestart(int argNum, gentity_t *ent, qboolean ShortCmd);
 void	Boe_Third(int argNum, gentity_t *ent, qboolean ShortCmd);
 void	Boe_CompMode(int argNum, gentity_t *ent, qboolean ShortCmd);
-void	RemoveFence();
+void	RemoveFence(void);
 void	SpawnFence(int arg);
 qboolean henk_isdigit(char c);
 qboolean henk_ischar(char c);
@@ -383,3 +383,6 @@ void Boe_calcMatchScores (void);
 
 // Boe!Man 12/13/10
 extern vmCvar_t	g_aliasCheck;
+
+// Boe!Man 1/8/10
+void Boe_serverMsg (void);

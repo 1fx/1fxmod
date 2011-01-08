@@ -640,6 +640,12 @@ void		G_SpawnDebugCylinder	( vec3_t origin, float radius, gentity_t* clientent, 
 void		G_Voice					( gentity_t *ent, gentity_t *target, int mode, const char *id, qboolean voiceonly );
 void		G_VoiceGlobal			( gentity_t* ent, const char* id, qboolean force );
 qboolean	G_CanVoiceGlobal		( void );
+void		InitSpawn				( int choice );
+void		G_AdjustClientBBoxs		(void);
+void		G_UndoAdjustedClientBBox(gentity_t *other);
+void		G_UndoAdjustedClientBBoxs(void);
+void		G_SetClientPreLeaningBBox(gentity_t *ent);
+void		G_SetClientLeaningBBox(gentity_t *ent);
 
 //
 // g_items.c
@@ -940,6 +946,7 @@ void		G_ResetGametypeItem					( gitem_t* item );
 void		G_DropGametypeItems					( gentity_t* self, int delayPickup );
 void		G_FreeEnitityChildren				( gentity_t* ent );		
 //End - 02.03.05 - 11:32am
+void		LogExit								( const char *string );
 
 // ai_main.c
 #define MAX_FILEPATH			144
