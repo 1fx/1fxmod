@@ -3193,9 +3193,9 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 {
 	qboolean	 ghost = qfalse;
 	qboolean	 spec  = qfalse;
-	char	type[48];
-	char	admin[36];
-	char 	star[10];
+	char	type[128];
+	char	admin[128];
+	char 	star[128];
 	
 	//G_LogPrintf("Starting with chat\n");
 	if (!other) 

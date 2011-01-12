@@ -981,6 +981,7 @@ extern	vmCvar_t	g_cheats;
 extern	vmCvar_t	g_maxclients;			// allow this many total, including spectators
 extern	vmCvar_t	g_maxGameClients;		// allow this many active
 extern	vmCvar_t	g_restarted;
+extern  vmCvar_t    current_gametype;
 
 extern	vmCvar_t	g_logHits;
 

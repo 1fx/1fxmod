@@ -48,6 +48,7 @@ vmCvar_t	g_synchronousClients;
 vmCvar_t	g_warmup;
 vmCvar_t	g_doWarmup;
 vmCvar_t	g_restarted;
+vmCvar_t    current_gametype;
 vmCvar_t	g_log;
 vmCvar_t	g_logSync;
 vmCvar_t	g_logHits;
@@ -209,7 +210,7 @@ static cvarTable_t gameCvarTable[] =
 	{ NULL, "^3Mod Name", INF_STRING, CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse  },
 	{ NULL, "^3Mod Version", INF_VERSION_STRING, CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse  },
 	{ NULL, "^3Mod URL", "1fx.uk.to", CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse  },
-	{ NULL, "current_gametype", "3", CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qtrue  },
+	{ current_gametype, "current_gametype", "3", CVAR_SERVERINFO | CVAR_ROM | CVAR_LATCH | CVAR_INTERNAL, 0.0, 0.0, 0, qtrue  },
 	{ NULL, "modname", "RPM 2 k 3 v1.71 ^_- ^31fx.uk.to", CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse  },
 
 	// noset vars
