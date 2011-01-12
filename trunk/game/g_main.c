@@ -733,7 +733,7 @@ void G_SetGametype ( const char* gametype )
 					 bg_gametypeData[i].name );
 
 		gametype = bg_gametypeData[i].name;
-		trap_Cvar_Set( "g_gametype", gametype ); //
+		trap_Cvar_Set( "g_gametype", gametype );
 		level.gametype = BG_FindGametype ( gametype );
 
 		trap_Cvar_Update( &g_gametype );
