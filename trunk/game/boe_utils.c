@@ -1125,6 +1125,7 @@ void Boe_Print_File (gentity_t *ent, char *file, qboolean clonecheckstats, int i
 		trap_SendServerCommand( ent-g_entities, va("print \"%s\"", packet));
 		bufP += 500;
 	}
+	return; // Return because nothing else is to be done for this.
 	// Boe!Man 10/25/10: If clonecheckstatus is true we loop through the aliases progress for /stats.
 	}else{
 	// Boe!Man 11/20/10: Is he requesting information from another player?

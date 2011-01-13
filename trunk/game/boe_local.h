@@ -13,7 +13,6 @@
 #define INF_STRING "1fx. Mod"
 #define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod"
 #define INF_VERSION_DATE "1/8/11"
-
 // 1fx. Mod
 // Developed by: Boe!Man & Henkie
 // Codename: BoeMODV2

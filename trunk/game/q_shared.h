@@ -1009,6 +1009,19 @@ typedef enum {
 	FS_SEEK_SET
 } fsOrigin_t;
 
+// Henk 12/01/10 -> Added current_gametypes cvar
+typedef enum {
+	GT_NONE,
+	GT_HS,
+	GT_NONE1,
+	GT_INF,
+	GT_CTF,
+	GT_DM,
+	GT_TDM,
+	GT_ELIM
+} gameTypes_t;
+// Henk 12/01/10 -> End
+
 //=============================================
 
 int Q_isprint( int c );

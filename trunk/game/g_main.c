@@ -210,7 +210,7 @@ static cvarTable_t gameCvarTable[] =
 	{ NULL, "^3Mod Name", INF_STRING, CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse  },
 	{ NULL, "^3Mod Version", INF_VERSION_STRING, CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse  },
 	{ NULL, "^3Mod URL", "1fx.uk.to", CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse  },
-	{ current_gametype, "current_gametype", "3", CVAR_SERVERINFO | CVAR_ROM | CVAR_LATCH | CVAR_INTERNAL, 0.0, 0.0, 0, qtrue  },
+	{ &current_gametype, "current_gametype", "3", CVAR_SERVERINFO | CVAR_ROM | CVAR_LATCH, 0.0, 0.0, 0, qtrue  },
 	{ NULL, "modname", "RPM 2 k 3 v1.71 ^_- ^31fx.uk.to", CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse  },
 
 	// noset vars
@@ -787,6 +787,24 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	// Build the gametype list so we can verify the given gametype
 	BG_BuildGametypeList ( );
 
+	//Before we set the gametype we change current_gametype and we set H&S to INF
+	if(strstr(g_gametype.string, "inf")){
+		trap_Cvar_Set("current_gametype", "3");
+	}else if(strstr(g_gametype.string, "h&s")){
+		trap_Cvar_Set("current_gametype", "1");
+		trap_Cvar_Set( "g_gametype", "inf" );
+		trap_Cvar_Update(&g_gametype);
+	}else if(strstr(g_gametype.string, "elim")){
+		trap_Cvar_Set("current_gametype", "7");
+	}else if(strstr(g_gametype.string, "tdm")){
+		trap_Cvar_Set("current_gametype", "6");
+	}else if(strstr(g_gametype.string, "dm")){
+		trap_Cvar_Set("current_gametype", "5");
+	}else if(strstr(g_gametype.string, "ctf")){
+		trap_Cvar_Set("current_gametype", "4");
+	}
+	trap_Cvar_Update(&current_gametype);
+
 	// Set the current gametype
 	G_SetGametype(g_gametype.string);
 
@@ -901,7 +919,10 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	BG_SetAvailableOutfitting ( g_availableWeapons.string );
 
 	// Initialize the gametype
-	trap_GT_Init ( g_gametype.string, restart );
+	if(current_gametype.value == GT_HS)
+		trap_GT_Init ( "h&s", restart );
+	else
+		trap_GT_Init ( g_gametype.string, restart );
 
 	// Music
 	if ( RMG.integer )
