@@ -676,9 +676,12 @@ qboolean ClientInactivityTimer( gclient_t *client ) {
 		client->inactivityWarning = qfalse;*/ 
 	//Ryan
 
-	} else if ( !client->pers.localClient ) {
+	} else if ( !client->pers.localClient) {
+		#ifdef _SOF2_BOTS
+		if (g_entities[client-level.clients].r.svFlags & SVF_BOT)// Henk 13/01/11 -> Fixed bots getting forceteamed(Issue #65)
+			return;
+		#endif
 		if ( level.time > client->inactivityTime ) {
-			//bertman add msg here
 			SetTeam(&g_entities[client-level.clients], "s", NULL, qfalse); // Henk 08/04/10 -> Force ppl to spec instead of kicking them when afk
 			trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s ^7was forced to spectator for being AFK.\n\"", g_entities[client-level.clients].client->pers.netname));
 			//trap_DropClient( client - level.clients, "Dropped due to inactivity" );

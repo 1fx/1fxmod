@@ -5687,3 +5687,108 @@ void Boe_adm_f ( gentity_t *ent )
 		return;
 	}
 }
+
+/*
+=================
+ConsoleCommand
+=================
+*/
+qboolean ConsoleCommand( void )
+{
+	char cmd[MAX_TOKEN_CHARS];
+	int i;
+	//Ryan
+//	char arg1[64];
+	//Ryan
+
+	trap_Argv( 0, cmd, sizeof( cmd ) );
+
+	for(i=0;i<AdminCommandsSize;i++){ // Henk 15/09/10 -> Fixed loop going outside array(causing crashes)
+		//Com_Printf("Checking %s with %s\n", arg1, AdminCommands[i].adminCmd);
+		if(!Q_stricmp(cmd, AdminCommands[i].adminCmd)){
+				AdminCommands[i].Function(1, NULL, qfalse);
+				return qtrue;
+		}
+	}
+
+	if ( Q_stricmp (cmd, "entitylist") == 0 )
+	{
+		Svcmd_EntityList_f();
+		return qtrue;
+	}
+
+	/*if ( Q_stricmp (cmd, "forceteam") == 0 )
+	{
+		Svcmd_ForceTeam_f();
+		return qtrue;
+	}*/
+
+	if ( Q_stricmp ( cmd, "cancelvote" ) == 0 )
+	{
+		Svcmd_CancelVote_f();
+		return qtrue;
+	}
+
+#ifdef _SOF2_BOTS
+
+	if (Q_stricmp (cmd, "addbot") == 0)
+	{
+		//trap_Printf("^3[Info] ^7This command has been temporary disabled by the Mod Developers.\n");
+		Svcmd_AddBot_f();
+		return qtrue;
+	}
+
+	if (Q_stricmp (cmd, "botlist") == 0) 
+	{
+		//trap_Printf("^3[Info] ^7This command has been temporary disabled by the Mod Developers.\n");
+		Svcmd_BotList_f();
+		return qtrue;
+	}
+
+#endif
+
+	if (Q_stricmp (cmd, "addip") == 0)
+	{
+		Svcmd_AddIP_f();
+		return qtrue;
+	}
+
+	if (Q_stricmp (cmd, "removeip") == 0)
+	{
+		Svcmd_RemoveIP_f();
+		return qtrue;
+	}
+
+	if (Q_stricmp (cmd, "listip") == 0)
+	{
+		trap_SendConsoleCommand( EXEC_NOW, "g_banIPs\n" );
+		return qtrue;
+	}
+
+	if (Q_stricmp (cmd, "gametype_restart" ) == 0 )
+	{
+		G_ResetGametype ( );
+		return qtrue;
+	}
+
+	if (Q_stricmp (cmd, "extendtime" ) == 0 )
+	{
+		Svcmd_ExtendTime_f();
+		return qtrue;
+	}
+
+	if (g_dedicated.integer) 
+	{
+		if (Q_stricmp (cmd, "say") == 0) 
+		{
+			trap_SendServerCommand( -1, va("chat -1 \"server: %s\n\"", ConcatArgs(1) ) );
+			return qtrue;
+		}
+
+		// everything else will also be printed as a say command
+		trap_SendServerCommand( -1, va("chat -1 \"server: %s\n\"", ConcatArgs(0) ) );
+		return qtrue;
+	}
+
+	return qfalse;
+}
