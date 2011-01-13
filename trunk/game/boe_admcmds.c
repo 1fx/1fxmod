@@ -515,7 +515,7 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 		for(i=0;i<16;i++){
 			if(arg[i] == ' '){
 				//trap_SendServerCommand( -1, va("print \"^3[Debug] ^7Arg[%i] = %s.\n\"", i, arg[i]));
-				if(henk_isdigit(arg[i+1])){
+				if(henk_isdigit(arg[i+1]) && !henk_ischar(arg[i+2])){ // we check if the other 2 are chars(fixes !uc 1fx bug which uppercuts id 1)
 				num = atoi(va("%c%c", arg[i+1], arg[i+2]));
 				}else{
 					for(i=0;i<=20;i++){
@@ -536,7 +536,7 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 								}
 							}
 							if(space == qfalse){
-								if(!henk_ischar(arg[i+1])){
+								if(!henk_ischar(arg[i+1]) && !henk_ischar(arg[i+2])){
 									//trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You haven't entered a valid player ID/player name.\n\"", arg, usage));
 									num = -1;
 									break;
@@ -852,69 +852,97 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd){
 	char	ip[64], name[64], reason[64], by[64], test = ' ';
 	char	column1[20], column2[20], column3[20];
 	int		spaces = 0, length = 0, z;
-
-	GP2 = trap_GP_ParseFile(g_banlist1.string, qtrue, qfalse);
-	if (!GP2)
-	{
-		G_LogPrintf("Error in file: \"%s\" or file not found.\n", g_banlist1.string);
-	}
+	char	*filePtr;
+	char	*file;
+	int		fileCount, filelen;
+	char	Files[1024];
+	fileHandle_t testx;
+	char            buf[15000] = "\0";
+	int len, i;
 	//wrapper for interface
+	if(adm){
 	trap_SendServerCommand( adm-g_entities, va("print \"^3[Banlist]^7\n\n\""));
 	trap_SendServerCommand( adm-g_entities, va("print \"^3IP              Name                Reason             By\n\""));
 	trap_SendServerCommand( adm-g_entities, va("print \"^7------------------------------------------------------------------------\n\""));
-	group = trap_GPG_GetSubGroups(GP2);
-	while(group)
+	}else{
+	Com_Printf("^3[Banlist]^7\n\n");
+	Com_Printf("^3IP              Name                Reason             By\n");
+	Com_Printf("^7------------------------------------------------------------------------\n");
+	}
+
+	fileCount = trap_FS_GetFileList( "users/baninfo", ".IP", Files, 1024 );
+	filePtr = Files;
+	len = trap_FS_FOpenFile("users/bans.txt", &testx, FS_READ);
+	if(!test){
+		Com_Printf("Error while reading users/bans.txt\n");
+		return;
+	}
+	trap_FS_Read( buf, len, testx );
+	buf[len] = '\0';
+	trap_FS_FCloseFile(testx);
+	//Com_Printf("Banned clients: %d\n", fileCount);
+
+	for( i = 0; i < fileCount; i++, filePtr += filelen+1 )
 	{
+		filelen = strlen(filePtr);
+		file = va("users/baninfo/%s", filePtr);
+		GP2 = trap_GP_ParseFile(file, qtrue, qfalse);
+		if(!GP2){
+			//Com_Printf("Error while opening file: %s\n", file);
+			trap_GP_Delete(&GP2);
+		}else{
+		group = trap_GPG_GetSubGroups(GP2);
 		trap_GPG_FindPairValue(group, "ip", "0", ip);
+		if(strstr(buf, ip)){
 		trap_GPG_FindPairValue(group, "name", "", name);
 		trap_GPG_FindPairValue(group, "reason", "", reason);
 		trap_GPG_FindPairValue(group, "by", "", by);
-		// this banlist will not delete unbanned people
-		if(Boe_NameListCheck (adm->s.number, ip, g_banlist.string, NULL, qtrue, qfalse, qfalse, qfalse, qfalse)){
-			// exists so print
-			length = strlen(ip);
-			if(length > 15){
-				ip[15] = '\0';
-				length = 15;
-			}
-			spaces = 16-length;
-			for(z=0;z<spaces;z++){
-			column1[z] = test;
-			}
-			column1[spaces] = '\0';
-			//trap_SendServerCommand( adm-g_entities, va("print \"%s%s", ip, column1)); // Boe!Man 9/16/10: Print tier 1.
-			length = strlen(name);
-			if(length > 19){
-				name[19] = '\0';
-				length = 19;
-			}
-			spaces = 20-length;
-			for(z=0;z<spaces;z++){
-			column2[z] = test;
-			}
-			column2[spaces] = '\0';
-			//trap_SendServerCommand( adm-g_entities, va("print \"%s%s", name, column2)); // Boe!Man 9/16/10: Print tier 2.
-			length = strlen(reason);
-			if(length > 18){
-				reason[18] = '\0';
-				length = 18;
-			}
-			spaces = 19-length;
-			for(z=0;z<spaces;z++){
-			column3[z] = test;
-			}
-			column3[spaces] = '\0';
-			length = strlen(by);
-			if(length > 20){
-				by[20] = '\0';
-			}
-			trap_SendServerCommand( adm-g_entities, va("print \"%s%s%s%s%s%s%s\n", ip, column1, name, column2, reason, column3, by)); // Boe!Man 9/16/10: Print ban.
-			//trap_SendServerCommand( adm-g_entities, va("print \"%s\n", by)); // Boe!Man 9/16/10: Print tier 4.
-			//trap_SendServerCommand( adm-g_entities, va("print \"%s\n%s\n%s\n%s\n\"", ip, name, reason, by)); // print result
+		length = strlen(ip);
+		if(length > 15){
+			ip[15] = '\0';
+			length = 15;
 		}
-		group = trap_GPG_GetNext(group); // switch to next group and loop again
+		spaces = 16-length;
+		for(z=0;z<spaces;z++){
+		column1[z] = test;
+		}
+		column1[spaces] = '\0';
+		//trap_SendServerCommand( adm-g_entities, va("print \"%s%s", ip, column1)); // Boe!Man 9/16/10: Print tier 1.
+		length = strlen(name);
+		if(length > 19){
+			name[19] = '\0';
+			length = 19;
+		}
+		spaces = 20-length;
+		for(z=0;z<spaces;z++){
+		column2[z] = test;
+		}
+		column2[spaces] = '\0';
+		//trap_SendServerCommand( adm-g_entities, va("print \"%s%s", name, column2)); // Boe!Man 9/16/10: Print tier 2.
+		length = strlen(reason);
+		if(length > 18){
+			reason[18] = '\0';
+			length = 18;
+		}
+		spaces = 19-length;
+		for(z=0;z<spaces;z++){
+		column3[z] = test;
+		}
+		column3[spaces] = '\0';
+		length = strlen(by);
+		if(length > 20){
+			by[20] = '\0';
+		}
+		if(adm)
+		trap_SendServerCommand( adm-g_entities, va("print \"%s%s%s%s%s%s%s\n", ip, column1, name, column2, reason, column3, by)); // Boe!Man 9/16/10: Print ban.
+		else
+		Com_Printf("%s%s%s%s%s%s%s\n", ip, column1, name, column2, reason, column3, by);
+		//trap_SendServerCommand( adm-g_entities, va("print \"%s\n", by)); // Boe!Man 9/16/10: Print tier 4.
+		//trap_SendServerCommand( adm-g_entities, va("print \"%s\n%s\n%s\n%s\n\"", ip, name, reason, by)); // print result
+		}
+		trap_GP_Delete(&GP2);
+		}
 	}
-	trap_GP_Delete(&GP2);
 	trap_SendServerCommand( adm-g_entities, va("print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\""));
 	return;
 }
@@ -1134,12 +1162,20 @@ void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 	}*/
 
 	if(!subnet){
+		fileHandle_t f;
 		//if(count2 < 3){
 		//	trap_SendServerCommand( adm-g_entities, va("print \"^3%s ^7is an invalid ip address\n\"", ip));
 		//	return;
 		//}
 			if(Boe_Remove_from_list(ip, g_banlist.string, "Ban", adm, qtrue, qfalse, qfalse )){
 				trap_SendServerCommand( adm-g_entities, va("print \"^3%s ^7has been Unbanned.\n\"", ip));
+				trap_FS_FOpenFile( va("users\\baninfo\\%s.IP", ip), &f, FS_WRITE );
+				if(f){
+					trap_FS_Write("", 0, f);
+				}else{
+					Com_Printf("Error while opening file in unban\n");
+				}
+				trap_FS_FCloseFile(f);
 				/*
 				if(adm && adm->client)
 					SC_adminLog (va("%s - UNBAN: %s", adm->client->pers.cleanName, ip  )) ;
@@ -1416,35 +1452,37 @@ void Boe_Ban_f (int argNum, gentity_t *adm, qboolean shortCmd)
 	char *temp = "";
 	qboolean first = qfalse;
 	idnum = Boe_ClientNumFromArg(adm, argNum, "ban <idnumber> <reason>", "ban", qfalse, qfalse, shortCmd);
-
+	Com_Printf("You have banned id #%i\n", idnum);
 	if(idnum < 0)
 		return;
-	
-	if(shortCmd){
-		strcpy(reason, GetReason());
-	}else{
-	//trap_Argv( argNum + 1, reason, sizeof( reason ) );
-		for(i=0;i<=25;i++){
-		trap_Argv( (argNum+1)+i, arg, sizeof( arg ) );
-			if(first)
-				temp = va("%s %s", temp, arg); // we fill this array up with 25 arguments
-			else{
-				temp = va("%s", arg);
-				first = qtrue;
+	if(adm){
+		if(shortCmd){
+			strcpy(reason, GetReason());
+		}else{
+		//trap_Argv( argNum + 1, reason, sizeof( reason ) );
+			for(i=0;i<=25;i++){
+			trap_Argv( (argNum+1)+i, arg, sizeof( arg ) );
+				if(first)
+					temp = va("%s %s", temp, arg); // we fill this array up with 25 arguments
+				else{
+					temp = va("%s", arg);
+					first = qtrue;
+				}
 			}
+			strcpy(reason, temp);
 		}
-		strcpy(reason, temp);
 	}
 	// Boe!Man 9/7/10: Example of ban.
-	if (adm && adm->client){
-
-		trap_FS_FOpenFile( g_banlist1.string, &f, FS_APPEND_TEXT );
+		trap_FS_FOpenFile( va("users/baninfo/%s.IP", g_entities[idnum].client->pers.ip), &f, FS_WRITE );
 		if (!f)
 		{
 			Com_Printf("^1Error opening File\n");
 			return;
 		}
+		if (adm && adm->client)
 		strcpy(string, va("1\n{\nip \"%s\"\nname \"%s\"\nreason \"%s\"\nby \"%s\"\n}\n", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName, reason, adm->client->pers.cleanName));
+		else
+		strcpy(string, va("1\n{\nip \"%s\"\nname \"%s\"\nreason \"%s\"\nby \"RCON\"\n}\n", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName, reason));
 
 		trap_FS_Write(string, strlen(string), f);
 		trap_FS_Write("\n", 1, f);
@@ -1452,7 +1490,7 @@ void Boe_Ban_f (int argNum, gentity_t *adm, qboolean shortCmd)
 
 		Com_sprintf (banid, sizeof(banid), "%s\\%s",
 		g_entities[idnum].client->pers.ip,
-		g_entities[idnum].client->pers.cleanName);}
+		g_entities[idnum].client->pers.cleanName);
 
 	if(Boe_AddToList(banid, g_banlist.string, "Ban", adm)){
 		if(adm && adm->client)	{
@@ -1468,8 +1506,8 @@ void Boe_Ban_f (int argNum, gentity_t *adm, qboolean shortCmd)
 		else{
 			if(!*reason){
 				trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"Banned!\"\n", idnum));
-				Boe_adminLog (va("%s - RUNOVER: %s", "RCON", g_entities[idnum].client->pers.cleanName  )) ;}
-			else{
+				Boe_adminLog (va("%s - RUNOVER: %s", "RCON", g_entities[idnum].client->pers.cleanName  )) ;
+			}else{
 				trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"Banned for: %s\"\n", idnum, reason));
 				Com_Printf("%s was banned!\n", g_entities[idnum].client->pers.netname);
 				Boe_adminLog (va("%s - BAN: %s", "RCON", g_entities[idnum].client->pers.cleanName  )) ;
@@ -1792,8 +1830,6 @@ void Boe_Plant (int argNum, gentity_t *adm, qboolean shortCmd)
 {
 	gentity_t	*ent;
 	int			idnum;
-	vec3_t dir;
-	int nadeDir, weapon;
 
 	idnum = Boe_ClientNumFromArg(adm, argNum, "plant <idnumber>", "Plant", qtrue, qtrue, shortCmd);
 
@@ -1844,10 +1880,6 @@ void Boe_unPlant (int argNum, gentity_t *adm, qboolean shortCmd)
 {
 	gentity_t	*ent;
 	int			idnum;
-	vec3_t dir;
-	int it, nadeDir, weapon;
-	float x, y;
-	gentity_t *missile;
 
 	idnum = Boe_ClientNumFromArg(adm, argNum, "unplant <idnumber>", "unplant", qtrue, qtrue, shortCmd);
 
@@ -2015,8 +2047,6 @@ Boe_Mute
 void Boe_Mute (int argNum, gentity_t *adm, qboolean mute, qboolean shortCmd)
 {
 	int		idnum;
-	char	*status;
-	char	*status2;
 
 	idnum = Boe_ClientNumFromArg(adm, argNum, "mute/unmute <idnumber>", "mute/unmute", qfalse, qfalse, shortCmd);
 
@@ -2117,7 +2147,7 @@ Boe_Dev_f
 void Boe_dev_f ( gentity_t *ent )
 {
 
-	int		id, i, dev;
+	int		dev;
 	char	arg1[MAX_STRING_TOKENS];
 	char	arg2[MAX_STRING_TOKENS];
 	char	arg3[MAX_STRING_TOKENS];

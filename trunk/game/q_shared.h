@@ -75,6 +75,7 @@
 #define max(x,y) ((x)>(y)?(x):(y))
 
 #else
+#define _CRT_SECURE_NO_WARNINGS
 #include <assert.h>
 #include <math.h>
 #include <stdio.h>

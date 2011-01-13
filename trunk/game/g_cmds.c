@@ -1124,7 +1124,7 @@ void RPM_Obituary ( gentity_t *target, gentity_t *attacker, int mod, attackType_
 	qboolean		headShot = qfalse;
 	qboolean		statOk = qfalse;
 	statinfo_t		*atrstat = &attacker->client->pers.statinfo;
-	gentity_t *tent;
+//	gentity_t *tent;
 
 	killerColor = S_COLOR_WHITE;
 	targetColor   = S_COLOR_WHITE;
@@ -3605,19 +3605,12 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	// Boe!Man 1/10/10
 	int			id;
 	gentity_t	*targ;
-	char		id2[64];
 	int			i;
 	int			a = 0;
 	// Boe!Man 1/17/10
-	vec3_t		lookdown;
-	vec3_t		fireAngs;
 	int			anim = 0;
 	float		knockback = 400.0;
 	vec3_t		dir;
-	// Boe!Man 1/30/10
-	gentity_t	*tent;
-	gclient_t	*client;
-	int			idle;
 	// Boe!Man 3/20/10
 	int			it, nadeDir, weapon;
 	float		x, y;
@@ -3800,8 +3793,6 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	}else if(strstr(p, "!gt ") || strstr(p, "!g ")){
 		// Boe!Man 12/16/10: New Gametype Switch system.
 		if (ent->client->sess.admin >= 4){
-			char *numb;
-			int number;
 			char gametype[8];
 			if(level.mapSwitch == qfalse){
 			if(strstr(p, "ctf")){
@@ -3824,6 +3815,10 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 				trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype elim\n"));
 				strcpy(gametype, "elim");
 				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sG%sa%sm%se%st%sype ^7Elimination!", level.time + 3500, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+			}else if(strstr(p, "h&s")){
+				trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype h&s\n"));
+				strcpy(gametype, "h&s");
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sG%sa%sm%se%st%sype ^Hide&Seek!", level.time + 3500, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 			}else{
 				trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Unknown gametype.\n\""));
 				G_Say( ent, NULL, mode, p);
@@ -4555,11 +4550,9 @@ void AddIPList(char ip1[24], char country[128], char ext[6])
 {
 	int				len;
 	fileHandle_t	f;
-	char			*file;
 	char			string[1024];
 	char	octet[4][4], octetx[4][4];
-	int		RealOctet[4];
-	int		iIP, i, z, countx[4], loops = 0, count = 0;
+	int		i, z, countx[4], loops = 0, count = 0;
 	char *IP;
 	//G_LogPrintf("Checking ip..\n");
 	IP = va("%s", ip1);
@@ -4631,8 +4624,7 @@ qboolean CheckIP(gentity_t *ent){ // Henk Update 12/05/10 -> Lag spike when file
 	char	ip1[24], country[128], ext[6];
 	int		fileCount;
 	char	octet[4][4], octetx[4][4];
-	int		RealOctet[4];
-	int		iIP, i, z, countx[4], loops = 0, count = 0;
+	int		i, z, countx[4], loops = 0, count = 0;
 	char *IP;
 
 	IP = va("%s", ent->client->pers.ip);
@@ -4720,7 +4712,7 @@ void HENK_COUNTRY(gentity_t *ent){
 	int		fileCount;
 	char	*IP;
 	int		count = 0;
-	int		iIP, i, z, countx[4], loops = 0;
+	int		i, z, countx[4], loops = 0;
 	char	begin_ip[24], end_ip[24], country[128], ext[6];
 	unsigned int		begin_ipi, end_ipi;
 
@@ -5100,7 +5092,6 @@ ClientCommand
 */
 void ClientCommand( int clientNum ) {
 	gentity_t *ent;
-	int i;
 	char	cmd[MAX_TOKEN_CHARS];
 
 	ent = g_entities + clientNum;
@@ -5259,10 +5250,9 @@ Boe_Adm_f
 
 void Boe_adm_f ( gentity_t *ent )
 {
-	int		id, i, adm, level;
+	int		i, adm, level;
 	char	arg1[MAX_STRING_TOKENS];
 	char	arg2[MAX_STRING_TOKENS];
-	char	arg3[MAX_STRING_TOKENS];
 	gclient_t	*client;
 	client = ent->client;
 	trap_Argv( 1, arg1, sizeof( arg1 ) );

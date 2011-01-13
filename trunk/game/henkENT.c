@@ -18,6 +18,9 @@ qboolean G_LoadEntFile(void)
 	//if (level.entExt[0] != 0)
 	//	Com_sprintf(entPath, 128, "maps/%s%s.ent\0", mapname.string, level.entExt);
 	//else
+	if(strstr(level.gametypeData->name, "inf") && current_gametype.value == GT_HS)
+			Com_sprintf(entPath, 128, "maps/%s_h&s.ent\0", mapname.string);
+	else
 	Com_sprintf(entPath, 128, "maps/%s_%s.ent\0", mapname.string, level.gametypeData->name);
 
 	len = trap_FS_FOpenFile(entPath, &entFile, FS_READ);

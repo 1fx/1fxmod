@@ -226,7 +226,7 @@ void Boe_Tokens(gentity_t *ent, char *chatText, int mode, qboolean CheckSounds)
 	char *chatTextS;
 	gentity_t *tent;
 	qboolean text = qtrue;
-	gitem_t* item;		
+	//gitem_t* item;		
 	
 	if(ent->client->sess.mute)
 	{
@@ -868,8 +868,8 @@ void Boe_Players (gentity_t *ent)
 	char test = ' ';
 	int	length = 0, NumberOfSpaces = 0, z, ping;
 	// char clan = ""; // Boe!Man 2/2/10: This will be added later, when I actually implant the Clan functions.
-	char *s;
-	char userinfo[MAX_INFO_STRING];
+//	char *s;
+//	char userinfo[MAX_INFO_STRING];
 	qboolean client;
 	char client0;
 	float client1;
@@ -1230,7 +1230,7 @@ void Boe_Stats ( gentity_t *ent )
 	char		userinfo[MAX_INFO_STRING];
 	int			idnum, n;
 	char		*altname;
-	char		*fps;
+//	char		*fps;
 	qboolean	devmode = qfalse;
 	float		accuracy = 0;
 	char		*clonecheckfile;
@@ -1620,7 +1620,7 @@ Partly replaced by Com_Error system on 11/22/10 - 3:32 PM.
 void QDECL Boe_crashLog( const char *text)
 {
 	char		string[1024] = "";
-	va_list		argptr;
+//	va_list		argptr;
 	qtime_t		q;
 	fileHandle_t	f;
 

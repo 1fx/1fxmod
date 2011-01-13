@@ -446,7 +446,7 @@ qboolean ConsoleCommand( void )
 {
 	char cmd[MAX_TOKEN_CHARS];
 	//Ryan
-	char arg1[64];
+//	char arg1[64];
 	//Ryan
 
 	trap_Argv( 0, cmd, sizeof( cmd ) );

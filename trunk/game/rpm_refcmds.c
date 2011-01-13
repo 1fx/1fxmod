@@ -28,11 +28,11 @@ RPM_ref_cmd
 */
 void RPM_ref_cmd( gentity_t *ent)
 {
-	int		i;
+//	int		i;
 	char	arg1[MAX_STRING_TOKENS];
 	char	arg2[MAX_STRING_TOKENS];
-	char	arg3[MAX_STRING_TOKENS];
-	gentity_t *tent;
+//	char	arg3[MAX_STRING_TOKENS];
+//	gentity_t *tent;
 
 	trap_Argv( 1, arg1, sizeof( arg1 ) );
 	trap_Argv( 2, arg2, sizeof( arg2 ) );
