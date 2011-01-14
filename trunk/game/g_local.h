@@ -313,6 +313,9 @@ typedef struct
 	int					ready;
 	int					readyMessageTime;			// used for displaying the please ready up message every 3 seconds
 
+	// Boe!Man 1/13/11
+	qboolean			twisted;					// If a player is twisted, this will be set to qtrue.
+
 
 } clientPersistant_t;
 

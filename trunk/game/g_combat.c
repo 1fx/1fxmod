@@ -213,6 +213,7 @@ void player_die(
 	char			*killerName, *obit;
 	attackType_t	attack;
 	int				meansOfDeath;
+	vec3_t			lookdown;
 
 	attack		 = (mod >> 8) & 0xFF;
 	meansOfDeath = mod & 0xFF;
@@ -270,6 +271,13 @@ void player_die(
 		self->client->pers.planted = qfalse;
 	}
 	//Ryan
+
+	// Boe!Man 1/13/11: If they are twisted, untwist them before they die.
+	if(self->client->pers.twisted){
+		VectorSet(lookdown, 0, 0, 0);	
+		SetClientViewAngle(self, lookdown);
+		self->client->pers.twisted = qfalse;
+	}
 
 	// This is just to ensure that the player wont render for even a single frame
 	self->s.eFlags |= EF_DEAD;
