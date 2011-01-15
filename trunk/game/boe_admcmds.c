@@ -364,6 +364,7 @@ Boe_NoLower
 */
 
 void Boe_NoLower(int argNum, gentity_t *ent, qboolean shortCmd){
+	trap_Cvar_VariableStringBuffer ( "mapname", level.mapname, MAX_QPATH );
 	if(level.nolower1 == qtrue){
 		level.nolower1 = qfalse;
 		trap_Cvar_Set("g_disablelower", "0");

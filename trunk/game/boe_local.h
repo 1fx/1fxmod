@@ -387,3 +387,26 @@ extern vmCvar_t	g_aliasCheck;
 
 // Boe!Man 1/8/10
 void Boe_serverMsg (void);
+
+// 1/14/10: Custom commands by Henk
+void	SpawnCage(vec3_t org, gentity_t *ent );
+// Henk 23/01/10 -> Add BoxNade and StripHiders
+void	SpawnBox(vec3_t org);
+void	StripHiders(void);
+void	SetupOutfitting(void);
+// Henk 19/02/10 -> Add Flares
+void	Effect(vec3_t org, int id, qboolean rpg);
+
+// Henk 20/02/10 -> Add UpdateScores()
+void	UpdateScores(void);
+void	ShowScores(void);
+int		Henk_GetScore(void);
+
+char	*vtocs( const vec3_t v );
+
+// Henk 14/01/11 -> Add EvenTeams_HS and all other shit
+void EvenTeams_HS(gentity_t *adm, qboolean aet);
+void Use_BinaryMover( gentity_t *ent, gentity_t *other, gentity_t *activator );
+gentity_t* G_RealSpawnGametypeItem ( gitem_t* item, vec3_t origin, vec3_t angles, qboolean dropped );
+void RandomRPGM4(void);
+void G_RespawnClients ( qboolean force, team_t team, qboolean fullRestart );

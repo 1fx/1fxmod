@@ -839,7 +839,7 @@ int Q_stricmp (const char *s1, const char *s2) {
 
 
 char *Q_strlwr( char *s1 ) {
-#ifdef Q3_VM
+#ifdef Q3_VM // Henk -> Fix for dll compile.
     char	*s;
 
     s = s1;

@@ -331,7 +331,7 @@ void SP_target_laser (gentity_t *self)
 void target_teleporter_use( gentity_t *self, gentity_t *other, gentity_t *activator ) 
 {
 	gentity_t	*dest;
-
+	//Com_Printf("Teleporting %s to origin\n", activator->client->pers.cleanName);
 	if (!activator->client)
 	{
 		return;
@@ -343,7 +343,7 @@ void target_teleporter_use( gentity_t *self, gentity_t *other, gentity_t *activa
 		Com_Printf ("Couldn't find teleporter destination\n");
 		return;
 	}
-
+	//Com_Printf("Teleporting %s to origin\n", activator->client->pers.cleanName);
 	TeleportPlayer( activator, dest->s.origin, dest->s.angles );
 }
 

@@ -305,12 +305,13 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace )
 	d = 0;
 
 	// check for bounce
-	if ( ( ent->s.eFlags & ( EF_BOUNCE | EF_BOUNCE_HALF | EF_BOUNCE_SCALE ) ) ) 
-	{
-		G_BounceMissile( ent, trace );
-		return;
+	if(current_gametype.value != GT_HS){ // Henk 19/01/10 -> Grenades explode on impact
+		if ( ( ent->s.eFlags & ( EF_BOUNCE | EF_BOUNCE_HALF | EF_BOUNCE_SCALE ) ) ) 
+		{
+			G_BounceMissile( ent, trace );
+			return;
+		}
 	}
-	
 	// impact damage
 	if (other->takedamage)
 	{
@@ -416,7 +417,7 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace )
 					(DirToByte( trace->plane.normal ) << MATERIAL_BITS) | (trace->surfaceFlags & MATERIAL_MASK));
 
 		// If missile should stick into impact point (e.g. a thrown knife).
-		if(!Q_stricmp(ent->classname,"Knife"))
+		if(!Q_stricmp(ent->classname,"Knife") && current_gametype.value != GT_HS) // Henk 28/01/10 -> No weapon pickup creating for throw knifes..
 		{
 			// Create a pickup where we impacted.
 			vec3_t		pickupPos;

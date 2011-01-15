@@ -236,7 +236,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_friendlyFire, "g_friendlyFire", "0", CVAR_SERVERINFO|CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 
 	{ &g_teamAutoJoin, "g_teamAutoJoin", "0", CVAR_ARCHIVE, 0.0, 0.0,   },
-	{ &g_teamForceBalance, "g_teamForceBalance", "0", CVAR_ARCHIVE, 0.0, 0.0,   },
+	{ &g_teamForceBalance, "g_teamForceBalance", "1", CVAR_ARCHIVE, 0.0, 0.0,   },
 
 	{ &g_warmup, "g_warmup", "20", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 	{ &g_doWarmup, "g_doWarmup", "0", 0, 0.0, 0.0, 0, qtrue  },
@@ -425,6 +425,25 @@ static cvarTable_t gameCvarTable[] =
 
 	// Boe!Man 12/13/10
 	{ &g_aliasCheck, "g_aliasCheck", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
+
+	// Henk 19/01/10 -> Set default value of weapons and disable the cvar(Only in H&S though)
+	{ NULL,					"disable_weapon_knife",					"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 
+	{ NULL,					"disable_pickup_weapon_US_SOCOM",		"1", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 
+	{ NULL,					"disable_pickup_weapon_M19",			"1", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 
+	{ NULL,					"disable_pickup_weapon_microuzi",		"1", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 
+	{ NULL,					"disable_pickup_weapon_M3A1",			"1", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 
+	{ NULL,					"disable_pickup_weapon_USAS_12",		"1", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 
+	{ NULL,					"disable_pickup_weapon_M590",			"1", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 
+	{ NULL,					"disable_pickup_weapon_MSG90A1",		"1", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 
+	{ NULL,					"disable_pickup_weapon_M4",				"1", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 
+	{ NULL,					"disable_pickup_weapon_AK_74",			"1", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 
+	{ NULL,					"disable_pickup_weapon_M60",			"1", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 
+	{ NULL,					"disable_pickup_weapon_RPG_7",			"1", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 
+	{ NULL,					"disable_pickup_weapon_MM_1",			"1", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 
+	{ NULL,					"disable_pickup_weapon_M84",			"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 
+	{ NULL,					"disable_pickup_weapon_SMOHG92",		"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 
+	{ NULL,					"disable_pickup_weapon_AN_M14",			"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 
+	{ NULL,					"disable_pickup_weapon_M15",			"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 
 
 
 #ifdef _BOE_DBG
@@ -686,6 +705,49 @@ void G_UpdateCvars( void )
 
 /*
 ===============
+G_UpdateAvailableWeapons
+
+Updates the g_availableWeapons cvar using the disable cvars.
+===============
+*/
+void G_UpdateAvailableWeapons ( void )
+{
+	weapon_t weapon;
+	char	 available[WP_NUM_WEAPONS+1];
+
+	memset ( available, 0, sizeof(available) );
+
+	for ( weapon = WP_KNIFE; weapon < WP_NUM_WEAPONS; weapon ++ )
+	{
+		gitem_t* item = BG_FindWeaponItem ( weapon );
+		if ( !item )
+		{
+			continue;
+		}
+	
+		switch ( (int)trap_Cvar_VariableValue ( va("disable_%s", item->classname ) ) )
+		{
+			case 0:
+				available[weapon-1] = '2';
+				break;
+
+			case 1:
+				available[weapon-1] = '0';
+				break;
+
+			case 2:
+				available[weapon-1] = '1';
+				break;
+		}
+	}
+
+	// 1.03 CHANGE - Rename availableWeapons Cvar which might confuse old map cycles
+	trap_Cvar_Set ( "g_availableWeapons", available );
+    trap_Cvar_Update ( &g_availableWeapons );
+}
+
+/*
+===============
 G_SetGametype
 
 Sets the current gametype to the given value, if the map doesnt support it then it will
@@ -788,22 +850,26 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	BG_BuildGametypeList ( );
 
 	//Before we set the gametype we change current_gametype and we set H&S to INF
-	if(strstr(g_gametype.string, "inf")){
-		trap_Cvar_Set("current_gametype", "3");
-	}else if(strstr(g_gametype.string, "h&s")){
-		trap_Cvar_Set("current_gametype", "1");
-		trap_Cvar_Set( "g_gametype", "inf" );
-		trap_Cvar_Update(&g_gametype);
-	}else if(strstr(g_gametype.string, "elim")){
-		trap_Cvar_Set("current_gametype", "7");
-	}else if(strstr(g_gametype.string, "tdm")){
-		trap_Cvar_Set("current_gametype", "6");
-	}else if(strstr(g_gametype.string, "dm")){
-		trap_Cvar_Set("current_gametype", "5");
-	}else if(strstr(g_gametype.string, "ctf")){
-		trap_Cvar_Set("current_gametype", "4");
-	}
+	if(restart){
+
+	}else{
+		if(strstr(g_gametype.string, "inf")){
+			trap_Cvar_Set("current_gametype", "3");
+		}else if(strstr(g_gametype.string, "h&s")){
+			trap_Cvar_Set("current_gametype", "1");
+			trap_Cvar_Set( "g_gametype", "inf" );
+			trap_Cvar_Update(&g_gametype);
+		}else if(strstr(g_gametype.string, "elim")){
+			trap_Cvar_Set("current_gametype", "7");
+		}else if(strstr(g_gametype.string, "tdm")){
+			trap_Cvar_Set("current_gametype", "6");
+		}else if(strstr(g_gametype.string, "dm")){
+			trap_Cvar_Set("current_gametype", "5");
+		}else if(strstr(g_gametype.string, "ctf")){
+			trap_Cvar_Set("current_gametype", "4");
+		}
 	trap_Cvar_Update(&current_gametype);
+	}
 
 	// Set the current gametype
 	G_SetGametype(g_gametype.string);
@@ -915,6 +981,11 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 
 	G_RemapTeamShaders();
 
+	// Sets the available weapons cvar from the disable_ cvars.
+	if(current_gametype.value == GT_HS){
+	G_UpdateAvailableWeapons ( );
+	}
+
 	// Set the available outfitting
 	BG_SetAvailableOutfitting ( g_availableWeapons.string );
 
@@ -941,7 +1012,39 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 
 	if (strstr(g_gametype.string, "ctf")){
 	InitSpawn(1);
-	InitSpawn(2);
+	InitSpawn(3);
+	}else if(current_gametype.value == GT_HS){
+		InitSpawn(1);
+		InitSpawn(2);
+		InitSpawn(3);
+
+		// We'll have to preload the non-map effects in order to use them.
+		AddSpawnField("classname", "fx_play_effect");
+		AddSpawnField("effect", "flare_blue");
+		G_SpawnGEntityFromSpawnVars(qtrue);
+
+		AddSpawnField("classname", "fx_play_effect");
+		AddSpawnField("effect", "flare_red");
+		G_SpawnGEntityFromSpawnVars(qtrue);
+
+		AddSpawnField("classname", "fx_play_effect");
+		AddSpawnField("effect", "chunks/debris_snow"); // chunks/debris_snow
+		G_SpawnGEntityFromSpawnVars(qtrue);
+
+		AddSpawnField("classname", "fx_play_effect");
+		AddSpawnField("effect", "misc/electrical");
+		G_SpawnGEntityFromSpawnVars(qtrue);
+
+		// setup settings for h&s
+		trap_Cvar_Set("g_disablenades", "0");
+		trap_Cvar_Update(&g_disablenades);
+		trap_Cvar_Set("g_roundstartdelay", "30");
+		trap_Cvar_Update(&g_roundstartdelay);
+	}
+
+	if(current_gametype.value != GT_HS){
+		trap_Cvar_Set("g_roundstartdelay", "3");
+		trap_Cvar_Update(&g_roundstartdelay);
 	}
 
 	// Boe!Man 11/16/10: Scrim settings.
@@ -1726,7 +1829,10 @@ void CheckIntermissionExit( void )
 
 	if(!level.awardTime)
 	{
-		RPM_Awards();
+		if(current_gametype.value == GT_HS)
+			ShowScores();
+		else
+			RPM_Awards();
 		level.awardTime = level.time;
 		level.lastAwardSent = level.time;
 		return;
@@ -1734,7 +1840,10 @@ void CheckIntermissionExit( void )
 
 	if(level.awardTime && (level.time > level.lastAwardSent + 3000))
 	{
-		RPM_Awards();
+		if(current_gametype.value == GT_HS)
+			ShowScores();
+		else
+			RPM_Awards();
 		level.lastAwardSent = level.time;
 	}
 
@@ -1822,12 +1931,19 @@ void CheckExitRules( void )
 			trap_SendServerCommand( -1, va("print \"^3[Info] ^7Timelimit hit, waiting for round to finish.\n\"") );
 			level.timelimithit = qtrue;
 			}else{
+				if(current_gametype.value == GT_HS){
+				Com_Printf("Updating scores..\n");
+				UpdateScores();
+				LogExit("Timelimit hit.");
+				}else{
 				gentity_t*	tent;
 				tent = G_TempEntity( vec3_origin, EV_GAME_OVER );
 				tent->s.eventParm = GAME_OVER_TIMELIMIT;
 				tent->r.svFlags = SVF_BROADCAST;
 
 				LogExit( "Timelimit hit." );
+				}
+				return;
 			}
 			return;
 		}
@@ -2202,6 +2318,271 @@ void G_RunThink (gentity_t *ent)
 	ent->think (ent);
 }
 
+// Henk 23/01/10 -> Give players their outfitting nades and give seekers box nades
+void SetupOutfitting(void)
+{
+	int i;
+	for ( i = 0; i < level.numConnectedClients; i ++ )
+	{
+	g_entities[level.sortedClients[i]].client->noOutfittingChange = qfalse;
+	G_UpdateOutfitting ( g_entities[level.sortedClients[i]].s.number );
+		if(g_entities[level.sortedClients[i]].client->sess.team == TEAM_BLUE){
+		g_entities[level.sortedClients[i]].client->ps.ammo[weaponData[WP_MDN11_GRENADE].attack[ATTACK_NORMAL].ammoIndex]=3;
+		g_entities[level.sortedClients[i]].client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_MDN11_GRENADE );
+		g_entities[level.sortedClients[i]].client->ps.clip[ATTACK_NORMAL][WP_MDN11_GRENADE]=1;
+		}
+	}
+}
+
+/*
+================
+Henk_CheckHS
+
+Check H&S events
+================
+*/
+void Henk_CheckHS(void)
+{
+	int countred;
+	int i, random;
+	gspawn_t	*spawnPoint;
+	gentity_t	*dropped;
+
+	// Henk 19/02/10 -> Copy origin of dropped weapon to flare
+	if(level.time >= level.MM1Time && level.MM1Time != 0 && level.gametypeStartTime >= 5000){
+		Effect(g_entities[level.MM1ent].r.currentOrigin, 2, qfalse);
+		level.MM1Time = 0;
+	}
+	if(level.time >= level.M4Time && level.M4Time != 0 && level.gametypeStartTime >= 5000){
+		Effect(g_entities[level.M4ent].r.currentOrigin, 1, qfalse);
+		level.M4Time = 0;
+	}
+	if(level.time >= level.RPGTime && level.RPGTime != 0 && level.gametypeStartTime >= 5000){
+		Effect(g_entities[level.RPGent].r.currentOrigin, 1, qtrue);
+		level.RPGTime = 0;
+	}
+	// Henk 19/01/10 -> Last man standing
+if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
+	countred = level.teamAliveCount[TEAM_RED];
+	if(countred == 2 && level.lastaliveCheck[0] == qfalse){ // 2 hiders alive
+		level.lastalive[0] = -1;
+		level.lastalive[1] = -1;
+		for(i = 0; i < level.numConnectedClients; i++){
+			if (g_entities[level.sortedClients[i]].inuse){
+				if(g_entities[level.sortedClients[i]].client->sess.team == TEAM_RED && !G_IsClientDead(g_entities[level.sortedClients[i]].client) && g_entities[level.sortedClients[i]].client->pers.connected == CON_CONNECTED){
+					if(level.lastalive[0] == -1){
+						level.lastalive[0] = level.sortedClients[i];
+					}else{
+						level.lastalive[1] = level.sortedClients[i];
+						break;
+					}
+				}
+			}
+		}
+		Com_Printf("Log RPG: %s\nM4: %s\n", g_entities[level.lastalive[0]].client->pers.cleanName, g_entities[level.lastalive[1]].client->pers.cleanName);
+		G_LogPrintf("(2)RPG: %s\nM4: %s\n", g_entities[level.lastalive[0]].client->pers.cleanName, g_entities[level.lastalive[1]].client->pers.cleanName);
+		level.lastaliveCheck[0] = qtrue;
+	}
+	if(countred == 1 && level.lastaliveCheck[1] == qfalse){
+		for(i = 0; i < level.numConnectedClients; i++){
+			if (g_entities[level.sortedClients[i]].inuse){
+				if(g_entities[level.sortedClients[i]].client->sess.team == TEAM_RED && !G_IsClientDead(g_entities[level.sortedClients[i]].client) && g_entities[level.sortedClients[i]].client->pers.connected == CON_CONNECTED){
+					if(level.lastalive[0] == level.sortedClients[i]){
+						// leave as it is
+						break;
+					}else if(level.lastalive[1] == level.sortedClients[i]){
+						level.lastalive[1] = level.lastalive[0];
+						level.lastalive[0] = level.sortedClients[i];
+						break;
+					}else{
+						level.lastalive[0] = level.sortedClients[i];
+						break;
+					}
+				}
+			}
+		}
+		//Com_Printf("Log1 RPG: %s\nM4: %s\n", g_entities[level.lastalive[0]].client->pers.cleanName, g_entities[level.lastalive[1]].client->pers.cleanName);
+		//G_LogPrintf("RPG: %s\nM4: %s\n", g_entities[level.lastalive[0]].client->pers.cleanName, g_entities[level.lastalive[1]].client->pers.cleanName);
+		trap_SendServerCommand (-1, va("print\"^3[H&S] ^7%s is the last hider alive.\n\"", g_entities[level.lastalive[0]].client->pers.cleanName ));
+		trap_SendServerCommand( level.lastalive[0], va("cp \"^7You are the last %sh%si%sd%se%sr ^7alive!\n\"", server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+		level.lastaliveCheck[1] = qtrue;
+	}
+}
+	// Henk 22/01/10 -> Display seekers released message.
+	trap_Cvar_VariableStringBuffer ( "mapname", level.mapname, MAX_QPATH );
+	if(level.time >= level.gametypeDelayTime && level.messagedisplay == qfalse && level.gametypeStartTime >= 5000 && !strstr(level.mapname, "col9")){
+		trap_SendServerCommand( -1, va("cp \"^7%sS%se%se%sk%se%srs released!\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+		Boe_GlobalSound(level.clicksound); // Henkie 22/01/10 -> G_SoundIndex("sound/misc/menus/click.wav") index this when loading map(saves alot performance)
+		// give nades to all players
+		SetupOutfitting();
+		//G_LogPrintf("Giving away briefcase...\n");
+		if(TeamCount1(TEAM_BLUE) >= 1){
+			for(i=0;i<=200;i++){
+			random = irand(0, g_maxclients.integer);
+			if(!g_entities[level.sortedClients[random]].inuse)
+				continue;
+
+				if(g_entities[level.sortedClients[random]].client->sess.team == TEAM_BLUE){
+					break;
+				}
+			}
+			if(g_entities[level.sortedClients[random]].client){ // cvar update crash if client does not exist
+				if(g_entities[level.sortedClients[random]].client->sess.team != TEAM_BLUE){
+				trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Can't find any seeker.\n\""));
+				//G_LogPrintf("No player #1...\n");
+				}else{
+					G_LogPrintf("Found a player!...\n");
+				G_RealSpawnGametypeItem ( BG_FindGametypeItem (0), g_entities[level.sortedClients[random]].r.currentOrigin, g_entities[level.sortedClients[random]].s.angles, qtrue );
+				trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Briefcase given at random to %s.\n\"", g_entities[level.sortedClients[random]].client->pers.netname));
+				}
+			}else{
+				//G_LogPrintf("No player...\n");
+				trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Can't find any seeker.\n\""));
+			}
+		}else{
+			//G_LogPrintf("No one here...\n");
+			trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Not enough seekers for briefcase to spawn.\n\""));
+		}
+		level.messagedisplay = qtrue;
+		//G_LogPrintf("Done with briefcase give away...\n");
+	}
+
+	if(level.time > level.gametypeStartTime+10000 && level.messagedisplay1 == qfalse && level.time >= 5000 && !strstr(level.mapname, "col9")){
+		// Boe!Man 3/20/10: Commenting out debug messages.
+		//G_LogPrintf("ID RPG: %i\n", level.lastalive[0]);
+		//G_LogPrintf("ID M4: %i\n", level.lastalive[1]);
+		if(level.lastalive[0] != -1 && g_entities[level.lastalive[0]].client->sess.team == TEAM_RED && !G_IsClientDead(g_entities[level.lastalive[0]].client) && g_entities[level.lastalive[0]].client->pers.connected == CON_CONNECTED){
+			//trap_SendServerCommand (-1, va("print\"^3[H&S] ^7Debug: RPG to %s.\n\"", g_entities[level.lastalive[0]].client->pers.cleanName ));
+			// Henk 26/01/10 -> Give RPG to player
+			g_entities[level.lastalive[0]].client->ps.ammo[weaponData[WP_RPG7_LAUNCHER].attack[ATTACK_NORMAL].ammoIndex]=2;
+			g_entities[level.lastalive[0]].client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_RPG7_LAUNCHER );
+			g_entities[level.lastalive[0]].client->ps.clip[ATTACK_NORMAL][WP_RPG7_LAUNCHER]=1;
+			g_entities[level.lastalive[0]].client->ps.firemode[WP_RPG7_LAUNCHER] = BG_FindFireMode ( WP_RPG7_LAUNCHER, ATTACK_NORMAL, WP_FIREMODE_AUTO );
+			g_entities[level.lastalive[0]].client->ps.weapon = WP_KNIFE;
+			g_entities[level.lastalive[0]].client->ps.weaponstate = WEAPON_READY;
+			Com_sprintf(level.RPGloc, sizeof(level.RPGloc), "%s", g_entities[level.lastalive[0]].client->pers.netname);
+			level.RPGent = -1;
+			level.RPGTime = 0;
+			trap_SendServerCommand(-1, va("print\"^3[H&S] ^7RPG given to round winner %s.\n\"", g_entities[level.lastalive[0]].client->pers.cleanName));
+			level.lastalive[0] = -1;
+			// End
+		}else{ // Henk 26/01/10 -> Drop RPG at red spawn.
+			if(TeamCount1(TEAM_RED) == 0){
+				spawnPoint = G_SelectRandomSpawnPoint ( TEAM_BLUE );
+				dropped = G_DropItem2(spawnPoint->origin, spawnPoint->angles, BG_FindWeaponItem ( WP_RPG7_LAUNCHER ));
+				dropped->count  = 1&0xFF;
+				dropped->count += ((2<<8) & 0xFF00);
+				Com_sprintf(level.RPGloc, sizeof(level.RPGloc), "%s", "blue base");
+				level.RPGTime = level.time+1000;
+				level.RPGent = dropped->s.number;
+				trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Not enough hiders connected: RPG spawned in blue base\n\""));
+			}else{
+				for(i=0;i<=200;i++){
+					random = irand(0, g_maxclients.integer);
+					if(!g_entities[level.sortedClients[random]].inuse)
+						continue;
+					if(g_entities[level.sortedClients[random]].client->sess.team != TEAM_RED)
+						continue;
+					if(g_entities[level.sortedClients[random]].client->pers.connected != CON_CONNECTED)
+						continue;
+					if(G_IsClientDead(g_entities[level.sortedClients[random]].client))
+						continue;
+					// Henk 26/01/10 -> Give RPG to player
+					g_entities[level.sortedClients[random]].client->ps.ammo[weaponData[WP_RPG7_LAUNCHER].attack[ATTACK_NORMAL].ammoIndex]=2;
+					g_entities[level.sortedClients[random]].client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_RPG7_LAUNCHER );
+					g_entities[level.sortedClients[random]].client->ps.clip[ATTACK_NORMAL][WP_RPG7_LAUNCHER]=1;
+					g_entities[level.sortedClients[random]].client->ps.firemode[WP_RPG7_LAUNCHER] = BG_FindFireMode ( WP_RPG7_LAUNCHER, ATTACK_NORMAL, WP_FIREMODE_AUTO );
+					g_entities[level.sortedClients[random]].client->ps.weapon = WP_KNIFE;
+					g_entities[level.sortedClients[random]].client->ps.weaponstate = WEAPON_READY;
+					Com_sprintf(level.RPGloc, sizeof(level.RPGloc), "%s", g_entities[level.sortedClients[random]].client->pers.netname);
+					level.RPGent = -1;
+					level.RPGTime = 0;
+					level.lastalive[0] = -1;
+					trap_SendServerCommand(-1, va("print\"^3[H&S] ^7RPG given at random to %s.\n\"", g_entities[level.sortedClients[random]].client->pers.cleanName));
+					break;
+				}
+			}
+				/*
+			spawnPoint = G_SelectRandomSpawnPoint ( TEAM_RED );
+			dropped = G_DropItem2(spawnPoint->origin, spawnPoint->angles, BG_FindWeaponItem ( WP_RPG7_LAUNCHER ));
+			dropped->count  = 1&0xFF;
+			dropped->count += ((2<<8) & 0xFF00);
+			Com_sprintf(level.RPGloc, sizeof(level.RPGloc), "%s", "Red Spawn");
+			level.RPGTime = level.time+1000;
+			level.RPGent = dropped->s.number;
+			trap_SendServerCommand(-1, va("print\"^3[H&S] ^7RPG has spawned somewhere.\n\""));
+			*/
+		}
+		if(g_entities[level.lastalive[1]].client && level.lastalive[1] != -1 && g_entities[level.lastalive[1]].inuse && level.lastalive[1] != level.lastalive[0]){ // Henkie 01/02/10 -> Fixed M4 spawn bug causing cvar update crash
+			//trap_SendServerCommand (-1, va("print\"^3[H&S] ^7Debug: M4 to %s.\n\"", g_entities[level.lastalive[1]].client->pers.cleanName ));
+			// Henk 26/01/10 -> Give M4 to player
+			g_entities[level.lastalive[1]].client->ps.ammo[weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_ALTERNATE].ammoIndex]=2; // not 3 because 1 in clip
+			g_entities[level.lastalive[1]].client->ps.ammo[weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_NORMAL].ammoIndex]=2;
+			g_entities[level.lastalive[1]].client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_M4_ASSAULT_RIFLE);
+			g_entities[level.lastalive[1]].client->ps.clip[ATTACK_NORMAL][WP_M4_ASSAULT_RIFLE]=1;
+			// Henk 01/02/10 -> Fix for reloading M203
+			g_entities[level.lastalive[1]].client->ps.clip[ATTACK_ALTERNATE][WP_M4_ASSAULT_RIFLE]=1;
+			// End
+			g_entities[level.lastalive[1]].client->ps.firemode[WP_M4_ASSAULT_RIFLE] = BG_FindFireMode ( WP_M4_ASSAULT_RIFLE, ATTACK_NORMAL, WP_FIREMODE_SINGLE );
+			g_entities[level.lastalive[1]].client->ps.weapon = WP_KNIFE;
+			g_entities[level.lastalive[1]].client->ps.weaponstate = WEAPON_READY;
+			// End
+			Com_sprintf(level.M4loc, sizeof(level.M4loc), "%s", g_entities[level.lastalive[1]].client->pers.netname);
+			level.M4Time = 0;
+			level.M4ent = -1;
+			trap_SendServerCommand(-1, va("print\"^3[H&S] ^7M4 given to round winner %s.\n\"", g_entities[level.lastalive[1]].client->pers.cleanName));
+			level.lastalive[1] = -1;
+			// End
+		}else{ // Henk 26/01/10 -> Drop M4 at red spawn.
+			// Henk 24/02/10 -> Add randomize give away
+			if(TeamCount1(TEAM_RED) <= 2){
+				spawnPoint = G_SelectRandomSpawnPoint ( TEAM_BLUE );
+				dropped = G_DropItem2(spawnPoint->origin, spawnPoint->angles, BG_FindWeaponItem ( WP_M4_ASSAULT_RIFLE ));
+				dropped->count  = 1&0xFF;
+				dropped->count += ((2<<8) & 0xFF00);
+				dropped->count += ((3 << 16) & 0xFF0000 );
+				Com_sprintf(level.M4loc, sizeof(level.M4loc), "%s", "blue base");
+				level.M4Time = level.time+1000;
+				level.M4ent = dropped->s.number;
+				trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Not enough hiders connected: M4 spawned in blue base\n\""));
+			}else{
+				for(i=0;i<=200;i++){
+					random = irand(0, g_maxclients.integer);
+					if(!g_entities[level.sortedClients[random]].inuse)
+						continue;
+					if(g_entities[level.sortedClients[random]].client->sess.team != TEAM_RED)
+						continue;
+					if(g_entities[level.sortedClients[random]].client->pers.connected != CON_CONNECTED)
+						continue;
+					if(G_IsClientDead(g_entities[level.sortedClients[random]].client))
+						continue;
+					if(g_entities[level.sortedClients[random]].client->ps.stats[STAT_WEAPONS] & ( 1 << WP_RPG7_LAUNCHER )) // person already has RPG
+						continue;
+					Com_Printf("lastalive[0]: %i\nRandom: %i\n", level.lastalive[0], level.sortedClients[random]); // test this
+					g_entities[level.sortedClients[random]].client->ps.ammo[weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_ALTERNATE].ammoIndex]=2; // not 3 because 1 in clip
+					g_entities[level.sortedClients[random]].client->ps.ammo[weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_NORMAL].ammoIndex]=2;
+					g_entities[level.sortedClients[random]].client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_M4_ASSAULT_RIFLE);
+					g_entities[level.sortedClients[random]].client->ps.clip[ATTACK_NORMAL][WP_M4_ASSAULT_RIFLE]=1;
+					// Henk 01/02/10 -> Fix for reloading M203
+					g_entities[level.sortedClients[random]].client->ps.clip[ATTACK_ALTERNATE][WP_M4_ASSAULT_RIFLE]=1;
+					// End
+					g_entities[level.sortedClients[random]].client->ps.firemode[WP_M4_ASSAULT_RIFLE] = BG_FindFireMode ( WP_M4_ASSAULT_RIFLE, ATTACK_NORMAL, WP_FIREMODE_SINGLE );
+					g_entities[level.sortedClients[random]].client->ps.weapon = WP_KNIFE;
+					g_entities[level.sortedClients[random]].client->ps.weaponstate = WEAPON_READY;
+					level.lastalive[1] = -1;
+					// End
+					Com_sprintf(level.M4loc, sizeof(level.M4loc), "%s", g_entities[level.sortedClients[random]].client->pers.netname);
+					level.M4Time = 0;
+					level.M4ent = -1;
+					trap_SendServerCommand(-1, va("print\"^3[H&S] ^7M4 given at random to %s.\n\"", g_entities[level.sortedClients[random]].client->pers.cleanName));
+					break;
+				}
+			}
+		}
+		level.messagedisplay1 = qtrue;
+	}
+}
+
 /*
 ================
 G_RunFrame
@@ -2333,6 +2714,34 @@ void G_RunFrame( int levelTime )
 	ent = &g_entities[0];
 	for (i=0 ; i < level.maxclients ; i++, ent++ )
 	{
+		if(current_gametype.value == GT_HS){
+			// Henk 27/02/10 -> Fix for dead ppl frozen
+			if(G_IsClientDead(ent->client) && ent->client->ps.stats[STAT_FROZEN])
+				ent->client->ps.stats[STAT_FROZEN] = 0;
+			// End
+
+			// Henk 21/01/10 -> Check for dead seekers
+			if(G_IsClientDead(ent->client) == qtrue){
+				if(ent->client->sess.team == TEAM_BLUE || (level.time < level.gametypeStartTime+30000 && ent->client->sess.team == TEAM_RED)){
+					// If the client is a ghost then revert them
+					if ( ent->client->sess.ghost )
+					{
+						// Clean up any following monkey business
+						G_StopFollowing ( ent );
+
+						// Disable being a ghost
+						ent->client->ps.pm_flags &= ~PMF_GHOST;
+						ent->client->ps.pm_type = PM_NORMAL;
+						ent->client->sess.ghost = qfalse;
+					}
+		
+				ent->client->sess.noTeamChange = qfalse;
+
+				trap_UnlinkEntity (ent);
+				ClientSpawn ( ent );
+				}
+			}
+		}
 		if ( ent->inuse )
 		{
 			ClientEndFrame( ent );
@@ -2454,6 +2863,10 @@ void G_RunFrame( int levelTime )
 	// for tracking changes
 	CheckCvars();
 	
+	// Henk 21/01/10 -> Hide&Seek actions
+	if(current_gametype.value == GT_HS)
+	Henk_CheckHS();
+
 	if (g_listEntity.integer)
 	{
 		for (i = 0; i < MAX_GENTITIES; i++)

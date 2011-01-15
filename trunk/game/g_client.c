@@ -677,6 +677,23 @@ int TeamCount( int ignoreClientNum, team_t team, int *alive )
 	return count;
 }
 
+int TeamCount1(team_t team) 
+{
+	int		i;
+	int		count = 0;
+
+	for ( i = 0 ; i < level.maxclients ; i++ ) 
+	{
+		if ( level.clients[i].sess.team == team ) 
+		{
+
+			count++;
+		}
+	}
+
+	return count;
+}
+
 /*
 ================
 PickTeam
@@ -851,9 +868,9 @@ void G_UpdateOutfitting ( int clientNum )
 	}
 
 	// Clear all ammo, clips, and weapons
-	client->ps.stats[STAT_WEAPONS] = 0;
-	memset ( client->ps.ammo, 0, sizeof(client->ps.ammo) );
-	memset ( client->ps.clip, 0, sizeof(client->ps.clip) );
+	//client->ps.stats[STAT_WEAPONS] = 0; // Henk 15/01/11 -> Fix for disspearing shit
+	//memset ( client->ps.ammo, 0, sizeof(client->ps.ammo) );
+	//memset ( client->ps.clip, 0, sizeof(client->ps.clip) );
 
 	// Henkie -> Put zoom off!
 	client->ps.zoomFov = 0;
@@ -927,8 +944,10 @@ void G_UpdateOutfitting ( int clientNum )
 		}
 	}
 
+	if(current_gametype.value != GT_HS){ // Henk 15/01/11 -> dont't select new weapons when we get them
 	client->ps.weapon = equipWeapon;
 	client->ps.weaponstate = WEAPON_READY; //WEAPON_SPAWNING;
+	}
 	client->ps.weaponTime = 0;
 	client->ps.weaponAnimTime = 0;
 
@@ -967,7 +986,10 @@ void G_UpdateOutfitting ( int clientNum )
 
 	// Stuff which grenade is being used into stats for later use by
 	// the backpack code
+	if(current_gametype.value != GT_HS)
 	client->ps.ammo[weaponData[WP_KNIFE].attack[ATTACK_NORMAL].ammoIndex]=weaponData[WP_KNIFE].attack->extraClips;
+	else if(client->sess.team == TEAM_BLUE)
+		client->ps.ammo[weaponData[WP_KNIFE].attack[ATTACK_ALTERNATE].ammoIndex]=0;
 	if(g_disablenades.integer == 0){
 		client->ps.stats[STAT_OUTFIT_GRENADE] = bg_itemlist[bg_outfittingGroups[OUTFITTING_GROUP_GRENADE][3]].giTag;
 	}else{
@@ -997,7 +1019,6 @@ void ClientUserinfoChanged( int clientNum )
 	char		oldname[MAX_STRING_CHARS];
 	char		userinfo[MAX_INFO_STRING];
 	char		*clonecheck;
-	int			cloneCheck;
 	TIdentity	*oldidentity;
 
 	ent = g_entities + clientNum;
@@ -1155,7 +1176,7 @@ void ClientUserinfoChanged( int clientNum )
 	///End  - 08.30.06 - 08:52pm
 	}
 
-	if( level.gametypeData->teams ) 
+	if( level.gametypeData->teams && current_gametype.value != GT_HS ) 
 	{
 		s = Info_ValueForKey ( userinfo, "team_identity" );
 
@@ -1182,9 +1203,22 @@ void ClientUserinfoChanged( int clientNum )
 	else 
 	{
 		s = Info_ValueForKey ( userinfo, "identity" );
-
+		if(current_gametype.value == GT_HS){
+			if(client->sess.team == TEAM_BLUE){
+				client->pers.identity = &bg_identities[102];
+			}else{
+				client->pers.identity = BG_FindIdentity ( s );
+				if(client->pers.identity){
+					if(client->pers.identity->mName == "NPC_Swiss_Police/swiss_police_b1" || client->pers.identity->mName == "NPC_Honor_Guard/honor_guard_w1"){
+						trap_SendServerCommand ( client - &level.clients[0], "print \"^3[H&S] ^7You cannot use that skin.\n\"" );
+						client->pers.identity = &bg_identities[1]; // Henk 21/02/10 -> Changed from return to skin 1(could prevent hiders with seekers skin)
+					}
+				}
+			}
+		}else{
 		// Lookup the identity by name and if it cant be found then pick a random one
 		client->pers.identity = BG_FindIdentity ( s );
+		}
 	}
 	
 	// If the identity wasnt in the list then just give them the first identity.  We could
@@ -1271,7 +1305,20 @@ void ClientUserinfoChanged( int clientNum )
 	{
 		// Parse out the new outfitting
 		BG_DecompressOutfitting ( Info_ValueForKey ( userinfo, "outfitting" ), &client->pers.outfitting );
-		G_UpdateOutfitting ( clientNum );
+			if(current_gametype.value == GT_HS){
+				// Henk 28/01/10 -> Fixed outfitting given when players enters round(causing double nades).
+				//G_UpdateOutfitting ( index );
+				if ( !client->noOutfittingChange ){
+					client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_KNIFE );
+					client->ps.ammo[weaponData[WP_KNIFE].attack[ATTACK_NORMAL].ammoIndex]=0;
+					client->ps.clip[ATTACK_NORMAL][WP_KNIFE]=weaponData[WP_KNIFE].attack[ATTACK_NORMAL].clipSize;
+					client->ps.firemode[WP_KNIFE] = BG_FindFireMode ( WP_KNIFE, ATTACK_NORMAL, WP_FIREMODE_AUTO );
+					client->ps.weapon = WP_KNIFE;
+					client->ps.weaponstate = WEAPON_READY;
+					client->ps.stats[STAT_ARMOR] = MAX_HEALTH;
+				}
+			}else
+				G_UpdateOutfitting ( clientNum );
 	}
 
 	// send over a subset of the userinfo keys so other clients can
@@ -1334,13 +1381,8 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 	int			n = 0;
 	int			i = 0, ipCount = 0;
     //Ryan
-	char		guid[64];
 	char		a[64] = "\0";
 	gentity_t	*ent;
-
-		int             len;
-	fileHandle_t	f;
-	char			str[64];
 
 	ent = &g_entities[ clientNum ];
 #ifdef _BOE_DBG
@@ -1576,7 +1618,6 @@ void ClientBegin( int clientNum, qboolean setTime )
 	}
 	//Ryan
 	client->pers.teamState.state = TEAM_BEGIN;
-
 	// save eflags around this, because changing teams will
 	// cause this to happen with a valid entity, and we
 	// want to make sure the teleport bit is set right
@@ -1742,6 +1783,7 @@ void ClientSpawn(gentity_t *ent)
 	int					start_ammo_type;
 	int					ammoIndex;
 	int					idle;
+	char				location[64];
 
 	index  = ent - g_entities;
 	client = ent->client;
@@ -1848,7 +1890,22 @@ void ClientSpawn(gentity_t *ent)
 
 		BG_DecompressOutfitting ( Info_ValueForKey ( userinfo, "outfitting" ), &client->pers.outfitting);
 #endif
+		if(current_gametype.value == GT_HS){
+			 // Henk 23/01/10 -> Disable update outfitting, we'll do it later
+			// Henk 24/01/10 -> Fix players not starting with knife/armor
+			//G_UpdateOutfitting ( index );
+			client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_KNIFE );
+			ammoIndex=weaponData[WP_KNIFE].attack[ATTACK_NORMAL].ammoIndex;
+			client->ps.ammo[ammoIndex]=0;
+			client->ps.clip[ATTACK_NORMAL][WP_KNIFE]=weaponData[WP_KNIFE].attack[ATTACK_NORMAL].clipSize;
+			client->ps.firemode[WP_KNIFE] = BG_FindFireMode ( WP_KNIFE, ATTACK_NORMAL, WP_FIREMODE_AUTO );
+			client->ps.weapon = WP_KNIFE;
+			client->ps.weaponstate = WEAPON_READY;
+			client->ps.stats[STAT_ARMOR] = MAX_HEALTH;
+		// End
+		}else{
 		G_UpdateOutfitting ( ent->s.number );
+		}
 		// Prevent the client from picking up a whole bunch of stuff
 		client->ps.pm_flags |= PMF_LIMITED_INVENTORY;
 	}
@@ -1956,6 +2013,7 @@ void ClientSpawn(gentity_t *ent)
 	{
 		MoveClientToIntermission( ent );
 	}
+
 	//Ryan june 15 2003
 	//If paused then pause the client here
 	if(level.pause)
@@ -2001,9 +2059,17 @@ void ClientSpawn(gentity_t *ent)
 	BG_PlayerStateToEntityState( &client->ps, &ent->s, qtrue );
 
 	// Frozen?
-	if ( level.gametypeDelayTime > level.time )
-	{
-		ent->client->ps.stats[STAT_FROZEN] = level.gametypeDelayTime - level.time;
+	if(current_gametype.value != GT_HS){
+		if ( level.gametypeDelayTime > level.time )
+		{
+			ent->client->ps.stats[STAT_FROZEN] = level.gametypeDelayTime - level.time;
+		}
+	}else{
+		// Frozen?
+		if ( level.gametypeDelayTime > level.time && ent->client->sess.team == TEAM_BLUE ) // Henk 21/01/10 -> Only seekers have a start delay
+		{
+			ent->client->ps.stats[STAT_FROZEN] = level.gametypeDelayTime - level.time;
+		}
 	}
 
 	// Handle a deferred name change
@@ -2015,12 +2081,13 @@ void ClientSpawn(gentity_t *ent)
 		client->pers.netnameTime = level.time;
 		ClientUserinfoChanged ( client->ps.clientNum );
 	}
-
-	if(level.gametypeData->teams && client->sess.team != TEAM_SPECTATOR && !strstr(level.gametypeTeam[client->sess.team], client->pers.identity->mTeam)){ // this skin does not belong to this team so change their Identity
-		trap_SendServerCommand(ent->s.number, va("print \"^3[Info] ^7Your skin has been changed because it did not match your team.\n\"") );
-		ClientUserinfoChanged ( client->ps.clientNum );
+	if(current_gametype.value != GT_HS){
+		if(level.gametypeData->teams && client->sess.team != TEAM_SPECTATOR && !strstr(level.gametypeTeam[client->sess.team], client->pers.identity->mTeam)){ // this skin does not belong to this team so change their Identity
+			trap_SendServerCommand(ent->s.number, va("print \"^3[Info] ^7Your skin has been changed because it did not match your team.\n\"") );
+			ClientUserinfoChanged ( client->ps.clientNum );
+		}
 	}
-
+	
 	// Update the time when other people can join the game
 	if ( !level.gametypeJoinTime && level.gametypeData->teams )
 	{
@@ -2030,7 +2097,53 @@ void ClientSpawn(gentity_t *ent)
 			level.gametypeJoinTime = level.time;
 		}
 	}
+	if(current_gametype.value == GT_HS){
+			// Henk 19/01/10 -> Start with knife
+			ent->client->ps.ammo[weaponData[WP_KNIFE].attack[ATTACK_ALTERNATE].ammoIndex]=0;
+			ent->client->ps.weapon = WP_KNIFE;
+			ent->client->ps.weaponstate = WEAPON_READY;
+			if(strstr(level.mapname, "col9") && ent->client->sess.team == TEAM_RED){ // Henk 27/02/10 -> In cross the bridge hiders spawn with 5 smokes // Boe: They start with 3 now. ;)
+				ent->client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_M15_GRENADE);	
+				ent->client->ps.ammo[weaponData[WP_M15_GRENADE].attack[ATTACK_NORMAL].ammoIndex] = 2;
+				ent->client->ps.clip[ATTACK_NORMAL][WP_M15_GRENADE] = 1;
+				ent->client->ps.weapon = WP_M15_GRENADE;
+			}else if(strstr(level.mapname, "col9") && ent->client->sess.team == TEAM_BLUE){
+				Team_GetLocationMsg(ent, location, sizeof(location));
+				//Com_Printf("%c\n",location);
+				// Boe!Man 3/17/10: When seekers are spawned on the bridge they get an AK + nades.
+				if (strstr(location, "Bridge")){
+				ent->client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_AK74_ASSAULT_RIFLE);	
+				ent->client->ps.ammo[weaponData[WP_AK74_ASSAULT_RIFLE].attack[ATTACK_NORMAL].ammoIndex] = 175; // Boe!Man 3/17/10: The seekers ALWAYS run out, thus more clips, thus more ammo.
+				ent->client->ps.clip[ATTACK_NORMAL][WP_AK74_ASSAULT_RIFLE] = 7; // Boe!Man 3/17/10: We start with 7 bullets in the clip instead of the usual 5.
+				ent->client->ps.weapon = WP_AK74_ASSAULT_RIFLE;
+				ent->client->ps.firemode[WP_AK74_ASSAULT_RIFLE] = BG_FindFireMode ( WP_AK74_ASSAULT_RIFLE, ATTACK_NORMAL, WP_FIREMODE_AUTO ); // Boe!Man 3/17/10: Fix for shooting singles with AK74.
+				}
+				// Boe!Man 3/17/10: Seekers spawned in the watchtower get only the sniper (nades would be useless).
+				else if (strstr(location, "Seeker Watchtower")){
+				ent->client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_MSG90A1);	
+				ent->client->ps.ammo[weaponData[WP_MSG90A1].attack[ATTACK_NORMAL].ammoIndex] = 100;
+				ent->client->ps.clip[ATTACK_NORMAL][WP_MSG90A1] = 5;
+				ent->client->ps.weapon = WP_MSG90A1;
+				}
+			}
+			client->ps.stats[STAT_ARMOR]   = 0; // Henk 27/02/10 -> Fix that ppl start with no armor
+			client->ps.stats[STAT_GOGGLES] = GOGGLES_NONE;
+			switch ( bg_outfittingGroups[OUTFITTING_GROUP_ACCESSORY][client->pers.outfitting.items[OUTFITTING_GROUP_ACCESSORY]] )
+			{
+				default:
+				case MODELINDEX_ARMOR:
+					client->ps.stats[STAT_ARMOR] = MAX_HEALTH;
+					break;
 
+				case MODELINDEX_THERMAL:
+					client->ps.stats[STAT_GOGGLES] = GOGGLES_INFRARED;
+					break;
+
+				case MODELINDEX_NIGHTVISION:
+					client->ps.stats[STAT_GOGGLES] = GOGGLES_NIGHTVISION;
+					break;
+			}
+	}
 }
 
 

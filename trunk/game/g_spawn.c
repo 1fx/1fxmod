@@ -106,7 +106,18 @@ field_t fields[] =
 	{"angle",				FOFS(s.angles),				F_ANGLEHACK},
 	{"targetShaderName",	FOFS(targetShaderName),		F_LSTRING},
 	{"targetShaderNewName", FOFS(targetShaderNewName),	F_LSTRING},
-
+	{"bspmodel",			FOFS(bspmodel),				F_LSTRING},
+	{"mins",				FOFS(r.mins),				F_VECTOR},
+	{"maxs",				FOFS(r.maxs),				F_VECTOR},
+	{"origin2",				FOFS(s.origin2),			F_VECTOR},
+	{"bspmodel",			FOFS(bspmodel),				F_LSTRING},
+	///Henk 15/01/10 -> Door rotate
+	// Boe!Man 1/24/10: This can now be used for door_sliding.
+	
+	// Henk 26/02/10 -> minimum hiders before teleport can be triggered
+	{"minimumhiders",		FOFS(minimumhiders),		F_INT},
+	{"apos1", FOFS(apos1), F_VECTOR},
+	{"apos2", FOFS(apos2), F_VECTOR},
 	{NULL}
 };
 
@@ -131,6 +142,7 @@ void SP_func_door					(gentity_t *ent);
 void SP_func_train					(gentity_t *ent);
 void SP_func_timer					(gentity_t *ent);
 void SP_func_glass					(gentity_t *ent);
+void SP_func_wall					(gentity_t *ent);
 
 void SP_trigger_always				(gentity_t *ent);
 void SP_trigger_multiple			(gentity_t *ent);
@@ -163,6 +175,7 @@ void SP_misc_G2model				(gentity_t *ent);
 void SP_misc_portal_camera			(gentity_t *ent);
 void SP_misc_portal_surface			(gentity_t *ent);
 void SP_misc_bsp					(gentity_t *ent);
+void SP_func_door_rotating			(gentity_t *ent);
 void SP_terrain						(gentity_t *ent);
 
 void SP_model_static				(gentity_t* ent);
@@ -194,6 +207,7 @@ spawn_t	spawns[] =
 	{"func_train",					SP_func_train},
 	{"func_timer",					SP_func_timer},
 	{"func_glass",					SP_func_glass},
+	//{"func_wall",					SP_func_wall},
 
 	// Triggers are brush objects that cause an effect when contacted
 	// by a living player, usually involving firing targets.
@@ -204,6 +218,7 @@ spawn_t	spawns[] =
 	{"trigger_multiple",			SP_trigger_multiple},
 	{"trigger_push",				SP_trigger_push},
 	{"trigger_teleport",			SP_trigger_teleport},
+	{"1fx_teleport",				SP_trigger_teleport},
 	{"trigger_hurt",				SP_trigger_hurt},
 	{"trigger_ladder",				SP_trigger_ladder },
 
@@ -219,6 +234,7 @@ spawn_t	spawns[] =
 	{"target_relay",				SP_target_relay},
 	{"target_kill",					SP_target_kill},
 	{"target_position",				SP_target_position},
+	{"1fx_position",				SP_target_position},
 	{"target_location",				SP_target_location},
 	{"target_push",					SP_target_push},
 	{"target_effect",				SP_target_effect},
@@ -228,11 +244,15 @@ spawn_t	spawns[] =
 	{"misc_teleporter_dest",		SP_misc_teleporter_dest},
 	{"misc_model",					SP_misc_model},
 	{"client_model",				SP_model_static},
+	{"client_model1",				SP_model_static},
 	{"misc_G2model",				SP_misc_G2model},
 	{"misc_portal_surface",			SP_misc_portal_surface},
 	{"misc_portal_camera",			SP_misc_portal_camera},
 	{"misc_bsp",					SP_misc_bsp},
 	{"terrain",						SP_terrain},
+	{"func_door_rotating",			SP_func_door_rotating},
+	{"door_rotating",				SP_func_door_rotating},
+	{"door_sliding",				SP_func_door},
 
 	{"model_static",				SP_model_static },
 	{"nv_model",					NV_model },
@@ -254,7 +274,6 @@ spawn_t	spawns[] =
 	{"func_group",					0},
 	{"info_camp",					0},
 	{"info_null",					0},
-	{"door_rotating",				0},
 	{"emplaced_wpn",				0},
 	{"func_wall",					0},
 	{"info_NPC*",					0},
@@ -497,8 +516,31 @@ void G_SpawnGEntityFromSpawnVars( qboolean inSubBSP )
 	ent = G_Spawn();
 	for ( i = 0 ; i < level.numSpawnVars ; i++ ) 
 	{
+		if(current_gametype.value == GT_HS){
+			if(strstr(level.spawnVars[i][0], "bspmodel")){
+				if(strstr(level.spawnVars[i][1], "instances/Generic/fence01")){
+					ent->think = G_FreeEntity;
+					ent->nextthink = level.time+12000;
+				}else if(strstr(level.spawnVars[i][1], "instances/Colombia/npc_jump1")){
+					ent->think = G_FreeEntity;
+					ent->nextthink = level.time+10000;
+				}
+			}else if(strstr(level.spawnVars[i][0], "effect")){
+				if(strstr(level.spawnVars[i][1], "flare_blue")){
+					level.MM1Flare = ent->s.number;
+				}
+			}
+			if(strstr(level.spawnVars[i][0], "rpg")){
+				if(strstr(level.spawnVars[i][1], "true")){
+					level.RPGFlare = ent->s.number;
+				}else{
+					level.M4Flare = ent->s.number;
+				}
+			}
+		}
 		G_ParseField( level.spawnVars[i][0], level.spawnVars[i][1], ent );
 	}
+
 	// check for "notteam" flag (GT_DM)
 	if ( level.gametypeData->teams ) 
 	{

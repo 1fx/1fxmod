@@ -27,9 +27,15 @@ const char *TeamName(team_t team)
 	switch ( team )
 	{
 		case TEAM_RED:
-			return "RED";
+			if(current_gametype.value == GT_HS)
+				return "Hiders";
+			else
+				return "RED";
 		case TEAM_BLUE:
-			return "BLUE";
+			if(current_gametype.value == GT_HS)
+				return "Seekers";
+			else
+				return "BLUE";
 		case TEAM_FREE:
 			return "FREE";
 

@@ -416,6 +416,7 @@ typedef enum {
 #define PMD_USE					0x0008
 #define PMD_ALTATTACK			0x0010
 #define PMD_GOGGLES				0x0020
+#define PMF_INIVISIBILITY_ON	0x0040
 
 
 #define	MAXTOUCH	32

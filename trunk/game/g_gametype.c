@@ -108,7 +108,7 @@ void SP_gametype_trigger ( gentity_t* ent )
 	}
 
 	///RxCxW - 09.30.06 - 08:17pm #spMaps
-	if(!Q_stricmp(ent->model, "NV_MODEL")){
+	if(!Q_stricmp(ent->model, "misc_model")){
 		ent->r.contents = CONTENTS_TRIGGER;
 		ent->r.svFlags = SVF_NOCLIENT;
 		//ent->s.eType = ET_GAMETYPE_TRIGGER;
@@ -118,42 +118,43 @@ void SP_gametype_trigger ( gentity_t* ent )
 	InitTrigger (ent);
 }
 
-static gentity_t* G_RealSpawnGametypeItem ( gentity_t* ent, qboolean dropped )
+gentity_t* G_RealSpawnGametypeItem ( gitem_t* item, vec3_t origin, vec3_t angles, qboolean dropped )
 {
 	gentity_t* it_ent;
 
 	it_ent = G_Spawn();
 
 	it_ent->flags |= FL_DROPPED_ITEM;
-	it_ent->item = ent->item;
+	it_ent->item = item;
 
-	VectorCopy( ent->r.currentOrigin, it_ent->s.origin );
-	VectorCopy ( ent->s.angles, it_ent->s.apos.trBase );
-	it_ent->classname = ent->item->classname;
+	VectorCopy( origin, it_ent->s.origin );
+	VectorCopy ( angles, it_ent->s.apos.trBase );
+	VectorCopy ( angles, it_ent->s.angles );
+	it_ent->classname = item->classname;
 	G_SpawnItem ( it_ent, it_ent->item );
 	FinishSpawningItem(it_ent);	
 	
 	VectorSet( it_ent->r.mins, -ITEM_RADIUS * 4 / 3, -ITEM_RADIUS * 4 / 3, -ITEM_RADIUS );
 	VectorSet( it_ent->r.maxs, ITEM_RADIUS * 4 / 3, ITEM_RADIUS * 4 / 3, ITEM_RADIUS );
 
-	// Red team only
-	if ( ent->s.eFlags & EF_REDTEAM )
-	{
-		it_ent->s.eFlags |= EF_REDTEAM;
-	}
-	
-	if ( ent->s.eFlags & EF_BLUETEAM )
-	{
-		it_ent->s.eFlags |= EF_BLUETEAM;
-	}
-
 	return it_ent;
 }
 
-gentity_t* G_SpawnGametypeItem ( const char* pickup_name, qboolean dropped )
+gentity_t* G_SpawnGametypeItem ( const char* pickup_name, qboolean dropped, vec3_t origin )
 {
 	gentity_t* ent;
 
+	if ( dropped )
+	{
+		gitem_t* item = BG_FindItem ( pickup_name );
+		if ( item )
+		{
+			return G_RealSpawnGametypeItem ( item, origin, vec3_origin, dropped );
+		}
+
+		return NULL;
+	}
+		
 	// Look for the gametype item in the map
 	ent = NULL;
 	while ( NULL != (ent = G_Find ( ent, FOFS(classname), "gametype_item" ) ) )
@@ -172,12 +173,12 @@ gentity_t* G_SpawnGametypeItem ( const char* pickup_name, qboolean dropped )
 		return NULL;
 	}		
 
-	return G_RealSpawnGametypeItem ( ent, dropped );
+	return G_RealSpawnGametypeItem ( ent->item, ent->r.currentOrigin, ent->s.angles, dropped );
 }
 
 void G_GametypeItemThink ( gentity_t* ent )
 {
-	G_RealSpawnGametypeItem ( ent, qfalse );
+	G_RealSpawnGametypeItem ( ent->item, ent->r.currentOrigin, ent->s.angles, qfalse );
 }
 
 /*QUAKED gametype_item (0 0 1) (-16 -16 -16) (16 16 16) 
@@ -238,7 +239,7 @@ void G_ResetGametypeItem ( gitem_t* item )
 			continue;
 		}
 
-		G_RealSpawnGametypeItem ( find, qfalse );
+		G_RealSpawnGametypeItem ( find->item, find->r.currentOrigin, find->s.angles, qfalse );
 	}
 }
 
@@ -270,7 +271,7 @@ void G_ResetGametypeEntities ( void )
 G_RespawnClients
 ===============
 */
-void G_RespawnClients ( qboolean force, team_t team )
+void G_RespawnClients ( qboolean force, team_t team, qboolean fullRestart )
 {
 	int i;
 
@@ -318,21 +319,22 @@ void G_RespawnClients ( qboolean force, team_t team )
 			ent->client->ps.pm_flags &= ~PMF_GHOST;
 			ent->client->ps.pm_type = PM_NORMAL;
 			ent->client->sess.ghost = qfalse;
-
-			//Ryan april 10 2004
-			//make sure we add up the ghost time in inf, elim games
-			if(force && ent->client->sess.ghostStartTime)
-			{
-				ent->client->sess.totalSpectatorTime += level.time - ent->client->sess.ghostStartTime;
-				ent->client->sess.ghostStartTime = 0;
-			}
-			//Ryan
 		}
 		
 		ent->client->sess.noTeamChange = qfalse;
 
 		trap_UnlinkEntity (ent);
 		ClientSpawn ( ent );
+
+		if ( fullRestart )
+		{
+			ent->client->sess.score = 0;
+			ent->client->sess.kills = 0;
+			ent->client->sess.deaths = 0;
+			ent->client->sess.teamkillDamage = 0;
+			ent->client->sess.teamkillForgiveTime = 0;
+			ent->client->pers.enterTime = level.time;
+		}
 	}
 }
 
@@ -352,6 +354,15 @@ void G_ResetEntities ( void )
 		gentity_t* ent;
 
 		ent = &g_entities[i];
+
+		if(current_gametype.value == GT_HS){
+			if(ent->classname){
+				if(strstr(ent->classname, "fx_play_effect")){ // Henk 19/02/10 -> Remove effects every new round
+					G_FreeEntity(ent);
+					continue;
+				}
+			}
+		}
 
 		// Skip entities not in use
 		if ( !ent->inuse )
@@ -392,10 +403,9 @@ void G_ResetEntities ( void )
 G_ResetGametype
 ===============
 */
-void G_ResetGametype ( void )
+void G_ResetGametype ( qboolean fullRestart )
 {
 	gentity_t*	tent;
-
 	// Reset the glass in the level
 	G_ResetGlass ( );
 
@@ -425,6 +435,12 @@ void G_ResetGametype ( void )
 
 		case RT_NONE:
 			level.gametypeDelayTime = level.time + g_roundstartdelay.integer * 1000;
+			if(current_gametype.value == GT_HS){
+				level.gametypeRoundTime = level.time + (g_roundtimelimit.integer * 60000); // Henk 22/01/10 -> Round time without startup delay // + g_roundstartdelay.integer * 1000;
+				if(strstr(level.mapname, "col9")){
+					level.gametypeDelayTime = level.gametypeRoundTime;
+				}
+			}else
 			level.gametypeRoundTime = level.time + (g_roundtimelimit.integer * 60000);
 
 		#ifdef _BOE_DBG
@@ -470,6 +486,7 @@ void G_ResetGametype ( void )
 				// Boe!Man 11/19/10: Not in compMode. Just switch to the regular Get Ready msg.
 				else{
 					// Get Ready
+					if(current_gametype.value != GT_HS)
 					trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sG%se%st %sr%se%sa%sdy", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 				}
 			}
@@ -499,7 +516,6 @@ void G_ResetGametype ( void )
 	{
 		level.gametypeJoinTime = level.time;
 	}
-
 	if(g_disablelower.integer == 1){
 		level.nolower1 = qtrue;
 		if (strstr(level.mapname, "mp_kam2")){
@@ -514,14 +530,56 @@ void G_ResetGametype ( void )
 			RemoveFence();
 		}
 	}
-
 	// Respawn all clients
-	G_RespawnClients ( qtrue, TEAM_RED );
-	G_RespawnClients ( qtrue, TEAM_BLUE );
+	G_RespawnClients ( qtrue, TEAM_RED, fullRestart );
+	G_RespawnClients ( qtrue, TEAM_BLUE, fullRestart );
 
 	level.gametypeStartTime = level.time;
 	level.gametypeResetTime = 0;
 
+	if(current_gametype.value == GT_HS){
+		// Henk 19/01/10 -> Reset level variables
+		level.lastaliveCheck[0] = qfalse;
+		level.lastaliveCheck[1] = qfalse;
+		level.messagedisplay = qfalse;
+		level.messagedisplay1 = qfalse;
+		level.MM1given = qfalse;
+		level.MM1Time = 0;
+		level.RPGTime = 0;
+		level.M4Time = 0;
+		level.timelimithit = qfalse; // allow timelimit hit message
+		// Henkie 23/02/10 -> Cache the sounds' index
+		level.clicksound = G_SoundIndex("sound/misc/menus/click.wav");
+		level.rpgeffect = G_EffectIndex("chunks/debris_snow"); //chunks/debris_snow
+		Com_sprintf(level.M4loc, sizeof(level.M4loc), "%s", "Not given yet");
+		Com_sprintf(level.RPGloc, sizeof(level.RPGloc), "%s", "Not given yet");
+		Com_sprintf(level.MM1loc, sizeof(level.MM1loc), "%s", "Not given yet");
+		if(TeamCount1(TEAM_RED) == 0){
+			level.lastalive[0] = -1;
+			level.lastalive[1] = -1;
+		}else if(TeamCount1(TEAM_RED) <= 2){
+			level.lastalive[1] = -1;
+		}
+			if(strstr(level.mapname, "col7") || strstr(level.mapname, "hk5")){
+			//level.rpgeffect = 56;
+			}else if(strstr(level.mapname, "hk3") || strstr(level.mapname, "hk1") && !strstr(level.mapname, "mp_hk1")){
+			//level.rpgeffect = 60;
+			}else{
+			//level.rpgeffect = 55;
+			}
+
+		if ( fullRestart )
+		{
+			level.lastalive[0] = -1;
+			level.lastalive[1] = -1;
+			level.warmupTime = 0;
+			level.startTime = level.time;
+			memset ( level.teamScores, 0, sizeof(level.teamScores) );
+			trap_SetConfigstring( CS_WARMUP, va("%i", level.warmupTime) );
+			trap_SetConfigstring( CS_LEVEL_START_TIME, va("%i", level.startTime ) );	
+		}
+	}
+	
 	// Reset the clients local effects
 	tent = G_TempEntity( vec3_origin, EV_GAMETYPE_RESTART );
 	tent->r.svFlags |= SVF_BROADCAST;
@@ -742,10 +800,9 @@ void CheckGametype ( void )
 	// the first person joins
 	if ( !level.gametypeStartTime )
 	{
-		int counts[TEAM_NUM_TEAMS];
 		int i;
 
-		memset ( counts, 0, sizeof(counts) );
+		memset ( level.teamAliveCount, 0, sizeof(level.teamAliveCount) );
 
 		for ( i = 0; i < level.numConnectedClients; i ++ )
 		{
@@ -761,12 +818,12 @@ void CheckGametype ( void )
 				continue;
 			}
 
-			counts[other->client->sess.team]++;
+			level.teamAliveCount[other->client->sess.team]++;
 		}
 
-		if ( counts[TEAM_RED] || counts[TEAM_BLUE] )
+		if ( level.teamAliveCount[TEAM_RED] || level.teamAliveCount[TEAM_BLUE] || level.teamAliveCount[TEAM_FREE] )
 		{
-			G_ResetGametype ( );
+			G_ResetGametype ( qfalse );
 			return;
 		}
 	}
@@ -779,7 +836,7 @@ void CheckGametype ( void )
 			// Dont do this again
 			level.gametypeResetTime = 0;
 
-			G_ResetGametype ( );
+			G_ResetGametype ( qfalse );
 		}
 
 		return;
@@ -795,7 +852,7 @@ void CheckGametype ( void )
 			if ( level.gametypeRespawnTime[team] && level.time > level.gametypeRespawnTime[team] )
 			{
 				// Respawn all dead clients
-				G_RespawnClients ( qfalse, team );
+				G_RespawnClients ( qfalse, team, qfalse );
 
 				// Next interval
 				level.gametypeRespawnTime[team] = 0;
@@ -806,8 +863,7 @@ void CheckGametype ( void )
 	}
 
 	// If we are in RT_NONE respawn mode then we need to look for everyone being dead
-	if ( level.time > level.gametypeDelayTime && level.gametypeData->respawnType == RT_NONE && level.gametypeStartTime )
-	{
+	if ( level.gametypeData->respawnType == RT_NONE && level.gametypeStartTime ){
 		int i;
 		int alive[TEAM_NUM_TEAMS];
 		int dead[TEAM_NUM_TEAMS];
@@ -880,6 +936,12 @@ void CheckGametype ( void )
 				level.timelimithit = qfalse;
 				LogExit( "Timelimit hit." );
 			}
+			if(current_gametype.value == GT_HS){
+				StripHiders(); // hiders won
+				if(level.teamAliveCount[TEAM_RED] >= 3){ // more then 3 alive then call the function
+					RandomRPGM4();
+				}
+			}
 			trap_GT_SendEvent ( GTEV_TEAM_ELIMINATED, level.time, TEAM_RED, 0, 0, 0, 0 );
 		}
 		else if ( !alive[TEAM_BLUE] && dead[TEAM_BLUE] )
@@ -897,7 +959,8 @@ void CheckGametype ( void )
 		// See if the time has expired
 		if ( level.time > level.gametypeRoundTime )
 		{
-
+			if(current_gametype.value == GT_HS)
+			StripHiders(); 
 			trap_GT_SendEvent ( GTEV_TIME_EXPIRED, level.time, 0, 0, 0, 0, 0 );
 			if(level.timelimithit == qtrue){
 				gentity_t*	tent;
@@ -925,7 +988,7 @@ int G_GametypeCommand ( int cmd, int arg0, int arg1, int arg2, int arg3, int arg
 		case GTCMD_RESTART:
 			if ( arg0 <= 0 )
 			{
-				G_ResetGametype ( );
+				G_ResetGametype ( qfalse );
 			}
 			else
 			{
@@ -934,18 +997,21 @@ int G_GametypeCommand ( int cmd, int arg0, int arg1, int arg2, int arg3, int arg
 			break;
 
 		case GTCMD_TEXTMESSAGE:
-			if(strstr((const char*)arg1, "[INF]")){
-				trap_SendServerCommand( -1, va("print \"%s\n\"", (const char*)arg1));
-			}else if(strstr((const char*)arg1, "[CTF]")){
-				trap_SendServerCommand( -1, va("print \"%s\n\"", (const char*)arg1));
-			}else if(strstr((const char*)arg1, "[ELIM]")){
-				trap_SendServerCommand( -1, va("print \"%s\n\"", (const char*)arg1));
-			}else if(strstr((const char*)arg1, "[DM]")){
-				trap_SendServerCommand( -1, va("print \"%s\n\"", (const char*)arg1));
-			}else if(strstr((const char*)arg1, "[TDM]")){
-				trap_SendServerCommand( -1, va("print \"%s\n\"", (const char*)arg1));
-			}else{
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,%s", level.time + 5000, (const char*)arg1 ) );
+			if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime)
+			{
+				if(strstr((const char*)arg1, "[INF]")){
+					trap_SendServerCommand( -1, va("print \"%s\n\"", (const char*)arg1));
+				}else if(strstr((const char*)arg1, "[CTF]")){
+					trap_SendServerCommand( -1, va("print \"%s\n\"", (const char*)arg1));
+				}else if(strstr((const char*)arg1, "[ELIM]")){
+					trap_SendServerCommand( -1, va("print \"%s\n\"", (const char*)arg1));
+				}else if(strstr((const char*)arg1, "[DM]")){
+					trap_SendServerCommand( -1, va("print \"%s\n\"", (const char*)arg1));
+				}else if(strstr((const char*)arg1, "[TDM]")){
+					trap_SendServerCommand( -1, va("print \"%s\n\"", (const char*)arg1));
+				}else{
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,%s", level.time + 5000, (const char*)arg1 ) );
+				}
 			}
 			
 			break;		

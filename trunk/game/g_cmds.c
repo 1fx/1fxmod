@@ -730,6 +730,8 @@ void InitSpawn(int choice) // load bsp models before players loads a map(SOF2 cl
 	AddSpawnField("classname", "misc_bsp"); // blocker
 	if(choice == 1){
 	AddSpawnField("bspmodel",	"instances/Generic/fence01");
+	}else if(choice == 2){
+	AddSpawnField("bspmodel",	"instances/Colombia/npc_jump1");
 	}else{
 	AddSpawnField("bspmodel",	"instances/Kamchatka/wall01");
 	}
@@ -1783,6 +1785,11 @@ void EvenTeams (gentity_t *adm, qboolean aet)
 	clientSession_t	*sess;
 	qboolean canBeMoved = qfalse;
 
+	if(current_gametype.value == GT_HS){
+		EvenTeams_HS(adm, aet);
+		return;
+	}
+
 	if(level.intermissiontime)
 		return;
 
@@ -2176,6 +2183,8 @@ int ClientNumberFromString( gentity_t *to, char *s ) {
 Cmd_Drop_f
 
 Drops the currenty selected weapon
+
+Dupe fix by henk
 ==================
 */
 void Cmd_Drop_f ( gentity_t* ent )
@@ -2193,14 +2202,33 @@ void Cmd_Drop_f ( gentity_t* ent )
 	{
 		return;
 	}
-
-	// Drop the weapon the client wanted to drop
-	dropped = G_DropWeapon ( ent, atoi(ConcatArgs( 1 )), 3000 );
-	if ( !dropped )
-	{
+	if(current_gametype.value == GT_HS){
+		if(!ent->client->ps.stats[STAT_WEAPONS] & ( 1 << atoi(ConcatArgs( 1 )) ))
+		{
+			//trap_SendServerCommand(ent->s.number, va("print\"^3[Info] ^7You don't have any item to drop\n\""));
+			ent->client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_KNIFE );
+			ent->client->ps.ammo[weaponData[WP_KNIFE].attack[ATTACK_NORMAL].ammoIndex]=0;
+			ent->client->ps.clip[ATTACK_NORMAL][WP_KNIFE]=weaponData[WP_KNIFE].attack[ATTACK_NORMAL].clipSize;
+			ent->client->ps.firemode[WP_KNIFE] = BG_FindFireMode ( WP_KNIFE, ATTACK_NORMAL, WP_FIREMODE_AUTO );
+			ent->client->ps.weapon = WP_KNIFE;
+			ent->client->ps.weaponstate = WEAPON_READY;
+			return;
+		}
+	}
+	if(level.time < ent->client->sess.lastpickup && current_gametype.value == GT_HS){
 		return;
+	}else{
+
+		// Drop the weapon the client wanted to drop
+		dropped = G_DropWeapon ( ent, atoi(ConcatArgs( 1 )), 3000 );
+		if ( !dropped )
+		{
+			trap_SendServerCommand(ent->s.number, va("print\"^3[Info] ^7You don't have any item to drop\n\""));
+			return;
+		}
 	}
 }
+
 
 void Cmd_DropItem_f ( gentity_t* ent )
 {
@@ -2213,8 +2241,10 @@ void Cmd_DropItem_f ( gentity_t* ent )
 		return;
 
 	// Nothing to drop
-	if ( !ent->client->ps.stats[STAT_GAMETYPE_ITEMS] )
+	if ( !ent->client->ps.stats[STAT_GAMETYPE_ITEMS] ){
+		trap_SendServerCommand(ent->s.number, va("print\"^3[Info] ^7You don't have any gametype item to drop\n\""));
 		return;
+	}
 
 	G_DropGametypeItems ( ent, 3000 );
 }
@@ -2472,6 +2502,12 @@ void Cmd_Kill_f( gentity_t *ent )
 		return;
 	}
 
+	if(current_gametype.value == GT_HS && strstr(level.mapname, "col9") && ent->client->sess.team == TEAM_BLUE)
+	{
+		trap_SendServerCommand ( ent->client - &level.clients[0], "print\"^3[Cross the bridge] ^7Why would you want to kill yourself?\n\"" );
+		return;
+	}
+
 	ent->flags &= ~FL_GODMODE;
 	ent->client->ps.stats[STAT_HEALTH] = ent->health = -999;
 	player_die (ent, ent, ent, 100000, MOD_SUICIDE, HL_NONE, vec3_origin );
@@ -2528,7 +2564,8 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 	int					specClient;
 	qboolean			ghost;
    	qboolean			noOutfittingChange = qfalse;
-
+	int					seekers;
+	int					maxhiders;
 	// see what change is requested
 	//
 	client = ent->client;
@@ -2592,31 +2629,74 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 		{
 			// pick the team with the least number of players
 			team = PickTeam( clientNum );
+			if(current_gametype.value == GT_HS){
+				// Henk 19/01/10 -> Join hiders
+				team = TEAM_RED;
+			}
 		}
 
 		if ( g_teamForceBalance.integer  ) 
 		{
 			int		counts[TEAM_NUM_TEAMS];
 
-			counts[TEAM_BLUE] = TeamCount( ent->client->ps.clientNum, TEAM_BLUE, NULL );
-			counts[TEAM_RED] = TeamCount( ent->client->ps.clientNum, TEAM_RED, NULL );
+			if(current_gametype.value == GT_HS){
+				counts[TEAM_BLUE] = TeamCount1(TEAM_BLUE);
+				counts[TEAM_RED] = TeamCount1(TEAM_RED);
+				// Henk 19/01/10 -> Team balance hiders/seekers
+				if(counts[TEAM_RED] >= 4 && counts[TEAM_RED] <= 8){
+					seekers = 2;
+				}else if(counts[TEAM_RED] >= 9 && counts[TEAM_RED] <= 13){
+					seekers = 3;
+				}else if(counts[TEAM_RED] >= 14 && counts[TEAM_RED] <= 18){
+					seekers = 4;
+				}else if(counts[TEAM_RED] >= 19){
+					seekers = 5;
+				}
+				else{
+					seekers = 1;
+				}
 
-			// We allow a spread of two
-			if ( team == TEAM_RED && counts[TEAM_RED] - counts[TEAM_BLUE] > 1 ) 
-			{
-				trap_SendServerCommand( ent->client->ps.clientNum, 
-										"cp \"Red team has too many players.\n\"" );
+				if(counts[TEAM_BLUE] == 2){
+					maxhiders = 8;
+				}else if(counts[TEAM_BLUE] == 3){
+					maxhiders = 13;
+				}else if(counts[TEAM_BLUE] == 4){
+					maxhiders = 18;
+				}else if(counts[TEAM_BLUE] == 5){
+					maxhiders = 24;
+				}else{
+					maxhiders = 6; // Henkie 24/02/10 -> Was 4
+				}
+				if ( team == TEAM_BLUE && counts[TEAM_BLUE] >= seekers)	{
+					trap_SendServerCommand ( client - &level.clients[0], "print\"^3[H&S] ^7Seekers have too many players.\n\"" );
+					// ignore the request
+					return;
+				}else if(team == TEAM_RED && counts[TEAM_RED] >= maxhiders){
+					trap_SendServerCommand ( client - &level.clients[0], "print\"^3[H&S] ^7Hiders have too many players.\n\"" );
+					// ignore the request
+					return;
+				}
+			}else{
+				counts[TEAM_BLUE] = TeamCount( ent->client->ps.clientNum, TEAM_BLUE, NULL );
+				counts[TEAM_RED] = TeamCount( ent->client->ps.clientNum, TEAM_RED, NULL );
 
-				// ignore the request
-				return; 
-			}
-			if ( team == TEAM_BLUE && counts[TEAM_BLUE] - counts[TEAM_RED] > 1 ) 
-			{
-				trap_SendServerCommand( ent->client->ps.clientNum, 
-										"cp \"Blue team has too many players.\n\"" );
+				// We allow a spread of two
+				if ( team == TEAM_RED && counts[TEAM_RED] - counts[TEAM_BLUE] > 1 ) 
+				{
+					trap_SendServerCommand( ent->client->ps.clientNum, 
+											"cp \"Red team has too many players.\n\"" );
 
-				// ignore the request
-				return; 
+					// ignore the request
+					return; 
+				}
+				if ( team == TEAM_BLUE && counts[TEAM_BLUE] - counts[TEAM_RED] > 1 ) 
+				{
+					trap_SendServerCommand( ent->client->ps.clientNum, 
+											"cp \"Blue team has too many players.\n\"" );
+
+					// ignore the request
+					return; 
+				}
 			}
 
 			// It's ok, the team we are switching to has less or same number of players
@@ -2730,6 +2810,9 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 	client->sess.spectatorState = specState;
 	client->sess.spectatorClient = specClient;
 
+		// Kill any child entities of this client to protect against grenade team changers
+	G_FreeEnitityChildren ( ent ); // Henk 14/01/11 -> Fix for specnade
+
 	// Always spawn into a ctf game using a respawn timer.
 	if(!level.pause)
 	{
@@ -2778,6 +2861,11 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 			client->pers.identity = NULL;
 			ClientUserinfoChanged( clientNum );
 
+			// Henk 02/02/10 -> Set score to 0 when switching team.
+			ent->client->sess.score = 0;
+			ent->client->sess.kills = 0;
+			ent->client->sess.deaths = 0;
+
 			CalculateRanks();
 
 			return;
@@ -2787,6 +2875,11 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 	// get and distribute relevent paramters
 	client->pers.identity = NULL;
 	ClientUserinfoChanged( clientNum );
+
+	// Henk 02/02/10 -> Set score to 0 when switching team.
+	ent->client->sess.score = 0;
+	ent->client->sess.kills = 0;
+	ent->client->sess.deaths = 0;
 
 	CalculateRanks();
 
@@ -3818,7 +3911,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			}else if(strstr(p, "h&s")){
 				trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype h&s\n"));
 				strcpy(gametype, "h&s");
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sG%sa%sm%se%st%sype ^Hide&Seek!", level.time + 3500, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sG%sa%sm%se%st%sype ^7Hide&Seek!", level.time + 3500, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 			}else{
 				trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Unknown gametype.\n\""));
 				G_Say( ent, NULL, mode, p);
@@ -5767,7 +5860,8 @@ qboolean ConsoleCommand( void )
 
 	if (Q_stricmp (cmd, "gametype_restart" ) == 0 )
 	{
-		G_ResetGametype ( );
+		trap_Argv( 1, cmd, sizeof( cmd ) );
+		G_ResetGametype ( Q_stricmp ( cmd, "full" ) == 0 );
 		return qtrue;
 	}
 

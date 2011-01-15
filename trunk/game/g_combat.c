@@ -66,10 +66,21 @@ void TossClientItems( gentity_t *self )
 	}
 
 	// If we have a valid weapon to drop and it has ammo then drop it
-	if ( weapon > WP_KNIFE && weapon < WP_NUM_WEAPONS &&
-		 (self->client->ps.ammo[ weaponData[weapon].attack[ATTACK_NORMAL].ammoIndex ] + self->client->ps.clip[weapon]) )
-	{
-		G_DropWeapon ( self, weapon, 0 );
+	if(current_gametype.value == GT_HS){
+		if ( weapon > WP_KNIFE && weapon < WP_NUM_WEAPONS && weapon != WP_RPG7_LAUNCHER && weapon != WP_M4_ASSAULT_RIFLE ){
+			G_DropWeapon ( self, weapon, 0 );
+		}
+		else if ( self->client->ps.stats[STAT_WEAPONS] & ( 1 << WP_RPG7_LAUNCHER ) ){
+			G_DropWeapon ( self, WP_RPG7_LAUNCHER, 0 );
+		}else if ( self->client->ps.stats[STAT_WEAPONS] & ( 1 << WP_M4_ASSAULT_RIFLE ) ){
+			G_DropWeapon ( self, WP_M4_ASSAULT_RIFLE, 0 );
+		}
+	}else{
+		if ( weapon > WP_KNIFE && weapon < WP_NUM_WEAPONS &&
+			 (self->client->ps.ammo[ weaponData[weapon].attack[ATTACK_NORMAL].ammoIndex ] + self->client->ps.clip[weapon]) )
+		{
+			G_DropWeapon ( self, weapon, 0 );
+		}
 	}
 
 	// drop all custom gametype items
@@ -373,6 +384,15 @@ void player_die(
 		}
 		else
 		{
+			if(current_gametype.value == GT_HS){
+				if(attacker->client->ps.stats[STAT_WEAPONS] & ( 1 << WP_M4_ASSAULT_RIFLE )){
+					G_AddScore( attacker, 2 );
+				}else if(attacker->client->ps.stats[STAT_WEAPONS] & ( 1 << WP_RPG7_LAUNCHER )){
+					G_AddScore( attacker, 3 );
+				}else{
+					G_AddScore( attacker, 1 );
+				}
+			}else
 			G_AddScore( attacker, 1 );
 			attacker->client->sess.kills++;
 			attacker->client->pers.statinfo.killsinarow++;
@@ -437,15 +457,19 @@ void player_die(
 	if ( !( contents & CONTENTS_NODROP ) )
 	{
 		// People who kill themselves dont drop guns
-		if ( attacker == self )
-		{
-			self->client->ps.stats[STAT_WEAPONS] = 0;
+		if(current_gametype.value != GT_HS){ // Henk 19/01/10 -> In H&S they do
+			if ( attacker == self )
+			{
+				self->client->ps.stats[STAT_WEAPONS] = 0;
+			}
 		}
-
 		TossClientItems( self );
 	}
 	else
 	{
+		// Henk 26/02/10 -> People that die in a nodrop area(no lower) will drop their weapons
+		TossClientItems( self );
+		// End
 		// Any gametype items that are dropped into a no drop area need to be reported
 		// to the gametype so it can handle it accordingly
 		for ( i = 0 ; i < MAX_GAMETYPE_ITEMS ; i++ )
@@ -921,6 +945,11 @@ int G_Damage (
 	//Ryan
 	int				actualtake;
 	//Ryan
+	int				ammoindex;
+	vec3_t			kvel;
+	float			mass;
+	int				m4ammo[4];
+	int				rpgammo[2];
 
 	if (!targ->takedamage)
 	{
@@ -1000,36 +1029,162 @@ int G_Damage (
 		knockback = 0;
 	}
 
-/*
-	// figure momentum add, even if the damage won't be taken
-	if ( knockback && targ->client )
-	{
-		G_ApplyKnockback ( targ, dir, knockback );
-		vec3_t	kvel;
-		float	mass;
 
-		mass = 200;
-
-		VectorScale (dir, g_knockback.value * (float)knockback / mass, kvel);
-		VectorAdd (targ->client->ps.velocity, kvel, targ->client->ps.velocity);
-
-		// set the timer so that the other client can't cancel
-		// out the movement immediately
-		if ( !targ->client->ps.pm_time ) {
-			int		t;
-
-			t = knockback * 2;
-			if ( t < 50 ) {
-				t = 50;
-			}
-			if ( t > 200 ) {
-				t = 200;
-			}
-			targ->client->ps.pm_time = t;
-			targ->client->ps.pm_flags |= PMF_TIME_KNOCKBACK;
+	if(current_gametype.value == GT_HS){
+		if ( damage < 1 ) 
+		{
+			damage = 1;
 		}
-	}
-*/
+		//Com_Printf("G_Damage() -> Mod: %i\n", mod); // HENK DEBUG
+		// Henk 18/01/10 ->  Knife damage and stun function
+		if(client->sess.team == TEAM_BLUE && attacker->client->sess.team == TEAM_RED){ // if target is a seeker
+			damage = 0;
+			if(mod == 1){ // hider has stunned a seeker
+			client->sess.slowtime = level.time+4000; // after 4 seconds slowdown stops
+			attacker->client->sess.speedtime = level.time+4000; // after 4 seconds speedup stops
+
+			trap_SendServerCommand(attacker->s.number, va("cp \"@^7You have stunned %s\n\"", client->pers.netname)); // notify the hider
+			trap_SendServerCommand(targ->s.number, va("cp \"@^7You got stunned by %s\n\"", attacker->client->pers.netname)); // notify the seeker
+
+			// Add ammo to hider
+			ammoindex=weaponData[WP_KNIFE].attack[ATTACK_ALTERNATE].ammoIndex;
+				if(attacker->client->ps.ammo[ammoindex] < 5 && level.time >= level.gametypeStartTime+30000){
+					attacker->client->ps.ammo[ammoindex]+=1;
+				}
+			}else if(mod == 257){ // Henk 22/01/10 -> Add throw knife
+				client->sess.slowtime = level.time+4000; // after 4 seconds slowdown stops
+				attacker->client->sess.speedtime = level.time+4000; // after 4 seconds speedup stops
+
+				trap_SendServerCommand(attacker->s.number, va("cp \"@^7You have stunned %s\n\"", client->pers.netname)); // notify the hider
+				trap_SendServerCommand(targ->s.number, va("cp \"@^7You got stunned by %s\n\"", attacker->client->pers.netname)); // notify the seeker
+			}else if(mod == WP_M4_ASSAULT_RIFLE){ // Henk 22/01/10 -> Add M4 bullet stun
+				client->sess.slowtime = level.time+4000; // after 4 seconds slowdown stops
+				attacker->client->sess.speedtime = level.time+4000; // after 4 seconds speedup stops
+
+				trap_SendServerCommand(attacker->s.number, va("cp \"@^7You have stunned %s\n\"", client->pers.netname)); // notify the hider
+				trap_SendServerCommand(targ->s.number, va("cp \"@^7You got stunned by %s\n\"", attacker->client->pers.netname)); // notify the seeker
+			}
+		}else if(client->sess.team == TEAM_RED && attacker->client->sess.team == TEAM_BLUE){ // if target is a hider
+			if(mod != 1){
+				damage = 0;
+			}else if(mod == 1){
+				if(level.MM1given == qfalse){ // MM1 has not been given to a seeker, so give it to him.
+					attacker->client->ps.ammo[weaponData[WP_MM1_GRENADE_LAUNCHER].attack[ATTACK_NORMAL].ammoIndex]=2;
+					attacker->client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_MM1_GRENADE_LAUNCHER );
+					attacker->client->ps.clip[ATTACK_NORMAL][WP_MM1_GRENADE_LAUNCHER]=1;
+					attacker->client->ps.firemode[WP_MM1_GRENADE_LAUNCHER] = BG_FindFireMode ( WP_MM1_GRENADE_LAUNCHER, ATTACK_NORMAL, WP_FIREMODE_AUTO );
+					Com_sprintf(level.MM1loc, sizeof(level.MM1loc), "%s", attacker->client->pers.netname);
+					level.MM1ent = -1;
+					level.MM1Time = 0;
+					trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s ^7has taken the MM1\n\"", attacker->client->pers.netname));
+					trap_SendServerCommand(attacker->s.number, va("cp \"@^7You now have the MM1.\n\""));
+					level.MM1given = qtrue; // only once each round :)
+				}
+			}
+		}else if(client->sess.team == attacker->client->sess.team){
+			if(client->sess.team == TEAM_RED){
+				if(client->ps.weapon == WP_RPG7_LAUNCHER && client->ps.weaponstate == WEAPON_READY && mod == WP_KNIFE){
+					if(attacker->client->ps.stats[STAT_WEAPONS] & ( 1 << WP_M4_ASSAULT_RIFLE )){
+						return 0;
+					}
+						rpgammo[0] = client->ps.ammo[weaponData[WP_RPG7_LAUNCHER].attack[ATTACK_NORMAL].ammoIndex];
+						rpgammo[1] = client->ps.clip[ATTACK_NORMAL][WP_RPG7_LAUNCHER];
+						client->ps.clip[ATTACK_NORMAL][WP_RPG7_LAUNCHER] = 0;
+						client->ps.clip[ATTACK_ALTERNATE][WP_RPG7_LAUNCHER] = 0;
+						client->ps.stats[STAT_WEAPONS] &= ~(1<<WP_RPG7_LAUNCHER);
+						attacker->client->ps.ammo[weaponData[WP_RPG7_LAUNCHER].attack[ATTACK_NORMAL].ammoIndex]=rpgammo[0];
+						attacker->client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_RPG7_LAUNCHER );
+						attacker->client->ps.clip[ATTACK_NORMAL][WP_RPG7_LAUNCHER]=rpgammo[1];
+						attacker->client->ps.firemode[WP_RPG7_LAUNCHER] = BG_FindFireMode ( WP_RPG7_LAUNCHER, ATTACK_NORMAL, WP_FIREMODE_AUTO );
+						attacker->client->ps.weapon = WP_KNIFE;
+						attacker->client->ps.weaponstate = WEAPON_READY;
+						client->ps.weapon = WP_KNIFE;
+						client->ps.weaponstate = WEAPON_READY;
+						Com_sprintf(level.RPGloc, sizeof(level.RPGloc), "%s", attacker->client->pers.netname);
+						trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s ^7has stolen the RPG from %s.\n\"", attacker->client->pers.netname, client->pers.netname));
+						trap_SendServerCommand(attacker->s.number, va("cp \"^7You stole the RPG ^7from %s\n\"", client->pers.netname));
+						trap_SendServerCommand(targ->s.number, va("cp \"^7%s ^7stole your RPG\n\"", attacker->client->pers.netname));
+				}else if(client->ps.weapon == WP_M4_ASSAULT_RIFLE && client->ps.weaponstate == WEAPON_READY && mod == WP_KNIFE){
+					if(attacker->client->ps.stats[STAT_WEAPONS] & ( 1 << WP_RPG7_LAUNCHER )){
+						return 0;
+					}
+						m4ammo[0] = client->ps.ammo[weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_ALTERNATE].ammoIndex];
+						m4ammo[1] = client->ps.ammo[weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_NORMAL].ammoIndex];
+						m4ammo[2] = client->ps.clip[ATTACK_NORMAL][WP_M4_ASSAULT_RIFLE];
+						m4ammo[3] = client->ps.clip[ATTACK_ALTERNATE][WP_M4_ASSAULT_RIFLE];
+						client->ps.ammo[weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_ALTERNATE].ammoIndex] = 0; // empty ammo/clips
+						client->ps.ammo[weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_NORMAL].ammoIndex] = 0;
+						client->ps.clip[ATTACK_NORMAL][WP_M4_ASSAULT_RIFLE] = 0;
+						client->ps.clip[ATTACK_ALTERNATE][WP_M4_ASSAULT_RIFLE] = 0;
+						client->ps.stats[STAT_WEAPONS] &= ~(1<<WP_M4_ASSAULT_RIFLE); // remove weapon
+
+						attacker->client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_M4_ASSAULT_RIFLE);
+						attacker->client->ps.ammo[weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_ALTERNATE].ammoIndex]=m4ammo[0];
+						attacker->client->ps.ammo[weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_NORMAL].ammoIndex]=m4ammo[1];
+						attacker->client->ps.clip[ATTACK_NORMAL][WP_M4_ASSAULT_RIFLE]=m4ammo[2];
+						attacker->client->ps.clip[ATTACK_ALTERNATE][WP_M4_ASSAULT_RIFLE]=m4ammo[3];
+						attacker->client->ps.firemode[WP_M4_ASSAULT_RIFLE] = BG_FindFireMode ( WP_M4_ASSAULT_RIFLE, ATTACK_NORMAL, WP_FIREMODE_AUTO );
+						attacker->client->ps.weapon = WP_KNIFE;
+						attacker->client->ps.weaponstate = WEAPON_READY;
+						client->ps.weapon = WP_KNIFE;
+						client->ps.weaponstate = WEAPON_READY;
+						Com_sprintf(level.M4loc, sizeof(level.M4loc), "%s", attacker->client->pers.netname);
+						trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s ^7has taken the M4 from %s.\n\"", attacker->client->pers.netname, client->pers.netname));
+						trap_SendServerCommand(attacker->s.number, va("cp \"^7You stole the M4 ^7from %s\n\"", client->pers.netname));
+						trap_SendServerCommand(targ->s.number, va("cp \"^7%s ^7stole your M4\n\"", attacker->client->pers.netname));
+				}
+			}
+			damage = 0;
+		}
+	
+		if(level.time > level.gametypeRoundTime && mod != MOD_POP){
+			damage = 0;
+		}
+		 if(mod == MOD_MSG90A1_SNIPER_RIFLE && strstr(level.mapname, "col9")){
+			damage = 75;
+		}else if(mod == MOD_AK74_ASSAULT_RIFLE && strstr(level.mapname, "col9")){
+			damage = 25;
+		 }
+		if(mod == MOD_ANM14_GRENADE && attacker->client->sess.team != targ->client->sess.team){
+			if(!targ && attacker->client->sess.team != TEAM_BLUE){ // no target so mm1 firenade SO do NOT slowdown blue
+				targ->client->sess.slowtime = level.time+1500;
+				Com_Printf("No target..\n");
+			}else if(targ->client->sess.team == TEAM_RED && attacker->client->sess.team == TEAM_BLUE){
+				targ->client->sess.slowtime = level.time+1500;
+			}else if(targ->client->sess.team == TEAM_BLUE && attacker->client->sess.team == TEAM_RED){
+				targ->client->sess.slowtime = level.time+1500;
+			}
+		
+			damage = 0;
+		}
+if(targ->client->sess.team != attacker->client->sess.team && (mod == WP_RPG7_LAUNCHER || mod == WP_SMOHG92_GRENADE)){//  || mod == WP_MM1_GRENADE_LAUNCHER)){ // Henk 22/01/10 -> Added better knockback(only on seekers)
+		if ( knockback && targ->client ) 
+		{
+			G_ApplyKnockback ( targ, dir, knockback );
+
+			mass = 200;
+
+			VectorScale (dir, g_knockback.value * (float)knockback / mass, kvel);
+			VectorAdd (targ->client->ps.velocity, kvel, targ->client->ps.velocity);
+
+			// set the timer so that the other client can't cancel
+			// out the movement immediately
+			if ( !targ->client->ps.pm_time ) {
+				int		t;
+
+				t = knockback * 2;
+				if ( t < 50 ) {
+					t = 50;
+				}
+				if ( t > 200 ) {
+					t = 200;
+				}
+				targ->client->ps.pm_time = t;
+				targ->client->ps.pm_flags |= PMF_TIME_KNOCKBACK;
+			}
+			}
+		} // End H&S stuff
+}
 
 	// check for completely getting out of the damage
 	if ( !(dflags & DAMAGE_NO_PROTECTION) ) {
@@ -1051,7 +1206,7 @@ int G_Damage (
 		}
 	}
 
-	if ( damage < 1 )
+	if ( damage < 1 && current_gametype.value != GT_HS)
 	{
 		damage = 1;
 	}
@@ -1066,8 +1221,10 @@ int G_Damage (
 	}
 
 	// save some from armor
+	if(current_gametype.value != GT_HS){
 	asave = CheckArmor (targ, take, dflags);
 	take -= asave;
+	}
 
 	//Ryan
 	actualtake = Com_Clamp ( 0, targ->health, take );
@@ -1460,13 +1617,19 @@ qboolean G_RadiusDamage (
 {
 	float		points, dist;
 	gentity_t	*ent, *tent;
-	int			entityList[MAX_GENTITIES];
+	int			entityList[MAX_GENTITIES], entityList1[MAX_GENTITIES];
 	int			numListedEntities;
-	vec3_t		mins, maxs;
+	vec3_t		mins, maxs, mins1, maxs1;
 	vec3_t		v;
 	vec3_t		dir;
-	int			i, e;
+	int			i, e, a;
 	qboolean	hitClient = qfalse;
+	qboolean	CageOutOfBoundaries = qfalse;
+	qboolean	NadeOutOfBoundaries = qfalse;
+	int			ammoindex;
+	// Henk 08/02/10 -> Add mm1 firenade
+	gentity_t *missile;
+	int num;
 
 	if ( radius < 1 )
 	{
@@ -1479,12 +1642,75 @@ qboolean G_RadiusDamage (
 		maxs[i] = origin[i] + radius;
 	}
 
+	if(mod == 264 && current_gametype.value == GT_HS){ // m4 cage
+		for ( i = 0 ; i < 3 ; i++ ) 
+		{
+			mins1[i] = origin[i] - 100;
+			maxs1[i] = origin[i] + 100;
+		}
+	}
+	//Com_Printf("Mod: %i\n", mod); // HENK DEBUG
+
 	numListedEntities = trap_EntitiesInBox( mins, maxs, entityList, MAX_GENTITIES );
 
-	for ( e = 0 ; e < numListedEntities ; e++ )
+	for ( e = 0 ; e < numListedEntities ; e++ ) // henk note: Loop through all entities caught in the radius
 	{
+		memset(entityList1, 0, sizeof(entityList1)); // clean memory where entitylist is stored to prevent problems
 		ent = &g_entities[entityList[ e ]];
 
+		if(current_gametype.value == GT_HS){
+			
+			ent = &g_entities[entityList[ e ]];
+
+			// Henk 14/01/10 -> M4 Cage
+			if(mod == 264){ // m4
+				if(ent->client){
+					if(ent->client->sess.team == TEAM_RED && G_IsClientDead(ent->client) == qfalse){ // check for hiders inside cage
+							CageOutOfBoundaries = qtrue;
+							break; // break the loop to save performance, no more loops needed because cage already failed no matter what.
+					}
+					else if(ent->client->sess.team == TEAM_BLUE){ // seeker caught in radius
+						CageOutOfBoundaries = qtrue;
+						num = trap_EntitiesInBox( mins1, maxs1, entityList1, MAX_GENTITIES );
+						for ( a = 0 ; a < num ; a++ ) // Loop until seeker has been found in safe radius
+						{	
+							if(g_entities[entityList1[ a ]].client && g_entities[entityList1[ a ]].client->sess.team == TEAM_BLUE){
+								if(g_entities[entityList1[ a ]].s.number == ent->s.number){ // seeker not at boundary
+									CageOutOfBoundaries = qfalse;
+									trap_SendServerCommand(-1, va("print \"^3[H&S] ^7%s was trapped in a cage by %s\n\"", ent->client->pers.netname, attacker->client->pers.netname));
+									break; 
+								}
+							}
+						}	// loop
+						if(CageOutOfBoundaries == qtrue){
+							break;
+						}
+					}
+				}
+			}
+			// End
+
+			// Henk 23/01/10 -> Add	box nade.
+			if(mod == WP_MDN11_GRENADE){
+				if(ent->client){
+					if(ent->client->sess.team == TEAM_RED || ent->client->sess.team == TEAM_BLUE){
+						NadeOutOfBoundaries = qtrue;
+						break; // break the loop to save performance, no more loops needed because box already failed no matter what.
+					}
+				}
+			}
+			// End
+
+			// Henk 18/01/10 -> RPG Boost
+			if(mod == WP_RPG7_LAUNCHER){
+				if(ent == attacker){ // RPG hits attacker self so boost him
+				attacker->client->ps.pm_flags |= PMF_JUMPING;
+				attacker->client->ps.groundEntityNum = ENTITYNUM_NONE;
+				attacker->client->ps.velocity[2] = 450;
+				}
+			}
+			// End
+		}
 		if (ent == ignore)
 		{
 			continue;
@@ -1594,6 +1820,31 @@ qboolean G_RadiusDamage (
 				VectorCopy ( ent->r.currentOrigin, tent->s.angles );
 				SnapVector ( tent->s.angles );
 			}
+		}
+	}
+
+	if(current_gametype.value == GT_HS){
+		if(mod == 264){
+			if(CageOutOfBoundaries == qtrue){
+				trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7Seeker at boundary or hider caught in cage.\n\"")); 
+				ammoindex=weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_ALTERNATE].ammoIndex;
+				attacker->client->ps.ammo[ammoindex]+=1;
+			}else{
+				SpawnCage(origin, attacker);
+			}
+		}
+
+		if(mod == WP_MDN11_GRENADE){
+			if(NadeOutOfBoundaries == qtrue){
+				ammoindex=weaponData[WP_MDN11_GRENADE].attack[ATTACK_ALTERNATE].ammoIndex;
+				attacker->client->ps.ammo[ammoindex]+=1;
+				trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7You cannot throw a box at a person.\n\"")); 
+			}else{
+				SpawnBox(origin);
+			}
+		}else if(mod == WP_MM1_GRENADE_LAUNCHER){
+			missile = NV_projectile( attacker, origin, dir, WP_ANM14_GRENADE, 0 );
+			missile->nextthink = level.time + 250;
 		}
 	}
 

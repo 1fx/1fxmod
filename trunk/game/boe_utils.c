@@ -285,6 +285,27 @@ void Boe_Tokens(gentity_t *ent, char *chatText, int mode, qboolean CheckSounds)
 					Q_strcat(newText, MAX_SAY_TEXT, va("%s", g_entities[ent->client->pers.statinfo.lastclient_hurt].client->pers.netname));
 					chatText++;
 					continue;
+				case 'r':
+				case 'R':
+					if(current_gametype.value == GT_HS){
+					Q_strcat(newText, MAX_SAY_TEXT, va("%s", level.RPGloc));
+					chatText++;
+					}
+					continue;
+				case 'c':
+				case 'C':
+					if(current_gametype.value == GT_HS){
+					Q_strcat(newText, MAX_SAY_TEXT, va("%s", level.M4loc));
+					chatText++;
+					}
+					continue;
+				case 'm':
+				case 'M':
+					if(current_gametype.value == GT_HS){
+					Q_strcat(newText, MAX_SAY_TEXT, va("%s", level.MM1loc));
+					chatText++;
+					}
+					continue;
 				case 'n':
 				case 'N':
 						Q_strcat(newText, MAX_SAY_TEXT, va("%s", g_motd.string));

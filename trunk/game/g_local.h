@@ -157,8 +157,14 @@ struct gentity_s
 
 	gitem_t		*item;			// for bonus items
 
+	// Henk 1/15/10 -> Door rotate
+	char		*message2;
+	char		*bspmodel;
+	float		distance;
+	vec3_t		savedAngles;
 	vec3_t		apos1;
 	vec3_t		apos2;
+	int			minimumhiders;
 };
 
 typedef struct gspawn_s
@@ -168,6 +174,15 @@ typedef struct gspawn_s
 	vec3_t		angles;
 
 } gspawn_t;
+
+typedef struct gtitem_s
+{
+	int		id;
+	int		useIcon;
+	int		useSound;
+	int		useTime;
+
+} gtitem_t;
 
 typedef enum
 {
@@ -271,6 +286,18 @@ typedef struct
 
 	// Boe!Man 10/16/10: Adminspec shouldn't be cleared everytime a spawn gets triggered.
 	qboolean			adminspec;
+
+	// Henk 15/01/10 -> RPG Animation
+	int			SpeedAnimation;					// Time when last animation has been played.
+	vec3_t		oldvelocity;					// Used for if player has moved then play animation again.
+
+	// Henk 18/01/10 -> RPG Animation
+	int			speedtime;
+	int			slowtime;
+
+	// Henk 26/01/10 -> Dupe fix
+	int			lastpickup;
+
 } clientSession_t;
 
 // Boe!Man 3/30/10
@@ -559,6 +586,7 @@ typedef struct
 	int				gametypeRespawnTime[TEAM_NUM_TEAMS];
 	int				gametypeDelayTime;
 	const char*		gametypeTeam[TEAM_NUM_TEAMS];
+	gtitem_t		gametypeItems[MAX_GAMETYPE_ITEMS];
 
 	void*			serverGhoul2;
 	animation_t		ghoulAnimations[MAX_ANIMATIONS];
@@ -611,6 +639,48 @@ typedef struct
 
 	//Henk 26/12/10
 	qboolean	timelimithit;
+
+	// Henk 15/01/10 -> RPG Effect
+	int			rpgeffect;
+	char		*effect;
+
+	// Henk 19/01/10 -> Last alive hiders
+	int			lastalive[2];
+	qboolean	lastaliveCheck[2];
+	
+	// Henk 22/01/10 -> Show seekers released.
+	qboolean	messagedisplay;
+	qboolean	messagedisplay1;
+
+	// Henk 26/01/10 -> Current RPG/M4/MM1 holders
+	char		RPGloc[64];
+	char		M4loc[64];
+	char		MM1loc[64];
+
+	// Henk 28/01/10 -> MM1 given yes or no
+	qboolean	MM1given;
+
+	// Henk 19/02/10 -> RPG Flares
+	int			RPGFlare;
+	int			M4Flare;
+	int			MM1Flare;
+	int			RPGent;
+	int			M4ent;
+	int			MM1ent;
+	int			RPGTime;
+	int			M4Time;
+	int			MM1Time;
+
+	// Henk 20/02/10 -> Top 3 hiders
+	char		firstname[64];
+	char		secondname[64];
+	char		thirdname[64];
+	int			firstscore;
+	int			secondscore;
+	int			thirdscore;
+
+	// Henk 22/02/10 -> Removes seeker released lag
+	int			clicksound;
 } level_locals_t;
 
 //
@@ -663,6 +733,7 @@ void RespawnItem( gentity_t *ent );
 
 void		PrecacheItem		( gitem_t *it );
 gentity_t*	G_DropItem			( gentity_t *ent, gitem_t *item, float angle );
+gentity_t*  G_DropItem2			( vec3_t Origin, vec3_t angles, gitem_t *item );
 gentity_t*	G_LaunchItem		( gitem_t *item, vec3_t origin, vec3_t velocity );
 gentity_t*	G_DropWeapon		( gentity_t* ent, weapon_t weapon, int pickupDelay );
 
@@ -706,6 +777,7 @@ void	G_Sound( gentity_t *ent, int channel, int soundIndex );
 void	G_SoundAtLoc( vec3_t loc, int channel, int soundIndex );
 void	G_EntitySound( gentity_t *ent, int channel, int soundIndex );
 void	G_FreeEntity( gentity_t *e );
+void	G_FreeEnitityChildren( gentity_t* ent );
 qboolean	G_EntitiesFree( void );
 
 void	G_TouchTriggers (gentity_t *ent);
@@ -826,6 +898,7 @@ qboolean	G_IsClientSpectating			( gclient_t* client );
 qboolean	G_IsClientDead					( gclient_t* client );
 void		G_ClientCleanName				( const char *in, char *out, int outSize, qboolean colors );
 int			TeamCount						( int ignoreClientNum, team_t team, int* alive );
+int			TeamCount1						(team_t team);
 int			G_GhostCount					( team_t team );
 team_t		PickTeam						( int ignoreClientNum );
 void		SetClientViewAngle				( gentity_t *ent, vec3_t angle );
@@ -938,11 +1011,11 @@ void G_LoadArenas ( void );
 // g_gametype.c
 //
 gentity_t*	G_SelectGametypeSpawnPoint			( team_t team, vec3_t origin, vec3_t angles );
-gentity_t*	G_SpawnGametypeItem					( const char* pickup_name, qboolean dropped );
+gentity_t*	G_SpawnGametypeItem					( const char* pickup_name, qboolean dropped, vec3_t origin );
 gentity_t*	G_SelectRandomGametypeSpawnPoint	( team_t team );
 qboolean	G_ParseGametypeFile					( void );
 qboolean	G_ExecuteGametypeScript				( gentity_t* activator, const char* name );
-void		G_ResetGametype						( void );
+void		G_ResetGametype						( qboolean fullRestart );
 qboolean	G_CanGametypeTriggerBeUsed			( gentity_t* self, gentity_t* activator );
 void		G_ResetGametypeItem					( gitem_t* item );
 //RxCxW - 02.03.05 - 11:32am #DropGTItems

@@ -24,12 +24,14 @@ qboolean G_LoadEntFile(void)
 	Com_sprintf(entPath, 128, "maps/%s_%s.ent\0", mapname.string, level.gametypeData->name);
 
 	len = trap_FS_FOpenFile(entPath, &entFile, FS_READ);
-
+	Com_Printf("Debug: %s\n", entPath);
 	if (!entFile){ /// failing that, just try by map name
 		Com_sprintf(entPath, 128, "maps/%s.ent\0", mapname.string); 
 		len = trap_FS_FOpenFile(entPath, &entFile, FS_READ);
-		if (!entFile)
+		if (!entFile){
+			Com_Printf("No ent data found at %s\n", entPath);
 			return qfalse;
+		}
 	}
 	Com_Printf(S_COLOR_YELLOW "Loading ent data from \"%s\"\n", entPath);
 

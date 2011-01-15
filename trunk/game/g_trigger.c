@@ -288,8 +288,15 @@ Spectator teleporters are not normally placed in the editor, but are created
 automatically near doors to allow spectators to move through them
 */
 void SP_trigger_teleport( gentity_t *self ) {
+	char			*origin;
+	origin = va("%.0f %.0f %.0f", self->r.currentOrigin[0], self->r.currentOrigin[1], self->r.currentOrigin[2]-30);
 	InitTrigger (self);
-
+	AddSpawnField("classname", "fx_play_effect"); //bertman_effect
+	//AddSpawnField("effect", "fire/blue_target_flame");
+	AddSpawnField("origin", origin);
+	AddSpawnField("angles", "0 90 0");
+	AddSpawnField("count", "-1");
+	G_SpawnGEntityFromSpawnVars (qtrue);
 	// unlike other triggers, we need to send this one to the client
 	// unless is a spectator trigger
 	if ( self->spawnflags & 1 ) {

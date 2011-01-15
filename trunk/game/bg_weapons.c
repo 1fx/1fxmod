@@ -364,20 +364,31 @@ qboolean BG_InitWeaponStats(void)
 	char		name[256];
 	int			i;
 	char WpnFile[64];
-	
+	char		mapname[64];
+
+	trap_Cvar_VariableStringBuffer ( "mapname", mapname, MAX_QPATH );	
 	// Henk 06/04/10 -> Different wpn files(H&S, Real Damage, Normal Damage)
-	if(g_instagib.integer == 1){
-	//strcpy(WpnFile, "ext_data/rd.wpn");
-	strcpy(WpnFile, "ext_data/rd.wpn");
+	if(current_gametype.value == GT_HS){
+		if(strstr(mapname, "col9"))
+			strcpy(WpnFile, "ext_data/col9.wpn");
+		else
+			strcpy(WpnFile, "ext_data/h&s.wpn");
 	}else{
-	strcpy(WpnFile, "ext_data/nd.wpn");
+		if(g_instagib.integer == 1){
+		//strcpy(WpnFile, "ext_data/rd.wpn");
+		strcpy(WpnFile, "ext_data/rd.wpn");
+		}else{
+		strcpy(WpnFile, "ext_data/nd.wpn");
+		}
 	}
 	//WpnFile = "ext_data/nd.wpn";
 	//WpnFile = "ext_data/rd.wpn";
 	//WpnFile = "ext_data/h&s.wpn";?
+	Com_Printf("Reading weapon file from: %s\n", WpnFile);
 	GP2 = trap_GP_ParseFile(WpnFile, qtrue, qfalse);
 	if (!GP2)
 	{
+		Com_Printf("Error reading from weapon file: %s\n", WpnFile);
 		return qfalse;
 	}
 

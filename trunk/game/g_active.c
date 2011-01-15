@@ -109,6 +109,12 @@ void P_WorldEffects( gentity_t *ent )
 		return;
 	}
 
+	waterlevel = ent->waterlevel;
+	if(current_gametype.value == GT_HS){ // Henk 13/01/11 -> Slow when walking in the water
+		if(waterlevel >= 1)
+			ent->client->sess.slowtime = level.time+200;
+	}
+
 	// Disable Nolower
 	if(level.nolower1 == qtrue && !strstr(level.mapname, "mp_kam2")){ // if enabled
 		if(ent->r.currentOrigin[2] <= level.nolower[2] && !G_IsClientDead(ent->client)){
@@ -117,8 +123,6 @@ void P_WorldEffects( gentity_t *ent )
 		}
 	}
 
-
-	waterlevel = ent->waterlevel;
 
 	// check for drowning
 	if ( waterlevel == 3 && (ent->watertype & CONTENTS_WATER)) 
@@ -679,7 +683,7 @@ qboolean ClientInactivityTimer( gclient_t *client ) {
 	} else if ( !client->pers.localClient) {
 		#ifdef _SOF2_BOTS
 		if (g_entities[client-level.clients].r.svFlags & SVF_BOT)// Henk 13/01/11 -> Fixed bots getting forceteamed(Issue #65)
-			return;
+			return qfalse;
 		#endif
 		if ( level.time > client->inactivityTime ) {
 			SetTeam(&g_entities[client-level.clients], "s", NULL, qfalse); // Henk 08/04/10 -> Force ppl to spec instead of kicking them when afk
@@ -1000,13 +1004,7 @@ void ClientThink_real( gentity_t *ent )
 	usercmd_t	*ucmd;
 
 	///RxCxW - 2.04.05 - 05:04am
-	int			warnings;
 	gspawn_t	*G_SelectClientSpawnPoint ( gentity_t* ent,  qboolean plantsk );
-
-	///05.20.05 - 02:42pm #antiCamp
-	int		distance;
-	vec3_t 	diff;
-	///End  - 05.20.05 - 02:42pm
 
 	vec3_t	dir, fireAngs;
 	//vec3_t  fireAngs;
@@ -1185,11 +1183,37 @@ void ClientThink_real( gentity_t *ent )
 	{
 		client->ps.pm_type = PM_NORMAL;
 	}
-
+	if(current_gametype.value == GT_HS){
+		if(client->ps.weapon == WP_MM1_GRENADE_LAUNCHER)
+			client->ps.gravity = g_gravity.value-400;
+		else
+			client->ps.gravity = g_gravity.value;
+		if(client->ps.weapon == WP_RPG7_LAUNCHER && level.time > client->sess.slowtime){
+			client->ps.speed = g_speed.value+70;
+			if(level.time >= client->sess.SpeedAnimation){
+				if(ent->r.currentOrigin[1] != client->sess.oldvelocity[1] || ent->r.currentOrigin[2] != client->sess.oldvelocity[2] ){
+					//G_PlayEffect ( level.rpgeffect, client->ps.origin, ent->pos1);
+					client->sess.SpeedAnimation = level.time+30;
+					VectorCopy(ent->r.currentOrigin,client->sess.oldvelocity);
+				}
+			}
+		}else if(level.time <= client->sess.speedtime){
+			client->ps.speed = g_speed.value+70;
+			if(level.time >= client->sess.SpeedAnimation){
+				if(ent->r.currentOrigin[1] != client->sess.oldvelocity[1] || ent->r.currentOrigin[2] != client->sess.oldvelocity[2] ){
+					//G_PlayEffect ( level.rpgeffect, client->ps.origin, ent->pos1);
+					client->sess.SpeedAnimation = level.time+30;
+					VectorCopy(ent->r.currentOrigin,client->sess.oldvelocity);
+				}
+			}
+		}else if(level.time <= client->sess.slowtime){
+			client->ps.speed = g_speed.value-110;
+		}else
+			client->ps.speed = g_speed.value;
+	}else{
 	client->ps.gravity = g_gravity.value;
-
-	// set speed
 	client->ps.speed = g_speed.value;
+	}
 
 	// set up for pmove
 	oldEventSequence = client->ps.eventSequence;

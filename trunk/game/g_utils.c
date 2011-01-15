@@ -17,6 +17,28 @@ typedef struct
 int remapCount = 0;
 shaderRemap_t remappedShaders[MAX_SHADER_REMAPS];
 
+/*
+=============
+VectorToCleanString
+
+This is just a convenience function
+for printing vectors
+=============
+*/
+char	*vtocs( const vec3_t v ) {
+	static	int		index;
+	static	char	str[8][32];
+	char	*s;
+
+	// use an array so that multiple vtos won't collide
+	s = str[index];
+	index = (index + 1)&7;
+
+	Com_sprintf (s, 32, "%i %i %i", (int)v[0], (int)v[1], (int)v[2]);
+
+	return s;
+}
+
 void AddRemap(const char *oldShader, const char *newShader, float timeOffset) 
 {
 	int i;
@@ -132,7 +154,14 @@ int G_IconIndex( char *name )
 
 int G_EffectIndex( char *name ) 
 {
+	// Henk  15/01/11 -> For internal use only(no .ent)
+	if(strstr(name, "1fx_flare_red")){
+		return 1;
+	}else if(strstr(name, "1fx_flare_blue")){
+		return 2;
+	}else{
 	return G_FindConfigstringIndex (name, CS_EFFECTS, MAX_FX, qtrue);
+	}
 }
 
 int G_BSPIndex( char *name )
@@ -263,7 +292,7 @@ void G_UseTargetsByName( const char* name, gentity_t* other, gentity_t *activato
 			}
 		}
 		
-		if ( !other->inuse ) 
+		if (other && !other->inuse ) 
 		{
 			Com_Printf("entity was removed while using targets\n");
 			return;
@@ -694,10 +723,15 @@ G_PlayEffect
 void G_PlayEffect(int fxID, vec3_t org, vec3_t ang)
 {
 	gentity_t	*te;
-
 	te = G_TempEntity( org, EV_PLAY_EFFECT );
+
 	VectorCopy(ang, te->s.angles);
 	VectorCopy(org, te->s.origin);
+	if(fxID != G_EffectIndex("chunks/debris_snow")){ //chunks/debris_snow
+	te->s.origin[2] = te->s.origin[2];
+	}else{
+	te->s.origin[2] = te->s.origin[2]-30;
+	}
 	te->s.eventParm = fxID;
 }
 

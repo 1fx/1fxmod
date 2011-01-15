@@ -26,7 +26,9 @@ TeleportPlayer
 void TeleportPlayer ( gentity_t *player, vec3_t origin, vec3_t angles ) 
 {
 	gentity_t	*tent;
-
+	char			*Corigin;
+	if(current_gametype.value == GT_HS)
+	Corigin = va("%.0f %.0f %.0f", origin[0], origin[1], origin[2]);
 	// use temp events at source and destination to prevent the effect
 	// from getting dropped by a second player event
 	if ( !G_IsClientSpectating ( player->client ) ) 
@@ -46,9 +48,15 @@ void TeleportPlayer ( gentity_t *player, vec3_t origin, vec3_t angles )
 
 	// spit the player out
 	AngleVectors( angles, player->client->ps.velocity, NULL, NULL );
+	if(current_gametype.value == GT_HS){
+	VectorScale( player->client->ps.velocity, 100, player->client->ps.velocity ); // Henkie 22/02/10 -> Do not spit ( default 400)
+	//player->client->ps.pm_time = 160;		// hold time
+	//player->client->ps.pm_flags |= PMF_TIME_KNOCKBACK;
+	}else{
 	VectorScale( player->client->ps.velocity, 400, player->client->ps.velocity );
 	player->client->ps.pm_time = 160;		// hold time
 	player->client->ps.pm_flags |= PMF_TIME_KNOCKBACK;
+	}
 
 	// toggle the teleport bit so the client knows to not lerp
 	player->client->ps.eFlags ^= EF_TELEPORT_BIT;
@@ -71,6 +79,15 @@ void TeleportPlayer ( gentity_t *player, vec3_t origin, vec3_t angles )
 	if ( !G_IsClientSpectating ( player->client ) ) 
 	{
 		trap_LinkEntity (player);
+	}
+	if(current_gametype.value == GT_HS){
+		AddSpawnField("classname", "fx_play_effect"); // bertman_effect?
+		AddSpawnField("effect", "misc/electrical");
+		AddSpawnField("origin", Corigin);
+		AddSpawnField("angles", "0 90 0");
+		AddSpawnField("count", "1");
+		G_SpawnGEntityFromSpawnVars (qtrue);
+		// Add sparking effect at dest
 	}
 }
 
@@ -646,7 +663,6 @@ START_OFF    fx starts off
 
 void SP_fx_play_effect(gentity_t *ent)
 {
-	gentity_t	*target;
 	char		*fxName;
 
 	G_SetOrigin( ent, ent->s.origin );
@@ -658,7 +674,8 @@ void SP_fx_play_effect(gentity_t *ent)
 	{
 		ent->wait = 0.3;
 	}
-
+	
+	/*
 	target = G_Find(0, FOFS(targetname), ent->target);
 	if (target)
 	{
@@ -671,10 +688,10 @@ void SP_fx_play_effect(gentity_t *ent)
 		VectorCopy( ent->r.currentAngles, ent->s.apos.trBase );
 	}
 	else
-	{
-		ent->pos1[0] = ent->pos1[1] = 0.0;
+	{*/
+		ent->pos1[0] = ent->pos1[1] = 0.0; // Henkie -> If you remove this effects will not be targeted up to the sky
 		ent->pos1[2] = 1.0;
-	}
+	//}
 
 	ent->think = fx_think;
 	ent->nextthink = level.time + 100;

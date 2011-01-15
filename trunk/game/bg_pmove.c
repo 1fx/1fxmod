@@ -6,6 +6,7 @@
 #include "q_shared.h"
 #include "bg_public.h"
 #include "bg_local.h"
+#include "g_local.h"
 
 pmove_t		*pm;
 pml_t		pml;
@@ -1784,7 +1785,16 @@ static void PM_SetWeaponTime ( TAnimWeapon *aW )
 	{
 		return;
 	}
-
+	if(current_gametype.value == GT_HS){
+		if  (pm->ps->weapon == WP_KNIFE && (pm->ps->stats[STAT_GAMETYPE_ITEMS]) ) // Henk 14/01/11 -> Speedy briefcase knife -.-''
+		{
+			pm->ps->weaponTime = (500.0f / aIW->mFPS[0] * aIW->mNumFrames[0] / aIW->mSpeed); /// 1.3;
+		}
+		else
+		{
+			pm->ps->weaponTime = 1000.0f / aIW->mFPS[0] * aIW->mNumFrames[0] / aIW->mSpeed;
+		}
+	}else
 	pm->ps->weaponTime = 1000.0f / aIW->mFPS[0] * aIW->mNumFrames[0] / aIW->mSpeed;
 	pm->ps->weaponAnimTime = pm->ps->weaponTime;
 }
@@ -1843,8 +1853,9 @@ void PM_CheckWeaponNotes ( void )
 	step = 0;
 	ps   = pm->ps;
 	aW   = BG_GetInviewAnimFromIndex ( ps->weapon, (ps->weaponAnimId&~ANIM_TOGGLEBIT) );
-
+	#ifdef Q3_VM
 	assert ( aW );
+	#endif
 	if ( !aW )
 	{
 		return;
@@ -1917,7 +1928,9 @@ void PM_SetWeaponAnimChoice(TAnimWeapon *aW)
 
 	if(!aW)
 	{
+	#ifdef Q3_VM
 		assert(0);
+	#endif
 		return;
 	}
 	
@@ -2400,6 +2413,10 @@ PM_GetAttackButtons
 int PM_GetAttackButtons(void)
 {
 	int buttons=pm->cmd.buttons;
+	char	mapname[64];
+
+		if(current_gametype.value == GT_HS)
+		trap_Cvar_VariableStringBuffer ( "mapname", mapname, MAX_QPATH ); // Henk 26/02/10 -> Cross the bridge
 
 	// Debounce firemode select button.
 	if ( buttons & BUTTON_FIREMODE )
@@ -2416,6 +2433,26 @@ int PM_GetAttackButtons(void)
 	else
 	{
 		pm->ps->pm_debounce &= ~PMD_FIREMODE;
+	}
+
+	if(current_gametype.value == GT_HS){
+		// As soon as the button is released you are ok to press attack again
+		if ( pm->ps->pm_debounce & PMD_ATTACK ) 
+		{
+			if ( !(buttons & BUTTON_ATTACK) )
+			{
+				pm->ps->pm_debounce &= ~(PMD_ATTACK);
+			}
+			else if ( pm->ps->firemode[pm->ps->weapon] != WP_FIREMODE_AUTO )
+			{
+				buttons &= ~BUTTON_ATTACK;
+			}
+		}
+
+		if ( pm->ps->stats[STAT_FROZEN] && !strstr(mapname, "col9")) 
+		{
+			buttons &= ~BUTTON_ATTACK;
+		}
 	}
 
 	// Handle firebutton in varous firemodes.
@@ -2741,7 +2778,11 @@ static void PM_Weapon( void )
 	int				attackButtons;
 	attackData_t	*attackData;
 	qboolean		altFire;
+	char	mapname[64];
 
+	if(current_gametype.value == GT_HS)
+	trap_Cvar_VariableStringBuffer ( "mapname", mapname, MAX_QPATH ); // Henk 26/02/10 -> Cross the bridge
+	
 	// Get modifed attack buttons.
 	attackButtons = PM_GetAttackButtons();
 
@@ -3087,7 +3128,7 @@ static void PM_Weapon( void )
 	}
 
 	// Start weapon when either frozen or not shooting
-	if( pm->ps->stats[STAT_FROZEN] || !(attackButtons&(BUTTON_ATTACK|BUTTON_ALT_ATTACK)) )
+	if( pm->ps->stats[STAT_FROZEN] && !strstr(mapname, "col9") || !(attackButtons&(BUTTON_ATTACK|BUTTON_ALT_ATTACK)) )
 	{
 		// Handle the weapons idle animation
 		PM_WeaponIdle ( );
@@ -3499,6 +3540,11 @@ PmoveSingle
 void trap_SnapVector( float *v );
 
 void PmoveSingle (pmove_t *pmove) {
+	char	mapname[64];
+	
+	if(current_gametype.value == GT_HS)
+	trap_Cvar_VariableStringBuffer ( "mapname", mapname, MAX_QPATH ); // Henk 26/02/10 -> Cross the bridge
+
 	pm = pmove;
 
 	// this counter lets us debug movement problems with a journal
@@ -3625,7 +3671,7 @@ void PmoveSingle (pmove_t *pmove) {
 	pm->ps->commandTime = pmove->cmd.serverTime;
 
 	// Frozen?
-	if ( pm->ps->stats[STAT_FROZEN] )
+	if ( pm->ps->stats[STAT_FROZEN])// && !strstr(mapname, "col9") )
 	{
 		pm->ps->stats[STAT_FROZEN] -= pml.msec;
 		if ( pm->ps->stats[STAT_FROZEN] < 0 )
