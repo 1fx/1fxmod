@@ -1017,10 +1017,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 
 	trap_SetConfigstring( CS_VOTE_TIME, "" );
 
-	// Boe!Man 3/30/10
-	Boe_ParseChatSounds();
-
-	if (strstr(g_gametype.string, "ctf")){
+		if (strstr(g_gametype.string, "ctf")){
 	InitSpawn(1);
 	InitSpawn(3);
 	}else if(current_gametype.value == GT_HS){
@@ -1050,6 +1047,12 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 		trap_Cvar_Set("g_roundstartdelay", "30");
 		trap_Cvar_Update(&g_roundstartdelay);
 	}
+
+	level.MM1Flare = -1;
+	level.M4Flare = -1;
+	level.RPGFlare = -1;
+	// Boe!Man 3/30/10
+	Boe_ParseChatSounds();
 
 	// Boe!Man 11/16/10: Scrim settings.
 	if (g_compMode.integer > 0){

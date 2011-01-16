@@ -81,11 +81,7 @@ void TeleportPlayer ( gentity_t *player, vec3_t origin, vec3_t angles )
 		trap_LinkEntity (player);
 	}
 	if(current_gametype.value == GT_HS){
-		AddSpawnField("classname", "fx_play_effect"); // bertman_effect?
-		AddSpawnField("effect", "misc/electrical");
-		AddSpawnField("origin", Corigin);
-		AddSpawnField("angles", "0 90 0");
-		AddSpawnField("count", "1");
+		G_PlayEffect ( 3,player->client->ps.origin, player->pos1);
 		G_SpawnGEntityFromSpawnVars (qtrue);
 		// Add sparking effect at dest
 	}

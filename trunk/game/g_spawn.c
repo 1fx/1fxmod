@@ -283,6 +283,7 @@ spawn_t	spawns[] =
 	{"pickup_ammo",					0},
 	{"script_runner",				0},
 	{"trigger_arioche_objective",	0},
+	{"noclass",	0},
 
 	{0, 0}
 };

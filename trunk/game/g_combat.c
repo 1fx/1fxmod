@@ -1030,7 +1030,7 @@ int G_Damage (
 	}
 
 
-	if(current_gametype.value == GT_HS){
+	if(current_gametype.value == GT_HS && attacker->client && client){
 		if ( damage < 1 ) 
 		{
 			damage = 1;
