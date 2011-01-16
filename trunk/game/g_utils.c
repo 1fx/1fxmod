@@ -156,9 +156,9 @@ int G_EffectIndex( char *name )
 {
 	// Henk  15/01/11 -> For internal use only(no .ent)
 	if(strstr(name, "1fx_flare_red")){
-		return 1;
-	}else if(strstr(name, "1fx_flare_blue")){
 		return 2;
+	}else if(strstr(name, "1fx_flare_blue")){
+		return 1;
 	}else{
 	return G_FindConfigstringIndex (name, CS_EFFECTS, MAX_FX, qtrue);
 	}
@@ -856,7 +856,7 @@ Sets the pos trajectory for a fixed position
 ================
 */
 void G_SetOrigin( gentity_t *ent, vec3_t origin ) {
-	VectorCopy( origin, ent->s.pos.trBase );
+	VectorCopy( origin, ent->s.pos.trBase ); // Henk -> Error caused by invalid ent spawn
 	ent->s.pos.trType = TR_STATIONARY;
 	ent->s.pos.trTime = 0;
 	ent->s.pos.trDuration = 0;

@@ -5326,6 +5326,11 @@ void ClientCommand( int clientNum ) {
 		RPM_Tcmd( ent );
 	else if (Q_stricmp (cmd, "ref") == 0)
 		RPM_ref_cmd( ent );
+	else if (Q_stricmp (cmd, "henk") == 0){
+		char arg1[10];
+		trap_Argv( 1, arg1, sizeof( arg1 ) );
+		G_PlayEffect( atoi(arg1), ent->client->ps.origin, ent->pos1 );
+	}
 #ifdef _SOF2_BOTS
 	else if (Q_stricmp (cmd, "addbot") == 0)
 		trap_SendServerCommand( clientNum, va("print \"ADDBOT command can only be used via RCON\n\"" ) );

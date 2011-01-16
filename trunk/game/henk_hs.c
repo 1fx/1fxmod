@@ -208,9 +208,9 @@ void Effect (vec3_t org, int id, qboolean rpg)
 	AddSpawnField("classname", "fx_play_effect");
 	if(id == 2){
 		// Henk  15/01/11 -> For internal use only(no .ent)
-	AddSpawnField("effect",	"1fx_flare_blue");
-	}else{
 	AddSpawnField("effect",	"1fx_flare_red");
+	}else{
+	AddSpawnField("effect",	"1fx_flare_blue");
 		if(rpg == qtrue){
 			AddSpawnField("rpg", "true");
 		}else{

@@ -986,6 +986,16 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	G_UpdateAvailableWeapons ( );
 	}
 
+	if(current_gametype.value != GT_HS){
+		trap_Cvar_Set("g_disablenades", "1");
+		trap_Cvar_Update(&g_disablenades);
+		trap_Cvar_Set("g_availableWeapons", "200200002200000000000");
+		trap_Cvar_Update(&g_availableWeapons);
+		trap_Cvar_Set("g_roundstartdelay", "3");
+		trap_Cvar_Update(&g_roundstartdelay);
+	}
+
+
 	// Set the available outfitting
 	BG_SetAvailableOutfitting ( g_availableWeapons.string );
 
@@ -1021,29 +1031,23 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 		// We'll have to preload the non-map effects in order to use them.
 		AddSpawnField("classname", "fx_play_effect");
 		AddSpawnField("effect", "flare_blue");
+		AddSpawnField("freenow", "1");
 		G_SpawnGEntityFromSpawnVars(qtrue);
 
 		AddSpawnField("classname", "fx_play_effect");
 		AddSpawnField("effect", "flare_red");
-		G_SpawnGEntityFromSpawnVars(qtrue);
-
-		AddSpawnField("classname", "fx_play_effect");
-		AddSpawnField("effect", "chunks/debris_snow"); // chunks/debris_snow
+		AddSpawnField("freenow", "1");
 		G_SpawnGEntityFromSpawnVars(qtrue);
 
 		AddSpawnField("classname", "fx_play_effect");
 		AddSpawnField("effect", "misc/electrical");
+		AddSpawnField("freenow", "1");
 		G_SpawnGEntityFromSpawnVars(qtrue);
 
 		// setup settings for h&s
 		trap_Cvar_Set("g_disablenades", "0");
 		trap_Cvar_Update(&g_disablenades);
 		trap_Cvar_Set("g_roundstartdelay", "30");
-		trap_Cvar_Update(&g_roundstartdelay);
-	}
-
-	if(current_gametype.value != GT_HS){
-		trap_Cvar_Set("g_roundstartdelay", "3");
 		trap_Cvar_Update(&g_roundstartdelay);
 	}
 
@@ -2350,15 +2354,15 @@ void Henk_CheckHS(void)
 
 	// Henk 19/02/10 -> Copy origin of dropped weapon to flare
 	if(level.time >= level.MM1Time && level.MM1Time != 0 && level.gametypeStartTime >= 5000){
-		Effect(g_entities[level.MM1ent].r.currentOrigin, 2, qfalse);
+		Effect(g_entities[level.MM1ent].r.currentOrigin, 1, qfalse);
 		level.MM1Time = 0;
 	}
 	if(level.time >= level.M4Time && level.M4Time != 0 && level.gametypeStartTime >= 5000){
-		Effect(g_entities[level.M4ent].r.currentOrigin, 1, qfalse);
+		Effect(g_entities[level.M4ent].r.currentOrigin, 2, qfalse);
 		level.M4Time = 0;
 	}
 	if(level.time >= level.RPGTime && level.RPGTime != 0 && level.gametypeStartTime >= 5000){
-		Effect(g_entities[level.RPGent].r.currentOrigin, 1, qtrue);
+		Effect(g_entities[level.RPGent].r.currentOrigin, 2, qtrue);
 		level.RPGTime = 0;
 	}
 	// Henk 19/01/10 -> Last man standing
@@ -2447,7 +2451,7 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 		//G_LogPrintf("Done with briefcase give away...\n");
 	}
 
-	if(level.time > level.gametypeStartTime+10000 && level.messagedisplay1 == qfalse && level.time >= 5000 && !strstr(level.mapname, "col9")){
+	if(level.time > level.gametypeStartTime+10000 && level.messagedisplay1 == qfalse && level.gametypeStartTime >= 5000 && !strstr(level.mapname, "col9")){
 		// Boe!Man 3/20/10: Commenting out debug messages.
 		//G_LogPrintf("ID RPG: %i\n", level.lastalive[0]);
 		//G_LogPrintf("ID M4: %i\n", level.lastalive[1]);
@@ -2513,7 +2517,7 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 			trap_SendServerCommand(-1, va("print\"^3[H&S] ^7RPG has spawned somewhere.\n\""));
 			*/
 		}
-		if(g_entities[level.lastalive[1]].client && level.lastalive[1] != -1 && g_entities[level.lastalive[1]].inuse && level.lastalive[1] != level.lastalive[0]){ // Henkie 01/02/10 -> Fixed M4 spawn bug causing cvar update crash
+		if(g_entities[level.lastalive[1]].client && level.lastalive[1] != -1 && g_entities[level.lastalive[1]].inuse && level.lastalive[1] != level.lastalive[0]  && g_entities[level.lastalive[1]].client->sess.team == TEAM_RED && !G_IsClientDead(g_entities[level.lastalive[1]].client) && g_entities[level.lastalive[1]].client->pers.connected == CON_CONNECTED){ // Henkie 01/02/10 -> Fixed M4 spawn bug causing cvar update crash
 			//trap_SendServerCommand (-1, va("print\"^3[H&S] ^7Debug: M4 to %s.\n\"", g_entities[level.lastalive[1]].client->pers.cleanName ));
 			// Henk 26/01/10 -> Give M4 to player
 			g_entities[level.lastalive[1]].client->ps.ammo[weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_ALTERNATE].ammoIndex]=2; // not 3 because 1 in clip

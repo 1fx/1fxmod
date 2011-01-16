@@ -298,6 +298,8 @@ typedef struct
 	// Henk 26/01/10 -> Dupe fix
 	int			lastpickup;
 
+	int			lastmsg; // teleporter touch message
+
 } clientSession_t;
 
 // Boe!Man 3/30/10

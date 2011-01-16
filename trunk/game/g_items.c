@@ -407,8 +407,12 @@ void Touch_Item (gentity_t *ent, gentity_t *other, trace_t *trace)
 			respawn = Pickup_Health(ent, other);
 			break;
 		case IT_GAMETYPE:
-			if(current_gametype.value == GT_HS)
+			if(current_gametype.value == GT_HS){
+				if(other->client->sess.team == TEAM_RED){ // Henkie 24/02/10 -> Hiders cannot pickup briefcase // Boe!Man 9/28/10: Bug fixed regarding this.
+					break;
+				}
 				trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s ^7has taken the briefcase.\n\"", other->client->pers.netname));
+			}
 			respawn = Pickup_Gametype(ent, other);
 			predict = qfalse;
 			break;

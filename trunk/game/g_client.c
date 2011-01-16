@@ -591,6 +591,8 @@ Returns qtrue if the client is dead and qfalse if not
 */
 qboolean G_IsClientDead ( gclient_t* client )
 {
+	if(!client) // Henk -> Debugger whines about this
+		return qfalse;
 	if ( client->ps.stats[STAT_HEALTH] <= 0 )
 	{
 		return qtrue;
@@ -868,9 +870,11 @@ void G_UpdateOutfitting ( int clientNum )
 	}
 
 	// Clear all ammo, clips, and weapons
-	//client->ps.stats[STAT_WEAPONS] = 0; // Henk 15/01/11 -> Fix for disspearing shit
-	//memset ( client->ps.ammo, 0, sizeof(client->ps.ammo) );
-	//memset ( client->ps.clip, 0, sizeof(client->ps.clip) );
+	if(current_gametype.value != GT_HS){
+	client->ps.stats[STAT_WEAPONS] = 0; // Henk 15/01/11 -> Fix for disspearing shit
+	memset ( client->ps.ammo, 0, sizeof(client->ps.ammo) );
+	memset ( client->ps.clip, 0, sizeof(client->ps.clip) );
+	}
 
 	// Henkie -> Put zoom off!
 	client->ps.zoomFov = 0;

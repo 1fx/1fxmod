@@ -7,7 +7,7 @@ void InitTrigger( gentity_t *self ) {
 	if (!VectorCompare (self->s.angles, vec3_origin))
 		G_SetMovedir (self->s.angles, self->movedir);
 
-	trap_SetBrushModel( self, self->model );
+	//trap_SetBrushModel( self, self->model ); // Henk -> This crashes teleports
 	self->r.contents = CONTENTS_TRIGGER;		// replaces the -1 from trap_SetBrushModel
 	self->r.svFlags = SVF_NOCLIENT;
 }
@@ -255,7 +255,8 @@ trigger_teleport
 
 void trigger_teleporter_touch (gentity_t *self, gentity_t *other, trace_t *trace ) {
 	gentity_t	*dest;
-
+	char	*origin2;
+	origin2 = va("%.0f %.0f %.0f", self->r.currentOrigin[0], self->r.currentOrigin[1], self->r.currentOrigin[2]+30);
 	if ( !other->client ) {
 		return;
 	}
@@ -268,7 +269,19 @@ void trigger_teleporter_touch (gentity_t *self, gentity_t *other, trace_t *trace
 		return;
 	}
 
-
+	if(TeamCount1(TEAM_RED) < self->minimumhiders){
+		if(level.time >= other->client->sess.lastmsg){
+		trap_SendServerCommand(-1, va("print\"^3[Info] ^7There has to be a minimum of %i hiders to use this teleport.\n\"", self->minimumhiders));
+		}
+		other->client->sess.lastmsg = level.time+10000;
+		return;
+	}
+	AddSpawnField("classname", "fx_play_effect");
+	AddSpawnField("effect", "misc/electrical");
+	AddSpawnField("origin", origin2);
+	AddSpawnField("angles", "0 90 0");
+	AddSpawnField("count", "1");
+	G_SpawnGEntityFromSpawnVars (qtrue);
 	dest = 	G_PickTarget( self->target );
 	if (!dest) {
 		Com_Printf ("Couldn't find teleporter destination\n");
@@ -292,7 +305,7 @@ void SP_trigger_teleport( gentity_t *self ) {
 	origin = va("%.0f %.0f %.0f", self->r.currentOrigin[0], self->r.currentOrigin[1], self->r.currentOrigin[2]-30);
 	InitTrigger (self);
 	AddSpawnField("classname", "fx_play_effect"); //bertman_effect
-	//AddSpawnField("effect", "fire/blue_target_flame");
+	AddSpawnField("effect", "fire/blue_target_flame");
 	AddSpawnField("origin", origin);
 	AddSpawnField("angles", "0 90 0");
 	AddSpawnField("count", "-1");

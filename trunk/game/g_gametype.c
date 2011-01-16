@@ -880,6 +880,9 @@ void CheckGametype ( void )
 		{
 			gentity_t* ent = &g_entities[level.sortedClients[i]];
 
+			if(ent->client)
+				continue;
+
 			if ( ent->client->pers.connected != CON_CONNECTED )
 			{
 				continue;
