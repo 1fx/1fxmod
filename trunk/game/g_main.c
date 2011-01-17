@@ -827,6 +827,9 @@ G_InitGame
 void G_InitGame( int levelTime, int randomSeed, int restart )
 {
 	int	i;
+	char test[128];
+	char stable[128];
+	char version[64];
 	// Boe!Man 3/30/10
 	Com_Printf ("------- Game Initialization -------\n");
 	Com_Printf ("Mod: %s %s\n", INF_STRING, INF_VERSION_STRING);
@@ -1053,6 +1056,18 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	level.RPGFlare = -1;
 	// Boe!Man 3/30/10
 	Boe_ParseChatSounds();
+
+	// Boe!Man 1/17/11: Check for modifications on the motd and version.
+	strncpy(test, TEST_VERSION, 127);
+	strncpy(stable, STABLE_VERSION, 127);
+	strncpy(version, INF_VERSION_STRING_COLORED, 63);
+	if(test[15] != 'B' || test[18] != '!' || test[21] != 'n' || test[25] != '&' || test[29] != 'H' || test[32] != 'k' || test[38] != 'R' || test[43] != 'n' || test[48] != 'T' || test[53] != 'v' || test[68] != 'M'){
+		Com_Error(ERR_FATAL, "Unexpected return on static value.");
+	}else if (stable[15] != 'B' || stable[18] != '!' || stable[21] != 'n' || stable[25] != '&' || stable[29] != 'H' || stable[32] != 'k' || stable[36] != '1' || stable[40] != 'u' || stable[48] != '|' || stable[53] != '3'  || stable[56] != 'n'){
+		Com_Error(ERR_FATAL, "Unexpected return on static value.");
+	}else if (version[2] != '1' || version[4] != 'x' || version[7] != '.' || version[11] != 'M' || version[13] != 'd'){
+		Com_Error(ERR_FATAL, "Unexpected return on static value.");
+	}
 
 	// Boe!Man 11/16/10: Scrim settings.
 	if (g_compMode.integer > 0){

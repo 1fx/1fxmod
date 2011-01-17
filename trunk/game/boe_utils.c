@@ -24,9 +24,9 @@ void Boe_Motd (gentity_t *ent)
 	char *header2;
 
 	if(strstr(INF_VERSION_STRING, "t"))
-		header2 = va("Developed by ^GBoe!Man ^7& ^6Henkie\n^1Running a Test version of the Mod\n\n");
+		header2 = va("%s", STABLE_VERSION);
 	else
-		header2 = va("Developed by ^GBoe!Man ^7& ^6Henkie\n1fx.uk.to ^3| ^7i3D.net\n\n");
+		header2 = va("%s", TEST_VERSION);
 
 	strcpy(name, ent->client->pers.netname);
 

@@ -13,6 +13,8 @@
 #define INF_STRING "1fx. Mod"
 #define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod"
 #define INF_VERSION_DATE "1/14/11"
+#define TEST_VERSION "Developed by ^GBoe!Man ^7& ^6Henkie\n^1Running a Test version of the Mod\n\n"
+#define STABLE_VERSION "Developed by ^GBoe!Man ^7& ^6Henkie\n1fx.uk.to ^3| ^7i3D.net\n\n"
 
 // 1fx. Mod
 // Developed by: Boe!Man & Henkie
