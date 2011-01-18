@@ -36,6 +36,7 @@ static admCmd_t AdminCommands[] =
 	{"!m ", "mute", &g_mute.integer, &Boe_XMute},
 	{"!um ", "unmute", &g_mute.integer, &Boe_UnMute},
 	{"!s ", "strip", &g_strip.integer, &Boe_Strip},
+	{"!st ", "strip", &g_strip.integer, &Boe_Strip},
 	{"!ra ", "removeadmin", &g_removeadmin.integer, &Boe_Remove_Admin_f},
 	{"!ft ", "forceteam", &g_forceteam.integer, &Adm_ForceTeam},
 	{"!nl", "nolower", &g_nolower.integer, &Boe_NoLower},
@@ -2220,10 +2221,10 @@ void Cmd_Drop_f ( gentity_t* ent )
 	}else{
 
 		// Drop the weapon the client wanted to drop
-		dropped = G_DropWeapon ( ent, atoi(ConcatArgs( 1 )), 3000 );
+		dropped = G_DropWeapon ( ent, atoi(ConcatArgs( 1 )), 1000 );
 		if ( !dropped )
 		{
-			trap_SendServerCommand(ent->s.number, va("print\"^3[Info] ^7You don't have any item to drop\n\""));
+			//trap_SendServerCommand(ent->s.number, va("print\"^3[Info] ^7You don't have any item to drop\n\""));
 			return;
 		}
 	}

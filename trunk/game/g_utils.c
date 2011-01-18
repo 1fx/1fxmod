@@ -154,14 +154,7 @@ int G_IconIndex( char *name )
 
 int G_EffectIndex( char *name ) 
 {
-	// Henk  15/01/11 -> For internal use only(no .ent)
-	if(strstr(name, "1fx_flare_red")){
-		return 2;
-	}else if(strstr(name, "1fx_flare_blue")){
-		return 1;
-	}else{
 	return G_FindConfigstringIndex (name, CS_EFFECTS, MAX_FX, qtrue);
-	}
 }
 
 int G_BSPIndex( char *name )

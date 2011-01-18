@@ -1523,7 +1523,7 @@ and after local prediction on the client
 */
 void BG_PlayerStateToEntityStateExtraPolate( playerState_t *ps, entityState_t *s, int time, qboolean snap ) 
 {
-if ( ps->pm_type == PM_INTERMISSION || ps->pm_type == PM_SPECTATOR || (ps->pm_flags & PMF_INIVISIBILITY_ON) ) // Henk 14/01/11 -> Add invisibility flag
+	if ( ps->pm_type == PM_INTERMISSION || ps->pm_type == PM_SPECTATOR || (ps->pm_flags & PMF_INIVISIBILITY_ON) ) // Henk 14/01/11 -> Add invisibility flag
 	{
 		s->eType = ET_INVISIBLE;
 	} 

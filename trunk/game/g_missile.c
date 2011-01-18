@@ -301,7 +301,6 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace )
 	vec3_t	velocity;
 	int d;
 	other = &g_entities[trace->entityNum];
-
 	d = 0;
 
 	// check for bounce

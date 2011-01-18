@@ -772,7 +772,7 @@ gentity_t* G_DropWeapon ( gentity_t* ent, weapon_t weapon, int pickupDelay )
 	// let them pick it up immediately
 	else if ( pickupDelay )
 	{
-		dropped->nextthink = level.time + 3000;	
+		dropped->nextthink = level.time + 1000;	// Henk 18/01/11 -> Lower the delay
 		dropped->s.eFlags |= EF_NOPICKUP;
 		dropped->think = G_EnablePickup;
 	}
@@ -795,24 +795,21 @@ gentity_t* G_DropWeapon ( gentity_t* ent, weapon_t weapon, int pickupDelay )
 
 	if(current_gametype.value == GT_HS){
 		// Henk 26/01/10 -> Show people that special weapons have been dropped and on what location.
-		Team_GetLocationMsg(ent, location, sizeof(location));
+		Team_GetLocationMsg(dropped, location, sizeof(location));
 		if(weapon == WP_RPG7_LAUNCHER){
 			Com_sprintf(level.RPGloc, sizeof(level.RPGloc), "%s", location);
-			//Effect(dropped->r.currentOrigin, 1, qtrue);
 			level.RPGent = dropped->s.number;
-			level.RPGTime = level.time+3000;
+			level.RPGTime = level.time+500;
 			trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s has dropped the RPG at %s.\n\"", ent->client->pers.netname, level.RPGloc));
 		}else if(weapon == WP_M4_ASSAULT_RIFLE){
 			Com_sprintf(level.M4loc, sizeof(level.M4loc), "%s", location);
-			//Effect(dropped->r.currentOrigin, 1, qfalse);
 			level.M4ent = dropped->s.number;
-			level.M4Time = level.time+3000;
+			level.M4Time = level.time+500;
 			trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s has dropped the M4 at %s.\n\"", ent->client->pers.netname, level.M4loc));
 		}else if(weapon == WP_MM1_GRENADE_LAUNCHER){
 			Com_sprintf(level.MM1loc, sizeof(level.MM1loc), "%s", location);
-			//Effect(dropped->r.currentOrigin, 2, qtrue);
 			level.MM1ent = dropped->s.number;
-			level.MM1Time = level.time+3000;
+			level.MM1Time = level.time+500;
 			trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s has dropped the MM1 at %s.\n\"", ent->client->pers.netname, level.MM1loc));
 		}
 		ent->client->ps.weapon = WP_KNIFE;
@@ -1082,7 +1079,6 @@ void G_RunItem( gentity_t *ent )
 
 	if ( ent->s.pos.trType == TR_STATIONARY ) 
 	{
-		// check think function
 		G_RunThink( ent );
 		return;
 	}
@@ -1163,7 +1159,7 @@ gentity_t *CreateWeaponPickup(vec3_t pos,weapon_t weapon)
 {
 	gentity_t	*dropped;
 	gitem_t		*item;
-	
+
 	if ( weapon < WP_KNIFE || weapon >= WP_NUM_WEAPONS )
 	{
 		return 0;

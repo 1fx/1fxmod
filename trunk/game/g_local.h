@@ -683,6 +683,9 @@ typedef struct
 
 	// Henk 22/02/10 -> Removes seeker released lag
 	int			clicksound;
+
+	// storage for temp effects so we can delete them later on.
+	int			tempent;
 } level_locals_t;
 
 //

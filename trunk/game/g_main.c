@@ -1020,9 +1020,9 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 
 	trap_SetConfigstring( CS_VOTE_TIME, "" );
 
-		if (strstr(g_gametype.string, "ctf")){
-	InitSpawn(1);
-	InitSpawn(3);
+	if (strstr(g_gametype.string, "ctf")){
+			InitSpawn(1);
+			InitSpawn(3);
 	}else if(current_gametype.value == GT_HS){
 		InitSpawn(1);
 		InitSpawn(2);
@@ -1031,18 +1031,21 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 		// We'll have to preload the non-map effects in order to use them.
 		AddSpawnField("classname", "fx_play_effect");
 		AddSpawnField("effect", "flare_blue");
-		AddSpawnField("freenow", "1");
+		AddSpawnField("tempent", "1");
 		G_SpawnGEntityFromSpawnVars(qtrue);
+		G_FreeEntity(&g_entities[level.tempent]);
 
 		AddSpawnField("classname", "fx_play_effect");
 		AddSpawnField("effect", "flare_red");
-		AddSpawnField("freenow", "1");
+		AddSpawnField("tempent", "1");
 		G_SpawnGEntityFromSpawnVars(qtrue);
+		G_FreeEntity(&g_entities[level.tempent]);
 
 		AddSpawnField("classname", "fx_play_effect");
 		AddSpawnField("effect", "misc/electrical");
-		AddSpawnField("freenow", "1");
+		AddSpawnField("tempent", "1");
 		G_SpawnGEntityFromSpawnVars(qtrue);
+		G_FreeEntity(&g_entities[level.tempent]);
 
 		// setup settings for h&s
 		trap_Cvar_Set("g_disablenades", "0");
@@ -2371,16 +2374,16 @@ void Henk_CheckHS(void)
 	gentity_t	*dropped;
 
 	// Henk 19/02/10 -> Copy origin of dropped weapon to flare
-	if(level.time >= level.MM1Time && level.MM1Time != 0 && level.gametypeStartTime >= 5000){
-		Effect(g_entities[level.MM1ent].r.currentOrigin, 1, qfalse);
+	if(g_entities[level.MM1ent].s.pos.trType == TR_STATIONARY && level.MM1Time != 0 && level.gametypeStartTime >= 5000){
+		Effect(g_entities[level.MM1ent].r.currentOrigin, G_EffectIndex("flare_blue"), qfalse);
 		level.MM1Time = 0;
 	}
-	if(level.time >= level.M4Time && level.M4Time != 0 && level.gametypeStartTime >= 5000){
-		Effect(g_entities[level.M4ent].r.currentOrigin, 2, qfalse);
+	if(g_entities[level.M4ent].s.pos.trType == TR_STATIONARY && level.M4Time != 0 && level.gametypeStartTime >= 5000){
+		Effect(g_entities[level.M4ent].r.currentOrigin, G_EffectIndex("flare_red"), qfalse);
 		level.M4Time = 0;
 	}
-	if(level.time >= level.RPGTime && level.RPGTime != 0 && level.gametypeStartTime >= 5000){
-		Effect(g_entities[level.RPGent].r.currentOrigin, 2, qtrue);
+	if(g_entities[level.RPGent].s.pos.trType == TR_STATIONARY && level.RPGTime != 0 && level.gametypeStartTime >= 5000){
+		Effect(g_entities[level.RPGent].r.currentOrigin, G_EffectIndex("flare_red"), qtrue);
 		level.RPGTime = 0;
 	}
 	// Henk 19/01/10 -> Last man standing
@@ -2440,7 +2443,7 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 		//G_LogPrintf("Giving away briefcase...\n");
 		if(TeamCount1(TEAM_BLUE) >= 1){
 			for(i=0;i<=200;i++){
-			random = irand(0, g_maxclients.integer);
+			random = irand(0, level.numConnectedClients);
 			if(!g_entities[level.sortedClients[random]].inuse)
 				continue;
 
@@ -2500,7 +2503,7 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 				trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Not enough hiders connected: RPG spawned in blue base\n\""));
 			}else{
 				for(i=0;i<=200;i++){
-					random = irand(0, g_maxclients.integer);
+					random = irand(0, level.numConnectedClients);
 					if(!g_entities[level.sortedClients[random]].inuse)
 						continue;
 					if(g_entities[level.sortedClients[random]].client->sess.team != TEAM_RED)
@@ -2557,7 +2560,7 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 			// End
 		}else{ // Henk 26/01/10 -> Drop M4 at red spawn.
 			// Henk 24/02/10 -> Add randomize give away
-			if(TeamCount1(TEAM_RED) <= 2){
+			if(TeamCount1(TEAM_RED) < 2){ // Henk 18/01/11 -> Fixed random when 2 players are connected
 				spawnPoint = G_SelectRandomSpawnPoint ( TEAM_BLUE );
 				dropped = G_DropItem2(spawnPoint->origin, spawnPoint->angles, BG_FindWeaponItem ( WP_M4_ASSAULT_RIFLE ));
 				dropped->count  = 1&0xFF;
@@ -2569,7 +2572,7 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 				trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Not enough hiders connected: M4 spawned in blue base\n\""));
 			}else{
 				for(i=0;i<=200;i++){
-					random = irand(0, g_maxclients.integer);
+					random = irand(0, level.numConnectedClients);
 					if(!g_entities[level.sortedClients[random]].inuse)
 						continue;
 					if(g_entities[level.sortedClients[random]].client->sess.team != TEAM_RED)

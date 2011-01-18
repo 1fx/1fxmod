@@ -604,11 +604,13 @@ static void BG_LinkTemplates(void)
 		{
 			// Link up all the inventory items specific to the skins
 			inv = skin->mInventory;
+			if(inv){
 			while(inv)
 			{
 				inv->mItem = BG_FindItemTemplate(inv->mName);
 
 				inv = inv->mNext;
+			}
 			}
 
 			skin = skin->mNext;

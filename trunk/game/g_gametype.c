@@ -880,9 +880,6 @@ void CheckGametype ( void )
 		{
 			gentity_t* ent = &g_entities[level.sortedClients[i]];
 
-			if(ent->client)
-				continue;
-
 			if ( ent->client->pers.connected != CON_CONNECTED )
 			{
 				continue;
@@ -939,12 +936,6 @@ void CheckGametype ( void )
 				level.timelimithit = qfalse;
 				LogExit( "Timelimit hit." );
 			}
-			if(current_gametype.value == GT_HS){
-				StripHiders(); // hiders won
-				if(level.teamAliveCount[TEAM_RED] >= 3){ // more then 3 alive then call the function
-					RandomRPGM4();
-				}
-			}
 			trap_GT_SendEvent ( GTEV_TEAM_ELIMINATED, level.time, TEAM_RED, 0, 0, 0, 0 );
 		}
 		else if ( !alive[TEAM_BLUE] && dead[TEAM_BLUE] )
@@ -964,6 +955,9 @@ void CheckGametype ( void )
 		{
 			if(current_gametype.value == GT_HS)
 			StripHiders(); 
+			if(level.teamAliveCount[TEAM_RED] >= 3){ // more then 3 alive then call the function
+				RandomRPGM4();
+			}
 			trap_GT_SendEvent ( GTEV_TIME_EXPIRED, level.time, 0, 0, 0, 0, 0 );
 			if(level.timelimithit == qtrue){
 				gentity_t*	tent;
@@ -1011,6 +1005,8 @@ int G_GametypeCommand ( int cmd, int arg0, int arg1, int arg2, int arg3, int arg
 				}else if(strstr((const char*)arg1, "[DM]")){
 					trap_SendServerCommand( -1, va("print \"%s\n\"", (const char*)arg1));
 				}else if(strstr((const char*)arg1, "[TDM]")){
+					trap_SendServerCommand( -1, va("print \"%s\n\"", (const char*)arg1));
+				}else if(strstr((const char*)arg1, "[H&S]")){
 					trap_SendServerCommand( -1, va("print \"%s\n\"", (const char*)arg1));
 				}else{
 				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,%s", level.time + 5000, (const char*)arg1 ) );
