@@ -1,0 +1,7 @@
+-o "gt_hs"
+
+gt_main
+bg_lib
+..\..\gt_syscalls
+q_math
+q_shared
