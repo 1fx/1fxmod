@@ -215,7 +215,7 @@ void Effect (vec3_t org, int id, qboolean rpg)
 			AddSpawnField("rpg", "false");
 		}
 	}else{
-	AddSpawnField("effect",	"flare_red");
+	AddSpawnField("effect",	"1fx_flare_blue");
 	}
 	AddSpawnField("origin",		origin);
 	AddSpawnField("wait",		"3");

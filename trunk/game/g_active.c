@@ -1192,7 +1192,7 @@ void ClientThink_real( gentity_t *ent )
 			client->ps.speed = g_speed.value+70;
 			if(level.time >= client->sess.SpeedAnimation){
 				if(ent->r.currentOrigin[1] != client->sess.oldvelocity[1] || ent->r.currentOrigin[2] != client->sess.oldvelocity[2] ){
-					//G_PlayEffect ( level.rpgeffect, client->ps.origin, ent->pos1);
+					G_PlayEffect ( G_EffectIndex("arm2smallsmoke"), client->ps.origin, ent->pos1);
 					client->sess.SpeedAnimation = level.time+30;
 					VectorCopy(ent->r.currentOrigin,client->sess.oldvelocity);
 				}
@@ -1201,7 +1201,7 @@ void ClientThink_real( gentity_t *ent )
 			client->ps.speed = g_speed.value+70;
 			if(level.time >= client->sess.SpeedAnimation){
 				if(ent->r.currentOrigin[1] != client->sess.oldvelocity[1] || ent->r.currentOrigin[2] != client->sess.oldvelocity[2] ){
-					//G_PlayEffect ( level.rpgeffect, client->ps.origin, ent->pos1);
+					G_PlayEffect ( G_EffectIndex("arm2smallsmoke"), client->ps.origin, ent->pos1);
 					client->sess.SpeedAnimation = level.time+30;
 					VectorCopy(ent->r.currentOrigin,client->sess.oldvelocity);
 				}

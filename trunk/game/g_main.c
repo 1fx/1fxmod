@@ -1047,6 +1047,18 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 		G_SpawnGEntityFromSpawnVars(qtrue);
 		G_FreeEntity(&g_entities[level.tempent]);
 
+		AddSpawnField("classname", "fx_play_effect");
+		AddSpawnField("effect", "arm2smallsmoke");
+		AddSpawnField("tempent", "1");
+		G_SpawnGEntityFromSpawnVars(qtrue);
+		G_FreeEntity(&g_entities[level.tempent]);
+
+		AddSpawnField("classname", "fx_play_effect");
+		AddSpawnField("effect", "smoke_big");
+		AddSpawnField("tempent", "1");
+		G_SpawnGEntityFromSpawnVars(qtrue);
+		G_FreeEntity(&g_entities[level.tempent]);
+
 		// setup settings for h&s
 		trap_Cvar_Set("g_disablenades", "0");
 		trap_Cvar_Update(&g_disablenades);

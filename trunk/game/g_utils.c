@@ -720,10 +720,10 @@ void G_PlayEffect(int fxID, vec3_t org, vec3_t ang)
 
 	VectorCopy(ang, te->s.angles);
 	VectorCopy(org, te->s.origin);
-	if(fxID != G_EffectIndex("chunks/debris_snow")){ //chunks/debris_snow
+	if(fxID != G_EffectIndex("arm2smallsmoke")){ //chunks/debris_snow
 	te->s.origin[2] = te->s.origin[2];
 	}else{
-	te->s.origin[2] = te->s.origin[2]-30;
+	te->s.origin[2] = te->s.origin[2]-10;
 	}
 	te->s.eventParm = fxID;
 }
