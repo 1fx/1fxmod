@@ -12,7 +12,7 @@
 #endif
 #define INF_STRING "1fx. Mod"
 #define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod"
-#define INF_VERSION_DATE "1/14/11"
+#define INF_VERSION_DATE "1/19/11"
 #define TEST_VERSION "Developed by ^GBoe!Man ^7& ^6Henkie\n^1Running a Test version of the Mod\n\n"
 #define STABLE_VERSION "Developed by ^GBoe!Man ^7& ^6Henkie\n1fx.uk.to ^3| ^7i3D.net\n\n"
 
@@ -24,54 +24,55 @@
 //
 // --- VERSION LOG BELOW
 //
-// Version		Status of Release				Date
+// Version		Status of Release				Rev		Date
 // ----------------------------------------------------------------
-// 0.01			Alpha							3/30/10
-// 0.02			Alpha							3/31/10
-// 0.05			Beta							4/4/10
-// 0.06			Beta							4/6/10
-// 0.10			Beta							4/7/10
-// 0.11a		1st Beta						4/8/10
-// 0.11b		2nd Beta						4/8/10
-// 0.15a		Release Candidate				4/12/10
-// 0.15b		Release							4/14/10
-// 0.16			Beta							4/15/10
-// 0.17			Beta							4/16/10
-// 0.18			Beta							4/17/10
-// 0.19			Beta							4/18/10
-// 0.20			Release							4/20/10
-// 0.21			Release							4/22/10
-// 0.22			Release							4/23/10
-// 0.25a		Release							5/3/10
-// 0.25b		Release							5/3/10
-// 0.30t		Beta							5/7/10
-// 0.30			Release							6/2/10
-// 0.31			Release							6/3/10
-// 0.40t		Beta							6/11/10
-// 0.40t		Release Candidate				7/24/10
-// 0.40			Release							8/2/10
-// 0.41t		Beta							8/22/10
-// 0.41			Release							8/25/10
-// 0.42t		Beta							9/1/10
-// 0.42			Release							9/3/10
-// 0.50t		Beta							9/9/10
-// 0.50			Release							9/17/10
-// 0.51t		Alpha							9/18/10
-// 0.51t		Beta							9/19/10
-// 0.51t		1st Release Candidate			9/26/10
-// 0.51t		2nd Release Candidate			9/30/10
-// 0.51			Release							10/7/10
-// 0.52t		Beta							10/16/10
-// 0.52			Release							10/25/10
-// 0.53			Release							11/2/10
-// 0.54t		Beta							11/21/10
-// 0.54t		Release Candidate				12/13/10
-// 0.54			Release							12/19/10
-// 0.55t		Beta							12/23/10
-// 0.55			Release							12/31/10
-// 0.56t		Alpha							1/1/11
-// 0.56t		1st Beta						1/8/11
-// 0.56t		2nd Beta						1/14/11
+// 0.01			Alpha							3		3/30/10
+// 0.02			Alpha							4		3/31/10
+// 0.05			Beta							24		4/4/10
+// 0.06			Beta							29		4/6/10
+// 0.10			Beta							33		4/7/10
+// 0.11a		1st Beta						34		4/8/10
+// 0.11b		2nd Beta						40		4/8/10
+// 0.15a		Release Candidate				51		4/12/10
+// 0.15b		Release							59		4/14/10
+// 0.16			Beta							66		4/15/10
+// 0.17			Beta							70		4/16/10
+// 0.18			Beta							77		4/17/10
+// 0.19			Beta							105		4/18/10
+// 0.20			Release							115		4/20/10
+// 0.21			Release							122		4/22/10
+// 0.22			Release							128		4/23/10
+// 0.25a		Release							142		5/3/10
+// 0.25b		Release							147		5/3/10
+// 0.30t		Beta							170		5/7/10
+// 0.30			Release							193		6/2/10
+// 0.31			Release							194		6/3/10
+// 0.40t		Beta							195		6/11/10
+// 0.40t		Release Candidate				198		7/24/10
+// 0.40			Release							199		8/2/10
+// 0.41t		Beta							200		8/22/10
+// 0.41			Release							202		8/25/10
+// 0.42t		Beta							208		9/1/10
+// 0.42			Release							213		9/3/10
+// 0.50t		Beta							223		9/9/10
+// 0.50			Release							229		9/17/10
+// 0.51t		Alpha							230		9/18/10
+// 0.51t		Beta							231		9/19/10
+// 0.51t		1st Release Candidate			238		9/26/10
+// 0.51t		2nd Release Candidate			240		9/30/10
+// 0.51			Release							244		10/7/10
+// 0.52t		Beta							246		10/16/10
+// 0.52			Release							250		10/25/10
+// 0.53			Release							253		11/2/10
+// 0.54t		Beta							261		11/21/10
+// 0.54t		Release Candidate				265		12/13/10
+// 0.54			Release							283		12/19/10
+// 0.55t		Beta							289		12/23/10
+// 0.55			Release							297		12/31/10
+// 0.56t		Alpha							299		1/1/11
+// 0.56t		1st Beta						304		1/8/11
+// 0.56t		2nd Beta						312		1/14/11
+// 0.56t		1st Release Candidate			328		1/19/11		// Sent out to BETA group on 1/19/11
 
 //===================================================================
 
