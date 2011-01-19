@@ -1034,12 +1034,14 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 		AddSpawnField("tempent", "1");
 		G_SpawnGEntityFromSpawnVars(qtrue);
 		G_FreeEntity(&g_entities[level.tempent]);
+		Com_Printf("Flare blue: %i\n", G_EffectIndex("flare_blue"));
 
 		AddSpawnField("classname", "fx_play_effect");
 		AddSpawnField("effect", "flare_red");
 		AddSpawnField("tempent", "1");
 		G_SpawnGEntityFromSpawnVars(qtrue);
 		G_FreeEntity(&g_entities[level.tempent]);
+		Com_Printf("Flare red: %i\n", G_EffectIndex("flare_red"));
 
 		AddSpawnField("classname", "fx_play_effect");
 		AddSpawnField("effect", "misc/electrical");
@@ -1049,12 +1051,6 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 
 		AddSpawnField("classname", "fx_play_effect");
 		AddSpawnField("effect", "arm2smallsmoke");
-		AddSpawnField("tempent", "1");
-		G_SpawnGEntityFromSpawnVars(qtrue);
-		G_FreeEntity(&g_entities[level.tempent]);
-
-		AddSpawnField("classname", "fx_play_effect");
-		AddSpawnField("effect", "smoke_big");
 		AddSpawnField("tempent", "1");
 		G_SpawnGEntityFromSpawnVars(qtrue);
 		G_FreeEntity(&g_entities[level.tempent]);
@@ -2387,15 +2383,15 @@ void Henk_CheckHS(void)
 
 	// Henk 19/02/10 -> Copy origin of dropped weapon to flare
 	if(g_entities[level.MM1ent].s.pos.trType == TR_STATIONARY && level.MM1Time != 0 && level.gametypeStartTime >= 5000){
-		Effect(g_entities[level.MM1ent].r.currentOrigin, G_EffectIndex("flare_blue"), qfalse);
+		Effect(g_entities[level.MM1ent].r.currentOrigin, "flare_blue", qfalse);
 		level.MM1Time = 0;
 	}
 	if(g_entities[level.M4ent].s.pos.trType == TR_STATIONARY && level.M4Time != 0 && level.gametypeStartTime >= 5000){
-		Effect(g_entities[level.M4ent].r.currentOrigin, G_EffectIndex("flare_red"), qfalse);
+		Effect(g_entities[level.M4ent].r.currentOrigin, "flare_red", qfalse);
 		level.M4Time = 0;
 	}
 	if(g_entities[level.RPGent].s.pos.trType == TR_STATIONARY && level.RPGTime != 0 && level.gametypeStartTime >= 5000){
-		Effect(g_entities[level.RPGent].r.currentOrigin, G_EffectIndex("flare_red"), qtrue);
+		Effect(g_entities[level.RPGent].r.currentOrigin, "flare_red", qtrue);
 		level.RPGTime = 0;
 	}
 	// Henk 19/01/10 -> Last man standing

@@ -544,6 +544,10 @@ void G_SpawnGEntityFromSpawnVars( qboolean inSubBSP )
 				ent->nextthink = level.time+100;
 				level.tempent = ent->s.number;
 		}
+		if(G_ReadingFromEntFile(inSubBSP) && strstr(level.spawnVars[i][1], "flare")){
+			Com_Printf("Ignoring flares in .ent\n");
+			G_FreeEntity(ent);
+		}else
 		G_ParseField( level.spawnVars[i][0], level.spawnVars[i][1], ent );
 	}
 
@@ -606,9 +610,11 @@ void G_SpawnGEntityFromSpawnVars( qboolean inSubBSP )
 	VectorCopy( ent->s.origin, ent->r.currentOrigin );
 
 	// if we didn't get a classname, don't bother spawning anything
-	if ( !G_CallSpawn( ent ) ) 
-	{
-		G_FreeEntity( ent );
+	if(!strstr(ent->classname, "freed")){ // Fix for no class freed
+		if ( !G_CallSpawn( ent ) ) 
+		{
+			G_FreeEntity( ent );
+		}
 	}
 }
 

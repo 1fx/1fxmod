@@ -201,21 +201,20 @@ void SpawnBox		 (vec3_t org)
 	level.numSpawnVarChars = 0;
 }	
 
-void Effect (vec3_t org, int id, qboolean rpg)
+void Effect (vec3_t org, char * name, qboolean rpg)
 {
 	char			*origin;
 	origin = va("%.0f %.0f %.0f", org[0], org[1], org[2]);
 	AddSpawnField("classname", "fx_play_effect");
-	if(id == 2){
-		// Henk  15/01/11 -> For internal use only(no .ent)
-	AddSpawnField("effect",	"flare_red");
-		if(rpg == qtrue){
-			AddSpawnField("rpg", "true");
-		}else{
-			AddSpawnField("rpg", "false");
-		}
+	if(strstr(name, "flare_red")){
+	AddSpawnField("effect",	name);
+	if(rpg == qtrue){
+		AddSpawnField("rpg", "true");
 	}else{
-	AddSpawnField("effect",	"1fx_flare_blue");
+		AddSpawnField("rpg", "false");
+	}
+	}else{
+	AddSpawnField("effect",	name);
 	}
 	AddSpawnField("origin",		origin);
 	AddSpawnField("wait",		"3");
