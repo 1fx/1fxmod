@@ -723,7 +723,7 @@ void G_PlayEffect(int fxID, vec3_t org, vec3_t ang)
 	if(fxID != G_EffectIndex("arm2smallsmoke")){ //chunks/debris_snow
 	te->s.origin[2] = te->s.origin[2];
 	}else{
-	te->s.origin[2] = te->s.origin[2]-10;
+	te->s.origin[2] = te->s.origin[2]-30;
 	}
 	te->s.eventParm = fxID;
 }

@@ -2636,7 +2636,7 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 			}
 		}
 
-		if ( g_teamForceBalance.integer  ) 
+		if ( g_teamForceBalance.integer && forced == qfalse  ) 
 		{
 			int		counts[TEAM_NUM_TEAMS];
 

@@ -925,6 +925,11 @@ void G_UpdateOutfitting ( int clientNum )
 		ammoIndex = weaponData[item->giTag].attack[ATTACK_NORMAL].ammoIndex;
 		client->ps.ammo[ammoIndex] += weaponData[item->giTag].attack[ATTACK_NORMAL].extraClips * weaponData[item->giTag].attack[ATTACK_NORMAL].clipSize;
 		client->ps.clip[ATTACK_NORMAL][item->giTag] = weaponData[item->giTag].attack[ATTACK_NORMAL].clipSize;
+		if(current_gametype.value == GT_HS){
+			if(item->giTag == WP_SMOHG92_GRENADE){
+				client->ps.clip[ATTACK_NORMAL][WP_SMOHG92_GRENADE] = 0; // Henk 19/01/11 -> Fix for 1 nade extra
+			}
+		}
 
 		// Lower group numbers are bigger guns
 		if ( group < equipWeaponGroup )
