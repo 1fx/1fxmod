@@ -197,7 +197,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 			switch ( arg0 )
 			{
 				case TEAM_RED:
-					trap_Cvar_VariableStringBuffer ( "server_redteamprefix", msg, 19 );
+					trap_Cvar_VariableStringBuffer ( "server_hiderteamprefix", msg, 19 );
 					trap_Cvar_VariableStringBuffer ( "server_color1", color1, 4 );
 					trap_Cvar_VariableStringBuffer ( "server_color2", color2, 4 );
 					trap_Cvar_VariableStringBuffer ( "server_color3", color3, 4 );

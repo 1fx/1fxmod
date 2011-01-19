@@ -24,9 +24,9 @@ void Boe_Motd (gentity_t *ent)
 	char *header2;
 
 	if(strstr(INF_VERSION_STRING, "t"))
-		header2 = va("%s", STABLE_VERSION);
-	else
 		header2 = va("%s", TEST_VERSION);
+	else
+		header2 = va("%s", STABLE_VERSION);
 
 	strcpy(name, ent->client->pers.netname);
 
