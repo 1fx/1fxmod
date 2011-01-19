@@ -228,7 +228,7 @@ void Effect (vec3_t org, char * name, qboolean rpg)
 
 void RandomRPGM4(void) // only called when more then 3 alive hiders so we can sort out who gets rpg and m4
 {
-	int clients[32];
+	int clients[64];
 	int	numclients = 0, random, random1, i;
 	for ( i = 0; i < level.numConnectedClients; i ++ )
 	{
@@ -244,11 +244,11 @@ void RandomRPGM4(void) // only called when more then 3 alive hiders so we can so
 	}
 	// here we have an array containing the alive hiders their ent index number
 
-	random = irand(0, numclients);
-	random1 = irand(0, numclients);
+	random = irand(0, numclients-1);
+	random1 = irand(0, numclients-1);
 	if(random1 == random){
 		for(i=0;i<=100;i++){ // do random until we have a good client
-			random1 = irand(0, numclients);
+			random1 = irand(0, numclients-1);
 			if(random1 != random){ // found different
 				break;
 			}

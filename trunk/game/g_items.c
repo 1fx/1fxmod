@@ -1120,7 +1120,7 @@ void G_RunItem( gentity_t *ent )
 	contents = trap_PointContents( ent->r.currentOrigin, -1 );
 	if ( contents & CONTENTS_NODROP ) 
 	{
-		if(current_gametype.value == GT_HS){
+		if(current_gametype.value == GT_HS && ent->item){
 			if(ent->item->giTag == WP_RPG7_LAUNCHER){
 				level.RPGTime = 0;
 				Com_sprintf(level.RPGloc, sizeof(level.RPGloc), "Disappeared");

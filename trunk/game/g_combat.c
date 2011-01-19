@@ -955,7 +955,7 @@ int G_Damage (
 	{
 		return 0;
 	}
-
+		Com_Printf("G_Damage() : %i(MOD_TRIGGER_HURT = %i)\n", mod, MOD_TRIGGER_HURT);
 	// See if they are invulnerable
 	if ( (mod&0xFF) < MOD_WATER )
 	{
@@ -1181,8 +1181,8 @@ if(targ->client->sess.team != attacker->client->sess.team && (mod == WP_RPG7_LAU
 				targ->client->ps.pm_flags |= PMF_TIME_KNOCKBACK;
 			}
 			}
-		} // End H&S stuff
-}
+		}
+} // End H&S stuff
 
 	// check for completely getting out of the damage
 	if ( !(dflags & DAMAGE_NO_PROTECTION) ) {
