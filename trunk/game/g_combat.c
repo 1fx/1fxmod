@@ -955,7 +955,7 @@ int G_Damage (
 	{
 		return 0;
 	}
-		Com_Printf("G_Damage() : %i(MOD_TRIGGER_HURT = %i)\n", mod, MOD_TRIGGER_HURT);
+
 	// See if they are invulnerable
 	if ( (mod&0xFF) < MOD_WATER )
 	{
