@@ -198,12 +198,12 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 			{
 				case TEAM_RED:
 					trap_Cvar_VariableStringBuffer ( "server_hiderteamprefix", msg, 19 );
-					trap_Cvar_VariableStringBuffer ( "server_color1", color1, 4 );
+					/*trap_Cvar_VariableStringBuffer ( "server_color1", color1, 4 );
 					trap_Cvar_VariableStringBuffer ( "server_color2", color2, 4 );
 					trap_Cvar_VariableStringBuffer ( "server_color3", color3, 4 );
 					trap_Cvar_VariableStringBuffer ( "server_color4", color4, 4 );
 					trap_Cvar_VariableStringBuffer ( "server_color5", color5, 4 );
-					trap_Cvar_VariableStringBuffer ( "server_color6", color6, 4 );
+					trap_Cvar_VariableStringBuffer ( "server_color6", color6, 4 );*/
 					trap_Cmd_TextMessage ( -1, va("@%s ^7won!", msg )); // Seekers won
 					trap_Cmd_TextMessage( -1, va("^3[H&S] ^7Seekers won the match\n\""));
 					trap_Cmd_AddTeamScore ( TEAM_BLUE, 1 );
