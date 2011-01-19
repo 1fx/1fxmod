@@ -156,6 +156,17 @@ Boe_Normaldamage
 
 void Boe_NormalDamage(int argNum, gentity_t *ent, qboolean shortCmd){
 	int i, ammoindex;
+
+	// Boe!Man 1/19/11: Disable ND in H&S.
+	if(current_gametype.value == GT_HS){
+		if(ent && ent->client){
+			trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7You cannot switch to Normal Damage in Hide&Seek.\n\""));
+		}else{
+			Com_Printf("^7You cannot switch to Normal Damage in Hide&Seek.\n");
+		}
+		return;
+	}
+
 	g_instagib.integer = 0;
 	BG_InitWeaponStats();
 	for(i=0;i<=level.numConnectedClients;i++){
@@ -183,6 +194,17 @@ Boe_Realdamage
 
 void Boe_RealDamage(int argNum, gentity_t *ent, qboolean shortCmd){
 	int i;
+
+	// Boe!Man 1/19/11: Disable RD in H&S.
+	if(current_gametype.value == GT_HS){
+		if(ent && ent->client){
+			trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7You cannot switch to Real Damage in Hide&Seek.\n\""));
+		}else{
+			Com_Printf("^7You cannot switch to Real Damage in Hide&Seek.\n");
+		}
+		return;
+	}
+
 	g_instagib.integer = 1;
 	BG_InitWeaponStats();
 	for(i=0;i<=level.numConnectedClients;i++){
@@ -310,6 +332,17 @@ Boe_NoNades
 
 void Boe_NoNades(int argNum, gentity_t *ent, qboolean shortCmd){
 	int i;
+
+	// Boe!Man 1/19/11: Disable NN in H&S.
+	if(current_gametype.value == GT_HS){
+		if(ent && ent->client){
+			trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7You cannot enable/disable Nades in Hide&Seek.\n\""));
+		}else{
+			Com_Printf("^7You cannot enable/disable Nades in Hide&Seek.\n");
+		}
+		return;
+	}
+
 	if(g_disablenades.integer == 1){
 		g_disablenades.integer = 0;
 		trap_Cvar_Set("g_disablenades", "0");

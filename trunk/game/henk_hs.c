@@ -304,6 +304,16 @@ void EvenTeams_HS (gentity_t *adm, qboolean aet)
 	if(level.intermissiontime)
 		return;
 
+	// Boe!Man 1/19/11: If teams are locked don't proceed with evening the teams.
+	if(level.blueLocked || level.redLocked){
+		if(adm && adm->client){
+			trap_SendServerCommand( adm - g_entities, va("print \"^3[Info] ^7Teams are locked.\n\"") );
+		}else if (aet == qfalse){
+			Com_Printf("Teams are locked.\n");
+		}
+		return;
+	}
+
 	counts[TEAM_BLUE] = TeamCount1(TEAM_BLUE);
 	counts[TEAM_RED] = TeamCount1(TEAM_RED);
 	totalplayers = counts[TEAM_BLUE]+counts[TEAM_RED];

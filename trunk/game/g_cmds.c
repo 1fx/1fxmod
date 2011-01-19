@@ -1804,9 +1804,9 @@ void EvenTeams (gentity_t *adm, qboolean aet)
 
 	if(level.blueLocked || level.redLocked){
 		if(adm && adm->client)
-			trap_SendServerCommand( adm - g_entities, va("print \"^3[Info] ^7Teams are Locked.\n\"") );
+			trap_SendServerCommand( adm - g_entities, va("print \"^3[Info] ^7Teams are locked.\n\"") );
 		else if (aet == qfalse)
-			Com_Printf("Teams are Locked.\n");
+			Com_Printf("Teams are locked.\n");
 		return;
 
 	}
