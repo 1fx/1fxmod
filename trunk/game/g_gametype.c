@@ -928,19 +928,23 @@ void CheckGametype ( void )
 		// there was someone on that team to begin with.
 		if ( !alive[TEAM_RED] && dead[TEAM_RED] )
 		{	
-			if(level.timelimithit == qtrue){
+			if(level.timelimithit == qtrue && (strstr(g_gametype.string, "inf") || strstr(g_gametype.string, "elim"))){
 				gentity_t*	tent;
 				tent = G_TempEntity( vec3_origin, EV_GAME_OVER );
 				tent->s.eventParm = GAME_OVER_TIMELIMIT;
 				tent->r.svFlags = SVF_BROADCAST;
 				level.timelimithit = qfalse;
+				if(current_gametype.value == GT_HS){
+						Com_Printf("Updating scores..\n");
+						UpdateScores();
+				}
 				LogExit( "Timelimit hit." );
 			}
 			trap_GT_SendEvent ( GTEV_TEAM_ELIMINATED, level.time, TEAM_RED, 0, 0, 0, 0 );
 		}
 		else if ( !alive[TEAM_BLUE] && dead[TEAM_BLUE] )
 		{		
-			if(level.timelimithit == qtrue){
+			if(level.timelimithit == qtrue && (strstr(g_gametype.string, "inf") || strstr(g_gametype.string, "elim"))){
 				gentity_t*	tent;
 				tent = G_TempEntity( vec3_origin, EV_GAME_OVER );
 				tent->s.eventParm = GAME_OVER_TIMELIMIT;
@@ -959,12 +963,16 @@ void CheckGametype ( void )
 				RandomRPGM4();
 			}
 			trap_GT_SendEvent ( GTEV_TIME_EXPIRED, level.time, 0, 0, 0, 0, 0 );
-			if(level.timelimithit == qtrue){
+			if(level.timelimithit == qtrue && (strstr(g_gametype.string, "inf") || strstr(g_gametype.string, "elim"))){
 				gentity_t*	tent;
 				tent = G_TempEntity( vec3_origin, EV_GAME_OVER );
 				tent->s.eventParm = GAME_OVER_TIMELIMIT;
 				tent->r.svFlags = SVF_BROADCAST;
 				level.timelimithit = qfalse;
+				if(current_gametype.value == GT_HS){
+						Com_Printf("Updating scores..\n");
+						UpdateScores();
+				}
 				LogExit( "Timelimit hit." );
 			}
 		} 

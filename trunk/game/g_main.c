@@ -1964,19 +1964,12 @@ void CheckExitRules( void )
 			trap_SendServerCommand( -1, va("print \"^3[Info] ^7Timelimit hit, waiting for round to finish.\n\"") );
 			level.timelimithit = qtrue;
 			}else{
-				if(current_gametype.value == GT_HS){
-				Com_Printf("Updating scores..\n");
-				UpdateScores();
-				LogExit("Timelimit hit.");
-				}else{
 				gentity_t*	tent;
 				tent = G_TempEntity( vec3_origin, EV_GAME_OVER );
 				tent->s.eventParm = GAME_OVER_TIMELIMIT;
 				tent->r.svFlags = SVF_BROADCAST;
 
 				LogExit( "Timelimit hit." );
-				}
-				return;
 			}
 			return;
 		}
