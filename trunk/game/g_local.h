@@ -1127,6 +1127,8 @@ extern	vmCvar_t	g_teamkillDamageMax;
 extern	vmCvar_t	g_teamkillDamageForgive;
 extern	vmCvar_t	g_voiceFloodCount;
 extern	vmCvar_t	g_voiceFloodPenalty;
+extern	vmCvar_t	server_hiderteamprefix;
+extern	vmCvar_t	server_seekerteamprefix;
 
 void	trap_Printf( const char *fmt );
 void	trap_Error( const char *fmt );

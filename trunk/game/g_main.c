@@ -139,6 +139,9 @@ vmCvar_t	ClanURL;
 // Boe!Man 4/1/10
 vmCvar_t	server_redteamprefix;
 vmCvar_t	server_blueteamprefix;
+// Boe!Man 1/19/11
+vmCvar_t	server_hiderteamprefix;
+vmCvar_t	server_seekerteamprefix;
 // Henk 01/04/10 -> Add g_disablenades
 vmCvar_t	g_disablenades;
 vmCvar_t	g_instagib;
@@ -382,6 +385,8 @@ static cvarTable_t gameCvarTable[] =
 
 	{ &server_redteamprefix, "server_redteamprefix", "^$R^Te^Hd", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_blueteamprefix, "server_blueteamprefix", "^yB^Il^fu^+e", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
+	{ &server_hiderteamprefix, "server_hiderteamprefix", "^1H^Ti^od^qe^+r^7s", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
+	{ &server_hiderteamprefix, "server_seekerteamprefix", "^yS^le^le^+k^7ers", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &g_instagib, "g_instagib", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 	{ &g_weaponModFlags, "g_weaponModFlags", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_allowthirdperson, "g_allowThirdPerson", "1", CVAR_ARCHIVE|CVAR_SERVERINFO, 0.0, 0.0, 0,  qfalse },
@@ -2813,6 +2818,9 @@ void G_RunFrame( int levelTime )
 			else if(level.time == level.mapSwitchCount + 4000){
 				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp %sr%se%sstart in 1!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));}
 			else if(level.time == level.mapSwitchCount + 5000){
+				if(current_gametype.value == GT_HS){
+					trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype h&s\n"));
+				}
 				trap_SendConsoleCommand( EXEC_APPEND, va("map_restart 0\n"));
 			}
 			}
@@ -2827,6 +2835,9 @@ void G_RunFrame( int levelTime )
 			else if(level.time == level.mapSwitchCount + 4000){
 				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp ^7%s in 1!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, level.mapSwitchName));}
 			else if(level.time == level.mapSwitchCount + 5000){
+				if(current_gametype.value == GT_HS){
+					trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype h&s\n"));
+				}
 				trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", level.mapSwitchName));}
 		}
 		else if(level.mapAction == 3){

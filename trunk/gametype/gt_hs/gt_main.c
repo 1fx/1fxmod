@@ -204,7 +204,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 					trap_Cvar_VariableStringBuffer ( "server_color4", color4, 4 );
 					trap_Cvar_VariableStringBuffer ( "server_color5", color5, 4 );
 					trap_Cvar_VariableStringBuffer ( "server_color6", color6, 4 );
-					trap_Cmd_TextMessage ( -1, va("@Seekers!"/*, msg, color1, color2, color3, color4, color5, color6*/ )); // red team eliminated
+					trap_Cmd_TextMessage ( -1, va("@%s ^7won!", msg )); // Seekers won
 					trap_Cmd_TextMessage( -1, va("^3[H&S] ^7Seekers won the match\n\""));
 					trap_Cmd_AddTeamScore ( TEAM_BLUE, 1 );
 					trap_Cmd_Restart ( 5 );
@@ -228,14 +228,8 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 			break;
 
 		case GTEV_TIME_EXPIRED:
-			trap_Cvar_VariableStringBuffer ( "server_redteamprefix", msg, 19 );
-			trap_Cvar_VariableStringBuffer ( "server_color1", color1, 4 );
-			trap_Cvar_VariableStringBuffer ( "server_color2", color2, 4 );
-			trap_Cvar_VariableStringBuffer ( "server_color3", color3, 4 );
-			trap_Cvar_VariableStringBuffer ( "server_color4", color4, 4 );
-			trap_Cvar_VariableStringBuffer ( "server_color5", color5, 4 );
-			trap_Cvar_VariableStringBuffer ( "server_color6", color6, 4 );
-			trap_Cmd_TextMessage ( -1, va("@Hiders won!", msg, color1, color2, color3, color4, color5, color6 )); // defended
+			trap_Cvar_VariableStringBuffer ( "server_hiderteamprefix", msg, 19 );
+			trap_Cmd_TextMessage ( -1, va("@%s ^7won!", msg )); // Defended, thus Hiders won
 			trap_Cmd_TextMessage( -1, va("^3[H&S] ^7Hiders won the match\n\""));
 			trap_Cmd_AddTeamScore ( TEAM_RED, 1 );
 			trap_Cmd_Restart ( 5 );
