@@ -397,7 +397,7 @@ void	SpawnBox(vec3_t org);
 void	StripHiders(void);
 void	SetupOutfitting(void);
 // Henk 19/02/10 -> Add Flares
-void	Effect(vec3_t org, int id, qboolean rpg);
+void	Effect(vec3_t org, char *name, qboolean rpg);
 
 // Henk 20/02/10 -> Add UpdateScores()
 void	UpdateScores(void);

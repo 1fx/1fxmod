@@ -544,7 +544,7 @@ void G_SpawnGEntityFromSpawnVars( qboolean inSubBSP )
 				ent->nextthink = level.time+100;
 				level.tempent = ent->s.number;
 		}
-		if(G_ReadingFromEntFile(inSubBSP) && strstr(level.spawnVars[i][1], "flare")){
+		if(G_ReadingFromEntFile(inSubBSP) && strstr(level.spawnVars[i][1], "flare") && current_gametype.value == GT_HS){
 			Com_Printf("Ignoring flares in .ent\n");
 			G_FreeEntity(ent);
 		}else

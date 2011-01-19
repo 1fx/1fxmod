@@ -1547,7 +1547,6 @@ void Boe_Ban_f (int argNum, gentity_t *adm, qboolean shortCmd)
 	char *temp = "";
 	qboolean first = qfalse;
 	idnum = Boe_ClientNumFromArg(adm, argNum, "ban <idnumber> <reason>", "ban", qfalse, qfalse, shortCmd);
-	Com_Printf("You have banned id #%i\n", idnum);
 	if(idnum < 0)
 		return;
 	if(adm){
@@ -1566,6 +1565,9 @@ void Boe_Ban_f (int argNum, gentity_t *adm, qboolean shortCmd)
 			}
 			strcpy(reason, temp);
 		}
+	}else{
+		trap_Argv( argNum+1, arg, sizeof( arg ) );
+		strcpy(reason, arg);
 	}
 	// Boe!Man 9/7/10: Example of ban.
 		trap_FS_FOpenFile( va("users/baninfo/%s.IP", g_entities[idnum].client->pers.ip), &f, FS_WRITE );

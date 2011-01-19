@@ -237,6 +237,8 @@ void RandomRPGM4(void) // only called when more then 3 alive hiders so we can so
 				continue;
 			if(G_IsClientDead(ent->client))
 				continue;
+			if(ent->s.number < 0 || ent->s.number > 64)
+				continue;
 			clients[i] = ent->s.number;
 			numclients += 1;		
 	}
