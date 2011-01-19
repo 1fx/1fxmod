@@ -1193,6 +1193,7 @@ void Boe_Print_File (gentity_t *ent, char *file, qboolean clonecheckstats, int i
 				else{
 					// Boe!Man 11/15/10: Is the alias string not as long?
 					if(strlen(packet2) != nameLength){
+						packet2[strlen(packet2)] = '\0'; // Henk 19/01/11 -> Fixed weird chars at end
 						trap_SendServerCommand( ent-g_entities, va("print \"\n              %s\"", packet2));
 						anAlias = qtrue;
 						aliasCount += 1;
@@ -1200,6 +1201,7 @@ void Boe_Print_File (gentity_t *ent, char *file, qboolean clonecheckstats, int i
 					// Boe!Man 11/15/10: If it is as long as the cleanName, does it contain the same?
 					else if(strlen(packet2) == nameLength){
 						if(!strstr(cleanName, packet2)){
+							packet2[strlen(packet2)] = '\0';  // Henk 19/01/11 -> Fixed weird chars at end
 							trap_SendServerCommand( ent-g_entities, va("print \"\n              %s\"", packet2));
 							anAlias = qtrue; 
 							aliasCount += 1;

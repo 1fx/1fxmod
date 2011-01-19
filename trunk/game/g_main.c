@@ -2496,7 +2496,7 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 			Com_sprintf(level.RPGloc, sizeof(level.RPGloc), "%s", g_entities[level.lastalive[0]].client->pers.netname);
 			level.RPGent = -1;
 			level.RPGTime = 0;
-			trap_SendServerCommand(-1, va("print\"^3[H&S] ^7RPG given to round winner %s.\n\"", g_entities[level.lastalive[0]].client->pers.cleanName));
+			trap_SendServerCommand(-1, va("print\"^3[H&S] ^7RPG given to round winner %s.\n\"", g_entities[level.lastalive[0]].client->pers.netname));
 			level.lastalive[0] = -1;
 			// End
 		}else{ // Henk 26/01/10 -> Drop RPG at red spawn.

@@ -370,8 +370,8 @@ void EvenTeams_HS (gentity_t *adm, qboolean aet)
 			}
 		} 
 
+		TossClientItems( lastConnected ); // Henk 19/01/11 -> Fixed items not dropping with !et
 		lastConnected->client->ps.stats[STAT_WEAPONS] = 0;
-		TossClientItems( lastConnected );
 		G_StartGhosting( lastConnected );
 
 		if(highTeam == TEAM_RED)
