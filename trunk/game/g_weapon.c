@@ -464,7 +464,7 @@ void G_FireBullet ( gentity_t* ent, int weapon, int attack )
 		vectoangles(fwd, fireAngs);
 	}
 */	// KRIS
-
+		
 	// Run a trace for each pellet being fired
 	for (i = 0; i < attackDat->pellets; i++) 
 	{

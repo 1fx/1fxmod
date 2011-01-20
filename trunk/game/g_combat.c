@@ -1300,7 +1300,6 @@ if(targ->client->sess.team != attacker->client->sess.team && (mod == WP_RPG7_LAU
 			client->damage_armor += asave;
 			client->damage_blood += take;
 		}
-
 		client->damage_knockback += knockback;
 
 		if ( dir )

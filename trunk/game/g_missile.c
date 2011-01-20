@@ -345,8 +345,9 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace )
 			d = G_Damage(other, ent, &g_entities[ent->r.ownerNum], velocity, 
 					 ent->s.origin, ent->damage, ent->dflags, 
 					 ent->methodOfDeath, location );
-
-			if ( d && other->client )
+			if(current_gametype.value == GT_HS && ent->methodOfDeath == 257)
+				d = 1;
+			if ( d && other->client)
 			{
 				gentity_t *tent;
 				vec3_t hitdir;
@@ -370,7 +371,6 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace )
 					}
 				}
 				//Ryan
-
 				// Put some procedural gore on the target.
 				tent = G_TempEntity( ent->r.currentOrigin, EV_EXPLOSION_HIT_FLESH );
 				
@@ -396,7 +396,7 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace )
 	// is it cheaper in bandwidth to just remove this ent and create a new
 	// one, rather than changing the missile into the explosion?
 
-	if ( d && other->client ) 
+	if ( d && other->client) 
 	{
 		G_AddEvent( ent, EV_MISSILE_HIT, 
 					(DirToByte( trace->plane.normal ) << MATERIAL_BITS) | (trace->surfaceFlags & MATERIAL_MASK));
