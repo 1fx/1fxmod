@@ -3791,6 +3791,8 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 				RPM_lockTeam(ent, qtrue, "red");
 			}else if(strstr(p, "s") || strstr(p, "spec")){
 				RPM_lockTeam(ent, qtrue, "spec");
+			}else if(strstr(p, "a") || strstr(p, "all")){
+				RPM_lockTeam(ent, qtrue, "all");
 			}else{
 				trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Unknown team entered.\n\""));
 				return;}
@@ -5404,7 +5406,7 @@ void Boe_adm_f ( gentity_t *ent )
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   ro  runover      <id>          ^7[^3Boost a player backwards^7]\n\"", g_runover.integer));
 		}
 	if (adm >= g_maprestart.integer && g_maprestart.integer != 5 && g_maprestart.integer == level){
-		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   mr  maprestart   <id>          ^7[^3Restart the current map^7]\n\"", g_maprestart.integer));
+		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   mr  maprestart                 ^7[^3Restart the current map^7]\n\"", g_maprestart.integer));
 		}
 	if (adm >= g_flash.integer && g_flash.integer != 5 && g_flash.integer == level){
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   fl  flash        <id>          ^7[^3Flash a player^7]\n\"", g_flash.integer));

@@ -319,6 +319,26 @@ void RPM_lockTeam(gentity_t *ent, qboolean referee, char *team)
 				trap_SendServerCommand( ent-g_entities, va("print \"^3[Referee Action] ^7%s has locked the Spectators.\n\"", ent->client->pers.netname));
 				///End  - 09.18.06 - 04:47pm
 			}
+		}else if(team[0] == 'a' || team[0] == 'A')
+		{
+			if(level.specsLocked)
+			{
+				level.specsLocked = 0;
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7has un%sl%so%sc%sk%se%sd all the teams", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string) );
+				if (ent->client->sess.admin > 1)
+				trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7%s has unlocked all the teams.\n\"", ent->client->pers.netname));
+				else
+				trap_SendServerCommand( ent-g_entities, va("print \"^3[Referee Action] ^7%s has unlocked all the teams.\n\"", ent->client->pers.netname));
+			}
+			else
+			{
+				level.specsLocked = 1;
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7has %sl%so%sc%sk%se%sd all the teams", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string) );
+				if (ent->client->sess.admin > 1)
+				trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7%s has locked all the teams.\n\"", ent->client->pers.netname));
+				else
+				trap_SendServerCommand( ent-g_entities, va("print \"^3[Referee Action] ^7%s has locked all the teams.\n\"", ent->client->pers.netname));
+			}
 		}
 		// Boe!Man 5/3/10: We don't need this anymore because the function checks for the correct team.
 		/*
