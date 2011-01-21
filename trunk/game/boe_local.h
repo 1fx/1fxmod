@@ -413,3 +413,8 @@ void Use_BinaryMover( gentity_t *ent, gentity_t *other, gentity_t *activator );
 gentity_t* G_RealSpawnGametypeItem ( gitem_t* item, vec3_t origin, vec3_t angles, qboolean dropped );
 void RandomRPGM4(void);
 void G_RespawnClients ( qboolean force, team_t team, qboolean fullRestart );
+void Henk_EvenTeams(int argNum, gentity_t *adm, qboolean shortCmd);
+void Henk_CVA(int argNum, gentity_t *adm, qboolean shortCmd);
+void Henk_SwapTeams(int argNum, gentity_t *adm, qboolean shortCmd);
+void Henk_Lock(int argNum, gentity_t *adm, qboolean shortCmd);
+void Henk_Map(int argNum, gentity_t *adm, qboolean shortCmd);

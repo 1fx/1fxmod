@@ -55,7 +55,12 @@ static admCmd_t AdminCommands[] =
 	{"!bl", "banlist", &g_ban.integer, &Boe_BanList},
 	{"!ba ", "ban", &g_ban.integer, &Boe_Ban_f},
 	{"!br ", "broadcast", &g_broadcast.integer, &Boe_Broadcast},
-	{"!sbl", "subnetbanlist", &g_subnetban.integer, &Boe_SubnetBanlist}
+	{"!sbl", "subnetbanlist", &g_subnetban.integer, &Boe_SubnetBanlist},
+	{"!et", "eventeams", &g_eventeams.integer, &Henk_EvenTeams},
+	{"!cva", "clanvsall", &g_clanvsall.integer, &Henk_CVA},
+	{"!sw", "swapteams", &g_swapteams.integer, &Henk_SwapTeams},
+	{"!l ", "lock", &g_lock.integer, &Henk_Lock},
+	{"!map ", "map", &g_maprestart.integer, &Henk_Map}
 };
 
 static int AdminCommandsSize = sizeof( AdminCommands ) / sizeof( AdminCommands[0] );
@@ -3734,20 +3739,16 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 				AdminCommands[i].Function(1, ent, qtrue);
 				break;
 			}else{
+				if(ent->client->sess.referee == 1 && strstr(Q_strlwr(test), "!l")){ // exception for referee lock
+					Henk_Lock(1, ent, qtrue);
+				}
 				trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
 			}
 		}
 	}
 	// End
 	
-	if ((strstr(p, "!et")) || (strstr(p, "!eventeams"))) {
-		if (ent->client->sess.admin >= g_eventeams.integer){
-			EvenTeams(ent, qfalse);
-		}
-		G_Say( ent, NULL, mode, p);
-		return;
-	}
-	/*else if ((strstr(p, "!333"))) {
+		/*else if ((strstr(p, "!333"))) {
 		if (ent->client->sess.admin >= g_333.integer){
 			// disable 333
 			if(pmove_fixed.value == 0){
@@ -3769,41 +3770,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		G_Say( ent, NULL, mode, p);
 		return;
 	}*/
-	else if(strstr(p, "!cva")){
-		if (ent->client->sess.admin >= g_clanvsall.integer){
-			RPM_Clan_Vs_All(ent);
-		}
-		G_Say( ent, NULL, mode, p);
-		return;
-	}
-	else if(strstr(p, "!sw") || strstr(p, "!swapteams")){
-		if (ent->client->sess.admin >= g_swapteams.integer){
-			Boe_SwapTeams(ent);
-		}
-		G_Say( ent, NULL, mode, p);
-		return;
-	}
-	else if(strstr(p, "!l ") || strstr(p, "!lock ")){
-		if (ent->client->sess.admin >= g_lock.integer || ent->client->sess.referee == 1){
-			if(strstr(p, "b") || strstr(p, "blue")){
-				RPM_lockTeam(ent, qtrue, "blue");
-			}else if(strstr(p, "r") || strstr(p, "red")){
-				RPM_lockTeam(ent, qtrue, "red");
-			}else if(strstr(p, "s") || strstr(p, "spec")){
-				RPM_lockTeam(ent, qtrue, "spec");
-			}else if(strstr(p, "a") || strstr(p, "all")){
-				RPM_lockTeam(ent, qtrue, "all");
-			}else{
-				trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Unknown team entered.\n\""));
-				return;}
-			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-		}else if (ent->client->sess.admin < g_lock.integer){
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
-		}
-		G_Say( ent, NULL, mode, p);
-		return;
-	}
-	else if ((strstr(p, "!fl ")) || (strstr(p, "!flash "))){
+	if ((strstr(p, "!fl ")) || (strstr(p, "!flash "))){
 		if (ent->client->sess.admin >= g_flash.integer){
 			id = Boe_ClientNumFromArg (ent, 1, "flash <id>", "flash", qtrue, qtrue, qtrue);
 			if(id < 0) return;
@@ -3837,56 +3804,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		G_Say( ent, NULL, mode, p);
 		return;
 	}	
-	else if(strstr(p, "!map ")){
-		if (ent->client->sess.admin >= 4){
-			char *numb;
-			char map[64];
-			int i;
-			fileHandle_t	f;
-			if(strlen(p) >= 5){
-				for(i=0;i<=20;i++){
-					if(p[i] == ' '){
-						numb = va("%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", p[i+1], p[i+2], p[i+3], p[i+4], p[i+5], p[i+6], p[i+7], p[i+8], p[i+9], p[i+10], p[i+11], p[i+12], p[i+13], p[i+14], p[i+15]);
-						break;
-					}
-				}
-				strcpy(map, va("%s", numb)); // copy to static
-				trap_FS_FOpenFile( va("maps\\%s.bsp", map), &f, FS_READ );
-				if ( !f ){
-					trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Map not found.\n\""));
-					return;
-				}	
-				trap_FS_FCloseFile(f);
-				
-				//trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sT%si%sm%se%sl%simit %i!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, number));
-				//trap_SendServerCommand( ent-g_entities, va("print \"^3[Admin Action] ^7Timelimit changed to %i by %s.\n\"", number, ent->client->pers.netname));
-				// Boe!Man 11/2/10: New Map Switch/Restart system.
-				if(level.mapSwitch == qfalse){
-				level.mapSwitch = qtrue;
-				level.mapAction = 2;
-				level.mapSwitchCount = level.time;
-				strcpy(level.mapSwitchName, map);
-				Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-				trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Map switch to %s by %s.\n\"", map, ent->client->pers.netname));
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp ^7%s in 5!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, map));
-				Boe_adminLog (va("%s - MAP CHANGE TO %s", ent->client->pers.cleanName, map)) ;
-				}else{
-					if(level.mapAction == 1){
-						trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7A map restart is already in progress.\n\""));}
-					else if(level.mapAction == 2){
-						trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7A map switch is already in progress.\n\""));}
-					else{
-						trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7Something appears to be wrong. Please report to a developer using this error code: 2L\n\""));}
-				}
-				//trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", map));
-				G_Say( ent, NULL, mode, p);
-				//Boe_adminLog (va("%s - TIMELIMIT %i", ent->client->pers.cleanName, number)) ;
-			}
-		}else if (ent->client->sess.admin < 4){
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
-		}
-		return;
-	}else if(strstr(p, "!gt ") || strstr(p, "!g ")){
+	else if(strstr(p, "!gt ") || strstr(p, "!g ")){
 		// Boe!Man 12/16/10: New Gametype Switch system.
 		if (ent->client->sess.admin >= 4){
 			char gametype[8];

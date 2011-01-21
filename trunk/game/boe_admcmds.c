@@ -2560,3 +2560,82 @@ void Boe_SubnetBanlist (int argNum, gentity_t *adm, qboolean shortCmd)
 	trap_SendServerCommand( adm-g_entities, va("print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\""));
 	return;
 }
+
+void Henk_EvenTeams(int argNum, gentity_t *adm, qboolean shortCmd){
+	EvenTeams(adm, qfalse);
+}
+
+void Henk_CVA(int argNum, gentity_t *adm, qboolean shortCmd){
+	RPM_Clan_Vs_All(adm);
+}
+
+void Henk_SwapTeams(int argNum, gentity_t *adm, qboolean shortCmd){
+	Boe_SwapTeams(adm);
+}
+
+void Henk_Lock(int argNum, gentity_t *adm, qboolean shortCmd){
+	char	arg[16] = "\0"; // increase buffer so we can process more commands
+
+	trap_Argv( argNum, arg, sizeof( arg ) );
+
+	if(strstr(Q_strlwr(arg), "b") || strstr(Q_strlwr(arg), "blue")){
+		RPM_lockTeam(adm, qtrue, "blue");
+	}else if(strstr(Q_strlwr(arg), "r") || strstr(Q_strlwr(arg), "red")){
+		RPM_lockTeam(adm, qtrue, "red");
+	}else if(strstr(Q_strlwr(arg), "s") || strstr(Q_strlwr(arg), "spec")){
+		RPM_lockTeam(adm, qtrue, "spec");
+	}else if(strstr(Q_strlwr(arg), "a") || strstr(Q_strlwr(arg), "all")){
+		RPM_lockTeam(adm, qtrue, "all");
+	}else{
+		trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Unknown team entered.\n\""));
+		return;
+	}
+	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+}
+
+void Henk_Map(int argNum, gentity_t *adm, qboolean shortCmd){
+	char *numb;
+	char map[64];
+	int i;
+	fileHandle_t	f;
+	char	arg[32] = "\0"; // increase buffer so we can process more commands
+
+	trap_Argv( argNum, arg, sizeof( arg ) );
+	if(strlen(arg) >= 3){
+		if(shortCmd){
+			for(i=0;i<=20;i++){
+				if(arg[i] == ' '){
+					numb = va("%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", arg[i+1], arg[i+2], arg[i+3], arg[i+4], arg[i+5], arg[i+6], arg[i+7], arg[i+8], arg[i+9], arg[i+10], arg[i+11], arg[i+12], arg[i+13], arg[i+14], arg[i+15]);
+					break;
+				}
+			}
+			strcpy(map, va("%s", numb)); // copy to static
+		}else{
+			strcpy(map, arg);
+		}
+		trap_FS_FOpenFile( va("maps\\%s.bsp", map), &f, FS_READ );
+		if ( !f ){
+			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Map not found.\n\""));
+			return;
+		}	
+		trap_FS_FCloseFile(f);
+
+		if(level.mapSwitch == qfalse){
+			level.mapSwitch = qtrue;
+			level.mapAction = 2;
+			level.mapSwitchCount = level.time;
+			strcpy(level.mapSwitchName, map);
+			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Map switch to %s by %s.\n\"", map, adm->client->pers.netname));
+			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp ^7%s in 5!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, map));
+			Boe_adminLog (va("%s - MAP CHANGE TO %s", adm->client->pers.cleanName, map)) ;
+		}else{
+			if(level.mapAction == 1)
+				trap_SendServerCommand(adm-g_entities, va("print\"^3[Info] ^7A map restart is already in progress.\n\""));
+			else if(level.mapAction == 2)
+				trap_SendServerCommand(adm-g_entities, va("print\"^3[Info] ^7A map switch is already in progress.\n\""));
+			else
+				trap_SendServerCommand(adm-g_entities, va("print\"^3[Info] ^7Something appears to be wrong. Please report to a developer using this error code: 2L\n\""));
+		}
+	}
+}
