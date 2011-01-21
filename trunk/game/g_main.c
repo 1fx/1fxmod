@@ -2544,7 +2544,7 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 			trap_SendServerCommand(-1, va("print\"^3[H&S] ^7RPG has spawned somewhere.\n\""));
 			*/
 		}
-		if(g_entities[level.lastalive[1]].client && level.lastalive[1] != -1 && g_entities[level.lastalive[1]].inuse && level.lastalive[1] != level.lastalive[0]  && g_entities[level.lastalive[1]].client->sess.team == TEAM_RED && !G_IsClientDead(g_entities[level.lastalive[1]].client) && g_entities[level.lastalive[1]].client->pers.connected == CON_CONNECTED){ // Henkie 01/02/10 -> Fixed M4 spawn bug causing cvar update crash
+		if((!g_entities[level.sortedClients[level.lastalive[1]]].client->ps.stats[STAT_WEAPONS] & ( 1 << WP_RPG7_LAUNCHER )) && g_entities[level.lastalive[1]].client && level.lastalive[1] != -1 && g_entities[level.lastalive[1]].inuse && level.lastalive[1] != level.lastalive[0] && g_entities[level.lastalive[1]].client->sess.team == TEAM_RED && !G_IsClientDead(g_entities[level.lastalive[1]].client) && g_entities[level.lastalive[1]].client->pers.connected == CON_CONNECTED){ // Henkie 01/02/10 -> Fixed M4 spawn bug causing cvar update crash
 			//trap_SendServerCommand (-1, va("print\"^3[H&S] ^7Debug: M4 to %s.\n\"", g_entities[level.lastalive[1]].client->pers.cleanName ));
 			// Henk 26/01/10 -> Give M4 to player
 			g_entities[level.lastalive[1]].client->ps.ammo[weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_ALTERNATE].ammoIndex]=2; // not 3 because 1 in clip
