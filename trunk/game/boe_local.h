@@ -175,7 +175,7 @@ void	Boe_Runover (int argNum, gentity_t *adm, qboolean shortCmd);
 
 void	G_ApplyKnockback( gentity_t *targ, vec3_t newDir, float knockback );	// Prototype warnings.
 
-extern	vmCvar_t	g_maprestart;
+extern	vmCvar_t	g_mapswitch;
 
 void	Boe_Flash(int argNum, gentity_t *ent, qboolean shortCmd);
 extern	vmCvar_t	g_flash;

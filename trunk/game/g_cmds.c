@@ -17,6 +17,47 @@ typedef struct
 
 static admCmd_t AdminCommands[] = 
 {
+	// Boe!Man 1/22/11: Adding full synonyms.
+	{"!uppercut ", "uppercut", &g_uppercut.integer, &Boe_Uppercut},
+	{"!pop ", "pop", &g_pop.integer, &Boe_pop},
+	{"!kick ", "kick", &g_kick.integer, &Boe_Kick},
+	{"!addbadmin ", "addbadmin", &g_addbadmin.integer, &Boe_Add_bAdmin_f},
+	{"!addadmin ", "addadmin", &g_addadmin.integer, &Boe_Add_Admin_f},
+	{"!addsadmin ", "addsadmin", &g_addsadmin.integer, &Boe_Add_sAdmin_f},
+	{"!twist ", "twist", &g_twist.integer, &Boe_Twist},
+	{"!untwist ", "untwist", &g_twist.integer, &Boe_unTwist},
+	{"!plant ", "plant", &g_plant.integer, &Boe_Plant},
+	{"!unplant ", "unplant", &g_plant.integer, &Boe_unPlant},
+	{"!runover ", "runover", &g_runover.integer, &Boe_Runover},
+	{"!respawn ", "respawn", &g_respawn.integer, &Boe_Respawn},
+	{"!maprestart", "maprestart", &g_mapswitch.integer, &Boe_MapRestart},
+	{"!burn ", "burn", &g_burn.integer, &Boe_Burn},
+	{"!mute ", "mute", &g_mute.integer, &Boe_XMute},
+	{"!unmute ", "unmute", &g_mute.integer, &Boe_UnMute},
+	{"!strip ", "strip", &g_strip.integer, &Boe_Strip},
+	{"!removeadmin ", "removeadmin", &g_removeadmin.integer, &Boe_Remove_Admin_f},
+	{"!forceteam ", "forceteam", &g_forceteam.integer, &Adm_ForceTeam},
+	{"!nolower", "nolower", &g_nolower.integer, &Boe_NoLower},
+	{"!nonades", "nonades", &g_nades.integer, &Boe_NoNades},
+	{"!scorelimit", "scorelimit", &g_sl.integer, &Boe_ScoreLimit},
+	{"!timelimit", "timelimit", &g_tl.integer, &Boe_TimeLimit},
+	{"!respawninterval ", "respawninterval", &g_ri.integer, &Boe_RespawnInterval},
+	{"!realdamage", "realdamage", &g_damage.integer, &Boe_RealDamage},
+	{"!normaldamage", "normaldamage", &g_damage.integer, &Boe_NormalDamage},
+	{"!gametyperestart", "gametyperestart", &g_gr.integer, &Boe_GametypeRestart},
+	{"!addclan ", "addclan", &g_clan.integer, &Boe_Add_Clan_Member},
+	{"!removeclan ", "removeclan", &g_clan.integer, &Boe_Remove_Clan_Member},
+	{"!compmode", "compmode", &g_clan.integer, &Boe_CompMode},
+	{"!competitionmode", "compmode", &g_clan.integer, &Boe_CompMode},
+	{"!banlist", "banlist", &g_ban.integer, &Boe_BanList},
+	{"!ban ", "ban", &g_ban.integer, &Boe_Ban_f},
+	{"!broadcast ", "broadcast", &g_broadcast.integer, &Boe_Broadcast},
+	{"!subnetbanlist", "subnetbanlist", &g_subnetban.integer, &Boe_SubnetBanlist},
+	{"!eventeams", "eventeams", &g_eventeams.integer, &Henk_EvenTeams},
+	{"!clanvsall", "clanvsall", &g_clanvsall.integer, &Henk_CVA},
+	{"!swapteams", "swapteams", &g_swapteams.integer, &Henk_SwapTeams},
+	{"!lock ", "lock", &g_lock.integer, &Henk_Lock},
+	// Boe!Man 1/22/11: End full synonyms.
 	{"!uc ", "uppercut", &g_uppercut.integer, &Boe_Uppercut},
 	{"!u ", "uppercut", &g_uppercut.integer, &Boe_Uppercut},
 	{"!p ", "pop", &g_pop.integer, &Boe_pop},
@@ -31,7 +72,7 @@ static admCmd_t AdminCommands[] =
 	{"!ro ", "runover", &g_runover.integer, &Boe_Runover},
 	{"!r ", "respawn", &g_respawn.integer, &Boe_Respawn},
 	{"!rs ", "respawn", &g_respawn.integer, &Boe_Respawn}, // this is how we add synonyms
-	{"!mr", "maprestart", &g_maprestart.integer, &Boe_MapRestart},
+	{"!mr", "maprestart", &g_mapswitch.integer, &Boe_MapRestart},
 	{"!b ", "burn", &g_burn.integer, &Boe_Burn},
 	{"!m ", "mute", &g_mute.integer, &Boe_XMute},
 	{"!um ", "unmute", &g_mute.integer, &Boe_UnMute},
@@ -60,7 +101,7 @@ static admCmd_t AdminCommands[] =
 	{"!cva", "clanvsall", &g_clanvsall.integer, &Henk_CVA},
 	{"!sw", "swapteams", &g_swapteams.integer, &Henk_SwapTeams},
 	{"!l ", "lock", &g_lock.integer, &Henk_Lock},
-	{"!map ", "map", &g_maprestart.integer, &Henk_Map}
+	{"!map ", "map", &g_mapswitch.integer, &Henk_Map}
 };
 
 static int AdminCommandsSize = sizeof( AdminCommands ) / sizeof( AdminCommands[0] );
@@ -1903,13 +1944,16 @@ void EvenTeams (gentity_t *adm, qboolean aet)
 	Boe_GlobalSound (G_SoundIndex("sound/misc/events/tut_lift02.mp3"));
 	
 	if(adm && adm->client) {
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sE%sv%se%sn%si%sng teams!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Eventeams by %s.\n\"", adm->client->pers.netname));
 		Boe_adminLog (va("%s - EVENTEAMS", adm->client->pers.cleanName)) ;
-	} else if (aet == qfalse){
+	}else if (aet == qfalse){
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sE%sv%se%sn%si%sng teams!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Eventeams.\n\""));
 		Boe_adminLog (va("RCON - EVENTEAMS")) ;
-	} else
+	}else{
 		trap_SendServerCommand(-1, va("print\"^3[Auto Action] ^7Eventeams.\n\""));
+	}
 }
 
 /*
@@ -5323,8 +5367,8 @@ void Boe_adm_f ( gentity_t *ent )
 	if (adm >= g_runover.integer && g_runover.integer != 5 && g_runover.integer == level){
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   ro  runover      <id>          ^7[^3Boost a player backwards^7]\n\"", g_runover.integer));
 		}
-	if (adm >= g_maprestart.integer && g_maprestart.integer != 5 && g_maprestart.integer == level){
-		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   mr  maprestart                 ^7[^3Restart the current map^7]\n\"", g_maprestart.integer));
+	if (adm >= g_mapswitch.integer && g_mapswitch.integer != 5 && g_mapswitch.integer == level){
+		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   mr  maprestart                 ^7[^3Restart the current map^7]\n\"", g_mapswitch.integer));
 		}
 	if (adm >= g_flash.integer && g_flash.integer != 5 && g_flash.integer == level){
 		trap_SendServerCommand( ent-g_entities, va("print \" [^3%i^7]   fl  flash        <id>          ^7[^3Flash a player^7]\n\"", g_flash.integer));

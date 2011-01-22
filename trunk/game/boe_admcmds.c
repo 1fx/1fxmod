@@ -2442,9 +2442,9 @@ void Boe_SwapTeams(gentity_t *adm)
 
 	if(!level.gametypeData->teams) {
 		if(adm && adm->client) {
-			trap_SendServerCommand( adm - g_entities, va("print \"Not playing a team game.\n\"") );
+			trap_SendServerCommand( adm - g_entities, va("print \"^3[Info] ^7Currently not playing a team game.\n\"") );
 			} else {
-			Com_Printf("Not playing a team game.\n");}
+			Com_Printf("^7Currently not playing a team game.\n");}
 		return;
 	}
 
@@ -2525,25 +2525,21 @@ void Boe_SwapTeams(gentity_t *adm)
 			trap_SetConfigstring ( CS_GAMETYPE_TIMER, va("%i", level.gametypeRoundTime) );
 		}
 	}
-	///Tell Everyone what happend
-	//trap_SendServerCommand( -1, va("cp \"^_**^7Admin Action^_**\n^3Swap Teams\n\"") );
-	if(adm && adm->client){
+
+	// Boe!Man 1/21/11: Proper messaging/logging.
 	Boe_GlobalSound(G_SoundIndex("sound/misc/events/tut_lift02.mp3"));
 	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sS%sw%sa%sp %st%se%sams!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color4.string, server_color5.string, server_color6.string));
-	trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Swap teams by %s.\n\"", adm->client->pers.netname));
-	Boe_adminLog (va("%s - SwapTeams", adm->client->pers.cleanName )) ;}
-	
-	else{
-	Boe_GlobalSound(G_SoundIndex("sound/misc/events/tut_lift02.mp3"));
-	Boe_adminLog (va("%s - SwapTeams", "RCON" )) ;
-	// Boe!Man 11/17/10: Auto swap in compmode.
-	if (g_compMode.integer > 0 && cm_enabled.integer == 3){
-		trap_SendServerCommand(-1, va("print\"^3[Auto Action] ^7Swap teams.\n\""));
-	}
-	else{
-		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sS%sw%sa%sp %st%se%sams!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color4.string, server_color5.string, server_color6.string));
-		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Swap teams.\n\""));
-	}
+	if(adm && adm->client){
+		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Swap teams by %s.\n\"", adm->client->pers.netname));
+		Boe_adminLog (va("%s - SwapTeams", adm->client->pers.cleanName )) ;
+	}else{
+		// Boe!Man 11/17/10: Auto swap in compmode.
+		if (g_compMode.integer > 0 && cm_enabled.integer == 3){
+			trap_SendServerCommand(-1, va("print\"^3[Auto Action] ^7Swap teams.\n\""));
+		}else{
+			trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Swap teams.\n\""));
+			Boe_adminLog (va("%s - SwapTeams", "RCON" ));
+		}
 	}
 }
 
@@ -2561,17 +2557,41 @@ void Boe_SubnetBanlist (int argNum, gentity_t *adm, qboolean shortCmd)
 	return;
 }
 
+/*
+=========
+Henk_EvenTeams
+=========
+*/
+
 void Henk_EvenTeams(int argNum, gentity_t *adm, qboolean shortCmd){
 	EvenTeams(adm, qfalse);
 }
+
+/*
+=========
+Henk_CVA
+=========
+*/
 
 void Henk_CVA(int argNum, gentity_t *adm, qboolean shortCmd){
 	RPM_Clan_Vs_All(adm);
 }
 
+/*
+=========
+Henk_SwapTeams
+=========
+*/
+
 void Henk_SwapTeams(int argNum, gentity_t *adm, qboolean shortCmd){
 	Boe_SwapTeams(adm);
 }
+
+/*
+=========
+Henk_Lock
+=========
+*/
 
 void Henk_Lock(int argNum, gentity_t *adm, qboolean shortCmd){
 	char	arg[16] = "\0"; // increase buffer so we can process more commands
@@ -2592,6 +2612,12 @@ void Henk_Lock(int argNum, gentity_t *adm, qboolean shortCmd){
 	}
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 }
+
+/*
+=========
+Henk_Map
+=========
+*/
 
 void Henk_Map(int argNum, gentity_t *adm, qboolean shortCmd){
 	char *numb;

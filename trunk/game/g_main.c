@@ -122,7 +122,7 @@ vmCvar_t	server_acprefix;
 vmCvar_t	server_caprefix;
 vmCvar_t	server_ccprefix;
 vmCvar_t	server_starprefix;
-vmCvar_t	g_maprestart;					// Admin CVAR.
+vmCvar_t	g_mapswitch;					// Admin CVAR.
 vmCvar_t	g_flash;						// Admin CVAR.
 vmCvar_t	g_plant;						// Admin CVAR.
 vmCvar_t	g_pop;							// Admin CVAR.
@@ -334,7 +334,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_runover,					"g_runover",			"2",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_twist,						"g_twist",				"2",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_respawn,					"g_respawn",			"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
-	{ &g_maprestart,				"g_maprestart",			"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
+	{ &g_mapswitch,					"g_mapswitch",			"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_flash,						"g_flash",				"3",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_plant,						"g_plant",				"2",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_pop,						"g_pop",				"2",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },

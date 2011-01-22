@@ -326,9 +326,12 @@ void RPM_lockTeam(gentity_t *ent, qboolean referee, char *team)
 			}
 		}else if(team[0] == 'a' || team[0] == 'A')
 		{
-			if(level.specsLocked)
+			// Boe!Man 1/21/11: There's no specific team for 'all'. So if we lock all teams, we make sure none of the teams are locked (and vice versa).
+			if(level.blueLocked || level.redLocked || level.specsLocked)
 			{
 				level.specsLocked = 0;
+				level.redLocked = 0;
+				level.blueLocked = 0;
 				if(ent && ent->client){
 					trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7has un%sl%so%sc%sk%se%sd all the teams", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string) );
 					if (ent->client->sess.admin > 1)
@@ -342,6 +345,8 @@ void RPM_lockTeam(gentity_t *ent, qboolean referee, char *team)
 			else
 			{
 				level.specsLocked = 1;
+				level.blueLocked = 1;
+				level.redLocked = 1;
 				if(ent && ent->client){
 					trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7has %sl%so%sc%sk%se%sd all the teams", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string) );
 					if (ent->client->sess.admin > 1)
