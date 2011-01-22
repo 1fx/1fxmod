@@ -17,47 +17,6 @@ typedef struct
 
 static admCmd_t AdminCommands[] = 
 {
-	// Boe!Man 1/22/11: Adding full synonyms.
-	{"!uppercut ", "uppercut", &g_uppercut.integer, &Boe_Uppercut},
-	{"!pop ", "pop", &g_pop.integer, &Boe_pop},
-	{"!kick ", "kick", &g_kick.integer, &Boe_Kick},
-	{"!addbadmin ", "addbadmin", &g_addbadmin.integer, &Boe_Add_bAdmin_f},
-	{"!addadmin ", "addadmin", &g_addadmin.integer, &Boe_Add_Admin_f},
-	{"!addsadmin ", "addsadmin", &g_addsadmin.integer, &Boe_Add_sAdmin_f},
-	{"!twist ", "twist", &g_twist.integer, &Boe_Twist},
-	{"!untwist ", "untwist", &g_twist.integer, &Boe_unTwist},
-	{"!plant ", "plant", &g_plant.integer, &Boe_Plant},
-	{"!unplant ", "unplant", &g_plant.integer, &Boe_unPlant},
-	{"!runover ", "runover", &g_runover.integer, &Boe_Runover},
-	{"!respawn ", "respawn", &g_respawn.integer, &Boe_Respawn},
-	{"!maprestart", "maprestart", &g_mapswitch.integer, &Boe_MapRestart},
-	{"!burn ", "burn", &g_burn.integer, &Boe_Burn},
-	{"!mute ", "mute", &g_mute.integer, &Boe_XMute},
-	{"!unmute ", "unmute", &g_mute.integer, &Boe_UnMute},
-	{"!strip ", "strip", &g_strip.integer, &Boe_Strip},
-	{"!removeadmin ", "removeadmin", &g_removeadmin.integer, &Boe_Remove_Admin_f},
-	{"!forceteam ", "forceteam", &g_forceteam.integer, &Adm_ForceTeam},
-	{"!nolower", "nolower", &g_nolower.integer, &Boe_NoLower},
-	{"!nonades", "nonades", &g_nades.integer, &Boe_NoNades},
-	{"!scorelimit", "scorelimit", &g_sl.integer, &Boe_ScoreLimit},
-	{"!timelimit", "timelimit", &g_tl.integer, &Boe_TimeLimit},
-	{"!respawninterval ", "respawninterval", &g_ri.integer, &Boe_RespawnInterval},
-	{"!realdamage", "realdamage", &g_damage.integer, &Boe_RealDamage},
-	{"!normaldamage", "normaldamage", &g_damage.integer, &Boe_NormalDamage},
-	{"!gametyperestart", "gametyperestart", &g_gr.integer, &Boe_GametypeRestart},
-	{"!addclan ", "addclan", &g_clan.integer, &Boe_Add_Clan_Member},
-	{"!removeclan ", "removeclan", &g_clan.integer, &Boe_Remove_Clan_Member},
-	{"!compmode", "compmode", &g_clan.integer, &Boe_CompMode},
-	{"!competitionmode", "compmode", &g_clan.integer, &Boe_CompMode},
-	{"!banlist", "banlist", &g_ban.integer, &Boe_BanList},
-	{"!ban ", "ban", &g_ban.integer, &Boe_Ban_f},
-	{"!broadcast ", "broadcast", &g_broadcast.integer, &Boe_Broadcast},
-	{"!subnetbanlist", "subnetbanlist", &g_subnetban.integer, &Boe_SubnetBanlist},
-	{"!eventeams", "eventeams", &g_eventeams.integer, &Henk_EvenTeams},
-	{"!clanvsall", "clanvsall", &g_clanvsall.integer, &Henk_CVA},
-	{"!swapteams", "swapteams", &g_swapteams.integer, &Henk_SwapTeams},
-	{"!lock ", "lock", &g_lock.integer, &Henk_Lock},
-	// Boe!Man 1/22/11: End full synonyms.
 	{"!uc ", "uppercut", &g_uppercut.integer, &Boe_Uppercut},
 	{"!u ", "uppercut", &g_uppercut.integer, &Boe_Uppercut},
 	{"!p ", "pop", &g_pop.integer, &Boe_pop},
@@ -101,7 +60,58 @@ static admCmd_t AdminCommands[] =
 	{"!cva", "clanvsall", &g_clanvsall.integer, &Henk_CVA},
 	{"!sw", "swapteams", &g_swapteams.integer, &Henk_SwapTeams},
 	{"!l ", "lock", &g_lock.integer, &Henk_Lock},
-	{"!map ", "map", &g_mapswitch.integer, &Henk_Map}
+	{"!map ", "map", &g_mapswitch.integer, &Henk_Map},
+	{"!fl ", "flash", &g_flash.integer, &Henk_Flash},
+	{"!g ", "gametype", &g_mapswitch.integer, &Henk_Gametype},
+	{"!gt ", "gametype", &g_mapswitch.integer, &Henk_Gametype},
+	{"!upa", "unpause", &g_mapswitch.integer, &Henk_Unpause},
+	{"!pa", "pause", &g_mapswitch.integer, &Henk_Pause},
+
+	// Boe!Man 1/22/11: Adding full synonyms.
+	{"!uppercut ", "uppercut", &g_uppercut.integer, &Boe_Uppercut},
+	{"!pop ", "pop", &g_pop.integer, &Boe_pop},
+	{"!kick ", "kick", &g_kick.integer, &Boe_Kick},
+	{"!addbadmin ", "addbadmin", &g_addbadmin.integer, &Boe_Add_bAdmin_f},
+	{"!addadmin ", "addadmin", &g_addadmin.integer, &Boe_Add_Admin_f},
+	{"!addsadmin ", "addsadmin", &g_addsadmin.integer, &Boe_Add_sAdmin_f},
+	{"!twist ", "twist", &g_twist.integer, &Boe_Twist},
+	{"!untwist ", "untwist", &g_twist.integer, &Boe_unTwist},
+	{"!plant ", "plant", &g_plant.integer, &Boe_Plant},
+	{"!unplant ", "unplant", &g_plant.integer, &Boe_unPlant},
+	{"!runover ", "runover", &g_runover.integer, &Boe_Runover},
+	{"!respawn ", "respawn", &g_respawn.integer, &Boe_Respawn},
+	{"!maprestart", "maprestart", &g_mapswitch.integer, &Boe_MapRestart},
+	{"!burn ", "burn", &g_burn.integer, &Boe_Burn},
+	{"!mute ", "mute", &g_mute.integer, &Boe_XMute},
+	{"!unmute ", "unmute", &g_mute.integer, &Boe_UnMute},
+	{"!strip ", "strip", &g_strip.integer, &Boe_Strip},
+	{"!removeadmin ", "removeadmin", &g_removeadmin.integer, &Boe_Remove_Admin_f},
+	{"!forceteam ", "forceteam", &g_forceteam.integer, &Adm_ForceTeam},
+	{"!nolower", "nolower", &g_nolower.integer, &Boe_NoLower},
+	{"!nonades", "nonades", &g_nades.integer, &Boe_NoNades},
+	{"!scorelimit", "scorelimit", &g_sl.integer, &Boe_ScoreLimit},
+	{"!timelimit", "timelimit", &g_tl.integer, &Boe_TimeLimit},
+	{"!respawninterval ", "respawninterval", &g_ri.integer, &Boe_RespawnInterval},
+	{"!realdamage", "realdamage", &g_damage.integer, &Boe_RealDamage},
+	{"!normaldamage", "normaldamage", &g_damage.integer, &Boe_NormalDamage},
+	{"!gametyperestart", "gametyperestart", &g_gr.integer, &Boe_GametypeRestart},
+	{"!addclan ", "addclan", &g_clan.integer, &Boe_Add_Clan_Member},
+	{"!removeclan ", "removeclan", &g_clan.integer, &Boe_Remove_Clan_Member},
+	{"!compmode", "compmode", &g_clan.integer, &Boe_CompMode},
+	{"!competitionmode", "compmode", &g_clan.integer, &Boe_CompMode},
+	{"!banlist", "banlist", &g_ban.integer, &Boe_BanList},
+	{"!ban ", "ban", &g_ban.integer, &Boe_Ban_f},
+	{"!broadcast ", "broadcast", &g_broadcast.integer, &Boe_Broadcast},
+	{"!subnetbanlist", "subnetbanlist", &g_subnetban.integer, &Boe_SubnetBanlist},
+	{"!eventeams", "eventeams", &g_eventeams.integer, &Henk_EvenTeams},
+	{"!clanvsall", "clanvsall", &g_clanvsall.integer, &Henk_CVA},
+	{"!swapteams", "swapteams", &g_swapteams.integer, &Henk_SwapTeams},
+	{"!lock ", "lock", &g_lock.integer, &Henk_Lock},
+	{"!flash ", "flash", &g_flash.integer, &Henk_Flash},
+	{"!gametype ", "gametype", &g_mapswitch.integer, &Henk_Gametype},
+	{"!unpause", "unpause", &g_mapswitch.integer, &Henk_Unpause},
+	{"!pause", "pause", &g_mapswitch.integer, &Henk_Pause}
+	// Boe!Man 1/22/11: End full synonyms.
 };
 
 static int AdminCommandsSize = sizeof( AdminCommands ) / sizeof( AdminCommands[0] );
@@ -941,7 +951,10 @@ void RPM_Unpause (gentity_t *adm)
 
 	if(!level.pause)
 	{
-		trap_SendServerCommand( adm-g_entities, va("print \"The game is not currently paused.\n\"") );
+		if(adm && adm->client)
+			trap_SendServerCommand( adm-g_entities, va("print \"The game is not currently paused.\n\"") );
+		else
+			Com_Printf("The game is not currently paused.\n");
 		return;
 	}
 
@@ -3814,143 +3827,8 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		G_Say( ent, NULL, mode, p);
 		return;
 	}*/
-	if ((strstr(p, "!fl ")) || (strstr(p, "!flash "))){
-		if (ent->client->sess.admin >= g_flash.integer){
-			id = Boe_ClientNumFromArg (ent, 1, "flash <id>", "flash", qtrue, qtrue, qtrue);
-			if(id < 0) return;
-			targ = g_entities + id;
-			weapon = WP_M84_GRENADE;
-			nadeDir = 1;
-			for( it = 0; it < 1; it++ ) {
-			x = 100 * cos( DEG2RAD(nadeDir * it));  
-			y = 100 * sin( DEG2RAD(nadeDir * it));
-			VectorSet( dir, x, y, 100 );
-			dir[2] = 300;	
-			}
-			if(strstr(p, "all")){
-				for(it=0;it<level.numConnectedClients;it++){
-				missile = NV_projectile( &g_entities[level.sortedClients[it]], g_entities[level.sortedClients[it]].r.currentOrigin, dir, weapon, 0 );
-				missile->nextthink = level.time + 250;
-				}
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7Everyone has been %sf%sl%sa%ss%sh%sed by %s", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, ent->client->pers.netname));
-				trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Everyone has been flashed by %s.\n\"", ent->client->pers.netname));
-				Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-				Boe_adminLog (va("%s - FLASH ALL", ent->client->pers.cleanName)) ;
-			}else{
-			missile = NV_projectile( targ, targ->r.currentOrigin, dir, weapon, 0 );
-			missile->nextthink = level.time + 250;
-			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7was %sf%sl%sa%ss%sh%sed by %s", level.time + 5000, g_entities[id].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, ent->client->pers.netname));
-			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s ^7was flashed by %s.\n\"", g_entities[id].client->pers.netname,ent->client->pers.netname));
-			Boe_adminLog (va("%s - FLASH: %s", ent->client->pers.cleanName, g_entities[id].client->pers.cleanName  )) ;
-			}
-		}
-		G_Say( ent, NULL, mode, p);
-		return;
-	}	
-	else if(strstr(p, "!gt ") || strstr(p, "!g ")){
-		// Boe!Man 12/16/10: New Gametype Switch system.
-		if (ent->client->sess.admin >= 4){
-			char gametype[8];
-			if(level.mapSwitch == qfalse){
-			if(strstr(p, "ctf")){
-				trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype ctf\n"));
-				strcpy(gametype, "ctf");
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sG%sa%sm%se%st%sype ^7Capture the Flag!", level.time + 3500, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-			}else if(strstr(p, "inf")){
-				trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype inf\n"));
-				strcpy(gametype, "inf");
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sG%sa%sm%se%st%sype ^7Infiltration!", level.time + 3500, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-			}else if(strstr(p, "tdm")){
-				trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype tdm\n"));
-				strcpy(gametype, "tdm");
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sG%sa%sm%se%st%sype ^7Team Deathmatch!", level.time + 3500, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-			}else if(strstr(p, "dm")){
-				trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype dm\n"));
-				strcpy(gametype, "dm");
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sG%sa%sm%se%st%sype ^7Deathmatch!", level.time + 3500, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-			}else if(strstr(p, "elim")){
-				trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype elim\n"));
-				strcpy(gametype, "elim");
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sG%sa%sm%se%st%sype ^7Elimination!", level.time + 3500, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-			}else if(strstr(p, "h&s")){
-				trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype h&s\n"));
-				strcpy(gametype, "h&s");
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sG%sa%sm%se%st%sype ^7Hide&Seek!", level.time + 3500, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-			}else{
-				trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Unknown gametype.\n\""));
-				G_Say( ent, NULL, mode, p);
-				return;
-			}
-			}else{
-				if(level.mapAction == 1 || level.mapAction == 3){
-					trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7A map restart is already in progress.\n\""));}
-				else if(level.mapAction == 2){
-					trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7A map switch is already in progress.\n\""));}
-				else{
-					trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7Something appears to be wrong. Please report to a developer using this error code: 2J\n\""));}
-				G_Say( ent, NULL, mode, p);
-				return;
-			}
-				trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Gametype changed to %s by %s.\n\"", gametype, ent->client->pers.netname));
-				Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-				level.mapSwitch = qtrue;
-				level.mapAction = 3;
-				level.mapSwitchCount = level.time;
-				Boe_adminLog (va("%s - GAMETYPE SWITCH - %s", ent->client->pers.cleanName, gametype)) ;
-			}
-		else if (ent->client->sess.admin < 4){
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
-		}
-		G_Say( ent, NULL, mode, p);
-		return;
-	}else if(strstr(p, "!pa")){
-		if (ent->client->sess.admin >= 4){
-				//trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sT%sh%si%sr%sd%sperson enabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-				trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Paused by %s.\n\"", ent->client->pers.netname));
-				RPM_Pause(ent);
-		}else if (ent->client->sess.admin < 4){
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
-		}
-		G_Say( ent, NULL, mode, p);
-		return;
-	}else if(strstr(p, "!upa")){
-		if (ent->client->sess.admin >= 4){
-				//trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sT%sh%si%sr%sd%sperson enabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-				trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Unpaused by %s.\n\"", ent->client->pers.netname));
-				RPM_Unpause(ent);
-		}else if (ent->client->sess.admin < 4){
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
-		}
-		G_Say( ent, NULL, mode, p);
-		return;
-	/*}else if(strstr(p, "!mo ")){
-		if (ent->client->sess.admin >= 4){
-			id = CheckAdmin(ent, p, qtrue);
-			targ = g_entities+id;
-			if(id < 0) return;
-				//trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sT%sh%si%sr%sd%sperson enabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-			if(targ->client->sess.monkey == qtrue){
-				targ->client->sess.monkey = qfalse;
-				targ->client->noOutfittingChange = qfalse;
-				G_UpdateOutfitting(targ->s.number);
-				trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Monkey disabled on %s.\n\"", targ->client->pers.netname));
-				Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-			}else{
-				targ->client->sess.monkey = qtrue;
-				SetTeam( targ, "s", NULL );
-				SetTeam( targ, "r", NULL );
-				trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Monkey enabled on %s.\n\"", targ->client->pers.netname));
-				Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-			}
-		}else if (ent->client->sess.admin < 4){
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
-		}
-		G_Say( ent, NULL, mode, p);
-		return;
-	}*/
 	// Boe!Man 5/2/10: The Referee tokens. I think we're actually the first with this... (:
-	}else if(strstr(p, "!i ")){
+	if(strstr(p, "!i ")){
 		if(ent->client->sess.admin > 1){
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Use /adm suspend or !su to become a Referee!\n\""));
 		}else if(ent->client->sess.referee == 1){

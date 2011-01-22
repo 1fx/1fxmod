@@ -2613,6 +2613,142 @@ void Henk_Lock(int argNum, gentity_t *adm, qboolean shortCmd){
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 }
 
+void Henk_Flash(int argNum, gentity_t *adm, qboolean shortCmd){
+	char	arg[16] = "\0"; // increase buffer so we can process more commands
+	qboolean all = qfalse;
+	int			id;
+	gentity_t	*targ;
+	int			i;
+	int			a = 0;
+	// Boe!Man 1/17/10
+	int			anim = 0;
+	float		knockback = 400.0;
+	vec3_t		dir;
+	// Boe!Man 3/20/10
+	int			nadeDir, weapon;
+	float		x, y;
+	gentity_t	*missile;
+	trap_Argv( argNum, arg, sizeof( arg ) );
+	id = Boe_ClientNumFromArg (adm, argNum, "flash <id>", "flash", qtrue, qtrue, qtrue);
+	if(id < 0){
+		if(strstr(arg, "all"))
+			all = qtrue;
+		else
+			return;
+	}
+	if(!all)
+	targ = g_entities + id;
+	weapon = WP_M84_GRENADE;
+	nadeDir = 1;
+	for( i = 0; i < 1; i++ ) {
+		x = 100 * cos( DEG2RAD(nadeDir * i));  
+		y = 100 * sin( DEG2RAD(nadeDir * i));
+		VectorSet( dir, x, y, 100 );
+		dir[2] = 300;	
+	}
+	if(all){
+		for(i=0;i<level.numConnectedClients;i++){
+			missile = NV_projectile( &g_entities[level.sortedClients[i]], g_entities[level.sortedClients[i]].r.currentOrigin, dir, weapon, 0 );
+			missile->nextthink = level.time + 250;
+		}
+		if(adm && adm->client){
+			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7Everyone has been %sf%sl%sa%ss%sh%sed by %s", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, adm->client->pers.netname));
+			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Everyone has been flashed by %s.\n\"", adm->client->pers.netname));
+			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+			Boe_adminLog (va("%s - FLASH ALL", adm->client->pers.cleanName)) ;
+		}else{
+			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7Everyone has been %sf%sl%sa%ss%sh%sed", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+			trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Everyone has been flashed.\n\""));
+			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+			Boe_adminLog (va("RCON - FLASH ALL")) ;
+		}
+	}else{
+		missile = NV_projectile( targ, targ->r.currentOrigin, dir, weapon, 0 );
+		missile->nextthink = level.time + 250;
+		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+		if(adm && adm->client){
+			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7was %sf%sl%sa%ss%sh%sed by %s", level.time + 5000, g_entities[id].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, adm->client->pers.netname));
+			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s ^7was flashed by %s.\n\"", g_entities[id].client->pers.netname,adm->client->pers.netname));
+			Boe_adminLog (va("%s - FLASH: %s", adm->client->pers.cleanName, g_entities[id].client->pers.cleanName  )) ;
+		}else{
+			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7was %sf%sl%sa%ss%sh%sed", level.time + 5000, g_entities[id].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+			trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s ^7was flashed.\n\"", g_entities[id].client->pers.netname));
+			Boe_adminLog (va("RCON - FLASH: %s", g_entities[id].client->pers.cleanName  )) ;
+		}
+	}
+}
+
+void Henk_Pause(int argNum, gentity_t *adm, qboolean shortCmd){
+	if(adm && adm->client)
+		trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Paused by %s.\n\"", adm->client->pers.netname));
+	else
+		trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Paused.\n\""));
+	RPM_Pause(adm);
+}
+
+void Henk_Unpause(int argNum, gentity_t *adm, qboolean shortCmd){
+	if(adm && adm->client)
+		trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Unaused by %s.\n\"", adm->client->pers.netname));
+	else
+		trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Unaused.\n\""));
+	RPM_Unpause(adm);
+}
+
+void Henk_Gametype(int argNum, gentity_t *adm, qboolean shortCmd){
+	char gametype[8];
+	char	arg[16] = "\0";
+	trap_Argv( argNum, arg, sizeof( arg ) );
+	if(level.mapSwitch == qfalse){
+		if(strstr(arg, "ctf")){
+			trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype ctf\n"));
+			strcpy(gametype, "ctf");
+			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sG%sa%sm%se%st%sype ^7Capture the Flag!", level.time + 3500, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+		}else if(strstr(arg, "inf")){
+			trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype inf\n"));
+			strcpy(gametype, "inf");
+			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sG%sa%sm%se%st%sype ^7Infiltration!", level.time + 3500, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+		}else if(strstr(arg, "tdm")){
+			trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype tdm\n"));
+			strcpy(gametype, "tdm");
+			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sG%sa%sm%se%st%sype ^7Team Deathmatch!", level.time + 3500, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+		}else if(strstr(arg, "dm")){
+			trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype dm\n"));
+			strcpy(gametype, "dm");
+			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sG%sa%sm%se%st%sype ^7Deathmatch!", level.time + 3500, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+		}else if(strstr(arg, "elim")){
+			trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype elim\n"));
+			strcpy(gametype, "elim");
+			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sG%sa%sm%se%st%sype ^7Elimination!", level.time + 3500, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+		}else if(strstr(arg, "h&s")){
+			trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype h&s\n"));
+			strcpy(gametype, "h&s");
+			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sG%sa%sm%se%st%sype ^7Hide&Seek!", level.time + 3500, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+		}else{
+			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Unknown gametype.\n\""));
+			return;
+		}
+	}else{
+		if(level.mapAction == 1 || level.mapAction == 3)
+			trap_SendServerCommand(adm-g_entities, va("print\"^3[Info] ^7A map restart is already in progress.\n\""));
+		else if(level.mapAction == 2)
+			trap_SendServerCommand(adm-g_entities, va("print\"^3[Info] ^7A map switch is already in progress.\n\""));
+		else{
+			trap_SendServerCommand(adm-g_entities, va("print\"^3[Info] ^7Something appears to be wrong. Please report to a developer using this error code: 2J\n\""));
+		}
+			return;
+	}
+		if(adm && adm->client){
+			trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Gametype changed to %s by %s.\n\"", gametype, adm->client->pers.netname));
+			Boe_adminLog (va("%s - GAMETYPE SWITCH - %s", adm->client->pers.cleanName, gametype)) ;
+		}else{
+			trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Gametype changed to %s.\n\"", gametype));
+		}
+		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+		level.mapSwitch = qtrue;
+		level.mapAction = 3;
+		level.mapSwitchCount = level.time;
+}
+
 /*
 =========
 Henk_Map

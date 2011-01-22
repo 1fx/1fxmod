@@ -290,21 +290,24 @@ void Boe_Tokens(gentity_t *ent, char *chatText, int mode, qboolean CheckSounds)
 					if(current_gametype.value == GT_HS){
 					Q_strcat(newText, MAX_SAY_TEXT, va("%s", level.RPGloc));
 					chatText++;
-					}
+					}else
+						chatText++;
 					continue;
 				case 'c':
 				case 'C':
 					if(current_gametype.value == GT_HS){
 					Q_strcat(newText, MAX_SAY_TEXT, va("%s", level.M4loc));
 					chatText++;
-					}
+					}else
+						chatText++;
 					continue;
 				case 'm':
 				case 'M':
 					if(current_gametype.value == GT_HS){
 					Q_strcat(newText, MAX_SAY_TEXT, va("%s", level.MM1loc));
 					chatText++;
-					}
+					}else
+						chatText++;
 					continue;
 				case 'n':
 				case 'N':
