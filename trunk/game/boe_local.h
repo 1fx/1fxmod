@@ -304,7 +304,7 @@ int Boe_NameListCheck (int num, const char *name, const char *file, gentity_t *e
 void G_UpdateOutfitting ( int clientNum );
 void G_DropGametypeItems ( gentity_t* self, int delayPickup );
 int trap_RealTime( qtime_t *qtime );
-qboolean BG_InitWeaponStats(void);
+qboolean BG_InitWeaponStats(qboolean init);
 void Boe_About( gentity_t *ent );
 void Boe_dev_f ( gentity_t *ent );
 void Boe_Add_Clan_Member(int argNum, gentity_t *adm, qboolean shortCmd);
@@ -422,3 +422,4 @@ void Henk_Flash(int argNum, gentity_t *adm, qboolean shortCmd);
 void Henk_Gametype(int argNum, gentity_t *adm, qboolean shortCmd);
 void Henk_Unpause(int argNum, gentity_t *adm, qboolean shortCmd);
 void Henk_Pause(int argNum, gentity_t *adm, qboolean shortCmd);
+void G_UpdateAvailableWeapons(void);

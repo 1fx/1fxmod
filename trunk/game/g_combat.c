@@ -1055,7 +1055,7 @@ int G_Damage (
 
 				trap_SendServerCommand(attacker->s.number, va("cp \"@^7You have stunned %s\n\"", client->pers.netname)); // notify the hider
 				trap_SendServerCommand(targ->s.number, va("cp \"@^7You got stunned by %s\n\"", attacker->client->pers.netname)); // notify the seeker
-			}else if(mod == WP_M4_ASSAULT_RIFLE){ // Henk 22/01/10 -> Add M4 bullet stun
+			}else if(mod == MOD_M4_ASSAULT_RIFLE){ // Henk 22/01/10 -> Add M4 bullet stun
 				client->sess.slowtime = level.time+4000; // after 4 seconds slowdown stops
 				attacker->client->sess.speedtime = level.time+4000; // after 4 seconds speedup stops
 
@@ -1155,9 +1155,11 @@ int G_Damage (
 		
 			damage = 0;
 		}
-if(targ->client->sess.team != attacker->client->sess.team && (mod == WP_RPG7_LAUNCHER || mod == WP_SMOHG92_GRENADE)){//  || mod == WP_MM1_GRENADE_LAUNCHER)){ // Henk 22/01/10 -> Added better knockback(only on seekers)
-		if ( knockback && targ->client ) 
+if(targ->client->sess.team != attacker->client->sess.team && (mod == MOD_RPG7_LAUNCHER || mod == MOD_SMOHG92_GRENADE)){//  || mod == WP_MM1_GRENADE_LAUNCHER)){ // Henk 22/01/10 -> Added better knockback(only on seekers)
+		if (targ->client ) 
 		{
+			Com_Printf("Doing a knockback\n");
+			knockback = 100;
 			G_ApplyKnockback ( targ, dir, knockback );
 
 			mass = 200;

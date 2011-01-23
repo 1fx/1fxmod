@@ -230,6 +230,7 @@ void RandomRPGM4(void) // only called when more then 3 alive hiders so we can so
 {
 	int clients[64];
 	int	numclients = 0, random, random1, i;
+		memset(clients, 0, sizeof(clients));
 	for ( i = 0; i < level.numConnectedClients; i ++ )
 	{
 		gentity_t* ent = &g_entities[level.sortedClients[i]];

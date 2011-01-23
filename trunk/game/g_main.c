@@ -72,6 +72,8 @@ vmCvar_t	g_timeextension;
 vmCvar_t	g_timeouttospec;
 vmCvar_t	g_roundstartdelay;
 vmCvar_t	g_availableWeapons;
+vmCvar_t	hideSeek_availableWeapons;
+vmCvar_t	availableWeapons;
 vmCvar_t	g_forceFollow;
 vmCvar_t	g_followEnemy;
 vmCvar_t	g_mapcycle;
@@ -291,7 +293,9 @@ static cvarTable_t gameCvarTable[] =
 
 	{ &g_roundstartdelay,	"g_roundstartdelay", "5",		CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 
-	{ &g_availableWeapons,	"g_availableWeapons", "2222222222211", CVAR_ARCHIVE|CVAR_SERVERINFO|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
+	{ &g_availableWeapons,	"g_availableWeapons", "2222222222211", CVAR_ARCHIVE|CVAR_SERVERINFO|CVAR_LATCH|CVAR_INTERNAL, 0.0, 0.0, 0, qfalse },
+	{ &hideSeek_availableWeapons,	"hideSeek_availableWeapons", "200000000000022222222", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
+	{ &availableWeapons,	"availableWeapons", "2222222222211", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
 	// Henk 01/04/10
 	{ &g_disablenades,	"g_disablenades", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 	// End
@@ -448,7 +452,10 @@ static cvarTable_t gameCvarTable[] =
 	{ NULL,					"disable_pickup_weapon_M84",			"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 
 	{ NULL,					"disable_pickup_weapon_SMOHG92",		"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 
 	{ NULL,					"disable_pickup_weapon_AN_M14",			"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 
-	{ NULL,					"disable_pickup_weapon_M15",			"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 
+	{ NULL,					"disable_pickup_weapon_M67",			"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 
+	{ NULL,					"disable_pickup_weapon_F1",				"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 
+	{ NULL,					"disable_pickup_weapon_L2A2",			"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 
+	{ NULL,					"disable_pickup_weapon_MDN11",			"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 
 
 
 #ifdef _BOE_DBG
@@ -710,6 +717,42 @@ void G_UpdateCvars( void )
 
 /*
 ===============
+G_UpdateDisableCvars
+
+Updates the disable cvars using the g_availableWeapons cvar.
+
+Reversed -.-''
+===============
+*/
+void G_UpdateDisableCvars ( void )
+{
+	weapon_t weapon;
+	char	 available[WP_NUM_WEAPONS+1];
+
+	if(current_gametype.value == GT_HS)
+		strcpy(available, hideSeek_availableWeapons.string);
+	else
+		strcpy(available, availableWeapons.string);
+
+	for ( weapon = WP_KNIFE; weapon < WP_NUM_WEAPONS; weapon ++ )
+	{
+		gitem_t* item = BG_FindWeaponItem ( weapon );
+		if ( !item )
+		{
+			continue;
+		}
+		
+	
+		if(available[weapon-1] == '1' || available[weapon-1] == '2'){
+			trap_Cvar_Set ( va("disable_%s", item->classname), "0" );
+		}else{
+			trap_Cvar_Set ( va("disable_%s", item->classname), "1" );
+		}
+	}
+}
+
+/*
+===============
 G_UpdateAvailableWeapons
 
 Updates the g_availableWeapons cvar using the disable cvars.
@@ -729,7 +772,7 @@ void G_UpdateAvailableWeapons ( void )
 		{
 			continue;
 		}
-	
+
 		switch ( (int)trap_Cvar_VariableValue ( va("disable_%s", item->classname ) ) )
 		{
 			case 0:
@@ -952,6 +995,8 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 
 	BG_ParseInviewFile();
 
+	BG_InitWeaponStats(qfalse); // Henk 22/01/11 -> Parse other stats :)
+
 	ClearRegisteredItems();
 
 	// parse the key/value pairs and spawn gentities
@@ -988,24 +1033,24 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 #endif
 
 	G_RemapTeamShaders();
-
-	// Sets the available weapons cvar from the disable_ cvars.
-	if(current_gametype.value == GT_HS){
-	G_UpdateAvailableWeapons ( );
-	}
-
+	// Henk 22/01/11 -> New weapon cvars.
+	G_UpdateDisableCvars(); // Set the disabled_ cvars from availableWeapons and hideSeek_availableWeapons
+	
+	G_UpdateAvailableWeapons(); // also set the original g_availableWeapons for the client :)
+	// End
 	if(current_gametype.value != GT_HS){
 		trap_Cvar_Set("g_disablenades", "1");
 		trap_Cvar_Update(&g_disablenades);
-		trap_Cvar_Set("g_availableWeapons", "200200002200000000000");
-		trap_Cvar_Update(&g_availableWeapons);
 		trap_Cvar_Set("g_roundstartdelay", "3");
 		trap_Cvar_Update(&g_roundstartdelay);
 	}
 
 
 	// Set the available outfitting
-	BG_SetAvailableOutfitting ( g_availableWeapons.string );
+	if(current_gametype.value == GT_HS)
+		BG_SetAvailableOutfitting ( hideSeek_availableWeapons.string );
+	else
+		BG_SetAvailableOutfitting ( availableWeapons.string );
 
 	// Initialize the gametype
 	if(current_gametype.value == GT_HS)
@@ -2355,12 +2400,12 @@ void SetupOutfitting(void)
 	int i;
 	for ( i = 0; i < level.numConnectedClients; i ++ )
 	{
-	g_entities[level.sortedClients[i]].client->noOutfittingChange = qfalse;
-	G_UpdateOutfitting ( g_entities[level.sortedClients[i]].s.number );
+		g_entities[level.sortedClients[i]].client->noOutfittingChange = qfalse;
+		G_UpdateOutfitting ( g_entities[level.sortedClients[i]].s.number );
 		if(g_entities[level.sortedClients[i]].client->sess.team == TEAM_BLUE){
-		g_entities[level.sortedClients[i]].client->ps.ammo[weaponData[WP_MDN11_GRENADE].attack[ATTACK_NORMAL].ammoIndex]=3;
-		g_entities[level.sortedClients[i]].client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_MDN11_GRENADE );
-		g_entities[level.sortedClients[i]].client->ps.clip[ATTACK_NORMAL][WP_MDN11_GRENADE]=1;
+			g_entities[level.sortedClients[i]].client->ps.ammo[weaponData[WP_MDN11_GRENADE].attack[ATTACK_NORMAL].ammoIndex]=3;
+			g_entities[level.sortedClients[i]].client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_MDN11_GRENADE );
+			g_entities[level.sortedClients[i]].client->ps.clip[ATTACK_NORMAL][WP_MDN11_GRENADE]=1;
 		}
 	}
 }
@@ -2571,7 +2616,8 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 				dropped = G_DropItem2(spawnPoint->origin, spawnPoint->angles, BG_FindWeaponItem ( WP_M4_ASSAULT_RIFLE ));
 				dropped->count  = 1&0xFF;
 				dropped->count += ((2<<8) & 0xFF00);
-				dropped->count += ((3 << 16) & 0xFF0000 );
+				dropped->count += ((1 << 16) & 0xFF0000 );
+				dropped->count += ((2 << 24) & 0xFF000000 );
 				Com_sprintf(level.M4loc, sizeof(level.M4loc), "%s", "blue base");
 				level.M4Time = level.time+1000;
 				level.M4ent = dropped->s.number;

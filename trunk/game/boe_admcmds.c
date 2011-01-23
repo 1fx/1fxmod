@@ -168,7 +168,7 @@ void Boe_NormalDamage(int argNum, gentity_t *ent, qboolean shortCmd){
 	}
 
 	g_instagib.integer = 0;
-	BG_InitWeaponStats();
+	BG_InitWeaponStats(qfalse);
 	for(i=0;i<=level.numConnectedClients;i++){
 		level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
 		G_UpdateOutfitting(g_entities[level.sortedClients[i]].s.number);
@@ -206,7 +206,7 @@ void Boe_RealDamage(int argNum, gentity_t *ent, qboolean shortCmd){
 	}
 
 	g_instagib.integer = 1;
-	BG_InitWeaponStats();
+	BG_InitWeaponStats(qfalse);
 	for(i=0;i<=level.numConnectedClients;i++){
 		level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
 		G_UpdateOutfitting(g_entities[level.sortedClients[i]].s.number);
@@ -324,6 +324,18 @@ void Boe_ScoreLimit(int argNum, gentity_t *ent, qboolean shortCmd){ // Boe!Man 1
 	Boe_adminLog (va("%s - SCORELIMIT %i", ent->client->pers.cleanName, number)) ;
 }
 
+void SetNades(char *status){
+	trap_Cvar_Set("disable_pickup_weapon_M84", status);
+	trap_Cvar_Set("disable_pickup_weapon_SMOHG92", status);
+	trap_Cvar_Set("disable_pickup_weapon_AN_M14", status);
+	trap_Cvar_Set("disable_pickup_weapon_M67", status);
+	trap_Cvar_Set("disable_pickup_weapon_F1", status);
+	trap_Cvar_Set("disable_pickup_weapon_L2A2", status);
+	trap_Cvar_Set("disable_pickup_weapon_MDN11", status);
+	trap_Cvar_Set("disable_pickup_weapon_M15", status);
+	G_UpdateAvailableWeapons(); // also set the original g_availableWeapons for the client :)
+}
+
 /*
 ==========
 Boe_NoNades
@@ -338,7 +350,7 @@ void Boe_NoNades(int argNum, gentity_t *ent, qboolean shortCmd){
 		if(ent && ent->client){
 			trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7You cannot enable/disable Nades in Hide&Seek.\n\""));
 		}else{
-			Com_Printf("^7You cannot enable/disable Nades in Hide&Seek.\n");
+			Com_Printf("You cannot enable/disable Nades in Hide&Seek.\n");
 		}
 		return;
 	}
@@ -346,16 +358,15 @@ void Boe_NoNades(int argNum, gentity_t *ent, qboolean shortCmd){
 	if(g_disablenades.integer == 1){
 		g_disablenades.integer = 0;
 		trap_Cvar_Set("g_disablenades", "0");
-		trap_Cvar_Set("g_availableweapons", "200200002200000000200");
-		trap_Cvar_Update(&g_availableWeapons);
+	    SetNades("0");
 		trap_Cvar_Update(&g_disablenades);
-		BG_SetAvailableOutfitting("200200002200000000200");
+		BG_SetAvailableOutfitting(g_availableWeapons.string);
 		for(i=0;i<=level.numConnectedClients;i++){
 			level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
 			G_UpdateOutfitting(g_entities[level.sortedClients[i]].s.number);
-			level.clients[level.sortedClients[i]].ps.ammo[weaponData[WP_SMOHG92_GRENADE].attack[ATTACK_NORMAL].ammoIndex]=1;
-			level.clients[level.sortedClients[i]].ps.stats[STAT_WEAPONS] |= ( 1 << WP_SMOHG92_GRENADE );
-			level.clients[level.sortedClients[i]].ps.clip[ATTACK_NORMAL][WP_SMOHG92_GRENADE]=1;
+			//level.clients[level.sortedClients[i]].ps.ammo[weaponData[WP_SMOHG92_GRENADE].attack[ATTACK_NORMAL].ammoIndex]=1;
+			//level.clients[level.sortedClients[i]].ps.stats[STAT_WEAPONS] |= ( 1 << WP_SMOHG92_GRENADE );
+			//level.clients[level.sortedClients[i]].ps.clip[ATTACK_NORMAL][WP_SMOHG92_GRENADE]=1;
 		}
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sN%sa%sd%se%ss %senabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
@@ -369,11 +380,9 @@ void Boe_NoNades(int argNum, gentity_t *ent, qboolean shortCmd){
 	}else{
 		g_disablenades.integer = 1;
 		trap_Cvar_Set("g_disablenades", "1");
-		// change g_available
-		trap_Cvar_Set("g_availableweapons", "200200002200000000000");
-		trap_Cvar_Update(&g_availableWeapons);
+		SetNades("1");
 		trap_Cvar_Update(&g_disablenades);
-		BG_SetAvailableOutfitting("200200002200000000000");
+		BG_SetAvailableOutfitting(g_availableWeapons.string);
 		for(i=0;i<=level.numConnectedClients;i++){
 			level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
 			G_UpdateOutfitting(g_entities[level.sortedClients[i]].s.number);
@@ -1268,6 +1277,10 @@ Boe_Unban
 
 void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 {
+	if(strlen(ip) < 2){
+		trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid IP, Usage: adm unban <ip>.\n\""));
+		return;
+	}
 	/*int		count = 0, count2 = 0;
 
 	while (ip[count] != '\0'){
@@ -2113,13 +2126,14 @@ Boe_Broadcast
 void Boe_Broadcast(int argNum, gentity_t *adm, qboolean shortCmd){
 	char buffer[512];
 	char buffer1[512];
-	int i;
+	int i, z = 0;
 	if(shortCmd){
 		trap_Argv(1, buffer, sizeof(buffer));
 		for(i=StartAfterCommand(va("%s", buffer));i<=strlen(buffer);i++){
-			strcpy(buffer1, va("%s%c", buffer1, buffer[i]));
+			buffer1[z] = buffer[i];
+			z+= 1;
 		}
-		buffer[i+1] = '\0';
+		buffer1[z] = '\0';
 	}else{
 		// Boe!Man 1/14/11: Fixed Broadcast with RCON.
 		if(adm && adm->client){
@@ -2184,7 +2198,9 @@ void Adm_ForceTeam(int argNum, gentity_t *adm, qboolean shortCmd)
 {
 	char		str[MAX_TOKEN_CHARS];
 	int			idnum;
-
+	int			i;
+	qboolean	pass = qfalse;
+	char		team;
 	// find the player
 	if(shortCmd == qtrue){
 		idnum = Boe_ClientNumFromArg(adm, 1, "forceteam <idnumber>", "forceteam", qfalse, qtrue, shortCmd);
@@ -2199,14 +2215,23 @@ void Adm_ForceTeam(int argNum, gentity_t *adm, qboolean shortCmd)
 	// set the team
 	if(shortCmd == qtrue){
 		trap_Argv(1, str, sizeof(str));
-		if(strstr(Q_CleanStr(str), "s")){
+		for(i=0;i<strlen(str);i++){
+			if(pass == qtrue && str[i] == ' '){
+				team = str[i+1];
+				break;
+			}
+			if(str[i] == ' ')
+				pass = qtrue;
+		}
+		if(team == 's' || team == 'S'){
 			strcpy(str, "s");
-		}else if(strstr(Q_CleanStr(str), "r")){
+		}else if(team == 'r' || team == 'R'){
 			strcpy(str, "r");
-		}else if(strstr(Q_CleanStr(str), "b")){
+		}else if(team == 'b' || team == 'B'){
 			strcpy(str, "b");
 		}else{
 			trap_SendServerCommand(adm->s.number, va("print\"^3[Info] Wrong team: %s.\n\"", str));
+			return;
 		}
 	}else{
 		// Boe!Man 1/13/11: Fix for Forceteam not working with RCON system.
@@ -2237,6 +2262,9 @@ void Boe_UnMute(int argNum, gentity_t *ent, qboolean shortCmd){
 }
 
 void Boe_XMute(int argNum, gentity_t *ent, qboolean shortCmd){
+	if(ent->client->sess.mute == qtrue)
+	Boe_Mute (argNum, ent, qfalse, shortCmd);
+	else
 	Boe_Mute (argNum, ent, qtrue, shortCmd);
 }
 
@@ -2629,7 +2657,7 @@ void Henk_Flash(int argNum, gentity_t *adm, qboolean shortCmd){
 	float		x, y;
 	gentity_t	*missile;
 	trap_Argv( argNum, arg, sizeof( arg ) );
-	id = Boe_ClientNumFromArg (adm, argNum, "flash <id>", "flash", qtrue, qtrue, qtrue);
+	id = Boe_ClientNumFromArg (adm, argNum, "flash <id>", "flash", qtrue, qtrue, shortCmd);
 	if(id < 0){
 		if(strstr(arg, "all"))
 			all = qtrue;

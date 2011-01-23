@@ -1106,6 +1106,8 @@ extern  vmCvar_t	g_roundtimelimit;
 extern  vmCvar_t	g_timeextension;
 extern  vmCvar_t	g_roundstartdelay;
 extern  vmCvar_t	g_availableWeapons;
+extern  vmCvar_t	hideSeek_availableWeapons;
+extern	vmCvar_t	availableWeapons;
 extern  vmCvar_t	g_disablenades; // Henk 01/04/10
 extern  vmCvar_t	g_instagib; // Henk 08/04/10
 extern  vmCvar_t	g_weaponModFlags; // Henk 08/04/10
