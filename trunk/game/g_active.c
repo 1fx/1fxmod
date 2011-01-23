@@ -1222,7 +1222,9 @@ void ClientThink_real( gentity_t *ent )
 		if(client->ps.ammo[index] == 0 && client->ps.ammo[index1] == 0 && client->ps.clip[ATTACK_NORMAL][WP_M4_ASSAULT_RIFLE] == 0 && client->ps.clip[ATTACK_ALTERNATE][WP_M4_ASSAULT_RIFLE] == 0){
 			client->ps.clip[ATTACK_NORMAL][WP_M4_ASSAULT_RIFLE] = 0;
 			client->ps.clip[ATTACK_ALTERNATE][WP_M4_ASSAULT_RIFLE] = 0;
-			client->ps.stats[STAT_WEAPONS] &= ~(1<<WP_M4_ASSAULT_RIFLE);
+			client->ps.stats[STAT_WEAPONS] &= ~(1<<WP_M4_ASSAULT_RIFLE); // FIX ME; IF LAST CAGE FAILS M4 WILL DISAPPEAR
+			//client->ps.weapon = WP_KNIFE;
+			//client->ps.weaponstate = WEAPON_READY;
 			Com_sprintf(level.M4loc, sizeof(level.M4loc), "%s", "Disappeared");
 			trap_SendServerCommand(-1, va("print\"^3[H&S] ^7M4 has disappeared\n\""));
 		}

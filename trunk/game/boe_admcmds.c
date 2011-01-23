@@ -1270,8 +1270,69 @@ void Boe_Add_sAdmin_f(int argNum, gentity_t *adm, qboolean shortCmd)
 		*/
 
 /*
+================
+Henk_RemoveLineFromFile
+23/01/11 -> By Henkie
+
+Removes a zero based line from a file
+================
+*/
+void Henk_RemoveLineFromFile(gentity_t *adm, int line, char *file){
+	fileHandle_t	f;
+	int len, CurrentLine = 0, StartPos = -1, EndPos = -1, i;
+	qboolean begin = qtrue;
+	char buf[15000];
+	char newbuf[15000];
+	char asd[128] = "";
+	qboolean done = qfalse;
+	line = line+1;
+	memset( buf, 0, sizeof(buf) );
+	memset( newbuf, 0, sizeof(newbuf) );
+	len = trap_FS_FOpenFile( file, &f, FS_READ_TEXT);
+	trap_FS_Read( buf, len, f );
+	buf[len] = '\0';
+	trap_FS_FCloseFile( f );
+	for(i=0;i<=len;i++){
+		if(i == len){
+			EndPos = i;
+			if(line != CurrentLine){
+			strncpy(asd, buf+StartPos, EndPos);
+			sprintf(newbuf, "%s%s", newbuf, asd);
+			}else
+				done = qtrue;
+			break;
+		}
+		if(begin){
+			StartPos = i;
+			EndPos = -1;
+			begin = qfalse;
+			CurrentLine += 1; // current line
+		}
+		if(buf[i] == '\n'){ // Last line doesn't have an enter
+			EndPos = i;
+			begin = qtrue;
+		}
+		if(EndPos != -1){
+			if(line != CurrentLine){
+			strncpy(asd, buf+StartPos, EndPos-StartPos);
+			//Com_Printf("Final: %s\n", asd);
+			sprintf(newbuf, "%s%s\n", newbuf, asd);
+			}else
+				done = qtrue;
+		}
+	}
+	if(done){
+	// Start writing our new created file
+	len = trap_FS_FOpenFile( file, &f, FS_WRITE_TEXT);
+	trap_FS_Write(newbuf, strlen(newbuf), f);
+	trap_FS_FCloseFile( f );
+	}else
+		Com_Printf("Cannot find line %i\n", line);
+}
+
+/*
 ==================
-Boe_Unban
+j
 ==================
 */
 
