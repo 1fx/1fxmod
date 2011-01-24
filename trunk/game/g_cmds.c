@@ -3149,7 +3149,7 @@ void Cmd_Team_f( gentity_t *ent )
 	// Limit how often one can switch team
 	if ( ent->client->switchTeamTime > level.time ) 
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"May not switch teams more than once per 5 seconds.\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"May not switch teams more than once per 3 seconds.\n\"" );
 		return;
 	}
 
@@ -3159,7 +3159,7 @@ void Cmd_Team_f( gentity_t *ent )
 	SetTeam( ent, team, identity[0]?identity:NULL, qfalse );
 
 	// Remember the team switch time so they cant do it again really quick
-	ent->client->switchTeamTime = level.time + 5000;
+	ent->client->switchTeamTime = level.time + 3000;
 }
 
 
