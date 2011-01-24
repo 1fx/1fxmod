@@ -390,7 +390,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &server_redteamprefix, "server_redteamprefix", "^$R^Te^Hd", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_blueteamprefix, "server_blueteamprefix", "^yB^Il^fu^+e", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_hiderteamprefix, "server_hiderteamprefix", "^1H^Ti^od^qe^+r^7s", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
-	{ &server_hiderteamprefix, "server_seekerteamprefix", "^yS^le^le^+k^7ers", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
+	{ &server_seekerteamprefix, "server_seekerteamprefix", "^yS^le^le^+k^7ers", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &g_instagib, "g_instagib", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 	{ &g_weaponModFlags, "g_weaponModFlags", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_allowthirdperson, "g_allowThirdPerson", "1", CVAR_ARCHIVE|CVAR_SERVERINFO, 0.0, 0.0, 0,  qfalse },

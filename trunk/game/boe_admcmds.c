@@ -2767,19 +2767,35 @@ void Henk_Flash(int argNum, gentity_t *adm, qboolean shortCmd){
 	}
 }
 
-void Henk_Pause(int argNum, gentity_t *adm, qboolean shortCmd){
-	if(adm && adm->client)
-		trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Paused by %s.\n\"", adm->client->pers.netname));
-	else
-		trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Paused.\n\""));
+void Henk_Pause(int argNum, gentity_t *adm, qboolean shortCmd)
+{
+	// Boe!Man 1/24/11: Tell everyone what just happened.
+	Boe_GlobalSound(G_SoundIndex("sound/misc/events/buzz02.wav"));
+			
+	if(adm && adm->client){
+		Boe_adminLog (va("%s - PAUSE", adm->client->pers.cleanName)) ;
+		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Pause by %s.\n\"", adm->client->pers.netname));
+	}else{
+		Boe_adminLog (va("RCON - PAUSE")) ;
+		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Pause.\n\""));
+	}
+
 	RPM_Pause(adm);
 }
 
-void Henk_Unpause(int argNum, gentity_t *adm, qboolean shortCmd){
-	if(adm && adm->client)
-		trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Unaused by %s.\n\"", adm->client->pers.netname));
-	else
-		trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Unaused.\n\""));
+void Henk_Unpause(int argNum, gentity_t *adm, qboolean shortCmd)
+{
+	// Boe!Man 1/24/11: Tell everyone what just happened.
+	Boe_GlobalSound(G_SoundIndex("sound/misc/events/buzz02.wav"));
+			
+	if(adm && adm->client){
+		Boe_adminLog (va("%s - UNPAUSE", adm->client->pers.cleanName)) ;
+		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Unpause by %s.\n\"", adm->client->pers.netname));
+	}else{
+		Boe_adminLog (va("RCON - UNPAUSE")) ;
+		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Unpaused.\n\""));
+	}
+	
 	RPM_Unpause(adm);
 }
 
@@ -2831,6 +2847,7 @@ void Henk_Gametype(int argNum, gentity_t *adm, qboolean shortCmd){
 			Boe_adminLog (va("%s - GAMETYPE SWITCH - %s", adm->client->pers.cleanName, gametype)) ;
 		}else{
 			trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Gametype changed to %s.\n\"", gametype));
+			Boe_adminLog (va("RCON - GAMETYPE SWITCH - %s", gametype)) ;
 		}
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 		level.mapSwitch = qtrue;
