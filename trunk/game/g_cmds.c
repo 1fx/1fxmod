@@ -5199,9 +5199,9 @@ void ClientCommand( int clientNum ) {
 	else if (Q_stricmp (cmd, "ref") == 0)
 		RPM_ref_cmd( ent );
 	else if (Q_stricmp (cmd, "henk") == 0){
-		char arg1[10];
-		trap_Argv( 1, arg1, sizeof( arg1 ) );
-		Henk_RemoveLineFromFile(ent, atoi(arg1), "users/bans.txt");
+		//char arg1[10];
+		//trap_Argv( 1, arg1, sizeof( arg1 ) );
+		//Henk_RemoveLineFromFile(ent, atoi(arg1), "users/bans.txt");
 	}
 #ifdef _SOF2_BOTS
 	else if (Q_stricmp (cmd, "addbot") == 0)

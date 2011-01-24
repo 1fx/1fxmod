@@ -3,7 +3,6 @@
 // q_shared.c -- stateless support routines that are included in each code dll
 #include "q_shared.h"
 
-
 /*
 -------------------------
 GetIDForString 

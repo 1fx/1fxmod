@@ -1628,6 +1628,11 @@ qboolean G_RadiusDamage (
 	// Henk 08/02/10 -> Add mm1 firenade
 	gentity_t *missile;
 	int num;
+	// Henk 24/01/11 -> Store hiders caught in a cage
+	int countCaught = 0;
+	int lastCaught = -1; // store ent number so we can get his name
+	// End
+	int			index,index1;
 
 	if ( radius < 1 )
 	{
@@ -1675,7 +1680,9 @@ qboolean G_RadiusDamage (
 							if(g_entities[entityList1[ a ]].client && g_entities[entityList1[ a ]].client->sess.team == TEAM_BLUE){
 								if(g_entities[entityList1[ a ]].s.number == ent->s.number){ // seeker not at boundary
 									CageOutOfBoundaries = qfalse;
-									trap_SendServerCommand(-1, va("print \"^3[H&S] ^7%s was trapped in a cage by %s\n\"", ent->client->pers.netname, attacker->client->pers.netname));
+									countCaught += 1;
+									lastCaught = ent->s.number;
+									//trap_SendServerCommand(-1, va("print \"^3[H&S] ^7%s was trapped in a cage by %s\n\"", ent->client->pers.netname, attacker->client->pers.netname));
 									break; 
 								}
 							}
@@ -1828,6 +1835,23 @@ qboolean G_RadiusDamage (
 				ammoindex=weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_ALTERNATE].ammoIndex;
 				attacker->client->ps.ammo[ammoindex]+=1;
 			}else{
+				if(lastCaught != -1 && countCaught == 1)
+					trap_SendServerCommand(-1, va("print \"^3[H&S] ^7%s was trapped in a cage by %s\n\"", g_entities[lastCaught].client->pers.netname, attacker->client->pers.netname));
+				else if(countCaught > 1)
+					trap_SendServerCommand(-1, va("print \"^3[H&S] ^7%i seekers were trapped in a cage by %s\n\"", countCaught, attacker->client->pers.netname));
+				// Check if ammo is empty
+				index = weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_ALTERNATE].ammoIndex;
+				index1 = weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_NORMAL].ammoIndex;
+				if(attacker->client->ps.ammo[index] == 0 && attacker->client->ps.ammo[index1] == 0 && attacker->client->ps.clip[ATTACK_NORMAL][WP_M4_ASSAULT_RIFLE] == 0 && attacker->client->ps.clip[ATTACK_ALTERNATE][WP_M4_ASSAULT_RIFLE] == 0){
+					attacker->client->ps.clip[ATTACK_NORMAL][WP_M4_ASSAULT_RIFLE] = 0;
+					attacker->client->ps.clip[ATTACK_ALTERNATE][WP_M4_ASSAULT_RIFLE] = 0;
+					attacker->client->ps.stats[STAT_WEAPONS] &= ~(1<<WP_M4_ASSAULT_RIFLE);
+					attacker->client->ps.weapon = WP_KNIFE;
+					attacker->client->ps.weaponstate = WEAPON_READY;
+					Com_sprintf(level.M4loc, sizeof(level.M4loc), "%s", "Disappeared");
+					trap_SendServerCommand(-1, va("print\"^3[H&S] ^7M4 has disappeared\n\""));
+				}
+				// End
 				SpawnCage(origin, attacker);
 			}
 		}

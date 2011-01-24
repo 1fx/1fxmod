@@ -1002,7 +1002,6 @@ void ClientThink_real( gentity_t *ent )
 	int			oldEventSequence;
 	int			msec;
 	usercmd_t	*ucmd;
-	int			index,index1;
 
 	///RxCxW - 2.04.05 - 05:04am
 	gspawn_t	*G_SelectClientSpawnPoint ( gentity_t* ent,  qboolean plantsk );
@@ -1214,20 +1213,6 @@ void ClientThink_real( gentity_t *ent )
 	}else{
 	client->ps.gravity = g_gravity.value;
 	client->ps.speed = g_speed.value;
-	}
-
-	if(client->ps.weapon == WP_M4_ASSAULT_RIFLE && client->ps.stats[STAT_WEAPONS] & ( 1 << WP_M4_ASSAULT_RIFLE )){
-		index = weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_ALTERNATE].ammoIndex;
-		index1 = weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_NORMAL].ammoIndex;
-		if(client->ps.ammo[index] == 0 && client->ps.ammo[index1] == 0 && client->ps.clip[ATTACK_NORMAL][WP_M4_ASSAULT_RIFLE] == 0 && client->ps.clip[ATTACK_ALTERNATE][WP_M4_ASSAULT_RIFLE] == 0){
-			client->ps.clip[ATTACK_NORMAL][WP_M4_ASSAULT_RIFLE] = 0;
-			client->ps.clip[ATTACK_ALTERNATE][WP_M4_ASSAULT_RIFLE] = 0;
-			client->ps.stats[STAT_WEAPONS] &= ~(1<<WP_M4_ASSAULT_RIFLE); // FIX ME; IF LAST CAGE FAILS M4 WILL DISAPPEAR
-			//client->ps.weapon = WP_KNIFE;
-			//client->ps.weaponstate = WEAPON_READY;
-			Com_sprintf(level.M4loc, sizeof(level.M4loc), "%s", "Disappeared");
-			trap_SendServerCommand(-1, va("print\"^3[H&S] ^7M4 has disappeared\n\""));
-		}
 	}
 
 	// set up for pmove

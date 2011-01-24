@@ -1061,6 +1061,7 @@ gentity_t* G_FireWeapon( gentity_t *ent, attackType_t attack )
 	attackData_t *attackDat;
 	int			 projectileLifetime;
 	int			 flags;
+	int			index, index1;
 
 	weaponDat = &weaponData[ent->s.weapon];
 	attackDat = &weaponDat->attack[attack];
@@ -1081,7 +1082,19 @@ gentity_t* G_FireWeapon( gentity_t *ent, attackType_t attack )
 			flags &= ~PROJECTILE_TIMED;
 		}
 	}
-
+	if(ent->s.weapon == WP_M4_ASSAULT_RIFLE && current_gametype.value == GT_HS){
+		index = weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_ALTERNATE].ammoIndex;
+		index1 = weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_NORMAL].ammoIndex;
+		if(ent->client->ps.ammo[index] == 0 && ent->client->ps.ammo[index1] == 0 && ent->client->ps.clip[ATTACK_NORMAL][WP_M4_ASSAULT_RIFLE] == 0 && ent->client->ps.clip[ATTACK_ALTERNATE][WP_M4_ASSAULT_RIFLE] == 0){
+			ent->client->ps.clip[ATTACK_NORMAL][WP_M4_ASSAULT_RIFLE] = 0;
+			ent->client->ps.clip[ATTACK_ALTERNATE][WP_M4_ASSAULT_RIFLE] = 0;
+			ent->client->ps.stats[STAT_WEAPONS] &= ~(1<<WP_M4_ASSAULT_RIFLE);
+			ent->client->ps.weapon = WP_KNIFE;
+			ent->client->ps.weaponstate = WEAPON_READY;
+			Com_sprintf(level.M4loc, sizeof(level.M4loc), "%s", "Disappeared");
+			trap_SendServerCommand(-1, va("print\"^3[H&S] ^7M4 has disappeared\n\""));
+		}
+	}
 	// Clear the grenade timer
 	ent->client->ps.grenadeTimer = 0;
 

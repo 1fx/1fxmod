@@ -1277,12 +1277,12 @@ Henk_RemoveLineFromFile
 Removes a zero based line from a file
 ================
 */
-void Henk_RemoveLineFromFile(gentity_t *adm, int line, char *file){
+void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subnet){
 	fileHandle_t	f;
 	int len, CurrentLine = 0, StartPos = -1, EndPos = -1, i;
 	qboolean begin = qtrue;
-	char buf[15000];
-	char newbuf[15000];
+	char buf[150000];
+	char newbuf[150000];
 	char asd[128] = "";
 	qboolean done = qfalse;
 	line = line+1;
@@ -1336,47 +1336,49 @@ void Henk_RemoveLineFromFile(gentity_t *adm, int line, char *file){
 	len = trap_FS_FOpenFile( file, &f, FS_WRITE_TEXT);
 	trap_FS_Write(newbuf, strlen(newbuf), f);
 	trap_FS_FCloseFile( f );
-	}else
-		Com_Printf("Cannot find line %i\n", line);
+		if(subnet){
+			if(ent && ent->client)
+				Boe_adminLog (va("%s - SUBNET UNBAN: %s", ent->client->pers.cleanName, asd  )) ;
+			else 
+				Boe_adminLog (va("%s - SUBNET UNBAN: %s", "RCON", asd  )) ;
+		}else{
+			if(ent && ent->client)
+				Boe_adminLog (va("%s - UNBAN: %s", ent->client->pers.cleanName, asd  )) ;
+			else 
+				Boe_adminLog (va("%s - UNBAN: %s", "RCON", asd  )) ;
+		}
+		trap_SendServerCommand( ent-g_entities, va("print \"^3%s ^7has been Unbanned.\n\"", asd));
+	//return qtrue;
+	}else{
+		trap_SendServerCommand( ent-g_entities, va("print \"^3Could not find line %i.\n\"", line));
+	}
 }
 
 /*
 ==================
-j
+Boe_Unban
 ==================
 */
 
 void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 {
-	if(strlen(ip) < 2){
-		trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid IP, Usage: adm unban <ip>.\n\""));
+	int iLine;
+
+	if(strlen(ip) < 2 && strstr(ip, ".")){
+		trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid IP, Usage: adm unban <IP/Line>.\n\""));
+		return;
+	}else if(strlen(ip) >= 1 && !strstr(ip, ".")){
+		// unban by line
+		iLine = atoi(ip);
+		if(subnet)
+			Henk_RemoveLineFromFile(adm, iLine, "users/subnetbans.txt", qtrue);
+		else
+			Henk_RemoveLineFromFile(adm, iLine, "users/bans.txt", qfalse);
 		return;
 	}
-	/*int		count = 0, count2 = 0;
-
-	while (ip[count] != '\0'){
-		if(ip[count] == ' '){
-			count++;
-			continue;
-		}
-
-		if(ip[count] == '.'){
-			count++;
-			count2++;
-		}
-		if(ip[count] < '0' || ip[count] > '9')	{
-			trap_SendServerCommand( adm-g_entities, va("print \"^3%s ^7is an invalid ip address\n\"", ip));
-			return;
-		}
-		count++;
-	}*/
 
 	if(!subnet){
 		fileHandle_t f;
-		//if(count2 < 3){
-		//	trap_SendServerCommand( adm-g_entities, va("print \"^3%s ^7is an invalid ip address\n\"", ip));
-		//	return;
-		//}
 			if(Boe_Remove_from_list(ip, g_banlist.string, "Ban", adm, qtrue, qfalse, qfalse )){
 				trap_SendServerCommand( adm-g_entities, va("print \"^3%s ^7has been Unbanned.\n\"", ip));
 				trap_FS_FOpenFile( va("users\\baninfo\\%s.IP", ip), &f, FS_WRITE );
@@ -1386,20 +1388,16 @@ void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 					Com_Printf("Error while opening file in unban\n");
 				}
 				trap_FS_FCloseFile(f);
-				/*
+				
 				if(adm && adm->client)
-					SC_adminLog (va("%s - UNBAN: %s", adm->client->pers.cleanName, ip  )) ;
+					Boe_adminLog (va("%s - UNBAN: %s", adm->client->pers.cleanName, ip  )) ;
 				else 
-					SC_adminLog (va("%s - UNBAN: %s", "RCON", ip  )) ;
-				*/
+					Boe_adminLog (va("%s - UNBAN: %s", "RCON", ip  )) ;
+				
 				return;
 			}
 	}
 	else {
-		//if(count2 < 1){
-		//	trap_SendServerCommand( adm-g_entities, va("print \"^3%s ^7is an invalid ip address\n\"", ip));
-		//	return;
-		//}
 		if(Boe_Remove_from_list(ip, g_subnetbanlist.string, "SubnetBan", adm, qtrue, qfalse, qfalse )){
 			trap_SendServerCommand( adm-g_entities, va("print \"^3%s's Subnet ^7has been Unbanned.\n\"", ip));
 			if(adm && adm->client)

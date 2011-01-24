@@ -423,3 +423,4 @@ void Henk_Gametype(int argNum, gentity_t *adm, qboolean shortCmd);
 void Henk_Unpause(int argNum, gentity_t *adm, qboolean shortCmd);
 void Henk_Pause(int argNum, gentity_t *adm, qboolean shortCmd);
 void G_UpdateAvailableWeapons(void);
+void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subnet);
