@@ -1297,7 +1297,12 @@ void Henk_RemoveLineFromFile(gentity_t *adm, int line, char *file){
 			EndPos = i;
 			if(line != CurrentLine){
 			strncpy(asd, buf+StartPos, EndPos);
+			// Boe!Man 1/24/11: Fixed compiling errors using sprintf.
+#ifdef Q3_VM
+			Com_sprintf(newbuf, sizeof(newbuf), va("%s%s\n", newbuf, asd));
+#else
 			sprintf(newbuf, "%s%s", newbuf, asd);
+#endif
 			}else
 				done = qtrue;
 			break;
@@ -1316,7 +1321,12 @@ void Henk_RemoveLineFromFile(gentity_t *adm, int line, char *file){
 			if(line != CurrentLine){
 			strncpy(asd, buf+StartPos, EndPos-StartPos);
 			//Com_Printf("Final: %s\n", asd);
+			// Boe!Man 1/24/11: Fixed compiling errors using sprintf.
+#ifdef Q3_VM
+			Com_sprintf(newbuf, sizeof(newbuf), va("%s%s\n", newbuf, asd));
+#else
 			sprintf(newbuf, "%s%s\n", newbuf, asd);
+#endif
 			}else
 				done = qtrue;
 		}
