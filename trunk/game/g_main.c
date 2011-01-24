@@ -2848,9 +2848,11 @@ void G_RunFrame( int levelTime )
 			}
 			else if (g_compMode.integer > 0 && cm_enabled.integer == 3){
 				if(level.time == level.mapSwitchCount + 2000){
-					// Boe!Man 11/17/10: Is auto swap enabled?
+					/*
+					// Boe!Man 11/17/10: Is auto swap enabled? -- Update 1/24/11: Swap the teams when the round has just ended.
 					if (cm_aswap.integer > 0){
-						Boe_SwapTeams(NULL);}
+						Boe_SwapTeams(NULL);
+					}*/
 					trap_SendConsoleCommand( EXEC_APPEND, va("map_restart 0\n"));
 				}
 			}
@@ -2918,6 +2920,11 @@ void G_RunFrame( int levelTime )
 			level.compMsgCount = level.time + 3000;
 			}
 		else if(cm_enabled.integer == 3 && level.compMsgCount == level.time){
+			// Boe!Man 1/24/11: Swap the teams.
+			if (cm_aswap.integer > 0 && level.swappedteams == qfalse){
+				Boe_SwapTeams(NULL);
+				level.swappedteams = qtrue;
+			}
 			if (level.teamScores[TEAM_RED] > level.teamScores[TEAM_BLUE]){
 				trap_SendServerCommand(-1, va("cp \"@%sFirst round ended!\n\n^7[^3Red team^7] %sleads with %i - %i\n\n%sRestart map to start the second round!",
 					server_color3.string, server_color3.string, level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE], server_color3.string));}

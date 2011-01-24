@@ -1578,7 +1578,12 @@ void Boe_About( gentity_t *ent )
 	trap_SendServerCommand( ent-g_entities, va("print \"\n^3Server settings\n\""));
 	trap_SendServerCommand( ent-g_entities, va("print \"--------------------------------------\n\""));
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Mod used^7]            %s %s\n", INF_STRING, INF_VERSION_STRING));
-	if (g_compMode.integer > 0){
+	if (g_instagib.integer > 0){
+		trap_SendServerCommand( ent-g_entities, va("print \"[^3Instagib^7]            Yes\n"));
+	}else{
+		trap_SendServerCommand( ent-g_entities, va("print \"[^3Instagib^7]            No\n"));
+	}
+	if (g_compMode.integer > 0 && cm_enabled.integer > 1){
 		trap_SendServerCommand( ent-g_entities, va("print \"[^3Competition Mode^7]    Yes\n"));
 	}else{
 		trap_SendServerCommand( ent-g_entities, va("print \"[^3Competition Mode^7]    No\n"));

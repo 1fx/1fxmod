@@ -618,6 +618,7 @@ typedef struct
 	int			bluetimeouts;
 	int			timeout;
 	qboolean	swapteams;
+	qboolean	swappedteams; // Boe!Man 1/24/11: Used for Competetion Mode swap.
 	int			pause; // when 1 all players in intermission type state
 	int			unpausetime;			// time for the restart countdown sequence
 

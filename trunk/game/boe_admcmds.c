@@ -997,11 +997,11 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd){
 	//wrapper for interface
 	if(adm){
 	trap_SendServerCommand( adm-g_entities, va("print \"^3[Banlist]^7\n\n\""));
-	trap_SendServerCommand( adm-g_entities, va("print \"^3IP              Name                Reason             By\n\""));
+	trap_SendServerCommand( adm-g_entities, va("print \"^3 #    IP              Name                Reason             By\n\""));
 	trap_SendServerCommand( adm-g_entities, va("print \"^7------------------------------------------------------------------------\n\""));
 	}else{
 	Com_Printf("^3[Banlist]^7\n\n");
-	Com_Printf("^3IP              Name                Reason             By\n");
+	Com_Printf("^3 #    IP              Name                Reason             By\n");
 	Com_Printf("^7------------------------------------------------------------------------\n");
 	}
 
@@ -1068,10 +1068,24 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd){
 		if(length > 20){
 			by[20] = '\0';
 		}
-		if(adm)
-		trap_SendServerCommand( adm-g_entities, va("print \"%s%s%s%s%s%s%s\n", ip, column1, name, column2, reason, column3, by)); // Boe!Man 9/16/10: Print ban.
-		else
-		Com_Printf("%s%s%s%s%s%s%s\n", ip, column1, name, column2, reason, column3, by);
+		if(adm){
+			// Boe!Man 1/24/11: Print the banline as well (for easy unbanning).
+			if(i <= 9){
+				trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7]   %s%s%s%s%s%s%s\n", i, ip, column1, name, column2, reason, column3, by)); // Boe!Man 9/16/10: Print ban.
+			}else if(i > 9 && i < 100){
+				trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7]  %s%s%s%s%s%s%s\n", i, ip, column1, name, column2, reason, column3, by)); // Boe!Man 9/16/10: Print ban.
+			}else{
+				trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7] %s%s%s%s%s%s%s\n", i, ip, column1, name, column2, reason, column3, by)); // Boe!Man 9/16/10: Print ban.
+			}
+		}else{
+			if(i <= 9){
+				Com_Printf("[^3%i^7]   %s%s%s%s%s%s%s\n", i, ip, column1, name, column2, reason, column3, by);
+			}else if(i > 9 && i < 100){
+				Com_Printf("[^3%i^7]  %s%s%s%s%s%s%s\n", i, ip, column1, name, column2, reason, column3, by);
+			}else{
+				Com_Printf("[^3%i^7] %s%s%s%s%s%s%s\n", i, ip, column1, name, column2, reason, column3, by);
+			}
+		}
 		//trap_SendServerCommand( adm-g_entities, va("print \"%s\n", by)); // Boe!Man 9/16/10: Print tier 4.
 		//trap_SendServerCommand( adm-g_entities, va("print \"%s\n%s\n%s\n%s\n\"", ip, name, reason, by)); // print result
 		}

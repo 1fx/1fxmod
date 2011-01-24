@@ -43,7 +43,7 @@ static admCmd_t AdminCommands[] =
 	{"!nn", "nonades", &g_nades.integer, &Boe_NoNades},
 	{"!sl", "scorelimit", &g_sl.integer, &Boe_ScoreLimit},
 	{"!tl", "timelimit", &g_tl.integer, &Boe_TimeLimit},
-	{"!ri ", "respawninterval", &g_ri.integer, &Boe_RespawnInterval},
+	{"!ri", "respawninterval", &g_ri.integer, &Boe_RespawnInterval},
 	{"!rd", "realdamage", &g_damage.integer, &Boe_RealDamage},
 	{"!nd", "normaldamage", &g_damage.integer, &Boe_NormalDamage},
 	{"!gr", "gametyperestart", &g_gr.integer, &Boe_GametypeRestart},
@@ -65,6 +65,7 @@ static admCmd_t AdminCommands[] =
 	{"!g ", "gametype", &g_mapswitch.integer, &Henk_Gametype},
 	{"!gt ", "gametype", &g_mapswitch.integer, &Henk_Gametype},
 	{"!upa", "unpause", &g_mapswitch.integer, &Henk_Unpause},
+	{"!up", "unpause", &g_mapswitch.integer, &Henk_Unpause},
 	{"!pa", "pause", &g_mapswitch.integer, &Henk_Pause},
 
 	// Boe!Man 1/22/11: Adding full synonyms.
@@ -91,7 +92,7 @@ static admCmd_t AdminCommands[] =
 	{"!nonades", "nonades", &g_nades.integer, &Boe_NoNades},
 	{"!scorelimit", "scorelimit", &g_sl.integer, &Boe_ScoreLimit},
 	{"!timelimit", "timelimit", &g_tl.integer, &Boe_TimeLimit},
-	{"!respawninterval ", "respawninterval", &g_ri.integer, &Boe_RespawnInterval},
+	{"!respawninterval", "respawninterval", &g_ri.integer, &Boe_RespawnInterval},
 	{"!realdamage", "realdamage", &g_damage.integer, &Boe_RealDamage},
 	{"!normaldamage", "normaldamage", &g_damage.integer, &Boe_NormalDamage},
 	{"!gametyperestart", "gametyperestart", &g_gr.integer, &Boe_GametypeRestart},
