@@ -160,7 +160,7 @@ extern	vmCvar_t	server_color6;
 void	Boe_Add_bAdmin_f (int argNum, gentity_t *adm, qboolean shortCmd);		// Prototype warnings.
 void	Boe_Add_Admin_f (int argNum, gentity_t *adm, qboolean shortCmd);		// Prototype warnings.
 void	Boe_Add_sAdmin_f (int argNum, gentity_t *adm, qboolean shortCmd);		// Prototype warnings.
-void	Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd);
+void	Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet);
 void	Boe_Ban_f (int argNum, gentity_t *adm, qboolean shortCmd);				// Prototype warnings.
 void	Boe_Uppercut (int argNum, gentity_t *adm, qboolean shortCmd);
 extern	vmCvar_t	g_uppercut;
@@ -426,3 +426,10 @@ void G_UpdateAvailableWeapons(void);
 void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subnet);
 void Henk_Unban(int argNum, gentity_t *adm, qboolean shortCmd);
 void Henk_SubnetUnban(int argNum, gentity_t *adm, qboolean shortCmd);
+void Henk_SubnetBanList(int argNum, gentity_t *adm, qboolean shortCmd);
+void Henk_BanList(int argNum, gentity_t *adm, qboolean shortCmd);
+void Svcmd_EntityList_f(void);
+void Svcmd_CancelVote_f(void);
+void Svcmd_AddIP_f(void);
+void Svcmd_RemoveIP_f(void);
+void Svcmd_ExtendTime_f(void);

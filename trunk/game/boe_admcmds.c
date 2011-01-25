@@ -982,7 +982,15 @@ Boe_BanList
 =============
 */
 
-void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd){
+void Henk_BanList(int argNum, gentity_t *adm, qboolean shortCmd){
+	Boe_BanList(argNum, adm, shortCmd, qfalse);
+}
+
+void Henk_SubnetBanList(int argNum, gentity_t *adm, qboolean shortCmd){
+	Boe_BanList(argNum, adm, shortCmd, qtrue);
+}
+
+void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet){
 	void	*GP2, *group;
 	char	ip[64], name[64], reason[64], by[64], test = ' ';
 	char	column1[20], column2[20], column3[20];
@@ -995,19 +1003,32 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd){
 	char xip[64];
 	//wrapper for interface
 	if(adm){
-	trap_SendServerCommand( adm-g_entities, va("print \"^3[Banlist]^7\n\n\""));
-	trap_SendServerCommand( adm-g_entities, va("print \"^3 #    IP              Name                Reason             By\n\""));
-	trap_SendServerCommand( adm-g_entities, va("print \"^7------------------------------------------------------------------------\n\""));
+		if(subnet)
+			trap_SendServerCommand( adm-g_entities, va("print \"^3[Subnetbanlist]^7\n\n\""));
+		else
+			trap_SendServerCommand( adm-g_entities, va("print \"^3[Banlist]^7\n\n\""));
+		trap_SendServerCommand( adm-g_entities, va("print \"^3 #    IP              Name                Reason             By\n\""));
+		trap_SendServerCommand( adm-g_entities, va("print \"^7------------------------------------------------------------------------\n\""));
 	}else{
-	Com_Printf("^3[Banlist]^7\n\n");
-	Com_Printf("^3 #    IP              Name                Reason             By\n");
-	Com_Printf("^7------------------------------------------------------------------------\n");
+		if(subnet)
+			Com_Printf("^3[Subnetbanlist]^7\n\n");
+		else
+			Com_Printf("^3[Banlist]^7\n\n");
+		Com_Printf("^3 #    IP              Name                Reason             By\n");
+		Com_Printf("^7------------------------------------------------------------------------\n");
 	}
-
-	len = trap_FS_FOpenFile("users/bans.txt", &testx, FS_READ);
-	if(!test){
-		Com_Printf("Error while reading users/bans.txt\n");
-		return;
+	if(subnet){
+		len = trap_FS_FOpenFile("users/subnetbans.txt", &testx, FS_READ);
+		if(!test){
+			Com_Printf("Error while reading users/subnetbans.txt\n");
+			return;
+		}
+	}else{
+		len = trap_FS_FOpenFile("users/bans.txt", &testx, FS_READ);
+		if(!test){
+			Com_Printf("Error while reading users/bans.txt\n");
+			return;
+		}
 	}
 	trap_FS_Read( buf, len, testx );
 	buf[len] = '\0';
@@ -1027,7 +1048,10 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd){
 			Com_Printf("%s\n", xip);
 			count += 1; // Henk 25/01/11 -> Fix wrong ban lines.
 			// Start extracting and printing baninfo
-			file = va("users/baninfo/%s.IP", xip);
+			if(subnet)
+				file = va("users/baninfo/subnet/%s.IP", xip);
+			else
+				file = va("users/baninfo/%s.IP", xip);
 			GP2 = trap_GP_ParseFile(file, qtrue, qfalse);
 			if(!GP2){
 				//Com_Printf("Error while opening file: %s\n", file);
@@ -1303,15 +1327,16 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 	fileHandle_t	f;
 	int len, CurrentLine = 0, StartPos = 0, EndPos = -1, i;
 	qboolean begin = qtrue;
-	char buf[150000];
-	char newbuf[150000];
+	char buf[15000];
+	char newbuf[15000];
 	char asd[128] = "";
-	char last[128] = "";
+	char last[128] = "", lastip[64] = "";
 	qboolean done = qfalse;
 	line = line;
 	memset( buf, 0, sizeof(buf) );
 	memset( newbuf, 0, sizeof(newbuf) );
 	memset( last, 0, sizeof(last) );
+	memset( lastip, 0, sizeof(lastip) );
 	len = trap_FS_FOpenFile( file, &f, FS_READ_TEXT);
 	trap_FS_Read( buf, len, f );
 	buf[len] = '\0';
@@ -1368,6 +1393,25 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 	len = trap_FS_FOpenFile( file, &f, FS_WRITE_TEXT);
 	trap_FS_Write(newbuf, strlen(newbuf), f);
 	trap_FS_FCloseFile( f );
+	// Clear ban info
+	for(i=0;i<strlen(last);i++){
+		if(last[i] == '\\'){
+			strncpy(lastip, last, i);
+			break;
+		}
+	}
+	Com_Printf("Last ip: %s\n", lastip);
+	if(subnet)
+		trap_FS_FOpenFile( va("users\\baninfo\\subnet\\%s.IP", lastip), &f, FS_WRITE );
+	else
+		trap_FS_FOpenFile( va("users\\baninfo\\%s.IP", lastip), &f, FS_WRITE );
+	if(f){
+		trap_FS_Write("", 0, f);
+	}else{
+		Com_Printf("Error while opening file in unban\n");
+	}
+	trap_FS_FCloseFile(f);
+	// End
 		if(subnet){
 			if(ent && ent->client)
 				Boe_adminLog (va("%s - SUBNET UNBAN: %s", ent->client->pers.cleanName, last  )) ;
@@ -1395,6 +1439,7 @@ Boe_Unban
 void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 {
 	int iLine;
+	fileHandle_t f;
 
 	if(strlen(ip) < 2 && strstr(ip, ".")){
 		trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid IP, Usage: adm unban <IP/Line>.\n\""));
@@ -1413,7 +1458,6 @@ void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 	}
 
 	if(!subnet){
-		fileHandle_t f;
 			if(Boe_Remove_from_list(ip, g_banlist.string, "Ban", adm, qtrue, qfalse, qfalse )){
 				trap_SendServerCommand( adm-g_entities, va("print \"^3%s ^7has been Unbanned.\n\"", ip));
 				trap_FS_FOpenFile( va("users\\baninfo\\%s.IP", ip), &f, FS_WRITE );
@@ -1570,54 +1614,80 @@ int Boe_NameListCheck (int num, const char *name, const char *file, gentity_t *e
 Boe_subnetBan
 =================
 */
-
-void Boe_subnetBan (int argNum, gentity_t *adm, qboolean shortCmd)  
-{
-	gentity_t		*ent;
+void Boe_subnetBan (int argNum, gentity_t *adm, qboolean shortCmd){
+	int				idnum;
+	char			reason[MAX_STRING_TOKENS] = "\0";
+	fileHandle_t	f;
+	char			string[1024];
+	int i;
+	char arg[64];
+	char *temp = "";
 	char			ip[16];
-	char			reason[16] = "\0";
-	char			size[4];
-	char			info[96];
-	int				idnum, s;
+	char			info[1024];
+	qboolean first = qfalse;
+	idnum = Boe_ClientNumFromArg(adm, argNum, "subnetban <idnumber> <reason>", "subnetban", qfalse, qfalse, shortCmd);
+	if(idnum < 0)
+		return;
+	if(adm){
+		if(shortCmd){
+			strcpy(reason, GetReason());
+		}else{
+		//trap_Argv( argNum + 1, reason, sizeof( reason ) );
+			for(i=0;i<=25;i++){
+			trap_Argv( (argNum+1)+i, arg, sizeof( arg ) );
+				if(first)
+					temp = va("%s %s", temp, arg); // we fill this array up with 25 arguments
+				else{
+					temp = va("%s", arg);
+					first = qtrue;
+				}
+			}
+			strcpy(reason, temp);
+		}
+	}else{
+		trap_Argv( argNum+1, arg, sizeof( arg ) );
+		strcpy(reason, arg);
+	}
+	Q_strncpyz(ip, g_entities[idnum].client->pers.ip, 8);
+	// Boe!Man 9/7/10: Example of ban.
+		trap_FS_FOpenFile( va("users/baninfo/subnet/%s.IP", ip), &f, FS_WRITE );
+		if (!f)
+		{
+			Com_Printf("^1Error opening File\n");
+			return;
+		}
+		if (adm && adm->client)
+		strcpy(string, va("1\n{\nip \"%s\"\nname \"%s\"\nreason \"%s\"\nby \"%s\"\n}\n", ip, g_entities[idnum].client->pers.cleanName, reason, adm->client->pers.cleanName));
+		else
+		strcpy(string, va("1\n{\nip \"%s\"\nname \"%s\"\nreason \"%s\"\nby \"RCON\"\n}\n", ip, g_entities[idnum].client->pers.cleanName, reason));
 
-	if(adm && adm->client) argNum = 2;
-	else argNum = 1;
+		trap_FS_Write(string, strlen(string), f);
+		trap_FS_Write("\n", 1, f);
+		trap_FS_FCloseFile(f);
 
-	idnum = Boe_ClientNumFromArg(adm, argNum, "subnetban <id> <size> <reason>", "subnetban", qfalse, qfalse, shortCmd);
-	if(idnum < 0) return;
-	ent = g_entities + idnum;
-
-	trap_Argv( argNum + 1, size, sizeof( size ) );
-	trap_Argv( argNum + 2, reason, sizeof( reason ) );
-	s = atoi(size) + 1;
-	
-	if (!size[0] || s <= 4 ) s = 8;
-	if (s > 16) s = 16;		
-
-	Q_strncpyz(ip, ent->client->pers.ip, s);
 	// Boe!Man 1/7/10: No more logging of reason in the ban file.
-	strcpy(info, va("%s\\%s", ip, ent->client->pers.cleanName));
-	
+	strcpy(info, va("%s\\%s", ip, g_entities[idnum].client->pers.cleanName));
+
 	if(Boe_AddToList(info, g_subnetbanlist.string, "Subnet ban", adm)){
 		if(adm && adm->client)	{
 			if(!*reason){
-				trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"Subnetbanned by %s\"\n", idnum, adm->client->pers.netname)); }
-			else if(reason != ""){
-				trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"Subnetbanned by %s for: %s\"\n", idnum, adm->client->pers.netname, reason));}
-			else {
-				trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"Subnetbanned by %s\"\n", idnum, adm->client->pers.netname));}
-			// trap_SendServerCommand( adm-g_entities, va("print \"%s's ^4SUBNET ^7WAS ^1BANNED^7!\n\"", ent->client->pers.netname));
-			Boe_adminLog (va("%s - SUBNETBAN: %s", adm->client->pers.cleanName, ent->client->pers.cleanName  )) ;
+				trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"Subnetbanned by %s\"\n", idnum, adm->client->pers.netname));
+				Boe_adminLog (va("%s - SUBNETBAN: %s", adm->client->pers.cleanName, g_entities[idnum].client->pers.cleanName  )) ;}
+			else{
+				trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"Subnetbanned by %s for: %s\"\n", idnum, adm->client->pers.netname, reason));
+				trap_SendServerCommand( adm-g_entities, va("print \"%s was Subnetbanned by %s!\n\"", g_entities[idnum].client->pers.netname, adm->client->pers.netname));
+				Boe_adminLog (va("%s - SUBNETBAN: %s - For: %s", adm->client->pers.cleanName, g_entities[idnum].client->pers.cleanName, reason  )) ;
+			}
 		}
-		else {
-			if (!*reason){
+		else{
+			if(!*reason){
+				Boe_adminLog (va("%s - SUBNETBAN: %s", "RCON", g_entities[idnum].client->pers.cleanName  )) ;
+				trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"Subnetbanned!\"\n", idnum));
+			}else{
+				Com_Printf("%s was subnetbanned!\n", g_entities[idnum].client->pers.cleanName);
+				Boe_adminLog (va("%s - SUBNETBAN: %s - For: %s", "RCON", g_entities[idnum].client->pers.cleanName, reason)) ;
 				trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"Subnetbanned for: %s\"\n", idnum, reason));
 			}
-			else {
-				trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"Subnetbanned!\"\n", idnum));
-			}
-			Boe_adminLog (va("%s - SUBNETBAN: %s", "RCON", ent->client->pers.cleanName  )) ;
-			// Com_Printf("%s's ^4SUBNET ^7WAS ^1BANNED^7!\n", ent->client->pers.netname);
 		}
 	}
 }

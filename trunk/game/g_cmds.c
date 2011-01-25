@@ -52,10 +52,10 @@ static admCmd_t AdminCommands[] =
 	{"!rcl ", "removeclan", &g_clan.integer, &Boe_Remove_Clan_Member},
 	{"!3rd", "3rd", &g_clan.integer, &Boe_Third},
 	{"!cm", "compmode", &g_clan.integer, &Boe_CompMode},
-	{"!bl", "banlist", &g_ban.integer, &Boe_BanList},
+	{"!bl", "banlist", &g_ban.integer, &Henk_BanList},
 	{"!ba ", "ban", &g_ban.integer, &Boe_Ban_f},
 	{"!br ", "broadcast", &g_broadcast.integer, &Boe_Broadcast},
-	{"!sbl", "subnetbanlist", &g_subnetban.integer, &Boe_SubnetBanlist},
+	{"!sbl", "subnetbanlist", &g_subnetban.integer, &Henk_SubnetBanList},
 	{"!et", "eventeams", &g_eventeams.integer, &Henk_EvenTeams},
 	{"!cva", "clanvsall", &g_clanvsall.integer, &Henk_CVA},
 	{"!sw", "swapteams", &g_swapteams.integer, &Henk_SwapTeams},
@@ -69,7 +69,10 @@ static admCmd_t AdminCommands[] =
 	{"!pa", "pause", &g_mapswitch.integer, &Henk_Pause},
 	{"!uba ", "unban", &g_ban.integer, &Henk_Unban},
 	{"!sbu ", "subnetunban", &g_subnetban.integer, &Henk_SubnetUnban},
-	
+	{"!ub ", "unban", &g_ban.integer, &Henk_Unban},
+	{"!su ", "subnetunban", &g_subnetban.integer, &Henk_SubnetUnban},
+	{"!sb ", "subnetban", &g_subnetban.integer, &Boe_subnetBan},
+
 		// Boe!Man 1/22/11: Adding full synonyms.
 	{"!uppercut ", "uppercut", &g_uppercut.integer, &Boe_Uppercut},
 	{"!pop ", "pop", &g_pop.integer, &Boe_pop},
@@ -102,10 +105,10 @@ static admCmd_t AdminCommands[] =
 	{"!removeclan ", "removeclan", &g_clan.integer, &Boe_Remove_Clan_Member},
 	{"!compmode", "compmode", &g_clan.integer, &Boe_CompMode},
 	{"!competitionmode", "compmode", &g_clan.integer, &Boe_CompMode},
-	{"!banlist", "banlist", &g_ban.integer, &Boe_BanList},
+	{"!banlist", "banlist", &g_ban.integer, &Henk_BanList},
 	{"!ban ", "ban", &g_ban.integer, &Boe_Ban_f},
 	{"!broadcast ", "broadcast", &g_broadcast.integer, &Boe_Broadcast},
-	{"!subnetbanlist", "subnetbanlist", &g_subnetban.integer, &Boe_SubnetBanlist},
+	{"!subnetbanlist", "subnetbanlist", &g_subnetban.integer, &Henk_SubnetBanList},
 	{"!eventeams", "eventeams", &g_eventeams.integer, &Henk_EvenTeams},
 	{"!clanvsall", "clanvsall", &g_clanvsall.integer, &Henk_CVA},
 	{"!swapteams", "swapteams", &g_swapteams.integer, &Henk_SwapTeams},
@@ -115,7 +118,8 @@ static admCmd_t AdminCommands[] =
 	{"!unpause", "unpause", &g_mapswitch.integer, &Henk_Unpause},
 	{"!pause", "pause", &g_mapswitch.integer, &Henk_Pause},
 	{"!unban ", "unban", &g_ban.integer, &Henk_Unban},
-	{"!subnetunban ", "subnetunban", &g_subnetban.integer, &Henk_SubnetUnban}
+	{"!subnetunban ", "subnetunban", &g_subnetban.integer, &Henk_SubnetUnban},
+	{"!subnetban ", "subnetban", &g_subnetban.integer, &Boe_subnetBan}
 	// Boe!Man 1/22/11: End full synonyms.
 };
 
@@ -3793,18 +3797,11 @@ int StartAfterCommand(char *param){
 void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	char		*p;
 	// Boe!Man 1/10/10
-	int			id;
-	gentity_t	*targ;
 	int			i;
 	int			a = 0;
 	// Boe!Man 1/17/10
 	int			anim = 0;
 	float		knockback = 400.0;
-	vec3_t		dir;
-	// Boe!Man 3/20/10
-	int			it, nadeDir, weapon;
-	float		x, y;
-	gentity_t	*missile;
 	char team[4];
 	// Boe!Man 5/3/10: Temp(?) fix.
 	qboolean	acmd = qfalse;
