@@ -1298,6 +1298,7 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 	char buf[150000];
 	char newbuf[150000];
 	char asd[128] = "";
+	char last[128] = "";
 	qboolean done = qfalse;
 	line = line+1;
 	memset( buf, 0, sizeof(buf) );
@@ -1311,12 +1312,14 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 			EndPos = i;
 			if(line != CurrentLine){
 			strncpy(asd, buf+StartPos, EndPos);
+			strcpy(last, asd); 
 			// Boe!Man 1/24/11: Fixed compiling errors using sprintf.
 #ifdef Q3_VM
 			Com_sprintf(newbuf, sizeof(newbuf), va("%s%s\n", newbuf, asd));
 #else
 			sprintf(newbuf, "%s%s", newbuf, asd);
 #endif
+			Com_Printf("Last: %s\n", last);
 			}else
 				done = qtrue;
 			break;
@@ -1334,6 +1337,7 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 		if(EndPos != -1){
 			if(line != CurrentLine){
 			strncpy(asd, buf+StartPos, EndPos-StartPos);
+			strcpy(last, asd); 
 			//Com_Printf("Final: %s\n", asd);
 			// Boe!Man 1/24/11: Fixed compiling errors using sprintf.
 #ifdef Q3_VM
@@ -1352,16 +1356,16 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 	trap_FS_FCloseFile( f );
 		if(subnet){
 			if(ent && ent->client)
-				Boe_adminLog (va("%s - SUBNET UNBAN: %s", ent->client->pers.cleanName, asd  )) ;
+				Boe_adminLog (va("%s - SUBNET UNBAN: %s", ent->client->pers.cleanName, last  )) ;
 			else 
 				Boe_adminLog (va("%s - SUBNET UNBAN: %s", "RCON", asd  )) ;
 		}else{
 			if(ent && ent->client)
 				Boe_adminLog (va("%s - UNBAN: %s", ent->client->pers.cleanName, asd  )) ;
 			else 
-				Boe_adminLog (va("%s - UNBAN: %s", "RCON", asd  )) ;
+				Boe_adminLog (va("%s - UNBAN: %s", "RCON", last  )) ;
 		}
-		trap_SendServerCommand( ent-g_entities, va("print \"^3%s ^7has been Unbanned.\n\"", asd));
+		trap_SendServerCommand( ent-g_entities, va("print \"^3%s ^7has been Unbanned.\n\"", last));
 	//return qtrue;
 	}else{
 		trap_SendServerCommand( ent-g_entities, va("print \"^3Could not find line %i.\n\"", line));
@@ -1388,6 +1392,9 @@ void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 			Henk_RemoveLineFromFile(adm, iLine, "users/subnetbans.txt", qtrue);
 		else
 			Henk_RemoveLineFromFile(adm, iLine, "users/bans.txt", qfalse);
+		return;
+	}else if(strlen(ip) < 2){
+		trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid IP, Usage: adm unban <IP/Line>.\n\""));
 		return;
 	}
 
