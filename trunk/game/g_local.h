@@ -1058,6 +1058,7 @@ extern	gentity_t		g_entities[MAX_GENTITIES];
 #define	FOFS(x) ((int)&(((gentity_t *)0)->x))
 
 extern	vmCvar_t	g_gametype;
+extern	vmCvar_t	g_gametype1;
 extern	vmCvar_t	g_dedicated;
 extern	vmCvar_t	g_cheats;
 extern	vmCvar_t	g_maxclients;			// allow this many total, including spectators

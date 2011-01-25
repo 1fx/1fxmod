@@ -1648,7 +1648,7 @@ void Boe_subnetBan (int argNum, gentity_t *adm, qboolean shortCmd){
 		trap_Argv( argNum+1, arg, sizeof( arg ) );
 		strcpy(reason, arg);
 	}
-	Q_strncpyz(ip, g_entities[idnum].client->pers.ip, 8);
+	Q_strncpyz(ip, g_entities[idnum].client->pers.ip, 7);
 	// Boe!Man 9/7/10: Example of ban.
 		trap_FS_FOpenFile( va("users/baninfo/subnet/%s.IP", ip), &f, FS_WRITE );
 		if (!f)

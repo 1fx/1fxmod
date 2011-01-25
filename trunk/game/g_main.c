@@ -23,6 +23,7 @@ gentity_t		g_entities[MAX_GENTITIES];
 gclient_t		g_clients[MAX_CLIENTS];
 
 vmCvar_t	g_gametype;
+vmCvar_t	g_gametype1;
 vmCvar_t	g_dmflags;
 vmCvar_t	g_scorelimit;
 vmCvar_t	g_timelimit;
@@ -225,6 +226,7 @@ static cvarTable_t gameCvarTable[] =
 
 	// latched vars
 	{ &g_gametype, "g_gametype", "dm", CVAR_SERVERINFO | CVAR_LATCH, 0.0, 0.0, 0, qfalse  },
+	{ &g_gametype1, "g_gametype1", "dm", CVAR_INTERNAL, 0.0, 0.0, 0, qfalse  },
 
 	{ &g_maxclients, "sv_maxclients", "8", CVAR_SERVERINFO | CVAR_CHEAT | CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_maxGameClients, "g_maxGameClients", "0", CVAR_SERVERINFO | CVAR_LATCH | CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
@@ -687,6 +689,12 @@ void G_UpdateCvars( void )
 						trap_Cvar_Update ( cv->vmCvar );
 					}
 				}
+				// Henk 25/01/11 -> Remember previous gametype
+				if ( !Q_stricmp ( cv->cvarName, "g_gametype" ) )
+				{
+					trap_Cvar_Set("g_gametype1", cv->vmCvar->string);
+					trap_Cvar_Update ( &g_gametype1);
+				}
 
 				cv->modificationCount = cv->vmCvar->modificationCount;
 
@@ -891,14 +899,14 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	// Load the list of arenas
 	G_LoadArenas ( );
 
+	G_UpdateCvars();
+
 	// Build the gametype list so we can verify the given gametype
 	BG_BuildGametypeList ( );
 
 	//Before we set the gametype we change current_gametype and we set H&S to INF
-	if(restart){
-
-	}else{
-		if(strstr(g_gametype.string, "inf")){
+	if(!restart){
+		if(strstr(g_gametype.string, "inf") && !strstr(g_gametype1.string, "h&s")){
 			trap_Cvar_Set("current_gametype", "3");
 		}else if(strstr(g_gametype.string, "h&s")){
 			trap_Cvar_Set("current_gametype", "1");
@@ -2877,9 +2885,6 @@ void G_RunFrame( int levelTime )
 			else if(level.time == level.mapSwitchCount + 4000){
 				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp ^7%s in 1!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, level.mapSwitchName));}
 			else if(level.time == level.mapSwitchCount + 5000){
-				if(current_gametype.value == GT_HS){
-					trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype h&s\n"));
-				}
 				trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", level.mapSwitchName));}
 		}
 		else if(level.mapAction == 3){

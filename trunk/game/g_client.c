@@ -1171,7 +1171,6 @@ void ClientUserinfoChanged( int clientNum )
 	{
 		team = client->sess.team;
 	}
-	Com_Printf("ClientUserInfoChanged %i\n", clientNum);
 	
 	// Enforce the identities
 	oldidentity = client->pers.identity;
@@ -1214,7 +1213,7 @@ void ClientUserinfoChanged( int clientNum )
 			}else{
 				client->pers.identity = BG_FindIdentity ( s );
 				if(client->pers.identity){
-					if(client->pers.identity->mName == "NPC_Swiss_Police/swiss_police_b1" || client->pers.identity->mName == "NPC_Honor_Guard/honor_guard_w1"){
+					if(client->pers.identity->mName == "NPC_Swiss_Police/swiss_police_b1" || client->pers.identity->mName == "NPC_Honor_Guard/honor_guard_w1" || strstr(client->pers.identity->mName, "NPC_Swiss_Police")){
 						trap_SendServerCommand ( client - &level.clients[0], "print \"^3[H&S] ^7You cannot use that skin.\n\"" );
 						client->pers.identity = &bg_identities[1]; // Henk 21/02/10 -> Changed from return to skin 1(could prevent hiders with seekers skin)
 					}
