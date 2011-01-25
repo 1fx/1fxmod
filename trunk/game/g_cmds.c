@@ -67,8 +67,10 @@ static admCmd_t AdminCommands[] =
 	{"!upa", "unpause", &g_mapswitch.integer, &Henk_Unpause},
 	{"!up", "unpause", &g_mapswitch.integer, &Henk_Unpause},
 	{"!pa", "pause", &g_mapswitch.integer, &Henk_Pause},
-
-	// Boe!Man 1/22/11: Adding full synonyms.
+	{"!uba ", "unban", &g_ban.integer, &Henk_Unban},
+	{"!sbu ", "subnetunban", &g_subnetban.integer, &Henk_SubnetUnban},
+	
+		// Boe!Man 1/22/11: Adding full synonyms.
 	{"!uppercut ", "uppercut", &g_uppercut.integer, &Boe_Uppercut},
 	{"!pop ", "pop", &g_pop.integer, &Boe_pop},
 	{"!kick ", "kick", &g_kick.integer, &Boe_Kick},
@@ -111,7 +113,9 @@ static admCmd_t AdminCommands[] =
 	{"!flash ", "flash", &g_flash.integer, &Henk_Flash},
 	{"!gametype ", "gametype", &g_mapswitch.integer, &Henk_Gametype},
 	{"!unpause", "unpause", &g_mapswitch.integer, &Henk_Unpause},
-	{"!pause", "pause", &g_mapswitch.integer, &Henk_Pause}
+	{"!pause", "pause", &g_mapswitch.integer, &Henk_Pause},
+	{"!unban ", "unban", &g_ban.integer, &Henk_Unban},
+	{"!subnetunban ", "subnetunban", &g_subnetban.integer, &Henk_SubnetUnban}
 	// Boe!Man 1/22/11: End full synonyms.
 };
 

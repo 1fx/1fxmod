@@ -1145,6 +1145,7 @@ void Boe_Print_File (gentity_t *ent, char *file, qboolean clonecheckstats, int i
 	if(clonecheckstats == qfalse){
 	while(bufP <= &buf[len + 500])
 	{
+		memset(packet, 0, sizeof(packet)); // Henk 25/01/11 -> Clear the buffer to prevent problems
 		Q_strncpyz(packet, bufP, 501);
 		trap_SendServerCommand( ent-g_entities, va("print \"%s\"", packet));
 		bufP += 500;
@@ -1162,6 +1163,7 @@ void Boe_Print_File (gentity_t *ent, char *file, qboolean clonecheckstats, int i
 	}
 	while(bufP <= &buf[len + 500])
 	{
+		memset(packet, 0, sizeof(packet)); // Henk 25/01/11 -> Clear the buffer to prevent problems
 		Q_strncpyz(packet, bufP, 501);
 		j = strlen(packet);
 		x = 0;
@@ -1259,7 +1261,6 @@ void Boe_Stats ( gentity_t *ent )
 //	char		*fps;
 	qboolean	devmode = qfalse;
 	float		accuracy = 0;
-	char		*clonecheckfile;
 	qboolean	otherClient = qfalse;
 	int i;
 
@@ -1350,11 +1351,10 @@ void Boe_Stats ( gentity_t *ent )
 	trap_SendServerCommand( ent-g_entities, va("print \"-------------------------------------------------------\n"));
 	if(g_aliasCheck.integer > 0){ // Boe!Man 12/13/10: Only log when the Aliases are enabled.
 		trap_SendServerCommand( ent-g_entities, va("print \"[^3Aliases^7]     "));
-		clonecheckfile = va("users/aliases/%s.ip", ip);
 		if (otherClient == qfalse){
-			Boe_Print_File(ent, clonecheckfile, qtrue, -1);
+			Boe_Print_File(ent, va("users/aliases/%s.ip", ip), qtrue, -1);
 		}else{
-			Boe_Print_File(ent, clonecheckfile, qtrue, idnum);
+			Boe_Print_File(ent, va("users/aliases/%s.ip", ip), qtrue, idnum);
 		}
 		trap_SendServerCommand( ent-g_entities, va("print \"\n[^3Admin^7]       %s\n", admin));}
 	else{

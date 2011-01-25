@@ -424,3 +424,5 @@ void Henk_Unpause(int argNum, gentity_t *adm, qboolean shortCmd);
 void Henk_Pause(int argNum, gentity_t *adm, qboolean shortCmd);
 void G_UpdateAvailableWeapons(void);
 void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subnet);
+void Henk_Unban(int argNum, gentity_t *adm, qboolean shortCmd);
+void Henk_SubnetUnban(int argNum, gentity_t *adm, qboolean shortCmd);

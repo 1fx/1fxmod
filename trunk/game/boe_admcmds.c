@@ -987,13 +987,12 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd){
 	char	ip[64], name[64], reason[64], by[64], test = ' ';
 	char	column1[20], column2[20], column3[20];
 	int		spaces = 0, length = 0, z;
-	char	*filePtr;
 	char	*file;
-	int		fileCount, filelen;
-	char	Files[1024];
 	fileHandle_t testx;
 	char            buf[15000] = "\0";
-	int len, i;
+	int len, i, count = 0, EndPos = -1, StartPos = 0;
+	qboolean begin = qtrue;
+	char xip[64];
 	//wrapper for interface
 	if(adm){
 	trap_SendServerCommand( adm-g_entities, va("print \"^3[Banlist]^7\n\n\""));
@@ -1005,8 +1004,6 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd){
 	Com_Printf("^7------------------------------------------------------------------------\n");
 	}
 
-	fileCount = trap_FS_GetFileList( "users/baninfo", ".IP", Files, 1024 );
-	filePtr = Files;
 	len = trap_FS_FOpenFile("users/bans.txt", &testx, FS_READ);
 	if(!test){
 		Com_Printf("Error while reading users/bans.txt\n");
@@ -1015,83 +1012,94 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd){
 	trap_FS_Read( buf, len, testx );
 	buf[len] = '\0';
 	trap_FS_FCloseFile(testx);
-	//Com_Printf("Banned clients: %d\n", fileCount);
-
-	for( i = 0; i < fileCount; i++, filePtr += filelen+1 )
-	{
-		filelen = strlen(filePtr);
-		file = va("users/baninfo/%s", filePtr);
-		GP2 = trap_GP_ParseFile(file, qtrue, qfalse);
-		if(!GP2){
-			//Com_Printf("Error while opening file: %s\n", file);
+	// We parse the buffer, each IP follow it to the file in baninfo(if exists), if empty ignore and LINES +1(CUZ IT IS A LINE IN BANLIST!)
+	for(i=0;i<len;i++){
+		if(begin && buf[i] == '\n'){
+			StartPos = i+1;
+			EndPos = -1;
+			begin = qfalse;
+		}
+		if(buf[i] == '\\' && buf[i] != '\n'){
+			EndPos = i;
+			begin = qtrue;
+			memset(xip, 0, sizeof(xip));
+			strncpy(xip, buf+StartPos, EndPos-StartPos);
+			Com_Printf("%s\n", xip);
+			count += 1; // Henk 25/01/11 -> Fix wrong ban lines.
+			// Start extracting and printing baninfo
+			file = va("users/baninfo/%s.IP", xip);
+			GP2 = trap_GP_ParseFile(file, qtrue, qfalse);
+			if(!GP2){
+				//Com_Printf("Error while opening file: %s\n", file);
+				trap_GP_Delete(&GP2);
+			}else{
+			group = trap_GPG_GetSubGroups(GP2);
+			trap_GPG_FindPairValue(group, "ip", "0", ip);
+			trap_GPG_FindPairValue(group, "name", "", name);
+			trap_GPG_FindPairValue(group, "reason", "", reason);
+			trap_GPG_FindPairValue(group, "by", "", by);
+			length = strlen(ip);
+			if(length > 15){
+				ip[15] = '\0';
+				length = 15;
+			}
+			spaces = 16-length;
+			for(z=0;z<spaces;z++){
+			column1[z] = test;
+			}
+			column1[spaces] = '\0';
+			//trap_SendServerCommand( adm-g_entities, va("print \"%s%s", ip, column1)); // Boe!Man 9/16/10: Print tier 1.
+			length = strlen(name);
+			if(length > 19){
+				name[19] = '\0';
+				length = 19;
+			}
+			spaces = 20-length;
+			for(z=0;z<spaces;z++){
+			column2[z] = test;
+			}
+			column2[spaces] = '\0';
+			//trap_SendServerCommand( adm-g_entities, va("print \"%s%s", name, column2)); // Boe!Man 9/16/10: Print tier 2.
+			length = strlen(reason);
+			if(length > 18){
+				reason[18] = '\0';
+				length = 18;
+			}
+			spaces = 19-length;
+			for(z=0;z<spaces;z++){
+			column3[z] = test;
+			}
+			column3[spaces] = '\0';
+			length = strlen(by);
+			if(length > 20){
+				by[20] = '\0';
+			}
+			if(adm){
+				// Boe!Man 1/24/11: Print the banline as well (for easy unbanning).
+				if(count <= 9){
+					trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7]   %s%s%s%s%s%s%s\n", count, ip, column1, name, column2, reason, column3, by)); // Boe!Man 9/16/10: Print ban.
+				}else if(count > 9 && count < 100){
+					trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7]  %s%s%s%s%s%s%s\n", count, ip, column1, name, column2, reason, column3, by)); // Boe!Man 9/16/10: Print ban.
+				}else{
+					trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7] %s%s%s%s%s%s%s\n", count, ip, column1, name, column2, reason, column3, by)); // Boe!Man 9/16/10: Print ban.
+				}
+			}else{
+				if(count <= 9){
+					Com_Printf("[^3%i^7]   %s%s%s%s%s%s%s\n", count, ip, column1, name, column2, reason, column3, by);
+				}else if(count > 9 && count < 100){
+					Com_Printf("[^3%i^7]  %s%s%s%s%s%s%s\n", count, ip, column1, name, column2, reason, column3, by);
+				}else{
+					Com_Printf("[^3%i^7] %s%s%s%s%s%s%s\n", count, ip, column1, name, column2, reason, column3, by);
+				}
+			}
+			//trap_SendServerCommand( adm-g_entities, va("print \"%s\n", by)); // Boe!Man 9/16/10: Print tier 4.
+			//trap_SendServerCommand( adm-g_entities, va("print \"%s\n%s\n%s\n%s\n\"", ip, name, reason, by)); // print result
 			trap_GP_Delete(&GP2);
-		}else{
-		group = trap_GPG_GetSubGroups(GP2);
-		trap_GPG_FindPairValue(group, "ip", "0", ip);
-		if(strstr(buf, ip)){
-		trap_GPG_FindPairValue(group, "name", "", name);
-		trap_GPG_FindPairValue(group, "reason", "", reason);
-		trap_GPG_FindPairValue(group, "by", "", by);
-		length = strlen(ip);
-		if(length > 15){
-			ip[15] = '\0';
-			length = 15;
-		}
-		spaces = 16-length;
-		for(z=0;z<spaces;z++){
-		column1[z] = test;
-		}
-		column1[spaces] = '\0';
-		//trap_SendServerCommand( adm-g_entities, va("print \"%s%s", ip, column1)); // Boe!Man 9/16/10: Print tier 1.
-		length = strlen(name);
-		if(length > 19){
-			name[19] = '\0';
-			length = 19;
-		}
-		spaces = 20-length;
-		for(z=0;z<spaces;z++){
-		column2[z] = test;
-		}
-		column2[spaces] = '\0';
-		//trap_SendServerCommand( adm-g_entities, va("print \"%s%s", name, column2)); // Boe!Man 9/16/10: Print tier 2.
-		length = strlen(reason);
-		if(length > 18){
-			reason[18] = '\0';
-			length = 18;
-		}
-		spaces = 19-length;
-		for(z=0;z<spaces;z++){
-		column3[z] = test;
-		}
-		column3[spaces] = '\0';
-		length = strlen(by);
-		if(length > 20){
-			by[20] = '\0';
-		}
-		if(adm){
-			// Boe!Man 1/24/11: Print the banline as well (for easy unbanning).
-			if(i <= 9){
-				trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7]   %s%s%s%s%s%s%s\n", i, ip, column1, name, column2, reason, column3, by)); // Boe!Man 9/16/10: Print ban.
-			}else if(i > 9 && i < 100){
-				trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7]  %s%s%s%s%s%s%s\n", i, ip, column1, name, column2, reason, column3, by)); // Boe!Man 9/16/10: Print ban.
-			}else{
-				trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7] %s%s%s%s%s%s%s\n", i, ip, column1, name, column2, reason, column3, by)); // Boe!Man 9/16/10: Print ban.
 			}
-		}else{
-			if(i <= 9){
-				Com_Printf("[^3%i^7]   %s%s%s%s%s%s%s\n", i, ip, column1, name, column2, reason, column3, by);
-			}else if(i > 9 && i < 100){
-				Com_Printf("[^3%i^7]  %s%s%s%s%s%s%s\n", i, ip, column1, name, column2, reason, column3, by);
-			}else{
-				Com_Printf("[^3%i^7] %s%s%s%s%s%s%s\n", i, ip, column1, name, column2, reason, column3, by);
-			}
-		}
-		//trap_SendServerCommand( adm-g_entities, va("print \"%s\n", by)); // Boe!Man 9/16/10: Print tier 4.
-		//trap_SendServerCommand( adm-g_entities, va("print \"%s\n%s\n%s\n%s\n\"", ip, name, reason, by)); // print result
-		}
-		trap_GP_Delete(&GP2);
+			// End
 		}
 	}
+	// End
 	trap_SendServerCommand( adm-g_entities, va("print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\""));
 	return;
 }
@@ -1293,35 +1301,39 @@ Removes a zero based line from a file
 */
 void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subnet){
 	fileHandle_t	f;
-	int len, CurrentLine = 0, StartPos = -1, EndPos = -1, i;
+	int len, CurrentLine = 0, StartPos = 0, EndPos = -1, i;
 	qboolean begin = qtrue;
 	char buf[150000];
 	char newbuf[150000];
 	char asd[128] = "";
 	char last[128] = "";
 	qboolean done = qfalse;
-	line = line+1;
+	line = line;
 	memset( buf, 0, sizeof(buf) );
 	memset( newbuf, 0, sizeof(newbuf) );
+	memset( last, 0, sizeof(last) );
 	len = trap_FS_FOpenFile( file, &f, FS_READ_TEXT);
 	trap_FS_Read( buf, len, f );
 	buf[len] = '\0';
 	trap_FS_FCloseFile( f );
 	for(i=0;i<=len;i++){
+		memset( asd, 0, sizeof(asd) );
 		if(i == len){
 			EndPos = i;
 			if(line != CurrentLine){
 			strncpy(asd, buf+StartPos, EndPos);
-			strcpy(last, asd); 
 			// Boe!Man 1/24/11: Fixed compiling errors using sprintf.
 #ifdef Q3_VM
 			Com_sprintf(newbuf, sizeof(newbuf), va("%s%s\n", newbuf, asd));
 #else
 			sprintf(newbuf, "%s%s", newbuf, asd);
 #endif
-			Com_Printf("Last: %s\n", last);
-			}else
+			
+			}else{
+				strncpy(last, buf+StartPos, EndPos-StartPos); 
 				done = qtrue;
+				//Com_Printf("Last: %s\n", asd);
+			}
 			break;
 		}
 		if(begin){
@@ -1336,20 +1348,22 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 		}
 		if(EndPos != -1){
 			if(line != CurrentLine){
-			strncpy(asd, buf+StartPos, EndPos-StartPos);
-			strcpy(last, asd); 
-			//Com_Printf("Final: %s\n", asd);
+			strncpy(asd, buf+StartPos, EndPos-StartPos); 
 			// Boe!Man 1/24/11: Fixed compiling errors using sprintf.
 #ifdef Q3_VM
 			Com_sprintf(newbuf, sizeof(newbuf), va("%s%s\n", newbuf, asd));
 #else
 			sprintf(newbuf, "%s%s\n", newbuf, asd);
 #endif
-			}else
+			}else{
 				done = qtrue;
+				strncpy(last, buf+StartPos, EndPos-StartPos); 
+				//Com_Printf("Final: %s\n", asd);
+			}
 		}
 	}
-	if(done){
+	if(done && !strstr(newbuf, last)){
+		Com_Printf("New buf:\n%s\n", newbuf);
 	// Start writing our new created file
 	len = trap_FS_FOpenFile( file, &f, FS_WRITE_TEXT);
 	trap_FS_Write(newbuf, strlen(newbuf), f);
@@ -1358,10 +1372,10 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 			if(ent && ent->client)
 				Boe_adminLog (va("%s - SUBNET UNBAN: %s", ent->client->pers.cleanName, last  )) ;
 			else 
-				Boe_adminLog (va("%s - SUBNET UNBAN: %s", "RCON", asd  )) ;
+				Boe_adminLog (va("%s - SUBNET UNBAN: %s", "RCON", last  )) ;
 		}else{
 			if(ent && ent->client)
-				Boe_adminLog (va("%s - UNBAN: %s", ent->client->pers.cleanName, asd  )) ;
+				Boe_adminLog (va("%s - UNBAN: %s", ent->client->pers.cleanName, last  )) ;
 			else 
 				Boe_adminLog (va("%s - UNBAN: %s", "RCON", last  )) ;
 		}
@@ -2793,6 +2807,46 @@ void Henk_Flash(int argNum, gentity_t *adm, qboolean shortCmd){
 			trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s ^7was flashed.\n\"", g_entities[id].client->pers.netname));
 			Boe_adminLog (va("RCON - FLASH: %s", g_entities[id].client->pers.cleanName  )) ;
 		}
+	}
+}
+
+void Henk_Unban(int argNum, gentity_t *adm, qboolean shortCmd){
+	char	arg[32] = "\0", buf[32] = "\0";
+	int		i = 0, count = 0;
+	if(shortCmd){
+		trap_Argv( argNum, arg, sizeof( arg ) );
+		if(strstr(arg, "!") && !strstr(arg, " ")){
+			trap_Argv( argNum+1, arg, sizeof( arg ) );
+		}
+		for(i=StartAfterCommand(va("%s", arg));i<strlen(arg);i++){
+			buf[count] = arg[i];
+			count += 1;
+		}
+		buf[count+1] = '\0';
+		Boe_Unban(adm, buf, qfalse);
+	}else{
+		trap_Argv( argNum, arg, sizeof( arg ) );
+		Boe_Unban(adm, arg, qfalse);
+	}
+}
+
+void Henk_SubnetUnban(int argNum, gentity_t *adm, qboolean shortCmd){
+	char	arg[32] = "\0", buf[32] = "\0";
+	int		i = 0, count = 0;
+	if(shortCmd){
+		trap_Argv( argNum, arg, sizeof( arg ) );
+		if(strstr(arg, "!") && !strstr(arg, " ")){
+			trap_Argv( argNum+1, arg, sizeof( arg ) );
+		}
+		for(i=StartAfterCommand(va("%s", arg));i<strlen(arg);i++){
+			buf[count] = arg[i];
+			count += 1;
+		}
+		buf[count+1] = '\0';
+		Boe_Unban(adm, buf, qtrue);
+	}else{
+		trap_Argv( argNum, arg, sizeof( arg ) );
+		Boe_Unban(adm, arg, qtrue);
 	}
 }
 
