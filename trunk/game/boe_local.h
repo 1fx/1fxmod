@@ -145,8 +145,6 @@ void	Boe_Remove_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd);
 extern	vmCvar_t	g_ban;
 extern	vmCvar_t	g_subnetban;
 extern	vmCvar_t	g_subnetbanlist;
-extern	vmCvar_t	g_banlist;
-extern	vmCvar_t	g_banlist1;
 extern	vmCvar_t	g_removeadmin;
 extern	vmCvar_t	g_broadcast;
 

@@ -100,9 +100,6 @@ vmCvar_t	g_addbadmin;					// Adds a B-Admin to the Admin file.
 vmCvar_t	g_addadmin;						// Adds an Admin to the Admin file.
 vmCvar_t	g_addsadmin;					// Adds a S-Admin to the Admin file.
 vmCvar_t	g_kick;							// Admin CVAR.
-vmCvar_t	g_subnetbanlist;				// Stores the subnetbans on the server.
-vmCvar_t	g_banlist;						// Stores the bans on the server.
-vmCvar_t	g_banlist1;
 vmCvar_t	g_subnetban;					// Admin CVAR.
 vmCvar_t	g_ban;							// Admin CVAR.
 vmCvar_t	g_broadcast;
@@ -361,9 +358,6 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_damage,					"g_damage",				"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 
 
-	{ &g_banlist,			"g_banlist",			"users/bans.txt",			CVAR_ARCHIVE,	0.0,	0.0,	0, qfalse  },
-	{ &g_banlist1,			"g_banlist1",			"users/baninfo.txt",		CVAR_ARCHIVE,	0.0,	0.0,	0, qfalse  },
-	{ &g_subnetbanlist,		"g_subnetbanlist",		"users/subnetbans.txt",		CVAR_ARCHIVE,	0.0,	0.0,	0, qfalse  },
 	{ &g_clanfile,			"g_clanfile",			"users/clanmembers.txt",	CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  },
 
 	{ &server_color1, "server_color1", "^G", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
