@@ -1146,6 +1146,7 @@ void Boe_Print_File (gentity_t *ent, char *file, qboolean clonecheckstats, int i
 	while(bufP <= &buf[len + 500])
 	{
 		memset(packet, 0, sizeof(packet)); // Henk 25/01/11 -> Clear the buffer to prevent problems
+		memset(packet2, 0, sizeof(packet2)); // Henk 25/01/11 -> Clear the buffer to prevent problems
 		Q_strncpyz(packet, bufP, 501);
 		trap_SendServerCommand( ent-g_entities, va("print \"%s\"", packet));
 		bufP += 500;
@@ -1164,6 +1165,7 @@ void Boe_Print_File (gentity_t *ent, char *file, qboolean clonecheckstats, int i
 	while(bufP <= &buf[len + 500])
 	{
 		memset(packet, 0, sizeof(packet)); // Henk 25/01/11 -> Clear the buffer to prevent problems
+		memset(packet2, 0, sizeof(packet2)); // Henk 25/01/11 -> Clear the buffer to prevent problems
 		Q_strncpyz(packet, bufP, 501);
 		j = strlen(packet);
 		x = 0;
