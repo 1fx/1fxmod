@@ -1171,6 +1171,7 @@ void ClientUserinfoChanged( int clientNum )
 	{
 		team = client->sess.team;
 	}
+	Com_Printf("ClientUserInfoChanged %i\n", clientNum);
 	
 	// Enforce the identities
 	oldidentity = client->pers.identity;

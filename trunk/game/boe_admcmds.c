@@ -2372,9 +2372,10 @@ void Adm_ForceTeam(int argNum, gentity_t *adm, qboolean shortCmd)
 {
 	char		str[MAX_TOKEN_CHARS];
 	int			idnum;
-	int			i;
+	int			i, xteam;
 	qboolean	pass = qfalse;
 	char		team;
+	char userinfo[MAX_INFO_STRING];
 	// find the player
 	if(shortCmd == qtrue){
 		idnum = Boe_ClientNumFromArg(adm, 1, "forceteam <idnumber>", "forceteam", qfalse, qtrue, shortCmd);
@@ -2398,11 +2399,14 @@ void Adm_ForceTeam(int argNum, gentity_t *adm, qboolean shortCmd)
 				pass = qtrue;
 		}
 		if(team == 's' || team == 'S'){
-			strcpy(str, "s");
+			strcpy(str, "spectator");
+			xteam = TEAM_SPECTATOR;
 		}else if(team == 'r' || team == 'R'){
-			strcpy(str, "r");
+			strcpy(str, "red");
+			xteam = TEAM_RED;
 		}else if(team == 'b' || team == 'B'){
-			strcpy(str, "b");
+			strcpy(str, "blue");
+			xteam = TEAM_BLUE;
 		}else{
 			trap_SendServerCommand(adm->s.number, va("print\"^3[Info] Wrong team: %s.\n\"", str));
 			return;
@@ -2414,6 +2418,15 @@ void Adm_ForceTeam(int argNum, gentity_t *adm, qboolean shortCmd)
 		else
 			trap_Argv( 2, str, sizeof( str ) );
 	}
+	if(g_entities[idnum].r.svFlags & SVF_BOT){ // Henk 25/01/11 -> Reset bots to set them to another team
+		trap_GetUserinfo( idnum, userinfo, sizeof( userinfo ) );
+		Info_SetValueForKey( userinfo, "team", str );
+		trap_SetUserinfo( idnum, userinfo );
+		g_entities[idnum].client->sess.team = xteam;
+		if(current_gametype.value != GT_HS)
+		g_entities[idnum].client->pers.identity = BG_FindTeamIdentity ( level.gametypeTeam[xteam], -1 );
+		ClientBegin( idnum, qfalse );
+	}else
 	SetTeam( &g_entities[idnum], str, NULL, qtrue );
 	if(adm){
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s ^7was forceteamed by %s.\n\"", g_entities[idnum].client->pers.netname,adm->client->pers.netname));
