@@ -226,6 +226,10 @@ extern	vmCvar_t	g_clan;
 // Boe!Man 12/7/10
 void Boe_SubnetBanlist (int argNum, gentity_t *adm, qboolean shortCmd);
 
+// Boe!Man 1/26/11
+extern	vmCvar_t	g_3rd;
+extern	vmCvar_t	g_cm;
+
 //==============================================
 // boe_utils.c
 //==============================================

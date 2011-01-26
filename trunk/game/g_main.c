@@ -201,6 +201,10 @@ vmCvar_t	cm_sb;
 // Boe!Man 12/13/10: Clonecheck CVARs.
 vmCvar_t	g_aliasCheck;
 
+// Boe!Man 1/26/11
+vmCvar_t	g_cm;
+vmCvar_t	g_3rd;
+
 #ifdef _BOE_DBG
 vmCvar_t	boe_log;
 #endif
@@ -356,6 +360,8 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_lock,						"g_lock",				"3",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_clan,						"g_clan",				"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_damage,					"g_damage",				"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
+	{ &g_3rd,						"g_3rd",				"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
+	{ &g_cm,						"g_cm",					"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 
 
 	{ &g_clanfile,			"g_clanfile",			"users/clanmembers.txt",	CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  },
