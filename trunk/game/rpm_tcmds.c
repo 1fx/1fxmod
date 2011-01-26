@@ -52,7 +52,7 @@ void RPM_Tcmd ( gentity_t *ent )
 
 	///RxCxW - 09.18.06 - 04:57pm #compmode needed for tcmds no matter what
 	///if (g_enableTeamCmds.integer == 1 && !g_compMode.integer)
-	if (!g_compMode.integer)
+	if (!g_compMode.integer && g_enableTeamCmds.integer != 2)
 	///End  - 09.18.06 - 04:58pm
 	{
 		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Competition Mode must be enabled to use team commands!\n\""));
