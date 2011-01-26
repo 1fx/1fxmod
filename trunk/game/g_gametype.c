@@ -322,7 +322,7 @@ void G_RespawnClients ( qboolean force, team_t team, qboolean fullRestart )
 		}
 		
 		ent->client->sess.noTeamChange = qfalse;
-
+		ent->client->sess.roundkills = 0;
 		trap_UnlinkEntity (ent);
 		ClientSpawn ( ent );
 
@@ -544,6 +544,7 @@ void G_ResetGametype ( qboolean fullRestart )
 		level.messagedisplay = qfalse;
 		level.messagedisplay1 = qfalse;
 		level.MM1given = qfalse;
+		level.SeekKills = 0;
 		level.MM1Time = 0;
 		level.RPGTime = 0;
 		level.M4Time = 0;
@@ -560,18 +561,12 @@ void G_ResetGametype ( qboolean fullRestart )
 		}else if(TeamCount1(TEAM_RED) <= 2){
 			level.lastalive[1] = -1;
 		}
-			if(strstr(level.mapname, "col7") || strstr(level.mapname, "hk5")){
-			//level.rpgeffect = 56;
-			}else if(strstr(level.mapname, "hk3") || strstr(level.mapname, "hk1") && !strstr(level.mapname, "mp_hk1")){
-			//level.rpgeffect = 60;
-			}else{
-			//level.rpgeffect = 55;
-			}
 
 		if ( fullRestart )
 		{
 			level.lastalive[0] = -1;
 			level.lastalive[1] = -1;
+			level.lastseek = -1;
 			level.warmupTime = 0;
 			level.startTime = level.time;
 			memset ( level.teamScores, 0, sizeof(level.teamScores) );
@@ -957,10 +952,11 @@ void CheckGametype ( void )
 		// See if the time has expired
 		if ( level.time > level.gametypeRoundTime )
 		{
-			if(current_gametype.value == GT_HS)
-			StripHiders(); 
-			if(level.teamAliveCount[TEAM_RED] >= 3){ // more then 3 alive then call the function
-				RandomRPGM4();
+			if(current_gametype.value == GT_HS){
+				StripHiders(); 
+				if(level.teamAliveCount[TEAM_RED] >= 3){ // more then 3 alive then call the function
+					RandomRPGM4();
+				}
 			}
 			trap_GT_SendEvent ( GTEV_TIME_EXPIRED, level.time, 0, 0, 0, 0, 0 );
 			if(level.timelimithit == qtrue && (strstr(g_gametype.string, "inf") || strstr(g_gametype.string, "elim"))){

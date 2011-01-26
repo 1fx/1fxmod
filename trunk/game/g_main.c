@@ -23,7 +23,6 @@ gentity_t		g_entities[MAX_GENTITIES];
 gclient_t		g_clients[MAX_CLIENTS];
 
 vmCvar_t	g_gametype;
-vmCvar_t	g_gametype1;
 vmCvar_t	g_dmflags;
 vmCvar_t	g_scorelimit;
 vmCvar_t	g_timelimit;
@@ -225,8 +224,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_fps, "sv_fps", "", CVAR_ROM, 0.0, 0.0, 0, qfalse },
 
 	// latched vars
-	{ &g_gametype, "g_gametype", "dm", CVAR_SERVERINFO | CVAR_LATCH, 0.0, 0.0, 0, qfalse  },
-	{ &g_gametype1, "g_gametype1", "dm", CVAR_INTERNAL, 0.0, 0.0, 0, qfalse  },
+	{ &g_gametype, "g_gametype", "dm", CVAR_SERVERINFO | CVAR_LATCH, 0.0, 0.0, 0, qfalse  }, 
 
 	{ &g_maxclients, "sv_maxclients", "8", CVAR_SERVERINFO | CVAR_CHEAT | CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_maxGameClients, "g_maxGameClients", "0", CVAR_SERVERINFO | CVAR_LATCH | CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
@@ -689,12 +687,6 @@ void G_UpdateCvars( void )
 						trap_Cvar_Update ( cv->vmCvar );
 					}
 				}
-				// Henk 25/01/11 -> Remember previous gametype
-				if ( !Q_stricmp ( cv->cvarName, "g_gametype" ) )
-				{
-					trap_Cvar_Set("g_gametype1", cv->vmCvar->string);
-					trap_Cvar_Update ( &g_gametype1);
-				}
 
 				cv->modificationCount = cv->vmCvar->modificationCount;
 
@@ -906,7 +898,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 
 	//Before we set the gametype we change current_gametype and we set H&S to INF
 	if(!restart){
-		if(strstr(g_gametype.string, "inf") && !strstr(g_gametype1.string, "h&s")){
+		if(strstr(g_gametype.string, "inf")){
 			trap_Cvar_Set("current_gametype", "3");
 		}else if(strstr(g_gametype.string, "h&s")){
 			trap_Cvar_Set("current_gametype", "1");
@@ -1162,13 +1154,6 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 			G_LogPrintf("3e\n");
 		#endif
 	}
-	
-	//if(Preloaded != 1 && restart == 0){
-	//	G_LogPrintf("Preloading IP2Country database..\n");
-	//	Preload();
-	//	G_LogPrintf("Done preloading.\n");
-	//	Preloaded = 1;
-	//}
 }
 
 /*
@@ -2506,23 +2491,23 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 			}
 			if(g_entities[level.sortedClients[random]].client){ // cvar update crash if client does not exist
 				if(g_entities[level.sortedClients[random]].client->sess.team != TEAM_BLUE){
-				trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Can't find any seeker.\n\""));
-				//G_LogPrintf("No player #1...\n");
+					trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Can't find any seeker.\n\""));
 				}else{
-					G_LogPrintf("Found a player!...\n");
-				G_RealSpawnGametypeItem ( BG_FindGametypeItem (0), g_entities[level.sortedClients[random]].r.currentOrigin, g_entities[level.sortedClients[random]].s.angles, qtrue );
-				trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Briefcase given at random to %s.\n\"", g_entities[level.sortedClients[random]].client->pers.netname));
+					if(level.lastseek != -1 && g_entities[level.lastseek].client && g_entities[level.lastseek].client->sess.team == TEAM_BLUE){
+						G_RealSpawnGametypeItem ( BG_FindGametypeItem (0), g_entities[level.lastseek].r.currentOrigin, g_entities[level.lastseek].s.angles, qtrue );
+						trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Briefcase given to round winner %s.\n\"", g_entities[level.lastseek].client->pers.netname));
+					}else{
+						G_RealSpawnGametypeItem ( BG_FindGametypeItem (0), g_entities[level.sortedClients[random]].r.currentOrigin, g_entities[level.sortedClients[random]].s.angles, qtrue );
+						trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Briefcase given at random to %s.\n\"", g_entities[level.sortedClients[random]].client->pers.netname));
+					}
 				}
 			}else{
-				//G_LogPrintf("No player...\n");
 				trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Can't find any seeker.\n\""));
 			}
 		}else{
-			//G_LogPrintf("No one here...\n");
 			trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Not enough seekers for briefcase to spawn.\n\""));
 		}
 		level.messagedisplay = qtrue;
-		//G_LogPrintf("Done with briefcase give away...\n");
 	}
 
 	if(level.time > level.gametypeStartTime+10000 && level.messagedisplay1 == qfalse && level.gametypeStartTime >= 5000 && !strstr(level.mapname, "col9")){

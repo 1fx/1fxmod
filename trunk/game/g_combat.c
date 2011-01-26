@@ -398,7 +398,13 @@ void player_die(
 			attacker->client->pers.statinfo.killsinarow++;
 			// Boe!Man 6/2/10: Add it to our own stats list.
 			attacker->client->pers.statinfo.kills++;
-	
+			if(attacker->client->sess.team == TEAM_BLUE && current_gametype.value == GT_HS){
+				attacker->client->sess.roundkills += 1;
+				if(attacker->client->sess.roundkills >= level.SeekKills){
+					level.SeekKills += 1;
+					level.lastseek = attacker->s.number;
+				}
+			}
 			attacker->client->lastKillTime = level.time;
 		}
 	}
