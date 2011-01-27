@@ -200,16 +200,15 @@ static qboolean BG_ParseAttackStats ( int weaponNum, attackData_t* attack, void 
 		attack->splashRadius = atoi(tmpStr);
 
 	// max ammo is the combination of all guns that share the ammo
-	if(!mod)
-		ammoData[attack->ammoIndex].max += attack->clipSize * attack->extraClips;
-	else
-		ammoData[attack->ammoIndex].max = attack->clipSize * attack->extraClips; 
+	ammoData[attack->ammoIndex].max += attack->clipSize * attack->extraClips;
+	
 	//Ryan april 24 2004 8:48pm
 	//save the default values so we can revert back to them later if needed
 	attack->defaultClipSize = attack->clipSize;
 	attack->defaultExtraClips = attack->extraClips;
 	attack->defaultDamage = attack->damage;
 	ammoData[attack->ammoIndex].defaultMax = ammoData[attack->ammoIndex].max;
+	
 	//Ryan
 	if(!mod){
 		trap_GPG_FindPairValue(attacksub,"mp_kickAngles||kickAngles", "0 0 0 0 0 0", tmpStr);

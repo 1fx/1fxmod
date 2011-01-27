@@ -1048,11 +1048,12 @@ int G_Damage (
 			if(mod == 1){ // hider has stunned a seeker
 			// Add ammo to hider
 			ammoindex=weaponData[WP_KNIFE].attack[ATTACK_ALTERNATE].ammoIndex;
-				if(attacker->client->ps.ammo[ammoindex] < 5 && level.time >= level.gametypeStartTime+30000){
+				if(level.time >= level.gametypeStartTime+30000){
 					client->sess.slowtime = level.time+4000; // after 4 seconds slowdown stops
 					attacker->client->sess.speedtime = level.time+4000; // after 4 seconds speedup stops
 					trap_SendServerCommand(attacker->s.number, va("cp \"@^7You have stunned %s\n\"", client->pers.netname)); // notify the hider
 					trap_SendServerCommand(targ->s.number, va("cp \"@^7You got stunned by %s\n\"", attacker->client->pers.netname)); // notify the seeker
+					if(attacker->client->ps.ammo[ammoindex] < 5)
 					attacker->client->ps.ammo[ammoindex]+=1;
 				}
 			}else if(mod == 257){ // Henk 22/01/10 -> Add throw knife

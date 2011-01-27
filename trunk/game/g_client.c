@@ -888,6 +888,7 @@ void G_UpdateOutfitting ( int clientNum )
 
 	if ( BG_IsWeaponAvailableForOutfitting ( WP_KNIFE, 2 ) )
 	{
+		if(current_gametype.value != GT_HS)
 		client->ps.ammo[ammoIndex]=ammoData[ammoIndex].max;
 	}
 

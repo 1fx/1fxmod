@@ -29,7 +29,6 @@ extern gentity_t *droppedBlueFlag;
 void Add_Ammo (gentity_t *ent, int ammoindex, int count)
 {
 	ent->client->ps.ammo[ammoindex] += count;
-	
 	if ( ent->client->ps.ammo[ammoindex] > ammoData[ammoindex].max ) 
 	{
 		ent->client->ps.ammo[ammoindex] = ammoData[ammoindex].max;
@@ -391,7 +390,6 @@ void Touch_Item (gentity_t *ent, gentity_t *other, trace_t *trace)
 	// Initialize booleans
 	predict    = other->client->pers.predictItemPickup;
 	autoswitch = qfalse;
-
 	// call the item-specific pickup function
 	switch( ent->item->giType ) 
 	{
