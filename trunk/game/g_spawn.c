@@ -219,6 +219,7 @@ spawn_t	spawns[] =
 	{"trigger_push",				SP_trigger_push},
 	{"trigger_teleport",			SP_trigger_teleport},
 	{"1fx_teleport",				SP_trigger_teleport},
+	{"blocked_teleporter",			SP_trigger_teleport},
 	{"trigger_hurt",				SP_trigger_hurt},
 	{"trigger_ladder",				SP_trigger_ladder },
 
