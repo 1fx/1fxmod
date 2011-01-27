@@ -108,7 +108,7 @@ void SP_gametype_trigger ( gentity_t* ent )
 	}
 
 	///RxCxW - 09.30.06 - 08:17pm #spMaps
-	if(!Q_stricmp(ent->model, "misc_model")){
+	if(!Q_stricmp(ent->model, "misc_model") || (!Q_stricmp(ent->model, "NV_MODEL"))){
 		ent->r.contents = CONTENTS_TRIGGER;
 		ent->r.svFlags = SVF_NOCLIENT;
 		//ent->s.eType = ET_GAMETYPE_TRIGGER;

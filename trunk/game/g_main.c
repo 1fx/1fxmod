@@ -460,7 +460,7 @@ static cvarTable_t gameCvarTable[] =
 
 #ifdef _BOE_DBG
 	// Boe!Man: Debug CVAR.
-	{ &boe_log, "boe_log", "1", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
+	{ &boe_log, "boe_log", "0", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 #endif
 
 /*
