@@ -519,11 +519,11 @@ void G_SpawnGEntityFromSpawnVars( qboolean inSubBSP )
 	for ( i = 0 ; i < level.numSpawnVars ; i++ ) 
 	{
 		if(current_gametype.value == GT_HS){
-			if(strstr(level.spawnVars[i][0], "bspmodel")){
+			if(strstr(level.spawnVars[i][0], "bspmodel") && !G_ReadingFromEntFile(inSubBSP)){
 				if(strstr(level.spawnVars[i][1], "instances/Generic/fence01")){
 					ent->think = G_FreeEntity;
 					ent->nextthink = level.time+12000;
-				}else if(strstr(level.spawnVars[i][1], "instances/Colombia/npc_jump1")){
+				}else if(strstr(level.spawnVars[i][1], "instances/Colombia/npc_jump1") && !G_ReadingFromEntFile(inSubBSP)){
 					ent->think = G_FreeEntity;
 					ent->nextthink = level.time+10000;
 				}

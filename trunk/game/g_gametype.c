@@ -89,7 +89,7 @@ void gametype_trigger_touch ( gentity_t *self, gentity_t *other, trace_t *trace 
 	{
 		return;
 	}
-
+	
 	if ( trap_GT_SendEvent ( GTEV_TRIGGER_TOUCHED, level.time, self->health, other->s.number, other->client->sess.team, 0, 0 ) )
 	{
 		G_UseTargets ( self, other );
