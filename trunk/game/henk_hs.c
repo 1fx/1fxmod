@@ -205,7 +205,7 @@ void Effect (vec3_t org, char * name, qboolean rpg)
 {
 	char			*origin;
 	origin = va("%.0f %.0f %.0f", org[0], org[1], org[2]);
-	AddSpawnField("classname", "fx_play_effect");
+	AddSpawnField("classname", "1fx_play_effect");
 	if(strstr(name, "flare_red")){
 	AddSpawnField("effect",	name);
 	if(rpg == qtrue){

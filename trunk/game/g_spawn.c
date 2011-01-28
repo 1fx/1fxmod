@@ -118,6 +118,8 @@ field_t fields[] =
 	{"minimumhiders",		FOFS(minimumhiders),		F_INT},
 	{"apos1", FOFS(apos1), F_VECTOR},
 	{"apos2", FOFS(apos2), F_VECTOR},
+	{"distance",			FOFS(distance),				F_FLOAT},
+	{"message2",			FOFS(message2),				F_LSTRING},
 	{NULL}
 };
 
@@ -188,6 +190,9 @@ void SP_mission_player				(gentity_t* ent);
 									
 void SP_fx_play_effect				(gentity_t* ent);
 void nolower						(gentity_t* ent);
+void NV_blocked_trigger				(gentity_t *ent);
+void NV_blocked_Teleport			(gentity_t *ent);
+void NV_misc_bsp					(gentity_t *ent); 
 
 spawn_t	spawns[] = 
 {
@@ -219,7 +224,6 @@ spawn_t	spawns[] =
 	{"trigger_push",				SP_trigger_push},
 	{"trigger_teleport",			SP_trigger_teleport},
 	{"1fx_teleport",				SP_trigger_teleport},
-	{"blocked_teleporter",			SP_trigger_teleport},
 	{"trigger_hurt",				SP_trigger_hurt},
 	{"trigger_ladder",				SP_trigger_ladder },
 
@@ -257,7 +261,7 @@ spawn_t	spawns[] =
 
 	{"model_static",				SP_model_static },
 	{"nv_model",					NV_model },
-	{"blocker",						SP_misc_bsp },
+	{"blocker",						NV_misc_bsp},
 
 	{"gametype_item",				SP_gametype_item },
 	{"gametype_trigger",			SP_gametype_trigger },
@@ -267,7 +271,10 @@ spawn_t	spawns[] =
 	// stuff from SP emulated
 	{"func_breakable_brush",		SP_func_static},
 	{"fx_play_effect",				SP_fx_play_effect},
-	{"nolower",				nolower},
+	{"1fx_play_effect",				SP_fx_play_effect}, // internal use so we can clean it up
+	{"nolower",						nolower},
+	{"blocked_trigger",				NV_blocked_trigger},
+	{"blocked_teleporter",			NV_blocked_Teleport},
 	// The following classnames are instantly removed when spawned.  The RMG 
 	// shares instances with single player which is what causes these things
 	// to attempt to spawn
@@ -1282,3 +1289,94 @@ void SP_model_static ( gentity_t* ent )
 	trap_LinkEntity ( ent );
 }
 
+void NV_misc_bsp(gentity_t *ent) 
+{
+	char	temp[MAX_QPATH];
+	char	*out;
+	float	newAngle;
+	int		tempint;
+	vec3_t	mins, maxs;
+	//int		newBsp = 0;
+
+	G_SpawnFloat( "angles", "0", &newAngle );
+	if (newAngle != 0.0)
+	{
+		ent->s.angles[0] = newAngle;
+		ent->s.angles[1] = newAngle;
+		ent->s.angles[2] = newAngle;
+#ifdef _SPMAPS	
+	VectorCopy( ent->s.angles, ent->savedAngles );
+#endif
+
+	}
+	// don't support rotation any other way
+	//ent->s.angles[0] = 0.0;
+	//ent->s.angles[2] = 0.0;
+	
+	G_SpawnString("bspmodel", "", &out);
+
+	//ent->s.eFlags = /*EF_PERMANENT*/ EF_TELEPORT_BIT;
+
+	// Mainly for debugging
+	G_SpawnInt( "spacing", "0", &tempint);
+	ent->s.time2 = tempint;
+	G_SpawnInt( "flatten", "0", &tempint);
+	ent->s.time = tempint;
+	Com_sprintf(temp, MAX_QPATH, "#%s", out);
+
+	trap_SetBrushModel( ent, temp );  // SV_SetBrushModel -- sets mins and maxs
+	G_BSPIndex(temp);
+
+	if(G_SpawnVector( "maxs", "0 0 0", maxs )){
+		//VectorCopy(ent->r.maxs, maxs);
+		ent->r.maxs[0] = (int)maxs[0];
+		ent->r.maxs[1] = (int)maxs[1];
+		ent->r.maxs[2] = (int)maxs[2];
+	}
+	
+	if(G_SpawnVector( "mins", "0 0 0", mins )){
+		//VectorCopy(ent->r.mins, mins);
+		ent->r.mins[0] = (int)mins[0];
+		ent->r.mins[1] = (int)mins[1];
+		ent->r.mins[2] = (int)mins[2];
+	}
+	level.mNumBSPInstances++;
+	Com_sprintf(temp, MAX_QPATH, "%d-", level.mNumBSPInstances);
+	VectorCopy(ent->s.origin, level.mOriginAdjust);
+	level.mRotationAdjust = ent->s.angles[1];
+	level.mTargetAdjust = temp;
+	level.hasBspInstances = qtrue;
+	level.mBSPInstanceDepth++;
+	G_SpawnString("filter", "", &out);
+	strcpy(level.mFilter, out);
+	G_SpawnString("teamfilter", "", &out);
+	strcpy(level.mTeamFilter, out);
+
+	VectorCopy( ent->s.origin, ent->s.pos.trBase );
+	VectorCopy( ent->s.origin, ent->r.currentOrigin );
+	VectorCopy( ent->s.angles, ent->s.apos.trBase );
+	VectorCopy( ent->s.angles, ent->r.currentAngles );
+
+	ent->s.eType = ET_MOVER;
+	///ent->s.eType = ET_WALL;
+
+	trap_LinkEntity (ent);
+
+	trap_SetActiveSubBSP(ent->s.modelindex);
+	G_SpawnEntitiesFromString(qtrue);
+	trap_SetActiveSubBSP(-1);
+
+	level.mBSPInstanceDepth--;
+	level.mFilter[0] = level.mTeamFilter[0] = 0;
+
+	if ( g_debugRMG.integer )
+	{
+		G_SpawnDebugCylinder ( ent->s.origin, ent->s.time2, &g_entities[0], 2000, COLOR_WHITE );
+
+		if ( ent->s.time )
+		{
+			G_SpawnDebugCylinder ( ent->s.origin, ent->s.time, &g_entities[0], 2000, COLOR_RED );
+		}
+	}
+	
+}

@@ -1104,16 +1104,7 @@ void SP_func_door (gentity_t *ent) {
 	VectorCopy( ent->s.origin, ent->pos1 );
 
 	// calculate second position
-	///RxCxW - 01.08.07 - 05:05am
-	if(!strcmp("misc_model", ent->model)){
-		ent->r.contents = MASK_ALL;
-		ent->r.svFlags = SVF_NOCLIENT;
-		ent->s.eType =	ET_TERRAIN;		
-		trap_LinkEntity (ent);
-	}
-	else
-	///End  - 01.08.07 - 05:05am
-		trap_SetBrushModel( ent, ent->model );
+	trap_SetBrushModel( ent, ent->model );
 	G_SetMovedir (ent->s.angles, ent->movedir);
 	abs_movedir[0] = fabs(ent->movedir[0]);
 	abs_movedir[1] = fabs(ent->movedir[1]);

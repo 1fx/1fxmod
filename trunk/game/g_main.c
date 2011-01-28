@@ -2711,6 +2711,41 @@ void G_RunFrame( int levelTime )
 			continue;
 		}
 
+		if(ent->model && ent->model != NULL && !strcmp(ent->model, "BLOCKED_TRIGGER"))
+		{
+			if(ent->count){
+				///Team Games
+				if(level.gametypeData->teams){
+					if(	ent->count <= (TeamCount( -1, TEAM_RED, NULL )) && ent->count <= (TeamCount( -1, TEAM_BLUE, NULL ))){
+						if (ent->r.linked)	{
+							trap_UnlinkEntity( ent );
+							if(ent->message != NULL)
+								trap_SendServerCommand(-1, va("cp \"%s\n\"", ent->message));
+						}
+					}
+					else if(!ent->r.linked)	{
+						trap_LinkEntity( ent );
+						if(ent->message2 != NULL)
+							trap_SendServerCommand(-1, va("cp \"%s\n\"", ent->message2));
+					}
+				}
+				///Non-Team Games
+				else if(ent->count >= level.numPlayingClients){
+					if (ent->r.linked){
+						trap_UnlinkEntity( ent );
+						if(ent->message != NULL)
+							trap_SendServerCommand(-1, va("cp \"%s\n\"", ent->message));
+					}
+				}
+				else if(!ent->r.linked)	{
+					trap_LinkEntity( ent );
+					if(ent->message2 != NULL)
+						trap_SendServerCommand(-1, va("cp \"%s\n\"", ent->message2));
+				}
+			}
+			continue;
+		}	
+
 		// clear events that are too old
 		if ( level.time - ent->eventTime > EVENT_VALID_MSEC )
 		{

@@ -108,7 +108,9 @@ void SP_gametype_trigger ( gentity_t* ent )
 	}
 
 	///RxCxW - 09.30.06 - 08:17pm #spMaps
-	if(!Q_stricmp(ent->model, "misc_model") || (!Q_stricmp(ent->model, "NV_MODEL"))){
+	if(!Q_stricmp(ent->model, "NV_MODEL")){
+		if (!VectorCompare (ent->s.angles, vec3_origin))
+			G_SetMovedir (ent->s.angles, ent->movedir);
 		ent->r.contents = CONTENTS_TRIGGER;
 		ent->r.svFlags = SVF_NOCLIENT;
 		//ent->s.eType = ET_GAMETYPE_TRIGGER;
@@ -338,6 +340,7 @@ void G_RespawnClients ( qboolean force, team_t team, qboolean fullRestart )
 	}
 }
 
+void G_WallUse(gentity_t *self, gentity_t *other, gentity_t *activator);
 /*
 ===============
 G_ResetPickups
@@ -357,7 +360,7 @@ void G_ResetEntities ( void )
 
 		if(current_gametype.value == GT_HS){
 			if(ent->classname){
-				if(strstr(ent->classname, "fx_play_effect")){ // Henk 19/02/10 -> Remove effects every new round
+				if(strstr(ent->classname, "1fx_play_effect")){ // Henk 19/02/10 -> Remove effects every new round
 					G_FreeEntity(ent);
 					continue;
 				}
@@ -394,6 +397,16 @@ void G_ResetEntities ( void )
 		else if ( ent->s.eType == ET_DAMAGEAREA )
 		{
 			G_FreeEntity ( ent );
+		}else if ( ent->s.eType == ET_MOVER && ent->use != NULL && ent->use == G_WallUse )
+		{
+			if ( ent->spawnflags & 1 )
+			{
+				trap_UnlinkEntity ( ent );
+			}
+			else
+			{
+				trap_LinkEntity ( ent );
+			}
 		}
 	}
 }

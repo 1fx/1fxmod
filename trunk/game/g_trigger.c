@@ -96,7 +96,14 @@ void SP_trigger_multiple( gentity_t *ent )
 
 	ent->touch = Touch_Multi;
 	ent->use = Use_Multi;
-
+	if(!Q_stricmp(ent->model, "BLOCKED_TRIGGER")){
+		if (!VectorCompare (ent->s.angles, vec3_origin))
+			G_SetMovedir (ent->s.angles, ent->movedir);
+		ent->r.contents = CONTENTS_TRIGGER;
+		ent->r.svFlags = SVF_NOCLIENT;
+		trap_LinkEntity (ent);
+		return;
+	}
 	InitTrigger( ent );
 	trap_LinkEntity (ent);
 }
@@ -494,4 +501,38 @@ void SP_func_timer( gentity_t *self ) {
 	self->r.svFlags = SVF_NOCLIENT;
 }
 
+/* 
+================
+NV_blocked_trigger
+RxCxW - 10.01.06
+================
+*/
+void NV_blocked_trigger	(gentity_t *ent)
+{
+	ent->r.contents = MASK_SHOT;
+	ent->r.svFlags = SVF_NOCLIENT;
+	ent->s.eType =	ET_TERRAIN;	
+	
+	if ( ent->damage ) {
+		ent->noise_index = 0;
+		ent->touch = hurt_touch;
+		ent->use = hurt_use;
+		ent->methodOfDeath = MOD_TRIGGER_HURT;
+	}
+	trap_LinkEntity (ent);
+}
+/* 
+================
+NV_blocked_Teleport
+RxCxW - 10.01.06
+================
+*/
+void NV_blocked_Teleport	(gentity_t *ent)
+{
+	ent->r.contents = CONTENTS_PLAYERCLIP;
+	ent->r.svFlags = SVF_NOCLIENT;
+	ent->s.eType = ET_TELEPORT_TRIGGER;
 
+	ent->touch = trigger_teleporter_touch;
+	trap_LinkEntity (ent);
+}
