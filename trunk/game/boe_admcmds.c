@@ -576,20 +576,17 @@ void Boe_Add_Clan_Member(int argNum, gentity_t *adm, qboolean shortCmd)
 
 	if(Boe_AddToList(id, g_clanfile.string, "Clan", NULL))
 	{
+		// Boe!Man 1/28/11: Fixed clan members getting added to the file twice.
 		if(adm && adm->client)	{
-			if(Boe_AddToList(id, g_clanfile.string, "Clan", NULL)) {
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is now a %sC%sl%sa%sn %sm%se%smber!", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color4.string, server_color5.string, server_color6.string));
 			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was made Clan member by %s.\n\"", g_entities[idnum].client->pers.netname, adm->client->pers.cleanName));
 			Boe_adminLog (va("%s - ADD CLAN: %s", adm->client->pers.cleanName, g_entities[idnum].client->pers.cleanName  )) ;
-			}
 		}else {
-			if(Boe_AddToList(id, g_clanfile.string, "Clan", NULL)) {
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is now a %sC%sl%sa%sn %sm%se%smber!", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color4.string, server_color5.string, server_color6.string));
 			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 			trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s is now a Clan member.\n\"", g_entities[idnum].client->pers.netname));
 			Boe_adminLog (va("%s - ADD CLAN: %s", "RCON", g_entities[idnum].client->pers.cleanName  )) ;
-			}
 		}
 	}
 }
@@ -1131,6 +1128,7 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 /*
 =============
 Boe_id
+Updated 1/28/11 - 11:35 AM
 =============
 */
 void Boe_id (int idnum)
@@ -1143,15 +1141,17 @@ void Boe_id (int idnum)
 		Com_sprintf(id, MAX_BOE_ID, "bot\\%s", g_entities[idnum].client->pers.cleanName);
 		return;
 	}
-	while(i < 6)
-	{
-		*id++ = *ip++;
-		i++;
-	}
+	//while(i < 6)
+	//{
+	//	*id++ = *ip++;
+	//	i++;
+	//}
 
-	*id++ = '\\';
-    *id = '\0';
-	strcat(id, g_entities[idnum].client->pers.cleanName);
+	//*id++ = '\\';
+    //*id = '\0';
+
+	Com_sprintf(id, MAX_BOE_ID, "%s\\%s", ip, g_entities[idnum].client->pers.cleanName);
+	//strcat(id, g_entities[idnum].client->pers.cleanName);
 	return;
 }
 
@@ -1853,19 +1853,34 @@ void Boe_Uppercut (int argNum, gentity_t *adm, qboolean shortCmd)
 	ent->client->ps.groundEntityNum = ENTITYNUM_NONE;
 	// Boe!Man 5/3/10: We higher the uppercut.
 	if(shortCmd){
-	uclevel = atoi(GetReason());
-	//if(uclevel == 0){
-	//trap_Argv( 3, arg, sizeof( arg ) );
-	//uclevel = atoi(arg);
-	//}
-	// Boe!Man 1/13/11: Changing uppercut levels.
-	if(uclevel == 0)
-		ent->client->ps.velocity[2] = 1000;
-	else
-		ent->client->ps.velocity[2] = 200*uclevel;
-	}else{
-		ent->client->ps.velocity[2] = 1000;
+		uclevel = atoi(GetReason());
+		//if(uclevel == 0){
+		//trap_Argv( 3, arg, sizeof( arg ) );
+		//uclevel = atoi(arg);
+		//}
+		// Boe!Man 1/13/11: Changing uppercut levels.
+		if(uclevel == 0){
+			ent->client->ps.velocity[2] = 1000;
+		}else{
+			ent->client->ps.velocity[2] = 200*uclevel;
+		}
 	}
+	
+	// Boe!Man 1/28/11: Check for the uppercut level other than when called from ! commands.
+	else{
+		if(adm&&adm->client){	// If called from /adm..
+			trap_Argv(3, arg, sizeof(arg));
+		}else{					// If called from /rcon..
+			trap_Argv(2, arg, sizeof(arg));
+		}
+		uclevel = atoi(arg);
+		if (uclevel == 0){
+			ent->client->ps.velocity[2] = 1000;
+		}else{
+			ent->client->ps.velocity[2] = 200*uclevel;
+		}
+	}
+
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 	// Boe!Man 11/2/10: Added client sound.
 	Boe_ClientSound(ent, G_SoundIndex("sound/weapons/rpg7/fire01.mp3"));
