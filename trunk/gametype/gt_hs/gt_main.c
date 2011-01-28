@@ -181,16 +181,16 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 			return 0;
 
 		case GTEV_ITEM_STUCK:
-			trap_Cvar_VariableStringBuffer ( "server_color1", color1, 4 );
+			/*trap_Cvar_VariableStringBuffer ( "server_color1", color1, 4 );
 			trap_Cvar_VariableStringBuffer ( "server_color2", color2, 4 );
 			trap_Cvar_VariableStringBuffer ( "server_color3", color3, 4 );
 			trap_Cvar_VariableStringBuffer ( "server_color4", color4, 4 );
 			trap_Cvar_VariableStringBuffer ( "server_color5", color5, 4 );
 			trap_Cvar_VariableStringBuffer ( "server_color6", color6, 4 );
-			trap_Cmd_TextMessage ( -1, va("@The Briefcase has %sr%se%st%su%sr%sned!", color1, color2, color3, color4, color5, color6 ));
-			trap_Cmd_TextMessage( -1, va("^3[H&S] ^7The briefcase has returned\n\""));
-			trap_Cmd_ResetItem ( ITEM_BRIEFCASE );
-			trap_Cmd_StartGlobalSound ( gametype.caseReturnSound );
+			trap_Cmd_TextMessage ( -1, va("@The Briefcase has %sr%se%st%su%sr%sned!", color1, color2, color3, color4, color5, color6 ));*/
+			trap_Cmd_TextMessage( -1, va("^3[H&S] ^7The briefcase has disappeared\n\""));
+			//trap_Cmd_ResetItem ( ITEM_BRIEFCASE );
+			//trap_Cmd_StartGlobalSound ( gametype.caseReturnSound );
 			return 1;
 
 		case GTEV_TEAM_ELIMINATED:
