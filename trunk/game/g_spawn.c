@@ -290,6 +290,7 @@ spawn_t	spawns[] =
 	{"pickup_ammo",					0},
 	{"script_runner",				0},
 	{"trigger_arioche_objective",	0},
+	{"noclass",	0},								// Boe!Man 1/28/11: Keep this entry here.. Some messed up SP maps still house this class.
 
 	{0, 0}
 };

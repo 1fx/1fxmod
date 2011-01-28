@@ -5081,16 +5081,19 @@ void ClientCommand( int clientNum ) {
 	if (Q_stricmp (cmd, "say") == 0) {
 		// Boe!Man 1/30/10: We need to make sure the clients aren't muted.. And otherwise prevent them talking.
 		if(IsClientMuted(ent, qtrue)){
-		return;
+			return;
 		}
 		Cmd_Say_f (ent, SAY_ALL, qfalse);
 		return;
 	}
 	if (Q_stricmp (cmd, "say_team") == 0) {
 		// Boe!Man 1/30/10: We need to make sure the clients aren't muted.. And otherwise prevent them talking.
-		if(ent->client->sess.mute){
+		/*if(ent->client->sess.mute){
 		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You are currently muted by an Admin.\n\"") );
 		return;
+		}*/
+		if(IsClientMuted(ent, qtrue)){
+			return;
 		}
 		Cmd_Say_f (ent, SAY_TEAM, qfalse);
 		return;
