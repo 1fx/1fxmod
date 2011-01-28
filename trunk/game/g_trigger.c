@@ -6,7 +6,6 @@
 void InitTrigger( gentity_t *self ) {
 	if (!VectorCompare (self->s.angles, vec3_origin))
 		G_SetMovedir (self->s.angles, self->movedir);
-	Com_Printf("InitTrigger.. %s\n", self->classname);
 	if(!strstr(self->classname, "teleport") && !strstr(self->model, "NV_MODEL") && !strstr(self->model, "BLOCKED_TRIGGER"))
 	trap_SetBrushModel( self, self->model ); // Henk -> This crashes teleports
 	self->r.contents = CONTENTS_TRIGGER;		// replaces the -1 from trap_SetBrushModel

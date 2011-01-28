@@ -122,7 +122,7 @@ void SP_gametype_trigger ( gentity_t* ent )
 static gentity_t* G_RealSpawnGametypeItem ( gentity_t* ent, qboolean dropped )
 {
 	gentity_t* it_ent;
-
+	
 	it_ent = G_Spawn();
 
 	it_ent->flags |= FL_DROPPED_ITEM;
@@ -151,7 +151,7 @@ static gentity_t* G_RealSpawnGametypeItem ( gentity_t* ent, qboolean dropped )
 	return it_ent;
 }
 
-gentity_t* G_RealSpawnGametypeItem1 ( gitem_t* item, vec3_t origin, vec3_t angles, qboolean dropped ) // used to spawn briefcase
+gentity_t* G_RealSpawnGametypeItem1 ( gitem_t* item, vec3_t origin, vec3_t angles, qboolean dropped ) // used to spawn briefcase at a player
 {
 	gentity_t* it_ent;
 
@@ -230,12 +230,16 @@ void G_ResetGametypeItem ( gitem_t* item )
 {
 	gentity_t *find;
 	int		  i;
-
 	// Convience check
 	if ( !item )
 	{
 		return;
 	}
+
+	if(current_gametype.value == GT_HS){
+		Com_Printf("Briefcase has disappeared\n");
+		//ASDKJASKJDKASDJKSJDSKJDSKDD
+		return;
 
 	// Remove all spawned instances of the item on the map
 	find = NULL;

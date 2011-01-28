@@ -524,6 +524,10 @@ void G_SpawnGEntityFromSpawnVars( qboolean inSubBSP )
 	for ( i = 0 ; i < level.numSpawnVars ; i++ ) 
 	{
 		if(current_gametype.value == GT_HS){
+			if(strstr(level.spawnVars[i][1], "gametype_item")){
+				ent->think = G_FreeEntity;
+				ent->nextthink = level.time+100;
+			}
 			if(strstr(level.spawnVars[i][0], "bspmodel") && !G_ReadingFromEntFile(inSubBSP)){
 				if(strstr(level.spawnVars[i][1], "instances/Generic/fence01")){
 					ent->think = G_FreeEntity;

@@ -361,11 +361,10 @@ void Touch_Item (gentity_t *ent, gentity_t *other, trace_t *trace)
 
 	// If its a gametype item the gametype handles it
 	if ( ent->item->giType == IT_GAMETYPE )
-	{
-		
+	{		
 		if(current_gametype.value == GT_HS){
-			if(ent->client){
-				if(ent->client->sess.team == TEAM_RED){ // Henkie 24/02/10 -> Hiders cannot pickup briefcase
+			if(other->client){
+				if(other->client->sess.team == TEAM_RED){ // Henkie 24/02/10 -> Hiders cannot pickup briefcase
 					return;
 				}
 			}
@@ -407,9 +406,6 @@ void Touch_Item (gentity_t *ent, gentity_t *other, trace_t *trace)
 			break;
 		case IT_GAMETYPE:
 			if(current_gametype.value == GT_HS){
-				if(other->client->sess.team == TEAM_RED){ // Henkie 24/02/10 -> Hiders cannot pickup briefcase // Boe!Man 9/28/10: Bug fixed regarding this.
-					break;
-				}
 				trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s ^7has taken the briefcase.\n\"", other->client->pers.netname));
 			}
 			respawn = Pickup_Gametype(ent, other);
@@ -514,7 +510,7 @@ gentity_t *LaunchItem( gitem_t *item, vec3_t origin, vec3_t velocity )
 	// Gametype items must be spawned using the spawn mission item function
 	if ( item->giType == IT_GAMETYPE )
 	{
-		dropped = G_SpawnGametypeItem ( item->pickup_name, qtrue, origin );
+		dropped = G_SpawnGametypeItem ( item->pickup_name, qtrue );
 		dropped->nextthink = 0;
 	}
 	else
