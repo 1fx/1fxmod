@@ -436,3 +436,6 @@ void Svcmd_CancelVote_f(void);
 void Svcmd_AddIP_f(void);
 void Svcmd_RemoveIP_f(void);
 void Svcmd_ExtendTime_f(void);
+qboolean IsClientMuted(gentity_t *ent, qboolean message);
+qboolean AddMutedClient(gentity_t *ent, int time);
+qboolean RemoveMutedClient(gentity_t *ent);

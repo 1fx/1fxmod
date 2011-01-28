@@ -1673,6 +1673,7 @@ void RPM_UpdateTMI(void)
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
 		cl = &level.clients[level.sortedClients[i]];
+		IsClientMuted(&g_entities[cl->ps.clientNum], qfalse);
 		if (G_IsClientSpectating(cl))// || G_IsClientDead (cl)) 
 		{
 			continue;
@@ -2784,16 +2785,16 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 				// We allow a spread of two
 				if ( team == TEAM_RED && counts[TEAM_RED] - counts[TEAM_BLUE] > 1 ) 
 				{
-					trap_SendServerCommand( ent->client->ps.clientNum, 
-											"cp \"Red team has too many players.\n\"" );
+					trap_SendServerCommand( ent->s.number, 
+											"print \"Red team has too many players.\n\"" );
 
 					// ignore the request
 					return; 
 				}
 				if ( team == TEAM_BLUE && counts[TEAM_BLUE] - counts[TEAM_RED] > 1 ) 
 				{
-					trap_SendServerCommand( ent->client->ps.clientNum, 
-											"cp \"Blue team has too many players.\n\"" );
+					trap_SendServerCommand( ent->s.number, 
+											"print \"Blue team has too many players.\n\"" );
 
 					// ignore the request
 					return; 
@@ -5079,8 +5080,7 @@ void ClientCommand( int clientNum ) {
 	//end rww
 	if (Q_stricmp (cmd, "say") == 0) {
 		// Boe!Man 1/30/10: We need to make sure the clients aren't muted.. And otherwise prevent them talking.
-		if(ent->client->sess.mute){
-		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You are currently muted by an Admin.\n\"") );
+		if(IsClientMuted(ent, qtrue)){
 		return;
 		}
 		Cmd_Say_f (ent, SAY_ALL, qfalse);

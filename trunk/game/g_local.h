@@ -467,6 +467,13 @@ struct gclient_s
 #define	MAX_SPAWN_VARS			64
 #define	MAX_SPAWN_VARS_CHARS	4096
 
+typedef struct {
+	char ip[36];
+	int  time;
+	int  startTime;
+	qboolean used;
+}muted_t;
+
 typedef struct
 {
 	struct gclient_s	*clients;		// [maxclients]
@@ -688,6 +695,7 @@ typedef struct
 
 	int			SeekKills;
 	int			lastseek;
+	muted_t		mutedClients[21]; // Henk 28/01/11 -> Add new mute system.
 } level_locals_t;
 
 //

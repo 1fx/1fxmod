@@ -2464,9 +2464,6 @@ void Boe_UnMute(int argNum, gentity_t *ent, qboolean shortCmd){
 }
 
 void Boe_XMute(int argNum, gentity_t *ent, qboolean shortCmd){
-	if(ent->client->sess.mute == qtrue)
-	Boe_Mute (argNum, ent, qfalse, shortCmd);
-	else
 	Boe_Mute (argNum, ent, qtrue, shortCmd);
 }
 
@@ -2477,12 +2474,15 @@ void Boe_Mute (int argNum, gentity_t *adm, qboolean mute, qboolean shortCmd)
 	idnum = Boe_ClientNumFromArg(adm, argNum, "mute/unmute <idnumber>", "mute/unmute", qfalse, qfalse, shortCmd);
 	if(idnum < 0) return;
 
+
 	if (mute == qtrue){
 		// Boe!Man 1/13/11: If the client's already muted, and the player called mute, unmute him instead.
 		if(g_entities[idnum].client->sess.mute == qtrue){
 			//trap_SendServerCommand(adm-g_entities, va("print \"^3[Info] ^7This client is already muted!\n\""));}
+			Boe_Mute(argNum, adm, qfalse, shortCmd);
 			mute = qfalse;
 		}else{
+			AddMutedClient(&g_entities[idnum], atoi(GetReason()));
 			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 			g_entities[idnum].client->sess.mute = qtrue;
 			if(adm && adm->client){
@@ -2504,8 +2504,10 @@ void Boe_Mute (int argNum, gentity_t *adm, qboolean mute, qboolean shortCmd)
 			}else{
 				Com_Printf("This client is currently not muted.\n");
 			}
-			return;}
+			return;
+		}
 		else{
+			RemoveMutedClient(&g_entities[idnum]);
 			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 			g_entities[idnum].client->sess.mute = qfalse;
 			if(adm && adm->client){
