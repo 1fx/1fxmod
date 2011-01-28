@@ -240,7 +240,7 @@ void G_ResetGametypeItem ( gitem_t* item )
 		Com_Printf("Briefcase has disappeared\n");
 		//ASDKJASKJDKASDJKSJDSKJDSKDD
 		return;
-
+	}
 	// Remove all spawned instances of the item on the map
 	find = NULL;
 	while ( NULL != (find = G_Find ( find, FOFS(classname), item->classname ) ) )
