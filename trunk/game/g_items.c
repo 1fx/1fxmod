@@ -511,7 +511,6 @@ Spawns an item and tosses it forward
 gentity_t *LaunchItem( gitem_t *item, vec3_t origin, vec3_t velocity ) 
 {
 	gentity_t	*dropped;
-
 	// Gametype items must be spawned using the spawn mission item function
 	if ( item->giType == IT_GAMETYPE )
 	{
@@ -1135,7 +1134,7 @@ void G_RunItem( gentity_t *ent )
 			}
 		}
 		// Gametype items are reported to the gametype when they are stuck like this
-		if ( ent->item && ent->item->giType == IT_GAMETYPE )
+		if ( ent->item && ent->item->giType == IT_GAMETYPE)
 		{
 			// Let the gametype handle the problem, if it doenst handle it and return 1 then 
 			if ( trap_GT_SendEvent ( GTEV_ITEM_STUCK, level.time, ent->item->quantity, 0, 0, 0, 0 ) ){

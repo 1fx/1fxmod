@@ -1020,7 +1020,7 @@ void G_LoadArenas ( void );
 // g_gametype.c
 //
 gentity_t*	G_SelectGametypeSpawnPoint			( team_t team, vec3_t origin, vec3_t angles );
-gentity_t*	G_SpawnGametypeItem					( const char* pickup_name, qboolean dropped, vec3_t origin );
+gentity_t*	G_SpawnGametypeItem					( const char* pickup_name, qboolean dropped );
 gentity_t*	G_SelectRandomGametypeSpawnPoint	( team_t team );
 qboolean	G_ParseGametypeFile					( void );
 qboolean	G_ExecuteGametypeScript				( gentity_t* activator, const char* name );

@@ -119,8 +119,39 @@ void SP_gametype_trigger ( gentity_t* ent )
 
 	InitTrigger (ent);
 }
+static gentity_t* G_RealSpawnGametypeItem ( gentity_t* ent, qboolean dropped )
+{
+	gentity_t* it_ent;
 
-gentity_t* G_RealSpawnGametypeItem ( gitem_t* item, vec3_t origin, vec3_t angles, qboolean dropped )
+	it_ent = G_Spawn();
+
+	it_ent->flags |= FL_DROPPED_ITEM;
+	it_ent->item = ent->item;
+
+	VectorCopy( ent->r.currentOrigin, it_ent->s.origin );
+	VectorCopy ( ent->s.angles, it_ent->s.apos.trBase );
+	it_ent->classname = ent->item->classname;
+	G_SpawnItem ( it_ent, it_ent->item );
+	FinishSpawningItem(it_ent);	
+	
+	VectorSet( it_ent->r.mins, -ITEM_RADIUS * 4 / 3, -ITEM_RADIUS * 4 / 3, -ITEM_RADIUS );
+	VectorSet( it_ent->r.maxs, ITEM_RADIUS * 4 / 3, ITEM_RADIUS * 4 / 3, ITEM_RADIUS );
+
+	// Red team only
+	if ( ent->s.eFlags & EF_REDTEAM )
+	{
+		it_ent->s.eFlags |= EF_REDTEAM;
+	}
+	
+	if ( ent->s.eFlags & EF_BLUETEAM )
+	{
+		it_ent->s.eFlags |= EF_BLUETEAM;
+	}
+
+	return it_ent;
+}
+
+gentity_t* G_RealSpawnGametypeItem1 ( gitem_t* item, vec3_t origin, vec3_t angles, qboolean dropped ) // used to spawn briefcase
 {
 	gentity_t* it_ent;
 
@@ -142,21 +173,10 @@ gentity_t* G_RealSpawnGametypeItem ( gitem_t* item, vec3_t origin, vec3_t angles
 	return it_ent;
 }
 
-gentity_t* G_SpawnGametypeItem ( const char* pickup_name, qboolean dropped, vec3_t origin )
+gentity_t* G_SpawnGametypeItem ( const char* pickup_name, qboolean dropped )
 {
 	gentity_t* ent;
 
-	if ( dropped )
-	{
-		gitem_t* item = BG_FindItem ( pickup_name );
-		if ( item )
-		{
-			return G_RealSpawnGametypeItem ( item, origin, vec3_origin, dropped );
-		}
-
-		return NULL;
-	}
-		
 	// Look for the gametype item in the map
 	ent = NULL;
 	while ( NULL != (ent = G_Find ( ent, FOFS(classname), "gametype_item" ) ) )
@@ -175,12 +195,12 @@ gentity_t* G_SpawnGametypeItem ( const char* pickup_name, qboolean dropped, vec3
 		return NULL;
 	}		
 
-	return G_RealSpawnGametypeItem ( ent->item, ent->r.currentOrigin, ent->s.angles, dropped );
+	return G_RealSpawnGametypeItem ( ent, dropped );
 }
 
 void G_GametypeItemThink ( gentity_t* ent )
 {
-	G_RealSpawnGametypeItem ( ent->item, ent->r.currentOrigin, ent->s.angles, qfalse );
+	G_RealSpawnGametypeItem ( ent, qfalse );
 }
 
 /*QUAKED gametype_item (0 0 1) (-16 -16 -16) (16 16 16) 
@@ -197,7 +217,7 @@ void SP_gametype_item ( gentity_t* ent )
 		if ( ent->target )
 			ent->target = strchr ( ent->target, '-' ) + 1;
 	}
-
+	
 	G_SetOrigin( ent, ent->s.origin );
 }
 
@@ -241,7 +261,7 @@ void G_ResetGametypeItem ( gitem_t* item )
 			continue;
 		}
 
-		G_RealSpawnGametypeItem ( find->item, find->r.currentOrigin, find->s.angles, qfalse );
+		G_RealSpawnGametypeItem ( find, qfalse );
 	}
 }
 
@@ -644,7 +664,6 @@ qboolean G_ParseGametypeItems ( TGPGroup* itemsGroup )
 			{
 				continue;
 			}
-
 			// Setup the gametype data
 			ent->item	   = item;
 			ent->nextthink = level.time + 200;

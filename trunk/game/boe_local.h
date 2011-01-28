@@ -413,7 +413,7 @@ char	*vtocs( const vec3_t v );
 // Henk 14/01/11 -> Add EvenTeams_HS and all other shit
 void EvenTeams_HS(gentity_t *adm, qboolean aet);
 void Use_BinaryMover( gentity_t *ent, gentity_t *other, gentity_t *activator );
-gentity_t* G_RealSpawnGametypeItem ( gitem_t* item, vec3_t origin, vec3_t angles, qboolean dropped );
+gentity_t* G_RealSpawnGametypeItem1 ( gitem_t* item, vec3_t origin, vec3_t angles, qboolean dropped );
 void RandomRPGM4(void);
 void G_RespawnClients ( qboolean force, team_t team, qboolean fullRestart );
 void Henk_EvenTeams(int argNum, gentity_t *adm, qboolean shortCmd);

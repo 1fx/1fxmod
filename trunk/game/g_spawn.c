@@ -110,7 +110,6 @@ field_t fields[] =
 	{"mins",				FOFS(r.mins),				F_VECTOR},
 	{"maxs",				FOFS(r.maxs),				F_VECTOR},
 	{"origin2",				FOFS(s.origin2),			F_VECTOR},
-	{"bspmodel",			FOFS(bspmodel),				F_LSTRING},
 	///Henk 15/01/10 -> Door rotate
 	// Boe!Man 1/24/10: This can now be used for door_sliding.
 	
@@ -291,7 +290,6 @@ spawn_t	spawns[] =
 	{"pickup_ammo",					0},
 	{"script_runner",				0},
 	{"trigger_arioche_objective",	0},
-	{"noclass",	0},
 
 	{0, 0}
 };
@@ -618,12 +616,10 @@ void G_SpawnGEntityFromSpawnVars( qboolean inSubBSP )
 	VectorCopy( ent->s.origin, ent->r.currentOrigin );
 
 	// if we didn't get a classname, don't bother spawning anything
-	if(!strstr(ent->classname, "freed")){ // Fix for no class freed
 		if ( !G_CallSpawn( ent ) ) 
 		{
 			G_FreeEntity( ent );
 		}
-	}
 }
 
 

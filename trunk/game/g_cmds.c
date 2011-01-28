@@ -3807,6 +3807,8 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	qboolean	acmd = qfalse;
 	char		test[128];
 
+	if(!ent || !ent->client)
+		return;
 
 	if ( trap_Argc () < 2 && !arg0 )
 		return;
