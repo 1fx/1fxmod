@@ -2470,7 +2470,7 @@ void Boe_XMute(int argNum, gentity_t *ent, qboolean shortCmd){
 void Boe_Mute (int argNum, gentity_t *adm, qboolean mute, qboolean shortCmd)
 {
 	int		idnum;
-
+	int		time;
 	idnum = Boe_ClientNumFromArg(adm, argNum, "mute/unmute <idnumber>", "mute/unmute", qfalse, qfalse, shortCmd);
 	if(idnum < 0) return;
 
@@ -2480,19 +2480,26 @@ void Boe_Mute (int argNum, gentity_t *adm, qboolean mute, qboolean shortCmd)
 		if(g_entities[idnum].client->sess.mute == qtrue){
 			//trap_SendServerCommand(adm-g_entities, va("print \"^3[Info] ^7This client is already muted!\n\""));}
 			Boe_Mute(argNum, adm, qfalse, shortCmd);
-			mute = qfalse;
+			return;
 		}else{
-			AddMutedClient(&g_entities[idnum], atoi(GetReason()));
+			if(atoi(GetReason()) <= 0)
+				time = 5;
+			else if(atoi(GetReason()) > 60){
+				trap_SendServerCommand(adm-g_entities, va("print \"^3[Info] ^7The maximum timelimit for mute is 60 minutes.\n\""));
+				time = 60;
+			}else
+				time = atoi(GetReason());
+			AddMutedClient(&g_entities[idnum], time); // fix me: slots of muted clients(20) could be full.. never happens i guess
 			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 			g_entities[idnum].client->sess.mute = qtrue;
 			if(adm && adm->client){
 				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7was %sm%su%st%se%sd by %s", level.time + 5000, g_entities[idnum].client->pers.netname, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, adm->client->pers.netname));
-				trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s ^7was muted by %s.\n\"", g_entities[idnum].client->pers.netname, adm->client->pers.netname));
+				trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s ^7was muted by %s for %i minutes.\n\"", g_entities[idnum].client->pers.netname, adm->client->pers.netname, time));
 				Boe_adminLog (va("%s - MUTE: %s", adm->client->pers.cleanName, g_entities[idnum].client->pers.cleanName  )) ;
 			}
 			else{
 				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7was %sm%su%st%se%sd", level.time + 5000, g_entities[idnum].client->pers.netname, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-				trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s ^7was muted.\n\"", g_entities[idnum].client->pers.netname));
+				trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s ^7was muted for %i minutes.\n\"", g_entities[idnum].client->pers.netname, time));
 				Boe_adminLog (va("%s - MUTE: %s", "RCON", g_entities[idnum].client->pers.cleanName  )) ;
 			}
 			return;
