@@ -715,18 +715,15 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 		if (arg[0] >= '0' && arg[0] <= '9')
 		{
 			num = atoi( arg );
-		}
-		else if(ent && ent->client)
-		{
-			// Boe!Man 1/4/10: Putting two Info messages together.
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Bad client slot: %s. ^7Usage: adm %s\n\"", arg, usage));
-			return -1;
-		}
-		else
-		{
-			Com_Printf("Bad client slot: %s\n", arg);
-			Com_Printf("Usage: rcon %s\n", usage);
-			return -1;
+		}else{
+			for(i=0;i<=level.numConnectedClients;i++){
+				//trap_SendServerCommand(-1, va("print\"^3[Debug] ^7%s comparing with %s.\n\"", g_entities[level.sortedClients[i]].client->pers.cleanName,numb));
+				if(strstr(Q_strlwr(g_entities[level.sortedClients[i]].client->pers.cleanName), Q_strlwr(arg))){
+					num = level.sortedClients[i];
+				break;
+				}
+			num = -1;
+			}
 		}
 	}
 
@@ -738,7 +735,7 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 		}
 		else
 		{
-			Com_Printf("Invalid client number %d.\n", num );
+			Com_Printf("You haven't entered a valid player ID/player name.\n", num );
 		}
 		return -1;
 	}
