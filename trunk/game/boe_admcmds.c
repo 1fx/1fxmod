@@ -1504,7 +1504,7 @@ int Boe_NameListCheck (int num, const char *name, const char *file, gentity_t *e
 	char			a[64] = "\0";
 	qboolean		banline = qfalse;
 	int				realcount = 0;
-
+	int i;
 	int count;
 	ent = g_entities + num;
 	len = trap_FS_FOpenFile( file, &f, FS_READ_TEXT); 
@@ -1523,10 +1523,6 @@ int Boe_NameListCheck (int num, const char *name, const char *file, gentity_t *e
 			return -1;
 		}
 	}
-	if(f >= 5){
-		Com_Printf("%i of 64 max handles used\n", f);
-		G_LogPrintf( "!=!=!=!=!=!=!=!=WARNING=!=!=!=!=!=!=!=!=!=! File handles are not closing properly  [handle count: ( %i )]\n", f );
-	}
 
 	if(len > 15000)	{
 		len = 15000;
@@ -1535,6 +1531,17 @@ int Boe_NameListCheck (int num, const char *name, const char *file, gentity_t *e
 	trap_FS_Read( buf, len, f );
 	buf[len] = '\0';
 	trap_FS_FCloseFile( f );
+
+	if(f >= 5){ // if more than 5 then clear the handles
+		for(i=0;i<=(int)f;i++){
+		trap_FS_FCloseFile(f);
+		}
+	}
+
+	if(f >= 10){
+		G_LogPrintf( "!=!=!=!=!=!=!=!=WARNING=!=!=!=!=!=!=!=!=!=! %i open handles, report at 1fx.uk.to\n", f );
+		Com_Printf("%i of 64 max handles used\n", f);
+	}
 
 	while( *bufP != '\0') {
 		while(*bufP != '\n' && *bufP != '\0') {

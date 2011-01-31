@@ -537,6 +537,10 @@ Marks the entity as free
 */
 void G_FreeEntity( gentity_t *ed ) 
 {
+	if(ed == NULL){
+		G_LogPrintf("!=!=!=!=!=!=!=!=WARNING=!=!=!=!=!=!=!=!=!=! Trying to free a NULL ent, report at 1fx.uk.to");
+		return;
+	}
 	trap_UnlinkEntity (ed);
 
 	if ( ed->neverFree ) 
