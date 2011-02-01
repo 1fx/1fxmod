@@ -995,7 +995,8 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 
 	BG_ParseInviewFile();
 
-	BG_InitWeaponStats(qfalse); // Henk 22/01/11 -> Parse other stats :)
+	RPM_WeaponMod();
+	//BG_InitWeaponStats(qfalse); // Henk 22/01/11 -> Parse other stats :)
 
 	ClearRegisteredItems();
 

@@ -125,7 +125,7 @@ qboolean BG_InitAmmoStats(void)
 	return qtrue;
 }
 
-static qboolean BG_ParseAttackStats ( int weaponNum, attackData_t* attack, void *attacksub, qboolean mod )
+static qboolean BG_ParseAttackStats ( int weaponNum, attackData_t* attack, void *attacksub)
 {
 	void*	sub;
 	char	tmpStr[256];
@@ -136,7 +136,7 @@ static qboolean BG_ParseAttackStats ( int weaponNum, attackData_t* attack, void 
 	{
 		return qtrue;
 	}
-	if(!mod){
+
 	// Assign a melee attribute if there is one
 	trap_GPG_FindPairValue(attacksub, "mp_melee||melee", "none", tmpStr );
 	if ( Q_stricmp ( tmpStr, "none" ) )
@@ -186,7 +186,6 @@ static qboolean BG_ParseAttackStats ( int weaponNum, attackData_t* attack, void 
 	attack->maxInaccuracy = (int)(atof(tmpStr)*1000.0f);
 	trap_GPG_FindPairValue(attacksub, "mp_gore||gore", "YES", tmpStr);
 	attack->gore = (Q_stricmp ( tmpStr, "YES" )?qfalse:qtrue);
-	}
 	trap_GPG_FindPairValue(attacksub, "mp_clipSize||clipSize", "0", tmpStr);
 	attack->clipSize = atoi(tmpStr);
 	trap_GPG_FindPairValue(attacksub, "mp_damage||damage", "0", tmpStr);
@@ -194,10 +193,7 @@ static qboolean BG_ParseAttackStats ( int weaponNum, attackData_t* attack, void 
 	trap_GPG_FindPairValue(attacksub,"mp_extraClips", "0", tmpStr );
 	attack->extraClips = atoi ( tmpStr );
 	trap_GPG_FindPairValue(attacksub, "mp_radius||radius", "0", tmpStr);
-	if(!strstr(tmpStr, "0") && mod == qtrue) // We only update it when we find a value
-		attack->splashRadius = atoi(tmpStr);
-	else if(mod == qfalse)
-		attack->splashRadius = atoi(tmpStr);
+	attack->splashRadius = atoi(tmpStr);
 
 	// max ammo is the combination of all guns that share the ammo
 	ammoData[attack->ammoIndex].max += attack->clipSize * attack->extraClips;
@@ -210,7 +206,6 @@ static qboolean BG_ParseAttackStats ( int weaponNum, attackData_t* attack, void 
 	ammoData[attack->ammoIndex].defaultMax = ammoData[attack->ammoIndex].max;
 	
 	//Ryan
-	if(!mod){
 		trap_GPG_FindPairValue(attacksub,"mp_kickAngles||kickAngles", "0 0 0 0 0 0", tmpStr);
 		sscanf( tmpStr, "%f %f %f %f %f %f", 
 				&attack->minKickAngles[0], 
@@ -314,18 +309,17 @@ static qboolean BG_ParseAttackStats ( int weaponNum, attackData_t* attack, void 
 			trap_GPG_FindPairValue(sub, "mp_explosionEffect||explosionEffect", "", attack->explosionEffect);
 			trap_GPG_FindPairValue(sub, "mp_explosionSound||explosionSound", "", attack->explosionSound);
 		}
-	}
 
 	return qtrue;
 }
 
-static qboolean BG_ParseWeaponStats(weapon_t weaponNum, void *group, qboolean mod)
+static qboolean BG_ParseWeaponStats(weapon_t weaponNum, void *group)
 {
 	char		 tmpStr[256];
 	weaponData_t *weapon;
 
 	weapon = &weaponData[weaponNum];
-		if(!mod){
+
 	memset(weapon, 0, sizeof(weaponData_t));
 
 	weapon->classname = bg_weaponNames[weaponNum];
@@ -354,12 +348,12 @@ static qboolean BG_ParseWeaponStats(weapon_t weaponNum, void *group, qboolean mo
 	weapon->animReloadStart = GetIDForString ( bg_animTable, tmpStr );
 	trap_GPG_FindPairValue( group, "mp_animReloadEnd", "", tmpStr );
 	weapon->animReloadEnd = GetIDForString ( bg_animTable, tmpStr );
-	}
+
 	// primary attack
-	BG_ParseAttackStats ( weaponNum, &weapon->attack[ATTACK_NORMAL], trap_GPG_FindSubGroup(group, "attack"), mod );
+	BG_ParseAttackStats ( weaponNum, &weapon->attack[ATTACK_NORMAL], trap_GPG_FindSubGroup(group, "attack"));
 
 	// alternate attack
-	BG_ParseAttackStats ( weaponNum, &weapon->attack[ATTACK_ALTERNATE], trap_GPG_FindSubGroup(group, "altattack"), mod );
+	BG_ParseAttackStats ( weaponNum, &weapon->attack[ATTACK_ALTERNATE], trap_GPG_FindSubGroup(group, "altattack"));
 
 	return qtrue;
 }
@@ -370,26 +364,8 @@ qboolean BG_InitWeaponStats(qboolean init)
 	char		name[256];
 	int			i;
 	char WpnFile[64];
-	char		mapname[64];
 
-	if(!init){
-		trap_Cvar_VariableStringBuffer ( "mapname", mapname, MAX_QPATH );	
-		// Henk 06/04/10 -> Different wpn files(H&S, Real Damage, Normal Damage)
-		if(current_gametype.value == GT_HS){
-			if(strstr(mapname, "col9"))
-				strcpy(WpnFile, "weaponfiles/col9.wpn");
-			else
-				strcpy(WpnFile, "weaponfiles/h&s.wpn");
-		}else{
-			if(g_instagib.integer == 1){
-			//strcpy(WpnFile, "ext_data/rd.wpn");
-			strcpy(WpnFile, "weaponfiles/rd.wpn");
-			}else{
-			strcpy(WpnFile, "weaponfiles/nd.wpn");
-			}
-		}
-	}else
-		strcpy(WpnFile, "ext_data/SOF2.wpn");
+	strcpy(WpnFile, "ext_data/SOF2.wpn");
 
 	Com_Printf("Reading weapon file from: %s\n", WpnFile);
 	GP2 = trap_GP_ParseFile(WpnFile, qtrue, qfalse);
@@ -412,7 +388,7 @@ qboolean BG_InitWeaponStats(qboolean init)
 				{
 					if (Q_stricmp(bg_weaponNames[i], name) == 0)
 					{
-						BG_ParseWeaponStats(i, topSubs, qfalse);
+						BG_ParseWeaponStats(i, topSubs);
 						break;
 					}
 				}
@@ -430,7 +406,7 @@ qboolean BG_InitWeaponStats(qboolean init)
 				{
 					if (Q_stricmp(bg_weaponNames[i], name) == 0)
 					{
-						BG_ParseWeaponStats(i, topSubs, qtrue);
+						BG_ParseWeaponStats(i, topSubs);
 						break;
 					}
 				}

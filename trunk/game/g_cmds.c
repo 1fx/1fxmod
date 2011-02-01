@@ -130,6 +130,7 @@ int AcceptBotCommand(char *cmd, gentity_t *pl);
 
 void trap_SendServerCommand2( int clientNum, const char *text );
 void trap_SendServerCommand( int clientNum, const char *text ) {
+	
         if( strlen( text ) > 2044 ) { // Henk 15/09/10 -> Scores reach 1022 length easily when there are more then 32 players.
 			char a[100]; 
 			Boe_crashLog(va("overflow: name:[%s]",g_entities[clientNum].client->pers.netname)); // save this first incase of crash while copying memory
@@ -138,6 +139,14 @@ void trap_SendServerCommand( int clientNum, const char *text ) {
 			trap_SendServerCommand2(clientNum, a);
             return;
         }
+		if(clientNum != -1){
+			if(&g_entities[clientNum]){
+				if(g_entities[clientNum].client){
+					if(g_entities[clientNum].client->ps.ping != 999)
+						trap_SendServerCommand2(clientNum, text);
+				}
+			}
+		}else
 		trap_SendServerCommand2(clientNum, text);
 } 
 
@@ -3797,6 +3806,7 @@ int StartAfterCommand(char *param){
 
 void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	char		*p;
+	char        newp[128] = "";
 	// Boe!Man 1/10/10
 	int			i;
 	int			a = 0;
@@ -3807,7 +3817,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	// Boe!Man 5/3/10: Temp(?) fix.
 	qboolean	acmd = qfalse;
 	char		test[128];
-
+	int			ignore = -1;
 	if(!ent || !ent->client)
 		return;
 
@@ -3912,15 +3922,29 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	}
 	}
 	// Boe!Man 1/24/10: Different kinds of Talk during Gameplay.
-	if ((strstr(p, "!at ")) || (strstr(p, "!admintalk ")) || (strstr(p, "!AT")) || (strstr(p, "!aT ")) || (strstr(p, "!At "))) {
+	if ((strstr(p, "!at")) || (strstr(p, "!AT")) || (strstr(p, "!aT")) || (strstr(p, "!At"))) {
 		if (ent->client->sess.admin){
 			p = ConcatArgs(1);
-			for(i=StartAfterCommand(va("%s", p));i<=strlen(p);i++){
-			p[a] = p[i];
-			a += 1;
+			for(i=0;i<=strlen(p);i++){
+				if(p[i] == '!' && (p[i+1] == 'a' || p[i+1] == 'A') && (p[i+2] == 't' || p[i+2] == 'T')){
+					ignore = i;
+				}
+				if(ignore == -1){
+				newp[a] = p[i];
+				a += 1;
+				}else if(i == ignore || i == ignore+1 || i == ignore+2){
+				if(a != 0)
+					i+=1; // Fix for spaces
+				}else{
+				if(a == 0 && p[i] == ' ') // Fix for spaces
+					continue;
+				newp[a] = p[i];
+				a += 1;
+				}
 			}
 			mode = ADM_TALK;
 			acmd = qtrue;
+			strcpy(p, newp);
 		}else{
 			p = ConcatArgs(1);
 			for(i=StartAfterCommand(va("%s", p));i<=strlen(p);i++){
@@ -5365,7 +5389,7 @@ void Boe_adm_f ( gentity_t *ent )
 	
 	// Henk loop through my admin command array
 	
-	if (!Q_stricmp ( arg1, "chat" )){
+	if (!Q_stricmp ( arg1, "chat" ) || !Q_stricmp ( arg1, "adminchat" )){
 		if(ent->client->sess.mute){
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You are currently muted by admin.\n\"") );
 			return;
@@ -5373,7 +5397,7 @@ void Boe_adm_f ( gentity_t *ent )
 		Cmd_Say_f (ent, ADM_CHAT, qfalse);
 		return;
 	}
-	if (!Q_stricmp ( arg1, "talk" )){
+	if (!Q_stricmp ( arg1, "talk" ) || !Q_stricmp ( arg1, "admintalk" )){
 		if(ent->client->sess.mute){
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You are currently muted by admin.\n\"") );
 			return;

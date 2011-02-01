@@ -6,6 +6,126 @@
 #include "boe_local.h"
 
 /*
+================
+RPM_WeaponMod
+================
+*/
+void RPM_WeaponMod ()
+{
+	void			*GP2, *group, *attackType;
+	char			name[64], tmpStr[64];
+	int				i, n, clipSize, numExtraClips, damage, splashRadius;
+	int				ammoMaxs[AMMO_MAX] = {0};
+	attackData_t	*attack;
+	char			WpnFile[64];
+	char			mapname[MAX_QPATH];
+
+	trap_Cvar_VariableStringBuffer ( "mapname", mapname, MAX_QPATH );	
+		// Henk 06/04/10 -> Different wpn files(H&S, Real Damage, Normal Damage)
+		if(current_gametype.value == GT_HS){
+			if(strstr(mapname, "col9"))
+				strcpy(WpnFile, "weaponfiles/col9.wpn");
+			else
+				strcpy(WpnFile, "weaponfiles/h&s.wpn");
+		}else{
+			if(g_instagib.integer == 1){
+			//strcpy(WpnFile, "ext_data/rd.wpn");
+			strcpy(WpnFile, "weaponfiles/rd.wpn");
+			}else{
+			strcpy(WpnFile, "weaponfiles/nd.wpn");
+			}
+		}
+
+	GP2 = trap_GP_ParseFile(WpnFile, qtrue, qfalse);
+	if (!GP2)
+	{
+		Com_Printf("^1Error in file: \"%s\" or file not found\n", WpnFile);
+		G_LogPrintf("Error in file: \"%s\" or file not found\n", WpnFile);
+		return;
+	}
+
+	G_LogPrintf("Loading weapon mods from: %s\n", WpnFile);
+
+	group = trap_GPG_GetSubGroups(GP2);
+
+	while(group)
+	{
+		trap_GPG_FindPairValue(group, "name", "", name);
+
+		for(i = 0; i < WP_NUM_WEAPONS; i++)
+		{
+			if (Q_stricmp(bg_weaponNames[i], name) == 0)
+			{
+				for(n = ATTACK_NORMAL; n < ATTACK_MAX; n++)
+				{
+					if(n == ATTACK_NORMAL)
+					{
+						attackType = trap_GPG_FindSubGroup(group, "attack");
+					}
+					else if(n == ATTACK_ALTERNATE)
+					{
+						attackType = trap_GPG_FindSubGroup(group, "altattack");
+					}
+
+					if ( NULL == attackType )
+					{
+						continue;
+					}
+
+					attack = &weaponData[i].attack[n];
+
+					trap_GPG_FindPairValue(attackType, "mp_clipSize||clipSize", "-1", tmpStr);
+					clipSize = atoi(tmpStr);
+					if(clipSize < 0) //If no value specified in the file use default vaule
+					{
+						clipSize = attack->clipSize;
+					}
+
+					trap_GPG_FindPairValue(attackType, "mp_radius||radius", "-1", tmpStr);
+					splashRadius = atoi(tmpStr);
+					if(splashRadius < 0) //If no value specified in the file use default vaule
+					{
+						splashRadius = attack->splashRadius;
+					}
+
+					trap_GPG_FindPairValue(attackType, "mp_extraClips", "-1", tmpStr );
+					numExtraClips = atoi ( tmpStr );
+					if(numExtraClips < 0)
+					{
+						numExtraClips = attack->extraClips;
+					}
+
+					trap_GPG_FindPairValue(attackType, "mp_damage||damage", "-1", tmpStr);
+					damage = atoi(tmpStr);
+					if(damage < 0)
+					{
+						damage = attack->damage;
+					}
+
+					ammoMaxs[attack->ammoIndex] += clipSize * numExtraClips;
+
+					//if(g_weaponModFlags.integer & AMMO_MOD)
+					//{
+						attack->clipSize = clipSize;
+						attack->extraClips = numExtraClips;
+						ammoData[attack->ammoIndex].max = ammoMaxs[attack->ammoIndex];
+					//}
+
+					//if(g_weaponModFlags.integer & DAMAGE_MOD)
+					//{
+						attack->damage = damage;
+					//}
+				}
+			}
+		}
+
+		group = trap_GPG_GetNext(group);
+	}
+
+	trap_GP_Delete(&GP2);
+}
+
+/*
 ===================
 Boe_Motd by boe
 3/30/10 - 10:58 AM
