@@ -5365,6 +5365,35 @@ void Boe_adm_f ( gentity_t *ent )
 	
 	// Henk loop through my admin command array
 	
+	if (!Q_stricmp ( arg1, "chat" )){
+		if(ent->client->sess.mute){
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You are currently muted by admin.\n\"") );
+			return;
+		}
+		Cmd_Say_f (ent, ADM_CHAT, qfalse);
+		return;
+	}
+	if (!Q_stricmp ( arg1, "talk" )){
+		if(ent->client->sess.mute){
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You are currently muted by admin.\n\"") );
+			return;
+		}
+		Cmd_Say_f (ent, ADM_TALK, qfalse);
+		return;
+	}
+
+	if (!Q_stricmp ( arg1, "clanchat" )){
+		if(ent->client->sess.mute){
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You are currently muted by admin.\n\"") );
+			return;
+		}else if(!ent->client->sess.clanMember){
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You are no clan member\n\"") );
+			return;
+		}
+		Cmd_Say_f (ent, CLAN_CHAT, qfalse);
+		return;
+	}
+
 	for(i=0;i<AdminCommandsSize;i++){ // Henk 15/09/10 -> Fixed loop going outside array(causing crashes)
 		//Com_Printf("Checking %s with %s\n", arg1, AdminCommands[i].adminCmd);
 		if(!Q_stricmp(arg1, AdminCommands[i].adminCmd)){
@@ -5373,7 +5402,7 @@ void Boe_adm_f ( gentity_t *ent )
 				return;
 			}else{
 			// Boe!Man 12/30/09: Putting two Info messages together.
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7`Your admin level is too low to use this command.\n\""));
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your admin level is too low to use this command.\n\""));
 			return;
 			}
 		}

@@ -1384,7 +1384,7 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 			}
 		}
 	}
-	if(done && !strstr(newbuf, last)){
+	if(done && strlen(last) >= 1){ // && !strstr(newbuf, last)
 		Com_Printf("New buf:\n%s\n", newbuf);
 	// Start writing our new created file
 	len = trap_FS_FOpenFile( file, &f, FS_WRITE_TEXT);
@@ -1420,10 +1420,10 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 			else 
 				Boe_adminLog (va("%s - UNBAN: %s", "RCON", last  )) ;
 		}
-		trap_SendServerCommand( ent-g_entities, va("print \"^3%s ^7has been Unbanned.\n\"", last));
+		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7%s has been Unbanned.\n\"", last));
 	//return qtrue;
 	}else{
-		trap_SendServerCommand( ent-g_entities, va("print \"^3Could not find line %i.\n\"", line));
+		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Could not find line %i.\n\"", line));
 	}
 }
 
