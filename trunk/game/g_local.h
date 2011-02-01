@@ -298,6 +298,8 @@ typedef struct
 
 	int			lastmsg; // teleporter touch message
 	int			roundkills;
+
+	qboolean	pausespawn;
 } clientSession_t;
 
 // Boe!Man 3/30/10

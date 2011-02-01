@@ -1,5 +1,5 @@
-
-#include  "g_local.h"
+#include "g_local.h"
+#include "boe_local.h"
 #ifdef _spMaps
 
 ///RxCxW - 02.26.06 - 07:53pm #sp map
@@ -12,42 +12,54 @@ qboolean G_LoadEntFile(void)
 	char entPath[128];
 	vmCvar_t mapname;
 	int len;
-
+	char alt[5];
+	if(g_alternateMap.integer == 1){
+		strcpy(alt, "alt/");
+		trap_Cvar_Set( "g_alternateMap", "0");
+		trap_Cvar_Update ( &g_alternateMap );
+	}else{
+		strcpy(alt, "");
+	}
 	trap_Cvar_Register( &mapname, "mapname", "", CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0 );
-	/// first up, try finding an .ent file with the gametype extension
-	//if (level.entExt[0] != 0)
-	//	Com_sprintf(entPath, 128, "maps/%s%s.ent\0", mapname.string, level.entExt);
-	//else
+
 	if(strstr(level.gametypeData->name, "inf") && current_gametype.value == GT_HS)
-		Com_sprintf(entPath, 128, "maps/h&s/%s.ent\0", mapname.string);
+		Com_sprintf(entPath, 128, "maps/%sh&s/%s.ent\0", alt, mapname.string);
 	else
-		Com_sprintf(entPath, 128, "maps/%s/%s.ent\0", level.gametypeData->name, mapname.string, level.gametypeData->name);
+		Com_sprintf(entPath, 128, "maps/%s%s/%s.ent\0", alt, level.gametypeData->name, mapname.string, level.gametypeData->name);
 
 	len = trap_FS_FOpenFile(entPath, &entFile, FS_READ);
-	Com_Printf("Debug: %s\n", entPath);
 	if (!entFile){ /// failing that, just try by map name
 		if(strstr(level.gametypeData->name, "inf") && current_gametype.value == GT_HS)
-			Com_sprintf(entPath, 128, "maps/h&s/%s_h&s.ent\0", mapname.string);
+			Com_sprintf(entPath, 128, "maps/%sh&s/%s_h&s.ent\0", alt, mapname.string);
 		else
-			Com_sprintf(entPath, 128, "maps/%s/%s_%s.ent\0", level.gametypeData->name, mapname.string, level.gametypeData->name);
+			Com_sprintf(entPath, 128, "maps/%s%s/%s_%s.ent\0", alt, level.gametypeData->name, mapname.string, level.gametypeData->name);
 		len = trap_FS_FOpenFile(entPath, &entFile, FS_READ);
 		if (!entFile){
 			if(strstr(level.gametypeData->name, "inf") && current_gametype.value == GT_HS)
-				Com_sprintf(entPath, 128, "maps/%s_h&s.ent\0", mapname.string);
+				Com_sprintf(entPath, 128, "maps/%s%s_h&s.ent\0",alt, mapname.string);
 			else
-				Com_sprintf(entPath, 128, "maps/%s_%s.ent\0", mapname.string, level.gametypeData->name); 
+				Com_sprintf(entPath, 128, "maps/%s%s_%s.ent\0", alt, mapname.string, level.gametypeData->name); 
 			len = trap_FS_FOpenFile(entPath, &entFile, FS_READ);
 			if (!entFile){
-				Com_sprintf(entPath, 128, "maps/%s.ent\0", mapname.string); 
+				Com_sprintf(entPath, 128, "maps/%s%s.ent\0", alt, mapname.string); 
 				len = trap_FS_FOpenFile(entPath, &entFile, FS_READ);
 				if (!entFile){
 					Com_Printf("No ent data found at %s\n", entPath);
+					if(strlen(alt) >= 2){
+					Com_Printf("Loading default ent now\n");
+					trap_Cvar_Set( "g_alternateMap", "0");
+					trap_Cvar_Update ( &g_alternateMap );
+					return G_LoadEntFile();
+					}
 					return qfalse;
 				}
 			}
 		}
 	}
-	Com_Printf(S_COLOR_YELLOW "Loading ent data from \"%s\"\n", entPath);
+	if(strlen(alt) >= 2)
+		Com_Printf(S_COLOR_YELLOW "Loading alternative ent data from \"%s\"\n", entPath);
+	else
+		Com_Printf(S_COLOR_YELLOW "Loading ent data from \"%s\"\n", entPath);
 
 	if (len >= 131072) {
 		Com_Printf( S_COLOR_RED "file too large: %s is %i, max allowed is %i", entPath, len, 131072);

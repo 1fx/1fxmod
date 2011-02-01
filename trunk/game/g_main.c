@@ -200,6 +200,7 @@ vmCvar_t	cm_sb;
 
 // Boe!Man 12/13/10: Clonecheck CVARs.
 vmCvar_t	g_aliasCheck;
+vmCvar_t	g_alternateMap;
 
 // Boe!Man 1/26/11
 vmCvar_t	g_cm;
@@ -216,7 +217,7 @@ static cvarTable_t gameCvarTable[] =
 	{ NULL, "^3Mod Name", INF_STRING, CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse  },
 	{ NULL, "^3Mod Version", INF_VERSION_STRING, CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse  },
 	{ NULL, "^3Mod URL", "1fx.uk.to", CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse  },
-	{ &current_gametype, "current_gametype", "3", CVAR_SERVERINFO | CVAR_ROM | CVAR_LATCH | CVAR_INTERNAL | CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
+	{ &current_gametype, "current_gametype", "3", CVAR_SERVERINFO | CVAR_ROM | CVAR_LATCH | CVAR_INTERNAL | CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ NULL, "modname", "RPM 2 k 3 v1.71 ^_- ^31fx.uk.to", CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse  },
 
 	// noset vars
@@ -457,31 +458,11 @@ static cvarTable_t gameCvarTable[] =
 	{ NULL,					"disable_pickup_weapon_L2A2",			"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 
 	{ NULL,					"disable_pickup_weapon_MDN11",			"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 
 
-
+	{ &g_alternateMap, "g_alternateMap", "0", CVAR_ROM|CVAR_INTERNAL|CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 #ifdef _BOE_DBG
 	// Boe!Man: Debug CVAR.
 	{ &boe_log, "boe_log", "0", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 #endif
-
-/*
-	switch (g_weaponModFlags.integer){
-		case AMMO_MOD: 0x1
-			ammo = "ENABLED ";
-			damage = "DISABLED";
-			break;
-		case DAMAGE_MOD: 0x2
-			ammo = "DISABLED";
-			damage = "ENABLED ";
-			break;
-		case 3:
-			ammo = "ENABLED ";
-			damage = "ENABLED ";
-			break;
-		default:
-			ammo = "DISABLED";
-			damage = "DISABLED";
-	}
-*/
 };
 
 // bk001129 - made static to avoid aliasing
@@ -2820,6 +2801,19 @@ void G_RunFrame( int levelTime )
 	ent = &g_entities[0];
 	for (i=0 ; i < level.maxclients ; i++, ent++ )
 	{
+		if(current_gametype.value == GT_CTF){
+			if(ent->client->sess.pausespawn == qtrue && !level.pause){
+				if(level.time > ent->client->ps.RealSpawnTimer){
+					ent->client->sess.pausespawn = qfalse;
+					G_StopFollowing ( ent );
+					ent->client->ps.pm_flags &= ~PMF_GHOST;
+					ent->client->ps.pm_type = PM_NORMAL;
+					ent->client->sess.ghost = qfalse;
+					trap_UnlinkEntity (ent);
+					ClientSpawn(ent);
+				}
+			}
+		}
 		if(current_gametype.value == GT_HS){
 			// Henk 27/02/10 -> Fix for dead ppl frozen
 			if(G_IsClientDead(ent->client) && ent->client->ps.stats[STAT_FROZEN])

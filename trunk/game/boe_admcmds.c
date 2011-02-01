@@ -2048,11 +2048,6 @@ void Boe_Respawn (int argNum, gentity_t *adm, qboolean shortCmd)
 			ent->client->ps.pm_flags &= ~PMF_GHOST;
 			ent->client->ps.pm_type = PM_NORMAL;
 			ent->client->sess.ghost = qfalse;
-			//if(ent->client->sess.ghostStartTime)
-			//{
-			//	ent->client->sess.totalSpectatorTime += level.time - ent->client->sess.ghostStartTime;
-			//	ent->client->sess.ghostStartTime = 0;
-			//}
 	}else{
 		TossClientItems(ent);
 	}
@@ -2965,6 +2960,15 @@ void Henk_Pause(int argNum, gentity_t *adm, qboolean shortCmd)
 
 void Henk_Unpause(int argNum, gentity_t *adm, qboolean shortCmd)
 {
+	if(!level.pause)
+	{
+		if(adm && adm->client)
+			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7The game is not currently paused.\n\"") );
+		else
+			Com_Printf("The game is not currently paused.\n");
+		return;
+	}
+
 	// Boe!Man 1/24/11: Tell everyone what just happened.
 	Boe_GlobalSound(G_SoundIndex("sound/misc/events/buzz02.wav"));
 			
@@ -2975,7 +2979,6 @@ void Henk_Unpause(int argNum, gentity_t *adm, qboolean shortCmd)
 		Boe_adminLog (va("RCON - UNPAUSE")) ;
 		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Unpaused.\n\""));
 	}
-	
 	RPM_Unpause(adm);
 }
 

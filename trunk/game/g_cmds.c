@@ -944,6 +944,10 @@ void RPM_Pause (gentity_t *adm)
 		{
 			continue;
 		}
+		if(G_IsClientDead(ent->client)){
+			ent->client->sess.pausespawn = qtrue;
+			ent->client->ps.oldTimer = ent->client->ps.respawnTimer-level.time;
+		}
 		ent->client->ps.pm_type = PM_INTERMISSION;
 	}
 	// send the current scoring to all clients
@@ -970,7 +974,7 @@ void RPM_Unpause (gentity_t *adm)
 	if(!level.pause)
 	{
 		if(adm && adm->client)
-			trap_SendServerCommand( adm-g_entities, va("print \"The game is not currently paused.\n\"") );
+			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7The game is not currently paused.\n\"") );
 		else
 			Com_Printf("The game is not currently paused.\n");
 		return;
@@ -1010,6 +1014,10 @@ void RPM_Unpause (gentity_t *adm)
 				if (!ent->inuse)
 				{
 					continue;
+				}
+				if(ent->client->sess.pausespawn == qtrue){
+				ent->client->ps.RealSpawnTimer = level.time+ent->client->ps.oldTimer;
+				Com_Printf("Waiting %i\n", ent->client->ps.oldTimer);
 				}
 				ent->client->ps.pm_type = PM_NORMAL;
 			}
@@ -1352,8 +1360,7 @@ void RPM_Obituary ( gentity_t *target, gentity_t *attacker, int mod, attackType_
 	}
 
 	gender = GENDER_MALE;
-	// HENKIE CRASH FIX
-	//is the client female?, check the name of the model they're using
+
 	if ( strstr ( target->client->pers.identity->mCharacter->mModel, "female" ) )
 	{
 		gender = GENDER_FEMALE;
@@ -5230,9 +5237,7 @@ void ClientCommand( int clientNum ) {
 	else if (Q_stricmp (cmd, "ref") == 0)
 		RPM_ref_cmd( ent );
 	else if (Q_stricmp (cmd, "henk") == 0){
-		//char arg1[10];
-		//trap_Argv( 1, arg1, sizeof( arg1 ) );
-		//Henk_RemoveLineFromFile(ent, atoi(arg1), "users/bans.txt");
+		trap_SendServerCommand( clientNum, va("print \"Timer: %i\n\"", ent->client->ps.respawnTimer ) );
 	}
 #ifdef _SOF2_BOTS
 	else if (Q_stricmp (cmd, "addbot") == 0)
@@ -5442,18 +5447,24 @@ qboolean ConsoleCommand( void )
 {
 	char cmd[MAX_TOKEN_CHARS];
 	int i;
-	//Ryan
-//	char arg1[64];
-	//Ryan
+	char arg1[64];
 
 	trap_Argv( 0, cmd, sizeof( cmd ) );
-
+	trap_Argv( 1, arg1, sizeof( arg1 ) );
 	for(i=0;i<AdminCommandsSize;i++){ // Henk 15/09/10 -> Fixed loop going outside array(causing crashes)
 		//Com_Printf("Checking %s with %s\n", arg1, AdminCommands[i].adminCmd);
 		if(!Q_stricmp(cmd, AdminCommands[i].adminCmd)){
 				AdminCommands[i].Function(1, NULL, qfalse);
 				return qtrue;
 		}
+	}
+
+	if ( Q_stricmp (cmd, "altmap") == 0 )
+	{
+		trap_Cvar_Set( "g_alternateMap", "1");
+		trap_Cvar_Update ( &g_alternateMap );
+		trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", arg1));
+		return qtrue;
 	}
 
 	if ( Q_stricmp (cmd, "entitylist") == 0 )

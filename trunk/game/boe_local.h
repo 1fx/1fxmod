@@ -392,6 +392,9 @@ void Boe_calcMatchScores (void);
 // Boe!Man 12/13/10
 extern vmCvar_t	g_aliasCheck;
 
+// Henkie 01/02/11
+extern vmCvar_t g_alternateMap;
+
 // Boe!Man 1/8/10
 void Boe_serverMsg (void);
 
@@ -440,3 +443,4 @@ void Svcmd_ExtendTime_f(void);
 qboolean IsClientMuted(gentity_t *ent, qboolean message);
 qboolean AddMutedClient(gentity_t *ent, int time);
 qboolean RemoveMutedClient(gentity_t *ent);
+void RPM_WeaponMod ();

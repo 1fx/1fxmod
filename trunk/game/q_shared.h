@@ -1500,6 +1500,8 @@ typedef struct playerState_s
 	// Timers 
 	int			grenadeTimer;
 	int			respawnTimer;
+	int			oldTimer;
+	int			RealSpawnTimer;
 
 } playerState_t;
 
