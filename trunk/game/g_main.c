@@ -118,6 +118,7 @@ vmCvar_t	server_badminprefix;
 vmCvar_t	server_adminprefix;
 vmCvar_t	server_sadminprefix;
 vmCvar_t	server_acprefix;
+vmCvar_t	server_sacprefix;
 vmCvar_t	server_caprefix;
 vmCvar_t	server_ccprefix;
 vmCvar_t	server_starprefix;
@@ -378,6 +379,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &server_adminprefix, "server_adminprefix", "^GA^gd^Km^7in", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_sadminprefix, "server_sadminprefix", "^GS-^gA^Kdm^7in", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_acprefix, "server_acprefix", "^GA^gd^Km^7in Only", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
+	{ &server_sacprefix, "server_sacprefix", "^GS-^gA^Kdm^7in Only", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse},
 	{ &server_caprefix, "server_caprefix", "^GH^ge^Ky ^7Admin!", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_ccprefix, "server_ccprefix", "^GC^gl^Kan ^7Only", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_starprefix, "server_starprefix", "^<*", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
@@ -2803,6 +2805,7 @@ void G_RunFrame( int levelTime )
 	{
 		if(current_gametype.value == GT_CTF){
 			if(ent->client->sess.pausespawn == qtrue && !level.pause){
+				//FIX ME: Add custom respawn message
 				if(level.time > ent->client->ps.RealSpawnTimer){
 					ent->client->sess.pausespawn = qfalse;
 					G_StopFollowing ( ent );

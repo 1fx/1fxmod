@@ -3537,6 +3537,10 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 		strcpy(type, server_acprefix.string);
 		Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3"));
 		break;
+	case SADM_CHAT:
+		strcpy(type, server_sacprefix.string);
+		Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3"));
+		break;
 	case ADM_TALK:
 		if(ent->client->sess.admin == 2){
 		strcpy(type, server_badminprefix.string);
@@ -3970,6 +3974,21 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			a += 1;
 			}
 			mode = ADM_CHAT;
+			acmd = qtrue;
+		}else{
+			p = ConcatArgs(1);
+			G_Say( ent, NULL, mode, p );
+			return;
+		}
+	}
+	else if ((strstr(p, "!sc ")) || (strstr(p, "!SC ")) || (strstr(p, "!sC ")) || (strstr(p, "!Sc "))) {
+		if (ent->client->sess.admin){
+			p = ConcatArgs(1);
+			for(i=StartAfterCommand(va("%s", p));i<=strlen(p);i++){
+			p[a] = p[i];
+			a += 1;
+			}
+			mode = SADM_CHAT;
 			acmd = qtrue;
 		}else{
 			p = ConcatArgs(1);

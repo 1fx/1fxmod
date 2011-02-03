@@ -295,6 +295,7 @@ extern	vmCvar_t	server_badminprefix;
 extern	vmCvar_t	server_adminprefix;
 extern	vmCvar_t	server_sadminprefix;
 extern	vmCvar_t	server_acprefix;
+extern	vmCvar_t	server_sacprefix;
 extern	vmCvar_t	server_caprefix;
 extern	vmCvar_t	server_ccprefix;
 extern	vmCvar_t	server_starprefix;
