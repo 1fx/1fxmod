@@ -913,3 +913,477 @@ void RPM_UpdateTMI(void)
 			trap_SendServerCommand(level.sortedClients[i], va("tmi %i%s", numAdded, infoString));
 	}
 }
+
+/*
+=============
+RPM_Awards
+=============
+*/
+void RPM_Awards(void)
+{
+	static int overallScore = 0, headshots = 0, damage = 0, explosiveKills = 0, knifeKills = 0;
+	static float  accuracy = 0, ratio = 0;
+	unsigned int i, numPlayers = 0;
+	//I changed this to an integer so players who connect
+	//faster than the rest don't bump up the avg. time
+	//float avgtime = 0.0, playerTime = 0.0;
+	int avgtime = 0, playerTime = 0;
+	statinfo_t     *stat;
+	static gentity_t *bestOverall = NULL, *headshooter = NULL, *killer = NULL;
+	static gentity_t *accurate = NULL, *bestRatio = NULL, *explosive = NULL, *knifer = NULL;
+	gentity_t *ent;
+
+	///RxCxW - 01.12.06 - 09:26pm #TEST - for award debug :p
+	//char	*a, *b;
+	///End  - 01.12.06 - 09:26pm
+
+#ifdef _BOE_DBG
+	if (strstr(boe_log.string, "1"))
+		G_LogPrintf("1s\n");
+#endif
+
+	if(!level.awardTime)
+	{
+		//find the average time player by all connected clients
+		for (i=0; i < level.maxclients ; i++)
+		{
+			ent = g_entities + i;
+			if (!ent->inuse)
+			{
+				continue;
+			}
+			numPlayers++;
+			avgtime += ((level.time - ent->client->pers.enterTime) - ent->client->sess.totalSpectatorTime) / 60000;
+		}
+		//incase timelimit runs out with nobody in the server
+		//I'll use an "if" here
+		if(numPlayers)
+		{
+			avgtime /= numPlayers;
+			//Com_Printf("^3Averagetime %d\n", avgtime);
+		}
+
+		for (i = 0; i < level.maxclients ; i++)
+		{
+			ent = g_entities + i;
+			if (!ent->inuse)
+			{
+				continue;
+			}
+
+			stat = &ent->client->pers.statinfo;
+
+			playerTime = ((level.time - ent->client->pers.enterTime) - ent->client->sess.totalSpectatorTime) / 60000;
+			//Com_Printf("%s playtime %d, Level time: %d, Enter Time: %d SPECTIME: %d\n", ent->client->pers.netname, playerTime, level.time, ent->client->pers.enterTime, ent->client->sess.totalSpectatorTime);
+
+			//RxCxW - 1.20.2005 - #Version 0.5 compatible. Right?
+			if(ent->client->sess.rpmClient >= 0.5)
+//			if(ent->client->sess.rpmClient >= RPM_VERSION)
+			{
+				trap_SendServerCommand( i, va("stats %i %i %i %i %.2f %i %i %i %i",
+				playerTime,
+				(((level.time - ent->client->pers.enterTime) - ent->client->sess.totalSpectatorTime) % 60000) / 1000,
+				stat->damageDone,
+				stat->damageTaken,
+				stat->ratio,
+				stat->shotcount,
+				stat->hitcount,
+				stat->explosiveKills,
+				stat->knifeKills));
+			}
+
+			//this will remove the SPECTATOR Press ESC etc.. from the specs screen
+			if(ent->client->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
+			{
+				ent->client->ps.persistant[PERS_TEAM] = TEAM_FREE;
+			}
+
+			//Make sure they can't move
+			ent->client->ps.pm_type = PM_FREEZE;
+
+			//This will remove the HUD icons etc.. from the players screen
+			ent->client->ps.stats[STAT_HEALTH] = -1;
+
+			stat->overallScore = ent->client->sess.score + (int)(100 * (stat->accuracy + stat->ratio)) + (stat->damageDone - stat->damageTaken);
+
+			if(stat->overallScore > overallScore)
+			{
+				overallScore = stat->overallScore;
+				bestOverall = ent;
+			}
+			else if(stat->overallScore == overallScore && overallScore)
+			{
+				//if they got the same amout of points in less time
+				//make them mvp
+				if(ent->client->pers.enterTime > bestOverall->client->pers.enterTime)
+				{
+					overallScore = stat->overallScore;
+					bestOverall = ent;
+				}
+			}
+
+			if(stat->headShotKills > headshots)
+			{
+				headshots = stat->headShotKills;
+				headshooter = ent;
+			}
+			else if(stat->headShotKills == headshots && headshots)
+			{
+				if(ent->client->pers.enterTime > headshooter->client->pers.enterTime)
+				{
+					headshots = stat->headShotKills;
+					headshooter = ent;
+				}
+			}
+
+			if(stat->damageDone > damage)
+			{
+				damage = stat->damageDone;
+				killer = ent;
+			}
+			else if(stat->damageDone == damage && damage)
+			{
+				if(ent->client->pers.enterTime > killer->client->pers.enterTime)
+				{
+					damage = stat->damageDone;
+					killer = ent;
+				}
+			}
+
+			if(stat->explosiveKills > explosiveKills)
+			{
+				explosiveKills = stat->explosiveKills;
+				explosive = ent;
+			}
+			else if(stat->explosiveKills == explosiveKills && explosiveKills)
+			{
+				if(ent->client->pers.enterTime > explosive->client->pers.enterTime)
+				{
+					explosiveKills = stat->explosiveKills;
+					explosive = ent;
+				}
+			}
+
+			if(stat->knifeKills > knifeKills )
+			{
+				knifeKills = stat->knifeKills;
+				knifer = ent;
+			}
+			else if(stat->knifeKills == knifeKills && knifeKills)
+			{
+				if(ent->client->pers.enterTime > knifer->client->pers.enterTime)
+				{
+					knifeKills = stat->knifeKills;
+					knifer = ent;
+				}
+			}
+
+			//The awards below here are time sensitive so players
+			//with 1/0 for ratio etc.. dont get the award
+			if(playerTime < avgtime)
+			{
+				continue;
+			}
+
+			if(stat->accuracy > accuracy)
+			{
+				accuracy = stat->accuracy;
+				accurate = ent;
+			}
+			else if(stat->accuracy == accuracy && accuracy)
+			{
+				//if this player held the accuracy longer give him the award
+				if(ent->client->pers.enterTime < accurate->client->pers.enterTime)
+				{
+					accuracy = stat->accuracy;
+					accurate = ent;
+				}
+			}
+
+			if(stat->ratio > ratio)
+			{
+				ratio = stat->ratio;
+				bestRatio = ent;
+			}
+			else if(stat->ratio == ratio && ratio)
+			{
+				if(ent->client->pers.enterTime < bestRatio->client->pers.enterTime)
+				{
+					ratio = stat->ratio;
+					bestRatio = ent;
+				}
+			}
+		}
+	}
+
+	for (i = 0; i < level.maxclients ; i++)
+	{
+		ent = g_entities + i;
+
+		if (!ent->inuse)
+		{
+			continue;
+		}
+
+		///RxCxW - 01.12.06 - 03:03pm - dont send to bots
+		if (ent->r.svFlags & SVF_BOT)
+			continue;
+		///End  - 01.12.06 - 03:03pm
+
+		///RxCxW - #Version 0.5 Had awards too #Version
+		///if(ent->client->sess.rpmClient < RPM_VERSION)
+		if(ent->client->sess.rpmClient < 0.5)
+		{
+			///RxCxW - 01.12.06 - 09:21pm
+#ifdef _DEBUG
+			if(knifer == NULL)
+				knifer = ent;
+			if(explosive == NULL)
+				explosive = ent;
+			if(headshooter == NULL)
+				explosive = ent;
+#endif
+
+			///CJJ - 2.5.2005 - Added a text based awards system for older RPM clients
+			///We should spam them instead
+			///trap_SendServerCommand( i, va("cp \"You are ^1NOT ^7using ^1R^4P^3M^7 %s.\nYou cannot see the awards without it.\nGet the ^$NEWEST ^7[SC] ^4VERSION ^7at\n^1http://clanforums.ath.cx/\n\nFor more information check out the\n^1R^4P^3M^7 OFFICIAL SITE: ^1www.rpm-mod.tk\n\"", RPM_VERSION_STRING));
+			trap_SendServerCommand( i, va("cp \"^1Best Overall: ^7%s - %i\n^1Headshots: ^7%s - %i\n^1Killer: ^7%s - %i\n^1Accurate: ^7%s - %.2f percent\n^1Best Ratio: ^7%s - %.2f\n^1Nades: ^7%s - %i detonated\n^1Knifer: ^7%s - %i shanked",
+				g_entities[bestOverall->s.number].client->pers.netname,
+				overallScore,
+				g_entities[headshooter->s.number].client->pers.netname,
+				headshots,
+				g_entities[killer->s.number].client->pers.netname,
+				damage,
+				g_entities[accurate->s.number].client->pers.netname,
+				accuracy,
+				g_entities[bestRatio->s.number].client->pers.netname,
+				ratio,
+				g_entities[explosive->s.number].client->pers.netname,
+				explosiveKills,
+				g_entities[knifer->s.number].client->pers.netname,
+				knifeKills ));
+			continue;
+		}
+		if(!level.awardTime)
+		{
+			///RxCxW - 01.12.06 - 09:21pm
+			if(knifer == NULL)
+				knifer = ent;
+			if(explosive == NULL)
+				explosive = ent;
+
+			//a = va("awards %i %i %i %i %i %i %i %.2f %i %.2f %i %i\n", bestOverall->s.number, overallScore, headshooter->s.number, headshots, killer->s.number, damage, accurate->s.number, accuracy, bestRatio->s.number, ratio, explosive->s.number, explosiveKills);
+			//b = va("%i %i", knifer->s.number, knifeKills );
+			////b = va("%i %i", bestOverall->s.number, overallScore );
+			/////trap_SendServerCommand( -1, va("awards %s %s", a, b));
+			//Com_Printf("awards %s %s\n", a, b);
+
+#ifdef _BOE_DBG
+	if (strstr(boe_log.string, "1"))
+		G_LogPrintf("1e\n");
+#endif
+
+#ifdef Q3_VM
+			///End  - 01.12.06 - 09:23pm
+			trap_SendServerCommand( -1, va("awards %i %i %i %i %i %i %i %.2f %i %.2f %i %i %i %i", 
+				bestOverall->s.number,
+				overallScore,
+				headshooter->s.number, 
+				headshots, 
+				killer->s.number, 
+				damage, 
+				accurate->s.number, 
+				accuracy, 
+				bestRatio->s.number, 
+				ratio, 
+				explosive->s.number,
+				explosiveKills,	
+				knifer->s.number, 
+				knifeKills 
+				));
+#endif
+		}
+	}
+}
+
+
+/*
+================
+G_AdjustClientBBox
+================
+*/
+void G_AdjustClientBBox(gentity_t *other)
+{
+	other->client->minSave[0] = other->r.mins[0];
+	other->client->minSave[1] = other->r.mins[1];
+	other->client->minSave[2] = other->r.mins[2];
+
+	other->client->maxSave[0] = other->r.maxs[0];
+	other->client->maxSave[1] = other->r.maxs[1];
+	other->client->maxSave[2] = other->r.maxs[2];
+
+	// Adjust the hit box to account for hands and such 
+	// that are sticking out of the normal bounding box
+	if (other->client->ps.pm_flags & PMF_LEANING)
+	{
+		other->r.maxs[0] *= 3.0f;
+		other->r.maxs[1] *= 3.0f;
+		other->r.mins[0] *= 3.0f;
+		other->r.mins[1] *= 3.0f;
+		other->r.svFlags |= SVF_DOUBLED_BBOX;
+	}
+
+	// Relink the entity into the world
+	trap_LinkEntity (other);
+}
+
+
+/*
+================
+G_AdjustClientBBoxs
+
+Inflates every clients bbox to take leaning/jumping etc into account this frame.
+This is all very nasty really...
+================
+*/
+void G_AdjustClientBBoxs(void)
+{
+	int i;
+
+	// Move all the clients back into the reference clients time frame.
+	for (i = 0; i < level.numConnectedClients; i++)
+	{
+		gentity_t* other = &g_entities[level.sortedClients[i]];
+
+		if (other->client->pers.connected != CON_CONNECTED)
+		{
+			continue;
+		}
+
+		// Skip entities not in use
+		if (!other->inuse)
+		{
+			continue;
+		}
+
+		// Skip clients that are spectating
+		if (G_IsClientSpectating(other->client) || G_IsClientDead(other->client))
+		{
+			continue;
+		}
+
+		G_AdjustClientBBox(other);
+	}	
+}
+
+
+
+/*
+================
+G_UndoAdjustedClientBBox
+================
+*/
+void G_UndoAdjustedClientBBox(gentity_t *other)
+{
+	// Put the hitbox back the way it was
+	other->r.maxs[0] = other->client->maxSave[0];
+	other->r.maxs[1] = other->client->maxSave[1];
+	other->r.maxs[2] = other->client->maxSave[2];
+
+	other->r.mins[0] = other->client->minSave[0];
+	other->r.mins[1] = other->client->minSave[1];
+	other->r.mins[2] = other->client->minSave[2];
+
+	other->r.svFlags &= (~SVF_DOUBLED_BBOX);
+}
+
+
+/*
+================
+G_UndoAdjustedClientBBoxs
+================
+*/
+void G_UndoAdjustedClientBBoxs(void)
+{
+	int i;
+
+	for ( i = 0; i < level.numConnectedClients; i ++ )
+	{
+		gentity_t* other = &g_entities[level.sortedClients[i]];
+		
+		if ( other->client->pers.connected != CON_CONNECTED )
+		{
+			continue;
+		}
+
+		// Skip clients that are spectating
+		if ( G_IsClientSpectating ( other->client ) || G_IsClientDead ( other->client ) )
+		{
+			continue;
+		}
+
+		G_UndoAdjustedClientBBox(other);
+
+		// Relink the entity into the world
+		trap_LinkEntity ( other );
+	}
+}
+
+/*
+================
+G_SetClientPreLeaningBBox
+================
+*/
+void G_SetClientPreLeaningBBox(gentity_t *ent)
+{
+	//Ryan
+	//ent->r.maxs[2] += g_adjPLBMaxsZ.value;
+	ent->r.maxs[2] += PLB_MAXZ;
+	//Ryan
+}
+
+/*
+================
+G_SetClientLeaningBBox
+================
+*/
+
+void G_SetClientLeaningBBox(gentity_t *ent)
+{
+	float	leanOffset;
+	vec3_t	up;
+	vec3_t	right;
+	
+	// adjust origin for leaning
+	//BG_ApplyLeanOffset(&ent->client->ps, org);//ent->r.currentOrigin);
+	leanOffset = (float)(ent->client->ps.leanTime - LEAN_TIME) / LEAN_TIME * LEAN_OFFSET;
+	
+	//Ryan
+	//leanOffset *= g_adjLeanOffset.value;
+	leanOffset *= BBOX_LEAN_OFFSET;
+	//Ryan
+
+	AngleVectors( ent->client->ps.viewangles, NULL, right, up);
+	VectorMA(ent->r.currentOrigin, leanOffset, right, ent->r.currentOrigin);
+	VectorMA(ent->r.currentOrigin, Q_fabs(leanOffset) * -0.20f, up, ent->r.currentOrigin);
+
+	//Ryan
+	//ent->r.maxs[2] += g_adjLBMaxsZ.value;
+	ent->r.maxs[2] += LB_MAXZ;
+	//Ryan
+	
+	if (ent->client->ps.pm_flags & PMF_DUCKED)
+	{
+		//Ryan
+		//ent->r.mins[2] += g_adjDuckedLBMinsZ.value;
+		ent->r.mins[2] += DUCKED_LB_MINZ;
+		//Ryan
+	}
+	else
+	{
+		//Ryan
+		//ent->r.mins[2] += g_adjLBMinsZ.value;
+		ent->r.mins[2] += LB_MINZ;
+		//Ryan
+	}
+}			

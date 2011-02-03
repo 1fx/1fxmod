@@ -349,6 +349,105 @@ unsigned int henk_atoi( const char *string ) {
 	return value * sign;
 }
 
+void InitSpawn(int choice) // load bsp models before players loads a map(SOF2 clients cannot load a bsp model INGAME)
+{
+	AddSpawnField("classname", "misc_bsp"); // blocker
+	if(choice == 1){
+	AddSpawnField("bspmodel",	"instances/Generic/fence01");
+	}else if(choice == 2){
+	AddSpawnField("bspmodel",	"instances/Colombia/npc_jump1");
+	}else{
+	AddSpawnField("bspmodel",	"instances/Kamchatka/wall01");
+	}
+	AddSpawnField("origin",		"-4841 -4396 5000");
+	AddSpawnField("angles",		"0 90 0");
+	AddSpawnField("model",		"trigger_hurt"); //blocked_trigger
+	AddSpawnField("count",		 "1");
+
+	G_SpawnGEntityFromSpawnVars(qfalse);
+
+	level.numSpawnVars = 0;
+	level.numSpawnVarChars = 0;
+}	
+
+void RemoveFence(void){
+	int i;
+	for (i = 0; i < MAX_GENTITIES; i++)
+	{
+		if(g_entities[i].classname != NULL)
+		{
+			if(!strcmp(g_entities[i].classname, "misc_bsp") )
+				G_FreeEntity( &g_entities[i] );
+		}
+	}
+}
+
+qboolean henk_isdigit(char c){ // by henk
+	if(c >= 48 && c <= 57){
+		return qtrue;
+	}else{
+		return qfalse;
+	}
+}
+
+
+qboolean henk_ischar(char c){
+	if(c >= 97 && c <= 122){ // a-z lowercase
+		return qtrue;
+	}else if(c >= 65 && c <= 90){ // A-Z uppercase
+		return qtrue;
+	}else{
+		return qfalse;
+	}
+}
+
+void SpawnFence(int choice) // big cage
+{
+	AddSpawnField("classname", "misc_bsp"); // blocker
+	if (choice == 1){
+	AddSpawnField("bspmodel",	"instances/Generic/fence01");
+	AddSpawnField("origin",		"-346 -309 -275");
+	AddSpawnField("angles",		"0 270 0");
+	}else if(choice == 2){
+	AddSpawnField("bspmodel",	"instances/Generic/fence01");
+	AddSpawnField("origin",		"-4073 -710 -275");
+	AddSpawnField("angles",		"0 90 0");
+	// Boe!Man 5/3/10: The solid walls.
+	}else if (choice == 3){
+	AddSpawnField("bspmodel",	"instances/Kamchatka/wall01");
+	AddSpawnField("origin",		"-1813 -210 -10");
+	AddSpawnField("angles",		"0 0 0");
+	}else if(choice == 4){
+	AddSpawnField("bspmodel",	"instances/Kamchatka/wall01");
+	AddSpawnField("origin",		"-2607 -825 -10");
+	AddSpawnField("angles",		"0 180 0");
+	}
+	AddSpawnField("model",		"trigger_hurt"); //blocked_trigger
+	AddSpawnField("count",		 "1");
+
+	G_SpawnGEntityFromSpawnVars(qfalse);
+
+	level.numSpawnVars = 0;
+	level.numSpawnVarChars = 0;
+}
+
+int FormatDamage(int damage){
+	char test[10];
+	char *test1;
+	strcpy(test, va("%i", damage));
+	if(damage >= 100 && damage < 1000){
+	test1 = va("%c00", test[0]);
+	damage = atoi(test1);
+	}else if(damage >= 1000 && damage < 10000){
+	test1 = va("%c%c00", test[0], test[1]);
+	damage = atoi(test1);
+	}else if(damage >= 10000 && damage < 100000){
+	test1 = va("%c%c%c00", test[0], test[1], test[2]);
+	damage = atoi(test1);
+	}
+return damage/10;
+}
+
 void HENK_COUNTRY(gentity_t *ent){
 	void	*GP2, *group;
 	char	*filePtr, *file, Files[1024];
