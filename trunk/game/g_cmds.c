@@ -3066,6 +3066,10 @@ void Boe_adm_f ( gentity_t *ent )
 	}*/
 	// Boe!Man 9/21/10: End of Loop.
 	}
+	if(g_enableCustomCommands.integer == 1){
+		trap_SendServerCommand( ent-g_entities, va("print \"\n ^7[^3Custom Commands^7] \n\""));
+		// Add wrapper for CustomCommands.txt
+	}
 	trap_SendServerCommand( ent-g_entities, va("print \"    [^32^7] B-Admin          ^7[^33^7] Admin          ^7[^34^7] S-Admin\n\""));
 	trap_SendServerCommand( ent-g_entities, va("print \" \n^7Use ^3[Page Up]^7 and ^3[Page Down]^7 keys to scroll.\n\""));
 	}

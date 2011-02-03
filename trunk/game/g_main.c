@@ -206,6 +206,7 @@ vmCvar_t	g_alternateMap;
 // Boe!Man 1/26/11
 vmCvar_t	g_cm;
 vmCvar_t	g_3rd;
+vmCvar_t	g_enableCustomCommands;
 
 #ifdef _BOE_DBG
 vmCvar_t	boe_log;
@@ -461,6 +462,7 @@ static cvarTable_t gameCvarTable[] =
 	{ NULL,					"disable_pickup_weapon_MDN11",			"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 
 
 	{ &g_alternateMap, "g_alternateMap", "0", CVAR_ROM|CVAR_INTERNAL|CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
+	{ &g_enableCustomCommands, "g_enableCustomCommands", "0", CVAR_ROM|CVAR_INTERNAL|CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 #ifdef _BOE_DBG
 	// Boe!Man: Debug CVAR.
 	{ &boe_log, "boe_log", "0", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
