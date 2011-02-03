@@ -450,3 +450,4 @@ void RPM_ReadyUp(gentity_t *ent);
 int FormatDamage(int damage);
 
 extern vmCvar_t g_enableCustomCommands;
+extern vmCvar_t g_rpmEnt;

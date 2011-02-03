@@ -207,6 +207,7 @@ vmCvar_t	g_alternateMap;
 vmCvar_t	g_cm;
 vmCvar_t	g_3rd;
 vmCvar_t	g_enableCustomCommands;
+vmCvar_t	g_rpmEnt;
 
 #ifdef _BOE_DBG
 vmCvar_t	boe_log;
@@ -463,6 +464,8 @@ static cvarTable_t gameCvarTable[] =
 
 	{ &g_alternateMap, "g_alternateMap", "0", CVAR_ROM|CVAR_INTERNAL|CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_enableCustomCommands, "g_enableCustomCommands", "0", CVAR_ROM|CVAR_INTERNAL|CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
+	{ &g_rpmEnt, "g_rpmEnt", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
+	
 #ifdef _BOE_DBG
 	// Boe!Man: Debug CVAR.
 	{ &boe_log, "boe_log", "0", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
@@ -2697,7 +2700,7 @@ void G_RunFrame( int levelTime )
 			continue;
 		}
 
-		if(ent->model && ent->model != NULL && !strcmp(ent->model, "BLOCKED_TRIGGER"))
+		if(ent->model && ent->model != NULL && !strcmp(ent->model, "BLOCKED_TRIGGER") && g_rpmEnt.integer == 1)
 		{
 			if(ent->count){
 				///Team Games
