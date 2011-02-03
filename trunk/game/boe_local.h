@@ -445,3 +445,6 @@ qboolean IsClientMuted(gentity_t *ent, qboolean message);
 qboolean AddMutedClient(gentity_t *ent, int time);
 qboolean RemoveMutedClient(gentity_t *ent);
 void RPM_WeaponMod ();
+void RPM_Refresh(gentity_t *ent);
+void RPM_ReadyUp(gentity_t *ent);
+int FormatDamage(int damage);

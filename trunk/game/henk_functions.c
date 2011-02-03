@@ -56,6 +56,87 @@ qboolean RemoveMutedClient(gentity_t *ent){
 	return qfalse;
 }
 
+
+char *GetReason(void) {
+	char	arg[256] = "\0"; // increase buffer so we can process more commands
+	char	*reason = "";
+	int i, z;
+	qboolean Do = qfalse;
+	trap_Argv( 1, arg, sizeof( arg ) );
+	for(i=0;i<256;i++){
+		if(arg[i] == ' '){
+			if(Do == qtrue){ // second space so its the reason
+				for(z=i+1;z<256-i;z++){
+					if(arg[z] == ' '){
+						arg[z] = '_';
+					}
+					reason = va("%s%c", reason, arg[z]);
+				}
+				if(strlen(reason) < 1){
+					trap_Argv( 3, arg, sizeof( arg ) );
+					return arg;
+				}
+				return reason;
+			}
+		Do = qtrue;
+		}
+	}
+	if(strlen(reason) < 1){
+		trap_Argv( 3, arg, sizeof( arg ) );
+		return arg;
+	}
+	return "";
+}
+
+// Boe!Man 1/10/10
+// This function is called alot, better optimize this -.-''
+int CheckAdmin(gentity_t *ent, char *buffer, qboolean otheradmins) {
+char		*numb;
+int			id;
+int			i;
+for(i=0;i<=g_maxclients.integer;i++){
+	numb = va("%i", i);
+	if(strstr(buffer, numb)){
+		id = atoi(numb);
+		if(i>=10){
+			break;
+		}
+	}
+}
+	memset(&numb, 0, sizeof(numb)); // clean buffer
+	if(id >= 0 && id <= g_maxclients.integer){
+		if(g_entities[id].client->sess.admin && otheradmins == qfalse){
+			trap_SendServerCommand(ent->s.number, va("print\"^3[Info] ^7You cannot use this command on other Admins.\n\""));
+			return -1;
+		}
+			else{
+				if ( g_entities[id].client->pers.connected != CON_DISCONNECTED )
+				{
+					if(ent && ent->client)
+					{
+						return id;
+					}else{
+						return -1;
+					}
+				}else{
+					return -1;
+				}
+			}
+	}else{
+	return -1;
+	}
+}
+
+int StartAfterCommand(char *param){
+	int i;
+	for(i=0;i<=strlen(param);i++){
+		if(param[i] == ' '){
+			return i+1;
+		}
+	}
+	return 0;
+}
+
 /*
 ====================
 IP2Country by Henkie
