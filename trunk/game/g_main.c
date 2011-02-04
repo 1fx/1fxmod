@@ -890,6 +890,13 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	// Build the gametype list so we can verify the given gametype
 	BG_BuildGametypeList ( );
 
+	// Boe!Man 2/5/11: Force col9 to be a H&S map only.
+	trap_Cvar_VariableStringBuffer ( "mapname", level.mapname, MAX_QPATH );
+	if(strstr(level.mapname, "col9")){
+		trap_Cvar_Set("g_gametype", "h&s");
+		trap_Cvar_Update(&g_gametype);
+	}
+
 	//Before we set the gametype we change current_gametype and we set H&S to INF
 	if(!restart){
 		if(strstr(g_gametype.string, "inf")){

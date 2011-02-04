@@ -52,6 +52,15 @@ Boe_CompMode
 */
 
 void Boe_CompMode(int argNum, gentity_t *ent, qboolean shotCmd){
+	// Boe!Man 1/19/11: Disable Compmode in H&S.
+	if(current_gametype.value == GT_HS){
+		if(ent && ent->client){
+			trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7You cannot enable Competition Mode in Hide&Seek.\n\""));
+		}else{
+			Com_Printf("^7You cannot enable Competition Mode in Hide&Seek.\n");
+		}
+		return;
+	}
 	if(g_compMode.integer == 0){
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sC%so%sm%sp%se%stition mode enabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
@@ -2985,34 +2994,58 @@ void Henk_Unpause(int argNum, gentity_t *adm, qboolean shortCmd)
 void Henk_Gametype(int argNum, gentity_t *adm, qboolean shortCmd){
 	char gametype[8];
 	char	arg[16] = "\0";
+	char		*lwrP;
 	trap_Argv( argNum, arg, sizeof( arg ) );
+	// Boe!Man 2/4/11: Adding support for uppercase arguments.
+	lwrP = Q_strlwr(arg);
 	if(level.mapSwitch == qfalse){
-		if(strstr(arg, "ctf")){
+		if(strstr(lwrP, "ctf")){
 			trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype ctf\n"));
 			strcpy(gametype, "ctf");
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sG%sa%sm%se%st%sype ^7Capture the Flag!", level.time + 3500, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-		}else if(strstr(arg, "inf")){
+		}else if(strstr(lwrP, "inf")){
 			trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype inf\n"));
 			strcpy(gametype, "inf");
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sG%sa%sm%se%st%sype ^7Infiltration!", level.time + 3500, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-		}else if(strstr(arg, "tdm")){
+		}else if(strstr(lwrP, "tdm")){
 			trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype tdm\n"));
 			strcpy(gametype, "tdm");
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sG%sa%sm%se%st%sype ^7Team Deathmatch!", level.time + 3500, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-		}else if(strstr(arg, "dm")){
+		}else if(strstr(lwrP, "dm")){
 			trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype dm\n"));
 			strcpy(gametype, "dm");
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sG%sa%sm%se%st%sype ^7Deathmatch!", level.time + 3500, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-		}else if(strstr(arg, "elim")){
+		}else if(strstr(lwrP, "elim")){
 			trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype elim\n"));
 			strcpy(gametype, "elim");
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sG%sa%sm%se%st%sype ^7Elimination!", level.time + 3500, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-		}else if(strstr(arg, "h&s")){
+		}else if(strstr(lwrP, "h&s")){
 			trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype h&s\n"));
 			strcpy(gametype, "h&s");
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sG%sa%sm%se%st%sype ^7Hide&Seek!", level.time + 3500, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		}else{
-			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Unknown gametype.\n\""));
+			// Boe!Man 2/4/11: In case no argument is found we just display the current gametype.
+			if(strstr(g_gametype.string, "inf")){
+				if(current_gametype.value == GT_HS){
+					if(adm && adm->client){
+						trap_SendServerCommand(adm-g_entities, va("print\"^3[Info] ^7Unknown gametype. Gametype is: h&s.\n\""));
+					}else{
+						Com_Printf("Unknown gametype. Gametype is: h&s.\n");
+					}
+				}else{
+					if(adm && adm->client){
+						trap_SendServerCommand(adm-g_entities, va("print\"^3[Info] ^7Unknown gametype. Gametype is: inf.\n\""));
+					}else{
+						Com_Printf("Unknown gametype. Gametype is: inf.\n");
+					}
+				}
+			}else{
+				if (adm && adm->client){
+					trap_SendServerCommand(adm-g_entities, va("print\"^3[Info] ^7Unknown gametype. Gametype is: %s.\n\"", g_gametype.string));
+				}else{
+					Com_Printf("Unknown gametype. Gametype is: %s.\n", g_gametype.string);
+				}
+			}
 			return;
 		}
 	}else{
