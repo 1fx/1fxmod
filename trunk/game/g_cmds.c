@@ -226,8 +226,8 @@ void EvenTeams (gentity_t *adm, qboolean aet)
 				continue;
 			if(sess->team != highTeam)
 				continue;
-			if(sess->admin)
-				continue;
+			//if(sess->admin)
+			//	continue;
 			if(ent->s.gametypeitems)
 				continue;
 

@@ -177,12 +177,14 @@ void Boe_NormalDamage(int argNum, gentity_t *ent, qboolean shortCmd){
 	}
 
 	g_instagib.integer = 0;
-	BG_InitWeaponStats(qfalse);
+	RPM_WeaponMod ();
+	//BG_InitWeaponStats(qfalse);
+	
 	for(i=0;i<=level.numConnectedClients;i++){
 		level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
 		G_UpdateOutfitting(g_entities[level.sortedClients[i]].s.number);
-		ammoindex = weaponData[WP_KNIFE].attack[ATTACK_ALTERNATE].ammoIndex;
-		ammoData[ammoindex].max = 5; 
+		//ammoindex = weaponData[WP_KNIFE].attack[ATTACK_ALTERNATE].ammoIndex;
+		//ammoData[ammoindex].max = 5; 
 	}
 	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sN%so%sr%sm%sa%sl damage!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
@@ -215,7 +217,8 @@ void Boe_RealDamage(int argNum, gentity_t *ent, qboolean shortCmd){
 	}
 
 	g_instagib.integer = 1;
-	BG_InitWeaponStats(qfalse);
+	RPM_WeaponMod ();
+	//BG_InitWeaponStats(qfalse);
 	for(i=0;i<=level.numConnectedClients;i++){
 		level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
 		G_UpdateOutfitting(g_entities[level.sortedClients[i]].s.number);

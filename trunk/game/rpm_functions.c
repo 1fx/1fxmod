@@ -827,6 +827,7 @@ void RPM_UpdateTMI(void)
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
 		cl = &level.clients[level.sortedClients[i]];
+		if(g_checkMute.integer == 1)
 		IsClientMuted(&g_entities[cl->ps.clientNum], qfalse);
 		if (G_IsClientSpectating(cl))// || G_IsClientDead (cl)) 
 		{

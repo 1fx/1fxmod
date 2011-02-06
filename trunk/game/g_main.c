@@ -208,6 +208,7 @@ vmCvar_t	g_cm;
 vmCvar_t	g_3rd;
 vmCvar_t	g_enableCustomCommands;
 vmCvar_t	g_rpmEnt;
+vmCvar_t	g_checkMute;
 
 #ifdef _BOE_DBG
 vmCvar_t	boe_log;
@@ -465,6 +466,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_alternateMap, "g_alternateMap", "0", CVAR_ROM|CVAR_INTERNAL|CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_enableCustomCommands, "g_enableCustomCommands", "0", CVAR_ROM|CVAR_INTERNAL|CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 	{ &g_rpmEnt, "g_rpmEnt", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
+	{ &g_checkMute, "g_checkMute", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 	
 #ifdef _BOE_DBG
 	// Boe!Man: Debug CVAR.

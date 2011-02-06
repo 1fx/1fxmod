@@ -451,3 +451,4 @@ int FormatDamage(int damage);
 
 extern vmCvar_t g_enableCustomCommands;
 extern vmCvar_t g_rpmEnt;
+extern vmCvar_t g_checkMute;

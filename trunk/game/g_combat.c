@@ -258,7 +258,7 @@ void player_die(
 	// Add to the number of deaths for this player
 
 	//Ryan March 30 2004 5:28pm
-	if(attacker != self && attacker->client && self->client->pers.statinfo.killsinarow >= 3)
+	if(attacker != self && attacker->client && self->client->pers.statinfo.killsinarow >= 3 && current_gametype.value != GT_HS)
 	{
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s's %sk%si%sl%sl%si%sng spree was ended by ^3%s",
 				level.time + 5000,
@@ -414,7 +414,7 @@ void player_die(
 	}
 
 	if(attacker->client){
-	if(attacker->client->pers.statinfo.killsinarow >= 3){
+	if(attacker->client->pers.statinfo.killsinarow >= 3 && current_gametype.value != GT_HS){
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7is %so%sn %sf%si%sr%se ^7with %s%i ^7kills in a row.",
 				level.time + 5000,
 				attacker->client->pers.netname,
