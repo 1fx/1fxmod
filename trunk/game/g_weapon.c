@@ -1092,7 +1092,7 @@ gentity_t* G_FireWeapon( gentity_t *ent, attackType_t attack )
 	}
 	else
 	{
-		G_FireBullet ( ent, ent->s.weapon, attack );/*
+		G_FireBullet ( ent, ent->s.weapon, attack );
 		if(ent->s.weapon == WP_M4_ASSAULT_RIFLE && current_gametype.value == GT_HS){
 			index = weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_ALTERNATE].ammoIndex;
 			index1 = weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_NORMAL].ammoIndex;
@@ -1105,7 +1105,7 @@ gentity_t* G_FireWeapon( gentity_t *ent, attackType_t attack )
 				Com_sprintf(level.M4loc, sizeof(level.M4loc), "%s", "Disappeared");
 				trap_SendServerCommand(-1, va("print\"^3[H&S] ^7M4 has disappeared\n\""));
 			}
-		}*/
+		}
 	}
 
 	return NULL;
