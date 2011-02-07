@@ -2166,38 +2166,79 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			strcpy(p, newp);
 		}else{
 			p = ConcatArgs(1);
-			for(i=StartAfterCommand(va("%s", p));i<=strlen(p);i++){
-			p[a] = p[i];
-			a += 1;
+			for(i=0;i<=strlen(p);i++){
+				if(p[i] == '!' && (p[i+1] == 'a' || p[i+1] == 'A') && (p[i+2] == 't' || p[i+2] == 'T')){
+					ignore = i;
+				}
+				if(ignore == -1){
+				newp[a] = p[i];
+				a += 1;
+				}else if(i == ignore || i == ignore+1 || i == ignore+2){
+				if(a != 0)
+					i+=1; // Fix for spaces
+				}else{
+				if(a == 0 && p[i] == ' ') // Fix for spaces
+					continue;
+				newp[a] = p[i];
+				a += 1;
+				}
 			}
 			mode = CADM_CHAT;
 			acmd = qtrue;
 		}
 	}
-	else if ((strstr(p, "!ac ")) || (strstr(p, "!AC ")) || (strstr(p, "!aC ")) || (strstr(p, "!Ac "))) {
+	else if ((strstr(p, "!ac")) || (strstr(p, "!AC")) || (strstr(p, "!aC")) || (strstr(p, "!Ac"))) {
 		if (ent->client->sess.admin){
 			p = ConcatArgs(1);
-			for(i=StartAfterCommand(va("%s", p));i<=strlen(p);i++){
-			p[a] = p[i];
-			a += 1;
+			for(i=0;i<=strlen(p);i++){
+				if(p[i] == '!' && (p[i+1] == 'a' || p[i+1] == 'A') && (p[i+2] == 'c' || p[i+2] == 'C')){
+					ignore = i;
+				}
+				if(ignore == -1){
+				newp[a] = p[i];
+				a += 1;
+				}else if(i == ignore || i == ignore+1 || i == ignore+2){
+				if(a != 0)
+					i+=1; // Fix for spaces
+				}else{
+				if(a == 0 && p[i] == ' ') // Fix for spaces
+					continue;
+				newp[a] = p[i];
+				a += 1;
+				}
 			}
 			mode = ADM_CHAT;
 			acmd = qtrue;
+			strcpy(p, newp);
 		}else{
 			p = ConcatArgs(1);
 			G_Say( ent, NULL, mode, p );
 			return;
 		}
 	}
-	else if ((strstr(p, "!sc ")) || (strstr(p, "!SC ")) || (strstr(p, "!sC ")) || (strstr(p, "!Sc "))) {
+	else if ((strstr(p, "!sc")) || (strstr(p, "!SC")) || (strstr(p, "!sC")) || (strstr(p, "!Sc"))) {
 		if (ent->client->sess.admin){
 			p = ConcatArgs(1);
-			for(i=StartAfterCommand(va("%s", p));i<=strlen(p);i++){
-			p[a] = p[i];
-			a += 1;
+			for(i=0;i<=strlen(p);i++){
+				if(p[i] == '!' && (p[i+1] == 's' || p[i+1] == 'S') && (p[i+2] == 'c' || p[i+2] == 'C')){
+					ignore = i;
+				}
+				if(ignore == -1){
+				newp[a] = p[i];
+				a += 1;
+				}else if(i == ignore || i == ignore+1 || i == ignore+2){
+				if(a != 0)
+					i+=1; // Fix for spaces
+				}else{
+				if(a == 0 && p[i] == ' ') // Fix for spaces
+					continue;
+				newp[a] = p[i];
+				a += 1;
+				}
 			}
 			mode = SADM_CHAT;
 			acmd = qtrue;
+			strcpy(p, newp);
 		}else{
 			p = ConcatArgs(1);
 			G_Say( ent, NULL, mode, p );
@@ -2205,26 +2246,53 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		}
 	}
 	// Boe!Man 4/17/10: Clan chat.
-	else if ((strstr(p, "!cc ")) || (strstr(p, "!CC ")) || (strstr(p, "!Cc ")) || (strstr(p, "!cC "))) {
-		if (ent->client->sess.clanMember == 1){
+	else if ((strstr(p, "!cc")) || (strstr(p, "!CC")) || (strstr(p, "!Cc")) || (strstr(p, "!cC"))) {
+		if (ent->client->sess.admin){
 			p = ConcatArgs(1);
-			for(i=StartAfterCommand(va("%s", p));i<=strlen(p);i++){
-			p[a] = p[i];
-			a += 1;
+			for(i=0;i<=strlen(p);i++){
+				if(p[i] == '!' && (p[i+1] == 'c' || p[i+1] == 'C') && (p[i+2] == 'c' || p[i+2] == 'C')){
+					ignore = i;
+				}
+				if(ignore == -1){
+				newp[a] = p[i];
+				a += 1;
+				}else if(i == ignore || i == ignore+1 || i == ignore+2){
+				if(a != 0)
+					i+=1; // Fix for spaces
+				}else{
+				if(a == 0 && p[i] == ' ') // Fix for spaces
+					continue;
+				newp[a] = p[i];
+				a += 1;
+				}
 			}
 			mode = CLAN_CHAT;
 			acmd = qtrue;
+			strcpy(p, newp);
 		}else{
 			p = ConcatArgs(1);
 			G_Say( ent, NULL, mode, p );
 			return;
 		}
 	}
-	else if ((strstr(p, "!ca ")) || (strstr(p, "!Ca ")) || (strstr(p, "!cA ")) || (strstr(p, "!CA "))) {
+	else if ((strstr(p, "!ca")) || (strstr(p, "!Ca")) || (strstr(p, "!cA")) || (strstr(p, "!CA"))) {
 			p = ConcatArgs(1);
-			for(i=StartAfterCommand(va("%s", p));i<=strlen(p);i++){
-			p[a] = p[i];
-			a += 1;
+			for(i=0;i<=strlen(p);i++){
+				if(p[i] == '!' && (p[i+1] == 'c' || p[i+1] == 'C') && (p[i+2] == 'a' || p[i+2] == 'A')){
+					ignore = i;
+				}
+				if(ignore == -1){
+				newp[a] = p[i];
+				a += 1;
+				}else if(i == ignore || i == ignore+1 || i == ignore+2){
+				if(a != 0)
+					i+=1; // Fix for spaces
+				}else{
+				if(a == 0 && p[i] == ' ') // Fix for spaces
+					continue;
+				newp[a] = p[i];
+				a += 1;
+				}
 			}
 			mode = CADM_CHAT;
 			acmd = qtrue;
