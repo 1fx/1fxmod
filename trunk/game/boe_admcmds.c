@@ -536,10 +536,12 @@ Boe_Kick
 void Boe_Kick(int argNum, gentity_t *ent, qboolean shortCmd){
 	int id;
 	char	arg3[MAX_STRING_TOKENS];
+	char	reason[256];
 	if(shortCmd){
 		id = Boe_ClientNumFromArg(ent, 1, "kick <id> <reason>", "Kick", qfalse, qfalse, qtrue);
 		if(id < 0) return;
-		trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"%s\"\n", id, GetReason()));
+		strcpy(reason, GetReason());
+		trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"%s\"\n", id, reason));
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s was %sk%si%sc%sk%se%sd ^7by %s", level.time + 5000, g_entities[id].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, ent->client->pers.netname));
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was kicked by %s.\n\"", g_entities[id].client->pers.netname,ent->client->pers.netname));
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
@@ -1051,7 +1053,7 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 			begin = qtrue;
 			memset(xip, 0, sizeof(xip));
 			strncpy(xip, buf+StartPos, EndPos-StartPos);
-			Com_Printf("%s\n", xip);
+			Com_Printf("IP: %s\n", xip);
 			count += 1; // Henk 25/01/11 -> Fix wrong ban lines.
 			// Start extracting and printing baninfo
 			if(subnet)
@@ -1062,12 +1064,16 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 			if(!GP2){
 				//Com_Printf("Error while opening file: %s\n", file);
 				trap_GP_Delete(&GP2);
+				strcpy(ip, xip);
+				strcpy(reason, "");
+				strcpy(by, "");
 			}else{
 			group = trap_GPG_GetSubGroups(GP2);
 			trap_GPG_FindPairValue(group, "ip", "0", ip);
 			trap_GPG_FindPairValue(group, "name", "", name);
 			trap_GPG_FindPairValue(group, "reason", "", reason);
 			trap_GPG_FindPairValue(group, "by", "", by);
+			}
 			length = strlen(ip);
 			if(length > 15){
 				ip[15] = '\0';
@@ -1124,8 +1130,8 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 			}
 			//trap_SendServerCommand( adm-g_entities, va("print \"%s\n", by)); // Boe!Man 9/16/10: Print tier 4.
 			//trap_SendServerCommand( adm-g_entities, va("print \"%s\n%s\n%s\n%s\n\"", ip, name, reason, by)); // print result
+			if(GP2)
 			trap_GP_Delete(&GP2);
-			}
 			// End
 		}
 	}
@@ -2326,14 +2332,20 @@ Boe_Broadcast
 void Boe_Broadcast(int argNum, gentity_t *adm, qboolean shortCmd){
 	char buffer[512];
 	char buffer1[512];
+	char *buffer2;
 	int i, z = 0;
 	if(shortCmd){
 		trap_Argv(1, buffer, sizeof(buffer));
+		buffer2 = ConcatArgs1( 2 );
+		if(strlen(buffer2) < 1){
 		for(i=StartAfterCommand(va("%s", buffer));i<=strlen(buffer);i++){
 			buffer1[z] = buffer[i];
 			z+= 1;
 		}
 		buffer1[z] = '\0';
+		}else{
+			strcpy(buffer1, buffer2);
+		}
 	}else{
 		// Boe!Man 1/14/11: Fixed Broadcast with RCON.
 		if(adm && adm->client){

@@ -26,6 +26,33 @@ qboolean IsClientMuted(gentity_t *ent, qboolean message){
 	return qfalse;
 }
 
+char	*ConcatArgs1( int start ) {
+	int		i, c, tlen;
+	char	line[MAX_STRING_CHARS];
+	int		len;
+	char	arg[MAX_STRING_CHARS];
+
+	len = 0;
+	c = trap_Argc();
+	for ( i = start ; i < c ; i++ ) {
+		trap_Argv( i, arg, sizeof( arg ) );
+		tlen = strlen( arg );
+		if ( len + tlen >= MAX_STRING_CHARS - 1 ) {
+			break;
+		}
+		memcpy( line + len, arg, tlen );
+		len += tlen;
+		if ( i != c - 1 ) {
+			line[len] = ' ';
+			len++;
+		}
+	}
+
+	line[len] = 0;
+
+	return line;
+}
+
 qboolean AddMutedClient(gentity_t *ent, int time){
 	int i;
 	for(i=0;i<=20;i++){
@@ -73,7 +100,8 @@ char *GetReason(void) {
 					reason = va("%s%c", reason, arg[z]);
 				}
 				if(strlen(reason) < 1){
-					trap_Argv( 3, arg, sizeof( arg ) );
+					strcpy(arg ,ConcatArgs1(3));
+					//trap_Argv( 3, arg, sizeof( arg ) );
 					return arg;
 				}
 				return reason;
@@ -82,7 +110,8 @@ char *GetReason(void) {
 		}
 	}
 	if(strlen(reason) < 1){
-		trap_Argv( 3, arg, sizeof( arg ) );
+		strcpy(arg ,ConcatArgs1(3));
+		//trap_Argv( 3, arg, sizeof( arg ) );
 		return arg;
 	}
 	return "";
