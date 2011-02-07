@@ -625,7 +625,7 @@ void SpectatorThink( gentity_t *ent, usercmd_t *ucmd )
 		G_StopFollowing( ent );
 	}
 
-	(g_compMode.integer){
+	if (g_compMode.integer){
 		if(client->sess.spectating >= 0 && client->sess.spectating <= 64){
 			if(level.clients[client->sess.spectating].sess.thirdperson == 1){
 				client->sess.spectatorFirstPerson = qfalse;
