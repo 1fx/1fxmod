@@ -72,7 +72,7 @@ static admCmd_t AdminCommands[] =
 	{"!sbu ", "subnetunban", &g_subnetban.integer, &Henk_SubnetUnban},
 	{"!ub ", "unban", &g_ban.integer, &Henk_Unban},
 	{"!su ", "subnetunban", &g_subnetban.integer, &Henk_SubnetUnban},
-	{"!sb ", "subnetban", &g_subnetban.integer, &Boe_subnetBan},
+	{"!sb ", "subnetban", &g_subnetban.integer, &Boe_subnetBan}/*,
 
 		// Boe!Man 1/22/11: Adding full synonyms.
 	{"!uppercut ", "uppercut", &g_uppercut.integer, &Boe_Uppercut},
@@ -121,7 +121,7 @@ static admCmd_t AdminCommands[] =
 	{"!unban ", "unban", &g_ban.integer, &Henk_Unban},
 	{"!subnetunban ", "subnetunban", &g_subnetban.integer, &Henk_SubnetUnban},
 	{"!subnetban ", "subnetban", &g_subnetban.integer, &Boe_subnetBan}
-	// Boe!Man 1/22/11: End full synonyms.
+	// Boe!Man 1/22/11: End full synonyms.*/
 };
 
 static int AdminCommandsSize = sizeof( AdminCommands ) / sizeof( AdminCommands[0] );
@@ -1827,7 +1827,7 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 		Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3"));
 		break;
 	case SADM_CHAT:
-		strcpy(type, server_sacprefix.string);
+		strcpy(type, server_scprefix.string);
 		Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3"));
 		break;
 	case ADM_TALK:

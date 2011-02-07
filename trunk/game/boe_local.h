@@ -296,7 +296,7 @@ extern	vmCvar_t	server_badminprefix;
 extern	vmCvar_t	server_adminprefix;
 extern	vmCvar_t	server_sadminprefix;
 extern	vmCvar_t	server_acprefix;
-extern	vmCvar_t	server_sacprefix;
+extern	vmCvar_t	server_scprefix;
 extern	vmCvar_t	server_caprefix;
 extern	vmCvar_t	server_ccprefix;
 extern	vmCvar_t	server_starprefix;
@@ -451,7 +451,5 @@ void RPM_ReadyUp(gentity_t *ent);
 int FormatDamage(int damage);
 
 extern vmCvar_t g_enableCustomCommands;
-extern vmCvar_t g_rpmEnt;
-extern vmCvar_t g_checkMute;
 
 char	*ConcatArgs1( int start );

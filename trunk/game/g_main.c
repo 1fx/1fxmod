@@ -118,7 +118,7 @@ vmCvar_t	server_badminprefix;
 vmCvar_t	server_adminprefix;
 vmCvar_t	server_sadminprefix;
 vmCvar_t	server_acprefix;
-vmCvar_t	server_sacprefix;
+vmCvar_t	server_scprefix;
 vmCvar_t	server_caprefix;
 vmCvar_t	server_ccprefix;
 vmCvar_t	server_starprefix;
@@ -207,8 +207,6 @@ vmCvar_t	g_alternateMap;
 vmCvar_t	g_cm;
 vmCvar_t	g_3rd;
 vmCvar_t	g_enableCustomCommands;
-vmCvar_t	g_rpmEnt;
-vmCvar_t	g_checkMute;
 
 #ifdef _BOE_DBG
 vmCvar_t	boe_log;
@@ -382,7 +380,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &server_adminprefix, "server_adminprefix", "^GA^gd^Km^7in", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_sadminprefix, "server_sadminprefix", "^GS-^gA^Kdm^7in", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_acprefix, "server_acprefix", "^GA^gd^Km^7in Only", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
-	{ &server_sacprefix, "server_sacprefix", "^GS-^gA^Kdm^7in Only", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse},
+	{ &server_scprefix, "server_scprefix", "^GS-^gA^Kdm^7in Only", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse},
 	{ &server_caprefix, "server_caprefix", "^GH^ge^Ky ^7Admin!", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_ccprefix, "server_ccprefix", "^GC^gl^Kan ^7Only", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_starprefix, "server_starprefix", "^<*", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
@@ -465,8 +463,6 @@ static cvarTable_t gameCvarTable[] =
 
 	{ &g_alternateMap, "g_alternateMap", "0", CVAR_ROM|CVAR_INTERNAL|CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_enableCustomCommands, "g_enableCustomCommands", "0", CVAR_ROM|CVAR_INTERNAL|CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
-	{ &g_rpmEnt, "g_rpmEnt", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
-	{ &g_checkMute, "g_checkMute", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 	
 #ifdef _BOE_DBG
 	// Boe!Man: Debug CVAR.
@@ -2709,7 +2705,7 @@ void G_RunFrame( int levelTime )
 			continue;
 		}
 
-		if(ent->model && ent->model != NULL && !strcmp(ent->model, "BLOCKED_TRIGGER") && g_rpmEnt.integer == 1)
+		if(ent->model && ent->model != NULL && !strcmp(ent->model, "BLOCKED_TRIGGER"))
 		{
 			if(ent->count){
 				///Team Games

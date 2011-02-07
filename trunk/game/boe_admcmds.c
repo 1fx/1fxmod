@@ -164,7 +164,7 @@ Boe_Normaldamage
 */
 
 void Boe_NormalDamage(int argNum, gentity_t *ent, qboolean shortCmd){
-	int i, ammoindex;
+	int i;
 
 	// Boe!Man 1/19/11: Disable ND in H&S.
 	if(current_gametype.value == GT_HS){
@@ -373,8 +373,10 @@ void Boe_NoNades(int argNum, gentity_t *ent, qboolean shortCmd){
 	    SetNades("0");
 		trap_Cvar_Update(&g_disablenades);
 		BG_SetAvailableOutfitting(g_availableWeapons.string);
-		for(i=0;i<=level.numConnectedClients;i++){
+		for(i=0;i<level.numConnectedClients;i++){
 			level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
+			Com_Printf("Setting nades\n");
+			level.clients[level.sortedClients[i]].ps.stats[STAT_OUTFIT_GRENADE] = bg_itemlist[bg_outfittingGroups[OUTFITTING_GROUP_GRENADE][3]].giTag;
 			G_UpdateOutfitting(g_entities[level.sortedClients[i]].s.number);
 			//level.clients[level.sortedClients[i]].ps.ammo[weaponData[WP_SMOHG92_GRENADE].attack[ATTACK_NORMAL].ammoIndex]=1;
 			//level.clients[level.sortedClients[i]].ps.stats[STAT_WEAPONS] |= ( 1 << WP_SMOHG92_GRENADE );
@@ -1179,7 +1181,7 @@ void Boe_FileError (gentity_t * ent, const char *file)
 {
 	if(ent && ent->client)
 	{
-		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Error opening %s\n\"", file));
+		Com_Printf("^7Error opening %s\n\"", file);
 	}
 	else
 	{
@@ -3093,8 +3095,7 @@ Henk_Map
 */
 
 void Henk_Map(int argNum, gentity_t *adm, qboolean shortCmd){
-	char *numb;
-	char map[64];
+	char map[64] = "";
 	int i;
 	fileHandle_t	f;
 	char	arg[32] = "\0"; // increase buffer so we can process more commands
@@ -3102,13 +3103,16 @@ void Henk_Map(int argNum, gentity_t *adm, qboolean shortCmd){
 	trap_Argv( argNum, arg, sizeof( arg ) );
 	if(strlen(arg) >= 3){
 		if(shortCmd){
-			for(i=0;i<=20;i++){
+			for(i=0;i<=strlen(arg);i++){
 				if(arg[i] == ' '){
-					numb = va("%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", arg[i+1], arg[i+2], arg[i+3], arg[i+4], arg[i+5], arg[i+6], arg[i+7], arg[i+8], arg[i+9], arg[i+10], arg[i+11], arg[i+12], arg[i+13], arg[i+14], arg[i+15]);
+					strncpy(map, arg+i+1, strlen(arg));
 					break;
 				}
 			}
-			strcpy(map, va("%s", numb)); // copy to static
+			if(strlen(map) <= 1){
+				trap_Argv( 2, arg, sizeof( arg ) ); // short cmd from console
+				strcpy(map, arg);
+			}
 		}else{
 			strcpy(map, arg);
 		}
