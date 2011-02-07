@@ -2922,6 +2922,15 @@ void G_RunFrame( int levelTime )
 			// Boe!Man 1/24/11: Swap the teams.
 			if (cm_aswap.integer > 0 && level.swappedteams == qfalse){
 				Boe_SwapTeams(NULL);
+				for(i=0;i<level.numConnectedClients;i++){ // Henk swap the invites aswell
+					if(level.clients[level.sortedClients[i]].sess.invitedByRed == qtrue){
+						level.clients[level.sortedClients[i]].sess.invitedByRed = qfalse;
+						level.clients[level.sortedClients[i]].sess.invitedByBlue = qtrue;
+					}else if(level.clients[level.sortedClients[i]].sess.invitedByBlue == qtrue){
+						level.clients[level.sortedClients[i]].sess.invitedByRed = qtrue;
+						level.clients[level.sortedClients[i]].sess.invitedByBlue = qfalse;
+					}
+				}
 				level.swappedteams = qtrue;
 			}
 			if (level.teamScores[TEAM_RED] > level.teamScores[TEAM_BLUE]){
