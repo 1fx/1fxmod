@@ -52,7 +52,7 @@ void RPM_Tcmd ( gentity_t *ent )
 
 	///RxCxW - 09.18.06 - 04:57pm #compmode needed for tcmds no matter what
 	///if (g_enableTeamCmds.integer == 1 && !g_compMode.integer)
-	if (!g_compMode.integer && g_enableTeamCmds.integer != 2)
+	if (!g_compMode.integer && g_enableTeamCmds.integer != 2 && !cm_enabled.integer)
 	///End  - 09.18.06 - 04:58pm
 	{
 		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Competition Mode must be enabled to use team commands!\n\""));
@@ -77,15 +77,15 @@ void RPM_Tcmd ( gentity_t *ent )
 		*/
 		trap_SendServerCommand( ent-g_entities, va("print \"\n ^3Commands         Lvl         Arguments     Explanation\n\""));
 		trap_SendServerCommand( ent-g_entities, va("print \" ----------------------------------------------------------\n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \" info                         <team>        ^7[^3Shows your team's info^7]   \n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \" invite                       <id>          ^7[^3Invites a spectator^7]   \n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \" uninvite                     <id>          ^7[^3Un-invites a spectator^7]   \n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \" lock                                       ^7[^3Locks your team^7]   \n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \" unlock                                     ^7[^3Unlocks your team^7]   \n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \" timeout          ^7[^3L^7]                       [^3Request a pause^7]   \n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \" timein           ^7[^3L^7]                       [^3End a pause^7]   \n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \" kick             ^7[^3L^7]         <id>          [^3Kick a team member^7]   \n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \" \n^7Use ^3[Page Up]^7 and ^3[Page Down]^7 keys to scroll.\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \"info                         <team>        ^7[^3Shows your team's info^7]\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \"invite                       <id>          ^7[^3Invites a spectator^7]\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \"uninvite                     <id>          ^7[^3Un-invites a spectator^7]\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \"lock                                       ^7[^3Locks your team^7]\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \"unlock                                     ^7[^3Unlocks your team^7]\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \"timeout                                    ^7[^3Request a pause^7]\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \"timein                                     ^7[^3End a pause^7]\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \"kick             ^7[^3%i^7]         <id>          [^3Kick a team member^7]\n\"", g_kick.integer));
+		trap_SendServerCommand( ent-g_entities, va("print \"\n^7Use ^3[Page Up]^7 and ^3[Page Down]^7 keys to scroll.\n\""));
 		return;
 	}
 
@@ -140,7 +140,8 @@ Recoded by Boe!Man, 11/16/10 3:11 PM
 */
 void RPM_TeamInfo (gentity_t *ent, char *team)
 {
-	int t;
+	int t, i;
+	int	invitedcount = 0;
 	char *teamName;
 
 	#ifdef _BOE_DBG
@@ -190,6 +191,19 @@ void RPM_TeamInfo (gentity_t *ent, char *team)
 	}else{
 		trap_SendServerCommand( ent-g_entities, va("print \"[^3Locked^7]              No\n"));
 	}
+	// Boe!Man 2/7/11: Display the amount of invited specs to the team.
+	for ( i = 0; i < level.maxclients; i ++ ){
+		if(g_entities[i].client->pers.connected == CON_DISCONNECTED )
+			continue;
+		if(g_entities[i].client->sess.team != TEAM_SPECTATOR)
+			continue;
+		if(t == 1 && !g_entities[i].client->sess.invitedByRed)
+			continue;
+		if(t == 2 && !g_entities[i].client->sess.invitedByBlue)
+			continue;
+		invitedcount += 1;
+	}
+	trap_SendServerCommand( ent-g_entities, va("print \"[^3Invited^7]             %i\n", invitedcount));
 	if (cm_enabled.integer == 2 || cm_enabled.integer == 3){
 		trap_SendServerCommand( ent-g_entities, va("print \"[^3Round^7]               1st\n"));
 	}else if (cm_enabled.integer == 4){
@@ -198,6 +212,27 @@ void RPM_TeamInfo (gentity_t *ent, char *team)
 		trap_SendServerCommand( ent-g_entities, va("print \"[^3Round^7]               Finished\n"));
 	}else{
 		trap_SendServerCommand( ent-g_entities, va("print \"[^3Round^7]               N/A\n"));
+	}
+
+	// Boe!Man 2/7/11: Show the invited people.
+	if (invitedcount > 0){
+		trap_SendServerCommand( ent-g_entities, va("print \"\n^3Id#  Invited spectators\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \"--------------------------------------\n\""));
+		for ( i = 0; i < level.maxclients; i ++ ){
+			if(g_entities[i].client->pers.connected == CON_DISCONNECTED )
+				continue;
+			if(g_entities[i].client->sess.team != TEAM_SPECTATOR)
+				continue;
+			if(t == TEAM_RED && !g_entities[i].client->sess.invitedByRed)
+				continue;
+			if(t == TEAM_BLUE && !g_entities[i].client->sess.invitedByBlue)
+				continue;
+			if(i < 10){
+				trap_SendServerCommand( ent-g_entities, va("print \"^7[^3%i^7]  %s\n\"", i, g_entities[i].client->pers.cleanName));
+			}else{
+				trap_SendServerCommand( ent-g_entities, va("print \"^7[^3%i^7] %s\n\"", i, g_entities[i].client->pers.cleanName));
+			}
+		}
 	}
 
 	// Boe!Man 11/18/10: Print scores as well when the scrim's started.
@@ -431,23 +466,16 @@ void RPM_Invite_Spec(gentity_t *ent, char *arg2)
 {
 	int		id;
 
-	///RxCxW - 1.14.2005 - #compMode check - dont need
-	///if (!g_compMode.integer)
-	///{
-	///	trap_SendServerCommand( ent-g_entities, "print \"Competition mode is not enabled on this server.\n\"");
-	///	return;
-	///}
-	///End - 1.14.2005
-
-	if (!level.specsLocked)
-	{
-		trap_SendServerCommand( ent-g_entities, "print \"Spectators are not currently locked.\n\"");
-		return;
-	}
+	// Boe!Man 2/7/11: We don't need this as you can only invite when Competition Mode's enabled anyway.
+	//if (!level.specsLocked)
+	//{
+	//	trap_SendServerCommand( ent-g_entities, "print \"^3[Info] ^7Spectator team is currently not locked.\n\"");
+	//	return;
+	//}
 
 	if ((ent->client->sess.team != TEAM_RED) && (ent->client->sess.team != TEAM_BLUE) )
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"Not on a valid team.\n\"");
+		trap_SendServerCommand( ent-g_entities, "print \"^3[Info] ^7Not on a valid team.\n\"");
 		return;
 	}
 

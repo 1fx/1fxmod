@@ -2021,7 +2021,7 @@ void CheckExitRules( void )
 			{
 				gentity_t* tent;
 				tent = G_TempEntity( vec3_origin, EV_GAME_OVER );
-				if (cm_enabled.integer < 4){
+				if (!cm_enabled.integer){
 					tent->s.eventParm = GAME_OVER_SCORELIMIT;
 				}else{
 					tent->s.eventParm = LEEG;
@@ -2047,7 +2047,7 @@ void CheckExitRules( void )
 					trap_SendServerCommand(-1, va("print\"^3[Info] ^7Red team wins 1st round with %i - %i.\n\"", level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE] ));
 					trap_Cvar_Set("cm_enabled", "3");
 					// Boe!Man 11/17/10: Display the Match screen again, and set the scorelimit temporary to 0 in order to get rid of the "hit the scorelimit" msg.
-					level.compMsgCount = level.time + 2000;
+					level.compMsgCount = level.time + 5000;
 					g_scorelimit.integer = 0;
 				}else if (g_compMode.integer > 0 && cm_enabled.integer == 4){
 					if (cm_sr.integer > cm_sb.integer){
