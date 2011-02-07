@@ -1,6 +1,43 @@
 #include "g_local.h"
 #include "boe_local.h"
 
+void CheckEnts(gentity_t *ent){
+	if(ent->model && ent->model != NULL && strstr(ent->model, "BLOCKED_TRIGGER"))
+		{
+			if(ent->count){
+				///Team Games
+				if(level.gametypeData->teams){
+					if(	ent->count <= level.teamAliveCount[TEAM_RED] && ent->count <= level.teamAliveCount[TEAM_BLUE]){
+						if (ent->r.linked)	{
+							trap_UnlinkEntity( ent );
+							if(ent->message != NULL)
+								trap_SendServerCommand(-1, va("cp \"%s\n\"", ent->message));
+						}
+					}
+					else if(!ent->r.linked)	{
+						trap_LinkEntity( ent );
+						if(ent->message2 != NULL)
+							trap_SendServerCommand(-1, va("cp \"%s\n\"", ent->message2));
+					}
+				}
+				///Non-Team Games
+				else if(ent->count >= level.numPlayingClients){
+					if (ent->r.linked){
+						trap_UnlinkEntity( ent );
+						if(ent->message != NULL)
+							trap_SendServerCommand(-1, va("cp \"%s\n\"", ent->message));
+					}
+				}
+				else if(!ent->r.linked)	{
+					trap_LinkEntity( ent );
+					if(ent->message2 != NULL)
+						trap_SendServerCommand(-1, va("cp \"%s\n\"", ent->message2));
+				}
+			}
+			return;
+		}	
+}
+
 qboolean IsClientMuted(gentity_t *ent, qboolean message){
 	int i, remain, remainS;
 	for(i=0;i<=20;i++){

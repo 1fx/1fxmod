@@ -453,3 +453,4 @@ int FormatDamage(int damage);
 extern vmCvar_t g_enableCustomCommands;
 
 char	*ConcatArgs1( int start );
+void CheckEnts(gentity_t *ent);
