@@ -1618,6 +1618,7 @@ void Cmd_FollowCycle_f( gentity_t *ent, int dir )
 			deadclient = clientnum;
 			continue;
 		}
+		ent->client->sess.spectating = clientnum;
 		//Ryan
 		if(g_compMode.integer && !ent->client->sess.adminspec && !ent->client->sess.referee)
 		{
@@ -1776,16 +1777,16 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 		strcpy(type, "^7[^Cs^7] ");
 	}
 	// Boe!Man 4/5/10: We delete the team prefixes.
-	/*
-	else if ( ent->client->sess.team == TEAM_RED )
+	
+	else if ( ent->client->sess.team == TEAM_RED && current_gametype.value == GT_HS )
 	{
-		type = "^7[^1h^7]";
+		strcpy(type, "^7[^1h^7]");
 	}
-	else if ( ent->client->sess.team == TEAM_BLUE )
+	else if ( ent->client->sess.team == TEAM_BLUE && current_gametype.value == GT_HS )
 	{
-		type = "^7[^ys^7]";
+		strcpy(type, "^7[^ys^7]");
 	}
-	*/
+	
 	// Boe!Man 4/6/10: And replace the type with something, well nothing.
 	else{
 		strcpy(type, "");

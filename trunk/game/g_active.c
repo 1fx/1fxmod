@@ -606,7 +606,9 @@ void SpectatorThink( gentity_t *ent, usercmd_t *ucmd )
 	if ( ( client->buttons & BUTTON_ATTACK ) && ! ( client->oldbuttons & BUTTON_ATTACK ) ) 
 	{
 		if(client->sess.team == TEAM_SPECTATOR && level.specsLocked){
-
+			if(g_compMode.integer && (client->sess.invitedByBlue || client->sess.invitedByRed)){ // Fix for not able to switch
+				Cmd_FollowCycle_f( ent, 1 );
+			}
 		}else{
 		Cmd_FollowCycle_f( ent, 1 );
 		}
@@ -621,6 +623,18 @@ void SpectatorThink( gentity_t *ent, usercmd_t *ucmd )
 	//Ryan
 	{
 		G_StopFollowing( ent );
+	}
+
+	(g_compMode.integer){
+		if(client->sess.spectating >= 0 && client->sess.spectating <= 64){
+			if(level.clients[client->sess.spectating].sess.thirdperson == 1){
+				client->sess.spectatorFirstPerson = qfalse;
+			}else if(level.clients[client->sess.spectating].sess.thirdperson == 0){
+				client->sess.spectatorFirstPerson = qtrue;
+			}else{
+				client->sess.spectatorFirstPerson = qtrue;
+			}
+		}
 	}
 
 	//Ryan june 7 2003

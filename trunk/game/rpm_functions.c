@@ -786,7 +786,6 @@ void RPM_UpdateTMI(void)
 	int			numAdded, location;
 	gentity_t	*bestLoc;
 	int			adm = 0;
-	int			thirdperson;
 	char		*s;
 	char		userinfo[MAX_INFO_STRING];
 	int			damage;
@@ -802,7 +801,7 @@ void RPM_UpdateTMI(void)
 		return;
 	}
 
-	if(level.pause) // Henk 06/04/10 -> No pause functionality yet
+	if(level.pause)
 		return;
 
 	if(level.numConnectedClients >= 0 && level.numConnectedClients <= 10)
@@ -845,14 +844,14 @@ void RPM_UpdateTMI(void)
 		trap_GetUserinfo( g_entities[level.sortedClients[i]].s.number, userinfo, sizeof( userinfo ) );
 		if(g_entities[level.sortedClients[i]].client->sess.rpmClient >= 0.7){
 		s = Info_ValueForKey( userinfo, "cg_thirdperson" );
-		thirdperson = atoi(s);
-		if(thirdperson >= 1){
-			thirdperson = 1;
+		cl->sess.thirdperson = atoi(s);
+		if(cl->sess.thirdperson >= 1){
+			cl->sess.thirdperson = 1;
 		}else{
-			thirdperson = 0;
+			cl->sess.thirdperson = 0;
 		}
 		}else{
-			thirdperson = 2;
+			cl->sess.thirdperson = 2;
 		}
 			adm = cl->sess.admin;
 			damage = cl->pers.statinfo.damageDone;
@@ -873,7 +872,7 @@ void RPM_UpdateTMI(void)
 				cl->ps.stats[STAT_HEALTH],
 				cl->ps.stats[STAT_ARMOR],
 				location,
-				thirdperson, // 1 = third | 0 = first | 2 = n/a, aka no client
+				cl->sess.thirdperson, // 1 = third | 0 = first | 2 = n/a, aka no client
 				adm,
 				string,
 				//cl->ps.weapon, //cl->pers.statinfo.damageDone

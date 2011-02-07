@@ -281,7 +281,8 @@ typedef struct
 	qboolean			invitedByBlue;
 	int					referee;
 	qboolean			clanMember;
-
+	int					thirdperson;
+	int					spectating;
 	// Boe!Man 10/16/10: Adminspec shouldn't be cleared everytime a spawn gets triggered.
 	qboolean			adminspec;
 
