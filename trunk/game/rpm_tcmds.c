@@ -23,6 +23,7 @@
 ===========
 RPM_Tcmd
 Heavily modified version by Boe!Man, 11/16/10
+Updated 2/7/11
 ===========
 */
 void RPM_Tcmd ( gentity_t *ent )
@@ -75,16 +76,16 @@ void RPM_Tcmd ( gentity_t *ent )
 		trap_SendServerCommand( ent-g_entities, va("print \" [^4timein       ^7starts the match from a timeout                           ]\n\""));
 		trap_SendServerCommand( ent-g_entities, va("print \" ^3** Press PgUp and PgDn keys to scroll up and down the list in console! **\n\""));
 		*/
-		trap_SendServerCommand( ent-g_entities, va("print \"\n ^3Commands         Lvl         Arguments     Explanation\n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \" ----------------------------------------------------------\n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \"info                         <team>        ^7[^3Shows your team's info^7]\n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \"invite                       <id>          ^7[^3Invites a spectator^7]\n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \"uninvite                     <id>          ^7[^3Un-invites a spectator^7]\n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \"lock                                       ^7[^3Locks your team^7]\n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \"unlock                                     ^7[^3Unlocks your team^7]\n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \"timeout                                    ^7[^3Request a pause^7]\n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \"timein                                     ^7[^3End a pause^7]\n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \"kick             ^7[^3%i^7]         <id>          [^3Kick a team member^7]\n\"", g_kick.integer));
+		trap_SendServerCommand( ent-g_entities, va("print \"\n^3Commands         Arguments     Explanation\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \"----------------------------------------------------------\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \"info             <team>        ^7[^3Shows your team's info^7]\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \"invite           <id>          ^7[^3Invites a spectator^7]\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \"uninvite         <id>          ^7[^3Un-invites a spectator^7]\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \"lock                           ^7[^3Locks your team^7]\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \"unlock                         ^7[^3Unlocks your team^7]\n\""));
+		// Boe!Man 2/7/11: Removed timeout/timein commands due to excessive abuse (who needs them anyway when you got admins).
+		//trap_SendServerCommand( ent-g_entities, va("print \"timeout                        ^7[^3Request a pause^7]\n\""));
+		//trap_SendServerCommand( ent-g_entities, va("print \"timein                         ^7[^3End a pause^7]\n\""));
 		trap_SendServerCommand( ent-g_entities, va("print \"\n^7Use ^3[Page Up]^7 and ^3[Page Down]^7 keys to scroll.\n\""));
 		return;
 	}
@@ -100,25 +101,38 @@ void RPM_Tcmd ( gentity_t *ent )
 	else if (!Q_stricmp ( arg1, "ready" )){
 		RPM_ReadyTeam(ent, qfalse, arg2);
 	}*/ 
-	else if (!Q_stricmp ( arg1, "invite" )){
+	else if ( (!Q_stricmp ( arg1, "invite" )) || (!Q_stricmp ( arg1, "uninvite" ))){
 		RPM_Invite_Spec(ent, arg2);
 	}
+	// Boe!Man 2/7/11: Cleaning up some code.
+	/*
 	else if (!Q_stricmp ( arg1, "uninvite" )){
 		RPM_Invite_Spec(ent, arg2);
 	}
+	*/
 	else if ( (!Q_stricmp ( arg1, "lock" )) || (!Q_stricmp ( arg1, "unlock" )) ){
-		if(ent->client->sess.referee == 1)
-		RPM_lockTeam(ent, qfalse, arg2);
+		// Boe!Man 2/7/11: Everybody on a team should be able to lock/unlock their own team(!).
+		if(ent->client->sess.team == TEAM_RED){
+			RPM_lockTeam(ent, qfalse, "r");
+		}else{
+			RPM_lockTeam(ent, qfalse, "b");
+		}
 	}
+	// Boe!Man 2/7/11: Remove reset.
+	/*
 	else if (!Q_stricmp ( arg1, "reset" )){
 		RPM_Team_Reset(ent, qfalse, arg2);
 	}
+	*/
+	// Boe!Man 2/7/11: Remove timeout and timein commands.
+	/*
 	else if (!Q_stricmp ( arg1, "timeout" )){
 		RPM_Timeout(ent, qfalse);
 	}
 	else if (!Q_stricmp ( arg1, "timein" )){
 		RPM_Timein(ent);
 	}
+	*/
 	
 	else 
 	{
@@ -283,7 +297,7 @@ void RPM_lockTeam(gentity_t *ent, qboolean referee, char *team)
 					if (ent->client->sess.admin > 1)
 					trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7%s has unlocked the Red team.\n\"", ent->client->pers.netname));
 					else if(referee)
-					trap_SendServerCommand( -1, va("print \"^3[Referee Action] ^7%s has unlocked the Red team.\n\"", ent->client->pers.netname));
+					trap_SendServerCommand( -1, va("print \"^3[Team Action] ^7%s has unlocked the Red team.\n\"", ent->client->pers.netname));
 				}else{
 					trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Red team has been unlocked.\n\""));
 				}
@@ -296,7 +310,7 @@ void RPM_lockTeam(gentity_t *ent, qboolean referee, char *team)
 					if (ent->client->sess.admin > 1)
 					trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7%s has locked the Red team.\n\"", ent->client->pers.netname));
 					else
-					trap_SendServerCommand( -1, va("print \"^3[Referee Action] ^7%s has locked the Red team.\n\"", ent->client->pers.netname));
+					trap_SendServerCommand( -1, va("print \"^3[Team Action] ^7%s has locked the Red team.\n\"", ent->client->pers.netname));
 				}else{
 					trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Red team has been locked.\n\""));
 				}
@@ -312,7 +326,7 @@ void RPM_lockTeam(gentity_t *ent, qboolean referee, char *team)
 					if (ent->client->sess.admin > 1)
 					trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7%s has unlocked the Blue team.\n\"", ent->client->pers.netname));
 					else
-					trap_SendServerCommand( -1, va("print \"^3[Referee Action] ^7%s has unlocked the Blue team.\n\"", ent->client->pers.netname));
+					trap_SendServerCommand( -1, va("print \"^3[Team Action] ^7%s has unlocked the Blue team.\n\"", ent->client->pers.netname));
 				}else{
 					trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Blue team has been unlocked.\n\""));
 				}
@@ -325,7 +339,7 @@ void RPM_lockTeam(gentity_t *ent, qboolean referee, char *team)
 					if (ent->client->sess.admin > 1)
 					trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7%s has locked the Blue team.\n\"", ent->client->pers.netname));
 					else
-					trap_SendServerCommand( -1, va("print \"^3[Referee Action] ^7%s has locked the Blue team.\n\"", ent->client->pers.netname));
+					trap_SendServerCommand( -1, va("print \"^3[Team Action] ^7%s has locked the Blue team.\n\"", ent->client->pers.netname));
 				}else{
 					trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Blue team has been locked.\n\""));
 				}
@@ -485,25 +499,26 @@ void RPM_Invite_Spec(gentity_t *ent, char *arg2)
 	}
 	else
 	{
-		trap_SendServerCommand( ent-g_entities, va("print \"Bad client slot: %s\n\"", arg2));
-		trap_SendServerCommand( ent-g_entities, va("print \"Usage: tcmd invite/uninvite <idnumber>\n\""));
+		// Boe!Man 2/7/11: Merging two messages into one.
+		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Bad client slot: %s. Usage: tcmd invite/uninvite <idnumber>\n\"", arg2));
+		//trap_SendServerCommand( ent-g_entities, va("print \"\n\""));
 		return;
 	}
 
 	if ( id < 0 || id >= g_maxclients.integer )
 	{
-		trap_SendServerCommand( ent-g_entities, va("print \"Invalid client number %d.\n\"",id));
+		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Invalid client number %d.\n\"",id));
 		return;
 	}
 
 	if ( g_entities[id].client->pers.connected == CON_DISCONNECTED )
 	{
-		trap_SendServerCommand( ent-g_entities, va("print \"There is no client with the client number %d.\n\"", id));
+		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7There is no client with the client number %d.\n\"", id));
 		return;
 	}
 	if( g_entities[id].client->sess.team != TEAM_SPECTATOR)
 	{
-		trap_SendServerCommand( ent-g_entities, va("print \"That player is not currently spectating.\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7That player is not currently spectating.\n\""));
 		return;
 	}
 	
@@ -511,15 +526,15 @@ void RPM_Invite_Spec(gentity_t *ent, char *arg2)
 	{
 		if(g_entities[id].client->sess.invitedByRed)
 		{
-			trap_SendServerCommand( ent-g_entities, va("print \"%s was Un-invited to spectate your team.\n\"", g_entities[id].client->pers.netname ));
-			trap_SendServerCommand( g_entities[id].s.number, va("cp \"You were Un-invited to spectate the ^1Red ^7team\n\""));
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^3%s ^7was un-invited to spectate your team.\n\"", g_entities[id].client->pers.cleanName));
+			trap_SendServerCommand( g_entities[id].s.number, va("cp \"^3You ^7were %su%sn^7-%si%sn%sv%si%sted to spectate\nthe %s ^7team\n\"", server_color1.string, server_color2.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, server_redteamprefix.string));
 			g_entities[id].client->sess.invitedByRed = qfalse;
 			return;
 		}
 		else
 		{
-			trap_SendServerCommand( ent-g_entities, va("print \"%s was invited to spectate your team.\n\"", g_entities[id].client->pers.netname ));
-			trap_SendServerCommand( g_entities[id].s.number, va("cp \"You were invited to spectate the ^1Red ^7team\n\""));
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^3%s ^7was invited to spectate your team.\n\"", g_entities[id].client->pers.cleanName));
+			trap_SendServerCommand( g_entities[id].s.number, va("cp \"^3You ^7were %si%sn%sv%si%st%sed to spectate\nthe %s ^7team\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, server_redteamprefix.string));
 			g_entities[id].client->sess.invitedByRed = qtrue;
 			g_entities[id].client->ps.pm_type = PM_SPECTATOR;
 			g_entities[id].client->sess.spectatorClient = ent->s.number;
@@ -531,15 +546,15 @@ void RPM_Invite_Spec(gentity_t *ent, char *arg2)
 	{	
 		if(g_entities[id].client->sess.invitedByBlue)
 		{
-			trap_SendServerCommand( ent-g_entities, va("print \"%s was Un-invited to spectate your team.\n\"", g_entities[id].client->pers.netname ));
-			trap_SendServerCommand( g_entities[id].s.number, va("cp \"You were Un-invited to spectate the ^4Blue ^7team\n\""));
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^3%s ^7was un-invited to spectate your team.\n\"", g_entities[id].client->pers.cleanName));
+			trap_SendServerCommand( g_entities[id].s.number, va("cp \"^3You ^7were %su%sn^7-%si%sn%sv%si%sted to spectate\nthe %s ^7team\n\"", server_color1.string, server_color2.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, server_blueteamprefix.string));
 			g_entities[id].client->sess.invitedByBlue = qfalse;
 			return;
 		}
 		else
 		{
-			trap_SendServerCommand( ent-g_entities, va("print \"%s was invited to spectate your team.\n\"", g_entities[id].client->pers.netname ));
-			trap_SendServerCommand( g_entities[id].s.number, va("cp \"You were invited to spectate the ^4Blue ^7team\n\""));
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^3%s ^7was invited to spectate your team.\n\"", g_entities[id].client->pers.cleanName ));
+			trap_SendServerCommand( g_entities[id].s.number, va("cp \"^3You ^7were %si%sn%sv%si%st%sed to spectate\nthe %s ^7team\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, server_blueteamprefix.string));
 			g_entities[id].client->sess.invitedByBlue = qtrue;
 			g_entities[id].client->ps.pm_type = PM_SPECTATOR;
 			g_entities[id].client->sess.spectatorClient = ent->s.number;
@@ -552,7 +567,6 @@ void RPM_Invite_Spec(gentity_t *ent, char *arg2)
 ==============
 RPM_Team_Reset
 ==============
-*/
 
 void RPM_Team_Reset(gentity_t *ent, qboolean referee, char *team)
 {
@@ -639,12 +653,13 @@ void RPM_Team_Reset(gentity_t *ent, qboolean referee, char *team)
 		}
 	}
 }
+/*
 
 /*
 ==============
 RPM_Timeout
 ==============
-*/
+
 
 void RPM_Timeout(gentity_t *ent, qboolean referee)
 {
@@ -710,11 +725,13 @@ void RPM_Timeout(gentity_t *ent, qboolean referee)
 			return;
 	}
 }
+*/
+
 /*
 =============
 RPM_Timein
 =============
-*/
+
 void RPM_Timein (gentity_t *ent)
 {
 	if(!level.timeout)
@@ -745,3 +762,4 @@ void RPM_Timein (gentity_t *ent)
 	RPM_Unpause(ent);
 }
 
+*/

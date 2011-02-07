@@ -1137,17 +1137,22 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 			trap_Cvar_Set("scorelimit", cm_sl.string); // Set the scorelimit the same as the previously mentioned scrim setting.
 			trap_Cvar_Set("timelimit", cm_tl.string); // And the timelimit as well..
 		}
-		if (cm_enabled.integer == 3){
+		else if (cm_enabled.integer == 3){
 			trap_Cvar_Set("cm_enabled", "4"); // This is set to 4 - The scrim resumed and it just hit the second round.
 			trap_Cvar_Set("scorelimit", cm_sl.string); // Set the scorelimit the same as the previously mentioned scrim setting.
 			trap_Cvar_Set("timelimit", cm_tl.string); // And the timelimit as well..
 		}
-		if (cm_enabled.integer == 2 || cm_enabled.integer == 4 || cm_enabled.integer == 5){ // Boe!Man 11/19/10: This is bad, meaning they warped out of the scrim during a match. 
-																							// Or, in the case of '5', the scrim already ended.
+		else if (cm_enabled.integer == 2 || cm_enabled.integer == 4 || cm_enabled.integer == 5){ // Boe!Man 11/19/10: This is bad, meaning they warped out of the scrim during a match. 
+																								 // Or, in the case of '5', the scrim already ended.
 			trap_Cvar_Set("g_compMode", "0");
 			trap_Cvar_Set("cm_enabled", "0");
 			trap_Cvar_Set("scorelimit", cm_oldsl.string);
 			trap_Cvar_Set("timelimit", cm_oldtl.string);
+			// Boe!Man 2/7/11: Reset the invatations after the scrim has ended/had an unexpected ending.
+			for ( i = 0; i < level.maxclients; i ++ ){
+				g_entities[i].client->sess.invitedByBlue = qfalse;
+				g_entities[i].client->sess.invitedByRed = qfalse;
+			}
 		}
 		#ifdef _BOE_DBG
 		if (strstr(boe_log.string, "2"))

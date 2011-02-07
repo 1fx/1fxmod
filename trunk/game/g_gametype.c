@@ -461,6 +461,19 @@ void G_ResetGametype ( qboolean fullRestart )
 	}
 	///End  - 09.09.06 - 11:24pm
 
+	// Boe!Man 11/19/10: Did the round just start?
+	if (g_compMode.integer > 0 && cm_enabled.integer > 1){
+		if (level.teamScores[TEAM_RED] == level.teamScores[TEAM_BLUE] && level.teamScores[TEAM_RED] == 0){
+		// Boe!Man 11/17/10: Lock the teams again because we just performed a map restart.	
+			trap_SendServerCommand(-1, va("print \"^3[Auto Action] ^7Teams have been locked.\n\""));
+			if (cm_slock.integer == 1){
+				level.specsLocked = 1;
+			}
+			level.blueLocked = 1;
+			level.redLocked = 1;
+		}
+	}
+
 	// Initialize the respawn interval since this is a interval gametype
 	switch ( level.gametypeData->respawnType )
 	{
@@ -489,16 +502,6 @@ void G_ResetGametype ( qboolean fullRestart )
 			{
 				// Boe!Man 11/19/10: Messages and actions for the two rounds.
 				if (g_compMode.integer > 0 && cm_enabled.integer > 1){
-					// Boe!Man 11/19/10: Did the round just start?
-					if (level.teamScores[TEAM_RED] == level.teamScores[TEAM_BLUE] && level.teamScores[TEAM_RED] == 0){
-						// Boe!Man 11/17/10: Lock the teams again because we just performed a map restart.	
-						trap_SendServerCommand(-1, va("print \"^3[Auto Action] ^7Teams have been locked.\n\""));
-						if (cm_slock.integer == 1){
-							level.specsLocked = 1;
-						}
-						level.blueLocked = 1;
-						level.redLocked = 1;
-					}
 					// Boe!Man 11/19/10: Messages for round one.
 					if (cm_enabled.integer <= 3){
 						if (level.teamScores[TEAM_RED] == level.teamScores[TEAM_BLUE]){
