@@ -731,7 +731,7 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 		if (arg[0] >= '0' && arg[0] <= '9')
 		{
 			num = atoi( arg );
-		}else{
+		}else if(strlen(arg) >= 1){
 			for(i=0;i<=level.numConnectedClients;i++){
 				//trap_SendServerCommand(-1, va("print\"^3[Debug] ^7%s comparing with %s.\n\"", g_entities[level.sortedClients[i]].client->pers.cleanName,numb));
 				if(strstr(Q_strlwr(g_entities[level.sortedClients[i]].client->pers.cleanName), Q_strlwr(arg))){
