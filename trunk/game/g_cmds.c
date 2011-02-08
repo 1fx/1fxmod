@@ -1777,14 +1777,15 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 		strcpy(type, "^7[^Cs^7] ");
 	}
 	// Boe!Man 4/5/10: We delete the team prefixes.
+	// Boe!Man 2/8/11: And we re-add them for Hide&Seek lol.
 	
 	else if ( ent->client->sess.team == TEAM_RED && current_gametype.value == GT_HS )
 	{
-		strcpy(type, "^7[^1h^7]");
+		strcpy(type, "^7[^1h^7] ");
 	}
 	else if ( ent->client->sess.team == TEAM_BLUE && current_gametype.value == GT_HS )
 	{
-		strcpy(type, "^7[^ys^7]");
+		strcpy(type, "^7[^ys^7] ");
 	}
 	
 	// Boe!Man 4/6/10: And replace the type with something, well nothing.
@@ -1853,12 +1854,26 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 		break;
 	}
 
-	// Boe!Man 1/6/10
-	trap_SendServerCommand( other-g_entities, va("%s %d \"%s %s%s %s%s %s\"", // Boe!Man 1/6/10: Adding prefixes. - Update 1/17/10: Adding Admin Talk/Chat prefixes. - Update 5/8/10: Solved message problem.
+	// Boe!Man 1/6/10 - Update 2/8/11: Finally fixing these space issues. This would be the best way for it.
+	if(ent->client->sess.admin > 0 && mode >= ADM_TALK && mode <= CADM_CHAT){
+		trap_SendServerCommand( other-g_entities, va("%s %d \"%s %s %s%s %s\"", // Boe!Man 1/6/10: Adding prefixes. - Update 1/17/10: Adding Admin Talk/Chat prefixes. - Update 5/8/10: Solved message problem.
+								mode == SAY_TEAM ? "tchat" : "chat",
+								ent->s.number,
+								// Boe!Man 1/6/10: Adding the Admin prefix in front of the chat. - Update 1/17/10.
+								star, type, name, message, star)); // Boe!Man 1/17/10: Adding stars.
+	}else if(ent->client->sess.admin > 0){
+		trap_SendServerCommand( other-g_entities, va("%s %d \"%s%s %s%s\"", // Boe!Man 1/6/10: Adding prefixes. - Update 1/17/10: Adding Admin Talk/Chat prefixes. - Update 5/8/10: Solved message problem.
+								mode == SAY_TEAM ? "tchat" : "chat",
+								ent->s.number,
+								// Boe!Man 1/6/10: Adding the Admin prefix in front of the chat. - Update 1/17/10.
+								type, admin, name, message));
+	}else{
+		trap_SendServerCommand( other-g_entities, va("%s %d \"%s%s%s\"", // Boe!Man 1/6/10: Adding prefixes. - Update 1/17/10: Adding Admin Talk/Chat prefixes. - Update 5/8/10: Solved message problem.
 							mode == SAY_TEAM ? "tchat" : "chat",
 							ent->s.number,
 							// Boe!Man 1/6/10: Adding the Admin prefix in front of the chat. - Update 1/17/10.
-							star, type, admin, name, message, star)); // Boe!Man 1/17/10: Adding stars.
+							type, name, message));
+	}
 }
 
 /*
