@@ -1269,9 +1269,12 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 			ClientUserinfoChanged( clientNum );
 
 			// Henk 02/02/10 -> Set score to 0 when switching team.
-			ent->client->sess.score = 0;
-			ent->client->sess.kills = 0;
-			ent->client->sess.deaths = 0;
+			// Boe!Man 2/8/11: Forcing this to be H&S only.
+			if (current_gametype.value == GT_HS){
+				ent->client->sess.score = 0;
+				ent->client->sess.kills = 0;
+				ent->client->sess.deaths = 0;
+			}
 
 			CalculateRanks();
 
