@@ -6,13 +6,13 @@
 
 // Boe!Man 3/30/10
 #ifdef Q3_VM
-#define INF_VERSION_STRING "0.56t"
+#define INF_VERSION_STRING "0.56"
 #else
-#define INF_VERSION_STRING "0.56t-dll"
+#define INF_VERSION_STRING "0.56-dll"
 #endif
 #define INF_STRING "1fx. Mod"
 #define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod"
-#define INF_VERSION_DATE "2/6/11"
+#define INF_VERSION_DATE "2/8/11"
 #define TEST_VERSION "Developed by ^GBoe!Man ^7& ^6Henkie\n^1Running a Test version of the Mod\n\n"
 #define STABLE_VERSION "Developed by ^GBoe!Man ^7& ^6Henkie\n1fx.uk.to ^3| ^7i3D.net\n\n"
 
@@ -76,6 +76,7 @@
 // 0.56t		2nd Release Candidate			362		1/27/11		
 // 0.56t		3rd Release Candidate			372		1/28/11		// Sent out to BETA group on 1/28/11
 // 0.56t		4th	Release	Candidate			388		2/6/11		// Sent out to BETA group on 2/6/11
+// 0.56			Release							404		2/8/11		// Sent out to BETA group on 2/8/11
 
 //===================================================================
 
