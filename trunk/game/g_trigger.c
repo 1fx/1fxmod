@@ -283,7 +283,7 @@ void trigger_teleporter_touch (gentity_t *self, gentity_t *other, trace_t *trace
 		other->client->sess.lastmsg = level.time+10000;
 		return;
 	}
-	G_PlayEffect ( 3,other->client->ps.origin, other->pos1);
+	G_PlayEffect ( G_EffectIndex("misc/electrical"),other->client->ps.origin, other->pos1);
 	G_SpawnGEntityFromSpawnVars (qtrue);
 	dest = 	G_PickTarget( self->target );
 	if (!dest) {
@@ -306,6 +306,12 @@ automatically near doors to allow spectators to move through them
 void SP_trigger_teleport( gentity_t *self ) {
 	char			*origin;
 	origin = va("%.0f %.0f %.0f", self->r.currentOrigin[0], self->r.currentOrigin[1], self->r.currentOrigin[2]-30);
+	AddSpawnField("classname", "fx_play_effect");
+	AddSpawnField("effect", "fire/blue_target_flame");
+	AddSpawnField("origin", origin);
+	AddSpawnField("angles", "0 90 0");
+	AddSpawnField("count", "-1");
+	G_SpawnGEntityFromSpawnVars (qtrue);
 	InitTrigger (self);
 	//G_PlayEffect ( 3,self->client->ps.origin, self->pos1);
 	// unlike other triggers, we need to send this one to the client

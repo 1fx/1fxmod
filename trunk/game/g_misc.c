@@ -49,9 +49,9 @@ void TeleportPlayer ( gentity_t *player, vec3_t origin, vec3_t angles )
 	// spit the player out
 	AngleVectors( angles, player->client->ps.velocity, NULL, NULL );
 	if(current_gametype.value == GT_HS){
-	VectorScale( player->client->ps.velocity, 100, player->client->ps.velocity ); // Henkie 22/02/10 -> Do not spit ( default 400)
-	//player->client->ps.pm_time = 160;		// hold time
-	//player->client->ps.pm_flags |= PMF_TIME_KNOCKBACK;
+	VectorScale( player->client->ps.velocity, 400, player->client->ps.velocity ); // Henkie 22/02/10 -> Do not spit ( default 400)
+	player->client->ps.pm_time = 160;		// hold time
+	player->client->ps.pm_flags |= PMF_TIME_KNOCKBACK;
 	}else{
 	VectorScale( player->client->ps.velocity, 400, player->client->ps.velocity );
 	player->client->ps.pm_time = 160;		// hold time
@@ -81,7 +81,7 @@ void TeleportPlayer ( gentity_t *player, vec3_t origin, vec3_t angles )
 		trap_LinkEntity (player);
 	}
 	if(current_gametype.value == GT_HS){
-		G_PlayEffect ( 3,player->client->ps.origin, player->pos1);
+		G_PlayEffect ( G_EffectIndex("misc/electrical"),player->client->ps.origin, player->pos1);
 		G_SpawnGEntityFromSpawnVars (qtrue);
 		// Add sparking effect at dest
 	}

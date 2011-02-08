@@ -86,7 +86,8 @@ void RPM_WeaponMod ()
 					if(splashRadius < 0) //If no value specified in the file use default vaule
 					{
 						splashRadius = attack->splashRadius;
-					}
+					}else
+						attack->splashRadius = splashRadius;
 
 					trap_GPG_FindPairValue(attackType, "mp_extraClips", "-1", tmpStr );
 					numExtraClips = atoi ( tmpStr );

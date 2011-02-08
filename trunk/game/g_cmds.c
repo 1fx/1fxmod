@@ -2053,6 +2053,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	qboolean	acmd = qfalse;
 	char		test[128];
 	int			ignore = -1;
+	qboolean	command = qfalse;
 	if(!ent || !ent->client)
 		return;
 
@@ -2071,6 +2072,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	if(ent->client->sess.admin > 0){
 	for(i=0;i<AdminCommandsSize;i++){
 		if(strstr(Q_strlwr(test), Q_strlwr(AdminCommands[i].shortCmd))){
+			command = qtrue;
 			if(ent->client->sess.admin >= *AdminCommands[i].adminLevel){
 				AdminCommands[i].Function(1, ent, qtrue);
 				break;
@@ -2156,6 +2158,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 
 	}
 	}
+	if(!command){
 	// Boe!Man 1/24/10: Different kinds of Talk during Gameplay.
 	if ((strstr(p, "!at")) || (strstr(p, "!AT")) || (strstr(p, "!aT")) || (strstr(p, "!At"))) {
 		if (ent->client->sess.admin){
@@ -2201,6 +2204,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			}
 			mode = CADM_CHAT;
 			acmd = qtrue;
+			strcpy(p, newp);
 		}
 	}
 	else if ((strstr(p, "!ac")) || (strstr(p, "!AC")) || (strstr(p, "!aC")) || (strstr(p, "!Ac"))) {
@@ -2294,7 +2298,9 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	else if ((strstr(p, "!ca")) || (strstr(p, "!Ca")) || (strstr(p, "!cA")) || (strstr(p, "!CA"))) {
 			p = ConcatArgs(1);
 			for(i=0;i<=strlen(p);i++){
+				Com_Printf("%c\n", p[i]);
 				if(p[i] == '!' && (p[i+1] == 'c' || p[i+1] == 'C') && (p[i+2] == 'a' || p[i+2] == 'A')){
+					Com_Printf("Ignore: %i\n", i);
 					ignore = i;
 				}
 				if(ignore == -1){
@@ -2312,6 +2318,8 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			}
 			mode = CADM_CHAT;
 			acmd = qtrue;
+			strcpy(p, newp);
+	}
 	}
 
 	// Boe!Man 12/20/09
@@ -3002,7 +3010,7 @@ void ClientCommand( int clientNum ) {
 	else if (Q_stricmp (cmd, "ref") == 0)
 		RPM_ref_cmd( ent );
 	else if (Q_stricmp (cmd, "henk") == 0){
-		trap_SendServerCommand( clientNum, va("print \"Timer: %i\n\"", ent->client->ps.respawnTimer ) );
+		RPM_WeaponMod();
 	}
 #ifdef _SOF2_BOTS
 	else if (Q_stricmp (cmd, "addbot") == 0)
