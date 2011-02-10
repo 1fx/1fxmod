@@ -1097,18 +1097,16 @@ void ClientUserinfoChanged( int clientNum )
 		{
 			// new client sends the version of the client mod eg. 0.6
 			client->sess.rpmClient = atof(s);
+			strcpy(client->sess.strClient, s);
+		}else{ // if no rpm client
+			s = Info_ValueForKey (userinfo, "cg_proClient");
+			if(*s)
+			{
+				// new client sends the version of the client mod eg. 0.6
+				client->sess.proClient = atof(s);
+			}
 		}
 	}
-
-	/*
-	s = Info_ValueForKey (userinfo, "cg_proClient");
-	if(*s)
-	{
-		// new client sends the version of the client mod eg. 0.6
-		client->sess.proClient = atof(s);
-	}
-	
-	//Ryan*/
 
 
 	// set name

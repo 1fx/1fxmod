@@ -1012,6 +1012,7 @@ void Boe_Players (gentity_t *ent)
 	char mute3;
 	char test = ' ';
 	int	length = 0, NumberOfSpaces = 0, z, ping;
+	char *strClient;
 	// char clan = ""; // Boe!Man 2/2/10: This will be added later, when I actually implant the Clan functions.
 //	char *s;
 //	char userinfo[MAX_INFO_STRING];
@@ -1129,6 +1130,11 @@ void Boe_Players (gentity_t *ent)
 		client0 = '[';
 		client1 = level.clients[i].sess.rpmClient;
 		client2 = ']';
+		}else if(level.clients[i].sess.proClient >= 0.1){
+		client = qtrue;
+		client0 = '[';
+		client1 = level.clients[i].sess.proClient;
+		client2 = ']';
 		}
 		else{
 		client = qfalse;
@@ -1154,15 +1160,12 @@ void Boe_Players (gentity_t *ent)
 		mute2,
 		mute3));
 		if(client == qtrue){
-			if(client1 == 0.78){
-			trap_SendServerCommand( ent-g_entities, va("print \"%c^30.78^7%c\n\"",
-			client0,
-			client2));
+			strClient = level.clients[i].sess.strClient;
+			if(*strClient)
+			{
+				trap_SendServerCommand( ent-g_entities, va("print \"%c^3%s^7%c\n\"", client0, strClient, client2));
 			}else{
-			trap_SendServerCommand( ent-g_entities, va("print \"%c^3%.1f^7%c\n\"",
-			client0,
-			client1,
-			client2));
+				trap_SendServerCommand( ent-g_entities, va("print \"%c^3%.1f^7%c\n\"", client0, client1, client2));
 			}
 		}
 		else if(client == qfalse){
@@ -1377,6 +1380,7 @@ void Boe_Stats ( gentity_t *ent )
 	char		*player;
 	char		*admin;
 	char		*country;
+	char		*strClient;
 	qboolean	client1 = qfalse;
 	char		userinfo[MAX_INFO_STRING];
 	int			idnum, n;
@@ -1489,12 +1493,20 @@ void Boe_Stats ( gentity_t *ent )
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3IP^7]          %s\n", ip));
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Country^7]     %s\n", country));
 	if (client1 == qtrue){
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Client^7]      %s\n", client0));
+		trap_SendServerCommand( ent-g_entities, va("print \"[^3Client^7]      %s\n", client0));
 	}else{
-		if(client == 0.78){
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Client^7]      0.78\n"));
+		strClient = level.clients[i].sess.strClient;
+		if(*strClient){
+			trap_SendServerCommand( ent-g_entities, va("print \"[^3Client^7]      %s\n", strClient));
 		}else{
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Client^7]      %.1f\n", client));
+			if(client >= 1.0)
+				trap_SendServerCommand( ent-g_entities, va("print \"[^3Client^7]      %.1f\n", client));
+			else{
+				if(g_entities[idnum].client->sess.proClient >= 0.1)
+				trap_SendServerCommand( ent-g_entities, va("print \"[^3Client^7]      %.1f\n", g_entities[idnum].client->sess.proClient));
+				else
+					trap_SendServerCommand( ent-g_entities, va("print \"[^3Client^7]      N/A\n"));
+			}
 		}
 	}
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Rate^7]        %s\n", rate));

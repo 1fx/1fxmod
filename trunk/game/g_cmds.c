@@ -2301,9 +2301,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	else if ((strstr(p, "!ca")) || (strstr(p, "!Ca")) || (strstr(p, "!cA")) || (strstr(p, "!CA"))) {
 			p = ConcatArgs(1);
 			for(i=0;i<=strlen(p);i++){
-				Com_Printf("%c\n", p[i]);
 				if(p[i] == '!' && (p[i+1] == 'c' || p[i+1] == 'C') && (p[i+2] == 'a' || p[i+2] == 'A')){
-					Com_Printf("Ignore: %i\n", i);
 					ignore = i;
 				}
 				if(ignore == -1){
