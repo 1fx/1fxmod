@@ -119,6 +119,8 @@ field_t fields[] =
 	{"apos2", FOFS(apos2), F_VECTOR},
 	{"distance",			FOFS(distance),				F_FLOAT},
 	{"message2",			FOFS(message2),				F_LSTRING},
+	{"up",					FOFS(up),					F_INT},
+	{"forward",				FOFS(forward),				F_INT},
 	{NULL}
 };
 
@@ -186,6 +188,7 @@ void SP_gametype_item				(gentity_t* ent);
 void SP_gametype_trigger			(gentity_t* ent);
 void SP_gametype_player				(gentity_t* ent);
 void SP_mission_player				(gentity_t* ent);
+void SP_booster						(gentity_t* ent);
 									
 void SP_fx_play_effect				(gentity_t* ent);
 void nolower						(gentity_t* ent);
@@ -274,6 +277,7 @@ spawn_t	spawns[] =
 	{"nolower",						nolower},
 	{"blocked_trigger",				NV_blocked_trigger},
 	{"blocked_teleporter",			NV_blocked_Teleport},
+	{"booster",						SP_booster},
 	// The following classnames are instantly removed when spawned.  The RMG 
 	// shares instances with single player which is what causes these things
 	// to attempt to spawn

@@ -49,6 +49,7 @@ vmCvar_t	g_warmup;
 vmCvar_t	g_doWarmup;
 vmCvar_t	g_restarted;
 vmCvar_t    current_gametype;
+vmCvar_t	g_rpmEnt;
 vmCvar_t	g_log;
 vmCvar_t	g_logSync;
 vmCvar_t	g_logHits;
@@ -463,7 +464,7 @@ static cvarTable_t gameCvarTable[] =
 
 	{ &g_alternateMap, "g_alternateMap", "0", CVAR_ROM|CVAR_INTERNAL|CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_enableCustomCommands, "g_enableCustomCommands", "0", CVAR_ROM|CVAR_INTERNAL|CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
-	
+	{ &g_rpmEnt, "g_rpmEnt", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 #ifdef _BOE_DBG
 	// Boe!Man: Debug CVAR.
 	{ &boe_log, "boe_log", "0", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
@@ -1101,6 +1102,12 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 
 		AddSpawnField("classname", "fx_play_effect");
 		AddSpawnField("effect", "misc/electrical");
+		AddSpawnField("tempent", "1");
+		G_SpawnGEntityFromSpawnVars(qtrue);
+		G_FreeEntity(&g_entities[level.tempent]);
+
+		AddSpawnField("classname", "gametype_item");
+		AddSpawnField("targetname", "briefcase");
 		AddSpawnField("tempent", "1");
 		G_SpawnGEntityFromSpawnVars(qtrue);
 		G_FreeEntity(&g_entities[level.tempent]);
@@ -2783,6 +2790,7 @@ void G_RunFrame( int levelTime )
 		}
 
 		G_RunThink( ent );
+		if(g_rpmEnt.integer)
 		CheckEnts(ent);
 	}
 

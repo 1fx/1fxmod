@@ -165,6 +165,8 @@ struct gentity_s
 	vec3_t		apos1;
 	vec3_t		apos2;
 	int			minimumhiders;
+	int			up;
+	int			forward;
 };
 
 typedef struct gspawn_s
@@ -300,6 +302,7 @@ typedef struct
 
 	int			lastmsg; // teleporter touch message
 	int			roundkills;
+	int			lastjump;
 
 	qboolean	pausespawn;
 } clientSession_t;
@@ -896,6 +899,7 @@ void		G_ResetGlass		( void );
 // g_trigger.c
 //
 void		trigger_teleporter_touch		( gentity_t *self, gentity_t *other, trace_t *trace );
+void		trigger_booster_touch		( gentity_t *self, gentity_t *other, trace_t *trace );
 void		InitTrigger						( gentity_t *self );
 
 //
@@ -1077,6 +1081,7 @@ extern	vmCvar_t	g_maxclients;			// allow this many total, including spectators
 extern	vmCvar_t	g_maxGameClients;		// allow this many active
 extern	vmCvar_t	g_restarted;
 extern  vmCvar_t    current_gametype;
+extern  vmCvar_t	g_rpmEnt;
 
 extern	vmCvar_t	g_logHits;
 

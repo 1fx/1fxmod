@@ -252,6 +252,39 @@ void SP_target_push( gentity_t *self ) {
 	self->use = Use_target_push;
 }
 
+void trigger_booster_touch (gentity_t *self, gentity_t *other, trace_t *trace ) {
+	gentity_t	*dest;
+	char	*origin2;
+	int up, forward;
+	origin2 = va("%.0f %.0f %.0f", self->r.currentOrigin[0], self->r.currentOrigin[1], self->r.currentOrigin[2]+30);
+	if ( !other->client ) {
+		return;
+	}
+	if ( other->client->ps.pm_type == PM_DEAD ) {
+		return;
+	}
+	// Spectators only?
+	if (G_IsClientSpectating ( other->client ) ) 
+	{
+		return;
+	}
+
+	if(other->client->sess.lastjump >= level.time){
+		return;
+	}
+
+	//G_PlayEffect ( G_EffectIndex("misc/electrical"),other->client->ps.origin, other->pos1);
+	G_SpawnGEntityFromSpawnVars (qtrue);
+	Boe_ClientSound(other, G_SoundIndex("sound/weapons/rpg7/fire01.mp3"));
+	other->client->ps.pm_flags |= PMF_JUMPING;
+	other->client->ps.groundEntityNum = ENTITYNUM_NONE;
+	G_SpawnInt("forward", "0", &forward);
+	G_SpawnInt("up", "0", &up);
+	other->client->ps.velocity[2] = up;
+	other->client->ps.velocity[1] = forward;
+	other->client->sess.lastjump = level.time+1000;
+}
+
 /*
 ==============================================================================
 
@@ -539,5 +572,24 @@ void NV_blocked_Teleport	(gentity_t *ent)
 	ent->s.eType = ET_TELEPORT_TRIGGER;
 
 	ent->touch = trigger_teleporter_touch;
+	trap_LinkEntity (ent);
+}
+
+// Henk 10/02/11
+void SP_booster(gentity_t* ent){
+	char			*origin;
+	origin = va("%.0f %.0f %.0f", ent->r.currentOrigin[0], ent->r.currentOrigin[1], ent->r.currentOrigin[2]-30);
+	AddSpawnField("classname", "nv_model");
+	AddSpawnField("model", "models/objects/Armory/virus.md3");
+	AddSpawnField("origin", origin);
+	AddSpawnField("angles", "0 90 0");
+	AddSpawnField("count", "-1");
+
+	G_SpawnGEntityFromSpawnVars (qtrue);
+	ent->r.contents = CONTENTS_PLAYERCLIP;
+	ent->r.svFlags = SVF_NOCLIENT;
+	ent->s.eType = ET_TELEPORT_TRIGGER;
+
+	ent->touch = trigger_booster_touch;
 	trap_LinkEntity (ent);
 }
