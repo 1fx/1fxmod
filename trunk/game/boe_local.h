@@ -24,59 +24,60 @@
 //
 // --- VERSION LOG BELOW
 //
-// Version		Status of Release				Rev		Date
+// Version		Status of Release				Rev			Date
 // ----------------------------------------------------------------
-// 0.01			Alpha							3		3/30/10
-// 0.02			Alpha							4		3/31/10
-// 0.05			Beta							24		4/4/10
-// 0.06			Beta							29		4/6/10
-// 0.10			Beta							33		4/7/10
-// 0.11a		1st Beta						34		4/8/10
-// 0.11b		2nd Beta						40		4/8/10
-// 0.15a		Release Candidate				51		4/12/10
-// 0.15b		Release							59		4/14/10
-// 0.16			Beta							66		4/15/10
-// 0.17			Beta							70		4/16/10
-// 0.18			Beta							77		4/17/10
-// 0.19			Beta							105		4/18/10
-// 0.20			Release							115		4/20/10
-// 0.21			Release							122		4/22/10
-// 0.22			Release							128		4/23/10
-// 0.25a		Release							142		5/3/10
-// 0.25b		Release							147		5/3/10
-// 0.30t		Beta							170		5/7/10
-// 0.30			Release							193		6/2/10
-// 0.31			Release							194		6/3/10
-// 0.40t		Beta							195		6/11/10
-// 0.40t		Release Candidate				198		7/24/10
-// 0.40			Release							199		8/2/10
-// 0.41t		Beta							200		8/22/10
-// 0.41			Release							202		8/25/10
-// 0.42t		Beta							208		9/1/10
-// 0.42			Release							213		9/3/10
-// 0.50t		Beta							223		9/9/10
-// 0.50			Release							229		9/17/10
-// 0.51t		Alpha							230		9/18/10
-// 0.51t		Beta							231		9/19/10
-// 0.51t		1st Release Candidate			238		9/26/10
-// 0.51t		2nd Release Candidate			240		9/30/10
-// 0.51			Release							244		10/7/10
-// 0.52t		Beta							246		10/16/10
-// 0.52			Release							250		10/25/10
-// 0.53			Release							253		11/2/10
-// 0.54t		Beta							261		11/21/10
-// 0.54t		Release Candidate				265		12/13/10
-// 0.54			Release							283		12/19/10
-// 0.55t		Beta							289		12/23/10
-// 0.55			Release							297		12/31/10
-// 0.56t		Alpha							299		1/1/11
-// 0.56t		1st Beta						304		1/8/11
-// 0.56t		2nd Beta						312		1/14/11
-// 0.56t		1st Release Candidate			332		1/19/11		// Sent out to BETA group on 1/19/11
-// 0.56t		2nd Release Candidate			362		1/27/11		
-// 0.56t		3rd Release Candidate			372		1/28/11		// Sent out to BETA group on 1/28/11
-// 0.56t		4th	Release	Candidate			388		2/6/11		// Sent out to BETA group on 2/6/11
-// 0.56			Release							404		2/8/11		// Sent out to BETA group on 2/8/11
+// 0.01			Alpha							3			3/30/10
+// 0.02			Alpha							4			3/31/10
+// 0.05			Beta							24			4/4/10
+// 0.06			Beta							29			4/6/10
+// 0.10			Beta							33			4/7/10
+// 0.11a		1st Beta						34			4/8/10
+// 0.11b		2nd Beta						40			4/8/10
+// 0.15a		Release Candidate				51			4/12/10
+// 0.15b		Release							59			4/14/10
+// 0.16			Beta							66			4/15/10
+// 0.17			Beta							70			4/16/10
+// 0.18			Beta							77			4/17/10
+// 0.19			Beta							105			4/18/10
+// 0.20			Release							115			4/20/10
+// 0.21			Release							122			4/22/10
+// 0.22			Release							128			4/23/10
+// 0.25a		Release							142			5/3/10
+// 0.25b		Release							147			5/3/10
+// 0.30t		Beta							170			5/7/10
+// 0.30			Release							193			6/2/10
+// 0.31			Release							194			6/3/10
+// 0.40t		Beta							195			6/11/10
+// 0.40t		Release Candidate				198			7/24/10
+// 0.40			Release							199			8/2/10
+// 0.41t		Beta							200			8/22/10
+// 0.41			Release							202			8/25/10
+// 0.42t		Beta							208			9/1/10
+// 0.42			Release							213			9/3/10
+// 0.50t		Beta							223			9/9/10
+// 0.50			Release							229			9/17/10
+// 0.51t		Alpha							230			9/18/10
+// 0.51t		Beta							231			9/19/10
+// 0.51t		1st Release Candidate			238			9/26/10
+// 0.51t		2nd Release Candidate			240			9/30/10
+// 0.51			Release							244			10/7/10
+// 0.52t		Beta							246			10/16/10
+// 0.52			Release							250			10/25/10
+// 0.53			Release							253			11/2/10
+// 0.54t		Beta							261			11/21/10
+// 0.54t		Release Candidate				265			12/13/10
+// 0.54			Release							283			12/19/10
+// 0.55t		Beta							289			12/23/10
+// 0.55			Release							297			12/31/10
+// 0.56t		Alpha							299			1/1/11
+// 0.56t		1st Beta						304			1/8/11
+// 0.56t		2nd Beta						312			1/14/11
+// 0.56t		1st Release Candidate			332			1/19/11		// Sent out to BETA group on 1/19/11
+// 0.56t		2nd Release Candidate			362			1/27/11		
+// 0.56t		3rd Release Candidate			372			1/28/11		// Sent out to BETA group on 1/28/11
+// 0.56t		4th	Release	Candidate			388			2/6/11		// Sent out to BETA group on 2/6/11
+// 0.56			1st Release						404			2/8/11		// Sent out to BETA group on 2/8/11
+// 0.56			2nd Release (hotfix)			404(/408)	2/12/11		// Sent out to BETA group on 2/12/11
 
 //===================================================================
 
