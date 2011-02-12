@@ -804,12 +804,14 @@ void RPM_UpdateTMI(void)
 	if(level.pause)
 		return;
 
-	if(level.numConnectedClients >= 0 && level.numConnectedClients <= 10)
+		if(level.numConnectedClients >= 0 && level.numConnectedClients <= 10)
 		UpdateTime = 2000;
-	else if(level.numConnectedClients > 11 && level.numConnectedClients <= 20)
+	else if(level.numConnectedClients >= 11 && level.numConnectedClients <= 20)
 		UpdateTime = 3000;
 	else if(level.numConnectedClients > 20)
 		UpdateTime = 4000;
+	else
+		UpdateTime = 2000;
 
 	if (level.time - level.lastTMIupdate < UpdateTime) // Henk 06/04/10 -> Increase to reduce lagg
 	{
