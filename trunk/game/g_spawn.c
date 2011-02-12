@@ -115,12 +115,13 @@ field_t fields[] =
 	
 	// Henk 26/02/10 -> minimum hiders before teleport can be triggered
 	{"minimumhiders",		FOFS(minimumhiders),		F_INT},
-	{"apos1", FOFS(apos1), F_VECTOR},
-	{"apos2", FOFS(apos2), F_VECTOR},
+	{"apos1",				FOFS(apos1),				F_VECTOR},
+	{"apos2",				FOFS(apos2),				F_VECTOR},
 	{"distance",			FOFS(distance),				F_FLOAT},
 	{"message2",			FOFS(message2),				F_LSTRING},
 	{"up",					FOFS(up),					F_INT},
 	{"forward",				FOFS(forward),				F_INT},
+	{"side",				FOFS(side),					F_INT},
 	{NULL}
 };
 

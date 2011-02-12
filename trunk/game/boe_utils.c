@@ -1496,7 +1496,7 @@ void Boe_Stats ( gentity_t *ent )
 		trap_SendServerCommand( ent-g_entities, va("print \"[^3Client^7]      %s\n", client0));
 	}else{
 		strClient = level.clients[i].sess.strClient;
-		if(*strClient){
+		if(strClient){
 			trap_SendServerCommand( ent-g_entities, va("print \"[^3Client^7]      %s\n", strClient));
 		}else{
 			if(client >= 1.0)

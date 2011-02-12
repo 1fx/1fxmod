@@ -212,7 +212,6 @@ void Use_target_push( gentity_t *self, gentity_t *other, gentity_t *activator ) 
 	if ( !activator->client ) {
 		return;
 	}
-
 	if ( activator->client->ps.pm_type != PM_NORMAL ) {
 		return;
 	}
@@ -253,17 +252,14 @@ void SP_target_push( gentity_t *self ) {
 }
 
 void trigger_booster_touch (gentity_t *self, gentity_t *other, trace_t *trace ) {
-	gentity_t	*dest;
-	char	*origin2;
-	int up, forward;
-	origin2 = va("%.0f %.0f %.0f", self->r.currentOrigin[0], self->r.currentOrigin[1], self->r.currentOrigin[2]+30);
 	if ( !other->client ) {
 		return;
 	}
+
 	if ( other->client->ps.pm_type == PM_DEAD ) {
 		return;
 	}
-	// Spectators only?
+
 	if (G_IsClientSpectating ( other->client ) ) 
 	{
 		return;
@@ -274,15 +270,12 @@ void trigger_booster_touch (gentity_t *self, gentity_t *other, trace_t *trace ) 
 	}
 
 	//G_PlayEffect ( G_EffectIndex("misc/electrical"),other->client->ps.origin, other->pos1);
-	G_SpawnGEntityFromSpawnVars (qtrue);
+	//G_SpawnGEntityFromSpawnVars (qtrue);
 	Boe_ClientSound(other, G_SoundIndex("sound/weapons/rpg7/fire01.mp3"));
-	other->client->ps.pm_flags |= PMF_JUMPING;
-	other->client->ps.groundEntityNum = ENTITYNUM_NONE;
-	G_SpawnInt("forward", "0", &forward);
-	G_SpawnInt("up", "0", &up);
-	other->client->ps.velocity[2] = up;
-	other->client->ps.velocity[1] = forward;
-	other->client->sess.lastjump = level.time+1000;
+
+	VectorCopy (self->s.origin2, other->client->ps.velocity);
+	other->client->ps.velocity[2] += self->up;
+	other->client->sess.lastjump = level.time+500;
 }
 
 /*
@@ -578,7 +571,24 @@ void NV_blocked_Teleport	(gentity_t *ent)
 // Henk 10/02/11
 void SP_booster(gentity_t* ent){
 	char			*origin;
-	origin = va("%.0f %.0f %.0f", ent->r.currentOrigin[0], ent->r.currentOrigin[1], ent->r.currentOrigin[2]-30);
+	trace_t		tr;
+	vec3_t		dest;
+	vec3_t		src;
+
+	VectorSet( ent->r.mins, -ITEM_RADIUS, -ITEM_RADIUS, -ITEM_RADIUS );
+	VectorSet( ent->r.maxs, ITEM_RADIUS, ITEM_RADIUS, ITEM_RADIUS );
+	VectorSet( src, ent->s.origin[0], ent->s.origin[1], ent->s.origin[2] + 1 );
+	VectorSet( dest, ent->s.origin[0], ent->s.origin[1], ent->s.origin[2] - 4096 );
+	trap_Trace( &tr, src, ent->r.mins, ent->r.maxs, dest, ent->s.number, MASK_SOLID );
+	if ( tr.startsolid ) 
+	{
+		Com_Printf ("Booster: %s startsolid at %s\n", ent->classname, vtos(ent->s.origin));
+		G_FreeEntity( ent );
+		return;
+	}
+	ent->s.groundEntityNum = tr.entityNum;
+	G_SetOrigin( ent, tr.endpos );
+	origin = va("%.0f %.0f %.0f", ent->r.currentOrigin[0], ent->r.currentOrigin[1], ent->r.currentOrigin[2]-15);
 	AddSpawnField("classname", "nv_model");
 	AddSpawnField("model", "models/objects/Armory/virus.md3");
 	AddSpawnField("origin", origin);
@@ -586,10 +596,11 @@ void SP_booster(gentity_t* ent){
 	AddSpawnField("count", "-1");
 
 	G_SpawnGEntityFromSpawnVars (qtrue);
-	ent->r.contents = CONTENTS_PLAYERCLIP;
-	ent->r.svFlags = SVF_NOCLIENT;
-	ent->s.eType = ET_TELEPORT_TRIGGER;
-
+	G_SetMovedir (ent->s.angles, ent->s.origin2);
+	VectorScale (ent->s.origin2, ent->forward, ent->s.origin2);
+	ent->r.contents = CONTENTS_TRIGGER;
+	ent->r.svFlags &= ~SVF_NOCLIENT;
+	ent->s.eType = ET_PUSH_TRIGGER;
 	ent->touch = trigger_booster_touch;
 	trap_LinkEntity (ent);
 }

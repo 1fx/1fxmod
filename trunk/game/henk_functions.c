@@ -7,7 +7,7 @@ void CheckEnts(gentity_t *ent){
 			if(ent->count){
 				///Team Games
 				if(level.gametypeData->teams){
-					if(	ent->count <= level.teamAliveCount[TEAM_RED] && ent->count <= level.teamAliveCount[TEAM_BLUE]){
+					if(	ent->count <= TeamCount1(TEAM_RED) && ent->count <= TeamCount1(TEAM_BLUE)){
 						if (ent->r.linked)	{
 							trap_UnlinkEntity( ent );
 							if(ent->message != NULL)

@@ -167,6 +167,7 @@ struct gentity_s
 	int			minimumhiders;
 	int			up;
 	int			forward;
+	int			side;
 };
 
 typedef struct gspawn_s
