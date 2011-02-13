@@ -121,7 +121,6 @@ field_t fields[] =
 	{"message2",			FOFS(message2),				F_LSTRING},
 	{"up",					FOFS(up),					F_INT},
 	{"forward",				FOFS(forward),				F_INT},
-	{"side",				FOFS(side),					F_INT},
 	{NULL}
 };
 

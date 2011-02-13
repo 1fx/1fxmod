@@ -1287,9 +1287,11 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 	ClientUserinfoChanged( clientNum );
 
 	// Henk 02/02/10 -> Set score to 0 when switching team.
+	if (current_gametype.value == GT_HS){
 	ent->client->sess.score = 0;
 	ent->client->sess.kills = 0;
 	ent->client->sess.deaths = 0;
+	}
 
 	CalculateRanks();
 
@@ -1858,7 +1860,7 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 	}
 
 	// Boe!Man 1/6/10 - Update 2/8/11: Finally fixing these space issues. This would be the best way for it.
-	if(ent->client->sess.admin > 0 && mode >= ADM_TALK && mode <= CADM_CHAT){
+	if(ent->client->sess.admin > 0 && mode >= ADM_TALK && mode <= SADM_CHAT || mode == CLAN_CHAT || mode == CADM_CHAT || mode == CLAN_TALK){ // Henk 13/02/11 -> Fixed.
 		trap_SendServerCommand( other-g_entities, va("%s %d \"%s %s %s%s %s\"", // Boe!Man 1/6/10: Adding prefixes. - Update 1/17/10: Adding Admin Talk/Chat prefixes. - Update 5/8/10: Solved message problem.
 								mode == SAY_TEAM ? "tchat" : "chat",
 								ent->s.number,
@@ -2270,7 +2272,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	}
 	// Boe!Man 4/17/10: Clan chat.
 	else if ((strstr(p, "!cc")) || (strstr(p, "!CC")) || (strstr(p, "!Cc")) || (strstr(p, "!cC"))) {
-		if (ent->client->sess.admin){
+		if (ent->client->sess.clanMember){
 			p = ConcatArgs(1);
 			for(i=0;i<=strlen(p);i++){
 				if(p[i] == '!' && (p[i+1] == 'c' || p[i+1] == 'C') && (p[i+2] == 'c' || p[i+2] == 'C')){

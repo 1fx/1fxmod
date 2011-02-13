@@ -1089,19 +1089,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 		Com_Printf("Flare red: %i\n", G_EffectIndex("flare_red"));
 
 		AddSpawnField("classname", "fx_play_effect");
-		AddSpawnField("effect", "misc/electrical");
-		AddSpawnField("tempent", "1");
-		G_SpawnGEntityFromSpawnVars(qtrue);
-		G_FreeEntity(&g_entities[level.tempent]);
-
-		AddSpawnField("classname", "fx_play_effect");
 		AddSpawnField("effect", "arm2smallsmoke");
-		AddSpawnField("tempent", "1");
-		G_SpawnGEntityFromSpawnVars(qtrue);
-		G_FreeEntity(&g_entities[level.tempent]);
-
-		AddSpawnField("classname", "fx_play_effect");
-		AddSpawnField("effect", "misc/electrical");
 		AddSpawnField("tempent", "1");
 		G_SpawnGEntityFromSpawnVars(qtrue);
 		G_FreeEntity(&g_entities[level.tempent]);
@@ -1111,13 +1099,36 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 		AddSpawnField("tempent", "1");
 		G_SpawnGEntityFromSpawnVars(qtrue);
 		G_FreeEntity(&g_entities[level.tempent]);
-
+		
 		// setup settings for h&s
 		trap_Cvar_Set("g_disablenades", "0");
 		trap_Cvar_Update(&g_disablenades);
 		trap_Cvar_Set("g_roundstartdelay", "30");
 		trap_Cvar_Update(&g_roundstartdelay);
 	}
+		AddSpawnField("classname", "fx_play_effect");
+		AddSpawnField("effect", "misc/electrical");
+		AddSpawnField("tempent", "1");
+		G_SpawnGEntityFromSpawnVars(qtrue);
+		G_FreeEntity(&g_entities[level.tempent]);
+
+		AddSpawnField("classname", "fx_play_effect");
+		AddSpawnField("effect", "misc/electrical");
+		AddSpawnField("tempent", "1");
+		G_SpawnGEntityFromSpawnVars(qtrue);
+		G_FreeEntity(&g_entities[level.tempent]);
+
+		AddSpawnField("classname", "fx_play_effect");
+		AddSpawnField("effect", "gen_tendril1");
+		AddSpawnField("tempent", "1");
+		G_SpawnGEntityFromSpawnVars(qtrue);
+		G_FreeEntity(&g_entities[level.tempent]);
+
+		AddSpawnField("classname", "fx_play_effect");
+		AddSpawnField("effect", "levels/shop7_toxiic_explosion");
+		AddSpawnField("tempent", "1");
+		G_SpawnGEntityFromSpawnVars(qtrue);
+		G_FreeEntity(&g_entities[level.tempent]);
 
 	level.MM1Flare = -1;
 	level.M4Flare = -1;

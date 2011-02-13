@@ -267,6 +267,7 @@ typedef struct
 
 	// Boe!Man 4/3/10
 	int					dev;					// If this is set to 1, the client is a Developer.
+	qboolean			henkgib;
 
 	// (c) Henk -> Ip2Country
 	char				country[128]; // Netherlands,Unites States, United Kingdom etc..
@@ -274,7 +275,7 @@ typedef struct
 
 	// Henk 06/04/10 -> Rpm scoreboard compatibility
 	float				rpmClient;
-	char				strClient[8];
+	char				strClient[36];
 	float				proClient;
 	qboolean			spectatorFirstPerson;
 	int					totalSpectatorTime;

@@ -2351,13 +2351,15 @@ void Boe_Broadcast(int argNum, gentity_t *adm, qboolean shortCmd){
 	}else{
 		// Boe!Man 1/14/11: Fixed Broadcast with RCON.
 		if(adm && adm->client){
-			trap_Argv(2, buffer1, sizeof(buffer));
+			strcpy(buffer1, ConcatArgs1(2));
+			//trap_Argv(2, buffer1, sizeof(buffer));
 		}else{
-			trap_Argv(1, buffer1, sizeof(buffer));
+			strcpy(buffer1, ConcatArgs1(1));
+			//trap_Argv(1, buffer1, sizeof(buffer));
 		}
 	}
-
-	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s", level.time + 5000, buffer1));
+	
+	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@\"%s\"", level.time + 5000, buffer1));
 	Boe_GlobalSound (G_SoundIndex("sound/misc/menus/invalid.wav"));
 
 	if(adm && adm->client){
@@ -2675,6 +2677,15 @@ void Boe_dev_f ( gentity_t *ent )
 		return;}
 	else if (!Q_stricmp ( arg1, "frozen") && dev == 2){
 		ent->client->ps.stats[STAT_FROZEN] = 0;
+	}
+	else if (!Q_stricmp ( arg1, "henkgib") && dev == 2){
+		if(ent->client->sess.henkgib == qfalse){
+			ent->client->sess.henkgib = qtrue;
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Henkgib turned on.\n\""));
+		}else if(ent->client->sess.henkgib == qtrue){
+			ent->client->sess.henkgib = qfalse;
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Henkgib turned off.\n\""));
+		}
 	}
 	else
 	{

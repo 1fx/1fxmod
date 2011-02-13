@@ -1012,7 +1012,7 @@ void Boe_Players (gentity_t *ent)
 	char mute3;
 	char test = ' ';
 	int	length = 0, NumberOfSpaces = 0, z, ping;
-	char *strClient;
+	char strClient[36];
 	// char clan = ""; // Boe!Man 2/2/10: This will be added later, when I actually implant the Clan functions.
 //	char *s;
 //	char userinfo[MAX_INFO_STRING];
@@ -1132,7 +1132,7 @@ void Boe_Players (gentity_t *ent)
 		client2 = ']';
 		}else if(level.clients[i].sess.proClient >= 0.1){
 		client = qtrue;
-		client0 = '[';
+		client0 = '[P';
 		client1 = level.clients[i].sess.proClient;
 		client2 = ']';
 		}
@@ -1160,8 +1160,8 @@ void Boe_Players (gentity_t *ent)
 		mute2,
 		mute3));
 		if(client == qtrue){
-			strClient = level.clients[i].sess.strClient;
-			if(*strClient)
+			strcpy(strClient, level.clients[i].sess.strClient);
+			if(strlen(strClient) >= 2)
 			{
 				trap_SendServerCommand( ent-g_entities, va("print \"%c^3%s^7%c\n\"", client0, strClient, client2));
 			}else{
@@ -1380,7 +1380,7 @@ void Boe_Stats ( gentity_t *ent )
 	char		*player;
 	char		*admin;
 	char		*country;
-	char		*strClient;
+	char		strClient[36];
 	qboolean	client1 = qfalse;
 	char		userinfo[MAX_INFO_STRING];
 	int			idnum, n;
@@ -1495,15 +1495,15 @@ void Boe_Stats ( gentity_t *ent )
 	if (client1 == qtrue){
 		trap_SendServerCommand( ent-g_entities, va("print \"[^3Client^7]      %s\n", client0));
 	}else{
-		strClient = level.clients[i].sess.strClient;
-		if(strClient){
+		strcpy(strClient, level.clients[i].sess.strClient);
+		if(strlen(strClient) >= 2){
 			trap_SendServerCommand( ent-g_entities, va("print \"[^3Client^7]      %s\n", strClient));
 		}else{
-			if(client >= 1.0)
+			if(client >= 0.1)
 				trap_SendServerCommand( ent-g_entities, va("print \"[^3Client^7]      %.1f\n", client));
 			else{
 				if(g_entities[idnum].client->sess.proClient >= 0.1)
-				trap_SendServerCommand( ent-g_entities, va("print \"[^3Client^7]      %.1f\n", g_entities[idnum].client->sess.proClient));
+				trap_SendServerCommand( ent-g_entities, va("print \"[^3Client^7]      P%.1f\n", g_entities[idnum].client->sess.proClient));
 				else
 					trap_SendServerCommand( ent-g_entities, va("print \"[^3Client^7]      N/A\n"));
 			}

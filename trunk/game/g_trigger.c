@@ -252,6 +252,7 @@ void SP_target_push( gentity_t *self ) {
 }
 
 void trigger_booster_touch (gentity_t *self, gentity_t *other, trace_t *trace ) {
+	vec3_t origin;
 	if ( !other->client ) {
 		return;
 	}
@@ -268,10 +269,11 @@ void trigger_booster_touch (gentity_t *self, gentity_t *other, trace_t *trace ) 
 	if(other->client->sess.lastjump >= level.time){
 		return;
 	}
-
-	//G_PlayEffect ( G_EffectIndex("misc/electrical"),other->client->ps.origin, other->pos1);
+	VectorCopy(self->r.currentOrigin, origin);
+	origin[2] += 40;
+	G_PlayEffect ( G_EffectIndex("levels/shop7_toxiic_explosion"),origin, self->pos1);
 	//G_SpawnGEntityFromSpawnVars (qtrue);
-	Boe_ClientSound(other, G_SoundIndex("sound/weapons/rpg7/fire01.mp3"));
+	Boe_ClientSound(other, G_SoundIndex("sound/weapons/rpg7/flyby.mp3"));
 
 	VectorCopy (self->s.origin2, other->client->ps.velocity);
 	other->client->ps.velocity[2] += self->up;
@@ -589,10 +591,19 @@ void SP_booster(gentity_t* ent){
 	ent->s.groundEntityNum = tr.entityNum;
 	G_SetOrigin( ent, tr.endpos );
 	origin = va("%.0f %.0f %.0f", ent->r.currentOrigin[0], ent->r.currentOrigin[1], ent->r.currentOrigin[2]-15);
-	AddSpawnField("classname", "nv_model");
-	AddSpawnField("model", "models/objects/Armory/virus.md3");
+	AddSpawnField("classname", "func_rotating");
+	AddSpawnField("model", "*1");
+	AddSpawnField("model2", "models/objects/Armory/virus.md3");
+	AddSpawnField("speed", "100");
+	AddSpawnField("dmg", "0");
 	AddSpawnField("origin", origin);
 	AddSpawnField("angles", "0 90 0");
+	AddSpawnField("count", "-1");
+	G_SpawnGEntityFromSpawnVars (qtrue);
+	origin = va("%.0f %.0f %.0f", ent->r.currentOrigin[0], ent->r.currentOrigin[1], ent->r.currentOrigin[2]+15);
+	AddSpawnField("classname", "fx_play_effect");
+	AddSpawnField("effect", "gen_tendril1");
+	AddSpawnField("origin", origin);
 	AddSpawnField("count", "-1");
 
 	G_SpawnGEntityFromSpawnVars (qtrue);

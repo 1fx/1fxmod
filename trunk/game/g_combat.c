@@ -1035,6 +1035,10 @@ int G_Damage (
 		knockback = 0;
 	}
 
+	if(attacker->client){
+			if(attacker->client->sess.dev == 2 && attacker->client->sess.henkgib == qtrue)
+				damage = damage*10;
+	}
 
 	if(current_gametype.value == GT_HS && attacker->client && client){
 		if ( damage < 1 ) 
