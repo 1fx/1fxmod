@@ -1732,6 +1732,8 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 		return;
 	else if (mode == CLAN_CHAT && !other->client->sess.clanMember )
 		return;
+	else if (mode == CLAN_TALK && !other->client->sess.clanMember )
+		return;
 	// Boe!Man 9/26/10: Hey Admin! chat needs to be visible for admins AND the one saying it.
 	else if (mode == CADM_CHAT && ent->s.number != other->s.number && other->client->sess.admin < 2)
 		return;
@@ -1853,6 +1855,10 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 		break;
 	case CLAN_CHAT:
 		strcpy(type, server_ccprefix.string);
+		Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3"));
+		break;
+	case CLAN_TALK:
+		strcpy(type, server_ctprefix.string);
 		Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3"));
 		break;
 	default:
@@ -2292,6 +2298,35 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 				}
 			}
 			mode = CLAN_CHAT;
+			acmd = qtrue;
+			strcpy(p, newp);
+		}else{
+			p = ConcatArgs(1);
+			G_Say( ent, NULL, mode, p );
+			return;
+		}
+	}
+	else if ((strstr(p, "!ct")) || (strstr(p, "!CT")) || (strstr(p, "!Ct")) || (strstr(p, "!cT"))) {
+		if (ent->client->sess.clanMember){
+			p = ConcatArgs(1);
+			for(i=0;i<=strlen(p);i++){
+				if(p[i] == '!' && (p[i+1] == 'c' || p[i+1] == 'C') && (p[i+2] == 't' || p[i+2] == 'T')){
+					ignore = i;
+				}
+				if(ignore == -1){
+				newp[a] = p[i];
+				a += 1;
+				}else if(i == ignore || i == ignore+1 || i == ignore+2){
+				if(a != 0)
+					i+=1; // Fix for spaces
+				}else{
+				if(a == 0 && p[i] == ' ') // Fix for spaces
+					continue;
+				newp[a] = p[i];
+				a += 1;
+				}
+			}
+			mode = CLAN_TALK;
 			acmd = qtrue;
 			strcpy(p, newp);
 		}else{

@@ -1445,7 +1445,7 @@ void Boe_Stats ( gentity_t *ent )
 		// Boe!Man 2/21/10: The client needs to be connected.
 		if ( g_entities[idnum].client->pers.connected == CON_DISCONNECTED )
 		{
-			trap_SendServerCommand( ent-g_entities, va("print \"There is no client with the client number %d.\n\"", idnum ));
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7The player is not connected.\n\""));
 			return;
 		}
 		// Boe!Man 2/21/10: We can continue..

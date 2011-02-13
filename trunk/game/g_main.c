@@ -122,6 +122,7 @@ vmCvar_t	server_acprefix;
 vmCvar_t	server_scprefix;
 vmCvar_t	server_caprefix;
 vmCvar_t	server_ccprefix;
+vmCvar_t	server_ctprefix;
 vmCvar_t	server_starprefix;
 vmCvar_t	g_mapswitch;					// Admin CVAR.
 vmCvar_t	g_flash;						// Admin CVAR.
@@ -385,6 +386,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &server_caprefix, "server_caprefix", "^GH^ge^Ky ^7Admin!", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_ccprefix, "server_ccprefix", "^GC^gl^Kan ^7Only", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_starprefix, "server_starprefix", "^<*", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
+	{ &server_ctprefix, "server_ctprefix", "^GC^gl^Ka^7n", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 
 	{ &g_maxIPConnections,			"g_maxIPConnections",	"3",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse},
 	// Boe!Man 3/30/10: This info is used for the /about menu.
@@ -2762,7 +2764,7 @@ void G_RunFrame( int levelTime )
 				trap_UnlinkEntity( ent );
 			}
 		}
-
+				CheckEnts(ent);
 		// temporary entities don't think
 		if ( ent->freeAfterEvent )
 		{
@@ -2801,8 +2803,7 @@ void G_RunFrame( int levelTime )
 		}
 
 		G_RunThink( ent );
-		if(g_rpmEnt.integer)
-		CheckEnts(ent);
+
 	}
 
 	// perform final fixups on the players

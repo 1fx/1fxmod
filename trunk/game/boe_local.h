@@ -301,6 +301,7 @@ extern	vmCvar_t	server_acprefix;
 extern	vmCvar_t	server_scprefix;
 extern	vmCvar_t	server_caprefix;
 extern	vmCvar_t	server_ccprefix;
+extern  vmCvar_t	server_ctprefix;
 extern	vmCvar_t	server_starprefix;
 
 extern	vmCvar_t	Owner;

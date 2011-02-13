@@ -2,12 +2,12 @@
 #include "boe_local.h"
 
 void CheckEnts(gentity_t *ent){
-	if(ent->model && ent->model != NULL && strstr(ent->model, "BLOCKED_TRIGGER"))
+	if(ent->model && ent->model != NULL && !strcmp(ent->model, "BLOCKED_TRIGGER"))
 		{
 			if(ent->count){
 				///Team Games
 				if(level.gametypeData->teams){
-					if(	ent->count <= TeamCount1(TEAM_RED) && ent->count <= TeamCount1(TEAM_BLUE)){
+					if(	ent->count <= (TeamCount( -1, TEAM_RED, NULL )) && ent->count <= (TeamCount( -1, TEAM_BLUE, NULL ))){
 						if (ent->r.linked)	{
 							trap_UnlinkEntity( ent );
 							if(ent->message != NULL)

@@ -384,10 +384,10 @@ void player_die(
 		}
 		else
 		{
-			if(current_gametype.value == GT_HS){
-				if(attacker->client->ps.stats[STAT_WEAPONS] & ( 1 << WP_M4_ASSAULT_RIFLE )){
+			if(current_gametype.value == GT_HS && self->client){
+				if(self->client->ps.stats[STAT_WEAPONS] & ( 1 << WP_M4_ASSAULT_RIFLE )){
 					G_AddScore( attacker, 2 );
-				}else if(attacker->client->ps.stats[STAT_WEAPONS] & ( 1 << WP_RPG7_LAUNCHER )){
+				}else if(self->client->ps.stats[STAT_WEAPONS] & ( 1 << WP_RPG7_LAUNCHER )){
 					G_AddScore( attacker, 3 );
 				}else{
 					G_AddScore( attacker, 1 );
