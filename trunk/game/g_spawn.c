@@ -189,6 +189,7 @@ void SP_gametype_trigger			(gentity_t* ent);
 void SP_gametype_player				(gentity_t* ent);
 void SP_mission_player				(gentity_t* ent);
 void SP_booster						(gentity_t* ent);
+void SP_teleporter					(gentity_t* ent);
 									
 void SP_fx_play_effect				(gentity_t* ent);
 void nolower						(gentity_t* ent);
@@ -278,6 +279,7 @@ spawn_t	spawns[] =
 	{"blocked_trigger",				NV_blocked_trigger},
 	{"blocked_teleporter",			NV_blocked_Teleport},
 	{"booster",						SP_booster},
+	{"teleporter",					SP_teleporter},
 	// The following classnames are instantly removed when spawned.  The RMG 
 	// shares instances with single player which is what causes these things
 	// to attempt to spawn

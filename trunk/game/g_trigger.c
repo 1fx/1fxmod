@@ -570,6 +570,20 @@ void NV_blocked_Teleport	(gentity_t *ent)
 	trap_LinkEntity (ent);
 }
 
+// Henk 13/02/11
+void SP_teleporter(gentity_t* ent){
+	char			*origin;
+	origin = va("%.0f %.0f %.0f", ent->r.currentOrigin[0], ent->r.currentOrigin[1], ent->r.currentOrigin[2]-30);
+	AddSpawnField("classname", "fx_play_effect");
+	AddSpawnField("effect", "fire/blue_target_flame");
+	AddSpawnField("origin", origin);
+	AddSpawnField("angles", "0 90 0");
+	AddSpawnField("count", "-1");
+	G_SpawnGEntityFromSpawnVars (qtrue);
+	ent->r.contents = CONTENTS_TRIGGER;		// replaces the -1 from trap_SetBrushModel
+	ent->r.svFlags = SVF_NOCLIENT;
+}
+
 // Henk 10/02/11
 void SP_booster(gentity_t* ent){
 	char			*origin;

@@ -2460,16 +2460,19 @@ void Adm_ForceTeam(int argNum, gentity_t *adm, qboolean shortCmd)
 		else
 			trap_Argv( 2, str, sizeof( str ) );
 	}
-	if(g_entities[idnum].r.svFlags & SVF_BOT){ // Henk 25/01/11 -> Reset bots to set them to another team
-		trap_GetUserinfo( idnum, userinfo, sizeof( userinfo ) );
-		Info_SetValueForKey( userinfo, "team", str );
-		trap_SetUserinfo( idnum, userinfo );
-		g_entities[idnum].client->sess.team = xteam;
-		if(current_gametype.value != GT_HS)
-		g_entities[idnum].client->pers.identity = BG_FindTeamIdentity ( level.gametypeTeam[xteam], -1 );
-		ClientBegin( idnum, qfalse );
+	if(g_entities[idnum].client){
+		if(g_entities[idnum].r.svFlags & SVF_BOT){ // Henk 25/01/11 -> Reset bots to set them to another team
+			trap_GetUserinfo( idnum, userinfo, sizeof( userinfo ) );
+			Info_SetValueForKey( userinfo, "team", str );
+			trap_SetUserinfo( idnum, userinfo );
+			g_entities[idnum].client->sess.team = xteam;
+			if(current_gametype.value != GT_HS)
+			g_entities[idnum].client->pers.identity = BG_FindTeamIdentity ( level.gametypeTeam[xteam], -1 );
+			ClientBegin( idnum, qfalse );
+		}else
+		SetTeam( &g_entities[idnum], str, NULL, qtrue );
 	}else
-	SetTeam( &g_entities[idnum], str, NULL, qtrue );
+		trap_SendServerCommand(adm->s.number, va("print\"^3[Info] Error, no client on id %i.\n\"", idnum));
 	// Boe!Man 2/13/11: Proper messaging..
 	if(adm){
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7was %sf%so%sr%sc%se%steamed by %s", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, adm->client->pers.netname));
