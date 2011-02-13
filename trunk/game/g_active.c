@@ -1199,7 +1199,7 @@ void ClientThink_real( gentity_t *ent )
 	}
 	if(current_gametype.value == GT_HS){
 		if(client->ps.weapon == WP_MM1_GRENADE_LAUNCHER)
-			client->ps.gravity = g_gravity.value-400;
+			client->ps.gravity = g_gravity.value-300;
 		else
 			client->ps.gravity = g_gravity.value;
 		if(client->ps.weapon == WP_RPG7_LAUNCHER && level.time > client->sess.slowtime){

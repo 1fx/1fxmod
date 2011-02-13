@@ -281,6 +281,52 @@ void trigger_booster_touch (gentity_t *self, gentity_t *other, trace_t *trace ) 
 }
 
 /*
+-----------------------------
+New easy teleporter by Henkie
+13/02/2011
+-----------------------------
+
+origin_from: the origin of the teleporter
+origin_to: the origin of the teleporter destination
+angles_from: the angles of your view angles after teleporting this way
+(only for both_sides teleporters)
+angles_to: the angles of your view angles after teleporting this way
+both_sides: if yes, you can teleporter back as well
+team: team for which the teleporter is accessible
+max_players: teleporter will disappear if this number of players is exceeded
+min_players: teleporter will disappear if less than this number of players
+*/
+
+void trigger_NewTeleporter_touch (gentity_t *self, gentity_t *other, trace_t *trace ) {
+	gentity_t	*dest;
+
+	if ( !other->client ) {
+		return;
+	}
+	if ( other->client->ps.pm_type == PM_DEAD ) {
+		return;
+	}
+	// Spectators only?
+	if ( ( self->spawnflags & 1 ) && !G_IsClientSpectating ( other->client ) ) 
+	{
+		return;
+	}
+
+	if(!strstr(self->team, "all")){
+		if(other->client->sess.team == TEAM_RED && !strstr(self->team, "red") || other->client->sess.team == TEAM_BLUE && !strstr(self->team, "blue")){
+			if(level.time >= other->client->sess.lastmsg){
+				trap_SendServerCommand(other->s.number, va("print\"^3[Info] ^7Only the %s team can use this teleporter.\n\"", self->team));
+				other->client->sess.lastmsg = level.time+5000;
+			}
+			return;
+		}
+	}
+	G_PlayEffect ( G_EffectIndex("misc/electrical"),other->client->ps.origin, other->pos1);
+
+	TeleportPlayer( other, self->origin_to, self->angles_to );
+}
+
+/*
 ==============================================================================
 
 trigger_teleport
@@ -312,7 +358,7 @@ void trigger_teleporter_touch (gentity_t *self, gentity_t *other, trace_t *trace
 		return;
 	}
 	G_PlayEffect ( G_EffectIndex("misc/electrical"),other->client->ps.origin, other->pos1);
-	G_SpawnGEntityFromSpawnVars (qtrue);
+	//G_SpawnGEntityFromSpawnVars (qtrue);
 	dest = 	G_PickTarget( self->target );
 	if (!dest) {
 		Com_Printf ("Couldn't find teleporter destination\n");
@@ -573,15 +619,41 @@ void NV_blocked_Teleport	(gentity_t *ent)
 // Henk 13/02/11
 void SP_teleporter(gentity_t* ent){
 	char			*origin;
-	origin = va("%.0f %.0f %.0f", ent->r.currentOrigin[0], ent->r.currentOrigin[1], ent->r.currentOrigin[2]-30);
+	trace_t		tr;
+	vec3_t		dest;
+	vec3_t		src;
+
+	VectorSet( ent->r.mins, -ITEM_RADIUS, -ITEM_RADIUS, -ITEM_RADIUS );
+	VectorSet( ent->r.maxs, ITEM_RADIUS, ITEM_RADIUS, ITEM_RADIUS );
+	VectorSet( src, ent->origin_from[0], ent->origin_from[1], ent->origin_from[2] + 1 );
+	VectorSet( dest, ent->origin_from[0], ent->origin_from[1], ent->origin_from[2] - 4096 );
+	trap_Trace( &tr, src, ent->r.mins, ent->r.maxs, dest, ent->s.number, MASK_SOLID );
+	if ( tr.startsolid ) 
+	{
+		Com_Printf ("Teleporter: %s startsolid at %s\n", ent->classname, vtos(ent->origin_from));
+		G_FreeEntity( ent );
+		return;
+	}
+	ent->s.groundEntityNum = tr.entityNum;
+	G_SetOrigin( ent, tr.endpos );
+	//origin = va("%.0f %.0f %.0f", ent->r.currentOrigin[0], ent->r.currentOrigin[1], ent->r.currentOrigin[2]-30);
+	origin = va("%.0f %.0f %.0f", ent->r.currentOrigin[0], ent->r.currentOrigin[1], ent->r.currentOrigin[2]);
 	AddSpawnField("classname", "fx_play_effect");
 	AddSpawnField("effect", "fire/blue_target_flame");
 	AddSpawnField("origin", origin);
 	AddSpawnField("angles", "0 90 0");
 	AddSpawnField("count", "-1");
 	G_SpawnGEntityFromSpawnVars (qtrue);
-	ent->r.contents = CONTENTS_TRIGGER;		// replaces the -1 from trap_SetBrushModel
-	ent->r.svFlags = SVF_NOCLIENT;
+	ent->r.contents = CONTENTS_TRIGGER;
+	ent->r.svFlags &= ~SVF_NOCLIENT;
+
+	// make sure the client precaches this sound
+	G_SoundIndex("sound/world/jumppad.wav");
+
+	ent->s.eType = ET_TELEPORT_TRIGGER;
+	ent->touch = trigger_NewTeleporter_touch;
+
+	trap_LinkEntity (ent);
 }
 
 // Henk 10/02/11

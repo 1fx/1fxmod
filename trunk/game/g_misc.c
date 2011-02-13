@@ -26,9 +26,7 @@ TeleportPlayer
 void TeleportPlayer ( gentity_t *player, vec3_t origin, vec3_t angles ) 
 {
 	gentity_t	*tent;
-	char			*Corigin;
-	if(current_gametype.value == GT_HS)
-	Corigin = va("%.0f %.0f %.0f", origin[0], origin[1], origin[2]);
+
 	// use temp events at source and destination to prevent the effect
 	// from getting dropped by a second player event
 	if ( !G_IsClientSpectating ( player->client ) ) 
@@ -80,11 +78,8 @@ void TeleportPlayer ( gentity_t *player, vec3_t origin, vec3_t angles )
 	{
 		trap_LinkEntity (player);
 	}
-	if(current_gametype.value == GT_HS){
-		G_PlayEffect ( G_EffectIndex("misc/electrical"),player->client->ps.origin, player->pos1);
-		G_SpawnGEntityFromSpawnVars (qtrue);
-		// Add sparking effect at dest
-	}
+
+	G_PlayEffect ( G_EffectIndex("misc/electrical"),player->client->ps.origin, player->pos1);
 }
 
 

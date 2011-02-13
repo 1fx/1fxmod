@@ -121,6 +121,13 @@ field_t fields[] =
 	{"message2",			FOFS(message2),				F_LSTRING},
 	{"up",					FOFS(up),					F_INT},
 	{"forward",				FOFS(forward),				F_INT},
+	{"origin_from",			FOFS(origin_from),			F_VECTOR},
+	{"origin_to",			FOFS(origin_to),			F_VECTOR},
+	{"angles_from",			FOFS(angles_from),			F_VECTOR},
+	{"angles_to",			FOFS(angles_to),			F_VECTOR},
+	{"both_sides",			FOFS(both_sides),			F_LSTRING},
+	{"max_players",			FOFS(max_players),			F_INT},
+	{"min_players",			FOFS(min_players),			F_INT},
 	{NULL}
 };
 

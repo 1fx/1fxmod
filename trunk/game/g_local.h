@@ -167,7 +167,13 @@ struct gentity_s
 	int			minimumhiders;
 	int			up;
 	int			forward;
-	int			side;
+	vec3_t		origin_from;
+	vec3_t		origin_to;
+	vec3_t		angles_from;
+	vec3_t		angles_to;
+	char		*both_sides;
+	int			max_players;
+	int			min_players;
 };
 
 typedef struct gspawn_s
@@ -902,6 +908,7 @@ void		G_ResetGlass		( void );
 // g_trigger.c
 //
 void		trigger_teleporter_touch		( gentity_t *self, gentity_t *other, trace_t *trace );
+void		trigger_NewTeleporter_touch		( gentity_t *self, gentity_t *other, trace_t *trace );
 void		trigger_booster_touch		( gentity_t *self, gentity_t *other, trace_t *trace );
 void		InitTrigger						( gentity_t *self );
 
