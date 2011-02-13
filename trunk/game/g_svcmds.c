@@ -427,7 +427,7 @@ Svcmd_CancelVote_f
 
 cancels the vote in progress
 ===================
-*/
+
 void Svcmd_CancelVote_f ( void )
 {
 	level.voteTime = 0;
@@ -436,3 +436,4 @@ void Svcmd_CancelVote_f ( void )
 
 	trap_SendServerCommand( -1, "print \"Vote cancelled by admin.\n\"" );
 }
+*/

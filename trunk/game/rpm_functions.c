@@ -91,7 +91,16 @@ void RPM_Pause (gentity_t *adm)
 	// send the current scoring to all clients
 	SendScoreboardMessageToAllClients();
 
+	// Boe!Man 1/24/11: Tell everyone what just happened.
 	Boe_GlobalSound(G_SoundIndex("sound/misc/events/buzz02.wav"));
+	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sP%sa%su%ss%se%sd!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+	if(adm && adm->client){
+		Boe_adminLog (va("%s - PAUSE", adm->client->pers.cleanName)) ;
+		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Pause by %s.\n\"", adm->client->pers.netname));
+	}else{
+		Boe_adminLog (va("RCON - PAUSE")) ;
+		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Pause.\n\""));
+	}
 /*	tent = G_TempEntity( vec3_origin, EV_GLOBAL_SOUND );
 	tent->s.eventParm = G_SoundIndex("sound/misc/events/buzz02.wav");
 	tent->r.svFlags = SVF_BROADCAST;
@@ -123,7 +132,7 @@ void RPM_Unpause (gentity_t *adm)
 		level.unpausetime = level.time;
 		level.pause--;
 
-		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^1Resume ^7game in: %d ^4seconds", level.time + 2000, level.pause ) );
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sR%se%ss%su%sm%sing in: %d sec", level.time + 2000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, level.pause ) );
 
 		Boe_GlobalSound(G_SoundIndex("sound/misc/events/buzz02.wav"));
 /*		tent = G_TempEntity( vec3_origin, EV_GLOBAL_SOUND );
@@ -159,7 +168,7 @@ void RPM_Unpause (gentity_t *adm)
 				}
 				ent->client->ps.pm_type = PM_NORMAL;
 			}
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@GO!", level.time + 2000) );
+			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sG%so %sG%so!", level.time + 2000, server_color2.string, server_color3.string, server_color4.string, server_color5.string) );
 		}
 	}
 }

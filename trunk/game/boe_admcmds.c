@@ -2470,10 +2470,13 @@ void Adm_ForceTeam(int argNum, gentity_t *adm, qboolean shortCmd)
 		ClientBegin( idnum, qfalse );
 	}else
 	SetTeam( &g_entities[idnum], str, NULL, qtrue );
+	// Boe!Man 2/13/11: Proper messaging..
 	if(adm){
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7was %sf%so%sr%sc%se%steamed by %s", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, adm->client->pers.netname));
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s ^7was forceteamed by %s.\n\"", g_entities[idnum].client->pers.netname,adm->client->pers.netname));
 		Boe_adminLog (va("%s - FORCETEAM: %s - Team: %s", adm->client->pers.cleanName, g_entities[idnum].client->pers.cleanName, str ));
 	}else{
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7was %sf%so%sr%sc%se%steamed", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s ^7was forceteamed.\n\"", g_entities[idnum].client->pers.netname));
 		Boe_adminLog (va("%s - FORCETEAM: %s - Team: %s", "RCON", g_entities[idnum].client->pers.cleanName, str ));
 	}
@@ -2981,17 +2984,7 @@ void Henk_SubnetUnban(int argNum, gentity_t *adm, qboolean shortCmd){
 
 void Henk_Pause(int argNum, gentity_t *adm, qboolean shortCmd)
 {
-	// Boe!Man 1/24/11: Tell everyone what just happened.
-	Boe_GlobalSound(G_SoundIndex("sound/misc/events/buzz02.wav"));
-			
-	if(adm && adm->client){
-		Boe_adminLog (va("%s - PAUSE", adm->client->pers.cleanName)) ;
-		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Pause by %s.\n\"", adm->client->pers.netname));
-	}else{
-		Boe_adminLog (va("RCON - PAUSE")) ;
-		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Pause.\n\""));
-	}
-
+	// Boe!Man 2/13/11: Forward it to the proper function.
 	RPM_Pause(adm);
 }
 
@@ -3151,5 +3144,61 @@ void Henk_Map(int argNum, gentity_t *adm, qboolean shortCmd){
 			else
 				trap_SendServerCommand(adm-g_entities, va("print\"^3[Info] ^7Something appears to be wrong. Please report to a developer using this error code: 2L\n\""));
 		}
+	}
+}
+
+/*
+=========
+Boe_passVote
+=========
+*/
+
+void Boe_passVote (int argNum, gentity_t *adm, qboolean shortCmd){
+	if ( !level.voteTime ){
+			trap_SendServerCommand( adm-g_entities, "print \"^3[Info] ^7No vote in progress.\n\"" );
+			return;
+	}
+	
+	// Boe!Man 2/13/11: Let the vote pass.
+	level.voteYes = level.numVotingClients / 2 + 1;
+	level.forceVote = qtrue;
+	
+	// Boe!Man 2/13/11: Let everybody know what happened..
+	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sV%so%st%se passed!", level.time + 5000, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+	if(adm && adm->client){
+		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Vote passed by %s.\n\"", adm->client->pers.netname));
+		Boe_adminLog (va("%s - PASSVOTE", adm->client->pers.cleanName)) ;
+	}else{
+		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Vote passed.\n\""));
+		Boe_adminLog (va("%s - PASSVOTE", "RCON")) ;
+	}
+}
+
+/*
+=========
+Boe_cancelVote
+=========
+*/
+
+void Boe_cancelVote (int argNum, gentity_t *adm, qboolean shortCmd){
+	if ( !level.voteTime ){
+			trap_SendServerCommand( adm-g_entities, "print \"^3[Info] ^7No vote in progress.\n\"" );
+			return;
+	}
+
+	// Boe!Man 2/13/11: Cancel the vote.
+	level.voteTime = 0;
+	trap_SetConfigstring( CS_VOTE_TIME, "" );
+	
+	// Boe!Man 2/13/11: Let everybody know what happened..
+	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sV%so%st%se cancelled!", level.time + 5000, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+	if(adm && adm->client){
+		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Vote cancelled by %s.\n\"", adm->client->pers.netname));
+		Boe_adminLog (va("%s - CANCELVOTE", adm->client->pers.cleanName)) ;
+	}else{
+		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Vote cancelled.\n\""));
+		Boe_adminLog (va("%s - CANCELVOTE", "RCON")) ;
 	}
 }

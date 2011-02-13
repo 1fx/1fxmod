@@ -441,7 +441,7 @@ void Henk_SubnetUnban(int argNum, gentity_t *adm, qboolean shortCmd);
 void Henk_SubnetBanList(int argNum, gentity_t *adm, qboolean shortCmd);
 void Henk_BanList(int argNum, gentity_t *adm, qboolean shortCmd);
 void Svcmd_EntityList_f(void);
-void Svcmd_CancelVote_f(void);
+//void Svcmd_CancelVote_f(void);
 void Svcmd_AddIP_f(void);
 void Svcmd_RemoveIP_f(void);
 void Svcmd_ExtendTime_f(void);
@@ -457,3 +457,8 @@ extern vmCvar_t g_enableCustomCommands;
 
 char	*ConcatArgs1( int start );
 void CheckEnts(gentity_t *ent);
+
+// Boe!Man 2/13/11: Passvote and cancelvote.
+extern vmCvar_t	g_forcevote;
+void Boe_passVote (int argNum, gentity_t *adm, qboolean shortCmd);
+void Boe_cancelVote (int argNum, gentity_t *adm, qboolean shortCmd);

@@ -543,6 +543,7 @@ typedef struct
 	int			voteNo;
 	int			voteClient;				// client who initiated vote
 	int			numVotingClients;		// set by CalculateRanks
+	qboolean	forceVote;				// Boe!Man 2/13/11: If the vote has been forced to pass/cancel, the admin command will handle the messaging.
 
 	// spawn variables
 	qboolean	spawning;				// the G_Spawn*() functions are valid

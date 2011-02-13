@@ -210,6 +210,9 @@ vmCvar_t	g_cm;
 vmCvar_t	g_3rd;
 vmCvar_t	g_enableCustomCommands;
 
+// Boe!Man 2/13/11
+vmCvar_t	g_forcevote;
+
 #ifdef _BOE_DBG
 vmCvar_t	boe_log;
 #endif
@@ -367,6 +370,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_damage,					"g_damage",				"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_3rd,						"g_3rd",				"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_cm,						"g_cm",					"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
+	{ &g_forcevote,					"g_forcevote",			"3",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 
 
 	{ &g_clanfile,			"g_clanfile",			"users/clanmembers.txt",	CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  },
@@ -2321,7 +2325,12 @@ void CheckVote( void )
 		if ( level.voteYes > level.numVotingClients/2 )
 		{
 			// execute the command, then remove the vote
-			trap_SendServerCommand( -1, "print \"Vote passed.\n\"" );
+			// Boe!Man 2/13/11: Make sure the vote hasn't been forced by an Admin.
+			if (level.forceVote == qfalse){
+				trap_SendServerCommand( -1, "print \"Vote passed.\n\"" );
+			}else{ // Boe!Man 2/13/11: Else it must've been, just reset the forceVote state and don't broadcast the message.. again..
+				level.forceVote = qfalse;
+			}
 			level.voteExecuteTime = level.time + 3000;
 		} 
 		else if ( level.voteNo >= level.numVotingClients/2 ) 

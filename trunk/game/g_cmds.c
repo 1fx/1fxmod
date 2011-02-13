@@ -17,6 +17,57 @@ typedef struct
 
 static admCmd_t AdminCommands[] = 
 {
+		// Boe!Man 1/22/11: Adding full synonyms.
+	{"!uppercut ", "uppercut", &g_uppercut.integer, &Boe_Uppercut},
+	{"!pop ", "pop", &g_pop.integer, &Boe_pop},
+	{"!kick ", "kick", &g_kick.integer, &Boe_Kick},
+	{"!addbadmin ", "addbadmin", &g_addbadmin.integer, &Boe_Add_bAdmin_f},
+	{"!addadmin ", "addadmin", &g_addadmin.integer, &Boe_Add_Admin_f},
+	{"!addsadmin ", "addsadmin", &g_addsadmin.integer, &Boe_Add_sAdmin_f},
+	{"!twist ", "twist", &g_twist.integer, &Boe_Twist},
+	{"!untwist ", "untwist", &g_twist.integer, &Boe_unTwist},
+	{"!plant ", "plant", &g_plant.integer, &Boe_Plant},
+	{"!unplant ", "unplant", &g_plant.integer, &Boe_unPlant},
+	{"!runover ", "runover", &g_runover.integer, &Boe_Runover},
+	{"!respawn ", "respawn", &g_respawn.integer, &Boe_Respawn},
+	{"!maprestart", "maprestart", &g_mapswitch.integer, &Boe_MapRestart},
+	{"!burn ", "burn", &g_burn.integer, &Boe_Burn},
+	{"!mute ", "mute", &g_mute.integer, &Boe_XMute},
+	{"!unmute ", "unmute", &g_mute.integer, &Boe_UnMute},
+	{"!strip ", "strip", &g_strip.integer, &Boe_Strip},
+	{"!removeadmin ", "removeadmin", &g_removeadmin.integer, &Boe_Remove_Admin_f},
+	{"!forceteam ", "forceteam", &g_forceteam.integer, &Adm_ForceTeam},
+	{"!nolower", "nolower", &g_nolower.integer, &Boe_NoLower},
+	{"!nonades", "nonades", &g_nades.integer, &Boe_NoNades},
+	{"!scorelimit", "scorelimit", &g_sl.integer, &Boe_ScoreLimit},
+	{"!timelimit", "timelimit", &g_tl.integer, &Boe_TimeLimit},
+	{"!respawninterval", "respawninterval", &g_ri.integer, &Boe_RespawnInterval},
+	{"!realdamage", "realdamage", &g_damage.integer, &Boe_RealDamage},
+	{"!normaldamage", "normaldamage", &g_damage.integer, &Boe_NormalDamage},
+	{"!gametyperestart", "gametyperestart", &g_gr.integer, &Boe_GametypeRestart},
+	{"!addclan ", "addclan", &g_clan.integer, &Boe_Add_Clan_Member},
+	{"!removeclan ", "removeclan", &g_clan.integer, &Boe_Remove_Clan_Member},
+	{"!compmode", "compmode", &g_clan.integer, &Boe_CompMode},
+	{"!competitionmode", "compmode", &g_clan.integer, &Boe_CompMode},
+	{"!banlist", "banlist", &g_ban.integer, &Henk_BanList},
+	{"!ban ", "ban", &g_ban.integer, &Boe_Ban_f},
+	{"!broadcast ", "broadcast", &g_broadcast.integer, &Boe_Broadcast},
+	{"!subnetbanlist", "subnetbanlist", &g_subnetban.integer, &Henk_SubnetBanList},
+	{"!eventeams", "eventeams", &g_eventeams.integer, &Henk_EvenTeams},
+	{"!clanvsall", "clanvsall", &g_clanvsall.integer, &Henk_CVA},
+	{"!swapteams", "swapteams", &g_swapteams.integer, &Henk_SwapTeams},
+	{"!lock ", "lock", &g_lock.integer, &Henk_Lock},
+	{"!flash ", "flash", &g_flash.integer, &Henk_Flash},
+	{"!gametype ", "gametype", &g_mapswitch.integer, &Henk_Gametype},
+	{"!unpause", "unpause", &g_mapswitch.integer, &Henk_Unpause},
+	{"!pause", "pause", &g_mapswitch.integer, &Henk_Pause},
+	{"!unban ", "unban", &g_ban.integer, &Henk_Unban},
+	{"!subnetunban ", "subnetunban", &g_subnetban.integer, &Henk_SubnetUnban},
+	{"!subnetban ", "subnetban", &g_subnetban.integer, &Boe_subnetBan},
+	{"!pass", "passvote", &g_forcevote.integer, &Boe_passVote},
+	{"!cancel", "cancelvote", &g_forcevote.integer, &Boe_cancelVote},
+	// Boe!Man 1/22/11: End full synonyms.
+
 	{"!uc ", "uppercut", &g_uppercut.integer, &Boe_Uppercut},
 	{"!u ", "uppercut", &g_uppercut.integer, &Boe_Uppercut},
 	{"!p ", "pop", &g_pop.integer, &Boe_pop},
@@ -65,6 +116,8 @@ static admCmd_t AdminCommands[] =
 	{"!fl ", "flash", &g_flash.integer, &Henk_Flash},
 	{"!g", "gametype", &g_mapswitch.integer, &Henk_Gametype},
 	{"!gt", "gametype", &g_mapswitch.integer, &Henk_Gametype},
+	{"!pv", "passvote", &g_forcevote.integer, &Boe_passVote},
+	{"!cv", "cancelvote", &g_forcevote.integer, &Boe_cancelVote},
 	{"!upa", "unpause", &g_mapswitch.integer, &Henk_Unpause},
 	{"!up", "unpause", &g_mapswitch.integer, &Henk_Unpause},
 	{"!pa", "pause", &g_mapswitch.integer, &Henk_Pause},
@@ -72,56 +125,7 @@ static admCmd_t AdminCommands[] =
 	{"!sbu ", "subnetunban", &g_subnetban.integer, &Henk_SubnetUnban},
 	{"!ub ", "unban", &g_ban.integer, &Henk_Unban},
 	{"!su ", "subnetunban", &g_subnetban.integer, &Henk_SubnetUnban},
-	{"!sb ", "subnetban", &g_subnetban.integer, &Boe_subnetBan},
-
-		// Boe!Man 1/22/11: Adding full synonyms.
-	{"!uppercut ", "uppercut", &g_uppercut.integer, &Boe_Uppercut},
-	{"!pop ", "pop", &g_pop.integer, &Boe_pop},
-	{"!kick ", "kick", &g_kick.integer, &Boe_Kick},
-	{"!addbadmin ", "addbadmin", &g_addbadmin.integer, &Boe_Add_bAdmin_f},
-	{"!addadmin ", "addadmin", &g_addadmin.integer, &Boe_Add_Admin_f},
-	{"!addsadmin ", "addsadmin", &g_addsadmin.integer, &Boe_Add_sAdmin_f},
-	{"!twist ", "twist", &g_twist.integer, &Boe_Twist},
-	{"!untwist ", "untwist", &g_twist.integer, &Boe_unTwist},
-	{"!plant ", "plant", &g_plant.integer, &Boe_Plant},
-	{"!unplant ", "unplant", &g_plant.integer, &Boe_unPlant},
-	{"!runover ", "runover", &g_runover.integer, &Boe_Runover},
-	{"!respawn ", "respawn", &g_respawn.integer, &Boe_Respawn},
-	{"!maprestart", "maprestart", &g_mapswitch.integer, &Boe_MapRestart},
-	{"!burn ", "burn", &g_burn.integer, &Boe_Burn},
-	{"!mute ", "mute", &g_mute.integer, &Boe_XMute},
-	{"!unmute ", "unmute", &g_mute.integer, &Boe_UnMute},
-	{"!strip ", "strip", &g_strip.integer, &Boe_Strip},
-	{"!removeadmin ", "removeadmin", &g_removeadmin.integer, &Boe_Remove_Admin_f},
-	{"!forceteam ", "forceteam", &g_forceteam.integer, &Adm_ForceTeam},
-	{"!nolower", "nolower", &g_nolower.integer, &Boe_NoLower},
-	{"!nonades", "nonades", &g_nades.integer, &Boe_NoNades},
-	{"!scorelimit", "scorelimit", &g_sl.integer, &Boe_ScoreLimit},
-	{"!timelimit", "timelimit", &g_tl.integer, &Boe_TimeLimit},
-	{"!respawninterval", "respawninterval", &g_ri.integer, &Boe_RespawnInterval},
-	{"!realdamage", "realdamage", &g_damage.integer, &Boe_RealDamage},
-	{"!normaldamage", "normaldamage", &g_damage.integer, &Boe_NormalDamage},
-	{"!gametyperestart", "gametyperestart", &g_gr.integer, &Boe_GametypeRestart},
-	{"!addclan ", "addclan", &g_clan.integer, &Boe_Add_Clan_Member},
-	{"!removeclan ", "removeclan", &g_clan.integer, &Boe_Remove_Clan_Member},
-	{"!compmode", "compmode", &g_clan.integer, &Boe_CompMode},
-	{"!competitionmode", "compmode", &g_clan.integer, &Boe_CompMode},
-	{"!banlist", "banlist", &g_ban.integer, &Henk_BanList},
-	{"!ban ", "ban", &g_ban.integer, &Boe_Ban_f},
-	{"!broadcast ", "broadcast", &g_broadcast.integer, &Boe_Broadcast},
-	{"!subnetbanlist", "subnetbanlist", &g_subnetban.integer, &Henk_SubnetBanList},
-	{"!eventeams", "eventeams", &g_eventeams.integer, &Henk_EvenTeams},
-	{"!clanvsall", "clanvsall", &g_clanvsall.integer, &Henk_CVA},
-	{"!swapteams", "swapteams", &g_swapteams.integer, &Henk_SwapTeams},
-	{"!lock ", "lock", &g_lock.integer, &Henk_Lock},
-	{"!flash ", "flash", &g_flash.integer, &Henk_Flash},
-	{"!gametype ", "gametype", &g_mapswitch.integer, &Henk_Gametype},
-	{"!unpause", "unpause", &g_mapswitch.integer, &Henk_Unpause},
-	{"!pause", "pause", &g_mapswitch.integer, &Henk_Pause},
-	{"!unban ", "unban", &g_ban.integer, &Henk_Unban},
-	{"!subnetunban ", "subnetunban", &g_subnetban.integer, &Henk_SubnetUnban},
-	{"!subnetban ", "subnetban", &g_subnetban.integer, &Boe_subnetBan}
-	// Boe!Man 1/22/11: End full synonyms.
+	{"!sb ", "subnetban", &g_subnetban.integer, &Boe_subnetBan}
 };
 
 static int AdminCommandsSize = sizeof( AdminCommands ) / sizeof( AdminCommands[0] );
@@ -1217,7 +1221,7 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 	client->sess.spectatorState = specState;
 	client->sess.spectatorClient = specClient;
 
-		// Kill any child entities of this client to protect against grenade team changers
+	// Kill any child entities of this client to protect against grenade team changers
 	G_FreeEnitityChildren ( ent ); // Henk 14/01/11 -> Fix for specnade
 
 	// Always spawn into a ctf game using a respawn timer.
@@ -3292,13 +3296,13 @@ qboolean ConsoleCommand( void )
 	{
 		Svcmd_ForceTeam_f();
 		return qtrue;
-	}*/
+	}
 
 	if ( Q_stricmp ( cmd, "cancelvote" ) == 0 )
 	{
 		Svcmd_CancelVote_f();
 		return qtrue;
-	}
+	}*/
 
 #ifdef _SOF2_BOTS
 
