@@ -1,6 +1,7 @@
 // Copyright (C) 2001-2002 Raven Software
 //
 #include "g_local.h"
+void	Boe_ClientSound (gentity_t *ent, int soundIndex);
 
 
 void InitTrigger( gentity_t *self ) {
@@ -298,7 +299,6 @@ min_players: teleporter will disappear if less than this number of players
 */
 
 void trigger_NewTeleporter_touch (gentity_t *self, gentity_t *other, trace_t *trace ) {
-	gentity_t	*dest;
 
 	if ( !other->client ) {
 		return;
@@ -623,11 +623,39 @@ void SP_teleporter(gentity_t* ent){
 	vec3_t		dest;
 	vec3_t		src;
 
+	if(strstr(ent->both_sides, "yes")){
+		AddSpawnField("classname", "teleporter");
+		origin = va("%.0f %.0f %.0f", ent->origin_to[0], ent->origin_to[1], ent->origin_to[2]);
+		AddSpawnField("origin_from", origin);
+		origin = va("%.0f %.0f %.0f", ent->origin_from[0], ent->origin_from[1], ent->origin_from[2]);
+		AddSpawnField("origin_to", origin);
+		origin = va("%.0f %.0f %.0f", ent->angles_to[0], ent->angles_to[1], ent->angles_to[2]);
+		AddSpawnField("angles_from", origin);
+		origin = va("%.0f %.0f %.0f", ent->angles_from[0], ent->angles_from[1], ent->angles_from[2]);
+		AddSpawnField("angles_to", origin);
+		AddSpawnField("team", va("%s", ent->team));
+		AddSpawnField("min_players", va("%i", ent->min_players));
+		AddSpawnField("max_players",va("%i", ent->max_players));
+		AddSpawnField("both_sides", "no");
+		G_SpawnGEntityFromSpawnVars (qtrue);
+		/*
+		"classname" "teleporter"
+		"origin_from" "1822 230 106"
+		"origin_to" "-128 -90 108"
+		"angles_from" "0 1 0"
+		"angles_to" "0 1 0"
+		"both_sides" "yes"
+		"team" "red"
+		"max_players" "0"
+		"min_players" "0"
+		*/
+	}
 	VectorSet( ent->r.mins, -ITEM_RADIUS, -ITEM_RADIUS, -ITEM_RADIUS );
 	VectorSet( ent->r.maxs, ITEM_RADIUS, ITEM_RADIUS, ITEM_RADIUS );
 	VectorSet( src, ent->origin_from[0], ent->origin_from[1], ent->origin_from[2] + 1 );
 	VectorSet( dest, ent->origin_from[0], ent->origin_from[1], ent->origin_from[2] - 4096 );
 	trap_Trace( &tr, src, ent->r.mins, ent->r.maxs, dest, ent->s.number, MASK_SOLID );
+
 	if ( tr.startsolid ) 
 	{
 		Com_Printf ("Teleporter: %s startsolid at %s\n", ent->classname, vtos(ent->origin_from));
@@ -635,7 +663,11 @@ void SP_teleporter(gentity_t* ent){
 		return;
 	}
 	ent->s.groundEntityNum = tr.entityNum;
+	VectorCopy(tr.endpos, ent->origin_from);
 	G_SetOrigin( ent, tr.endpos );
+
+	// origin_to until ground
+	
 	//origin = va("%.0f %.0f %.0f", ent->r.currentOrigin[0], ent->r.currentOrigin[1], ent->r.currentOrigin[2]-30);
 	origin = va("%.0f %.0f %.0f", ent->r.currentOrigin[0], ent->r.currentOrigin[1], ent->r.currentOrigin[2]);
 	AddSpawnField("classname", "fx_play_effect");
