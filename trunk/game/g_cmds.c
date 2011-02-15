@@ -1146,16 +1146,28 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 		///RxCxW - 03.05.05 - 07:19am
 		///if ((team == TEAM_RED) && level.redLocked)
 		if ((team == TEAM_RED) && level.redLocked && client->sess.admin < 2) {
-			// Boe!Man 12/14/10
-			trap_SendServerCommand(clientNum, va("cp \"@%s ^7team is currently %sl%so%sc%sk%se%sd!\n\"", server_redteamprefix.string, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string ));
-			trap_SendServerCommand(clientNum, va("print \"^3[Info] ^7Red team is currently locked.\n\"") );
+			// Boe!Man 2/15/11: H&S messages are different as they use another team prefix.
+			if(current_gametype.value == GT_HS){
+				trap_SendServerCommand(clientNum, va("cp \"@%s ^7are %sl%so%sc%sk%se%sd!\n\"", server_hiderteamprefix.string, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string ));
+				trap_SendServerCommand(clientNum, va("print \"^3[Info] ^7Hiders are locked.\n\"") );
+			}else{
+				// Boe!Man 12/14/10
+				trap_SendServerCommand(clientNum, va("cp \"@%s ^7team is %sl%so%sc%sk%se%sd!\n\"", server_redteamprefix.string, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string ));
+				trap_SendServerCommand(clientNum, va("print \"^3[Info] ^7Red team is locked.\n\"") );
+			}
 			return;
 		}
 		///else if ((team == TEAM_BLUE) && level.blueLocked)
 		else if ((team == TEAM_BLUE) && level.blueLocked && client->sess.admin < 2) {
-			// Boe!Man 12/14/10
-			trap_SendServerCommand(clientNum, va("cp \"@%s ^7team is currently %sl%so%sc%sk%se%sd!\n\"", server_blueteamprefix.string, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string ));
-			trap_SendServerCommand(clientNum, va("print \"^3[Info] ^7Blue team is currently locked.\n\"") );
+			// Boe!Man 2/15/11: H&S messages are different as they use another team prefix.
+			if(current_gametype.value == GT_HS){
+				trap_SendServerCommand(clientNum, va("cp \"@%s ^7are %sl%so%sc%sk%se%sd!\n\"", server_seekerteamprefix.string, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string ));
+				trap_SendServerCommand(clientNum, va("print \"^3[Info] ^7Seekers are locked.\n\"") );
+			}else{
+				// Boe!Man 12/14/10
+				trap_SendServerCommand(clientNum, va("cp \"@%s ^7team is %sl%so%sc%sk%se%sd!\n\"", server_blueteamprefix.string, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string ));
+				trap_SendServerCommand(clientNum, va("print \"^3[Info] ^7Blue team is locked.\n\"") );
+			}
 			return;
 		}
 	}
