@@ -760,7 +760,7 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 	{
 		if(ent && ent->client)
 		{
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7There is no client with the client number %d.\n\"", num));
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7This client has been disconnected.\n\""));
 		}
 		else
 		{
@@ -1355,6 +1355,8 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 	memset( last, 0, sizeof(last) );
 	memset( lastip, 0, sizeof(lastip) );
 	len = trap_FS_FOpenFile( file, &f, FS_READ_TEXT);
+	if(!f)
+		return;
 	trap_FS_Read( buf, len, f );
 	buf[len] = '\0';
 	trap_FS_FCloseFile( f );
@@ -1408,6 +1410,8 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 		Com_Printf("New buf:\n%s\n", newbuf);
 	// Start writing our new created file
 	len = trap_FS_FOpenFile( file, &f, FS_WRITE_TEXT);
+	if(!f)
+		return;
 	trap_FS_Write(newbuf, strlen(newbuf), f);
 	trap_FS_FCloseFile( f );
 	// Clear ban info
@@ -1424,10 +1428,10 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 		trap_FS_FOpenFile( va("users\\baninfo\\%s.IP", lastip), &f, FS_WRITE );
 	if(f){
 		trap_FS_Write("", 0, f);
+		trap_FS_FCloseFile(f);
 	}else{
 		Com_Printf("Error while opening file in unban\n");
 	}
-	trap_FS_FCloseFile(f);
 	// End
 		if(subnet){
 			if(ent && ent->client)
@@ -1480,10 +1484,10 @@ void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 				trap_FS_FOpenFile( va("users\\baninfo\\%s.IP", ip), &f, FS_WRITE );
 				if(f){
 					trap_FS_Write("", 0, f);
+					trap_FS_FCloseFile(f);
 				}else{
 					Com_Printf("Error while opening file in unban\n");
 				}
-				trap_FS_FCloseFile(f);
 				
 				if(adm && adm->client)
 					Boe_adminLog (va("%s - UNBAN: %s", adm->client->pers.cleanName, ip  )) ;

@@ -174,6 +174,8 @@ struct gentity_s
 	char		*both_sides;
 	int			max_players;
 	int			min_players;
+	int			effect_index;
+	qboolean	disabled;
 };
 
 typedef struct gspawn_s
@@ -723,7 +725,7 @@ qboolean	G_SpawnFloat( const char *key, const char *defaultString, float *out );
 qboolean	G_SpawnInt( const char *key, const char *defaultString, int *out );
 qboolean	G_SpawnVector( const char *key, const char *defaultString, float *out );
 qboolean	G_ParseSpawnVars( qboolean inSubBSP );
-void		G_SpawnGEntityFromSpawnVars( qboolean inSubBSP );
+int		G_SpawnGEntityFromSpawnVars( qboolean inSubBSP ); // Henkie 16/02/11 -> Make it return entity index
 void		G_SpawnEntitiesFromString( qboolean inSubBSP );
 char		*G_NewString( const char *string );
 void		AddSpawnField(char *field, char *value);

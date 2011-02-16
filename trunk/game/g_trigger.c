@@ -675,7 +675,7 @@ void SP_teleporter(gentity_t* ent){
 	AddSpawnField("origin", origin);
 	AddSpawnField("angles", "0 90 0");
 	AddSpawnField("count", "-1");
-	G_SpawnGEntityFromSpawnVars (qtrue);
+	ent->effect_index = G_SpawnGEntityFromSpawnVars (qtrue);
 	ent->r.contents = CONTENTS_TRIGGER;
 	ent->r.svFlags &= ~SVF_NOCLIENT;
 

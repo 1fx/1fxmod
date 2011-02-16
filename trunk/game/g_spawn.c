@@ -516,7 +516,7 @@ Spawn an entity and fill in all of the level fields from
 level.spawnVars[], then call the class specfic spawn function
 ===================
 */
-void G_SpawnGEntityFromSpawnVars( qboolean inSubBSP ) 
+int G_SpawnGEntityFromSpawnVars( qboolean inSubBSP ) 
 {
 	int			i;
 	gentity_t	*ent;
@@ -529,7 +529,7 @@ void G_SpawnGEntityFromSpawnVars( qboolean inSubBSP )
 		if (value[0] && Q_stricmp(level.mFilter, value))
 		{	
 			// we are not matching up to the filter, so no spawney
-			return;
+			return -1;
 		}
 	}
 
@@ -582,7 +582,7 @@ void G_SpawnGEntityFromSpawnVars( qboolean inSubBSP )
 		if ( i ) 
 		{
 			G_FreeEntity( ent );
-			return;
+			return -1;
 		}
 	} 
 	else 
@@ -591,7 +591,7 @@ void G_SpawnGEntityFromSpawnVars( qboolean inSubBSP )
 		if ( i ) 
 		{
 			G_FreeEntity( ent );
-			return;
+			return -1;
 		}
 	}
 
@@ -607,13 +607,13 @@ void G_SpawnGEntityFromSpawnVars( qboolean inSubBSP )
 				if ( !G_IsGametypeInList ( level.gametypeData->basegametype, value ) )
 				{
 					G_FreeEntity ( ent );
-					return;
+					return -1;
 				}
 			}
 			else
 			{
 				G_FreeEntity ( ent );
-				return;
+				return -1;
 			}
 		} 
 	}
@@ -638,6 +638,7 @@ void G_SpawnGEntityFromSpawnVars( qboolean inSubBSP )
 		{
 			G_FreeEntity( ent );
 		}
+		return ent->s.number;
 }
 
 

@@ -35,7 +35,33 @@ void CheckEnts(gentity_t *ent){
 				}
 			}
 			return;
-		}	
+		}
+	if(level.numPlayingClients < ent->min_players && ent->min_players != 0){
+		if(ent->r.linked){
+			trap_UnlinkEntity(ent);
+			g_entities[ent->effect_index].disabled = qtrue;
+		}
+	}else if(level.numPlayingClients >= ent->min_players && ent->min_players != 0){
+		if(level.numPlayingClients <= ent->max_players){
+			if(!ent->r.linked){
+				trap_LinkEntity(ent);
+				g_entities[ent->effect_index].disabled = qfalse;
+			}
+		}
+	}
+	if(level.numPlayingClients < ent->max_players && ent->max_players != 0){
+		if(level.numPlayingClients > ent->min_players){
+			if(!ent->r.linked){
+				trap_LinkEntity(ent);
+				g_entities[ent->effect_index].disabled = qfalse;
+			}
+		}
+	}else if(level.numPlayingClients >= ent->max_players && ent->max_players != 0){
+		if(ent->r.linked){
+			trap_UnlinkEntity(ent);
+			g_entities[ent->effect_index].disabled = qtrue;
+		}
+	}
 }
 
 qboolean IsClientMuted(gentity_t *ent, qboolean message){

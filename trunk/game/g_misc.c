@@ -610,6 +610,7 @@ void fx_think( gentity_t *ent )
 	int		time;
 
 	// play fx
+	if(ent->disabled != qtrue)
 	G_PlayEffect( ent->health, ent->s.origin, ent->pos1 );
 
 	if( ent->count >= 0 )	// stops it from rolling over, yeah kinda lame...
