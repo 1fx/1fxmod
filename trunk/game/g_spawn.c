@@ -197,6 +197,7 @@ void SP_gametype_player				(gentity_t* ent);
 void SP_mission_player				(gentity_t* ent);
 void SP_booster						(gentity_t* ent);
 void SP_teleporter					(gentity_t* ent);
+void hideseek_cage					(gentity_t* ent);
 									
 void SP_fx_play_effect				(gentity_t* ent);
 void nolower						(gentity_t* ent);
@@ -287,6 +288,7 @@ spawn_t	spawns[] =
 	{"blocked_teleporter",			NV_blocked_Teleport},
 	{"booster",						SP_booster},
 	{"teleporter",					SP_teleporter},
+	{"hideseek_cage",				hideseek_cage},
 	// The following classnames are instantly removed when spawned.  The RMG 
 	// shares instances with single player which is what causes these things
 	// to attempt to spawn
@@ -302,8 +304,7 @@ spawn_t	spawns[] =
 	{"ce_*",						0},
 	{"pickup_ammo",					0},
 	{"script_runner",				0},
-	{"trigger_arioche_objective",	0},
-	{"noclass",	0},								// Boe!Man 1/28/11: Keep this entry here.. Some messed up SP maps still house this class.
+	{"trigger_arioche_objective",	0},					
 
 	{0, 0}
 };
@@ -544,8 +545,10 @@ int G_SpawnGEntityFromSpawnVars( qboolean inSubBSP )
 			}
 			if(strstr(level.spawnVars[i][0], "bspmodel") && !G_ReadingFromEntFile(inSubBSP)){
 				if(strstr(level.spawnVars[i][1], "instances/Generic/fence01")){
+					if(!level.cagefight){
 					ent->think = G_FreeEntity;
 					ent->nextthink = level.time+12000;
+					}
 				}else if(strstr(level.spawnVars[i][1], "instances/Colombia/npc_jump1") && !G_ReadingFromEntFile(inSubBSP)){
 					ent->think = G_FreeEntity;
 					ent->nextthink = level.time+10000;
@@ -568,6 +571,7 @@ int G_SpawnGEntityFromSpawnVars( qboolean inSubBSP )
 				ent->nextthink = level.time+100;
 				level.tempent = ent->s.number;
 		}
+
 		if(G_ReadingFromEntFile(inSubBSP) && strstr(level.spawnVars[i][1], "flare") && current_gametype.value == GT_HS){
 			Com_Printf("Ignoring flares in .ent\n");
 			G_FreeEntity(ent);

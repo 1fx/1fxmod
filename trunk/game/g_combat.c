@@ -956,7 +956,7 @@ int G_Damage (
 	float			mass;
 	int				m4ammo[4];
 	int				rpgammo[2];
-
+	attackData_t	*attack;
 	if (!targ->takedamage)
 	{
 		return 0;
@@ -1150,10 +1150,16 @@ int G_Damage (
 			damage = 0;
 		}
 		 if(mod == MOD_MSG90A1_SNIPER_RIFLE && strstr(level.mapname, "col9")){
-			damage = 75;
+			attack = &weaponData[WP_MSG90A1].attack[ATTACK_NORMAL];
+			damage = attack->damage;
 		}else if(mod == MOD_AK74_ASSAULT_RIFLE && strstr(level.mapname, "col9")){
-			damage = 25;
-		 }
+			attack = &weaponData[WP_AK74_ASSAULT_RIFLE].attack[ATTACK_NORMAL];
+			damage = attack->damage;
+		 }else if(level.cagefight == qtrue && mod == 265){
+			attack = &weaponData[WP_AK74_ASSAULT_RIFLE].attack[ATTACK_ALTERNATE];
+			damage = attack->damage;
+		}
+		
 		if(mod == MOD_ANM14_GRENADE && attacker->client->sess.team != targ->client->sess.team){
 			if(!targ && attacker->client->sess.team != TEAM_BLUE){ // no target so mm1 firenade SO do NOT slowdown blue
 				targ->client->sess.slowtime = level.time+1500;
@@ -1203,7 +1209,7 @@ if(targ->client->sess.team != attacker->client->sess.team && (mod == MOD_RPG7_LA
 		// if the attacker was on the same team
 		if ( targ != attacker && OnSameTeam (targ, attacker)  )
 		{
-			if ( !g_friendlyFire.integer )
+			if ( !g_friendlyFire.integer && !level.cagefight)
 			{
 				return 0;
 			}
@@ -1863,7 +1869,7 @@ qboolean G_RadiusDamage (
 					trap_SendServerCommand(-1, va("print\"^3[H&S] ^7M4 has disappeared\n\""));
 				}
 				// End
-				SpawnCage(origin, attacker);
+				SpawnCage(origin, attacker, qfalse);
 			}
 		}
 

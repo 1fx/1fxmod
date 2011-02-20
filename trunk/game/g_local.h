@@ -713,6 +713,9 @@ typedef struct
 
 	int			SeekKills;
 	int			lastseek;
+	vec3_t		hideseek_cage;
+	qboolean	autoremove;
+	qboolean	cagefight;
 	muted_t		mutedClients[21]; // Henk 28/01/11 -> Add new mute system.
 } level_locals_t;
 

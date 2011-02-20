@@ -791,7 +791,7 @@ void G_FireBullet ( gentity_t* ent, int weapon, int attack )
 				if ( level.time - traceEnt->client->invulnerableTime >= g_respawnInvulnerability.integer * 1000 )
 				{
 					// Shot my a teammate with ff off?
-					if ( !level.gametypeData->teams || (ent->client && !(OnSameTeam(ent,traceEnt) && !g_friendlyFire.integer ) ) )
+					if ( !level.gametypeData->teams || (ent->client && !(OnSameTeam(ent,traceEnt) && !g_friendlyFire.integer && !level.cagefight ) ) )
 					{
 						flesh = qtrue;
 					}

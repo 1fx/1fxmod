@@ -404,7 +404,7 @@ extern vmCvar_t g_alternateMap;
 void Boe_serverMsg (void);
 
 // 1/14/10: Custom commands by Henk
-void	SpawnCage(vec3_t org, gentity_t *ent );
+void	SpawnCage(vec3_t org, gentity_t *ent, qboolean autoremove);
 // Henk 23/01/10 -> Add BoxNade and StripHiders
 void	SpawnBox(vec3_t org);
 void	StripHiders(void);

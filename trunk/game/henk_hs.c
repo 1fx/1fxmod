@@ -136,10 +136,10 @@ void UpdateScores(void)
 }
 
 // 14/01/10: Custom commands by Henk
-void SpawnCage(vec3_t org, gentity_t *ent) // Spawn a cage
+void SpawnCage(vec3_t org, gentity_t *ent, qboolean autoremove) // Spawn a cage
 {
 	char			*origin;
-	int part;
+	int part, entindex;
 	for(part=1;part<=4;part++){
 	AddSpawnField("classname", "misc_bsp"); // blocker
 	AddSpawnField("bspmodel",	"instances/Generic/fence01");
@@ -174,12 +174,14 @@ void SpawnCage(vec3_t org, gentity_t *ent) // Spawn a cage
 	}
 	AddSpawnField("model",		"trigger_hurt"); //blocked_trigger
 	AddSpawnField("count",		 "1");
-
+	if(autoremove)
+		level.autoremove = qtrue;
 	G_SpawnGEntityFromSpawnVars(qtrue);
-
 	level.numSpawnVars = 0;
 	level.numSpawnVarChars = 0;
 	}
+		if(autoremove)
+		level.autoremove = qfalse;
 }
 
 void SpawnBox		 (vec3_t org)

@@ -98,7 +98,7 @@ int Pickup_Weapon (gentity_t *ent, gentity_t *other, qboolean* autoswitch )
 		{
 			quantity = ent->count;
 		} 
-		else if((weaponNum == WP_RPG7_LAUNCHER || weaponNum == WP_MM1_GRENADE_LAUNCHER || weaponNum == WP_MSG90A1) && current_gametype.value == GT_HS){
+		else if((weaponNum == WP_RPG7_LAUNCHER || weaponNum == WP_AK74_ASSAULT_RIFLE || weaponNum == WP_MM1_GRENADE_LAUNCHER || weaponNum == WP_MSG90A1) && current_gametype.value == GT_HS){
 		// Henk 28/01/10 -> Fixed weapons bug causing M4/RPG to dissapear at pickup
 		quantity = 0;
 		}

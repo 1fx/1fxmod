@@ -451,7 +451,7 @@ void G_ResetGametype ( qboolean fullRestart )
 
 	// Reset the gametype itself
 	G_ResetGametypeEntities ( );
-
+	level.cagefight = qfalse;
 	trap_Cvar_VariableStringBuffer ( "mapname", level.mapname, MAX_QPATH );
 	// Cant have a 0 roundtimelimit
 	if ( g_roundtimelimit.integer < 1 )
