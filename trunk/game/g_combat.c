@@ -1342,7 +1342,7 @@ if(targ->client->sess.team != attacker->client->sess.team && (mod == MOD_RPG7_LA
 		targ->client->lasthurt_time = level.time;
 		targ->client->lasthurt_mod = mod;
 
-		//Ryan april 28 2003
+		if(attacker->client) // Henk 20/02/11 -> Fix for no lower kills
 		targ->client->pers.statinfo.lasthurtby = attacker->s.number;
 		if(attacker->client)
 		{

@@ -710,7 +710,7 @@ void SP_booster(gentity_t* ent){
 	G_SetOrigin( ent, tr.endpos );
 	origin = va("%.0f %.0f %.0f", ent->r.currentOrigin[0], ent->r.currentOrigin[1], ent->r.currentOrigin[2]-15);
 	AddSpawnField("classname", "func_rotating");
-	AddSpawnField("model", "*1");
+	AddSpawnField("model", "none");
 	AddSpawnField("model2", "models/objects/Armory/virus.md3");
 	AddSpawnField("speed", "100");
 	AddSpawnField("dmg", "0");

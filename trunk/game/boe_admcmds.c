@@ -1006,11 +1006,13 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 	char	column1[20], column2[20], column3[20];
 	int		spaces = 0, length = 0, z;
 	char	*file;
-	fileHandle_t testx;
+	fileHandle_t f;
 	char            buf[15000] = "\0";
 	int len, i, count = 0, EndPos = -1, StartPos = 0;
 	qboolean begin = qtrue;
+	int r, lcount = -1, lenx;
 	char xip[64];
+	char fileName[128];
 	//wrapper for interface
 	if(adm){
 		if(subnet)
@@ -1027,22 +1029,19 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 		Com_Printf("^3 #    IP              Name                Reason             By\n");
 		Com_Printf("^7------------------------------------------------------------------------\n");
 	}
-	if(subnet){
-		len = trap_FS_FOpenFile("users/subnetbans.txt", &testx, FS_READ);
-		if(!test){
-			Com_Printf("Error while reading users/subnetbans.txt\n");
-			return;
-		}
-	}else{
-		len = trap_FS_FOpenFile("users/bans.txt", &testx, FS_READ);
-		if(!test){
-			Com_Printf("Error while reading users/bans.txt\n");
-			return;
-		}
+	if(subnet)
+		strcpy(fileName, "users/subnetbans.txt");
+	else
+		strcpy(fileName, "users/bans.txt");
+
+	len = trap_FS_FOpenFile(fileName, &f, FS_READ);
+	if(!test){
+		Com_Printf("Error while reading %s\n", fileName);
+		return;
 	}
-	trap_FS_Read( buf, len, testx );
+	trap_FS_Read( buf, len, f );
 	buf[len] = '\0';
-	trap_FS_FCloseFile(testx);
+	trap_FS_FCloseFile(f);
 	// We parse the buffer, each IP follow it to the file in baninfo(if exists), if empty ignore and LINES +1(CUZ IT IS A LINE IN BANLIST!)
 	for(i=0;i<len;i++){
 		if(begin && buf[i] == '\n'){
@@ -1055,26 +1054,47 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 			begin = qtrue;
 			memset(xip, 0, sizeof(xip));
 			strncpy(xip, buf+StartPos, EndPos-StartPos);
+			lcount = -1;
+			for(r=i;r<strlen(buf);r++){
+				if(buf[r] == '\n'){
+					lcount = r-1;
+					break;
+				}
+			}
+			if(lcount == -1){
+				lcount = strlen(buf); // last line
+			}
+			strncpy(name, buf+EndPos+1, lcount-(EndPos+1));
 			Com_Printf("IP: %s\n", xip);
+			Com_Printf("Name: %s\n", name);
 			count += 1; // Henk 25/01/11 -> Fix wrong ban lines.
 			// Start extracting and printing baninfo
 			if(subnet)
 				file = va("users/baninfo/subnet/%s.IP", xip);
 			else
 				file = va("users/baninfo/%s.IP", xip);
-			GP2 = trap_GP_ParseFile(file, qtrue, qfalse);
-			if(!GP2){
-				//Com_Printf("Error while opening file: %s\n", file);
-				trap_GP_Delete(&GP2);
+			lenx = trap_FS_FOpenFile(file, &f, FS_READ);
+			if(f){
+				if(lenx >= 1){
+					GP2 = trap_GP_ParseFile(file, qtrue, qfalse);
+					group = trap_GPG_GetSubGroups(GP2);
+					trap_GPG_FindPairValue(group, "ip", "0", ip);
+					trap_GPG_FindPairValue(group, "name", "", name);
+					trap_GPG_FindPairValue(group, "reason", "", reason);
+					trap_GPG_FindPairValue(group, "by", "", by);
+					trap_GP_Delete(&GP2);
+				}else{
+					strcpy(ip, xip);
+					strcpy(reason, "");
+					strcpy(by, "");
+					Com_Printf("Not opening because file is too small.\n");
+				}
+				trap_FS_FCloseFile(f);
+			}else{
 				strcpy(ip, xip);
 				strcpy(reason, "");
 				strcpy(by, "");
-			}else{
-			group = trap_GPG_GetSubGroups(GP2);
-			trap_GPG_FindPairValue(group, "ip", "0", ip);
-			trap_GPG_FindPairValue(group, "name", "", name);
-			trap_GPG_FindPairValue(group, "reason", "", reason);
-			trap_GPG_FindPairValue(group, "by", "", by);
+				Com_Printf("No baninfo available\n");
 			}
 			length = strlen(ip);
 			if(length > 15){
@@ -1132,8 +1152,6 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 			}
 			//trap_SendServerCommand( adm-g_entities, va("print \"%s\n", by)); // Boe!Man 9/16/10: Print tier 4.
 			//trap_SendServerCommand( adm-g_entities, va("print \"%s\n%s\n%s\n%s\n\"", ip, name, reason, by)); // print result
-			if(GP2)
-			trap_GP_Delete(&GP2);
 			// End
 		}
 	}
@@ -1348,12 +1366,14 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 	char newbuf[15000];
 	char asd[128] = "";
 	char last[128] = "", lastip[64] = "";
+	char fileName[128];
 	qboolean done = qfalse;
 	line = line;
 	memset( buf, 0, sizeof(buf) );
 	memset( newbuf, 0, sizeof(newbuf) );
 	memset( last, 0, sizeof(last) );
 	memset( lastip, 0, sizeof(lastip) );
+	memset( fileName, 0, sizeof(fileName) );
 	len = trap_FS_FOpenFile( file, &f, FS_READ_TEXT);
 	if(!f)
 		return;
@@ -1407,7 +1427,6 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 		}
 	}
 	if(done && strlen(last) >= 1){ // && !strstr(newbuf, last)
-		Com_Printf("New buf:\n%s\n", newbuf);
 	// Start writing our new created file
 	len = trap_FS_FOpenFile( file, &f, FS_WRITE_TEXT);
 	if(!f)
@@ -1423,9 +1442,11 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 	}
 	Com_Printf("Last ip: %s\n", lastip);
 	if(subnet)
-		trap_FS_FOpenFile( va("users\\baninfo\\subnet\\%s.IP", lastip), &f, FS_WRITE );
+		strcpy(fileName, va("users\\baninfo\\subnet\\%s.IP", lastip));
 	else
-		trap_FS_FOpenFile( va("users\\baninfo\\%s.IP", lastip), &f, FS_WRITE );
+		strcpy(fileName, va("users\\baninfo\\%s.IP", lastip));
+
+	len = trap_FS_FOpenFile(fileName , &f, FS_WRITE );
 	if(f){
 		trap_FS_Write("", 0, f);
 		trap_FS_FCloseFile(f);
@@ -2454,8 +2475,20 @@ void Adm_ForceTeam(int argNum, gentity_t *adm, qboolean shortCmd)
 			strcpy(str, "blue");
 			xteam = TEAM_BLUE;
 		}else{
-			trap_SendServerCommand(adm->s.number, va("print\"^3[Info] Wrong team: %s.\n\"", str));
-			return;
+			trap_Argv(3, str, sizeof(str));
+			if(str[0] == 's' || str[0] == 'S'){
+				strcpy(str, "spectator");
+				xteam = TEAM_SPECTATOR;
+			}else if(str[0] == 'r' || str[0] == 'R'){
+				strcpy(str, "red");
+				xteam = TEAM_RED;
+			}else if(str[0] == 'b' || str[0] == 'B'){
+				strcpy(str, "blue");
+				xteam = TEAM_BLUE;
+			}else{
+				trap_SendServerCommand(adm->s.number, va("print\"^3[Info] Wrong team: %s.\n\"", str));
+				return;
+			}
 		}
 	}else{
 		// Boe!Man 1/13/11: Fix for Forceteam not working with RCON system.
@@ -2878,8 +2911,20 @@ void Henk_Lock(int argNum, gentity_t *adm, qboolean shortCmd){
 	}else if(strstr(Q_strlwr(arg), "a") || strstr(Q_strlwr(arg), "all")){
 		RPM_lockTeam(adm, qtrue, "all");
 	}else{
-		trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Unknown team entered.\n\""));
-		return;
+		trap_Argv( 2, arg, sizeof( arg ) );
+		if(strstr(Q_strlwr(arg), "b") || strstr(Q_strlwr(arg), "blue")){
+			RPM_lockTeam(adm, qtrue, "blue");
+		}else if(strstr(Q_strlwr(arg), "r") || strstr(Q_strlwr(arg), "red")){
+			RPM_lockTeam(adm, qtrue, "red");
+		}else if(strstr(Q_strlwr(arg), "s") || strstr(Q_strlwr(arg), "spec")){
+			RPM_lockTeam(adm, qtrue, "spec");
+		}else if(strstr(Q_strlwr(arg), "a") || strstr(Q_strlwr(arg), "all")){
+			RPM_lockTeam(adm, qtrue, "all");
+		}else{
+			trap_Argv( 2, arg, sizeof( arg ) );
+			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Unknown team entered.\n\""));
+			return;
+		}
 	}
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 }

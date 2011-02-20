@@ -1673,7 +1673,11 @@ void SP_func_rotating (gentity_t *ent) {
 		ent->damage = 2;
 	}
 
+	if(!strstr(ent->model, "none")){
 	trap_SetBrushModel( ent, ent->model );
+	}else
+		ent->s.modelindex = 1;
+
 	InitMover( ent );
 
 	VectorCopy( ent->s.origin, ent->s.pos.trBase );
