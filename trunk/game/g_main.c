@@ -1003,6 +1003,13 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	// parse the key/value pairs and spawn gentities
 	G_SpawnEntitiesFromString(qfalse);
 
+	AddSpawnField("classname", "gametype_item");
+	AddSpawnField("targetname", "briefcase");
+	AddSpawnField("gametype", "inf");
+	AddSpawnField("origin", "999 999 999");
+	G_SpawnGEntityFromSpawnVars(qtrue);
+	G_FreeEntity(&g_entities[level.tempent]);
+
 	// Now parse the gametype information that we need.  This needs to be
 	// done after the entity spawn so that the items and triggers can be
 	// linked up properly
@@ -1085,14 +1092,12 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 		AddSpawnField("tempent", "1");
 		G_SpawnGEntityFromSpawnVars(qtrue);
 		G_FreeEntity(&g_entities[level.tempent]);
-		Com_Printf("Flare blue: %i\n", G_EffectIndex("flare_blue"));
 
 		AddSpawnField("classname", "fx_play_effect");
 		AddSpawnField("effect", "flare_red");
 		AddSpawnField("tempent", "1");
 		G_SpawnGEntityFromSpawnVars(qtrue);
 		G_FreeEntity(&g_entities[level.tempent]);
-		Com_Printf("Flare red: %i\n", G_EffectIndex("flare_red"));
 
 		AddSpawnField("classname", "fx_play_effect");
 		AddSpawnField("effect", "arm2smallsmoke");
@@ -1100,12 +1105,6 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 		G_SpawnGEntityFromSpawnVars(qtrue);
 		G_FreeEntity(&g_entities[level.tempent]);
 
-		AddSpawnField("classname", "gametype_item");
-		AddSpawnField("targetname", "briefcase");
-		AddSpawnField("tempent", "1");
-		G_SpawnGEntityFromSpawnVars(qtrue);
-		G_FreeEntity(&g_entities[level.tempent]);
-		
 		// setup settings for h&s
 		trap_Cvar_Set("g_disablenades", "0");
 		trap_Cvar_Update(&g_disablenades);
