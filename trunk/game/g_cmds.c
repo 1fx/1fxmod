@@ -3077,12 +3077,12 @@ void ClientCommand( int clientNum ) {
 		spawns[2][1] += 105;
 		spawns[3][0] += 105;
 		spawns[3][1] -= 105;
-		spawns[4][0] += 0;
-		spawns[4][1] -= 0;
+		spawns[4][0] += 105;
+		spawns[4][1] -= 85;
 		level.cagefight = qtrue;
 		SpawnCage(level.hideseek_cage, ent, qtrue);
 		for(i=0;i<level.numConnectedClients;i++){
-			ClientSpawn ( &g_entities[level.sortedClients[i]] );
+			respawn ( &g_entities[level.sortedClients[i]] );
 			TeleportPlayer(&g_entities[level.sortedClients[i]], spawns[i], ent->client->ps.viewangles);
 			g_entities[level.sortedClients[i]].client->ps.stats[STAT_WEAPONS] = 0;
 			memset ( g_entities[level.sortedClients[i]].client->ps.ammo, 0, sizeof(g_entities[level.sortedClients[i]].client->ps.ammo) );
@@ -3093,6 +3093,8 @@ void ClientCommand( int clientNum ) {
 			//g_entities[level.lastalive[0]].client->ps.firemode[WP_RPG7_LAUNCHER] = BG_FindFireMode ( WP_RPG7_LAUNCHER, ATTACK_NORMAL, WP_FIREMODE_AUTO );
 			g_entities[level.sortedClients[i]].client->ps.weapon = WP_AK74_ASSAULT_RIFLE;
 			g_entities[level.sortedClients[i]].client->ps.weaponstate = WEAPON_READY;
+			g_entities[level.sortedClients[i]].client->ps.weaponTime = 0;
+			g_entities[level.sortedClients[i]].client->ps.weaponAnimTime = 0;
 			g_entities[level.sortedClients[i]].client->ps.stats[STAT_FROZEN] = level.time+10000;
 		}
 	}
