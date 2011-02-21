@@ -545,7 +545,7 @@ int G_SpawnGEntityFromSpawnVars( qboolean inSubBSP )
 			}
 			if(strstr(level.spawnVars[i][0], "bspmodel") && !G_ReadingFromEntFile(inSubBSP)){
 				if(strstr(level.spawnVars[i][1], "instances/Generic/fence01")){
-					if(!level.cagefight){
+					if(level.autoremove != qtrue){
 					ent->think = G_FreeEntity;
 					ent->nextthink = level.time+12000;
 					}

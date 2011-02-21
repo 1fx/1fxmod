@@ -254,6 +254,7 @@ void SP_target_push( gentity_t *self ) {
 
 void trigger_booster_touch (gentity_t *self, gentity_t *other, trace_t *trace ) {
 	vec3_t origin;
+
 	if ( !other->client ) {
 		return;
 	}
@@ -274,7 +275,7 @@ void trigger_booster_touch (gentity_t *self, gentity_t *other, trace_t *trace ) 
 	origin[2] += 40;
 	G_PlayEffect ( G_EffectIndex("levels/shop7_toxiic_explosion"),origin, self->pos1);
 	//G_SpawnGEntityFromSpawnVars (qtrue);
-	Boe_ClientSound(other, G_SoundIndex("sound/weapons/rpg7/flyby.mp3"));
+	Henk_CloseSound(other->r.currentOrigin, G_SoundIndex("sound/movers/doors/airlock_door01/airlock_open.mp3"));
 
 	VectorCopy (self->s.origin2, other->client->ps.velocity);
 	other->client->ps.velocity[2] += self->up;
@@ -322,7 +323,8 @@ void trigger_NewTeleporter_touch (gentity_t *self, gentity_t *other, trace_t *tr
 		}
 	}
 	G_PlayEffect ( G_EffectIndex("misc/electrical"),other->client->ps.origin, other->pos1);
-
+	Henk_CloseSound(self->origin_to, G_SoundIndex("sound/misc/menus/apply_changes.wav"));
+	Henk_CloseSound(self->origin_from, G_SoundIndex("sound/misc/menus/apply_changes.wav"));
 	TeleportPlayer( other, self->origin_to, self->angles_to );
 }
 
@@ -623,7 +625,7 @@ void hideseek_cage(gentity_t *ent){
 
 // Henk 13/02/11
 void SP_teleporter(gentity_t* ent){
-	char			*origin;
+	char		*origin;
 	trace_t		tr;
 	vec3_t		dest;
 	vec3_t		src;

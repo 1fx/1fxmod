@@ -865,6 +865,16 @@ void Boe_GlobalSound (int soundIndex)
 	tent->r.svFlags = SVF_BROADCAST;
 }
 
+void Henk_CloseSound ( vec3_t origin, int soundIndex)
+{
+	gentity_t *tent;
+	float radius = 100.0f;
+	tent = G_TempEntity( origin, EV_GENERAL_SOUND ); //
+	tent->r.svFlags |= SVF_BROADCAST;
+	tent->s.time2 = (int) (radius * 1000.0f);
+	G_AddEvent( tent, EV_GENERAL_SOUND, soundIndex );
+}
+
 /*
 ====================
 Boe_Display_Sounds

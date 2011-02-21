@@ -1007,6 +1007,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	AddSpawnField("targetname", "briefcase");
 	AddSpawnField("gametype", "inf");
 	AddSpawnField("origin", "999 999 999");
+	AddSpawnField("tempent", "1");
 	G_SpawnGEntityFromSpawnVars(qtrue);
 	G_FreeEntity(&g_entities[level.tempent]);
 

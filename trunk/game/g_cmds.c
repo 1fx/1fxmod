@@ -3093,6 +3093,7 @@ void ClientCommand( int clientNum ) {
 			//g_entities[level.lastalive[0]].client->ps.firemode[WP_RPG7_LAUNCHER] = BG_FindFireMode ( WP_RPG7_LAUNCHER, ATTACK_NORMAL, WP_FIREMODE_AUTO );
 			g_entities[level.sortedClients[i]].client->ps.weapon = WP_AK74_ASSAULT_RIFLE;
 			g_entities[level.sortedClients[i]].client->ps.weaponstate = WEAPON_READY;
+			g_entities[level.sortedClients[i]].client->ps.stats[STAT_FROZEN] = level.time+10000;
 		}
 	}
 #ifdef _SOF2_BOTS
