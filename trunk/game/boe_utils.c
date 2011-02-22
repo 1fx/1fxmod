@@ -1505,7 +1505,7 @@ void Boe_Stats ( gentity_t *ent )
 	if (client1 == qtrue){
 		trap_SendServerCommand( ent-g_entities, va("print \"[^3Client^7]      %s\n", client0));
 	}else{
-		strcpy(strClient, level.clients[i].sess.strClient);
+		strcpy(strClient, g_entities[idnum].client->sess.strClient);
 		if(strlen(strClient) >= 2){
 			trap_SendServerCommand( ent-g_entities, va("print \"[^3Client^7]      %s\n", strClient));
 		}else{
