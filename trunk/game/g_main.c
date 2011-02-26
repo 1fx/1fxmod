@@ -138,6 +138,7 @@ vmCvar_t	g_forceteam;					// Admin CVAR.
 vmCvar_t	Owner;
 vmCvar_t	Clan;
 vmCvar_t	ClanURL;
+vmCvar_t	HostedBy;
 // Boe!Man 4/1/10
 vmCvar_t	server_redteamprefix;
 vmCvar_t	server_blueteamprefix;
@@ -394,9 +395,11 @@ static cvarTable_t gameCvarTable[] =
 
 	{ &g_maxIPConnections,			"g_maxIPConnections",	"3",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse},
 	// Boe!Man 3/30/10: This info is used for the /about menu.
-	{ &Owner, "Owner", "Unknown", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
+	{ &Owner, "Owner", "Unknown", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 	{ &Clan, "Clan", "0", CVAR_ARCHIVE | CVAR_LOCK_RANGE, 0.0, 1.0 },
 	{ &ClanURL, "ClanURL", "0", CVAR_ARCHIVE, 0.0, 1.0 },
+	// Boe!Man 2/25/11: As 1fx. Mod isn't going to be exclusive to i3D.net, we need to give providers/users the chance to set a CVAR to point to where they ARE hosting it.
+	{ &HostedBy, "HostedBy", "Other", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 
 	{ &server_redteamprefix, "server_redteamprefix", "^$R^Te^Hd", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_blueteamprefix, "server_blueteamprefix", "^yB^Il^fu^+e", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
@@ -2932,6 +2935,18 @@ void G_RunFrame( int levelTime )
 				trap_Cvar_VariableStringBuffer ( "mapname", level.mapname, MAX_QPATH );
 				trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", level.mapname));
 			}
+		}
+		else if(level.mapAction == 4){
+			if(level.time == level.mapSwitchCount + 1000){
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp%sc%sy%scle in 4!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));}
+			else if(level.time == level.mapSwitchCount + 2000){
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp%sc%sy%scle in 3!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));}
+			else if(level.time == level.mapSwitchCount + 3000){
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp%sc%sy%scle in 2!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));}
+			else if(level.time == level.mapSwitchCount + 4000){
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp%sc%sy%scle in 1!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));}
+			else if(level.time == level.mapSwitchCount + 5000){
+				trap_SendConsoleCommand( EXEC_APPEND, va("mapcycle\n"));}
 		}
 	}
 

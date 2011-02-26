@@ -489,9 +489,9 @@ void Boe_MapRestart(int argNum, gentity_t *ent, qboolean shortCmd){
 		Boe_adminLog (va("%s - MAP RESTART", ent->client->pers.cleanName)) ;
 		return;
 		}else{
-			if(level.mapAction == 1){
+			if(level.mapAction == 1 || level.mapAction == 3){
 				trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7A map restart is already in progress.\n\""));}
-			else if(level.mapAction == 2){
+			else if(level.mapAction == 2 || level.mapAction == 4){
 				trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7A map switch is already in progress.\n\""));}
 			else{
 				trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7Something appears to be wrong. Please report to an developer using this error code: 2L\n\""));}
@@ -503,7 +503,7 @@ void Boe_MapRestart(int argNum, gentity_t *ent, qboolean shortCmd){
 		level.mapAction = 1;
 		level.mapSwitchCount = level.time;
 		if (g_compMode.integer == 0){
-			Com_Printf("^3[Rcon Action] ^7Map restarted.\n");
+			trap_SendServerCommand(-1, va("print \"^3[Rcon Action] ^7Map restarted.\n\""));
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp %sr%se%sstart in 5!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		}else if (g_compMode.integer > 0 && cm_enabled.integer == 1){
 			trap_SendServerCommand(-1, va("print \"^3[Info] ^7First round started.\n\""));
@@ -518,9 +518,9 @@ void Boe_MapRestart(int argNum, gentity_t *ent, qboolean shortCmd){
 		Boe_adminLog (va("%s - MAP RESTART", "RCON")) ;
 		return;
 		}else{
-			if(level.mapAction == 1){
+			if(level.mapAction == 1 || level.mapAction == 3){
 				Com_Printf("^3[Info] ^7A map restart is already in progress.\n");}
-			else if(level.mapAction == 2){
+			else if(level.mapAction == 2 || level.mapAction == 4){
 				Com_Printf("^3[Info] ^7A map switch is already in progress.\n");}
 			else{
 				Com_Printf("^3[Info] ^7Something appears to be wrong. Please report to an developer using this error code: 2L\n");}
@@ -3124,7 +3124,7 @@ void Henk_Gametype(int argNum, gentity_t *adm, qboolean shortCmd){
 	}else{
 		if(level.mapAction == 1 || level.mapAction == 3)
 			trap_SendServerCommand(adm-g_entities, va("print\"^3[Info] ^7A map restart is already in progress.\n\""));
-		else if(level.mapAction == 2)
+		else if(level.mapAction == 2 || level.mapAction == 4)
 			trap_SendServerCommand(adm-g_entities, va("print\"^3[Info] ^7A map switch is already in progress.\n\""));
 		else{
 			trap_SendServerCommand(adm-g_entities, va("print\"^3[Info] ^7Something appears to be wrong. Please report to a developer using this error code: 2J\n\""));
@@ -3151,51 +3151,96 @@ Henk_Map
 */
 
 void Henk_Map(int argNum, gentity_t *adm, qboolean shortCmd){
-	char map[64] = "";
-	int i;
+	char			map[64]			= "";
+	int				i;
 	fileHandle_t	f;
-	char	arg[32] = "\0"; // increase buffer so we can process more commands
+	char			arg[32]			= "\0";		// increase buffer so we can process more commands
+	char			gametype[8];				// Boe!Man 2/26/11: The gametype we store so we can broadcast if neccesary.
+	char			*gt;						// Boe!Man 2/26/11: Gametype parameter.
 
 	trap_Argv( argNum, arg, sizeof( arg ) );
-	if(strlen(arg) >= 3){
-		if(shortCmd){
-			for(i=0;i<=strlen(arg);i++){
-				if(arg[i] == ' '){
-					strncpy(map, arg+i+1, strlen(arg));
-					break;
+	// Boe!Man 2/26/11: Pre-check if the map switch is already in progress. No need to waste resources.
+	if(level.mapSwitch == qfalse){
+	// Boe!Man 2/26/11: We get the gametype parameter. Also added support for uppercase arguments.
+		if(strlen(arg) >= 3){
+			if(shortCmd){
+				gt = Q_strlwr(GetReason());
+				for(i=0;i<=strlen(arg);i++){
+					// Boe!Man 2/26/11: Modified code so the mapname actually excludes the potential gametype.
+					if(arg[i] == ' '){
+						if(strlen(gt) > 1){
+							strncpy(map, arg+i+1, strlen(arg) -i - 1 - strlen(gt) - 1);
+						}else{
+							strncpy(map, arg+i+1, strlen(arg) -i - 1);
+						}
+						break;
+					}
 				}
-			}
-			if(strlen(map) <= 1){
-				trap_Argv( 2, arg, sizeof( arg ) ); // short cmd from console
+				if(strlen(map) <= 1){
+					trap_Argv( 2, arg, sizeof( arg ) ); // short cmd from console
+					strcpy(map, arg);
+				}
+			}else{
 				strcpy(map, arg);
+				// Boe!Man 2/26/11: Check for the gametype.
+				trap_Argv(3, arg, sizeof(arg));
+				gt = Q_strlwr(arg); // Boe!Man 2/26/11: So the gametype check will not fall over captials.
 			}
+			trap_FS_FOpenFile( va("maps\\%s.bsp", map), &f, FS_READ );
+			if ( !f ){
+				trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Map not found.\n\""));
+				return;
+			}	
+			trap_FS_FCloseFile(f);
+		// Boe!Man 2/26/11: There are no maps that contain less than two characters. Obviously the map isn't found.
 		}else{
-			strcpy(map, arg);
-		}
-		trap_FS_FOpenFile( va("maps\\%s.bsp", map), &f, FS_READ );
-		if ( !f ){
 			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Map not found.\n\""));
 			return;
-		}	
-		trap_FS_FCloseFile(f);
-
-		if(level.mapSwitch == qfalse){
-			level.mapSwitch = qtrue;
-			level.mapAction = 2;
-			level.mapSwitchCount = level.time;
-			strcpy(level.mapSwitchName, map);
-			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Map switch to %s by %s.\n\"", map, adm->client->pers.netname));
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp ^7%s in 5!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, map));
-			Boe_adminLog (va("%s - MAP CHANGE TO %s", adm->client->pers.cleanName, map)) ;
-		}else{
-			if(level.mapAction == 1)
-				trap_SendServerCommand(adm-g_entities, va("print\"^3[Info] ^7A map restart is already in progress.\n\""));
-			else if(level.mapAction == 2)
-				trap_SendServerCommand(adm-g_entities, va("print\"^3[Info] ^7A map switch is already in progress.\n\""));
-			else
-				trap_SendServerCommand(adm-g_entities, va("print\"^3[Info] ^7Something appears to be wrong. Please report to a developer using this error code: 2L\n\""));
 		}
+
+		// Boe!Man 2/26/11: The map is found, did they append a gametype among with it?
+		if(strlen(gt) >= 2){ // Boe!Man 2/26/11: The shortest available GT is "dm", so we check the size (is it longer then 2?) and save resouces if not.
+			if(strstr(gt, "ctf")){
+				trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype ctf\n"));
+				strcpy(gametype, "ctf");
+			}else if(strstr(gt, "inf")){
+				trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype inf\n"));
+				strcpy(gametype, "inf");
+			}else if(strstr(gt, "tdm")){
+				trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype tdm\n"));
+				strcpy(gametype, "tdm");
+			}else if(strstr(gt, "dm")){
+				trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype dm\n"));
+				strcpy(gametype, "dm");
+			}else if(strstr(gt, "elim")){
+				trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype elim\n"));
+				strcpy(gametype, "elim");
+			}else if(strstr(gt, "h&s")){
+				trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype h&s\n"));
+				strcpy(gametype, "h&s");
+			}
+		}
+			
+		level.mapSwitch = qtrue;
+		level.mapAction = 2;
+		level.mapSwitchCount = level.time;
+		strcpy(level.mapSwitchName, map);
+		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp ^7%s in 5!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, map));
+		if(strlen(gametype) > 0){ // Boe!Man 2/26/11: If there's actually a gametype found..
+			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Map switch to %s [%s] by %s.\n\"", map, gametype, adm->client->pers.netname));
+			Boe_adminLog (va("%s - MAP CHANGE TO %s [%s]", adm->client->pers.cleanName, map, gametype)) ;
+		}else{
+			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Map switch to %s by %s.\n\"", map, adm->client->pers.netname));
+			Boe_adminLog (va("%s - MAP CHANGE TO %s", adm->client->pers.cleanName, map)) ;
+		}
+	}else{
+		if(level.mapAction == 1 || level.mapAction == 3)
+			trap_SendServerCommand(adm-g_entities, va("print\"^3[Info] ^7A map restart is already in progress.\n\""));
+		else if(level.mapAction == 2 || level.mapAction == 4)
+			trap_SendServerCommand(adm-g_entities, va("print\"^3[Info] ^7A map switch is already in progress.\n\""));
+		else
+			trap_SendServerCommand(adm-g_entities, va("print\"^3[Info] ^7Something appears to be wrong. Please report to a developer using this error code: 2L\n\""));
 	}
 }
 
@@ -3252,5 +3297,53 @@ void Boe_cancelVote (int argNum, gentity_t *adm, qboolean shortCmd){
 	}else{
 		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Vote cancelled.\n\""));
 		Boe_adminLog (va("%s - CANCELVOTE", "RCON")) ;
+	}
+}
+
+/*
+=========
+Boe_Mapcycle
+=========
+*/
+
+void Boe_Mapcycle (int argNum, gentity_t *ent, qboolean shortCmd){
+	if(ent && ent->client){
+		if(level.mapSwitch == qfalse){
+			level.mapSwitch = qtrue;
+			level.mapAction = 4; 
+			level.mapSwitchCount = level.time;
+			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+			Boe_adminLog (va("%s - MAPCYCLE", ent->client->pers.cleanName));
+			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp%sc%sy%scle in 5!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Mapcycle by %s.\n\"", ent->client->pers.netname));
+			return;
+		}else{
+			if(level.mapAction == 1 || level.mapAction == 3){
+				trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7A map restart is already in progress.\n\""));}
+			else if(level.mapAction == 2 || level.mapAction == 4){
+				trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7A map switch is already in progress.\n\""));}
+			else{
+				trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7Something appears to be wrong. Please report to an developer using this error code: 2L\n\""));}
+			return;
+		}
+	}else{
+		if(level.mapSwitch == qfalse){
+			level.mapSwitch = qtrue;
+			level.mapAction = 4;
+			level.mapSwitchCount = level.time;
+			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp%sc%sy%scle in 5!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+			trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Mapcycle.\n\""));
+			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+			Boe_adminLog (va("%s - MAPCYCLE", "RCON")) ;
+			return;
+		}else{
+			if(level.mapAction == 1 || level.mapAction == 3){
+				Com_Printf("^3[Info] ^7A map restart is already in progress.\n");}
+			else if(level.mapAction == 2 || level.mapAction == 4){
+				Com_Printf("^3[Info] ^7A map switch is already in progress.\n");}
+			else{
+				Com_Printf("^3[Info] ^7Something appears to be wrong. Please report to an developer using this error code: 2L\n");}
+			return;
+		}
 	}
 }

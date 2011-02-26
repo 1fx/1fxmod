@@ -1706,20 +1706,12 @@ Updated 11/20/10 - 11:17 PM
 
 void Boe_About( gentity_t *ent )
 {
-	char Clan[64];
-	char ClanURL[64];
-	char Owner[64];
-
 	#ifdef _BOE_DBG
 	if (strstr(boe_log.string, "2"))
 		G_LogPrintf("8s\n");
 	#endif
 	
 	// Boe!Man 3/30/10
-	trap_Cvar_VariableStringBuffer ( "Clan", Clan, MAX_QPATH );
-	trap_Cvar_VariableStringBuffer ( "ClanURL", ClanURL, MAX_QPATH );
-	trap_Cvar_VariableStringBuffer ( "Owner", Owner, MAX_QPATH );
-
 	trap_SendServerCommand( ent-g_entities, va("print \"\n^3Server settings\n\""));
 	trap_SendServerCommand( ent-g_entities, va("print \"--------------------------------------\n\""));
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Mod used^7]            %s %s\n", INF_STRING, INF_VERSION_STRING));
@@ -1768,16 +1760,16 @@ void Boe_About( gentity_t *ent )
 	*/
 	trap_SendServerCommand( ent-g_entities, va("print \"\n^3Owner settings\n\""));
 	trap_SendServerCommand( ent-g_entities, va("print \"--------------------------------------\n\""));
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Owner^7]               %s\n", Owner));
-	if (strstr(Clan, "0"))
+	trap_SendServerCommand( ent-g_entities, va("print \"[^3Owner^7]               %s\n", Owner.string));
+	if (strstr(Clan.string, "0"))
 		trap_SendServerCommand( ent-g_entities, va("print \"[^3Active clan^7]         No\n"));
 	else
 		trap_SendServerCommand( ent-g_entities, va("print \"[^3Active clan^7]         Yes\n"));
-	if (strstr(ClanURL, "0"))
+	if (strstr(ClanURL.string, "0"))
 		trap_SendServerCommand( ent-g_entities, va("print \"[^3Clan URL^7]            None\n"));
 	else
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Clan URL^7]            %s\n", ClanURL));
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Hosted by^7]           i3D.net\n"));
+	trap_SendServerCommand( ent-g_entities, va("print \"[^3Clan URL^7]            %s\n", ClanURL.string));
+	trap_SendServerCommand( ent-g_entities, va("print \"[^3Hosted by^7]           %s\n", HostedBy.string));
 	trap_SendServerCommand( ent-g_entities, va("print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\""));
 	#ifdef _BOE_DBG
 	if (strstr(boe_log.string, "2"))

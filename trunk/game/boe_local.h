@@ -12,7 +12,7 @@
 #endif
 #define INF_STRING "1fx. Mod"
 #define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod"
-#define INF_VERSION_DATE "2/12/11"
+#define INF_VERSION_DATE "2/26/11"
 #define TEST_VERSION "Developed by ^GBoe!Man ^7& ^6Henkie\n^1Running a Test version of the Mod\n\n"
 #define STABLE_VERSION "Developed by ^GBoe!Man ^7& ^6Henkie\n1fx.uk.to ^3| ^7i3D.net\n\n"
 
@@ -78,6 +78,7 @@
 // 0.56t		4th	Release	Candidate			388			2/6/11		// Sent out to BETA group on 2/6/11
 // 0.56			1st Release						404			2/8/11		// Sent out to BETA group on 2/8/11
 // 0.56			2nd Release (hotfix)			404(/408)	2/12/11		// Sent out to BETA group on 2/12/11
+// 0.57t		Alpha							424			2/26/11
 
 //===================================================================
 
@@ -307,6 +308,7 @@ extern	vmCvar_t	server_starprefix;
 extern	vmCvar_t	Owner;
 extern	vmCvar_t	Clan;
 extern	vmCvar_t	ClanURL;
+extern	vmCvar_t	HostedBy;
 
 // Henk 19/04/10 -> Fix all prototypes warning(Yes im bored)
 int Boe_NameListCheck (int num, const char *name, const char *file, gentity_t *ent, qboolean banCheck, qboolean admCheck, qboolean subnetCheck, qboolean scoreCheck, qboolean cloneCheck);
@@ -462,3 +464,6 @@ void CheckEnts(gentity_t *ent);
 extern vmCvar_t	g_forcevote;
 void Boe_passVote (int argNum, gentity_t *adm, qboolean shortCmd);
 void Boe_cancelVote (int argNum, gentity_t *adm, qboolean shortCmd);
+
+// Boe!Man 2/25/11: Mapcycle.
+void Boe_Mapcycle (int argNum, gentity_t *ent, qboolean shortCmd);
