@@ -156,7 +156,9 @@ vmCvar_t	g_clanfile;
 vmCvar_t	g_enableTeamCmds;
 vmCvar_t	g_refpassword;
 vmCvar_t	g_checkcountry;
-vmCvar_t	g_disablelower;
+// Boe!Man 2/27/11: Some new CVARs for nolower.
+vmCvar_t	g_useNoLower;
+vmCvar_t	g_autoNoLower;
 
 // Boe!Man 4/15/10: Some level commands (Admin).
 vmCvar_t	g_nolower;
@@ -412,7 +414,8 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_enableTeamCmds, "g_enableTeamCmds", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 	{ &g_refpassword, "g_refpassword", "none", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 	{ &g_checkcountry, "g_checkcountry", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
-	{ &g_disablelower, "g_disablelower", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
+	{ &g_useNoLower, "g_useNoLower", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
+	{ &g_autoNoLower, "g_autoNoLower", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_autoeventeams, "g_autoeventeams", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 
 	{ &server_enableServerMsgs, "server_enableServerMsgs", "1", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },

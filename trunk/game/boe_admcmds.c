@@ -421,9 +421,19 @@ Boe_NoLower
 
 void Boe_NoLower(int argNum, gentity_t *ent, qboolean shortCmd){
 	trap_Cvar_VariableStringBuffer ( "mapname", level.mapname, MAX_QPATH );
+	// Boe!Man 2/27/11: If people don't want to use NoLower they can specify to disable it.
+	if(g_useNoLower.integer <= 0){
+		if(ent && ent->client){
+			trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7Nolower has been disabled on this server.\n\""));
+		}else{
+			Com_Printf("Nolower has been disabled on this server.\n");
+		}
+		return;
+	}
+
 	if(level.nolower1 == qtrue){
 		level.nolower1 = qfalse;
-		trap_Cvar_Set("g_disablelower", "0");
+		//trap_Cvar_Set("g_disablelower", "0");
 		//trap_Cvar_Update(&g_disablelower);
 		if (strstr(level.mapname, "mp_kam2")){
 			RemoveFence();
@@ -439,7 +449,7 @@ void Boe_NoLower(int argNum, gentity_t *ent, qboolean shortCmd){
 		}
 	}else{
 		level.nolower1 = qtrue;
-		trap_Cvar_Set("g_disablelower", "1");
+		//trap_Cvar_Set("g_disablelower", "1");
 		//trap_Cvar_Update(&g_disablelower);
 		if (strstr(level.mapname, "mp_kam2")){
 			SpawnFence(1);

@@ -556,7 +556,7 @@ void G_ResetGametype ( qboolean fullRestart )
 	{
 		level.gametypeJoinTime = level.time;
 	}
-	if(g_disablelower.integer == 1){
+	if(g_useNoLower.integer == 1){
 		level.nolower1 = qtrue;
 		if (strstr(level.mapname, "mp_kam2")){
 			SpawnFence(1);

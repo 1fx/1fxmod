@@ -323,8 +323,6 @@ void Boe_Remove_Clan_Member(int argNum, gentity_t *adm, qboolean shortCmd);
 void RPM_Clan_Vs_All(gentity_t *adm);
 void Preload(void);
 
-extern  vmCvar_t	g_disablelower;
-
 char *GetReason(void);
 
 // Boe!Man 5/9/10
