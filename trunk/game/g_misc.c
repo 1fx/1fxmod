@@ -635,6 +635,16 @@ void fx_think( gentity_t *ent )
 void nolower(gentity_t *ent)
 {
 	G_SpawnVector("origin", "0", level.nolower);
+	// Boe!Man 3/1/11: Add the minimum players (if found).
+	if (ent->min_players > 0){
+		level.autoNoLower = ent->min_players;
+		if(ent->wait == 0){
+			level.autoNoLowerDelay = 10;
+		}else{
+			level.autoNoLowerDelay = ent->wait;
+		}
+		level.autoNoLowerUpdateTime = level.time + 10000;
+	}
 	level.nolower1 = qtrue;
 }
 

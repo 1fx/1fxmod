@@ -633,6 +633,13 @@ typedef struct
 	// Henk 06/04/10 -> Add TMI for RPM scoreboard compatiblity
 	int				lastTMIupdate;
 
+	// Boe!Man 3/1/11: Auto nolower system.
+	int			autoNoLower;	// Number of clients that need to be in the game in order for lower to open.
+	int			autoNoLowerUpdateTime; // Check for nolower again when this value has been reached (in conjunction with level.time).
+	qboolean	autoNoLowerActive;	   // qtrue for being active.
+	int			autoNoLowerDelay;		// The delay (closes in x seconds).
+	qboolean	autoNoLowerWait;		// qtrue when the delay is active.
+
 	int			redLocked;				// when set to 1 no one will be allowed to join team
 	int			blueLocked;
 	int			specsLocked;

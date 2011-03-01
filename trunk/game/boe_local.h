@@ -236,6 +236,10 @@ void Boe_SubnetBanlist (int argNum, gentity_t *adm, qboolean shortCmd);
 extern	vmCvar_t	g_3rd;
 extern	vmCvar_t	g_cm;
 
+// Boe!Man 3/1/11
+extern	vmCvar_t	g_useNoLower;
+extern	vmCvar_t	g_autoNoLower;
+
 //==============================================
 // boe_utils.c
 //==============================================
