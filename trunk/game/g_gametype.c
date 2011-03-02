@@ -556,20 +556,7 @@ void G_ResetGametype ( qboolean fullRestart )
 	{
 		level.gametypeJoinTime = level.time;
 	}
-	if(g_useNoLower.integer == 1){
-		level.nolower1 = qtrue;
-		if (strstr(level.mapname, "mp_kam2")){
-			SpawnFence(1);
-			SpawnFence(2);
-			SpawnFence(3);
-			SpawnFence(4);
-		}
-	}else{
-		level.nolower1 = qfalse;
-		if (strstr(level.mapname, "mp_kam2")){
-			RemoveFence();
-		}
-	}
+
 	// Respawn all clients
 	G_RespawnClients ( qtrue, TEAM_RED, fullRestart );
 	G_RespawnClients ( qtrue, TEAM_BLUE, fullRestart );
@@ -591,7 +578,6 @@ void G_ResetGametype ( qboolean fullRestart )
 		level.timelimithit = qfalse; // allow timelimit hit message
 		// Henkie 23/02/10 -> Cache the sounds' index
 		level.clicksound = G_SoundIndex("sound/misc/menus/click.wav");
-		level.rpgeffect = G_EffectIndex("chunks/debris_snow"); //chunks/debris_snow
 		Com_sprintf(level.M4loc, sizeof(level.M4loc), "%s", "Not given yet");
 		Com_sprintf(level.RPGloc, sizeof(level.RPGloc), "%s", "Not given yet");
 		Com_sprintf(level.MM1loc, sizeof(level.MM1loc), "%s", "Not given yet");

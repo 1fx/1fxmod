@@ -468,7 +468,7 @@ void RemoveFence(void){
 	{
 		if(g_entities[i].classname != NULL)
 		{
-			if(!strcmp(g_entities[i].classname, "misc_bsp") )
+			if(!strcmp(g_entities[i].classname, "misc_bsp") && g_entities[i].nolower == 1 )
 				G_FreeEntity( &g_entities[i] );
 		}
 	}
@@ -495,6 +495,7 @@ qboolean henk_ischar(char c){
 
 void SpawnFence(int choice) // big cage
 {
+	int result;
 	AddSpawnField("classname", "misc_bsp"); // blocker
 	if (choice == 1){
 	AddSpawnField("bspmodel",	"instances/Generic/fence01");
@@ -516,8 +517,10 @@ void SpawnFence(int choice) // big cage
 	}
 	AddSpawnField("model",		"trigger_hurt"); //blocked_trigger
 	AddSpawnField("count",		 "1");
+	AddSpawnField("nolower",	"1");
 
-	G_SpawnGEntityFromSpawnVars(qfalse);
+	result = G_SpawnGEntityFromSpawnVars(qtrue);
+	Com_Printf("Spawning %i result: %i\n", choice, result);
 
 	level.numSpawnVars = 0;
 	level.numSpawnVarChars = 0;

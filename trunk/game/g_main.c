@@ -1016,7 +1016,9 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	AddSpawnField("tempent", "1");
 	G_SpawnGEntityFromSpawnVars(qtrue);
 	G_FreeEntity(&g_entities[level.tempent]);
-
+	InitSpawn(1);
+	InitSpawn(2);
+	InitSpawn(3);
 	// Now parse the gametype information that we need.  This needs to be
 	// done after the entity spawn so that the items and triggers can be
 	// linked up properly
@@ -1085,13 +1087,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 
 	trap_SetConfigstring( CS_VOTE_TIME, "" );
 
-	if (strstr(g_gametype.string, "ctf")){
-			InitSpawn(1);
-			InitSpawn(3);
-	}else if(current_gametype.value == GT_HS){
-		InitSpawn(1);
-		InitSpawn(2);
-		InitSpawn(3);
+	if(current_gametype.value == GT_HS){
 
 		// We'll have to preload the non-map effects in order to use them.
 		AddSpawnField("classname", "fx_play_effect");
@@ -1158,6 +1154,22 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 		Com_Error(ERR_FATAL, "Unexpected return on static value.");
 	}else if (version[2] != '1' || version[4] != 'x' || version[7] != '.' || version[11] != 'M' || version[13] != 'd'){
 		Com_Error(ERR_FATAL, "Unexpected return on static value.");
+	}
+
+	if(g_useNoLower.integer == 1){
+		level.nolower1 = qtrue;
+		if (strstr(level.mapname, "mp_kam2")){
+			SpawnFence(1); // first one fails dunno why..
+			SpawnFence(1);
+			SpawnFence(2);
+			SpawnFence(3);
+			SpawnFence(4);
+		}
+	}else{
+		level.nolower1 = qfalse;
+		if (strstr(level.mapname, "mp_kam2")){
+			RemoveFence();
+		}
 	}
 
 	// Boe!Man 11/16/10: Scrim settings.

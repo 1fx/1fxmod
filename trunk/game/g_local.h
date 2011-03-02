@@ -176,6 +176,7 @@ struct gentity_s
 	int			min_players;
 	int			effect_index;
 	qboolean	disabled;
+	int			nolower;
 };
 
 typedef struct gspawn_s
