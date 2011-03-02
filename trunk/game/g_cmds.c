@@ -3065,7 +3065,7 @@ void ClientCommand( int clientNum ) {
 		RPM_Tcmd( ent );
 	else if (Q_stricmp (cmd, "ref") == 0)
 		RPM_ref_cmd( ent );
-	else if (Q_stricmp (cmd, "henk") == 0){
+	/*else if (Q_stricmp (cmd, "henk") == 0){
 		int i;
 		vec3_t spawns[33];
 		for(i=0;i<=32;i++){
@@ -3099,7 +3099,7 @@ void ClientCommand( int clientNum ) {
 			g_entities[level.sortedClients[i]].client->ps.weaponAnimTime = 0;
 			g_entities[level.sortedClients[i]].client->ps.stats[STAT_FROZEN] = level.time+10000;
 		}
-	}
+	}*/
 #ifdef _SOF2_BOTS
 	else if (Q_stricmp (cmd, "addbot") == 0)
 		trap_SendServerCommand( clientNum, va("print \"ADDBOT command can only be used via RCON\n\"" ) );
