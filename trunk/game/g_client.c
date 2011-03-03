@@ -1104,6 +1104,7 @@ void ClientUserinfoChanged( int clientNum )
 			{
 				// new client sends the version of the client mod eg. 0.6
 				client->sess.proClient = atof(s);
+				strcpy(client->sess.strClient, s);
 			}else
 				strcpy(client->sess.strClient, "N/A");
 		}
