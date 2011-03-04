@@ -1087,6 +1087,10 @@ void ClientUserinfoChanged( int clientNum )
 	s = Info_ValueForKey (userinfo, "cg_rpm");
 	if(*s)
 	{
+		if(strlen(s) >= 2)
+				strcpy(client->sess.strClient, s);
+			else
+				strcpy(client->sess.strClient, "N/A");
 		client->sess.rpmClient = 0.5;
 	}
 	// not using older client so lets test for new client
