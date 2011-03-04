@@ -1097,14 +1097,20 @@ void ClientUserinfoChanged( int clientNum )
 		{
 			// new client sends the version of the client mod eg. 0.6
 			client->sess.rpmClient = atof(s);
-			strcpy(client->sess.strClient, s);
+			if(strlen(s) >= 2)
+				strcpy(client->sess.strClient, s);
+			else
+				strcpy(client->sess.strClient, "N/A");
 		}else{ // if no rpm client
 			s = Info_ValueForKey (userinfo, "cg_proClient");
 			if(*s)
 			{
 				// new client sends the version of the client mod eg. 0.6
 				client->sess.proClient = atof(s);
+			if(strlen(s) >= 2)
 				strcpy(client->sess.strClient, s);
+			else
+				strcpy(client->sess.strClient, "N/A");
 			}else
 				strcpy(client->sess.strClient, "N/A");
 		}

@@ -522,7 +522,7 @@ void SpawnFence(int choice) // big cage
 	AddSpawnField("nolower",	"1");
 
 	result = G_SpawnGEntityFromSpawnVars(qtrue);
-	Com_Printf("Spawning %i result: %i\n", choice, result);
+	//Com_Printf("Spawning %i result: %i\n", choice, result);
 
 	level.numSpawnVars = 0;
 	level.numSpawnVarChars = 0;
