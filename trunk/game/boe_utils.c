@@ -1030,6 +1030,7 @@ void Boe_Players (gentity_t *ent)
 	char client0;
 	float client1;
 	char client2;
+	char prefix;
 	trap_SendServerCommand( ent-g_entities, va("print \"\n\""));
 	// Boe!Man 8/25/10: Maybe not the best solution, but if we want to exclude the country, this is a very easy way to exclude it.
 	if (g_checkcountry.integer != 0){
@@ -1142,7 +1143,8 @@ void Boe_Players (gentity_t *ent)
 		client2 = ']';
 		}else if(level.clients[i].sess.proClient >= 0.1){
 		client = qtrue;
-		client0 = '[P';
+		client0 = '[';
+		prefix = 'P';
 		client1 = level.clients[i].sess.proClient;
 		client2 = ']';
 		}
@@ -1169,20 +1171,23 @@ void Boe_Players (gentity_t *ent)
 		mute1,
 		mute2,
 		mute3));
-		if(client == qtrue){
-			strcpy(strClient, level.clients[i].sess.strClient);
-			if(strlen(strClient) >= 2)
-			{
-				trap_SendServerCommand( ent-g_entities, va("print \"%c^3%s^7%c\n\"", client0, strClient, client2));
-			}else{
-				trap_SendServerCommand( ent-g_entities, va("print \"%c^3%.1f^7%c\n\"", client0, client1, client2));
+			if(client == qtrue){
+				strcpy(strClient, level.clients[i].sess.strClient);
+				if(strlen(strClient) >= 2){
+					if(prefix == 'P')
+						trap_SendServerCommand( ent-g_entities, va("print \"%c^3%c%s^7%c\n\"", client0, prefix, strClient, client2));
+					else
+						trap_SendServerCommand( ent-g_entities, va("print \"%c^3%s^7%c\n\"", client0, strClient, client2));
+				}else{
+					if(prefix == 'P')
+						trap_SendServerCommand( ent-g_entities, va("print \"%c^3%c%.1f^7%c\n\"", client0, prefix, client1, client2));
+					else
+						trap_SendServerCommand( ent-g_entities, va("print \"%c^3%.1f^7%c\n\"", client0, client1, client2));
+				}
+			}else if(client == qfalse){
+				trap_SendServerCommand( ent-g_entities, va("print \"\n\""));
 			}
-		}
-		else if(client == qfalse){
-		trap_SendServerCommand( ent-g_entities, va("print \"\n\""));
-		}
-		}
-		else{
+		}else{ // if g_checkcountry == 0
 		trap_SendServerCommand( ent-g_entities, va("print \"[^3%d^7]%s[^%c%s^7]%s[^3%d^7]%s%c^3%c^7%c %c^3%c^7%c %c^3%c^7%c \"", // c = single character
 		i,
 		column1,
@@ -1201,20 +1206,21 @@ void Boe_Players (gentity_t *ent)
 		mute2,
 		mute3));
 		if(client == qtrue){
-			if(client1 == 0.78){
-			trap_SendServerCommand( ent-g_entities, va("print \"%c^30.78^7%c\n\"",
-			client0,
-			client2));
-			}else{
-			trap_SendServerCommand( ent-g_entities, va("print \"%c^3%.1f^7%c\n\"",
-			client0,
-			client1,
-			client2));
+				strcpy(strClient, level.clients[i].sess.strClient);
+				if(strlen(strClient) >= 2){
+					if(prefix == 'P')
+						trap_SendServerCommand( ent-g_entities, va("print \"%c^3%c%s^7%c\n\"", client0, prefix, strClient, client2));
+					else
+						trap_SendServerCommand( ent-g_entities, va("print \"%c^3%s^7%c\n\"", client0, strClient, client2));
+				}else{
+					if(prefix == 'P')
+						trap_SendServerCommand( ent-g_entities, va("print \"%c^3%c%.1f^7%c\n\"", client0, prefix, client1, client2));
+					else
+						trap_SendServerCommand( ent-g_entities, va("print \"%c^3%.1f^7%c\n\"", client0, client1, client2));
+				}
+			}else if(client == qfalse){
+				trap_SendServerCommand( ent-g_entities, va("print \"\n\""));
 			}
-		}
-		else if(client == qfalse){
-		trap_SendServerCommand( ent-g_entities, va("print \"\n\""));
-		}
 		}
 		}
 	trap_SendServerCommand( ent-g_entities, va("print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\""));
@@ -1390,7 +1396,6 @@ void Boe_Stats ( gentity_t *ent )
 	char		*player;
 	char		*admin;
 	char		*country;
-	char		strClient[36];
 	qboolean	client1 = qfalse;
 	char		userinfo[MAX_INFO_STRING];
 	int			idnum, n;
@@ -1505,9 +1510,8 @@ void Boe_Stats ( gentity_t *ent )
 	if (client1 == qtrue){
 		trap_SendServerCommand( ent-g_entities, va("print \"[^3Client^7]      %s\n", client0));
 	}else{
-		strcpy(strClient, g_entities[idnum].client->sess.strClient);
-		if(strlen(strClient) >= 2){
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3Client^7]      %s\n", strClient));
+		if(strlen(g_entities[idnum].client->sess.strClient) >= 2){
+			trap_SendServerCommand( ent-g_entities, va("print \"[^3Client^7]      %s\n", g_entities[idnum].client->sess.strClient));
 		}else{
 			if(client >= 0.1)
 				trap_SendServerCommand( ent-g_entities, va("print \"[^3Client^7]      %.1f\n", client));
