@@ -3250,6 +3250,7 @@ void Boe_adm_f ( gentity_t *ent )
 	}
 	if(g_enableCustomCommands.integer == 1){
 		trap_SendServerCommand( ent-g_entities, va("print \"\n ^7[^3Custom Commands^7] \n\""));
+		PrintCustom(ent-g_entities);
 		// Add wrapper for CustomCommands.txt
 	}
 	trap_SendServerCommand( ent-g_entities, va("print \"    [^32^7] B-Admin          ^7[^33^7] Admin          ^7[^34^7] S-Admin\n\""));
@@ -3301,6 +3302,9 @@ void Boe_adm_f ( gentity_t *ent )
 			return;
 			}
 		}
+	}
+	if(g_enableCustomCommands.integer == 1){
+
 	}
 }
 

@@ -495,6 +495,31 @@ qboolean henk_ischar(char c){
 	}
 }
 
+void PrintCustom(int numb){
+	void	*GP2, *group;
+	char desc[256];
+	char level[2];
+	char spaces[30]; // 27 - strlen
+	char name[10];
+	int i;
+	GP2 = trap_GP_ParseFile("CustomCommands.txt", qtrue, qfalse);
+	group = trap_GPG_GetSubGroups(GP2);
+	while(group)
+	{
+		trap_GPG_FindPairValue(group, "Command", "none", name);
+		for(i=0;i<27-strlen(name);i++){
+			spaces[i] = ' ';
+		}
+		spaces[i] = '\0';
+		trap_GPG_FindPairValue(group, "Description", "No description defined", desc);
+		trap_GPG_FindPairValue(group, "AdminLevel", "5", level);
+		trap_SendServerCommand( numb, va("print \"[^3%s^7]       %s%s^7[^3%s^7]\n\"", level, name, spaces, desc));
+		group = trap_GPG_GetNext(group);
+	}
+	trap_GP_Delete(&GP2);
+	trap_SendServerCommand( numb, va("print \"\n\""));
+}
+
 void SpawnFence(int choice) // big cage
 {
 	int result;
