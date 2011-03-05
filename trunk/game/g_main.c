@@ -2892,6 +2892,12 @@ void G_RunFrame( int levelTime )
 	if ( server_enableServerMsgs.integer && level.time > level.serverMsg && (level.time - level.startTime >= 20000))
 		Boe_serverMsg();
 
+	if(level.custom == qtrue){ // apply custom commands with a small delay
+		if(level.time >= level.customtime){
+		level.custom = qfalse;
+		trap_SendConsoleCommand( EXEC_APPEND, va("%s\n", level.action) );
+		}
+	}
 	// Boe!Man 8/25/10: Auto restart after 60000000 milliseconds, or 1000 minutes with an empty server. This ensures no crashes.
 	// FIX ME (Prio low): Bots aren't supported as of right now.
 	if ( level.time - level.startTime >= 60000000 && level.numConnectedClients == 0){

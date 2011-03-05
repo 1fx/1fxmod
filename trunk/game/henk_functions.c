@@ -503,6 +503,10 @@ void PrintCustom(int numb){
 	char name[10];
 	int i;
 	GP2 = trap_GP_ParseFile("CustomCommands.txt", qtrue, qfalse);
+	if(!GP2){
+		Com_Printf("Error while loading CustomCommands.txt\n");
+		return;
+	}
 	group = trap_GPG_GetSubGroups(GP2);
 	while(group)
 	{
