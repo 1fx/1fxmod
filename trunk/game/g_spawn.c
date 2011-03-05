@@ -128,7 +128,8 @@ field_t fields[] =
 	{"both_sides",			FOFS(both_sides),			F_LSTRING},
 	{"max_players",			FOFS(max_players),			F_INT},
 	{"min_players",			FOFS(min_players),			F_INT},
-	{"nolower",				FOFS(nolower),			F_INT},
+	{"nolower",				FOFS(nolower),				F_INT},
+	{"hideseek",			FOFS(hideseek),				F_INT},
 	{NULL}
 };
 

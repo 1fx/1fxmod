@@ -176,6 +176,7 @@ void SpawnCage(vec3_t org, gentity_t *ent, qboolean autoremove) // Spawn a cage
 	}
 	AddSpawnField("model",		"trigger_hurt"); //blocked_trigger
 	AddSpawnField("count",		 "1");
+	AddSpawnField("hideseek",	 "1");
 	G_SpawnGEntityFromSpawnVars(qtrue);
 	level.numSpawnVars = 0;
 	level.numSpawnVarChars = 0;
@@ -196,6 +197,7 @@ void SpawnBox		 (vec3_t org)
 	AddSpawnField("angles",		"0 98 0");
 	AddSpawnField("model",		"trigger_hurt"); //blocked_trigger
 	AddSpawnField("count",		 "1");
+	AddSpawnField("hideseek",	 "1");
 
 	G_SpawnGEntityFromSpawnVars(qtrue);
 

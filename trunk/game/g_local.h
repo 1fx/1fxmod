@@ -177,6 +177,7 @@ struct gentity_s
 	int			effect_index;
 	qboolean	disabled;
 	int			nolower;
+	int			hideseek;
 };
 
 typedef struct gspawn_s

@@ -435,6 +435,21 @@ void G_ResetEntities ( void )
 	}
 }
 
+void ResetCages(){
+	int i;
+	for ( i = 0; i < level.num_entities; i ++ )
+	{
+		gentity_t* ent;
+
+		ent = &g_entities[i];
+
+		if(ent->hideseek == 1){
+			G_FreeEntity(ent);
+		}
+
+	}
+}
+
 /*
 ===============
 G_ResetGametype
@@ -448,6 +463,8 @@ void G_ResetGametype ( qboolean fullRestart )
 
 	// Reset all pickups in the world
 	G_ResetEntities ( );
+
+	ResetCages();
 
 	// Reset the gametype itself
 	G_ResetGametypeEntities ( );
