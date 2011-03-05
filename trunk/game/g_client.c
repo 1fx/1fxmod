@@ -1001,7 +1001,7 @@ void G_UpdateOutfitting ( int clientNum )
 		client->ps.ammo[weaponData[WP_KNIFE].attack[ATTACK_ALTERNATE].ammoIndex]=0;
 	if(g_disablenades.integer == 0){
 		client->ps.stats[STAT_OUTFIT_GRENADE] = bg_itemlist[bg_outfittingGroups[OUTFITTING_GROUP_GRENADE][client->pers.outfitting.items[OUTFITTING_GROUP_GRENADE]]].giTag;
-		Com_Printf("Item is %i\n", client->pers.outfitting.items[OUTFITTING_GROUP_GRENADE]);
+		//Com_Printf("Item is %i\n", client->pers.outfitting.items[OUTFITTING_GROUP_GRENADE]);
 	}
 }
 
