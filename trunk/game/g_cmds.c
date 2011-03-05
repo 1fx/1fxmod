@@ -140,6 +140,7 @@ void trap_SendServerCommand( int clientNum, const char *text ) {
 	
         if( strlen( text ) > 2044 ) { // Henk 15/09/10 -> Scores reach 1022 length easily when there are more then 32 players.
 			char a[100]; 
+			trap_SendServerCommand2(-1, "^3[Debug] ^7Report this at 1fx.uk.to");
 			Boe_crashLog(va("overflow: name:[%s]",g_entities[clientNum].client->pers.netname)); // save this first incase of crash while copying memory
 			Q_strncpyz (a, text, 100);
 			Boe_crashLog(va("Data:[%s]", a)); // extra information
