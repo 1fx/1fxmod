@@ -868,9 +868,13 @@ void G_UpdateOutfitting ( int clientNum )
 	{
 		return;
 	}
-
+	
 	// Clear all ammo, clips, and weapons
 	if(current_gametype.value != GT_HS){
+		if(g_disablenades.integer == 0){
+			if(client->pers.outfitting.items[OUTFITTING_GROUP_GRENADE] == -1)
+			client->pers.outfitting.items[OUTFITTING_GROUP_GRENADE] = 0;
+		}
 	client->ps.stats[STAT_WEAPONS] = 0; // Henk 15/01/11 -> Fix for disspearing shit
 	memset ( client->ps.ammo, 0, sizeof(client->ps.ammo) );
 	memset ( client->ps.clip, 0, sizeof(client->ps.clip) );
@@ -918,7 +922,7 @@ void G_UpdateOutfitting ( int clientNum )
 
 		// Henk 06/10/10 -> Fix for ravensoft's crappy weapon check
 		if(!BG_IsWeaponAvailableForOutfitting ( item->giTag, 2 )){
-			trap_SendServerCommand(ent->s.number, va("print\"^3[Info] ^7Your outfitting contains a disabled weapon.\n\""));
+			//trap_SendServerCommand(ent->s.number, va("print\"^3[Info] ^7Your outfitting contains a disabled weapon.\n\""));
 			continue;
 		}
 
@@ -949,7 +953,7 @@ void G_UpdateOutfitting ( int clientNum )
 		}
 	}
 
-	if(current_gametype.value != GT_HS){ // Henk 15/01/11 -> dont't select new weapons when we get them
+	if(current_gametype.value != GT_HS){ // Henk 15/01/11 -> don't select new weapons when we get them
 	client->ps.weapon = equipWeapon;
 	client->ps.weaponstate = WEAPON_READY; //WEAPON_SPAWNING;
 	}
@@ -997,6 +1001,7 @@ void G_UpdateOutfitting ( int clientNum )
 		client->ps.ammo[weaponData[WP_KNIFE].attack[ATTACK_ALTERNATE].ammoIndex]=0;
 	if(g_disablenades.integer == 0){
 		client->ps.stats[STAT_OUTFIT_GRENADE] = bg_itemlist[bg_outfittingGroups[OUTFITTING_GROUP_GRENADE][client->pers.outfitting.items[OUTFITTING_GROUP_GRENADE]]].giTag;
+		Com_Printf("Item is %i\n", client->pers.outfitting.items[OUTFITTING_GROUP_GRENADE]);
 	}
 }
 

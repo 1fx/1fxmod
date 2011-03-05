@@ -305,7 +305,7 @@ static cvarTable_t gameCvarTable[] =
 
 	{ &g_roundstartdelay,	"g_roundstartdelay", "5",		CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 
-	{ &g_availableWeapons,	"g_availableWeapons", "2222222222211", CVAR_ARCHIVE|CVAR_SERVERINFO|CVAR_LATCH|CVAR_INTERNAL, 0.0, 0.0, 0, qfalse },
+	{ &g_availableWeapons,	"g_availableWeapons", "2222222222211", CVAR_ARCHIVE|CVAR_SERVERINFO|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
 	{ &hideSeek_availableWeapons,	"hideSeek_availableWeapons", "200000000000022222222", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
 	{ &availableWeapons,	"availableWeapons", "2222222222211", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
 	// Henk 01/04/10
@@ -1056,8 +1056,8 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	G_UpdateAvailableWeapons(); // also set the original g_availableWeapons for the client :)
 	// End
 	if(current_gametype.value != GT_HS){
-		trap_Cvar_Set("g_disablenades", "1");
-		trap_Cvar_Update(&g_disablenades);
+		//trap_Cvar_Set("g_disablenades", "1");
+		//trap_Cvar_Update(&g_disablenades);
 		trap_Cvar_Set("g_roundstartdelay", "3");
 		trap_Cvar_Update(&g_roundstartdelay);
 	}
@@ -1066,8 +1066,12 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	// Set the available outfitting
 	if(current_gametype.value == GT_HS)
 		BG_SetAvailableOutfitting ( hideSeek_availableWeapons.string );
-	else
-		BG_SetAvailableOutfitting ( availableWeapons.string );
+	else{
+		if(g_disablenades.integer == 0){
+		SetNades("0");
+		BG_SetAvailableOutfitting(g_availableWeapons.string);
+		}
+	}
 
 	// Initialize the gametype
 	if(current_gametype.value == GT_HS)
