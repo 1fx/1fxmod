@@ -275,7 +275,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_knockback, "g_knockback", "700", 0, 0.0, 0.0, 0, qtrue  },
 	{ &g_weaponRespawn, "g_weaponrespawn", "15", 0, 0.0, 0.0, 0, qtrue  },
 	{ &g_backpackRespawn, "g_backpackrespawn", "40", 0, 0.0, 0.0, 0, qtrue  },
-	{ &g_forcerespawn, "g_forcerespawn", "20", 0, 0.0, 0.0, 0, qtrue },
+	{ &g_forcerespawn, "g_forcerespawn", "0", 0, 0.0, 0.0, 0, qtrue },
 	{ &g_inactivity, "g_inactivity", "180", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue },
 	{ &g_debugMove, "g_debugMove", "0", 0, 0.0, 0.0, 0, qfalse },
 	{ &g_debugDamage, "g_debugDamage", "0", 0, 0.0, 0.0, 0, qfalse },
