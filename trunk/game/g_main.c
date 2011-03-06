@@ -216,6 +216,9 @@ vmCvar_t	g_enableCustomCommands;
 // Boe!Man 2/13/11
 vmCvar_t	g_forcevote;
 
+// Boe!Man 3/6/11
+vmCvar_t	g_customCommandsFile;
+
 #ifdef _BOE_DBG
 vmCvar_t	boe_log;
 #endif
@@ -476,6 +479,8 @@ static cvarTable_t gameCvarTable[] =
 
 	{ &g_alternateMap, "g_alternateMap", "0", CVAR_ROM|CVAR_INTERNAL|CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_enableCustomCommands, "g_enableCustomCommands", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
+	{ &g_customCommandsFile,			"g_customCommandsFile",			"CustomCommands.txt",	CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  }, // Boe!Man 3/6/11: So users can change if desired.
+
 	{ &g_rpmEnt, "g_rpmEnt", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 #ifdef _BOE_DBG
 	// Boe!Man: Debug CVAR.

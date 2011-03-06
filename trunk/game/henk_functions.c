@@ -537,9 +537,9 @@ void PrintCustom(int numb){
 	char spaces[30]; // 27 - strlen
 	char name[10];
 	int i;
-	GP2 = trap_GP_ParseFile("CustomCommands.txt", qtrue, qfalse);
+	GP2 = trap_GP_ParseFile(g_customCommandsFile.string, qtrue, qfalse);
 	if(!GP2){
-		Com_Printf("Error while loading CustomCommands.txt\n");
+		Com_Printf("Error while loading %s\n", g_customCommandsFile.string);
 		return;
 	}
 	group = trap_GPG_GetSubGroups(GP2);

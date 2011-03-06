@@ -3264,9 +3264,9 @@ void Boe_adm_f ( gentity_t *ent )
 	// Boe!Man 9/21/10: End of Loop.
 	}
 	if(g_enableCustomCommands.integer == 1){
-		trap_SendServerCommand( ent-g_entities, va("print \"\n ^7[^3Custom Commands^7] \n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \"\n^7[^3Custom Commands^7] \n\"")); // Boe!Man 3/6/11: Spaces fix (so layout doesn't mess up).
 		PrintCustom(ent-g_entities);
-		// Add wrapper for CustomCommands.txt
+		// Add wrapper for CustomCommands file
 	}
 	trap_SendServerCommand( ent-g_entities, va("print \"    [^32^7] B-Admin          ^7[^33^7] Admin          ^7[^34^7] S-Admin\n\""));
 	trap_SendServerCommand( ent-g_entities, va("print \"\n^7Use ^3[Page Up]^7 and ^3[Page Down]^7 keys to scroll.\n\""));
@@ -3323,9 +3323,9 @@ void Boe_adm_f ( gentity_t *ent )
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7There's already a custom command being executed.\n\""));
 			return;
 		}
-		GP2 = trap_GP_ParseFile("CustomCommands.txt", qtrue, qfalse);
+		GP2 = trap_GP_ParseFile(g_customCommandsFile.string, qtrue, qfalse);
 		if(!GP2){
-			Com_Printf("Error while loading CustomCommands.txt\n");
+			Com_Printf("Error while loading %s\n", g_customCommandsFile.string);
 			return;
 		}
 		group = trap_GPG_GetSubGroups(GP2);
@@ -3337,7 +3337,7 @@ void Boe_adm_f ( gentity_t *ent )
 					trap_GPG_FindPairValue(group, "Action", "say \"No custom action defined\"", action);
 					trap_GPG_FindPairValue(group, "Broadcast", "Custom action applied", broadcast);
 					trap_GPG_FindPairValue(group, "Message", "Custom action has been applied.", message);
-					trap_SendServerCommand( -1, va("print \"^3[Custom admin action] ^7%s.\n\"", message));
+					trap_SendServerCommand( -1, va("print \"^3[Custom Admin action] ^7%s.\n\"", message));
 					trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s", level.time + 5000, broadcast));
 					memset(level.action, 0, sizeof(level.action));
 					strcpy(level.action, action);

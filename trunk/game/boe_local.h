@@ -241,6 +241,9 @@ extern	vmCvar_t	g_cm;
 extern	vmCvar_t	g_useNoLower;
 extern	vmCvar_t	g_autoNoLower;
 
+// Boe!Man 3/6/11
+extern	vmCvar_t	g_customCommandsFile;
+
 //==============================================
 // boe_utils.c
 //==============================================
