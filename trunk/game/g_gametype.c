@@ -469,6 +469,7 @@ void G_ResetGametype ( qboolean fullRestart )
 	// Reset the gametype itself
 	G_ResetGametypeEntities ( );
 	level.cagefight = qfalse;
+	level.aetdone = qfalse;
 	trap_Cvar_VariableStringBuffer ( "mapname", level.mapname, MAX_QPATH );
 	// Cant have a 0 roundtimelimit
 	if ( g_roundtimelimit.integer < 1 )
@@ -556,7 +557,7 @@ void G_ResetGametype ( qboolean fullRestart )
 			if (strstr(boe_log.string, "1"))
 				G_LogPrintf("5s\n");
 			#endif
-			if (g_autoeventeams.integer == 1){
+			if (g_autoeventeams.integer == 1 && current_gametype.value != GT_HS){
 				EvenTeams(NULL, qtrue);}
 			#ifdef _BOE_DBG
 			if (strstr(boe_log.string, "1"))

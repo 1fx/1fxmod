@@ -2535,6 +2535,13 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 }
 	// Henk 22/01/10 -> Display seekers released message.
 	trap_Cvar_VariableStringBuffer ( "mapname", level.mapname, MAX_QPATH );
+
+	//g_autoeventeams.integer == 1
+	if(level.time >= level.gametypeDelayTime-1000 && level.aetdone == qfalse && level.gametypeStartTime >= 5000 && g_autoeventeams.integer == 1){
+		EvenTeams_HS(NULL, qtrue);
+		level.aetdone = qtrue;
+	}
+
 	if(level.time >= level.gametypeDelayTime && level.messagedisplay == qfalse && level.gametypeStartTime >= 5000 && !strstr(level.mapname, "col9")){
 		trap_SendServerCommand( -1, va("cp \"^7%sS%se%se%sk%se%srs released!\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		Boe_GlobalSound(level.clicksound); // Henkie 22/01/10 -> G_SoundIndex("sound/misc/menus/click.wav") index this when loading map(saves alot performance)

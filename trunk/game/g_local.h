@@ -728,6 +728,7 @@ typedef struct
 	qboolean	custom;
 	char		action[512];
 	int			customtime;
+	qboolean	aetdone;
 
 	muted_t		mutedClients[21]; // Henk 28/01/11 -> Add new mute system.
 } level_locals_t;
