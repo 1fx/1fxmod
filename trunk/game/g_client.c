@@ -1660,6 +1660,11 @@ void ClientBegin( int clientNum, qboolean setTime )
 
 	// count current clients and rank for scoreboard
 	CalculateRanks();
+
+	if(client->sess.team == TEAM_SPECTATOR && current_gametype.value == GT_HS){
+
+		SetTeam(ent, ChooseTeam(), NULL, qfalse); 
+	}
 #ifdef _BOE_DBG
 	if (strstr(boe_log.string, "1"))
 		G_LogPrintf("8e\n");

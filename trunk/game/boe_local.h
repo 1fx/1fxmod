@@ -470,3 +470,5 @@ void Boe_cancelVote (int argNum, gentity_t *adm, qboolean shortCmd);
 
 // Boe!Man 2/25/11: Mapcycle.
 void Boe_Mapcycle (int argNum, gentity_t *ent, qboolean shortCmd);
+
+char *ChooseTeam(void);

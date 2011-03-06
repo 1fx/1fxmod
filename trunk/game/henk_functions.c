@@ -495,6 +495,41 @@ qboolean henk_ischar(char c){
 	}
 }
 
+char *ChooseTeam(){
+	int counts[2], seekers, maxhiders;
+	counts[TEAM_BLUE] = TeamCount1(TEAM_BLUE);
+	counts[TEAM_RED] = TeamCount1(TEAM_RED);
+	if(counts[TEAM_RED] >= 4 && counts[TEAM_RED] <= 8){
+		seekers = 2;
+	}else if(counts[TEAM_RED] >= 9 && counts[TEAM_RED] <= 13){
+		seekers = 3;
+	}else if(counts[TEAM_RED] >= 14 && counts[TEAM_RED] <= 18){
+		seekers = 4;
+	}else if(counts[TEAM_RED] >= 19){
+		seekers = 5;
+	}else{
+		seekers = 1;
+	}
+	if(counts[TEAM_BLUE] == 2){
+		maxhiders = 8;
+	}else if(counts[TEAM_BLUE] == 3){
+		maxhiders = 13;
+	}else if(counts[TEAM_BLUE] == 4){
+		maxhiders = 18;
+	}else if(counts[TEAM_BLUE] == 5){
+		maxhiders = 24;
+	}else{
+		maxhiders = 6; // Henkie 24/02/10 -> Was 4
+	}
+	if ( counts[TEAM_BLUE] >= seekers)	{
+		return "r";
+	}else if(counts[TEAM_RED] >= maxhiders){
+		return "b";
+	}else{
+		return "r";
+	}
+}
+
 void PrintCustom(int numb){
 	void	*GP2, *group;
 	char desc[256];
