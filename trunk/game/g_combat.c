@@ -1874,6 +1874,10 @@ qboolean G_RadiusDamage (
 			}
 		}
 
+		if(mod == MOD_F1_GRENADE){
+			DoTeleport(attacker, origin);
+		}
+
 		if(mod == WP_MDN11_GRENADE){
 			if(NadeOutOfBoundaries == qtrue){
 				ammoindex=weaponData[WP_MDN11_GRENADE].attack[ATTACK_ALTERNATE].ammoIndex;

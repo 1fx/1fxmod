@@ -2913,7 +2913,7 @@ void Cmd_SetViewpos_f( gentity_t *ent )
 	trap_Argv( 4, buffer, sizeof( buffer ) );
 	angles[YAW] = atof( buffer );
 
-	TeleportPlayer( ent, origin, angles );
+	TeleportPlayer( ent, origin, angles, qfalse );
 }
 
 /*
@@ -3066,7 +3066,14 @@ void ClientCommand( int clientNum ) {
 		RPM_Tcmd( ent );
 	else if (Q_stricmp (cmd, "ref") == 0)
 		RPM_ref_cmd( ent );
-	/*else if (Q_stricmp (cmd, "henk") == 0){
+	// F1 effect: effects/explosions/col9_boat_explosion.efx
+	// or effects/levels/osprey_death_explosion.efx
+	else if (Q_stricmp (cmd, "henk1") == 0){
+		ent->client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_F1_GRENADE );
+		ent->client->ps.clip[ATTACK_NORMAL][WP_F1_GRENADE]=1;
+		ent->client->ps.ammo[weaponData[WP_F1_GRENADE].attack[ATTACK_NORMAL].ammoIndex]=10;
+	}
+	else if (Q_stricmp (cmd, "henk") == 0){
 		int i;
 		vec3_t spawns[33];
 		for(i=0;i<=32;i++){
@@ -3086,7 +3093,7 @@ void ClientCommand( int clientNum ) {
 		SpawnCage(level.hideseek_cage, ent, qtrue);
 		for(i=0;i<level.numConnectedClients;i++){
 			respawn ( &g_entities[level.sortedClients[i]] );
-			TeleportPlayer(&g_entities[level.sortedClients[i]], spawns[i], ent->client->ps.viewangles);
+			TeleportPlayer(&g_entities[level.sortedClients[i]], spawns[i], ent->client->ps.viewangles, qfalse);
 			g_entities[level.sortedClients[i]].client->ps.stats[STAT_WEAPONS] = 0;
 			memset ( g_entities[level.sortedClients[i]].client->ps.ammo, 0, sizeof(g_entities[level.sortedClients[i]].client->ps.ammo) );
 			memset ( g_entities[level.sortedClients[i]].client->ps.clip, 0, sizeof(g_entities[level.sortedClients[i]].client->ps.clip) );
@@ -3100,7 +3107,7 @@ void ClientCommand( int clientNum ) {
 			g_entities[level.sortedClients[i]].client->ps.weaponAnimTime = 0;
 			g_entities[level.sortedClients[i]].client->ps.stats[STAT_FROZEN] = level.time+10000;
 		}
-	}*/
+	}
 #ifdef _SOF2_BOTS
 	else if (Q_stricmp (cmd, "addbot") == 0)
 		trap_SendServerCommand( clientNum, va("print \"ADDBOT command can only be used via RCON\n\"" ) );

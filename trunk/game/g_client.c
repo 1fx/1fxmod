@@ -1662,7 +1662,7 @@ void ClientBegin( int clientNum, qboolean setTime )
 	CalculateRanks();
 
 	if(client->sess.team == TEAM_SPECTATOR && current_gametype.value == GT_HS){
-		if(!ent->r.svFlags & SVF_BOT)
+		if(!(ent->r.svFlags & SVF_BOT))
 		SetTeam(ent, ChooseTeam(), NULL, qfalse); 
 	}
 #ifdef _BOE_DBG

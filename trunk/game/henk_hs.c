@@ -266,6 +266,12 @@ void RandomRPGM4(void) // only called when more then 3 alive hiders so we can so
 	
 }
 
+void DoTeleport(gentity_t *ent, vec3_t origin){
+	origin[2] += 50;
+	TeleportPlayer(ent, origin, ent->client->ps.viewangles, qtrue);
+	G_PlayEffect ( G_EffectIndex("effects/explosions/col9_boat_explosion"),origin, ent->pos1);
+}
+
 // Henk 23/01/10 -> Will strip hiders and put weapon to WP_NONE(puts their hands up).
 void StripHiders(void)
 {

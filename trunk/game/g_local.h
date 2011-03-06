@@ -934,7 +934,7 @@ void		InitTrigger						( gentity_t *self );
 //
 // g_misc.c
 //
-void		TeleportPlayer					( gentity_t *player, vec3_t origin, vec3_t angles );
+void		TeleportPlayer					( gentity_t *player, vec3_t origin, vec3_t angles, qboolean nojump );
 
 
 //

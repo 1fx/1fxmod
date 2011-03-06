@@ -307,6 +307,7 @@ static qboolean BG_ParseAttackStats ( int weaponNum, attackData_t* attack, void 
 			trap_GPG_FindPairValue(sub, "mp_effect||effect", "", attack->tracerEffect);
 			trap_GPG_FindPairValue(sub, "model", "", attack->missileG2Model);
 			trap_GPG_FindPairValue(sub, "mp_explosionEffect||explosionEffect", "", attack->explosionEffect);
+
 			trap_GPG_FindPairValue(sub, "mp_explosionSound||explosionSound", "", attack->explosionSound);
 		}
 

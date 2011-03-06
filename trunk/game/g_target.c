@@ -344,7 +344,7 @@ void target_teleporter_use( gentity_t *self, gentity_t *other, gentity_t *activa
 		return;
 	}
 	//Com_Printf("Teleporting %s to origin\n", activator->client->pers.cleanName);
-	TeleportPlayer( activator, dest->s.origin, dest->s.angles );
+	TeleportPlayer( activator, dest->s.origin, dest->s.angles, qfalse );
 }
 
 /*QUAKED target_teleporter (1 0 0) (-8 -8 -8) (8 8 8)

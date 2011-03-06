@@ -1142,6 +1142,12 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 		G_SpawnGEntityFromSpawnVars(qtrue);
 		G_FreeEntity(&g_entities[level.tempent]);
 
+		AddSpawnField("classname", "fx_play_effect");
+		AddSpawnField("effect", "effects/explosions/col9_boat_explosion");
+		AddSpawnField("tempent", "1");
+		G_SpawnGEntityFromSpawnVars(qtrue);
+		G_FreeEntity(&g_entities[level.tempent]);
+
 	level.MM1Flare = -1;
 	level.M4Flare = -1;
 	level.RPGFlare = -1;
