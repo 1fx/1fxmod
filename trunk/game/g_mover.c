@@ -1676,7 +1676,7 @@ void SP_func_rotating (gentity_t *ent) {
 	if(!strstr(ent->model, "none")){
 	trap_SetBrushModel( ent, ent->model );
 	}else
-		ent->s.modelindex = 1;
+		ent->s.modelindex = G_ModelIndex("models/objects/Armory/virus.md3");
 
 	InitMover( ent );
 
