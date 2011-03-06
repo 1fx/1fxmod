@@ -1875,7 +1875,29 @@ qboolean G_RadiusDamage (
 		}
 
 		if(mod == MOD_F1_GRENADE){
-			DoTeleport(attacker, origin);
+			if(origin[2] <= attacker->r.currentOrigin[2]){
+				static vec3_t	mins = {-15,-15,-45};
+				static vec3_t	maxs = {15,15,46};
+				vec3_t			org1, org2;
+				trace_t			tr;
+				tr.fraction = 0.0f;
+				VectorCopy(origin, org1);
+				VectorCopy(origin, org2);
+				org1[2] += 50;
+				trap_Trace ( &tr, org1, mins, maxs, org2, attacker->s.number, MASK_SOLID );
+				if ( !tr.startsolid )
+				{
+				DoTeleport(attacker, origin);
+				}else{
+					ammoindex=weaponData[WP_F1_GRENADE].attack[ATTACK_ALTERNATE].ammoIndex;
+					attacker->client->ps.ammo[ammoindex]+=1;
+					trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7Surface is not empty.\n\""));
+				}
+			}else{
+			ammoindex=weaponData[WP_F1_GRENADE].attack[ATTACK_ALTERNATE].ammoIndex;
+			attacker->client->ps.ammo[ammoindex]+=1;
+			trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7Surface is too high.\n\""));
+			}
 		}
 
 		if(mod == WP_MDN11_GRENADE){
