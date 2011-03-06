@@ -398,6 +398,9 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace )
 
 	if ( d && other->client) 
 	{
+		if(current_gametype.value == GT_HS && ent->methodOfDeath == MOD_F1_GRENADE){
+			//
+		}else
 		G_AddEvent( ent, EV_MISSILE_HIT, 
 					(DirToByte( trace->plane.normal ) << MATERIAL_BITS) | (trace->surfaceFlags & MATERIAL_MASK));
 		ent->s.otherEntityNum = other->s.number;
@@ -412,6 +415,9 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace )
 	} 
 	else 
 	{
+		if(current_gametype.value == GT_HS && ent->methodOfDeath == MOD_F1_GRENADE){
+			//
+		}else
 		G_AddEvent( ent, EV_MISSILE_MISS, 
 					(DirToByte( trace->plane.normal ) << MATERIAL_BITS) | (trace->surfaceFlags & MATERIAL_MASK));
 
