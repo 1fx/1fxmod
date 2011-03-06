@@ -243,6 +243,7 @@ extern	vmCvar_t	g_autoNoLower;
 
 // Boe!Man 3/6/11
 extern	vmCvar_t	g_customCommandsFile;
+extern	vmCvar_t	g_banfile;
 
 //==============================================
 // boe_utils.c

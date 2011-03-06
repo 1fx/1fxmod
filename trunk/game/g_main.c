@@ -218,6 +218,7 @@ vmCvar_t	g_forcevote;
 
 // Boe!Man 3/6/11
 vmCvar_t	g_customCommandsFile;
+vmCvar_t	g_banfile;
 
 #ifdef _BOE_DBG
 vmCvar_t	boe_log;
@@ -380,6 +381,7 @@ static cvarTable_t gameCvarTable[] =
 
 
 	{ &g_clanfile,			"g_clanfile",			"users/clanmembers.txt",	CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  },
+	{ &g_banfile,			"g_banfile",			"users/bans.txt",		CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  },
 
 	{ &server_color1, "server_color1", "^G", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_color2, "server_color2", "^g", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },

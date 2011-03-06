@@ -1453,7 +1453,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 			return va("Invalid password: %s", value );
 		}
 		// Boe!Man 1/6/10: Obvious fix that banned clients don't "really" get banned.
-		if(Boe_NameListCheck (clientNum, ip, "users/bans.txt", NULL, qtrue, qfalse, qfalse, qfalse, qfalse))
+		if(Boe_NameListCheck (clientNum, ip, g_banfile.string, NULL, qtrue, qfalse, qfalse, qfalse, qfalse))
 			return "Banned! [IP]";
 		if(Boe_NameListCheck (clientNum, ip, "users/subnetbans.txt", NULL, qfalse, qfalse, qtrue, qfalse, qfalse))
 			return "Banned! [Subnet]";

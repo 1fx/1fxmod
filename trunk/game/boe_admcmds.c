@@ -1042,7 +1042,7 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 	if(subnet)
 		strcpy(fileName, "users/subnetbans.txt");
 	else
-		strcpy(fileName, "users/bans.txt");
+		strcpy(fileName, g_banfile.string);
 
 	len = trap_FS_FOpenFile(fileName, &f, FS_READ);
 	if(!test){
@@ -1502,7 +1502,7 @@ void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 		if(subnet)
 			Henk_RemoveLineFromFile(adm, iLine, "users/subnetbans.txt", qtrue);
 		else
-			Henk_RemoveLineFromFile(adm, iLine, "users/bans.txt", qfalse);
+			Henk_RemoveLineFromFile(adm, iLine, g_banfile.string, qfalse);
 		return;
 	}else if(strlen(ip) < 2){
 		trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid IP, Usage: adm unban <IP/Line>.\n\""));
@@ -1510,7 +1510,7 @@ void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 	}
 
 	if(!subnet){
-			if(Boe_Remove_from_list(ip, "users/bans.txt", "Ban", adm, qtrue, qfalse, qfalse )){
+			if(Boe_Remove_from_list(ip, g_banfile.string, "Ban", adm, qtrue, qfalse, qfalse )){
 				trap_SendServerCommand( adm-g_entities, va("print \"^3%s ^7has been Unbanned.\n\"", ip));
 				trap_FS_FOpenFile( va("users\\baninfo\\%s.IP", ip), &f, FS_WRITE );
 				if(f){
@@ -1868,7 +1868,7 @@ void Boe_Ban_f (int argNum, gentity_t *adm, qboolean shortCmd)
 		g_entities[idnum].client->pers.ip,
 		g_entities[idnum].client->pers.cleanName);
 
-	if(Boe_AddToList(banid, "users/bans.txt", "Ban", adm)){
+	if(Boe_AddToList(banid, g_banfile.string, "Ban", adm)){
 		if(adm && adm->client)	{
 			if(!*reason){
 				trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"Banned by %s\"\n", idnum, adm->client->pers.netname));
