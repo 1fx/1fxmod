@@ -629,6 +629,7 @@ void SP_teleporter(gentity_t* ent){
 	trace_t		tr;
 	vec3_t		dest;
 	vec3_t		src;
+	vec3_t		origin1;
 
 	if(strstr(ent->both_sides, "yes")){
 		AddSpawnField("classname", "teleporter");
@@ -671,12 +672,13 @@ void SP_teleporter(gentity_t* ent){
 	}
 	ent->s.groundEntityNum = tr.entityNum;
 	VectorCopy(tr.endpos, ent->origin_from);
-	G_SetOrigin( ent, tr.endpos );
-
+	VectorCopy(tr.endpos, origin1);
+	origin1[2] += 30;
+	G_SetOrigin( ent,origin1 );
 	// origin_to until ground
 	
 	//origin = va("%.0f %.0f %.0f", ent->r.currentOrigin[0], ent->r.currentOrigin[1], ent->r.currentOrigin[2]-30);
-	origin = va("%.0f %.0f %.0f", ent->r.currentOrigin[0], ent->r.currentOrigin[1], ent->r.currentOrigin[2]);
+	origin = va("%.0f %.0f %.0f", ent->r.currentOrigin[0], ent->r.currentOrigin[1], ent->r.currentOrigin[2]-30);
 	AddSpawnField("classname", "fx_play_effect");
 	AddSpawnField("effect", "fire/blue_target_flame");
 	AddSpawnField("origin", origin);
