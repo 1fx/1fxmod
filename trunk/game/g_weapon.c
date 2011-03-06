@@ -701,7 +701,7 @@ void G_FireBullet ( gentity_t* ent, int weapon, int attack )
 			}
 
 			// we hit something that noticed, so that is enough pellets
-			if ( (int)(attackDat->damage * damageMult) > 0 )
+			if ( (int)(attackDat->damage * damageMult) > 0 || current_gametype.value == GT_HS && weapon == WP_M4_ASSAULT_RIFLE )
 			{
 				if ( !attackDat->melee )
 				{
@@ -872,7 +872,6 @@ void G_FireBullet ( gentity_t* ent, int weapon, int attack )
 			{
 				ent->client->sess.teamkillForgiveTime = 0;
 			}
-	
 			G_Damage( hit[h].ent, ent, ent, fwd, hit[h].origin, hit[h].damage, flags, attackDat->mod + (attack<<8), hit[h].location );
 		}
 	}

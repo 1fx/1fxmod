@@ -957,6 +957,7 @@ int G_Damage (
 	int				m4ammo[4];
 	int				rpgammo[2];
 	attackData_t	*attack;
+
 	if (!targ->takedamage)
 	{
 		return 0;
