@@ -588,6 +588,10 @@ void Cmd_Drop_f ( gentity_t* ent )
 		return;
 	}
 	if(current_gametype.value == GT_HS){
+		if ( level.time > level.gametypeRoundTime ) // Henk  07/03/11 -> Don't let ppl drop stuff when the round has ended.
+		{
+			return;
+		}
 		if(!ent->client->ps.stats[STAT_WEAPONS] & ( 1 << atoi(ConcatArgs( 1 )) ))
 		{
 			//trap_SendServerCommand(ent->s.number, va("print\"^3[Info] ^7You don't have any item to drop\n\""));
