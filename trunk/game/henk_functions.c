@@ -22,7 +22,7 @@ int TiedPlayers(void){
 }
 
 void InitCagefight(void){
-	int i;
+	int i, count = 0;
 	vec3_t spawns[33];
 	G_ResetGametype(qfalse);
 	for(i=0;i<=32;i++){
@@ -44,7 +44,7 @@ void InitCagefight(void){
 		if(g_entities[level.sortedClients[i]].client->sess.team == TEAM_RED){
 			//respawn ( &g_entities[level.sortedClients[i]] );
 			count += 1;
-			TeleportPlayer(&g_entities[level.sortedClients[i]], spawns[z], g_entities[level.sortedClients[i]].client->ps.viewangles, qtrue);
+			TeleportPlayer(&g_entities[level.sortedClients[i]], spawns[count], g_entities[level.sortedClients[i]].client->ps.viewangles, qtrue);
 			g_entities[level.sortedClients[i]].client->ps.stats[STAT_WEAPONS] = 0;
 			memset ( g_entities[level.sortedClients[i]].client->ps.ammo, 0, sizeof(g_entities[level.sortedClients[i]].client->ps.ammo) );
 			memset ( g_entities[level.sortedClients[i]].client->ps.clip, 0, sizeof(g_entities[level.sortedClients[i]].client->ps.clip) );
