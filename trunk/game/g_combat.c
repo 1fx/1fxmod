@@ -370,14 +370,14 @@ void player_die(
 
 		if ( attacker == self )
 		{
-			if ( mod != MOD_TEAMCHANGE && current_gametype != GT_HS)
+			if ( mod != MOD_TEAMCHANGE && current_gametype.integer != GT_HS)
 			{
 				G_AddScore( attacker, g_suicidePenalty.integer );
 			}
 		}
 		else if ( OnSameTeam ( self, attacker ) )
 		{
-			if ( mod != MOD_TELEFRAG && current_gametype != GT_HS )
+			if ( mod != MOD_TELEFRAG && current_gametype.integer != GT_HS )
 			{
 				G_AddScore( attacker, g_teamkillPenalty.integer );
 			}
