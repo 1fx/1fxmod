@@ -476,3 +476,6 @@ void Boe_cancelVote (int argNum, gentity_t *adm, qboolean shortCmd);
 void Boe_Mapcycle (int argNum, gentity_t *ent, qboolean shortCmd);
 
 char *ChooseTeam(void);
+void DoTeleport(gentity_t *ent, vec3_t origin);
+int TiedPlayers(void);
+void InitCagefight(void);

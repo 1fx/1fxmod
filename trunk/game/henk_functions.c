@@ -3,6 +3,64 @@
 
 char *GetCountry(char *ext);
 
+int TiedPlayers(void){
+	int i, highscore = 0, count = 0;
+	gclient_s *client;
+	for(i=0;i<=g_maxclients.integer;i++){
+		client = &level.clients[level.sortedClients[i]];
+		if(client->sess.team == TEAM_RED){
+			if(client->sess.kills == highscore){
+				count += 1;
+				highscore = client->sess.kills;
+			}else if(client->sess.kills > highscore){
+				count = 1;
+				highscore = client->sess.kills;
+			}
+		}
+	}
+	return count;
+}
+
+void InitCagefight(void){
+	int i;
+	vec3_t spawns[33];
+	for(i=0;i<=32;i++){
+		VectorCopy(level.hideseek_cage, spawns[i]);
+	}
+	spawns[0][0] -= 105;
+	spawns[0][1] -= 105;
+	spawns[1][0] += 105;
+	spawns[1][1] += 105;
+	spawns[2][0] -= 105;
+	spawns[2][1] += 105;
+	spawns[3][0] += 105;
+	spawns[3][1] -= 105;
+	spawns[4][0] += 105;
+	spawns[4][1] -= 85;
+	level.cagefight = qtrue;
+	G_ResetGametype(qfalse);
+	SpawnCage(level.hideseek_cage, NULL, qtrue);
+	for(i=0;i<level.numConnectedClients;i++){
+		respawn ( &g_entities[level.sortedClients[i]] );
+		TeleportPlayer(&g_entities[level.sortedClients[i]], spawns[i], g_entities[level.sortedClients[i]].client->ps.viewangles, qfalse);
+		g_entities[level.sortedClients[i]].client->ps.stats[STAT_WEAPONS] = 0;
+		memset ( g_entities[level.sortedClients[i]].client->ps.ammo, 0, sizeof(g_entities[level.sortedClients[i]].client->ps.ammo) );
+		memset ( g_entities[level.sortedClients[i]].client->ps.clip, 0, sizeof(g_entities[level.sortedClients[i]].client->ps.clip) );
+		//g_entities[level.lastalive[0]].client->ps.ammo[weaponData[WP_RPG7_LAUNCHER].attack[ATTACK_NORMAL].ammoIndex]=2;
+		g_entities[level.sortedClients[i]].client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_AK74_ASSAULT_RIFLE );
+		//g_entities[level.lastalive[0]].client->ps.clip[ATTACK_NORMAL][WP_RPG7_LAUNCHER]=1;
+		//g_entities[level.lastalive[0]].client->ps.firemode[WP_RPG7_LAUNCHER] = BG_FindFireMode ( WP_RPG7_LAUNCHER, ATTACK_NORMAL, WP_FIREMODE_AUTO );
+		g_entities[level.sortedClients[i]].client->ps.weapon = WP_AK74_ASSAULT_RIFLE;
+		g_entities[level.sortedClients[i]].client->ps.weaponstate = WEAPON_READY;
+		g_entities[level.sortedClients[i]].client->ps.weaponTime = 0;
+		g_entities[level.sortedClients[i]].client->ps.weaponAnimTime = 0;
+		g_entities[level.sortedClients[i]].client->ps.stats[STAT_FROZEN] = level.time+10000;
+	}
+	// when it ends execute this:
+	//level.cagefight = qfalse;
+	//LogExit( "Timelimit hit." );
+}
+
 void CheckEnts(gentity_t *ent){
 	if(ent->model && ent->model != NULL && !strcmp(ent->model, "BLOCKED_TRIGGER"))
 		{
