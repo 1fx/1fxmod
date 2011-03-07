@@ -3321,6 +3321,7 @@ void Boe_adm_f ( gentity_t *ent )
 				return;
 				}
 			}
+			group = trap_GPG_GetNext ( group );
 		}
 		trap_GP_Delete(&GP2);
 	}
