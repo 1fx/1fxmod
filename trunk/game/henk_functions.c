@@ -5,16 +5,16 @@ char *GetCountry(char *ext);
 
 int TiedPlayers(void){
 	int i, highscore = 0, count = 0;
-	gclient_s *client;
+	gentity_t *ent;
 	for(i=0;i<=g_maxclients.integer;i++){
-		client = &level.clients[level.sortedClients[i]];
-		if(client->sess.team == TEAM_RED){
-			if(client->sess.kills == highscore){
+		ent = &g_entities[level.sortedClients[i]];
+		if(ent->client->sess.team == TEAM_RED){
+			if(ent->client->sess.kills == highscore){
 				count += 1;
-				highscore = client->sess.kills;
-			}else if(client->sess.kills > highscore){
+				highscore = ent->client->sess.kills;
+			}else if(ent->client->sess.kills > highscore){
 				count = 1;
-				highscore = client->sess.kills;
+				highscore = ent->client->sess.kills;
 			}
 		}
 	}

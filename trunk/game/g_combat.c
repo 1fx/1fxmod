@@ -1873,7 +1873,6 @@ qboolean G_RadiusDamage (
 				SpawnCage(origin, attacker, qfalse);
 			}
 		}
-
 		if(mod == MOD_F1_GRENADE){
 			if(origin[2] <= attacker->r.currentOrigin[2]){
 				static vec3_t	mins = {-15,-15,-45};
