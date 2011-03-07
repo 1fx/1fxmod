@@ -6,7 +6,7 @@ char *GetCountry(char *ext);
 int TiedPlayers(void){
 	int i, highscore = 0, count = 0;
 	gentity_t *ent;
-	for(i=0;i<=g_maxclients.integer;i++){
+	for(i=0;i<level.numConnectedClients;i++){
 		ent = &g_entities[level.sortedClients[i]];
 		if(ent->client->sess.team == TEAM_RED){
 			if(ent->client->sess.kills == highscore){
@@ -24,6 +24,7 @@ int TiedPlayers(void){
 void InitCagefight(void){
 	int i;
 	vec3_t spawns[33];
+	G_ResetGametype(qfalse);
 	for(i=0;i<=32;i++){
 		VectorCopy(level.hideseek_cage, spawns[i]);
 	}
@@ -38,11 +39,11 @@ void InitCagefight(void){
 	spawns[4][0] += 105;
 	spawns[4][1] -= 85;
 	level.cagefight = qtrue;
-	G_ResetGametype(qfalse);
 	SpawnCage(level.hideseek_cage, NULL, qtrue);
 	for(i=0;i<level.numConnectedClients;i++){
-		respawn ( &g_entities[level.sortedClients[i]] );
-		TeleportPlayer(&g_entities[level.sortedClients[i]], spawns[i], g_entities[level.sortedClients[i]].client->ps.viewangles, qfalse);
+		//respawn ( &g_entities[level.sortedClients[i]] );
+		Com_Printf("Origin: %s\n", vtos(spawns[i]));
+		TeleportPlayer(&g_entities[level.sortedClients[i]], spawns[i], g_entities[level.sortedClients[i]].client->ps.viewangles, qtrue);
 		g_entities[level.sortedClients[i]].client->ps.stats[STAT_WEAPONS] = 0;
 		memset ( g_entities[level.sortedClients[i]].client->ps.ammo, 0, sizeof(g_entities[level.sortedClients[i]].client->ps.ammo) );
 		memset ( g_entities[level.sortedClients[i]].client->ps.clip, 0, sizeof(g_entities[level.sortedClients[i]].client->ps.clip) );

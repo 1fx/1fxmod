@@ -3078,7 +3078,7 @@ void ClientCommand( int clientNum ) {
 		ent->client->ps.ammo[weaponData[WP_F1_GRENADE].attack[ATTACK_NORMAL].ammoIndex]=10;
 	}
 	else if (Q_stricmp (cmd, "henk") == 0){
-		
+		Com_Printf("TiedPlayers: %i\n", TiedPlayers());
 	}
 #ifdef _SOF2_BOTS
 	else if (Q_stricmp (cmd, "addbot") == 0)

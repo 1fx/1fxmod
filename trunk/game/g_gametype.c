@@ -966,7 +966,7 @@ void CheckGametype ( void )
 		// there was someone on that team to begin with.
 		if ( !alive[TEAM_RED] && dead[TEAM_RED] )
 		{	
-			if(level.timelimithit == qtrue && level.cagefight == qfalse && (strstr(g_gametype.string, "inf") || strstr(g_gametype.string, "elim"))){
+			if(level.timelimithit == qtrue && level.cagefight != qtrue && (strstr(g_gametype.string, "inf") || strstr(g_gametype.string, "elim"))){
 				gentity_t*	tent;
 				tent = G_TempEntity( vec3_origin, EV_GAME_OVER );
 				tent->s.eventParm = GAME_OVER_TIMELIMIT;
@@ -975,11 +975,12 @@ void CheckGametype ( void )
 				if(current_gametype.value == GT_HS){
 						Com_Printf("Updating scores..\n");
 						UpdateScores();
-				}
-				if(TiedPlayers() >= 2)
+				
+				if(TiedPlayers() < 2)
 					LogExit( "Timelimit hit." );
 				else
 					InitCagefight();
+				}
 			}
 			trap_GT_SendEvent ( GTEV_TEAM_ELIMINATED, level.time, TEAM_RED, 0, 0, 0, 0 );
 		}
@@ -1014,8 +1015,12 @@ void CheckGametype ( void )
 				if(current_gametype.value == GT_HS){
 						Com_Printf("Updating scores..\n");
 						UpdateScores();
+				
+				if(TiedPlayers() < 2)
+					LogExit( "Timelimit hit." );
+				else
+					InitCagefight();
 				}
-				LogExit( "Timelimit hit." );
 			}
 		} 
 	}

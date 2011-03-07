@@ -2056,11 +2056,12 @@ void CheckExitRules( void )
 	}
 
 	// check for sudden death
+	/* Henk 07/03/11 -> This will destroy our timelimit hit message and action.
 	if ( ScoreIsTied() ) // HENK FIX ME -> Add allow tie variable? 
 	{
 		// always wait for sudden death
 		return;
-	}
+	}*/
 
 	// Check to see if the timelimit was hit
 	if ( g_timelimit.integer && !level.warmupTime && level.timelimithit != qtrue ) 
