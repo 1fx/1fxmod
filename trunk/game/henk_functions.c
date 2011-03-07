@@ -43,12 +43,13 @@ void InitCagefight(void){
 	for(i=0;i<level.numConnectedClients;i++){
 		if(g_entities[level.sortedClients[i]].client->sess.team == TEAM_RED){
 			//respawn ( &g_entities[level.sortedClients[i]] );
-			Com_Printf("Origin: %s\n", vtos(spawns[i]));
-			TeleportPlayer(&g_entities[level.sortedClients[i]], spawns[i], g_entities[level.sortedClients[i]].client->ps.viewangles, qtrue);
+			count += 1;
+			TeleportPlayer(&g_entities[level.sortedClients[i]], spawns[z], g_entities[level.sortedClients[i]].client->ps.viewangles, qtrue);
 			g_entities[level.sortedClients[i]].client->ps.stats[STAT_WEAPONS] = 0;
 			memset ( g_entities[level.sortedClients[i]].client->ps.ammo, 0, sizeof(g_entities[level.sortedClients[i]].client->ps.ammo) );
 			memset ( g_entities[level.sortedClients[i]].client->ps.clip, 0, sizeof(g_entities[level.sortedClients[i]].client->ps.clip) );
 			//g_entities[level.lastalive[0]].client->ps.ammo[weaponData[WP_RPG7_LAUNCHER].attack[ATTACK_NORMAL].ammoIndex]=2;
+			g_entities[level.sortedClients[i]].client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_KNIFE );
 			g_entities[level.sortedClients[i]].client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_AK74_ASSAULT_RIFLE );
 			//g_entities[level.lastalive[0]].client->ps.clip[ATTACK_NORMAL][WP_RPG7_LAUNCHER]=1;
 			//g_entities[level.lastalive[0]].client->ps.firemode[WP_RPG7_LAUNCHER] = BG_FindFireMode ( WP_RPG7_LAUNCHER, ATTACK_NORMAL, WP_FIREMODE_AUTO );
