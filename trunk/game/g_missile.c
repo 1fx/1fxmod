@@ -300,6 +300,8 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace )
 	gentity_t		*other;
 	vec3_t	velocity;
 	int d;
+	static vec3_t	mins = {-15,-15,-45};
+	static vec3_t	maxs = {15,15,46};
 	other = &g_entities[trace->entityNum];
 	d = 0;
 
@@ -399,12 +401,19 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace )
 	if ( d && other->client) 
 	{
 		if(current_gametype.value == GT_HS && ent->methodOfDeath == MOD_F1_GRENADE){
-			int ammoindex;
-			if(trace->endpos[2] > ent->parent->r.currentOrigin[2]){
-			ammoindex=weaponData[WP_F1_GRENADE].attack[ATTACK_ALTERNATE].ammoIndex;
-			ent->parent->client->ps.ammo[ammoindex]+=1;
-			trap_SendServerCommand(ent->parent-g_entities, va("print \"^3[Info] ^7Surface is too high.\n\""));
+			vec3_t			org1, org2;
+			trace_t			tr;
+			tr.fraction = 0.0f;
+			VectorCopy(trace->endpos, org1);
+			VectorCopy(trace->endpos, org2);
+			org1[2] += 50;
+			trap_Trace ( &tr, org1, mins, maxs, org2, ent->parent->s.number, MASK_ALL );
+			if ( tr.startsolid || tr.allsolid )
+			{
 			G_AddEvent( ent, EV_MISSILE_HIT, 
+					(DirToByte( trace->plane.normal ) << MATERIAL_BITS) | (trace->surfaceFlags & MATERIAL_MASK));
+			}else if(trace->endpos[2] > ent->parent->r.currentOrigin[2]){
+				G_AddEvent( ent, EV_MISSILE_MISS, 
 					(DirToByte( trace->plane.normal ) << MATERIAL_BITS) | (trace->surfaceFlags & MATERIAL_MASK));
 			}
 		}else
@@ -423,21 +432,18 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace )
 	else 
 	{
 		if(current_gametype.value == GT_HS && ent->methodOfDeath == MOD_F1_GRENADE){
-			static vec3_t	mins = {-15,-15,-45};
-			static vec3_t	maxs = {15,15,46};
 			vec3_t			org1, org2;
 			trace_t			tr;
 			tr.fraction = 0.0f;
 			VectorCopy(trace->endpos, org1);
 			VectorCopy(trace->endpos, org2);
 			org1[2] += 50;
-			trap_Trace ( &tr, org1, mins, maxs, org2, ent->parent->s.number, MASK_SOLID );
-			if ( tr.startsolid )
+			trap_Trace ( &tr, org1, mins, maxs, org2, ent->parent->s.number, MASK_ALL );
+			if ( tr.startsolid || tr.allsolid )
 			{
 			G_AddEvent( ent, EV_MISSILE_HIT, 
 					(DirToByte( trace->plane.normal ) << MATERIAL_BITS) | (trace->surfaceFlags & MATERIAL_MASK));
-			}
-			if(trace->endpos[2] > ent->parent->r.currentOrigin[2]){
+			}else if(trace->endpos[2] > ent->parent->r.currentOrigin[2]){
 				G_AddEvent( ent, EV_MISSILE_MISS, 
 					(DirToByte( trace->plane.normal ) << MATERIAL_BITS) | (trace->surfaceFlags & MATERIAL_MASK));
 			}

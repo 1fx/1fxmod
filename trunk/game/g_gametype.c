@@ -971,9 +971,9 @@ void CheckGametype ( void )
 				tent = G_TempEntity( vec3_origin, EV_GAME_OVER );
 				tent->s.eventParm = GAME_OVER_TIMELIMIT;
 				tent->r.svFlags = SVF_BROADCAST;
-				level.timelimithit = qfalse;
 				if(current_gametype.value == GT_HS){				
 				if(TiedPlayers() < 2){
+					level.timelimithit = qfalse;
 					Com_Printf("Updating scores..\n");
 					UpdateScores();
 					LogExit( "Timelimit hit." );
@@ -994,9 +994,10 @@ void CheckGametype ( void )
 				LogExit( "Timelimit hit." );
 			}
 			trap_GT_SendEvent ( GTEV_TEAM_ELIMINATED, level.time, TEAM_BLUE, 0, 0, 0, 0 );
-		}else if(level.cagefight == qtrue){
+		}else if(level.cagefight == qtrue && level.teamAliveCount[TEAM_RED] == 1){
 			Com_Printf("Updating scores..\n");
 			UpdateScores();
+			level.timelimithit = qfalse;
 			level.cagefight = qfalse;
 			LogExit( "Someone has won the cagefight" );
 			return;
@@ -1007,6 +1008,7 @@ void CheckGametype ( void )
 			if(level.cagefight == qtrue){
 				Com_Printf("Updating scores..\n");
 				UpdateScores();
+				level.timelimithit = qfalse;
 				level.cagefight = qfalse;
 				LogExit( "Timelimit hit" );
 				return;
@@ -1023,11 +1025,11 @@ void CheckGametype ( void )
 				tent = G_TempEntity( vec3_origin, EV_GAME_OVER );
 				tent->s.eventParm = GAME_OVER_TIMELIMIT;
 				tent->r.svFlags = SVF_BROADCAST;
-				level.timelimithit = qfalse;
 				if(current_gametype.value == GT_HS){
 				if(TiedPlayers() < 2){
 					Com_Printf("Updating scores..\n");
 					UpdateScores();
+					level.timelimithit = qfalse;
 					LogExit( "Timelimit hit." );
 				}else
 					InitCagefight();

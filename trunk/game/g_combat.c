@@ -1895,11 +1895,8 @@ qboolean G_RadiusDamage (
 				trap_Trace ( &tr, org1, mins, maxs, org2, attacker->s.number, MASK_ALL); //MASK_SOLID
 				if ( !tr.startsolid && !tr.allsolid )
 				{
-					if ( tr.entityNum != ENTITYNUM_NONE )
-						trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7Found an entity at the origin.\n\""));
 				DoTeleport(attacker, origin);
 				}else{
-					DoTeleport(attacker, tr.endpos); // TEST
 					ammoindex=weaponData[WP_F1_GRENADE].attack[ATTACK_ALTERNATE].ammoIndex;
 					attacker->client->ps.ammo[ammoindex]+=1;
 					trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7Surface is not empty.\n\""));
