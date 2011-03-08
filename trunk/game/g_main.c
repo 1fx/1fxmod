@@ -2461,14 +2461,20 @@ void G_RunThink (gentity_t *ent)
 void SetupOutfitting(void)
 {
 	int i;
+	attackData_t *attack;
 	for ( i = 0; i < level.numConnectedClients; i ++ )
 	{
 		g_entities[level.sortedClients[i]].client->noOutfittingChange = qfalse;
 		G_UpdateOutfitting ( g_entities[level.sortedClients[i]].s.number );
 		if(g_entities[level.sortedClients[i]].client->sess.team == TEAM_BLUE){
-			g_entities[level.sortedClients[i]].client->ps.ammo[weaponData[WP_MDN11_GRENADE].attack[ATTACK_NORMAL].ammoIndex]=3;
+			attack = &weaponData[WP_MDN11_GRENADE].attack[ATTACK_NORMAL];
+			g_entities[level.sortedClients[i]].client->ps.ammo[weaponData[WP_MDN11_GRENADE].attack[ATTACK_NORMAL].ammoIndex]=attack->clipSize;
 			g_entities[level.sortedClients[i]].client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_MDN11_GRENADE );
-			g_entities[level.sortedClients[i]].client->ps.clip[ATTACK_NORMAL][WP_MDN11_GRENADE]=1;
+			g_entities[level.sortedClients[i]].client->ps.clip[ATTACK_NORMAL][WP_MDN11_GRENADE]=attack->extraClips;
+			attack = &weaponData[WP_MDN11_GRENADE].attack[ATTACK_NORMAL];
+			g_entities[level.sortedClients[i]].client->ps.ammo[weaponData[WP_F1_GRENADE].attack[ATTACK_NORMAL].ammoIndex]=attack->clipSize;
+			g_entities[level.sortedClients[i]].client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_F1_GRENADE );
+			g_entities[level.sortedClients[i]].client->ps.clip[ATTACK_NORMAL][WP_F1_GRENADE]=attack->extraClips;
 		}
 	}
 }
