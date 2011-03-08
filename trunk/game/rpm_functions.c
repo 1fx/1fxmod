@@ -75,6 +75,12 @@ void RPM_Pause (gentity_t *adm)
 
 	level.pause = 6;
 
+	//trap_SetConfigstring( CS_LEVEL_START_TIME, va("%i", level.startTime ) );
+	//trap_SetConfigstring ( CS_GAMETYPE_TIMER, va("%i", level.gametypeRoundTime) );
+	level.oldstartTime = level.startTime;
+	level.oldgametypeRoundTime = level.gametypeRoundTime;
+	level.oldtime = level.time;
+
 	for (i=0 ; i< level.maxclients ; i++)
 	{
 		ent = g_entities + i;
@@ -143,6 +149,10 @@ void RPM_Unpause (gentity_t *adm)
 		{
 			level.unpausetime = 0;
 			
+			level.startTime = level.oldstartTime;
+			level.gametypeRoundTime = level.oldgametypeRoundTime;
+			level.time = level.oldtime;
+
 			///RxCxW - 08.30.06 - 03:06pm #reset clients (scoreboard) display time
 			trap_SetConfigstring( CS_LEVEL_START_TIME, va("%i", level.startTime ) );
 			trap_SetConfigstring ( CS_GAMETYPE_TIMER, va("%i", level.gametypeRoundTime) );

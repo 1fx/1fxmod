@@ -730,6 +730,10 @@ typedef struct
 	int			customtime;
 	qboolean	aetdone;
 
+	int			oldstartTime;
+	int			oldgametypeRoundTime;
+	int			oldtime;
+
 	muted_t		mutedClients[21]; // Henk 28/01/11 -> Add new mute system.
 } level_locals_t;
 
