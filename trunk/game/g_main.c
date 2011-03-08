@@ -221,6 +221,9 @@ vmCvar_t	g_customCommandsFile;
 vmCvar_t	g_banfile;
 vmCvar_t	hideseek_extra;
 
+// Boe!Man 3/8/11
+vmCvar_t	g_enableAdminLog;
+
 #ifdef _BOE_DBG
 vmCvar_t	boe_log;
 #endif
@@ -484,6 +487,9 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_enableCustomCommands, "g_enableCustomCommands", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 	{ &g_customCommandsFile,			"g_customCommandsFile",			"CustomCommands.txt",	CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  }, // Boe!Man 3/6/11: So users can change if desired.
 	{ &hideseek_extra,			"hideseek_extra",			"110",	CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  }, // Boe!Man 3/6/11: So users can change if desired.
+
+	// Boe!Man 3/8/11: CVAR for the Admin logging.
+	{ &g_enableAdminLog, "g_enableAdminLog", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 
 	{ &g_rpmEnt, "g_rpmEnt", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 #ifdef _BOE_DBG

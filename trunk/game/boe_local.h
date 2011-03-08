@@ -246,6 +246,9 @@ extern	vmCvar_t	g_customCommandsFile;
 extern	vmCvar_t	g_banfile;
 extern  vmCvar_t	hideseek_extra;
 
+// Boe!Man 3/8/11
+extern	vmCvar_t	g_enableAdminLog;
+
 //==============================================
 // boe_utils.c
 //==============================================
