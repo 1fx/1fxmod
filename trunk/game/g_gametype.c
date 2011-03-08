@@ -936,7 +936,7 @@ void CheckGametype ( void )
 			}
 		}
 
-		if(alive[TEAM_RED] == 1 && level.redMsgCount == 0 && players[TEAM_RED] >= 2){
+		if(alive[TEAM_RED] == 1 && level.redMsgCount == 0 && players[TEAM_RED] >= 2 && current_gametype.value != GT_HS){
 			for ( i = 0; i < level.numConnectedClients; i ++ ){
 				gentity_t* ent = &g_entities[level.sortedClients[i]];
 				if ( ent->client->sess.team == TEAM_RED && alive[TEAM_RED] == 1 &&
@@ -949,7 +949,7 @@ void CheckGametype ( void )
 			}
 		}
 
-		if(alive[TEAM_BLUE] == 1 && level.blueMsgCount == 0 && players[TEAM_BLUE] >= 2){
+		if(alive[TEAM_BLUE] == 1 && level.blueMsgCount == 0 && players[TEAM_BLUE] >= 2 && current_gametype.value != GT_HS){
 			for ( i = 0; i < level.numConnectedClients; i ++ ){
 				gentity_t* ent = &g_entities[level.sortedClients[i]];
 				if ( ent->client->sess.team == TEAM_BLUE && alive[TEAM_BLUE] == 1 &&
@@ -972,13 +972,12 @@ void CheckGametype ( void )
 				tent->s.eventParm = GAME_OVER_TIMELIMIT;
 				tent->r.svFlags = SVF_BROADCAST;
 				level.timelimithit = qfalse;
-				if(current_gametype.value == GT_HS){
-						Com_Printf("Updating scores..\n");
-						UpdateScores();
-				
-				if(TiedPlayers() < 2)
+				if(current_gametype.value == GT_HS){				
+				if(TiedPlayers() < 2){
+					Com_Printf("Updating scores..\n");
+					UpdateScores();
 					LogExit( "Timelimit hit." );
-				else
+				}else
 					InitCagefight();
 				}
 			}
@@ -995,10 +994,23 @@ void CheckGametype ( void )
 				LogExit( "Timelimit hit." );
 			}
 			trap_GT_SendEvent ( GTEV_TEAM_ELIMINATED, level.time, TEAM_BLUE, 0, 0, 0, 0 );
+		}else if(level.cagefight == qtrue){
+			Com_Printf("Updating scores..\n");
+			UpdateScores();
+			level.cagefight = qfalse;
+			LogExit( "Someone has won the cagefight" );
+			return;
 		}
 		// See if the time has expired
 		if ( level.time > level.gametypeRoundTime )
 		{
+			if(level.cagefight == qtrue){
+				Com_Printf("Updating scores..\n");
+				UpdateScores();
+				level.cagefight = qfalse;
+				LogExit( "Timelimit hit" );
+				return;
+			}
 			if(current_gametype.value == GT_HS){
 				StripHiders(); 
 				if(level.teamAliveCount[TEAM_RED] >= 3){ // more then 3 alive then call the function
@@ -1013,12 +1025,11 @@ void CheckGametype ( void )
 				tent->r.svFlags = SVF_BROADCAST;
 				level.timelimithit = qfalse;
 				if(current_gametype.value == GT_HS){
-						Com_Printf("Updating scores..\n");
-						UpdateScores();
-				
-				if(TiedPlayers() < 2)
+				if(TiedPlayers() < 2){
+					Com_Printf("Updating scores..\n");
+					UpdateScores();
 					LogExit( "Timelimit hit." );
-				else
+				}else
 					InitCagefight();
 				}
 			}

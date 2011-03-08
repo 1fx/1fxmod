@@ -370,14 +370,14 @@ void player_die(
 
 		if ( attacker == self )
 		{
-			if ( mod != MOD_TEAMCHANGE && current_gametype.integer != GT_HS)
+			if ( mod != MOD_TEAMCHANGE && current_gametype.value != GT_HS)
 			{
 				G_AddScore( attacker, g_suicidePenalty.integer );
 			}
 		}
 		else if ( OnSameTeam ( self, attacker ) )
 		{
-			if ( mod != MOD_TELEFRAG && current_gametype.integer != GT_HS )
+			if ( mod != MOD_TELEFRAG && current_gametype.value != GT_HS )
 			{
 				G_AddScore( attacker, g_teamkillPenalty.integer );
 			}
@@ -1883,11 +1883,14 @@ qboolean G_RadiusDamage (
 				VectorCopy(origin, org1);
 				VectorCopy(origin, org2);
 				org1[2] += 50;
-				trap_Trace ( &tr, org1, mins, maxs, org2, attacker->s.number, MASK_SOLID );
-				if ( !tr.startsolid )
+				trap_Trace ( &tr, org1, mins, maxs, org2, attacker->s.number, MASK_ALL); //MASK_SOLID
+				if ( !tr.startsolid && !tr.allsolid )
 				{
+					if ( tr.entityNum != ENTITYNUM_NONE )
+						trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7Found an entity at the origin.\n\""));
 				DoTeleport(attacker, origin);
 				}else{
+					DoTeleport(attacker, tr.endpos); // TEST
 					ammoindex=weaponData[WP_F1_GRENADE].attack[ATTACK_ALTERNATE].ammoIndex;
 					attacker->client->ps.ammo[ammoindex]+=1;
 					trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7Surface is not empty.\n\""));

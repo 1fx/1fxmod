@@ -2551,12 +2551,12 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 	trap_Cvar_VariableStringBuffer ( "mapname", level.mapname, MAX_QPATH );
 
 	//g_autoeventeams.integer == 1
-	if(level.time >= level.gametypeDelayTime-1000 && level.aetdone == qfalse && level.gametypeStartTime >= 5000 && g_autoeventeams.integer == 1){
+	if(level.time >= level.gametypeDelayTime-1000 && level.aetdone == qfalse && level.gametypeStartTime >= 5000 && g_autoeventeams.integer == 1 && level.cagefight != qtrue){
 		EvenTeams_HS(NULL, qtrue);
 		level.aetdone = qtrue;
 	}
 
-	if(level.time >= level.gametypeDelayTime && level.messagedisplay == qfalse && level.gametypeStartTime >= 5000 && !strstr(level.mapname, "col9")){
+	if(level.time >= level.gametypeDelayTime && level.messagedisplay == qfalse && level.gametypeStartTime >= 5000 && !strstr(level.mapname, "col9") && level.cagefight != qtrue){
 		trap_SendServerCommand( -1, va("cp \"^7%sS%se%se%sk%se%srs released!\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		Boe_GlobalSound(level.clicksound); // Henkie 22/01/10 -> G_SoundIndex("sound/misc/menus/click.wav") index this when loading map(saves alot performance)
 		// give nades to all players
@@ -2593,12 +2593,9 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 		level.messagedisplay = qtrue;
 	}
 
-	if(level.time > level.gametypeStartTime+10000 && level.messagedisplay1 == qfalse && level.gametypeStartTime >= 5000 && !strstr(level.mapname, "col9")){
+	if(level.time > level.gametypeStartTime+10000 && level.messagedisplay1 == qfalse && level.gametypeStartTime >= 5000 && !strstr(level.mapname, "col9") && level.cagefight != qtrue){
 		// Boe!Man 3/20/10: Commenting out debug messages.
-		//G_LogPrintf("ID RPG: %i\n", level.lastalive[0]);
-		//G_LogPrintf("ID M4: %i\n", level.lastalive[1]);
 		if(level.lastalive[0] != -1 && g_entities[level.lastalive[0]].client->sess.team == TEAM_RED && !G_IsClientDead(g_entities[level.lastalive[0]].client) && g_entities[level.lastalive[0]].client->pers.connected == CON_CONNECTED){
-			//trap_SendServerCommand (-1, va("print\"^3[H&S] ^7Debug: RPG to %s.\n\"", g_entities[level.lastalive[0]].client->pers.cleanName ));
 			// Henk 26/01/10 -> Give RPG to player
 			g_entities[level.lastalive[0]].client->ps.ammo[weaponData[WP_RPG7_LAUNCHER].attack[ATTACK_NORMAL].ammoIndex]=2;
 			g_entities[level.lastalive[0]].client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_RPG7_LAUNCHER );

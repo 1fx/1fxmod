@@ -61,6 +61,8 @@ void InitCagefight(void){
 		}
 	}
 	// when it ends execute this:
+	//Com_Printf("Updating scores..\n");
+	//UpdateScores();
 	//level.cagefight = qfalse;
 	//LogExit( "Timelimit hit." );
 }
