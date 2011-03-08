@@ -1724,6 +1724,15 @@ qboolean G_RadiusDamage (
 			}
 			// End
 
+			if(mod == WP_L2A2_GRENADE){
+				if(ent == attacker){
+					Henk_CloseSound(attacker->r.currentOrigin, G_SoundIndex("sound/weapons/rpg7/fire01.mp3"));
+					attacker->client->ps.pm_flags |= PMF_JUMPING;
+					attacker->client->ps.groundEntityNum = ENTITYNUM_NONE;
+					attacker->client->ps.velocity[2] = 450;
+				}
+			}
+
 			// Henk 18/01/10 -> RPG Boost
 			if(mod == WP_RPG7_LAUNCHER){
 				if(ent == attacker){ // RPG hits attacker self so boost him

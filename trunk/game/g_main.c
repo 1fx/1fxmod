@@ -2603,6 +2603,7 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 		// Boe!Man 3/20/10: Commenting out debug messages.
 		if(level.lastalive[0] != -1 && g_entities[level.lastalive[0]].client->sess.team == TEAM_RED && !G_IsClientDead(g_entities[level.lastalive[0]].client) && g_entities[level.lastalive[0]].client->pers.connected == CON_CONNECTED){
 			// Henk 26/01/10 -> Give RPG to player
+			// Add it here aswell //attack = &weaponData[WP_MDN11_GRENADE].attack[ATTACK_NORMAL];
 			g_entities[level.lastalive[0]].client->ps.ammo[weaponData[WP_RPG7_LAUNCHER].attack[ATTACK_NORMAL].ammoIndex]=2;
 			g_entities[level.lastalive[0]].client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_RPG7_LAUNCHER );
 			g_entities[level.lastalive[0]].client->ps.clip[ATTACK_NORMAL][WP_RPG7_LAUNCHER]=1;
@@ -2867,7 +2868,7 @@ void G_RunFrame( int levelTime )
 	{
 		if(current_gametype.value == GT_CTF){
 			if(ent->client->sess.pausespawn == qtrue && !level.pause){
-				//FIX ME: Add custom respawn message
+				//FIX ME: Add custom respawn message(eg. Respawn in x sec), original will be frozen on 0
 				if(level.time > ent->client->ps.RealSpawnTimer){
 					ent->client->sess.pausespawn = qfalse;
 					G_StopFollowing ( ent );

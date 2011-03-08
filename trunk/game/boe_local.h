@@ -479,3 +479,5 @@ char *ChooseTeam(void);
 void DoTeleport(gentity_t *ent, vec3_t origin);
 int TiedPlayers(void);
 void InitCagefight(void);
+void Henk_CloseSound ( vec3_t origin, int soundIndex);
+

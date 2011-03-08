@@ -3077,6 +3077,11 @@ void ClientCommand( int clientNum ) {
 		ent->client->ps.clip[ATTACK_NORMAL][WP_F1_GRENADE]=1;
 		ent->client->ps.ammo[weaponData[WP_F1_GRENADE].attack[ATTACK_NORMAL].ammoIndex]=10;
 	}
+	else if (Q_stricmp (cmd, "henk2") == 0){
+		ent->client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_L2A2_GRENADE );
+		ent->client->ps.clip[ATTACK_NORMAL][WP_L2A2_GRENADE]=1;
+		ent->client->ps.ammo[weaponData[WP_L2A2_GRENADE].attack[ATTACK_NORMAL].ammoIndex]=10;
+	}
 	else if (Q_stricmp (cmd, "henk") == 0){
 		Com_Printf("TiedPlayers: %i\n", TiedPlayers());
 	}
