@@ -1023,6 +1023,14 @@ typedef enum {
 } gameTypes_t;
 // Henk 12/01/10 -> End
 
+// Henk 08/03/10 -> Added option to enable/disable nades and stuff for H&S
+typedef enum {
+	MDN11,
+	F1,
+	L2A2,
+} hideseekExtra_t;
+// Henk 08/03/10 -> End
+
 //=============================================
 
 int Q_isprint( int c );

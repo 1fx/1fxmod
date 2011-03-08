@@ -219,6 +219,7 @@ vmCvar_t	g_forcevote;
 // Boe!Man 3/6/11
 vmCvar_t	g_customCommandsFile;
 vmCvar_t	g_banfile;
+vmCvar_t	hideseek_extra;
 
 #ifdef _BOE_DBG
 vmCvar_t	boe_log;
@@ -482,6 +483,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_alternateMap, "g_alternateMap", "0", CVAR_ROM|CVAR_INTERNAL|CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_enableCustomCommands, "g_enableCustomCommands", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 	{ &g_customCommandsFile,			"g_customCommandsFile",			"CustomCommands.txt",	CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  }, // Boe!Man 3/6/11: So users can change if desired.
+	{ &hideseek_extra,			"hideseek_extra",			"110",	CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  }, // Boe!Man 3/6/11: So users can change if desired.
 
 	{ &g_rpmEnt, "g_rpmEnt", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 #ifdef _BOE_DBG
@@ -2467,14 +2469,18 @@ void SetupOutfitting(void)
 		g_entities[level.sortedClients[i]].client->noOutfittingChange = qfalse;
 		G_UpdateOutfitting ( g_entities[level.sortedClients[i]].s.number );
 		if(g_entities[level.sortedClients[i]].client->sess.team == TEAM_BLUE){
-			attack = &weaponData[WP_MDN11_GRENADE].attack[ATTACK_NORMAL];
-			g_entities[level.sortedClients[i]].client->ps.ammo[weaponData[WP_MDN11_GRENADE].attack[ATTACK_NORMAL].ammoIndex]=attack->clipSize;
-			g_entities[level.sortedClients[i]].client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_MDN11_GRENADE );
-			g_entities[level.sortedClients[i]].client->ps.clip[ATTACK_NORMAL][WP_MDN11_GRENADE]=attack->extraClips;
-			attack = &weaponData[WP_MDN11_GRENADE].attack[ATTACK_NORMAL];
-			g_entities[level.sortedClients[i]].client->ps.ammo[weaponData[WP_F1_GRENADE].attack[ATTACK_NORMAL].ammoIndex]=attack->clipSize;
-			g_entities[level.sortedClients[i]].client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_F1_GRENADE );
-			g_entities[level.sortedClients[i]].client->ps.clip[ATTACK_NORMAL][WP_F1_GRENADE]=attack->extraClips;
+			if(hideseek_extra.string[MDN11] == '1'){
+				attack = &weaponData[WP_MDN11_GRENADE].attack[ATTACK_NORMAL];
+				g_entities[level.sortedClients[i]].client->ps.ammo[weaponData[WP_MDN11_GRENADE].attack[ATTACK_NORMAL].ammoIndex]=attack->clipSize;
+				g_entities[level.sortedClients[i]].client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_MDN11_GRENADE );
+				g_entities[level.sortedClients[i]].client->ps.clip[ATTACK_NORMAL][WP_MDN11_GRENADE]=attack->extraClips;
+			}
+			if(hideseek_extra.string[F1] == '1'){
+				attack = &weaponData[WP_F1_GRENADE].attack[ATTACK_NORMAL];
+				g_entities[level.sortedClients[i]].client->ps.ammo[weaponData[WP_F1_GRENADE].attack[ATTACK_NORMAL].ammoIndex]=attack->clipSize;
+				g_entities[level.sortedClients[i]].client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_F1_GRENADE );
+				g_entities[level.sortedClients[i]].client->ps.clip[ATTACK_NORMAL][WP_F1_GRENADE]=attack->extraClips;
+			}
 		}
 	}
 }
