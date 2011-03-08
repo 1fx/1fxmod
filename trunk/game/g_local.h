@@ -729,6 +729,8 @@ typedef struct
 	char		action[512];
 	int			customtime;
 	qboolean	aetdone;
+	int			cagefighttimer;
+	qboolean	startcage;
 
 	muted_t		mutedClients[21]; // Henk 28/01/11 -> Add new mute system.
 } level_locals_t;

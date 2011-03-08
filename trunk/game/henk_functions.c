@@ -24,6 +24,12 @@ int TiedPlayers(void){
 void InitCagefight(void){
 	int i, count = 0;
 	vec3_t spawns[33];
+
+	if(level.time < level.cagefighttimer){
+		return;
+	}
+	level.startcage = qfalse;
+
 	G_ResetGametype(qfalse);
 	for(i=0;i<=32;i++){
 		VectorCopy(level.hideseek_cage, spawns[i]);
@@ -39,6 +45,8 @@ void InitCagefight(void){
 	spawns[4][0] += 105;
 	spawns[4][1] -= 85;
 	level.cagefight = qtrue;
+	level.messagedisplay = qtrue; // stop Seeker Released
+	level.messagedisplay1 = qtrue; // stop RPG/M4 stuff
 	SpawnCage(level.hideseek_cage, NULL, qtrue);
 	for(i=0;i<level.numConnectedClients;i++){
 		if(g_entities[level.sortedClients[i]].client->sess.team == TEAM_RED){
@@ -58,6 +66,8 @@ void InitCagefight(void){
 			g_entities[level.sortedClients[i]].client->ps.weaponTime = 0;
 			g_entities[level.sortedClients[i]].client->ps.weaponAnimTime = 0;
 			g_entities[level.sortedClients[i]].client->ps.stats[STAT_FROZEN] = 10000;
+		}else{
+			player_die(&g_entities[level.sortedClients[i]], NULL, NULL, 10000, MOD_POP, 0, 0);
 		}
 	}
 	// when it ends execute this:

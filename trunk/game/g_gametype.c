@@ -470,6 +470,7 @@ void G_ResetGametype ( qboolean fullRestart )
 	G_ResetGametypeEntities ( );
 	level.cagefight = qfalse;
 	level.aetdone = qfalse;
+	level.cagefighttimer = 0;
 	trap_Cvar_VariableStringBuffer ( "mapname", level.mapname, MAX_QPATH );
 	// Cant have a 0 roundtimelimit
 	if ( g_roundtimelimit.integer < 1 )
@@ -828,6 +829,11 @@ void CheckGametype ( void )
 	// If the level is over then forget checking gametype stuff.
 	//Ryan june 15 2003
 	//if ( level.intermissiontime )
+		if(current_gametype.value == GT_HS){
+			if(level.startcage == qtrue){
+				InitCagefight();
+			}
+		}
 	if ( level.intermissiontime || level.pause || cm_enabled.integer == 3)
 	//End Ryan
 	{
@@ -968,17 +974,24 @@ void CheckGametype ( void )
 		{	
 			if(level.timelimithit == qtrue && level.cagefight != qtrue && (strstr(g_gametype.string, "inf") || strstr(g_gametype.string, "elim"))){
 				gentity_t*	tent;
-				tent = G_TempEntity( vec3_origin, EV_GAME_OVER );
-				tent->s.eventParm = GAME_OVER_TIMELIMIT;
-				tent->r.svFlags = SVF_BROADCAST;
 				if(current_gametype.value == GT_HS){				
 				if(TiedPlayers() < 2){
+					tent = G_TempEntity( vec3_origin, EV_GAME_OVER );
+					tent->s.eventParm = GAME_OVER_TIMELIMIT;
+					tent->r.svFlags = SVF_BROADCAST;
 					level.timelimithit = qfalse;
 					Com_Printf("Updating scores..\n");
 					UpdateScores();
-					LogExit( "Timelimit hit." );
-				}else
-					InitCagefight();
+					LogExit( "Seekers have won the match" );
+				}else{
+						level.cagefighttimer = level.time+3000;
+						level.startcage = qtrue;
+				}
+				}else{
+					tent = G_TempEntity( vec3_origin, EV_GAME_OVER );
+					tent->s.eventParm = GAME_OVER_TIMELIMIT;
+					tent->r.svFlags = SVF_BROADCAST;
+					LogExit( "Red team has been eliminated" );
 				}
 			}
 			trap_GT_SendEvent ( GTEV_TEAM_ELIMINATED, level.time, TEAM_RED, 0, 0, 0, 0 );
@@ -991,7 +1004,7 @@ void CheckGametype ( void )
 				tent->s.eventParm = GAME_OVER_TIMELIMIT;
 				tent->r.svFlags = SVF_BROADCAST;
 				level.timelimithit = qfalse;
-				LogExit( "Timelimit hit." );
+				LogExit( "Blue team has been eliminated" );
 			}
 			trap_GT_SendEvent ( GTEV_TEAM_ELIMINATED, level.time, TEAM_BLUE, 0, 0, 0, 0 );
 		}else if(level.cagefight == qtrue && level.teamAliveCount[TEAM_RED] == 1){
@@ -1005,7 +1018,7 @@ void CheckGametype ( void )
 		// See if the time has expired
 		if ( level.time > level.gametypeRoundTime )
 		{
-			if(level.cagefight == qtrue){
+			if(level.cagefight == qtrue && current_gametype.value == GT_HS){
 				Com_Printf("Updating scores..\n");
 				UpdateScores();
 				level.timelimithit = qfalse;
@@ -1026,13 +1039,15 @@ void CheckGametype ( void )
 				tent->s.eventParm = GAME_OVER_TIMELIMIT;
 				tent->r.svFlags = SVF_BROADCAST;
 				if(current_gametype.value == GT_HS){
-				if(TiedPlayers() < 2){
-					Com_Printf("Updating scores..\n");
-					UpdateScores();
-					level.timelimithit = qfalse;
-					LogExit( "Timelimit hit." );
-				}else
-					InitCagefight();
+					if(TiedPlayers() < 2){
+						Com_Printf("Updating scores..\n");
+						UpdateScores();
+						level.timelimithit = qfalse;
+						LogExit( "Timelimit hit." );
+					}else{
+							level.cagefighttimer = level.time+3000;
+							level.startcage = qtrue;
+					}
 				}
 			}
 		} 
