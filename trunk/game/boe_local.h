@@ -249,6 +249,8 @@ extern  vmCvar_t	hideseek_extra;
 // Boe!Man 3/8/11
 extern	vmCvar_t	g_enableAdminLog;
 
+extern	vmCvar_t	g_adminlist;
+
 //==============================================
 // boe_utils.c
 //==============================================

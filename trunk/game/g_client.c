@@ -1334,6 +1334,7 @@ void ClientUserinfoChanged( int clientNum )
 					client->ps.weapon = WP_KNIFE;
 					client->ps.weaponstate = WEAPON_READY;
 					client->ps.stats[STAT_ARMOR] = MAX_HEALTH;
+					Com_Printf("Given a knife..\n");
 				}
 			}else
 				G_UpdateOutfitting ( clientNum );

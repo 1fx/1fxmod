@@ -135,6 +135,7 @@ vmCvar_t	g_eventeams;					// Admin CVAR.
 vmCvar_t	g_maxIPConnections;
 //vmCvar_t	g_333;							// Admin CVAR.
 vmCvar_t	g_forceteam;					// Admin CVAR.
+vmCvar_t	g_adminlist;
 vmCvar_t	Owner;
 vmCvar_t	Clan;
 vmCvar_t	ClanURL;

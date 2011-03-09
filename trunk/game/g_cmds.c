@@ -67,6 +67,7 @@ static admCmd_t AdminCommands[] =
 	{"!pass", "passvote", &g_forcevote.integer, &Boe_passVote},
 	{"!cancel", "cancelvote", &g_forcevote.integer, &Boe_cancelVote},
 	{"!mapcycle", "mapcycle", &g_mapswitch.integer, &Boe_Mapcycle},
+	{"!adminlist", "adminlist", &g_adminlist.integer, &Henk_Admlist},
 	// Boe!Man 1/22/11: End full synonyms.
 
 	{"!uc ", "uppercut", &g_uppercut.integer, &Boe_Uppercut},
@@ -127,7 +128,9 @@ static admCmd_t AdminCommands[] =
 	{"!ub ", "unban", &g_ban.integer, &Henk_Unban},
 	{"!su ", "subnetunban", &g_subnetban.integer, &Henk_SubnetUnban},
 	{"!sb ", "subnetban", &g_subnetban.integer, &Boe_subnetBan},
-	{"!mc", "mapcycle", &g_mapswitch.integer, &Boe_Mapcycle}
+	{"!mc", "mapcycle", &g_mapswitch.integer, &Boe_Mapcycle},
+	{"!adl", "adminlist", &g_adminlist.integer, &Henk_Admlist},
+	{"!al", "adminlist", &g_adminlist.integer, &Henk_Admlist},
 };
 
 static int AdminCommandsSize = sizeof( AdminCommands ) / sizeof( AdminCommands[0] );

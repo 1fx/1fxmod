@@ -3024,6 +3024,116 @@ void Henk_Unban(int argNum, gentity_t *adm, qboolean shortCmd){
 	}
 }
 
+void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
+	void	*GP2, *group;
+	char	ip[64], name[64], reason[64], test = ' ';
+	char	column1[20], column2[20];
+	int		spaces = 0, length = 0, z;
+	char	*file;
+	fileHandle_t f;
+	char            buf[15000] = "\0";
+	int len, i, count = 0, EndPos = -1, StartPos = 0;
+	qboolean begin = qtrue;
+	int r, lcount = -1, lenx;
+	char xip[64];
+	//wrapper for interface
+	if(adm){
+		trap_SendServerCommand( adm-g_entities, va("print \"^3[Banlist]^7\n\n\""));
+		trap_SendServerCommand( adm-g_entities, va("print \"^3 #    Lvl    Name                IP\n\""));
+		trap_SendServerCommand( adm-g_entities, va("print \"^7------------------------------------------------------------------------\n\""));
+	}else{
+		Com_Printf("^3[Banlist]^7\n\n");
+		Com_Printf("^3 #    Lvl    Name                IP\n");
+		Com_Printf("^7------------------------------------------------------------------------\n");
+	}
+
+	len = trap_FS_FOpenFile(g_adminfile.string, &f, FS_READ);
+	if(!f){
+		Com_Printf("Error while reading %s\n", g_adminfile.string);
+		return;
+	}
+	trap_FS_Read( buf, len, f );
+	buf[len] = '\0';
+	trap_FS_FCloseFile(f);
+
+	for(i=0;i<len;i++){
+		if(begin && buf[i] == '\n'){
+			StartPos = i+1;
+			EndPos = -1;
+			begin = qfalse;
+		}
+		if(buf[i] == '\\' && buf[i] != '\n'){
+			EndPos = i;
+			begin = qtrue;
+			memset(xip, 0, sizeof(xip));
+			strncpy(xip, buf+StartPos, EndPos-StartPos);
+			lcount = -1;
+			for(r=i;r<strlen(buf);r++){
+				if(buf[r] == '\n'){
+					lcount = r-1;
+					break;
+				}
+			}
+			if(lcount == -1){
+				lcount = strlen(buf); // last line
+			}
+			strncpy(name, buf+EndPos+1, lcount-(EndPos+1));
+			Com_Printf("IP: %s\n", xip);
+			Com_Printf("Name: %s\n", name);
+			count += 1;
+
+			length = strlen(ip);
+			if(length > 15){
+				ip[15] = '\0';
+				length = 15;
+			}
+			spaces = 16-length;
+			for(z=0;z<spaces;z++){
+			column1[z] = test;
+			}
+			column1[spaces] = '\0';
+
+			length = strlen(name);
+			if(length > 19){
+				name[19] = '\0';
+				length = 19;
+			}
+			spaces = 20-length;
+			for(z=0;z<spaces;z++){
+			column2[z] = test;
+			}
+			column2[spaces] = '\0';
+
+			length = strlen(reason);
+			if(length > 18){
+				reason[18] = '\0';
+				length = 18;
+			}
+			spaces = 19-length;
+			if(adm){
+				if(count <= 9){
+					trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7]   %s%s%s%s%s\n", count, ip, column1, name, column2, reason)); // Boe!Man 9/16/10: Print ban.
+				}else if(count > 9 && count < 100){
+					trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7]  %s%s%s%s%s\n", count, ip, column1, name, column2, reason)); // Boe!Man 9/16/10: Print ban.
+				}else{
+					trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7] %s%s%s%s%s\n", count, ip, column1, name, column2, reason)); // Boe!Man 9/16/10: Print ban.
+				}
+			}else{
+				if(count <= 9){
+					Com_Printf("[^3%i^7]   %s%s%s%s%s\n", count, ip, column1, name, column2, reason);
+				}else if(count > 9 && count < 100){
+					Com_Printf("[^3%i^7]  %s%s%s%s%s\n", count, ip, column1, name, column2, reason);
+				}else{
+					Com_Printf("[^3%i^7] %s%s%s%s%s\n", count, ip, column1, name, column2, reason);
+				}
+			}
+		}
+	}
+	// End
+	trap_SendServerCommand( adm-g_entities, va("print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\""));
+	return;
+}
+
 void Henk_SubnetUnban(int argNum, gentity_t *adm, qboolean shortCmd){
 	char	arg[32] = "\0", buf[32] = "\0";
 	int		i = 0, count = 0;
