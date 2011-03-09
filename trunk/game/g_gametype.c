@@ -1011,7 +1011,7 @@ void CheckGametype ( void )
 			Com_Printf("Updating scores..\n");
 			UpdateScores();
 			level.timelimithit = qfalse;
-			level.cagefight = qfalse;
+			//level.cagefight = qfalse;
 			LogExit( "Someone has won the cagefight" );
 			return;
 		}
@@ -1022,7 +1022,7 @@ void CheckGametype ( void )
 				Com_Printf("Updating scores..\n");
 				UpdateScores();
 				level.timelimithit = qfalse;
-				level.cagefight = qfalse;
+				//level.cagefight = qfalse;
 				LogExit( "Timelimit hit" );
 				return;
 			}
