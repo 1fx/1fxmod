@@ -663,58 +663,71 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 {
 	char	arg[16] = "\0"; // increase buffer so we can process more commands
 	int		num = -1;
-	int i, y;	
+	int i, y, x, count;
 	char *numb;
 	qboolean first = qtrue;
 	qboolean space = qfalse;
 	trap_Argv( argNum, arg, sizeof( arg ) );
 	if(shortCmd){ // Henk 04/05/10 -> Handle the short admin commands.
 		num = -1;
-		for(i=0;i<16;i++){
+		for(i=0;i<16;i++){ // FIX ME HENK: could be out of bounds
 			if(arg[i] == ' '){
 				//trap_SendServerCommand( -1, va("print \"^3[Debug] ^7Arg[%i] = %s.\n\"", i, arg[i]));
 				if(henk_isdigit(arg[i+1]) && !henk_ischar(arg[i+2])){ // we check if the other 2 are chars(fixes !uc 1fx bug which uppercuts id 1)
 				num = atoi(va("%c%c", arg[i+1], arg[i+2]));
 				}else{
-					for(i=0;i<=20;i++){
-						if(arg[i] == ' '){
+					for(x=0;x<=20;x++){ // FIX ME HENK: could be out of bounds
+						if(arg[x] == ' '){
 							// Henk 08/09/10 -> Check for another arg in this.
 							for(y=1;y<=sizeof(arg);y++){
-								if(arg[i+y] == ' '){
+								if(arg[x+y] == ' '){
 									space = qtrue;
 									break;
 								}else{
 									if(first){
-										numb = va("%c", arg[i+y]);
+										numb = va("%c", arg[x+y]);
 										first = qfalse;
 									}else{
-										numb = va("%s%c", numb, arg[i+y]);
+										numb = va("%s%c", numb, arg[x+y]);
 									}
 									//Com_Printf("%s\n", numb);
 								}
 							}
 							if(space == qfalse){
-								if(!henk_ischar(arg[i+1]) && !henk_ischar(arg[i+2])){
+								if(!henk_ischar(arg[x+1]) && !henk_ischar(arg[x+2])){
 									//trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You haven't entered a valid player ID/player name.\n\"", arg, usage));
 									num = -1;
 									break;
 								}
-							//trap_SendServerCommand( -1, va("print \"^3[Debug] ^7%s.\n\"", numb));
-							numb = va("%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", arg[i+1], arg[i+2], arg[i+3], arg[i+4], arg[i+5], arg[i+6], arg[i+7], arg[i+8], arg[i+9], arg[i+10], arg[i+11], arg[i+12], arg[i+13], arg[i+14], arg[i+15]);
+							// FIX ME HENK: could be out of bounds
+							numb = va("%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", arg[x+1], arg[x+2], arg[x+3], arg[x+4], arg[x+5], arg[x+6], arg[x+7], arg[x+8], arg[x+9], arg[x+10], arg[x+11], arg[x+12], arg[x+13], arg[x+14], arg[x+15]);
 							}
 							break;
 						}
 					}
-					for(i=0;i<=level.numConnectedClients;i++){
+					for(x=0;x<=level.numConnectedClients;x++){
 						//trap_SendServerCommand(-1, va("print\"^3[Debug] ^7%s comparing with %s.\n\"", g_entities[level.sortedClients[i]].client->pers.cleanName,numb));
-						if(strstr(Q_strlwr(g_entities[level.sortedClients[i]].client->pers.cleanName), Q_strlwr(numb))){
-							num = level.sortedClients[i];
+						if(strstr(Q_strlwr(g_entities[level.sortedClients[x]].client->pers.cleanName), Q_strlwr(numb))){
+							num = level.sortedClients[x];
 							break;
 						}
 						num = -1;
 					}
 				}
 				break;
+			}else if(henk_isdigit(arg[i]) && henk_ischar(arg[i-1])){ // Henk 10/03/11 -> Add support for !u1/!r1 commands
+				count = 0;
+				for(x=i;x<strlen(arg);x++){
+					if(henk_isdigit(arg[x])){
+						numb[count] = arg[x];
+						count += 1;
+					}else{
+						numb[count] = '\0';
+						break;
+					}
+				}
+				num = atoi(numb);
+				trap_SendServerCommand(ent->s.number, va("print\"^3[Debug] ^7New short command style detected, Client number: %i.\n\"", num));
 			}
 		}
 		if(num == -1){ // Get second argument because they use it from the console

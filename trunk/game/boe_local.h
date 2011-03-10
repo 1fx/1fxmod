@@ -336,7 +336,6 @@ void Boe_dev_f ( gentity_t *ent );
 void Boe_Add_Clan_Member(int argNum, gentity_t *adm, qboolean shortCmd);
 void Boe_Remove_Clan_Member(int argNum, gentity_t *adm, qboolean shortCmd);
 void RPM_Clan_Vs_All(gentity_t *adm);
-void Preload(void);
 
 char *GetReason(void);
 

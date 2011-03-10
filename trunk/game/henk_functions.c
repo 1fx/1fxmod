@@ -477,8 +477,6 @@ unsigned int henk_atoi( const char *string ) {
 	unsigned int		value;
 	unsigned int		c;
 
-
-	// skip whitespace
 	while ( *string <= ' ' ) {
 		if ( !*string ) {
 			return 0;
@@ -486,7 +484,6 @@ unsigned int henk_atoi( const char *string ) {
 		string++;
 	}
 
-	// check sign
 	switch ( *string ) {
 	case '+':
 		string++;
@@ -501,7 +498,6 @@ unsigned int henk_atoi( const char *string ) {
 		break;
 	}
 
-	// read digits
 	value = 0;
 	do {
 		c = *string++;
@@ -511,8 +507,6 @@ unsigned int henk_atoi( const char *string ) {
 		c -= '0';
 		value = value * 10 + c;
 	} while ( 1 );
-
-	// not handling 10e10 notation...
 
 	return value * sign;
 }

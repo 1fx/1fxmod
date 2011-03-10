@@ -816,7 +816,7 @@ void RPM_UpdateTMI(void)
 	if(level.pause)
 		return;
 
-		if(level.numConnectedClients >= 0 && level.numConnectedClients <= 10)
+	if(level.numConnectedClients >= 0 && level.numConnectedClients <= 10)
 		UpdateTime = 2000;
 	else if(level.numConnectedClients >= 11 && level.numConnectedClients <= 20)
 		UpdateTime = 3000;
