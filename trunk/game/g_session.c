@@ -23,7 +23,7 @@ void G_WriteClientSessionData( gclient_t *client )
 //RxCxW - #ClanList - Modded From RPM GOLD - 1.04.2005
 // We want to save our special status so we dont have to check again when the map starts
 //RM	s = va("%i %i %i", client->sess.team, client->sess.admin, client->sess.referee );
-	s = va("%i %i %i %i %i %i", client->sess.team, client->sess.admin, client->sess.referee, client->sess.clanMember, client->sess.invitedByRed, client->sess.invitedByBlue);
+	s = va("%i %i %i %i %i %i %s %s", client->sess.team, client->sess.admin, client->sess.referee, client->sess.clanMember, client->sess.invitedByRed, client->sess.invitedByBlue, client->sess.countryext, client->sess.country);
 	//s = va("%i", client->sess.team );
 
 	//Ryan
@@ -56,13 +56,15 @@ void G_ReadSessionData( gclient_t *client )
 	//Henkie
 	int			invitedByRed;
 	int			invitedByBlue;
+	char		country[128];
+	char		ext[4];
 
 	var = va( "session%i", client - level.clients );
 	trap_Cvar_VariableStringBuffer( var, s, sizeof(s) );
 
 	///Ryan june 7 2003
 	///sscanf( s, "%i %i %i", &sessionTeam, &adminSess, &refSess );
-	sscanf( s, "%i %i %i %i %i %i", &sessionTeam, &adminSess, &refSess, &clanSess, &invitedByRed, &invitedByBlue); //RxCxW - 04.2005 #Clan
+	sscanf( s, "%i %i %i %i %i %i %s %s", &sessionTeam, &adminSess, &refSess, &clanSess, &invitedByRed, &invitedByBlue, &ext, &country); //RxCxW - 04.2005 #Clan
 	///Ryan
 
 	/// bk001205 - format issues
@@ -73,6 +75,8 @@ void G_ReadSessionData( gclient_t *client )
 	client->sess.clanMember = clanSess;		//RxCxW - 1.04.2005 - #ClanList
 	client->sess.invitedByRed = invitedByRed;
 	client->sess.invitedByBlue = invitedByBlue;
+	strcpy(client->sess.country, country);
+	strcpy(client->sess.countryext, ext);
 }
 
 

@@ -1490,7 +1490,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 	{
 		G_InitSessionData( client, userinfo );
 	}
-	
+	strcpy(ent->client->sess.country, "noneandempty");
 	G_ReadSessionData( client );
 
 	if( isBot ) 
@@ -1506,7 +1506,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 	// get and distribute relevent paramters
 	//G_LogPrintf( "ClientConnect: %i\n", clientNum );
 	// Boe!Man 3/31/10: First off we search in the Country database.
-	if(g_checkcountry.integer == 1){
+	if(g_checkcountry.integer == 1 && !strstr(ent->client->sess.country, "noneandempty")){
 	HENK_COUNTRY(ent);
 	}
 	//G_LogPrintf( "HENK_COUNTRY done..\n" );
