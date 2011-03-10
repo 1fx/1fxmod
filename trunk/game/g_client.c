@@ -1327,14 +1327,14 @@ void ClientUserinfoChanged( int clientNum )
 				// Henk 28/01/10 -> Fixed outfitting given when players enters round(causing double nades).
 				//G_UpdateOutfitting ( index );
 				if ( !client->noOutfittingChange ){
-					client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_KNIFE );
+					/*client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_KNIFE );
 					client->ps.ammo[weaponData[WP_KNIFE].attack[ATTACK_NORMAL].ammoIndex]=0;
 					client->ps.clip[ATTACK_NORMAL][WP_KNIFE]=weaponData[WP_KNIFE].attack[ATTACK_NORMAL].clipSize;
 					client->ps.firemode[WP_KNIFE] = BG_FindFireMode ( WP_KNIFE, ATTACK_NORMAL, WP_FIREMODE_AUTO );
 					client->ps.weapon = WP_KNIFE;
 					client->ps.weaponstate = WEAPON_READY;
 					client->ps.stats[STAT_ARMOR] = MAX_HEALTH;
-					Com_Printf("Given a knife..\n");
+					Com_Printf("Given a knife..\n");*/
 				}
 			}else
 				G_UpdateOutfitting ( clientNum );

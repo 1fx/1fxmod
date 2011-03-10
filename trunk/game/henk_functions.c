@@ -67,7 +67,7 @@ void InitCagefight(void){
 			g_entities[level.sortedClients[i]].client->ps.weaponAnimTime = 0;
 			g_entities[level.sortedClients[i]].client->ps.stats[STAT_FROZEN] = 10000;
 		}else{
-			player_die(&g_entities[level.sortedClients[i]], NULL, NULL, 10000, MOD_POP, 0, 0);
+			//G_Damage (&g_entities[level.sortedClients[i]], NULL, NULL, NULL, NULL, 10000, 0, MOD_POP, HL_HEAD|HL_FOOT_RT|HL_FOOT_LT|HL_LEG_UPPER_RT|HL_LEG_UPPER_LT|HL_HAND_RT|HL_HAND_LT|HL_WAIST|HL_CHEST|HL_NECK);
 		}
 	}
 	// when it ends execute this:

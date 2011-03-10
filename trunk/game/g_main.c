@@ -2073,7 +2073,7 @@ void CheckExitRules( void )
 	}*/
 
 	// Check to see if the timelimit was hit
-	if ( g_timelimit.integer && !level.warmupTime && level.timelimithit != qtrue ) 
+	if ( g_timelimit.integer && !level.warmupTime && level.timelimithit != qtrue && level.cagefight != qtrue ) 
 	{
 		if ( level.time - level.startTime >= (g_timelimit.integer + level.timeExtension)*60000 ) 
 		{
