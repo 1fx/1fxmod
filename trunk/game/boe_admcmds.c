@@ -3038,25 +3038,23 @@ void Henk_Unban(int argNum, gentity_t *adm, qboolean shortCmd){
 }
 
 void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
-	void	*GP2, *group;
-	char	ip[64], name[64], reason[64], test = ' ';
-	char	column1[20], column2[20];
+	char	level[10], level1[3], name[64], reason[64], test = ' ';
+	char	column1[20], column2[25];
 	int		spaces = 0, length = 0, z;
-	char	*file;
 	fileHandle_t f;
 	char            buf[15000] = "\0";
 	int len, i, count = 0, EndPos = -1, StartPos = 0;
 	qboolean begin = qtrue;
-	int r, lcount = -1, lenx;
+	int r, lcount = -1;
 	char xip[64];
 	//wrapper for interface
 	if(adm){
 		trap_SendServerCommand( adm-g_entities, va("print \"^3[Banlist]^7\n\n\""));
-		trap_SendServerCommand( adm-g_entities, va("print \"^3 #    Lvl    Name                IP\n\""));
+		trap_SendServerCommand( adm-g_entities, va("print \"^3 #   Lvl   Name               IP\n\""));
 		trap_SendServerCommand( adm-g_entities, va("print \"^7------------------------------------------------------------------------\n\""));
 	}else{
 		Com_Printf("^3[Banlist]^7\n\n");
-		Com_Printf("^3 #    Lvl    Name                IP\n");
+		Com_Printf("^3 #   Lvl   Name               IP\n");
 		Com_Printf("^7------------------------------------------------------------------------\n");
 	}
 
@@ -3090,54 +3088,50 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 			if(lcount == -1){
 				lcount = strlen(buf); // last line
 			}
-			strncpy(name, buf+EndPos+1, lcount-(EndPos+1));
-			Com_Printf("IP: %s\n", xip);
-			Com_Printf("Name: %s\n", name);
+			memset(level, 0, sizeof(level));
+			memset(name, 0, sizeof(name));
+			strncpy(name, buf+EndPos+1, (lcount-(EndPos+1))-2);
+			strncpy(level1, buf+(lcount-1), 1);
+			//Com_Printf("IP: %s\n", xip);
+			//Com_Printf("Name: %s\n", name);
+			//Com_Printf("Level: %s\n", level1);
 			count += 1;
-
-			length = strlen(ip);
-			if(length > 15){
-				ip[15] = '\0';
-				length = 15;
+			length = strlen(level1);
+			if(length > 2){
+				level1[2] = '\0';
+				length = 2;
 			}
-			spaces = 16-length;
+			spaces = 3-length;
 			for(z=0;z<spaces;z++){
 			column1[z] = test;
 			}
 			column1[spaces] = '\0';
-
+			sprintf(level, "^7[^3%s^7]", level1);
 			length = strlen(name);
-			if(length > 19){
-				name[19] = '\0';
-				length = 19;
+			if(length > 18){
+				name[18] = '\0';
+				length = 18;
 			}
-			spaces = 20-length;
+			spaces = 19-length;
 			for(z=0;z<spaces;z++){
 			column2[z] = test;
 			}
 			column2[spaces] = '\0';
-
-			length = strlen(reason);
-			if(length > 18){
-				reason[18] = '\0';
-				length = 18;
-			}
-			spaces = 19-length;
 			if(adm){
 				if(count <= 9){
-					trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7]   %s%s%s%s%s\n", count, ip, column1, name, column2, reason)); // Boe!Man 9/16/10: Print ban.
+					trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7]   %s%s%s%s%s\n", count, level, column1, name, column2, xip)); // Boe!Man 9/16/10: Print ban.
 				}else if(count > 9 && count < 100){
-					trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7]  %s%s%s%s%s\n", count, ip, column1, name, column2, reason)); // Boe!Man 9/16/10: Print ban.
+					trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7]  %s%s%s%s%s\n", count, level, column1, name, column2, xip)); // Boe!Man 9/16/10: Print ban.
 				}else{
-					trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7] %s%s%s%s%s\n", count, ip, column1, name, column2, reason)); // Boe!Man 9/16/10: Print ban.
+					trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7] %s%s%s%s%s\n", count, level, column1, name, column2, xip)); // Boe!Man 9/16/10: Print ban.
 				}
 			}else{
 				if(count <= 9){
-					Com_Printf("[^3%i^7]   %s%s%s%s%s\n", count, ip, column1, name, column2, reason);
+					Com_Printf("[^3%i^7]   %s%s%s%s%s\n", count, level, column1, name, column2, xip);
 				}else if(count > 9 && count < 100){
-					Com_Printf("[^3%i^7]  %s%s%s%s%s\n", count, ip, column1, name, column2, reason);
+					Com_Printf("[^3%i^7]  %s%s%s%s%s\n", count, level, column1, name, column2, xip);
 				}else{
-					Com_Printf("[^3%i^7] %s%s%s%s%s\n", count, ip, column1, name, column2, reason);
+					Com_Printf("[^3%i^7] %s%s%s%s%s\n", count, level, column1, name, column2, xip);
 				}
 			}
 		}

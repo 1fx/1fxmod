@@ -150,14 +150,6 @@ void trap_SendServerCommand( int clientNum, const char *text ) {
 			trap_SendServerCommand2(clientNum, a);
             return;
         }
-		if(clientNum != -1){
-			if(&g_entities[clientNum]){
-				if(g_entities[clientNum].client){
-					if(g_entities[clientNum].client->ps.ping != 999)
-						trap_SendServerCommand2(clientNum, text);
-				}
-			}
-		}else
 		trap_SendServerCommand2(clientNum, text);
 } 
 
