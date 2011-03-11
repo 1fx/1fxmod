@@ -2564,6 +2564,7 @@ void Boe_Mute (int argNum, gentity_t *adm, qboolean mute, qboolean shortCmd)
 {
 	int		idnum;
 	int		time;
+	char	arg[128];
 	idnum = Boe_ClientNumFromArg(adm, argNum, "mute/unmute <idnumber>", "mute/unmute", qfalse, qfalse, shortCmd);
 	if(idnum < 0) return;
 
@@ -2575,13 +2576,31 @@ void Boe_Mute (int argNum, gentity_t *adm, qboolean mute, qboolean shortCmd)
 			Boe_Mute(argNum, adm, qfalse, shortCmd);
 			return;
 		}else{
-			if(atoi(GetReason()) <= 0)
-				time = 5;
-			else if(atoi(GetReason()) > 60){
-				trap_SendServerCommand(adm-g_entities, va("print \"^3[Info] ^7The maximum timelimit for mute is 60 minutes.\n\""));
-				time = 60;
-			}else
-				time = atoi(GetReason());
+			if(shortCmd){
+				if(atoi(GetReason()) <= 0)
+					time = 5;
+				else if(atoi(GetReason()) > 60){
+					trap_SendServerCommand(adm-g_entities, va("print \"^3[Info] ^7The maximum timelimit for mute is 60 minutes.\n\""));
+					time = 60;
+				}else
+					time = atoi(GetReason());
+			}else{
+				if(adm&&adm->client){	// If called from /adm..
+					trap_Argv(3, arg, sizeof(arg));
+					time = atoi(arg);
+					if(time <= 0)
+						time = 5;
+					else if(time > 60)
+						time = 60;
+				}else{					// If called from /rcon..
+					trap_Argv(2, arg, sizeof(arg));
+					time = atoi(arg);
+					if(time <= 0)
+						time = 5;
+					else if(time > 60)
+						time = 60;
+				}
+			}
 			AddMutedClient(&g_entities[idnum], time); // fix me: slots of muted clients(20) could be full.. never happens i guess
 			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 			g_entities[idnum].client->sess.mute = qtrue;
