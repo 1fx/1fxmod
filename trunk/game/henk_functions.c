@@ -43,7 +43,7 @@ void InitCagefight(void){
 	spawns[3][0] += 105;
 	spawns[3][1] -= 105;
 	spawns[4][0] += 105;
-	spawns[4][1] -= 85;
+	spawns[4][1] -= 75;
 	level.cagefight = qtrue;
 	level.messagedisplay = qtrue; // stop Seeker Released
 	level.messagedisplay1 = qtrue; // stop RPG/M4 stuff
@@ -51,8 +51,8 @@ void InitCagefight(void){
 	for(i=0;i<level.numConnectedClients;i++){
 		if(g_entities[level.sortedClients[i]].client->sess.team == TEAM_RED){
 			//respawn ( &g_entities[level.sortedClients[i]] );
-			count += 1;
 			TeleportPlayer(&g_entities[level.sortedClients[i]], spawns[count], g_entities[level.sortedClients[i]].client->ps.viewangles, qtrue);
+			count += 1;
 			g_entities[level.sortedClients[i]].client->ps.stats[STAT_WEAPONS] = 0;
 			memset ( g_entities[level.sortedClients[i]].client->ps.ammo, 0, sizeof(g_entities[level.sortedClients[i]].client->ps.ammo) );
 			memset ( g_entities[level.sortedClients[i]].client->ps.clip, 0, sizeof(g_entities[level.sortedClients[i]].client->ps.clip) );

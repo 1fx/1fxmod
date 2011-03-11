@@ -1473,7 +1473,9 @@ void Boe_Stats ( gentity_t *ent )
 		country = g_entities[idnum].client->sess.country;
 		if (g_entities[idnum].client->sess.rpmClient >= 0.1){
 			client = g_entities[idnum].client->sess.rpmClient;}
-		else{
+		else if (g_entities[idnum].client->sess.proClient >= 0.1){
+			client = g_entities[idnum].client->sess.proClient;
+		}else{
 			client0 = "N/A";
 			client1 = qtrue;}
 		if (g_entities[idnum].client->sess.dev > 0)
