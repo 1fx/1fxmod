@@ -1,0 +1,5 @@
+{
+	map "air1"
+	longname "Airport: Security Station"
+	type "h&s"
+}
