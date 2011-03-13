@@ -249,7 +249,7 @@ void QDECL Boe_adminLog( const char *command, const char *by, const char *to, ..
 		va_end( argptr );
 	}
 		
-	trap_FS_FOpenFile("logs/adminlog.txt", &f, FS_APPEND_TEXT);
+	trap_FS_FOpenFile(g_adminlog.string, &f, FS_APPEND_TEXT);
 	
 	if ( !f )
 		return;

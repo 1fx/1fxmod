@@ -136,6 +136,7 @@ extern	vmCvar_t	g_kick;
 //extern	admCmd_t AdminCommands[124];
 
 extern  vmCvar_t	g_adminfile;
+extern	vmCvar_t	g_adminlog;
 extern	vmCvar_t	g_addbadmin;
 extern	vmCvar_t	g_addadmin;
 extern	vmCvar_t	g_addsadmin;

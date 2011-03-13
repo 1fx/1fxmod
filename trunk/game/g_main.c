@@ -224,6 +224,7 @@ vmCvar_t	hideseek_extra;
 
 // Boe!Man 3/8/11
 vmCvar_t	g_enableAdminLog;
+vmCvar_t	g_adminlog;
 
 #ifdef _BOE_DBG
 vmCvar_t	boe_log;
@@ -266,7 +267,7 @@ static cvarTable_t gameCvarTable[] =
 
 	{ &g_warmup, "g_warmup", "20", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 	{ &g_doWarmup, "g_doWarmup", "0", 0, 0.0, 0.0, 0, qtrue  },
-	{ &g_log, "g_log", "games.log", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
+	{ &g_log, "g_log", "logs/games.log", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_logSync, "g_logSync", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_logHits, "g_logHits", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 
@@ -491,6 +492,7 @@ static cvarTable_t gameCvarTable[] =
 
 	// Boe!Man 3/8/11: CVAR for the Admin logging.
 	{ &g_enableAdminLog, "g_enableAdminLog", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
+	{ &g_adminlog, "g_adminlog", "logs/admin.log", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 
 	{ &g_rpmEnt, "g_rpmEnt", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 #ifdef _BOE_DBG
