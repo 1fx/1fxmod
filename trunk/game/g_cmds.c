@@ -276,11 +276,11 @@ void EvenTeams (gentity_t *adm, qboolean aet)
 	if(adm && adm->client) {
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sE%sv%se%sn%si%sng teams!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Eventeams by %s.\n\"", adm->client->pers.netname));
-		Boe_adminLog (va("%s - EVENTEAMS", adm->client->pers.cleanName)) ;
+		Boe_adminLog ("Eventeams", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "none");
 	}else if (aet == qfalse){
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sE%sv%se%sn%si%sng teams!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Eventeams.\n\""));
-		Boe_adminLog (va("RCON - EVENTEAMS")) ;
+		Boe_adminLog ("Eventeams", va("RCON"), "none");
 	}else{
 		trap_SendServerCommand(-1, va("print\"^3[Auto Action] ^7Eventeams.\n\""));
 	}

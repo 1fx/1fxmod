@@ -190,23 +190,64 @@ void Boe_Motd (gentity_t *ent)
 /*
 ===================
 Boe_adminLog by boe
-3/30/10 - 12:42 PM
+Original: 3/30/10 - 12:42 PM
+Updated: 3/13/11 - 7:10 PM
 ===================
 */
 
-void QDECL Boe_adminLog( const char *text, ... )
+void QDECL Boe_adminLog( const char *command, const char *by, const char *to, ... )
 {
 	char		string[1024] = "";
+	int			len, i;
 	va_list		argptr;
+	va_list		argptr2;
 	qtime_t		q;
 	fileHandle_t	f;
 
+	// Boe!Man 3/13/11: If they disabled the Admin Log, return.
+	if(g_enableAdminLog.integer < 1){
+		return;
+	}
+
 	trap_RealTime (&q);
 
-	Com_sprintf( string, sizeof(string), "%02i/%02i/%i %02i:%02i - ", 1+q.tm_mon,q.tm_mday, q.tm_year+1900,q.tm_hour,q.tm_min);
-	va_start( argptr, text );
-	vsprintf( string + 19, text, argptr );
-	va_end( argptr );
+	Com_sprintf( string, sizeof(string), "%02i/%02i/%i %02i:%02i ", 1+q.tm_mon,q.tm_mday, q.tm_year+1900,q.tm_hour,q.tm_min); // Boe!Man 3/13/11: Write the date.
+	va_start( argptr, command );
+	vsprintf( string + 17, command, argptr ); // Boe!Man 3/13/11: Append the command.
+	va_end( argptr);
+	// Boe!Man 3/13/11: Make sure the rest of the block gets filled with spaces.
+	len = strlen(command);
+	for(i = len + 17;i < 37; i++){
+		string[i] = ' ';
+	}
+	string[37] = 'b';
+	string[38] = 'y';
+	string[39] = ' ';
+
+	va_start( argptr2, by);
+	if((strstr(by, "RCON")) && (!strstr(by, "\\"))){
+		vsprintf( string + 40, by, argptr2); // Boe!Man 3/13/11: Append RCON (as he did it).
+	}else{
+		vsprintf( string + 40, Q_strlwr(by), argptr2); // Boe!Man 3/13/11: Append the Admin who did it.
+	}
+	va_end( argptr2 );
+	// Boe!Man 3/13/11: Make sure the rest of the block gets filled with spaces.
+	if(strlen(to) > 5){
+		len = strlen(by);
+		for(i = len + 40;i < 90; i++){
+			string[i] = ' ';
+		}
+	}
+
+	if(strlen(to) > 5){ // Boe!Man 3/13/11: Only append if the 'to' char contains something useful.
+		string[90] = 't';
+		string[91] = 'o';
+		string[92] = ' ';
+
+		va_start( argptr, to);
+		vsprintf( string + 93, Q_strlwr(to), argptr); // Boe!Man 3/13/11: Append the client who got it (can't be RCON).
+		va_end( argptr );
+	}
 		
 	trap_FS_FOpenFile("logs/adminlog.txt", &f, FS_APPEND_TEXT);
 	

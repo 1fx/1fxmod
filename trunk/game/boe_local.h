@@ -300,7 +300,7 @@ void	Boe_Print_File (gentity_t *ent, char *file, qboolean clonecheckstats, int i
 
 void	Boe_Stats( gentity_t *ent );
 
-void	QDECL Boe_adminLog	(const char *text, ... );
+void	QDECL Boe_adminLog( const char *command, const char *by, const char *to, ... );
 
 // Boe!Man 4/2/10: Crash log.
 void	QDECL Boe_crashLog	(const char *text);
@@ -486,5 +486,3 @@ int TiedPlayers(void);
 void InitCagefight(void);
 void Henk_CloseSound ( vec3_t origin, int soundIndex);
 void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd);
-
-

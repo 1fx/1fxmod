@@ -66,10 +66,10 @@ void Boe_CompMode(int argNum, gentity_t *ent, qboolean shotCmd){
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 		if(ent && ent->client){
 			trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Competition mode enabled by %s.\n\"", ent->client->pers.netname));
-			Boe_adminLog (va("%s - COMPMODE ENABLED", ent->client->pers.cleanName)) ;
+			Boe_adminLog ("CompMode Enabled", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), "none");
 		}else{
 			trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Competition mode enabled.\n\""));
-			Boe_adminLog (va("%s - COMPMODE ENABLED", "RCON")) ;
+			Boe_adminLog ("CompMode Enabled", va("RCON"), "none");
 		}
 		trap_Cvar_Set("g_compMode", "1");
 		// Boe!Man 11/16/10: Set the temporary CVARs.
@@ -89,10 +89,10 @@ void Boe_CompMode(int argNum, gentity_t *ent, qboolean shotCmd){
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 		if(ent && ent->client){
 			trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Competition mode disabled by %s.\n\"", ent->client->pers.netname));
-			Boe_adminLog (va("%s - COMPMODE DISABLED", ent->client->pers.cleanName)) ;
+			Boe_adminLog ("CompMode Disabled", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), "none");
 		}else{
 			trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Competition mode disabled.\n\""));
-			Boe_adminLog (va("%s - COMPMODE DISABLED", "RCON")) ;
+			Boe_adminLog ("CompMode Disabled", va("RCON"), "none");
 		}
 		trap_Cvar_Set("g_compMode", "0");
 		trap_Cvar_Set("cm_enabled", "0");
@@ -119,10 +119,10 @@ void Boe_Third(int argNum, gentity_t *ent, qboolean shortCmd){
 		trap_Cvar_Set("g_allowthirdperson", "1");
 		if(ent && ent->client){
 			trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Thirdperson enabled by %s.\n\"", ent->client->pers.netname));
-			Boe_adminLog (va("%s - THIRDPERSON ENABLED", ent->client->pers.cleanName)) ;
+			Boe_adminLog ("3rd Enabled", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), "none");
 		}else{
 			trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Thirdperson enabled.\n\""));
-			Boe_adminLog (va("%s - THIRDPERSON ENABLED", "RCON")) ;
+			Boe_adminLog ("3rd Enabled", va("RCON"), "none");
 		}
 	}else{
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sT%sh%si%sr%sd%sperson disabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
@@ -130,10 +130,10 @@ void Boe_Third(int argNum, gentity_t *ent, qboolean shortCmd){
 		trap_Cvar_Set("g_allowthirdperson", "0");
 		if(ent && ent->client){
 			trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Thirdperson disabled by %s.\n\"", ent->client->pers.netname));
-			Boe_adminLog (va("%s - THIRDPERSON DISABLED", ent->client->pers.cleanName)) ;
+			Boe_adminLog ("3rd Disabled", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), "none");
 		}else{
 			trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Thirdperson disabled.\n\""));
-			Boe_adminLog (va("%s - THIRDPERSON DISABLED", "RCON")) ;
+			Boe_adminLog ("3rd Disabled", va("RCON"), "none");
 		}
 	}
 }
@@ -149,10 +149,10 @@ void Boe_GametypeRestart(int argNum, gentity_t *ent, qboolean shortCmd){
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 	if(ent && ent->client){
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Gametype restart by %s.\n\"", ent->client->pers.netname));
-		Boe_adminLog (va("%s - GAMETYPE RESTART", ent->client->pers.cleanName)) ;
+		Boe_adminLog ("Gametype Restart", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), "none");
 	}else{
 		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Gametype restart.\n\""));
-		Boe_adminLog (va("%s - GAMETYPE RESTART", "RCON")) ;
+		Boe_adminLog ("Gametype Restart", va("RCON"), "none");
 	}
 	trap_SendConsoleCommand( EXEC_APPEND, va("gametype_restart\n"));
 }
@@ -190,10 +190,10 @@ void Boe_NormalDamage(int argNum, gentity_t *ent, qboolean shortCmd){
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 	if(ent && ent->client){
 		trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Normal damage by %s.\n\"", ent->client->pers.netname));
-		Boe_adminLog (va("%s - NORMAL DAMAGE", ent->client->pers.cleanName)) ;
+		Boe_adminLog ("Normal Damage", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), "none");
 	}else{
 		trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Normal damage.\n\""));
-		Boe_adminLog (va("%s - NORMAL DAMAGE", "RCON")) ;
+		Boe_adminLog ("Normal Damage", va("RCON"), "none");
 	}
 }
 
@@ -227,10 +227,10 @@ void Boe_RealDamage(int argNum, gentity_t *ent, qboolean shortCmd){
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 	if(ent && ent->client){
 		trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Real damage by %s.\n\"", ent->client->pers.netname));
-		Boe_adminLog (va("%s - REAL DAMAGE", ent->client->pers.cleanName)) ;
+		Boe_adminLog ("Real Damage", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), "none");
 	}else{
 		trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Real damage.\n\""));
-		Boe_adminLog (va("%s - REAL DAMAGE", "RCON")) ;
+		Boe_adminLog ("Real Damage", va("RCON"), "none");
 	}
 }
 
@@ -252,12 +252,13 @@ void Boe_RespawnInterval(int argNum, gentity_t *ent, qboolean shortCmd){
 			Com_Printf("g_respawnInterval is %i.\n", g_respawnInterval.integer);
 		}
 		return;
+	}else if(number < 100){ // Boe!Man 3/13/11: Don't allow more than 100 second respawn interval.
+		trap_SendConsoleCommand( EXEC_APPEND, va("g_respawnInterval %i\n", number));
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sR%se%ss%sp%sa%swn interval %i!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, number));
+		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+		Boe_adminLog (va("Respawn Interval %i", number), va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), "none");
+		trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Respawn interval changed to %i by %s.\n\"", number, ent->client->pers.netname));
 	}
-	trap_SendConsoleCommand( EXEC_APPEND, va("g_respawnInterval %i\n", number));
-	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sR%se%ss%sp%sa%swn interval %i!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, number));
-	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-	Boe_adminLog (va("%s - RESPAWN INTERVAL: %i", ent->client->pers.cleanName, number)) ;
-	trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Respawn interval changed to %i by %s.\n\"", number, ent->client->pers.netname));
 }
 
 /*
@@ -295,7 +296,7 @@ void Boe_TimeLimit(int argNum, gentity_t *ent, qboolean shortCmd){ // Boe!Man 1/
 	}
 	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sT%si%sm%se%sl%simit %i!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, number));
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-	Boe_adminLog (va("%s - TIMELIMIT %i", ent->client->pers.cleanName, number)) ;
+	Boe_adminLog (va("Timelimit %i", number), va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), "none");
 }
 
 /*
@@ -333,7 +334,7 @@ void Boe_ScoreLimit(int argNum, gentity_t *ent, qboolean shortCmd){ // Boe!Man 1
 	}
 	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sS%sc%so%sr%se%slimit %i!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, number));
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-	Boe_adminLog (va("%s - SCORELIMIT %i", ent->client->pers.cleanName, number)) ;
+	Boe_adminLog (va("Scorelimit %i", number), va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), "none");
 }
 
 void SetNades(char *status){
@@ -386,10 +387,10 @@ void Boe_NoNades(int argNum, gentity_t *ent, qboolean shortCmd){
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 		if(ent && ent->client){
 			trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Nades enabled by %s.\n\"", ent->client->pers.netname));
-			Boe_adminLog (va("%s - NADES ENABLED", ent->client->pers.cleanName)) ;
+			Boe_adminLog ("Nades Enabled", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), "none");
 		}else{
 			trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Nades enabled.\n\""));
-			Boe_adminLog (va("%s - NADES ENABLED", "RCON")) ;
+			Boe_adminLog ("Nades Enabled", va("RCON"), "none");
 		}
 	}else{
 		g_disablenades.integer = 1;
@@ -405,10 +406,10 @@ void Boe_NoNades(int argNum, gentity_t *ent, qboolean shortCmd){
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 		if(ent && ent->client){
 			trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Nades disabled by %s.\n\"", ent->client->pers.netname));
-			Boe_adminLog (va("%s - NADES DISABLED", ent->client->pers.cleanName)) ;
+			Boe_adminLog ("Nades Disabled", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), "none");
 		}else{
 			trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Nades disabled.\n\""));
-			Boe_adminLog (va("%s - NADES DISABLED", "RCON")) ;
+			Boe_adminLog ("Nades Disabled", va("RCON"), "none");
 		}
 	}
 }
@@ -442,10 +443,10 @@ void Boe_NoLower(int argNum, gentity_t *ent, qboolean shortCmd){
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 		if(ent && ent->client){
 			trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Nolower disabled by %s.\n\"", ent->client->pers.netname));
-			Boe_adminLog (va("%s - NOLOWER DISABLED", ent->client->pers.cleanName)) ;
+			Boe_adminLog ("Nolower Disabled", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), "none");
 		}else{
 			trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Nolower disabled.\n\""));
-			Boe_adminLog (va("%s - NOLOWER DISABLED", "RCON")) ;
+			Boe_adminLog ("Nolower Disabled", va("RCON"), "none");
 		}
 	}else{
 		level.nolower1 = qtrue;
@@ -461,10 +462,10 @@ void Boe_NoLower(int argNum, gentity_t *ent, qboolean shortCmd){
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 		if(ent && ent->client){
 			trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7Nolower enabled by %s.\n\"", ent->client->pers.netname));
-			Boe_adminLog (va("%s - NOLOWER ENABLED", ent->client->pers.cleanName)) ;
+			Boe_adminLog ("Nolower Enabled", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), "none");
 		}else{
 			trap_SendServerCommand(-1, va("print \"^3[Rcon Action] ^7Nolower enabled.\n\""));
-			Boe_adminLog (va("%s - NOLOWER ENABLED", "RCON")) ;
+			Boe_adminLog ("Nolower Enabled", va("RCON"), "none");
 		}
 	}
 }
@@ -496,7 +497,7 @@ void Boe_MapRestart(int argNum, gentity_t *ent, qboolean shortCmd){
 			level.compMsgCount = -1;
 		}
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-		Boe_adminLog (va("%s - MAP RESTART", ent->client->pers.cleanName)) ;
+		Boe_adminLog ("Map Restart", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), "none");
 		return;
 		}else{
 			if(level.mapAction == 1 || level.mapAction == 3){
@@ -525,7 +526,7 @@ void Boe_MapRestart(int argNum, gentity_t *ent, qboolean shortCmd){
 			level.compMsgCount = -1;
 		}
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-		Boe_adminLog (va("%s - MAP RESTART", "RCON")) ;
+		Boe_adminLog ("Map Restart", va("RCON"), "none");
 		return;
 		}else{
 			if(level.mapAction == 1 || level.mapAction == 3){
@@ -557,7 +558,7 @@ void Boe_Kick(int argNum, gentity_t *ent, qboolean shortCmd){
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s was %sk%si%sc%sk%se%sd ^7by %s", level.time + 5000, g_entities[id].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, ent->client->pers.netname));
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was kicked by %s.\n\"", g_entities[id].client->pers.netname,ent->client->pers.netname));
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-		Boe_adminLog (va("%s - KICK: %s", ent->client->pers.cleanName, g_entities[id].client->pers.cleanName  )) ;
+		Boe_adminLog ("Kick", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), va("%s\\%s", g_entities[id].client->pers.ip, g_entities[id].client->pers.cleanName));
 	}else{
 		id = Boe_ClientNumFromArg(ent, 2, "kick <id> <reason>", "Kick", qfalse, qfalse, qfalse);
 		if(id < 0) return;
@@ -565,6 +566,7 @@ void Boe_Kick(int argNum, gentity_t *ent, qboolean shortCmd){
 		trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"%s\"\n", id, arg3));
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s was %sk%si%sc%sk%se%sd ^7by %s", level.time + 5000, g_entities[id].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, ent->client->pers.netname));
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was kicked by %s.\n\"", g_entities[id].client->pers.netname,ent->client->pers.netname));
+		Boe_adminLog ("Kick", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), va("%s\\%s", g_entities[id].client->pers.ip, g_entities[id].client->pers.cleanName));
 	}
 }
 
@@ -607,12 +609,12 @@ void Boe_Add_Clan_Member(int argNum, gentity_t *adm, qboolean shortCmd)
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is now a %sC%sl%sa%sn %sm%se%smber!", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color4.string, server_color5.string, server_color6.string));
 			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was made Clan member by %s.\n\"", g_entities[idnum].client->pers.netname, adm->client->pers.cleanName));
-			Boe_adminLog (va("%s - ADD CLAN: %s", adm->client->pers.cleanName, g_entities[idnum].client->pers.cleanName  )) ;
+			Boe_adminLog ("Add Clan", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
 		}else {
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is now a %sC%sl%sa%sn %sm%se%smber!", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color4.string, server_color5.string, server_color6.string));
 			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 			trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s is now a Clan member.\n\"", g_entities[idnum].client->pers.netname));
-			Boe_adminLog (va("%s - ADD CLAN: %s", "RCON", g_entities[idnum].client->pers.cleanName  )) ;
+			Boe_adminLog ("Add Clan", va("%s", "RCON"), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
 		}
 	}
 }
@@ -644,12 +646,12 @@ void Boe_Remove_Clan_Member(int argNum, gentity_t *adm, qboolean shortCmd)
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is no longer a %sC%sl%sa%sn %sm%se%smber!", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color4.string, server_color5.string, server_color6.string));
 			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was removed as Clan member by %s.\n\"", g_entities[idnum].client->pers.netname, adm->client->pers.cleanName));
-			Boe_adminLog (va("%s - REMOVE CLAN: %s", adm->client->pers.cleanName, g_entities[idnum].client->pers.cleanName  )) ;
+			Boe_adminLog ("Remove Clan", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
 		}else {
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is no longer a %sC%sl%sa%sn %sm%se%smber!", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color4.string, server_color5.string, server_color6.string));
 			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 			trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s is no longer a Clan member.\n\"", g_entities[idnum].client->pers.netname));
-			Boe_adminLog (va("%s - REMOVE CLAN: %s", "RCON", g_entities[idnum].client->pers.cleanName  )) ;
+			Boe_adminLog ("Remove Clan", va("%s", "RCON"), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
 		}
 	}
 }
@@ -1260,7 +1262,7 @@ void Boe_Add_bAdmin_f(int argNum, gentity_t *adm, qboolean shortCmd)
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is now a %sB^7-%sA%sd%sm%si%sn", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was made B-Admin by %s.\n\"", g_entities[idnum].client->pers.netname, adm->client->pers.cleanName));
-		Boe_adminLog (va("%s - ADD B-ADMIN: %s", adm->client->pers.cleanName, g_entities[idnum].client->pers.cleanName  )) ;
+		Boe_adminLog ("Add B-Admin", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
 		}
 	}
 	else {
@@ -1268,7 +1270,7 @@ void Boe_Add_bAdmin_f(int argNum, gentity_t *adm, qboolean shortCmd)
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is now a %sB^7-%sA%sd%sm%si%sn", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s is now a B-Admin.\n\"", g_entities[idnum].client->pers.netname));
-		Boe_adminLog (va("%s - ADD B-ADMIN: %s", "RCON", g_entities[idnum].client->pers.cleanName  )) ;
+		Boe_adminLog ("Add B-Admin", va("%s", "RCON"), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
 		}
 	}
 	// Boe!Man 10/16/10: Is the Admin level allowed to spec the opposite team?
@@ -1305,7 +1307,7 @@ void Boe_Add_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd)
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is now an %sA%sd%sm%si%sn", level.time + 5000, g_entities[idnum].client->pers.netname, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was made Admin by %s.\n\"", g_entities[idnum].client->pers.netname, adm->client->pers.cleanName));
-		Boe_adminLog (va("%s - ADD ADMIN: %s", adm->client->pers.cleanName, g_entities[idnum].client->pers.cleanName  )) ;
+		Boe_adminLog ("Add Admin", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
 		}
 	}
 	else {
@@ -1313,7 +1315,7 @@ void Boe_Add_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd)
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is now an %sA%sd%sm%si%sn", level.time + 5000, g_entities[idnum].client->pers.netname, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s is now an Admin.\n\"", g_entities[idnum].client->pers.netname));
-		Boe_adminLog (va("%s - ADD ADMIN: %s", "RCON", g_entities[idnum].client->pers.cleanName  )) ;
+		Boe_adminLog ("Add Admin", va("%s", "RCON"), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
 		}
 	}
 	// Boe!Man 10/16/10: Is the Admin level allowed to spec the opposite team?
@@ -1350,7 +1352,7 @@ void Boe_Add_sAdmin_f(int argNum, gentity_t *adm, qboolean shortCmd)
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is now a %sS^7-%sA%sd%sm%si%sn", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was made S-Admin by %s.\n\"", g_entities[idnum].client->pers.netname, adm->client->pers.cleanName));
-		Boe_adminLog (va("%s - ADD S-ADMIN: %s", adm->client->pers.cleanName, g_entities[idnum].client->pers.cleanName  )) ;
+		Boe_adminLog ("Add S-Admin", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
 		}
 	}
 	else {
@@ -1358,7 +1360,7 @@ void Boe_Add_sAdmin_f(int argNum, gentity_t *adm, qboolean shortCmd)
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is now a %sS^7-%sA%sd%sm%si%sn", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s is now a S-Admin.\n\"", g_entities[idnum].client->pers.netname));
-		Boe_adminLog (va("%s - ADD S-ADMIN: %s", "RCON", g_entities[idnum].client->pers.cleanName  )) ;
+		Boe_adminLog ("Add S-Admin", va("%s", "RCON"), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
 		}
 	}
 
@@ -1479,14 +1481,14 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 	// End
 		if(subnet){
 			if(ent && ent->client)
-				Boe_adminLog (va("%s - SUBNET UNBAN: %s", ent->client->pers.cleanName, last  )) ;
+				Boe_adminLog ("Subnet Unban", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), va("%s", last));
 			else 
-				Boe_adminLog (va("%s - SUBNET UNBAN: %s", "RCON", last  )) ;
+				Boe_adminLog ("Subnet Unban", va("RCON"), va("%s", last));
 		}else{
 			if(ent && ent->client)
-				Boe_adminLog (va("%s - UNBAN: %s", ent->client->pers.cleanName, last  )) ;
+				Boe_adminLog ("Unban", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), va("%s", last));
 			else 
-				Boe_adminLog (va("%s - UNBAN: %s", "RCON", last  )) ;
+				Boe_adminLog ("Unban", va("RCON"), va("%s", last));
 		}
 		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7%s has been Unbanned.\n\"", last));
 	//return qtrue;
@@ -1533,10 +1535,10 @@ void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 					Com_Printf("Error while opening file in unban\n");
 				}
 				
-				if(adm && adm->client)
-					Boe_adminLog (va("%s - UNBAN: %s", adm->client->pers.cleanName, ip  )) ;
-				else 
-					Boe_adminLog (va("%s - UNBAN: %s", "RCON", ip  )) ;
+				//if(adm && adm->client)
+				//	Boe_adminLog (va("%s - UNBAN: %s", adm->client->pers.cleanName, ip  )) ;
+				//else 
+				//	Boe_adminLog (va("%s - UNBAN: %s", "RCON", ip  )) ;
 				
 				return;
 			}
@@ -1544,10 +1546,10 @@ void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 	else {
 		if(Boe_Remove_from_list(ip, "users/subnetbans.txt", "SubnetBan", adm, qtrue, qfalse, qfalse )){
 			trap_SendServerCommand( adm-g_entities, va("print \"^3%s's Subnet ^7has been Unbanned.\n\"", ip));
-			if(adm && adm->client)
-				Boe_adminLog (va("%s - SUBNET UNBAN: %s", adm->client->pers.cleanName, ip  )) ;
-			else 
-				Boe_adminLog (va("%s - SUBNET UNBAN: %s", "RCON", ip  )) ;
+			//if(adm && adm->client)
+			//	Boe_adminLog (va("%s - SUBNET UNBAN: %s", adm->client->pers.cleanName, ip  )) ;
+			//else 
+			//	Boe_adminLog (va("%s - SUBNET UNBAN: %s", "RCON", ip  )) ;
 			return;
 		}
 	}
@@ -1744,20 +1746,20 @@ void Boe_subnetBan (int argNum, gentity_t *adm, qboolean shortCmd){
 		if(adm && adm->client)	{
 			if(!*reason){
 				trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"Subnetbanned by %s\"\n", idnum, adm->client->pers.netname));
-				Boe_adminLog (va("%s - SUBNETBAN: %s", adm->client->pers.cleanName, g_entities[idnum].client->pers.cleanName  )) ;}
+				Boe_adminLog ("Subnetban", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));}
 			else{
 				trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"Subnetbanned by %s for: %s\"\n", idnum, adm->client->pers.netname, reason));
 				trap_SendServerCommand( adm-g_entities, va("print \"%s was Subnetbanned by %s!\n\"", g_entities[idnum].client->pers.netname, adm->client->pers.netname));
-				Boe_adminLog (va("%s - SUBNETBAN: %s - For: %s", adm->client->pers.cleanName, g_entities[idnum].client->pers.cleanName, reason  )) ;
+				Boe_adminLog ("Subnetban", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
 			}
 		}
 		else{
 			if(!*reason){
-				Boe_adminLog (va("%s - SUBNETBAN: %s", "RCON", g_entities[idnum].client->pers.cleanName  )) ;
+				Boe_adminLog ("Subnetban", va("%s", "RCON"), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
 				trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"Subnetbanned!\"\n", idnum));
 			}else{
 				Com_Printf("%s was subnetbanned!\n", g_entities[idnum].client->pers.cleanName);
-				Boe_adminLog (va("%s - SUBNETBAN: %s - For: %s", "RCON", g_entities[idnum].client->pers.cleanName, reason)) ;
+				Boe_adminLog ("Subnetban", va("%s", "RCON"), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
 				trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"Subnetbanned for: %s\"\n", idnum, reason));
 			}
 		}
@@ -1803,12 +1805,12 @@ void Boe_Remove_Admin_f (int argNum, gentity_t *adm, qboolean shortCmd)
 		if(adm && adm->client){
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7is no longer an %sA%sd%sm%si%sn", level.time + 5000, g_entities[idnum].client->pers.netname, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s ^7was removed as Admin by %s.\n\"", g_entities[idnum].client->pers.netname,adm->client->pers.netname));
-			Boe_adminLog (va("%s - REMOVE ADMIN: %s", adm->client->pers.cleanName, g_entities[idnum].client->pers.cleanName  )) ;
+			Boe_adminLog ("Remove Admin", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
 		}
 		else{
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7is no longer an %sA%sd%sm%si%sn", level.time + 5000, g_entities[idnum].client->pers.netname, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 			trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s ^7was removed as Admin.\n\"", g_entities[idnum].client->pers.netname));
-			Boe_adminLog (va("%s - REMOVE ADMIN: %s", "RCON", g_entities[idnum].client->pers.cleanName  )) ;
+			Boe_adminLog ("Remove Admin", va("%s", "RCON"), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
 		}
 	}
 
@@ -1885,20 +1887,22 @@ void Boe_Ban_f (int argNum, gentity_t *adm, qboolean shortCmd)
 		if(adm && adm->client)	{
 			if(!*reason){
 				trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"Banned by %s\"\n", idnum, adm->client->pers.netname));
-				Boe_adminLog (va("%s - BAN: %s", adm->client->pers.cleanName, g_entities[idnum].client->pers.cleanName  )) ;}
+				Boe_adminLog ("Ban", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
+			}
 			else{
 				trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"Banned by %s for: %s\"\n", idnum, adm->client->pers.netname, reason));
 				trap_SendServerCommand( adm-g_entities, va("print \"%s was banned by %s!\n\"", g_entities[idnum].client->pers.netname, adm->client->pers.netname));
-				Boe_adminLog (va("%s - BAN: %s - For: %s", adm->client->pers.cleanName, g_entities[idnum].client->pers.cleanName, reason  )) ;
+				Boe_adminLog ("Ban", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
 			}
 		}
 		else{
 			if(!*reason){
-				Boe_adminLog (va("%s - BAN: %s", "RCON", g_entities[idnum].client->pers.cleanName  )) ;
+				Boe_adminLog ("Ban", va("%s", "RCON"), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
 				trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"Banned!\"\n", idnum));
-			}else{
+			}
+			else{
 				Com_Printf("%s was banned!\n", g_entities[idnum].client->pers.cleanName);
-				Boe_adminLog (va("%s - BAN: %s - For: %s", "RCON", g_entities[idnum].client->pers.cleanName, reason)) ;
+				Boe_adminLog ("Ban", va("%s", "RCON"), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
 				trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"Banned for: %s\"\n", idnum, reason));
 			}
 		}
@@ -1969,12 +1973,12 @@ void Boe_Uppercut (int argNum, gentity_t *adm, qboolean shortCmd)
 	if(adm && adm->client){
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,^7%s was %su%sp%sp%se%sr%scut by %s", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, adm->client->pers.netname));
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was uppercut by %s.\n\"", ent->client->pers.netname,adm->client->pers.netname));
-		Boe_adminLog (va("%s - UPPERCUT: %s", adm->client->pers.cleanName, ent->client->pers.cleanName  )) ;
+		Boe_adminLog ("Uppercut", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName));
 	}
 	else {
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,^7%s was %su%sp%sp%se%sr%scut", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s was uppercut.\n\"", g_entities[idnum].client->pers.netname));
-		Boe_adminLog (va("%s - UPPERCUT: %s", "RCON", g_entities[idnum].client->pers.cleanName  )) ;
+		Boe_adminLog ("Uppercut", va("%s", "RCON"), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
 	}
 }
 
@@ -2032,11 +2036,12 @@ void Boe_Twist (int argNum, gentity_t *adm, qboolean shortCmd)
 	if(adm && adm->client) {
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,^7%s was %st%sw%si%ss%st%sed by %s", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, adm->client->pers.netname));
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was twisted by %s.\n\"", ent->client->pers.netname,adm->client->pers.netname));
-		Boe_adminLog (va("%s - TWIST: %s", adm->client->pers.cleanName, ent->client->pers.cleanName  )) ;}
+		Boe_adminLog ("Twist", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName));
+	}
 	else {
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,^7%s was %st%sw%si%ss%st%sed", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s was twisted.\n\"", ent->client->pers.netname));
-		Boe_adminLog (va("%s - TWIST: %s", "RCON", ent->client->pers.cleanName  )) ;
+		Boe_adminLog ("Twist", va("%s", "RCON"), va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName));
 	}
 }
 
@@ -2076,12 +2081,12 @@ void Boe_unTwist (int argNum, gentity_t *adm, qboolean shortCmd)
 		// Boe!Man 6/11/10: Double "Twisted" message bug fixed.
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,^7%s was %su%sn%st%sw%si%ssted by %s", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, adm->client->pers.netname));
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was untwisted by %s.\n\"", ent->client->pers.netname,adm->client->pers.netname));
-		Boe_adminLog (va("%s - UNTWIST: %s", adm->client->pers.cleanName, ent->client->pers.cleanName  )) ;
+		Boe_adminLog ("Untwist", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName));
 	}
 	else {
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,^7%s was %su%sn%st%sw%si%ssted", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s was untwisted.\n\"", ent->client->pers.netname));
-		Boe_adminLog (va("%s - UNTWIST: %s", "RCON", ent->client->pers.cleanName  )) ;
+		Boe_adminLog ("Untwist", va("%s", "RCON"), va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName));
 	}
 }
 
@@ -2138,12 +2143,12 @@ void Boe_Respawn (int argNum, gentity_t *adm, qboolean shortCmd)
 	if(adm && adm->client){
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,^7%s was %sr%se%ss%sp%sa%swned by %s", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, adm->client->pers.netname));
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was respawned by %s.\n\"", ent->client->pers.netname,adm->client->pers.netname));
-		Boe_adminLog (va("%s - RESPAWN: %s", adm->client->pers.cleanName, ent->client->pers.cleanName  )) ;
+		Boe_adminLog ("Respawn", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName));
 	}
 	else {
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,^7%s was %sr%se%ss%sp%sa%swned", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s was respawned.\n\"", ent->client->pers.netname));
-		Boe_adminLog (va("%s - RESPAWN: %s", "RCON", ent->client->pers.cleanName  )) ;
+		Boe_adminLog ("Respawn", va("%s", "RCON"), va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName));
 	}
 }
 
@@ -2185,12 +2190,12 @@ void Boe_Runover (int argNum, gentity_t *adm, qboolean shortCmd)
 	if(adm && adm->client){
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7was %sr%su%sn%so%sv%ser by %s", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, adm->client->pers.netname));
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s ^7was runover by %s.\n\"", ent->client->pers.netname,adm->client->pers.netname));
-		Boe_adminLog (va("%s - RUNOVER: %s", adm->client->pers.cleanName, ent->client->pers.cleanName  )) ;
+		Boe_adminLog ("Runover", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName));
 	}
 	else{
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7was %sr%su%sn%so%sv%ser", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s ^7was runover.\n\"", ent->client->pers.netname));
-		Boe_adminLog (va("%s - RUNOVER: %s", "RCON", ent->client->pers.cleanName  )) ;
+		Boe_adminLog ("Runover", va("%s", "RCON"), va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName));
 	}	
 	G_Damage (ent, NULL, NULL, NULL, NULL, 15, 0, MOD_CAR, HL_NONE );
 	G_ApplyKnockback ( ent, dir, knockback );
@@ -2227,12 +2232,12 @@ void Boe_Flash (int argNum, gentity_t *adm, qboolean shortCmd)
 	if(adm && adm->client){
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7was %sf%sl%sa%ss%sh%sed by %s", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, adm->client->pers.netname));
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s ^7was flashed by %s.\n\"", g_entities[idnum].client->pers.netname,adm->client->pers.netname));
-		Boe_adminLog (va("%s - FLASH: %s", adm->client->pers.cleanName, g_entities[idnum].client->pers.cleanName  )) ;
+		Boe_adminLog ("Flash", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
 	}
 	else{
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7was %sf%sl%sa%ss%sh%sed", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s ^7was flashed.\n\"", g_entities[idnum].client->pers.netname));
-		Boe_adminLog (va("%s - FLASH: %s", "RCON", g_entities[idnum].client->pers.cleanName  )) ;
+		Boe_adminLog ("Flash", va("%s", "RCON"), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
 	}	
 }
 
@@ -2286,12 +2291,12 @@ void Boe_Plant (int argNum, gentity_t *adm, qboolean shortCmd)
 	if(adm && adm->client){
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7was %sp%sl%sa%sn%st%sed by %s", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, adm->client->pers.netname));
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s ^7was planted by %s.\n\"", ent->client->pers.netname,adm->client->pers.netname));
-		Boe_adminLog (va("%s - PLANT: %s", adm->client->pers.cleanName, ent->client->pers.cleanName  )) ;
+		Boe_adminLog ("Plant", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName));
 	}
 	else{
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7was %sp%sl%sa%sn%st%sed", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s ^7was planted.\n\"", ent->client->pers.netname));
-		Boe_adminLog (va("%s - PLANT: %s", "RCON", ent->client->pers.cleanName  )) ;
+		Boe_adminLog ("Plant", va("%s", "RCON"), va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName));
 	}
 }
 
@@ -2331,12 +2336,12 @@ void Boe_unPlant (int argNum, gentity_t *adm, qboolean shortCmd)
 	if(adm && adm->client){
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7was %su%sn%sp%sl%sa%snted by %s", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, adm->client->pers.netname));
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s ^7was unplanted by %s.\n\"", g_entities[idnum].client->pers.netname,adm->client->pers.netname));
-		Boe_adminLog (va("%s - UNPLANT: %s", adm->client->pers.cleanName, g_entities[idnum].client->pers.cleanName  )) ;
+		Boe_adminLog ("Unplant", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
 	}
 	else{
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7was %su%sn%sp%sl%sa%snted", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s ^7was unplanted.\n\"", g_entities[idnum].client->pers.netname));
-		Boe_adminLog (va("%s - UNPLANT: %s", "RCON", g_entities[idnum].client->pers.cleanName  )) ;
+		Boe_adminLog ("Unplant", va("%s", "RCON"), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
 	}
 }
 
@@ -2362,12 +2367,12 @@ void Boe_pop (int argNum, gentity_t *adm, qboolean shortCmd)
 	if(adm && adm->client){
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7was %sp%so%sp%sp%se%sd by %s", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, adm->client->pers.netname));
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s ^7was popped by %s.\n\"", g_entities[idnum].client->pers.netname,adm->client->pers.netname));
-		Boe_adminLog (va("%s - POP: %s", adm->client->pers.cleanName, g_entities[idnum].client->pers.cleanName  )) ;
+		Boe_adminLog ("Pop", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
 	}
 	else{
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7was %sp%so%sp%sp%se%sd", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s ^7was popped.\n\"", g_entities[idnum].client->pers.netname));
-		Boe_adminLog (va("%s - POP: %s", "RCON", g_entities[idnum].client->pers.cleanName  )) ;
+		Boe_adminLog ("Pop", va("%s", "RCON"), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
 	}
 	// Boe!Man 1/30/10: We use g_damage since the animations won't work.
 	G_Damage (ent, NULL, NULL, NULL, NULL, 10000, 0, MOD_POP, HL_HEAD|HL_FOOT_RT|HL_FOOT_LT|HL_LEG_UPPER_RT|HL_LEG_UPPER_LT|HL_HAND_RT|HL_HAND_LT|HL_WAIST|HL_CHEST|HL_NECK);
@@ -2412,10 +2417,10 @@ void Boe_Broadcast(int argNum, gentity_t *adm, qboolean shortCmd){
 
 	if(adm && adm->client){
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Broadcast by %s.\n\"", adm->client->pers.netname));
-		Boe_adminLog (va("%s - BROADCAST: %s", adm->client->pers.cleanName, buffer1  )) ;
+		//Boe_adminLog (va("%s - BROADCAST: %s", adm->client->pers.cleanName, buffer1  )) ; // Boe!Man 3/13/11: Disabled this Log.. Pretty useless, we don't log !at either.
 	}else{
 		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Broadcast.\n\""));
-		Boe_adminLog (va("%s - BROADCAST: %s", "RCON", buffer1  )) ;
+		//Boe_adminLog (va("%s - BROADCAST: %s", "RCON", buffer1  )) ; // Boe!Man 3/13/11: Disabled this Log.. Pretty useless, we don't log !at either.
 	}
 	//trap_SendServerCommand( -1, va("cp \"%s\n\"", buffer) );
 }
@@ -2449,12 +2454,12 @@ void Boe_Burn (int argNum, gentity_t *adm, qboolean shortCmd)
 	if(adm && adm->client){
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7was %sb%su%sr%sn%se%sd by %s", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, adm->client->pers.netname));
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s ^7was burned by %s.\n\"", ent->client->pers.netname,adm->client->pers.netname));
-		Boe_adminLog (va("%s - BURN: %s", adm->client->pers.cleanName, ent->client->pers.cleanName  )) ;
+		Boe_adminLog ("Burn", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName));
 	}
 	else{
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7was %sb%su%sr%sn%se%sd", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s ^7was burned.\n\"", ent->client->pers.netname));
-		Boe_adminLog (va("%s - BURN: %s", "RCON", ent->client->pers.cleanName  )) ;
+		Boe_adminLog ("Burn", va("%s", "RCON"), va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName));
 	}
 }
 
@@ -2465,6 +2470,7 @@ void Adm_ForceTeam(int argNum, gentity_t *adm, qboolean shortCmd)
 	int			i, xteam;
 	qboolean	pass = qfalse;
 	char		team;
+	char		merged[64];
 	char userinfo[MAX_INFO_STRING];
 	// find the player
 	if(shortCmd == qtrue){
@@ -2531,17 +2537,20 @@ void Adm_ForceTeam(int argNum, gentity_t *adm, qboolean shortCmd)
 			ClientBegin( idnum, qfalse );
 		}else
 		SetTeam( &g_entities[idnum], str, NULL, qtrue );
-	}else
+	}else{
 		trap_SendServerCommand(adm->s.number, va("print\"^3[Info] Error, no client on id %i.\n\"", idnum));
+		return;
+	}
+	Com_sprintf( merged, sizeof(merged), "%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName);
 	// Boe!Man 2/13/11: Proper messaging..
 	if(adm){
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7was %sf%so%sr%sc%se%steamed by %s", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, adm->client->pers.netname));
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s ^7was forceteamed by %s.\n\"", g_entities[idnum].client->pers.netname,adm->client->pers.netname));
-		Boe_adminLog (va("%s - FORCETEAM: %s - Team: %s", adm->client->pers.cleanName, g_entities[idnum].client->pers.cleanName, str ));
+		Boe_adminLog (va("Forceteam to %c", team), va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), merged);
 	}else{
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7was %sf%so%sr%sc%se%steamed", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s ^7was forceteamed.\n\"", g_entities[idnum].client->pers.netname));
-		Boe_adminLog (va("%s - FORCETEAM: %s - Team: %s", "RCON", g_entities[idnum].client->pers.cleanName, str ));
+		Boe_adminLog (va("Forceteam to %c", team), va("%s", "RCON"), merged);
 	}
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 }
@@ -2565,6 +2574,7 @@ void Boe_Mute (int argNum, gentity_t *adm, qboolean mute, qboolean shortCmd)
 	int		idnum;
 	int		time;
 	char	arg[128];
+	char	merged[64];
 	idnum = Boe_ClientNumFromArg(adm, argNum, "mute/unmute <idnumber>", "mute/unmute", qfalse, qfalse, shortCmd);
 	if(idnum < 0) return;
 
@@ -2604,15 +2614,16 @@ void Boe_Mute (int argNum, gentity_t *adm, qboolean mute, qboolean shortCmd)
 			AddMutedClient(&g_entities[idnum], time); // fix me: slots of muted clients(20) could be full.. never happens i guess
 			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 			g_entities[idnum].client->sess.mute = qtrue;
+			Com_sprintf( merged, sizeof(merged), "%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName);
 			if(adm && adm->client){
 				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7was %sm%su%st%se%sd by %s", level.time + 5000, g_entities[idnum].client->pers.netname, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, adm->client->pers.netname));
 				trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s ^7was muted by %s for %i minutes.\n\"", g_entities[idnum].client->pers.netname, adm->client->pers.netname, time));
-				Boe_adminLog (va("%s - MUTE: %s", adm->client->pers.cleanName, g_entities[idnum].client->pers.cleanName  )) ;
+				Boe_adminLog (va("Mute %i minutes", time), va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), merged);
 			}
 			else{
 				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7was %sm%su%st%se%sd", level.time + 5000, g_entities[idnum].client->pers.netname, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 				trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s ^7was muted for %i minutes.\n\"", g_entities[idnum].client->pers.netname, time));
-				Boe_adminLog (va("%s - MUTE: %s", "RCON", g_entities[idnum].client->pers.cleanName  )) ;
+				Boe_adminLog (va("Mute %i minutes", time), va("%s", "RCON"), merged);
 			}
 			return;
 		}
@@ -2632,12 +2643,12 @@ void Boe_Mute (int argNum, gentity_t *adm, qboolean mute, qboolean shortCmd)
 			if(adm && adm->client){
 				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7was %su%sn%sm%su%st%sed by %s", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, adm->client->pers.netname));
 				trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s ^7was unmuted by %s.\n\"", g_entities[idnum].client->pers.netname, adm->client->pers.netname));
-				Boe_adminLog (va("%s - UNMUTE: %s", adm->client->pers.cleanName, g_entities[idnum].client->pers.cleanName  )) ;
+				Boe_adminLog ("Unmute", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
 			}
 			else{
 				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7was %su%sn%sm%su%st%sed", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 				trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s ^7was unmuted.\n\"", g_entities[idnum].client->pers.netname));
-				Boe_adminLog (va("%s - UNMUTE: %s", "RCON", g_entities[idnum].client->pers.cleanName  )) ;
+				Boe_adminLog ("Unmute", va("%s", "RCON"), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
 			}
 		}
 	}
@@ -2685,12 +2696,12 @@ void Boe_Strip (int argNum, gentity_t *adm, qboolean shortCmd)
 	if(adm && adm->client){
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7was %ss%st%sr%si%sp%sped by %s", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, adm->client->pers.netname));
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s ^7was stripped by %s.\n\"", ent->client->pers.netname,adm->client->pers.netname));
-		Boe_adminLog (va("%s - STRIP: %s", adm->client->pers.cleanName, ent->client->pers.cleanName  )) ;
+		Boe_adminLog ("Strip", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName));
 	}
 	else{
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7was %ss%st%sr%si%sp%sped", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s ^7was stripped.\n\"", ent->client->pers.netname));
-		Boe_adminLog (va("%s - STRIP: %s", "RCON", ent->client->pers.cleanName  )) ;
+		Boe_adminLog ("Strip", va("%s", "RCON"), va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName));
 	}
 }
 
@@ -2891,14 +2902,14 @@ void Boe_SwapTeams(gentity_t *adm)
 	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sS%sw%sa%sp %st%se%sams!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color4.string, server_color5.string, server_color6.string));
 	if(adm && adm->client){
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Swap teams by %s.\n\"", adm->client->pers.netname));
-		Boe_adminLog (va("%s - SwapTeams", adm->client->pers.cleanName )) ;
+		Boe_adminLog ("Swap Teams", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "none");
 	}else{
 		// Boe!Man 11/17/10: Auto swap in compmode.
 		if (g_compMode.integer > 0 && cm_enabled.integer == 3){
 			trap_SendServerCommand(-1, va("print\"^3[Auto Action] ^7Swap teams.\n\""));
 		}else{
 			trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Swap teams.\n\""));
-			Boe_adminLog (va("%s - SwapTeams", "RCON" ));
+			Boe_adminLog ("Swap Teams", va("RCON"), "none");
 		}
 	}
 }
@@ -3013,12 +3024,12 @@ void Henk_Flash(int argNum, gentity_t *adm, qboolean shortCmd){
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7Everyone has been %sf%sl%sa%ss%sh%sed by %s", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, adm->client->pers.netname));
 			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Everyone has been flashed by %s.\n\"", adm->client->pers.netname));
 			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-			Boe_adminLog (va("%s - FLASH ALL", adm->client->pers.cleanName)) ;
+			Boe_adminLog ("Flash", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("all clients"));
 		}else{
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7Everyone has been %sf%sl%sa%ss%sh%sed", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 			trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Everyone has been flashed.\n\""));
 			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-			Boe_adminLog (va("RCON - FLASH ALL")) ;
+			Boe_adminLog ("Flash", va("RCON"), va("all clients"));
 		}
 	}else{
 		missile = NV_projectile( targ, targ->r.currentOrigin, dir, weapon, 0 );
@@ -3027,11 +3038,11 @@ void Henk_Flash(int argNum, gentity_t *adm, qboolean shortCmd){
 		if(adm && adm->client){
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7was %sf%sl%sa%ss%sh%sed by %s", level.time + 5000, g_entities[id].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, adm->client->pers.netname));
 			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s ^7was flashed by %s.\n\"", g_entities[id].client->pers.netname,adm->client->pers.netname));
-			Boe_adminLog (va("%s - FLASH: %s", adm->client->pers.cleanName, g_entities[id].client->pers.cleanName  )) ;
+			Boe_adminLog ("Flash", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", g_entities[id].client->pers.ip, g_entities[id].client->pers.cleanName));
 		}else{
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7was %sf%sl%sa%ss%sh%sed", level.time + 5000, g_entities[id].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 			trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s ^7was flashed.\n\"", g_entities[id].client->pers.netname));
-			Boe_adminLog (va("RCON - FLASH: %s", g_entities[id].client->pers.cleanName  )) ;
+			Boe_adminLog ("Flash", va("%s", "RCON"), va("%s\\%s", g_entities[id].client->pers.ip, g_entities[id].client->pers.cleanName));
 		}
 	}
 }
@@ -3201,10 +3212,10 @@ void Henk_Unpause(int argNum, gentity_t *adm, qboolean shortCmd)
 	Boe_GlobalSound(G_SoundIndex("sound/misc/events/buzz02.wav"));
 			
 	if(adm && adm->client){
-		Boe_adminLog (va("%s - UNPAUSE", adm->client->pers.cleanName)) ;
+		Boe_adminLog ("Unpause", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "none");
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Unpause by %s.\n\"", adm->client->pers.netname));
 	}else{
-		Boe_adminLog (va("RCON - UNPAUSE")) ;
+		Boe_adminLog ("Unpause", va("RCON"), "none");
 		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Unpaused.\n\""));
 	}
 	RPM_Unpause(adm);
@@ -3279,10 +3290,10 @@ void Henk_Gametype(int argNum, gentity_t *adm, qboolean shortCmd){
 	}
 		if(adm && adm->client){
 			trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Gametype changed to %s by %s.\n\"", gametype, adm->client->pers.netname));
-			Boe_adminLog (va("%s - GAMETYPE SWITCH - %s", adm->client->pers.cleanName, gametype)) ;
+			Boe_adminLog (va("Gametype - %s", gametype), va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "none");
 		}else{
 			trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Gametype changed to %s.\n\"", gametype));
-			Boe_adminLog (va("RCON - GAMETYPE SWITCH - %s", gametype)) ;
+			Boe_adminLog (va("Gametype - %s", gametype), va("RCON"), "none");
 		}
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 		level.mapSwitch = qtrue;
@@ -3375,10 +3386,10 @@ void Henk_Map(int argNum, gentity_t *adm, qboolean shortCmd){
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp ^7%s in 5!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, map));
 		if(strlen(gametype) > 0){ // Boe!Man 2/26/11: If there's actually a gametype found..
 			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Map switch to %s [%s] by %s.\n\"", map, gametype, adm->client->pers.netname));
-			Boe_adminLog (va("%s - MAP CHANGE TO %s [%s]", adm->client->pers.cleanName, map, gametype)) ;
+			Boe_adminLog ("Map Switch", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", map, gametype));
 		}else{
 			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Map switch to %s by %s.\n\"", map, adm->client->pers.netname));
-			Boe_adminLog (va("%s - MAP CHANGE TO %s", adm->client->pers.cleanName, map)) ;
+			Boe_adminLog ("Map Switch", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s", map));
 		}
 	}else{
 		if(level.mapAction == 1 || level.mapAction == 3)
@@ -3411,10 +3422,10 @@ void Boe_passVote (int argNum, gentity_t *adm, qboolean shortCmd){
 	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sV%so%st%se passed!", level.time + 5000, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 	if(adm && adm->client){
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Vote passed by %s.\n\"", adm->client->pers.netname));
-		Boe_adminLog (va("%s - PASSVOTE", adm->client->pers.cleanName)) ;
+		Boe_adminLog ("Passvote", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "none");
 	}else{
 		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Vote passed.\n\""));
-		Boe_adminLog (va("%s - PASSVOTE", "RCON")) ;
+		Boe_adminLog ("Passvote", va("RCON"), "none");
 	}
 }
 
@@ -3439,10 +3450,10 @@ void Boe_cancelVote (int argNum, gentity_t *adm, qboolean shortCmd){
 	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sV%so%st%se cancelled!", level.time + 5000, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 	if(adm && adm->client){
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Vote cancelled by %s.\n\"", adm->client->pers.netname));
-		Boe_adminLog (va("%s - CANCELVOTE", adm->client->pers.cleanName)) ;
+		Boe_adminLog ("Cancelvote", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "none");
 	}else{
 		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Vote cancelled.\n\""));
-		Boe_adminLog (va("%s - CANCELVOTE", "RCON")) ;
+		Boe_adminLog ("Cancelvote", va("RCON"), "none");
 	}
 }
 
@@ -3459,7 +3470,7 @@ void Boe_Mapcycle (int argNum, gentity_t *ent, qboolean shortCmd){
 			level.mapAction = 4; 
 			level.mapSwitchCount = level.time;
 			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-			Boe_adminLog (va("%s - MAPCYCLE", ent->client->pers.cleanName));
+			Boe_adminLog ("Mapcycle", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), "none");
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp%sc%sy%scle in 5!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Mapcycle by %s.\n\"", ent->client->pers.netname));
 			return;
@@ -3480,7 +3491,7 @@ void Boe_Mapcycle (int argNum, gentity_t *ent, qboolean shortCmd){
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp%sc%sy%scle in 5!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 			trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Mapcycle.\n\""));
 			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-			Boe_adminLog (va("%s - MAPCYCLE", "RCON")) ;
+			Boe_adminLog ("Mapcycle", va("RCON"), "none");
 			return;
 		}else{
 			if(level.mapAction == 1 || level.mapAction == 3){

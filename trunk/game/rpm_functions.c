@@ -98,10 +98,10 @@ void RPM_Pause (gentity_t *adm)
 	Boe_GlobalSound(G_SoundIndex("sound/misc/events/buzz02.wav"));
 	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sP%sa%su%ss%se%sd!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 	if(adm && adm->client){
-		Boe_adminLog (va("%s - PAUSE", adm->client->pers.cleanName)) ;
+		Boe_adminLog ("Pause", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "none");
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Pause by %s.\n\"", adm->client->pers.netname));
 	}else{
-		Boe_adminLog (va("RCON - PAUSE")) ;
+		Boe_adminLog ("Pause", va("RCON"), "none");
 		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Pause.\n\""));
 	}
 /*	tent = G_TempEntity( vec3_origin, EV_GLOBAL_SOUND );
@@ -287,10 +287,10 @@ void RPM_Clan_Vs_All(gentity_t *adm)
 	Boe_GlobalSound(G_SoundIndex("sound/misc/events/tut_lift02.mp3"));
 			
 	if(adm && adm->client) {
-		Boe_adminLog (va("%s - ClanVsAll", adm->client->pers.cleanName)) ;
+		Boe_adminLog ("Clan Vs All", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "none");
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Clan vs all by %s.\n\"", adm->client->pers.netname));
 	} else	{
-		Boe_adminLog (va("RCON - ClanVsAll")) ;
+		Boe_adminLog ("Clan Vs All", va("RCON"), "none");
 		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Clan vs all.\n\""));
 	}
 	///End  - 02.26.05 - 02:59am
