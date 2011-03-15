@@ -242,8 +242,12 @@ Boe_RespawnInterval
 
 void Boe_RespawnInterval(int argNum, gentity_t *ent, qboolean shortCmd){
 	int number;
+	char arg1[6];
 	number = GetArgument(argNum);
-
+	if(!ent){
+		trap_Argv( 2, arg1, sizeof( arg1 ) );
+		number = atoi(arg1);
+	}
 	if(number < 0){
 		// Boe!Man 1/14/11: Show current respawn interval if there's no arg, or if 'respawninterval' is called from RCON.
 		if(ent && ent->client){
