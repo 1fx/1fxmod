@@ -1114,8 +1114,9 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 				lcount = strlen(buf); // last line
 			}
 			strncpy(name, buf+EndPos+1, lcount-(EndPos+1));
-			Com_Printf("IP: %s\n", xip);
-			Com_Printf("Name: %s\n", name);
+			name[strlen(name)] = '\0';
+			//Com_Printf("IP: %s\n", xip);
+			//Com_Printf("Name: %s\n", name);
 			count += 1; // Henk 25/01/11 -> Fix wrong ban lines.
 			// Start extracting and printing baninfo
 			if(subnet)
@@ -3167,11 +3168,11 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 	char xip[64];
 	//wrapper for interface
 	if(adm){
-		trap_SendServerCommand( adm-g_entities, va("print \"^3[Banlist]^7\n\n\""));
+		trap_SendServerCommand( adm-g_entities, va("print \"^3Adminlist]^7\n\n\""));
 		trap_SendServerCommand( adm-g_entities, va("print \"^3 #   Lvl   Name               IP\n\""));
 		trap_SendServerCommand( adm-g_entities, va("print \"^7------------------------------------------------------------------------\n\""));
 	}else{
-		Com_Printf("^3[Banlist]^7\n\n");
+		Com_Printf("^3[Adminlist]^7\n\n");
 		Com_Printf("^3 #   Lvl   Name               IP\n");
 		Com_Printf("^7------------------------------------------------------------------------\n");
 	}
@@ -3224,7 +3225,7 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 			column1[z] = test;
 			}
 			column1[spaces] = '\0';
-			sprintf(level, "^7[^3%s^7]", level1);
+			strcpy(level, va("^7[^3%c^7]", level1[0]));
 			length = strlen(name);
 			if(length > 18){
 				name[18] = '\0';
