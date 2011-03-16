@@ -906,9 +906,10 @@ Let everyone know about a team change
 */
 void BroadcastTeamChange( gclient_t *client, int oldTeam )
 {
-	char message[256];
-	char admin[46];
-	char clan[46];
+	char		message[256];
+	char		admin[46];
+	char		clan[46];
+	qboolean	noAdmin;
 
 	if(current_gametype.value == GT_HS){
 		switch ( client->sess.team )
@@ -986,10 +987,15 @@ void BroadcastTeamChange( gclient_t *client, int oldTeam )
 		}
 	}else{
 		strncpy(admin, "", 2);
+		noAdmin = qtrue; // Boe!Man 3/16/11: It doesn't matter if clan is empty, the lining won't fuck up. With an empty admin entry however, it will.. Hence this check.
 	}
 
 	// Boe!Man 3/16/11: Broadcast the teamchange.
-	trap_SendServerCommand( -1, va("cp \"@%s\n%s %s\n\"", clan, admin, message));
+	if(noAdmin == qfalse){
+		trap_SendServerCommand( -1, va("cp \"@%s\n%s %s\n\"", clan, admin, message));
+	}else{
+		trap_SendServerCommand( -1, va("cp \"@%s\n%s\n\"", clan, message));
+	}
 	return;
 
 }
