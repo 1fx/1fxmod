@@ -1259,9 +1259,25 @@ void Boe_Add_bAdmin_f(int argNum, gentity_t *adm, qboolean shortCmd)
 	int             idnum;
 	char			*id;
 	char			id2[64];
-
+	char			pass[24];
 	idnum = Boe_ClientNumFromArg(adm, argNum, "addbadmin <idnumber>", "do this to", qfalse, qfalse, shortCmd);
 	if(idnum < 0) return;
+
+	if(shortCmd){
+		strcpy(pass, GetReason());
+	}else{
+		if(adm && adm->client)
+			trap_Argv(3, pass, sizeof(pass));
+		else
+			trap_Argv(2, pass, sizeof(pass));
+	}
+
+	if(!Q_stricmp(pass, "pass")){
+		g_entities[idnum].client->sess.admin = 2;
+		AddToPasswordList(&g_entities[idnum], 2);
+		// add messages & shit
+		return;
+	}
 
 	id = g_entities[idnum].client->pers.boe_id;
 
@@ -1304,9 +1320,25 @@ void Boe_Add_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd)
 	int             idnum;
 	char			*id;
 	char			id2[64];
-
+	char			pass[24];
 	idnum = Boe_ClientNumFromArg(adm, argNum, "addadmin <idnumber>", "do this to", qfalse, qfalse, shortCmd);
 	if(idnum < 0) return;
+
+	if(shortCmd){
+		strcpy(pass, GetReason());
+	}else{
+		if(adm && adm->client)
+			trap_Argv(3, pass, sizeof(pass));
+		else
+			trap_Argv(2, pass, sizeof(pass));
+	}
+
+	if(!Q_stricmp(pass, "pass")){
+		g_entities[idnum].client->sess.admin = 3;
+		AddToPasswordList(&g_entities[idnum], 3);
+		// add messages & shit
+		return;
+	}
 
 	id = g_entities[idnum].client->pers.boe_id; 
 
@@ -1349,9 +1381,25 @@ void Boe_Add_sAdmin_f(int argNum, gentity_t *adm, qboolean shortCmd)
 	int             idnum;
 	char			*id;
 	char			id2[64];
-
+	char			pass[24];
 	idnum = Boe_ClientNumFromArg(adm, argNum, "addsadmin <idnumber>", "do this to", qfalse, qfalse, shortCmd);
 	if(idnum < 0) return;
+
+	if(shortCmd){
+		strcpy(pass, GetReason());
+	}else{
+		if(adm && adm->client)
+			trap_Argv(3, pass, sizeof(pass));
+		else
+			trap_Argv(2, pass, sizeof(pass));
+	}
+
+	if(!Q_stricmp(pass, "pass")){
+		g_entities[idnum].client->sess.admin = 4;
+		AddToPasswordList(&g_entities[idnum], 4);
+		// add messages & shit
+		return;
+	}
 
 	id = g_entities[idnum].client->pers.boe_id; 
 

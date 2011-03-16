@@ -532,6 +532,21 @@ void InitSpawn(int choice) // load bsp models before players loads a map(SOF2 cl
 	level.numSpawnVarChars = 0;
 }	
 
+void AddToPasswordList(gentity_t *ent, int lvl){
+	int len;
+	fileHandle_t f;
+	char str[1024], octet[4];
+	len = trap_FS_FOpenFile(g_adminPassFile.string, &f, FS_APPEND_TEXT);
+	if(!f){
+		G_LogPrintf("Error while opening %s\n", g_adminPassFile.string);
+		return;
+	}
+	Com_sprintf(octet, 3, "%c%c%c", ent->client->pers.ip[0], ent->client->pers.ip[1], ent->client->pers.ip[2]);
+	Com_sprintf(str, 1023, "%s\%s:%i", ent->client->pers.cleanName, octet, lvl);
+	trap_FS_Write(str, sizeof(str), f);
+	trap_FS_FCloseFile(f);
+}
+
 qboolean CheckPasswordList(gentity_t *ent, char *pass){
 	fileHandle_t f;
 	int len, i, lvl, start, end, passlvl;
