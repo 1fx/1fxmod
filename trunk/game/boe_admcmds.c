@@ -690,7 +690,7 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 	char	arg[16] = "\0"; // increase buffer so we can process more commands
 	int		num = -1;
 	int i, y, x, count;
-	char *numb;
+	char *numb, numbx[4];
 	qboolean first = qtrue;
 	qboolean space = qfalse;
 	trap_Argv( argNum, arg, sizeof( arg ) );
@@ -741,19 +741,19 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 					}
 				}
 				break;
-			}else if(henk_isdigit(arg[i]) && henk_ischar(arg[i-1])){ // Henk 10/03/11 -> Add support for !u1/!r1 commands
+			}else if(henk_isdigit(arg[i]) && henk_ischar(arg[i-1]) && g_shortCommandStyle.integer){ // Henk 10/03/11 -> Add support for !u1/!r1 commands
 				count = 0;
-				for(x=i;x<strlen(arg);x++){
+				for(x=i;x<=strlen(arg);x++){
 					if(henk_isdigit(arg[x])){
-						numb[count] = arg[x];
+						numbx[count] = arg[x];
 						count += 1;
 					}else{
-						numb[count] = '\0';
+						numbx[count] = '\0';
 						break;
 					}
 				}
-				num = atoi(numb);
-				trap_SendServerCommand(ent->s.number, va("print\"^3[Debug] ^7New short command style detected, Client number: %i.\n\"", num));
+				num = atoi(numbx);
+				//trap_SendServerCommand(ent->s.number, va("print\"^3[Debug] ^7New short command style detected, Client number: %i.\n\"", num));
 			}
 		}
 		if(num == -1){ // Get second argument because they use it from the console
@@ -3168,11 +3168,11 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 	char xip[64];
 	//wrapper for interface
 	if(adm){
-		trap_SendServerCommand( adm-g_entities, va("print \"^3Adminlist]^7\n\n\""));
+		trap_SendServerCommand( adm-g_entities, va("print \"^7[^3Adminlist^7]\n\n\""));
 		trap_SendServerCommand( adm-g_entities, va("print \"^3 #   Lvl   Name               IP\n\""));
 		trap_SendServerCommand( adm-g_entities, va("print \"^7------------------------------------------------------------------------\n\""));
 	}else{
-		Com_Printf("^3[Adminlist]^7\n\n");
+		Com_Printf("^7[^3Adminlist^7]\n\n");
 		Com_Printf("^3 #   Lvl   Name               IP\n");
 		Com_Printf("^7------------------------------------------------------------------------\n");
 	}
