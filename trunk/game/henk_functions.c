@@ -535,33 +535,35 @@ void InitSpawn(int choice) // load bsp models before players loads a map(SOF2 cl
 void AddToPasswordList(gentity_t *ent, int lvl){
 	int len;
 	fileHandle_t f;
-	char str[1024], octet[4];
+	char str[512], octet[4];
 	len = trap_FS_FOpenFile(g_adminPassFile.string, &f, FS_APPEND_TEXT);
 	if(!f){
 		G_LogPrintf("Error while opening %s\n", g_adminPassFile.string);
 		return;
 	}
-	Com_sprintf(octet, 3, "%c%c%c", ent->client->pers.ip[0], ent->client->pers.ip[1], ent->client->pers.ip[2]);
-	Com_sprintf(str, 1023, "%s\%s:%i", ent->client->pers.cleanName, octet, lvl);
-	trap_FS_Write(str, sizeof(str), f);
+	strcpy(octet, va("%c%c%c", ent->client->pers.ip[0], ent->client->pers.ip[1], ent->client->pers.ip[2]));
+	strcpy(str, va("%s\\%s:%i", ent->client->pers.cleanName, octet, lvl));
+	str[strlen(str)] = '\0';
+	trap_FS_Write(str, strlen(str), f);
 	trap_FS_FCloseFile(f);
 }
 
 qboolean CheckPasswordList(gentity_t *ent, char *pass){
 	fileHandle_t f;
-	int len, i, lvl, start, end, passlvl;
+	int len, i, start, end;
+	char lvl, passlvl;
 	char buf[1024], octet[5], name[64], myoctet[5];
 
 	// sort out what admin lvl pass he entered
 	if(!Q_stricmp(pass, g_badminPass.string))
-		passlvl = 2;
+		passlvl = '2';
 	else if(!Q_stricmp(pass, g_adminPass.string))
-		passlvl = 3;
+		passlvl = '3';
 	else if(!Q_stricmp(pass, g_sadminPass.string))
-		passlvl = 4;
+		passlvl = '4';
 
 	// set our first octet
-	Com_sprintf(myoctet, 3, "%c%c%c", ent->client->pers.ip[0], ent->client->pers.ip[1], ent->client->pers.ip[2]);
+	strcpy(myoctet, va("%c%c%c", ent->client->pers.ip[0], ent->client->pers.ip[1], ent->client->pers.ip[2]));
 
 	len = trap_FS_FOpenFile(g_adminPassFile.string, &f, FS_READ_TEXT);
 	if(!f){
@@ -569,16 +571,22 @@ qboolean CheckPasswordList(gentity_t *ent, char *pass){
 		return qfalse;
 	}
 	trap_FS_Read(buf, len, f);
-	for(i=0;i<len;i++){
+	for(i=0;i<=len;i++){
 		if(i==0)
 			start = 0;
 		if(buf[i] == '\n' || i == len){
 			end = i;
-			lvl = (int)buf[i-1];
-			Com_sprintf(octet, 3, "%c%c%c", buf[i-5], buf[i-4], buf[i-3]);
-			Q_strncpyz(name, buf+start, start+(i-6));
-			Com_Printf("Name: %s\nLevel: %i\nOctet: %s\n\n", name, lvl, octet);
+			lvl = buf[i-1];
+			strcpy(octet, va("%c%c%c", buf[i-5], buf[i-4], buf[i-3]));
+			Q_strncpyz(name, buf+start, start+(i-5));
+			//Com_Printf("Name: %s\nLevel: %c\nOctet: %s\n\n", name, lvl, octet);
 			if(!Q_stricmp(octet, myoctet) && !Q_stricmp(ent->client->pers.cleanName, name) && lvl == passlvl){ // found octet
+				if(lvl == '2')
+					ent->client->sess.admin = 2;
+				else if(lvl == '3')
+					ent->client->sess.admin = 3;
+				else if(lvl == '4')
+					ent->client->sess.admin = 4;
 				trap_FS_FCloseFile(f);
 				return qtrue;
 			}

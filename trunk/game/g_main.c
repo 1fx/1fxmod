@@ -508,7 +508,7 @@ static cvarTable_t gameCvarTable[] =
 
 	{ &g_rpmEnt, "g_rpmEnt", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 
-	{ &g_passwordAdmins, "g_passwordAdmins", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
+	{ &g_passwordAdmins, "g_passwordAdmins", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 	{ &g_badminPass, "g_badminPass", "none", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_adminPass, "g_adminPass", "none", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_sadminPass, "g_sadminPass", "none", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
