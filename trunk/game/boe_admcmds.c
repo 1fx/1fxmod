@@ -243,9 +243,15 @@ Boe_RespawnInterval
 void Boe_RespawnInterval(int argNum, gentity_t *ent, qboolean shortCmd){
 	int number;
 	char arg1[6];
-	number = GetArgument(argNum);
-	if(!ent){
+
+	if(shortCmd){
+		number = GetArgument(argNum);
+	}else if(ent&&ent->client && !shortCmd){
 		trap_Argv( 2, arg1, sizeof( arg1 ) );
+		number = atoi(arg1);
+	}
+	else if(!ent){
+		trap_Argv( 1, arg1, sizeof( arg1 ) );
 		number = atoi(arg1);
 	}
 	if(number < 0){
@@ -260,8 +266,13 @@ void Boe_RespawnInterval(int argNum, gentity_t *ent, qboolean shortCmd){
 		trap_SendConsoleCommand( EXEC_APPEND, va("g_respawnInterval %i\n", number));
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sR%se%ss%sp%sa%swn interval %i!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, number));
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-		Boe_adminLog (va("Respawn Interval %i", number), va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), "none");
-		trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Respawn interval changed to %i by %s.\n\"", number, ent->client->pers.netname));
+		if(ent&&ent->client){
+			Boe_adminLog (va("Respawn Interval %i", number), va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), "none");
+			trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Respawn interval changed to %i by %s.\n\"", number, ent->client->pers.netname));
+		}else{
+			Boe_adminLog (va("Respawn Interval %i", number), va("RCON"), "none");
+			trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Respawn interval changed to %i.\n\"", number));
+		}
 	}
 }
 
