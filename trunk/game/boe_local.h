@@ -489,3 +489,7 @@ void Henk_CloseSound ( vec3_t origin, int soundIndex);
 void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd);
 qboolean CheckPasswordList(gentity_t *ent, char *pass);
 void PrintCustom(int numb);
+
+// Boe!Man 3/16/11
+extern vmCvar_t	server_rconprefix;
+extern vmCvar_t	server_specteamprefix;

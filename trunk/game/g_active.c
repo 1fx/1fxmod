@@ -1178,6 +1178,17 @@ void ClientThink_real( gentity_t *ent )
 			client->sess.motdStartTime += 3000;
 			Boe_Motd(ent);
 		}
+		// Boe!Man 3/16/11: Better to reset the values and actually put firstTime to qfalse so it doesn't mess up when we want to broadcast a teamchange.
+		else if(level.time >= client->sess.motdStopTime)
+		{
+			client->sess.motdStartTime = 0;
+			client->sess.motdStopTime = 0;
+			if(client->sess.firstTime)
+			{
+				BroadcastTeamChange( client, -1 );
+				client->sess.firstTime = qfalse;
+			}
+		}
 
 	}
 	if(level.time > client->sess.oneSecChecks){

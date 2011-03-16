@@ -906,59 +906,91 @@ Let everyone know about a team change
 */
 void BroadcastTeamChange( gclient_t *client, int oldTeam )
 {
+	char message[256];
+	char admin[46];
+	char clan[46];
+
 	if(current_gametype.value == GT_HS){
 		switch ( client->sess.team )
 		{
 			case TEAM_RED:
-				trap_SendServerCommand( -1, va("cp \"@%s" S_COLOR_WHITE "\njoined the %s\n\"", client->pers.netname, server_hiderteamprefix.string) );
+				strcpy(message, va("%s" S_COLOR_WHITE "\njoined the %s\n\"", client->pers.netname, server_hiderteamprefix.string));
 				trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s ^7joined the hiders.\n\"", client->pers.cleanName));
 				break;
 
 			case TEAM_BLUE:
-				trap_SendServerCommand( -1, va("cp \"@%s" S_COLOR_WHITE "\njoined the %s\n\"", client->pers.netname, server_seekerteamprefix.string));
+				strcpy(message, va("%s" S_COLOR_WHITE "\njoined the %s\n\"", client->pers.netname, server_seekerteamprefix.string));
 				trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s ^7joined the seekers.\n\"", client->pers.cleanName));
 				break;
 
 			case TEAM_SPECTATOR:
 				if ( oldTeam != TEAM_SPECTATOR )
 				{
-					trap_SendServerCommand( -1, va("cp \"@%s" S_COLOR_WHITE "\njoined the spectators\n\"", client->pers.netname));
-						trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s ^7joined the spectators.\n\"", client->pers.cleanName));
+					strcpy(message, va("%s" S_COLOR_WHITE "\njoined the %s\n\"", client->pers.netname, server_specteamprefix.string));
+					trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s ^7joined the spectators.\n\"", client->pers.cleanName));
+				}
+				else
+				{
+					return;
 				}
 				break;
 
 			case TEAM_FREE:
-				trap_SendServerCommand( -1, va("cp \"@%s" S_COLOR_WHITE " joined the battle.\n\"", client->pers.netname));
-					trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s ^7joined the battle.\n\"", client->pers.cleanName));
+				strcpy(message, va("%s" S_COLOR_WHITE " joined the battle.\n\"", client->pers.netname));
+				trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s ^7joined the battle.\n\"", client->pers.cleanName));
 				break;
 		}
 	}else{
 		switch ( client->sess.team )
 		{
 			case TEAM_RED:
-				trap_SendServerCommand( -1, va("cp \"@%s" S_COLOR_WHITE "\njoined the %s ^7team\n\"", client->pers.netname, server_redteamprefix.string) );
+				strcpy(message, va("%s\n^7joined the %s ^7team", client->pers.netname, server_redteamprefix.string));
 				trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s ^7joined the red team.\n\"", client->pers.cleanName));
 				break;
 
 			case TEAM_BLUE:
-				trap_SendServerCommand( -1, va("cp \"@%s" S_COLOR_WHITE "\njoined the %s ^7team\n\"", client->pers.netname, server_blueteamprefix.string));
+				strcpy(message, va("%s" S_COLOR_WHITE "\njoined the %s ^7team\n\"", client->pers.netname, server_blueteamprefix.string));
 				trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s ^7joined the blue team.\n\"", client->pers.cleanName));
 				break;
 			
 			case TEAM_SPECTATOR:
 				if ( oldTeam != TEAM_SPECTATOR )
 				{
-					trap_SendServerCommand( -1, va("cp \"@%s" S_COLOR_WHITE "\njoined the spectators\n\"", client->pers.netname));
-						trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s ^7joined the spectators.\n\"", client->pers.cleanName));
+					strcpy(message, va("%s" S_COLOR_WHITE "\njoined the %s\n\"", client->pers.netname, server_specteamprefix.string));
+					trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s ^7joined the spectators.\n\"", client->pers.cleanName));
+				}else
+				{
+					return;
 				}
 				break;
 
 			case TEAM_FREE:
-				trap_SendServerCommand( -1, va("cp \"@%s" S_COLOR_WHITE " joined the battle.\n\"", client->pers.netname));
-					trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s ^7joined the battle.\n\"", client->pers.cleanName));
+				strcpy(message, va("%s" S_COLOR_WHITE " joined the battle.\n\"", client->pers.netname));
+				trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s ^7joined the battle.\n\"", client->pers.cleanName));
 				break;
 		}
 	}
+	// Boe!Man 3/16/11: Append Clan and/or Admin status if needed.
+	if(client->sess.clanMember == qtrue){
+		strncpy(clan, server_ctprefix.string, 45);
+	}else{
+		strncpy(clan, "", 2);
+	}
+	if(client->sess.admin > 1){
+		if(client->sess.admin == 2){
+			strncpy(admin, server_badminprefix.string, 45);
+		}else if(client->sess.admin == 3){
+			strncpy(admin, server_adminprefix.string, 45);
+		}else if(client->sess.admin == 4){
+			strncpy(admin, server_sadminprefix.string, 45);
+		}
+	}else{
+		strncpy(admin, "", 2);
+	}
+
+	// Boe!Man 3/16/11: Broadcast the teamchange.
+	trap_SendServerCommand( -1, va("cp \"@%s\n%s %s\n\"", clan, admin, message));
+	return;
 
 }
 
@@ -3444,12 +3476,12 @@ qboolean ConsoleCommand( void )
 	{
 		if (Q_stricmp (cmd, "say") == 0) 
 		{
-			trap_SendServerCommand( -1, va("chat -1 \"server: %s\n\"", ConcatArgs(1) ) );
+			trap_SendServerCommand( -1, va("chat -1 \"%s: %s\n\"", server_rconprefix.string, ConcatArgs(1) ) );
 			return qtrue;
 		}
 
 		// everything else will also be printed as a say command
-		trap_SendServerCommand( -1, va("chat -1 \"server: %s\n\"", ConcatArgs(0) ) );
+		trap_SendServerCommand( -1, va("chat -1 \"%s: %s\n\"", server_rconprefix.string, ConcatArgs(0) ) );
 		return qtrue;
 	}
 

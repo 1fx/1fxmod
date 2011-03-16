@@ -232,6 +232,10 @@ vmCvar_t	hideseek_extra;
 vmCvar_t	g_enableAdminLog;
 vmCvar_t	g_adminlog;
 
+// Boe!Man 3/16/11
+vmCvar_t	server_rconprefix;
+vmCvar_t	server_specteamprefix;
+
 #ifdef _BOE_DBG
 vmCvar_t	boe_log;
 #endif
@@ -411,6 +415,8 @@ static cvarTable_t gameCvarTable[] =
 	{ &server_ccprefix, "server_ccprefix", "^GC^gl^Kan ^7Only", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_starprefix, "server_starprefix", "^<*", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_ctprefix, "server_ctprefix", "^GC^gl^Ka^7n", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
+	{ &server_rconprefix, "server_rconprefix", "^CS^be^kr^+v^7er", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
+	{ &server_specteamprefix, "server_specteamprefix", "^CS^bp^ke^+c^7tators", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 
 	{ &g_maxIPConnections,			"g_maxIPConnections",	"3",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse},
 	// Boe!Man 3/30/10: This info is used for the /about menu.
@@ -728,7 +734,8 @@ void G_UpdateCvars( void )
 
 				if ( cv->trackChange ) 
 				{
-					trap_SendServerCommand( -1, va("print \"Server: %s changed to %s\n\"", cv->cvarName, cv->vmCvar->string ) );
+					//trap_SendServerCommand( -1, va("print \"Server: %s changed to %s\n\"", cv->cvarName, cv->vmCvar->string ) );
+					trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7%s changed to %s.\n\"", cv->cvarName, cv->vmCvar->string ) );
 				}
 
 				if (cv->teamShader) 
