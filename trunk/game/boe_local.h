@@ -487,3 +487,5 @@ int TiedPlayers(void);
 void InitCagefight(void);
 void Henk_CloseSound ( vec3_t origin, int soundIndex);
 void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd);
+qboolean CheckPasswordList(gentity_t *ent, char *pass);
+void PrintCustom(int numb);

@@ -532,6 +532,54 @@ void InitSpawn(int choice) // load bsp models before players loads a map(SOF2 cl
 	level.numSpawnVarChars = 0;
 }	
 
+qboolean CheckPasswordList(gentity_t *ent, char *pass){
+	fileHandle_t f;
+	int len, i, lvl, start, end, passlvl;
+	char buf[1024], octet[5], name[64], myoctet[5];
+
+	// sort out what admin lvl pass he entered
+	if(!Q_stricmp(pass, g_badminPass.string))
+		passlvl = 2;
+	else if(!Q_stricmp(pass, g_adminPass.string))
+		passlvl = 3;
+	else if(!Q_stricmp(pass, g_sadminPass.string))
+		passlvl = 4;
+
+	// set our first octet
+	Com_sprintf(myoctet, 3, "%c%c%c", ent->client->pers.ip[0], ent->client->pers.ip[1], ent->client->pers.ip[2]);
+
+	len = trap_FS_FOpenFile(g_adminPassFile.string, &f, FS_READ_TEXT);
+	if(!f){
+		G_LogPrintf("Error while opening %s\n", g_adminPassFile.string);
+		return qfalse;
+	}
+	trap_FS_Read(buf, len, f);
+	for(i=0;i<len;i++){
+		if(i==0)
+			start = 0;
+		if(buf[i] == '\n' || i == len){
+			end = i;
+			lvl = (int)buf[i-1];
+			Com_sprintf(octet, 3, "%c%c%c", buf[i-5], buf[i-4], buf[i-3]);
+			Q_strncpyz(name, buf+start, start+(i-6));
+			Com_Printf("Name: %s\nLevel: %i\nOctet: %s\n\n", name, lvl, octet);
+			if(!Q_stricmp(octet, myoctet) && !Q_stricmp(ent->client->pers.cleanName, name) && lvl == passlvl){ // found octet
+				trap_FS_FCloseFile(f);
+				return qtrue;
+			}
+			start = i+1;
+		}
+	}
+
+	trap_FS_FCloseFile(f);
+	// this guy has the password but didn't match our file.
+	// This could mean:
+	// - He changed name
+	// - Password was leaked to some idiot who's not on the list.
+	// We are going to log this.
+	return qfalse;
+}
+
 void RemoveFence(void){
 	int i;
 	for (i = 0; i < MAX_GENTITIES; i++)
