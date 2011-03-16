@@ -244,15 +244,24 @@ void Boe_RespawnInterval(int argNum, gentity_t *ent, qboolean shortCmd){
 	int number;
 	char arg1[6];
 
+	// Boe!Man 3/16/11: Fix for 'respawninterval' in RCON, /adm and shortCmd in console.
 	if(shortCmd){
 		number = GetArgument(argNum);
 	}else if(ent&&ent->client && !shortCmd){
 		trap_Argv( 2, arg1, sizeof( arg1 ) );
-		number = atoi(arg1);
+		if(strlen(arg1) > 0){
+			number = atoi(arg1);
+		}else{
+			number = -1;
+		}
 	}
 	else if(!ent){
 		trap_Argv( 1, arg1, sizeof( arg1 ) );
-		number = atoi(arg1);
+		if(strlen(arg1) > 0){
+			number = atoi(arg1);
+		}else{
+			number = -1;
+		}
 	}
 	if(number < 0){
 		// Boe!Man 1/14/11: Show current respawn interval if there's no arg, or if 'respawninterval' is called from RCON.
@@ -732,7 +741,7 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 					}
 				}
 				break;
-			}else if(henk_isdigit(arg[i]) && henk_ischar(arg[i-1]) && g_shortCommandStyle.integer){ // Henk 10/03/11 -> Add support for !u1/!r1 commands
+			}else if(henk_isdigit(arg[i]) && henk_ischar(arg[i-1])){ // Henk 10/03/11 -> Add support for !u1/!r1 commands
 				count = 0;
 				for(x=i;x<strlen(arg);x++){
 					if(henk_isdigit(arg[x])){
@@ -1259,25 +1268,9 @@ void Boe_Add_bAdmin_f(int argNum, gentity_t *adm, qboolean shortCmd)
 	int             idnum;
 	char			*id;
 	char			id2[64];
-	char			pass[24];
+
 	idnum = Boe_ClientNumFromArg(adm, argNum, "addbadmin <idnumber>", "do this to", qfalse, qfalse, shortCmd);
 	if(idnum < 0) return;
-
-	if(shortCmd){
-		strcpy(pass, GetReason());
-	}else{
-		if(adm && adm->client)
-			trap_Argv(3, pass, sizeof(pass));
-		else
-			trap_Argv(2, pass, sizeof(pass));
-	}
-
-	if(!Q_stricmp(pass, "pass")){
-		g_entities[idnum].client->sess.admin = 2;
-		AddToPasswordList(&g_entities[idnum], 2);
-		// add messages & shit
-		return;
-	}
 
 	id = g_entities[idnum].client->pers.boe_id;
 
@@ -1320,25 +1313,9 @@ void Boe_Add_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd)
 	int             idnum;
 	char			*id;
 	char			id2[64];
-	char			pass[24];
+
 	idnum = Boe_ClientNumFromArg(adm, argNum, "addadmin <idnumber>", "do this to", qfalse, qfalse, shortCmd);
 	if(idnum < 0) return;
-
-	if(shortCmd){
-		strcpy(pass, GetReason());
-	}else{
-		if(adm && adm->client)
-			trap_Argv(3, pass, sizeof(pass));
-		else
-			trap_Argv(2, pass, sizeof(pass));
-	}
-
-	if(!Q_stricmp(pass, "pass")){
-		g_entities[idnum].client->sess.admin = 3;
-		AddToPasswordList(&g_entities[idnum], 3);
-		// add messages & shit
-		return;
-	}
 
 	id = g_entities[idnum].client->pers.boe_id; 
 
@@ -1381,25 +1358,9 @@ void Boe_Add_sAdmin_f(int argNum, gentity_t *adm, qboolean shortCmd)
 	int             idnum;
 	char			*id;
 	char			id2[64];
-	char			pass[24];
+
 	idnum = Boe_ClientNumFromArg(adm, argNum, "addsadmin <idnumber>", "do this to", qfalse, qfalse, shortCmd);
 	if(idnum < 0) return;
-
-	if(shortCmd){
-		strcpy(pass, GetReason());
-	}else{
-		if(adm && adm->client)
-			trap_Argv(3, pass, sizeof(pass));
-		else
-			trap_Argv(2, pass, sizeof(pass));
-	}
-
-	if(!Q_stricmp(pass, "pass")){
-		g_entities[idnum].client->sess.admin = 4;
-		AddToPasswordList(&g_entities[idnum], 4);
-		// add messages & shit
-		return;
-	}
 
 	id = g_entities[idnum].client->pers.boe_id; 
 
@@ -2578,7 +2539,7 @@ void Adm_ForceTeam(int argNum, gentity_t *adm, qboolean shortCmd)
 				strcpy(str, "blue");
 				xteam = TEAM_BLUE;
 			}else{
-				trap_SendServerCommand(adm->s.number, va("print\"^3[Info] Wrong team: %s.\n\"", str));
+				trap_SendServerCommand(adm->s.number, va("print\"^3[Info] ^7Wrong team: %s.\n\"", str));
 				return;
 			}
 		}
@@ -2588,6 +2549,20 @@ void Adm_ForceTeam(int argNum, gentity_t *adm, qboolean shortCmd)
 			trap_Argv( 3, str, sizeof( str ) );
 		else
 			trap_Argv( 2, str, sizeof( str ) );
+
+		if(str[0] == 's' || str[0] == 'S'){
+				strcpy(str, "spectator");
+				xteam = TEAM_SPECTATOR;
+			}else if(str[0] == 'r' || str[0] == 'R'){
+				strcpy(str, "red");
+				xteam = TEAM_RED;
+			}else if(str[0] == 'b' || str[0] == 'B'){
+				strcpy(str, "blue");
+				xteam = TEAM_BLUE;
+			}else{
+				trap_SendServerCommand(adm->s.number, va("print\"^3[Info] ^7Wrong team: %s.\n\"", str));
+				return;
+			}
 	}
 	if(g_entities[idnum].client){
 		if(g_entities[idnum].r.svFlags & SVF_BOT){ // Henk 25/01/11 -> Reset bots to set them to another team
