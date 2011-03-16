@@ -1114,6 +1114,7 @@ extern	vmCvar_t	g_restarted;
 extern  vmCvar_t    current_gametype;
 extern  vmCvar_t	g_rpmEnt;
 extern  vmCvar_t	g_passwordAdmins;
+extern  vmCvar_t	g_shortCommandStyle;
 extern  vmCvar_t	g_badminPass;
 extern  vmCvar_t	g_adminPass;
 extern  vmCvar_t	g_sadminPass;

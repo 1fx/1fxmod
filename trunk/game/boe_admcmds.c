@@ -732,7 +732,7 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 					}
 				}
 				break;
-			}else if(henk_isdigit(arg[i]) && henk_ischar(arg[i-1])){ // Henk 10/03/11 -> Add support for !u1/!r1 commands
+			}else if(henk_isdigit(arg[i]) && henk_ischar(arg[i-1]) && g_shortCommandStyle.integer){ // Henk 10/03/11 -> Add support for !u1/!r1 commands
 				count = 0;
 				for(x=i;x<strlen(arg);x++){
 					if(henk_isdigit(arg[x])){
