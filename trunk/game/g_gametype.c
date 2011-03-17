@@ -829,11 +829,11 @@ void CheckGametype ( void )
 	// If the level is over then forget checking gametype stuff.
 	//Ryan june 15 2003
 	//if ( level.intermissiontime )
-		if(current_gametype.value == GT_HS){
-			if(level.startcage == qtrue){
-				InitCagefight();
-			}
+	if(current_gametype.value == GT_HS){
+		if(level.startcage == qtrue){
+			InitCagefight();
 		}
+	}
 	if ( level.intermissiontime || level.pause || cm_enabled.integer == 3)
 	//End Ryan
 	{
@@ -860,6 +860,11 @@ void CheckGametype ( void )
 			if ( other->client->pers.connected != CON_CONNECTED )
 			{
 				continue;
+			}
+
+			if(other->client->ps.weapon == WP_NONE){
+				respawn(other);
+				trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s has been respawned due spawned with no weapons.\n\"", other->client->pers.netname));
 			}
 
 			level.teamAliveCount[other->client->sess.team]++;
