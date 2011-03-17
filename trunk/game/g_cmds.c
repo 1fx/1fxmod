@@ -3158,7 +3158,7 @@ void Boe_adm_f ( gentity_t *ent )
 			return;
 		}else if(!Q_stricmp(arg2, g_adminPass.string) || !Q_stricmp(arg2, g_sadminPass.string) || !Q_stricmp(arg2, g_badminPass.string)){ // good password, now check if he's in admin list
 			if(CheckPasswordList(ent, arg2)){
-				// give admin
+				// got admin message
 				return;
 			}else{
 				trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Access denied: Invalid password!\n\""));
