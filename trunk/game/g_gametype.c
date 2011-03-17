@@ -862,7 +862,7 @@ void CheckGametype ( void )
 				continue;
 			}
 
-			if(other->client->ps.weapon == WP_NONE){
+			if(other->client->ps.weapon == WP_NONE && current_gametype.value != GT_HS){
 				respawn(other);
 				trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s has been respawned due spawned with no weapons.\n\"", other->client->pers.netname));
 			}
