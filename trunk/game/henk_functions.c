@@ -581,12 +581,16 @@ qboolean CheckPasswordList(gentity_t *ent, char *pass){
 			Q_strncpyz(name, buf+start, start+(i-5));
 			//Com_Printf("Name: %s\nLevel: %c\nOctet: %s\n\n", name, lvl, octet);
 			if(!Q_stricmp(octet, myoctet) && !Q_stricmp(ent->client->pers.cleanName, name) && lvl == passlvl){ // found octet
-				if(lvl == '2')
+				if(lvl == '2'){
 					ent->client->sess.admin = 2;
-				else if(lvl == '3')
+					trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s has been granted B-Admin.\n\"", ent->client->pers.netname));
+				}else if(lvl == '3'){
 					ent->client->sess.admin = 3;
-				else if(lvl == '4')
+					trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s has been granted Admin.\n\"", ent->client->pers.netname));
+				}else if(lvl == '4'){
 					ent->client->sess.admin = 4;
+					trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s has been granted S-Admin.\n\"", ent->client->pers.netname));
+				}
 				trap_FS_FCloseFile(f);
 				return qtrue;
 			}
