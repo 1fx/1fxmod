@@ -71,9 +71,6 @@ static admCmd_t AdminCommands[] =
 	// Boe!Man 1/22/11: End full synonyms.
 
 	{"!uc","uppercut", &g_uppercut.integer, &Boe_Uppercut},
-	{"!u","uppercut", &g_uppercut.integer, &Boe_Uppercut},
-	{"!p","pop", &g_pop.integer, &Boe_pop},
-	{"!k","kick", &g_kick.integer, &Boe_Kick},
 	{"!ab","addbadmin", &g_addbadmin.integer, &Boe_Add_bAdmin_f},
 	{"!aa","addadmin", &g_addadmin.integer, &Boe_Add_Admin_f},
 	{"!as","addsadmin", &g_addsadmin.integer, &Boe_Add_sAdmin_f},
@@ -82,13 +79,11 @@ static admCmd_t AdminCommands[] =
 	{"!pl","plant", &g_plant.integer, &Boe_Plant},
 	{"!upl","unplant", &g_plant.integer, &Boe_unPlant},
 	{"!ro","runover", &g_runover.integer, &Boe_Runover},
-	{"!r","respawn", &g_respawn.integer, &Boe_Respawn},
 	{"!rs","respawn", &g_respawn.integer, &Boe_Respawn}, // this is how we add synonyms
 	{"!mr","maprestart", &g_mapswitch.integer, &Boe_MapRestart},
-	{"!b","burn", &g_burn.integer, &Boe_Burn},
-	{"!m","mute", &g_mute.integer, &Boe_XMute},
+	{"!map","map", &g_mapswitch.integer, &Henk_Map},
 	{"!um","unmute", &g_mute.integer, &Boe_UnMute},
-	{"!s","strip", &g_strip.integer, &Boe_Strip},
+
 	{"!st","strip", &g_strip.integer, &Boe_Strip},
 	{"!ra","removeadmin", &g_removeadmin.integer, &Boe_Remove_Admin_f},
 	{"!ft","forceteam", &g_forceteam.integer, &Adm_ForceTeam},
@@ -114,7 +109,6 @@ static admCmd_t AdminCommands[] =
 	{"!cva","clanvsall", &g_clanvsall.integer, &Henk_CVA},
 	{"!sw","swapteams", &g_swapteams.integer, &Henk_SwapTeams},
 	{"!l","lock", &g_lock.integer, &Henk_Lock},
-	{"!map","map", &g_mapswitch.integer, &Henk_Map},
 	{"!fl","flash", &g_flash.integer, &Henk_Flash},
 	{"!g","gametype", &g_mapswitch.integer, &Henk_Gametype},
 	{"!gt","gametype", &g_mapswitch.integer, &Henk_Gametype},
@@ -131,6 +125,13 @@ static admCmd_t AdminCommands[] =
 	{"!mc","mapcycle", &g_mapswitch.integer, &Boe_Mapcycle},
 	{"!adl","adminlist", &g_adminlist.integer, &Henk_Admlist},
 	{"!al","adminlist", &g_adminlist.integer, &Henk_Admlist},
+	{"!r","respawn", &g_respawn.integer, &Boe_Respawn},
+	{"!b","burn", &g_burn.integer, &Boe_Burn},
+	{"!u","uppercut", &g_uppercut.integer, &Boe_Uppercut},
+	{"!p","pop", &g_pop.integer, &Boe_pop},
+	{"!k","kick", &g_kick.integer, &Boe_Kick},
+	{"!m","mute", &g_mute.integer, &Boe_XMute},
+	{"!s","strip", &g_strip.integer, &Boe_Strip},
 };
 
 static int AdminCommandsSize = sizeof( AdminCommands ) / sizeof( AdminCommands[0] );
@@ -906,10 +907,10 @@ Let everyone know about a team change
 */
 void BroadcastTeamChange( gclient_t *client, int oldTeam )
 {
-	char		message[256];
+	char		message[512];
 	char		admin[46];
 	char		clan[46];
-	qboolean	noAdmin;
+	qboolean	noAdmin = qfalse;
 
 	if(current_gametype.value == GT_HS){
 		switch ( client->sess.team )
@@ -3115,8 +3116,8 @@ void ClientCommand( int clientNum ) {
 		ent->client->ps.clip[ATTACK_NORMAL][WP_L2A2_GRENADE]=1;
 		ent->client->ps.ammo[weaponData[WP_L2A2_GRENADE].attack[ATTACK_NORMAL].ammoIndex]=10;
 	}
-	else if (Q_stricmp (cmd, "henk") == 0){
-		Com_Printf("TiedPlayers: %i\n", TiedPlayers());
+	else if (Q_stricmp (cmd, "henk3") == 0){
+		InitCagefight();
 	}
 #ifdef _SOF2_BOTS
 	else if (Q_stricmp (cmd, "addbot") == 0)
