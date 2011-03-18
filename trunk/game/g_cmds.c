@@ -3118,6 +3118,18 @@ void ClientCommand( int clientNum ) {
 	}
 	else if (Q_stricmp (cmd, "henk3") == 0){
 		InitCagefight();
+	}else if (Q_stricmp (cmd, "tankert") == 0){
+		ent->client->ps.zoomFov = 0;	///if they are looking through a scope go to normal view
+		ent->client->ps.pm_flags &= ~(PMF_GOGGLES_ON|PMF_ZOOM_FLAGS);
+		ent->client->ps.stats[STAT_WEAPONS] = 0;
+		ent->client->ps.stats[STAT_GOGGLES] = GOGGLES_NONE;
+		memset ( ent->client->ps.ammo, 0, sizeof(ent->client->ps.ammo) );
+		memset ( ent->client->ps.clip, 0, sizeof(ent->client->ps.clip) );
+		ent->client->ps.weapon = WP_NONE;
+		ent->client->ps.weaponstate = WEAPON_READY;
+		ent->client->ps.weaponTime = 0;
+		ent->client->ps.weaponAnimTime = 0;
+		Com_Printf("Weapon: %i\n", ent->client->ps.weapon);
 	}
 #ifdef _SOF2_BOTS
 	else if (Q_stricmp (cmd, "addbot") == 0)

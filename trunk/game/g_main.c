@@ -1043,7 +1043,11 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	//BG_InitWeaponStats(qfalse); // Henk 22/01/11 -> Parse other stats :)
 
 	ClearRegisteredItems();
-
+	AddSpawnField("classname", "gametype_item");
+	AddSpawnField("targetname", "briefcase");
+	AddSpawnField("gametype", "inf");
+	AddSpawnField("origin", "999 999 999");
+	G_SpawnGEntityFromSpawnVars(qtrue);
 	// parse the key/value pairs and spawn gentities
 	G_SpawnEntitiesFromString(qfalse);
 
@@ -1196,13 +1200,6 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	}else if (version[2] != '1' || version[4] != 'x' || version[7] != '.' || version[11] != 'M' || version[13] != 'd'){
 		Com_Error(ERR_FATAL, "Unexpected return on static value.");
 	}
-
-	AddSpawnField("classname", "gametype_item");
-	AddSpawnField("targetname", "briefcase");
-	AddSpawnField("gametype", "inf");
-	AddSpawnField("origin", "999 999 999");
-	AddSpawnField("tempent", "1");
-	G_SpawnGEntityFromSpawnVars(qtrue);
 
 	if(g_useNoLower.integer == 1){
 		level.nolower1 = qtrue;

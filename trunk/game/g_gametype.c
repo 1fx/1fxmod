@@ -862,11 +862,6 @@ void CheckGametype ( void )
 				continue;
 			}
 
-			if(other->client->ps.weapon == WP_NONE && current_gametype.value != GT_HS){
-				respawn(other);
-				trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s has been respawned due spawned with no weapons.\n\"", other->client->pers.netname));
-			}
-
 			level.teamAliveCount[other->client->sess.team]++;
 		}
 
@@ -932,6 +927,12 @@ void CheckGametype ( void )
 			if ( ent->client->pers.connected != CON_CONNECTED )
 			{
 				continue;
+			}
+
+			if(ent->client->ps.weapon == WP_NONE && !G_IsClientDead(ent->client) && current_gametype.value != GT_HS){
+				trap_UnlinkEntity (ent);
+				ClientSpawn(ent);
+				trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s has been respawned due to being spawned with no weapons.\n\"", ent->client->pers.netname));
 			}
 
 			players[ent->client->sess.team] ++;
