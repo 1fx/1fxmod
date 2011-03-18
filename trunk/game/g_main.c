@@ -2510,6 +2510,12 @@ void SetupOutfitting(void)
 				g_entities[level.sortedClients[i]].client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_F1_GRENADE );
 				g_entities[level.sortedClients[i]].client->ps.clip[ATTACK_NORMAL][WP_F1_GRENADE]=attack->extraClips;
 			}
+			if(hideseek_extra.string[L2A2] == '1'){
+				attack = &weaponData[WP_L2A2_GRENADE].attack[ATTACK_NORMAL];
+				g_entities[level.sortedClients[i]].client->ps.ammo[weaponData[WP_L2A2_GRENADE].attack[ATTACK_NORMAL].ammoIndex]=attack->clipSize;
+				g_entities[level.sortedClients[i]].client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_L2A2_GRENADE );
+				g_entities[level.sortedClients[i]].client->ps.clip[ATTACK_NORMAL][WP_L2A2_GRENADE]=attack->extraClips;
+			}
 		}
 	}
 }
