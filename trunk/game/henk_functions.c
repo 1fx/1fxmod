@@ -852,288 +852,290 @@ void HENK_COUNTRY(gentity_t *ent){
 	RealOctet[3] = atoi(octetx[3]);
 
 	IPnum = (RealOctet[0] * 16777216) + (RealOctet[1] * 65536) + (RealOctet[2] * 256) + (RealOctet[3]);
-if(IPnum >= 16777216 && IPnum <= 460945407){
+if(IPnum >= 16777216 && IPnum <= 460602367){
 part = 0;
-}else if(IPnum >= 460947456 && IPnum <= 773140479){
+}else if(IPnum >= 460602368 && IPnum <= 772902911){
 part = 1;
-}else if(IPnum >= 773140480 && IPnum <= 786634751){
+}else if(IPnum >= 772902912 && IPnum <= 781320191){
 part = 2;
-}else if(IPnum >= 786634752 && IPnum <= 1041705695){
+}else if(IPnum >= 781320192 && IPnum <= 1024329343){
 part = 3;
-}else if(IPnum >= 1041705696 && IPnum <= 1042894355){
+}else if(IPnum >= 1024329344 && IPnum <= 1041737015){
 part = 4;
-}else if(IPnum >= 1042894356 && IPnum <= 1044938523){
+}else if(IPnum >= 1041737016 && IPnum <= 1044020359){
 part = 5;
-}else if(IPnum >= 1044938524 && IPnum <= 1047568251){
+}else if(IPnum >= 1044020360 && IPnum <= 1046497671){
 part = 6;
-}else if(IPnum >= 1047568252 && IPnum <= 1049762303){
+}else if(IPnum >= 1046497672 && IPnum <= 1048882151){
 part = 7;
-}else if(IPnum >= 1049762304 && IPnum <= 1052361663){
+}else if(IPnum >= 1048882152 && IPnum <= 1052016447){
 part = 8;
-}else if(IPnum >= 1052361664 && IPnum <= 1054672775){
+}else if(IPnum >= 1052016448 && IPnum <= 1053297151){
 part = 9;
-}else if(IPnum >= 1054672776 && IPnum <= 1074680623){
+}else if(IPnum >= 1053297152 && IPnum <= 1067625983){
 part = 10;
-}else if(IPnum >= 1074680624 && IPnum <= 1076309151){
+}else if(IPnum >= 1067625984 && IPnum <= 1076183071){
 part = 11;
-}else if(IPnum >= 1076309152 && IPnum <= 1078437567){
+}else if(IPnum >= 1076183072 && IPnum <= 1077936433){
 part = 12;
-}else if(IPnum >= 1078437568 && IPnum <= 1083417791){
+}else if(IPnum >= 1077936434 && IPnum <= 1081385215){
 part = 13;
-}else if(IPnum >= 1083417792 && IPnum <= 1093740191){
+}else if(IPnum >= 1081385216 && IPnum <= 1091802871){
 part = 14;
-}else if(IPnum >= 1093740192 && IPnum <= 1106547759){
+}else if(IPnum >= 1091802872 && IPnum <= 1101041407){
 part = 15;
-}else if(IPnum >= 1106547760 && IPnum <= 1117985447){
+}else if(IPnum >= 1101041408 && IPnum <= 1115698047){
 part = 16;
-}else if(IPnum >= 1117985448 && IPnum <= 1120493087){
+}else if(IPnum >= 1115698048 && IPnum <= 1119166855){
 part = 17;
-}else if(IPnum >= 1120493088 && IPnum <= 1125455399){
+}else if(IPnum >= 1119166856 && IPnum <= 1122126249){
 part = 18;
-}else if(IPnum >= 1125455400 && IPnum <= 1137524735){
+}else if(IPnum >= 1122126250 && IPnum <= 1136689743){
 part = 19;
-}else if(IPnum >= 1137524736 && IPnum <= 1158496506){
+}else if(IPnum >= 1136689744 && IPnum <= 1138661417){
 part = 20;
-}else if(IPnum >= 1158496507 && IPnum <= 1160810751){
+}else if(IPnum >= 1138661418 && IPnum <= 1159522071){
 part = 21;
-}else if(IPnum >= 1160810752 && IPnum <= 1163588608){
+}else if(IPnum >= 1159522072 && IPnum <= 1163396199){
 part = 22;
-}else if(IPnum >= 1163588609 && IPnum <= 1208518244){
+}else if(IPnum >= 1163396200 && IPnum <= 1177164415){
 part = 23;
-}else if(IPnum >= 1208518245 && IPnum <= 1210097791){
+}else if(IPnum >= 1177164416 && IPnum <= 1210061327){
 part = 24;
-}else if(IPnum >= 1210097792 && IPnum <= 1254959151){
+}else if(IPnum >= 1210061328 && IPnum <= 1249027503){
 part = 25;
-}else if(IPnum >= 1254959152 && IPnum <= 1279975423){
+}else if(IPnum >= 1249027504 && IPnum <= 1275875367){
 part = 26;
-}else if(IPnum >= 1279975424 && IPnum <= 1307578367){
+}else if(IPnum >= 1275875368 && IPnum <= 1296746495){
 part = 27;
-}else if(IPnum >= 1307578368 && IPnum <= 1317668791){
+}else if(IPnum >= 1296746496 && IPnum <= 1315504127){
 part = 28;
-}else if(IPnum >= 1317668792 && IPnum <= 1334595583){
+}else if(IPnum >= 1315504128 && IPnum <= 1317835007){
 part = 29;
-}else if(IPnum >= 1334595584 && IPnum <= 1347977607){
+}else if(IPnum >= 1317835008 && IPnum <= 1347239935){
 part = 30;
-}else if(IPnum >= 1347977608 && IPnum <= 1357899279){
+}else if(IPnum >= 1347239936 && IPnum <= 1353950399){
 part = 31;
-}else if(IPnum >= 1357899280 && IPnum <= 1360629247){
+}else if(IPnum >= 1353950400 && IPnum <= 1358899471){
 part = 32;
-}else if(IPnum >= 1360629248 && IPnum <= 1365220855){
+}else if(IPnum >= 1358899472 && IPnum <= 1364586495){
 part = 33;
-}else if(IPnum >= 1365220856 && IPnum <= 1386676223){
+}else if(IPnum >= 1364586496 && IPnum <= 1383226095){
 part = 34;
-}else if(IPnum >= 1386676224 && IPnum <= 1401563135){
+}else if(IPnum >= 1383226096 && IPnum <= 1389266559){
 part = 35;
-}else if(IPnum >= 1401563136 && IPnum <= 1407524767){
+}else if(IPnum >= 1389266560 && IPnum <= 1406751967){
 part = 36;
-}else if(IPnum >= 1407524768 && IPnum <= 1410818047){
+}else if(IPnum >= 1406751968 && IPnum <= 1408270335){
 part = 37;
-}else if(IPnum >= 1410818048 && IPnum <= 1426967567){
+}else if(IPnum >= 1408270336 && IPnum <= 1424618495){
 part = 38;
-}else if(IPnum >= 1426967568 && IPnum <= 1441603583){
+}else if(IPnum >= 1424618496 && IPnum <= 1433890815){
 part = 39;
-}else if(IPnum >= 1441603584 && IPnum <= 1446911367){
+}else if(IPnum >= 1433890816 && IPnum <= 1446907371){
 part = 40;
-}else if(IPnum >= 1446911368 && IPnum <= 1485275135){
+}else if(IPnum >= 1446907372 && IPnum <= 1475131391){
 part = 41;
-}else if(IPnum >= 1485275136 && IPnum <= 1505456895){
+}else if(IPnum >= 1475131392 && IPnum <= 1500094463){
 part = 42;
-}else if(IPnum >= 1505456896 && IPnum <= 1534714287){
+}else if(IPnum >= 1500094464 && IPnum <= 1508639231){
 part = 43;
-}else if(IPnum >= 1534714288 && IPnum <= 1539480063){
+}else if(IPnum >= 1508639232 && IPnum <= 1534990335){
 part = 44;
-}else if(IPnum >= 1539480064 && IPnum <= 1540152319){
+}else if(IPnum >= 1534990336 && IPnum <= 1539754495){
 part = 45;
-}else if(IPnum >= 1540152320 && IPnum <= 1540664575){
+}else if(IPnum >= 1539754496 && IPnum <= 1540405759){
 part = 46;
-}else if(IPnum >= 1540664576 && IPnum <= 1541165823){
+}else if(IPnum >= 1540405760 && IPnum <= 1540897279){
 part = 47;
-}else if(IPnum >= 1541165824 && IPnum <= 1566400639){
+}else if(IPnum >= 1540897280 && IPnum <= 1541375487){
 part = 48;
-}else if(IPnum >= 1566400640 && IPnum <= 1578594239){
+}else if(IPnum >= 1541375488 && IPnum <= 1570660543){
 part = 49;
-}else if(IPnum >= 1578594240 && IPnum <= 1593209163){
+}else if(IPnum >= 1570660544 && IPnum <= 1578612903){
 part = 50;
-}else if(IPnum >= 1593209164 && IPnum <= 1652643223){
+}else if(IPnum >= 1578612904 && IPnum <= 1602316287){
 part = 51;
-}else if(IPnum >= 1652643224 && IPnum <= 1836777471){
+}else if(IPnum >= 1602316288 && IPnum <= 1652657447){
 part = 52;
-}else if(IPnum >= 1836777472 && IPnum <= 1908670463){
+}else if(IPnum >= 1652657448 && IPnum <= 1842047371){
 part = 53;
-}else if(IPnum >= 1908670464 && IPnum <= 2018004991){
+}else if(IPnum >= 1842047372 && IPnum <= 1925642239){
 part = 54;
-}else if(IPnum >= 2018004992 && IPnum <= 2173239295){
+}else if(IPnum >= 1925642240 && IPnum <= 2036703231){
 part = 55;
-}else if(IPnum >= 2173239296 && IPnum <= 2337013759){
+}else if(IPnum >= 2036703232 && IPnum <= 2190868479){
 part = 56;
-}else if(IPnum >= 2337013760 && IPnum <= 2545483775){
+}else if(IPnum >= 2190868480 && IPnum <= 2359885823){
 part = 57;
-}else if(IPnum >= 2545483776 && IPnum <= 2756509695){
+}else if(IPnum >= 2359885824 && IPnum <= 2604138495){
 part = 58;
-}else if(IPnum >= 2756509696 && IPnum <= 2917168479){
+}else if(IPnum >= 2604138496 && IPnum <= 2780561407){
 part = 59;
-}else if(IPnum >= 2917168480 && IPnum <= 2928655991){
+}else if(IPnum >= 2780561408 && IPnum <= 2918534943){
 part = 60;
-}else if(IPnum >= 2928655992 && IPnum <= 2988465647){
+}else if(IPnum >= 2918534944 && IPnum <= 2928635127){
 part = 61;
-}else if(IPnum >= 2988465648 && IPnum <= 2988543015){
+}else if(IPnum >= 2928635128 && IPnum <= 2988463679){
 part = 62;
-}else if(IPnum >= 2988543016 && IPnum <= 2997003199){
+}else if(IPnum >= 2988463680 && IPnum <= 2988524623){
 part = 63;
-}else if(IPnum >= 2997003200 && IPnum <= 3075388415){
+}else if(IPnum >= 2988524624 && IPnum <= 2991128575){
 part = 64;
-}else if(IPnum >= 3075389440 && IPnum <= 3164950735){
+}else if(IPnum >= 2991128576 && IPnum <= 3029602303){
 part = 65;
-}else if(IPnum >= 3164950736 && IPnum <= 3195645951){
+}else if(IPnum >= 3029604352 && IPnum <= 3161948159){
 part = 66;
-}else if(IPnum >= 3195650048 && IPnum <= 3226481407){
+}else if(IPnum >= 3161948160 && IPnum <= 3168161791){
 part = 67;
-}else if(IPnum >= 3226481408 && IPnum <= 3229969663){
+}else if(IPnum >= 3168161792 && IPnum <= 3224822015){
 part = 68;
-}else if(IPnum >= 3229969664 && IPnum <= 3233654271){
+}else if(IPnum >= 3224822016 && IPnum <= 3228084479){
 part = 69;
-}else if(IPnum >= 3233654272 && IPnum <= 3239306239){
+}else if(IPnum >= 3228084480 && IPnum <= 3231296511){
 part = 70;
-}else if(IPnum >= 3239306240 && IPnum <= 3240858623){
+}else if(IPnum >= 3231296512 && IPnum <= 3237319679){
 part = 71;
-}else if(IPnum >= 3240858624 && IPnum <= 3245029375){
+}else if(IPnum >= 3237319680 && IPnum <= 3240215551){
 part = 72;
-}else if(IPnum >= 3245029376 && IPnum <= 3247816703){
+}else if(IPnum >= 3240215552 && IPnum <= 3244855295){
 part = 73;
-}else if(IPnum >= 3247816704 && IPnum <= 3251245567){
+}else if(IPnum >= 3244855296 && IPnum <= 3247069951){
 part = 74;
-}else if(IPnum >= 3251245568 && IPnum <= 3253890559){
+}else if(IPnum >= 3247069952 && IPnum <= 3250601983){
 part = 75;
-}else if(IPnum >= 3253890560 && IPnum <= 3256165375){
+}else if(IPnum >= 3250601984 && IPnum <= 3252452503){
 part = 76;
-}else if(IPnum >= 3256165376 && IPnum <= 3257785183){
+}else if(IPnum >= 3252452504 && IPnum <= 3255246623){
 part = 77;
-}else if(IPnum >= 3257785184 && IPnum <= 3261784063){
+}else if(IPnum >= 3255246624 && IPnum <= 3257757831){
 part = 78;
-}else if(IPnum >= 3261784064 && IPnum <= 3262476299){
+}else if(IPnum >= 3257757832 && IPnum <= 3259319407){
 part = 79;
-}else if(IPnum >= 3262476300 && IPnum <= 3262479059){
+}else if(IPnum >= 3259319408 && IPnum <= 3262474004){
 part = 80;
-}else if(IPnum >= 3262479060 && IPnum <= 3262753791){
+}else if(IPnum >= 3262474005 && IPnum <= 3262478482){
 part = 81;
-}else if(IPnum >= 3262753792 && IPnum <= 3265605631){
+}else if(IPnum >= 3262478483 && IPnum <= 3262479912){
 part = 82;
-}else if(IPnum >= 3265605632 && IPnum <= 3268268799){
+}else if(IPnum >= 3262479913 && IPnum <= 3264668159){
 part = 83;
-}else if(IPnum >= 3268268800 && IPnum <= 3272084735){
+}else if(IPnum >= 3264668160 && IPnum <= 3267745615){
 part = 84;
-}else if(IPnum >= 3272084736 && IPnum <= 3273345279){
+}else if(IPnum >= 3267745616 && IPnum <= 3271398047){
 part = 85;
-}else if(IPnum >= 3273345280 && IPnum <= 3275446271){
+}else if(IPnum >= 3271398048 && IPnum <= 3272976991){
 part = 86;
-}else if(IPnum >= 3275446272 && IPnum <= 3276045455){
+}else if(IPnum >= 3272976992 && IPnum <= 3274902423){
 part = 87;
-}else if(IPnum >= 3276045456 && IPnum <= 3276371239){
+}else if(IPnum >= 3274902424 && IPnum <= 3276029583){
 part = 88;
-}else if(IPnum >= 3276371240 && IPnum <= 3276401759){
+}else if(IPnum >= 3276029584 && IPnum <= 3276362079){
 part = 89;
-}else if(IPnum >= 3276401760 && IPnum <= 3276790127){
+}else if(IPnum >= 3276362080 && IPnum <= 3276395047){
 part = 90;
-}else if(IPnum >= 3276790128 && IPnum <= 3278939335){
+}else if(IPnum >= 3276395048 && IPnum <= 3276744191){
 part = 91;
-}else if(IPnum >= 3278939336 && IPnum <= 3278943296){
+}else if(IPnum >= 3276744192 && IPnum <= 3278786943){
 part = 92;
-}else if(IPnum >= 3278943297 && IPnum <= 3278945271){
+}else if(IPnum >= 3278786944 && IPnum <= 3278942953){
 part = 93;
-}else if(IPnum >= 3278945272 && IPnum <= 3280930959){
+}else if(IPnum >= 3278942954 && IPnum <= 3278944222){
 part = 94;
-}else if(IPnum >= 3280930960 && IPnum <= 3280986365){
+}else if(IPnum >= 3278944223 && IPnum <= 3280590847){
 part = 95;
-}else if(IPnum >= 3280986366 && IPnum <= 3283585023){
+}else if(IPnum >= 3280590848 && IPnum <= 3280979975){
 part = 96;
-}else if(IPnum >= 3283585024 && IPnum <= 3285471103){
+}else if(IPnum >= 3280979976 && IPnum <= 3283493119){
 part = 97;
-}else if(IPnum >= 3285471104 && IPnum <= 3285575679){
+}else if(IPnum >= 3283493120 && IPnum <= 3285331967){
 part = 98;
-}else if(IPnum >= 3285575680 && IPnum <= 3287704063){
+}else if(IPnum >= 3285331968 && IPnum <= 3285548959){
 part = 99;
-}else if(IPnum >= 3287704064 && IPnum <= 3326713343){
+}else if(IPnum >= 3285548960 && IPnum <= 3287218175){
 part = 100;
-}else if(IPnum >= 3326713344 && IPnum <= 3355478271){
+}else if(IPnum >= 3287218176 && IPnum <= 3323068415){
 part = 101;
-}else if(IPnum >= 3355478272 && IPnum <= 3360694079){
+}else if(IPnum >= 3323201536 && IPnum <= 3349446911){
 part = 102;
-}else if(IPnum >= 3360694080 && IPnum <= 3392339967){
+}else if(IPnum >= 3349446912 && IPnum <= 3358766591){
 part = 103;
-}else if(IPnum >= 3392339968 && IPnum <= 3397781503){
+}else if(IPnum >= 3358766592 && IPnum <= 3389979647){
 part = 104;
-}else if(IPnum >= 3397781504 && IPnum <= 3406670847){
+}else if(IPnum >= 3389979648 && IPnum <= 3395133439){
 part = 105;
-}else if(IPnum >= 3406670848 && IPnum <= 3416328191){
+}else if(IPnum >= 3395133440 && IPnum <= 3400437663){
 part = 106;
-}else if(IPnum >= 3416328192 && IPnum <= 3420367503){
+}else if(IPnum >= 3400437664 && IPnum <= 3412803583){
 part = 107;
-}else if(IPnum >= 3420367504 && IPnum <= 3429396223){
+}else if(IPnum >= 3412819968 && IPnum <= 3418511439){
 part = 108;
-}else if(IPnum >= 3429396224 && IPnum <= 3451824127){
+}else if(IPnum >= 3418511440 && IPnum <= 3427770623){
 part = 109;
-}else if(IPnum >= 3451824128 && IPnum <= 3460917135){
+}else if(IPnum >= 3427770624 && IPnum <= 3448382351){
 part = 110;
-}else if(IPnum >= 3460917136 && IPnum <= 3468632295){
+}else if(IPnum >= 3448382352 && IPnum <= 3459277823){
 part = 111;
-}else if(IPnum >= 3468632296 && IPnum <= 3476420863){
+}else if(IPnum >= 3459277824 && IPnum <= 3468048127){
 part = 112;
-}else if(IPnum >= 3476420864 && IPnum <= 3488072703){
+}else if(IPnum >= 3468048128 && IPnum <= 3470646807){
 part = 113;
-}else if(IPnum >= 3488072704 && IPnum <= 3495741439){
+}else if(IPnum >= 3470646808 && IPnum <= 3484777695){
 part = 114;
-}else if(IPnum >= 3495741440 && IPnum <= 3508303871){
+}else if(IPnum >= 3484777696 && IPnum <= 3494764343){
 part = 115;
-}else if(IPnum >= 3508303872 && IPnum <= 3511419951){
+}else if(IPnum >= 3494764344 && IPnum <= 3506198007){
 part = 116;
-}else if(IPnum >= 3511419952 && IPnum <= 3517424639){
+}else if(IPnum >= 3506198008 && IPnum <= 3510469831){
 part = 117;
-}else if(IPnum >= 3517424640 && IPnum <= 3522120447){
+}else if(IPnum >= 3510469832 && IPnum <= 3513368575){
 part = 118;
-}else if(IPnum >= 3522120448 && IPnum <= 3558288063){
+}else if(IPnum >= 3513368576 && IPnum <= 3520034791){
 part = 119;
-}else if(IPnum >= 3558288064 && IPnum <= 3560833023){
+}else if(IPnum >= 3520034792 && IPnum <= 3557364607){
 part = 120;
-}else if(IPnum >= 3560833024 && IPnum <= 3560943451){
+}else if(IPnum >= 3557364608 && IPnum <= 3559491455){
 part = 121;
-}else if(IPnum >= 3560943452 && IPnum <= 3560951119){
+}else if(IPnum >= 3559491456 && IPnum <= 3560943007){
 part = 122;
-}else if(IPnum >= 3560951120 && IPnum <= 3563854175){
+}else if(IPnum >= 3560943008 && IPnum <= 3560945867){
 part = 123;
-}else if(IPnum >= 3563854176 && IPnum <= 3565493759){
+}else if(IPnum >= 3560945868 && IPnum <= 3562856447){
 part = 124;
-}else if(IPnum >= 3565493760 && IPnum <= 3569740047){
+}else if(IPnum >= 3562856448 && IPnum <= 3564893759){
 part = 125;
-}else if(IPnum >= 3569740048 && IPnum <= 3575625039){
+}else if(IPnum >= 3564893760 && IPnum <= 3568304127){
 part = 126;
-}else if(IPnum >= 3575625040 && IPnum <= 3576257167){
+}else if(IPnum >= 3568304128 && IPnum <= 3572580351){
 part = 127;
-}else if(IPnum >= 3576257168 && IPnum <= 3582192303){
+}else if(IPnum >= 3572580352 && IPnum <= 3576103679){
 part = 128;
-}else if(IPnum >= 3582192304 && IPnum <= 3584196607){
+}else if(IPnum >= 3576103680 && IPnum <= 3579486831){
 part = 129;
-}else if(IPnum >= 3584196608 && IPnum <= 3587287387){
+}else if(IPnum >= 3579486832 && IPnum <= 3583707775){
 part = 130;
-}else if(IPnum >= 3587287388 && IPnum <= 3590311231){
+}else if(IPnum >= 3583707776 && IPnum <= 3586906735){
 part = 131;
-}else if(IPnum >= 3590311232 && IPnum <= 3626382121){
+}else if(IPnum >= 3586906736 && IPnum <= 3590033759){
 part = 132;
-}else if(IPnum >= 3626382122 && IPnum <= 3630074543){
+}else if(IPnum >= 3590033760 && IPnum <= 3625243215){
 part = 133;
-}else if(IPnum >= 3630074544 && IPnum <= 3633036607){
+}else if(IPnum >= 3625243216 && IPnum <= 3628772095){
 part = 134;
-}else if(IPnum >= 3633036608 && IPnum <= 3640112575){
+}else if(IPnum >= 3628772096 && IPnum <= 3632489127){
 part = 135;
-}else if(IPnum >= 3640112576 && IPnum <= 3644961343){
+}else if(IPnum >= 3632489128 && IPnum <= 3638530047){
 part = 136;
-}else if(IPnum >= 3644961344 && IPnum <= 3645764561){
+}else if(IPnum >= 3638530048 && IPnum <= 3642554675){
 part = 137;
-}else if(IPnum >= 3645764562 && IPnum <= 3651223663){
+}else if(IPnum >= 3642554676 && IPnum <= 3645764300){
 part = 138;
-}else if(IPnum >= 3651223664 && IPnum <= 3740925951){
+}else if(IPnum >= 3645764301 && IPnum <= 3650433023){
 part = 139;
-}else{
+}else if(IPnum >= 3650433024 && IPnum <= 3671326719){
 part = 140;
+}else{
+part = 141;
 }
 	fileCount = trap_FS_GetFileList( "country", va(".%i", part), Files, 1024 );
 	filePtr = Files;
