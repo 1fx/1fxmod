@@ -1051,7 +1051,11 @@ void CheckGametype ( void )
 			if(level.timelimithit == qtrue && (strstr(g_gametype.string, "inf") || strstr(g_gametype.string, "elim"))){
 				gentity_t*	tent;
 				tent = G_TempEntity( vec3_origin, EV_GAME_OVER );
-				tent->s.eventParm = GAME_OVER_TIMELIMIT;
+				if(cm_enabled.integer > 0){ // Boe!Man 3/18/11: Only change the entry if competition mode's enabled.
+					tent->s.eventParm = LEEG;
+				}else{
+					tent->s.eventParm = GAME_OVER_TIMELIMIT;
+				}
 				tent->r.svFlags = SVF_BROADCAST;
 				if(current_gametype.value == GT_HS){
 					if(TiedPlayers() < 2){
@@ -1064,7 +1068,11 @@ void CheckGametype ( void )
 							level.startcage = qtrue;
 					}
 				}else{
-					LogExit( "Timelimit hit." );
+					if (g_compMode.integer > 0 && cm_enabled.integer > 1){
+						Boe_compTimeLimitCheck();
+					}else{	
+						LogExit( "Timelimit Hit." );
+					}
 				}
 			}
 		} 
