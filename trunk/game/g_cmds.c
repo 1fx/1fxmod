@@ -3110,7 +3110,7 @@ void ClientCommand( int clientNum ) {
 		RPM_ref_cmd( ent );
 	// F1 effect: effects/explosions/col9_boat_explosion.efx
 	// or effects/levels/osprey_death_explosion.efx
-	else if (Q_stricmp (cmd, "henk1") == 0){
+	/*else if (Q_stricmp (cmd, "henk1") == 0){
 		ent->client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_F1_GRENADE );
 		ent->client->ps.clip[ATTACK_NORMAL][WP_F1_GRENADE]=1;
 		ent->client->ps.ammo[weaponData[WP_F1_GRENADE].attack[ATTACK_NORMAL].ammoIndex]=10;
@@ -3135,6 +3135,7 @@ void ClientCommand( int clientNum ) {
 		ent->client->ps.weaponAnimTime = 0;
 		Com_Printf("Weapon: %i\n", ent->client->ps.weapon);
 	}
+	*/
 #ifdef _SOF2_BOTS
 	else if (Q_stricmp (cmd, "addbot") == 0)
 		trap_SendServerCommand( clientNum, va("print \"ADDBOT command can only be used via RCON\n\"" ) );
