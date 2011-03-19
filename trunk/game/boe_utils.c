@@ -1462,9 +1462,12 @@ void Boe_Stats ( gentity_t *ent )
 		rate	= Info_ValueForKey ( userinfo, "rate" );
 		snaps	= Info_ValueForKey ( userinfo, "snaps" );
 		country = ent->client->sess.country;
+		idnum = ent->s.number;
 		if (ent->client->sess.rpmClient >= 0.1){
 			client = ent->client->sess.rpmClient;}
-		else{
+		else if (ent->client->sess.proClient >= 0.1){
+			client = ent->client->sess.proClient;
+		}else{
 			client0 = "N/A";
 			client1 = qtrue;}
 		if (ent->client->sess.dev > 0)

@@ -556,16 +556,26 @@ void AddToPasswordList(gentity_t *ent, int lvl){
 	int len;
 	fileHandle_t f;
 	char str[512], octet[4];
+	char levelstr[32];
 	len = trap_FS_FOpenFile(g_adminPassFile.string, &f, FS_APPEND_TEXT);
 	if(!f){
 		G_LogPrintf("Error while opening %s\n", g_adminPassFile.string);
 		return;
 	}
 	strcpy(octet, va("%c%c%c", ent->client->pers.ip[0], ent->client->pers.ip[1], ent->client->pers.ip[2]));
-	strcpy(str, va("%s\\%s:%i", ent->client->pers.cleanName, octet, lvl));
+	strcpy(str, va("%s\\%s:%i\n", ent->client->pers.cleanName, octet, lvl));
 	str[strlen(str)] = '\0';
 	trap_FS_Write(str, strlen(str), f);
 	trap_FS_FCloseFile(f);
+	if(lvl == 2)
+		strcpy(levelstr, "B-Admin");
+	else if(lvl == 3)
+		strcpy(levelstr, "Admin");
+	else if(lvl == 4)
+		strcpy(levelstr, "S-Admin");
+
+	trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s has been added to the %s list.\n\"", ent->client->pers.netname, levelstr));
+
 }
 
 qboolean CheckPasswordList(gentity_t *ent, char *pass){
@@ -594,12 +604,13 @@ qboolean CheckPasswordList(gentity_t *ent, char *pass){
 	for(i=0;i<=len;i++){
 		if(i==0)
 			start = 0;
-		if(buf[i] == '\n' || i == len){
+		if(buf[i] == '\n'){
 			end = i;
 			lvl = buf[i-1];
 			strcpy(octet, va("%c%c%c", buf[i-5], buf[i-4], buf[i-3]));
-			Q_strncpyz(name, buf+start, start+(i-5));
-			//Com_Printf("Name: %s\nLevel: %c\nOctet: %s\n\n", name, lvl, octet);
+			memset(name, 0, sizeof(name));
+			strncpy(name, buf+start, (i-6)-start);
+			//Com_Printf("Name: %s(%i - %i)\nLevel: %c\nOctet: %s\n\n", name, i, len, lvl, octet);
 			if(!Q_stricmp(octet, myoctet) && !Q_stricmp(ent->client->pers.cleanName, name) && lvl == passlvl){ // found octet
 				if(lvl == '2'){
 					ent->client->sess.admin = 2;
