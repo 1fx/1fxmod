@@ -12,7 +12,7 @@
 #endif
 #define INF_STRING "1fx. Mod"
 #define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod"
-#define INF_VERSION_DATE "3/2/11"
+#define INF_VERSION_DATE "3/19/11"
 #define TEST_VERSION "Developed by ^GBoe!Man ^7& ^6Henkie\n^1Running a Test version of the Mod\n\n"
 #define STABLE_VERSION "Developed by ^GBoe!Man ^7& ^6Henkie\n1fx.uk.to ^3| ^7i3D.net\n\n"
 
@@ -253,7 +253,7 @@ extern	vmCvar_t	g_enableAdminLog;
 extern	vmCvar_t	g_adminlist;
 
 // Boe!Man 3/18/11
-void Boe_DualRounds(int argNum, gentity_t *ent, qboolean shortCmd);
+void Boe_Rounds(int argNum, gentity_t *ent, qboolean shortCmd);
 
 //==============================================
 // boe_utils.c
@@ -397,7 +397,7 @@ extern	vmCvar_t	g_matchSwapTeams;
 extern	vmCvar_t	g_matchTimeLimit;
 extern	vmCvar_t	g_matchScoreLimit;
 extern	vmCvar_t	g_matchDisableSounds;
-extern	vmCvar_t	g_matchDualRounds;
+extern	vmCvar_t	g_matchRounds;
 
 extern vmCvar_t	cm_enabled;
 extern vmCvar_t	cm_sl;

@@ -981,23 +981,32 @@ void CheckGametype ( void )
 			if(level.timelimithit == qtrue && level.cagefight != qtrue && (strstr(g_gametype.string, "inf") || strstr(g_gametype.string, "elim"))){
 				gentity_t*	tent;
 				if(current_gametype.value == GT_HS){				
-				if(TiedPlayers() < 2){
-					tent = G_TempEntity( vec3_origin, EV_GAME_OVER );
-					tent->s.eventParm = GAME_OVER_TIMELIMIT;
-					tent->r.svFlags = SVF_BROADCAST;
-					level.timelimithit = qfalse;
-					Com_Printf("Updating scores..\n");
-					UpdateScores();
-					LogExit( "Seekers have won the match" );
+					if(TiedPlayers() < 2){
+						tent = G_TempEntity( vec3_origin, EV_GAME_OVER );
+						tent->s.eventParm = GAME_OVER_TIMELIMIT;
+						tent->r.svFlags = SVF_BROADCAST;
+						level.timelimithit = qfalse;
+						Com_Printf("Updating scores..\n");
+						UpdateScores();
+						LogExit( "Seekers have won the match" );
+					}else{
+							level.cagefighttimer = level.time+3000;
+							level.startcage = qtrue;
+					}
 				}else{
-						level.cagefighttimer = level.time+3000;
-						level.startcage = qtrue;
-				}
-				}else{
 					tent = G_TempEntity( vec3_origin, EV_GAME_OVER );
-					tent->s.eventParm = GAME_OVER_TIMELIMIT;
+					if(cm_enabled.integer > 0){ // Boe!Man 3/18/11: Only change the entry if competition mode's enabled.
+						tent->s.eventParm = LEEG;
+					}else{
+						tent->s.eventParm = GAME_OVER_TIMELIMIT;
+					}
 					tent->r.svFlags = SVF_BROADCAST;
-					LogExit( "Red team has been eliminated" );
+
+					if (g_compMode.integer > 0 && cm_enabled.integer > 1){
+						Boe_compTimeLimitCheck();
+					}else{	
+						LogExit( "Timelimit Hit." );
+					}
 				}
 			}
 			trap_GT_SendEvent ( GTEV_TEAM_ELIMINATED, level.time, TEAM_RED, 0, 0, 0, 0 );

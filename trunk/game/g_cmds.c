@@ -68,7 +68,6 @@ static admCmd_t AdminCommands[] =
 	{"!cancel","cancelvote", &g_forcevote.integer, &Boe_cancelVote},
 	{"!mapcycle","mapcycle", &g_mapswitch.integer, &Boe_Mapcycle},
 	{"!adminlist","adminlist", &g_adminlist.integer, &Henk_Admlist},
-	{"!dualrounds","dualrounds", &g_cm.integer, &Boe_DualRounds},
 	// Boe!Man 1/22/11: End full synonyms.
 
 	{"!uc","uppercut", &g_uppercut.integer, &Boe_Uppercut},
@@ -79,12 +78,12 @@ static admCmd_t AdminCommands[] =
 	{"!utw","untwist", &g_twist.integer, &Boe_unTwist},
 	{"!pl","plant", &g_plant.integer, &Boe_Plant},
 	{"!upl","unplant", &g_plant.integer, &Boe_unPlant},
+	{"!rounds","rounds", &g_cm.integer, &Boe_Rounds},
 	{"!ro","runover", &g_runover.integer, &Boe_Runover},
 	{"!rs","respawn", &g_respawn.integer, &Boe_Respawn}, // this is how we add synonyms
 	{"!mr","maprestart", &g_mapswitch.integer, &Boe_MapRestart},
 	{"!map","map", &g_mapswitch.integer, &Henk_Map},
 	{"!um","unmute", &g_mute.integer, &Boe_UnMute},
-
 	{"!st","strip", &g_strip.integer, &Boe_Strip},
 	{"!ra","removeadmin", &g_removeadmin.integer, &Boe_Remove_Admin_f},
 	{"!ft","forceteam", &g_forceteam.integer, &Adm_ForceTeam},
@@ -132,8 +131,7 @@ static admCmd_t AdminCommands[] =
 	{"!p","pop", &g_pop.integer, &Boe_pop},
 	{"!k","kick", &g_kick.integer, &Boe_Kick},
 	{"!m","mute", &g_mute.integer, &Boe_XMute},
-	{"!s","strip", &g_strip.integer, &Boe_Strip},
-	{"!dr","dualrounds", &g_cm.integer, &Boe_DualRounds}
+	{"!s","strip", &g_strip.integer, &Boe_Strip}
 };
 
 static int AdminCommandsSize = sizeof( AdminCommands ) / sizeof( AdminCommands[0] );

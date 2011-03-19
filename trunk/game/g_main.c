@@ -200,7 +200,7 @@ vmCvar_t	g_matchSwapTeams;
 vmCvar_t	g_matchTimeLimit;
 vmCvar_t	g_matchScoreLimit;
 vmCvar_t	g_matchDisableSounds;
-vmCvar_t	g_matchDualRounds;
+vmCvar_t	g_matchRounds;
 vmCvar_t	cm_enabled;
 vmCvar_t	cm_sl;
 vmCvar_t	cm_tl;
@@ -461,7 +461,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_matchTimeLimit, "g_matchTimeLimit", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_matchScoreLimit, "g_matchScoreLimit", "10", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_matchDisableSounds, "g_matchDisableSounds", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
-	{ &g_matchDualRounds, "g_matchDualRounds", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
+	{ &g_matchRounds, "g_matchRounds", "2", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 
 	// Boe!Man 11/16/10: For Compmode. As most structures get cleared during shut down, and writing everything to temp CVARs will be more time/resource consuming, we'll simply use a couple of CVARs to update everything.
 	{ &cm_enabled, "cm_enabled", "0", CVAR_ROM|CVAR_INTERNAL, 0.0, 0.0, 0, qfalse  },
@@ -2120,48 +2120,8 @@ void CheckExitRules( void )
 				}
 				tent->r.svFlags = SVF_BROADCAST;
 
-				if (g_compMode.integer > 0 && cm_enabled.integer == 2){
-					if(cm_dr.integer == 1){ // Boe!Man 3/18/11: If dual rounds are enabled, make use of them and display the temporary stuff.
-						if ( level.teamScores[TEAM_RED] > level.teamScores[TEAM_BLUE] ){
-							trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7team wins 1st round with %i - %i!", level.time + 10000, server_redteamprefix.string, level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE]));
-							trap_SendServerCommand(-1, va("print\"^3[Info] ^7Red team wins 1st round with %i - %i.\n\"", level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE] ));
-							// Boe!Man 11/18/10: Set the scores right (for logging purposes).
-							if (cm_aswap.integer == 0){
-								trap_Cvar_Set("cm_sr", va("%i", level.teamScores[TEAM_RED]));
-								trap_Cvar_Set("cm_sb", va("%i", level.teamScores[TEAM_BLUE]));
-							}else{
-								// Boe!Man 11/19/10: Log the scores the other way around as the teams will get swapped the next round.
-								trap_Cvar_Set("cm_sr", va("%i", level.teamScores[TEAM_BLUE]));
-								trap_Cvar_Set("cm_sb", va("%i", level.teamScores[TEAM_RED]));
-							}
-							LogExit("Red team wins the 1st round.");
-						}else if ( level.teamScores[TEAM_BLUE] > level.teamScores[TEAM_RED] ){
-							trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7team wins 1st round with %i - %i!", level.time + 10000, server_blueteamprefix.string, level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]));
-							trap_SendServerCommand(-1, va("print\"^3[Info] ^7Blue team wins 1st round with %i - %i.\n\"", level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED] ));
-							// Boe!Man 11/18/10: Set the scores right (for logging purposes).
-							if (cm_aswap.integer == 0){
-								trap_Cvar_Set("cm_sr", va("%i", level.teamScores[TEAM_RED]));
-								trap_Cvar_Set("cm_sb", va("%i", level.teamScores[TEAM_BLUE]));
-							}else{
-								// Boe!Man 11/19/10: Log the scores the other way around as the teams will get swapped the next round.
-								trap_Cvar_Set("cm_sr", va("%i", level.teamScores[TEAM_BLUE]));
-								trap_Cvar_Set("cm_sb", va("%i", level.teamScores[TEAM_RED]));
-							}
-							LogExit("Blue team wins the 1st round.");
-						}else{ // Boe!Man 3/19/11: Tie is perfectly capable when a timelimit is set.
-							trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sR%so%su%sn%sd ^7draw with %i - %i!", level.time + 10000, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]));
-							trap_SendServerCommand(-1, va("print\"^3[Info] ^7Round draw with %i - %i.\n\"", level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE] ));
-							// Boe!Man 11/18/10: Set the scores right (for logging purposes).
-							trap_Cvar_Set("cm_sr", va("%i", level.teamScores[TEAM_RED]));
-							trap_Cvar_Set("cm_sb", va("%i", level.teamScores[TEAM_BLUE]));
-							LogExit("1st Round Draw.");
-						}
-						trap_Cvar_Set("cm_enabled", "21"); // Boe!Man 3/19/11: Display the screen again.
-					}else{
-						// FIX ME: Console msgs.
-						Boe_calcMatchScores(); // Boe!Man 3/19/11: Calculate the match scores, could be a match draw or anything really.
-						trap_Cvar_Set("cm_enabled", "5"); // Boe!Man 11/18/10: 5 - Scrim Ended.
-					}
+				if(g_compMode.integer > 0 && cm_enabled.integer > 1){
+					Boe_compTimeLimitCheck();
 				}else{
 					LogExit( "Timelimit hit." );
 				}
@@ -2197,7 +2157,7 @@ void CheckExitRules( void )
 				if (g_compMode.integer > 0 && cm_enabled.integer == 2){
 					//LogExit(va("%s ^7team wins 1st round with %i - %i", server_redteamprefix, level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE] ));
 					if(cm_dr.integer == 1){ // Boe!Man 3/18/11: If dual rounds are enabled, make use of them and display the temporary stuff.
-						trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7team wins 1st round with %i - %i!", level.time + 10000, server_redteamprefix.string, level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE]));
+						trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7team wins the 1st round with %i - %i!", level.time + 10000, server_redteamprefix.string, level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE]));
 						// Boe!Man 11/18/10: Set the scores right (for logging purposes).
 						if (cm_aswap.integer == 0){
 							trap_Cvar_Set("cm_sr", va("%i", level.teamScores[TEAM_RED]));
@@ -2207,7 +2167,7 @@ void CheckExitRules( void )
 							trap_Cvar_Set("cm_sr", va("%i", level.teamScores[TEAM_BLUE]));
 							trap_Cvar_Set("cm_sb", va("%i", level.teamScores[TEAM_RED]));
 						}
-						trap_SendServerCommand(-1, va("print\"^3[Info] ^7Red team wins 1st round with %i - %i.\n\"", level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE] ));
+						trap_SendServerCommand(-1, va("print\"^3[Info] ^7Red team wins the 1st round with %i - %i.\n\"", level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE] ));
 						trap_Cvar_Set("cm_enabled", "21"); // Boe!Man 3/18/11: Display the awards prior to displaying this view again.
 						LogExit("Red team wins the 1st round.");
 					}else{ // Boe!Man 3/18/11: Red team won the match.
@@ -2218,9 +2178,11 @@ void CheckExitRules( void )
 					}
 				}else if (g_compMode.integer > 0 && cm_enabled.integer == 4){
 					if (cm_sr.integer > cm_sb.integer){
-						trap_SendServerCommand(-1, va("print\"^3[Info] ^7Red team won 1st round with %i - %i.\n\"", cm_sr.integer, cm_sb.integer));
+						trap_SendServerCommand(-1, va("print\"^3[Info] ^7Red team won the 1st round with %i - %i.\n\"", cm_sr.integer, cm_sb.integer));
+					}else if(cm_sr.integer < cm_sb.integer){
+						trap_SendServerCommand(-1, va("print\"^3[Info] ^7Blue team won the 1st round with %i - %i.\n\"", cm_sb.integer, cm_sr.integer));
 					}else{
-						trap_SendServerCommand(-1, va("print\"^3[Info] ^7Blue team won 1st round with %i - %i.\n\"", cm_sb.integer, cm_sr.integer));
+						trap_SendServerCommand(-1, va("print\"^3[Info] ^7Round draw 1st round with %i - %i.\n\"", cm_sb.integer, cm_sr.integer));
 					}
 					trap_SendServerCommand(-1, va("print\"^3[Info] ^7Red team won the 2nd round with %i - %i.\n\"", level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE] ));
 					trap_Cvar_Set("cm_enabled", "5"); // Boe!Man 11/18/10: 5 - Scrim Ended.
@@ -2252,7 +2214,7 @@ void CheckExitRules( void )
 				#endif
 				if (g_compMode.integer > 0 && cm_enabled.integer == 2){
 					if(cm_dr.integer == 1){ // Boe!Man 3/18/11: If dual rounds are enabled, make use of them and display the temporary stuff.
-						trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7team wins 1st round with %i - %i!", level.time + 10000, server_blueteamprefix.string, level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]));
+						trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7team wins the 1st round with %i - %i!", level.time + 10000, server_blueteamprefix.string, level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]));
 						// Boe!Man 11/18/10: Set the scores right (for logging purposes).
 						if (cm_aswap.integer == 0){
 							trap_Cvar_Set("cm_sr", va("%i", level.teamScores[TEAM_RED]));
@@ -2262,7 +2224,7 @@ void CheckExitRules( void )
 							trap_Cvar_Set("cm_sr", va("%i", level.teamScores[TEAM_BLUE]));
 							trap_Cvar_Set("cm_sb", va("%i", level.teamScores[TEAM_RED]));
 						}
-						trap_SendServerCommand(-1, va("print\"^3[Info] ^7Blue team wins 1st round with %i - %i.\n\"", level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED] ));
+						trap_SendServerCommand(-1, va("print\"^3[Info] ^7Blue team wins the 1st round with %i - %i.\n\"", level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED] ));
 						trap_Cvar_Set("cm_enabled", "21");
 						LogExit("Blue team wins the 1st round.");
 					}else{ // Boe!Man 3/18/11: Blue team won the match.
@@ -2273,9 +2235,11 @@ void CheckExitRules( void )
 					}
 				}else if (g_compMode.integer > 0 && cm_enabled.integer == 4){
 					if (cm_sr.integer > cm_sb.integer){
-						trap_SendServerCommand(-1, va("print\"^3[Info] ^7Red team won 1st round with %i - %i.\n\"", cm_sr.integer, cm_sb.integer));
+						trap_SendServerCommand(-1, va("print\"^3[Info] ^7Red team won the 1st round with %i - %i.\n\"", cm_sr.integer, cm_sb.integer));
+					}else if(cm_sr.integer < cm_sb.integer){
+						trap_SendServerCommand(-1, va("print\"^3[Info] ^7Blue team won the 1st round with %i - %i.\n\"", cm_sb.integer, cm_sr.integer));
 					}else{
-						trap_SendServerCommand(-1, va("print\"^3[Info] ^7Blue team won 1st round with %i - %i.\n\"", cm_sb.integer, cm_sr.integer));
+						trap_SendServerCommand(-1, va("print\"^3[Info] ^7Round draw 1st round with %i - %i.\n\"", cm_sb.integer, cm_sr.integer));
 					}
 					trap_SendServerCommand(-1, va("print\"^3[Info] ^7Blue team won the 2nd round with %i - %i.\n\"", level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED] ));
 					trap_Cvar_Set("cm_enabled", "5"); // Boe!Man 11/18/10: 5 - Scrim Ended.
@@ -3137,15 +3101,15 @@ void G_RunFrame( int levelTime )
 			else
 				ds = "No";
 			if (strstr(cm_dr.string, "1"))
-				dr = "Yes";
+				dr = "Two";
 			else
-				dr = "No";
+				dr = "One";
 			
-			if(dr == "Yes"){ // Boe!Man 3/18/11: Display the Auto Swap setting when Dual Rounds are enabled.
-				trap_SendServerCommand(-1, va("cp \"@%sMatch settings\n\n^7[^3Gametype^7]  %s%s %s\n^7[^3Scorelimit^7]  %s%i\n^7[^3Timelimit^7]  %s%i\n^7[^3Specs locked^7] %s%s\n^7[^3Disable sounds^7] %s%s\n^7[^3Dual rounds^7] %s%s\n^7[^3Auto swap^7] %s%s\n\n%sRestart map to start the first round!\"", 
+			if(dr == "Two"){ // Boe!Man 3/18/11: Display the Auto Swap setting when Dual Rounds are enabled.
+				trap_SendServerCommand(-1, va("cp \"@%sMatch settings\n\n^7[^3Gametype^7]  %s%s %s\n^7[^3Scorelimit^7]  %s%i\n^7[^3Timelimit^7]  %s%i\n^7[^3Specs locked^7] %s%s\n^7[^3Disable sounds^7] %s%s\n^7[^3# of Rounds^7] %s%s\n^7[^3Auto swap^7] %s%s\n\n%sRestart map to start the first round!\"", 
 					server_color3.string, server_color3.string, level.mapname, g_gametype.string, server_color3.string, cm_sl.integer, server_color3.string, cm_tl.integer, server_color3.string, sl, server_color3.string, ds, server_color3.string, dr, server_color3.string, as, server_color3.string));
 			}else{ // Boe!Man 3/18/11: Hide it when it's disabled.
-				trap_SendServerCommand(-1, va("cp \"@%sMatch settings\n\n^7[^3Gametype^7]  %s%s %s\n^7[^3Scorelimit^7]  %s%i\n^7[^3Timelimit^7]  %s%i\n^7[^3Specs locked^7] %s%s\n^7[^3Disable sounds^7] %s%s\n^7[^3Dual rounds^7] %s%s\n\n%sRestart map to start the first round!\"", 
+				trap_SendServerCommand(-1, va("cp \"@%sMatch settings\n\n^7[^3Gametype^7]  %s%s %s\n^7[^3Scorelimit^7]  %s%i\n^7[^3Timelimit^7]  %s%i\n^7[^3Specs locked^7] %s%s\n^7[^3Disable sounds^7] %s%s\n^7[^3# of Rounds^7] %s%s\n\n%sRestart map to start the first round!\"", 
 					server_color3.string, server_color3.string, level.mapname, g_gametype.string, server_color3.string, cm_sl.integer, server_color3.string, cm_tl.integer, server_color3.string, sl, server_color3.string, ds, server_color3.string, dr, server_color3.string));
 			}
 			level.compMsgCount = level.time + 3000;
