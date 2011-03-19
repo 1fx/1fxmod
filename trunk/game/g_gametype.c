@@ -1063,6 +1063,8 @@ void CheckGametype ( void )
 							level.cagefighttimer = level.time+3000;
 							level.startcage = qtrue;
 					}
+				}else{
+					LogExit( "Timelimit hit." );
 				}
 			}
 		} 
