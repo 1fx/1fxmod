@@ -498,3 +498,6 @@ void PrintCustom(int numb);
 // Boe!Man 3/16/11
 extern vmCvar_t	server_rconprefix;
 extern vmCvar_t	server_specteamprefix;
+
+void	trap_LinkEntity1( gentity_t *ent );
+void	trap_UnlinkEntity1( gentity_t *ent );

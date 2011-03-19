@@ -34,8 +34,8 @@ equ trap_InPVS								 -30	; G_IN_PVS
 equ trap_InPVSIgnorePortals					 -31	; G_IN_PVS_IGNORE_PORTALS 
 equ trap_AdjustAreaPortalState				 -32	; G_ADJUST_AREA_PORTAL_STATE 
 equ trap_AreasConnected						 -33	; G_AREAS_CONNECTED 
-equ trap_LinkEntity							 -34	; G_LINKENTITY 
-equ trap_UnlinkEntity						 -35	; G_UNLINKENTITY 
+equ trap_LinkEntity1						 -34	; G_LINKENTITY 
+equ trap_UnlinkEntity1						 -35	; G_UNLINKENTITY 
 equ trap_EntitiesInBox						 -36	; G_ENTITIES_IN_BOX 
 equ trap_EntityContact						 -37	; G_ENTITY_CONTACT 
 equ trap_EntityContactCapsule				 -50	; G_ENTITY_CONTACTCAPSULE 

@@ -139,7 +139,7 @@ void UpdateScores(void)
 void SpawnCage(vec3_t org, gentity_t *ent, qboolean autoremove) // Spawn a cage
 {
 	char			*origin;
-	int part, entindex;
+	int part;
 	if(autoremove){
 		level.autoremove = qtrue;
 	}

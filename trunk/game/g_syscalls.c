@@ -159,11 +159,11 @@ qboolean trap_AreasConnected( int area1, int area2 ) {
 	return syscall( G_AREAS_CONNECTED, area1, area2 );
 }
 
-void trap_LinkEntity( gentity_t *ent ) {
+void trap_LinkEntity1( gentity_t *ent ) {
 	syscall( G_LINKENTITY, ent );
 }
 
-void trap_UnlinkEntity( gentity_t *ent ) {
+void trap_UnlinkEntity1( gentity_t *ent ) {
 	syscall( G_UNLINKENTITY, ent );
 }
 

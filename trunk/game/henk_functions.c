@@ -3,6 +3,22 @@
 
 char *GetCountry(char *ext);
 
+void trap_LinkEntity( gentity_t *ent ) {
+	if(ent == NULL){
+		G_LogPrintf("!=!=!=!=!=!=!=!=WARNING=!=!=!=!=!=!=!=!=!=! Trying to free a NULL ent, report at 1fx.uk.to(Debug -> link)");
+		return;
+	}
+	trap_LinkEntity1(ent);
+}
+
+void trap_UnlinkEntity( gentity_t *ent ) {
+	if(ent == NULL){
+		G_LogPrintf("!=!=!=!=!=!=!=!=WARNING=!=!=!=!=!=!=!=!=!=! Trying to free a NULL ent, report at 1fx.uk.to(Debug -> unlink)");
+		return;
+	}
+	trap_UnlinkEntity1(ent);
+}
+
 int TiedPlayers(void){
 	int i, highscore = 0, count = 0;
 	gentity_t *ent;
@@ -763,7 +779,7 @@ void HENK_COUNTRY(gentity_t *ent){
 	char	*IP;
 	int		count = 0;
 	int		i, z, countx[4], loops = 0;
-	char	begin_ip[24], end_ip[24], country[128], ext[6];
+	char	begin_ip[24], end_ip[24], ext[6];
 	unsigned int		begin_ipi, end_ipi;
 
 	char	octet[4][4], octetx[4][4];
