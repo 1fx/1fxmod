@@ -17,7 +17,7 @@ typedef struct
 
 static admCmd_t AdminCommands[] = 
 {
-		// Boe!Man 1/22/11: Adding full synonyms.
+	// Boe!Man 1/22/11: Adding full synonyms.
 	{"!uppercut","uppercut", &g_uppercut.integer, &Boe_Uppercut},
 	{"!pop","pop", &g_pop.integer, &Boe_pop},
 	{"!kick","kick", &g_kick.integer, &Boe_Kick},
@@ -47,8 +47,8 @@ static admCmd_t AdminCommands[] =
 	{"!gametyperestart","gametyperestart", &g_gr.integer, &Boe_GametypeRestart},
 	{"!addclan","addclan", &g_clan.integer, &Boe_Add_Clan_Member},
 	{"!removeclan","removeclan", &g_clan.integer, &Boe_Remove_Clan_Member},
-	{"!compmode","compmode", &g_clan.integer, &Boe_CompMode},
-	{"!competitionmode","compmode", &g_clan.integer, &Boe_CompMode},
+	{"!compmode","compmode", &g_cm.integer, &Boe_CompMode},
+	{"!competitionmode","compmode", &g_cm.integer, &Boe_CompMode},
 	{"!banlist","banlist", &g_ban.integer, &Henk_BanList},
 	{"!ban","ban", &g_ban.integer, &Boe_Ban_f},
 	{"!broadcast","broadcast", &g_broadcast.integer, &Boe_Broadcast},
@@ -68,6 +68,7 @@ static admCmd_t AdminCommands[] =
 	{"!cancel","cancelvote", &g_forcevote.integer, &Boe_cancelVote},
 	{"!mapcycle","mapcycle", &g_mapswitch.integer, &Boe_Mapcycle},
 	{"!adminlist","adminlist", &g_adminlist.integer, &Henk_Admlist},
+	{"!dualrounds","dualrounds", &g_cm.integer, &Boe_DualRounds},
 	// Boe!Man 1/22/11: End full synonyms.
 
 	{"!uc","uppercut", &g_uppercut.integer, &Boe_Uppercut},
@@ -132,6 +133,7 @@ static admCmd_t AdminCommands[] =
 	{"!k","kick", &g_kick.integer, &Boe_Kick},
 	{"!m","mute", &g_mute.integer, &Boe_XMute},
 	{"!s","strip", &g_strip.integer, &Boe_Strip},
+	{"!dr","dualrounds", &g_cm.integer, &Boe_DualRounds}
 };
 
 static int AdminCommandsSize = sizeof( AdminCommands ) / sizeof( AdminCommands[0] );
@@ -973,29 +975,33 @@ void BroadcastTeamChange( gclient_t *client, int oldTeam )
 		}
 	}
 	// Boe!Man 3/16/11: Append Clan and/or Admin status if needed.
-	if(client->sess.clanMember == qtrue){
-		strncpy(clan, server_ctprefix.string, 45);
-	}else{
-		strncpy(clan, "", 2);
-	}
-	if(client->sess.admin > 1){
-		if(client->sess.admin == 2){
-			strncpy(admin, server_badminprefix.string, 45);
-		}else if(client->sess.admin == 3){
-			strncpy(admin, server_adminprefix.string, 45);
-		}else if(client->sess.admin == 4){
-			strncpy(admin, server_sadminprefix.string, 45);
+	if(client->sess.firstTime == qtrue){
+		if(client->sess.clanMember == qtrue){
+			strncpy(clan, server_ctprefix.string, 45);
+		}else{
+			strncpy(clan, "", 2);
 		}
-	}else{
-		strncpy(admin, "", 2);
-		noAdmin = qtrue; // Boe!Man 3/16/11: It doesn't matter if clan is empty, the lining won't fuck up. With an empty admin entry however, it will.. Hence this check.
-	}
+		if(client->sess.admin > 1){
+			if(client->sess.admin == 2){
+				strncpy(admin, server_badminprefix.string, 45);
+			}else if(client->sess.admin == 3){
+				strncpy(admin, server_adminprefix.string, 45);
+			}else if(client->sess.admin == 4){
+				strncpy(admin, server_sadminprefix.string, 45);
+			}
+		}else{
+			strncpy(admin, "", 2);
+			noAdmin = qtrue; // Boe!Man 3/16/11: It doesn't matter if clan is empty, the lining won't fuck up. With an empty admin entry however, it will.. Hence this check.
+		}
 
-	// Boe!Man 3/16/11: Broadcast the teamchange.
-	if(noAdmin == qfalse){
-		trap_SendServerCommand( -1, va("cp \"@%s\n%s %s\n\"", clan, admin, message));
-	}else{
-		trap_SendServerCommand( -1, va("cp \"@%s\n%s\n\"", clan, message));
+		// Boe!Man 3/16/11: Broadcast the teamchange.
+		if(noAdmin == qfalse){
+			trap_SendServerCommand( -1, va("cp \"@%s\n%s %s\n\"", clan, admin, message));
+		}else{
+			trap_SendServerCommand( -1, va("cp \"@%s\n%s\n\"", clan, message));
+		}
+	}else{ // Boe!Man 3/18/11: Else we just display the message itself.
+		trap_SendServerCommand( -1, va("cp \"@%s\n\"", message));
 	}
 	return;
 

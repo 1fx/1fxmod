@@ -252,6 +252,9 @@ extern	vmCvar_t	g_enableAdminLog;
 
 extern	vmCvar_t	g_adminlist;
 
+// Boe!Man 3/18/11
+void Boe_DualRounds(int argNum, gentity_t *ent, qboolean shortCmd);
+
 //==============================================
 // boe_utils.c
 //==============================================
@@ -389,11 +392,12 @@ extern	vmCvar_t	server_msgDelay;
 extern	vmCvar_t	g_adminspec;
 
 // Boe!Man 11/16/10: Default scrim settings.
-extern	vmCvar_t	g_autoLockSpec;
-extern	vmCvar_t	g_autoSwapTeams;
+extern	vmCvar_t	g_matchLockSpec;
+extern	vmCvar_t	g_matchSwapTeams;
 extern	vmCvar_t	g_matchTimeLimit;
 extern	vmCvar_t	g_matchScoreLimit;
 extern	vmCvar_t	g_matchDisableSounds;
+extern	vmCvar_t	g_matchDualRounds;
 
 extern vmCvar_t	cm_enabled;
 extern vmCvar_t	cm_sl;
@@ -401,6 +405,7 @@ extern vmCvar_t	cm_tl;
 extern vmCvar_t	cm_slock;
 extern vmCvar_t	cm_aswap;
 extern vmCvar_t	cm_dsounds;
+extern vmCvar_t	cm_dr;
 extern vmCvar_t	cm_oldsl;
 extern vmCvar_t	cm_oldtl;
 extern vmCvar_t	cm_sr;

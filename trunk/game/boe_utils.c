@@ -1969,6 +1969,8 @@ void Boe_calcMatchScores (void)
 	if (strstr(boe_log.string, "2"))
 		G_LogPrintf("7s\n");
 	#endif
+	if(cm_enabled.integer == 2) // Boe!Man 3/19/11: Can only be timelimit. Calculate all.
+
 	if (cm_sr.integer + level.teamScores[TEAM_RED] > cm_sb.integer + level.teamScores[TEAM_BLUE]){
 		if (cm_aswap.integer == 1)
 		trap_SendServerCommand(-1, va("print\"^3[Info] ^7Red team wins the match with %i - %i.\n\"", level.teamScores[TEAM_RED]+cm_sr.integer, level.teamScores[TEAM_BLUE]+cm_sb.integer ));

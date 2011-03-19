@@ -253,11 +253,19 @@ void RPM_TeamInfo (gentity_t *ent, char *team)
 	if (cm_enabled.integer > 1){
 		trap_SendServerCommand( ent-g_entities, va("print \"\n^3Scores\n\""));
 		trap_SendServerCommand( ent-g_entities, va("print \"-------------------------------\n\""));
-		if (cm_enabled.integer == 2 || cm_enabled.integer == 3){
+		if (cm_enabled.integer == 2 || cm_enabled.integer == 21){
 			if (t == 1){
 				trap_SendServerCommand( ent-g_entities, va("print \"[^31st Round^7]           %i - %i\n", level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE]));
 			}else if (t == 2){
 				trap_SendServerCommand( ent-g_entities, va("print \"[^31st Round^7]           %i - %i\n", level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]));
+			}
+		}
+		// Boe!Man 3/19/11: Print the scores written to the CVARs when displaying the 1st round result screen.
+		else if(cm_enabled.integer == 3){
+			if (t == 1){
+				trap_SendServerCommand( ent-g_entities, va("print \"[^31st Round^7]           %i - %i\n", cm_sr.integer, cm_sb.integer));
+			}else if (t == 2){
+				trap_SendServerCommand( ent-g_entities, va("print \"[^31st Round^7]           %i - %i\n", cm_sb.integer, cm_sr.integer));
 			}
 		}
 		else if (cm_enabled.integer == 4 || cm_enabled.integer == 5){

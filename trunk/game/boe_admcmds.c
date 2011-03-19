@@ -76,9 +76,10 @@ void Boe_CompMode(int argNum, gentity_t *ent, qboolean shotCmd){
 		trap_Cvar_Set("cm_enabled", "1");
 		trap_Cvar_Set("cm_sl", g_matchScoreLimit.string);
 		trap_Cvar_Set("cm_tl", g_matchTimeLimit.string);
-		trap_Cvar_Set("cm_slock", g_autoLockSpec.string);
-		trap_Cvar_Set("cm_aswap", g_autoSwapTeams.string);
+		trap_Cvar_Set("cm_slock", g_matchLockSpec.string);
+		trap_Cvar_Set("cm_aswap", g_matchSwapTeams.string);
 		trap_Cvar_Set("cm_dsounds", g_matchDisableSounds.string);
+		trap_Cvar_Set("cm_dr", g_matchDualRounds.string);
 		// Boe!Man 11/16/10: Set the current timelimit in the temp CVARs so we can restore them after the scrim has ended.
 		trap_Cvar_Set("cm_oldsl", g_scorelimit.string);
 		trap_Cvar_Set("cm_oldtl", g_timelimit.string);
@@ -512,9 +513,15 @@ void Boe_MapRestart(int argNum, gentity_t *ent, qboolean shortCmd){
 			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Map restarted by %s.\n\"", ent->client->pers.netname));
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp %sr%se%sstart in 5!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		}else if (g_compMode.integer > 0 && cm_enabled.integer == 1){
-			trap_SendServerCommand(-1, va("print \"^3[Info] ^7First round started.\n\""));
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sF%si%sr%ss%st round started!", level.time + 3000, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-			level.compMsgCount = -1;
+			if(cm_dr.integer == 1){ // Boe!Man 3/18/11: If dual rounds are enabled, the first round would be started.
+				trap_SendServerCommand(-1, va("print \"^3[Info] ^7First round started.\n\""));
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sF%si%sr%ss%st round started!", level.time + 3000, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+				level.compMsgCount = -1;
+			}else{ // Boe!Man 3/18/11: If not, general message.
+				trap_SendServerCommand(-1, va("print \"^3[Info] ^7Match started.\n\""));
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sM%sa%st%sc%sh started!", level.time + 3000, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+				level.compMsgCount = -1;
+			}
 		}else if (g_compMode.integer > 0 && cm_enabled.integer == 3){
 			trap_SendServerCommand(-1, va("print \"^3[Info] ^7Second round started.\n\""));
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sS%se%sc%so%sn%sd round started!", level.time + 3000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
@@ -2908,6 +2915,28 @@ void Boe_SwapTeams(gentity_t *adm)
 		return;
 	}
 
+	// Boe!Man 3/18/11: Toggle the setting if they're on the Match Settings screen instead of swapping the teams.
+	if(cm_enabled.integer == 1){
+		if(cm_aswap.integer == 1){
+			trap_Cvar_Set("cm_aswap", "0"); // Disable it.
+			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sA%su%st%so %sS%swap disabled!", level.time + 3000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+			if(adm&&adm->client){
+				trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Auto swap disabled by %s.\n\"", adm->client->pers.netname));
+			}else{
+				trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Auto swap disabled.\n\""));
+			}
+		}else{
+			trap_Cvar_Set("cm_aswap", "1"); // Enable it.
+			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sA%su%st%so %sS%swap enabled!", level.time + 3000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+			if(adm&&adm->client){
+				trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Auto swap enabled by %s.\n\"", adm->client->pers.netname));
+			}else{
+				trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Auto swap enabled.\n\""));
+			}
+		}
+		return;
+	}
+
 	/// used to swap scores (or not)
 	if(adm && adm->client) trap_Argv( 2, score, sizeof( score ) );
 	else trap_Argv( 1, score, sizeof( score ) );
@@ -3590,6 +3619,42 @@ void Boe_Mapcycle (int argNum, gentity_t *ent, qboolean shortCmd){
 			else{
 				Com_Printf("^3[Info] ^7Something appears to be wrong. Please report to an developer using this error code: 2L\n");}
 			return;
+		}
+	}
+}
+
+/*
+=========
+Boe_DualRounds
+=========
+*/
+
+void Boe_DualRounds(int argNum, gentity_t *ent, qboolean shortCmd)
+{
+	if(cm_enabled.integer != 1){ // Boe!Man 3/18/11: We need to insure Competition Mode is at it's starting stage. Do NOT allow changes to this before or during the scrim.
+		if(ent&&ent->client){
+			trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7You can only change this setting during Competition Warmup.\n\""));
+		}else{
+			Com_Printf("^3[Info] ^7You can only change this setting during Competition Warmup.\n");
+		}
+		return;
+	}
+	// Boe!Man 3/18/11: We can continue. Determine it's new state by reading the current CVAR.
+	if(cm_dr.integer == 0){ // No Dual rounds -> Switch to Dual Rounds.
+		trap_Cvar_Set("cm_dr", "1");
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sD%su%sa%sl %sr%sounds enabled!", level.time + 3000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+		if(ent&&ent->client){
+			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Dual rounds enabled by %s.\n\"", ent->client->pers.netname));
+		}else{
+			trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Dual rounds enabled.\n\""));
+		}
+	}else if(cm_dr.integer == 1){ // Dual rounds -> Switch to Single Round.
+		trap_Cvar_Set("cm_dr", "0");
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sD%su%sa%sl %sr%sounds disabled!", level.time + 3000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+		if(ent&&ent->client){
+			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Dual rounds disabled by %s.\n\"", ent->client->pers.netname));
+		}else{
+			trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Dual rounds disabled.\n\""));
 		}
 	}
 }
