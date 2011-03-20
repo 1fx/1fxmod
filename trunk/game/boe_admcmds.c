@@ -3194,11 +3194,15 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 	char	column1[20], column2[25];
 	int		spaces = 0, length = 0, z;
 	fileHandle_t f;
-	char            buf[15000] = "\0";
+	char buf[15000] = "\0";
+	char buffer[15000];
+	char packet[512];
+	char *bufP = buffer;
 	int len, i, count = 0, EndPos = -1, StartPos = 0;
 	qboolean begin = qtrue;
 	int r, lcount = -1;
 	char xip[64];
+	memset(buffer, 0, sizeof(buffer));
 	//wrapper for interface
 	if(adm){
 		trap_SendServerCommand( adm-g_entities, va("print \"^7[^3Adminlist^7]\n\n\""));
@@ -3271,11 +3275,14 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 			column2[spaces] = '\0';
 			if(adm){
 				if(count <= 9){
-					trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7]   %s%s%s%s%s\n", count, level, column1, name, column2, xip)); // Boe!Man 9/16/10: Print ban.
+					//trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7]   %s%s%s%s%s\n", count, level, column1, name, column2, xip)); // Boe!Man 9/16/10: Print ban.
+					sprintf(buffer+strlen(buffer), "[^3%i^7]   %s%s%s%s%s\n", count, level, column1, name, column2, xip);
 				}else if(count > 9 && count < 100){
-					trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7]  %s%s%s%s%s\n", count, level, column1, name, column2, xip)); // Boe!Man 9/16/10: Print ban.
+					//trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7]  %s%s%s%s%s\n", count, level, column1, name, column2, xip)); // Boe!Man 9/16/10: Print ban.
+					sprintf(buffer+strlen(buffer), "[^3%i^7]  %s%s%s%s%s\n", count, level, column1, name, column2, xip);
 				}else{
-					trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7] %s%s%s%s%s\n", count, level, column1, name, column2, xip)); // Boe!Man 9/16/10: Print ban.
+					//trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7] %s%s%s%s%s\n", count, level, column1, name, column2, xip)); // Boe!Man 9/16/10: Print ban.
+					sprintf(buffer+strlen(buffer), "[^3%i^7] %s%s%s%s%s\n", count, level, column1, name, column2, xip);
 				}
 			}else{
 				if(count <= 9){
@@ -3288,6 +3295,17 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 			}
 		}
 	}
+	buffer[strlen(buffer)] = '\0';
+	len = strlen(buffer);
+
+	while(bufP <= &buffer[len + 500])
+	{
+		memset(packet, 0, sizeof(packet)); // Henk 25/01/11 -> Clear the buffer to prevent problems
+		Q_strncpyz(packet, bufP, 501);
+		trap_SendServerCommand( adm-g_entities, va("print \"%s\"", packet));
+		bufP += 500;
+	}
+
 	// End
 	trap_SendServerCommand( adm-g_entities, va("print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\""));
 	return;

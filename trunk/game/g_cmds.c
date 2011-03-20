@@ -2142,95 +2142,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	// Henk loop through my admin command array
 	// Boe!Man 1/8/11: Only go through this cycle if the client indeed has admin powers. If not, save on resources.
 	if(ent->client->sess.admin > 0){
-	for(i=0;i<AdminCommandsSize;i++){
-		if(strstr(Q_strlwr(test), Q_strlwr(AdminCommands[i].shortCmd))){
-			command = qtrue;
-			if(ent->client->sess.admin >= *AdminCommands[i].adminLevel){
-				AdminCommands[i].Function(1, ent, qtrue);
-				break;
-			}else{
-				if(ent->client->sess.referee == 1 && strstr(Q_strlwr(test), "!l")){ // exception for referee lock
-					Henk_Lock(1, ent, qtrue);
-				}
-				trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
-			}
-		}
-	}
-	// End
-	
-		/*else if ((strstr(p, "!333"))) {
-		if (ent->client->sess.admin >= g_333.integer){
-			// disable 333
-			if(pmove_fixed.value == 0){
-				trap_Cvar_Set ( "pmove_fixed", "1");
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7333 FPS jumps %sd%si%ss%sa%sbled by %s", level.time + 5000, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, ent->client->pers.netname));
-				trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7333 FPS jumps disabled by %s.\n\"", ent->client->pers.netname));
-				Boe_adminLog (va("%s - 333 DISABLED", ent->client->pers.cleanName)) ;
-			}else{
-				trap_Cvar_Set( "pmove_fixed", "0");
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7333 FPS jumps %se%sn%sa%sb%sled ^7by %s", level.time + 5000, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, ent->client->pers.netname));
-				trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7333 FPS jumps enabled by %s.\n\"", ent->client->pers.netname));
-				Boe_adminLog (va("%s - 333 ENABLED", ent->client->pers.cleanName)) ;
-			}
-			trap_Cvar_Update ( &pmove_fixed );
-		}
-		else if (ent->client->sess.admin < g_eventeams.integer){
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
-		}
-		G_Say( ent, NULL, mode, p);
-		return;
-	}*/
-	// Boe!Man 5/2/10: The Referee tokens. I think we're actually the first with this... (:
-	if(strstr(p, "!i ")){
-		if(ent->client->sess.admin > 1){
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Use /adm suspend or !su to become a Referee!\n\""));
-		}else if(ent->client->sess.referee == 1){
-			if (!level.gametypeData->teams){
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Not playing a team game!\n\""));
-			return;}
-			if (strstr(p, "b")){
-			strcpy(team, "b");
-			RPM_TeamInfo(ent, va("%s", team));}
-			else if(strstr(p, "r")){
-			strcpy(team, "b");
-			RPM_TeamInfo(ent, va("%s", team));}
-			else{
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Unknown team specified!\n\""));
-			return;}
-		}
-		G_Say( ent, NULL, mode, p);
-		return;
-	}
-	else if(strstr(p, "!rt")){
-		if(ent->client->sess.admin > 1){
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Use /adm suspend or !su to become a Referee!\n\""));
-		}else if(ent->client->sess.referee == 1){
-			if(level.warmupTime == 0 || g_doWarmup.integer != 2){
-			trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7Server is currently not in Ready-up mode.\n\""));
-			return;}
-			if (!level.gametypeData->teams){
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Not playing a team game!\n\""));
-			return;}
-			if(strlen(p) == 3){
-			//RPM_ReadyAll();
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@Teams %sr%se%sa%sd%si%sed by %s", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, ent->client->pers.netname));
-			trap_SendServerCommand( -1, va("print \"^3[Referee Action] ^7Teams readied by %s.\n\"", ent->client->pers.netname));
-			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-			}
-		}
-		//else
-		//{
-			//RPM_ReadyTeam(ent, qtrue, arg2);
-		//}
-		G_Say( ent, NULL, mode, p);
-		return;
-	//}else if(strstr(p, "!test")){
-	//	AdminCommands[1].Function(1, ent, qtrue);
-	//	trap_SendServerCommand( -1, va("print \"^3[Debug] ^7%s level is %i.\n\"", AdminCommands[1].adminCmd, *AdminCommands[1].adminLevel));
 
-	}
-	}
-	if(!command){
 	// Boe!Man 1/24/10: Different kinds of Talk during Gameplay.
 	if ((strstr(p, "!at")) || (strstr(p, "!AT")) || (strstr(p, "!aT")) || (strstr(p, "!At"))) {
 		if (ent->client->sess.admin){
@@ -2418,6 +2330,74 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			mode = CADM_CHAT;
 			acmd = qtrue;
 			strcpy(p, newp);
+	}
+
+	if(acmd != qtrue){
+		for(i=0;i<AdminCommandsSize;i++){
+			if(strstr(Q_strlwr(test), Q_strlwr(AdminCommands[i].shortCmd))){
+				command = qtrue;
+				if(ent->client->sess.admin >= *AdminCommands[i].adminLevel){
+					AdminCommands[i].Function(1, ent, qtrue);
+					break;
+				}else{
+					if(ent->client->sess.referee == 1 && strstr(Q_strlwr(test), "!l")){ // exception for referee lock
+						Henk_Lock(1, ent, qtrue);
+					}
+					trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
+				}
+			}
+		}
+	}
+	// End
+
+	// Boe!Man 5/2/10: The Referee tokens. I think we're actually the first with this... (:
+	if(strstr(p, "!i ")){
+		if(ent->client->sess.admin > 1){
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Use /adm suspend or !su to become a Referee!\n\""));
+		}else if(ent->client->sess.referee == 1){
+			if (!level.gametypeData->teams){
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Not playing a team game!\n\""));
+			return;}
+			if (strstr(p, "b")){
+			strcpy(team, "b");
+			RPM_TeamInfo(ent, va("%s", team));}
+			else if(strstr(p, "r")){
+			strcpy(team, "b");
+			RPM_TeamInfo(ent, va("%s", team));}
+			else{
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Unknown team specified!\n\""));
+			return;}
+		}
+		G_Say( ent, NULL, mode, p);
+		return;
+	}
+	else if(strstr(p, "!rt")){
+		if(ent->client->sess.admin > 1){
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Use /adm suspend or !su to become a Referee!\n\""));
+		}else if(ent->client->sess.referee == 1){
+			if(level.warmupTime == 0 || g_doWarmup.integer != 2){
+			trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7Server is currently not in Ready-up mode.\n\""));
+			return;}
+			if (!level.gametypeData->teams){
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Not playing a team game!\n\""));
+			return;}
+			if(strlen(p) == 3){
+			//RPM_ReadyAll();
+			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@Teams %sr%se%sa%sd%si%sed by %s", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, ent->client->pers.netname));
+			trap_SendServerCommand( -1, va("print \"^3[Referee Action] ^7Teams readied by %s.\n\"", ent->client->pers.netname));
+			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+			}
+		}
+		//else
+		//{
+			//RPM_ReadyTeam(ent, qtrue, arg2);
+		//}
+		G_Say( ent, NULL, mode, p);
+		return;
+	//}else if(strstr(p, "!test")){
+	//	AdminCommands[1].Function(1, ent, qtrue);
+	//	trap_SendServerCommand( -1, va("print \"^3[Debug] ^7%s level is %i.\n\"", AdminCommands[1].adminCmd, *AdminCommands[1].adminLevel));
+
 	}
 	}
 
