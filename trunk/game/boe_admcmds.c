@@ -3297,13 +3297,14 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 	}
 	buffer[strlen(buffer)] = '\0';
 	len = strlen(buffer);
-
-	while(bufP <= &buffer[len + 500])
-	{
-		memset(packet, 0, sizeof(packet)); // Henk 25/01/11 -> Clear the buffer to prevent problems
-		Q_strncpyz(packet, bufP, 501);
-		trap_SendServerCommand( adm-g_entities, va("print \"%s\"", packet));
-		bufP += 500;
+	if(adm){
+		while(bufP <= &buffer[len + 500])
+		{
+			memset(packet, 0, sizeof(packet)); // Henk 25/01/11 -> Clear the buffer to prevent problems
+			Q_strncpyz(packet, bufP, 501);
+			trap_SendServerCommand( adm-g_entities, va("print \"%s\"", packet));
+			bufP += 500;
+		}
 	}
 
 	// End
