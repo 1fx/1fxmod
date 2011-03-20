@@ -1286,7 +1286,7 @@ void Boe_Add_bAdmin_f(int argNum, gentity_t *adm, qboolean shortCmd)
 	if(idnum < 0) return;
 
 	if(shortCmd){
-		strcpy(GetReason(), arg);
+		strcpy(arg, GetReason());
 	}else{
 		if(adm && adm->client){
 			trap_Argv(3, arg, sizeof(arg));
@@ -1294,7 +1294,7 @@ void Boe_Add_bAdmin_f(int argNum, gentity_t *adm, qboolean shortCmd)
 			trap_Argv(2, arg, sizeof(arg));
 		}
 	}
-
+	Com_Printf("Arg: %s\n", arg);
 	if(!Q_stricmp(arg, "pass")){
 		AddToPasswordList(&g_entities[idnum], 2);
 		g_entities[idnum].client->sess.admin = 2;
@@ -1347,7 +1347,7 @@ void Boe_Add_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd)
 	if(idnum < 0) return;
 
 	if(shortCmd){
-		strcpy(GetReason(), arg);
+		strcpy(arg, GetReason());
 	}else{
 		if(adm && adm->client){
 			trap_Argv(3, arg, sizeof(arg));
@@ -1409,7 +1409,7 @@ void Boe_Add_sAdmin_f(int argNum, gentity_t *adm, qboolean shortCmd)
 	if(idnum < 0) return;
 
 	if(shortCmd){
-		strcpy(GetReason(), arg);
+		strcpy(arg, GetReason());
 	}else{
 		if(adm && adm->client){
 			trap_Argv(3, arg, sizeof(arg));
