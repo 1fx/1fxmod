@@ -110,6 +110,11 @@ void G_ExplodeMissile( gentity_t *ent ) {
 	dir[2] = 1;
 
 	ent->s.eType = ET_GENERAL;
+	if(current_gametype.value == GT_HS){
+		if(ent->methodOfDeath == MOD_F1_GRENADE && ent->r.currentOrigin[2] > ent->parent->r.currentOrigin[2]){
+			G_AddEvent( ent, EV_MISSILE_MISS, (DirToByte( dir ) << MATERIAL_BITS) | MATERIAL_NONE);
+		}
+	}else
 	G_AddEvent( ent, EV_MISSILE_MISS, (DirToByte( dir ) << MATERIAL_BITS) | MATERIAL_NONE);
 
 	ent->freeAfterEvent = qtrue;
@@ -416,9 +421,10 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace )
 				G_AddEvent( ent, EV_MISSILE_MISS, 
 					(DirToByte( trace->plane.normal ) << MATERIAL_BITS) | (trace->surfaceFlags & MATERIAL_MASK));
 			}
-		}else
+		}else{
 		G_AddEvent( ent, EV_MISSILE_HIT, 
 					(DirToByte( trace->plane.normal ) << MATERIAL_BITS) | (trace->surfaceFlags & MATERIAL_MASK));
+		}
 		ent->s.otherEntityNum = other->s.number;
 		// KRIS 12/08/2003 11:14AM
 		//if( ent->damage )
@@ -447,9 +453,10 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace )
 				G_AddEvent( ent, EV_MISSILE_MISS, 
 					(DirToByte( trace->plane.normal ) << MATERIAL_BITS) | (trace->surfaceFlags & MATERIAL_MASK));
 			}
-		}else
+		}else{
 		G_AddEvent( ent, EV_MISSILE_MISS, 
 					(DirToByte( trace->plane.normal ) << MATERIAL_BITS) | (trace->surfaceFlags & MATERIAL_MASK));
+		}
 
 		// If missile should stick into impact point (e.g. a thrown knife).
 		if(!Q_stricmp(ent->classname,"Knife") && current_gametype.value != GT_HS) // Henk 28/01/10 -> No weapon pickup creating for throw knifes..
