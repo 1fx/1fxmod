@@ -80,7 +80,8 @@
 // 0.56			2nd Release (hotfix)			404(/408)	2/12/11		// Sent out to BETA group on 2/12/11
 // 0.57t		Alpha							424			2/26/11
 // 0.57t		Beta							428			3/2/11		// Sent out to BETA group on 3/2/11
-// 0.57t		Release Candidate				511			3/19/11		// Sent out to BETA group on 3/19/11
+// 0.57t		1st Release Candidate			511			3/19/11		// Sent out to BETA group on 3/19/11
+// 0.57t		2nd Release Candidate			516			3/20/11		// Sent out to BETA group on 3/20/11
 
 //===================================================================
 
