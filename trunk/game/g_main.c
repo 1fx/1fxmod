@@ -1047,11 +1047,14 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	//BG_InitWeaponStats(qfalse); // Henk 22/01/11 -> Parse other stats :)
 
 	ClearRegisteredItems();
+	if(current_gametype.value == GT_HS){
 	AddSpawnField("classname", "gametype_item");
 	AddSpawnField("targetname", "briefcase");
 	AddSpawnField("gametype", "inf");
 	AddSpawnField("origin", "999 999 999");
-	G_SpawnGEntityFromSpawnVars(qtrue);
+	trap_UnlinkEntity(&g_entities[G_SpawnGEntityFromSpawnVars(qtrue)]);
+	}
+
 	// parse the key/value pairs and spawn gentities
 	G_SpawnEntitiesFromString(qfalse);
 
@@ -1253,9 +1256,9 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 			trap_Cvar_Set("scorelimit", cm_oldsl.string);
 			trap_Cvar_Set("timelimit", cm_oldtl.string);
 			// Boe!Man 2/7/11: Reset the invatations after the scrim has ended/had an unexpected ending.
-			for ( i = 0; i < level.maxclients; i ++ ){
-				g_entities[i].client->sess.invitedByBlue = qfalse;
-				g_entities[i].client->sess.invitedByRed = qfalse;
+			for ( i = 0; i < level.numConnectedClients; i ++ ){
+				g_entities[level.sortedClients[i]].client->sess.invitedByBlue = qfalse;
+				g_entities[level.sortedClients[i]].client->sess.invitedByRed = qfalse;
 			}
 		}
 		#ifdef _BOE_DBG
