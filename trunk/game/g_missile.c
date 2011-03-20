@@ -110,8 +110,8 @@ void G_ExplodeMissile( gentity_t *ent ) {
 	dir[2] = 1;
 
 	ent->s.eType = ET_GENERAL;
-	if(current_gametype.value == GT_HS){
-		if(ent->methodOfDeath == MOD_F1_GRENADE && ent->r.currentOrigin[2] > ent->parent->r.currentOrigin[2]){
+	if(current_gametype.value == GT_HS && ent->methodOfDeath == MOD_F1_GRENADE){
+		if(ent->r.currentOrigin[2] > ent->parent->r.currentOrigin[2]){
 			G_AddEvent( ent, EV_MISSILE_MISS, (DirToByte( dir ) << MATERIAL_BITS) | MATERIAL_NONE);
 		}
 	}else

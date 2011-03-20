@@ -3190,7 +3190,7 @@ void Henk_Unban(int argNum, gentity_t *adm, qboolean shortCmd){
 }
 
 void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
-	char	level[10], level1[3], name[64], reason[64], test = ' ';
+	char	level[15], level1[3], name[64], reason[64], test = ' ';
 	char	column1[20], column2[25];
 	int		spaces = 0, length = 0, z;
 	fileHandle_t f;
@@ -3263,6 +3263,7 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 			}
 			column1[spaces] = '\0';
 			strcpy(level, va("^7[^3%c^7]", level1[0]));
+			level[strlen(level)] = '\0';
 			length = strlen(name);
 			if(length > 18){
 				name[18] = '\0';
@@ -3276,13 +3277,13 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 			if(adm){
 				if(count <= 9){
 					//trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7]   %s%s%s%s%s\n", count, level, column1, name, column2, xip)); // Boe!Man 9/16/10: Print ban.
-					sprintf(buffer+strlen(buffer), "[^3%i^7]   %s%s%s%s%s\n", count, level, column1, name, column2, xip);
+					Com_sprintf(buffer+strlen(buffer), sizeof(buffer), "[^3%i^7]   %s%s%s%s%s\n", count, level, column1, name, column2, xip);
 				}else if(count > 9 && count < 100){
 					//trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7]  %s%s%s%s%s\n", count, level, column1, name, column2, xip)); // Boe!Man 9/16/10: Print ban.
-					sprintf(buffer+strlen(buffer), "[^3%i^7]  %s%s%s%s%s\n", count, level, column1, name, column2, xip);
+					Com_sprintf(buffer+strlen(buffer), sizeof(buffer), "[^3%i^7]  %s%s%s%s%s\n", count, level, column1, name, column2, xip);
 				}else{
 					//trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7] %s%s%s%s%s\n", count, level, column1, name, column2, xip)); // Boe!Man 9/16/10: Print ban.
-					sprintf(buffer+strlen(buffer), "[^3%i^7] %s%s%s%s%s\n", count, level, column1, name, column2, xip);
+					Com_sprintf(buffer+strlen(buffer), sizeof(buffer), "[^3%i^7] %s%s%s%s%s\n", count, level, column1, name, column2, xip);
 				}
 			}else{
 				if(count <= 9){
