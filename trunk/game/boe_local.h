@@ -12,7 +12,7 @@
 #endif
 #define INF_STRING "1fx. Mod"
 #define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod"
-#define INF_VERSION_DATE "3/19/11"
+#define INF_VERSION_DATE "3/21/11"
 #define TEST_VERSION "Developed by ^GBoe!Man ^7& ^6Henkie\n^1Running a Test version of the Mod\n\n"
 #define STABLE_VERSION "Developed by ^GBoe!Man ^7& ^6Henkie\n1fx.uk.to ^3| ^7i3D.net\n\n"
 
@@ -81,7 +81,7 @@
 // 0.57t		Alpha							424			2/26/11
 // 0.57t		Beta							428			3/2/11		// Sent out to BETA group on 3/2/11
 // 0.57t		1st Release Candidate			511			3/19/11		// Sent out to BETA group on 3/19/11
-// 0.57t		2nd Release Candidate			516			3/20/11		// Sent out to BETA group on 3/20/11
+// 0.57t		2nd Release Candidate			521			3/21/11		// Sent out to BETA group on 3/21/11
 
 //===================================================================
 
