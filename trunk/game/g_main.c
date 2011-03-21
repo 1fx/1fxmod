@@ -2124,6 +2124,16 @@ void CheckExitRules( void )
 				tent->r.svFlags = SVF_BROADCAST;
 
 				if(g_compMode.integer > 0 && cm_enabled.integer > 1){
+					if(current_gametype.value == GT_CTF){
+						if ( level.teamScores[TEAM_BLUE] == level.teamScores[TEAM_RED] ){
+						// Boe!Man 3/21/11 FIXME: Might need a CVAR for this in the future..
+							if(level.timelimitMsg == qfalse){
+								trap_SendServerCommand( -1, va("print \"^3[Info] ^7Timelimit hit, waiting for the final flag to be captured.\n\""));
+								level.timelimitMsg = qtrue;
+							}
+							return;
+						}
+					}
 					Boe_compTimeLimitCheck();
 				}else{
 					LogExit( "Timelimit hit." );
