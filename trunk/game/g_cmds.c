@@ -2139,11 +2139,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		p = ConcatArgs( 1 );
 
 	strcpy(test, p); // Henk 08/09/10 -> Copy p to static buffer to prevent unwanted changes by other functions
-	// Henk loop through my admin command array
-	// Boe!Man 1/8/11: Only go through this cycle if the client indeed has admin powers. If not, save on resources.
-	if(ent->client->sess.admin > 0){
-
-	// Boe!Man 1/24/10: Different kinds of Talk during Gameplay.
+	// Boe!Man 1/24/10: Different kinds of Talk during Gameplay. -- Update 3/21/11: No need to be admin in order to use this..
 	if ((strstr(p, "!at")) || (strstr(p, "!AT")) || (strstr(p, "!aT")) || (strstr(p, "!At"))) {
 		if (ent->client->sess.admin){
 			p = ConcatArgs(1);
@@ -2331,7 +2327,9 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			acmd = qtrue;
 			strcpy(p, newp);
 	}
-
+	// Henk loop through my admin command array
+	// Boe!Man 1/8/11: Only go through this cycle if the client indeed has admin powers. If not, save on resources.
+	if(ent->client->sess.admin > 0){
 	if(acmd != qtrue){
 		for(i=0;i<AdminCommandsSize;i++){
 			if(strstr(Q_strlwr(test), Q_strlwr(AdminCommands[i].shortCmd))){
