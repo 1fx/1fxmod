@@ -327,7 +327,7 @@ static cvarTable_t gameCvarTable[] =
 
 	{ &g_roundstartdelay,	"g_roundstartdelay", "5",		CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 
-	{ &g_availableWeapons,	"g_availableWeapons", "2222222222211", CVAR_ARCHIVE|CVAR_SERVERINFO|CVAR_LATCH|CVAR_INTERNAL, 0.0, 0.0, 0, qfalse },
+	{ &g_availableWeapons,	"g_availableWeapons", "2222222222211", CVAR_ARCHIVE|CVAR_SERVERINFO|CVAR_LATCH|CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
 	{ &hideSeek_availableWeapons,	"hideSeek_availableWeapons", "200000000000022222222", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
 	{ &availableWeapons,	"availableWeapons", "2222222222211", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
 	// Henk 01/04/10
@@ -1111,8 +1111,8 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	else{
 		if(g_disablenades.integer == 0){
 		SetNades("0");
-		BG_SetAvailableOutfitting(g_availableWeapons.string);
 		}
+		BG_SetAvailableOutfitting(g_availableWeapons.string);
 	}
 
 	// Initialize the gametype
