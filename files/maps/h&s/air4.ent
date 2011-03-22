@@ -1054,32 +1054,8 @@
 }
 {
 "classname" "target_speaker"
-"origin" "-780 16 536"
-"noise" "sound/player/door_rattle"
-"targetname" "t466"
-}
-{
-"classname" "target_speaker"
 "origin" "1152 0 192"
 "soundSet" "airplane_wind"
-}
-{
-"classname" "target_speaker"
-"targetname" "t468"
-"noise" "sound/player/door_rattle2"
-"origin" "438 -8 216"
-}
-{
-"classname" "target_speaker"
-"origin" "-1316 2 216"
-"noise" "sound/player/door_rattle2"
-"targetname" "t469"
-}
-{
-"classname" "target_speaker"
-"origin" "580 -132 376"
-"noise" "sound/player/pickup/ammo"
-"targetname" "t480"
 }
 {
 "classname" "target_speaker"
@@ -1105,42 +1081,6 @@
 "classname" "target_speaker"
 "origin" "576 0 192"
 "soundSet" "airplane_wind"
-}
-{
-"classname" "target_speaker"
-"targetname" "t488"
-"noise" "sound/player/door_rattle"
-"origin" "-588 -136 392"
-}
-{
-"classname" "target_speaker"
-"origin" "-556 -136 392"
-"noise" "sound/player/door_rattle"
-"targetname" "t488"
-}
-{
-"classname" "target_speaker"
-"targetname" "t489"
-"noise" "sound/player/door_rattle"
-"origin" "244 -136 392"
-}
-{
-"classname" "target_speaker"
-"targetname" "t490"
-"noise" "sound/player/door_rattle"
-"origin" "-948 -96 216"
-}
-{
-"classname" "target_speaker"
-"origin" "204 -136 392"
-"noise" "sound/player/door_rattle"
-"targetname" "t495"
-}
-{
-"classname" "target_speaker"
-"origin" "-980 -96 216"
-"noise" "sound/player/door_rattle"
-"targetname" "t496"
 }
 {
 "classname" "target_speaker"
