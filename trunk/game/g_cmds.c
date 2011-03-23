@@ -2188,7 +2188,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		}
 	}
 	else if ((strstr(p, "!ac")) || (strstr(p, "!AC")) || (strstr(p, "!aC")) || (strstr(p, "!Ac"))) {
-		if (ent->client->sess.admin){
+		if (ent->client->sess.admin && !strstr(Q_strlwr(test), "!acl")){ // Boe!Man 3/23/11: Check if they didn't mean to add a clan member..
 			p = ConcatArgs(1);
 			for(i=0;i<=strlen(p);i++){
 				if(p[i] == '!' && (p[i+1] == 'a' || p[i+1] == 'A') && (p[i+2] == 'c' || p[i+2] == 'C')){
@@ -2210,7 +2210,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			mode = ADM_CHAT;
 			acmd = qtrue;
 			strcpy(p, newp);
-		}else{
+		}else if(!strstr(Q_strlwr(test), "!acl")){
 			p = ConcatArgs(1);
 			G_Say( ent, NULL, mode, p );
 			return;
