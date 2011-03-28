@@ -3244,7 +3244,6 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 			if(lcount == -1){
 				lcount = strlen(buf); // last line
 			}
-			memset(level, 0, sizeof(level));
 			memset(name, 0, sizeof(name));
 			strncpy(name, buf+EndPos+1, (lcount-(EndPos+1))-2);
 			strncpy(level1, buf+(lcount-1), 1);
@@ -3262,7 +3261,8 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 			column1[z] = test;
 			}
 			column1[spaces] = '\0';
-			strcpy(level, va("^7[^3%c^7]", level1[0]));
+			memset(level, 0, sizeof(level));
+			strcpy(level, va("[^3%c^7]", level1[0]));
 			level[strlen(level)] = '\0';
 			length = strlen(name);
 			if(length > 18){
@@ -3299,7 +3299,7 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 	buffer[strlen(buffer)] = '\0';
 	len = strlen(buffer);
 	if(adm){
-		while(bufP <= &buffer[len + 500])
+		while(bufP <= &buffer[len + 501])
 		{
 			memset(packet, 0, sizeof(packet)); // Henk 25/01/11 -> Clear the buffer to prevent problems
 			Q_strncpyz(packet, bufP, 501);

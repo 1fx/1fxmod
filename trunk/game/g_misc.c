@@ -287,7 +287,6 @@ void SP_misc_bsp(gentity_t *ent)
 	VectorCopy( ent->s.angles, ent->r.currentAngles );
 
 	ent->s.eType = ET_MOVER;
-	///ent->s.eType = ET_WALL;
 
 	trap_LinkEntity (ent);
 
