@@ -1859,7 +1859,6 @@ qboolean G_RadiusDamage (
 		if(mod == 264){
 			if(CageOutOfBoundaries == qtrue){
 				ammoindex=weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_ALTERNATE].ammoIndex;
-				trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7Seeker at boundary or hider caught in cage.\n\"")); 
 				if(g_cageAttempts.integer != 0){
 					if(attacker->client->sess.cageAttempts < 3){
 						attacker->client->ps.ammo[ammoindex]+=1;
