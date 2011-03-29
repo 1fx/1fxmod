@@ -347,6 +347,11 @@ void G_RespawnClients ( qboolean force, team_t team, qboolean fullRestart )
 			ent->client->sess.ghost = qfalse;
 		}
 		
+		if(current_gametype.value == GT_HS){
+			ent->client->sess.mdnAttempts = 0;
+			ent->client->sess.cageAttempts = 0;
+		}
+
 		ent->client->sess.noTeamChange = qfalse;
 		ent->client->sess.roundkills = 0;
 		trap_UnlinkEntity (ent);

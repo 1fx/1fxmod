@@ -52,6 +52,8 @@ vmCvar_t    current_gametype;
 vmCvar_t	g_rpmEnt;
 vmCvar_t	g_passwordAdmins;
 vmCvar_t	g_shortCommandStyle;
+vmCvar_t	g_boxAttempts;
+vmCvar_t	g_cageAttempts;
 vmCvar_t	g_badminPass;
 vmCvar_t	g_adminPass;
 vmCvar_t	g_sadminPass;
@@ -518,6 +520,9 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_sadminPass, "g_sadminPass", "none", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_adminPassFile, "g_adminPassFile", "users/passfile.txt", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_shortCommandStyle, "g_shortCommandStyle", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
+	{ &g_boxAttempts, "g_boxAttempts", "3",	CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  }, 
+	{ &g_cageAttempts, "g_cageAttempts", "3",	CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  },
+
 #ifdef _BOE_DBG
 	// Boe!Man: Debug CVAR.
 	{ &boe_log, "boe_log", "0", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
@@ -2676,7 +2681,7 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 				}else{
 					if(level.lastseek != -1 && g_entities[level.lastseek].client && g_entities[level.lastseek].client->sess.team == TEAM_BLUE){
 						G_RealSpawnGametypeItem1 ( BG_FindGametypeItem (0), g_entities[level.lastseek].r.currentOrigin, g_entities[level.lastseek].s.angles, qtrue );
-						trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Briefcase given to round winner %s.\n\"", g_entities[level.lastseek].client->pers.netname));
+						trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Briefcase given to round winner %s: %i kills last round.\n\"", g_entities[level.lastseek].client->pers.netname, level.SeekKills));
 					}else{
 						G_RealSpawnGametypeItem1 ( BG_FindGametypeItem (0), g_entities[level.sortedClients[random]].r.currentOrigin, g_entities[level.sortedClients[random]].s.angles, qtrue );
 						trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Briefcase given at random to %s.\n\"", g_entities[level.sortedClients[random]].client->pers.netname));

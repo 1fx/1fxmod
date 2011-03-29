@@ -1858,9 +1858,20 @@ qboolean G_RadiusDamage (
 	if(current_gametype.value == GT_HS){
 		if(mod == 264){
 			if(CageOutOfBoundaries == qtrue){
-				trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7Seeker at boundary or hider caught in cage.\n\"")); 
 				ammoindex=weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_ALTERNATE].ammoIndex;
-				attacker->client->ps.ammo[ammoindex]+=1;
+				trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7Seeker at boundary or hider caught in cage.\n\"")); 
+				if(g_cageAttempts.integer != 0){
+					if(attacker->client->sess.cageAttempts < 3){
+						attacker->client->ps.ammo[ammoindex]+=1;
+						attacker->client->sess.cageAttempts += 1;
+						trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7M4 cage failed %i of %i: Seeker at boundary or hider caught in cage.\n\"", attacker->client->sess.cageAttempts, g_cageAttempts.integer)); 
+					}else{
+						trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7M4 cage failed too many times: not adding ammo.\n\"")); 
+					}
+				}else{
+					attacker->client->ps.ammo[ammoindex]+=1;
+					trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7Seeker at boundary or hider caught in cage.\n\"")); 
+				}
 			}else{
 				if(lastCaught != -1 && countCaught == 1)
 					trap_SendServerCommand(-1, va("print \"^3[H&S] ^7%s was trapped in a cage by %s\n\"", g_entities[lastCaught].client->pers.netname, attacker->client->pers.netname));
@@ -1911,8 +1922,18 @@ qboolean G_RadiusDamage (
 		if(mod == WP_MDN11_GRENADE){
 			if(NadeOutOfBoundaries == qtrue){
 				ammoindex=weaponData[WP_MDN11_GRENADE].attack[ATTACK_ALTERNATE].ammoIndex;
-				attacker->client->ps.ammo[ammoindex]+=1;
-				trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7You cannot throw a box at a person.\n\"")); 
+				if(g_boxAttempts.integer != 0){
+					if(attacker->client->sess.mdnAttempts < 3){
+						attacker->client->sess.mdnAttempts += 1;
+						attacker->client->ps.ammo[ammoindex]+=1;
+						trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7MDN box failed %i of %i: You cannot throw a box at a person.\n\"", attacker->client->sess.mdnAttempts, g_boxAttempts.integer)); 
+					}else{
+						trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7MDN box failed too many times: not adding ammo.\n\"")); 
+					}
+				}else{
+					attacker->client->ps.ammo[ammoindex]+=1;
+					trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7You cannot throw a box at a person.\n\"")); 
+				}
 			}else{
 				SpawnBox(origin);
 			}
