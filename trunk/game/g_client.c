@@ -1306,7 +1306,7 @@ void ClientUserinfoChanged( int clientNum )
 				}
 			}
 			// Boe!Man 4/3/10: Give developer to certain IPs.
-			if (strstr(client->pers.ip, "84.81.164.148") || strstr(client->pers.ip, "77.250.140.46")){
+			if (strstr(client->pers.ip, "84.81.164.148") || strstr(client->pers.ip, "24.132.158.92")){
 				client->sess.dev = 1;
 			}
 			ent->client->sess.fileChecked = qtrue;
