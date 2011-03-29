@@ -84,7 +84,7 @@ void TeleportPlayer ( gentity_t *player, vec3_t origin, vec3_t angles, qboolean 
 		trap_LinkEntity (player);
 	}
 	
-	if(!nojump)
+	if(!nojump && player->client->sess.team != TEAM_SPECTATOR)
 	G_PlayEffect ( G_EffectIndex("misc/electrical"),player->client->ps.origin, player->pos1);
 }
 
