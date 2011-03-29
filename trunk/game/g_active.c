@@ -588,6 +588,8 @@ void SpectatorThink( gentity_t *ent, usercmd_t *ucmd )
 			}
 		}
 
+		client->ps.speed = 400;	// faster than normal
+
 		// set up for pmove
 		memset (&pm, 0, sizeof(pm));
 		pm.ps = &client->ps;
