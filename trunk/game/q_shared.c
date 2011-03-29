@@ -1255,7 +1255,7 @@ void Info_SetValueForKey( char *s, const char *key, const char *value ) {
 
 	if (strlen(newi) + strlen(s) > MAX_INFO_STRING)
 	{
-		Com_Printf ("Info string length exceeded\n");
+		Com_Printf ("Q3InfoBoom crash attempt: Info string length exceeded\n");
 		return;
 	}
 
