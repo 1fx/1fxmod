@@ -26,6 +26,10 @@ TeleportPlayer
 void TeleportPlayer ( gentity_t *player, vec3_t origin, vec3_t angles, qboolean nojump) 
 {
 	gentity_t	*tent;
+	if(level.time < player->client->sess.lastTele)
+		return;
+	else
+		player->client->sess.lastTele = level.time+500;
 
 	// use temp events at source and destination to prevent the effect
 	// from getting dropped by a second player event

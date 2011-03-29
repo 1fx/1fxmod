@@ -322,9 +322,11 @@ void trigger_NewTeleporter_touch (gentity_t *self, gentity_t *other, trace_t *tr
 			return;
 		}
 	}
+	if(other->client->sess.team != TEAM_SPECTATOR && level.time > other->client->sess.lastTele){
 	G_PlayEffect ( G_EffectIndex("misc/electrical"),other->client->ps.origin, other->pos1);
 	Henk_CloseSound(self->origin_to, G_SoundIndex("sound/misc/menus/apply_changes.wav"));
 	Henk_CloseSound(self->origin_from, G_SoundIndex("sound/misc/menus/apply_changes.wav"));
+	}
 	TeleportPlayer( other, self->origin_to, self->angles_to, qfalse );
 }
 

@@ -319,6 +319,8 @@ typedef struct
 	int			mdnAttempts;
 	int			cageAttempts;
 
+	int			lastTele;
+
 	qboolean	pausespawn;
 } clientSession_t;
 
