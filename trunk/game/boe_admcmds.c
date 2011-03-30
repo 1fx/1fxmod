@@ -3246,7 +3246,11 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 			}
 			memset(name, 0, sizeof(name));
 			strncpy(name, buf+EndPos+1, (lcount-(EndPos+1))-2);
+#ifdef Q3_VM
+			strncpy(level1, buf+lcount, 1);
+#else
 			strncpy(level1, buf+(lcount-1), 1);
+#endif
 			//Com_Printf("IP: %s\n", xip);
 			//Com_Printf("Name: %s\n", name);
 			//Com_Printf("Level: %s\n", level1);
