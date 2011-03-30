@@ -321,6 +321,8 @@ typedef struct
 
 	int			lastTele;
 
+	int			timeOfDeath;
+
 	qboolean	pausespawn;
 } clientSession_t;
 

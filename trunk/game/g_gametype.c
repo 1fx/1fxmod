@@ -365,6 +365,7 @@ void G_RespawnClients ( qboolean force, team_t team, qboolean fullRestart )
 			ent->client->sess.teamkillDamage = 0;
 			ent->client->sess.teamkillForgiveTime = 0;
 			ent->client->pers.enterTime = level.time;
+			ent->client->sess.timeOfDeath = 0;
 		}
 	}
 }

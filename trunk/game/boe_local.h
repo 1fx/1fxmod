@@ -504,3 +504,4 @@ extern vmCvar_t	server_specteamprefix;
 
 void	trap_LinkEntity1( gentity_t *ent );
 void	trap_UnlinkEntity1( gentity_t *ent );
+int GetRpgWinner(void);

@@ -285,6 +285,47 @@ void DoTeleport(gentity_t *ent, vec3_t origin){
 	G_SpawnGEntityFromSpawnVars(qtrue);
 }
 
+// Henk 30/03/11 -> New RPG give away code
+int GetRpgWinner(void){
+	int i;
+	int winners = 0;
+	int clients[32];
+	int timeofdeath = 0; // time
+	int deaths = 0; // id
+	for ( i = 0; i < level.numConnectedClients; i ++ )
+	{
+		gentity_t* ent = &g_entities[level.sortedClients[i]];
+		if(ent->client->sess.team != TEAM_RED)
+			continue;
+		if(G_IsClientDead(ent->client))
+			continue;
+
+		if(ent->client->sess.timeOfDeath == 1){ // this guy really won the round
+			clients[winners] = ent->s.number;
+			winners += 1;
+		}else if(ent->client->sess.timeOfDeath == 0){ // weird case didn't die and won
+			continue;
+		}else if(ent->client->sess.timeOfDeath > 1){ // this is the time at which he died
+			if(ent->client->sess.timeOfDeath > timeofdeath){
+				timeofdeath = ent->client->sess.timeOfDeath;
+				clients[deaths] = ent->s.number;
+				deaths += 1;
+			}else if(ent->client->sess.timeOfDeath == timeofdeath){// multiple
+				// probably never happens
+			}
+		}
+	}
+
+	if(winners == 1){
+		return clients[0];
+	}else if(winners == 0 && deaths >= 1){
+		return clients[irand(0, deaths-1)];
+	}else if(winners > 1){
+		return clients[irand(0, winners-1)];
+	}
+	return -1; // fail
+}
+
 // Henk 23/01/10 -> Will strip hiders and put weapon to WP_NONE(puts their hands up).
 void StripHiders(void)
 {
@@ -300,6 +341,7 @@ void StripHiders(void)
 		if(G_IsClientDead(ent->client))
 			continue;
 
+		ent->client->sess.timeOfDeath = 1;
 		ent->client->ps.zoomFov = 0;	///if they are looking through a scope go to normal view
 		ent->client->ps.pm_flags &= ~(PMF_GOGGLES_ON|PMF_ZOOM_FLAGS);
 		ent->client->ps.stats[STAT_WEAPONS] = 0;

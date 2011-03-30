@@ -272,6 +272,9 @@ void player_die(
 	self->client->pers.statinfo.deaths++;
 	// Boe!Man 6/3/10: Fix for not showing deaths in scoreboard.
 	self->client->sess.deaths++;
+	if(current_gametype.value == GT_HS){
+		self->client->sess.timeOfDeath = level.time;
+	}
 
 	//Ryan april 22 2003
 	//If they are planted unplant them before we kill them

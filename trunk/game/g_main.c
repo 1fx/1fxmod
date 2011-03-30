@@ -2551,6 +2551,7 @@ void SetupOutfitting(void)
 	attackData_t *attack;
 	for ( i = 0; i < level.numConnectedClients; i ++ )
 	{
+		g_entities[level.sortedClients[i]].client->sess.timeOfDeath = 0;
 		g_entities[level.sortedClients[i]].client->noOutfittingChange = qfalse;
 		G_UpdateOutfitting ( g_entities[level.sortedClients[i]].s.number );
 		if(g_entities[level.sortedClients[i]].client->sess.team == TEAM_BLUE){
@@ -2586,7 +2587,7 @@ Check H&S events
 void Henk_CheckHS(void)
 {
 	int countred;
-	int i, random;
+	int i, random, rpgwinner = -1;
 	gspawn_t	*spawnPoint;
 	gentity_t	*dropped;
 
@@ -2697,24 +2698,23 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 	}
 
 	if(level.time > level.gametypeStartTime+10000 && level.messagedisplay1 == qfalse && level.gametypeStartTime >= 5000 && !strstr(level.mapname, "col9") && level.cagefight != qtrue){
-		// Boe!Man 3/20/10: Commenting out debug messages.
-		if(level.lastalive[0] != -1 && g_entities[level.lastalive[0]].client->sess.team == TEAM_RED && !G_IsClientDead(g_entities[level.lastalive[0]].client) && g_entities[level.lastalive[0]].client->pers.connected == CON_CONNECTED){
+		rpgwinner = GetRpgWinner();
+		if(rpgwinner != -1){
 			// Henk 26/01/10 -> Give RPG to player
 			// Add it here aswell //attack = &weaponData[WP_MDN11_GRENADE].attack[ATTACK_NORMAL];
-			g_entities[level.lastalive[0]].client->ps.ammo[weaponData[WP_RPG7_LAUNCHER].attack[ATTACK_NORMAL].ammoIndex]=2;
-			g_entities[level.lastalive[0]].client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_RPG7_LAUNCHER );
-			g_entities[level.lastalive[0]].client->ps.clip[ATTACK_NORMAL][WP_RPG7_LAUNCHER]=1;
-			g_entities[level.lastalive[0]].client->ps.firemode[WP_RPG7_LAUNCHER] = BG_FindFireMode ( WP_RPG7_LAUNCHER, ATTACK_NORMAL, WP_FIREMODE_AUTO );
-			g_entities[level.lastalive[0]].client->ps.weapon = WP_KNIFE;
-			g_entities[level.lastalive[0]].client->ps.weaponstate = WEAPON_READY;
-			Com_sprintf(level.RPGloc, sizeof(level.RPGloc), "%s", g_entities[level.lastalive[0]].client->pers.netname);
+			g_entities[rpgwinner].client->ps.ammo[weaponData[WP_RPG7_LAUNCHER].attack[ATTACK_NORMAL].ammoIndex]=2;
+			g_entities[rpgwinner].client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_RPG7_LAUNCHER );
+			g_entities[rpgwinner].client->ps.clip[ATTACK_NORMAL][WP_RPG7_LAUNCHER]=1;
+			g_entities[rpgwinner].client->ps.firemode[WP_RPG7_LAUNCHER] = BG_FindFireMode ( WP_RPG7_LAUNCHER, ATTACK_NORMAL, WP_FIREMODE_AUTO );
+			g_entities[rpgwinner].client->ps.weapon = WP_KNIFE;
+			g_entities[rpgwinner].client->ps.weaponstate = WEAPON_READY;
+			Com_sprintf(level.RPGloc, sizeof(level.RPGloc), "%s", g_entities[rpgwinner].client->pers.netname);
 			level.RPGent = -1;
 			level.RPGTime = 0;
-			trap_SendServerCommand(-1, va("print\"^3[H&S] ^7RPG given to round winner %s.\n\"", g_entities[level.lastalive[0]].client->pers.netname));
-			level.lastalive[0] = -1;
+			trap_SendServerCommand(-1, va("print\"^3[H&S] ^7RPG given to round winner %s.\n\"", g_entities[rpgwinner].client->pers.netname));
 			// End
 		}else{ // Henk 26/01/10 -> Drop RPG at red spawn.
-			if(TeamCount1(TEAM_RED) == 0){
+			//if(TeamCount1(TEAM_RED) == 0){
 				spawnPoint = G_SelectRandomSpawnPoint ( TEAM_BLUE );
 				dropped = G_DropItem2(spawnPoint->origin, spawnPoint->angles, BG_FindWeaponItem ( WP_RPG7_LAUNCHER ));
 				dropped->count  = 1&0xFF;
@@ -2723,7 +2723,7 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 				level.RPGTime = level.time+1000;
 				level.RPGent = dropped->s.number;
 				trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Not enough hiders connected: RPG spawned in blue base\n\""));
-			}else{
+			/*}else{
 				for(i=0;i<=200;i++){
 					random = irand(0, level.numConnectedClients);
 					if(!g_entities[level.sortedClients[random]].inuse)
@@ -2748,17 +2748,7 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 					trap_SendServerCommand(-1, va("print\"^3[H&S] ^7RPG given at random to %s.\n\"", g_entities[level.sortedClients[random]].client->pers.cleanName));
 					break;
 				}
-			}
-				/*
-			spawnPoint = G_SelectRandomSpawnPoint ( TEAM_RED );
-			dropped = G_DropItem2(spawnPoint->origin, spawnPoint->angles, BG_FindWeaponItem ( WP_RPG7_LAUNCHER ));
-			dropped->count  = 1&0xFF;
-			dropped->count += ((2<<8) & 0xFF00);
-			Com_sprintf(level.RPGloc, sizeof(level.RPGloc), "%s", "Red Spawn");
-			level.RPGTime = level.time+1000;
-			level.RPGent = dropped->s.number;
-			trap_SendServerCommand(-1, va("print\"^3[H&S] ^7RPG has spawned somewhere.\n\""));
-			*/
+			}*/
 		}
 		if( level.lastalive[1] != -1 && g_entities[level.lastalive[1]].inuse && level.lastalive[1] != level.lastalive[0] && (!g_entities[level.sortedClients[level.lastalive[1]]].client->ps.stats[STAT_WEAPONS] & ( 1 << WP_RPG7_LAUNCHER )) && g_entities[level.lastalive[1]].client && g_entities[level.lastalive[1]].client->sess.team == TEAM_RED && !G_IsClientDead(g_entities[level.lastalive[1]].client) && g_entities[level.lastalive[1]].client->pers.connected == CON_CONNECTED){ // Henkie 01/02/10 -> Fixed M4 spawn bug causing cvar update crash
 			//trap_SendServerCommand (-1, va("print\"^3[H&S] ^7Debug: M4 to %s.\n\"", g_entities[level.lastalive[1]].client->pers.cleanName ));
