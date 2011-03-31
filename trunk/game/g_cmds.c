@@ -3164,7 +3164,11 @@ void Boe_adm_f ( gentity_t *ent )
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Access denied: Invalid password!\n\""));
 			return;
 		}
+	}else if(!g_passwordAdmins.integer && !Q_stricmp(arg1, "login")){ // Boe!Man 3/31/11: Else display an alternate message, instead of the "You don't have Admin powers!" message (confusing).
+		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Access denied: No password logins allowed by the server!\n\""));
+		return;
 	}
+
 	if(!adm){
 		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Access denied: You don't have Admin powers!\n\""));
 		return;
