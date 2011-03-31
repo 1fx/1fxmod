@@ -1049,9 +1049,6 @@ void CheckGametype ( void )
 			}
 			if(current_gametype.value == GT_HS){
 				StripHiders(); 
-				if(level.teamAliveCount[TEAM_RED] >= 3){ // more then 3 alive then call the function
-					RandomRPGM4();
-				}
 			}
 			trap_GT_SendEvent ( GTEV_TIME_EXPIRED, level.time, 0, 0, 0, 0, 0 );
 			if(level.timelimithit == qtrue && (strstr(g_gametype.string, "inf") || strstr(g_gametype.string, "elim"))){

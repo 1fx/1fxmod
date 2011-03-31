@@ -232,42 +232,6 @@ void Effect (vec3_t org, char * name, qboolean rpg)
 	level.numSpawnVarChars = 0;
 }	
 
-void RandomRPGM4(void) // only called when more then 3 alive hiders so we can sort out who gets rpg and m4
-{
-	int clients[64];
-	int	numclients = 0, random, random1, i;
-		memset(clients, 0, sizeof(clients));
-	for ( i = 0; i < level.numConnectedClients; i ++ )
-	{
-		gentity_t* ent = &g_entities[level.sortedClients[i]];
-			if(ent->client->sess.team != TEAM_RED)
-				continue;
-			if(G_IsClientDead(ent->client))
-				continue;
-			if(ent->s.number < 0 || ent->s.number > 64)
-				continue;
-			clients[i] = ent->s.number;
-			numclients += 1;		
-	}
-	// here we have an array containing the alive hiders their ent index number
-
-	random = irand(0, numclients-1);
-	random1 = irand(0, numclients-1);
-	if(random1 == random){
-		for(i=0;i<=100;i++){ // do random until we have a good client
-			random1 = irand(0, numclients-1);
-			if(random1 != random){ // found different
-				break;
-			}
-		}
-	}
-	// pass their ent index numbers to level.lastalive variables
-	level.lastalive[0] = clients[random];
-	level.lastalive[1] = clients[random1];
-	Com_Printf("More then 3 hiders\nRPG to: %s\nM4 to: %s\n", g_entities[level.lastalive[0]].client->pers.cleanName, g_entities[level.lastalive[1]].client->pers.cleanName);
-	
-}
-
 void DoTeleport(gentity_t *ent, vec3_t origin){
 	vec3_t angles;
 	char *origin1;
