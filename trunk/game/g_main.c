@@ -2587,7 +2587,7 @@ Check H&S events
 void Henk_CheckHS(void)
 {
 	int countred;
-	int i, random, rpgwinner = -1;
+	int i, random, rpgwinner = -1, m4winner = -1;
 	gspawn_t	*spawnPoint;
 	gentity_t	*dropped;
 
@@ -2622,8 +2622,6 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 				}
 			}
 		}
-		Com_Printf("Log RPG: %s\nM4: %s\n", g_entities[level.lastalive[0]].client->pers.cleanName, g_entities[level.lastalive[1]].client->pers.cleanName);
-		G_LogPrintf("(2)RPG: %s\nM4: %s\n", g_entities[level.lastalive[0]].client->pers.cleanName, g_entities[level.lastalive[1]].client->pers.cleanName);
 		level.lastaliveCheck[0] = qtrue;
 	}
 	if(countred == 1 && level.lastaliveCheck[1] == qfalse){
@@ -2750,29 +2748,29 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 				}
 			}*/
 		}
-		if( level.lastalive[1] != -1 && g_entities[level.lastalive[1]].inuse && level.lastalive[1] != level.lastalive[0] && (!g_entities[level.sortedClients[level.lastalive[1]]].client->ps.stats[STAT_WEAPONS] & ( 1 << WP_RPG7_LAUNCHER )) && g_entities[level.lastalive[1]].client && g_entities[level.lastalive[1]].client->sess.team == TEAM_RED && !G_IsClientDead(g_entities[level.lastalive[1]].client) && g_entities[level.lastalive[1]].client->pers.connected == CON_CONNECTED){ // Henkie 01/02/10 -> Fixed M4 spawn bug causing cvar update crash
+		m4winner = GetM4Winner(rpgwinner);
+		if(m4winner != -1 && TeamCount1(TEAM_RED) >= 2){ // Henkie 01/02/10 -> Fixed M4 spawn bug causing cvar update crash
 			//trap_SendServerCommand (-1, va("print\"^3[H&S] ^7Debug: M4 to %s.\n\"", g_entities[level.lastalive[1]].client->pers.cleanName ));
 			// Henk 26/01/10 -> Give M4 to player
-			g_entities[level.lastalive[1]].client->ps.ammo[weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_ALTERNATE].ammoIndex]=2; // not 3 because 1 in clip
-			g_entities[level.lastalive[1]].client->ps.ammo[weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_NORMAL].ammoIndex]=2;
-			g_entities[level.lastalive[1]].client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_M4_ASSAULT_RIFLE);
-			g_entities[level.lastalive[1]].client->ps.clip[ATTACK_NORMAL][WP_M4_ASSAULT_RIFLE]=1;
+			g_entities[m4winner].client->ps.ammo[weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_ALTERNATE].ammoIndex]=2; // not 3 because 1 in clip
+			g_entities[m4winner].client->ps.ammo[weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_NORMAL].ammoIndex]=2;
+			g_entities[m4winner].client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_M4_ASSAULT_RIFLE);
+			g_entities[m4winner].client->ps.clip[ATTACK_NORMAL][WP_M4_ASSAULT_RIFLE]=1;
 			// Henk 01/02/10 -> Fix for reloading M203
-			g_entities[level.lastalive[1]].client->ps.clip[ATTACK_ALTERNATE][WP_M4_ASSAULT_RIFLE]=1;
+			g_entities[m4winner].client->ps.clip[ATTACK_ALTERNATE][WP_M4_ASSAULT_RIFLE]=1;
 			// End
-			g_entities[level.lastalive[1]].client->ps.firemode[WP_M4_ASSAULT_RIFLE] = BG_FindFireMode ( WP_M4_ASSAULT_RIFLE, ATTACK_NORMAL, WP_FIREMODE_SINGLE );
-			g_entities[level.lastalive[1]].client->ps.weapon = WP_KNIFE;
-			g_entities[level.lastalive[1]].client->ps.weaponstate = WEAPON_READY;
+			g_entities[m4winner].client->ps.firemode[WP_M4_ASSAULT_RIFLE] = BG_FindFireMode ( WP_M4_ASSAULT_RIFLE, ATTACK_NORMAL, WP_FIREMODE_SINGLE );
+			g_entities[m4winner].client->ps.weapon = WP_KNIFE;
+			g_entities[m4winner].client->ps.weaponstate = WEAPON_READY;
 			// End
-			Com_sprintf(level.M4loc, sizeof(level.M4loc), "%s", g_entities[level.lastalive[1]].client->pers.netname);
+			Com_sprintf(level.M4loc, sizeof(level.M4loc), "%s", g_entities[m4winner].client->pers.netname);
 			level.M4Time = 0;
 			level.M4ent = -1;
-			trap_SendServerCommand(-1, va("print\"^3[H&S] ^7M4 given to round winner %s.\n\"", g_entities[level.lastalive[1]].client->pers.cleanName));
-			level.lastalive[1] = -1;
+			trap_SendServerCommand(-1, va("print\"^3[H&S] ^7M4 given to round winner %s.\n\"", g_entities[m4winner].client->pers.netname));
 			// End
 		}else{ // Henk 26/01/10 -> Drop M4 at red spawn.
 			// Henk 24/02/10 -> Add randomize give away
-			if(TeamCount1(TEAM_RED) < 2){ // Henk 18/01/11 -> Fixed random when 2 players are connected
+			//if(TeamCount1(TEAM_RED) < 2){ // Henk 18/01/11 -> Fixed random when 2 players are connected
 				spawnPoint = G_SelectRandomSpawnPoint ( TEAM_BLUE );
 				dropped = G_DropItem2(spawnPoint->origin, spawnPoint->angles, BG_FindWeaponItem ( WP_M4_ASSAULT_RIFLE ));
 				dropped->count  = 1&0xFF;
@@ -2783,7 +2781,7 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 				level.M4Time = level.time+1000;
 				level.M4ent = dropped->s.number;
 				trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Not enough hiders connected: M4 spawned in blue base\n\""));
-			}else{
+			/*}else{
 				for(i=0;i<=200;i++){
 					random = irand(0, level.numConnectedClients);
 					if(!g_entities[level.sortedClients[random]].inuse)
@@ -2815,7 +2813,7 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 					trap_SendServerCommand(-1, va("print\"^3[H&S] ^7M4 given at random to %s.\n\"", g_entities[level.sortedClients[random]].client->pers.cleanName));
 					break;
 				}
-			}
+			}*/
 		}
 		level.messagedisplay1 = qtrue;
 	}

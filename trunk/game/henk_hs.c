@@ -285,6 +285,46 @@ void DoTeleport(gentity_t *ent, vec3_t origin){
 	G_SpawnGEntityFromSpawnVars(qtrue);
 }
 
+// Henk 31/03/11 -> New M4 give away code
+int GetM4Winner(int rpgwinner){
+	int i;
+	int winners = 0;
+	int clients[32];
+	int timeofdeath = 0; // time
+	int deaths = 0; // id
+	for ( i = 0; i < level.numConnectedClients; i ++ )
+	{
+		gentity_t* ent = &g_entities[level.sortedClients[i]];
+		if(ent->client->sess.team != TEAM_RED)
+			continue;
+		if(G_IsClientDead(ent->client))
+			continue;
+
+		if(ent->client->sess.timeOfDeath == 1 && ent->s.number != rpgwinner){ // this guy really won the round
+			clients[winners] = ent->s.number;
+			winners += 1;
+		}else if(ent->client->sess.timeOfDeath == 0){ // weird case didn't die and won
+			continue;
+		}else if(ent->client->sess.timeOfDeath > 1){ // this is the time at which he died
+			if(ent->client->sess.timeOfDeath > timeofdeath && ent->s.number != rpgwinner){
+				timeofdeath = ent->client->sess.timeOfDeath;
+				clients[deaths] = ent->s.number;
+				deaths += 1;
+			}else if(ent->client->sess.timeOfDeath == timeofdeath){// multiple
+				// probably never happens
+			}
+		}
+	}
+	if(winners == 1){
+		return clients[0];
+	}else if(winners == 0 && deaths >= 1){
+		return clients[irand(0, deaths-1)];
+	}else if(winners > 1){
+		return clients[irand(0, winners-1)];
+	}
+	return -1; // fail
+}
+
 // Henk 30/03/11 -> New RPG give away code
 int GetRpgWinner(void){
 	int i;
