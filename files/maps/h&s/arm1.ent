@@ -705,11 +705,6 @@
 "soundSet" "small_clock"
 }
 {
-"classname" "target_speaker"
-"origin" "-384 -1552 72"
-"soundSet" "rain_metal"
-}
-{
 "classname" "target_location"
 "message" "Blue Spawn"
 "origin" "264 -2168 176"
