@@ -1473,8 +1473,8 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 	fileHandle_t	f;
 	int len, CurrentLine = 0, StartPos = 0, EndPos = -1, i;
 	qboolean begin = qtrue;
-	char buf[15000];
-	char newbuf[15000];
+	char buf[10000];
+	char newbuf[10000];
 	char asd[128] = "";
 	char last[128] = "", lastip[64] = "";
 	char fileName[128];
@@ -1486,8 +1486,14 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 	memset( lastip, 0, sizeof(lastip) );
 	memset( fileName, 0, sizeof(fileName) );
 	len = trap_FS_FOpenFile( file, &f, FS_READ_TEXT);
-	if(!f)
+	if(!f){
+		Com_Printf("Error while opening %s\n", file);
 		return;
+	}
+	if(len >= 9999){
+		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Banlist is too large.\n\""));
+		return;
+	}
 	trap_FS_Read( buf, len, f );
 	buf[len] = '\0';
 	trap_FS_FCloseFile( f );
@@ -1498,11 +1504,11 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 			if(line != CurrentLine){
 			strncpy(asd, buf+StartPos, EndPos);
 			// Boe!Man 1/24/11: Fixed compiling errors using sprintf.
-#ifdef Q3_VM
-			Com_sprintf(newbuf, sizeof(newbuf), va("%s%s", newbuf, asd));
-#else
-			sprintf(newbuf, "%s%s", newbuf, asd);
-#endif
+//#ifdef Q3_VM
+			Com_sprintf(newbuf, sizeof(newbuf), "%s%s", newbuf, asd);
+//#else
+	//		sprintf(newbuf, "%s%s", newbuf, asd);
+//#endif
 			
 			}else{
 				strncpy(last, buf+StartPos, EndPos-StartPos); 
@@ -1518,6 +1524,7 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 			CurrentLine += 1; // current line
 		}
 		if(buf[i] == '\n'){ // Last line doesn't have an enter
+			Com_Printf("Found a line\n");
 			EndPos = i;
 			begin = qtrue;
 		}
@@ -1525,11 +1532,11 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 			if(line != CurrentLine){
 			strncpy(asd, buf+StartPos, EndPos-StartPos); 
 			// Boe!Man 1/24/11: Fixed compiling errors using sprintf.
-#ifdef Q3_VM
-			Com_sprintf(newbuf, sizeof(newbuf), va("%s%s\n", newbuf, asd));
-#else
-			sprintf(newbuf, "%s%s\n", newbuf, asd);
-#endif
+//#ifdef Q3_VM
+			Com_sprintf(newbuf, sizeof(newbuf), "%s%s\n", newbuf, asd);
+//#else
+			//sprintf(newbuf, "%s%s\n", newbuf, asd);
+//#endif
 			}else{
 				done = qtrue;
 				strncpy(last, buf+StartPos, EndPos-StartPos); 
@@ -1569,12 +1576,12 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 			if(ent && ent->client)
 				Boe_adminLog ("Subnet Unban", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), va("%s", last));
 			else 
-				Boe_adminLog ("Subnet Unban", va("RCON"), va("%s", last));
+				Boe_adminLog ("Subnet Unban", "RCON", va("%s", last));
 		}else{
 			if(ent && ent->client)
 				Boe_adminLog ("Unban", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), va("%s", last));
 			else 
-				Boe_adminLog ("Unban", va("RCON"), va("%s", last));
+				Boe_adminLog ("Unban", "RCON", va("%s", last));
 		}
 		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7%s has been Unbanned.\n\"", last));
 	//return qtrue;
