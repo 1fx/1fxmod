@@ -1148,7 +1148,7 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 					strcpy(ip, xip);
 					strcpy(reason, "");
 					strcpy(by, "");
-					Com_Printf("Not opening because file is too small.\n");
+					//Com_Printf("Not opening because file is too small.\n");
 				}
 				trap_FS_FCloseFile(f);
 			}else{

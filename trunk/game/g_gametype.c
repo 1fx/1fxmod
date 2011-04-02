@@ -606,6 +606,12 @@ void G_ResetGametype ( qboolean fullRestart )
 		Com_sprintf(level.M4loc, sizeof(level.M4loc), "%s", "Not given yet");
 		Com_sprintf(level.RPGloc, sizeof(level.RPGloc), "%s", "Not given yet");
 		Com_sprintf(level.MM1loc, sizeof(level.MM1loc), "%s", "Not given yet");
+		memset(level.firstname, 0, sizeof(level.firstname));
+		memset(level.secondname, 0, sizeof(level.secondname));
+		memset(level.thirdname, 0, sizeof(level.thirdname));
+		level.firstscore = 0;
+		level.secondscore = 0;
+		level.thirdscore = 0;
 		if(TeamCount1(TEAM_RED) == 0){
 			level.lastalive[0] = -1;
 			level.lastalive[1] = -1;

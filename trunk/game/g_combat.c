@@ -1089,7 +1089,7 @@ int G_Damage (
 					Com_sprintf(level.MM1loc, sizeof(level.MM1loc), "%s", attacker->client->pers.netname);
 					level.MM1ent = -1;
 					level.MM1Time = 0;
-					trap_SendServerCommand(-1, va("print\"^3[H&S] First Blood: ^7%s ^7has taken the MM1\n\"", attacker->client->pers.netname));
+					trap_SendServerCommand(-1, va("print\"^3[H&S] ^7First Blood: %s ^7has taken the MM1\n\"", attacker->client->pers.netname));
 					trap_SendServerCommand(attacker->s.number, va("cp \"@^7You now have the MM1.\n\""));
 					level.MM1given = qtrue; // only once each round :)
 				}

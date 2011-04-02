@@ -24,6 +24,8 @@ int Henk_GetScore (void)
 	char			*file;
 	int number = 0, highestscore = 0;
 	char			mapname[64];
+	char			strScore[12];
+	int i;
 	struct {
 		char	name[64];
 		int		score;
@@ -67,14 +69,17 @@ int Henk_GetScore (void)
 
 		*listP = '\0';
 		listP = listName;			
-			for(count=0;count<=100;count++){ // FIX ME HENK
-				if(strstr(listName, va(":%i", count))){
-				Scores[number].score = count;
-				Q_strncpyz(Scores[number].name, listName, strlen(listName)-strlen(va("%i", count)));
-				Com_Printf("Found score -> name: %s -> score -> %i\n", Scores[number].name, Scores[number].score);
-				}
-			}		
-			number += 1;
+		Com_Printf("listName: %s\n", listName);
+		for(i=0;i<strlen(listName);i++){
+			if(listName[i] == ':'){
+				Q_strncpyz(Scores[number].name, listName, i+1);
+				Q_strncpyz(strScore, (listName+i)+1, strlen(listName)-i);
+				//Com_Printf("%s - %i\n", strScore, strlen(listName)-i);
+			}
+		}
+		Scores[number].score = atoi(strScore);
+		Com_Printf("Found score -> name: %s -> score -> %i\n", Scores[number].name, Scores[number].score);	
+		number += 1;
 			
 		while(*bufP == '\n') {
 			bufP++;
@@ -114,22 +119,23 @@ void UpdateScores(void)
 {
 	int i;
 	char mapname[64];
-	char *file;
+	char filename[128];
 	int oldscore = 0;
 	char *SearchStr;
 	trap_Cvar_VariableStringBuffer ( "mapname", mapname, MAX_QPATH );
-	file = va("scores/h_%s.scores", mapname);
-	Com_Printf("Score file: %s\n", file);
 	for ( i = 0; i < level.numConnectedClients; i ++ )
 	{
 		gentity_t* ent = &g_entities[level.sortedClients[i]];
-		if(ent->client->sess.team == TEAM_RED){
-		oldscore = Boe_NameListCheck ( 0, ent->client->pers.cleanName, file, NULL, qfalse, qfalse, qfalse, qtrue, qfalse);
-		file = va("scores/h_%s.scores", mapname);
-		Boe_Remove_from_list(ent->client->pers.cleanName, file, "Score", NULL, qfalse, qfalse, qtrue);
-		SearchStr = va("%s:%i", ent->client->pers.cleanName, oldscore+ent->client->sess.kills);
-		Com_Printf("New string: %s\n", SearchStr);
-		Boe_AddToList(SearchStr, file, "Score", NULL);
+		if(ent->client->sess.team != TEAM_SPECTATOR){
+			if(ent->client->sess.team == TEAM_RED)
+				strcpy(filename, va("scores/h_%s.scores", mapname));
+			else if(ent->client->sess.team == TEAM_BLUE)
+				strcpy(filename, va("scores/s_%s.scores", mapname));
+			oldscore = Boe_NameListCheck ( 0, Q_strlwr(ent->client->pers.cleanName), filename, NULL, qfalse, qfalse, qfalse, qtrue, qfalse);
+			Boe_Remove_from_list(Q_strlwr(ent->client->pers.cleanName), filename, "Score", NULL, qfalse, qfalse, qtrue);
+			SearchStr = va("%s:%i", Q_strlwr(ent->client->pers.cleanName), oldscore+ent->client->sess.kills);
+			Com_Printf("New string: %s\n", SearchStr);
+			Boe_AddToList(SearchStr, filename, "Score", NULL);
 		}
 	}
 	Henk_GetScore();
