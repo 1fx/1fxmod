@@ -3377,6 +3377,7 @@ static void PM_CheckLean( void )
 		// since we're moving the camera over
 		// check that move
 		VectorMA( start, leanDir * LEAN_OFFSET * 1.25f, right, end );
+		if(pm->trace)
 		pm->trace(&trace, start, mins, maxs, end, pm->ps->clientNum, pm->tracemask );
 
 		if ( trace.fraction < 0 || trace.fraction >= 1.0f )

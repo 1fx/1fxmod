@@ -8,7 +8,7 @@ void ShowScores(void)
 	for ( i = 0; i < level.numConnectedClients; i ++ )
 	{
 	trap_SendServerCommand( g_entities[level.sortedClients[i]].s.number, va("cp \"@^3%s\n\n^_ THE 3 BEST HIDERS IN THIS MAP ARE:\n\n^31st ^7%s with ^3%i ^7wins.\n^+2nd ^7%s with ^+%i ^7wins.\n^@3rd ^7%s with ^@%i ^7wins.\n\n"
-		"^y THE 3 BEST SEEKERS IN THIS MAP ARE:\n\n^31st ^7%s with ^3%i ^7wins.\n^+2nd ^7%s with ^+%i ^7wins.\n^@3rd ^7%s with ^@%i ^7wins.\n\"",
+		"^y THE 3 BEST SEEKERS IN THIS MAP ARE:\n\n^31st ^7%s with ^3%i ^7kills.\n^+2nd ^7%s with ^+%i ^7kills.\n^@3rd ^7%s with ^@%i ^7kills.\n\"",
 				g_motd.string,
 				level.firstname, level.firstscore, level.secondname, level.secondscore, level.thirdname, level.thirdscore,
 				level.Sfirstname, level.Sfirstscore, level.Ssecondname, level.Ssecondscore, level.Sthirdname, level.Sthirdscore));
@@ -171,6 +171,8 @@ void UpdateScores(void)
 	for ( i = 0; i < level.numConnectedClients; i ++ )
 	{
 		gentity_t* ent = &g_entities[level.sortedClients[i]];
+		if(ent->client->sess.kills == 0)
+			continue;
 		if(ent->client->sess.team != TEAM_SPECTATOR){
 			if(ent->client->sess.team == TEAM_RED)
 				strcpy(filename, va("scores/h_%s.scores", mapname));

@@ -2972,7 +2972,7 @@ void G_RunFrame( int levelTime )
 			// End
 
 			// Henk 21/01/10 -> Check for dead seekers
-			if(G_IsClientDead(ent->client) == qtrue && level.cagefight == qfalse){
+			if(G_IsClientDead(ent->client) == qtrue && level.cagefight == qfalse && level.cagefightdone != qtrue){
 				if(ent->client->sess.team == TEAM_BLUE || (level.time < level.gametypeStartTime+30000 && ent->client->sess.team == TEAM_RED)){
 					// If the client is a ghost then revert them
 					if ( ent->client->sess.ghost )

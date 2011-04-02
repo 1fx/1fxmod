@@ -591,6 +591,7 @@ void G_ResetGametype ( qboolean fullRestart )
 
 	if(current_gametype.value == GT_HS){
 		// Henk 19/01/10 -> Reset level variables
+		level.cagefightdone = qfalse;
 		level.lastaliveCheck[0] = qfalse;
 		level.lastaliveCheck[1] = qfalse;
 		level.messagedisplay = qfalse;
@@ -1039,6 +1040,7 @@ void CheckGametype ( void )
 			UpdateScores();
 			level.timelimithit = qfalse;
 			level.cagefight = qfalse;
+			level.cagefightdone = qtrue;
 			LogExit( "Someone has won the cagefight" );
 			return;
 		}

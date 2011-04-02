@@ -739,6 +739,7 @@ typedef struct
 	vec3_t		hideseek_cage;
 	qboolean	autoremove;
 	qboolean	cagefight;
+	qboolean	cagefightdone;
 	qboolean	custom;
 	char		action[512];
 	int			customtime;

@@ -40,7 +40,7 @@ int TiedPlayers(void){
 void InitCagefight(void){
 	int i, count = 0;
 	vec3_t spawns[33];
-
+	vec3_t angles;
 	if(level.time < level.cagefighttimer){
 		return;
 	}
@@ -58,16 +58,55 @@ void InitCagefight(void){
 	spawns[2][1] += 105;
 	spawns[3][0] += 105;
 	spawns[3][1] -= 105;
-	spawns[4][0] += 105;
-	spawns[4][1] -= 75;
+	spawns[4][0] += 105; // fifth spawn
+	spawns[4][1] -= 0;
 	spawns[5][0] -= 105;
-	spawns[5][1] += 75;
-	spawns[6][0] -= 75;
-	spawns[6][1] += 75;
+	spawns[5][1] += 0;
+	spawns[6][0] -= 0;
+	spawns[6][1] += 105;
+	spawns[7][0] += 0;
+	spawns[7][1] -= 105;
+	spawns[8][0] += 105; // ninth spawn
+	spawns[8][1] -= 50;
+	spawns[9][0] -= 105;
+	spawns[9][1] += 50;
+	spawns[10][0] -= 50;
+	spawns[10][1] += 105;
+	spawns[11][0] += 50;
+	spawns[11][1] -= 105;
+	spawns[12][0] -= 50;
+	spawns[12][1] -= 105;
+	spawns[13][0] += 50;
+	spawns[13][1] += 105;
+	spawns[14][0] -= 105;
+	spawns[14][1] -= 50;
+	spawns[15][0] += 105;
+	spawns[15][1] += 50;
+	spawns[16][0] += 50;
+	spawns[16][1] -= 50;
+	spawns[17][0] += 50;
+	spawns[17][1] += 50;
+	spawns[18][0] -= 50;
+	spawns[18][1] += 50;
+	spawns[19][0] -= 50;
+	spawns[19][1] -= 50;
+
+	spawns[20][0] += 0;
+	spawns[20][1] -= 50;
+	spawns[21][0] += 50;
+	spawns[21][1] += 0;
+	spawns[22][0] -= 0;
+	spawns[22][1] += 50;
+	spawns[23][0] -= 50;
+	spawns[23][1] -= 0;
+	spawns[24][0] -= 0;
+	spawns[24][1] -= 0;
+
 	level.cagefight = qtrue;
 	level.messagedisplay = qtrue; // stop Seeker Released
 	level.messagedisplay1 = qtrue; // stop RPG/M4 stuff
 	SpawnCage(level.hideseek_cage, NULL, qtrue);
+	SpawnCage(level.hideseek_cage, NULL, qtrue); // 2 to be sure no parts are missing
 	for(i=0;i<level.numConnectedClients;i++){
 		if(g_entities[level.sortedClients[i]].client->sess.team == TEAM_RED){
 			//respawn ( &g_entities[level.sortedClients[i]] );
@@ -78,6 +117,7 @@ void InitCagefight(void){
 			memset ( g_entities[level.sortedClients[i]].client->ps.clip, 0, sizeof(g_entities[level.sortedClients[i]].client->ps.clip) );
 			//g_entities[level.lastalive[0]].client->ps.ammo[weaponData[WP_RPG7_LAUNCHER].attack[ATTACK_NORMAL].ammoIndex]=2;
 			g_entities[level.sortedClients[i]].client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_KNIFE );
+			g_entities[level.sortedClients[i]].client->ps.clip[ATTACK_NORMAL][WP_KNIFE]=1;
 			g_entities[level.sortedClients[i]].client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_AK74_ASSAULT_RIFLE );
 			//g_entities[level.lastalive[0]].client->ps.clip[ATTACK_NORMAL][WP_RPG7_LAUNCHER]=1;
 			//g_entities[level.lastalive[0]].client->ps.firemode[WP_RPG7_LAUNCHER] = BG_FindFireMode ( WP_RPG7_LAUNCHER, ATTACK_NORMAL, WP_FIREMODE_AUTO );
@@ -86,7 +126,7 @@ void InitCagefight(void){
 			g_entities[level.sortedClients[i]].client->ps.weaponTime = 0;
 			g_entities[level.sortedClients[i]].client->ps.weaponAnimTime = 0;
 			g_entities[level.sortedClients[i]].client->ps.stats[STAT_FROZEN] = 10000;
-		}else{
+		}else if(g_entities[level.sortedClients[i]].client->sess.team == TEAM_BLUE){
 			G_Damage (&g_entities[level.sortedClients[i]], NULL, NULL, NULL, NULL, 10000, 0, MOD_POP, HL_HEAD|HL_FOOT_RT|HL_FOOT_LT|HL_LEG_UPPER_RT|HL_LEG_UPPER_LT|HL_HAND_RT|HL_HAND_LT|HL_WAIST|HL_CHEST|HL_NECK);
 		}
 	}
