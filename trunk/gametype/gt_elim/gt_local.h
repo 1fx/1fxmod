@@ -10,6 +10,9 @@ typedef struct gametypeLocals_s
 {
 	int		time;
 
+	// Boe!Man 4/2/11
+	int		captureSound;
+
 } gametypeLocals_t;
 
 extern	gametypeLocals_t	gametype;

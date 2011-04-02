@@ -114,6 +114,9 @@ void GT_Init ( void )
 {
 	memset ( &gametype, 0, sizeof(gametype) );
 
+	// Boe!Man 4/2/11: Register the global sounds.
+	gametype.captureSound = trap_Cmd_RegisterGlobalSound ( "sound/ctf_win.mp3" );
+
 	// Register all cvars for this gametype
 	GT_RegisterCvars ( );
 }
@@ -164,6 +167,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 					trap_Cmd_TextMessage ( -1, va("@%s ^7team %se%sl%si%sm%si%snated!", msg, color1, color2, color3, color4, color5, color6 )); // red team eliminated
 					trap_Cmd_TextMessage( -1, va("^3[ELIM] ^7Red team eliminated\n\""));
 					trap_Cmd_AddTeamScore ( TEAM_BLUE, 1 );
+					trap_Cmd_StartGlobalSound ( gametype.captureSound );
 					trap_Cmd_Restart ( 5 );
 					break;
 
@@ -178,6 +182,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 					trap_Cmd_TextMessage ( -1, va("@%s ^7team %se%sl%si%sm%si%snated!", msg, color1, color2, color3, color4, color5, color6 )); // blue team eliminated
 					trap_Cmd_TextMessage( -1, va("^3[ELIM] ^7Blue team eliminated\n\""));
 					trap_Cmd_AddTeamScore ( TEAM_RED, 1 );
+					trap_Cmd_StartGlobalSound ( gametype.captureSound );
 					trap_Cmd_Restart ( 5 );
 					break;
 			}

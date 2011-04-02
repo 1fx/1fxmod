@@ -3140,25 +3140,27 @@ void Boe_adm_f ( gentity_t *ent )
 	trap_Argv( 2, arg2, sizeof( arg2 ) );
 	
 	adm = ent->client->sess.admin;
-	if(g_passwordAdmins.integer && !Q_stricmp(arg1, "login")){ // only check if its enabled
-		if(!Q_stricmp(arg2, "none")){ // no password set so deny access.
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Access denied: Default password can't be used!\n\""));
-			return;
-		}else if(!Q_stricmp(arg2, g_adminPass.string) || !Q_stricmp(arg2, g_sadminPass.string) || !Q_stricmp(arg2, g_badminPass.string)){ // good password, now check if he's in admin list
-			if(CheckPasswordList(ent, arg2)){
-				// got admin message
+	if(!Q_stricmp(arg1, "login")){ // Boe!Man 4/3/11: Very small optimize.
+		if(g_passwordAdmins.integer){ // only check if its enabled
+			if(!Q_stricmp(arg2, "none")){ // no password set so deny access.
+				trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Access denied: Default password can't be used!\n\""));
 				return;
-			}else{
+			}else if(!Q_stricmp(arg2, g_adminPass.string) || !Q_stricmp(arg2, g_sadminPass.string) || !Q_stricmp(arg2, g_badminPass.string)){ // good password, now check if he's in admin list
+				if(CheckPasswordList(ent, arg2)){
+					// got admin message
+					return;
+				}else{
+					trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Access denied: Invalid password!\n\""));
+					return;
+				}
+			}else{ // wrong password
 				trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Access denied: Invalid password!\n\""));
 				return;
 			}
-		}else{ // wrong password
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Access denied: Invalid password!\n\""));
+		}else if(!g_passwordAdmins.integer){ // Boe!Man 3/31/11: Else display an alternate message, instead of the "You don't have Admin powers!" message (confusing).
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Access denied: No password logins allowed by the server!\n\""));
 			return;
 		}
-	}else if(!g_passwordAdmins.integer && !Q_stricmp(arg1, "login")){ // Boe!Man 3/31/11: Else display an alternate message, instead of the "You don't have Admin powers!" message (confusing).
-		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Access denied: No password logins allowed by the server!\n\""));
-		return;
 	}
 
 	if(!adm){

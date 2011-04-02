@@ -127,9 +127,9 @@ void GT_Init ( void )
 	GT_RegisterCvars ( );
 
 	// Register the global sounds
-	gametype.caseTakenSound   = trap_Cmd_RegisterGlobalSound ( "sound/ctf_flag.mp3" );
+	//gametype.caseTakenSound   = trap_Cmd_RegisterGlobalSound ( "sound/ctf_flag.mp3" );
 	gametype.caseCaptureSound = trap_Cmd_RegisterGlobalSound ( "sound/ctf_win.mp3" );
-	gametype.caseReturnSound  = trap_Cmd_RegisterGlobalSound ( "sound/ctf_return.mp3" );
+	//gametype.caseReturnSound  = trap_Cmd_RegisterGlobalSound ( "sound/ctf_return.mp3" );
 
 	// Register the items
 	memset ( &itemDef, 0, sizeof(itemDef) );
@@ -206,6 +206,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 					trap_Cvar_VariableStringBuffer ( "server_color6", color6, 4 );*/
 					trap_Cmd_TextMessage ( -1, va("@%s ^7won!", msg )); // Seekers won
 					trap_Cmd_TextMessage( -1, va("^3[H&S] ^7Seekers won the match\n\""));
+					trap_Cmd_StartGlobalSound ( gametype.caseCaptureSound );
 					trap_Cmd_AddTeamScore ( TEAM_BLUE, 1 );
 					trap_Cmd_Restart ( 5 );
 					break;
@@ -232,6 +233,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 			trap_Cmd_TextMessage ( -1, va("@%s ^7won!", msg )); // Defended, thus Hiders won
 			trap_Cmd_TextMessage( -1, va("^3[H&S] ^7Hiders won the match\n\""));
 			trap_Cmd_AddTeamScore ( TEAM_RED, 1 );
+			trap_Cmd_StartGlobalSound ( gametype.caseCaptureSound );
 			trap_Cmd_Restart ( 5 );
 			break;
 

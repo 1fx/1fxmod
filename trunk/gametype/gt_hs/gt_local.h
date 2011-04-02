@@ -10,9 +10,9 @@ typedef struct gametypeLocals_s
 {
 	int		time;
 
-	int		caseTakenSound;
+	//int		caseTakenSound;
 	int		caseCaptureSound;
-	int		caseReturnSound;
+	//int		caseReturnSound;
 
 } gametypeLocals_t;
 
