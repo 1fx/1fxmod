@@ -338,6 +338,22 @@ int GetM4Winner(int rpgwinner){
 	}else if(winners > 1){
 		return clients[irand(0, winners-1)];
 	}
+
+	winners = 0;
+	if(TeamCount1(TEAM_RED) <= 2){
+		for ( i = 0; i < level.numConnectedClients; i ++ )
+		{
+			gentity_t* ent = &g_entities[level.sortedClients[i]];
+			if(ent->client->sess.team != TEAM_RED)
+				continue;
+			if(ent->s.number == rpgwinner)
+				continue;
+			clients[winners] = ent->s.number;
+			winners += 1;
+		}
+		return clients[irand(0, winners-1)];
+	}
+
 	return -1; // fail
 }
 
@@ -377,6 +393,18 @@ int GetRpgWinner(void){
 	}else if(winners == 0 && deaths >= 1){
 		return clients[irand(0, deaths-1)];
 	}else if(winners > 1){
+		return clients[irand(0, winners-1)];
+	}
+	winners = 0;
+	if(TeamCount1(TEAM_RED) <= 2){
+		for ( i = 0; i < level.numConnectedClients; i ++ )
+		{
+			gentity_t* ent = &g_entities[level.sortedClients[i]];
+			if(ent->client->sess.team != TEAM_RED)
+				continue;
+			clients[winners] = ent->s.number;
+			winners += 1;
+		}
 		return clients[irand(0, winners-1)];
 	}
 	return -1; // fail
