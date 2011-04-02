@@ -720,6 +720,13 @@ typedef struct
 	int			firstscore;
 	int			secondscore;
 	int			thirdscore;
+	// Henk 02/03/10 -> Top 3 seekers
+	char		Sfirstname[64];
+	char		Ssecondname[64];
+	char		Sthirdname[64];
+	int			Sfirstscore;
+	int			Ssecondscore;
+	int			Sthirdscore;
 
 	// Henk 22/02/10 -> Removes seeker released lag
 	int			clicksound;

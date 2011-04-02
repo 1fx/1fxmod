@@ -7,13 +7,15 @@ void ShowScores(void)
 	int i;
 	for ( i = 0; i < level.numConnectedClients; i ++ )
 	{
-	trap_SendServerCommand( g_entities[level.sortedClients[i]].s.number, va("cp \"@^3%s\n\n^_ THE 3 BEST HIDERS IN THIS MAP ARE:\n\n^31st ^7%s with ^3%i ^7wins.\n^+2nd ^7%s with ^+%i ^7wins.\n^@3rd ^7%s with ^@%i ^7wins.\n\"",
+	trap_SendServerCommand( g_entities[level.sortedClients[i]].s.number, va("cp \"@^3%s\n\n^_ THE 3 BEST HIDERS IN THIS MAP ARE:\n\n^31st ^7%s with ^3%i ^7wins.\n^+2nd ^7%s with ^+%i ^7wins.\n^@3rd ^7%s with ^@%i ^7wins.\n\n"
+		"^y THE 3 BEST SEEKERS IN THIS MAP ARE:\n\n^31st ^7%s with ^3%i ^7wins.\n^+2nd ^7%s with ^+%i ^7wins.\n^@3rd ^7%s with ^@%i ^7wins.\n\"",
 				g_motd.string,
-				level.firstname, level.firstscore, level.secondname, level.secondscore, level.thirdname, level.thirdscore));
+				level.firstname, level.firstscore, level.secondname, level.secondscore, level.thirdname, level.thirdscore,
+				level.Sfirstname, level.Sfirstscore, level.Ssecondname, level.Ssecondscore, level.Sthirdname, level.Sthirdscore));
 	}
 }
 
-int Henk_GetScore (void)
+int Henk_GetScore (qboolean seekers)
 {
 	int             len;
 	fileHandle_t	f;
@@ -32,7 +34,10 @@ int Henk_GetScore (void)
 	} Scores[128];
 	int count;
 	trap_Cvar_VariableStringBuffer ( "mapname", mapname, MAX_QPATH );
-	file = va("scores/h_%s.scores", mapname);
+	if(seekers)
+		file = va("scores/s_%s.scores", mapname);
+	else
+		file = va("scores/h_%s.scores", mapname);
 	len = trap_FS_FOpenFile( file, &f, FS_READ_TEXT); 
 
 	if (!f) { 
@@ -85,31 +90,71 @@ int Henk_GetScore (void)
 			bufP++;
 		}
 	}	
-	// start parsing top 3
+	// start parsing top 3 hiders
 	for(count=0;count<number;count++){
 		if(Scores[count].score >= highestscore){
-			strcpy(level.firstname, Scores[count].name);
-			level.firstscore = Scores[count].score;
+			if(seekers){
+				strcpy(level.Sfirstname, Scores[count].name);
+				level.Sfirstscore = Scores[count].score;
+			}else{
+				strcpy(level.firstname, Scores[count].name);
+				level.firstscore = Scores[count].score;
+			}
 			highestscore = Scores[count].score;
 		}
 	}
 	highestscore = 0;
 	for(count=0;count<number;count++){
-		if(Scores[count].score >= highestscore && !strstr(Scores[count].name, level.firstname)){
-			strcpy(level.secondname, Scores[count].name);
-			level.secondscore = Scores[count].score;
-			highestscore = Scores[count].score;
+		if(seekers){
+			if(Scores[count].score >= highestscore && !strstr(Scores[count].name, level.Sfirstname)){
+				strcpy(level.Ssecondname, Scores[count].name);
+				level.Ssecondscore = Scores[count].score;
+				highestscore = Scores[count].score;
+			}
+		}else{
+			if(Scores[count].score >= highestscore && !strstr(Scores[count].name, level.firstname)){
+				strcpy(level.secondname, Scores[count].name);
+				level.secondscore = Scores[count].score;
+				highestscore = Scores[count].score;
+			}
 		}
 	}
 	highestscore = 0;
 	for(count=0;count<number;count++){
-		if(Scores[count].score >= highestscore && !strstr(Scores[count].name, level.secondname) && !strstr(Scores[count].name, level.firstname)){
-			strcpy(level.thirdname, Scores[count].name);
-			level.thirdscore = Scores[count].score;
-			highestscore = Scores[count].score;
+		if(seekers){
+			if(Scores[count].score >= highestscore && !strstr(Scores[count].name, level.Ssecondname) && !strstr(Scores[count].name, level.Sfirstname)){
+				strcpy(level.Sthirdname, Scores[count].name);
+				level.Sthirdscore = Scores[count].score;
+				highestscore = Scores[count].score;
+			}
+		}else{
+			if(Scores[count].score >= highestscore && !strstr(Scores[count].name, level.secondname) && !strstr(Scores[count].name, level.firstname)){
+				strcpy(level.thirdname, Scores[count].name);
+				level.thirdscore = Scores[count].score;
+				highestscore = Scores[count].score;
+			}
 		}
 	}
-	Com_Printf("Top 3\n%s\n%s\n%s\n", level.firstname, level.secondname, level.thirdname);
+	if(strlen(level.firstname) < 1){
+		strcpy(level.firstname, "none");
+	}
+	if(strlen(level.secondname) < 1){
+		strcpy(level.secondname, "none");
+	}
+	if(strlen(level.thirdname) < 1){
+		strcpy(level.thirdname, "none");
+	}
+	if(strlen(level.Sfirstname) < 1){
+		strcpy(level.Sfirstname, "none");
+	}
+	if(strlen(level.Ssecondname) < 1){
+		strcpy(level.Ssecondname, "none");
+	}
+	if(strlen(level.Sthirdname) < 1){
+		strcpy(level.Sthirdname, "none");
+	}
+	Com_Printf("Top 3 Hiders\n%s\n%s\n%s\n", level.firstname, level.secondname, level.thirdname);
+	Com_Printf("Top 3 Seekers\n%s\n%s\n%s\n", level.Sfirstname, level.Ssecondname, level.Sthirdname);
 	// end
 
 	return 0;
@@ -138,7 +183,8 @@ void UpdateScores(void)
 			Boe_AddToList(SearchStr, filename, "Score", NULL);
 		}
 	}
-	Henk_GetScore();
+	Henk_GetScore(qfalse);
+	Henk_GetScore(qtrue);
 }
 
 // 14/01/10: Custom commands by Henk

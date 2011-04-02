@@ -439,7 +439,7 @@ void	Effect(vec3_t org, char *name, qboolean rpg);
 // Henk 20/02/10 -> Add UpdateScores()
 void	UpdateScores(void);
 void	ShowScores(void);
-int		Henk_GetScore(void);
+int		Henk_GetScore(qboolean seekers);
 
 char	*vtocs( const vec3_t v );
 
