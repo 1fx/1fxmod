@@ -82,6 +82,7 @@ static admCmd_t AdminCommands[] =
 	{"!ro","runover", &g_runover.integer, &Boe_Runover},
 	{"!rs","respawn", &g_respawn.integer, &Boe_Respawn}, // this is how we add synonyms
 	{"!mr","maprestart", &g_mapswitch.integer, &Boe_MapRestart},
+	{"!mr","map_restart", &g_mapswitch.integer, &Boe_MapRestart},
 	{"!map","map", &g_mapswitch.integer, &Henk_Map},
 	{"!um","unmute", &g_mute.integer, &Boe_UnMute},
 	{"!st","strip", &g_strip.integer, &Boe_Strip},
@@ -3386,9 +3387,11 @@ qboolean ConsoleCommand( void )
 	char cmd[MAX_TOKEN_CHARS];
 	int i;
 	char arg1[64];
+	char arg2[64];
 
 	trap_Argv( 0, cmd, sizeof( cmd ) );
 	trap_Argv( 1, arg1, sizeof( arg1 ) );
+	trap_Argv( 2, arg2, sizeof( arg2 ) );
 	for(i=0;i<AdminCommandsSize;i++){ // Henk 15/09/10 -> Fixed loop going outside array(causing crashes)
 		//Com_Printf("Checking %s with %s\n", arg1, AdminCommands[i].adminCmd);
 		if(!Q_stricmp(cmd, AdminCommands[i].adminCmd)){
@@ -3399,6 +3402,10 @@ qboolean ConsoleCommand( void )
 
 	if ( Q_stricmp (cmd, "altmap") == 0 )
 	{
+		if(strstr(arg2, "ctf") || strstr(arg2, "inf") || strstr(arg2, "tdm") || strstr(arg2, "dm") || strstr(arg2, "elim") || strstr(arg2, "h&s")){
+			trap_Cvar_Set( "g_gametype", arg2);
+			trap_Cvar_Update ( &g_gametype );
+		}
 		trap_Cvar_Set( "g_alternateMap", "1");
 		trap_Cvar_Update ( &g_alternateMap );
 		trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", arg1));

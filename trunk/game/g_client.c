@@ -882,6 +882,7 @@ void G_UpdateOutfitting ( int clientNum )
 
 	// Henkie -> Put zoom off!
 	client->ps.zoomFov = 0;
+	if(current_gametype.value != GT_HS)
 	client->ps.pm_flags &= ~(PMF_GOGGLES_ON|PMF_ZOOM_FLAGS);
 
 	// Everyone gets some knives
@@ -975,7 +976,7 @@ void G_UpdateOutfitting ( int clientNum )
 	client->ps.weaponCallbackStep = 0;
 
 	// Armor?
-	client->ps.stats[STAT_ARMOR]   = 0;
+	//client->ps.stats[STAT_ARMOR]   = 0;
 	client->ps.stats[STAT_GOGGLES] = GOGGLES_NONE;
 	switch ( bg_outfittingGroups[OUTFITTING_GROUP_ACCESSORY][client->pers.outfitting.items[OUTFITTING_GROUP_ACCESSORY]] )
 	{
@@ -1925,7 +1926,6 @@ void ClientSpawn(gentity_t *ent)
 			client->ps.firemode[WP_KNIFE] = BG_FindFireMode ( WP_KNIFE, ATTACK_NORMAL, WP_FIREMODE_AUTO );
 			client->ps.weapon = WP_KNIFE;
 			client->ps.weaponstate = WEAPON_READY;
-			client->ps.stats[STAT_ARMOR] = MAX_HEALTH;
 		// End
 		}else{
 		G_UpdateOutfitting ( ent->s.number );
@@ -2164,7 +2164,11 @@ void ClientSpawn(gentity_t *ent)
 					break;
 
 				case MODELINDEX_NIGHTVISION:
+					if(hideseek_extra.string[GOGGLES] == '1'){
 					client->ps.stats[STAT_GOGGLES] = GOGGLES_NIGHTVISION;
+					if(ent->client->sess.team == TEAM_BLUE)
+					client->ps.stats[STAT_ARMOR]   = 100; 
+					}
 					break;
 			}
 	}

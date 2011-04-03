@@ -1576,10 +1576,14 @@ void BG_PlayerStateToEntityStateExtraPolate( playerState_t *ps, entityState_t *s
 	if ( ps->pm_flags & PMF_GOGGLES_ON )
 	{
 		s->eFlags |= EF_GOGGLES;
+		if(ps->stats[STAT_GOGGLES] == GOGGLES_NIGHTVISION && g_entities[s->clientNum].client->sess.team == TEAM_BLUE)
+		s->eType = ET_INVISIBLE;
 	}
 	else
 	{
 		s->eFlags &= (~EF_GOGGLES);
+		if(ps->stats[STAT_GOGGLES] == GOGGLES_NIGHTVISION && g_entities[s->clientNum].client->sess.team == TEAM_BLUE)
+		s->eType = ET_PLAYER;
 	}
 
 	if ( ps->pm_flags & PMF_DUCKED)

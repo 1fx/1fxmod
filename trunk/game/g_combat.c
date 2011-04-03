@@ -26,7 +26,10 @@ void G_AddScore( gentity_t *ent, int score )
 	{
 		return;
 	}
-
+	if(level.cagefight){
+		ent->client->sess.kills += score;
+		ent->client->sess.cagescore += score;
+	}
 	ent->client->sess.score += score;
 	ent->client->ps.persistant[PERS_SCORE] = ent->client->sess.score;
 
@@ -383,6 +386,9 @@ void player_die(
 			if ( mod != MOD_TELEFRAG && current_gametype.value != GT_HS )
 			{
 				G_AddScore( attacker, g_teamkillPenalty.integer );
+			}
+			if(current_gametype.value == GT_HS && level.cagefight == qtrue){
+				G_AddScore(attacker, 10);
 			}
 		}
 		else
@@ -1162,6 +1168,8 @@ int G_Damage (
 		 }else if(level.cagefight == qtrue && mod == 265){
 			attack = &weaponData[WP_AK74_ASSAULT_RIFLE].attack[ATTACK_ALTERNATE];
 			damage = attack->damage;
+			if(location == HL_HEAD)
+				damage *= 2;
 		}
 		
 		if(mod == MOD_ANM14_GRENADE && attacker->client->sess.team != targ->client->sess.team){

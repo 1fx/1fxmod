@@ -1,7 +1,7 @@
 // Copyright (C) 2001-2002 Raven Software
 //
 #include "g_local.h"
-void	Boe_ClientSound (gentity_t *ent, int soundIndex);
+#include "boe_local.h"
 
 
 void InitTrigger( gentity_t *self ) {
@@ -316,16 +316,21 @@ void trigger_NewTeleporter_touch (gentity_t *self, gentity_t *other, trace_t *tr
 	if(!strstr(self->team, "all")){
 		if(other->client->sess.team == TEAM_RED && !strstr(self->team, "red") || other->client->sess.team == TEAM_BLUE && !strstr(self->team, "blue")){
 			if(level.time >= other->client->sess.lastmsg){
-				trap_SendServerCommand(other->s.number, va("print\"^3[Info] ^7Only the %s team can use this teleporter.\n\"", self->team));
+				if(strstr(self->team, "red")){
+					trap_SendServerCommand ( other->s.number, va("cp\"@^7Teleporter is for %s ^7team only!", server_redteamprefix.string));
+				}else if(strstr(self->team, "blue")){
+					trap_SendServerCommand ( other->s.number, va("cp\"@^7Teleporter is for %s ^7team only!", server_blueteamprefix.string));
+				}
+				//trap_SendServerCommand(other->s.number, va("print\"^3[Info] ^7Only the %s team can use this teleporter.\n\"", self->team));
 				other->client->sess.lastmsg = level.time+5000;
 			}
 			return;
 		}
 	}
 	if(other->client->sess.team != TEAM_SPECTATOR && level.time > other->client->sess.lastTele){
-	G_PlayEffect ( G_EffectIndex("misc/electrical"),other->client->ps.origin, other->pos1);
-	Henk_CloseSound(self->origin_to, G_SoundIndex("sound/misc/menus/apply_changes.wav"));
-	Henk_CloseSound(self->origin_from, G_SoundIndex("sound/misc/menus/apply_changes.wav"));
+		G_PlayEffect ( G_EffectIndex("misc/electrical"),other->client->ps.origin, other->pos1);
+		Henk_CloseSound(self->origin_to, G_SoundIndex("sound/misc/menus/apply_changes.wav"));
+		Henk_CloseSound(self->origin_from, G_SoundIndex("sound/misc/menus/apply_changes.wav"));
 	}
 	TeleportPlayer( other, self->origin_to, self->angles_to, qfalse );
 }

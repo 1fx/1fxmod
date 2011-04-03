@@ -366,6 +366,7 @@ void G_RespawnClients ( qboolean force, team_t team, qboolean fullRestart )
 			ent->client->sess.teamkillForgiveTime = 0;
 			ent->client->pers.enterTime = level.time;
 			ent->client->sess.timeOfDeath = 0;
+			ent->client->sess.cagescore = 0;
 		}
 	}
 }
@@ -601,6 +602,7 @@ void G_ResetGametype ( qboolean fullRestart )
 		level.MM1Time = 0;
 		level.RPGTime = 0;
 		level.M4Time = 0;
+		strcpy(level.cagewinner, "none");
 		level.timelimithit = qfalse; // allow timelimit hit message
 		// Henkie 23/02/10 -> Cache the sounds' index
 		level.clicksound = G_SoundIndex("sound/misc/menus/click.wav");
@@ -1003,8 +1005,9 @@ void CheckGametype ( void )
 						UpdateScores();
 						LogExit( "Seekers have won the match" );
 					}else{
-							level.cagefighttimer = level.time+3000;
-							level.startcage = qtrue;
+						trap_SendServerCommand(-1, va("print \"^3[H&S] ^7%i hiders found with top score, starting cage round.\n\"", TiedPlayers()));
+						level.cagefighttimer = level.time+3000;
+						level.startcage = qtrue;
 					}
 				}else{
 					tent = G_TempEntity( vec3_origin, EV_GAME_OVER );
@@ -1035,7 +1038,16 @@ void CheckGametype ( void )
 				LogExit( "Blue team has been eliminated" );
 			}
 			trap_GT_SendEvent ( GTEV_TEAM_ELIMINATED, level.time, TEAM_BLUE, 0, 0, 0, 0 );
-		}else if(level.cagefight == qtrue && level.teamAliveCount[TEAM_RED] == 1){
+		}if(level.cagefight == qtrue && level.teamAliveCount[TEAM_RED] == 1){
+			for ( i = 0; i < level.numConnectedClients; i ++ ){
+				if(!G_IsClientDead(g_entities[level.sortedClients[i]].client)){
+					G_AddScore(&g_entities[level.sortedClients[i]], 100);
+					strcpy(level.cagewinner, g_entities[level.sortedClients[i]].client->pers.netname);
+				}
+			}
+			trap_SendServerCommand(-1, va("print \"^3[H&S] ^7Fight ended.\n\""));
+			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,^7%sF%si%sg%sh%st %sended", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 			Com_Printf("Updating scores..\n");
 			UpdateScores();
 			level.timelimithit = qfalse;
@@ -1048,6 +1060,16 @@ void CheckGametype ( void )
 		if ( level.time > level.gametypeRoundTime )
 		{
 			if(level.cagefight == qtrue && current_gametype.value == GT_HS){
+				for ( i = 0; i < level.numConnectedClients; i ++ ){
+					if(!G_IsClientDead(g_entities[level.sortedClients[i]].client) && g_entities[level.sortedClients[i]].client->sess.team == TEAM_RED){
+						G_AddScore(&g_entities[level.sortedClients[i]], 100);
+						strcpy(level.cagewinner, g_entities[level.sortedClients[i]].client->pers.netname);
+					}
+				}
+				trap_SendServerCommand(-1, va("print \"^3[H&S] ^7Fight ended.\n\""));
+				Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,^7%sF%si%sg%sh%st %sended", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+
 				Com_Printf("Updating scores..\n");
 				UpdateScores();
 				level.timelimithit = qfalse;
@@ -1075,8 +1097,9 @@ void CheckGametype ( void )
 						level.timelimithit = qfalse;
 						LogExit( "Timelimit hit." );
 					}else{
-							level.cagefighttimer = level.time+3000;
-							level.startcage = qtrue;
+						trap_SendServerCommand(-1, va("print \"^3[H&S] ^7%i hiders found with top score, starting cage round.\n\"", TiedPlayers()));
+						level.cagefighttimer = level.time+3000;
+						level.startcage = qtrue;
 					}
 				}else{
 					if (g_compMode.integer > 0 && cm_enabled.integer > 1){

@@ -506,7 +506,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_alternateMap, "g_alternateMap", "0", CVAR_ROM|CVAR_INTERNAL|CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_enableCustomCommands, "g_enableCustomCommands", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 	{ &g_customCommandsFile,			"g_customCommandsFile",			"CustomCommands.txt",	CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  }, // Boe!Man 3/6/11: So users can change if desired.
-	{ &hideseek_extra,			"hideseek_extra",			"110",	CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  }, // Boe!Man 3/6/11: So users can change if desired.
+	{ &hideseek_extra,			"hideseek_extra",			"1101",	CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  }, // Boe!Man 3/6/11: So users can change if desired.
 
 	// Boe!Man 3/8/11: CVAR for the Admin logging.
 	{ &g_enableAdminLog, "g_enableAdminLog", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
@@ -2966,6 +2966,20 @@ void G_RunFrame( int levelTime )
 			}
 		}
 		if(current_gametype.value == GT_HS){
+
+			if ( ent->client->ps.pm_flags & PMF_GOGGLES_ON && ent->client->ps.stats[STAT_GOGGLES] == GOGGLES_NIGHTVISION && ent->client->sess.team == TEAM_BLUE)
+			{
+				if(ent->client->ps.stats[STAT_ARMOR] <= 0){
+					trap_SendServerCommand(ent->s.number, va("print\"^3[H&S] ^7Invisibility goggles wore off.\n\""));
+					ent->client->ps.pm_flags &= ~(PMF_GOGGLES_ON);
+					ent->client->ps.stats[STAT_GOGGLES] = GOGGLES_NONE;
+				}
+				if(level.time >= ent->client->sess.invisibletime){
+					ent->client->ps.stats[STAT_ARMOR] -= 1;
+					ent->client->sess.invisibletime = level.time+100;
+				}
+			}
+
 			// Henk 27/02/10 -> Fix for dead ppl frozen
 			if(G_IsClientDead(ent->client) && ent->client->ps.stats[STAT_FROZEN])
 				ent->client->ps.stats[STAT_FROZEN] = 0;

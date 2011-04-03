@@ -2051,6 +2051,7 @@ void Boe_Uppercut (int argNum, gentity_t *adm, qboolean shortCmd)
 	}
 
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+
 	// Boe!Man 11/2/10: Added client sound.
 	Boe_ClientSound(ent, G_SoundIndex("sound/weapons/rpg7/fire01.mp3"));
 	

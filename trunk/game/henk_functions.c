@@ -107,7 +107,7 @@ void InitCagefight(void){
 	level.messagedisplay1 = qtrue; // stop RPG/M4 stuff
 	SpawnCage(level.hideseek_cage, NULL, qtrue);
 	SpawnCage(level.hideseek_cage, NULL, qtrue); // 2 to be sure no parts are missing
-	for(i=0;i<level.numConnectedClients;i++){
+	for(i=0;i<=level.numConnectedClients;i++){
 		if(g_entities[level.sortedClients[i]].client->sess.team == TEAM_RED){
 			//respawn ( &g_entities[level.sortedClients[i]] );
 			TeleportPlayer(&g_entities[level.sortedClients[i]], spawns[count], g_entities[level.sortedClients[i]].client->ps.viewangles, qtrue);

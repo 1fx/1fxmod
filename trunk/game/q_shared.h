@@ -1027,6 +1027,7 @@ typedef enum {
 	MDN11,
 	F1,
 	L2A2,
+	GOGGLES,
 } hideseekExtra_t;
 // Henk 08/03/10 -> End
 

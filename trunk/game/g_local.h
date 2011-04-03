@@ -324,6 +324,8 @@ typedef struct
 	int			timeOfDeath;
 
 	qboolean	pausespawn;
+	int			cagescore;
+	int			invisibletime;
 } clientSession_t;
 
 // Boe!Man 3/30/10
@@ -747,6 +749,7 @@ typedef struct
 	int			cagefighttimer;
 	qboolean	startcage;
 	qboolean	timelimitMsg;
+	char		cagewinner[36];
 
 	muted_t		mutedClients[21]; // Henk 28/01/11 -> Add new mute system.
 } level_locals_t;

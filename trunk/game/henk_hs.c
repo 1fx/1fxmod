@@ -4,12 +4,19 @@
 // Henk 20/02/10 -> Add UpdateScores()
 void ShowScores(void)
 {
+	char winner[128];
 	int i;
+
+	if(!strstr(level.cagewinner, "none"))
+		sprintf(winner, "%s has won the round\n\n", level.cagewinner);
+	else
+		memset(winner, 0, sizeof(winner));
+
 	for ( i = 0; i < level.numConnectedClients; i ++ )
 	{
-	trap_SendServerCommand( g_entities[level.sortedClients[i]].s.number, va("cp \"@^3%s\n\n^_ THE 3 BEST HIDERS IN THIS MAP ARE:\n\n^31st ^7%s with ^3%i ^7wins.\n^+2nd ^7%s with ^+%i ^7wins.\n^@3rd ^7%s with ^@%i ^7wins.\n\n"
+	trap_SendServerCommand( g_entities[level.sortedClients[i]].s.number, va("cp \"@^3%s\n\n%s^_ THE 3 BEST HIDERS IN THIS MAP ARE:\n\n^31st ^7%s with ^3%i ^7wins.\n^+2nd ^7%s with ^+%i ^7wins.\n^@3rd ^7%s with ^@%i ^7wins.\n\n"
 		"^y THE 3 BEST SEEKERS IN THIS MAP ARE:\n\n^31st ^7%s with ^3%i ^7kills.\n^+2nd ^7%s with ^+%i ^7kills.\n^@3rd ^7%s with ^@%i ^7kills.\n\"",
-				g_motd.string,
+				g_motd.string, winner,
 				level.firstname, level.firstscore, level.secondname, level.secondscore, level.thirdname, level.thirdscore,
 				level.Sfirstname, level.Sfirstscore, level.Ssecondname, level.Ssecondscore, level.Sthirdname, level.Sthirdscore));
 	}
@@ -180,7 +187,10 @@ void UpdateScores(void)
 				strcpy(filename, va("scores/s_%s.scores", mapname));
 			oldscore = Boe_NameListCheck ( 0, Q_strlwr(ent->client->pers.cleanName), filename, NULL, qfalse, qfalse, qfalse, qtrue, qfalse);
 			Boe_Remove_from_list(Q_strlwr(ent->client->pers.cleanName), filename, "Score", NULL, qfalse, qfalse, qtrue);
-			SearchStr = va("%s:%i", Q_strlwr(ent->client->pers.cleanName), oldscore+ent->client->sess.kills);
+			if(level.cagefight == qtrue)
+				SearchStr = va("%s:%i", Q_strlwr(ent->client->pers.cleanName), oldscore+(ent->client->sess.kills-ent->client->sess.cagescore));
+			else
+				SearchStr = va("%s:%i", Q_strlwr(ent->client->pers.cleanName), oldscore+ent->client->sess.kills);
 			Com_Printf("New string: %s\n", SearchStr);
 			Boe_AddToList(SearchStr, filename, "Score", NULL);
 		}
@@ -317,6 +327,8 @@ int GetM4Winner(int rpgwinner){
 			continue;
 		if(G_IsClientDead(ent->client))
 			continue;
+		if(ent->client->pers.connected != CON_CONNECTED)
+			continue;
 
 		if(ent->client->sess.timeOfDeath == 1 && ent->s.number != rpgwinner){ // this guy really won the round
 			clients[winners] = ent->s.number;
@@ -348,6 +360,10 @@ int GetM4Winner(int rpgwinner){
 			gentity_t* ent = &g_entities[level.sortedClients[i]];
 			if(ent->client->sess.team != TEAM_RED)
 				continue;
+			if(G_IsClientDead(ent->client))
+				continue;
+			if(ent->client->pers.connected != CON_CONNECTED)
+				continue;
 			if(ent->s.number == rpgwinner)
 				continue;
 			clients[winners] = ent->s.number;
@@ -372,6 +388,8 @@ int GetRpgWinner(void){
 		if(ent->client->sess.team != TEAM_RED)
 			continue;
 		if(G_IsClientDead(ent->client))
+			continue;
+		if(ent->client->pers.connected != CON_CONNECTED)
 			continue;
 
 		if(ent->client->sess.timeOfDeath == 1){ // this guy really won the round
@@ -402,8 +420,13 @@ int GetRpgWinner(void){
 		for ( i = 0; i < level.numConnectedClients; i ++ )
 		{
 			gentity_t* ent = &g_entities[level.sortedClients[i]];
-			if(ent->client->sess.team != TEAM_RED)
-				continue;
+		if(ent->client->sess.team != TEAM_RED)
+			continue;
+		if(G_IsClientDead(ent->client))
+			continue;
+		if(ent->client->pers.connected != CON_CONNECTED)
+			continue;
+
 			clients[winners] = ent->s.number;
 			winners += 1;
 		}
