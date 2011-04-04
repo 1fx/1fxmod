@@ -871,7 +871,7 @@ void G_UpdateOutfitting ( int clientNum )
 	
 	// Clear all ammo, clips, and weapons
 	if(current_gametype.value != GT_HS){
-		if(g_disablenades.integer == 0){
+		if(g_disableNades.integer == 0){
 			if(client->pers.outfitting.items[OUTFITTING_GROUP_GRENADE] == -1)
 			client->pers.outfitting.items[OUTFITTING_GROUP_GRENADE] = 0;
 		}
@@ -913,7 +913,7 @@ void G_UpdateOutfitting ( int clientNum )
 		}
 
 		// Henk 06/04/10 -> Disable nades outfitting
-		if(group == 3 && g_disablenades.integer == 1){
+		if(group == 3 && g_disableNades.integer == 1){
 			continue; // start loop again(at group == 3)
 		}
 		// End
@@ -1000,7 +1000,7 @@ void G_UpdateOutfitting ( int clientNum )
 	client->ps.ammo[weaponData[WP_KNIFE].attack[ATTACK_NORMAL].ammoIndex]=weaponData[WP_KNIFE].attack->extraClips;
 	else if(client->sess.team == TEAM_BLUE)
 		client->ps.ammo[weaponData[WP_KNIFE].attack[ATTACK_ALTERNATE].ammoIndex]=0;
-	if(g_disablenades.integer == 0){
+	if(g_disableNades.integer == 0){
 		client->ps.stats[STAT_OUTFIT_GRENADE] = bg_itemlist[bg_outfittingGroups[OUTFITTING_GROUP_GRENADE][client->pers.outfitting.items[OUTFITTING_GROUP_GRENADE]]].giTag;
 		//Com_Printf("Item is %i\n", client->pers.outfitting.items[OUTFITTING_GROUP_GRENADE]);
 	}
@@ -1315,7 +1315,7 @@ void ClientUserinfoChanged( int clientNum )
 	}
 
 	// Boe!Man 10/16/10: If Admins are allowed to spec the opposite team..
-	if (client->sess.admin >= g_adminspec.integer && g_compMode.integer == 0){
+	if (client->sess.admin >= g_adminSpec.integer && g_compMode.integer == 0){
 		client->sess.adminspec = qtrue;
 	}
 
@@ -1507,7 +1507,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 	// get and distribute relevent paramters
 	//G_LogPrintf( "ClientConnect: %i\n", clientNum );
 	// Boe!Man 3/31/10: First off we search in the Country database.
-	if(g_checkcountry.integer == 1 && !strstr(ent->client->sess.country, "noneandempty")){
+	if(g_checkCountry.integer == 1 && !strstr(ent->client->sess.country, "noneandempty")){
 	HENK_COUNTRY(ent);
 	}
 	//G_LogPrintf( "HENK_COUNTRY done..\n" );
@@ -1553,7 +1553,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 		}
 	}
 	// Boe!Man 10/16/10: If Admins are allowed to spec the opposite team..
-	if (client->sess.admin >= g_adminspec.integer && g_compMode.integer == 0){
+	if (client->sess.admin >= g_adminSpec.integer && g_compMode.integer == 0){
 		client->sess.adminspec = qtrue;}
 	/*if(client->sess.admin == 4 && g_sadminspec.integer == 1)
 		client->sess.adminspec = qtrue;*/
@@ -2164,7 +2164,7 @@ void ClientSpawn(gentity_t *ent)
 					break;
 
 				case MODELINDEX_NIGHTVISION:
-					if(hideseek_extra.string[GOGGLES] == '1'){
+					if(hideSeek_Extra.string[GOGGLES] == '1'){
 					client->ps.stats[STAT_GOGGLES] = GOGGLES_NIGHTVISION;
 					if(ent->client->sess.team == TEAM_BLUE)
 					client->ps.stats[STAT_ARMOR]   = 100; 

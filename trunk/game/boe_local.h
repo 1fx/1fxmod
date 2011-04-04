@@ -269,7 +269,7 @@ extern	vmCvar_t	g_autoNoLower;
 // Boe!Man 3/6/11
 extern	vmCvar_t	g_customCommandsFile;
 extern	vmCvar_t	g_banfile;
-extern  vmCvar_t	hideseek_extra;
+extern  vmCvar_t	hideSeek_Extra;
 
 // Boe!Man 3/8/11
 extern	vmCvar_t	g_enableAdminLog;
@@ -402,7 +402,7 @@ void G_SetClientLeaningBBox(gentity_t *ent);
 #define PLB_MAXZ			-39
 
 // Boe!Man 6/2/10
-extern	vmCvar_t	g_autoeventeams;
+extern	vmCvar_t	g_autoEvenTeams;
 extern	vmCvar_t	server_msgInterval;
 extern	vmCvar_t	server_enableServerMsgs;
 extern	vmCvar_t	server_message1;
@@ -413,7 +413,7 @@ extern	vmCvar_t	server_message5;
 extern	vmCvar_t	server_msgDelay;
 
 // Boe!Man 10/16/10
-extern	vmCvar_t	g_adminspec;
+extern	vmCvar_t	g_adminSpec;
 
 // Boe!Man 11/16/10: Default scrim settings.
 extern	vmCvar_t	g_matchLockSpec;

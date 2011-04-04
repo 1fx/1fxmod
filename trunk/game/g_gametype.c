@@ -565,7 +565,7 @@ void G_ResetGametype ( qboolean fullRestart )
 			if (strstr(boe_log.string, "1"))
 				G_LogPrintf("5s\n");
 			#endif
-			if (g_autoeventeams.integer == 1 && current_gametype.value != GT_HS){
+			if (g_autoEvenTeams.integer == 1 && current_gametype.value != GT_HS){
 				EvenTeams(NULL, qtrue);}
 			#ifdef _BOE_DBG
 			if (strstr(boe_log.string, "1"))

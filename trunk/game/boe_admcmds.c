@@ -397,11 +397,11 @@ void Boe_NoNades(int argNum, gentity_t *ent, qboolean shortCmd){
 		return;
 	}
 
-	if(g_disablenades.integer == 1){
-		g_disablenades.integer = 0;
-		trap_Cvar_Set("g_disablenades", "0");
+	if(g_disableNades.integer == 1){
+		g_disableNades.integer = 0;
+		trap_Cvar_Set("g_disableNades", "0");
 	    SetNades("0");
-		trap_Cvar_Update(&g_disablenades);
+		trap_Cvar_Update(&g_disableNades);
 		BG_SetAvailableOutfitting(g_availableWeapons.string);
 		for(i=0;i<level.numConnectedClients;i++){
 			level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
@@ -422,10 +422,10 @@ void Boe_NoNades(int argNum, gentity_t *ent, qboolean shortCmd){
 			Boe_adminLog ("Nades Enabled", va("RCON"), "none");
 		}
 	}else{
-		g_disablenades.integer = 1;
-		trap_Cvar_Set("g_disablenades", "1");
+		g_disableNades.integer = 1;
+		trap_Cvar_Set("g_disableNades", "1");
 		SetNades("1");
-		trap_Cvar_Update(&g_disablenades);
+		trap_Cvar_Update(&g_disableNades);
 		BG_SetAvailableOutfitting(g_availableWeapons.string);
 		for(i=0;i<=level.numConnectedClients;i++){
 			level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
@@ -1327,7 +1327,7 @@ void Boe_Add_bAdmin_f(int argNum, gentity_t *adm, qboolean shortCmd)
 		}
 	}
 	// Boe!Man 10/16/10: Is the Admin level allowed to spec the opposite team?
-	if (g_adminspec.integer <= 2)
+	if (g_adminSpec.integer <= 2)
 		g_entities[idnum].client->sess.adminspec = qtrue;
 }
 
@@ -1388,7 +1388,7 @@ void Boe_Add_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd)
 		}
 	}
 	// Boe!Man 10/16/10: Is the Admin level allowed to spec the opposite team?
-	if (g_adminspec.integer <= 3)
+	if (g_adminSpec.integer <= 3)
 		g_entities[idnum].client->sess.adminspec = qtrue;
 }
 
@@ -1451,7 +1451,7 @@ void Boe_Add_sAdmin_f(int argNum, gentity_t *adm, qboolean shortCmd)
 	}
 
 	// Boe!Man 10/16/10: Is the Admin level allowed to spec the opposite team?
-	if (g_adminspec.integer <= 4)
+	if (g_adminSpec.integer <= 4)
 		g_entities[idnum].client->sess.adminspec = qtrue;
 }
 		/*

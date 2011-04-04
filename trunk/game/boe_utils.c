@@ -1081,7 +1081,7 @@ void Boe_Players (gentity_t *ent)
 	char prefix;
 	trap_SendServerCommand( ent-g_entities, va("print \"\n\""));
 	// Boe!Man 8/25/10: Maybe not the best solution, but if we want to exclude the country, this is a very easy way to exclude it.
-	if (g_checkcountry.integer != 0){
+	if (g_checkCountry.integer != 0){
 	trap_SendServerCommand( ent-g_entities, va("print \"^3Id#  Name                                  Ping  Coun Adm Cln Mut Ver\n\""));}
 	else{
 	trap_SendServerCommand( ent-g_entities, va("print \"^3Id#  Name                                  Ping  Adm Cln Mut Ver\n\""));}
@@ -1200,7 +1200,7 @@ void Boe_Players (gentity_t *ent)
 		client = qfalse;
 		}
 		// Boe!Man 8/25/10: Maybe not the best solution, but if we want to exclude the country, this is a very easy way to exclude it.
-		if (g_checkcountry.integer != 0){
+		if (g_checkCountry.integer != 0){
 		trap_SendServerCommand( ent-g_entities, va("print \"[^3%d^7]%s[^%c%s^7]%s[^3%d^7]%s[^3%s^7] %c^3%c^7%c %c^3%c^7%c %c^3%c^7%c \"", // c = single character
 		i,
 		column1,
@@ -1235,7 +1235,7 @@ void Boe_Players (gentity_t *ent)
 			}else if(client == qfalse){
 				trap_SendServerCommand( ent-g_entities, va("print \"\n\""));
 			}
-		}else{ // if g_checkcountry == 0
+		}else{ // if g_checkCountry == 0
 		trap_SendServerCommand( ent-g_entities, va("print \"[^3%d^7]%s[^%c%s^7]%s[^3%d^7]%s%c^3%c^7%c %c^3%c^7%c %c^3%c^7%c \"", // c = single character
 		i,
 		column1,

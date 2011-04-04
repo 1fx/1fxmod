@@ -1186,7 +1186,7 @@ extern  vmCvar_t	g_roundstartdelay;
 extern  vmCvar_t	g_availableWeapons;
 extern  vmCvar_t	hideSeek_availableWeapons;
 extern	vmCvar_t	availableWeapons;
-extern  vmCvar_t	g_disablenades; // Henk 01/04/10
+extern  vmCvar_t	g_disableNades; // Henk 01/04/10
 extern  vmCvar_t	g_instagib; // Henk 08/04/10
 extern  vmCvar_t	g_weaponModFlags; // Henk 08/04/10
 extern  vmCvar_t	g_allowthirdperson;
@@ -1195,7 +1195,7 @@ extern	vmCvar_t	g_compMode;
 extern  vmCvar_t	g_clanfile;
 extern  vmCvar_t	g_enableTeamCmds;
 extern  vmCvar_t	g_refpassword;
-extern  vmCvar_t	g_checkcountry;
+extern  vmCvar_t	g_checkCountry;
 extern  vmCvar_t	g_disablelower;
 extern	vmCvar_t	g_forceFollow;
 extern	vmCvar_t	g_followEnemy;

@@ -155,8 +155,8 @@ vmCvar_t	server_blueteamprefix;
 // Boe!Man 1/19/11
 vmCvar_t	server_hiderteamprefix;
 vmCvar_t	server_seekerteamprefix;
-// Henk 01/04/10 -> Add g_disablenades
-vmCvar_t	g_disablenades;
+// Henk 01/04/10 -> Add g_disableNades
+vmCvar_t	g_disableNades;
 vmCvar_t	g_instagib;
 vmCvar_t	g_weaponModFlags;
 vmCvar_t	g_allowthirdperson;
@@ -165,7 +165,7 @@ vmCvar_t	g_compMode;
 vmCvar_t	g_clanfile;
 vmCvar_t	g_enableTeamCmds;
 vmCvar_t	g_refpassword;
-vmCvar_t	g_checkcountry;
+vmCvar_t	g_checkCountry;
 // Boe!Man 2/27/11: Some new CVARs for nolower.
 vmCvar_t	g_useNoLower;
 vmCvar_t	g_autoNoLower;
@@ -184,7 +184,7 @@ vmCvar_t	g_lock;
 vmCvar_t	g_clan;
 
 // Boe!Man 6/2/10
-vmCvar_t	g_autoeventeams;
+vmCvar_t	g_autoEvenTeams;
 vmCvar_t	server_msgInterval;
 vmCvar_t	server_enableServerMsgs;
 vmCvar_t	server_message1;
@@ -195,7 +195,7 @@ vmCvar_t	server_message5;
 vmCvar_t	server_msgDelay;
 
 // Boe!Man 10/16/10
-vmCvar_t	g_adminspec;
+vmCvar_t	g_adminSpec;
 
 // Boe!Man 11/16/10: Default scrim settings.
 vmCvar_t	g_matchLockSpec;
@@ -231,7 +231,7 @@ vmCvar_t	g_forcevote;
 // Boe!Man 3/6/11
 vmCvar_t	g_customCommandsFile;
 vmCvar_t	g_banfile;
-vmCvar_t	hideseek_extra;
+vmCvar_t	hideSeek_Extra;
 
 // Boe!Man 3/8/11
 vmCvar_t	g_enableAdminLog;
@@ -334,7 +334,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &hideSeek_availableWeapons,	"hideSeek_availableWeapons", "200000000000022222222", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
 	{ &availableWeapons,	"availableWeapons", "2222222222211", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
 	// Henk 01/04/10
-	{ &g_disablenades,	"g_disablenades", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
+	{ &g_disableNades,	"g_disableNades", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 	// End
 	{ &g_forceFollow,		"g_forceFollow",	 "1",			  CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 	{ &g_followEnemy,		"g_followEnemy",	 "1",			  CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
@@ -441,10 +441,10 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_compMode, "g_compMode", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_enableTeamCmds, "g_enableTeamCmds", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 	{ &g_refpassword, "g_refpassword", "none", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
-	{ &g_checkcountry, "g_checkcountry", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
+	{ &g_checkCountry, "g_checkCountry", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 	{ &g_useNoLower, "g_useNoLower", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_autoNoLower, "g_autoNoLower", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
-	{ &g_autoeventeams, "g_autoeventeams", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
+	{ &g_autoEvenTeams, "g_autoEvenTeams", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 
 	{ &server_enableServerMsgs, "server_enableServerMsgs", "1", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_msgInterval, "server_msgInterval", "5", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
@@ -456,7 +456,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &server_message5, "server_message5", "", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 
 	// Boe!Man 10/16/10
-	{ &g_adminspec, "g_adminspec", "4", CVAR_ARCHIVE | CVAR_LATCH, 0.0, 0.0, 0,  qfalse },
+	{ &g_adminSpec, "g_adminSpec", "4", CVAR_ARCHIVE | CVAR_LATCH, 0.0, 0.0, 0,  qfalse },
 
 	// Boe!Man 11/16/10: Default scrim settings.
 	{ &g_matchLockSpec, "g_matchLockSpec", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
@@ -507,7 +507,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_alternateMap, "g_alternateMap", "0", CVAR_ROM|CVAR_INTERNAL|CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_enableCustomCommands, "g_enableCustomCommands", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 	{ &g_customCommandsFile,			"g_customCommandsFile",			"CustomCommands.txt",	CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  }, // Boe!Man 3/6/11: So users can change if desired.
-	{ &hideseek_extra,			"hideseek_extra",			"1101",	CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  }, // Boe!Man 3/6/11: So users can change if desired.
+	{ &hideSeek_Extra,			"hideSeek_Extra",			"1101",	CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  }, // Boe!Man 3/6/11: So users can change if desired.
 
 	// Boe!Man 3/8/11: CVAR for the Admin logging.
 	{ &g_enableAdminLog, "g_enableAdminLog", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
@@ -1105,8 +1105,8 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	G_UpdateAvailableWeapons(); // also set the original g_availableWeapons for the client :)
 	// End
 	if(current_gametype.value != GT_HS){
-		//trap_Cvar_Set("g_disablenades", "1");
-		//trap_Cvar_Update(&g_disablenades);
+		//trap_Cvar_Set("g_disableNades", "1");
+		//trap_Cvar_Update(&g_disableNades);
 		trap_Cvar_Set("g_roundstartdelay", "3");
 		trap_Cvar_Update(&g_roundstartdelay);
 	}
@@ -1116,7 +1116,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	if(current_gametype.value == GT_HS)
 		BG_SetAvailableOutfitting ( hideSeek_availableWeapons.string );
 	else{
-		if(g_disablenades.integer == 0){
+		if(g_disableNades.integer == 0){
 		SetNades("0");
 		}
 		BG_SetAvailableOutfitting(g_availableWeapons.string);
@@ -1162,8 +1162,8 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 		G_FreeEntity(&g_entities[level.tempent]);
 
 		// setup settings for h&s
-		trap_Cvar_Set("g_disablenades", "0");
-		trap_Cvar_Update(&g_disablenades);
+		trap_Cvar_Set("g_disableNades", "0");
+		trap_Cvar_Update(&g_disableNades);
 		trap_Cvar_Set("g_roundstartdelay", "30");
 		trap_Cvar_Update(&g_roundstartdelay);
 	}
@@ -2557,19 +2557,19 @@ void SetupOutfitting(void)
 		g_entities[level.sortedClients[i]].client->noOutfittingChange = qfalse;
 		G_UpdateOutfitting ( g_entities[level.sortedClients[i]].s.number );
 		if(g_entities[level.sortedClients[i]].client->sess.team == TEAM_BLUE){
-			if(hideseek_extra.string[MDN11] == '1'){
+			if(hideSeek_Extra.string[MDN11] == '1'){
 				attack = &weaponData[WP_MDN11_GRENADE].attack[ATTACK_NORMAL];
 				g_entities[level.sortedClients[i]].client->ps.ammo[weaponData[WP_MDN11_GRENADE].attack[ATTACK_NORMAL].ammoIndex]=attack->clipSize;
 				g_entities[level.sortedClients[i]].client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_MDN11_GRENADE );
 				g_entities[level.sortedClients[i]].client->ps.clip[ATTACK_NORMAL][WP_MDN11_GRENADE]=attack->extraClips;
 			}
-			if(hideseek_extra.string[F1] == '1'){
+			if(hideSeek_Extra.string[F1] == '1'){
 				attack = &weaponData[WP_F1_GRENADE].attack[ATTACK_NORMAL];
 				g_entities[level.sortedClients[i]].client->ps.ammo[weaponData[WP_F1_GRENADE].attack[ATTACK_NORMAL].ammoIndex]=attack->clipSize;
 				g_entities[level.sortedClients[i]].client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_F1_GRENADE );
 				g_entities[level.sortedClients[i]].client->ps.clip[ATTACK_NORMAL][WP_F1_GRENADE]=attack->extraClips;
 			}
-			if(hideseek_extra.string[L2A2] == '1'){
+			if(hideSeek_Extra.string[L2A2] == '1'){
 				attack = &weaponData[WP_L2A2_GRENADE].attack[ATTACK_NORMAL];
 				g_entities[level.sortedClients[i]].client->ps.ammo[weaponData[WP_L2A2_GRENADE].attack[ATTACK_NORMAL].ammoIndex]=attack->clipSize;
 				g_entities[level.sortedClients[i]].client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_L2A2_GRENADE );
@@ -2654,8 +2654,8 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 	// Henk 22/01/10 -> Display seekers released message.
 	trap_Cvar_VariableStringBuffer ( "mapname", level.mapname, MAX_QPATH );
 
-	//g_autoeventeams.integer == 1
-	if(level.time >= level.gametypeDelayTime-1000 && level.aetdone == qfalse && level.gametypeStartTime >= 5000 && g_autoeventeams.integer == 1 && level.cagefight != qtrue){
+	//g_autoEvenTeams.integer == 1
+	if(level.time >= level.gametypeDelayTime-1000 && level.aetdone == qfalse && level.gametypeStartTime >= 5000 && g_autoEvenTeams.integer == 1 && level.cagefight != qtrue){
 		EvenTeams_HS(NULL, qtrue);
 		level.aetdone = qtrue;
 	}
