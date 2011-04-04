@@ -737,6 +737,7 @@ typedef struct
 	int			tempent;
 
 	int			SeekKills;
+	int			rememberSeekKills;
 	int			lastseek;
 	vec3_t		hideseek_cage;
 	qboolean	autoremove;
@@ -1136,6 +1137,7 @@ extern  vmCvar_t	g_passwordAdmins;
 extern  vmCvar_t	g_shortCommandStyle;
 extern  vmCvar_t	g_boxAttempts;
 extern  vmCvar_t	g_cageAttempts;
+extern  vmCvar_t	g_RpgStyle;
 extern  vmCvar_t	g_badminPass;
 extern  vmCvar_t	g_adminPass;
 extern  vmCvar_t	g_sadminPass;

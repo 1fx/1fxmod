@@ -1648,7 +1648,7 @@ qboolean G_RadiusDamage (
 	int			numListedEntities;
 	vec3_t		mins, maxs, mins1, maxs1;
 	vec3_t		v;
-	vec3_t		dir;
+	vec3_t		dir, rpgAngs, rpgdir;
 	int			i, e, a;
 	qboolean	hitClient = qfalse;
 	qboolean	CageOutOfBoundaries = qfalse;
@@ -1747,9 +1747,25 @@ qboolean G_RadiusDamage (
 			// Henk 18/01/10 -> RPG Boost
 			if(mod == WP_RPG7_LAUNCHER){
 				if(ent == attacker){ // RPG hits attacker self so boost him
-				attacker->client->ps.pm_flags |= PMF_JUMPING;
-				attacker->client->ps.groundEntityNum = ENTITYNUM_NONE;
-				attacker->client->ps.velocity[2] = 450;
+					if(g_RpgStyle.integer == 0){
+						attacker->client->ps.pm_flags |= PMF_JUMPING;
+						attacker->client->ps.groundEntityNum = ENTITYNUM_NONE;
+						attacker->client->ps.velocity[2] = 450;
+					}else{
+						VectorCopy(attacker->client->ps.viewangles, rpgAngs);
+						AngleVectors( rpgAngs, rpgdir, NULL, NULL );	
+						rpgdir[0] *= -1.0;
+						rpgdir[1] = 0;
+						rpgdir[2] = 15.0;
+						VectorNormalize ( rpgdir );
+						G_ApplyKnockback(attacker, rpgdir, 100);
+						VectorCopy(attacker->client->ps.viewangles, rpgAngs);
+						AngleVectors( rpgAngs, rpgdir, NULL, NULL );	
+						rpgdir[0] *= -1.0;
+						rpgdir[1] *= -1.0;
+						rpgdir[2] = 0.0;
+						G_ApplyKnockback(attacker, rpgdir, 100);
+					}
 				}
 			}
 			// End

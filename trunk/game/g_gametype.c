@@ -598,6 +598,7 @@ void G_ResetGametype ( qboolean fullRestart )
 		level.messagedisplay = qfalse;
 		level.messagedisplay1 = qfalse;
 		level.MM1given = qfalse;
+		level.rememberSeekKills = level.SeekKills;
 		level.SeekKills = 0;
 		level.MM1Time = 0;
 		level.RPGTime = 0;
@@ -1040,7 +1041,7 @@ void CheckGametype ( void )
 			trap_GT_SendEvent ( GTEV_TEAM_ELIMINATED, level.time, TEAM_BLUE, 0, 0, 0, 0 );
 		}if(level.cagefight == qtrue && level.teamAliveCount[TEAM_RED] == 1){
 			for ( i = 0; i < level.numConnectedClients; i ++ ){
-				if(!G_IsClientDead(g_entities[level.sortedClients[i]].client)){
+				if(!G_IsClientDead(g_entities[level.sortedClients[i]].client) && g_entities[level.sortedClients[i]].client->sess.team == TEAM_RED){
 					G_AddScore(&g_entities[level.sortedClients[i]], 100);
 					strcpy(level.cagewinner, g_entities[level.sortedClients[i]].client->pers.netname);
 				}

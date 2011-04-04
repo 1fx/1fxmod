@@ -320,6 +320,10 @@ int GetM4Winner(int rpgwinner){
 	int clients[32];
 	int timeofdeath = 0; // time
 	int deaths = 0; // id
+
+	if(TeamCount1(TEAM_RED) <= 2)
+		return 100;
+
 	for ( i = 0; i < level.numConnectedClients; i ++ )
 	{
 		gentity_t* ent = &g_entities[level.sortedClients[i]];
@@ -353,25 +357,6 @@ int GetM4Winner(int rpgwinner){
 		return clients[irand(0, winners-1)];
 	}
 
-	winners = 0;
-	if(TeamCount1(TEAM_RED) <= 2){
-		for ( i = 0; i < level.numConnectedClients; i ++ )
-		{
-			gentity_t* ent = &g_entities[level.sortedClients[i]];
-			if(ent->client->sess.team != TEAM_RED)
-				continue;
-			if(G_IsClientDead(ent->client))
-				continue;
-			if(ent->client->pers.connected != CON_CONNECTED)
-				continue;
-			if(ent->s.number == rpgwinner)
-				continue;
-			clients[winners] = ent->s.number;
-			winners += 1;
-		}
-		return clients[irand(0, winners-1)];
-	}
-
 	return -1; // fail
 }
 
@@ -382,6 +367,8 @@ int GetRpgWinner(void){
 	int clients[32];
 	int timeofdeath = 0; // time
 	int deaths = 0; // id
+	if(TeamCount1(TEAM_RED) < 1)
+		return 100;
 	for ( i = 0; i < level.numConnectedClients; i ++ )
 	{
 		gentity_t* ent = &g_entities[level.sortedClients[i]];
@@ -413,23 +400,6 @@ int GetRpgWinner(void){
 	}else if(winners == 0 && deaths >= 1){
 		return clients[irand(0, deaths-1)];
 	}else if(winners > 1){
-		return clients[irand(0, winners-1)];
-	}
-	winners = 0;
-	if(TeamCount1(TEAM_RED) <= 2){
-		for ( i = 0; i < level.numConnectedClients; i ++ )
-		{
-			gentity_t* ent = &g_entities[level.sortedClients[i]];
-		if(ent->client->sess.team != TEAM_RED)
-			continue;
-		if(G_IsClientDead(ent->client))
-			continue;
-		if(ent->client->pers.connected != CON_CONNECTED)
-			continue;
-
-			clients[winners] = ent->s.number;
-			winners += 1;
-		}
 		return clients[irand(0, winners-1)];
 	}
 	return -1; // fail

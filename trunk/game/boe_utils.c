@@ -140,7 +140,11 @@ void Boe_Motd (gentity_t *ent)
 	char	*s = motd;
 	char	*gs = gmotd;
 	char	name[36];
+#ifdef Q3_VM
 	char	*header1 = va("@%s ^7%s ^7- %s\n", INF_VERSION_STRING_COLORED, INF_VERSION_STRING, INF_VERSION_DATE );
+#else
+	char	*header1 = va("@%s ^7%s ^7- %d/%d/%02d\n", INF_VERSION_STRING_COLORED, INF_VERSION_STRING, MONTH+1, DAY, YEAR );
+#endif
 	//char	*header2 = va("Developed by ^GBoe!Man ^7& ^6Henkie\nv1servers.com ^3| ^71fx.ipbfree.com\n\n");
 	char *header2;
 

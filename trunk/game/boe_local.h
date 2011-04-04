@@ -12,7 +12,27 @@
 #endif
 #define INF_STRING "1fx. Mod"
 #define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod"
+#ifdef Q3_VM
 #define INF_VERSION_DATE "4/2/11"
+#else
+#define YEAR ((((__DATE__ [7] - '0') * 10 + (__DATE__ [8] - '0')) * 10 \
+              + (__DATE__ [9] - '0')) * 10 + (__DATE__ [10] - '0'))
+
+#define MONTH (__DATE__ [2] == 'n' ? 0 \
+               : __DATE__ [2] == 'b' ? 1 \
+               : __DATE__ [2] == 'r' ? (__DATE__ [0] == 'M' ? 2 : 3) \
+               : __DATE__ [2] == 'y' ? 4 \
+               : __DATE__ [2] == 'n' ? 5 \
+               : __DATE__ [2] == 'l' ? 6 \
+               : __DATE__ [2] == 'g' ? 7 \
+               : __DATE__ [2] == 'p' ? 8 \
+               : __DATE__ [2] == 't' ? 9 \
+               : __DATE__ [2] == 'v' ? 10 : 11)
+
+#define DAY ((__DATE__ [4] == ' ' ? 0 : __DATE__ [4] - '0') * 10 + (__DATE__ [5] - '0'))
+// Date will be generated automatically
+#define INF_VERSION_DATE ""
+#endif
 #define TEST_VERSION "Developed by ^GBoe!Man ^7& ^6Henkie\n^1Running a Test version of the Mod\n\n"
 #define STABLE_VERSION "Developed by ^GBoe!Man ^7& ^6Henkie\n1fx.uk.to ^3| ^7i3D.net\n\n"
 
