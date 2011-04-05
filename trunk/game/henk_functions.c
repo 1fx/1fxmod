@@ -19,6 +19,27 @@ void trap_UnlinkEntity( gentity_t *ent ) {
 	trap_UnlinkEntity1(ent);
 }
 
+qboolean IsValidCommand(char *cmd, char *string){
+	int i, z;
+	for(i=0;i<=strlen(string);i++){
+		if(string[i] == '!'){
+			for(z=1;z<=strlen(cmd)-1;z++){
+				if(string[i+z] != cmd[z]){
+					break; // invalid command
+				}else if(z == strlen(cmd)-1){
+					if(isdigit(string[(i+z)+1]))
+						return qtrue;
+					else if(!string[(i+z)+1])
+						return qtrue;
+					else if(string[(i+z)+1] != ' ')
+						return qfalse;
+				}
+			}
+		}
+	}
+	return qtrue;
+}
+
 int TiedPlayers(void){
 	int i, highscore = 0, count = 0;
 	gentity_t *ent;

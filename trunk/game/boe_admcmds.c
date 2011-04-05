@@ -700,10 +700,13 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 {
 	char	arg[16] = "\0"; // increase buffer so we can process more commands
 	int		num = -1;
-	int i, y, x, count;
-	char *numb, numbx[4];
+	int i, y, x, count, r;
+	char numb[36], numbx[4];
 	qboolean first = qtrue;
 	qboolean space = qfalse;
+	int numberofclients = 0;
+	char string[1024] = "\0";
+	char string1[64] = "\0";
 	trap_Argv( argNum, arg, sizeof( arg ) );
 	if(shortCmd){ // Henk 04/05/10 -> Handle the short admin commands.
 		num = -1;
@@ -722,10 +725,10 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 									break;
 								}else{
 									if(first){
-										numb = va("%c", arg[x+y]);
+										sprintf(numb, "%c", arg[x+y]);
 										first = qfalse;
 									}else{
-										numb = va("%s%c", numb, arg[x+y]);
+										sprintf(numb, "%s%c", numb, arg[x+y]);
 									}
 									//Com_Printf("%s\n", numb);
 								}
@@ -737,18 +740,40 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 									break;
 								}
 							// FIX ME HENK: could be out of bounds
-							numb = va("%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", arg[x+1], arg[x+2], arg[x+3], arg[x+4], arg[x+5], arg[x+6], arg[x+7], arg[x+8], arg[x+9], arg[x+10], arg[x+11], arg[x+12], arg[x+13], arg[x+14], arg[x+15]);
+								memset(numb, 0, sizeof(numb));
+								for(r=x+1;r<strlen(arg);r++){
+									if(arg[r])
+										if(!numb[0])
+											sprintf(numb, "%c", arg[r]);
+										else
+										sprintf(numb, "%s%c", numb, arg[r]);
+									else
+										break;
+								}
+							//sprintf(numb, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", arg[x+1], arg[x+2], arg[x+3], arg[x+4], arg[x+5], arg[x+6], arg[x+7], arg[x+8], arg[x+9], arg[x+10], arg[x+11], arg[x+12], arg[x+13], arg[x+14], arg[x+15]);
 							}
 							break;
 						}
 					}
-					for(x=0;x<=level.numConnectedClients;x++){
-						//trap_SendServerCommand(-1, va("print\"^3[Debug] ^7%s comparing with %s.\n\"", g_entities[level.sortedClients[i]].client->pers.cleanName,numb));
+					memset(string, 0, sizeof(string));
+					memset(string1, 0, sizeof(string1));
+					numberofclients = 0;
+					num = -1;
+					for(x=0;x<level.numConnectedClients;x++){
+						//trap_SendServerCommand(-1, va("print\"^3[Debug] ^7%s comparing with %s.\n\"", g_entities[level.sortedClients[x]].client->pers.cleanName,numb));
 						if(strstr(Q_strlwr(g_entities[level.sortedClients[x]].client->pers.cleanName), Q_strlwr(numb))){
+							Com_Printf("%s\n", g_entities[level.sortedClients[x]].client->pers.cleanName);
 							num = level.sortedClients[x];
-							break;
+							numberofclients += 1;
+							sprintf(string1, "^1[#%i] ^7%s, ",  num, g_entities[level.sortedClients[x]].client->pers.cleanName);
+							Q_strncpyz(string+strlen(string), string1, strlen(string1)+1);
+							//break;
 						}
-						num = -1;
+					}
+					string[strlen(string)-2] = '\0';
+					if(numberofclients > 1){
+						trap_SendServerCommand(ent->s.number, va("print\"^3[Info] ^7Multiple names found with ^3%s^7: %s\n\"", numb, string));
+						return -1;
 					}
 				}
 				break;
@@ -1155,7 +1180,7 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 				strcpy(ip, xip);
 				strcpy(reason, "");
 				strcpy(by, "");
-				Com_Printf("No baninfo available\n");
+				//Com_Printf("No baninfo available\n");
 			}
 			length = strlen(ip);
 			if(length > 15){
@@ -1473,16 +1498,16 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 	fileHandle_t	f;
 	int len, CurrentLine = 0, StartPos = 0, EndPos = -1, i;
 	qboolean begin = qtrue;
-	char buf[10000];
-	char newbuf[10000];
+	char buf[5000];
+	char newbuf[5000];
 	char asd[128] = "";
-	char last[128] = "", lastip[64] = "";
+	char last[128], lastip[64] = "";
 	char fileName[128];
 	qboolean done = qfalse;
+
 	line = line;
 	memset( buf, 0, sizeof(buf) );
 	memset( newbuf, 0, sizeof(newbuf) );
-	memset( last, 0, sizeof(last) );
 	memset( lastip, 0, sizeof(lastip) );
 	memset( fileName, 0, sizeof(fileName) );
 	len = trap_FS_FOpenFile( file, &f, FS_READ_TEXT);
@@ -1503,13 +1528,7 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 			EndPos = i;
 			if(line != CurrentLine){
 			strncpy(asd, buf+StartPos, EndPos);
-			// Boe!Man 1/24/11: Fixed compiling errors using sprintf.
-//#ifdef Q3_VM
-			Com_sprintf(newbuf, sizeof(newbuf), "%s%s", newbuf, asd);
-//#else
-	//		sprintf(newbuf, "%s%s", newbuf, asd);
-//#endif
-			
+			Q_strncpyz(newbuf+strlen(newbuf), asd, sizeof(newbuf));
 			}else{
 				strncpy(last, buf+StartPos, EndPos-StartPos); 
 				done = qtrue;
@@ -1524,31 +1543,33 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 			CurrentLine += 1; // current line
 		}
 		if(buf[i] == '\n'){ // Last line doesn't have an enter
-			Com_Printf("Found a line\n");
+			//Com_Printf("Found a line\n");
 			EndPos = i;
 			begin = qtrue;
 		}
 		if(EndPos != -1){
 			if(line != CurrentLine){
 			strncpy(asd, buf+StartPos, EndPos-StartPos); 
-			// Boe!Man 1/24/11: Fixed compiling errors using sprintf.
-//#ifdef Q3_VM
-			Com_sprintf(newbuf, sizeof(newbuf), "%s%s\n", newbuf, asd);
-//#else
-			//sprintf(newbuf, "%s%s\n", newbuf, asd);
-//#endif
+			sprintf(asd, "%s\n", asd);
+			Q_strncpyz(newbuf+strlen(newbuf), asd, sizeof(newbuf));
+			//Com_Printf("New buf length: %i\n", strlen(newbuf));
+			//Com_sprintf(newbuf, sizeof(newbuf), "%s%s\n", newbuf, asd);
+			//Com_Printf("Added %s\n", asd);
 			}else{
 				done = qtrue;
 				strncpy(last, buf+StartPos, EndPos-StartPos); 
-				//Com_Printf("Final: %s\n", asd);
+				Com_Printf("Final: %s\n", last);
 			}
 		}
 	}
 	if(done && strlen(last) >= 1){ // && !strstr(newbuf, last)
 	// Start writing our new created file
 	len = trap_FS_FOpenFile( file, &f, FS_WRITE_TEXT);
-	if(!f)
+	if(!f){
+		Com_Printf("failed\n");
 		return;
+	}
+	Com_Printf("New buf length: %i\n", strlen(newbuf));
 	trap_FS_Write(newbuf, strlen(newbuf), f);
 	trap_FS_FCloseFile( f );
 	// Clear ban info

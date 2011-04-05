@@ -2333,7 +2333,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	if(ent->client->sess.admin > 0){
 	if(acmd != qtrue){
 		for(i=0;i<AdminCommandsSize;i++){
-			if(strstr(Q_strlwr(test), Q_strlwr(AdminCommands[i].shortCmd))){
+			if(strstr(Q_strlwr(test), Q_strlwr(AdminCommands[i].shortCmd)) && IsValidCommand(AdminCommands[i].shortCmd, test)){
 				command = qtrue;
 				if(ent->client->sess.admin >= *AdminCommands[i].adminLevel){
 					AdminCommands[i].Function(1, ent, qtrue);

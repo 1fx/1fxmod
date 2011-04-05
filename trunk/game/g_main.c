@@ -2699,7 +2699,7 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 
 	if(level.time > level.gametypeStartTime+10000 && level.messagedisplay1 == qfalse && level.gametypeStartTime >= 5000 && !strstr(level.mapname, "col9") && level.cagefight != qtrue){
 		rpgwinner = GetRpgWinner();
-		if(rpgwinner != -1){
+		if(rpgwinner != -1 && rpgwinner < 100){
 			// Henk 26/01/10 -> Give RPG to player
 			// Add it here aswell //attack = &weaponData[WP_MDN11_GRENADE].attack[ATTACK_NORMAL];
 			g_entities[rpgwinner].client->ps.ammo[weaponData[WP_RPG7_LAUNCHER].attack[ATTACK_NORMAL].ammoIndex]=2;
@@ -2768,6 +2768,18 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 			trap_SendServerCommand(-1, va("print\"^3[H&S] ^7M4 given to round winner %s.\n\"", g_entities[m4winner].client->pers.netname));
 			// End
 		}else if(m4winner >= 100){
+			spawnPoint = G_SelectRandomSpawnPoint ( TEAM_BLUE );
+				dropped = G_DropItem2(spawnPoint->origin, spawnPoint->angles, BG_FindWeaponItem ( WP_M4_ASSAULT_RIFLE ));
+				dropped->count  = 1&0xFF;
+				dropped->count += ((2<<8) & 0xFF00);
+				dropped->count += ((1 << 16) & 0xFF0000 );
+				dropped->count += ((2 << 24) & 0xFF000000 );
+				Com_sprintf(level.M4loc, sizeof(level.M4loc), "%s", "blue base");
+				level.M4Time = level.time+1000;
+				level.M4ent = dropped->s.number;
+				trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Not enough hiders connected: M4 spawned in blue base\n\""));
+		}else{ // Henk 26/01/10 -> Drop M4 at red spawn.
+			// Henk 24/02/10 -> Add randomize give away
 			for(i=0;i<=200;i++){
 				random = irand(0, level.numConnectedClients);
 				if(!g_entities[level.sortedClients[random]].inuse)
@@ -2798,19 +2810,6 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 				trap_SendServerCommand(-1, va("print\"^3[H&S] ^7M4 given at random to %s.\n\"", g_entities[level.sortedClients[random]].client->pers.cleanName));
 				break;
 			}
-		}else{ // Henk 26/01/10 -> Drop M4 at red spawn.
-			// Henk 24/02/10 -> Add randomize give away
-			//if(TeamCount1(TEAM_RED) < 2){ // Henk 18/01/11 -> Fixed random when 2 players are connected
-				spawnPoint = G_SelectRandomSpawnPoint ( TEAM_BLUE );
-				dropped = G_DropItem2(spawnPoint->origin, spawnPoint->angles, BG_FindWeaponItem ( WP_M4_ASSAULT_RIFLE ));
-				dropped->count  = 1&0xFF;
-				dropped->count += ((2<<8) & 0xFF00);
-				dropped->count += ((1 << 16) & 0xFF0000 );
-				dropped->count += ((2 << 24) & 0xFF000000 );
-				Com_sprintf(level.M4loc, sizeof(level.M4loc), "%s", "blue base");
-				level.M4Time = level.time+1000;
-				level.M4ent = dropped->s.number;
-				trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Not enough hiders connected: M4 spawned in blue base\n\""));
 		}
 		level.messagedisplay1 = qtrue;
 	}
