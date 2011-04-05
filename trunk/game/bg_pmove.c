@@ -237,7 +237,7 @@ static void PM_Accelerate( vec3_t wishdir, float wishspeed, float accel )
 	if (accelspeed > addspeed) {
 		accelspeed = addspeed;
 	}
-	
+
 	for (i=0 ; i<3 ; i++) {
 		pm->ps->velocity[i] += accelspeed*wishdir[i];	
 	}
@@ -256,7 +256,6 @@ static void PM_Accelerate( vec3_t wishdir, float wishspeed, float accel )
 	if (canPush > pushLen) {
 		canPush = pushLen;
 	}
-
 	VectorMA( pm->ps->velocity, canPush, pushDir, pm->ps->velocity );
 #endif
 }

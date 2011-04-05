@@ -756,7 +756,6 @@ void G_ApplyKnockback( gentity_t *targ, vec3_t newDir, float knockback )
 	if ( targ->client && !targ->client->ps.pm_time )
 	{
 		int		t;
-
 		t = knockback * 2;
 		if ( t < 50 ) {
 			t = 50;
@@ -1184,7 +1183,7 @@ int G_Damage (
 		
 			damage = 0;
 		}
-if(targ->client->sess.team != attacker->client->sess.team && (mod == MOD_RPG7_LAUNCHER || mod == MOD_SMOHG92_GRENADE)){//  || mod == WP_MM1_GRENADE_LAUNCHER)){ // Henk 22/01/10 -> Added better knockback(only on seekers)
+	if(targ->client->sess.team != attacker->client->sess.team && (mod == MOD_RPG7_LAUNCHER || mod == MOD_SMOHG92_GRENADE)){//  || mod == WP_MM1_GRENADE_LAUNCHER)){ // Henk 22/01/10 -> Added better knockback(only on seekers)
 		if (targ->client ) 
 		{
 			knockback = 100; // Henkie
@@ -1210,8 +1209,8 @@ if(targ->client->sess.team != attacker->client->sess.team && (mod == MOD_RPG7_LA
 				targ->client->ps.pm_time = t;
 				targ->client->ps.pm_flags |= PMF_TIME_KNOCKBACK;
 			}
-			}
 		}
+	}
 } // End H&S stuff
 
 	// check for completely getting out of the damage
@@ -1648,7 +1647,7 @@ qboolean G_RadiusDamage (
 	int			numListedEntities;
 	vec3_t		mins, maxs, mins1, maxs1;
 	vec3_t		v;
-	vec3_t		dir, rpgAngs, rpgdir;
+	vec3_t		dir, rpgAngs, rpgdir, xtest;
 	int			i, e, a;
 	qboolean	hitClient = qfalse;
 	qboolean	CageOutOfBoundaries = qfalse;
@@ -1753,18 +1752,14 @@ qboolean G_RadiusDamage (
 						attacker->client->ps.velocity[2] = 450;
 					}else{
 						VectorCopy(attacker->client->ps.viewangles, rpgAngs);
-						AngleVectors( rpgAngs, rpgdir, NULL, NULL );	
-						rpgdir[0] *= -1.0;
-						rpgdir[1] = 0;
-						rpgdir[2] = 15.0;
+						AngleVectors( rpgAngs, NULL , NULL, rpgdir );	
+						rpgdir[0] *= 0.0;
+						rpgdir[1] *= 0.0;
+						rpgdir[2] = 1.0;
 						VectorNormalize ( rpgdir );
-						G_ApplyKnockback(attacker, rpgdir, 100);
-						VectorCopy(attacker->client->ps.viewangles, rpgAngs);
-						AngleVectors( rpgAngs, rpgdir, NULL, NULL );	
-						rpgdir[0] *= -1.0;
-						rpgdir[1] *= -1.0;
-						rpgdir[2] = 0.0;
-						G_ApplyKnockback(attacker, rpgdir, 100);
+						G_ApplyKnockback(attacker, rpgdir, 115);
+						attacker->client->ps.velocity[0] *= 0.25f;
+						attacker->client->ps.velocity[1] *= 0.25f;
 					}
 				}
 			}

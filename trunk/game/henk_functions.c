@@ -587,9 +587,6 @@ void InitSpawn(int choice) // load bsp models before players loads a map(SOF2 cl
 	AddSpawnField("count",		 "1");
 
 	G_SpawnGEntityFromSpawnVars(qfalse);
-
-	level.numSpawnVars = 0;
-	level.numSpawnVarChars = 0;
 }	
 
 void AddToPasswordList(gentity_t *ent, int lvl){

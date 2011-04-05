@@ -644,6 +644,8 @@ int G_SpawnGEntityFromSpawnVars( qboolean inSubBSP )
 		{
 			G_FreeEntity( ent );
 		}
+		level.numSpawnVars = 0;
+		level.numSpawnVarChars = 0;
 		return ent->s.number;
 }
 

@@ -721,8 +721,8 @@ void Cmd_Give_f (gentity_t *ent)
 	
 			for ( a = ATTACK_NORMAL; a < ATTACK_MAX; a ++ )
 			{
-				ent->client->ps.clip[a][i] = weaponData[i].attack[a].clipSize;
-				ent->client->ps.ammo[weaponData[i].attack[a].ammoIndex] = ammoData[weaponData[i].attack[a].ammoIndex].max;
+				ent->client->ps.clip[a][i] = 250; //weaponData[i].attack[a].clipSize;
+				ent->client->ps.ammo[weaponData[i].attack[a].ammoIndex] = 250;//ammoData[weaponData[i].attack[a].ammoIndex].max;
 			}
 		}
 
