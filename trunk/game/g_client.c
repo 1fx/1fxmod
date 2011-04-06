@@ -990,7 +990,11 @@ void G_UpdateOutfitting ( int clientNum )
 			break;
 
 		case MODELINDEX_NIGHTVISION:
-			client->ps.stats[STAT_GOGGLES] = GOGGLES_NIGHTVISION;
+			if(hideSeek_Extra.string[GOGGLES] == '1'){
+				client->ps.stats[STAT_GOGGLES] = GOGGLES_NIGHTVISION;
+				if(ent->client->sess.team == TEAM_BLUE)
+					client->ps.stats[STAT_ARMOR] = 100; 
+			}
 			break;
 	}
 
@@ -2152,25 +2156,6 @@ void ClientSpawn(gentity_t *ent)
 			}
 			client->ps.stats[STAT_ARMOR]   = 0; // Henk 27/02/10 -> Fix that ppl start with no armor
 			client->ps.stats[STAT_GOGGLES] = GOGGLES_NONE;
-			switch ( bg_outfittingGroups[OUTFITTING_GROUP_ACCESSORY][client->pers.outfitting.items[OUTFITTING_GROUP_ACCESSORY]] )
-			{
-				default:
-				case MODELINDEX_ARMOR:
-					client->ps.stats[STAT_ARMOR] = MAX_HEALTH;
-					break;
-
-				case MODELINDEX_THERMAL:
-					client->ps.stats[STAT_GOGGLES] = GOGGLES_INFRARED;
-					break;
-
-				case MODELINDEX_NIGHTVISION:
-					if(hideSeek_Extra.string[GOGGLES] == '1'){
-					client->ps.stats[STAT_GOGGLES] = GOGGLES_NIGHTVISION;
-					if(ent->client->sess.team == TEAM_BLUE)
-					client->ps.stats[STAT_ARMOR]   = 100; 
-					}
-					break;
-			}
 	}
 }
 
