@@ -203,10 +203,7 @@ void UpdateScores(void)
 void SpawnCage(vec3_t org, gentity_t *ent, qboolean autoremove) // Spawn a cage
 {
 	char			*origin;
-	int part;
-	if(autoremove){
-		level.autoremove = qtrue;
-	}
+	int part, numb;
 	for(part=1;part<=4;part++){
 	AddSpawnField("classname", "misc_bsp"); // blocker
 	AddSpawnField("bspmodel",	"instances/Generic/fence01");
@@ -242,19 +239,20 @@ void SpawnCage(vec3_t org, gentity_t *ent, qboolean autoremove) // Spawn a cage
 	AddSpawnField("model",		"trigger_hurt"); //blocked_trigger
 	AddSpawnField("count",		 "1");
 	AddSpawnField("hideseek",	 "1");
-	G_SpawnGEntityFromSpawnVars(qtrue);
+	numb = G_SpawnGEntityFromSpawnVars(qtrue);
+	if(numb != -1 && !autoremove){
+	g_entities[numb].think = G_FreeEntity;
+	g_entities[numb].nextthink = level.time+12000;
+	}
 	level.numSpawnVars = 0;
 	level.numSpawnVarChars = 0;
 	}
-		if(autoremove){
-		level.autoremove = qfalse;
-		}
 }
 
 void SpawnBox		 (vec3_t org)
 {
 	char			*origin;
-
+	int				numb;
 	origin = va("%.0f %.0f %.0f", org[0], org[1], org[2]);// - (ent->client->ps.viewheight));
 
 	AddSpawnField("classname", "misc_bsp"); // blocker
@@ -265,8 +263,11 @@ void SpawnBox		 (vec3_t org)
 	AddSpawnField("count",		 "1");
 	AddSpawnField("hideseek",	 "1");
 
-	G_SpawnGEntityFromSpawnVars(qtrue);
-
+	numb = G_SpawnGEntityFromSpawnVars(qtrue);
+	if(numb != -1){
+	g_entities[numb].think = G_FreeEntity;
+	g_entities[numb].nextthink = level.time+10000;
+	}
 	level.numSpawnVars = 0;
 	level.numSpawnVarChars = 0;
 }	

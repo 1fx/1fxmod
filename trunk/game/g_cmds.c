@@ -132,7 +132,7 @@ static admCmd_t AdminCommands[] =
 	{"!p","pop", &g_pop.integer, &Boe_pop},
 	{"!k","kick", &g_kick.integer, &Boe_Kick},
 	{"!m","mute", &g_mute.integer, &Boe_XMute},
-	{"!s","strip", &g_strip.integer, &Boe_Strip}
+	{"!s","strip", &g_strip.integer, &Boe_Strip},
 	{"!box","box", &g_strip.integer, &Henk_Box}
 };
 
