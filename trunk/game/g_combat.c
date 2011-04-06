@@ -1011,7 +1011,6 @@ int G_Damage (
 		}
 		return 0;
 	}
-
 	client = targ->client;
 
 	if ( client )

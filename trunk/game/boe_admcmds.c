@@ -4,7 +4,7 @@
 
 #include "g_local.h"
 #include "boe_local.h"
-
+void G_GlassDie ( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, int mod, int hitLocation, vec3_t hitDir );
 // --- BOE PROTOTYPE WARNINGS FIXES --- \\
 // I'm lazy so I just 'fix' them here. I'll fix them fo'real later.
 // ALREADY DONE LAZY BITCH -.-'' HENK
@@ -2796,25 +2796,55 @@ void Henk_Box (int argNum, gentity_t *adm, qboolean shortCmd)
 	gentity_t	*ent;
 	int			idnum;
 	vec3_t		org, ang;
+	int test, i;
 	idnum = Boe_ClientNumFromArg(adm, argNum, "box <idnumber>", "box", qtrue, qtrue, shortCmd);
 	if(idnum < 0)
 		return;
 
 	ent    = g_entities + idnum;
-	VectorCopy(ent->r.currentOrigin, org);
-	org[0] += 50;
-	org[1] += 50;
+	for(i=0;i<=5;i++){
+	VectorCopy(ent->r.currentOrigin, org); // back
+	org[0] += 35;
+	org[1] -= 10;
+	org[2] -= 40-(48*i);
 	ang[0] = 0;
 	ang[1] = 0;
 	ang[2] = 0;
-	SpawnBoxEx(org, ang);
-	VectorCopy(ent->r.currentOrigin, org);
-	org[0] += 0;
-	org[1] += 50;
+	test = SpawnBoxEx(org, ang);
+	g_entities[test].think = G_GlassDie;
+	g_entities[test].nextthink = level.time+5000;
+	VectorCopy(ent->r.currentOrigin, org); // left
+	org[0] += 10;
+	org[1] -= 40;
+	org[2] -= 40-(48*i);
 	ang[0] = 0;
 	ang[1] = 90;
 	ang[2] = 0;
-	SpawnBoxEx(org, ang);
+	test = SpawnBoxEx(org, ang);
+	g_entities[test].think = G_GlassDie;
+	g_entities[test].nextthink = level.time+5000;
+
+	VectorCopy(ent->r.currentOrigin, org); // right
+	org[0] += 10;
+	org[1] += 60;
+	org[2] -= 40-(48*i);
+	ang[0] = 0;
+	ang[1] = 90;
+	ang[2] = 0;
+	test = SpawnBoxEx(org, ang);
+	g_entities[test].think = G_GlassDie;
+	g_entities[test].nextthink = level.time+5000;
+	VectorCopy(ent->r.currentOrigin, org); // front
+	org[0] -= 50;
+	org[1] -= 10;
+	org[2] -= 40-(48*i);
+	ang[0] = 0;
+	ang[1] = 0;
+	ang[2] = 0;
+	test = SpawnBoxEx(org, ang);
+	g_entities[test].think = G_GlassDie;
+	g_entities[test].nextthink = level.time+5000;
+	}
 }
 
 /*

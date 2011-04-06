@@ -544,17 +544,6 @@ int G_SpawnGEntityFromSpawnVars( qboolean inSubBSP )
 			if(strstr(level.spawnVars[i][1], "gametype_item")){
 				ent->think = G_FreeEntity;
 				ent->nextthink = level.time+100;
-			}
-			/*if(strstr(level.spawnVars[i][0], "bspmodel") && !G_ReadingFromEntFile(inSubBSP)){
-				if(strstr(level.spawnVars[i][1], "instances/Generic/fence01")){
-					if(level.autoremove != qtrue){
-					ent->think = G_FreeEntity;
-					ent->nextthink = level.time+12000;
-					}
-				//}else if(strstr(level.spawnVars[i][1], "instances/Colombia/npc_jump1") && !G_ReadingFromEntFile(inSubBSP)){
-				//	ent->think = G_FreeEntity;
-				//	ent->nextthink = level.time+10000;
-				//}
 			}else if(strstr(level.spawnVars[i][0], "effect")){
 				if(strstr(level.spawnVars[i][1], "flare_blue")){
 					level.MM1Flare = ent->s.number;
@@ -566,7 +555,7 @@ int G_SpawnGEntityFromSpawnVars( qboolean inSubBSP )
 				}else{
 					level.M4Flare = ent->s.number;
 				}
-			}*/
+			}
 		}
 		if(strstr(level.spawnVars[i][0], "tempent")){
 				ent->think = G_FreeEntity;
