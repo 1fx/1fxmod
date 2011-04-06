@@ -3550,10 +3550,26 @@ void Henk_Map(int argNum, gentity_t *adm, qboolean shortCmd){
 	int				i;
 	fileHandle_t	f;
 	char			arg[32]			= "\0";		// increase buffer so we can process more commands
+	char			arg0[32]		= "\0";		// increase buffer so we can process more commands
 	char			gametype[8];				// Boe!Man 2/26/11: The gametype we store so we can broadcast if neccesary.
 	char			*gt;						// Boe!Man 2/26/11: Gametype parameter.
 
 	trap_Argv( argNum, arg, sizeof( arg ) );
+	trap_Argv( argNum-1, arg0, sizeof( arg0 ) );
+
+	// Boe!Man 4/6/11: Check if the client wishes to load an alternative ent.
+	if(shortCmd){
+		if(strstr(arg, "!altmap")){
+			trap_Cvar_Set( "g_alternateMap", "1");
+			trap_Cvar_Update ( &g_alternateMap );
+		}
+	}else{
+		if(strstr(arg0, "altmap")){
+			trap_Cvar_Set( "g_alternateMap", "1");
+			trap_Cvar_Update ( &g_alternateMap );
+		}
+	}
+
 	// Boe!Man 2/26/11: Pre-check if the map switch is already in progress. No need to waste resources.
 	if(level.mapSwitch == qfalse){
 	// Boe!Man 2/26/11: We get the gametype parameter. Also added support for uppercase arguments.

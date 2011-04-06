@@ -84,6 +84,7 @@ static admCmd_t AdminCommands[] =
 	{"!mr","maprestart", &g_mapswitch.integer, &Boe_MapRestart},
 	{"!mr","map_restart", &g_mapswitch.integer, &Boe_MapRestart},
 	{"!map","map", &g_mapswitch.integer, &Henk_Map},
+	{"!altmap","altmap", &g_mapswitch.integer, &Henk_Map},
 	{"!um","unmute", &g_mute.integer, &Boe_UnMute},
 	{"!st","strip", &g_strip.integer, &Boe_Strip},
 	{"!ra","removeadmin", &g_removeadmin.integer, &Boe_Remove_Admin_f},
@@ -3220,7 +3221,7 @@ void Boe_adm_f ( gentity_t *ent )
 		trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   p   pop          <id>          ^7[^3Pop a player^7]\n\"", g_pop.integer));
 		}
 	if (adm >= g_strip.integer && g_strip.integer != 5 && g_strip.integer == levelx){
-		trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   s  strip         <id>          ^7[^3Remove weapons from a player^7]\n\"", g_strip.integer));
+		trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   s   strip         <id>          ^7[^3Remove weapons from a player^7]\n\"", g_strip.integer));
 		}
 	if (adm >= g_mute.integer && g_mute.integer != 5 && g_mute.integer == levelx){
 		trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   m   mute         <id>          ^7[^3Mute a player^7]\n\"", g_mute.integer));
@@ -3393,14 +3394,8 @@ qboolean ConsoleCommand( void )
 	trap_Argv( 0, cmd, sizeof( cmd ) );
 	trap_Argv( 1, arg1, sizeof( arg1 ) );
 	trap_Argv( 2, arg2, sizeof( arg2 ) );
-	for(i=0;i<AdminCommandsSize;i++){ // Henk 15/09/10 -> Fixed loop going outside array(causing crashes)
-		//Com_Printf("Checking %s with %s\n", arg1, AdminCommands[i].adminCmd);
-		if(!Q_stricmp(cmd, AdminCommands[i].adminCmd)){
-				AdminCommands[i].Function(1, NULL, qfalse);
-				return qtrue;
-		}
-	}
 
+	// Boe!Man 4/6/11: Check the altmap command prior to the admin loop.
 	if ( Q_stricmp (cmd, "altmap") == 0 )
 	{
 		if(strstr(arg2, "ctf") || strstr(arg2, "inf") || strstr(arg2, "tdm") || strstr(arg2, "dm") || strstr(arg2, "elim") || strstr(arg2, "h&s")){
@@ -3411,6 +3406,14 @@ qboolean ConsoleCommand( void )
 		trap_Cvar_Update ( &g_alternateMap );
 		trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", arg1));
 		return qtrue;
+	}
+
+	for(i=0;i<AdminCommandsSize;i++){ // Henk 15/09/10 -> Fixed loop going outside array(causing crashes)
+		//Com_Printf("Checking %s with %s\n", arg1, AdminCommands[i].adminCmd);
+		if(!Q_stricmp(cmd, AdminCommands[i].adminCmd)){
+				AdminCommands[i].Function(1, NULL, qfalse);
+				return qtrue;
+		}
 	}
 
 	if ( Q_stricmp (cmd, "entitylist") == 0 )
