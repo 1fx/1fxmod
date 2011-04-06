@@ -219,6 +219,7 @@ void	Boe_Burn (int argNum, gentity_t *adm, qboolean shortCmd);
 void	Boe_Broadcast(int argNum, gentity_t *adm, qboolean shortCmd);
 void	Boe_Mute (int argNum, gentity_t *adm, qboolean mute, qboolean shortCmd);
 void	Boe_Strip (int argNum, gentity_t *adm, qboolean shortCmd);
+void	Henk_Box(int argNum, gentity_t *adm, qboolean shortCmd);
 void	Adm_ForceTeam(int argNum, gentity_t *adm, qboolean shortCmd);
 extern	vmCvar_t	g_pop;
 extern	vmCvar_t	g_burn;
@@ -451,6 +452,7 @@ void Boe_serverMsg (void);
 void	SpawnCage(vec3_t org, gentity_t *ent, qboolean autoremove);
 // Henk 23/01/10 -> Add BoxNade and StripHiders
 void	SpawnBox(vec3_t org);
+int		SpawnBoxEx(vec3_t org, vec3_t ang);
 void	StripHiders(void);
 void	SetupOutfitting(void);
 // Henk 19/02/10 -> Add Flares

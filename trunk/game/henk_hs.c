@@ -271,6 +271,23 @@ void SpawnBox		 (vec3_t org)
 	level.numSpawnVarChars = 0;
 }	
 
+int SpawnBoxEx(vec3_t org, vec3_t ang)
+{
+		char			*origin;
+		char			*angles;
+	origin = va("%.0f %.0f %.0f", org[0], org[1], org[2]);
+	angles = va("%.0f %.0f %.0f", ang[0], ang[1], ang[2]);
+
+	AddSpawnField("classname", "misc_bsp"); // blocker
+	AddSpawnField("bspmodel",	"instances/Colombia/npc_jump1");
+	AddSpawnField("origin",		origin);
+	AddSpawnField("angles",		angles);
+	AddSpawnField("model",		"trigger_hurt"); //blocked_trigger
+	AddSpawnField("count",		 "1");
+
+	return G_SpawnGEntityFromSpawnVars(qtrue);
+}
+
 void Effect (vec3_t org, char * name, qboolean rpg)
 {
 	char			*origin;

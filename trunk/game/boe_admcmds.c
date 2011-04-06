@@ -2789,12 +2789,37 @@ void Boe_Mute (int argNum, gentity_t *adm, qboolean mute, qboolean shortCmd)
 	}
 }
 
+void Henk_Box (int argNum, gentity_t *adm, qboolean shortCmd)
+{
+	gentity_t	*ent;
+	int			idnum;
+	vec3_t		org, ang;
+	idnum = Boe_ClientNumFromArg(adm, argNum, "box <idnumber>", "box", qtrue, qtrue, shortCmd);
+	if(idnum < 0)
+		return;
+
+	ent    = g_entities + idnum;
+	VectorCopy(ent->r.currentOrigin, org);
+	org[0] += 50;
+	org[1] += 50;
+	ang[0] = 0;
+	ang[1] = 0;
+	ang[2] = 0;
+	SpawnBoxEx(org, ang);
+	VectorCopy(ent->r.currentOrigin, org);
+	org[0] += 0;
+	org[1] += 50;
+	ang[0] = 0;
+	ang[1] = 90;
+	ang[2] = 0;
+	SpawnBoxEx(org, ang);
+}
+
 /*
 =========
 Boe_Strip
 =========
 */
-
 void Boe_Strip (int argNum, gentity_t *adm, qboolean shortCmd)
 {
 	gentity_t	*ent;
