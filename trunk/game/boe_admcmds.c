@@ -1498,8 +1498,7 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 	fileHandle_t	f;
 	int len, CurrentLine = 0, StartPos = 0, EndPos = -1, i;
 	qboolean begin = qtrue;
-	char buf[5000];
-	char newbuf[5000];
+	char buf[10000];
 	char asd[128] = "";
 	char last[128], lastip[64] = "";
 	char fileName[128];
@@ -1507,7 +1506,6 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 
 	line = line;
 	memset( buf, 0, sizeof(buf) );
-	memset( newbuf, 0, sizeof(newbuf) );
 	memset( lastip, 0, sizeof(lastip) );
 	memset( fileName, 0, sizeof(fileName) );
 	len = trap_FS_FOpenFile( file, &f, FS_READ_TEXT);
@@ -1522,13 +1520,29 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 	trap_FS_Read( buf, len, f );
 	buf[len] = '\0';
 	trap_FS_FCloseFile( f );
+
+	len = trap_FS_FOpenFile( file, &f, FS_WRITE_TEXT);
+	if(!f){
+		Com_Printf("failed\n");
+		return;
+	}
+	trap_FS_Write("", 0, f); // clear file
+	trap_FS_FCloseFile(f);
+
+	len = trap_FS_FOpenFile( file, &f, FS_APPEND_TEXT);
+	if(!f){
+		Com_Printf("failed\n");
+		return;
+	}
+
 	for(i=0;i<=len;i++){
 		memset( asd, 0, sizeof(asd) );
 		if(i == len){
 			EndPos = i;
 			if(line != CurrentLine){
 			strncpy(asd, buf+StartPos, EndPos);
-			Q_strncpyz(newbuf+strlen(newbuf), asd, sizeof(newbuf));
+			trap_FS_Write(asd, strlen(asd), f);
+			//Q_strncpyz(newbuf+strlen(newbuf), asd, sizeof(newbuf));
 			}else{
 				strncpy(last, buf+StartPos, EndPos-StartPos); 
 				done = qtrue;
@@ -1550,10 +1564,10 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 		if(EndPos != -1){
 			if(line != CurrentLine){
 			strncpy(asd, buf+StartPos, EndPos-StartPos); 
-			sprintf(asd, "%s\n", asd);
-			Q_strncpyz(newbuf+strlen(newbuf), asd, sizeof(newbuf));
+			Com_sprintf(asd, sizeof(asd), "%s\n", asd);
+			//Q_strncpyz(newbuf+strlen(newbuf), asd, sizeof(newbuf));
+			trap_FS_Write(asd, strlen(asd), f);
 			//Com_Printf("New buf length: %i\n", strlen(newbuf));
-			//Com_sprintf(newbuf, sizeof(newbuf), "%s%s\n", newbuf, asd);
 			//Com_Printf("Added %s\n", asd);
 			}else{
 				done = qtrue;
@@ -1562,16 +1576,8 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 			}
 		}
 	}
+	trap_FS_FCloseFile(f);
 	if(done && strlen(last) >= 1){ // && !strstr(newbuf, last)
-	// Start writing our new created file
-	len = trap_FS_FOpenFile( file, &f, FS_WRITE_TEXT);
-	if(!f){
-		Com_Printf("failed\n");
-		return;
-	}
-	Com_Printf("New buf length: %i\n", strlen(newbuf));
-	trap_FS_Write(newbuf, strlen(newbuf), f);
-	trap_FS_FCloseFile( f );
 	// Clear ban info
 	for(i=0;i<strlen(last);i++){
 		if(last[i] == '\\'){
