@@ -1556,7 +1556,7 @@ Cmd_Follow_f
 */
 void Cmd_Follow_f( gentity_t *ent ) 
 {
-	int		i;
+	int		i, z;
 	char	arg[MAX_TOKEN_CHARS];
 
 	if ( trap_Argc() != 2 ) 
@@ -1569,7 +1569,19 @@ void Cmd_Follow_f( gentity_t *ent )
 	}
 
 	trap_Argv( 1, arg, sizeof( arg ) );
-	i = ClientNumberFromString( ent, arg );
+
+	if(henk_ischar(arg[0])){
+		for(z=0;z<=level.numConnectedClients;z++){
+			//trap_SendServerCommand(-1, va("print\"^3[Debug] ^7%s comparing with %s.\n\"", g_entities[level.sortedClients[i]].client->pers.cleanName,numb));
+			if(strstr(Q_strlwr(g_entities[level.sortedClients[z]].client->pers.cleanName), Q_strlwr(arg))){
+				i = level.sortedClients[z];
+				break;
+			}
+			i = -1;
+		}
+	}else{
+		i = ClientNumberFromString( ent, arg );
+	}
 	if ( i == -1 ) 
 	{
 		return;
