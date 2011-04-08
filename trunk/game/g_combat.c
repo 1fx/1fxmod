@@ -1094,7 +1094,7 @@ int G_Damage (
 					level.MM1ent = -1;
 					level.MM1Time = 0;
 					trap_SendServerCommand(-1, va("print\"^3[H&S] ^7First Blood: %s ^7has taken the MM1\n\"", attacker->client->pers.netname));
-					trap_SendServerCommand(attacker->s.number, va("cp \"@^7You now have the MM1.\n\""));
+					trap_SendServerCommand(attacker->s.number, va("cp \"^7You now have the %sM%sM%s1^7!\n\"", server_color1.string, server_color2.string, server_color3.string));
 					level.MM1given = qtrue; // only once each round :)
 				}
 			}
@@ -1119,8 +1119,8 @@ int G_Damage (
 						client->ps.weaponstate = WEAPON_READY;
 						Com_sprintf(level.RPGloc, sizeof(level.RPGloc), "%s", attacker->client->pers.netname);
 						trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s ^7has stolen the RPG from %s.\n\"", attacker->client->pers.netname, client->pers.netname));
-						trap_SendServerCommand(attacker->s.number, va("cp \"^7You stole the RPG ^7from %s\n\"", client->pers.netname));
-						trap_SendServerCommand(targ->s.number, va("cp \"^7%s ^7stole your RPG\n\"", attacker->client->pers.netname));
+						trap_SendServerCommand(attacker->s.number, va("cp \"^7You have stolen the %sR%sP%sG^7!\n\"", server_color1.string, server_color2.string, server_color3.string));
+						trap_SendServerCommand(targ->s.number, va("cp \"%s ^7stole your %sR%sP%sG^7!\n\"", attacker->client->pers.netname, server_color1.string, server_color2.string, server_color3.string));
 				}else if(client->ps.weapon == WP_M4_ASSAULT_RIFLE && client->ps.weaponstate == WEAPON_READY && mod == WP_KNIFE){
 					if(attacker->client->ps.stats[STAT_WEAPONS] & ( 1 << WP_RPG7_LAUNCHER )){
 						return 0;
@@ -1147,8 +1147,8 @@ int G_Damage (
 						client->ps.weaponstate = WEAPON_READY;
 						Com_sprintf(level.M4loc, sizeof(level.M4loc), "%s", attacker->client->pers.netname);
 						trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s ^7has taken the M4 from %s.\n\"", attacker->client->pers.netname, client->pers.netname));
-						trap_SendServerCommand(attacker->s.number, va("cp \"^7You stole the M4 ^7from %s\n\"", client->pers.netname));
-						trap_SendServerCommand(targ->s.number, va("cp \"^7%s ^7stole your M4\n\"", attacker->client->pers.netname));
+						trap_SendServerCommand(attacker->s.number, va("cp \"^7You have stolen the %sM%s4^7!\n\"", server_color1.string, server_color2.string));
+						trap_SendServerCommand(targ->s.number, va("cp \"%s ^7stole your %sM%s4^7!\n\"", attacker->client->pers.netname, server_color1.string, server_color2.string));
 				}
 			}
 			damage = 0;

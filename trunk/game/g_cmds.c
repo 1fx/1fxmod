@@ -135,8 +135,8 @@ static admCmd_t AdminCommands[] =
 	{"!p","pop", &g_pop.integer, &Boe_pop},
 	{"!k","kick", &g_kick.integer, &Boe_Kick},
 	{"!m","mute", &g_mute.integer, &Boe_XMute},
-	{"!s","strip", &g_strip.integer, &Boe_Strip},
-	{"!box","box", &g_strip.integer, &Henk_Box}
+	{"!s","strip", &g_strip.integer, &Boe_Strip}
+	//{"!box","box", &g_strip.integer, &Henk_Box} // Boe!Man 4/8/11: Seems like a useless command?
 };
 
 static int AdminCommandsSize = sizeof( AdminCommands ) / sizeof( AdminCommands[0] );
@@ -2389,7 +2389,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 							trap_GPG_FindPairValue(group, "Action", "say \"No custom action defined\"", action);
 							trap_GPG_FindPairValue(group, "Broadcast", "Custom action applied", broadcast);
 							trap_GPG_FindPairValue(group, "Message", "Custom action has been applied.", message);
-							trap_SendServerCommand( -1, va("print \"^3[Custom Admin action] ^7%s.\n\"", message));
+							trap_SendServerCommand( -1, va("print \"^3[Custom Admin Action] ^7%s.\n\"", message));
 							trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s", level.time + 5000, broadcast));
 							memset(level.action, 0, sizeof(level.action));
 							Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
@@ -3152,6 +3152,9 @@ void ClientCommand( int clientNum ) {
 		RPM_ref_cmd( ent );
 	// F1 effect: effects/explosions/col9_boat_explosion.efx
 	// or effects/levels/osprey_death_explosion.efx
+	// Boe!Man 4/8/11: DEBUG COMMANDS BELOW.
+	// ======================================
+	/*
 	else if (Q_stricmp (cmd, "henk_score") == 0){
 		UpdateScores();
 		ShowScores();
@@ -3169,6 +3172,7 @@ void ClientCommand( int clientNum ) {
 	else if (Q_stricmp (cmd, "henk3") == 0){
 		InitCagefight();
 	}
+	*/
 	
 #ifdef _SOF2_BOTS
 	else if (Q_stricmp (cmd, "addbot") == 0)

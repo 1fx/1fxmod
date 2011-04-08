@@ -27,7 +27,7 @@ qboolean IsValidCommand(char *cmd, char *string){
 				if(string[i+z] != cmd[z]){
 					break; // invalid command
 				}else if(z == strlen(cmd)-1){
-					if(isdigit(string[(i+z)+1]))
+					if(henk_isdigit(string[(i+z)+1]))
 						return qtrue;
 					else if(!string[(i+z)+1])
 						return qtrue;

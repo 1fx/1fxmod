@@ -8,7 +8,7 @@ void ShowScores(void)
 	int i;
 
 	if(!strstr(level.cagewinner, "none"))
-		sprintf(winner, "%s has won the round\n\n", level.cagewinner);
+		Com_sprintf(winner, sizeof(winner), "%s has won the round\n\n", level.cagewinner);
 	else
 		memset(winner, 0, sizeof(winner));
 

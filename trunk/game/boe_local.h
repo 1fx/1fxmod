@@ -13,7 +13,7 @@
 #define INF_STRING "1fx. Mod"
 #define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod"
 #ifdef Q3_VM
-#define INF_VERSION_DATE "4/2/11"
+#define INF_VERSION_DATE "4/8/11"
 #else
 #define YEAR ((((__DATE__ [7] - '0') * 10 + (__DATE__ [8] - '0')) * 10 \
               + (__DATE__ [9] - '0')) * 10 + (__DATE__ [10] - '0'))
@@ -104,6 +104,7 @@
 // 0.57t		2nd Release Candidate			521			3/21/11		// Sent out to BETA group on 3/21/11
 // 0.57			Release							525			3/27/11		// Sent out to BETA group on 3/27/11
 // 0.58t		Alpha							545			4/2/11
+// 0.58t		Beta							568			4/8/11		// Sent out to BETA group on 4/8/11
 
 //===================================================================
 
@@ -219,7 +220,7 @@ void	Boe_Burn (int argNum, gentity_t *adm, qboolean shortCmd);
 void	Boe_Broadcast(int argNum, gentity_t *adm, qboolean shortCmd);
 void	Boe_Mute (int argNum, gentity_t *adm, qboolean mute, qboolean shortCmd);
 void	Boe_Strip (int argNum, gentity_t *adm, qboolean shortCmd);
-void	Henk_Box(int argNum, gentity_t *adm, qboolean shortCmd);
+//void	Henk_Box(int argNum, gentity_t *adm, qboolean shortCmd);
 void	Adm_ForceTeam(int argNum, gentity_t *adm, qboolean shortCmd);
 extern	vmCvar_t	g_pop;
 extern	vmCvar_t	g_burn;

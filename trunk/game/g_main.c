@@ -2712,6 +2712,7 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 			level.RPGent = -1;
 			level.RPGTime = 0;
 			trap_SendServerCommand(-1, va("print\"^3[H&S] ^7RPG given to round winner %s.\n\"", g_entities[rpgwinner].client->pers.netname));
+			trap_SendServerCommand(g_entities[rpgwinner].s.number, va("cp \"^7You now have the %sR%sP%sG^7!\n\"", server_color1.string, server_color2.string, server_color3.string));
 			// End
 		}else if(rpgwinner >= 100 && m4winner < 100){
 				spawnPoint = G_SelectRandomSpawnPoint ( TEAM_BLUE );
@@ -2745,6 +2746,7 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 					level.RPGTime = 0;
 					level.lastalive[0] = -1;
 					trap_SendServerCommand(-1, va("print\"^3[H&S] ^7RPG given at random to %s.\n\"", g_entities[level.sortedClients[random]].client->pers.cleanName));
+					trap_SendServerCommand(g_entities[level.sortedClients[random]].s.number, va("cp \"^7You now have the %sR%sP%sG^7!\n\"", server_color1.string, server_color2.string, server_color3.string));
 					break;
 				}
 			}
@@ -2766,6 +2768,7 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 			level.M4Time = 0;
 			level.M4ent = -1;
 			trap_SendServerCommand(-1, va("print\"^3[H&S] ^7M4 given to round winner %s.\n\"", g_entities[m4winner].client->pers.netname));
+			trap_SendServerCommand(g_entities[m4winner].s.number, va("cp \"^7You now have the %sM%s4^7!\n\"", server_color1.string, server_color2.string));
 			// End
 		}else if(m4winner >= 100){
 			spawnPoint = G_SelectRandomSpawnPoint ( TEAM_BLUE );
@@ -2808,6 +2811,7 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 				level.M4Time = 0;
 				level.M4ent = -1;
 				trap_SendServerCommand(-1, va("print\"^3[H&S] ^7M4 given at random to %s.\n\"", g_entities[level.sortedClients[random]].client->pers.cleanName));
+				trap_SendServerCommand(g_entities[level.sortedClients[random]].s.number, va("cp \"^7You now have the %sM%s4^7!\n\"", server_color1.string, server_color2.string));
 				break;
 			}
 		}

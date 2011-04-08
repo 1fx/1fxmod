@@ -725,10 +725,11 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 									break;
 								}else{
 									if(first){
-										sprintf(numb, "%c", arg[x+y]);
+										Com_sprintf(numb, sizeof(numb), "%c", arg[x+y]);
 										first = qfalse;
 									}else{
-										sprintf(numb, "%s%c", numb, arg[x+y]);
+										Com_sprintf(numb, sizeof(numb), "%s%c", numb, arg[x+y]);
+
 									}
 									//Com_Printf("%s\n", numb);
 								}
@@ -744,9 +745,9 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 								for(r=x+1;r<strlen(arg);r++){
 									if(arg[r])
 										if(!numb[0])
-											sprintf(numb, "%c", arg[r]);
+											Com_sprintf(numb, sizeof(numb), "%c", arg[r]);
 										else
-										sprintf(numb, "%s%c", numb, arg[r]);
+											Com_sprintf(numb, sizeof(numb), "%s%c", numb, arg[r]);
 									else
 										break;
 								}
@@ -765,7 +766,7 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 							Com_Printf("%s\n", g_entities[level.sortedClients[x]].client->pers.cleanName);
 							num = level.sortedClients[x];
 							numberofclients += 1;
-							sprintf(string1, "^1[#%i] ^7%s, ",  num, g_entities[level.sortedClients[x]].client->pers.cleanName);
+							Com_sprintf(string1, sizeof(string1), "^1[#%i] ^7%s, ",  num, g_entities[level.sortedClients[x]].client->pers.cleanName);
 							Q_strncpyz(string+strlen(string), string1, strlen(string1)+1);
 							//break;
 						}
@@ -2791,6 +2792,7 @@ void Boe_Mute (int argNum, gentity_t *adm, qboolean mute, qboolean shortCmd)
 	}
 }
 
+/*
 void Henk_Box (int argNum, gentity_t *adm, qboolean shortCmd)
 {
 	gentity_t	*ent;
@@ -2846,6 +2848,7 @@ void Henk_Box (int argNum, gentity_t *adm, qboolean shortCmd)
 	g_entities[test].nextthink = level.time+5000;
 	}
 }
+*/
 
 /*
 =========
