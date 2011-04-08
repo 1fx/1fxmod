@@ -57,6 +57,7 @@ static admCmd_t AdminCommands[] =
 	{"!clanvsall","clanvsall", &g_clanvsall.integer, &Henk_CVA},
 	{"!swapteams","swapteams", &g_swapteams.integer, &Henk_SwapTeams},
 	{"!lock","lock", &g_lock.integer, &Henk_Lock},
+	{"!unlock","unlock", &g_lock.integer, &Henk_Unlock},
 	{"!flash","flash", &g_flash.integer, &Henk_Flash},
 	{"!gametype","gametype", &g_mapswitch.integer, &Henk_Gametype},
 	{"!unpause","unpause", &g_mapswitch.integer, &Henk_Unpause},
@@ -111,6 +112,7 @@ static admCmd_t AdminCommands[] =
 	{"!cva","clanvsall", &g_clanvsall.integer, &Henk_CVA},
 	{"!sw","swapteams", &g_swapteams.integer, &Henk_SwapTeams},
 	{"!l","lock", &g_lock.integer, &Henk_Lock},
+	{"!ul","unlock", &g_lock.integer, &Henk_Unlock},
 	{"!fl","flash", &g_flash.integer, &Henk_Flash},
 	{"!g","gametype", &g_mapswitch.integer, &Henk_Gametype},
 	{"!gt","gametype", &g_mapswitch.integer, &Henk_Gametype},
@@ -2129,6 +2131,14 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	char		test[128];
 	int			ignore = -1;
 	qboolean	command = qfalse;
+
+	void	*GP2, *group;
+	char txtlevel[2];
+	char name[10];
+	char action[512];
+	char message[512];
+	char broadcast[512];
+
 	if(!ent || !ent->client)
 		return;
 
@@ -2348,6 +2358,45 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 				}
 			}
 		}
+		// check custom commands
+	if(g_enableCustomCommands.integer == 1){
+		if(level.custom == qtrue){
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7There's already a custom command being executed.\n\""));
+			return;
+		}
+		GP2 = trap_GP_ParseFile(g_customCommandsFile.string, qtrue, qfalse);
+		if(GP2){
+			group = trap_GPG_GetSubGroups(GP2);
+			while(group){
+				trap_GPG_FindPairValue(group, "ShortCommand", "none", name);
+				if(!strstr(name, "none")){
+					if(strstr(Q_strlwr(test), Q_strlwr(name))){
+						command = qtrue;
+						trap_GPG_FindPairValue(group, "AdminLevel", "5", txtlevel);
+						if(ent->client->sess.admin >= atoi(txtlevel)){
+							trap_GPG_FindPairValue(group, "Action", "say \"No custom action defined\"", action);
+							trap_GPG_FindPairValue(group, "Broadcast", "Custom action applied", broadcast);
+							trap_GPG_FindPairValue(group, "Message", "Custom action has been applied.", message);
+							trap_SendServerCommand( -1, va("print \"^3[Custom Admin action] ^7%s.\n\"", message));
+							trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s", level.time + 5000, broadcast));
+							memset(level.action, 0, sizeof(level.action));
+							Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+							strcpy(level.action, action);
+							level.customtime = level.time+2000;
+							level.custom = qtrue;
+						}else{
+							trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your admin level is too low to use this command.\n\""));
+						}
+					}
+				}
+				group = trap_GPG_GetNext ( group );
+			}
+			trap_GP_Delete(&GP2);
+		}
+
+	}
+		//
+
 	}
 	// End
 
@@ -3365,6 +3414,7 @@ void Boe_adm_f ( gentity_t *ent )
 					trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s", level.time + 5000, broadcast));
 					memset(level.action, 0, sizeof(level.action));
 					strcpy(level.action, action);
+					Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 					level.customtime = level.time+2000;
 					level.custom = qtrue;
 					return;

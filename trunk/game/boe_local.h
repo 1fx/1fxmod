@@ -474,6 +474,7 @@ void Henk_EvenTeams(int argNum, gentity_t *adm, qboolean shortCmd);
 void Henk_CVA(int argNum, gentity_t *adm, qboolean shortCmd);
 void Henk_SwapTeams(int argNum, gentity_t *adm, qboolean shortCmd);
 void Henk_Lock(int argNum, gentity_t *adm, qboolean shortCmd);
+void Henk_Unlock(int argNum, gentity_t *adm, qboolean shortCmd);
 void Henk_Map(int argNum, gentity_t *adm, qboolean shortCmd);
 void Henk_Flash(int argNum, gentity_t *adm, qboolean shortCmd);
 void Henk_Gametype(int argNum, gentity_t *adm, qboolean shortCmd);

@@ -3196,6 +3196,113 @@ void Henk_Lock(int argNum, gentity_t *adm, qboolean shortCmd){
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 }
 
+void Henk_Unlock(int argNum, gentity_t *adm, qboolean shortCmd){
+	char	arg[16] = "\0"; // increase buffer so we can process more commands
+	int team;
+	qboolean locked;
+	char colorTeam[24];
+	char strTeam[12];
+	trap_Argv( argNum, arg, sizeof( arg ) );
+
+	if(strstr(Q_strlwr(arg), "b") || strstr(Q_strlwr(arg), "blue")){
+		team = TEAM_BLUE;
+	}else if(strstr(Q_strlwr(arg), "r") || strstr(Q_strlwr(arg), "red")){
+		team = TEAM_RED;
+	}else if(strstr(Q_strlwr(arg), "s") || strstr(Q_strlwr(arg), "spec")){
+		team = TEAM_SPECTATOR;
+	}else if(strstr(Q_strlwr(arg), "a") || strstr(Q_strlwr(arg), "all")){
+		team = TEAM_FREE;
+	}else{
+		trap_Argv( 2, arg, sizeof( arg ) );
+		if(strstr(Q_strlwr(arg), "b") || strstr(Q_strlwr(arg), "blue")){
+			team = TEAM_BLUE;
+		}else if(strstr(Q_strlwr(arg), "r") || strstr(Q_strlwr(arg), "red")){
+			team = TEAM_RED;
+		}else if(strstr(Q_strlwr(arg), "s") || strstr(Q_strlwr(arg), "spec")){
+			team = TEAM_SPECTATOR;
+		}else if(strstr(Q_strlwr(arg), "a") || strstr(Q_strlwr(arg), "all")){
+			team = TEAM_FREE;
+		}else{
+			trap_Argv( 2, arg, sizeof( arg ) );
+			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Unknown team entered.\n\""));
+			return;
+		}
+	}
+	if(team == TEAM_RED){
+		if(level.redLocked)
+			locked = qtrue;
+		else
+			locked = qfalse;
+	}else if(team == TEAM_BLUE){
+		if(level.blueLocked)
+			locked = qtrue;
+		else
+			locked = qfalse;
+	}else if(team == TEAM_SPECTATOR){
+		if(level.specsLocked)
+			locked = qtrue;
+		else
+			locked = qfalse;
+	}else if(team == TEAM_FREE){ // aka all
+		if(level.specsLocked || level.blueLocked || level.redLocked)
+			locked = qtrue;
+		else
+			locked = qfalse;
+	}
+	
+				if(team == TEAM_RED){
+					if(current_gametype.value == GT_HS)
+						strcpy(colorTeam, server_hiderteamprefix.string);
+					else
+						strcpy(colorTeam, server_redteamprefix.string);
+					strcpy(strTeam, "Red");
+					level.redLocked = 0;
+				}else if(team == TEAM_BLUE){
+					if(current_gametype.value == GT_HS)
+						strcpy(colorTeam, server_seekerteamprefix.string);
+					else
+						strcpy(colorTeam, server_blueteamprefix.string);
+					strcpy(strTeam, "Blue");
+					level.blueLocked = 0;
+				}else if(team == TEAM_SPECTATOR){
+					strcpy(colorTeam, server_specteamprefix.string);
+					strcpy(strTeam, "Spectator");
+					level.specsLocked = 0;
+				}else if(team == TEAM_FREE){
+					level.redLocked = 0;
+					level.blueLocked = 0;
+					level.specsLocked = 0;
+				}
+			if(locked)
+			{
+				Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+				if(team == TEAM_FREE){
+					if(adm && adm->client){
+							trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7has un%sl%so%sc%sk%se%sd all the teams", level.time + 5000, adm->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string) );
+							trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7%s has unlocked all the teams.\n\"", adm->client->pers.netname));
+					}else{
+							trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3All ^7the teams has been un%sl%so%sc%sk%se%sd!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string ) );
+							trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7All the teams have been unlocked.\n\""));
+					}
+				}else{
+					if(adm && adm->client){
+							trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7has un%sl%so%sc%sk%se%sd the %s ^7team", level.time + 5000, adm->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, colorTeam ) );
+							trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7%s has unlocked the %s team.\n\"", adm->client->pers.netname, strTeam));
+					}else{
+							trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7team has been un%sl%so%sc%sk%se%sd!", level.time + 5000, colorTeam, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string ) );
+							trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7%s team has been unlocked.\n\"", strTeam));
+					}
+				}
+			}
+			else
+			{
+				if(team == TEAM_FREE)
+					trap_SendServerCommand( adm->s.number, va("print \"^3[Info] ^7None of the teams are locked.\n\""));
+				else
+					trap_SendServerCommand( adm->s.number, va("print \"^3[Info] ^7The %s team is not locked.\n\"", strTeam));
+			}
+}
+
 void Henk_Flash(int argNum, gentity_t *adm, qboolean shortCmd){
 	char	arg[16] = "\0"; // increase buffer so we can process more commands
 	qboolean all = qfalse;
