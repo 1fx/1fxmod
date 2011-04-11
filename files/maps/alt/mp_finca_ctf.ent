@@ -1,0 +1,765 @@
+
+{
+"classname" "worldspawn"
+"redteam" "marine"
+"blueteam"	"thug"
+}
+{
+"classname" "gametype_player"
+"spawnflags" "1"
+"origin" "-5216 -3425 100"
+"angles" "0 180 0"
+}
+{
+"classname" "gametype_player"
+"spawnflags" "1"
+"origin" "-5219 -3509 100"
+"angles" "0 180 0"
+}
+{
+"classname" "gametype_player"
+"spawnflags" "1"
+"origin" "-5197 -3608 100"
+"angles" "0 180 0"
+}
+{
+"classname" "gametype_player"
+"spawnflags" "1"
+"origin" "-5201 -3710 100"
+"angles" "0 180 0"
+}
+{
+"classname" "gametype_player"
+"spawnflags" "1"
+"origin" "-5078 -3715 100"
+"angles" "0 180 0"
+}
+{
+"classname" "gametype_player"
+"spawnflags" "1"
+"origin" "-4960 -3720 100"
+"angles" "0 180 0"
+}
+{
+"classname" "gametype_player"
+"spawnflags" "1"
+"origin" "-4855 -3724 100"
+"angles" "0 180 0"
+}
+{
+"classname" "gametype_player"
+"spawnflags" "1"
+"origin" "-4859 -3805 100"
+"angles" "0 180 0"
+}
+{
+"classname" "gametype_player"
+"spawnflags" "1"
+"origin" "-4941 -3802 100"
+"angles" "0 180 0"
+}
+{
+"classname" "gametype_player"
+"spawnflags" "1"
+"origin" "-5069 -3797 100"
+"angles" "0 180 0"
+}
+{
+"classname" "gametype_player"
+"spawnflags" "1"
+"origin" "-5196 -3791 100"
+"angles" "0 180 0"
+}
+{
+"classname" "gametype_player"
+"spawnflags" "1"
+"origin" "-5202 -3926 100"
+"angles" "0 180 0"
+}
+{
+"classname" "gametype_player"
+"spawnflags" "1"
+"origin" "-5058 -3923 100"
+"angles" "0 180 0"
+}
+{
+"classname" "gametype_player"
+"spawnflags" "1"
+"origin" "-4946 -3928 100"
+"angles" "0 180 0"
+}
+{
+"classname" "gametype_player"
+"spawnflags" "1"
+"origin" "-4870 -3931 100"
+"angles" "0 180 0"
+}
+{
+"classname" "gametype_player"
+"spawnflags" "1"
+"origin" "-5098 -3367 100"
+"angles" "0 -175 0"
+}
+{
+"classname" "gametype_player"
+"spawnflags" "1"
+"origin" "-5088 -3478 100"
+"angles" "0 -175 0"
+}
+{
+"classname" "gametype_player"
+"spawnflags" "1"
+"origin" "-5081 -3572 100"
+"angles" "0 -177 0"
+}
+{
+"classname" "gametype_player"
+"spawnflags" "1"
+"origin" "-5077 -3650 100"
+"angles" "0 -176 0"
+}
+{
+"classname" "gametype_player"
+"spawnflags" "2"
+"origin" "-6187 -9197 100"
+"angles" "0 90 0"
+}
+{
+"classname" "gametype_player"
+"spawnflags" "2"
+"origin" "-6272 -9201 100"
+"angles" "0 90 0"
+}
+{
+"classname" "gametype_player"
+"spawnflags" "2"
+"origin" "-6335 -9203 100"
+"angles" "0 90 0"
+}
+{
+"classname" "gametype_player"
+"spawnflags" "2"
+"origin" "-6343 -9118 100"
+"angles" "0 90 0"
+}
+{
+"classname" "gametype_player"
+"spawnflags" "2"
+"origin" "-6270 -9120 100"
+"angles" "0 90 0"
+}
+{
+"classname" "gametype_player"
+"spawnflags" "2"
+"origin" "-6198 -9132 100"
+"angles" "0 90 0"
+}
+{
+"classname" "gametype_player"
+"spawnflags" "2"
+"origin" "-6191 -9039 100"
+"angles" "0 90 0"
+}
+{
+"classname" "gametype_player"
+"spawnflags" "2"
+"origin" "-6276 -9029 100"
+"angles" "0 90 0"
+}
+{
+"classname" "gametype_player"
+"spawnflags" "2"
+"origin" "-6348 -9026 100"
+"angles" "0 90 0"
+}
+{
+"classname" "gametype_player"
+"spawnflags" "2"
+"origin" "-6342 -8934 100"
+"angles" "0 90 0"
+}
+{
+"classname" "gametype_player"
+"spawnflags" "2"
+"origin" "-6274 -8945 100"
+"angles" "0 90 0"
+}
+{
+"classname" "gametype_player"
+"spawnflags" "2"
+"origin" "-6186 -8937 100"
+"angles" "0 90 0"
+}
+{
+"classname" "gametype_player"
+"spawnflags" "2"
+"origin" "-6180 -8860 100"
+"angles" "0 90 0"
+}
+{
+"classname" "gametype_player"
+"spawnflags" "2"
+"origin" "-6086 -8867 100"
+"angles" "0 90 0"
+}
+{
+"classname" "gametype_player"
+"spawnflags" "2"
+"origin" "-6271 -8854 100"
+"angles" "0 90 0"
+}
+{
+"classname" "gametype_player"
+"spawnflags" "2"
+"origin" "-6658 -8835 80"
+"angles" "0 129 0"
+}
+{
+"classname" "gametype_player"
+"spawnflags" "2"
+"origin" "-7288 -8873 88"
+"angles" "0 81 0"
+}
+{
+"classname" "gametype_player"
+"spawnflags" "2"
+"origin" "-6542 -8877 80"
+"angles" "0 85 0"
+}
+{
+"classname" "gametype_player"
+"spawnflags" "2"
+"origin" "-6071 -8788 80"
+"angles" "0 151 0"
+}
+{
+"classname" "info_player_intermission"
+"origin" "-7136 -2784 622"
+"target" "t1"
+}
+{
+"model" "models/objects/Common/beam.md3"
+"classname" "nv_model"
+"origin" "-6399 -7925 135"
+"angles" "0 99 0"
+"mins" "-16 -16 -16"
+"maxs" "16 16 16"
+}
+{
+"model" "models/objects/Common/beam.md3"
+"classname" "nv_model"
+"origin" "-7132 -2997 79"
+"angles" "0 99 0"
+"mins" "-16 -16 -16"
+"maxs" "16 16 16"
+}
+{
+"classname" "target_location"
+"origin" "-7133 -2986 126"
+"message" "red capture"
+"health" "1"
+}
+{
+"model" "BLOCKED_TRIGGER"
+"classname" "blocked_teleporter"
+"origin" "-7135 -2981 126"
+"target" "red chopper"
+"count" "21"
+"mins" "-27 -29 -100"
+"maxs" "27 29 100"
+}
+{
+"classname" "target_location"
+"origin" "-7208 -3523 854"
+"targetname" "red chopper"
+"message" "red chopper"
+"health" "2"
+"angles" "0 -91 0"
+}
+{
+"classname" "target_location"
+"origin" "-6396 -7924 182"
+"message" "blue capture"
+"health" "3"
+}
+{
+"classname" "target_location"
+"origin" "-6455 -7909 854"
+"message" "blue chopper"
+"health" "4"
+}
+{
+"model" "BLOCKED_TRIGGER"
+"classname" "blocked_teleporter"
+"origin" "-6396 -7924 182"
+"target" "blue chopper"
+"count" "21"
+"mins" "-24 -19 -100"
+"maxs" "24 19 100"
+}
+{
+"classname" "target_location"
+"origin" "-6453 -7909 854"
+"targetname" "blue chopper"
+"message" "blue chopper"
+"health" "5"
+"angles" "0 91 0"
+}
+{
+"classname" "target_location"
+"origin" "-7206 -3529 854"
+"message" "red chopper"
+"health" "6"
+}
+{
+"classname" "gametype_item"
+"origin" "-6447 -7768 854"
+"targetname" "blue_flag"
+"angles" "0 99 0"
+}
+{
+"model" "NV_MODEL"
+"classname" "gametype_trigger"
+"origin" "-6447 -7768 854"
+"targetname" "blue_capture_point"
+"health" "201"
+"angles" "0 99 0"
+"mins" "-15 -15 -15"
+"maxs" "15 15 15"
+}
+{
+"model" "models/objects/Common/beam.md3"
+"classname" "nv_model"
+"origin" "-6447 -7768 808"
+"angles" "0 99 0"
+"mins" "-16 -16 -16"
+"maxs" "16 16 16"
+}
+{
+"classname" "gametype_item"
+"origin" "-7210 -3647 854"
+"targetname" "red_flag"
+"angles" "0 -89 0"
+}
+{
+"model" "NV_MODEL"
+"classname" "gametype_trigger"
+"origin" "-7210 -3647 854"
+"targetname" "red_capture_point"
+"health" "200"
+"angles" "0 -89 0"
+"mins" "-15 -15 -15"
+"maxs" "15 15 15"
+}
+{
+"model" "models/objects/Common/beam.md3"
+"classname" "nv_model"
+"origin" "-7210 -3647 808"
+"angles" "0 -89 0"
+"mins" "-16 -16 -16"
+"maxs" "16 16 16"
+}
+{
+"classname" "pickup_backpack"
+"origin" "-5279 -4030 95"
+"angles" "0 -174 0"
+"mins" "-15 -15 -15"
+"maxs" "15 15 15"
+}
+{
+"classname" "pickup_backpack"
+"origin" "-5279 -4828 97"
+"angles" "0 -177 0"
+"mins" "-15 -15 -15"
+"maxs" "15 15 15"
+}
+{
+"classname" "pickup_backpack"
+"origin" "-5280 -4226 97"
+"angles" "0 -176 0"
+"mins" "-15 -15 -15"
+"maxs" "15 15 15"
+}
+{
+"classname" "pickup_backpack"
+"origin" "-5280 -5025 97"
+"angles" "0 -173 0"
+"mins" "-15 -15 -15"
+"maxs" "15 15 15"
+}
+{
+"classname" "pickup_backpack"
+"origin" "-6095 -8942 33"
+"angles" "0 -88 0"
+"mins" "-15 -15 -15"
+"maxs" "15 15 15"
+}
+{
+"classname" "pickup_backpack"
+"origin" "-6381 -9244 33"
+"angles" "0 -95 0"
+"mins" "-15 -15 -15"
+"maxs" "15 15 15"
+}
+{
+"classname" "pickup_backpack"
+"origin" "-6458 -8935 33"
+"angles" "0 -86 0"
+"mins" "-15 -15 -15"
+"maxs" "15 15 15"
+}
+{
+"classname" "pickup_backpack"
+"origin" "-6166 -9235 33"
+"angles" "0 -90 0"
+"mins" "-15 -15 -15"
+"maxs" "15 15 15"
+}
+{
+"model" "BLOCKED_TRIGGER"
+"classname" "blocker"
+"origin" "-7163 -3569 760"
+"angles" "0 -90 0"
+"mins" "-553 -545 -1"
+"maxs" "561 677 281"
+"bspmodel" "instances/GENERIC/COPTER"
+}
+{
+"model" "BLOCKED_TRIGGER"
+"classname" "blocker"
+"origin" "-6496 -7850 760"
+"angles" "0 90 0"
+"mins" "-553 -545 -1"
+"maxs" "561 677 281"
+"bspmodel" "instances/GENERIC/COPTER"
+}
+{
+"model" "BLOCKED_TRIGGER"
+"classname" "blocker"
+"origin" "-5679 -3787 25"
+"angles" "0 -179 0"
+"mins" "-17 -13 -9"
+"maxs" "17 53 41"
+"bspmodel" "instances/COLOMBIA/NPC_JUMP1"
+}
+{
+"model" "BLOCKED_TRIGGER"
+"classname" "blocker"
+"origin" "-5679 -3787 72"
+"angles" "0 -180 0"
+"mins" "-17 -13 -9"
+"maxs" "17 53 41"
+"bspmodel" "instances/COLOMBIA/NPC_JUMP1"
+}
+{
+"model" "BLOCKED_TRIGGER"
+"classname" "blocker"
+"origin" "-5680 -3789 120"
+"angles" "0 -181 0"
+"mins" "-17 -13 -9"
+"maxs" "17 53 41"
+"bspmodel" "instances/COLOMBIA/NPC_JUMP1"
+}
+{
+"model" "BLOCKED_TRIGGER"
+"classname" "blocker"
+"origin" "-5614 -3785 25"
+"angles" "0 -178 0"
+"mins" "-17 -13 -9"
+"maxs" "17 53 41"
+"bspmodel" "instances/COLOMBIA/NPC_JUMP1"
+}
+{
+"model" "BLOCKED_TRIGGER"
+"classname" "blocker"
+"origin" "-5646 -3787 25"
+"angles" "0 -178 0"
+"mins" "-17 -15 -9"
+"maxs" "17 55 41"
+"bspmodel" "instances/COLOMBIA/NPC_JUMP1"
+}
+{
+"model" "BLOCKED_TRIGGER"
+"classname" "blocker"
+"origin" "-6880 -3066 88"
+"angles" "0 -451 0"
+"mins" "-241 -67 -65"
+"maxs" "233 65 249"
+"bspmodel" "instances/JORDAN/JORD_LGCOVER1"
+}
+{
+"model" "BLOCKED_TRIGGER"
+"classname" "blocker"
+"origin" "-7533 -4817 75"
+"angles" "0 90 0"
+"mins" "-17 -13 -9"
+"maxs" "17 53 41"
+"bspmodel" "instances/COLOMBIA/NPC_JUMP1"
+}
+{
+"model" "BLOCKED_TRIGGER"
+"classname" "blocker"
+"origin" "-6703 -4851 74"
+"angles" "0 -2 0"
+"mins" "-17 -13 -9"
+"maxs" "17 53 41"
+"bspmodel" "instances/COLOMBIA/NPC_JUMP1"
+}
+{
+"model" "BLOCKED_TRIGGER"
+"classname" "blocker"
+"origin" "-5708 -6228 97"
+"angles" "0 -179 0"
+"mins" "-17 -13 -9"
+"maxs" "17 53 41"
+"bspmodel" "instances/COLOMBIA/NPC_JUMP1"
+}
+{
+"model" "BLOCKED_TRIGGER"
+"classname" "blocker"
+"origin" "-5712 -6229 144"
+"angles" "0 -178 0"
+"mins" "-17 -13 -9"
+"maxs" "17 53 41"
+"bspmodel" "instances/COLOMBIA/NPC_JUMP1"
+}
+{
+"model" "BLOCKED_TRIGGER"
+"classname" "blocker"
+"origin" "-5841 -6342 97"
+"angles" "0 -2 0"
+"mins" "-17 -13 -9"
+"maxs" "17 53 41"
+"bspmodel" "instances/COLOMBIA/NPC_JUMP1"
+}
+{
+"model" "BLOCKED_TRIGGER"
+"classname" "blocker"
+"origin" "-5839 -6337 144"
+"angles" "0 1 0"
+"mins" "-17 -13 -9"
+"maxs" "17 53 41"
+"bspmodel" "instances/COLOMBIA/NPC_JUMP1"
+}
+{
+"model" "BLOCKED_TRIGGER"
+"classname" "blocker"
+"origin" "-6491 -7576 307"
+"angles" "0 -179 0"
+"mins" "-1409 -65 -257"
+"maxs" "1473 137 193"
+"bspmodel" "instances/COLOMBIA/NATURAL_COLBRIDG"
+}
+{
+"model" "BLOCKED_TRIGGER"
+"classname" "blocker"
+"origin" "-5126 -7586 -606"
+"angles" "0 -116 0"
+"mins" "-25 -25 -9"
+"maxs" "25 25 857"
+"bspmodel" "instances/HONGKONG/FLAGPOLE"
+}
+{
+"model" "BLOCKED_TRIGGER"
+"classname" "blocker"
+"origin" "-7209 -8773 -114"
+"angles" "0 179 0"
+"mins" "-766 -574 -257"
+"maxs" "761 569 577"
+"bspmodel" "instances/JORDAN/JORD_LGCOVER5"
+}
+{
+"model" "BLOCKED_TRIGGER"
+"classname" "blocker"
+"origin" "-5646 -3787 73"
+"angles" "0 -178 0"
+"mins" "-17 -13 -9"
+"maxs" "17 53 41"
+"bspmodel" "instances/COLOMBIA/NPC_JUMP1"
+}
+{
+"model" "BLOCKED_TRIGGER"
+"classname" "blocker"
+"origin" "-8105 -7640 23"
+"angles" "0 -269 0"
+"mins" "-257 -449 -65"
+"maxs" "257 513 297"
+"bspmodel" "instances/GENERIC/TRAINCAR"
+}
+{
+"model" "BLOCKED_TRIGGER"
+"classname" "blocker"
+"origin" "-6039 -8344 -2"
+"mins" "-225 -225 -65"
+"maxs" "225 225 409"
+"bspmodel" "instances/HONGKONG/TOWER2"
+}
+{
+"model" "BLOCKED_TRIGGER"
+"classname" "blocker"
+"origin" "-5954 -8361 32"
+"angles" "0 -90 0"
+"mins" "-17 -13 -9"
+"maxs" "17 53 41"
+"bspmodel" "instances/COLOMBIA/NPC_JUMP1"
+}
+{
+"model" "BLOCKED_TRIGGER"
+"classname" "blocker"
+"origin" "-5833 -7725 79"
+"angles" "0 -2 0"
+"mins" "-193 -193 -57"
+"maxs" "193 193 89"
+"bspmodel" "instances/COLOMBIA/BOMBED_JEEP"
+}
+{
+"classname" "target_location"
+"origin" "-6214 -5263 70"
+"targetname" "blue1"
+"message" ""
+"health" "1"
+"angles" "0 -90 0"
+}
+{
+"classname" "target_location"
+"origin" "-6214 -5628 70"
+"targetname" "red1"
+"message" ""
+"health" "1"
+"angles" "0 90 0"
+}
+{
+"model" "BLOCKED_TRIGGER"
+"classname" "blocker"
+"origin" "-6140 -5202 293"
+"count" "4"
+"angles" "0 -90 0"
+"mins" "63 -193 -65"
+"maxs" "97 65 137"
+"bspmodel" "instances/COLOMBIA/WALL04"
+}
+{
+"model" "BLOCKED_TRIGGER"
+"classname" "blocked_teleporter"
+"origin" "-6191 -5384 360"
+"target" "red1"
+"count" "4"
+"mins" "-80 -60 -30"
+"maxs" "80 60 30"
+}
+{
+"model" "BLOCKED_TRIGGER"
+"classname" "blocker"
+"origin" "-8024 -5585 34"
+"message" "^3FULL MAP ^7IS NOW ^jOPEN"
+"message2" "^3GARAGE ONLY ^$UNTIL 4vs4"
+"count" "4"
+"angles" "0 -90 0"
+"mins" "63 -193 -65"
+"maxs" "97 65 137"
+"bspmodel" "instances/COLOMBIA/WALL04"
+}
+{
+"model" "BLOCKED_TRIGGER"
+"classname" "blocked_teleporter"
+"origin" "-8079 -5756 104"
+"target" "red1"
+"count" "4"
+"mins" "-72 -60 -30"
+"maxs" "72 60 30"
+}
+{
+"model" "BLOCKED_TRIGGER"
+"classname" "blocker"
+"origin" "-6937 -7101 137"
+"count" "4"
+"angles" "0 90 0"
+"mins" "63 -193 -65"
+"maxs" "97 65 137"
+"bspmodel" "instances/COLOMBIA/WALL04"
+}
+{
+"model" "BLOCKED_TRIGGER"
+"classname" "blocked_teleporter"
+"origin" "-6897 -6929 211"
+"target" "blue1"
+"count" "4"
+"mins" "-98 -60 -30"
+"maxs" "98 60 30"
+}
+{
+"model" "BLOCKED_TRIGGER"
+"classname" "blocker"
+"origin" "-6411 -7161 313"
+"count" "4"
+"angles" "0 -180 0"
+"mins" "63 -193 -65"
+"maxs" "97 65 137"
+"bspmodel" "instances/COLOMBIA/WALL04"
+}
+{
+"model" "BLOCKED_TRIGGER"
+"classname" "blocked_teleporter"
+"origin" "-6582 -7093 387"
+"target" "blue1"
+"count" "4"
+"mins" "-60 -107 -30"
+"maxs" "60 107 30"
+}
+{
+"model" "BLOCKED_TRIGGER"
+"classname" "blocker"
+"origin" "-8281 -7042 109"
+"count" "4"
+"angles" "0 90 0"
+"mins" "63 -193 -65"
+"maxs" "97 65 137"
+"bspmodel" "instances/COLOMBIA/WALL04"
+}
+{
+"model" "BLOCKED_TRIGGER"
+"classname" "blocked_teleporter"
+"origin" "-8223 -6870 131"
+"target" "blue1"
+"count" "4"
+"mins" "-64 -60 -30"
+"maxs" "64 60 30"
+}
+{
+"model" "BLOCKED_TRIGGER"
+"classname" "blocker"
+"origin" "-7740 -7547 171"
+"count" "4"
+"angles" "0 90 0"
+"mins" "63 -193 -65"
+"maxs" "97 65 137"
+"bspmodel" "instances/COLOMBIA/WALL04"
+}
+{
+"model" "BLOCKED_TRIGGER"
+"classname" "blocked_teleporter"
+"origin" "-7675 -7375 179"
+"target" "blue1"
+"count" "4"
+"mins" "-107 -60 -30"
+"maxs" "107 60 30"
+}
+{
+"model" "BLOCKED_TRIGGER"
+"classname" "blocker"
+"origin" "-7582 -6173 153"
+"count" "4"
+"angles" "0 -90 0"
+"mins" "63 -193 -65"
+"maxs" "97 65 137"
+"bspmodel" "instances/COLOMBIA/WALL04"
+}
+{
+"model" "BLOCKED_TRIGGER"
+"classname" "blocked_teleporter"
+"origin" "-7639 -6344 211"
+"target" "red1"
+"count" "4"
+"mins" "-64 -60 -30"
+"maxs" "64 60 30"
+}
