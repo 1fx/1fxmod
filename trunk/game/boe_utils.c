@@ -1184,6 +1184,7 @@ void Boe_Players (gentity_t *ent)
 			mute2 = ' ';
 			mute3 = ' ';
 		}
+		prefix = '\0';
 		if(level.clients[i].sess.rpmClient >= 0.1){
 		client = qtrue;
 		client0 = '[';
