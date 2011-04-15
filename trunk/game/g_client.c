@@ -990,11 +990,14 @@ void G_UpdateOutfitting ( int clientNum )
 			break;
 
 		case MODELINDEX_NIGHTVISION:
-			if(hideSeek_Extra.string[GOGGLES] == '1'){
+			if(current_gametype.value == GT_HS){
+				if(hideSeek_Extra.string[GOGGLES] == '1'){
+					client->ps.stats[STAT_GOGGLES] = GOGGLES_NIGHTVISION;
+					if(ent->client->sess.team == TEAM_BLUE)
+						client->ps.stats[STAT_ARMOR] = 100; 
+				}
+			}else
 				client->ps.stats[STAT_GOGGLES] = GOGGLES_NIGHTVISION;
-				if(ent->client->sess.team == TEAM_BLUE)
-					client->ps.stats[STAT_ARMOR] = 100; 
-			}
 			break;
 	}
 
