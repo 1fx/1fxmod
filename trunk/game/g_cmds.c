@@ -892,7 +892,7 @@ void Cmd_Kill_f( gentity_t *ent )
 		return;
 	}
 
-	if(current_gametype.value == GT_HS && strstr(level.mapname, "col9") && ent->client->sess.team == TEAM_BLUE)
+	if(/*current_gametype.value == GT_HS && */level.crossTheBridge && ent->client->sess.team == TEAM_BLUE)
 	{
 		trap_SendServerCommand ( ent->client - &level.clients[0], "print\"^3[Cross the bridge] ^7Why would you want to kill yourself?\n\"" );
 		return;

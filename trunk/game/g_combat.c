@@ -1157,10 +1157,10 @@ int G_Damage (
 		if(level.time > level.gametypeRoundTime && mod != MOD_POP){
 			damage = 0;
 		}
-		 if(mod == MOD_MSG90A1_SNIPER_RIFLE && strstr(level.mapname, "col9")){
+		 if(mod == MOD_MSG90A1_SNIPER_RIFLE && level.crossTheBridge){
 			attack = &weaponData[WP_MSG90A1].attack[ATTACK_NORMAL];
 			damage = attack->damage;
-		}else if(mod == MOD_AK74_ASSAULT_RIFLE && strstr(level.mapname, "col9")){
+		 }else if(mod == MOD_AK74_ASSAULT_RIFLE && level.crossTheBridge){
 			attack = &weaponData[WP_AK74_ASSAULT_RIFLE].attack[ATTACK_NORMAL];
 			damage = attack->damage;
 		 }else if(level.cagefight == qtrue && mod == 265){

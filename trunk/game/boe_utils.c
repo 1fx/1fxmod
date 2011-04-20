@@ -18,23 +18,21 @@ void RPM_WeaponMod ()
 	int				ammoMaxs[AMMO_MAX] = {0};
 	attackData_t	*attack;
 	char			WpnFile[64];
-	char			mapname[MAX_QPATH];
 
-	trap_Cvar_VariableStringBuffer ( "mapname", mapname, MAX_QPATH );	
-		// Henk 06/04/10 -> Different wpn files(H&S, Real Damage, Normal Damage)
-		if(current_gametype.value == GT_HS){
-			if(strstr(mapname, "col9"))
-				strcpy(WpnFile, "weaponfiles/col9.wpn");
-			else
-				strcpy(WpnFile, "weaponfiles/h&s.wpn");
-		}else{
-			if(g_instagib.integer == 1){
+	// Henk 06/04/10 -> Different wpn files(H&S, Real Damage, Normal Damage)
+	if(current_gametype.value == GT_HS){
+		if(level.crossTheBridge)
+			strcpy(WpnFile, "weaponfiles/ctb.wpn");
+		else
+			strcpy(WpnFile, "weaponfiles/h&s.wpn");
+	}else{
+		if(g_instagib.integer == 1){
 			//strcpy(WpnFile, "ext_data/rd.wpn");
 			strcpy(WpnFile, "weaponfiles/rd.wpn");
-			}else{
+		}else{
 			strcpy(WpnFile, "weaponfiles/nd.wpn");
-			}
 		}
+	}
 
 	GP2 = trap_GP_ParseFile(WpnFile, qtrue, qfalse);
 	if (!GP2)

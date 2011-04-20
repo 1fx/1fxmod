@@ -241,6 +241,9 @@ vmCvar_t	g_adminlog;
 vmCvar_t	server_rconprefix;
 vmCvar_t	server_specteamprefix;
 
+// Boe!Man 4/20/11
+vmCvar_t	g_crossTheBridge;
+
 #ifdef _BOE_DBG
 vmCvar_t	boe_log;
 #endif
@@ -524,6 +527,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_boxAttempts, "g_boxAttempts", "3",	CVAR_ARCHIVE,	0.0,	0.0,  0, qtrue  }, 
 	{ &g_cageAttempts, "g_cageAttempts", "3",	CVAR_ARCHIVE,	0.0,	0.0,  0, qtrue  },
 	{ &g_RpgStyle, "g_RpgStyle", "0",	CVAR_ARCHIVE,	0.0,	0.0,  0, qtrue  },
+	{ &g_crossTheBridge, "g_crossTheBridge", "0",	CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  },
 
 #ifdef _BOE_DBG
 	// Boe!Man: Debug CVAR.
@@ -950,13 +954,6 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	// Build the gametype list so we can verify the given gametype
 	BG_BuildGametypeList ( );
 
-	// Boe!Man 2/5/11: Force col9 to be a H&S map only.
-	trap_Cvar_VariableStringBuffer ( "mapname", level.mapname, MAX_QPATH );
-	if(strstr(level.mapname, "col9")){
-		trap_Cvar_Set("g_gametype", "h&s");
-		trap_Cvar_Update(&g_gametype);
-	}
-
 	//Before we set the gametype we change current_gametype and we set H&S to INF
 	if(!restart){
 		if(strstr(g_gametype.string, "inf")){
@@ -975,6 +972,13 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 			trap_Cvar_Set("current_gametype", "4");
 		}
 	trap_Cvar_Update(&current_gametype);
+	}
+
+	// Boe!Man 2/5/11: Force col9 to be a H&S map only.
+	// Boe!Man 4/20/11: Removed on request: http://1fx.uk.to/index.php?/tracker/issue-198-col9-not-working-with-ctf/ -- We now check if the g_crossTheBridge CVAR is enabled.
+	trap_Cvar_VariableStringBuffer ( "mapname", level.mapname, MAX_QPATH );
+	if(strstr(level.mapname, "col9") && current_gametype.value == GT_HS && g_crossTheBridge.integer > 0){
+		level.crossTheBridge = qtrue;
 	}
 
 	// Set the current gametype
@@ -1055,11 +1059,11 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 
 	ClearRegisteredItems();
 	if(current_gametype.value == GT_HS){
-	AddSpawnField("classname", "gametype_item");
-	AddSpawnField("targetname", "briefcase");
-	AddSpawnField("gametype", "inf");
-	AddSpawnField("origin", "999 999 999");
-	trap_UnlinkEntity(&g_entities[G_SpawnGEntityFromSpawnVars(qtrue)]);
+		AddSpawnField("classname", "gametype_item");
+		AddSpawnField("targetname", "briefcase");
+		AddSpawnField("gametype", "inf");
+		AddSpawnField("origin", "999 999 999");
+		trap_UnlinkEntity(&g_entities[G_SpawnGEntityFromSpawnVars(qtrue)]);
 	}
 
 	// parse the key/value pairs and spawn gentities
@@ -2660,7 +2664,7 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 		level.aetdone = qtrue;
 	}
 
-	if(level.time >= level.gametypeDelayTime && level.messagedisplay == qfalse && level.gametypeStartTime >= 5000 && !strstr(level.mapname, "col9") && level.cagefight != qtrue && level.time < level.gametypeRoundTime){
+	if(level.time >= level.gametypeDelayTime && level.messagedisplay == qfalse && level.gametypeStartTime >= 5000 && !level.crossTheBridge && level.cagefight != qtrue && level.time < level.gametypeRoundTime){
 		trap_SendServerCommand( -1, va("cp \"^7%sS%se%se%sk%se%srs released!\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		Boe_GlobalSound(level.clicksound); // Henkie 22/01/10 -> G_SoundIndex("sound/misc/menus/click.wav") index this when loading map(saves alot performance)
 		// give nades to all players
@@ -2697,7 +2701,7 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 		level.messagedisplay = qtrue;
 	}
 
-	if(level.time > level.gametypeStartTime+10000 && level.messagedisplay1 == qfalse && level.gametypeStartTime >= 5000 && !strstr(level.mapname, "col9") && level.cagefight != qtrue){
+	if(level.time > level.gametypeStartTime+10000 && level.messagedisplay1 == qfalse && level.gametypeStartTime >= 5000 && !level.crossTheBridge && level.cagefight != qtrue){
 		rpgwinner = GetRpgWinner();
 		if(rpgwinner != -1 && rpgwinner < 100){
 			// Henk 26/01/10 -> Give RPG to player

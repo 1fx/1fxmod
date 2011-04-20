@@ -513,7 +513,7 @@ void G_ResetGametype ( qboolean fullRestart )
 			level.gametypeDelayTime = level.time + g_roundstartdelay.integer * 1000;
 			if(current_gametype.value == GT_HS){
 				level.gametypeRoundTime = level.time + (g_roundtimelimit.integer * 60000); // Henk 22/01/10 -> Round time without startup delay // + g_roundstartdelay.integer * 1000;
-				if(strstr(level.mapname, "col9")){
+				if(level.crossTheBridge){
 					level.gametypeDelayTime = level.gametypeRoundTime;
 				}
 			}else

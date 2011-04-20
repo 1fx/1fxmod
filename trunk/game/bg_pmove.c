@@ -2412,10 +2412,6 @@ PM_GetAttackButtons
 int PM_GetAttackButtons(void)
 {
 	int buttons=pm->cmd.buttons;
-	char	mapname[64];
-
-		if(current_gametype.value == GT_HS)
-		trap_Cvar_VariableStringBuffer ( "mapname", mapname, MAX_QPATH ); // Henk 26/02/10 -> Cross the bridge
 
 	// Debounce firemode select button.
 	if ( buttons & BUTTON_FIREMODE )
@@ -2448,7 +2444,7 @@ int PM_GetAttackButtons(void)
 			}
 		}
 
-		if ( pm->ps->stats[STAT_FROZEN] && !strstr(mapname, "col9")) 
+		if ( pm->ps->stats[STAT_FROZEN] && !level.crossTheBridge) 
 		{
 			buttons &= ~BUTTON_ATTACK;
 		}
@@ -2777,10 +2773,6 @@ static void PM_Weapon( void )
 	int				attackButtons;
 	attackData_t	*attackData;
 	qboolean		altFire;
-	char	mapname[64];
-
-	if(current_gametype.value == GT_HS)
-	trap_Cvar_VariableStringBuffer ( "mapname", mapname, MAX_QPATH ); // Henk 26/02/10 -> Cross the bridge
 	
 	// Get modifed attack buttons.
 	attackButtons = PM_GetAttackButtons();
@@ -3127,7 +3119,7 @@ static void PM_Weapon( void )
 	}
 
 	// Start weapon when either frozen or not shooting
-	if( pm->ps->stats[STAT_FROZEN] && !strstr(mapname, "col9") || !(attackButtons&(BUTTON_ATTACK|BUTTON_ALT_ATTACK)) )
+	if( pm->ps->stats[STAT_FROZEN] && !level.crossTheBridge || !(attackButtons&(BUTTON_ATTACK|BUTTON_ALT_ATTACK)) )
 	{
 		// Handle the weapons idle animation
 		PM_WeaponIdle ( );
