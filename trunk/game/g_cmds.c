@@ -1777,6 +1777,7 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 {
 	qboolean	 ghost = qfalse;
 	qboolean	 spec  = qfalse;
+	qboolean	 beep  = qfalse;
 	char	type[128];
 	char	admin[128];
 	char 	star[128];
@@ -1898,6 +1899,12 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 	
 	// Boe!Man 1/17/10: Different kinds of Talking 'Modes'.
 
+
+	// Boe!Man 4/20/11: Should the beep be enabled?
+	if (cm_dsounds.integer == 1 && cm_enabled.integer == 1 || cm_dsounds.integer == 0 && cm_enabled.integer != 1){
+		beep = qtrue;
+	}
+
 	switch(mode)
 	{
 /*	case REF_CHAT:
@@ -1911,11 +1918,15 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 		*/
 	case ADM_CHAT:
 		strcpy(type, server_acprefix.string);
-		Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3"));
+		if (beep == qtrue){
+			Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3"));
+		}
 		break;
 	case SADM_CHAT:
 		strcpy(type, server_scprefix.string);
-		Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3"));
+		if (beep == qtrue){
+			Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3"));
+		}
 		break;
 	case ADM_TALK:
 		if(ent->client->sess.admin == 2){
@@ -1925,19 +1936,27 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 		}else if(ent->client->sess.admin == 4){
 		strcpy(type, server_sadminprefix.string);
 		}
-		Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3"));
+		if (beep == qtrue){
+			Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3"));
+		}
 		break;
 	case CADM_CHAT:
 		strcpy(type, server_caprefix.string);
-		Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3"));
+		if (beep == qtrue){
+			Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3"));
+		}
 		break;
 	case CLAN_CHAT:
 		strcpy(type, server_ccprefix.string);
-		Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3"));
+		if (beep == qtrue){
+			Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3"));
+		}
 		break;
 	case CLAN_TALK:
 		strcpy(type, server_ctprefix.string);
-		Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3"));
+		if (beep == qtrue){
+			Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3"));
+		}
 		break;
 	default:
 		break;

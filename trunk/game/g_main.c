@@ -1264,6 +1264,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 																								 // Or, in the case of '5', the scrim already ended.
 			trap_Cvar_Set("g_compMode", "0");
 			trap_Cvar_Set("cm_enabled", "0");
+			trap_Cvar_Set("cm_dsounds", "0");
 			trap_Cvar_Set("scorelimit", cm_oldsl.string);
 			trap_Cvar_Set("timelimit", cm_oldtl.string);
 			// Boe!Man 2/7/11: Reset the invatations after the scrim has ended/had an unexpected ending.
