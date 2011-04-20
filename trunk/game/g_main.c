@@ -372,7 +372,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_addsadmin,					"g_addsadmin",          "5",				CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
 	{ &g_ban,						"g_ban",				"4",				CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
 	{ &g_broadcast,					"g_broadcast",			"3",				CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
-	{ &g_subnetban,					"g_subnetban",			"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
+	{ &g_subnetban,					"g_subnetban",			"5",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_removeadmin,				"g_removeadmin",		"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_uppercut,					"g_uppercut",			"3",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_runover,					"g_runover",			"2",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
