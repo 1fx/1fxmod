@@ -2149,7 +2149,7 @@ void G_Say ( gentity_t *ent, gentity_t *target, int mode, const char *chatText )
 
 void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	char		*p;
-	char        newp[128] = "";
+	char        newp[512] = "";
 	// Boe!Man 1/10/10
 	int			i;
 	int			a = 0;
@@ -2159,7 +2159,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	char team[4];
 	// Boe!Man 5/3/10: Temp(?) fix.
 	qboolean	acmd = qfalse;
-	char		test[128];
+	char		test[512];
 	int			ignore = -1;
 	qboolean	command = qfalse;
 
