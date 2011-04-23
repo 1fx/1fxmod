@@ -102,9 +102,12 @@
 // 0.57t		Beta							428			3/2/11		// Sent out to BETA group on 3/2/11
 // 0.57t		1st Release Candidate			511			3/19/11		// Sent out to BETA group on 3/19/11
 // 0.57t		2nd Release Candidate			521			3/21/11		// Sent out to BETA group on 3/21/11
-// 0.57			Release							525			3/27/11		// Sent out to BETA group on 3/27/11
+// 0.57			1st Release						525			3/27/11		// Sent out to BETA group on 3/27/11
 // 0.58t		Alpha							545			4/2/11
 // 0.58t		Beta							568			4/8/11		// Sent out to BETA group on 4/8/11
+// 0.57			2nd Release	(hotfix)			525(/578)	4/23/11		// Sent out to BETA group on 4/23/11
+// 0.58t		Beta (hotfix)					568(/578)	4/23/11		// Sent out to BETA group on 4/23/11
+
 
 //===================================================================
 
