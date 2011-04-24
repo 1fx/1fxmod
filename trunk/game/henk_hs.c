@@ -339,7 +339,7 @@ int GetM4Winner(int rpgwinner){
 	int timeofdeath = 0; // time
 	int deaths = 0; // id
 
-	if(TeamCount1(TEAM_RED) <= 2)
+	if(TeamCount1(TEAM_RED) < 2)
 		return 100;
 
 	for ( i = 0; i < level.numConnectedClients; i ++ )
