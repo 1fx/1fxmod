@@ -391,6 +391,7 @@ void Boe_Tokens(gentity_t *ent, char *chatText, int mode, qboolean CheckSounds)
 	char newText[MAX_SAY_TEXT] = "\0";
 	char *newTextp;
 	char *chatTextS;
+	char check;
 	gentity_t *tent;
 	qboolean text = qtrue;
 	//gitem_t* item;		
@@ -404,7 +405,10 @@ void Boe_Tokens(gentity_t *ent, char *chatText, int mode, qboolean CheckSounds)
 	chatTextS = chatText;
 	while(*chatText && newTextp < newText + MAX_SAY_TEXT )
 	{
-		if (*chatText == '#')
+		chatText--;
+		check = *chatText;
+		chatText++;
+		if (*chatText == '#' && check != '^')
 		{
 			chatText++;
 
