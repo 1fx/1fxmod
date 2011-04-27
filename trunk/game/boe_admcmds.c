@@ -1311,6 +1311,11 @@ void Boe_Add_bAdmin_f(int argNum, gentity_t *adm, qboolean shortCmd)
 
 	idnum = Boe_ClientNumFromArg(adm, argNum, "addbadmin <idnumber>", "do this to", qfalse, qfalse, shortCmd);
 	if(idnum < 0) return;
+	// Boe!Man 4/27/11: RCON has to be able to do everything. However, there are a few things that should be excluded. Instead of processing which command was entered in the ClientNumFromArg func, we deploy this check in the addxadmin functions (to save resources).
+	if(!adm && g_entities[idnum].client->sess.admin > 1){
+		Com_Printf("You cannot use this command on other Admins.\n");
+		return;
+	}
 
 	if(shortCmd){
 		strcpy(arg, GetReason());
@@ -1321,7 +1326,8 @@ void Boe_Add_bAdmin_f(int argNum, gentity_t *adm, qboolean shortCmd)
 			trap_Argv(2, arg, sizeof(arg));
 		}
 	}
-	Com_Printf("Arg: %s\n", arg);
+
+	//Com_Printf("Arg: %s\n", arg);
 	if(!Q_stricmp(arg, "pass")){
 		AddToPasswordList(&g_entities[idnum], 2);
 		g_entities[idnum].client->sess.admin = 2;
@@ -1372,6 +1378,11 @@ void Boe_Add_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd)
 	char			arg[64] = "\0";
 	idnum = Boe_ClientNumFromArg(adm, argNum, "addadmin <idnumber>", "do this to", qfalse, qfalse, shortCmd);
 	if(idnum < 0) return;
+	// Boe!Man 4/27/11: RCON has to be able to do everything. However, there are a few things that should be excluded. Instead of processing which command was entered in the ClientNumFromArg func, we deploy this check in the addxadmin functions (to save resources).
+	if(!adm && g_entities[idnum].client->sess.admin > 1){
+		Com_Printf("You cannot use this command on other Admins.\n");
+		return;
+	}
 
 	if(shortCmd){
 		strcpy(arg, GetReason());
@@ -1434,6 +1445,11 @@ void Boe_Add_sAdmin_f(int argNum, gentity_t *adm, qboolean shortCmd)
 
 	idnum = Boe_ClientNumFromArg(adm, argNum, "addsadmin <idnumber>", "do this to", qfalse, qfalse, shortCmd);
 	if(idnum < 0) return;
+	// Boe!Man 4/27/11: RCON has to be able to do everything. However, there are a few things that should be excluded. Instead of processing which command was entered in the ClientNumFromArg func, we deploy this check in the addxadmin functions (to save resources).
+	if(!adm && g_entities[idnum].client->sess.admin > 1){
+		Com_Printf("You cannot use this command on other Admins.\n");
+		return;
+	}
 
 	if(shortCmd){
 		strcpy(arg, GetReason());
