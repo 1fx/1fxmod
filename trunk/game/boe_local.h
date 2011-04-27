@@ -15,8 +15,7 @@
 #ifdef Q3_VM
 #define INF_VERSION_DATE "4/8/11"
 #else
-#define YEAR ((((__DATE__ [7] - '0') * 10 + (__DATE__ [8] - '0')) * 10 \
-              + (__DATE__ [9] - '0')) * 10 + (__DATE__ [10] - '0'))
+#define YEAR ((((__DATE__ [9] - '0')) * 10 + (__DATE__ [10] - '0')))
 
 #define MONTH (__DATE__ [2] == 'n' ? 0 \
                : __DATE__ [2] == 'b' ? 1 \
