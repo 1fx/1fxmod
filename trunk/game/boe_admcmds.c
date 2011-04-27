@@ -302,7 +302,7 @@ void Boe_TimeLimit(int argNum, gentity_t *ent, qboolean shortCmd){ // Boe!Man 1/
 	number = GetArgument(argNum);
 	if(number < 0){
 		// Boe!Man 12/14/10: Show current (match) timelimit if there's no arg.
-		if (g_compMode.integer > 0){
+		if (g_compMode.integer > 0 && cm_enabled.integer >= 1){
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Match timelimit is %i.\n\"", cm_tl.integer));
 		}
 		else{
@@ -311,7 +311,7 @@ void Boe_TimeLimit(int argNum, gentity_t *ent, qboolean shortCmd){ // Boe!Man 1/
 		return;
 	}
 	// Boe!Man 11/16/10: Is Competition Mode active so we can update the scrim setting vs. the global one?
-	if (g_compMode.integer > 0){
+	if (g_compMode.integer > 0 && cm_enabled.integer >= 1){
 		if (cm_enabled.integer == 1){
 			trap_Cvar_Set("cm_tl", va("%i", number));
 			trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Match timelimit changed to %i by %s.\n\"", number, ent->client->pers.netname));
@@ -340,7 +340,7 @@ void Boe_ScoreLimit(int argNum, gentity_t *ent, qboolean shortCmd){ // Boe!Man 1
 	number = GetArgument(argNum);
 	if(number < 0){
 		// Boe!Man 12/14/10: Show current (match) scorelimit if there's no arg.
-		if (g_compMode.integer > 0){
+		if (g_compMode.integer > 0 && cm_enabled.integer >= 1){
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Match scorelimit is %i.\n\"", cm_sl.integer));
 		}
 		else{
@@ -349,7 +349,7 @@ void Boe_ScoreLimit(int argNum, gentity_t *ent, qboolean shortCmd){ // Boe!Man 1
 		return;
 	}
 	// Boe!Man 11/16/10: Is Competition Mode active so we can update the scrim setting vs. the global one?
-	if (g_compMode.integer > 0){
+	if (g_compMode.integer > 0 && cm_enabled.integer >= 1){
 		if (cm_enabled.integer == 1){
 			trap_Cvar_Set("cm_sl", va("%i", number));
 			trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Match scorelimit changed to %i by %s.\n\"", number, ent->client->pers.netname));
