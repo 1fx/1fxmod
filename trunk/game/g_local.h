@@ -1078,6 +1078,7 @@ void Svcmd_AddBot_f( void );
 void Svcmd_BotList_f( void );
 void BotInterbreedEndMatch( void );
 qboolean G_DoesMapSupportGametype ( const char* gametype );
+qboolean Henk_DoesMapSupportGametype(const char* gametype, char *mapname);
 //Ryan
 qboolean G_DoesMapExist				( const char* mapname );
 //Ryan

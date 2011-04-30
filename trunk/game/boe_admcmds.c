@@ -3740,24 +3740,25 @@ void Henk_Map(int argNum, gentity_t *adm, qboolean shortCmd){
 		// Boe!Man 2/26/11: The map is found, did they append a gametype among with it?
 		if(strlen(gt) >= 2){ // Boe!Man 2/26/11: The shortest available GT is "dm", so we check the size (is it longer then 2?) and save resouces if not.
 			if(strstr(gt, "ctf")){
-				trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype ctf\n"));
 				strcpy(gametype, "ctf");
 			}else if(strstr(gt, "inf")){
-				trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype inf\n"));
 				strcpy(gametype, "inf");
 			}else if(strstr(gt, "tdm")){
-				trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype tdm\n"));
 				strcpy(gametype, "tdm");
 			}else if(strstr(gt, "dm")){
-				trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype dm\n"));
 				strcpy(gametype, "dm");
 			}else if(strstr(gt, "elim")){
-				trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype elim\n"));
 				strcpy(gametype, "elim");
 			}else if(strstr(gt, "h&s")){
-				trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype h&s\n"));
 				strcpy(gametype, "h&s");
 			}
+			trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype %s\n", gametype));
+		}else
+			strcpy(gametype, g_gametype.string);
+
+		if(!Henk_DoesMapSupportGametype(gametype, map)){
+			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7This map does not support the gametype %s.\n\"", gametype));
+			return;
 		}
 			
 		level.mapSwitch = qtrue;

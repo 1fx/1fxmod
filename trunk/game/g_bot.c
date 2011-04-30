@@ -235,6 +235,42 @@ qboolean G_DoesMapSupportGametype ( const char* gametype )
 	return qfalse;
 }
 
+qboolean Henk_DoesMapSupportGametype ( const char* gametype, char *mapname )
+{
+	//char		mapname[MAX_QPATH];
+	const char* info;
+	const char*	type;
+	char*		token;
+
+	// Get the arena info for the current map 
+	info = G_GetArenaInfoByMap ( mapname );
+	if ( !info )
+	{
+		// If they dont have an area file for this map then
+		// just assume it supports all gametypes
+		return qtrue;
+	}
+
+	// Get the supported gametypes
+	type = Info_ValueForKey( info, "type" );
+
+	while ( 1 )
+	{
+		token = COM_Parse ( &type );
+		if ( !token || !*token )
+		{
+			break;
+		}
+
+		if ( Q_stricmp ( gametype, token ) == 0 )
+		{
+			return qtrue;
+		}
+	}
+
+	return qfalse;
+}
+
 /*
 =================
 PlayerIntroSound
