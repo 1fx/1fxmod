@@ -2707,6 +2707,7 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 	}
 
 	if(level.time > level.gametypeStartTime+10000 && level.messagedisplay1 == qfalse && level.gametypeStartTime >= 5000 && !level.crossTheBridge && level.cagefight != qtrue){
+		if(hideSeek_availableWeapons.string[WP_RPG7_LAUNCHER] == '2'){
 		rpgwinner = GetRpgWinner();
 		if(rpgwinner != -1 && rpgwinner < 100){
 			// Henk 26/01/10 -> Give RPG to player
@@ -2759,6 +2760,8 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 					break;
 				}
 			}
+		}
+		if(hideSeek_availableWeapons.string[WP_M4_ASSAULT_RIFLE] == '2'){
 		m4winner = GetM4Winner(rpgwinner);
 		if(m4winner != -1 && m4winner < 100){
 			// Henk 26/01/10 -> Give M4 to player
@@ -2823,6 +2826,7 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 				trap_SendServerCommand(g_entities[level.sortedClients[random]].s.number, va("cp \"^7You now have the %sM%s4^7!\n\"", server_color1.string, server_color2.string));
 				break;
 			}
+		}
 		}
 		level.messagedisplay1 = qtrue;
 	}

@@ -1085,7 +1085,7 @@ int G_Damage (
 			if(mod != 1){
 				damage = 0;
 			}else if(mod == 1){
-				if(level.MM1given == qfalse){ // MM1 has not been given to a seeker, so give it to him.
+				if(level.MM1given == qfalse && hideSeek_availableWeapons.string[WP_MM1_GRENADE_LAUNCHER] == '2'){ // MM1 has not been given to a seeker, so give it to him.
 					attacker->client->ps.ammo[weaponData[WP_MM1_GRENADE_LAUNCHER].attack[ATTACK_NORMAL].ammoIndex]=2;
 					attacker->client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_MM1_GRENADE_LAUNCHER );
 					attacker->client->ps.clip[ATTACK_NORMAL][WP_MM1_GRENADE_LAUNCHER]=1;
