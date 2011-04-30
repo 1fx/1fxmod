@@ -3751,10 +3751,20 @@ void Henk_Map(int argNum, gentity_t *adm, qboolean shortCmd){
 				strcpy(gametype, "elim");
 			}else if(strstr(gt, "h&s")){
 				strcpy(gametype, "h&s");
+			}else{
+				if(current_gametype.value == GT_HS)
+					strcpy(gametype, "h&s");
+				else
+					strcpy(gametype, g_gametype.string);
 			}
-			trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype %s\n", gametype));
-		}else
+		}else{
+			if(current_gametype.value == GT_HS)
+				strcpy(gametype, "h&s");
+			else
 			strcpy(gametype, g_gametype.string);
+		}
+
+		trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype %s\n", gametype));
 
 		if(!Henk_DoesMapSupportGametype(gametype, map)){
 			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7This map does not support the gametype %s.\n\"", gametype));

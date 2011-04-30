@@ -856,6 +856,16 @@ use the first gametype that it does support
 */
 void G_SetGametype ( const char* gametype )
 {
+	char realgametype[8] = "0000";
+	char mapname[MAX_QPATH];
+	qboolean doit = qfalse;
+	qboolean check, check1;
+	if(strstr(gametype, "h&s")){
+		gametype = "inf";
+		strcpy(realgametype, "h&s");
+		doit = qtrue;
+	}
+	trap_Cvar_VariableStringBuffer ( "mapname", mapname, MAX_QPATH );
 	// Make sure the gametype is valid, if not default to deathmatch
 	level.gametype = BG_FindGametype ( gametype );
 
@@ -868,9 +878,18 @@ void G_SetGametype ( const char* gametype )
 	//	|| level.gametype == -1 )
 	//Ryan
 	///Taken from the 1.03 *unofficial* sdk
-	if ((level.gametype == -1) || (!G_DoesMapSupportGametype (gametype)
-	 && (!bg_gametypeData[level.gametype].basegametype || 
-	 !G_DoesMapSupportGametype (bg_gametypeData[level.gametype].basegametype))))
+	if(doit){
+		check = qfalse;
+		check1 = Henk_DoesMapSupportGametype (realgametype, mapname);
+	}else{
+		check1 = G_DoesMapSupportGametype (gametype);
+		if(!G_DoesMapSupportGametype (bg_gametypeData[level.gametype].basegametype))
+			check = qtrue;
+		else
+			check = qfalse;
+	}
+	if ((level.gametype == -1) || (!check
+	 && (!bg_gametypeData[level.gametype].basegametype || check == qtrue)))
 	 ///End  - 08.31.06 - 10:14pm
 	{
 		int i = 0;
@@ -878,10 +897,10 @@ void G_SetGametype ( const char* gametype )
 		// Find a gametype it does support
 		for ( i = 0; i < bg_gametypeCount; i ++ )
 		{
-			if ( G_DoesMapSupportGametype ( bg_gametypeData[i].name ) )
-			{
-				break;
-			}
+				if ( G_DoesMapSupportGametype ( bg_gametypeData[i].name ) )
+				{
+					break;
+				}
 		}
 
 		// This is bad, this means the map doesnt support any gametypes
@@ -987,7 +1006,6 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 
 	// Set the current gametype
 	G_SetGametype(g_gametype.string);
-
 	// Give the game a uniqe id
 	trap_SetConfigstring ( CS_GAME_ID, va("%d", randomSeed ) );
 
