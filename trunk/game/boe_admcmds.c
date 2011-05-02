@@ -1560,7 +1560,7 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 			if(line != CurrentLine){
 			strncpy(asd, buf+StartPos, EndPos);
 			trap_FS_Write(asd, strlen(asd), f);
-			Com_Printf("Written %s\n", asd);
+			//Com_Printf("Written %s\n", asd);
 			//Q_strncpyz(newbuf+strlen(newbuf), asd, sizeof(newbuf));
 			}else{
 				strncpy(last, buf+StartPos, EndPos-StartPos); 
@@ -1586,13 +1586,13 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 			Com_sprintf(asd, sizeof(asd), "%s\n", asd);
 			//Q_strncpyz(newbuf+strlen(newbuf), asd, sizeof(newbuf));
 			trap_FS_Write(asd, strlen(asd), f);
-			Com_Printf("Written %s\n", asd);
+			//Com_Printf("Written %s\n", asd);
 			//Com_Printf("New buf length: %i\n", strlen(newbuf));
 			//Com_Printf("Added %s\n", asd);
 			}else{
 				done = qtrue;
 				strncpy(last, buf+StartPos, EndPos-StartPos); 
-				Com_Printf("Final: %s\n", last);
+				//Com_Printf("Final: %s\n", last);
 			}
 		}
 	}
@@ -3428,8 +3428,13 @@ void Henk_AdminRemove(int argNum, gentity_t *adm, qboolean shortCmd){
 		else
 			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid IP, Usage: adm adminremove <Line>.\n\""));
 		return;
+	}else{
+			if(shortCmd)
+			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid IP, Usage: !adr <Line>.\n\""));
+		else
+			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid IP, Usage: adm adminremove <Line>.\n\""));
+		return;
 	}
-
 }
 
 
@@ -3462,9 +3467,9 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 	char buffer[15000];
 	char packet[512];
 	char *bufP = buffer;
-	int len, i, count = 0, EndPos = -1, StartPos = 0;
+	int len, i, count = 0, EndPos = -1, StartPos, CountLines = 0;
 	qboolean begin = qtrue;
-	int r, lcount = -1;
+	int r, lcount = -1, Start = 0;
 	char xip[64];
 	memset(buffer, 0, sizeof(buffer));
 	//wrapper for interface
@@ -3554,6 +3559,12 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 					//trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7] %s%s%s%s%s\n", count, level, column1, name, column2, xip)); // Boe!Man 9/16/10: Print ban.
 					Com_sprintf(buffer+strlen(buffer), sizeof(buffer), "[^3%i^7] %s%s%s%s%s\n", count, level, column1, name, column2, xip);
 				}
+				CountLines += 1;
+				if(CountLines == 10){
+					trap_SendServerCommand( adm-g_entities, va("print \"%s\"", buffer));
+					memset(buffer, 0, sizeof(buffer));
+					CountLines = 0;
+				}
 			}else{
 				if(count <= 9){
 					Com_Printf("[^3%i^7]   %s%s%s%s%s\n", count, level, column1, name, column2, xip);
@@ -3565,17 +3576,7 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 			}
 		}
 	}
-	buffer[strlen(buffer)] = '\0';
-	len = strlen(buffer);
-	if(adm){
-		while(bufP <= &buffer[len + 501])
-		{
-			memset(packet, 0, sizeof(packet)); // Henk 25/01/11 -> Clear the buffer to prevent problems
-			Q_strncpyz(packet, bufP, 501);
-			trap_SendServerCommand( adm-g_entities, va("print \"%s\"", packet));
-			bufP += 500;
-		}
-	}
+	trap_SendServerCommand( adm-g_entities, va("print \"%s\"", buffer));
 
 	// End
 	trap_SendServerCommand( adm-g_entities, va("print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\""));
