@@ -1512,7 +1512,7 @@ Henk_RemoveLineFromFile
 Removes a zero based line from a file
 ================
 */
-void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subnet){
+void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subnet, qboolean ban){
 	fileHandle_t	f;
 	int len, CurrentLine = 0, StartPos = 0, EndPos = -1, i;
 	qboolean begin = qtrue;
@@ -1606,6 +1606,7 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 		}
 	}
 	Com_Printf("Last ip: %s\n", lastip);
+	if(ban){
 	if(subnet)
 		strcpy(fileName, va("users\\baninfo\\subnet\\%s.IP", lastip));
 	else
@@ -1632,6 +1633,8 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 		}
 		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7%s has been Unbanned.\n\"", last));
 	//return qtrue;
+	}else
+		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7%s has been removed from the list.\n\"", last));
 	}else{
 		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Could not find line %i.\n\"", line));
 	}
@@ -1655,9 +1658,9 @@ void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 		// unban by line
 		iLine = atoi(ip);
 		if(subnet)
-			Henk_RemoveLineFromFile(adm, iLine, "users/subnetbans.txt", qtrue);
+			Henk_RemoveLineFromFile(adm, iLine, "users/subnetbans.txt", qtrue, qtrue);
 		else
-			Henk_RemoveLineFromFile(adm, iLine, g_banfile.string, qfalse);
+			Henk_RemoveLineFromFile(adm, iLine, g_banfile.string, qfalse, qtrue);
 		return;
 	}else if(strlen(ip) < 2){
 		trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid IP, Usage: adm unban <IP/Line>.\n\""));
@@ -3387,6 +3390,48 @@ void Henk_Flash(int argNum, gentity_t *adm, qboolean shortCmd){
 		}
 	}
 }
+
+void Henk_AdminRemove(int argNum, gentity_t *adm, qboolean shortCmd){
+	char	arg[32] = "\0", buf[32] = "\0";
+	int		i = 0, count = 0, iLine = 0;
+	if(shortCmd){
+		trap_Argv( argNum, arg, sizeof( arg ) );
+		if(strstr(arg, "!") && !strstr(arg, " ")){
+			trap_Argv( argNum+1, arg, sizeof( arg ) );
+		}
+		for(i=StartAfterCommand(va("%s", arg));i<strlen(arg);i++){
+			buf[count] = arg[i];
+			count += 1;
+		}
+		buf[count+1] = '\0';
+	}else{
+		trap_Argv( argNum, arg, sizeof( arg ) );
+	}
+
+	if(shortCmd)
+		strcpy(arg, buf);
+
+	if(strlen(arg) < 2 && strstr(arg, ".")){
+		if(shortCmd)
+			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid IP, Usage: !adr <Line>.\n\""));
+		else
+			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid IP, Usage: adm adminremove <Line>.\n\""));
+		return;
+	}else if(strlen(arg) >= 1 && !strstr(arg, ".")){
+		// unban by line
+		iLine = atoi(arg);
+		Henk_RemoveLineFromFile(adm, iLine, g_adminfile.string, qfalse, qfalse);
+		return;
+	}else if(strlen(arg) < 2){
+		if(shortCmd)
+			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid IP, Usage: !adr <Line>.\n\""));
+		else
+			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid IP, Usage: adm adminremove <Line>.\n\""));
+		return;
+	}
+
+}
+
 
 void Henk_Unban(int argNum, gentity_t *adm, qboolean shortCmd){
 	char	arg[32] = "\0", buf[32] = "\0";

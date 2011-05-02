@@ -121,6 +121,7 @@ vmCvar_t	server_color4;
 vmCvar_t	server_color5;
 vmCvar_t	server_color6;
 vmCvar_t	g_uppercut;						// Admin CVAR.
+vmCvar_t    g_adminremove;
 vmCvar_t	g_runover;						// Admin CVAR.
 vmCvar_t	g_twist;						// Admin CVAR.
 vmCvar_t	g_respawn;						// Admin CVAR.
@@ -402,7 +403,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_3rd,						"g_3rd",				"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_cm,						"g_cm",					"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_forcevote,					"g_forcevote",			"3",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
-
+	{ &g_adminremove,				"g_adminremove",		"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 
 	{ &g_clanfile,			"g_clanfile",			"users/clanmembers.txt",	CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  },
 	{ &g_banfile,			"g_banfile",			"users/bans.txt",		CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  },

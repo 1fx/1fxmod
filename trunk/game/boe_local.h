@@ -173,6 +173,7 @@ void	Boe_id (int);
 int		Boe_AddToList(const char *string, const char* file, const char* type, gentity_t* ent);
 int		Boe_Remove_from_list( char *key, const char *file, const char* type, gentity_t *ent, qboolean unban, qboolean removeAdmin, qboolean scoreCheck);
 void	Boe_Unban(gentity_t *adm, char *ip, qboolean subnet);
+void	Henk_AdminRemove(int argNum, gentity_t *adm, qboolean shortCmd);
 
 void	Boe_subnetBan(int argNum, gentity_t *adm, qboolean shortCmd);
 void	Boe_Remove_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd);
@@ -197,6 +198,7 @@ void	Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 void	Boe_Ban_f (int argNum, gentity_t *adm, qboolean shortCmd);				// Prototype warnings.
 void	Boe_Uppercut (int argNum, gentity_t *adm, qboolean shortCmd);
 extern	vmCvar_t	g_uppercut;
+extern  vmCvar_t	g_adminremove;
 
 void	Boe_Twist (int argNum, gentity_t *adm, qboolean shortCmd);
 void	Boe_unTwist (int argNum, gentity_t *adm, qboolean shortCmd);
@@ -487,7 +489,7 @@ void Henk_Gametype(int argNum, gentity_t *adm, qboolean shortCmd);
 void Henk_Unpause(int argNum, gentity_t *adm, qboolean shortCmd);
 void Henk_Pause(int argNum, gentity_t *adm, qboolean shortCmd);
 void G_UpdateAvailableWeapons(void);
-void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subnet);
+void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subnet, qboolean ban);
 void Henk_Unban(int argNum, gentity_t *adm, qboolean shortCmd);
 void Henk_SubnetUnban(int argNum, gentity_t *adm, qboolean shortCmd);
 void Henk_SubnetBanList(int argNum, gentity_t *adm, qboolean shortCmd);

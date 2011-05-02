@@ -71,6 +71,7 @@ static admCmd_t AdminCommands[] =
 	{"!adminlist","adminlist", &g_adminlist.integer, &Henk_Admlist},
 	// Boe!Man 1/22/11: End full synonyms.
 
+	{"!adr", "adminremove" &g_adminremove.integer, &Henk_AdminRemove},
 	{"!uc","uppercut", &g_uppercut.integer, &Boe_Uppercut},
 	{"!ab","addbadmin", &g_addbadmin.integer, &Boe_Add_bAdmin_f},
 	{"!aa","addadmin", &g_addadmin.integer, &Boe_Add_Admin_f},
