@@ -1194,15 +1194,9 @@ void ClientUserinfoChanged( int clientNum )
 	{
 		team = client->sess.team;
 	}
-	
+
 	// Enforce the identities
 	oldidentity = client->pers.identity;
-
-	if(ent->client->sess.lastIdentityChange <= level.time){
-		ent->client->sess.lastIdentityChange = level.time + 3000;
-	///End  - 08.30.06 - 08:52pm
-	}else
-		return;
 
 	if( level.gametypeData->teams && current_gametype.value != GT_HS ) 
 	{
@@ -1232,7 +1226,8 @@ void ClientUserinfoChanged( int clientNum )
 	{
 		s = Info_ValueForKey ( userinfo, "identity" );
 		if(current_gametype.value == GT_HS){
-			if(client->sess.team == TEAM_BLUE){
+			if(client->sess.team == TEAM_BLUE){ // spam protection
+				if(!client->pers.identity){
 				random = irand(0, 3);
 				if(random == 0)
 					client->pers.identity = &bg_identities[60];
@@ -1242,14 +1237,32 @@ void ClientUserinfoChanged( int clientNum )
 					client->pers.identity = &bg_identities[62];
 				else if(random == 3)
 					client->pers.identity = &bg_identities[103];
+				else
+					client->pers.identity = &bg_identities[102];
+				}else if(strstr(client->pers.identity->mName, "NPC_Swiss_Police/swiss_police_b1") || strstr(client->pers.identity->mName, "NPC_Honor_Guard/honor_guard_w1") || strstr(client->pers.identity->mName, "NPC_Swiss_Police") || strstr(client->pers.identity->mName, "NPC_Sebastian_Jenzer")){
+				
+				}else{
+				random = irand(0, 3);
+				if(random == 0)
+					client->pers.identity = &bg_identities[60];
+				else if(random == 1)
+					client->pers.identity = &bg_identities[61];
+				else if(random == 2)
+					client->pers.identity = &bg_identities[62];
+				else if(random == 3)
+					client->pers.identity = &bg_identities[103];
+				else
+					client->pers.identity = &bg_identities[102];
+				}
 			}else{
 				client->pers.identity = BG_FindIdentity ( s );
 				if(client->pers.identity){
-					if(client->pers.identity->mName == "NPC_Swiss_Police/swiss_police_b1" || client->pers.identity->mName == "NPC_Honor_Guard/honor_guard_w1" || strstr(client->pers.identity->mName, "NPC_Swiss_Police") || strstr(client->pers.identity->mName, "NPC_Sebastian_Jenzer")){
+					if(strstr(client->pers.identity->mName, "NPC_Swiss_Police/swiss_police_b1") || strstr(client->pers.identity->mName, "NPC_Honor_Guard/honor_guard_w1") || strstr(client->pers.identity->mName, "NPC_Swiss_Police") || strstr(client->pers.identity->mName, "NPC_Sebastian_Jenzer")){
 						trap_SendServerCommand ( client - &level.clients[0], "print \"^3[H&S] ^7You cannot use that skin.\n\"" );
 						client->pers.identity = &bg_identities[1]; // Henk 21/02/10 -> Changed from return to skin 1(could prevent hiders with seekers skin)
 					}
-				}
+				}else
+					client->pers.identity = &bg_identities[1];
 			}
 		}else{
 		// Lookup the identity by name and if it cant be found then pick a random one
@@ -1381,9 +1394,6 @@ void ClientUserinfoChanged( int clientNum )
 	if (strstr(boe_log.string, "1"))
 		G_LogPrintf("6e\n");
 #endif
-
-
-	ent->client->sess.lastIdentityChange = level.time+3000;
 }
 
 
