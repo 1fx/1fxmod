@@ -61,7 +61,6 @@ int TiedPlayers(void){
 void InitCagefight(void){
 	int i, count = 0;
 	vec3_t spawns[33];
-	vec3_t angles;
 	if(level.time < level.cagefighttimer){
 		return;
 	}

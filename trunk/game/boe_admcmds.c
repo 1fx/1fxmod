@@ -3459,18 +3459,26 @@ void Henk_Unban(int argNum, gentity_t *adm, qboolean shortCmd){
 }
 
 void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
-	char	level[15], level1[3], name[64], reason[64], test = ' ';
+	char	level[15], level1[3], name[64], test = ' ';
 	char	column1[20], column2[25];
 	int		spaces = 0, length = 0, z;
 	fileHandle_t f;
 	char buf[15000] = "\0";
 	char buffer[15000];
-	char packet[512];
 	char *bufP = buffer;
-	int len, i, count = 0, EndPos = -1, StartPos, CountLines = 0;
+	int len, i, count = 0, EndPos = -1, StartPos = 0, CountLines = 0;
 	qboolean begin = qtrue;
 	int r, lcount = -1, Start = 0;
-	char xip[64];
+	char xip[64], arg[32] = "\0";
+	qboolean passwordlist = qfalse;
+
+	if(shortCmd)
+		trap_Argv( 1, arg, sizeof( arg ) );
+	else
+		trap_Argv( argNum, arg, sizeof( arg ) );
+	if(strstr(arg, "pass"))
+		passwordlist = qtrue;
+
 	memset(buffer, 0, sizeof(buffer));
 	//wrapper for interface
 	if(adm){
@@ -3482,10 +3490,15 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 		Com_Printf("^3 #   Lvl   Name               IP\n");
 		Com_Printf("^7------------------------------------------------------------------------\n");
 	}
-
-	len = trap_FS_FOpenFile(g_adminfile.string, &f, FS_READ);
+	if(passwordlist)
+		len = trap_FS_FOpenFile(g_adminPassFile.string, &f, FS_READ);
+	else
+		len = trap_FS_FOpenFile(g_adminfile.string, &f, FS_READ);
 	if(!f){
-		Com_Printf("Error while reading %s\n", g_adminfile.string);
+		if(passwordlist)
+			Com_Printf("Error while reading %s\n", g_adminPassFile.string);
+		else
+			Com_Printf("Error while reading %s\n", g_adminfile.string);
 		return;
 	}
 	trap_FS_Read( buf, len, f );
@@ -3502,7 +3515,12 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 			EndPos = i;
 			begin = qtrue;
 			memset(xip, 0, sizeof(xip));
-			strncpy(xip, buf+StartPos, EndPos-StartPos);
+			if((EndPos-StartPos)  < 1)
+				Com_Printf("Error: %i - %i\n", EndPos, StartPos);
+			if(passwordlist)
+				Q_strncpyz(xip, buf+StartPos, (EndPos-StartPos)+1);
+			else
+				Q_strncpyz(xip, buf+StartPos, EndPos-StartPos);
 			lcount = -1;
 			for(r=i;r<strlen(buf);r++){
 				if(buf[r] == '\n'){
@@ -3538,9 +3556,15 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 			memset(level, 0, sizeof(level));
 			strcpy(level, va("[^3%c^7]", level1[0]));
 			level[strlen(level)] = '\0';
-			length = strlen(name);
+			if(passwordlist)
+				length = strlen(xip);
+			else
+				length = strlen(name);
 			if(length > 18){
-				name[18] = '\0';
+				if(passwordlist)
+					xip[18] = '\0';
+				else
+					name[18] = '\0';
 				length = 18;
 			}
 			spaces = 19-length;
@@ -3551,13 +3575,22 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 			if(adm){
 				if(count <= 9){
 					//trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7]   %s%s%s%s%s\n", count, level, column1, name, column2, xip)); // Boe!Man 9/16/10: Print ban.
-					Com_sprintf(buffer+strlen(buffer), sizeof(buffer), "[^3%i^7]   %s%s%s%s%s\n", count, level, column1, name, column2, xip);
+					if(passwordlist)
+						Com_sprintf(buffer+strlen(buffer), sizeof(buffer), "[^3%i^7]   %s%s%s%s%s\n", count, level, column1, xip, column2, name);
+					else
+						Com_sprintf(buffer+strlen(buffer), sizeof(buffer), "[^3%i^7]   %s%s%s%s%s\n", count, level, column1, name, column2, xip);
 				}else if(count > 9 && count < 100){
 					//trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7]  %s%s%s%s%s\n", count, level, column1, name, column2, xip)); // Boe!Man 9/16/10: Print ban.
-					Com_sprintf(buffer+strlen(buffer), sizeof(buffer), "[^3%i^7]  %s%s%s%s%s\n", count, level, column1, name, column2, xip);
+					if(passwordlist)
+						Com_sprintf(buffer+strlen(buffer), sizeof(buffer), "[^3%i^7]  %s%s%s%s%s\n", count, level, column1, xip, column2, name);
+					else
+						Com_sprintf(buffer+strlen(buffer), sizeof(buffer), "[^3%i^7]  %s%s%s%s%s\n", count, level, column1, name, column2, xip);
 				}else{
 					//trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7] %s%s%s%s%s\n", count, level, column1, name, column2, xip)); // Boe!Man 9/16/10: Print ban.
-					Com_sprintf(buffer+strlen(buffer), sizeof(buffer), "[^3%i^7] %s%s%s%s%s\n", count, level, column1, name, column2, xip);
+					if(passwordlist)
+						Com_sprintf(buffer+strlen(buffer), sizeof(buffer), "[^3%i^7] %s%s%s%s%s\n", count, level, column1, xip, column2, name);
+					else
+						Com_sprintf(buffer+strlen(buffer), sizeof(buffer), "[^3%i^7] %s%s%s%s%s\n", count, level, column1, name, column2, xip);
 				}
 				CountLines += 1;
 				if(CountLines == 10){

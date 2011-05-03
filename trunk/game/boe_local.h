@@ -537,3 +537,7 @@ void	trap_LinkEntity1( gentity_t *ent );
 void	trap_UnlinkEntity1( gentity_t *ent );
 int GetRpgWinner(void);
 int GetM4Winner(int rpgwinner);
+void AddToPasswordList(gentity_t *ent, int lvl);
+qboolean IsValidCommand(char *cmd, char *string);
+void Boe_compTimeLimitCheck (void);
+void SetNades(char *status);

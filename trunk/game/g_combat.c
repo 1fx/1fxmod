@@ -1646,7 +1646,7 @@ qboolean G_RadiusDamage (
 	int			numListedEntities;
 	vec3_t		mins, maxs, mins1, maxs1;
 	vec3_t		v;
-	vec3_t		dir, rpgAngs, rpgdir, xtest;
+	vec3_t		dir, rpgAngs, rpgdir;
 	int			i, e, a;
 	qboolean	hitClient = qfalse;
 	qboolean	CageOutOfBoundaries = qfalse;
