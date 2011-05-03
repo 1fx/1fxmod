@@ -462,7 +462,7 @@ void ResetCages(){
 G_ResetGametype
 ===============
 */
-void G_ResetGametype ( qboolean fullRestart )
+void G_ResetGametype ( qboolean fullRestart, qboolean cagefight )
 {
 	gentity_t*	tent;
 	// Reset the glass in the level
@@ -512,6 +512,9 @@ void G_ResetGametype ( qboolean fullRestart )
 		case RT_NONE:
 			level.gametypeDelayTime = level.time + g_roundstartdelay.integer * 1000;
 			if(current_gametype.value == GT_HS){
+				if(cagefight == qtrue)
+					level.gametypeRoundTime = level.time + (1*60000);
+				else
 				level.gametypeRoundTime = level.time + (g_roundtimelimit.integer * 60000); // Henk 22/01/10 -> Round time without startup delay // + g_roundstartdelay.integer * 1000;
 				if(level.crossTheBridge){
 					level.gametypeDelayTime = level.gametypeRoundTime;
@@ -883,7 +886,7 @@ void CheckGametype ( void )
 
 		if ( level.teamAliveCount[TEAM_RED] || level.teamAliveCount[TEAM_BLUE] || level.teamAliveCount[TEAM_FREE] )
 		{
-			G_ResetGametype ( qfalse );
+			G_ResetGametype ( qfalse, qfalse );
 			return;
 		}
 	}
@@ -896,7 +899,7 @@ void CheckGametype ( void )
 			// Dont do this again
 			level.gametypeResetTime = 0;
 
-			G_ResetGametype ( qfalse );
+			G_ResetGametype ( qfalse, qfalse );
 		}
 
 		return;
@@ -1128,7 +1131,7 @@ int G_GametypeCommand ( int cmd, int arg0, int arg1, int arg2, int arg3, int arg
 		case GTCMD_RESTART:
 			if ( arg0 <= 0 )
 			{
-				G_ResetGametype ( qfalse );
+				G_ResetGametype ( qfalse, qfalse );
 			}
 			else
 			{

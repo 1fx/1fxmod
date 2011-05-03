@@ -66,7 +66,7 @@ void InitCagefight(void){
 	}
 	level.startcage = qfalse;
 
-	G_ResetGametype(qfalse);
+	G_ResetGametype(qfalse, qtrue);
 	for(i=0;i<=32;i++){
 		VectorCopy(level.hideseek_cage, spawns[i]);
 	}

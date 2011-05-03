@@ -233,6 +233,7 @@ vmCvar_t	g_forcevote;
 vmCvar_t	g_customCommandsFile;
 vmCvar_t	g_banfile;
 vmCvar_t	hideSeek_Extra;
+vmCvar_t	hideSeek_Nades;
 
 // Boe!Man 3/8/11
 vmCvar_t	g_enableAdminLog;
@@ -335,7 +336,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_roundstartdelay,	"g_roundstartdelay", "5",		CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 
 	{ &g_availableWeapons,	"g_availableWeapons", "2222222222211", CVAR_ARCHIVE|CVAR_SERVERINFO|CVAR_LATCH|CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
-	{ &hideSeek_availableWeapons,	"hideSeek_availableWeapons", "200000000000022222222", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
+	{ &hideSeek_availableWeapons,	"hideSeek_availableWeapons", "200000000000022222222", CVAR_INTERNAL|CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
 	{ &availableWeapons,	"availableWeapons", "2222222222211", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
 	// Henk 01/04/10
 	{ &g_disableNades,	"g_disableNades", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
@@ -512,6 +513,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_enableCustomCommands, "g_enableCustomCommands", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 	{ &g_customCommandsFile,			"g_customCommandsFile",			"CustomCommands.txt",	CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  }, // Boe!Man 3/6/11: So users can change if desired.
 	{ &hideSeek_Extra,			"hideSeek_Extra",			"1101",	CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  }, // Boe!Man 3/6/11: So users can change if desired.
+	{ &hideSeek_Nades,			"hideSeek_Nades",			"1111",	CVAR_ARCHIVE|CVAR_LATCH,	0.0,	0.0,  0, qfalse  }, // Boe!Man 3/6/11: So users can change if desired.
 
 	// Boe!Man 3/8/11: CVAR for the Admin logging.
 	{ &g_enableAdminLog, "g_enableAdminLog", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
@@ -1129,6 +1131,23 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	// Henk 22/01/11 -> New weapon cvars.
 	G_UpdateDisableCvars(); // Set the disabled_ cvars from availableWeapons and hideSeek_availableWeapons
 	
+	if(hideSeek_Nades.string[0] == '0')
+		trap_Cvar_Set("disable_pickup_weapon_SMOHG92", "1");
+	else
+		trap_Cvar_Set("disable_pickup_weapon_SMOHG92", "0");
+	if(hideSeek_Nades.string[1] == '0')
+		trap_Cvar_Set("disable_pickup_weapon_M84", "1");
+	else
+		trap_Cvar_Set("disable_pickup_weapon_M84", "0");
+	if(hideSeek_Nades.string[2] == '0')
+		trap_Cvar_Set("disable_pickup_weapon_M15", "1");
+	else
+		trap_Cvar_Set("disable_pickup_weapon_M15", "0");
+	if(hideSeek_Nades.string[3] == '0')
+		trap_Cvar_Set("disable_pickup_weapon_AN_M14", "1");
+	else
+		trap_Cvar_Set("disable_pickup_weapon_AN_M14", "0");
+
 	G_UpdateAvailableWeapons(); // also set the original g_availableWeapons for the client :)
 	// End
 	if(current_gametype.value != GT_HS){
@@ -1141,7 +1160,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 
 	// Set the available outfitting
 	if(current_gametype.value == GT_HS)
-		BG_SetAvailableOutfitting ( hideSeek_availableWeapons.string );
+		BG_SetAvailableOutfitting ( g_availableWeapons.string);//hideSeek_availableWeapons.string );
 	else{
 		if(g_disableNades.integer == 0){
 		SetNades("0");
@@ -2236,6 +2255,11 @@ void CheckExitRules( void )
 					trap_Cvar_Set("cm_enabled", "5"); // Boe!Man 11/18/10: 5 - Scrim Ended.
 					Boe_calcMatchScores();
 				}else{
+					if(current_gametype.value == GT_HS){
+						Com_Printf("Updating scores..\n");
+						UpdateScores();
+						LogExit("Hiders have won");
+					}else
 					LogExit( "Red team hit the score limit." );
 				}
 				return;
@@ -2294,6 +2318,11 @@ void CheckExitRules( void )
 					Boe_calcMatchScores();
 				}
 				else{
+					if(current_gametype.value == GT_HS){
+						Com_Printf("Updating scores..\n");
+						UpdateScores();
+						LogExit("Seekers have won");
+					}else
 					LogExit( "Blue team hit the score limit." );
 				}
 				return;
@@ -2726,7 +2755,6 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 	}
 
 	if(level.time > level.gametypeStartTime+10000 && level.messagedisplay1 == qfalse && level.gametypeStartTime >= 5000 && !level.crossTheBridge && level.cagefight != qtrue){
-		if(hideSeek_availableWeapons.string[WP_RPG7_LAUNCHER] == '2'){
 		rpgwinner = GetRpgWinner();
 		if(rpgwinner != -1 && rpgwinner < 100){
 			// Henk 26/01/10 -> Give RPG to player
@@ -2779,8 +2807,6 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 					break;
 				}
 			}
-		}
-		if(hideSeek_availableWeapons.string[WP_M4_ASSAULT_RIFLE] == '2'){
 		m4winner = GetM4Winner(rpgwinner);
 		if(m4winner != -1 && m4winner < 100){
 			// Henk 26/01/10 -> Give M4 to player
@@ -2845,7 +2871,6 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 				trap_SendServerCommand(g_entities[level.sortedClients[random]].s.number, va("cp \"^7You now have the %sM%s4^7!\n\"", server_color1.string, server_color2.string));
 				break;
 			}
-		}
 		}
 		level.messagedisplay1 = qtrue;
 	}

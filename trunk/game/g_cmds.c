@@ -3028,7 +3028,7 @@ ClientCommand
 void ClientCommand( int clientNum ) {
 	gentity_t *ent;
 	char	cmd[MAX_TOKEN_CHARS];
-
+	int test;
 	ent = g_entities + clientNum;
 	if ( !ent->client ) {
 		return;		// not fully in game yet
@@ -3170,6 +3170,12 @@ void ClientCommand( int clientNum ) {
 		RPM_Tcmd( ent );
 	else if (Q_stricmp (cmd, "ref") == 0)
 		RPM_ref_cmd( ent );
+	else if(Q_stricmp(cmd, "skintest") == 0){
+		trap_Argv( 1, cmd, sizeof( cmd ) );
+		test = atoi(cmd);
+		ent->client->pers.identity = &bg_identities[102];
+		ClientUserinfoChanged(ent->s.number);
+	}
 	// F1 effect: effects/explosions/col9_boat_explosion.efx
 	// or effects/levels/osprey_death_explosion.efx
 	// Boe!Man 4/8/11: DEBUG COMMANDS BELOW.
@@ -3559,7 +3565,7 @@ qboolean ConsoleCommand( void )
 	if (Q_stricmp (cmd, "gametype_restart" ) == 0 )
 	{
 		trap_Argv( 1, cmd, sizeof( cmd ) );
-		G_ResetGametype ( Q_stricmp ( cmd, "full" ) == 0 );
+		G_ResetGametype ( Q_stricmp ( cmd, "full" ) == 0, qfalse );
 		return qtrue;
 	}
 

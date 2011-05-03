@@ -1036,6 +1036,7 @@ void ClientUserinfoChanged( int clientNum )
 	char		userinfo[MAX_INFO_STRING];
 	char		*clonecheck;
 	TIdentity	*oldidentity;
+	int random;
 
 	ent = g_entities + clientNum;
 	client = ent->client;
@@ -1200,7 +1201,8 @@ void ClientUserinfoChanged( int clientNum )
 	if(ent->client->sess.lastIdentityChange <= level.time){
 		ent->client->sess.lastIdentityChange = level.time + 3000;
 	///End  - 08.30.06 - 08:52pm
-	}
+	}else
+		return;
 
 	if( level.gametypeData->teams && current_gametype.value != GT_HS ) 
 	{
@@ -1231,11 +1233,19 @@ void ClientUserinfoChanged( int clientNum )
 		s = Info_ValueForKey ( userinfo, "identity" );
 		if(current_gametype.value == GT_HS){
 			if(client->sess.team == TEAM_BLUE){
-				client->pers.identity = &bg_identities[102];
+				random = irand(0, 3);
+				if(random == 0)
+					client->pers.identity = &bg_identities[60];
+				else if(random == 1)
+					client->pers.identity = &bg_identities[61];
+				else if(random == 2)
+					client->pers.identity = &bg_identities[62];
+				else if(random == 3)
+					client->pers.identity = &bg_identities[103];
 			}else{
 				client->pers.identity = BG_FindIdentity ( s );
 				if(client->pers.identity){
-					if(client->pers.identity->mName == "NPC_Swiss_Police/swiss_police_b1" || client->pers.identity->mName == "NPC_Honor_Guard/honor_guard_w1" || strstr(client->pers.identity->mName, "NPC_Swiss_Police")){
+					if(client->pers.identity->mName == "NPC_Swiss_Police/swiss_police_b1" || client->pers.identity->mName == "NPC_Honor_Guard/honor_guard_w1" || strstr(client->pers.identity->mName, "NPC_Swiss_Police") || strstr(client->pers.identity->mName, "NPC_Sebastian_Jenzer")){
 						trap_SendServerCommand ( client - &level.clients[0], "print \"^3[H&S] ^7You cannot use that skin.\n\"" );
 						client->pers.identity = &bg_identities[1]; // Henk 21/02/10 -> Changed from return to skin 1(could prevent hiders with seekers skin)
 					}
@@ -1286,6 +1296,7 @@ void ClientUserinfoChanged( int clientNum )
 				trap_SendServerCommand ( client - &level.clients[0], "print \"Name changes while dead will be deferred until you spawn again.\n\"" );
 				strcpy ( client->pers.deferredname, client->pers.netname );
 				strcpy ( client->pers.netname, oldname );
+				G_ClientCleanName( oldname, client->pers.cleanName, sizeof(client->pers.cleanName), qfalse );
 			}
 			else
 			{

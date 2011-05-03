@@ -1092,7 +1092,7 @@ gentity_t*	G_SpawnGametypeItem					( const char* pickup_name, qboolean dropped )
 gentity_t*	G_SelectRandomGametypeSpawnPoint	( team_t team );
 qboolean	G_ParseGametypeFile					( void );
 qboolean	G_ExecuteGametypeScript				( gentity_t* activator, const char* name );
-void		G_ResetGametype						( qboolean fullRestart );
+void		G_ResetGametype						( qboolean fullRestart, qboolean cagefight );
 qboolean	G_CanGametypeTriggerBeUsed			( gentity_t* self, gentity_t* activator );
 void		G_ResetGametypeItem					( gitem_t* item );
 //RxCxW - 02.03.05 - 11:32am #DropGTItems
