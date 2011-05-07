@@ -1527,13 +1527,14 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 	memset( buf, 0, sizeof(buf) );
 	memset( lastip, 0, sizeof(lastip) );
 	memset( fileName, 0, sizeof(fileName) );
+	memset( last, 0, sizeof(last) );
 	len = trap_FS_FOpenFile( file, &f, FS_READ_TEXT);
 	if(!f){
 		Com_Printf("Error while opening %s\n", file);
 		return;
 	}
 	if(len >= 9999){
-		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Banlist is too large.\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7List is too large.\n\""));
 		return;
 	}
 	trap_FS_Read( buf, len, f );
@@ -3393,8 +3394,9 @@ void Henk_Flash(int argNum, gentity_t *adm, qboolean shortCmd){
 }
 
 void Henk_AdminRemove(int argNum, gentity_t *adm, qboolean shortCmd){
-	char	arg[32] = "\0", buf[32] = "\0";
+	char	arg[32] = "\0", arg1[32] = "\0", buf[32] = "\0";
 	int		i = 0, count = 0, iLine = 0;
+	qboolean password = qfalse;
 	if(shortCmd){
 		trap_Argv( argNum, arg, sizeof( arg ) );
 		if(strstr(arg, "!") && !strstr(arg, " ")){
@@ -3409,31 +3411,49 @@ void Henk_AdminRemove(int argNum, gentity_t *adm, qboolean shortCmd){
 		trap_Argv( argNum, arg, sizeof( arg ) );
 	}
 
-	if(shortCmd)
+	if(shortCmd){
 		strcpy(arg, buf);
+		trap_Argv( 1, arg1, sizeof( arg1 ) );
+		if(strstr(arg1, "pass"))
+			password = qtrue;
+		else
+			trap_Argv( 3, arg1, sizeof( arg1 ) );
+		
+	}else
+		trap_Argv( argNum, arg1, sizeof( arg1 ) );
+	if(strstr(arg1, "pass"))
+		password = qtrue;
+		
+	if(password)
+		Com_Printf("pass\n");
+	else
+		Com_Printf("no pass\n");
 
 	if(strlen(arg) < 2 && strstr(arg, ".")){
 		if(shortCmd)
-			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid IP, Usage: !adr <Line>.\n\""));
+			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid line, Usage: !adr <Line>.\n\""));
 		else
-			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid IP, Usage: adm adminremove <Line>.\n\""));
+			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid line, Usage: adm adminremove <Line>.\n\""));
 		return;
 	}else if(strlen(arg) >= 1 && !strstr(arg, ".")){
 		// unban by line
 		iLine = atoi(arg);
-		Henk_RemoveLineFromFile(adm, iLine, g_adminfile.string, qfalse, qfalse);
+		if(password)
+			Henk_RemoveLineFromFile(adm, iLine, g_adminPassFile.string, qfalse, qfalse);
+		else
+			Henk_RemoveLineFromFile(adm, iLine, g_adminfile.string, qfalse, qfalse);
 		return;
 	}else if(strlen(arg) < 2){
 		if(shortCmd)
-			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid IP, Usage: !adr <Line>.\n\""));
+			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid line, Usage: !adr <Line>.\n\""));
 		else
-			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid IP, Usage: adm adminremove <Line>.\n\""));
+			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid line, Usage: adm adminremove <Line>.\n\""));
 		return;
 	}else{
 			if(shortCmd)
-			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid IP, Usage: !adr <Line>.\n\""));
+			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid line, Usage: !adr <Line>.\n\""));
 		else
-			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid IP, Usage: adm adminremove <Line>.\n\""));
+			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid line, Usage: adm adminremove <Line>.\n\""));
 		return;
 	}
 }
@@ -3473,9 +3493,14 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 	char xip[64], arg[32] = "\0";
 	qboolean passwordlist = qfalse;
 
-	if(shortCmd)
+	if(shortCmd){
 		trap_Argv( 1, arg, sizeof( arg ) );
-	else
+		if(strstr(arg, "pass"))
+			passwordlist = qtrue;
+		else
+			trap_Argv( 2, arg, sizeof( arg ) );
+		
+	}else
 		trap_Argv( argNum, arg, sizeof( arg ) );
 	if(strstr(arg, "pass"))
 		passwordlist = qtrue;

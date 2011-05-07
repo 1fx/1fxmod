@@ -1086,6 +1086,7 @@ int G_Damage (
 				damage = 0;
 			}else if(mod == 1){
 				if(level.MM1given == qfalse){ // MM1 has not been given to a seeker, so give it to him.
+					if(hideSeek_Weapons.string[2] == '1'){
 					attacker->client->ps.ammo[weaponData[WP_MM1_GRENADE_LAUNCHER].attack[ATTACK_NORMAL].ammoIndex]=2;
 					attacker->client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_MM1_GRENADE_LAUNCHER );
 					attacker->client->ps.clip[ATTACK_NORMAL][WP_MM1_GRENADE_LAUNCHER]=1;
@@ -1095,6 +1096,7 @@ int G_Damage (
 					level.MM1Time = 0;
 					trap_SendServerCommand(-1, va("print\"^3[H&S] ^7First Blood: %s ^7has taken the MM1\n\"", attacker->client->pers.netname));
 					trap_SendServerCommand(attacker->s.number, va("cp \"^7You now have the %sM%sM%s1^7!\n\"", server_color1.string, server_color2.string, server_color3.string));
+					}
 					level.MM1given = qtrue; // only once each round :)
 				}
 			}

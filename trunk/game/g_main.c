@@ -234,6 +234,7 @@ vmCvar_t	g_customCommandsFile;
 vmCvar_t	g_banfile;
 vmCvar_t	hideSeek_Extra;
 vmCvar_t	hideSeek_Nades;
+vmCvar_t	hideSeek_Weapons;
 
 // Boe!Man 3/8/11
 vmCvar_t	g_enableAdminLog;
@@ -512,8 +513,9 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_alternateMap, "g_alternateMap", "0", CVAR_ROM|CVAR_INTERNAL|CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_enableCustomCommands, "g_enableCustomCommands", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 	{ &g_customCommandsFile,			"g_customCommandsFile",			"CustomCommands.txt",	CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  }, // Boe!Man 3/6/11: So users can change if desired.
-	{ &hideSeek_Extra,			"hideSeek_Extra",			"1101",	CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  }, // Boe!Man 3/6/11: So users can change if desired.
+	{ &hideSeek_Extra,			"hideSeek_Extra",			"11011",	CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  }, // Boe!Man 3/6/11: So users can change if desired.
 	{ &hideSeek_Nades,			"hideSeek_Nades",			"1111",	CVAR_ARCHIVE|CVAR_LATCH,	0.0,	0.0,  0, qfalse  }, // Boe!Man 3/6/11: So users can change if desired.
+	{ &hideSeek_Weapons,		"hideSeek_Weapons",			"111",	CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  }, // Boe!Man 3/6/11: So users can change if desired.
 
 	// Boe!Man 3/8/11: CVAR for the Admin logging.
 	{ &g_enableAdminLog, "g_enableAdminLog", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
@@ -2738,23 +2740,30 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 					trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Can't find any seeker.\n\""));
 				}else{
 					if(level.lastseek != -1 && g_entities[level.lastseek].client && g_entities[level.lastseek].client->sess.team == TEAM_BLUE){
-						G_RealSpawnGametypeItem1 ( BG_FindGametypeItem (0), g_entities[level.lastseek].r.currentOrigin, g_entities[level.lastseek].s.angles, qtrue );
-						trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Briefcase given to round winner %s: %i kills last round.\n\"", g_entities[level.lastseek].client->pers.netname, level.rememberSeekKills));
+						if(hideSeek_Weapons.string[3] == '1'){
+							G_RealSpawnGametypeItem1 ( BG_FindGametypeItem (0), g_entities[level.lastseek].r.currentOrigin, g_entities[level.lastseek].s.angles, qtrue );
+							trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Briefcase given to round winner %s: %i kills last round.\n\"", g_entities[level.lastseek].client->pers.netname, level.rememberSeekKills));
+						}
 					}else{
-						G_RealSpawnGametypeItem1 ( BG_FindGametypeItem (0), g_entities[level.sortedClients[random]].r.currentOrigin, g_entities[level.sortedClients[random]].s.angles, qtrue );
-						trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Briefcase given at random to %s.\n\"", g_entities[level.sortedClients[random]].client->pers.netname));
+						if(hideSeek_Weapons.string[3] == '1'){
+							G_RealSpawnGametypeItem1 ( BG_FindGametypeItem (0), g_entities[level.sortedClients[random]].r.currentOrigin, g_entities[level.sortedClients[random]].s.angles, qtrue );
+							trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Briefcase given at random to %s.\n\"", g_entities[level.sortedClients[random]].client->pers.netname));
+						}
 					}
 				}
 			}else{
 				trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Can't find any seeker.\n\""));
 			}
 		}else{
-			trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Not enough seekers for briefcase to spawn.\n\""));
+			if(hideSeek_Weapons.string[3] == '1'){
+				trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Not enough seekers for briefcase to spawn.\n\""));
+			}
 		}
 		level.messagedisplay = qtrue;
 	}
 
 	if(level.time > level.gametypeStartTime+10000 && level.messagedisplay1 == qfalse && level.gametypeStartTime >= 5000 && !level.crossTheBridge && level.cagefight != qtrue){
+		if(hideSeek_Weapons.string[0] == '1'){
 		rpgwinner = GetRpgWinner();
 		if(rpgwinner != -1 && rpgwinner < 100){
 			// Henk 26/01/10 -> Give RPG to player
@@ -2807,6 +2816,8 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 					break;
 				}
 			}
+		}
+		if(hideSeek_Weapons.string[1] == '1'){
 		m4winner = GetM4Winner(rpgwinner);
 		if(m4winner != -1 && m4winner < 100){
 			// Henk 26/01/10 -> Give M4 to player
@@ -2871,6 +2882,7 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 				trap_SendServerCommand(g_entities[level.sortedClients[random]].s.number, va("cp \"^7You now have the %sM%s4^7!\n\"", server_color1.string, server_color2.string));
 				break;
 			}
+		}
 		}
 		level.messagedisplay1 = qtrue;
 	}
