@@ -3198,6 +3198,12 @@ void ClientCommand( int clientNum ) {
 	else if (Q_stricmp (cmd, "henk3") == 0){
 		InitCagefight();
 	}
+	else if (Q_stricmp (cmd, "boeboe1") == 0){
+		// Build a list of spawns
+		for ( test = 0; test < level.spawnCount; test ++ ){
+			trap_SendServerCommand( clientNum, va("print\"[%i] origin: %.2f %.2f %.2f\n\"", test, level.spawns[test].origin[0], level.spawns[test].origin[1], level.spawns[test].origin[2]) );
+		}
+	}
 	*/
 	
 #ifdef _SOF2_BOTS

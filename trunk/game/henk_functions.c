@@ -593,6 +593,11 @@ unsigned int henk_atoi( const char *string ) {
 
 void InitSpawn(int choice) // load bsp models before players loads a map(SOF2 clients cannot load a bsp model INGAME)
 {
+	// Boe!Man 5/14/11: Fix for random spawnpoint in DM/TDM gametypes.
+	if(current_gametype.value == GT_DM || current_gametype.value == GT_TDM){
+		return;
+	}
+
 	AddSpawnField("classname", "misc_bsp"); // blocker
 	if(choice == 1){
 	AddSpawnField("bspmodel",	"instances/Generic/fence01");
