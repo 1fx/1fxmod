@@ -1809,7 +1809,7 @@ void ExitLevel (void)
 	#endif
 
 	///Ryan march 21 2004 9:19am
-	if ((!*g_mapcycle.string || !Q_stricmp ( g_mapcycle.string, "none" )))
+	if ((!*g_mapcycle.string || !Q_stricmp ( g_mapcycle.string, "none" ) || g_compMode.integer > 0 && cm_enabled.integer >= 1))
 	{
 		trap_SendServerCommand( -1, va("cp \"@ \n\""));
 		if (g_compMode.integer > 0 && cm_enabled.integer == 5){
