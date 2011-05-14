@@ -1431,7 +1431,7 @@ void Boe_Print_File (gentity_t *ent, char *file, qboolean clonecheckstats, int i
 /*
 =========
 Boe_Stats
-Updated 11/20/10 - 11:32 PM
+Updated 5/14/11 - 9:50 PM
 =========
 */
 
@@ -1468,7 +1468,10 @@ void Boe_Stats ( gentity_t *ent )
 		trap_GetUserinfo( ent->s.number, userinfo, sizeof( userinfo ) );
 		rate	= Info_ValueForKey ( userinfo, "rate" );
 		snaps	= Info_ValueForKey ( userinfo, "snaps" );
-		country = ent->client->sess.country;
+		// Boe!Man 5/14/11: Check if the checking of countries is enabled.
+		if(g_checkCountry.integer){
+			country = ent->client->sess.country;
+		}
 		idnum = ent->s.number;
 		if (ent->client->sess.rpmClient >= 0.1){
 			client = ent->client->sess.rpmClient;}
@@ -1524,7 +1527,10 @@ void Boe_Stats ( gentity_t *ent )
 		trap_GetUserinfo( g_entities[idnum].s.number, userinfo, sizeof( userinfo ) );
 		rate	= Info_ValueForKey ( userinfo, "rate" );
 		snaps	= Info_ValueForKey ( userinfo, "snaps" );
-		country = g_entities[idnum].client->sess.country;
+		// Boe!Man 5/14/11: Check if the checking of countries is enabled.
+		if(g_checkCountry.integer){
+			country = g_entities[idnum].client->sess.country;
+		}
 		if (g_entities[idnum].client->sess.rpmClient >= 0.1){
 			client = g_entities[idnum].client->sess.rpmClient;}
 		else if (g_entities[idnum].client->sess.proClient >= 0.1){
@@ -1562,7 +1568,10 @@ void Boe_Stats ( gentity_t *ent )
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Developer^7]   Yes\n"));
 	else
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3IP^7]          %s\n", ip));
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Country^7]     %s\n", country));
+	// Boe!Man 5/14/11: Check if the checking of countries is enabled.
+	if(g_checkCountry.integer){
+		trap_SendServerCommand( ent-g_entities, va("print \"[^3Country^7]     %s\n", country));
+	}
 	if (client1 == qtrue){
 		trap_SendServerCommand( ent-g_entities, va("print \"[^3Client^7]      %s\n", client0));
 	}else{
