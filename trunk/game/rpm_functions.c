@@ -480,7 +480,7 @@ void RPM_Obituary ( gentity_t *target, gentity_t *attacker, int mod, attackType_
 				//heashot message with the "you killed" message
 				if ( level.gametypeData->showKills )
 				{	
-					message2 = va("HEADSHOT\n");//g_headShotMessage.string );
+					message2 = va("%sH%se%sa%sd%ss%shot!\n", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string);//g_headShotMessage.string );
 				}
 
 				//We'll tack this on to the end of the kill broadcast to all
@@ -607,11 +607,11 @@ void RPM_Obituary ( gentity_t *target, gentity_t *attacker, int mod, attackType_
 			//if not a team game display the kill and the rank
 			if ( !level.gametypeData->teams ) 
 			{
-				trap_SendServerCommand( attacker->s.number, va("cp \"%sYou killed %s%s\n place with %i\n\"", // %s after \n
+				trap_SendServerCommand( attacker->s.number, va("cp \"%sYou killed %s%s\n%s place with %i\n\"", // %s after \n
 				message2,
 				targetColor,
 				targetName, 
-				//G_PlaceString( attacker->client->ps.persistant[PERS_RANK] + 1 ),
+				G_PlaceString( attacker->client->ps.persistant[PERS_RANK] + 1 ),
 				attacker->client->ps.persistant[PERS_SCORE] ));
 			} 
 			else //if team just display the kill
@@ -1400,4 +1400,46 @@ void G_SetClientLeaningBBox(gentity_t *ent)
 		ent->r.mins[2] += LB_MINZ;
 		//Ryan
 	}
-}			
+}
+
+/*
+===================
+G_PlaceString	//stole code from CG_Placestring
+===================
+*/
+const char	*G_PlaceString( int rank ) {
+	static char	str[64];
+	char	*s, *t;
+
+	if ( rank & RANK_TIED_FLAG ) {
+		rank &= ~RANK_TIED_FLAG;
+		t = "Tied for ";
+	} else {
+		t = "";
+	}
+
+	if ( rank == 1 ) {
+		s = S_COLOR_BLUE "1st" S_COLOR_WHITE;		// draw in blue
+	} else if ( rank == 2 ) {
+		s = S_COLOR_RED "2nd" S_COLOR_WHITE;		// draw in red
+	} else if ( rank == 3 ) {
+		s = S_COLOR_YELLOW "3rd" S_COLOR_WHITE;		// draw in yellow
+	} else if ( rank == 11 ) {
+		s = "11th";
+	} else if ( rank == 12 ) {
+		s = "12th";
+	} else if ( rank == 13 ) {
+		s = "13th";
+	} else if ( rank % 10 == 1 ) {
+		s = va("%ist", rank);
+	} else if ( rank % 10 == 2 ) {
+		s = va("%ind", rank);
+	} else if ( rank % 10 == 3 ) {
+		s = va("%ird", rank);
+	} else {
+		s = va("%ith", rank);
+	}
+
+	Com_sprintf( str, sizeof( str ), "%s%s", t, s );
+	return str;
+}
