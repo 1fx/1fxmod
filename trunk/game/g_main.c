@@ -2740,12 +2740,12 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 					trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Can't find any seeker.\n\""));
 				}else{
 					if(level.lastseek != -1 && g_entities[level.lastseek].client && g_entities[level.lastseek].client->sess.team == TEAM_BLUE){
-						if(hideSeek_Weapons.string[3] == '1'){
+						if(hideSeek_Extra.string[3] == '1'){
 							G_RealSpawnGametypeItem1 ( BG_FindGametypeItem (0), g_entities[level.lastseek].r.currentOrigin, g_entities[level.lastseek].s.angles, qtrue );
 							trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Briefcase given to round winner %s: %i kills last round.\n\"", g_entities[level.lastseek].client->pers.netname, level.rememberSeekKills));
 						}
 					}else{
-						if(hideSeek_Weapons.string[3] == '1'){
+						if(hideSeek_Extra.string[3] == '1'){
 							G_RealSpawnGametypeItem1 ( BG_FindGametypeItem (0), g_entities[level.sortedClients[random]].r.currentOrigin, g_entities[level.sortedClients[random]].s.angles, qtrue );
 							trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Briefcase given at random to %s.\n\"", g_entities[level.sortedClients[random]].client->pers.netname));
 						}

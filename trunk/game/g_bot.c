@@ -248,7 +248,7 @@ qboolean Henk_DoesMapSupportGametype ( const char* gametype, char *mapname )
 	{
 		// If they dont have an area file for this map then
 		// just assume it supports all gametypes
-		return qtrue;
+		return qfalse;
 	}
 
 	// Get the supported gametypes

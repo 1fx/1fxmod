@@ -73,18 +73,17 @@ void Touch_2WayRotDoorTrigger( gentity_t *ent, gentity_t *other, trace_t *trace 
 		return;
 	if (!other->client)
 		return;
-	if (ent->parent->spawnflags & 16)
+	if (ent->parent->spawnflags & 16 && ent->parent->spawnflags != 604)
 		return;
-
 	// figure out which way the door should open
 	VectorSubtract(ent->s.origin, other->client->ps.origin, forward);
 	VectorNormalize(forward);
 
 	// make sure we're facing the door
 	AngleVectors(other->client->ps.viewangles, dir, NULL, NULL);
-	dot = DotProduct(dir, forward);
-	if (dot < 0.3)
-		return;
+	//dot = DotProduct(dir, forward);
+	//if (dot < 0.3)
+	//	return;
 
 	// LOCKED DOOR
 	//if (ent->parent->spawnflags & 16)
@@ -95,7 +94,7 @@ void Touch_2WayRotDoorTrigger( gentity_t *ent, gentity_t *other, trace_t *trace 
 		Use_BinaryMover(ent->parent, ent, other);
 		return;
 	}
-		
+
 	VectorSubtract(ent->parent->s.origin, ent->s.origin, dir);
 	VectorNormalize(dir);
 	vectoangles(dir, angles);
@@ -769,7 +768,7 @@ void Use_BinaryMover( gentity_t *ent, gentity_t *other, gentity_t *activator )
 	int		partial;
 
 	///Skip doors that are locked
-	if (ent->spawnflags & 16)
+	if (ent->spawnflags & 16 && ent->spawnflags != 604)
 		return;
 
 	// only the master should be used
@@ -807,6 +806,9 @@ void Use_BinaryMover( gentity_t *ent, gentity_t *other, gentity_t *activator )
 	// if all the way up, just delay before coming down
 	if ( ent->moverState == MOVER_POS2 ) 
 	{
+		if(ent->spawnflags == 604)
+			ent->nextthink = -1;
+		else
 		ent->nextthink = level.time + ent->wait;
 		return;
 	}
