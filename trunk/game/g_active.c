@@ -741,7 +741,7 @@ qboolean ClientInactivityTimer( gclient_t *client ) {
 			return qfalse;
 		#endif
 		if ( level.time > client->inactivityTime ) {
-			SetTeam(&g_entities[client-level.clients], "s", NULL, qfalse); // Henk 08/04/10 -> Force ppl to spec instead of kicking them when afk
+			SetTeam(&g_entities[client-level.clients], "s", NULL, qtrue); // Henk 08/04/10 -> Force ppl to spec instead of kicking them when afk
 			trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s ^7was forced to spectator for being AFK.\n\"", g_entities[client-level.clients].client->pers.netname));
 			//trap_DropClient( client - level.clients, "Dropped due to inactivity" );
 			return qfalse;
