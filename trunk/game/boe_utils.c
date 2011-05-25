@@ -1500,22 +1500,21 @@ void Boe_Stats ( gentity_t *ent )
 			memset(string, 0, sizeof(string));
 			memset(string1, 0, sizeof(string1));
 			numberofclients = 0;
-			for(i=0;i<=level.numConnectedClients;i++){
+			for(i=0;i<level.numConnectedClients;i++){
 				//trap_SendServerCommand(-1, va("print\"^3[Debug] ^7%s comparing with %s.\n\"", g_entities[level.sortedClients[i]].client->pers.cleanName,numb));
 				if(strstr(Q_strlwr(g_entities[level.sortedClients[i]].client->pers.cleanName), Q_strlwr(arg1))){
 					idnum = level.sortedClients[i];
 					numberofclients += 1;
 					Com_sprintf(string1, sizeof(string1), "^1[#%i] ^7%s, ",  idnum, g_entities[level.sortedClients[i]].client->pers.cleanName);
 					Q_strncpyz(string+strlen(string), string1, strlen(string1)+1);
-					break;
 				}
-				idnum = -1;
 			}
 			string[strlen(string)-2] = '\0';
 			if(numberofclients > 1){
 				trap_SendServerCommand(ent->s.number, va("print\"^3[Info] ^7Multiple names found with ^3%s^7: %s\n\"", arg1, string));
 				return;
-			}
+			}else if(numberofclients == 0)
+				idnum = -1;
 		}else{
 		idnum = atoi (arg1);
 		}
