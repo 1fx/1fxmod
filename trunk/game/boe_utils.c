@@ -1455,7 +1455,9 @@ void Boe_Stats ( gentity_t *ent )
 	qboolean	devmode = qfalse;
 	float		accuracy = 0;
 	qboolean	otherClient = qfalse;
-	int i;
+	int i, numberofclients = 0;
+	char string[1024] = "\0";
+	char string1[64] = "\0";
 
 	trap_Argv( 1, arg1, sizeof( arg1 ) );  // Boe!Man 2/21/10: Getting the client ID.
 
@@ -1495,13 +1497,24 @@ void Boe_Stats ( gentity_t *ent )
 	else
 	{
 		if(henk_ischar(arg1[0])){
+			memset(string, 0, sizeof(string));
+			memset(string1, 0, sizeof(string1));
+			numberofclients = 0;
 			for(i=0;i<=level.numConnectedClients;i++){
 				//trap_SendServerCommand(-1, va("print\"^3[Debug] ^7%s comparing with %s.\n\"", g_entities[level.sortedClients[i]].client->pers.cleanName,numb));
 				if(strstr(Q_strlwr(g_entities[level.sortedClients[i]].client->pers.cleanName), Q_strlwr(arg1))){
 					idnum = level.sortedClients[i];
+					numberofclients += 1;
+					Com_sprintf(string1, sizeof(string1), "^1[#%i] ^7%s, ",  idnum, g_entities[level.sortedClients[i]].client->pers.cleanName);
+					Q_strncpyz(string+strlen(string), string1, strlen(string1)+1);
 					break;
 				}
 				idnum = -1;
+			}
+			string[strlen(string)-2] = '\0';
+			if(numberofclients > 1){
+				trap_SendServerCommand(ent->s.number, va("print\"^3[Info] ^7Multiple names found with ^3%s^7: %s\n\"", arg1, string));
+				return;
 			}
 		}else{
 		idnum = atoi (arg1);

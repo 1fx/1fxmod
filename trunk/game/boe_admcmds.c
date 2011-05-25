@@ -765,7 +765,7 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 					for(x=0;x<level.numConnectedClients;x++){
 						//trap_SendServerCommand(-1, va("print\"^3[Debug] ^7%s comparing with %s.\n\"", g_entities[level.sortedClients[x]].client->pers.cleanName,numb));
 						if(strstr(Q_strlwr(g_entities[level.sortedClients[x]].client->pers.cleanName), Q_strlwr(numb))){
-							Com_Printf("%s\n", g_entities[level.sortedClients[x]].client->pers.cleanName);
+							//Com_Printf("%s\n", g_entities[level.sortedClients[x]].client->pers.cleanName);
 							num = level.sortedClients[x];
 							numberofclients += 1;
 							Com_sprintf(string1, sizeof(string1), "^1[#%i] ^7%s, ",  num, g_entities[level.sortedClients[x]].client->pers.cleanName);
