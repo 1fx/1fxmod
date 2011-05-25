@@ -740,6 +740,7 @@ typedef struct
 	int			rememberSeekKills;
 	int			lastseek;
 	vec3_t		hideseek_cage;
+	qboolean	cagefightloaded;
 	qboolean	autoremove;
 	qboolean	cagefight;
 	qboolean	cagefightdone;

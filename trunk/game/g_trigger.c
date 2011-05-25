@@ -648,6 +648,7 @@ void NV_blocked_Teleport	(gentity_t *ent)
 void hideseek_cage(gentity_t *ent){
 	VectorCopy(ent->s.origin, level.hideseek_cage);
 	G_FreeEntity(ent);
+	level.cagefightloaded = qtrue;
 }
 
 // Henk 13/02/11

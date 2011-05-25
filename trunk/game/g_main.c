@@ -970,6 +970,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	level.time = levelTime;
 	level.startTime = levelTime;
 	level.nolower[2] = -10000000;
+	level.cagefightloaded = qfalse;
 	G_RegisterCvars();
 
 	G_ProcessIPBans();

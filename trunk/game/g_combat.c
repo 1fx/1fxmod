@@ -26,7 +26,7 @@ void G_AddScore( gentity_t *ent, int score )
 	{
 		return;
 	}
-	if(level.cagefight){
+	if(level.cagefight && ent->client->sess.team == TEAM_RED){
 		ent->client->sess.kills += score;
 		ent->client->sess.cagescore += score;
 	}
@@ -393,6 +393,9 @@ void player_die(
 		}
 		else
 		{
+			if(current_gametype.value == GT_HS && level.cagefight == qtrue){
+				// don't add score
+			}else{
 			if(current_gametype.value == GT_HS && self->client){
 				if(self->client->ps.stats[STAT_WEAPONS] & ( 1 << WP_M4_ASSAULT_RIFLE )){
 					G_AddScore( attacker, 2 );
@@ -415,6 +418,7 @@ void player_die(
 				}
 			}
 			attacker->client->lastKillTime = level.time;
+			}
 		}
 	}
 	else if ( mod != MOD_TEAMCHANGE )

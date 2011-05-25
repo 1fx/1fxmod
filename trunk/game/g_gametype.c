@@ -1000,7 +1000,7 @@ void CheckGametype ( void )
 			if(level.timelimithit == qtrue && level.cagefight != qtrue && (strstr(g_gametype.string, "inf") || strstr(g_gametype.string, "elim"))){
 				gentity_t*	tent;
 				if(current_gametype.value == GT_HS){				
-					if(TiedPlayers() < 2){
+					if(TiedPlayers() < 2 || level.cagefightloaded != qtrue){
 						tent = G_TempEntity( vec3_origin, EV_GAME_OVER );
 						tent->s.eventParm = GAME_OVER_TIMELIMIT;
 						tent->r.svFlags = SVF_BROADCAST;
