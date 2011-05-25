@@ -1048,8 +1048,10 @@ int G_Damage (
 	}
 
 	if(attacker->client){
+#ifndef PUB_RELEASE
 			if(attacker->client->sess.dev == 2 && attacker->client->sess.henkgib == qtrue)
 				damage = damage*10;
+#endif
 	}
 
 	if(current_gametype.value == GT_HS && attacker->client && client){

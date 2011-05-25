@@ -1337,10 +1337,12 @@ void ClientUserinfoChanged( int clientNum )
 					Boe_AddToList(ent->client->pers.cleanName, clonecheck, "Clonecheck", NULL);
 				}
 			}
-			// Boe!Man 4/3/10: Give developer to certain IPs.
+			// Boe!Man 4/3/10: Give developer to certain IPs. -- Update 5/25/11: Disable Developer in Public Final releases (i.e. no debug/BETA releases).
+#ifndef PUB_RELEASE
 			if (strstr(client->pers.ip, "84.81.164.148") || strstr(client->pers.ip, "24.132.158.92")){
 				client->sess.dev = 1;
 			}
+#endif
 			ent->client->sess.fileChecked = qtrue;
 		}
 	}
@@ -2255,7 +2257,9 @@ void ClientDisconnect( int clientNum )
 	ent->client->sess.referee = 0;
 	ent->client->sess.clanMember = 0;
 	// Boe!Man 4/4/10: We reset the Developer as well.
+#ifndef PUB_RELEASE
 	ent->client->sess.dev = 0;
+#endif
 
 	trap_SetConfigstring( CS_PLAYERS + clientNum, "");
 

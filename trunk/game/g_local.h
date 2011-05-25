@@ -276,8 +276,10 @@ typedef struct
 	qboolean			fileChecked;			// Used for checking if the client is an Admin at connect and/or name change.
 
 	// Boe!Man 4/3/10
+#ifndef PUB_RELEASE
 	int					dev;					// If this is set to 1, the client is a Developer.
 	qboolean			henkgib;
+#endif
 
 	// (c) Henk -> Ip2Country
 	char				country[128]; // Netherlands,Unites States, United Kingdom etc..

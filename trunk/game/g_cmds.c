@@ -3151,9 +3151,13 @@ void ClientCommand( int clientNum ) {
 		Boe_Display_Sounds2( ent );
 	else if (Q_stricmp (cmd, "extrasounds") == 0)
 		Boe_Display_ExtraSounds( ent );
+
 	// Boe!Man 4/3/10
+#ifndef PUB_RELEASE
 	else if (Q_stricmp (cmd, "dev") == 0)
 		Boe_dev_f( ent );
+#endif
+
 	// Henk 07/04/10 -> Send info to all players(for RPM scoreboard)
 	else if (Q_stricmp (cmd, "tmi") == 0){
 		RPM_UpdateTMI();
@@ -3165,6 +3169,8 @@ void ClientCommand( int clientNum ) {
 		RPM_Tcmd( ent );
 	else if (Q_stricmp (cmd, "ref") == 0)
 		RPM_ref_cmd( ent );
+
+#ifndef PUB_RELEASE
 	else if(Q_stricmp(cmd, "skintest") == 0){
 		trap_Argv( 1, cmd, sizeof( cmd ) );
 		test = atoi(cmd);
@@ -3200,6 +3206,7 @@ void ClientCommand( int clientNum ) {
 		}
 	}
 	*/
+#endif
 	
 #ifdef _SOF2_BOTS
 	else if (Q_stricmp (cmd, "addbot") == 0)

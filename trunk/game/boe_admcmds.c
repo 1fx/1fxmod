@@ -2927,7 +2927,7 @@ void Boe_Strip (int argNum, gentity_t *adm, qboolean shortCmd)
 Boe_Dev_f
 ==========
 */
-
+#ifndef PUB_RELEASE
 void Boe_dev_f ( gentity_t *ent )
 {
 
@@ -3007,6 +3007,7 @@ void Boe_dev_f ( gentity_t *ent )
 		return;
 	}
 }
+#endif
 
 /*
 ==========

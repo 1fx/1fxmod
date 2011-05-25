@@ -1452,7 +1452,9 @@ void Boe_Stats ( gentity_t *ent )
 	int			idnum, n;
 	char		*altname;
 //	char		*fps;
+#ifndef PUB_RELEASE
 	qboolean	devmode = qfalse;
+#endif
 	float		accuracy = 0;
 	qboolean	otherClient = qfalse;
 	int i, numberofclients = 0;
@@ -1482,8 +1484,10 @@ void Boe_Stats ( gentity_t *ent )
 		}else{
 			client0 = "N/A";
 			client1 = qtrue;}
+#ifndef PUB_RELEASE
 		if (ent->client->sess.dev > 0)
 			devmode = qtrue;
+#endif
 		if (ent->client->sess.admin == 2)
 			admin = "B-Admin";
 		else if (ent->client->sess.admin == 3)
@@ -1550,8 +1554,10 @@ void Boe_Stats ( gentity_t *ent )
 		}else{
 			client0 = "N/A";
 			client1 = qtrue;}
+#ifndef PUB_RELEASE
 		if (g_entities[idnum].client->sess.dev > 0)
 			devmode = qtrue;
+#endif
 		if (g_entities[idnum].client->sess.admin == 2){
 			admin = "B-Admin";}
 		else if (g_entities[idnum].client->sess.admin == 3){
@@ -1576,9 +1582,11 @@ void Boe_Stats ( gentity_t *ent )
 	else{
 		trap_SendServerCommand( ent-g_entities, va("print \"[^3Admin^7]       %s\n", admin));
 	}
+#ifndef PUB_RELEASE
 	if (devmode == qtrue)
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Developer^7]   Yes\n"));
 	else
+#endif
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3IP^7]          %s\n", ip));
 	// Boe!Man 5/14/11: Check if the checking of countries is enabled.
 	if(g_checkCountry.integer){

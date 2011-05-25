@@ -372,10 +372,13 @@ void G_DropGametypeItems ( gentity_t* self, int delayPickup );
 int trap_RealTime( qtime_t *qtime );
 qboolean BG_InitWeaponStats(qboolean init);
 void Boe_About( gentity_t *ent );
-void Boe_dev_f ( gentity_t *ent );
 void Boe_Add_Clan_Member(int argNum, gentity_t *adm, qboolean shortCmd);
 void Boe_Remove_Clan_Member(int argNum, gentity_t *adm, qboolean shortCmd);
 void RPM_Clan_Vs_All(gentity_t *adm);
+
+#ifndef PUB_RELEASE
+void Boe_dev_f ( gentity_t *ent );
+#endif
 
 char *GetReason(void);
 
