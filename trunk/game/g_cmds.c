@@ -942,11 +942,6 @@ void BroadcastTeamChange( gclient_t *client, int oldTeam )
 					return;
 				}
 				break;
-
-			case TEAM_FREE:
-				strcpy(message, va("%s" S_COLOR_WHITE " joined the battle.\n\"", client->pers.netname));
-				trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s ^7joined the battle.\n\"", client->pers.cleanName));
-				break;
 		}
 	}else{
 		switch ( client->sess.team )
@@ -973,7 +968,7 @@ void BroadcastTeamChange( gclient_t *client, int oldTeam )
 				break;
 
 			case TEAM_FREE:
-				strcpy(message, va("%s" S_COLOR_WHITE " joined the battle.\n\"", client->pers.netname));
+				strcpy(message, va("%s" S_COLOR_WHITE "\njoined the %sb%sa%st%st%sl%se\n\"", client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 				trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s ^7joined the battle.\n\"", client->pers.cleanName));
 				break;
 		}
