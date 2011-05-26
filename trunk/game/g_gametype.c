@@ -475,6 +475,7 @@ void G_ResetGametype ( qboolean fullRestart, qboolean cagefight )
 
 	// Reset the gametype itself
 	G_ResetGametypeEntities ( );
+	memset(level.deadClients, 0, sizeof(level.deadClients)); // reset
 	level.cagefight = qfalse;
 	level.aetdone = qfalse;
 	level.cagefighttimer = 0;

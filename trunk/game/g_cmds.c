@@ -1141,7 +1141,7 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 				if ( team == TEAM_RED && counts[TEAM_RED] - counts[TEAM_BLUE] > 1 ) 
 				{
 					trap_SendServerCommand( ent->s.number, 
-											"print \"Red team has too many players.\n\"" );
+											"print \"^3[Info] ^7Red team has too many players.\n\"" );
 
 					// ignore the request
 					return; 
@@ -1149,7 +1149,7 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 				if ( team == TEAM_BLUE && counts[TEAM_BLUE] - counts[TEAM_RED] > 1 ) 
 				{
 					trap_SendServerCommand( ent->s.number, 
-											"print \"Blue team has too many players.\n\"" );
+											"print \"^3[Info] ^7Blue team has too many players.\n\"" );
 
 					// ignore the request
 					return; 
@@ -1164,6 +1164,15 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 		// force them to spectators if there aren't any spots free
 		team = TEAM_FREE;
 	}
+
+	// Henk 26/05/11 -> Add check to prevent switch team respawn
+	if(level.time <= level.gametypeStartTime+20000){ // only check within the delay time
+		if(strstr(level.deadClients, ent->client->pers.ip) && team == TEAM_RED || team == TEAM_BLUE){
+			trap_SendServerCommand (ent->s.number, "print\"^3[Info] ^7You just died, please wait before switching teams.\n\"" );
+			return;
+		}
+	}
+	// End
 
 	// override decision if limiting the players
 	if ( g_maxGameClients.integer > 0 && level.numNonSpectatorClients >= g_maxGameClients.integer ) 

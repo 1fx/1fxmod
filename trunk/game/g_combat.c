@@ -258,6 +258,15 @@ void player_die(
 		trap_GT_SendEvent ( GTEV_CLIENT_DEATH, level.time, self->s.number, self->client->sess.team, -1, -1, 0 );
 	}
 
+	// Henk 26/05/11 -> Add check to prevent switch team respawn
+	if(level.time <= level.gametypeStartTime+20000){ // only check within the delay time
+		if(attacker){
+			if(attacker->client && self->client && strlen(level.deadClients) < 1023) // only if attacked by a player
+			Com_sprintf(level.deadClients, sizeof(self->client->pers.ip), "%s|", self->client->pers.ip);
+		}
+	}
+	// End
+
 	// Add to the number of deaths for this player
 
 	//Ryan March 30 2004 5:28pm

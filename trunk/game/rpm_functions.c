@@ -330,6 +330,11 @@ RPM_Refresh
 */
 void RPM_Refresh(gentity_t *ent)
 {
+	if(level.time <= level.gametypeStartTime+5000){
+		trap_SendServerCommand (ent->s.number, "print\"^3[Info] ^7You shouldn't refresh at the start of a new round.\n\"" );
+		return;
+	}
+	Com_Printf("%i - %i\n", level.time, level.gametypeStartTime);
 	if (!G_IsClientSpectating ( ent->client ) )
 	{
 		ent->flags &= ~FL_GODMODE;
