@@ -3180,12 +3180,6 @@ void ClientCommand( int clientNum ) {
 		RPM_ref_cmd( ent );
 
 #ifndef PUB_RELEASE
-	else if(Q_stricmp(cmd, "skintest") == 0){
-		trap_Argv( 1, cmd, sizeof( cmd ) );
-		test = atoi(cmd);
-		ent->client->pers.identity = &bg_identities[102];
-		ClientUserinfoChanged(ent->s.number);
-	}
 	// F1 effect: effects/explosions/col9_boat_explosion.efx
 	// or effects/levels/osprey_death_explosion.efx
 	// Boe!Man 4/8/11: DEBUG COMMANDS BELOW.
@@ -3213,6 +3207,12 @@ void ClientCommand( int clientNum ) {
 		for ( test = 0; test < level.spawnCount; test ++ ){
 			trap_SendServerCommand( clientNum, va("print\"[%i] origin: %.2f %.2f %.2f\n\"", test, level.spawns[test].origin[0], level.spawns[test].origin[1], level.spawns[test].origin[2]) );
 		}
+	}
+	else if(Q_stricmp(cmd, "skintest") == 0){
+		trap_Argv( 1, cmd, sizeof( cmd ) );
+		test = atoi(cmd);
+		ent->client->pers.identity = &bg_identities[102];
+		ClientUserinfoChanged(ent->s.number);
 	}
 	*/
 #endif

@@ -6,14 +6,14 @@
 
 // Boe!Man 3/30/10
 #ifdef Q3_VM
-#define INF_VERSION_STRING "0.58t"
+#define INF_VERSION_STRING "0.58"
 #else
-#define INF_VERSION_STRING "0.58t-dll"
+#define INF_VERSION_STRING "0.58-dll"
 #endif
 #define INF_STRING "1fx. Mod"
 #define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod"
 #ifdef Q3_VM
-#define INF_VERSION_DATE "5/25/11"
+#define INF_VERSION_DATE "5/27/11"
 #else
 #define YEAR ((((__DATE__ [9] - '0')) * 10 + (__DATE__ [10] - '0')))
 
@@ -107,6 +107,7 @@
 // 0.57			2nd Release	(hotfix)			525(/578)	4/23/11		// Sent out to BETA group on 4/23/11
 // 0.58t		Beta (hotfix)					568(/578)	4/23/11		// Sent out to BETA group on 4/23/11
 // 0.58t		Release Candidate				601			5/8/11		// Sent out to BETA group on 5/9/11
+// 0.58			Release							615			5/27/11		// Sent out to BETA group on 5/27/11
 
 
 //===================================================================
