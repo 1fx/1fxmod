@@ -6,9 +6,9 @@
 
 // Boe!Man 3/30/10
 #ifdef Q3_VM
-#define INF_VERSION_STRING "0.58"
+#define INF_VERSION_STRING "0.59t"
 #else
-#define INF_VERSION_STRING "0.58-dll"
+#define INF_VERSION_STRING "0.59t-dll"
 #endif
 #define INF_STRING "1fx. Mod"
 #define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod"
