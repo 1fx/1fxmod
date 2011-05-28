@@ -292,6 +292,9 @@ void Boe_Rounds(int argNum, gentity_t *ent, qboolean shortCmd);
 // Boe!Man 4/20/11
 extern	vmCvar_t	g_crossTheBridge;
 
+// Boe!Man 5/28/11
+extern	vmCvar_t	g_customWeaponFile;
+
 //==============================================
 // boe_utils.c
 //==============================================

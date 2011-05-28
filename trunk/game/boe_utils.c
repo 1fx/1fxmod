@@ -21,23 +21,32 @@ void RPM_WeaponMod ()
 
 	// Henk 06/04/10 -> Different wpn files(H&S, Real Damage, Normal Damage)
 	if(current_gametype.value == GT_HS){
-		if(level.crossTheBridge)
+		if(level.crossTheBridge){
 			strcpy(WpnFile, "weaponfiles/ctb.wpn");
-		else
-			strcpy(WpnFile, "weaponfiles/h&s.wpn");
+		}else{ // Boe!Man 5/28/11: Enable the loading of  custom weapon files.
+			if(!*g_customWeaponFile.string || !Q_stricmp ( g_customWeaponFile.string, "none" ) ){
+				strcpy(WpnFile, "weaponfiles/h&s.wpn");
+			}else{
+				strcpy(WpnFile, g_customWeaponFile.string);
+			}
+		}
 	}else{
-		if(g_instagib.integer == 1){
-			//strcpy(WpnFile, "ext_data/rd.wpn");
-			strcpy(WpnFile, "weaponfiles/rd.wpn");
+		// Boe!Man 5/28/11: Enable the loading of  custom weapon files.
+		if(!*g_customWeaponFile.string || !Q_stricmp ( g_customWeaponFile.string, "none" ) ){
+			if(g_instaGib.integer == 1){
+				strcpy(WpnFile, "weaponfiles/rd.wpn");
+			}else{
+				strcpy(WpnFile, "weaponfiles/nd.wpn");
+			}
 		}else{
-			strcpy(WpnFile, "weaponfiles/nd.wpn");
+			strcpy(WpnFile, g_customWeaponFile.string);
 		}
 	}
 
 	GP2 = trap_GP_ParseFile(WpnFile, qtrue, qfalse);
 	if (!GP2)
 	{
-		Com_Printf("^1Error in file: \"%s\" or file not found\n", WpnFile);
+		//Com_Printf("^1Error in file: \"%s\" or file not found\n", WpnFile);
 		G_LogPrintf("Error in file: \"%s\" or file not found\n", WpnFile);
 		return;
 	}
@@ -1804,7 +1813,7 @@ void Boe_About( gentity_t *ent )
 	trap_SendServerCommand( ent-g_entities, va("print \"\n^3Server settings\n\""));
 	trap_SendServerCommand( ent-g_entities, va("print \"--------------------------------------\n\""));
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Mod used^7]            %s %s\n", INF_STRING, INF_VERSION_STRING));
-	if (g_instagib.integer > 0){
+	if (g_instaGib.integer > 0){
 		trap_SendServerCommand( ent-g_entities, va("print \"[^3Instagib^7]            Yes\n"));
 	}else{
 		trap_SendServerCommand( ent-g_entities, va("print \"[^3Instagib^7]            No\n"));

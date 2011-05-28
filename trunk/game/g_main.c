@@ -158,7 +158,7 @@ vmCvar_t	server_hiderteamprefix;
 vmCvar_t	server_seekerteamprefix;
 // Henk 01/04/10 -> Add g_disableNades
 vmCvar_t	g_disableNades;
-vmCvar_t	g_instagib;
+vmCvar_t	g_instaGib;
 vmCvar_t	g_weaponModFlags;
 vmCvar_t	g_allowthirdperson;
 vmCvar_t	g_weaponswitch;
@@ -246,6 +246,9 @@ vmCvar_t	server_specteamprefix;
 
 // Boe!Man 4/20/11
 vmCvar_t	g_crossTheBridge;
+
+// Boe!Man 5/28/11
+vmCvar_t	g_customWeaponFile;
 
 #ifdef _BOE_DBG
 vmCvar_t	boe_log;
@@ -441,7 +444,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &server_blueteamprefix, "server_blueteamprefix", "^yB^Il^fu^+e", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_hiderteamprefix, "server_hiderteamprefix", "^1H^Ti^od^qe^+r^7s", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_seekerteamprefix, "server_seekerteamprefix", "^yS^le^le^+k^7ers", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
-	{ &g_instagib, "g_instagib", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
+	{ &g_instaGib, "g_instaGib", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 	{ &g_weaponModFlags, "g_weaponModFlags", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_allowthirdperson, "g_allowThirdPerson", "1", CVAR_ARCHIVE|CVAR_SERVERINFO, 0.0, 0.0, 0,  qfalse },
 	{ &g_compMode, "g_compMode", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
@@ -533,6 +536,9 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_cageAttempts, "g_cageAttempts", "3",	CVAR_ARCHIVE,	0.0,	0.0,  0, qtrue  },
 	{ &g_RpgStyle, "g_RpgStyle", "0",	CVAR_ARCHIVE,	0.0,	0.0,  0, qtrue  },
 	{ &g_crossTheBridge, "g_crossTheBridge", "0",	CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  },
+
+	// Boe!Man 5/28/11
+	{ &g_customWeaponFile,			"g_customWeaponFile",		 "none",		CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 
 #ifdef _BOE_DBG
 	// Boe!Man: Debug CVAR.

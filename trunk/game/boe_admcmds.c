@@ -182,7 +182,7 @@ void Boe_NormalDamage(int argNum, gentity_t *ent, qboolean shortCmd){
 		return;
 	}
 
-	g_instagib.integer = 0;
+	g_instaGib.integer = 0;
 	RPM_WeaponMod ();
 	//BG_InitWeaponStats(qfalse);
 	
@@ -222,7 +222,7 @@ void Boe_RealDamage(int argNum, gentity_t *ent, qboolean shortCmd){
 		return;
 	}
 
-	g_instagib.integer = 1;
+	g_instaGib.integer = 1;
 	RPM_WeaponMod ();
 	//BG_InitWeaponStats(qfalse);
 	for(i=0;i<=level.numConnectedClients;i++){

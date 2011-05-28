@@ -1194,7 +1194,7 @@ extern  vmCvar_t	g_availableWeapons;
 extern  vmCvar_t	hideSeek_availableWeapons;
 extern	vmCvar_t	availableWeapons;
 extern  vmCvar_t	g_disableNades; // Henk 01/04/10
-extern  vmCvar_t	g_instagib; // Henk 08/04/10
+extern  vmCvar_t	g_instaGib; // Henk 08/04/10
 extern  vmCvar_t	g_weaponModFlags; // Henk 08/04/10
 extern  vmCvar_t	g_allowthirdperson;
 extern  vmCvar_t	g_weaponswitch;
