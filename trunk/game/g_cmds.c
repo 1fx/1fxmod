@@ -2266,7 +2266,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		}
 	}
 	else if ((strstr(p, "!sc")) || (strstr(p, "!SC")) || (strstr(p, "!sC")) || (strstr(p, "!Sc"))) {
-		if (ent->client->sess.admin){
+		if (ent->client->sess.admin == 4){
 			p = ConcatArgs(1);
 			for(i=0;i<=strlen(p);i++){
 				if(p[i] == '!' && (p[i+1] == 's' || p[i+1] == 'S') && (p[i+2] == 'c' || p[i+2] == 'C')){
