@@ -241,6 +241,7 @@ extern	vmCvar_t	g_forceteam;
 void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 );
 gentity_t *NV_projectile (gentity_t *ent, vec3_t start, vec3_t dir, int weapon, int damage);
 extern	vmCvar_t	g_maxIPConnections;
+extern  vmCvar_t	g_popHighFps;
 
 // Boe!Man 4/1/10
 extern	vmCvar_t	server_redteamprefix;

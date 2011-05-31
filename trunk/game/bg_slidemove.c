@@ -5,7 +5,9 @@
 #include "q_shared.h"
 #include "bg_public.h"
 #include "bg_local.h"
-
+#ifdef QAGAME
+#include "g_local.h"
+#endif
 /*
 ==================
 PM_SlideMove
@@ -252,7 +254,6 @@ void PM_StepSlideMove( qboolean gravity )
 		// we got exactly where we wanted to go on the first try	
 		return;		
 	}
-
 	// Set the standard stepsize
 	stepsize = STEPSIZE;
 

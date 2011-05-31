@@ -1449,7 +1449,7 @@ void Boe_Stats ( gentity_t *ent )
 	statinfo_t  *stat;
 	float		client;
 	char		*client0;
-	char		arg1[4];	
+	char		arg1[32];	
 	char		*rate;
 	char		*snaps;
 	char		*ip;

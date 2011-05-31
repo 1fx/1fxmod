@@ -1166,12 +1166,13 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 	}
 
 	// Henk 26/05/11 -> Add check to prevent switch team respawn
-	if(level.time <= level.gametypeStartTime+20000){ // only check within the delay time
+	// Henk 31/05/11 -> Removed due alot of possible faults
+	/*if(level.time <= level.gametypeStartTime+20000){ // only check within the delay time
 		if(strstr(level.deadClients, ent->client->pers.ip) && team == TEAM_RED || team == TEAM_BLUE){
 			trap_SendServerCommand (ent->s.number, "print\"^3[Info] ^7You just died, please wait before switching teams.\n\"" );
 			return;
 		}
-	}
+	}*/
 	// End
 
 	// override decision if limiting the players

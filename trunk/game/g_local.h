@@ -328,6 +328,7 @@ typedef struct
 	qboolean	pausespawn;
 	int			cagescore;
 	int			invisibletime;
+	int			fpschecks;
 } clientSession_t;
 
 // Boe!Man 3/30/10
@@ -758,7 +759,8 @@ typedef struct
 	qboolean	crossTheBridge;
 
 	muted_t		mutedClients[21]; // Henk 28/01/11 -> Add new mute system.
-	char		deadClients[1024]; // Henk 28/01/11 -> Add new mute system.
+	//char		deadClients[1024]; // Henk 28/01/11 -> Add new mute system.
+	int         debugtime;
 } level_locals_t;
 
 //

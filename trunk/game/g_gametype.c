@@ -354,6 +354,7 @@ void G_RespawnClients ( qboolean force, team_t team, qboolean fullRestart )
 
 		ent->client->sess.noTeamChange = qfalse;
 		ent->client->sess.roundkills = 0;
+		ent->client->sess.fpschecks = 0;
 		trap_UnlinkEntity (ent);
 		ClientSpawn ( ent );
 
@@ -475,7 +476,7 @@ void G_ResetGametype ( qboolean fullRestart, qboolean cagefight )
 
 	// Reset the gametype itself
 	G_ResetGametypeEntities ( );
-	memset(level.deadClients, 0, sizeof(level.deadClients)); // reset
+	//memset(level.deadClients, 0, sizeof(level.deadClients)); // reset
 	level.cagefight = qfalse;
 	level.aetdone = qfalse;
 	level.cagefighttimer = 0;

@@ -428,7 +428,7 @@ static qboolean PM_CheckJump( void )
 	}
 
 	pm->ps->velocity[2] = JUMP_VELOCITY;
-
+	
 	return qtrue;
 }
 
@@ -681,7 +681,6 @@ static void PM_AirMove( void )
 		PM_ClipVelocity (pm->ps->velocity, pml.groundTrace.plane.normal, 
 			pm->ps->velocity, OVERCLIP );
 	}
-
 	PM_StepSlideMove ( qtrue );
 }
 
@@ -3655,6 +3654,7 @@ void PmoveSingle (pmove_t *pmove) {
 
 	// determine the time
 	pml.msec = pmove->cmd.serverTime - pm->ps->commandTime;
+
 	if ( pml.msec < 1 ) {
 		pml.msec = 1;
 	} else if ( pml.msec > 200 ) {
@@ -3864,7 +3864,7 @@ void Pmove (pmove_t *pmove) {
 	}
 
 	pmove->ps->pmove_framecount = (pmove->ps->pmove_framecount+1) & ((1<<PS_PMOVEFRAMECOUNTBITS)-1);
-
+	//Com_Printf("%i\n", pmove->ps->pmove_framecount);
 	// chop the move up if it is too long, to prevent framerate
 	// dependent behavior
 	while ( pmove->ps->commandTime != finalTime ) {
@@ -3882,7 +3882,9 @@ void Pmove (pmove_t *pmove) {
 				msec = 66;
 			}
 		}
+
 		pmove->cmd.serverTime = pmove->ps->commandTime + msec;
+
 		PmoveSingle( pmove );
 
 		PM_UpdatePVSOrigin ( pmove );	

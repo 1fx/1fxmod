@@ -766,7 +766,6 @@ void ClientTimerActions( gentity_t *ent, int msec )
 	gclient_t	*client;
 
 	client = ent->client;
-
 	// Check so see if the player has moved and if so dont let them change their outfitting
 	if ( !client->noOutfittingChange && ((level.time - client->respawnTime) > 3000))
 	{
@@ -1088,6 +1087,21 @@ void ClientThink_real( gentity_t *ent )
 	} 
 	
 	msec = ucmd->serverTime - client->ps.commandTime;
+
+	if(msec < 4 && ent->client->sess.team != TEAM_SPECTATOR && g_popHighFps.integer == 1){
+		if(level.time >= level.debugtime){
+			if(!G_IsClientDead(ent->client)){
+				ent->client->sess.fpschecks += 1;
+				if(ent->client->sess.fpschecks >= 3){
+					trap_SendServerCommand (-1, va("print\"^3[Info] ^7%s has been popped due to a higher fps then allowed(125).\n\"", ent->client->pers.cleanName ));
+					G_Damage (ent, NULL, NULL, NULL, NULL, 10000, 0, MOD_POP, HL_HEAD|HL_FOOT_RT|HL_FOOT_LT|HL_LEG_UPPER_RT|HL_LEG_UPPER_LT|HL_HAND_RT|HL_HAND_LT|HL_WAIST|HL_CHEST|HL_NECK);
+					ent->client->sess.fpschecks = 0;
+				}
+			}
+			level.debugtime = level.time+1000;
+			return;
+		}
+	}
 	// following others may result in bad times, but we still want
 	// to check for follow toggles
 	if ( msec < 1 && client->sess.spectatorState != SPECTATOR_FOLLOW ) 
@@ -1249,6 +1263,7 @@ void ClientThink_real( gentity_t *ent )
 	{
 		client->ps.pm_type = PM_NORMAL;
 	}
+
 	if(current_gametype.value == GT_HS){
 		if(client->ps.weapon == WP_MM1_GRENADE_LAUNCHER)
 			client->ps.gravity = 500;
