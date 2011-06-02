@@ -13,7 +13,7 @@
 #define INF_STRING "1fx. Mod"
 #define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod"
 #ifdef Q3_VM
-#define INF_VERSION_DATE "5/27/11"
+#define INF_VERSION_DATE "6/2/11"
 #else
 #define YEAR ((((__DATE__ [9] - '0')) * 10 + (__DATE__ [10] - '0')))
 
@@ -108,6 +108,7 @@
 // 0.58t		Beta (hotfix)					568(/578)	4/23/11		// Sent out to BETA group on 4/23/11
 // 0.58t		Release Candidate				601			5/8/11		// Sent out to BETA group on 5/9/11
 // 0.58			Release							615			5/27/11		// Sent out to BETA group on 5/27/11
+// 0.59t		Alpha							622			6/2/11
 
 
 //===================================================================
@@ -440,7 +441,7 @@ extern	vmCvar_t	g_matchLockSpec;
 extern	vmCvar_t	g_matchSwapTeams;
 extern	vmCvar_t	g_matchTimeLimit;
 extern	vmCvar_t	g_matchScoreLimit;
-extern	vmCvar_t	g_matchDisableSounds;
+extern	vmCvar_t	g_matchDisableEvents;
 extern	vmCvar_t	g_matchRounds;
 
 extern vmCvar_t	cm_enabled;
@@ -448,7 +449,7 @@ extern vmCvar_t	cm_sl;
 extern vmCvar_t	cm_tl;
 extern vmCvar_t	cm_slock;
 extern vmCvar_t	cm_aswap;
-extern vmCvar_t	cm_dsounds;
+extern vmCvar_t	cm_devents;
 extern vmCvar_t	cm_dr;
 extern vmCvar_t	cm_oldsl;
 extern vmCvar_t	cm_oldtl;

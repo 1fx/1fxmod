@@ -570,7 +570,7 @@ void Boe_Tokens(gentity_t *ent, char *chatText, int mode, qboolean CheckSounds)
 					continue;
 				}
 				if (g_compMode.integer > 0 && cm_enabled.integer > 1){ // Boe!Man 11/20/10: Meaning the scrim already started..
-					if (cm_dsounds.integer == 1){
+					if (cm_devents.integer == 1){
 						trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Sounds are currently disabled in Competition Mode.\n\"" ) );
 						playedSound = qtrue;
 						continue;

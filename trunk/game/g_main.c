@@ -204,14 +204,14 @@ vmCvar_t	g_matchLockSpec;
 vmCvar_t	g_matchSwapTeams;
 vmCvar_t	g_matchTimeLimit;
 vmCvar_t	g_matchScoreLimit;
-vmCvar_t	g_matchDisableSounds;
+vmCvar_t	g_matchDisableEvents;
 vmCvar_t	g_matchRounds;
 vmCvar_t	cm_enabled;
 vmCvar_t	cm_sl;
 vmCvar_t	cm_tl;
 vmCvar_t	cm_slock;
 vmCvar_t	cm_aswap;
-vmCvar_t	cm_dsounds;
+vmCvar_t	cm_devents;
 vmCvar_t	cm_dr;
 vmCvar_t	cm_oldsl;
 vmCvar_t	cm_oldtl;
@@ -448,7 +448,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_instaGib, "g_instaGib", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 	{ &g_weaponModFlags, "g_weaponModFlags", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_allowthirdperson, "g_allowThirdPerson", "1", CVAR_ARCHIVE|CVAR_SERVERINFO, 0.0, 0.0, 0,  qfalse },
-	{ &g_compMode, "g_compMode", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
+	{ &g_compMode, "g_compMode", "0", CVAR_ROM|CVAR_INTERNAL, 0.0, 0.0, 0, qfalse  },
 	{ &g_enableTeamCmds, "g_enableTeamCmds", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 	{ &g_refpassword, "g_refpassword", "none", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 	{ &g_checkCountry, "g_checkCountry", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
@@ -473,7 +473,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_matchSwapTeams, "g_matchSwapTeams", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_matchTimeLimit, "g_matchTimeLimit", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_matchScoreLimit, "g_matchScoreLimit", "10", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
-	{ &g_matchDisableSounds, "g_matchDisableSounds", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
+	{ &g_matchDisableEvents, "g_matchDisableEvents", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_matchRounds, "g_matchRounds", "2", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 
 	// Boe!Man 11/16/10: For Compmode. As most structures get cleared during shut down, and writing everything to temp CVARs will be more time/resource consuming, we'll simply use a couple of CVARs to update everything.
@@ -483,7 +483,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &cm_slock, "cm_slock", "0", CVAR_ROM|CVAR_INTERNAL, 0.0, 0.0, 0, qfalse  },
 	{ &cm_aswap, "cm_aswap", "0", CVAR_ROM|CVAR_INTERNAL, 0.0, 0.0, 0, qfalse  },
 	{ &cm_dr, "cm_dr", "0", CVAR_ROM|CVAR_INTERNAL, 0.0, 0.0, 0, qfalse  },
-	{ &cm_dsounds, "cm_dsounds", "0", CVAR_ROM|CVAR_INTERNAL, 0.0, 0.0, 0, qfalse  },
+	{ &cm_devents, "cm_devents", "0", CVAR_ROM|CVAR_INTERNAL, 0.0, 0.0, 0, qfalse  },
 	{ &cm_oldsl, "cm_oldsl", "0", CVAR_ROM|CVAR_INTERNAL, 0.0, 0.0, 0, qfalse  },
 	{ &cm_oldtl, "cm_oldtl", "0", CVAR_ROM|CVAR_INTERNAL, 0.0, 0.0, 0, qfalse  },
 	{ &cm_sr, "cm_sr", "0", CVAR_ROM|CVAR_INTERNAL, 0.0, 0.0, 0, qfalse  }, // Boe!Man 11/18/10: These two are used to log the 1st round results.
@@ -755,6 +755,27 @@ void G_UpdateCvars( void )
 					{
 						trap_Cvar_Set ( "sv_fps", "10" );
 						trap_Cvar_Update ( cv->vmCvar );
+					}
+				}
+
+				// Boe!Man 6/2/11: Handle Competition Mode CVARs (the ones not toggable in-game).
+				if (g_compMode.integer > 0 && cm_enabled.integer > 0){
+					if (!Q_stricmp (cv->cvarName, "g_matchDisableEvents")){
+						if(cv->vmCvar->integer == 0){
+							trap_Cvar_Set("cm_devents", "0");
+							trap_SendServerCommand(-1, va("print \"^3[Rcon Action] ^7Match events enabled.\n\""));
+						}else if(cv->vmCvar->integer > 0){
+							trap_Cvar_Set("cm_devents", "1");
+							trap_SendServerCommand(-1, va("print \"^3[Rcon Action] ^7Match events disabled.\n\""));
+						}
+					}else if (!Q_stricmp (cv->cvarName, "g_matchLockSpec")){
+						if(cv->vmCvar->integer == 0){
+							trap_Cvar_Set("cm_slock", "0");
+							trap_SendServerCommand(-1, va("print \"^3[Rcon Action] ^7Spectator team unlocked during match.\n\""));
+						}else if(cv->vmCvar->integer > 0){
+							trap_Cvar_Set("cm_slock", "1");
+							trap_SendServerCommand(-1, va("print \"^3[Rcon Action] ^7Spectator team locked during match.\n\""));
+						}
 					}
 				}
 
@@ -1317,7 +1338,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 																								 // Or, in the case of '5', the scrim already ended.
 			trap_Cvar_Set("g_compMode", "0");
 			trap_Cvar_Set("cm_enabled", "0");
-			trap_Cvar_Set("cm_dsounds", "0");
+			trap_Cvar_Set("cm_devents", "0");
 			trap_Cvar_Set("scorelimit", cm_oldsl.string);
 			trap_Cvar_Set("timelimit", cm_oldtl.string);
 			// Boe!Man 2/7/11: Reset the invatations after the scrim has ended/had an unexpected ending.
@@ -1325,6 +1346,10 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 				g_entities[level.sortedClients[i]].client->sess.invitedByBlue = qfalse;
 				g_entities[level.sortedClients[i]].client->sess.invitedByRed = qfalse;
 			}
+		}
+		if (cm_enabled.integer == 0){ // Boe!Man 6/2/11: Little piece of error handling. When someone decides to reboot the server; either a crash or intented, Competition Mode didn't completely shut down. We don't worry about the score- or timelimit, Config should always be executed first?
+			trap_Cvar_Set("g_compMode", "0");
+			level.compMsgCount = 0;
 		}
 		#ifdef _BOE_DBG
 		if (strstr(boe_log.string, "2"))
@@ -3194,7 +3219,7 @@ void G_RunFrame( int levelTime )
 				as = "Yes";
 			else
 				as = "No";
-			if (strstr(cm_dsounds.string, "1"))
+			if (strstr(cm_devents.string, "1"))
 				ds = "Yes";
 			else
 				ds = "No";
@@ -3204,10 +3229,10 @@ void G_RunFrame( int levelTime )
 				dr = "One";
 			
 			if(dr == "Two"){ // Boe!Man 3/18/11: Display the Auto Swap setting when Dual Rounds are enabled.
-				trap_SendServerCommand(-1, va("cp \"@%sMatch settings\n\n^7[^3Gametype^7]  %s%s %s\n^7[^3Scorelimit^7]  %s%i\n^7[^3Timelimit^7]  %s%i\n^7[^3Specs locked^7] %s%s\n^7[^3Disable sounds^7] %s%s\n^7[^3# of Rounds^7] %s%s\n^7[^3Auto swap^7] %s%s\n\n%sRestart map to start the first round!\"", 
+				trap_SendServerCommand(-1, va("cp \"@%sMatch settings\n\n^7[^3Gametype^7]  %s%s %s\n^7[^3Scorelimit^7]  %s%i\n^7[^3Timelimit^7]  %s%i\n^7[^3Specs locked^7] %s%s\n^7[^3Disable events^7] %s%s\n^7[^3# of Rounds^7] %s%s\n^7[^3Auto swap^7] %s%s\n\n%sRestart map to start the first round!\"", 
 					server_color3.string, server_color3.string, level.mapname, g_gametype.string, server_color3.string, cm_sl.integer, server_color3.string, cm_tl.integer, server_color3.string, sl, server_color3.string, ds, server_color3.string, dr, server_color3.string, as, server_color3.string));
 			}else{ // Boe!Man 3/18/11: Hide it when it's disabled.
-				trap_SendServerCommand(-1, va("cp \"@%sMatch settings\n\n^7[^3Gametype^7]  %s%s %s\n^7[^3Scorelimit^7]  %s%i\n^7[^3Timelimit^7]  %s%i\n^7[^3Specs locked^7] %s%s\n^7[^3Disable sounds^7] %s%s\n^7[^3# of Rounds^7] %s%s\n\n%sRestart map to start the first round!\"", 
+				trap_SendServerCommand(-1, va("cp \"@%sMatch settings\n\n^7[^3Gametype^7]  %s%s %s\n^7[^3Scorelimit^7]  %s%i\n^7[^3Timelimit^7]  %s%i\n^7[^3Specs locked^7] %s%s\n^7[^3Disable events^7] %s%s\n^7[^3# of Rounds^7] %s%s\n\n%sRestart map to start the first round!\"", 
 					server_color3.string, server_color3.string, level.mapname, g_gametype.string, server_color3.string, cm_sl.integer, server_color3.string, cm_tl.integer, server_color3.string, sl, server_color3.string, ds, server_color3.string, dr, server_color3.string));
 			}
 			level.compMsgCount = level.time + 3000;

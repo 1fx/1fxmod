@@ -973,34 +973,38 @@ void BroadcastTeamChange( gclient_t *client, int oldTeam )
 				break;
 		}
 	}
-	// Boe!Man 3/16/11: Append Clan and/or Admin status if needed.
-	if(client->sess.firstTime == qtrue){
-		if(client->sess.clanMember == qtrue){
-			strncpy(clan, server_ctprefix.string, 45);
-		}else{
-			strncpy(clan, "", 2);
-		}
-		if(client->sess.admin > 1){
-			if(client->sess.admin == 2){
-				strncpy(admin, server_badminprefix.string, 45);
-			}else if(client->sess.admin == 3){
-				strncpy(admin, server_adminprefix.string, 45);
-			}else if(client->sess.admin == 4){
-				strncpy(admin, server_sadminprefix.string, 45);
-			}
-		}else{
-			strncpy(admin, "", 2);
-			noAdmin = qtrue; // Boe!Man 3/16/11: It doesn't matter if clan is empty, the lining won't fuck up. With an empty admin entry however, it will.. Hence this check.
-		}
 
-		// Boe!Man 3/16/11: Broadcast the teamchange.
-		if(noAdmin == qfalse){
-			trap_SendServerCommand( -1, va("cp \"@%s\n%s %s\n\"", clan, admin, message));
-		}else{
-			trap_SendServerCommand( -1, va("cp \"@%s\n%s\n\"", clan, message));
+	// Boe!Man 6/2/11: Only broadcast the message if the player specifies to by enabling events during compmode. Always broadcast it when compmode's disabled.
+	if(cm_enabled.integer == 0 || cm_devents.integer == 0 || cm_enabled.integer == 1 && cm_devents.integer == 1){
+		// Boe!Man 3/16/11: Append Clan and/or Admin status if needed.
+		if(client->sess.firstTime == qtrue){
+			if(client->sess.clanMember == qtrue){
+				strncpy(clan, server_ctprefix.string, 45);
+			}else{
+				strncpy(clan, "", 2);
+			}
+			if(client->sess.admin > 1){
+				if(client->sess.admin == 2){
+					strncpy(admin, server_badminprefix.string, 45);
+				}else if(client->sess.admin == 3){
+					strncpy(admin, server_adminprefix.string, 45);
+				}else if(client->sess.admin == 4){
+					strncpy(admin, server_sadminprefix.string, 45);
+				}
+			}else{
+				strncpy(admin, "", 2);
+				noAdmin = qtrue; // Boe!Man 3/16/11: It doesn't matter if clan is empty, the lining won't fuck up. With an empty admin entry however, it will.. Hence this check.
+			}
+
+			// Boe!Man 3/16/11: Broadcast the teamchange.
+			if(noAdmin == qfalse){
+				trap_SendServerCommand( -1, va("cp \"@%s\n%s %s\n\"", clan, admin, message));
+			}else{
+				trap_SendServerCommand( -1, va("cp \"@%s\n%s\n\"", clan, message));
+			}
+		}else{ // Boe!Man 3/18/11: Else we just display the message itself.
+			trap_SendServerCommand( -1, va("cp \"@%s\n\"", message));
 		}
-	}else{ // Boe!Man 3/18/11: Else we just display the message itself.
-		trap_SendServerCommand( -1, va("cp \"@%s\n\"", message));
 	}
 	return;
 
@@ -1907,7 +1911,7 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 
 
 	// Boe!Man 4/20/11: Should the beep be enabled?
-	if (cm_dsounds.integer == 1 && cm_enabled.integer == 1 || cm_dsounds.integer == 0 && cm_enabled.integer != 1){
+	if (cm_devents.integer == 1 && cm_enabled.integer == 1 || cm_devents.integer == 0 && cm_enabled.integer != 1){
 		beep = qtrue;
 	}
 

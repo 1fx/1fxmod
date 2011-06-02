@@ -78,7 +78,7 @@ void Boe_CompMode(int argNum, gentity_t *ent, qboolean shotCmd){
 		trap_Cvar_Set("cm_tl", g_matchTimeLimit.string);
 		trap_Cvar_Set("cm_slock", g_matchLockSpec.string);
 		trap_Cvar_Set("cm_aswap", g_matchSwapTeams.string);
-		trap_Cvar_Set("cm_dsounds", g_matchDisableSounds.string);
+		trap_Cvar_Set("cm_devents", g_matchDisableEvents.string);
 		if(g_matchRounds.integer <= 1){
 			trap_Cvar_Set("cm_dr", "0");
 		}else if(g_matchRounds.integer >= 2){
@@ -101,7 +101,7 @@ void Boe_CompMode(int argNum, gentity_t *ent, qboolean shotCmd){
 		}
 		trap_Cvar_Set("g_compMode", "0");
 		trap_Cvar_Set("cm_enabled", "0");
-		trap_Cvar_Set("cm_dsounds", "0"); // Boe!Man 4/20/11: It's used for more things than just in a scrim, so make sure to reset it!
+		trap_Cvar_Set("cm_devents", "0"); // Boe!Man 4/20/11: It's used for more things than just in a scrim, so make sure to reset it!
 		trap_Cvar_Set("scorelimit", cm_oldsl.string);
 		trap_Cvar_Set("timelimit", cm_oldtl.string);
 	}
