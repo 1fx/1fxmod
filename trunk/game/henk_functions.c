@@ -685,7 +685,7 @@ qboolean CheckPasswordList(gentity_t *ent, char *pass){
 					trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s has been granted S-Admin.\n\"", ent->client->pers.netname));
 				}
 				// Boe!Man 5/27/11: Is the Admin level allowed to spec the opposite team?
-				if (g_adminSpec.integer <= ent->client->sess.admin){
+				if (g_adminSpec.integer <= ent->client->sess.admin && g_adminSpec.integer != 0 && cm_enabled.integer < 2){
 					ent->client->sess.adminspec = qtrue;
 				}
 				trap_FS_FCloseFile(f);

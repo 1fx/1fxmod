@@ -1361,7 +1361,7 @@ void Boe_Add_bAdmin_f(int argNum, gentity_t *adm, qboolean shortCmd)
 		}
 	}
 	// Boe!Man 10/16/10: Is the Admin level allowed to spec the opposite team?
-	if (g_adminSpec.integer <= 2)
+	if (g_adminSpec.integer <= 2 && g_adminSpec.integer != 0 && cm_enabled.integer < 2)
 		g_entities[idnum].client->sess.adminspec = qtrue;
 }
 
@@ -1427,7 +1427,7 @@ void Boe_Add_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd)
 		}
 	}
 	// Boe!Man 10/16/10: Is the Admin level allowed to spec the opposite team?
-	if (g_adminSpec.integer <= 3)
+	if (g_adminSpec.integer <= 3 && g_adminSpec.integer != 0 && cm_enabled.integer < 2)
 		g_entities[idnum].client->sess.adminspec = qtrue;
 }
 
@@ -1495,7 +1495,7 @@ void Boe_Add_sAdmin_f(int argNum, gentity_t *adm, qboolean shortCmd)
 	}
 
 	// Boe!Man 10/16/10: Is the Admin level allowed to spec the opposite team?
-	if (g_adminSpec.integer <= 4)
+	if (g_adminSpec.integer <= 4 && g_adminSpec.integer != 0 && cm_enabled.integer < 2)
 		g_entities[idnum].client->sess.adminspec = qtrue;
 }
 		/*

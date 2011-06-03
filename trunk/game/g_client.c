@@ -1348,7 +1348,7 @@ void ClientUserinfoChanged( int clientNum )
 	}
 
 	// Boe!Man 10/16/10: If Admins are allowed to spec the opposite team..
-	if (client->sess.admin >= g_adminSpec.integer && g_compMode.integer == 0){
+	if (client->sess.admin >= g_adminSpec.integer && g_adminSpec.integer != 0 && g_compMode.integer == 0){
 		client->sess.adminspec = qtrue;
 	}
 
@@ -1583,7 +1583,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 		}
 	}
 	// Boe!Man 10/16/10: If Admins are allowed to spec the opposite team..
-	if (client->sess.admin >= g_adminSpec.integer && g_compMode.integer == 0){
+	if (client->sess.admin >= g_adminSpec.integer  && g_adminSpec.integer != 0 && g_compMode.integer == 0){
 		client->sess.adminspec = qtrue;}
 	/*if(client->sess.admin == 4 && g_sadminspec.integer == 1)
 		client->sess.adminspec = qtrue;*/
