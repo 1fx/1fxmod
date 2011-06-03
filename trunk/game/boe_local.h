@@ -13,7 +13,7 @@
 #define INF_STRING "1fx. Mod"
 #define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod"
 #ifdef Q3_VM
-#define INF_VERSION_DATE "6/2/11"
+#define INF_VERSION_DATE "6/3/11"
 #else
 #define YEAR ((((__DATE__ [9] - '0')) * 10 + (__DATE__ [10] - '0')))
 

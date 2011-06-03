@@ -301,6 +301,94 @@ void trigger_booster_touch (gentity_t *self, gentity_t *other, trace_t *trace ) 
 }
 
 /*
+==================
+Reachable Object
+6/3/10 - 2:09 PM
+==================
+
+"team" "red/blue/all"
+"endround" "yes/no"
+"score" "%i"
+"broadcast" "has reached the object!"
+*/
+
+void trigger_ReachableObject_touch ( gentity_t *self, gentity_t *other, trace_t *trace ){
+	char	*status;
+
+	if ( !other->client ) {
+		return;
+	}
+	if ( other->client->ps.pm_type == PM_DEAD ) {
+		return;
+	}
+	// Spectators only?
+	if ( ( self->spawnflags & 1 ) && !G_IsClientSpectating ( other->client ) ) 
+	{
+		return;
+	}
+
+	// Boe!Man 6/3/11: Check team if needed.
+	if(self->team){
+		if(!strstr(self->team, "all")){
+			if(other->client->sess.team == TEAM_RED && !strstr(self->team, "red") || other->client->sess.team == TEAM_BLUE && !strstr(self->team, "blue")){
+				if(level.time >= other->client->sess.lastmsg){
+					if(strstr(self->team, "red")){
+						trap_SendServerCommand ( other->s.number, va("cp\"@^7Object is for %s ^7team only!", server_redteamprefix.string));
+					}else if(strstr(self->team, "blue")){
+						trap_SendServerCommand ( other->s.number, va("cp\"@^7Object is for %s ^7team only!", server_blueteamprefix.string));
+					}
+					other->client->sess.lastmsg = level.time+3000;
+				}
+				return;
+			}
+		}
+	}
+
+	if(level.time >= other->client->sess.lastmsg){
+		other->client->sess.lastmsg = level.time+3000;
+		// Boe!Man 6/3/11: Add score if defined.
+		if(self->score > 0){
+			other->client->sess.score += self->score;
+			other->client->sess.kills += self->score;
+		}
+
+		// Boe!Man 6/3/11: End the round if specified.
+		if(strstr(self->endround, "yes")){
+			// Boe!Man 6/3/11: Restart gametype after 3000 msec.
+			self->nextthink = level.time + 3000;
+			self->think = ReachableObject_events;
+		}else{ // Else respawn the player.
+			if(other->client->sess.lastIdentityChange){
+				status = ".";
+				other->client->sess.lastIdentityChange = qfalse;
+			}
+			else{
+				status = ".";
+				other->client->sess.lastIdentityChange = qtrue;
+			}
+			other->client->sess.noTeamChange = qfalse;
+			trap_UnlinkEntity (other);
+			ClientSpawn(other);
+		}
+
+		// Boe!Man 6/3/11: Broadcast if specified.
+		if(strlen(self->broadcast) > 0){
+			if(strstr(self->endround, "yes")){
+				trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s has won the round.\n\"", other->client->pers.cleanName));
+			}else{
+				trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s has reached the object.\n\"", other->client->pers.cleanName));
+			}
+			trap_SendServerCommand ( -1, va("cp\"@^7%s\n^7%s", other->client->pers.netname, self->broadcast));
+		}
+	}
+}
+
+void ReachableObject_events ( gentity_t *self ){
+	// Boe!Man 6/3/11: Gametype restart.
+	G_ResetGametype(qfalse, qfalse);
+}
+
+/*
 -----------------------------
 New easy teleporter by Henkie
 13/02/2011
@@ -768,5 +856,76 @@ void SP_booster(gentity_t* ent){
 	ent->r.svFlags &= ~SVF_NOCLIENT;
 	ent->s.eType = ET_PUSH_TRIGGER;
 	ent->touch = trigger_booster_touch;
+	trap_LinkEntity (ent);
+}
+
+/*
+==================
+SP_sun
+6/3/10 - 11:34 AM
+==================
+*/
+
+void SP_sun(gentity_t* ent){
+	char		*origin;
+	char		*fxName;
+	char		*bspName;
+	trace_t		tr;
+	vec3_t		dest;
+	vec3_t		src;
+
+	/*
+	{
+	"classname" "reachable_object"
+	"origin" ""
+	"bspmodel" ""
+	"effect" ""
+	"team" "red/blue/all"
+	"endround" "yes/no"
+	"score" "%i"
+	"broadcast" "has reached the sun!"
+	}
+	*/
+
+	VectorSet( ent->r.mins, -ITEM_RADIUS, -ITEM_RADIUS, -ITEM_RADIUS );
+	VectorSet( ent->r.maxs, ITEM_RADIUS, ITEM_RADIUS, ITEM_RADIUS );
+	VectorSet( src, ent->s.origin[0], ent->s.origin[1], ent->s.origin[2] + 1 );
+	VectorSet( dest, ent->s.origin[0], ent->s.origin[1], ent->s.origin[2] - 4096 );
+	trap_Trace( &tr, src, ent->r.mins, ent->r.maxs, dest, ent->s.number, MASK_SOLID );
+
+	if (tr.startsolid){
+		Com_Printf ("Sun: %s startsolid at %s\n", ent->classname, vtos(ent->s.origin));
+		G_FreeEntity( ent );
+		return;
+	}
+
+	// Boe!Man 6/3/11: Get the effect and bspmodel name.
+	G_SpawnString("effect", "", &fxName);
+	G_SpawnString("bspmodel", "", &bspName);
+
+	// Boe!Man 6/3/11: Set the origin.
+	origin = va("%.0f %.0f %.0f", ent->r.currentOrigin[0], ent->r.currentOrigin[1], ent->r.currentOrigin[2]);
+
+	// Boe!Man 6/3/11: Spawn the effect.
+	if(strlen(fxName) > 0){ // We don't want the "effect" to be empty, so only attempt to spawn it if it's not empty.
+		AddSpawnField("classname", "fx_play_effect");
+		AddSpawnField("effect", fxName);
+		AddSpawnField("origin", origin);
+		AddSpawnField("count", "-1");
+		AddSpawnField("wait", "0.7");
+		G_SpawnGEntityFromSpawnVars (qtrue);
+	}
+	
+	
+	if(strlen(bspName) > 0){ // Same goes out for the model.
+		AddSpawnField("classname", "misc_bsp");
+		AddSpawnField("bspmodel", bspName);
+		AddSpawnField("origin", origin);
+		G_SpawnGEntityFromSpawnVars (qtrue);
+	}
+
+	ent->r.contents = CONTENTS_TRIGGER;
+	ent->r.svFlags &= ~SVF_NOCLIENT;
+	ent->touch = trigger_ReachableObject_touch;
 	trap_LinkEntity (ent);
 }

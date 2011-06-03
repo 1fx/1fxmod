@@ -178,6 +178,11 @@ struct gentity_s
 	qboolean	disabled;
 	int			nolower;
 	int			hideseek;
+
+	// Boe!Man 6/3/11: Reachable object.
+	char		*endround;
+	int			score;
+	char		*broadcast;
 };
 
 typedef struct gspawn_s
@@ -958,8 +963,10 @@ void		G_ResetGlass		( void );
 //
 void		trigger_teleporter_touch		( gentity_t *self, gentity_t *other, trace_t *trace );
 void		trigger_NewTeleporter_touch		( gentity_t *self, gentity_t *other, trace_t *trace );
-void		trigger_booster_touch		( gentity_t *self, gentity_t *other, trace_t *trace );
+void		trigger_booster_touch			( gentity_t *self, gentity_t *other, trace_t *trace );
+void		trigger_ReachableObject_touch	( gentity_t *self, gentity_t *other, trace_t *trace );
 void		InitTrigger						( gentity_t *self );
+void		ReachableObject_events			( gentity_t *self );
 
 //
 // g_misc.c

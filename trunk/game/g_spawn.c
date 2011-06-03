@@ -130,6 +130,12 @@ field_t fields[] =
 	{"min_players",			FOFS(min_players),			F_INT},
 	{"nolower",				FOFS(nolower),				F_INT},
 	{"hideseek",			FOFS(hideseek),				F_INT},
+
+	// Boe!Man 6/3/11: Parts for the reachable object (sun).
+	{"endround",			FOFS(endround),				F_LSTRING},
+	{"score",				FOFS(score),				F_INT},
+	{"broadcast",			FOFS(broadcast),			F_LSTRING},
+
 	{NULL}
 };
 
@@ -199,6 +205,7 @@ void SP_gametype_player				(gentity_t* ent);
 void SP_mission_player				(gentity_t* ent);
 void SP_booster						(gentity_t* ent);
 void SP_teleporter					(gentity_t* ent);
+void SP_sun							(gentity_t* ent);
 void hideseek_cage					(gentity_t* ent);
 									
 void SP_fx_play_effect				(gentity_t* ent);
@@ -290,6 +297,7 @@ spawn_t	spawns[] =
 	{"blocked_teleporter",			NV_blocked_Teleport},
 	{"booster",						SP_booster},
 	{"teleporter",					SP_teleporter},
+	{"reachable_object",			SP_sun},
 	{"hideseek_cage",				hideseek_cage},
 	// The following classnames are instantly removed when spawned.  The RMG 
 	// shares instances with single player which is what causes these things
