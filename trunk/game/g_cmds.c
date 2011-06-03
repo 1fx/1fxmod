@@ -2441,7 +2441,9 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	}
 	// End
 
+	/*	
 	// Boe!Man 5/2/10: The Referee tokens. I think we're actually the first with this... (:
+	// Boe!Man 6/3/11: Not needed, no one uses them.
 	if(strstr(p, "!i ")){
 		if(ent->client->sess.admin > 1){
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Use /adm suspend or !su to become a Referee!\n\""));
@@ -2490,6 +2492,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	//	trap_SendServerCommand( -1, va("print \"^3[Debug] ^7%s level is %i.\n\"", AdminCommands[1].adminCmd, *AdminCommands[1].adminLevel));
 
 	}
+	*/
 	}
 
 	// Boe!Man 12/20/09
