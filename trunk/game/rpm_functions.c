@@ -861,7 +861,7 @@ void RPM_UpdateTMI(void)
 		}
 		// Henk 06/04/10 -> Check what view person is in
 		trap_GetUserinfo( g_entities[level.sortedClients[i]].s.number, userinfo, sizeof( userinfo ) );
-		if(g_entities[level.sortedClients[i]].client->sess.rpmClient >= 0.7){
+		if(g_entities[level.sortedClients[i]].client->sess.rpmClient > 0.7){
 		s = Info_ValueForKey( userinfo, "cg_thirdperson" );
 		cl->sess.thirdperson = atoi(s);
 		if(cl->sess.thirdperson >= 1){
