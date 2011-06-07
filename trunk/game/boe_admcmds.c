@@ -1513,7 +1513,7 @@ Henk_RemoveLineFromFile
 Removes a zero based line from a file
 ================
 */
-void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subnet, qboolean ban){
+void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subnet, qboolean ban, qboolean banremove, char *banremovestring){
 	fileHandle_t	f;
 	int len, CurrentLine = 0, StartPos = 0, EndPos = -1, i;
 	qboolean begin = qtrue;
@@ -1561,6 +1561,13 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 			EndPos = i;
 			if(line != CurrentLine){
 			strncpy(asd, buf+StartPos, EndPos);
+			if(banremove){
+				if(strstr(asd, banremovestring)){
+					strncpy(last, buf+StartPos, EndPos-StartPos); 
+					done = qtrue;
+					break;
+				}
+			}
 			trap_FS_Write(asd, strlen(asd), f);
 			//Com_Printf("Written %s\n", asd);
 			//Q_strncpyz(newbuf+strlen(newbuf), asd, sizeof(newbuf));
@@ -1585,6 +1592,13 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 		if(EndPos != -1){
 			if(line != CurrentLine){
 			strncpy(asd, buf+StartPos, EndPos-StartPos); 
+			if(banremove){
+				if(strstr(asd, banremovestring)){
+					strncpy(last, buf+StartPos, EndPos-StartPos); 
+					done = qtrue;
+					break;
+				}
+			}
 			Com_sprintf(asd, sizeof(asd), "%s\n", asd);
 			//Q_strncpyz(newbuf+strlen(newbuf), asd, sizeof(newbuf));
 			trap_FS_Write(asd, strlen(asd), f);
@@ -1609,18 +1623,6 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 	}
 	Com_Printf("Last ip: %s\n", lastip);
 	if(ban){
-	if(subnet)
-		strcpy(fileName, va("users\\baninfo\\subnet\\%s.IP", lastip));
-	else
-		strcpy(fileName, va("users\\baninfo\\%s.IP", lastip));
-
-	len = trap_FS_FOpenFile(fileName , &f, FS_WRITE );
-	if(f){
-		trap_FS_Write("", 0, f);
-		trap_FS_FCloseFile(f);
-	}else{
-		Com_Printf("Error while opening file in unban\n");
-	}
 	// End
 		if(subnet){
 			if(ent && ent->client)
@@ -1651,7 +1653,6 @@ Boe_Unban
 void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 {
 	int iLine;
-	fileHandle_t f;
 
 	if(strlen(ip) < 2 && strstr(ip, ".")){
 		trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid IP, Usage: adm unban <IP/Line>.\n\""));
@@ -1660,9 +1661,9 @@ void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 		// unban by line
 		iLine = atoi(ip);
 		if(subnet)
-			Henk_RemoveLineFromFile(adm, iLine, "users/subnetbans.txt", qtrue, qtrue);
+			Henk_RemoveLineFromFile(adm, iLine, "users/subnetbans.txt", qtrue, qtrue, qfalse, "");
 		else
-			Henk_RemoveLineFromFile(adm, iLine, g_banfile.string, qfalse, qtrue);
+			Henk_RemoveLineFromFile(adm, iLine, g_banfile.string, qfalse, qtrue, qfalse, "");
 		return;
 	}else if(strlen(ip) < 2){
 		trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid IP, Usage: adm unban <IP/Line>.\n\""));
@@ -1670,23 +1671,16 @@ void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 	}
 
 	if(!subnet){
-			if(Boe_Remove_from_list(ip, g_banfile.string, "Ban", adm, qtrue, qfalse, qfalse )){
-				trap_SendServerCommand( adm-g_entities, va("print \"^3%s ^7has been Unbanned.\n\"", ip));
-				trap_FS_FOpenFile( va("users\\baninfo\\%s.IP", ip), &f, FS_WRITE );
-				if(f){
-					trap_FS_Write("", 0, f);
-					trap_FS_FCloseFile(f);
-				}else{
-					Com_Printf("Error while opening file in unban\n");
-				}
-				
+		Henk_RemoveLineFromFile(adm, -1, g_banfile.string, qfalse, qtrue, qtrue, va("%s\\", ip)); // add \\ to prevent getting the admin his ip.
+			/*if(Boe_Remove_from_list(ip, g_banfile.string, "Ban", adm, qtrue, qfalse, qfalse )){
+				trap_SendServerCommand( adm-g_entities, va("print \"^3%s ^7has been Unbanned.\n\"", ip));				
 				//if(adm && adm->client)
 				//	Boe_adminLog (va("%s - UNBAN: %s", adm->client->pers.cleanName, ip  )) ;
 				//else 
 				//	Boe_adminLog (va("%s - UNBAN: %s", "RCON", ip  )) ;
 				
 				return;
-			}
+			}*/
 	}
 	else {
 		if(Boe_Remove_from_list(ip, "users/subnetbans.txt", "SubnetBan", adm, qtrue, qfalse, qfalse )){
@@ -1836,8 +1830,6 @@ Boe_subnetBan
 void Boe_subnetBan (int argNum, gentity_t *adm, qboolean shortCmd){
 	int				idnum;
 	char			reason[MAX_STRING_TOKENS] = "\0";
-	fileHandle_t	f;
-	char			string[1024];
 	int i;
 	char arg[64];
 	char *temp = "";
@@ -1868,24 +1860,20 @@ void Boe_subnetBan (int argNum, gentity_t *adm, qboolean shortCmd){
 		strcpy(reason, arg);
 	}
 	Q_strncpyz(ip, g_entities[idnum].client->pers.ip, 7);
-	// Boe!Man 9/7/10: Example of ban.
-		trap_FS_FOpenFile( va("users/baninfo/subnet/%s.IP", ip), &f, FS_WRITE );
-		if (!f)
-		{
-			Com_Printf("^1Error opening File\n");
-			return;
-		}
-		if (adm && adm->client)
-		strcpy(string, va("1\n{\nip \"%s\"\nname \"%s\"\nreason \"%s\"\nby \"%s\"\n}\n", ip, g_entities[idnum].client->pers.cleanName, reason, adm->client->pers.cleanName));
-		else
-		strcpy(string, va("1\n{\nip \"%s\"\nname \"%s\"\nreason \"%s\"\nby \"RCON\"\n}\n", ip, g_entities[idnum].client->pers.cleanName, reason));
 
-		trap_FS_Write(string, strlen(string), f);
-		trap_FS_Write("\n", 1, f);
-		trap_FS_FCloseFile(f);
-
-	// Boe!Man 1/7/10: No more logging of reason in the ban file.
-	strcpy(info, va("%s\\%s", ip, g_entities[idnum].client->pers.cleanName));
+	if (adm && adm->client){
+		Com_sprintf (info, sizeof(info), "%s\\%s//%s||%s",
+		g_entities[idnum].client->pers.ip,
+		g_entities[idnum].client->pers.cleanName,
+		adm->client->pers.cleanName,
+		reason);
+	}else{
+		Com_sprintf (info, sizeof(info), "%s\\%s//%s||%s",
+		g_entities[idnum].client->pers.ip,
+		g_entities[idnum].client->pers.cleanName,
+		"RCON",
+		reason);
+	}
 
 	if(Boe_AddToList(info, "users/subnetbans.txt", "Subnet ban", adm)){
 		if(adm && adm->client)	{
@@ -1979,8 +1967,6 @@ void Boe_Ban_f (int argNum, gentity_t *adm, qboolean shortCmd)
 	int				idnum;
 	char            banid[1024]; // Henk 07/10/10 -> Needs to be bigger if we want to add reason so 128 -> 1024
 	char			reason[MAX_STRING_TOKENS] = "\0";
-	fileHandle_t	f;
-	char			string[1024];
 	int i;
 	char arg[64];
 	char *temp = "";
@@ -2008,25 +1994,19 @@ void Boe_Ban_f (int argNum, gentity_t *adm, qboolean shortCmd)
 		trap_Argv( argNum+1, arg, sizeof( arg ) );
 		strcpy(reason, arg);
 	}
-	// Boe!Man 9/7/10: Example of ban.
-		trap_FS_FOpenFile( va("users/baninfo/%s.IP", g_entities[idnum].client->pers.ip), &f, FS_WRITE );
-		if (!f)
-		{
-			Com_Printf("^1Error opening File\n");
-			return;
+		if (adm && adm->client){
+			Com_sprintf (banid, sizeof(banid), "%s\\%s//%s||%s",
+			g_entities[idnum].client->pers.ip,
+			g_entities[idnum].client->pers.cleanName,
+			adm->client->pers.cleanName,
+			reason);
+		}else{
+			Com_sprintf (banid, sizeof(banid), "%s\\%s//%s||%s",
+			g_entities[idnum].client->pers.ip,
+			g_entities[idnum].client->pers.cleanName,
+			"RCON",
+			reason);
 		}
-		if (adm && adm->client)
-		strcpy(string, va("1\n{\nip \"%s\"\nname \"%s\"\nreason \"%s\"\nby \"%s\"\n}\n", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName, reason, adm->client->pers.cleanName));
-		else
-		strcpy(string, va("1\n{\nip \"%s\"\nname \"%s\"\nreason \"%s\"\nby \"RCON\"\n}\n", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName, reason));
-
-		trap_FS_Write(string, strlen(string), f);
-		trap_FS_Write("\n", 1, f);
-		trap_FS_FCloseFile(f);
-
-		Com_sprintf (banid, sizeof(banid), "%s\\%s",
-		g_entities[idnum].client->pers.ip,
-		g_entities[idnum].client->pers.cleanName);
 
 	if(Boe_AddToList(banid, g_banfile.string, "Ban", adm)){
 		if(adm && adm->client)	{
@@ -3440,9 +3420,9 @@ void Henk_AdminRemove(int argNum, gentity_t *adm, qboolean shortCmd){
 		// unban by line
 		iLine = atoi(arg);
 		if(password)
-			Henk_RemoveLineFromFile(adm, iLine, g_adminPassFile.string, qfalse, qfalse);
+			Henk_RemoveLineFromFile(adm, iLine, g_adminPassFile.string, qfalse, qfalse, qfalse, "");
 		else
-			Henk_RemoveLineFromFile(adm, iLine, g_adminfile.string, qfalse, qfalse);
+			Henk_RemoveLineFromFile(adm, iLine, g_adminfile.string, qfalse, qfalse, qfalse, "");
 		return;
 	}else if(strlen(arg) < 2){
 		if(shortCmd)

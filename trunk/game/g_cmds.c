@@ -2166,7 +2166,6 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	// Boe!Man 1/17/10
 	int			anim = 0;
 	float		knockback = 400.0;
-	char team[4];
 	// Boe!Man 5/3/10: Temp(?) fix.
 	qboolean	acmd = qfalse;
 	char		test[512];
@@ -3040,7 +3039,6 @@ ClientCommand
 void ClientCommand( int clientNum ) {
 	gentity_t *ent;
 	char	cmd[MAX_TOKEN_CHARS];
-	int test;
 	ent = g_entities + clientNum;
 	if ( !ent->client ) {
 		return;		// not fully in game yet
