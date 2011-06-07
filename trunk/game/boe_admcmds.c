@@ -1098,7 +1098,7 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 	char            buf[15000] = "\0";
 	int len, i, count = 0, EndPos = -1, StartPos = 0;
 	qboolean begin = qtrue;
-	int r, lcount = -1, lenx;
+	int r, lcount = -1, lenx, tempend;
 	char xip[64];
 	char fileName[128];
 	//wrapper for interface
@@ -1144,47 +1144,28 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 			strncpy(xip, buf+StartPos, EndPos-StartPos);
 			lcount = -1;
 			for(r=i;r<strlen(buf);r++){
-				if(buf[r] == '\n'){
+				if(buf[r] == '//'){
 					lcount = r-1;
 					break;
 				}
 			}
-			if(lcount == -1){
-				lcount = strlen(buf); // last line
-			}
 			strncpy(name, buf+EndPos+1, lcount-(EndPos+1));
+			tempend = lcount-(EndPos+1);
 			name[strlen(name)] = '\0';
 			//Com_Printf("IP: %s\n", xip);
 			//Com_Printf("Name: %s\n", name);
+			for(r=lcount;r<strlen(buf);r++){
+				if(buf[r] == '||'){
+					lcount = r-1;
+					break;
+				}
+			}
+			strncpy(by, buf+tempend+1, lcount-(tempend+1));
+			Com_Printf("%s\n", by);
+
 			count += 1; // Henk 25/01/11 -> Fix wrong ban lines.
 			// Start extracting and printing baninfo
-			if(subnet)
-				file = va("users/baninfo/subnet/%s.IP", xip);
-			else
-				file = va("users/baninfo/%s.IP", xip);
-			lenx = trap_FS_FOpenFile(file, &f, FS_READ);
-			if(f){
-				if(lenx >= 1){
-					GP2 = trap_GP_ParseFile(file, qtrue, qfalse);
-					group = trap_GPG_GetSubGroups(GP2);
-					trap_GPG_FindPairValue(group, "ip", "0", ip);
-					trap_GPG_FindPairValue(group, "name", "", name);
-					trap_GPG_FindPairValue(group, "reason", "", reason);
-					trap_GPG_FindPairValue(group, "by", "", by);
-					trap_GP_Delete(&GP2);
-				}else{
-					strcpy(ip, xip);
-					strcpy(reason, "");
-					strcpy(by, "");
-					//Com_Printf("Not opening because file is too small.\n");
-				}
-				trap_FS_FCloseFile(f);
-			}else{
-				strcpy(ip, xip);
-				strcpy(reason, "");
-				strcpy(by, "");
-				//Com_Printf("No baninfo available\n");
-			}
+			
 			length = strlen(ip);
 			if(length > 15){
 				ip[15] = '\0';
