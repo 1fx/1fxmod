@@ -1256,7 +1256,7 @@ void ClientUserinfoChanged( int clientNum )
 				}
 			}else{
 				client->pers.identity = BG_FindIdentity ( s );
-				Com_Printf("Gender: %s\n", client->pers.identity->mCharacter->mModel); // a1g7s
+				//Com_Printf("Gender: %s\n", client->pers.identity->mCharacter->mModel); // a1g7s
 				if(client->pers.identity){
 					if(strstr(client->pers.identity->mName, "NPC_Swiss_Police/swiss_police_b1") || strstr(client->pers.identity->mName, "NPC_Honor_Guard/honor_guard_w1") || strstr(client->pers.identity->mName, "NPC_Swiss_Police") || strstr(client->pers.identity->mName, "NPC_Sebastian_Jenzer")){
 						trap_SendServerCommand ( client - &level.clients[0], "print \"^3[H&S] ^7You cannot use that skin.\n\"" );

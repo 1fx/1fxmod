@@ -1089,16 +1089,14 @@ void Henk_SubnetBanList(int argNum, gentity_t *adm, qboolean shortCmd){
 }
 
 void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet){
-	void	*GP2, *group;
 	char	ip[64], name[64], reason[64], by[64], test = ' ';
 	char	column1[20], column2[20], column3[20];
 	int		spaces = 0, length = 0, z;
-	char	*file;
 	fileHandle_t f;
 	char            buf[15000] = "\0";
 	int len, i, count = 0, EndPos = -1, StartPos = 0;
 	qboolean begin = qtrue;
-	int r, lcount = -1, lenx, tempend;
+	int r, lcount = -1, tempend;
 	char xip[64];
 	char fileName[128];
 	//wrapper for interface
@@ -1140,29 +1138,40 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 		if(buf[i] == '\\' && buf[i] != '\n'){
 			EndPos = i;
 			begin = qtrue;
-			memset(xip, 0, sizeof(xip));
-			strncpy(xip, buf+StartPos, EndPos-StartPos);
+			memset(ip, 0, sizeof(ip));
+			strncpy(ip, buf+StartPos, EndPos-StartPos);
 			lcount = -1;
 			for(r=i;r<strlen(buf);r++){
-				if(buf[r] == '//'){
-					lcount = r-1;
+				if(buf[r] == '/' && buf[r+1] == '/'){
+					lcount = r;
 					break;
 				}
 			}
+			memset(name, 0, sizeof(name));
 			strncpy(name, buf+EndPos+1, lcount-(EndPos+1));
-			tempend = lcount-(EndPos+1);
+			tempend = (EndPos+1)+(lcount-(EndPos+1));
 			name[strlen(name)] = '\0';
-			//Com_Printf("IP: %s\n", xip);
+			//Com_Printf("IP: %s\n", ip);
 			//Com_Printf("Name: %s\n", name);
 			for(r=lcount;r<strlen(buf);r++){
-				if(buf[r] == '||'){
+				if(buf[r] == '|' && buf[r+1] == '|'){
+					lcount = r;
+					break;
+				}
+			}
+			memset(by, 0, sizeof(by));
+			strncpy(by, buf+tempend+2, lcount-(tempend+2));
+			tempend = (tempend+4)+(lcount-(tempend+2));
+			Com_Printf("By: %s\n", by);
+			for(r=lcount;r<strlen(buf);r++){
+				if(buf[r] == '\n'){
 					lcount = r-1;
 					break;
 				}
 			}
-			strncpy(by, buf+tempend+1, lcount-(tempend+1));
-			Com_Printf("%s\n", by);
-
+			memset(reason, 0, sizeof(reason));
+			strncpy(reason, buf+tempend, lcount-(tempend));
+			Com_Printf("Reason: %s\n", reason);
 			count += 1; // Henk 25/01/11 -> Fix wrong ban lines.
 			// Start extracting and printing baninfo
 			
