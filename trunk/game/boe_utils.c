@@ -492,6 +492,8 @@ void Boe_Tokens(gentity_t *ent, char *chatText, int mode, qboolean CheckSounds)
 				case 'n':
 				case 'N':
 						Q_strcat(newText, MAX_SAY_TEXT, va("%s", g_motd.string));
+						ent->client->voiceFloodCount++; // add one to floodcount as they could massively flood this
+						Boe_GlobalSound(chatSounds[186].sound);
 					chatText++;
 					continue;
 				case 'f':
