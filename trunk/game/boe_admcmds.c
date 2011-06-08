@@ -1167,7 +1167,8 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 				if(buf[r] == '\n'){
 					lcount = r-1;
 					break;
-				}
+				}else
+					lcount = r+1;
 			}
 			memset(reason, 0, sizeof(reason));
 			strncpy(reason, buf+tempend, lcount-(tempend));
@@ -1586,19 +1587,23 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 				if(strstr(asd, banremovestring)){
 					strncpy(last, buf+StartPos, EndPos-StartPos); 
 					done = qtrue;
-					break;
+					//break;
+				}else{
+					Com_sprintf(asd, sizeof(asd), "%s\n", asd);
+					trap_FS_Write(asd, strlen(asd), f);
+					Com_Printf("Written %s\n", asd);
 				}
-			}
+			}else{
 			Com_sprintf(asd, sizeof(asd), "%s\n", asd);
-			//Q_strncpyz(newbuf+strlen(newbuf), asd, sizeof(newbuf));
 			trap_FS_Write(asd, strlen(asd), f);
-			//Com_Printf("Written %s\n", asd);
+			Com_Printf("Written %s\n", asd);
+			}
 			//Com_Printf("New buf length: %i\n", strlen(newbuf));
 			//Com_Printf("Added %s\n", asd);
 			}else{
 				done = qtrue;
 				strncpy(last, buf+StartPos, EndPos-StartPos); 
-				//Com_Printf("Final: %s\n", last);
+				Com_Printf("Final: %s\n", last);
 			}
 		}
 	}

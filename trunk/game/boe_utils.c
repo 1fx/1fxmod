@@ -492,8 +492,17 @@ void Boe_Tokens(gentity_t *ent, char *chatText, int mode, qboolean CheckSounds)
 				case 'n':
 				case 'N':
 						Q_strcat(newText, MAX_SAY_TEXT, va("%s", g_motd.string));
-						ent->client->voiceFloodCount++; // add one to floodcount as they could massively flood this
-						Boe_GlobalSound(chatSounds[186].sound);
+							if ( ent->client->voiceFloodCount >= g_voiceFloodCount.integer && g_voiceFloodCount.integer != 0) {
+								ent->client->voiceFloodCount = 0;
+								ent->client->voiceFloodTimer = 0;
+								ent->client->voiceFloodPenalty = level.time + g_voiceFloodPenalty.integer * 1000;
+								trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Voice chat flooded, you will be able use voice chats again in %d seconds.\n\"", g_voiceFloodPenalty.integer ) );
+							}else if ( ent->client->voiceFloodPenalty > level.time ) {
+								//trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Voice chat flooded, you will be able use voice chats again in %d seconds.\n\"", g_voiceFloodPenalty.integer ) );
+							}else{
+								ent->client->voiceFloodCount++; // add one to floodcount as they could massively flood this
+								Boe_GlobalSound(chatSounds[175].sound);
+							}
 					chatText++;
 					continue;
 				case 'f':
