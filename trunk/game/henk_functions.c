@@ -26,7 +26,7 @@ void Henk_Ignore(gentity_t *ent){
 
 	trap_Argv( 1, arg1, sizeof( arg1 ) );
 
-	if ((arg1[0] < '0' || arg1[0] > '9') && !henk_ischar(arg1[0])){
+	if(!henk_ischar(arg1[0])){
 		idnum = atoi(arg1);
 	}else if(henk_ischar(arg1[0])){
 			memset(string, 0, sizeof(string));
