@@ -19,6 +19,77 @@ void trap_UnlinkEntity( gentity_t *ent ) {
 	trap_UnlinkEntity1(ent);
 }
 
+void Henk_Ignore(gentity_t *ent){
+	char arg1[32];
+	int i, numberofclients, idnum = -1, z, temparray[33], count = 0;
+	char string[1024] = "\0", string1[64] = "\0";
+
+	trap_Argv( 1, arg1, sizeof( arg1 ) );
+
+	if ((arg1[0] < '0' || arg1[0] > '9') && !henk_ischar(arg1[0])){
+		idnum = atoi(arg1);
+	}else if(henk_ischar(arg1[0])){
+			memset(string, 0, sizeof(string));
+			memset(string1, 0, sizeof(string1));
+			numberofclients = 0;
+			for(i=0;i<level.numConnectedClients;i++){
+				//trap_SendServerCommand(-1, va("print\"^3[Debug] ^7%s comparing with %s.\n\"", g_entities[level.sortedClients[i]].client->pers.cleanName,numb));
+				if(strstr(Q_strlwr(g_entities[level.sortedClients[i]].client->pers.cleanName), Q_strlwr(arg1))){
+					idnum = level.sortedClients[i];
+					numberofclients += 1;
+					Com_sprintf(string1, sizeof(string1), "^1[#%i] ^7%s, ",  idnum, g_entities[level.sortedClients[i]].client->pers.cleanName);
+					Q_strncpyz(string+strlen(string), string1, strlen(string1)+1);
+				}
+			}
+			string[strlen(string)-2] = '\0';
+			if(numberofclients > 1){
+				trap_SendServerCommand(ent->s.number, va("print\"^3[Info] ^7Multiple names found with ^3%s^7: %s\n\"", arg1, string));
+				return;
+			}else if(numberofclients == 0)
+				idnum = -1;
+		}else
+			idnum = -1;
+		if ( idnum < 0 || idnum >= g_maxclients.integer )
+		{
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You haven't entered a valid player ID/player name.\n\""));
+			return;
+		}
+		
+		if ( g_entities[idnum].client->pers.connected == CON_DISCONNECTED )
+		{
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7The player is not connected.\n\""));
+			return;
+		}
+		// Check if he's already ignored then unignore him
+		for(i=0;i<g_entities[idnum].client->sess.IgnoredClientCount;i++){
+			if(g_entities[idnum].client->sess.IgnoredClients[i] == ent->s.number){
+				g_entities[idnum].client->sess.IgnoredClients[i] = -1;
+				// now sort the array again.
+				for(z=0;z<g_entities[idnum].client->sess.IgnoredClientCount;z++){
+					if(g_entities[idnum].client->sess.IgnoredClients[z] != -1){
+						temparray[count] = g_entities[idnum].client->sess.IgnoredClients[z];
+						count++;
+					}
+				}
+				// temp array to original
+				for(z=0;z<g_entities[idnum].client->sess.IgnoredClientCount;z++){
+					g_entities[idnum].client->sess.IgnoredClients[z] = temparray[z];
+				}
+				g_entities[idnum].client->sess.IgnoredClientCount--;
+				trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You are not ignoring %s anymore.\n\"", g_entities[idnum].client->pers.netname));
+				return;
+			}
+		}
+		if(g_entities[idnum].client->sess.IgnoredClientCount >= 32){
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You can't ignore more than 32 people.\n\""));
+			return;
+		}
+		g_entities[idnum].client->sess.IgnoredClients[g_entities[idnum].client->sess.IgnoredClientCount] = ent->s.number;
+		g_entities[idnum].client->sess.IgnoredClientCount++;
+		trap_SendServerCommand( g_entities[idnum].s.number, va("print \"^3[Info] ^7%s has ignored you.\n\"", ent->client->pers.netname));
+		trap_SendServerCommand( ent->s.number, va("print \"^3[Info] ^7You have ignored %s.\n\"", g_entities[idnum].client->pers.netname));
+}
+
 qboolean IsValidCommand(char *cmd, char *string){
 	int i, z;
 	for(i=0;i<=strlen(string);i++){

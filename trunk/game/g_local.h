@@ -334,6 +334,8 @@ typedef struct
 	int			cagescore;
 	int			invisibletime;
 	int			fpschecks;
+	int			IgnoredClients[33];
+	int			IgnoredClientCount;
 } clientSession_t;
 
 // Boe!Man 3/30/10

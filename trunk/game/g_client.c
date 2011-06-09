@@ -1592,7 +1592,8 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 	// Boe!Man 10/25/10: Make sure their stats are set correctly.
 	ent->client->pers.statinfo.lasthurtby = -1;
 	ent->client->pers.statinfo.lastclient_hurt = -1;
-
+	memset(ent->client->sess.IgnoredClients, -1, sizeof(ent->client->sess.IgnoredClients));
+	ent->client->sess.IgnoredClientCount = 0;
 
 #ifdef _BOE_DBG
 	if (strstr(boe_log.string, "1"))

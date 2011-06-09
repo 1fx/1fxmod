@@ -1791,7 +1791,8 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 	char	type[128];
 	char	admin[128];
 	char 	star[128];
-	
+	int i;
+
 	//G_LogPrintf("Starting with chat\n");
 	if (!other) 
 	{
@@ -1827,7 +1828,6 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 	else if (mode == CADM_CHAT && ent->s.number != other->s.number && other->client->sess.admin < 2)
 		return;
 
-
 	if ( !level.intermissiontime && !level.intermissionQueued )
 	{
 		// Spectators cant talk to alive people
@@ -1858,6 +1858,12 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 				return;
 			}
 
+		}
+	}
+
+	for(i=0;i<other->client->sess.IgnoredClientCount){
+		if(other->client->sess.IgnoredClients[i] == ent->s.number){
+			return;
 		}
 	}
 
@@ -3104,6 +3110,12 @@ void ClientCommand( int clientNum ) {
 	if (Q_stricmp (cmd, "team") == 0)
 	{
 		Cmd_Team_f (ent);
+		return;
+	}
+
+	if (Q_stricmp (cmd, "ignore") == 0)
+	{
+		Henk_Ignore (ent);
 		return;
 	}
 
