@@ -419,12 +419,12 @@ void trigger_NewTeleporter_touch (gentity_t *self, gentity_t *other, trace_t *tr
 		return;
 	}
 	if(self->team){
-		if(!strstr(self->team, "all")){
-			if(other->client->sess.team == TEAM_RED && !strstr(self->team, "red") || other->client->sess.team == TEAM_BLUE && !strstr(self->team, "blue")){
+		if(!strstr(Q_strlwr(self->team), "all")){
+			if(other->client->sess.team == TEAM_RED && !strstr(Q_strlwr(self->team), "red") || other->client->sess.team == TEAM_BLUE && !strstr(Q_strlwr(self->team), "blue")){
 				if(level.time >= other->client->sess.lastmsg){
-					if(strstr(self->team, "red")){
+					if(strstr(Q_strlwr(self->team), "red")){
 						trap_SendServerCommand ( other->s.number, va("cp\"@^7Teleporter is for %s ^7team only!", server_redteamprefix.string));
-					}else if(strstr(self->team, "blue")){
+					}else if(strstr(Q_strlwr(self->team), "blue")){
 						trap_SendServerCommand ( other->s.number, va("cp\"@^7Teleporter is for %s ^7team only!", server_blueteamprefix.string));
 					}
 					//trap_SendServerCommand(other->s.number, va("print\"^3[Info] ^7Only the %s team can use this teleporter.\n\"", self->team));
