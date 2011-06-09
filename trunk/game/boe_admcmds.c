@@ -1097,7 +1097,6 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 	int len, i, count = 0, EndPos = -1, StartPos = 0;
 	qboolean begin = qtrue;
 	int r, lcount = -1, tempend;
-	char xip[64];
 	char fileName[128];
 	//wrapper for interface
 	if(adm){
