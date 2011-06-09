@@ -1069,6 +1069,7 @@ void CheckGametype ( void )
 				for ( i = 0; i < level.numConnectedClients; i ++ ){
 					if(!G_IsClientDead(g_entities[level.sortedClients[i]].client) && g_entities[level.sortedClients[i]].client->sess.team == TEAM_RED){
 						G_AddScore(&g_entities[level.sortedClients[i]], 100);
+						g_entities[level.sortedClients[i]].client->sess.kills += 1; // round winner should get 1 point more.
 						strcpy(level.cagewinner, g_entities[level.sortedClients[i]].client->pers.netname);
 					}
 				}
