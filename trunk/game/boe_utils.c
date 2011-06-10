@@ -1480,6 +1480,7 @@ void Boe_Stats ( gentity_t *ent )
 	int i, numberofclients = 0;
 	char string[1024] = "\0";
 	char string1[64] = "\0";
+	int remain, remainS;
 
 	trap_Argv( 1, arg1, sizeof( arg1 ) );  // Boe!Man 2/21/10: Getting the client ID.
 
@@ -1630,6 +1631,18 @@ void Boe_Stats ( gentity_t *ent )
 	}
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Rate^7]        %s\n", rate));
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Snaps^7]       %s\n\n", snaps));
+
+	if(ent->client->sess.mute){
+		for(i=0;i<=20;i++){
+			if(level.mutedClients[i].used == qtrue){
+				if(strstr(level.mutedClients[i].ip, ent->client->pers.ip)){
+						remain = ((level.mutedClients[i].startTime+((level.mutedClients[i].time*60)*1000)-level.time)/1000)/60;
+						remainS = ((level.mutedClients[i].startTime+((level.mutedClients[i].time*60)*1000)-level.time)/1000);
+						trap_SendServerCommand( ent-g_entities, va("print \"[^3Mute^7]       %i:%02i minutes remaining\n\n", remain, remainS-(remain*60)));
+				}
+			}
+		}
+	}
 	// Boe!Man 6/2/10: Tier 0 - End.
 	
 	// Boe!Man 6/2/10: Tier 1 - Start.
