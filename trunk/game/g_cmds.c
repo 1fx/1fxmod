@@ -87,6 +87,7 @@ static admCmd_t AdminCommands[] =
 	{"!mr","map_restart", &g_mapswitch.integer, &Boe_MapRestart},
 	{"!map","map", &g_mapswitch.integer, &Henk_Map},
 	{"!altmap","altmap", &g_mapswitch.integer, &Henk_Map},
+	{"!devmap","devmap", &g_mapswitch.integer, &Henk_Map},
 	{"!um","unmute", &g_mute.integer, &Boe_UnMute},
 	{"!st","strip", &g_strip.integer, &Boe_Strip},
 	{"!ra","removeadmin", &g_removeadmin.integer, &Boe_Remove_Admin_f},

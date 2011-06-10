@@ -3761,6 +3761,7 @@ void Henk_Map(int argNum, gentity_t *adm, qboolean shortCmd){
 	char			arg0[32]		= "\0";		// increase buffer so we can process more commands
 	char			gametype[8];				// Boe!Man 2/26/11: The gametype we store so we can broadcast if neccesary.
 	char			*gt;						// Boe!Man 2/26/11: Gametype parameter.
+	int				altAction		= 0;		// Boe!Man 6/10/11: Alternative actions such as altmaps or devmaps.
 
 	trap_Argv( argNum, arg, sizeof( arg ) );
 	trap_Argv( argNum-1, arg0, sizeof( arg0 ) );
@@ -3770,11 +3771,17 @@ void Henk_Map(int argNum, gentity_t *adm, qboolean shortCmd){
 		if(strstr(Q_strlwr(arg), "!altmap")){ // Boe!Man 6/10/11: The server will load a normal map when a player capitalizes one letter.. Fix for that.
 			trap_Cvar_Set( "g_alternateMap", "1");
 			trap_Cvar_Update ( &g_alternateMap );
+			altAction = 1; // alt
+		}else if(strstr(Q_strlwr(arg), "!devmap")){ // Boe!Man 6/10/11: Add support for dev maps.
+			altAction = 2; // dev
 		}
 	}else{
 		if(strstr(Q_strlwr(arg0), "altmap")){
 			trap_Cvar_Set( "g_alternateMap", "1");
 			trap_Cvar_Update ( &g_alternateMap );
+			altAction = 1;
+		}else if(strstr(Q_strlwr(arg0), "devmap")){
+			altAction = 2;
 		}
 	}
 
@@ -3856,7 +3863,17 @@ void Henk_Map(int argNum, gentity_t *adm, qboolean shortCmd){
 		level.mapSwitchCount = level.time;
 		strcpy(level.mapSwitchName, map);
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp ^7%s in 5!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, map));
+		
+		if(altAction == 1){
+			strncpy(level.mapPrefix, va("%sA%sl%st%sm", server_color1.string, server_color2.string, server_color3.string, server_color4.string), 31);
+		}else if(altAction == 2){
+			strncpy(level.mapPrefix, va("%sD%se%sv%sm", server_color1.string, server_color2.string, server_color3.string, server_color4.string), 31);
+		}else{
+			strncpy(level.mapPrefix, va("%sM", server_color4.string), 31);
+		}
+
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s%sa%sp ^7%s in 5!", level.time + 1000, level.mapPrefix, server_color5.string, server_color6.string, map));
+
 		if(strlen(gametype) > 0){ // Boe!Man 2/26/11: If there's actually a gametype found..
 			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Map switch to %s [%s] by %s.\n\"", map, gametype, adm->client->pers.netname));
 			Boe_adminLog ("Map Switch", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", map, gametype));

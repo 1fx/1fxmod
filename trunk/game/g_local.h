@@ -684,6 +684,7 @@ typedef struct
 
 	// Boe!Man 11/2/10
 	qboolean	mapSwitch;
+	char		mapPrefix[32];
 	int			mapAction;
 	int			mapSwitchCount;
 	char		mapSwitchName[64];

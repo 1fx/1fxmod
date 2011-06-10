@@ -557,3 +557,6 @@ void SetNades(char *status);
 // Boe!Man 5/15/11: Misc. RPM function.
 const char	*G_PlaceString( int rank );
 void Henk_Ignore (gentity_t *ent);
+
+// Boe!Man 6/10/11: Map events.
+void Boe_mapEvents (void);
