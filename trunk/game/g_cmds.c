@@ -1862,8 +1862,8 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 		}
 	}
 
-	for(i=0;i<other->client->sess.IgnoredClientCount;i++){
-		if(other->client->sess.IgnoredClients[i] == ent->s.number){
+	for(i=0;i<ent->client->sess.IgnoredClientCount;i++){
+		if(ent->client->sess.IgnoredClients[i] == other->s.number){
 			return;
 		}
 	}

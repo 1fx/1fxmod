@@ -770,7 +770,7 @@ void SP_teleporter(gentity_t* ent){
 		AddSpawnField("classname", "teleporter");
 		origin = va("%.0f %.0f %.0f", ent->origin_to[0], ent->origin_to[1], ent->origin_to[2]);
 		AddSpawnField("origin_from", origin);
-		origin = va("%.0f %.0f %.0f", ent->origin_from[0], ent->origin_from[1], ent->origin_from[2]);
+		origin = va("%.0f %.0f %.0f", ent->origin_from[0], ent->origin_from[1], ent->origin_from[2]+30);
 		AddSpawnField("origin_to", origin);
 		origin = va("%.0f %.0f %.0f", ent->angles_to[0], ent->angles_to[1], ent->angles_to[2]);
 		AddSpawnField("angles_from", origin);
