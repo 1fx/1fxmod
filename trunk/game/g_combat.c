@@ -1204,8 +1204,9 @@ int G_Damage (
 	if(targ->client->sess.team != attacker->client->sess.team && (mod == MOD_RPG7_LAUNCHER || mod == MOD_SMOHG92_GRENADE)){//  || mod == WP_MM1_GRENADE_LAUNCHER)){ // Henk 22/01/10 -> Added better knockback(only on seekers)
 		if (targ->client ) 
 		{
-			knockback = 100; // Henkie
+			knockback = 50; // Henkie
 			G_ApplyKnockback ( targ, dir, knockback );
+			targ->client->ps.velocity[2] = 230;
 
 			mass = 200;
 

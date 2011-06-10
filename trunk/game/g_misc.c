@@ -52,12 +52,8 @@ void TeleportPlayer ( gentity_t *player, vec3_t origin, vec3_t angles, qboolean 
 	AngleVectors( angles, player->client->ps.velocity, NULL, NULL );
 	if(current_gametype.value == GT_HS){
 		if(!nojump){
-			VectorScale( player->client->ps.velocity, 400, player->client->ps.velocity ); // Henkie 22/02/10 -> Do not spit ( default 400)
-			player->client->ps.pm_time = 160;		// hold time
-			player->client->ps.pm_flags |= PMF_TIME_KNOCKBACK;
-			if(player->client->ps.pm_flags & PMF_JUMPING){ // create a double jump when out of teleport
-				player->client->ps.velocity[2] = 270;
-			}
+			VectorScale( player->client->ps.velocity, 500, player->client->ps.velocity ); // Henkie 22/02/10 -> Do not spit ( default 400)
+			player->client->ps.pm_time = 160;		// another jump available after 160ms
 		}
 	}else{
 		VectorScale( player->client->ps.velocity, 400, player->client->ps.velocity );
