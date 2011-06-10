@@ -3767,12 +3767,12 @@ void Henk_Map(int argNum, gentity_t *adm, qboolean shortCmd){
 
 	// Boe!Man 4/6/11: Check if the client wishes to load an alternative ent.
 	if(shortCmd){
-		if(strstr(arg, "!altmap")){
+		if(strstr(Q_strlwr(arg), "!altmap")){ // Boe!Man 6/10/11: The server will load a normal map when a player capitalizes one letter.. Fix for that.
 			trap_Cvar_Set( "g_alternateMap", "1");
 			trap_Cvar_Update ( &g_alternateMap );
 		}
 	}else{
-		if(strstr(arg0, "altmap")){
+		if(strstr(Q_strlwr(arg0), "altmap")){
 			trap_Cvar_Set( "g_alternateMap", "1");
 			trap_Cvar_Update ( &g_alternateMap );
 		}
