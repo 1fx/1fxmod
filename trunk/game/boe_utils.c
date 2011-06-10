@@ -1630,19 +1630,21 @@ void Boe_Stats ( gentity_t *ent )
 		}
 	}
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Rate^7]        %s\n", rate));
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Snaps^7]       %s\n\n", snaps));
+	trap_SendServerCommand( ent-g_entities, va("print \"[^3Snaps^7]       %s\n", snaps));
 
-	if(ent->client->sess.mute){
+	if( g_entities[idnum].client->sess.mute){
 		for(i=0;i<=20;i++){
 			if(level.mutedClients[i].used == qtrue){
-				if(strstr(level.mutedClients[i].ip, ent->client->pers.ip)){
+				if(strstr(level.mutedClients[i].ip,  g_entities[idnum].client->pers.ip)){
 						remain = ((level.mutedClients[i].startTime+((level.mutedClients[i].time*60)*1000)-level.time)/1000)/60;
 						remainS = ((level.mutedClients[i].startTime+((level.mutedClients[i].time*60)*1000)-level.time)/1000);
-						trap_SendServerCommand( ent-g_entities, va("print \"[^3Mute^7]       %i:%02i minutes remaining\n\n", remain, remainS-(remain*60)));
+						trap_SendServerCommand(  ent-g_entities, va("print \"[^3Mute^7]        %i:%02i minutes remaining\n\n", remain, remainS-(remain*60)));
 				}
 			}
 		}
-	}
+	}else
+		trap_SendServerCommand( ent-g_entities, va("print \"\n"));
+
 	// Boe!Man 6/2/10: Tier 0 - End.
 	
 	// Boe!Man 6/2/10: Tier 1 - Start.

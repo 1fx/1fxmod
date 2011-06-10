@@ -1539,7 +1539,11 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 	//G_LogPrintf( "ClientConnect: %i\n", clientNum );
 	// Boe!Man 3/31/10: First off we search in the Country database.
 	if(g_checkCountry.integer == 1 && !strstr(ent->client->sess.country, "noneandempty")){
-	HENK_COUNTRY(ent);
+		if(strstr(ent->client->pers.ip, "bot")){
+			strcpy(ent->client->sess.country, "None");
+			strcpy(ent->client->sess.countryext, "??");
+		}else
+		HENK_COUNTRY(ent);
 	}
 	//G_LogPrintf( "HENK_COUNTRY done..\n" );
 	// Boe!Man 3/30/10: We use this for several things.. Including MOTD and Admin.
