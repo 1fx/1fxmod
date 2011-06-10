@@ -1194,9 +1194,10 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	if(current_gametype.value == GT_HS)
 		BG_SetAvailableOutfitting ( g_availableWeapons.string);//hideSeek_availableWeapons.string );
 	else{
-		if(g_disableNades.integer == 0){
-		SetNades("0");
-		}
+		if(g_disableNades.integer == 0)
+			SetNades("0");
+		else
+			SetNades("1");
 		BG_SetAvailableOutfitting(g_availableWeapons.string);
 	}
 
