@@ -359,6 +359,7 @@ qboolean AddMutedClient(gentity_t *ent, int time){
 
 qboolean RemoveMutedClient(gentity_t *ent){
 	int i;
+	qboolean unmuted = qfalse;
 	for(i=0;i<=20;i++){
 		if(level.mutedClients[i].used == qtrue){
 			if(strstr(level.mutedClients[i].ip, ent->client->pers.ip)){
@@ -366,11 +367,11 @@ qboolean RemoveMutedClient(gentity_t *ent){
 				level.mutedClients[i].time = 0;
 				memset(level.mutedClients[i].ip, 0, sizeof(level.mutedClients[i]));
 				ent->client->sess.mute = qfalse;
-				return qtrue;
+				unmuted = qtrue;
 			}
 		}
 	}
-	return qfalse;
+	return unmuted;
 }
 
 
