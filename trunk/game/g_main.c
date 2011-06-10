@@ -2872,18 +2872,7 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 			trap_SendServerCommand(-1, va("print\"^3[H&S] ^7M4 given to round winner %s.\n\"", g_entities[m4winner].client->pers.netname));
 			trap_SendServerCommand(g_entities[m4winner].s.number, va("cp \"^7You now have the %sM%s4^7!\n\"", server_color1.string, server_color2.string));
 			// End
-		}else if(m4winner >= 100){
-			spawnPoint = G_SelectRandomSpawnPoint ( TEAM_BLUE );
-				dropped = G_DropItem2(spawnPoint->origin, spawnPoint->angles, BG_FindWeaponItem ( WP_M4_ASSAULT_RIFLE ));
-				dropped->count  = 1&0xFF;
-				dropped->count += ((2<<8) & 0xFF00);
-				dropped->count += ((1 << 16) & 0xFF0000 );
-				dropped->count += ((2 << 24) & 0xFF000000 );
-				Com_sprintf(level.M4loc, sizeof(level.M4loc), "%s", "blue base");
-				level.M4Time = level.time+1000;
-				level.M4ent = dropped->s.number;
-				trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Not enough hiders connected: M4 spawned in blue base\n\""));
-		}else{ // Henk 26/01/10 -> Drop M4 at red spawn.
+		}else if(m4winner != 100){ // Henk 26/01/10 -> Drop M4 at red spawn.
 			// Henk 24/02/10 -> Add randomize give away
 			for(i=0;i<=200;i++){
 				random = irand(0, level.numConnectedClients);
@@ -2916,6 +2905,17 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 				trap_SendServerCommand(g_entities[level.sortedClients[random]].s.number, va("cp \"^7You now have the %sM%s4^7!\n\"", server_color1.string, server_color2.string));
 				break;
 			}
+		}else{
+			spawnPoint = G_SelectRandomSpawnPoint ( TEAM_BLUE );
+			dropped = G_DropItem2(spawnPoint->origin, spawnPoint->angles, BG_FindWeaponItem ( WP_M4_ASSAULT_RIFLE ));
+			dropped->count  = 1&0xFF;
+			dropped->count += ((2<<8) & 0xFF00);
+			dropped->count += ((1 << 16) & 0xFF0000 );
+			dropped->count += ((2 << 24) & 0xFF000000 );
+			Com_sprintf(level.M4loc, sizeof(level.M4loc), "%s", "blue base");
+			level.M4Time = level.time+1000;
+			level.M4ent = dropped->s.number;
+			trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Not enough hiders connected: M4 spawned in blue base\n\""));
 		}
 		}
 		level.messagedisplay1 = qtrue;
