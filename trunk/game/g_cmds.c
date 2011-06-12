@@ -3348,7 +3348,7 @@ void Boe_adm_f ( gentity_t *ent )
 		trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   p   pop          <id>          ^7[^3Pop a player^7]\n\"", g_pop.integer));
 		}
 	if (adm >= g_strip.integer && g_strip.integer != 5 && g_strip.integer == levelx){
-		trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   s   strip         <id>          ^7[^3Remove weapons from a player^7]\n\"", g_strip.integer));
+		trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   s   strip         <id>         ^7[^3Remove weapons from a player^7]\n\"", g_strip.integer));
 		}
 	if (adm >= g_mute.integer && g_mute.integer != 5 && g_mute.integer == levelx){
 		trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   m   mute         <id>          ^7[^3Mute a player^7]\n\"", g_mute.integer));
