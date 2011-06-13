@@ -56,9 +56,8 @@ void TeleportPlayer ( gentity_t *player, vec3_t origin, vec3_t angles, qboolean 
 			player->client->ps.pm_time = 160;		// another jump available after 160ms
 		}
 	}else{
-		VectorScale( player->client->ps.velocity, 400, player->client->ps.velocity );
-		player->client->ps.pm_time = 160;		// hold time
-		player->client->ps.pm_flags |= PMF_TIME_KNOCKBACK;
+			VectorScale( player->client->ps.velocity, 500, player->client->ps.velocity ); // Henkie 22/02/10 -> Do not spit ( default 400)
+			player->client->ps.pm_time = 160;		// another jump available after 160ms
 	}
 
 	// toggle the teleport bit so the client knows to not lerp

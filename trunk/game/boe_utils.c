@@ -2033,10 +2033,8 @@ void Boe_serverMsg (void)
 		if(level.serverMsgCount == 0)
 			return;
 		tip = qtrue;
-		level.serverMsgCount = 0;
 	}
 
-	level.serverMsg = level.time + (server_msgDelay.integer * 1000);
 	if(tip){
 		len = trap_FS_FOpenFile( "tips.txt", &f, FS_READ_TEXT); 
 		if (!f) { 
