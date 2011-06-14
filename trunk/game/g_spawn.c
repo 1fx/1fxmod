@@ -135,6 +135,7 @@ field_t fields[] =
 	{"endround",			FOFS(endround),				F_LSTRING},
 	{"score",				FOFS(score),				F_INT},
 	{"broadcast",			FOFS(broadcast),			F_LSTRING},
+	{"effect_touch",		FOFS(effect_touch),			F_LSTRING},
 
 	{NULL}
 };

@@ -183,6 +183,7 @@ struct gentity_s
 	char		*endround;
 	int			score;
 	char		*broadcast;
+	char		*effect_touch;
 };
 
 typedef struct gspawn_s
@@ -495,6 +496,9 @@ struct gclient_s
 	vec3_t			maxSave;
 	vec3_t			minSave;
 	//Ryan
+	
+	// Boe!Man 6/13/11: Sun respawn time.
+	int				sunRespawnTimer;
 
 };
 

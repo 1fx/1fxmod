@@ -306,14 +306,23 @@ Reachable Object
 6/3/10 - 2:09 PM
 ==================
 
+Sample:
+{
+"classname" "reachable_object"
+"origin" "%.0f %.0f %.0f"
+"effect" "jon_sam_trail" // Main effect.
+"effect_touch" "levels/osprey_chaf" // When touching the object.
+"bspmodel" "" // You can spawn BSPModels as well (experimental).
 "team" "red/blue/all"
-"endround" "yes/no"
+"endround" "yes/no" // Will respawn after 5 secs if set to 'no'.
 "score" "%i"
-"broadcast" "has reached the object!"
+"broadcast" "has reached the sun." // Global broadcast in console only.
+}
 */
 
-void trigger_ReachableObject_touch ( gentity_t *self, gentity_t *other, trace_t *trace ){
-	char	*status;
+void trigger_ReachableObject_touch ( gentity_t *self, gentity_t *other, trace_t *trace )
+{
+	char *origin;
 
 	if ( !other->client ) {
 		return;
@@ -321,20 +330,20 @@ void trigger_ReachableObject_touch ( gentity_t *self, gentity_t *other, trace_t 
 	if ( other->client->ps.pm_type == PM_DEAD ) {
 		return;
 	}
-	// Spectators only?
-	if ( ( self->spawnflags & 1 ) && !G_IsClientSpectating ( other->client ) ) 
-	{
+
+	// Boe!Man 6/13/11: Someone else has beaten the client to it. Don't continue.
+	if(strstr(Q_strlwr(self->endround), "yes") && self->nextthink != 0){
 		return;
 	}
 
 	// Boe!Man 6/3/11: Check team if needed.
 	if(self->team){
-		if(!strstr(self->team, "all")){
-			if(other->client->sess.team == TEAM_RED && !strstr(self->team, "red") || other->client->sess.team == TEAM_BLUE && !strstr(self->team, "blue")){
+		if(!strstr(Q_strlwr(self->team), "all")){
+			if(other->client->sess.team == TEAM_RED && !strstr(Q_strlwr(self->team), "red") || other->client->sess.team == TEAM_BLUE && !strstr(Q_strlwr(self->team), "blue")){
 				if(level.time >= other->client->sess.lastmsg){
-					if(strstr(self->team, "red")){
+					if(strstr(Q_strlwr(self->team), "red")){
 						trap_SendServerCommand ( other->s.number, va("cp\"@^7Object is for %s ^7team only!", server_redteamprefix.string));
-					}else if(strstr(self->team, "blue")){
+					}else if(strstr(Q_strlwr(self->team), "blue")){
 						trap_SendServerCommand ( other->s.number, va("cp\"@^7Object is for %s ^7team only!", server_blueteamprefix.string));
 					}
 					other->client->sess.lastmsg = level.time+3000;
@@ -344,48 +353,77 @@ void trigger_ReachableObject_touch ( gentity_t *self, gentity_t *other, trace_t 
 		}
 	}
 
-	if(level.time >= other->client->sess.lastmsg){
-		other->client->sess.lastmsg = level.time+3000;
+	if(level.time >= other->client->sess.lastmsg && other->client->sunRespawnTimer == 0){
+		other->client->sess.lastmsg = level.time + 3000;
+		other->client->sunRespawnTimer = level.time + 5000;
+
 		// Boe!Man 6/3/11: Add score if defined.
 		if(self->score > 0){
 			other->client->sess.score += self->score;
 			other->client->sess.kills += self->score;
+			// Boe!Man 6/14/11: Update everything properly so the client doesn't mess up the score tables.
+			other->client->ps.persistant[PERS_SCORE] = other->client->sess.score;
+			CalculateRanks();
 		}
 
-		// Boe!Man 6/3/11: End the round if specified.
-		if(strstr(self->endround, "yes")){
-			// Boe!Man 6/3/11: Restart gametype after 3000 msec.
-			self->nextthink = level.time + 3000;
-			self->think = ReachableObject_events;
-		}else{ // Else respawn the player.
-			if(other->client->sess.lastIdentityChange){
-				status = ".";
-				other->client->sess.lastIdentityChange = qfalse;
-			}
-			else{
-				status = ".";
-				other->client->sess.lastIdentityChange = qtrue;
-			}
-			other->client->sess.noTeamChange = qfalse;
-			trap_UnlinkEntity (other);
-			ClientSpawn(other);
+		// Boe!Man 6/13/11: If a nextthink is already defined, we don't need to define it again (and thus can create an infinite loop). The think func will take care of multiple clients walking into the 'sun'.
+		if(self->nextthink == 0){
+				self->nextthink = level.time + 5000;
+				self->think = ReachableObject_events;
 		}
 
-		// Boe!Man 6/3/11: Broadcast if specified.
+		// Boe!Man 6/14/11: If an effect_touch is specified, display it!
+		if(strlen(self->effect_touch) > 0){
+			//Effect(self->r.currentOrigin, self->effect_touch, qfalse); // Boe!Man 6/14/11: Fix for effect not going up. Just use this function.
+			origin = va("%.0f %.0f %.0f", self->r.currentOrigin[0], self->r.currentOrigin[1], self->r.currentOrigin[2]);
+			AddSpawnField("classname", "1fx_play_effect");
+			AddSpawnField("effect", self->effect_touch);
+			AddSpawnField("origin",	origin);
+			AddSpawnField("count", "1");
+			G_SpawnGEntityFromSpawnVars(qtrue);
+		}
+
+
+		// Boe!Man 6/13/11: Broadcast in console if specified.
 		if(strlen(self->broadcast) > 0){
-			if(strstr(self->endround, "yes")){
-				trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s has won the round.\n\"", other->client->pers.cleanName));
-			}else{
-				trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s has reached the object.\n\"", other->client->pers.cleanName));
-			}
-			trap_SendServerCommand ( -1, va("cp\"@^7%s\n^7%s", other->client->pers.netname, self->broadcast));
+			trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s %s\n\"", other->client->pers.cleanName, self->broadcast));
 		}
+
+		// Boe!Man 6/13/11: Always notify it to the player.
+		trap_SendServerCommand ( other->s.number, va("cp\"@^7You have reached the %so%sb%sj%se%sc%st!", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 	}
 }
 
 void ReachableObject_events ( gentity_t *self ){
-	// Boe!Man 6/3/11: Gametype restart.
-	G_ResetGametype(qfalse, qfalse);
+	int		i;
+	char	*status;
+
+	// Boe!Man 6/14/11: Cycle through the clients - see what clients need to be respawned.
+	for(i=0;i<level.numConnectedClients;i++){
+		if(level.clients[level.sortedClients[i]].sunRespawnTimer != 0 && level.time >= level.clients[level.sortedClients[i]].sunRespawnTimer){ // Boe!Man 6/14/11: A client should be respawned.
+			level.clients[level.sortedClients[i]].sunRespawnTimer = 0; // Reset his timer.
+			// Boe!Man 6/13/11: End the round if specified.
+			if(strstr(Q_strlwr(self->endround), "yes")){
+				// Boe!Man 6/13/11: Gametype restart.
+				G_ResetGametype(qfalse, qfalse);
+			}else{
+			if(level.clients[level.sortedClients[i]].sess.lastIdentityChange){
+				status = ".";
+				level.clients[level.sortedClients[i]].sess.lastIdentityChange = qfalse;
+			}else{
+				status = ".";
+				level.clients[level.sortedClients[i]].sess.lastIdentityChange = qtrue;
+			}
+			level.clients[level.sortedClients[i]].sess.noTeamChange = qfalse;
+			trap_UnlinkEntity (&g_entities[level.sortedClients[i]]);
+			ClientSpawn(&g_entities[level.sortedClients[i]]);
+			}
+		}else if(level.time < level.clients[level.sortedClients[i]].sunRespawnTimer){ // Boe!Man 6/14/11: The rest are in queue, process this correctly and code-efficient.
+			// Boe!Man 6/13/11: Check again in a second. NOTE that if there are NO clients left that are about to be respawned this will delete itself until called again by the main func. Dirty, but very effective.
+			self->nextthink = level.time + 1000;
+			self->think = ReachableObject_events;
+		}
+	}
 }
 
 /*
@@ -906,6 +944,15 @@ void SP_sun(gentity_t* ent){
 
 	// Boe!Man 6/3/11: Set the origin.
 	origin = va("%.0f %.0f %.0f", ent->r.currentOrigin[0], ent->r.currentOrigin[1], ent->r.currentOrigin[2]);
+
+	// Boe!Man 6/14/11: Spawn the touching effect & preload it so we can properly play it later.
+	if(strlen(ent->effect_touch) > 0){ // We don't want the "effect_touch" to be empty, so only attempt to spawn it if it's not empty.
+		AddSpawnField("classname", "fx_play_effect");
+		AddSpawnField("effect", ent->effect_touch);
+		AddSpawnField("tempent", "1");
+		G_SpawnGEntityFromSpawnVars(qtrue);
+		G_FreeEntity(&g_entities[level.tempent]);
+	}
 
 	// Boe!Man 6/3/11: Spawn the effect.
 	if(strlen(fxName) > 0){ // We don't want the "effect" to be empty, so only attempt to spawn it if it's not empty.

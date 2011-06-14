@@ -1997,7 +1997,7 @@ void Boe_serverMsg (void)
 	qboolean tip = qfalse;
 	char buf[1024];
     struct test{
-		char tip[512];
+		char tip[256]; // Boe!Man 6/13/11: Ease down on those massive buffers.. The QVM compiler is chocking in them. A size of 255 for a tip should be sufficient (?).
 	} Tips[64];
 	fileHandle_t f;
 	int len, i, start, count;
