@@ -405,11 +405,13 @@ void trigger_ReachableObject_touch ( gentity_t *self, gentity_t *other, trace_t 
 
 		// Boe!Man 6/13/11: Broadcast in console if specified.
 		if(strlen(self->broadcast) > 0){
-			trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s %s\n\"", other->client->pers.cleanName, self->broadcast));
+			trap_SendServerCommand ( -1, va("cp\"@^7%s ^7%s", other->client->pers.netname, self->broadcast));
+		}else{ // Boe!Man 6/14/11: Else the standard broadcast to the player itself.
+			trap_SendServerCommand ( other->s.number, va("cp\"@^7You have reached the %so%sb%sj%se%sc%st!", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		}
 
-		// Boe!Man 6/13/11: Always notify it to the player.
-		trap_SendServerCommand ( other->s.number, va("cp\"@^7You have reached the %so%sb%sj%se%sc%st!", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+		// Boe!Man 6/14/11: Always notify all players in the console.
+		trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s has reached the object.\n\"", other->client->pers.cleanName));
 	}
 }
 
