@@ -355,7 +355,7 @@ void trigger_ReachableObject_touch ( gentity_t *self, gentity_t *other, trace_t 
 
 	if(level.time >= other->client->sess.lastmsg && other->client->sunRespawnTimer == 0){
 		other->client->sess.lastmsg = level.time + 3000;
-		other->client->sunRespawnTimer = level.time + 5000;
+		other->client->sunRespawnTimer = level.time + 6000;
 
 		// Boe!Man 6/3/11: Add score if defined.
 		if(self->score > 0){
@@ -368,7 +368,7 @@ void trigger_ReachableObject_touch ( gentity_t *self, gentity_t *other, trace_t 
 
 		// Boe!Man 6/13/11: If a nextthink is already defined, we don't need to define it again (and thus can create an infinite loop). The think func will take care of multiple clients walking into the 'sun'.
 		if(self->nextthink == 0){
-				self->nextthink = level.time + 5000;
+				self->nextthink = level.time + 6000;
 				self->think = ReachableObject_events;
 		}
 
@@ -381,6 +381,25 @@ void trigger_ReachableObject_touch ( gentity_t *self, gentity_t *other, trace_t 
 			AddSpawnField("origin",	origin);
 			AddSpawnField("count", "1");
 			G_SpawnGEntityFromSpawnVars(qtrue);
+		}
+
+		// Boe!Man 6/14/11: Play hotshot sound.
+		Boe_ClientSound(other, G_SoundIndex("sound/misc/outtakes/todd_s.mp3"));
+
+		// Boe!Man 6/14/11: Strip the player.
+		// Henk 26/01/10 -> Dead clients dun have to be stripped
+		if(!G_IsClientDead(other->client)){
+			other->client->sess.timeOfDeath = 1;
+			other->client->ps.zoomFov = 0;	///if they are looking through a scope go to normal view
+			other->client->ps.pm_flags &= ~(PMF_GOGGLES_ON|PMF_ZOOM_FLAGS);
+			other->client->ps.stats[STAT_WEAPONS] = 0;
+			other->client->ps.stats[STAT_GOGGLES] = GOGGLES_NONE;
+			memset ( other->client->ps.ammo, 0, sizeof(other->client->ps.ammo) );
+			memset ( other->client->ps.clip, 0, sizeof(other->client->ps.clip) );
+			other->client->ps.weapon = WP_NONE;
+			other->client->ps.weaponstate = WEAPON_READY;
+			other->client->ps.weaponTime = 0;
+			other->client->ps.weaponAnimTime = 0;
 		}
 
 
@@ -407,16 +426,16 @@ void ReachableObject_events ( gentity_t *self ){
 				// Boe!Man 6/13/11: Gametype restart.
 				G_ResetGametype(qfalse, qfalse);
 			}else{
-			if(level.clients[level.sortedClients[i]].sess.lastIdentityChange){
-				status = ".";
-				level.clients[level.sortedClients[i]].sess.lastIdentityChange = qfalse;
-			}else{
-				status = ".";
-				level.clients[level.sortedClients[i]].sess.lastIdentityChange = qtrue;
-			}
-			level.clients[level.sortedClients[i]].sess.noTeamChange = qfalse;
-			trap_UnlinkEntity (&g_entities[level.sortedClients[i]]);
-			ClientSpawn(&g_entities[level.sortedClients[i]]);
+				if(level.clients[level.sortedClients[i]].sess.lastIdentityChange){
+					status = ".";
+					level.clients[level.sortedClients[i]].sess.lastIdentityChange = qfalse;
+				}else{
+					status = ".";
+					level.clients[level.sortedClients[i]].sess.lastIdentityChange = qtrue;
+				}
+				level.clients[level.sortedClients[i]].sess.noTeamChange = qfalse;
+				trap_UnlinkEntity (&g_entities[level.sortedClients[i]]);
+				ClientSpawn(&g_entities[level.sortedClients[i]]);
 			}
 		}else if(level.time < level.clients[level.sortedClients[i]].sunRespawnTimer){ // Boe!Man 6/14/11: The rest are in queue, process this correctly and code-efficient.
 			// Boe!Man 6/13/11: Check again in a second. NOTE that if there are NO clients left that are about to be respawned this will delete itself until called again by the main func. Dirty, but very effective.
