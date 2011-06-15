@@ -1088,7 +1088,7 @@ void ClientThink_real( gentity_t *ent )
 	
 	msec = ucmd->serverTime - client->ps.commandTime;
 
-	if(msec < 4 && ent->client->sess.team != TEAM_SPECTATOR && g_popHighFps.integer == 1){
+/*	if(msec < 4 && ent->client->sess.team != TEAM_SPECTATOR && g_popHighFps.integer == 1){
 		if(level.time >= level.debugtime){
 			if(!G_IsClientDead(ent->client)){
 				ent->client->sess.fpschecks += 1;
@@ -1102,6 +1102,7 @@ void ClientThink_real( gentity_t *ent )
 			return;
 		}
 	}
+	*/
 	// following others may result in bad times, but we still want
 	// to check for follow toggles
 	if ( msec < 1 && client->sess.spectatorState != SPECTATOR_FOLLOW ) 
@@ -1265,10 +1266,14 @@ void ClientThink_real( gentity_t *ent )
 	}
 
 	if(current_gametype.value == GT_HS){
+		if(msec < 4)
+			client->ps.gravity = g_gravity.value+50; // 333fps/1000 fps fix.
+		else{
 		if(client->ps.weapon == WP_MM1_GRENADE_LAUNCHER)
 			client->ps.gravity = 500;
 		else
 			client->ps.gravity = g_gravity.value;
+		}
 		if(client->ps.weapon == WP_RPG7_LAUNCHER && level.time > client->sess.slowtime){
 			client->ps.speed = g_speed.value+70;
 			if(level.time >= client->sess.SpeedAnimation){

@@ -2788,7 +2788,7 @@ void Boe_Mute (int argNum, gentity_t *adm, qboolean mute, qboolean shortCmd)
 	}
 }
 
-/*
+
 void Henk_Box (int argNum, gentity_t *adm, qboolean shortCmd)
 {
 	gentity_t	*ent;
@@ -2844,7 +2844,7 @@ void Henk_Box (int argNum, gentity_t *adm, qboolean shortCmd)
 	g_entities[test].nextthink = level.time+5000;
 	}
 }
-*/
+
 
 /*
 =========

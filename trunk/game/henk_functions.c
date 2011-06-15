@@ -25,7 +25,10 @@ void Henk_Ignore(gentity_t *ent){
 	char string[1024] = "\0", string1[64] = "\0";
 
 	trap_Argv( 1, arg1, sizeof( arg1 ) );
-
+	if(strlen(arg1) < 1){
+		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You haven't entered a valid player ID/player name.\n\""));
+		return;
+	}
 	if(!henk_ischar(arg1[0])){
 		idnum = atoi(arg1);
 	}else if(henk_ischar(arg1[0])){
@@ -58,6 +61,10 @@ void Henk_Ignore(gentity_t *ent){
 		if ( g_entities[idnum].client->pers.connected == CON_DISCONNECTED )
 		{
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7The player is not connected.\n\""));
+			return;
+		}
+		if( g_entities[idnum].client->sess.admin >= 2){
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You can't ignore an admin.\n\""));
 			return;
 		}
 		// Check if he's already ignored then unignore him

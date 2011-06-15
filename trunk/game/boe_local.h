@@ -227,7 +227,7 @@ void	Boe_Burn (int argNum, gentity_t *adm, qboolean shortCmd);
 void	Boe_Broadcast(int argNum, gentity_t *adm, qboolean shortCmd);
 void	Boe_Mute (int argNum, gentity_t *adm, qboolean mute, qboolean shortCmd);
 void	Boe_Strip (int argNum, gentity_t *adm, qboolean shortCmd);
-//void	Henk_Box(int argNum, gentity_t *adm, qboolean shortCmd);
+void	Henk_Box(int argNum, gentity_t *adm, qboolean shortCmd);
 void	Adm_ForceTeam(int argNum, gentity_t *adm, qboolean shortCmd);
 extern	vmCvar_t	g_pop;
 extern	vmCvar_t	g_burn;

@@ -2026,9 +2026,9 @@ void Boe_serverMsg (void)
 		default:
 			message = "";
 			level.serverMsgCount = 0;
-			level.serverMsg = level.time + (server_msgInterval.integer * 60000);
 			break;
 	}
+				level.serverMsg = level.time + (server_msgInterval.integer * 60000);
 	if ( message[0] == '\0' ){
 		if(level.serverMsgCount == 0)
 			return;

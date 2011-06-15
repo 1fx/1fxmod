@@ -537,7 +537,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_cageAttempts, "g_cageAttempts", "3",	CVAR_ARCHIVE,	0.0,	0.0,  0, qtrue  },
 	{ &g_RpgStyle, "g_RpgStyle", "0",	CVAR_ARCHIVE,	0.0,	0.0,  0, qtrue  },
 	{ &g_crossTheBridge, "g_crossTheBridge", "0",	CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  },
-	{ &g_popHighFps, "g_popHighFps", "0",	CVAR_ARCHIVE,	0.0,	0.0,  0, qtrue  },
+	//{ &g_popHighFps, "g_popHighFps", "0",	CVAR_ARCHIVE,	0.0,	0.0,  0, qtrue  },
 
 	// Boe!Man 5/28/11
 	{ &g_customWeaponFile,			"g_customWeaponFile",		 "none",		CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
