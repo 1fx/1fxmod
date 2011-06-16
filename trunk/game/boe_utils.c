@@ -1994,13 +1994,6 @@ Boe_serverMsg
 void Boe_serverMsg (void)
 {
 	char	*message;
-	qboolean tip = qfalse;
-	char buf[1024];
-    struct test{
-		char tip[256]; // Boe!Man 6/13/11: Ease down on those massive buffers.. The QVM compiler is chocking in them. A size of 255 for a tip should be sufficient (?).
-	} Tips[64];
-	fileHandle_t f;
-	int len, i, start, count;
 	#ifdef _BOE_DBG
 	if (strstr(boe_log.string, "1"))
 		G_LogPrintf("3s\n");
@@ -2026,37 +2019,13 @@ void Boe_serverMsg (void)
 		default:
 			message = "";
 			level.serverMsgCount = 0;
+			level.serverMsg = level.time + (server_msgInterval.integer * 60000);
 			break;
 	}
-				level.serverMsg = level.time + (server_msgInterval.integer * 60000);
-	if ( message[0] == '\0' ){
-		if(level.serverMsgCount == 0)
-			return;
-		tip = qtrue;
-	}
-
-	if(tip){
-		len = trap_FS_FOpenFile( "tips.txt", &f, FS_READ_TEXT); 
-		if (!f) { 
-			Com_Printf("Can't open tips.txt");
-			return;
-		}
-		memset( buf, 0, sizeof(buf) );
-		trap_FS_Read( buf, len, f );
-		start = 0;
-		count = 0;
-		for(i=0;i<len;i++){
-			if(buf[i] == '\n'){
-				Q_strncpyz(Tips[count].tip, buf+start, i-start);
-				count++;
-				start = i+1;
-			}
-		}
-		trap_FS_FCloseFile(f);
-
-		trap_SendServerCommand( -1, va("chat -1 \"%sT%si%sp %sof %st%she Day: %s\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, Tips[irand(0, count-1)].tip ) );
+	if ( message[0] == '\0' )
 		return;
-	}
+
+	level.serverMsg = level.time + (server_msgDelay.integer * 1000);
 	trap_SendServerCommand( -1, va("chat -1 \"%sM%se%ss%ss%sa%sge: %s\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, message ) );
 	#ifdef _BOE_DBG
 	if (strstr(boe_log.string, "1"))

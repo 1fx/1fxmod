@@ -189,6 +189,7 @@ vmCvar_t	g_clan;
 vmCvar_t	g_autoEvenTeams;
 vmCvar_t	server_msgInterval;
 vmCvar_t	server_enableServerMsgs;
+vmCvar_t	server_enableTips;
 vmCvar_t	server_message1;
 vmCvar_t	server_message2;
 vmCvar_t	server_message3;
@@ -457,6 +458,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_autoEvenTeams, "g_autoEvenTeams", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 
 	{ &server_enableServerMsgs, "server_enableServerMsgs", "1", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
+	{ &server_enableTips, "server_enableTips", "1", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_msgInterval, "server_msgInterval", "5", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_msgDelay, "server_msgDelay", "2", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_message1, "server_message1", "Welcome to 1fx. Mod.", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
@@ -3119,6 +3121,8 @@ void G_RunFrame( int levelTime )
 	
 	if ( server_enableServerMsgs.integer && level.time > level.serverMsg && (level.time - level.startTime >= 20000))
 		Boe_serverMsg();
+	if(server_enableTips.integer && level.time > level.tipMsg && (level.time - level.startTime >= 20000))
+		Henk_Tip();
 
 	if(level.custom == qtrue){ // apply custom commands with a small delay
 		if(level.time >= level.customtime){

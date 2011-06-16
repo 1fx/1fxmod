@@ -137,8 +137,8 @@ static admCmd_t AdminCommands[] =
 	{"!p","pop", &g_pop.integer, &Boe_pop},
 	{"!k","kick", &g_kick.integer, &Boe_Kick},
 	{"!m","mute", &g_mute.integer, &Boe_XMute},
-	{"!s","strip", &g_strip.integer, &Boe_Strip},
-	{"!box","box", &g_strip.integer, &Henk_Box} // Boe!Man 4/8/11: Seems like a useless command?
+	{"!s","strip", &g_strip.integer, &Boe_Strip}
+	//{"!box","box", &g_strip.integer, &Henk_Box} // Boe!Man 4/8/11: Seems like a useless command?
 };
 
 static int AdminCommandsSize = sizeof( AdminCommands ) / sizeof( AdminCommands[0] );

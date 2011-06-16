@@ -773,6 +773,7 @@ typedef struct
 	muted_t		mutedClients[21]; // Henk 28/01/11 -> Add new mute system.
 	//char		deadClients[1024]; // Henk 28/01/11 -> Add new mute system.
 	int         debugtime;
+	int			tipMsg;
 } level_locals_t;
 
 //

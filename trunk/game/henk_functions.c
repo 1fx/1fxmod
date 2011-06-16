@@ -19,6 +19,37 @@ void trap_UnlinkEntity( gentity_t *ent ) {
 	trap_UnlinkEntity1(ent);
 }
 
+void Henk_Tip(void){
+	qboolean tip = qfalse;
+	char buf[1024];
+    struct test{
+		char tip[256]; // Boe!Man 6/13/11: Ease down on those massive buffers.. The QVM compiler is chocking in them. A size of 255 for a tip should be sufficient (?).
+	} Tips[64];
+	fileHandle_t f;
+	int len, i, start, count;
+
+	len = trap_FS_FOpenFile( "tips.txt", &f, FS_READ_TEXT); 
+	if (!f) { 
+		Com_Printf("Can't open tips.txt");
+		return;
+	}
+	memset( buf, 0, sizeof(buf) );
+	trap_FS_Read( buf, len, f );
+	start = 0;
+	count = 0;
+	for(i=0;i<len;i++){
+		if(buf[i] == '\n'){
+			Q_strncpyz(Tips[count].tip, buf+start, i-start);
+			count++;
+			start = i+1;
+		}
+	}
+	trap_FS_FCloseFile(f);
+
+	trap_SendServerCommand( -1, va("chat -1 \"%sT%si%sp %sof %st%she Day: %s\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, Tips[irand(0, count-1)].tip ) );		
+	level.tipMsg = level.time+(server_msgInterval.integer*60000);
+}
+
 void Henk_Ignore(gentity_t *ent){
 	char arg1[32];
 	int i, numberofclients, idnum = -1, z, temparray[33], count = 0;

@@ -426,6 +426,7 @@ void G_SetClientLeaningBBox(gentity_t *ent);
 extern	vmCvar_t	g_autoEvenTeams;
 extern	vmCvar_t	server_msgInterval;
 extern	vmCvar_t	server_enableServerMsgs;
+extern  vmCvar_t	server_enableTips;
 extern	vmCvar_t	server_message1;
 extern	vmCvar_t	server_message2;
 extern	vmCvar_t	server_message3;
@@ -467,6 +468,7 @@ extern vmCvar_t g_alternateMap;
 
 // Boe!Man 1/8/10
 void Boe_serverMsg (void);
+void Henk_Tip(void);
 
 // 1/14/10: Custom commands by Henk
 void	SpawnCage(vec3_t org, gentity_t *ent, qboolean autoremove);
