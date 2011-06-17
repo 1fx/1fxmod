@@ -457,6 +457,9 @@ extern vmCvar_t	cm_oldtl;
 extern vmCvar_t	cm_sr;
 extern vmCvar_t	cm_sb;
 
+// Boe!Man 6/17/11: A CVAR for pause.
+extern	vmCvar_t	g_pause;
+
 // Boe!Man 11/18/10
 void Boe_calcMatchScores (void);
 

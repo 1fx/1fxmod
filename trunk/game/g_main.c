@@ -252,6 +252,9 @@ vmCvar_t	g_crossTheBridge;
 // Boe!Man 5/28/11
 vmCvar_t	g_customWeaponFile;
 
+// Boe!man 6/17/11
+vmCvar_t	g_pause;
+
 #ifdef _BOE_DBG
 vmCvar_t	boe_log;
 #endif
@@ -411,6 +414,8 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_cm,						"g_cm",					"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_forcevote,					"g_forcevote",			"3",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_adminremove,				"g_adminremove",		"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
+	{ &g_pause,						"g_pause",				"3",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
+	{ &g_adminlist,					"g_adminlist",			"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse }, // Boe!Man 6/17/11: Solved bug where ALL admins could see the list (wasn't added to the CVAR table and thus 0).
 
 	{ &g_clanfile,			"g_clanfile",			"users/clanmembers.txt",	CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  },
 	{ &g_banfile,			"g_banfile",			"users/bans.txt",		CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  },

@@ -30,7 +30,8 @@ void Henk_Tip(void){
 
 	len = trap_FS_FOpenFile( "tips.txt", &f, FS_READ_TEXT); 
 	if (!f) { 
-		Com_Printf("Can't open tips.txt");
+		Com_Printf("Can't open tips.txt\n");
+		level.tipMsg = level.time+(server_msgInterval.integer*60000); // Boe!Man 6/17/11: If the tips file isn't found, do update the interval so it doesn't attempt to open the file every x msecs.
 		return;
 	}
 	memset( buf, 0, sizeof(buf) );
