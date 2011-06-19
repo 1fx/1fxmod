@@ -279,7 +279,6 @@ extern	vmCvar_t	g_autoNoLower;
 // Boe!Man 3/6/11
 extern	vmCvar_t	g_customCommandsFile;
 extern	vmCvar_t	g_banfile;
-extern  vmCvar_t	hideSeek_Extra;
 extern  vmCvar_t	hideSeek_Nades;
 extern  vmCvar_t	hideSeek_Weapons;
 

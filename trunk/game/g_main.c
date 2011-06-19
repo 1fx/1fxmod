@@ -2782,12 +2782,12 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 					trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Can't find any seeker.\n\""));
 				}else{
 					if(level.lastseek != -1 && g_entities[level.lastseek].client && g_entities[level.lastseek].client->sess.team == TEAM_BLUE){
-						if(hideSeek_Extra.string[3] == '1'){
+						if(hideSeek_Extra.string[BRIEFCASE] == '1'){
 							G_RealSpawnGametypeItem1 ( BG_FindGametypeItem (0), g_entities[level.lastseek].r.currentOrigin, g_entities[level.lastseek].s.angles, qtrue );
 							trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Briefcase given to round winner %s: %i kills last round.\n\"", g_entities[level.lastseek].client->pers.netname, level.rememberSeekKills));
 						}
 					}else{
-						if(hideSeek_Extra.string[3] == '1'){
+						if(hideSeek_Extra.string[BRIEFCASE] == '1'){
 							G_RealSpawnGametypeItem1 ( BG_FindGametypeItem (0), g_entities[level.sortedClients[random]].r.currentOrigin, g_entities[level.sortedClients[random]].s.angles, qtrue );
 							trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Briefcase given at random to %s.\n\"", g_entities[level.sortedClients[random]].client->pers.netname));
 						}
@@ -2797,8 +2797,11 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 				trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Can't find any seeker.\n\""));
 			}
 		}else{
-			if(hideSeek_Weapons.string[3] == '1'){
-				trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Not enough seekers for briefcase to spawn.\n\""));
+			if(hideSeek_Extra.string[BRIEFCASE] == '1'){
+				spawnPoint = G_SelectRandomSpawnPoint ( TEAM_BLUE );
+				G_RealSpawnGametypeItem1 ( BG_FindGametypeItem (0), spawnPoint->origin, spawnPoint->angles, qtrue );			
+				trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Not enough seekers: Briefcase was spawned in the blue base.\n\""));
+				//trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Not enough seekers for briefcase to spawn.\n\""));
 			}
 		}
 		level.messagedisplay = qtrue;
@@ -3078,7 +3081,7 @@ void G_RunFrame( int levelTime )
 		}
 		if(current_gametype.value == GT_HS){
 
-			if ( ent->client->ps.pm_flags & PMF_GOGGLES_ON && ent->client->ps.stats[STAT_GOGGLES] == GOGGLES_NIGHTVISION && ent->client->sess.team == TEAM_BLUE)
+			if ( hideSeek_Extra.string[3] == '1' && ent->client->ps.pm_flags & PMF_GOGGLES_ON && ent->client->ps.stats[STAT_GOGGLES] == GOGGLES_NIGHTVISION && ent->client->sess.team == TEAM_BLUE)
 			{
 				if(ent->client->ps.stats[STAT_ARMOR] <= 0){
 					trap_SendServerCommand(ent->s.number, va("print\"^3[H&S] ^7Invisibility goggles wore off.\n\""));

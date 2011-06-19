@@ -1233,6 +1233,7 @@ extern	vmCvar_t	g_voiceFloodCount;
 extern	vmCvar_t	g_voiceFloodPenalty;
 extern	vmCvar_t	server_hiderteamprefix;
 extern	vmCvar_t	server_seekerteamprefix;
+extern  vmCvar_t	hideSeek_Extra;
 
 void	trap_Printf( const char *fmt );
 void	trap_Error( const char *fmt );
