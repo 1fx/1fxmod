@@ -110,7 +110,7 @@ void G_InitSessionData( gclient_t *client, char *userinfo )
 	// initial team determination
 	if ( level.gametypeData->teams ) 
 	{
-		if ( g_teamAutoJoin.integer ) 
+		if ( g_teamAutoJoin.integer && current_gametype.value != GT_HS ) 
 		{
 			sess->team = PickTeam( -1 );
 			//Ryan We'll do this later 

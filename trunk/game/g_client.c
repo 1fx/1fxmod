@@ -1699,7 +1699,7 @@ void ClientBegin( int clientNum, qboolean setTime )
 	// count current clients and rank for scoreboard
 	CalculateRanks();
 
-	if(client->sess.team == TEAM_SPECTATOR && current_gametype.value == GT_HS && setTime){
+	if(client->sess.team == TEAM_SPECTATOR && current_gametype.value == GT_HS && setTime && client->pers.connected == CON_CONNECTED){
 		if(!(ent->r.svFlags & SVF_BOT))
 		SetTeam(ent, ChooseTeam(), NULL, qfalse); 
 	}
