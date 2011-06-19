@@ -1162,6 +1162,8 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 			strncpy(by, buf+tempend+2, lcount-(tempend+2));
 			tempend = (tempend+4)+(lcount-(tempend+2));
 			//Com_Printf("By: %s\n", by);
+			if(buf[lcount+2] != '\n'){
+				Com_Printf("test\n");
 			for(r=lcount;r<strlen(buf);r++){
 				if(buf[r] == '\n'){
 					lcount = r-1;
@@ -1170,7 +1172,13 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 					lcount = r+1;
 			}
 			memset(reason, 0, sizeof(reason));
+#ifdef Q3_VM
+			strncpy(reason, buf+tempend, lcount-(tempend)+1);
+#else
 			strncpy(reason, buf+tempend, lcount-(tempend));
+#endif
+			}else
+			strcpy(reason, "");
 			//Com_Printf("Reason: %s\n", reason);
 			count += 1; // Henk 25/01/11 -> Fix wrong ban lines.
 			// Start extracting and printing baninfo

@@ -26,7 +26,7 @@ TeleportPlayer
 void TeleportPlayer ( gentity_t *player, vec3_t origin, vec3_t angles, qboolean nojump) 
 {
 	gentity_t	*tent;
-	vec3_t lookdown;
+
 	if(level.time < player->client->sess.lastTele)
 		return;
 	else
