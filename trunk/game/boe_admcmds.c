@@ -1148,7 +1148,7 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 			}
 			memset(name, 0, sizeof(name));
 			strncpy(name, buf+EndPos+1, lcount-(EndPos+1));
-			tempend = (EndPos+1)+(lcount-(EndPos+1));
+			tempend = lcount;
 			name[strlen(name)] = '\0';
 			//Com_Printf("IP: %s\n", ip);
 			//Com_Printf("Name: %s\n", name);
@@ -1159,11 +1159,16 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 				}
 			}
 			memset(by, 0, sizeof(by));
-			strncpy(by, buf+tempend+2, lcount-(tempend+2));
+#ifdef Q3_VM
+			Q_strncpyz(by, buf+tempend+2, lcount-(tempend+2)+1);
+#else
+			Q_strncpyz(by, buf+tempend+2, lcount-(tempend+2));
+#endif
+			//Com_Printf("BY: %s(%i-%i)\n", by, lcount, tempend+2);
+			//by[(lcount-tempend)+2] = '\0';
 			tempend = (tempend+4)+(lcount-(tempend+2));
 			//Com_Printf("By: %s\n", by);
 			if(buf[lcount+2] != '\n'){
-				Com_Printf("test\n");
 			for(r=lcount;r<strlen(buf);r++){
 				if(buf[r] == '\n'){
 					lcount = r-1;
@@ -1173,10 +1178,11 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 			}
 			memset(reason, 0, sizeof(reason));
 #ifdef Q3_VM
-			strncpy(reason, buf+tempend, lcount-(tempend)+1);
+			strncpy(reason, buf+tempend, lcount-(tempend));
 #else
 			strncpy(reason, buf+tempend, lcount-(tempend));
 #endif
+			//Com_Printf("Reason: %s\n", reason);
 			}else
 			strcpy(reason, "");
 			//Com_Printf("Reason: %s\n", reason);
@@ -1211,6 +1217,7 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 				length = 18;
 			}
 			spaces = 19-length;
+			memset(column3, 0, sizeof(column3));
 			for(z=0;z<spaces;z++){
 			column3[z] = test;
 			}
@@ -1223,6 +1230,8 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 				// Boe!Man 1/24/11: Print the banline as well (for easy unbanning).
 				if(count <= 9){
 					trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7]   %s%s%s%s%s%s%s\n", count, ip, column1, name, column2, reason, column3, by)); // Boe!Man 9/16/10: Print ban.
+				//trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7]   %s%s%s%s%s\n", count, ip, column1, name, column2, reason)); // Boe!Man 9/16/10: Print ban.
+				
 				}else if(count > 9 && count < 100){
 					trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7]  %s%s%s%s%s%s%s\n", count, ip, column1, name, column2, reason, column3, by)); // Boe!Man 9/16/10: Print ban.
 				}else{
