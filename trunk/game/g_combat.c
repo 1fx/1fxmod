@@ -303,7 +303,7 @@ void player_die(
 	// Boe!Man 1/13/11: If they are twisted, untwist them before they die.
 	if(self->client->pers.twisted){
 		VectorSet(lookdown, 0, 0, 0);	
-		SetClientViewAngle(self, lookdown);
+		SetClientViewAngle(self, lookdown, qfalse);
 		self->client->pers.twisted = qfalse;
 	}
 

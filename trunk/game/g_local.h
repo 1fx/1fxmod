@@ -998,7 +998,7 @@ int			TeamCount						( int ignoreClientNum, team_t team, int* alive );
 int			TeamCount1						(team_t team);
 int			G_GhostCount					( team_t team );
 team_t		PickTeam						( int ignoreClientNum );
-void		SetClientViewAngle				( gentity_t *ent, vec3_t angle );
+void		SetClientViewAngle				( gentity_t *ent, vec3_t angle, qboolean teleport );
 void		CopyToBodyQue					( gentity_t *ent, int hitLocation, vec3_t hitDirection );
 void		respawn							( gentity_t *ent);
 void		BeginIntermission				( void);

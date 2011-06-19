@@ -841,6 +841,8 @@ qboolean henk_ischar(char c){
 		return qtrue;
 	}else if(c >= 65 && c <= 90){ // A-Z uppercase
 		return qtrue;
+	}else if(c >= 33 && c <= 47 || c >= 58 && c <= 64 || c >= 91 && c <= 95 || c >= 123 && c <= 125){ // symbols
+		return qtrue;
 	}else{
 		return qfalse;
 	}

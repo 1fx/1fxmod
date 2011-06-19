@@ -461,21 +461,22 @@ SetClientViewAngle
 
 ==================
 */
-void SetClientViewAngle( gentity_t *ent, vec3_t angle )
+void SetClientViewAngle( gentity_t *ent, vec3_t angle, qboolean teleport )
 {
 	int			i;
-
-	// set the delta angle
-	for (i=0 ; i<3 ; i++)
-	{
-		int		cmdAngle;
-
-		cmdAngle = ANGLE2SHORT(angle[i]);
-		ent->client->ps.delta_angles[i] = cmdAngle - ent->client->pers.cmd.angles[i];
+	if(ent->client->pers.twisted && teleport){
+		return;
 	}
+		// set the delta angle
+		for (i=0 ; i<3 ; i++)
+		{
+			int		cmdAngle;
 
-	VectorCopy( angle, ent->s.angles );
-	VectorCopy (ent->s.angles, ent->client->ps.viewangles);
+			cmdAngle = ANGLE2SHORT(angle[i]);
+			ent->client->ps.delta_angles[i] = cmdAngle - ent->client->pers.cmd.angles[i];
+		}
+		VectorCopy( angle, ent->s.angles );
+		VectorCopy (ent->s.angles, ent->client->ps.viewangles);
 }
 
 /*
@@ -2013,7 +2014,7 @@ void ClientSpawn(gentity_t *ent)
 	}
 
 	trap_GetUsercmd( client - level.clients, &ent->client->pers.cmd );
-	SetClientViewAngle( ent, spawn_angles );
+	SetClientViewAngle( ent, spawn_angles, qfalse );
 
 	if ( ent->client->sess.team != TEAM_SPECTATOR )
 	{

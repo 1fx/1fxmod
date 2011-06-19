@@ -2137,7 +2137,7 @@ void Boe_Twist (int argNum, gentity_t *adm, qboolean shortCmd)
 	VectorSet(lookdown, atoi(a), atoi(b), atoi(c));
 	}
 
-	SetClientViewAngle(ent, lookdown);
+	SetClientViewAngle(ent, lookdown, qfalse);
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 	ent->client->pers.twisted = qtrue;
 	
@@ -2193,7 +2193,7 @@ void Boe_unTwist (int argNum, gentity_t *adm, qboolean shortCmd)
 	}
 
 	VectorSet(lookdown, 0, 0, 0);	
-	SetClientViewAngle(ent, lookdown);
+	SetClientViewAngle(ent, lookdown, qfalse);
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 	ent->client->pers.twisted = qfalse;
 

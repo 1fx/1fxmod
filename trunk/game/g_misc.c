@@ -26,6 +26,7 @@ TeleportPlayer
 void TeleportPlayer ( gentity_t *player, vec3_t origin, vec3_t angles, qboolean nojump) 
 {
 	gentity_t	*tent;
+	vec3_t lookdown;
 	if(level.time < player->client->sess.lastTele)
 		return;
 	else
@@ -64,7 +65,7 @@ void TeleportPlayer ( gentity_t *player, vec3_t origin, vec3_t angles, qboolean 
 	player->client->ps.eFlags ^= EF_TELEPORT_BIT;
 
 	// set angles
-	SetClientViewAngle( player, angles );
+	SetClientViewAngle( player, angles, qtrue );
 
 	// kill anything at the destination
 	if ( !G_IsClientSpectating ( player->client ) ) 

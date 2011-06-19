@@ -581,7 +581,7 @@ void SpectatorThink( gentity_t *ent, usercmd_t *ucmd )
 				{
 					vec3_t lookdown;
 					VectorSet(lookdown, 90, 0, 0);
-					SetClientViewAngle(ent, lookdown);
+					SetClientViewAngle(ent, lookdown, qfalse);
 					client->ps.pm_type = PM_FREEZE;
 				}
 				
