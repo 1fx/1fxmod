@@ -1018,7 +1018,8 @@ typedef enum {
 	GT_CTF,
 	GT_DM,
 	GT_TDM,
-	GT_ELIM
+	GT_ELIM,
+	GT_HZ
 } gameTypes_t;
 // Henk 12/01/10 -> End
 

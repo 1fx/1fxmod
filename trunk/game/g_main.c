@@ -1027,6 +1027,10 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 			trap_Cvar_Set("current_gametype", "1");
 			trap_Cvar_Set( "g_gametype", "inf" );
 			trap_Cvar_Update(&g_gametype);
+		}else if(strstr(g_gametype.string, "h&z")){
+			trap_Cvar_Set("current_gametype", "8");
+			trap_Cvar_Set( "g_gametype", "inf" );
+			trap_Cvar_Update(&g_gametype);
 		}else if(strstr(g_gametype.string, "elim")){
 			trap_Cvar_Set("current_gametype", "7");
 		}else if(strstr(g_gametype.string, "tdm")){
@@ -1211,6 +1215,8 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	// Initialize the gametype
 	if(current_gametype.value == GT_HS)
 		trap_GT_Init ( "h&s", restart );
+	else if(current_gametype.value == GT_HZ)
+		trap_GT_Init ( "h&z", restart );
 	else
 		trap_GT_Init ( g_gametype.string, restart );
 

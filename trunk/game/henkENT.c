@@ -24,6 +24,8 @@ qboolean G_LoadEntFile(void)
 
 	if(strstr(level.gametypeData->name, "inf") && current_gametype.value == GT_HS)
 		Com_sprintf(entPath, 128, "maps/%sh&s/%s.ent\0", alt, mapname.string);
+	else if(strstr(level.gametypeData->name, "inf") && current_gametype.value == GT_HZ)
+		Com_sprintf(entPath, 128, "maps/%sh&z/%s.ent\0", alt, mapname.string);
 	else
 		Com_sprintf(entPath, 128, "maps/%s%s/%s.ent\0", alt, level.gametypeData->name, mapname.string, level.gametypeData->name);
 
@@ -31,12 +33,16 @@ qboolean G_LoadEntFile(void)
 	if (!entFile){ /// failing that, just try by map name
 		if(strstr(level.gametypeData->name, "inf") && current_gametype.value == GT_HS)
 			Com_sprintf(entPath, 128, "maps/%sh&s/%s_h&s.ent\0", alt, mapname.string);
+		else if(strstr(level.gametypeData->name, "inf") && current_gametype.value == GT_HZ)
+			Com_sprintf(entPath, 128, "maps/%sh&z/%s_h&s.ent\0", alt, mapname.string);
 		else
 			Com_sprintf(entPath, 128, "maps/%s%s/%s_%s.ent\0", alt, level.gametypeData->name, mapname.string, level.gametypeData->name);
 		len = trap_FS_FOpenFile(entPath, &entFile, FS_READ);
 		if (!entFile){
 			if(strstr(level.gametypeData->name, "inf") && current_gametype.value == GT_HS)
 				Com_sprintf(entPath, 128, "maps/%s%s_h&s.ent\0",alt, mapname.string);
+			else if(strstr(level.gametypeData->name, "inf") && current_gametype.value == GT_HZ)
+				Com_sprintf(entPath, 128, "maps/%s%s_h&z.ent\0",alt, mapname.string);
 			else
 				Com_sprintf(entPath, 128, "maps/%s%s_%s.ent\0", alt, mapname.string, level.gametypeData->name); 
 			len = trap_FS_FOpenFile(entPath, &entFile, FS_READ);
