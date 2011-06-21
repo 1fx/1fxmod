@@ -369,7 +369,6 @@ void CopyToBodyQue( gentity_t *ent, int hitLocation, vec3_t direction )
 	gentity_t	*body;
 	int			contents;
 	int			parm;
-
 	trap_UnlinkEntity (ent);
 
 	// if client is in a nodrop area, don't leave the body
@@ -411,7 +410,7 @@ void CopyToBodyQue( gentity_t *ent, int hitLocation, vec3_t direction )
 
 	parm  = (DirToByte( direction )&0xFF);
 	parm += (hitLocation<<8);
-
+	
 	G_AddEvent(body, EV_BODY_QUEUE_COPY, parm);
 
 	body->r.svFlags = ent->r.svFlags | SVF_BROADCAST;
@@ -1199,7 +1198,7 @@ void ClientUserinfoChanged( int clientNum )
 	// Enforce the identities
 	oldidentity = client->pers.identity;
 
-	if( level.gametypeData->teams && current_gametype.value != GT_HS ) 
+	if( level.gametypeData->teams && current_gametype.value != GT_HS && current_gametype.value != GT_HZ ) 
 	{
 		s = Info_ValueForKey ( userinfo, "team_identity" );
 
@@ -1266,6 +1265,8 @@ void ClientUserinfoChanged( int clientNum )
 				}else
 					client->pers.identity = &bg_identities[1];
 			}
+		}else if(current_gametype.value == GT_HZ && ent->client->sess.team == TEAM_BLUE){
+			client->pers.identity = BG_FindIdentity ( "NPC_Virus_Male/virus_male" );
 		}else{
 		// Lookup the identity by name and if it cant be found then pick a random one
 		client->pers.identity = BG_FindIdentity ( s );
@@ -1359,7 +1360,7 @@ void ClientUserinfoChanged( int clientNum )
 	{
 		// Parse out the new outfitting
 		BG_DecompressOutfitting ( Info_ValueForKey ( userinfo, "outfitting" ), &client->pers.outfitting );
-			if(current_gametype.value == GT_HS){
+			if(current_gametype.value == GT_HS && current_gametype.value == GT_HZ){
 				// Henk 28/01/10 -> Fixed outfitting given when players enters round(causing double nades).
 				//G_UpdateOutfitting ( index );
 				if ( !client->noOutfittingChange ){
@@ -1952,7 +1953,7 @@ void ClientSpawn(gentity_t *ent)
 
 		BG_DecompressOutfitting ( Info_ValueForKey ( userinfo, "outfitting" ), &client->pers.outfitting);
 #endif
-		if(current_gametype.value == GT_HS){
+		if(current_gametype.value == GT_HS || current_gametype.value == GT_HZ){
 			 // Henk 23/01/10 -> Disable update outfitting, we'll do it later
 			// Henk 24/01/10 -> Fix players not starting with knife/armor
 			//G_UpdateOutfitting ( index );
@@ -2132,6 +2133,8 @@ void ClientSpawn(gentity_t *ent)
 			ent->client->ps.stats[STAT_FROZEN] = level.gametypeDelayTime - level.time;
 		}
 	}
+	if(current_gametype.value == GT_HZ)
+		ent->client->ps.stats[STAT_FROZEN] = 0;
 
 	// Handle a deferred name change
 	if ( client->pers.deferredname[0] )
@@ -2158,7 +2161,7 @@ void ClientSpawn(gentity_t *ent)
 			level.gametypeJoinTime = level.time;
 		}
 	}
-	if(current_gametype.value == GT_HS){
+	if(current_gametype.value == GT_HS || current_gametype.value == GT_HZ){
 			// Henk 19/01/10 -> Start with knife
 			ent->client->ps.ammo[weaponData[WP_KNIFE].attack[ATTACK_ALTERNATE].ammoIndex]=0;
 			ent->client->ps.weapon = WP_KNIFE;

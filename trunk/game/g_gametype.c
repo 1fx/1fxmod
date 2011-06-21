@@ -926,7 +926,7 @@ void CheckGametype ( void )
 
 	}
 	}
-
+	if(level.gametypeData){
 	// If we are in RT_NONE respawn mode then we need to look for everyone being dead
 	if ( level.gametypeData->respawnType == RT_NONE && level.gametypeStartTime ){
 		int i;
@@ -950,7 +950,7 @@ void CheckGametype ( void )
 				continue;
 			}
 
-			if(ent->client->ps.weapon == WP_NONE && !G_IsClientDead(ent->client) && current_gametype.value != GT_HS && ent->client->sunRespawnTimer == 0){ // Boe!Man 6/14/11: Don't respawn them if they're waiting to be respawned with the sun condition.
+			if(ent->client->ps.weapon == WP_NONE && !G_IsClientDead(ent->client) && current_gametype.value != GT_HS && ent->client->sunRespawnTimer == 0 && ent->client->sess.team != TEAM_SPECTATOR){ // Boe!Man 6/14/11: Don't respawn them if they're waiting to be respawned with the sun condition.
 				trap_UnlinkEntity (ent);
 				ClientSpawn(ent);
 				trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s has been respawned due to being spawned with no weapons.\n\"", ent->client->pers.netname));
@@ -1117,6 +1117,7 @@ void CheckGametype ( void )
 				}
 			}
 		} 
+	}
 	}
 }
 

@@ -2686,6 +2686,10 @@ void SetupOutfitting(void)
 	}
 }
 
+void Henk_CheckZombie(void){
+	//
+}
+
 /*
 ================
 Henk_CheckHS
@@ -3071,6 +3075,12 @@ void G_RunFrame( int levelTime )
 	ent = &g_entities[0];
 	for (i=0 ; i < level.maxclients ; i++, ent++ )
 	{
+		if(current_gametype.value == GT_HZ){
+			// this will probably eat performance
+			if(level.bodyQue[i] && level.bodyQue[i]->s.pos.trType == TR_STATIONARY){
+				G_FreeEntity(level.bodyQue[i]);
+			}
+		}
 		if(current_gametype.value == GT_CTF){
 			if(ent->client->sess.pausespawn == qtrue && !level.pause){
 				//FIX ME: Add custom respawn message(eg. Respawn in x sec), original will be frozen on 0
@@ -3085,9 +3095,9 @@ void G_RunFrame( int levelTime )
 				}
 			}
 		}
-		if(current_gametype.value == GT_HS){
+		if(current_gametype.value == GT_HS || current_gametype.value == GT_HZ){
 
-			if ( hideSeek_Extra.string[3] == '1' && ent->client->ps.pm_flags & PMF_GOGGLES_ON && ent->client->ps.stats[STAT_GOGGLES] == GOGGLES_NIGHTVISION && ent->client->sess.team == TEAM_BLUE)
+			if ( hideSeek_Extra.string[3] == '1' && ent->client->ps.pm_flags & PMF_GOGGLES_ON && ent->client->ps.stats[STAT_GOGGLES] == GOGGLES_NIGHTVISION && ent->client->sess.team == TEAM_BLUE && current_gametype.value == GT_HS)
 			{
 				if(ent->client->ps.stats[STAT_ARMOR] <= 0){
 					trap_SendServerCommand(ent->s.number, va("print\"^3[H&S] ^7Invisibility goggles wore off.\n\""));
@@ -3245,7 +3255,9 @@ void G_RunFrame( int levelTime )
 	
 	// Henk 21/01/10 -> Hide&Seek actions
 	if(current_gametype.value == GT_HS)
-	Henk_CheckHS();
+		Henk_CheckHS();
+	if(current_gametype.value == GT_HZ)
+		Henk_CheckZombie();
 
 	if (g_listEntity.integer)
 	{

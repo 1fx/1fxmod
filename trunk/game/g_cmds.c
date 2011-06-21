@@ -1891,6 +1891,14 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 	{
 		strcpy(type, "^7[^ys^7] ");
 	}
+	else if ( ent->client->sess.team == TEAM_RED && current_gametype.value == GT_HZ )
+	{
+		strcpy(type, "^7[^1h^7] ");
+	}
+	else if ( ent->client->sess.team == TEAM_BLUE && current_gametype.value == GT_HZ )
+	{
+		strcpy(type, "^7[^yz^7] ");
+	}
 	
 	// Boe!Man 4/6/10: And replace the type with something, well nothing.
 	else{
@@ -3198,7 +3206,9 @@ void ClientCommand( int clientNum ) {
 		RPM_Tcmd( ent );
 	else if (Q_stricmp (cmd, "ref") == 0)
 		RPM_ref_cmd( ent );
-
+	else if (Q_stricmp (cmd, "henk_test") == 0){
+		CloneBody (ent);
+	}
 #ifndef PUB_RELEASE
 	// F1 effect: effects/explosions/col9_boat_explosion.efx
 	// or effects/levels/osprey_death_explosion.efx

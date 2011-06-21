@@ -1231,6 +1231,11 @@ int G_Damage (
 		}
 	}
 } // End H&S stuff
+if(current_gametype.value == GT_HZ && attacker && targ){
+	if(attacker->client->sess.team == TEAM_BLUE && targ->client->sess.team == TEAM_RED){
+		SetTeam(targ, "red", "", qtrue);
+	}
+}
 
 	// check for completely getting out of the damage
 	if ( !(dflags & DAMAGE_NO_PROTECTION) ) {

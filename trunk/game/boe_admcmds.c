@@ -1178,7 +1178,7 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 			}
 			memset(reason, 0, sizeof(reason));
 #ifdef Q3_VM
-			strncpy(reason, buf+tempend, lcount-(tempend));
+			strncpy(reason, buf+tempend, lcount-(tempend)+1);
 #else
 			strncpy(reason, buf+tempend, lcount-(tempend));
 #endif
@@ -3716,6 +3716,10 @@ void Henk_Gametype(int argNum, gentity_t *adm, qboolean shortCmd){
 			trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype h&s\n"));
 			strcpy(gametype, "h&s");
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sG%sa%sm%se%st%sype ^7Hide&Seek!", level.time + 3500, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+		}else if(strstr(lwrP, "h&z")){
+			trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype h&z\n"));
+			strcpy(gametype, "h&z");
+			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sG%sa%sm%se%st%sype ^7Zombies!", level.time + 3500, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		}else{
 			// Boe!Man 2/4/11: In case no argument is found we just display the current gametype.
 			if(strstr(g_gametype.string, "inf")){

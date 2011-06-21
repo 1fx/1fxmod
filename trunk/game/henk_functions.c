@@ -267,6 +267,88 @@ void InitCagefight(void){
 	//LogExit( "Timelimit hit." );
 }
 
+void CloneBody( gentity_t *ent )
+{
+	gentity_t	*body;
+	int			contents;
+	int			parm;
+	vec3_t		velo;
+	int hitLocation = HL_NONE;
+	vec3_t	direction;
+
+	VectorCopy(direction, vec3_origin);
+	trap_UnlinkEntity (ent);
+
+	// if client is in a nodrop area, don't leave the body
+	contents = trap_PointContents( ent->r.currentOrigin, -1 );
+	if ( contents & CONTENTS_NODROP )
+	{
+		return;
+	}
+
+	// grab a body que and cycle to the next one
+	body = level.bodyQue[ level.bodyQueIndex ];
+	level.bodyQueIndex = (level.bodyQueIndex + 1) % level.bodyQueSize;
+
+	trap_UnlinkEntity (body);
+
+	body->s					= ent->s;
+	body->s.eType			= ET_BODY;
+	body->s.eFlags			= EF_DEAD;
+	body->s.gametypeitems	= 0;
+	body->s.loopSound		= 0;
+	body->s.number			= body - g_entities;
+	body->timestamp			= level.time;
+	body->physicsObject		= qtrue;
+	body->physicsBounce		= 0;
+	body->s.otherEntityNum  = ent->s.clientNum;
+	
+	//if ( body->s.groundEntityNum == ENTITYNUM_NONE )
+	VectorCopy(ent->client->ps.velocity, velo);
+	AngleVectors( ent->client->ps.viewangles, velo, NULL, NULL );
+	VectorScale( velo, 600, velo );
+	body->s.pos.trType = TR_GRAVITY;
+	body->s.pos.trTime = level.time;
+	velo[2] = 200;
+	VectorCopy( velo, body->s.pos.trDelta );
+
+	body->s.event = 0;
+
+	parm  = (DirToByte( direction )&0xFF);
+	parm += (hitLocation<<8);
+	
+	G_AddEvent(body, EV_BODY_QUEUE_COPY, parm);
+
+	body->r.svFlags = ent->r.svFlags | SVF_BROADCAST;
+	VectorCopy (ent->r.mins, body->r.mins);
+	VectorCopy (ent->r.maxs, body->r.maxs);
+	VectorCopy (ent->r.absmin, body->r.absmin);
+	VectorCopy (ent->r.absmax, body->r.absmax);
+
+	body->s.torsoAnim = 45;
+	
+	body->clipmask = CONTENTS_SOLID | CONTENTS_PLAYERCLIP;
+	body->r.contents = 0; // CONTENTS_CORPSE;
+	body->r.ownerNum = ent->s.number;
+
+	body->nextthink = level.time + 10000;
+	body->think = G_FreeEntity;
+
+	body->s.time2 = 0;
+
+	body->die = body_die;
+	body->takedamage = qtrue;
+
+	body->s.apos.trBase[PITCH] = 0;
+
+	body->s.pos.trBase[2] = ent->client->ps.origin[2];
+
+	VectorCopy ( body->s.pos.trBase, body->r.currentOrigin );
+
+	trap_LinkEntity (body);
+
+}
+
 void CheckEnts(gentity_t *ent){
 	if(ent->model && ent->model != NULL && !strcmp(ent->model, "BLOCKED_TRIGGER"))
 		{

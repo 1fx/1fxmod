@@ -30,6 +30,12 @@ void RPM_WeaponMod ()
 				strcpy(WpnFile, g_customWeaponFile.string);
 			}
 		}
+	}else if(current_gametype.value == GT_HZ){
+		if(!*g_customWeaponFile.string || !Q_stricmp ( g_customWeaponFile.string, "none" ) ){
+			strcpy(WpnFile, "weaponfiles/zombies.wpn");
+		}else{
+			strcpy(WpnFile, g_customWeaponFile.string);
+		}
 	}else{
 		// Boe!Man 5/28/11: Enable the loading of  custom weapon files.
 		if(!*g_customWeaponFile.string || !Q_stricmp ( g_customWeaponFile.string, "none" ) ){
