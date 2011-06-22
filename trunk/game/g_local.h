@@ -1207,6 +1207,7 @@ extern	vmCvar_t	g_timeouttospec;
 extern  vmCvar_t	g_roundtimelimit;
 extern  vmCvar_t	g_timeextension;
 extern  vmCvar_t	g_roundstartdelay;
+extern  vmCvar_t	hideSeek_roundstartdelay;
 extern  vmCvar_t	g_availableWeapons;
 extern  vmCvar_t	hideSeek_availableWeapons;
 extern	vmCvar_t	availableWeapons;
@@ -1234,6 +1235,8 @@ extern	vmCvar_t	g_voiceFloodPenalty;
 extern	vmCvar_t	server_hiderteamprefix;
 extern	vmCvar_t	server_seekerteamprefix;
 extern  vmCvar_t	hideSeek_Extra;
+extern  vmCvar_t	server_humanteamprefix;
+extern  vmCvar_t	server_zombieteamprefix;
 
 void	trap_Printf( const char *fmt );
 void	trap_Error( const char *fmt );

@@ -1233,7 +1233,10 @@ int G_Damage (
 } // End H&S stuff
 if(current_gametype.value == GT_HZ && attacker && targ){
 	if(attacker->client->sess.team == TEAM_BLUE && targ->client->sess.team == TEAM_RED){
-		SetTeam(targ, "red", "", qtrue);
+		// targ has to die
+		CloneBody(attacker, targ->s.number);
+		damage = 0;
+		trap_SendServerCommand(-1, va("print \"^3[H&Z] ^7%s was zombified by %s.\n\"", targ->client->pers.netname, attacker->client->pers.netname) );
 	}
 }
 
@@ -1257,7 +1260,7 @@ if(current_gametype.value == GT_HZ && attacker && targ){
 		}
 	}
 
-	if ( damage < 1 && current_gametype.value != GT_HS)
+	if ( damage < 1 && current_gametype.value != GT_HS && current_gametype.value != GT_HZ)
 	{
 		damage = 1;
 	}

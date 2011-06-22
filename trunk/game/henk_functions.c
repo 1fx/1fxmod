@@ -267,7 +267,7 @@ void InitCagefight(void){
 	//LogExit( "Timelimit hit." );
 }
 
-void CloneBody( gentity_t *ent )
+void CloneBody( gentity_t *ent, int number )
 {
 	gentity_t	*body;
 	int			contents;
@@ -302,6 +302,8 @@ void CloneBody( gentity_t *ent )
 	body->physicsObject		= qtrue;
 	body->physicsBounce		= 0;
 	body->s.otherEntityNum  = ent->s.clientNum;
+	body->s.zombie = qtrue;
+	body->s.zombifie = number;
 	
 	//if ( body->s.groundEntityNum == ENTITYNUM_NONE )
 	VectorCopy(ent->client->ps.velocity, velo);

@@ -512,6 +512,9 @@ void G_ResetGametype ( qboolean fullRestart, qboolean cagefight )
 			break;
 
 		case RT_NONE:
+			if(current_gametype.value == GT_HS)
+				level.gametypeDelayTime = level.time + hideSeek_roundstartdelay.integer * 1000;
+			else
 			level.gametypeDelayTime = level.time + g_roundstartdelay.integer * 1000;
 			if(current_gametype.value == GT_HS){
 				if(cagefight == qtrue)

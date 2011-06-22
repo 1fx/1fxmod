@@ -3121,7 +3121,11 @@ void Boe_SwapTeams(gentity_t *adm)
 
 	///Enable roundtime for Gametypes w/out respawn intervals	
 	if (level.gametypeData->respawnType != RT_INTERVAL ){
+		if(current_gametype.value == GT_HS)
+			level.gametypeDelayTime = level.time + hideSeek_roundstartdelay.integer * 1000;
+		else
 		level.gametypeDelayTime = level.time + g_roundstartdelay.integer * 1000;
+
 		level.gametypeRoundTime = level.time + (g_roundtimelimit.integer * 60000);
 		if ( level.gametypeDelayTime != level.time ){
 			trap_SetConfigstring ( CS_GAMETYPE_TIMER, va("%i", level.gametypeRoundTime) );

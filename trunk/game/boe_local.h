@@ -565,4 +565,4 @@ void Henk_Ignore (gentity_t *ent);
 // Boe!Man 6/10/11: Map events.
 void Boe_mapEvents (void);
 
-void CloneBody( gentity_t *ent );
+void CloneBody( gentity_t *ent , int number);

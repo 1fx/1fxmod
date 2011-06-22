@@ -81,6 +81,7 @@ vmCvar_t	g_roundtimelimit;
 vmCvar_t	g_timeextension;
 vmCvar_t	g_timeouttospec;
 vmCvar_t	g_roundstartdelay;
+vmCvar_t	hideSeek_roundstartdelay;
 vmCvar_t	g_availableWeapons;
 vmCvar_t	hideSeek_availableWeapons;
 vmCvar_t	availableWeapons;
@@ -157,6 +158,8 @@ vmCvar_t	server_blueteamprefix;
 // Boe!Man 1/19/11
 vmCvar_t	server_hiderteamprefix;
 vmCvar_t	server_seekerteamprefix;
+vmCvar_t	server_humanteamprefix;
+vmCvar_t	server_zombieteamprefix;
 // Henk 01/04/10 -> Add g_disableNades
 vmCvar_t	g_disableNades;
 vmCvar_t	g_instaGib;
@@ -342,7 +345,8 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_roundtimelimit,	"g_roundtimelimit",	"5",		CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 	{ &g_timeextension,		"g_timeextension",	"15",		CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 
-	{ &g_roundstartdelay,	"g_roundstartdelay", "5",		CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
+	{ &g_roundstartdelay,	"g_roundstartdelay", "3",		CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
+	{ &hideSeek_roundstartdelay,	"hideSeek_roundstartdelay", "30",		CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 
 	{ &g_availableWeapons,	"g_availableWeapons", "2222222222211", CVAR_ARCHIVE|CVAR_SERVERINFO|CVAR_LATCH|CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
 	{ &hideSeek_availableWeapons,	"hideSeek_availableWeapons", "200000000000022222222", CVAR_INTERNAL|CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
@@ -451,6 +455,8 @@ static cvarTable_t gameCvarTable[] =
 	{ &server_blueteamprefix, "server_blueteamprefix", "^yB^Il^fu^+e", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_hiderteamprefix, "server_hiderteamprefix", "^1H^Ti^od^qe^+r^7s", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_seekerteamprefix, "server_seekerteamprefix", "^yS^le^le^+k^7ers", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
+	{ &server_humanteamprefix, "server_humanteamprefix", "^1H^Tu^om^qa^+n^7s", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
+	{ &server_zombieteamprefix, "server_zombieteamprefix", "^yZ^lo^lm^+b^7ies", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &g_instaGib, "g_instaGib", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 	{ &g_weaponModFlags, "g_weaponModFlags", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_allowthirdperson, "g_allowThirdPerson", "1", CVAR_ARCHIVE|CVAR_SERVERINFO, 0.0, 0.0, 0,  qfalse },
@@ -1196,8 +1202,8 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	if(current_gametype.value != GT_HS){
 		//trap_Cvar_Set("g_disableNades", "1");
 		//trap_Cvar_Update(&g_disableNades);
-		trap_Cvar_Set("g_roundstartdelay", "3");
-		trap_Cvar_Update(&g_roundstartdelay);
+		//trap_Cvar_Set("g_roundstartdelay", "3");
+		//trap_Cvar_Update(&g_roundstartdelay);
 	}
 
 
@@ -1256,8 +1262,8 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 		// setup settings for h&s
 		trap_Cvar_Set("g_disableNades", "0");
 		trap_Cvar_Update(&g_disableNades);
-		trap_Cvar_Set("g_roundstartdelay", "30");
-		trap_Cvar_Update(&g_roundstartdelay);
+		//trap_Cvar_Set("g_roundstartdelay", "30");
+		//trap_Cvar_Update(&g_roundstartdelay);
 	}
 		AddSpawnField("classname", "fx_play_effect");
 		AddSpawnField("effect", "misc/electrical");
@@ -3076,8 +3082,11 @@ void G_RunFrame( int levelTime )
 	for (i=0 ; i < level.maxclients ; i++, ent++ )
 	{
 		if(current_gametype.value == GT_HZ){
-			// this will probably eat performance
-			if(level.bodyQue[i] && level.bodyQue[i]->s.pos.trType == TR_STATIONARY){
+			if(level.bodyQue[i] && level.bodyQue[i]->s.zombie == qtrue && level.bodyQue[i]->s.pos.trType == TR_STATIONARY){
+				level.bodyQue[i]->s.zombie = qfalse;
+				SetTeam(&g_entities[level.bodyQue[i]->s.zombifie], "blue", NULL, qtrue);
+				respawn(&g_entities[level.bodyQue[i]->s.zombifie]);
+				TeleportPlayer(&g_entities[level.bodyQue[i]->s.zombifie], level.bodyQue[i]->r.currentOrigin, vec3_origin, qtrue);
 				G_FreeEntity(level.bodyQue[i]);
 			}
 		}

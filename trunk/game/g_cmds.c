@@ -945,6 +945,31 @@ void BroadcastTeamChange( gclient_t *client, int oldTeam )
 				}
 				break;
 		}
+	}else if(current_gametype.value == GT_HZ){
+		switch ( client->sess.team )
+		{
+			case TEAM_RED:
+				strcpy(message, va("%s" S_COLOR_WHITE "\njoined the %s\n\"", client->pers.netname, server_humanteamprefix.string));
+				trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s ^7joined the humans.\n\"", client->pers.cleanName));
+				break;
+
+			case TEAM_BLUE:
+				strcpy(message, va("%s" S_COLOR_WHITE "\njoined the %s\n\"", client->pers.netname, server_zombieteamprefix.string));
+				trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s ^7joined the zombies.\n\"", client->pers.cleanName));
+				break;
+
+			case TEAM_SPECTATOR:
+				if ( oldTeam != TEAM_SPECTATOR )
+				{
+					strcpy(message, va("%s" S_COLOR_WHITE "\njoined the %s\n\"", client->pers.netname, server_specteamprefix.string));
+					trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s ^7joined the spectators.\n\"", client->pers.cleanName));
+				}
+				else
+				{
+					return;
+				}
+				break;
+		}
 	}else{
 		switch ( client->sess.team )
 		{
