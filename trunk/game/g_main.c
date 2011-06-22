@@ -2693,7 +2693,28 @@ void SetupOutfitting(void)
 }
 
 void Henk_CheckZombie(void){
-	//
+	int i;
+	gentity_t *ent;
+	if(level.time >= level.gametypeStartTime+10000 && level.messagedisplay == qfalse && level.gametypeStartTime >= 5000){
+		trap_SendServerCommand(-1, va("print \"^3[H&Z] ^7%Shotguns distributed.\n\"") );
+		Boe_GlobalSound(level.clicksound); // Henkie 22/01/10 -> G_SoundIndex("sound/misc/menus/click.wav") index this when loading map(saves alot performance)
+		
+		for(i=0;i<level.numConnectedClients;i++){
+			ent = &g_entities[level.sortedClients[i]];
+			if(!ent)
+				continue;
+
+			if(ent->client->sess.team == TEAM_RED){
+				ent->client->ps.ammo[weaponData[WP_M590_SHOTGUN].attack[ATTACK_NORMAL].ammoIndex]=9;
+				ent->client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_M590_SHOTGUN );
+				ent->client->ps.clip[ATTACK_NORMAL][WP_M590_SHOTGUN]=9;
+				ent->client->ps.firemode[WP_RPG7_LAUNCHER] = BG_FindFireMode ( WP_M590_SHOTGUN, ATTACK_NORMAL, WP_FIREMODE_AUTO );
+				//ent->client->ps.weapon = WP_KNIFE;
+				ent->client->ps.weaponstate = WEAPON_READY;
+			}
+		}
+		level.messagedisplay = qtrue;
+	}
 }
 
 /*

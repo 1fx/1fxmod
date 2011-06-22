@@ -3537,8 +3537,10 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 			EndPos = i;
 			begin = qtrue;
 			memset(xip, 0, sizeof(xip));
-			if((EndPos-StartPos)  < 1)
+			if((EndPos-StartPos)  < 1){
 				Com_Printf("Error: %i - %i\n", EndPos, StartPos);
+				return;
+			}
 			//if(passwordlist)
 				Q_strncpyz(xip, buf+StartPos, (EndPos-StartPos)+1);
 			//else
