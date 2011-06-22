@@ -184,6 +184,9 @@ struct gentity_s
 	int			score;
 	char		*broadcast;
 	char		*effect_touch;
+
+	qboolean	zombie;
+	int			zombifie;
 };
 
 typedef struct gspawn_s

@@ -1360,7 +1360,7 @@ void ClientUserinfoChanged( int clientNum )
 	{
 		// Parse out the new outfitting
 		BG_DecompressOutfitting ( Info_ValueForKey ( userinfo, "outfitting" ), &client->pers.outfitting );
-			if(current_gametype.value == GT_HS && current_gametype.value == GT_HZ){
+			if(current_gametype.value == GT_HS || current_gametype.value == GT_HZ){
 				// Henk 28/01/10 -> Fixed outfitting given when players enters round(causing double nades).
 				//G_UpdateOutfitting ( index );
 				if ( !client->noOutfittingChange ){
@@ -1969,6 +1969,7 @@ void ClientSpawn(gentity_t *ent)
 		G_UpdateOutfitting ( ent->s.number );
 		}
 		// Prevent the client from picking up a whole bunch of stuff
+		if(current_gametype.value != GT_HZ)
 		client->ps.pm_flags |= PMF_LIMITED_INVENTORY;
 	}
 	else

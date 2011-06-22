@@ -362,6 +362,13 @@ void player_die(
 			VectorClear ( missile->s.pos.trDelta );
 		}
 	}
+	if(attacker && self){
+		if(attacker->client && self->client){
+			if(current_gametype.value == GT_HZ && self->client->sess.team == TEAM_BLUE && attacker->client->sess.team == TEAM_RED){
+				DropRandom(self, TeamCount1(TEAM_BLUE));
+			}
+		}
+	}
 
 	G_LogPrintf("Kill: %i %i %i: %s killed %s by %s\n",
 		killer, self->s.number, meansOfDeath, killerName,
@@ -679,6 +686,7 @@ void player_die(
 
 	// If the dismember bit is set then make sure the body queue dismembers
 	// the location that was hit
+	if(current_gametype.value != GT_HZ){
 	if ( hitLocation & HL_DISMEMBERBIT )
 	{
 		CopyToBodyQue (self, hitLocation & (~HL_DISMEMBERBIT), hitDir );
@@ -686,6 +694,7 @@ void player_die(
 	else
 	{
 		CopyToBodyQue (self, HL_NONE, hitDir );
+	}
 	}
 
 	// the body can still be gibbed
@@ -1232,11 +1241,15 @@ int G_Damage (
 	}
 } // End H&S stuff
 if(current_gametype.value == GT_HZ && attacker && targ){
-	if(attacker->client->sess.team == TEAM_BLUE && targ->client->sess.team == TEAM_RED){
-		// targ has to die
-		CloneBody(attacker, targ->s.number);
-		damage = 0;
-		trap_SendServerCommand(-1, va("print \"^3[H&Z] ^7%s was zombified by %s.\n\"", targ->client->pers.netname, attacker->client->pers.netname) );
+	if(attacker->client && targ->client){
+		if(attacker->client->sess.team == TEAM_BLUE && targ->client->sess.team == TEAM_RED){
+			// targ has to die
+			//player_die (targ, targ, attacker, 100000, MOD_TEAMCHANGE, HL_NONE, vec3_origin );
+			G_Damage (targ, NULL, NULL, NULL, NULL, 10000, 0, MOD_POP, HL_HEAD);
+			CloneBody(attacker, targ->s.number);
+			damage = 0;
+			trap_SendServerCommand(-1, va("print \"^3[H&Z] ^7%s was zombified by %s.\n\"", targ->client->pers.netname, attacker->client->pers.netname) );
+		}
 	}
 }
 

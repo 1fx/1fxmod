@@ -1636,8 +1636,6 @@ typedef struct entityState_s
 	int				eventParm;
 
 	int				generic1;
-	qboolean		zombie;
-	int				zombifie;
 	// for players
 	// these fields are only transmitted for client entities!!!!!
 	int				gametypeitems;	// bit flags indicating which items are carried

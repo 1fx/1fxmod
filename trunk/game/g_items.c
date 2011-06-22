@@ -357,6 +357,9 @@ void Touch_Item (gentity_t *ent, gentity_t *other, trace_t *trace)
 		}else if(ent->item->giTag == WP_RPG7_LAUNCHER && other->client->sess.team == TEAM_BLUE){
 			return;
 		}
+	}else if(current_gametype.value == GT_HZ){
+		if(other->client->sess.team == TEAM_BLUE) // zombies can't pickup anything
+			return;
 	}
 
 	// If its a gametype item the gametype handles it
@@ -377,7 +380,8 @@ void Touch_Item (gentity_t *ent, gentity_t *other, trace_t *trace)
 		}
 	}
 	// the same pickup rules are used for client side and server side
-	else if ( !BG_CanItemBeGrabbed( level.gametype, &ent->s, &other->client->ps ) ) 
+
+	else if ( !BG_CanItemBeGrabbed( level.gametype, &ent->s, &other->client->ps ) && current_gametype.value != GT_HZ ) 
 	{
 		return;
 	}

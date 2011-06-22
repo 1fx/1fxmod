@@ -315,8 +315,10 @@ void DropRandom( gentity_t *ent, int zombies){
    }else
 	   DropGroup = -1;
 
-   if(DropGroup == -1)
+   if(DropGroup == -1){
 	   Com_Printf("Error, too much zombies: %i\n", zombies);
+	   return;
+   }
    random = irand(0, 99);
    start = 0;
    for(i=0;i<8;i++){
@@ -332,18 +334,20 @@ void DropRandom( gentity_t *ent, int zombies){
 			start = Odds[i][0]+weaponDropOdds[DropGroup][i];
 		}
    }
-
+   Com_Printf("Group: %i\n", group);
    if(weaponGroups[group][2] == 0) 
 	   random = irand(0,1); // randomize between 2 weapons
    else
 	  random = irand(0, 2); // randomize between 3 weapons 
 
+   Com_Printf("Random: %i\n", random);
+
 	item = BG_FindWeaponItem ((weapon_t)weaponGroups[group][random]);
 	dropped = G_DropItem2(ent->r.currentOrigin, vec3_origin, item);
-	dropped->count  = 1&0xFF;
-	dropped->count += ((2<<8) & 0xFF00);
-	dropped->count += ((1 << 16) & 0xFF0000 );
-	dropped->count += ((2 << 24) & 0xFF000000 );
+	//dropped->count  = 1&0xFF;
+	//dropped->count += ((2<<8) & 0xFF00);
+	//dropped->count += ((1 << 16) & 0xFF0000 );
+	//dropped->count += ((2 << 24) & 0xFF000000 );
 	trap_SendServerCommand(-1, va("print \"^3[Debug] ^7%s spawned.\n\"", item->pickup_name) );
 }
 
@@ -369,6 +373,7 @@ void CloneBody( gentity_t *ent, int number )
 
 	// grab a body que and cycle to the next one
 	body = level.bodyQue[ level.bodyQueIndex ];
+
 	level.bodyQueIndex = (level.bodyQueIndex + 1) % level.bodyQueSize;
 
 	trap_UnlinkEntity (body);
@@ -383,8 +388,8 @@ void CloneBody( gentity_t *ent, int number )
 	body->physicsObject		= qtrue;
 	body->physicsBounce		= 0;
 	body->s.otherEntityNum  = ent->s.clientNum;
-	body->s.zombie = qtrue;
-	body->s.zombifie = number;
+	body->zombie = qtrue;
+	body->zombifie = number;
 	
 	//if ( body->s.groundEntityNum == ENTITYNUM_NONE )
 	VectorCopy(ent->client->ps.velocity, velo);

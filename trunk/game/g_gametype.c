@@ -236,7 +236,7 @@ void G_ResetGametypeItem ( gitem_t* item )
 		return;
 	}
 
-	if(current_gametype.value == GT_HS){
+	if(current_gametype.value == GT_HS || current_gametype.value == GT_HZ){
 		Com_Printf("Briefcase has disappeared\n");
 		//ASDKJASKJDKASDJKSJDSKJDSKDD
 		return;
@@ -466,6 +466,7 @@ G_ResetGametype
 void G_ResetGametype ( qboolean fullRestart, qboolean cagefight )
 {
 	gentity_t*	tent;
+	int i;
 	// Reset the glass in the level
 	G_ResetGlass ( );
 
@@ -473,6 +474,25 @@ void G_ResetGametype ( qboolean fullRestart, qboolean cagefight )
 	G_ResetEntities ( );
 
 	ResetCages();
+
+	if(current_gametype.value == GT_HZ){
+		for ( i = 0; i < level.numConnectedClients; i ++ )
+		{
+			gentity_t* other = &g_entities[level.sortedClients[i]];
+
+			if ( other->client->pers.connected != CON_CONNECTED )
+			{
+				continue;
+			}
+				
+			if ( other->client->pers.connected != CON_CONNECTED )
+			{
+				continue;
+			}
+
+			SetTeam(other, "red", NULL, qtrue);
+		}
+	}
 
 	// Reset the gametype itself
 	G_ResetGametypeEntities ( );
@@ -560,7 +580,7 @@ void G_ResetGametype ( qboolean fullRestart, qboolean cagefight )
 				// Boe!Man 11/19/10: Not in compMode. Just switch to the regular Get Ready msg.
 				else{
 					// Get Ready
-					if(current_gametype.value != GT_HS)
+					if(current_gametype.value != GT_HS && current_gametype.value != GT_HZ)
 					trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sG%se%st %sr%se%sa%sdy!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 				}
 			}
@@ -597,6 +617,10 @@ void G_ResetGametype ( qboolean fullRestart, qboolean cagefight )
 
 	level.gametypeStartTime = level.time;
 	level.gametypeResetTime = 0;
+
+	if(current_gametype.value == GT_HZ){
+		level.messagedisplay = qfalse;
+	}
 
 	if(current_gametype.value == GT_HS){
 		// Henk 19/01/10 -> Reset level variables
@@ -996,6 +1020,10 @@ void CheckGametype ( void )
 						level.blueMsgCount++;
 				}
 			}
+		}
+
+		if(current_gametype.value == GT_HZ && alive[TEAM_RED] == 0){
+			trap_GT_SendEvent ( GTEV_TEAM_ELIMINATED, level.time, TEAM_RED, 0, 0, 0, 0 );
 		}
 
 		// If everyone is dead on a team then reset the gametype, but only if 

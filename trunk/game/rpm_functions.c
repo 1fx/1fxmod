@@ -369,6 +369,12 @@ void RPM_Obituary ( gentity_t *target, gentity_t *attacker, int mod, attackType_
 	statinfo_t		*atrstat = &attacker->client->pers.statinfo;
 //	gentity_t *tent;
 
+	if(!attacker)
+		return;
+	if(!target)
+		return;
+	if(!attacker->client)
+		return;
 	killerColor = S_COLOR_WHITE;
 	targetColor   = S_COLOR_WHITE;
 	message2 = "";

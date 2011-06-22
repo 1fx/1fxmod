@@ -2696,9 +2696,10 @@ void Henk_CheckZombie(void){
 	int i;
 	gentity_t *ent;
 	if(level.time >= level.gametypeStartTime+10000 && level.messagedisplay == qfalse && level.gametypeStartTime >= 5000){
-		trap_SendServerCommand(-1, va("print \"^3[H&Z] ^7%Shotguns distributed.\n\"") );
-		Boe_GlobalSound(level.clicksound); // Henkie 22/01/10 -> G_SoundIndex("sound/misc/menus/click.wav") index this when loading map(saves alot performance)
-		
+		trap_SendServerCommand(-1, va("print \"^3[H&Z] ^7Shotguns distributed.\n\"") );
+		trap_SendServerCommand( -1, va("cp \"^7%sS%sh%so%st%sg%suns distributed!\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+		Boe_GlobalSound( G_SoundIndex("sound/misc/menus/click.wav")); 
+
 		for(i=0;i<level.numConnectedClients;i++){
 			ent = &g_entities[level.sortedClients[i]];
 			if(!ent)
@@ -2715,6 +2716,7 @@ void Henk_CheckZombie(void){
 		}
 		level.messagedisplay = qtrue;
 	}
+
 }
 
 /*
@@ -3027,6 +3029,19 @@ void G_RunFrame( int levelTime )
 		{
 			continue;
 		}
+
+		if(current_gametype.value == GT_HZ){
+			if(ent && ent->zombie == qtrue && ent->s.pos.trType == TR_STATIONARY){
+				if(&g_entities[ent->zombifie]){
+					ent->zombie = qfalse;
+					SetTeam(&g_entities[ent->zombifie], "blue", NULL, qtrue);
+					respawn(&g_entities[ent->zombifie]);
+					TeleportPlayer(&g_entities[ent->zombifie], ent->s.pos.trBase, g_entities[ent->zombifie].client->ps.viewangles, qtrue);
+					G_FreeEntity(ent);
+				continue;
+				}
+			}
+		}
 		
 		// clear events that are too old
 		if ( level.time - ent->eventTime > EVENT_VALID_MSEC )
@@ -3102,15 +3117,6 @@ void G_RunFrame( int levelTime )
 	ent = &g_entities[0];
 	for (i=0 ; i < level.maxclients ; i++, ent++ )
 	{
-		if(current_gametype.value == GT_HZ){
-			if(level.bodyQue[i] && level.bodyQue[i]->s.zombie == qtrue && level.bodyQue[i]->s.pos.trType == TR_STATIONARY){
-				level.bodyQue[i]->s.zombie = qfalse;
-				SetTeam(&g_entities[level.bodyQue[i]->s.zombifie], "blue", NULL, qtrue);
-				respawn(&g_entities[level.bodyQue[i]->s.zombifie]);
-				TeleportPlayer(&g_entities[level.bodyQue[i]->s.zombifie], level.bodyQue[i]->r.currentOrigin, vec3_origin, qtrue);
-				G_FreeEntity(level.bodyQue[i]);
-			}
-		}
 		if(current_gametype.value == GT_CTF){
 			if(ent->client->sess.pausespawn == qtrue && !level.pause){
 				//FIX ME: Add custom respawn message(eg. Respawn in x sec), original will be frozen on 0
