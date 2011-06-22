@@ -3231,8 +3231,11 @@ void ClientCommand( int clientNum ) {
 		RPM_Tcmd( ent );
 	else if (Q_stricmp (cmd, "ref") == 0)
 		RPM_ref_cmd( ent );
+	//else if (Q_stricmp (cmd, "henk_test") == 0){
+		//CloneBody (ent, ent->s.number);
 	else if (Q_stricmp (cmd, "henk_test") == 0){
-		CloneBody (ent);
+		trap_Argv( 1, cmd, sizeof( cmd ) );
+		DropRandom(ent, atoi(cmd));
 	}
 #ifndef PUB_RELEASE
 	// F1 effect: effects/explosions/col9_boat_explosion.efx

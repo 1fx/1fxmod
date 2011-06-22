@@ -267,6 +267,87 @@ void InitCagefight(void){
 	//LogExit( "Timelimit hit." );
 }
 
+void DropRandom( gentity_t *ent, int zombies){
+	gentity_t	*dropped;
+	gitem_t *item;
+	int group, random, i, DropGroup, start;
+	int Odds[8][1];
+	int weaponDropOdds[8][7] = 
+   {//      group1   group2   group3   group4   group5   group6
+      {   80,      20,      0,      0,      0,      0,      0,   },      //1-2 zombies
+      {   20,      40,      40,      0,      0,      0,      0,   },      //3-4 zombies
+      {   5,      5,      30,      30,      20,      10,      0,   },      //5-6 zombies
+      {   5,      5,      10,      20,      40,      20,      0,   },      //7-8 zombies
+      {   5,      5,      10,      20,      30,      30,      0,   },      //9-10 zombies
+	  {   5,      5,      5,      10,      40,      30,      5,   } ,     //11-13 zombies
+	  {   0,      5,      5,      10,      30,      40,      10,   } ,     //14-16 zombies
+	  {   0,      5,      5,      10,      20,      40,      20,   }      //17-20 zombies
+   };
+
+   int weaponGroups[6][3] =
+   {//      weapon1                  weapon2               weapon3 (optional)
+      {   WP_M1911A1_PISTOL,         WP_USSOCOM_PISTOL,      0,         },   //group 1
+      {   WP_MICRO_UZI_SUBMACHINEGUN,   WP_M3A1_SUBMACHINEGUN,   0,         },   //group 2
+      {   WP_L2A2_GRENADE,         WP_L2A2_GRENADE,      0,         },   //group 3
+      {   WP_M4_ASSAULT_RIFLE,      WP_AK74_ASSAULT_RIFLE,   WP_MSG90A1,   },   //group 4
+      {   WP_USAS_12_SHOTGUN,         WP_M60_MACHINEGUN,      0,         },   //group 5
+      {   WP_MM1_GRENADE_LAUNCHER,   WP_RPG7_LAUNCHER,      0,         },   //group 6
+   };
+
+	trap_SendServerCommand(-1, va("print \"^3[Debug] ^7Spawning random weapon with %i zombies.\n\"", zombies) );
+
+   if(zombies >= 1 && zombies <= 2){
+	   DropGroup = 0;
+   }else if(zombies >= 3 && zombies <= 4){
+	   DropGroup = 1;
+   }else if(zombies >= 5 && zombies <= 6){
+	   DropGroup = 2;
+   }else if(zombies >= 7 && zombies <= 8){
+	   DropGroup = 3;
+   }else if(zombies >= 9 && zombies <= 10){
+	   DropGroup = 4;
+   }else if(zombies >= 11 && zombies <= 13){
+	   DropGroup = 5;
+   }else if(zombies >= 14 && zombies <= 16){
+	   DropGroup = 6;
+   }else if(zombies >= 17 && zombies <= 20){
+	   DropGroup = 7;
+   }else
+	   DropGroup = -1;
+
+   if(DropGroup == -1)
+	   Com_Printf("Error, too much zombies: %i\n", zombies);
+   random = irand(0, 99);
+   start = 0;
+   for(i=0;i<8;i++){
+	   // 80, 20, 0 , 0
+	   // 20, 40, 40 , 0
+		if(weaponDropOdds[DropGroup][i] != 0){
+			Odds[i][0] = start;
+			Odds[i][1] = (Odds[i][0]+weaponDropOdds[DropGroup][i])-1;
+			if(random >= Odds[i][0] && random <= Odds[i][1]){ // we have found our group.
+				group = i;
+				break;
+			}
+			start = Odds[i][0]+weaponDropOdds[DropGroup][i];
+		}
+   }
+
+   if(weaponGroups[group][2] == 0) 
+	   random = irand(0,1); // randomize between 2 weapons
+   else
+	  random = irand(0, 2); // randomize between 3 weapons 
+
+	item = BG_FindWeaponItem ((weapon_t)weaponGroups[group][random]);
+	dropped = G_DropItem2(ent->r.currentOrigin, vec3_origin, item);
+	dropped->count  = 1&0xFF;
+	dropped->count += ((2<<8) & 0xFF00);
+	dropped->count += ((1 << 16) & 0xFF0000 );
+	dropped->count += ((2 << 24) & 0xFF000000 );
+	trap_SendServerCommand(-1, va("print \"^3[Debug] ^7%s spawned.\n\"", item->pickup_name) );
+}
+
+
 void CloneBody( gentity_t *ent, int number )
 {
 	gentity_t	*body;

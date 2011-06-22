@@ -566,3 +566,4 @@ void Henk_Ignore (gentity_t *ent);
 void Boe_mapEvents (void);
 
 void CloneBody( gentity_t *ent , int number);
+void DropRandom( gentity_t *ent, int zombies);
