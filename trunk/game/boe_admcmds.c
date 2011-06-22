@@ -3735,6 +3735,12 @@ void Henk_Gametype(int argNum, gentity_t *adm, qboolean shortCmd){
 					}else{
 						Com_Printf("Unknown gametype. Gametype is: h&s.\n");
 					}
+				}else if(current_gametype.value == GT_HZ){
+					if(adm && adm->client){
+						trap_SendServerCommand(adm-g_entities, va("print\"^3[Info] ^7Unknown gametype. Gametype is: h&z.\n\""));
+					}else{
+						Com_Printf("Unknown gametype. Gametype is: h&z.\n");
+					}
 				}else{
 					if(adm && adm->client){
 						trap_SendServerCommand(adm-g_entities, va("print\"^3[Info] ^7Unknown gametype. Gametype is: inf.\n\""));
@@ -3865,15 +3871,21 @@ void Henk_Map(int argNum, gentity_t *adm, qboolean shortCmd){
 				strcpy(gametype, "elim");
 			}else if(strstr(gt, "h&s")){
 				strcpy(gametype, "h&s");
+			}else if(strstr(gt, "h&z")){
+				strcpy(gametype, "h&z");
 			}else{
 				if(current_gametype.value == GT_HS)
 					strcpy(gametype, "h&s");
+				else if(current_gametype.value == GT_HZ)
+					strcpy(gametype, "h&z");
 				else
 					strcpy(gametype, g_gametype.string);
 			}
 		}else{
 			if(current_gametype.value == GT_HS)
 				strcpy(gametype, "h&s");
+			else if(current_gametype.value == GT_HZ)
+				strcpy(gametype, "h&z");
 			else
 			strcpy(gametype, g_gametype.string);
 		}

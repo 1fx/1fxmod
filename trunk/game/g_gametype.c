@@ -1161,6 +1161,8 @@ int G_GametypeCommand ( int cmd, int arg0, int arg1, int arg2, int arg3, int arg
 					trap_SendServerCommand( -1, va("print \"%s\n\"", (const char*)arg1));
 				}else if(strstr((const char*)arg1, "[H&S]")){
 					trap_SendServerCommand( -1, va("print \"%s\n\"", (const char*)arg1));
+				}else if(strstr((const char*)arg1, "[H&Z]")){
+					trap_SendServerCommand( -1, va("print \"%s\n\"", (const char*)arg1));
 				}else{
 				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,%s", level.time + 5000, (const char*)arg1 ) );
 				}

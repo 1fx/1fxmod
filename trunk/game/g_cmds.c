@@ -3623,7 +3623,7 @@ qboolean ConsoleCommand( void )
 	// Boe!Man 4/6/11: Check the altmap command prior to the admin loop.
 	if ( Q_stricmp (cmd, "altmap") == 0 )
 	{
-		if(strstr(arg2, "ctf") || strstr(arg2, "inf") || strstr(arg2, "tdm") || strstr(arg2, "dm") || strstr(arg2, "elim") || strstr(arg2, "h&s")){
+		if(strstr(arg2, "ctf") || strstr(arg2, "inf") || strstr(arg2, "tdm") || strstr(arg2, "dm") || strstr(arg2, "elim") || strstr(arg2, "h&s") || strstr(arg2, "h&z")){
 			trap_Cvar_Set( "g_gametype", arg2);
 			trap_Cvar_Update ( &g_gametype );
 		}
