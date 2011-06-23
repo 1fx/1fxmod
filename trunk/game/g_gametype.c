@@ -617,6 +617,8 @@ void G_ResetGametype ( qboolean fullRestart, qboolean cagefight )
 
 	if(current_gametype.value == GT_HZ){
 		level.messagedisplay = qfalse;
+		level.messagedisplay1 = qfalse;
+		level.messagedisplay2 = qfalse;
 	}
 
 	if(current_gametype.value == GT_HS){

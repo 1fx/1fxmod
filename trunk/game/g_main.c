@@ -2693,7 +2693,7 @@ void SetupOutfitting(void)
 }
 
 void Henk_CheckZombie(void){
-	int i;
+	int i, random;
 	gentity_t *ent;
 	if(TeamCount1(TEAM_BLUE) >= 3 && level.messagedisplay1 == qfalse){
 		trap_SendServerCommand(-1, va("print \"^3[H&Z] ^7Zombie team has been unlocked.\n\"") );
@@ -2702,7 +2702,18 @@ void Henk_CheckZombie(void){
 		level.messagedisplay1 = qfalse;
 	}
 
-	if(level.time >= level.gametypeStartTime+10000 && level.messagedisplay == qfalse && level.gametypeStartTime >= 5000){
+	if(level.time >= level.gametypeStartTime+10000 && level.messagedisplay2 == qfalse){
+		random = irand(0, level.numConnectedClients);
+		ent = &g_entities[level.sortedClients[random]];
+		trap_SendServerCommand(-1, va("print \"^3[H&Z] ^7%s suddenly turned into a zombie!\n\"") );
+		trap_SendServerCommand( -1, va("cp \"^%s has turned into a zombie!\n\"", ent->client->pers.netname));
+		// turn into zombie
+		CloneBody(ent, ent->s.number);
+		ent->client->sess.firstzombie = qtrue;
+		level.messagedisplay2 = qtrue;
+	}
+
+	if(level.time >= level.gametypeStartTime+20000 && level.messagedisplay == qfalse && level.gametypeStartTime >= 5000){
 		trap_SendServerCommand(-1, va("print \"^3[H&Z] ^7Shotguns distributed.\n\"") );
 		trap_SendServerCommand( -1, va("cp \"^7%sS%sh%so%st%sg%suns distributed!\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		Boe_GlobalSound( G_SoundIndex("sound/misc/menus/click.wav")); 

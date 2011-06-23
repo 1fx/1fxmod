@@ -360,7 +360,7 @@ void CloneBody( gentity_t *ent, int number )
 	vec3_t		velo;
 	int hitLocation = HL_NONE;
 	vec3_t	direction;
-
+	Henk_CloseSound(ent->r.currentOrigin, G_SoundIndex("sound/misc/events/attack01.mp3"));
 	VectorCopy(direction, vec3_origin);
 	trap_UnlinkEntity (ent);
 
