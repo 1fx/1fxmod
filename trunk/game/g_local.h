@@ -339,7 +339,7 @@ typedef struct
 	int			IgnoredClientCount;
 	qboolean	zombie;
 	int			zombiebody;
-	qboolean	firstzombie;			
+	qboolean	firstzombie;
 } clientSession_t;
 
 // Boe!Man 3/30/10

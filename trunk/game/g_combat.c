@@ -394,14 +394,14 @@ void player_die(
 
 		if ( attacker == self )
 		{
-			if ( mod != MOD_TEAMCHANGE && current_gametype.value != GT_HS)
+			if ( mod != MOD_TEAMCHANGE && current_gametype.value != GT_HS && current_gametype.value != GT_HZ)
 			{
 				G_AddScore( attacker, g_suicidePenalty.integer );
 			}
 		}
 		else if ( OnSameTeam ( self, attacker ) )
 		{
-			if ( mod != MOD_TELEFRAG && current_gametype.value != GT_HS )
+			if ( mod != MOD_TELEFRAG && current_gametype.value != GT_HS && current_gametype.value != GT_HZ )
 			{
 				G_AddScore( attacker, g_teamkillPenalty.integer );
 			}
@@ -1249,7 +1249,7 @@ if(current_gametype.value == GT_HZ && attacker && targ){
 		if(attacker->client->sess.team == TEAM_BLUE && targ->client->sess.team == TEAM_RED){
 			// targ has to die
 			//player_die (targ, targ, attacker, 100000, MOD_TEAMCHANGE, HL_NONE, vec3_origin );
-			G_Damage (targ, NULL, NULL, NULL, NULL, 10000, 0, MOD_POP, HL_HEAD);
+			G_Damage (targ, NULL, NULL, NULL, NULL, 10000, 0, MOD_TEAMCHANGE, HL_HEAD);
 			CloneBody(attacker, targ->s.number);
 			damage = 0;
 			trap_SendServerCommand(-1, va("print \"^3[H&Z] ^7%s was zombified by %s.\n\"", targ->client->pers.netname, attacker->client->pers.netname) );
@@ -1809,18 +1809,6 @@ qboolean G_RadiusDamage (
 				}
 			}
 			// End
-		}else if(current_gametype.value == GT_HZ){
-			if(mod == WP_M67_GRENADE){
-				char *originstr;
-				originstr = va("%.0f %.0f %.0f", origin[0], origin[1], origin[2]+15);
-				AddSpawnField("classname", "fx_play_effect");
-				AddSpawnField("effect", "jon_sam_trail");
-				AddSpawnField("origin", originstr);
-				AddSpawnField("count", "-1");
-				G_SpawnGEntityFromSpawnVars (qtrue);
-
-				G_CreateDamageArea ( origin, attacker, 0.00, radius, 30000, mod );
-			}
 		}
 
 		if (ent == ignore)
@@ -1933,6 +1921,13 @@ qboolean G_RadiusDamage (
 				SnapVector ( tent->s.angles );
 			}
 		}
+	}
+
+	if(current_gametype.value == GT_HZ){
+			if(mod == WP_M67_GRENADE){
+
+				G_CreateDamageArea ( origin, attacker, 0.00, radius, 30000, mod );
+			}
 	}
 
 	if(current_gametype.value == GT_HS){

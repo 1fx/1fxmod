@@ -257,14 +257,40 @@ void Henk_PushArea( gentity_t *ent )
 	vec3_t	dir;
 	vec3_t  fireAngs;
 	float   knockback = 400.0;
+	gentity_t *tent;
+	char *originstr;
+	int i, e;
+	int			entityList[MAX_GENTITIES];
+	int			numListedEntities;
+	vec3_t		mins, maxs;
+	for ( i = 0 ; i < 3 ; i++ )
+	{
+		mins[i] =  ent->r.currentOrigin[i] - ent->splashRadius;
+		maxs[i] =  ent->r.currentOrigin[i] + ent->splashRadius;
+	}
 
-	VectorCopy(ent->client->ps.viewangles, fireAngs);
-	AngleVectors( fireAngs, dir, NULL, NULL );	
-	dir[0] *= -1.0;
-	dir[1] *= -1.0;
-	dir[2] = 0.0;
-	VectorNormalize ( dir );
-	G_ApplyKnockback ( ent, dir, knockback );
+	numListedEntities = trap_EntitiesInBox( mins, maxs, entityList, MAX_GENTITIES );
+
+	for ( e = 0 ; e < numListedEntities ; e++ ) // henk note: Loop through all entities caught in the radius
+	{
+		tent = &g_entities[entityList[ e ]];
+		if(ent && ent->client){
+			VectorCopy(tent->client->ps.viewangles, fireAngs);
+			AngleVectors( fireAngs, dir, NULL, NULL );	
+			dir[0] = 100;
+			dir[1] = 100;
+			dir[2] = 0.0;
+			VectorNormalize ( dir );
+			G_ApplyKnockback ( tent, dir, knockback );
+			originstr = va("%.0f %.0f %.0f", tent->r.currentOrigin[0], tent->r.currentOrigin[1], tent->r.currentOrigin[2]+45);
+			//G_PlayEffect ( G_EffectIndex("effects/explosions/col9_boat_explosion"),origin, angles);
+			AddSpawnField("classname", "1fx_play_effect");
+			AddSpawnField("effect",	"levels/kam_train_sparks");
+			AddSpawnField("origin", originstr);
+			AddSpawnField("wait", "1");
+			AddSpawnField("count", "1");
+		}
+	}
 
 	ent->s.time2--;
 
@@ -273,8 +299,16 @@ void Henk_PushArea( gentity_t *ent )
 		G_FreeEntity ( ent );
 		return;
 	}
+	//levels/kam_train_sparks.efx
+	//levels/hk6_spark_shower
+	originstr = va("%.0f %.0f %.0f", ent->r.currentOrigin[0], ent->r.currentOrigin[1], ent->r.currentOrigin[2]+45);
+	AddSpawnField("classname", "1fx_play_effect");
+	AddSpawnField("effect", "jon_sam_trail");
+	AddSpawnField("origin", originstr);
+	AddSpawnField("count", "1");
+	G_SpawnGEntityFromSpawnVars (qtrue);
 
-	ent->nextthink = level.time + 350;
+	ent->nextthink = level.time + 1000;
 	trap_LinkEntity( ent );
 }
 
@@ -288,12 +322,13 @@ gentity_t* G_CreateDamageArea ( vec3_t origin, gentity_t* attacker, float damage
 	gentity_t	*damageArea;
 
 	damageArea = G_Spawn();
-	
-	damageArea->nextthink = level.time + 350;
-	if(current_gametype.value == GT_HZ && mod == MOD_M67_GRENADE)
+	if(current_gametype.value == GT_HZ && mod == MOD_M67_GRENADE){
+		damageArea->nextthink = level.time + 350;
 		damageArea->think = Henk_PushArea;
-	else
+	}else{
+		damageArea->nextthink = level.time + 350;
 		damageArea->think = G_CauseAreaDamage;
+	}
 
 	damageArea->s.eType = ET_DAMAGEAREA;
 	damageArea->r.svFlags = SVF_USE_CURRENT_ORIGIN;
@@ -342,7 +377,7 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace )
 	d = 0;
 
 	// check for bounce
-	if(current_gametype.value != GT_HS){ // Henk 19/01/10 -> Grenades explode on impact
+	if(current_gametype.value != GT_HS && current_gametype.value != GT_HZ){ // Henk 19/01/10 -> Grenades explode on impact
 		if ( ( ent->s.eFlags & ( EF_BOUNCE | EF_BOUNCE_HALF | EF_BOUNCE_SCALE ) ) ) 
 		{
 			G_BounceMissile( ent, trace );
@@ -436,7 +471,9 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace )
 
 	if ( d && other->client) 
 	{
-		if(current_gametype.value == GT_HS && ent->methodOfDeath == MOD_F1_GRENADE){
+		if(current_gametype.value == GT_HZ && ent->methodOfDeath == MOD_M67_GRENADE){
+
+		}else if(current_gametype.value == GT_HS && ent->methodOfDeath == MOD_F1_GRENADE){
 			vec3_t			org1, org2;
 			trace_t			tr;
 			tr.fraction = 0.0f;
@@ -468,7 +505,9 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace )
 	} 
 	else 
 	{
-		if(current_gametype.value == GT_HS && ent->methodOfDeath == MOD_F1_GRENADE){
+		if(current_gametype.value == GT_HZ && ent->methodOfDeath == MOD_M67_GRENADE){
+
+		}else if(current_gametype.value == GT_HS && ent->methodOfDeath == MOD_F1_GRENADE){
 			vec3_t			org1, org2;
 			trace_t			tr;
 			tr.fraction = 0.0f;

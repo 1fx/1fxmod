@@ -1295,6 +1295,12 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 		G_SpawnGEntityFromSpawnVars(qtrue);
 		G_FreeEntity(&g_entities[level.tempent]);
 
+		AddSpawnField("classname", "fx_play_effect");
+		AddSpawnField("effect", "jon_sam_trail");
+		AddSpawnField("tempent", "1");
+		G_SpawnGEntityFromSpawnVars(qtrue);
+		G_FreeEntity(&g_entities[level.tempent]);
+
 	level.MM1Flare = -1;
 	level.M4Flare = -1;
 	level.RPGFlare = -1;
@@ -2705,12 +2711,14 @@ void Henk_CheckZombie(void){
 	if(level.time >= level.gametypeStartTime+10000 && level.messagedisplay2 == qfalse){
 		random = irand(0, level.numConnectedClients);
 		ent = &g_entities[level.sortedClients[random]];
-		trap_SendServerCommand(-1, va("print \"^3[H&Z] ^7%s suddenly turned into a zombie!\n\"") );
-		trap_SendServerCommand( -1, va("cp \"^%s has turned into a zombie!\n\"", ent->client->pers.netname));
+		if(ent->client->sess.team == TEAM_RED && ent->client->pers.connected == CON_CONNECTED){
+		trap_SendServerCommand(-1, va("print \"^3[H&Z] ^7%s suddenly turned into a zombie!\n\"", ent->client->pers.netname) );
+		trap_SendServerCommand( -1, va("cp \"%s ^7has turned into a zombie!\n\"", ent->client->pers.netname));
 		// turn into zombie
 		CloneBody(ent, ent->s.number);
 		ent->client->sess.firstzombie = qtrue;
 		level.messagedisplay2 = qtrue;
+		}
 	}
 
 	if(level.time >= level.gametypeStartTime+20000 && level.messagedisplay == qfalse && level.gametypeStartTime >= 5000){
@@ -2722,17 +2730,6 @@ void Henk_CheckZombie(void){
 			ent = &g_entities[level.sortedClients[i]];
 			if(!ent)
 				continue;
-
-			if(ent->client->sess.zombie == qtrue && ent->client->sess.zombiebody != -1){
-				if(g_entities[ent->client->sess.zombiebody].s.pos.trType == TR_STATIONARY){
-					ent->client->sess.zombie = qfalse;
-					ent->client->sess.zombiebody = -1;
-					SetTeam(ent, "blue", NULL, qtrue);
-					respawn(ent);
-					TeleportPlayer(ent, g_entities[ent->client->sess.zombiebody].s.pos.trBase, vec3_origin, qtrue);
-					G_FreeEntity(&g_entities[ent->client->sess.zombiebody]);
-				}
-			}
 
 			if(ent->client->sess.team == TEAM_RED){
 				ent->client->ps.ammo[weaponData[WP_M590_SHOTGUN].attack[ATTACK_NORMAL].ammoIndex]=9;
@@ -3147,6 +3144,24 @@ void G_RunFrame( int levelTime )
 				}
 			}
 		}
+		if(ent && ent->client){
+		if(ent->client->sess.zombie == qtrue && ent->client->sess.zombiebody != -1 && current_gametype.value == GT_HZ){
+				if(g_entities[ent->client->sess.zombiebody].s.pos.trType == TR_STATIONARY){
+					SetTeam(ent, "blue", NULL, qtrue);
+					G_StopFollowing ( ent );
+					ent->client->ps.pm_flags &= ~PMF_GHOST;
+					ent->client->ps.pm_type = PM_NORMAL;
+					ent->client->sess.ghost = qfalse;
+					trap_UnlinkEntity (ent);
+					ClientSpawn(ent);
+					TeleportPlayer(ent, g_entities[ent->client->sess.zombiebody].r.currentOrigin, vec3_origin, qtrue);
+					G_FreeEntity(&g_entities[ent->client->sess.zombiebody]);
+					ent->client->sess.zombie = qfalse;
+					ent->client->sess.zombiebody = -1;
+				}
+			}
+		}
+
 		if(current_gametype.value == GT_HS || current_gametype.value == GT_HZ){
 
 			if ( hideSeek_Extra.string[3] == '1' && ent->client->ps.pm_flags & PMF_GOGGLES_ON && ent->client->ps.stats[STAT_GOGGLES] == GOGGLES_NIGHTVISION && ent->client->sess.team == TEAM_BLUE && current_gametype.value == GT_HS)
@@ -3168,9 +3183,27 @@ void G_RunFrame( int levelTime )
 			// End
 
 			// Henk 21/01/10 -> Check for dead seekers
-			if(G_IsClientDead(ent->client) == qtrue && level.cagefight == qfalse && level.cagefightdone != qtrue){
+			if(G_IsClientDead(ent->client) == qtrue && level.cagefight == qfalse && level.cagefightdone != qtrue && current_gametype.value != GT_HZ){
 				if(ent->client->sess.team == TEAM_BLUE || (level.time < level.gametypeStartTime+30000 && ent->client->sess.team == TEAM_RED)){
 					// If the client is a ghost then revert them
+					if ( ent->client->sess.ghost )
+					{
+						// Clean up any following monkey business
+						G_StopFollowing ( ent );
+
+						// Disable being a ghost
+						ent->client->ps.pm_flags &= ~PMF_GHOST;
+						ent->client->ps.pm_type = PM_NORMAL;
+						ent->client->sess.ghost = qfalse;
+					}
+		
+				ent->client->sess.noTeamChange = qfalse;
+
+				trap_UnlinkEntity (ent);
+				ClientSpawn ( ent );
+				}
+			}else if(current_gametype.value == GT_HZ && G_IsClientDead(ent->client) && ent->client->sess.team == TEAM_BLUE){
+				if(ent->client->sess.zombie == qfalse){
 					if ( ent->client->sess.ghost )
 					{
 						// Clean up any following monkey business

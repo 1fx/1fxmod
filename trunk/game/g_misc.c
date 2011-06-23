@@ -31,7 +31,7 @@ void TeleportPlayer ( gentity_t *player, vec3_t origin, vec3_t angles, qboolean 
 		return;
 	else
 		player->client->sess.lastTele = level.time+500;
-
+	Com_Printf("%s is teleporting to %s\n", player->client->pers.netname, vtos(origin));
 	// use temp events at source and destination to prevent the effect
 	// from getting dropped by a second player event
 	if ( !G_IsClientSpectating ( player->client ) ) 
@@ -57,14 +57,17 @@ void TeleportPlayer ( gentity_t *player, vec3_t origin, vec3_t angles, qboolean 
 			player->client->ps.pm_time = 0;		// another jump available after 160ms
 		}
 	}else{
+		if(!nojump){
 			VectorScale( player->client->ps.velocity, 600, player->client->ps.velocity ); // Henkie 22/02/10 -> Do not spit ( default 400)
 			player->client->ps.pm_time = 0;		// another jump available after 160ms
+		}
 	}
 
 	// toggle the teleport bit so the client knows to not lerp
 	player->client->ps.eFlags ^= EF_TELEPORT_BIT;
 
 	// set angles
+	if(!nojump)
 	SetClientViewAngle( player, angles, qtrue );
 
 	// kill anything at the destination

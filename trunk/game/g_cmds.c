@@ -1124,7 +1124,7 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 		}
 
 		if(!forced && current_gametype.value == GT_HZ){
-			if(TeamCount1(TEAM_BLUE) < 3){
+			if(TeamCount1(TEAM_BLUE) < 3 && team == TEAM_BLUE){
 			trap_SendServerCommand ( client - &level.clients[0], "print\"^3[H&Z] ^7Zombie team is locked.\n\"" );
 			return;
 			}
@@ -3244,8 +3244,8 @@ void ClientCommand( int clientNum ) {
 		RPM_Tcmd( ent );
 	else if (Q_stricmp (cmd, "ref") == 0)
 		RPM_ref_cmd( ent );
-	//else if (Q_stricmp (cmd, "henk_test") == 0){
-		//CloneBody (ent, ent->s.number);
+	//else if (Q_stricmp (cmd, "henk_test") == 0)
+		
 	//else if (Q_stricmp (cmd, "henk_test") == 0){
 	//	trap_Argv( 1, cmd, sizeof( cmd ) );
 	//	DropRandom(ent, atoi(cmd));
