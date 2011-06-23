@@ -484,12 +484,9 @@ void G_ResetGametype ( qboolean fullRestart, qboolean cagefight )
 			{
 				continue;
 			}
-				
-			if ( other->client->pers.connected != CON_CONNECTED )
-			{
-				continue;
-			}
-
+			other->client->sess.zombie = qfalse;
+			other->client->sess.zombiebody = -1;
+			other->client->sess.firstzombie = qfalse;
 			SetTeam(other, "red", NULL, qtrue);
 		}
 	}
@@ -1005,11 +1002,14 @@ void CheckGametype ( void )
 						trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s is the last alive player in the red team.\n\"", ent->client->pers.netname));
 						Boe_ClientSound(ent, G_SoundIndex("sound/misc/events/tut_door01.mp3"));
 						level.redMsgCount++;
+						if(current_gametype.value == GT_HZ){
+							trap_SendServerCommand(-1, va("print\"^3[Debug] ^7%s should get the M67 at the next round...\n\"", ent->client->pers.netname));
+						}
 				}
 			}
 		}
 
-		if(alive[TEAM_BLUE] == 1 && level.blueMsgCount == 0 && players[TEAM_BLUE] >= 2 && current_gametype.value != GT_HS){
+		if(alive[TEAM_BLUE] == 1 && level.blueMsgCount == 0 && players[TEAM_BLUE] >= 2 && current_gametype.value != GT_HS && current_gametype.value != GT_HZ){
 			for ( i = 0; i < level.numConnectedClients; i ++ ){
 				gentity_t* ent = &g_entities[level.sortedClients[i]];
 				if ( ent->client->sess.team == TEAM_BLUE && alive[TEAM_BLUE] == 1 &&

@@ -1,6 +1,7 @@
 // Copyright (C) 2001-2002 Raven Software
 //
 #include "g_local.h"
+#include "boe_local.h"
 
 int G_MultipleDamageLocations(int hitLocation);
 
@@ -251,6 +252,32 @@ void G_CauseAreaDamage( gentity_t *ent )
 	trap_LinkEntity( ent );
 }
 
+void Henk_PushArea( gentity_t *ent ) 
+{
+	vec3_t	dir;
+	vec3_t  fireAngs;
+	float   knockback = 400.0;
+
+	VectorCopy(ent->client->ps.viewangles, fireAngs);
+	AngleVectors( fireAngs, dir, NULL, NULL );	
+	dir[0] *= -1.0;
+	dir[1] *= -1.0;
+	dir[2] = 0.0;
+	VectorNormalize ( dir );
+	G_ApplyKnockback ( ent, dir, knockback );
+
+	ent->s.time2--;
+
+	if ( ent->s.time2 <= 0 )
+	{	
+		G_FreeEntity ( ent );
+		return;
+	}
+
+	ent->nextthink = level.time + 350;
+	trap_LinkEntity( ent );
+}
+
 /*
 ================
 G_CreateDamageArea
@@ -263,7 +290,11 @@ gentity_t* G_CreateDamageArea ( vec3_t origin, gentity_t* attacker, float damage
 	damageArea = G_Spawn();
 	
 	damageArea->nextthink = level.time + 350;
-	damageArea->think = G_CauseAreaDamage;
+	if(current_gametype.value == GT_HZ && mod == MOD_M67_GRENADE)
+		damageArea->think = Henk_PushArea;
+	else
+		damageArea->think = G_CauseAreaDamage;
+
 	damageArea->s.eType = ET_DAMAGEAREA;
 	damageArea->r.svFlags = SVF_USE_CURRENT_ORIGIN;
 	damageArea->parent = attacker;

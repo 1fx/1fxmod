@@ -424,6 +424,10 @@ void player_die(
 				}
 			}else
 			G_AddScore( attacker, 1 );
+
+			if(attacker->client->sess.team == TEAM_BLUE && self->client->sess.team == TEAM_RED && current_gametype.value == GT_HZ){
+				attacker->client->sess.deaths++;
+			}else
 			attacker->client->sess.kills++;
 			attacker->client->pers.statinfo.killsinarow++;
 			// Boe!Man 6/2/10: Add it to our own stats list.
@@ -439,7 +443,7 @@ void player_die(
 			}
 		}
 	}
-	else if ( mod != MOD_TEAMCHANGE )
+	else if ( mod != MOD_TEAMCHANGE && current_gametype.value != GT_HZ )
 	{
 		G_AddScore( self, g_suicidePenalty.integer );
 	}
@@ -1805,7 +1809,20 @@ qboolean G_RadiusDamage (
 				}
 			}
 			// End
+		}else if(current_gametype.value == GT_HZ){
+			if(mod == WP_M67_GRENADE){
+				char *originstr;
+				originstr = va("%.0f %.0f %.0f", origin[0], origin[1], origin[2]+15);
+				AddSpawnField("classname", "fx_play_effect");
+				AddSpawnField("effect", "jon_sam_trail");
+				AddSpawnField("origin", originstr);
+				AddSpawnField("count", "-1");
+				G_SpawnGEntityFromSpawnVars (qtrue);
+
+				G_CreateDamageArea ( origin, attacker, 0.00, radius, 30000, mod );
+			}
 		}
+
 		if (ent == ignore)
 		{
 			continue;

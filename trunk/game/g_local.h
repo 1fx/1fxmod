@@ -184,9 +184,6 @@ struct gentity_s
 	int			score;
 	char		*broadcast;
 	char		*effect_touch;
-
-	qboolean	zombie;
-	int			zombifie;
 };
 
 typedef struct gspawn_s
@@ -340,6 +337,9 @@ typedef struct
 	int			fpschecks;
 	int			IgnoredClients[33];
 	int			IgnoredClientCount;
+	qboolean	zombie;
+	int			zombiebody;
+	qboolean	firstzombie;			
 } clientSession_t;
 
 // Boe!Man 3/30/10

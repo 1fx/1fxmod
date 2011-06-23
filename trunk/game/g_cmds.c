@@ -1123,6 +1123,13 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 			}
 		}
 
+		if(!forced && current_gametype.value == GT_HZ){
+			if(TeamCount1(TEAM_BLUE) < 3){
+			trap_SendServerCommand ( client - &level.clients[0], "print\"^3[H&Z] ^7Zombie team is locked.\n\"" );
+			return;
+			}
+		}
+
 		if ( g_teamForceBalance.integer && forced == qfalse || current_gametype.value == GT_HS && forced == qfalse ) 
 		{
 			int		counts[TEAM_NUM_TEAMS];
@@ -1350,6 +1357,12 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 		if ( (level.gametypeJoinTime && (level.time - level.gametypeJoinTime) > 20000) || noOutfittingChange || client->sess.noTeamChange )
 		{
 			ghost = qtrue;
+		}
+
+		if(current_gametype.value == GT_HZ){
+			if(level.gametypeJoinTime && (level.time - level.gametypeJoinTime) > 10000){
+				ghost = qtrue;
+			}
 		}
 
 		// Spectator to a team doesnt count

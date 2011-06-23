@@ -143,6 +143,7 @@ int Pickup_Weapon (gentity_t *ent, gentity_t *other, qboolean* autoswitch )
 	}
 
 	// Call add ammo with 0 ammo to force it to cap it at max
+	if(current_gametype.value != GT_HZ)
 	Add_Ammo( other, weaponData[weaponNum].attack[ATTACK_NORMAL].ammoIndex, 0 );
 
 	if ( hasAltAmmo )

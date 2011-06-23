@@ -294,7 +294,7 @@ void DropRandom( gentity_t *ent, int zombies){
       {   WP_MM1_GRENADE_LAUNCHER,   WP_RPG7_LAUNCHER,      0,         },   //group 6
    };
 
-	trap_SendServerCommand(-1, va("print \"^3[Debug] ^7Spawning random weapon with %i zombies.\n\"", zombies) );
+	//trap_SendServerCommand(-1, va("print \"^3[Debug] ^7Spawning random weapon with %i zombies.\n\"", zombies) );
 
    if(zombies >= 1 && zombies <= 2){
 	   DropGroup = 0;
@@ -340,7 +340,7 @@ void DropRandom( gentity_t *ent, int zombies){
    else
 	  random = irand(0, 2); // randomize between 3 weapons 
 
-   Com_Printf("Random: %i\n", random);
+   //Com_Printf("Random: %i\n", random);
 
 	item = BG_FindWeaponItem ((weapon_t)weaponGroups[group][random]);
 	dropped = G_DropItem2(ent->r.currentOrigin, vec3_origin, item);
@@ -348,7 +348,7 @@ void DropRandom( gentity_t *ent, int zombies){
 	//dropped->count += ((2<<8) & 0xFF00);
 	//dropped->count += ((1 << 16) & 0xFF0000 );
 	//dropped->count += ((2 << 24) & 0xFF000000 );
-	trap_SendServerCommand(-1, va("print \"^3[Debug] ^7%s spawned.\n\"", item->pickup_name) );
+	//trap_SendServerCommand(-1, va("print \"^3[Debug] ^7%s spawned.\n\"", item->pickup_name) );
 }
 
 
@@ -388,8 +388,8 @@ void CloneBody( gentity_t *ent, int number )
 	body->physicsObject		= qtrue;
 	body->physicsBounce		= 0;
 	body->s.otherEntityNum  = ent->s.clientNum;
-	body->zombie = qtrue;
-	body->zombifie = number;
+	g_entities[number].client->sess.zombie = qtrue;
+	g_entities[number].client->sess.zombiebody = body->s.number;
 	
 	//if ( body->s.groundEntityNum == ENTITYNUM_NONE )
 	VectorCopy(ent->client->ps.velocity, velo);

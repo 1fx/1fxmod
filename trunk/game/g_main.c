@@ -2695,6 +2695,13 @@ void SetupOutfitting(void)
 void Henk_CheckZombie(void){
 	int i;
 	gentity_t *ent;
+	if(TeamCount1(TEAM_BLUE) >= 3 && level.messagedisplay1 == qfalse){
+		trap_SendServerCommand(-1, va("print \"^3[H&Z] ^7Zombie team has been unlocked.\n\"") );
+		level.messagedisplay1 = qtrue;
+	}else if(TeamCount1(TEAM_BLUE) < 3 && level.messagedisplay1 == qtrue){
+		level.messagedisplay1 = qfalse;
+	}
+
 	if(level.time >= level.gametypeStartTime+10000 && level.messagedisplay == qfalse && level.gametypeStartTime >= 5000){
 		trap_SendServerCommand(-1, va("print \"^3[H&Z] ^7Shotguns distributed.\n\"") );
 		trap_SendServerCommand( -1, va("cp \"^7%sS%sh%so%st%sg%suns distributed!\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
@@ -2704,6 +2711,17 @@ void Henk_CheckZombie(void){
 			ent = &g_entities[level.sortedClients[i]];
 			if(!ent)
 				continue;
+
+			if(ent->client->sess.zombie == qtrue && ent->client->sess.zombiebody != -1){
+				if(g_entities[ent->client->sess.zombiebody].s.pos.trType == TR_STATIONARY){
+					ent->client->sess.zombie = qfalse;
+					ent->client->sess.zombiebody = -1;
+					SetTeam(ent, "blue", NULL, qtrue);
+					respawn(ent);
+					TeleportPlayer(ent, g_entities[ent->client->sess.zombiebody].s.pos.trBase, vec3_origin, qtrue);
+					G_FreeEntity(&g_entities[ent->client->sess.zombiebody]);
+				}
+			}
 
 			if(ent->client->sess.team == TEAM_RED){
 				ent->client->ps.ammo[weaponData[WP_M590_SHOTGUN].attack[ATTACK_NORMAL].ammoIndex]=9;
@@ -3028,19 +3046,6 @@ void G_RunFrame( int levelTime )
 		if ( !ent->inuse )
 		{
 			continue;
-		}
-
-		if(current_gametype.value == GT_HZ){
-			if(ent && ent->zombie == qtrue && ent->s.pos.trType == TR_STATIONARY){
-				if(&g_entities[ent->zombifie]){
-					ent->zombie = qfalse;
-					SetTeam(&g_entities[ent->zombifie], "blue", NULL, qtrue);
-					respawn(&g_entities[ent->zombifie]);
-					TeleportPlayer(&g_entities[ent->zombifie], ent->s.pos.trBase, g_entities[ent->zombifie].client->ps.viewangles, qtrue);
-					G_FreeEntity(ent);
-				continue;
-				}
-			}
 		}
 		
 		// clear events that are too old
