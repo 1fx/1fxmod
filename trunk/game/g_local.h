@@ -340,6 +340,7 @@ typedef struct
 	qboolean	zombie;
 	int			zombiebody;
 	qboolean	firstzombie;
+	int			lastpush;
 } clientSession_t;
 
 // Boe!Man 3/30/10
@@ -715,6 +716,7 @@ typedef struct
 	qboolean	messagedisplay1;
 	qboolean	messagedisplay2;
 	int			zombie;
+	int			zombietime;
 
 	// Henk 26/01/10 -> Current RPG/M4/MM1 holders
 	char		RPGloc[64];
@@ -1001,6 +1003,7 @@ qboolean	G_IsClientDead					( gclient_t* client );
 void		G_ClientCleanName				( const char *in, char *out, int outSize, qboolean colors );
 int			TeamCount						( int ignoreClientNum, team_t team, int* alive );
 int			TeamCount1						(team_t team);
+int			TeamCountAlive					(team_t team);
 int			G_GhostCount					( team_t team );
 team_t		PickTeam						( int ignoreClientNum );
 void		SetClientViewAngle				( gentity_t *ent, vec3_t angle, qboolean teleport );

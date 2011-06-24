@@ -696,6 +696,23 @@ int TeamCount1(team_t team)
 	return count;
 }
 
+int TeamCountAlive(team_t team) 
+{
+	int		i;
+	int		count = 0;
+
+	for ( i = 0 ; i < level.maxclients ; i++ ) 
+	{
+		if ( level.clients[i].sess.team == team && G_IsClientDead(&level.clients[i])) 
+		{
+
+			count++;
+		}
+	}
+
+	return count;
+}
+
 /*
 ================
 PickTeam

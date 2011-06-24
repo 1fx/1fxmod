@@ -115,8 +115,12 @@ void G_ExplodeMissile( gentity_t *ent ) {
 		if(ent->r.currentOrigin[2] > ent->parent->r.currentOrigin[2]){
 			G_AddEvent( ent, EV_MISSILE_MISS, (DirToByte( dir ) << MATERIAL_BITS) | MATERIAL_NONE);
 		}
-	}else
+	}else{
+		if(current_gametype.value == GT_HZ && ent->methodOfDeath == MOD_M67_GRENADE){
+
+		}else
 	G_AddEvent( ent, EV_MISSILE_MISS, (DirToByte( dir ) << MATERIAL_BITS) | MATERIAL_NONE);
+	}
 
 	ent->freeAfterEvent = qtrue;
 
@@ -256,7 +260,7 @@ void Henk_PushArea( gentity_t *ent )
 {
 	vec3_t	dir;
 	vec3_t  fireAngs;
-	float   knockback = 400.0;
+	float   knockback = 200.0;
 	gentity_t *tent;
 	char *originstr;
 	int i, e;
@@ -274,21 +278,26 @@ void Henk_PushArea( gentity_t *ent )
 	for ( e = 0 ; e < numListedEntities ; e++ ) // henk note: Loop through all entities caught in the radius
 	{
 		tent = &g_entities[entityList[ e ]];
-		if(ent && ent->client){
-			VectorCopy(tent->client->ps.viewangles, fireAngs);
-			AngleVectors( fireAngs, dir, NULL, NULL );	
-			dir[0] = 100;
-			dir[1] = 100;
-			dir[2] = 0.0;
-			VectorNormalize ( dir );
-			G_ApplyKnockback ( tent, dir, knockback );
-			originstr = va("%.0f %.0f %.0f", tent->r.currentOrigin[0], tent->r.currentOrigin[1], tent->r.currentOrigin[2]+45);
-			//G_PlayEffect ( G_EffectIndex("effects/explosions/col9_boat_explosion"),origin, angles);
-			AddSpawnField("classname", "1fx_play_effect");
-			AddSpawnField("effect",	"levels/kam_train_sparks");
-			AddSpawnField("origin", originstr);
-			AddSpawnField("wait", "1");
-			AddSpawnField("count", "1");
+		if(tent && tent->client){
+			if(level.time >= tent->client->sess.lastpush && tent->client->sess.team == TEAM_BLUE){
+				VectorCopy(tent->client->ps.viewangles, fireAngs);
+				AngleVectors( fireAngs, dir, NULL, NULL );	
+				dir[0] *= -1.0;
+				dir[1] *= -1.0;
+				dir[2] = 0.0;
+				Com_Printf("test\n");
+				VectorNormalize ( dir );
+				G_ApplyKnockback ( tent, dir, knockback );
+				originstr = va("%.0f %.0f %.0f", tent->r.currentOrigin[0], tent->r.currentOrigin[1], tent->r.currentOrigin[2]+45);
+				G_PlayEffect ( G_EffectIndex("levels/kam_train_sparks"),tent->r.currentOrigin, vec3_origin);
+				//AddSpawnField("classname", "1fx_play_effect");
+				//AddSpawnField("effect",	"levels/kam_train_sparks");
+				//AddSpawnField("origin", originstr);
+				//AddSpawnField("wait", "1");
+				//AddSpawnField("count", "1");
+				//G_SpawnGEntityFromSpawnVars (qtrue);
+				tent->client->sess.lastpush = level.time+500;
+			}
 		}
 	}
 
@@ -306,9 +315,10 @@ void Henk_PushArea( gentity_t *ent )
 	AddSpawnField("effect", "jon_sam_trail");
 	AddSpawnField("origin", originstr);
 	AddSpawnField("count", "1");
+	AddSpawnField("wait", "3");
 	G_SpawnGEntityFromSpawnVars (qtrue);
 
-	ent->nextthink = level.time + 1000;
+	ent->nextthink = level.time + 500;
 	trap_LinkEntity( ent );
 }
 

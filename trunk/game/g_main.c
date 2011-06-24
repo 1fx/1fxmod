@@ -1301,6 +1301,11 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 		G_SpawnGEntityFromSpawnVars(qtrue);
 		G_FreeEntity(&g_entities[level.tempent]);
 
+		AddSpawnField("classname", "fx_play_effect");
+		AddSpawnField("effect", "effects/levels/hk6_spark_shower");
+		AddSpawnField("tempent", "1");
+		G_SpawnGEntityFromSpawnVars(qtrue);
+		G_FreeEntity(&g_entities[level.tempent]);
 	level.MM1Flare = -1;
 	level.M4Flare = -1;
 	level.RPGFlare = -1;
@@ -2708,24 +2713,33 @@ void Henk_CheckZombie(void){
 		level.messagedisplay1 = qfalse;
 	}
 
-	if(level.time >= level.gametypeStartTime+5000 && level.zombie == -1 && level.time <= level.gametypeStartTime+10000){
-		random = irand(0, level.numConnectedClients);
-		ent = &g_entities[level.sortedClients[random]];
-		if(ent->client->sess.team == TEAM_RED && ent->client->pers.connected == CON_CONNECTED){
-		level.zombie = ent->s.number;
-		trap_SendServerCommand( ent->s.number, va("cp \"You will turn into a zombie in 5 seconds!\n\""));
+	if(level.time >= level.gametypeStartTime+5000 && TeamCount1(TEAM_RED) >= 2){
+		if(TeamCount1(TEAM_BLUE) == 0 && TeamCount1(TEAM_RED) >= 1 && level.messagedisplay2 == qtrue){
+			level.zombie = -1;
+			level.messagedisplay2 = qfalse;
+		}
+		if(level.zombie == -1 && TeamCount1(TEAM_BLUE) == 0 && level.time >= level.zombietime+10000){
+			random = irand(0, level.numConnectedClients);
+			ent = &g_entities[level.sortedClients[random]];
+			if(ent->client->sess.team == TEAM_RED && ent->client->pers.connected == CON_CONNECTED && !G_IsClientDead(g_entities[level.zombie].client)){
+				level.zombie = ent->s.number;
+				level.zombietime = level.time+5000;
+				trap_SendServerCommand( ent->s.number, va("cp \"You will turn into a zombie in 5 seconds!\n\""));
+			}
 		}
 	}
 
-	if(level.time >= level.gametypeStartTime+10000 && level.messagedisplay2 == qfalse){
+	if(level.time >= level.zombietime && level.messagedisplay2 == qfalse && TeamCount1(TEAM_RED) >= 2 && TeamCount1(TEAM_BLUE) == 0){
 		if(level.zombie != -1){
-			trap_SendServerCommand(-1, va("print \"^3[H&Z] ^7%s suddenly turned into a zombie!\n\"", ent->client->pers.netname) );
-			trap_SendServerCommand( -1, va("cp \"%s ^7has turned into a zombie!\n\"", ent->client->pers.netname));
-			// turn into zombie
-			CloneBody(ent, ent->s.number);
-			ent->client->sess.firstzombie = qtrue;
-			level.messagedisplay2 = qtrue;
-			level.zombie = -1;
+			if(g_entities[level.zombie].client->sess.team != TEAM_SPECTATOR && !G_IsClientDead(g_entities[level.zombie].client)){
+				trap_SendServerCommand(-1, va("print \"^3[H&Z] ^7%s suddenly turned into a zombie!\n\"", g_entities[level.zombie].client->pers.netname) );
+				trap_SendServerCommand( -1, va("cp \"%s ^7has turned into a zombie!\n\"", g_entities[level.zombie].client->pers.netname));
+				// turn into zombie
+				CloneBody(&g_entities[level.zombie], g_entities[level.zombie].s.number);
+				g_entities[level.zombie].client->sess.firstzombie = qtrue;
+				level.messagedisplay2 = qtrue;
+				level.zombie = -1;
+			}
 		}
 	}
 
@@ -3152,9 +3166,12 @@ void G_RunFrame( int levelTime )
 				}
 			}
 		}
-		if(ent && ent->client){
+
 		if(ent->client->sess.zombie == qtrue && ent->client->sess.zombiebody != -1 && current_gametype.value == GT_HZ){
 				if(g_entities[ent->client->sess.zombiebody].s.pos.trType == TR_STATIONARY){
+					vec3_t temp;
+					//trap_SendServerCommand(-1, va("print\"^3[Debug] ^7Teleport angles: %s.\n\"", vtos(ent->client->ps.viewangles)));
+					VectorCopy(ent->client->ps.viewangles, temp);
 					SetTeam(ent, "blue", NULL, qtrue);
 					G_StopFollowing ( ent );
 					ent->client->ps.pm_flags &= ~PMF_GHOST;
@@ -3162,15 +3179,15 @@ void G_RunFrame( int levelTime )
 					ent->client->sess.ghost = qfalse;
 					trap_UnlinkEntity (ent);
 					ClientSpawn(ent);
-					TeleportPlayer(ent, g_entities[ent->client->sess.zombiebody].r.currentOrigin, vec3_origin, qtrue);
+					//trap_SendServerCommand(-1, va("print\"^3[Debug] ^7Teleport angles: %s.\n\"", vtos(temp)));
+					TeleportPlayer(ent, g_entities[ent->client->sess.zombiebody].r.currentOrigin, temp, qtrue);
 					//G_FreeEntity(&g_entities[ent->client->sess.zombiebody]);
-					g_entities[ent->client->sess.zombiebody].nextthink = level.time+2000;
+					g_entities[ent->client->sess.zombiebody].nextthink = level.time+1000;
 					g_entities[ent->client->sess.zombiebody].think = G_FreeEntity;
 					ent->client->sess.zombie = qfalse;
 					ent->client->sess.zombiebody = -1;
 				}
 			}
-		}
 
 		if(current_gametype.value == GT_HS || current_gametype.value == GT_HZ){
 

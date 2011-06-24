@@ -484,6 +484,10 @@ void G_ResetGametype ( qboolean fullRestart, qboolean cagefight )
 			{
 				continue;
 			}
+			if ( other->client->sess.team == TEAM_SPECTATOR )
+			{
+				continue;
+			}
 			other->client->sess.zombie = qfalse;
 			other->client->sess.zombiebody = -1;
 			other->client->sess.firstzombie = qfalse;
@@ -496,6 +500,7 @@ void G_ResetGametype ( qboolean fullRestart, qboolean cagefight )
 	//memset(level.deadClients, 0, sizeof(level.deadClients)); // reset
 	level.cagefight = qfalse;
 	level.aetdone = qfalse;
+	level.zombie = -1;
 	level.cagefighttimer = 0;
 	trap_Cvar_VariableStringBuffer ( "mapname", level.mapname, MAX_QPATH );
 	// Cant have a 0 roundtimelimit
@@ -1024,13 +1029,13 @@ void CheckGametype ( void )
 			}
 		}
 
-		if(current_gametype.value == GT_HZ && alive[TEAM_RED] == 0){
+		if(current_gametype.value == GT_HZ && alive[TEAM_RED] == 0 && TeamCount1(TEAM_RED)+TeamCount1(TEAM_BLUE) >= 2){
 			trap_GT_SendEvent ( GTEV_TEAM_ELIMINATED, level.time, TEAM_RED, 0, 0, 0, 0 );
 		}
 
 		// If everyone is dead on a team then reset the gametype, but only if 
 		// there was someone on that team to begin with.
-		if ( !alive[TEAM_RED] && dead[TEAM_RED] )
+		if ( !alive[TEAM_RED] && dead[TEAM_RED] && current_gametype.value != GT_HZ )
 		{	
 			if(level.timelimithit == qtrue && level.cagefight != qtrue && (strstr(g_gametype.string, "inf") || strstr(g_gametype.string, "elim"))){
 				gentity_t*	tent;

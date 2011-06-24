@@ -692,13 +692,13 @@ void player_die(
 	// the location that was hit
 	if ( hitLocation & HL_DISMEMBERBIT )
 	{
-		if(current_gametype.value == GT_HZ && self->client->sess.team == TEAM_RED){
+		if(current_gametype.value == GT_HZ && self->client->sess.team == TEAM_RED && mod == MOD_TEAMCHANGE){
 	}else
 		CopyToBodyQue (self, hitLocation & (~HL_DISMEMBERBIT), hitDir );
 	}
 	else
 	{
-		if(current_gametype.value == GT_HZ && self->client->sess.team == TEAM_RED){
+		if(current_gametype.value == GT_HZ && self->client->sess.team == TEAM_RED && mod == MOD_TEAMCHANGE){
 		}else
 		CopyToBodyQue (self, HL_NONE, hitDir );
 	}
@@ -754,7 +754,7 @@ void G_ApplyKnockback( gentity_t *targ, vec3_t newDir, float knockback )
 {
 	vec3_t	kvel;
 	float	mass;
-
+	
 	if ( targ->physicsBounce > 0 )	//overide the mass
 		mass = targ->physicsBounce;
 	else
@@ -1246,7 +1246,7 @@ int G_Damage (
 		}
 	}
 } // End H&S stuff
-if(current_gametype.value == GT_HZ && attacker && targ){
+if(current_gametype.value == GT_HZ && attacker && targ && mod == MOD_KNIFE){
 	if(attacker->client && targ->client){
 		if(attacker->client->sess.team == TEAM_BLUE && targ->client->sess.team == TEAM_RED){
 			// targ has to die
