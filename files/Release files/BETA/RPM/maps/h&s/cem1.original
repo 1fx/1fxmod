@@ -1,0 +1,312 @@
+{
+"classname" "worldspawn"
+"message" "&LEVELNAMES_CEM1"
+}
+{
+"model" "*1"
+"classname" "trigger_multiple"
+"target" "go_part4"
+"spawnflags" "1"
+}
+{
+"model" "*2"
+"classname" "func_static"
+"origin" "3536 2416 988"
+"parent" "1"
+"ICARUSname" "jets"
+"targetname" "jets"
+}
+{
+"model" "*3"
+"classname" "door_sliding"
+"targetname" "garagedoor"
+"angles" "-90 0 0"
+}
+{
+"model" "*4"
+"classname" "trigger_multiple"
+"spawnflags" "1"
+"target" "t1"
+}
+{
+"classname" "info_notnull"
+"origin" "2628 -780 68"
+"targetname" "guard01_die"
+}
+{
+"classname" "info_notnull"
+"origin" "2624 -452 28"
+"targetname" "guard_nav1"
+}
+{
+"classname" "info_notnull"
+"origin" "4416 3880 156"
+"targetname" "michaels_ground"
+}
+{
+"classname" "info_notnull"
+"origin" "4300 4316 164"
+"targetname" "mullins_nav1"
+}
+{
+"classname" "info_notnull"
+"targetname" "sam_nav1"
+"origin" "4348 4284 164"
+}
+{
+"classname" "info_notnull"
+"origin" "4404 4300 164"
+"targetname" "michaels_nav1"
+}
+{
+"classname" "info_notnull"
+"targetname" "sam_ground"
+"origin" "4396 3876 120"
+}
+{
+"classname" "info_notnull"
+"origin" "4406 3862 88"
+"targetname" "mullins_ground"
+}
+{
+"classname" "info_notnull"
+"origin" "4468 4356 164"
+"targetname" "mib1_nav1"
+}
+{
+"classname" "info_notnull"
+"targetname" "guard_nav2"
+"origin" "2376 -452 28"
+}
+{
+"classname" "info_notnull"
+"targetname" "guard02_die"
+"origin" "2100 -508 364"
+}
+{
+"classname" "info_notnull"
+"origin" "4244 3728 164"
+"targetname" "priest_nav1"
+}
+{
+"classname" "info_notnull"
+"targetname" "priest_nav2"
+"origin" "4408 3608 164"
+}
+{
+"classname" "info_notnull"
+"origin" "3792 3688 164"
+"targetname" "civ2_nav1"
+}
+{
+"classname" "info_notnull"
+"targetname" "civ1_nav1"
+"origin" "3792 3760 164"
+}
+{
+"classname" "info_notnull"
+"targetname" "newguard_nav1"
+"origin" "2624 -516 28"
+}
+{
+"classname" "info_notnull"
+"origin" "2376 -516 28"
+"targetname" "newguard_nav2"
+}
+{
+"classname" "info_notnull"
+"targetname" "priestlook"
+"origin" "4316 3808 292"
+}
+{
+"classname" "info_notnull"
+"targetname" "michaelslookright"
+"origin" "4804 4212 164"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"origin" "4288 2952 372"
+"angles" "0 360 0"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"origin" "1696 2200 336"
+"angles" "0 360 0"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"origin" "2076 2460 364"
+"angles" "0 360 0"
+}
+{
+"classname" "client_model"
+"origin" "1524 2720 364"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"angles" "0 45 0"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"origin" "5144 3516 376"
+"angles" "0 225 0"
+}
+{
+"classname" "client_model"
+"origin" "5672 5028 404"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"angles" "0 360 0"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"origin" "5664 5652 476"
+"angles" "0 45 0"
+}
+{
+"classname" "client_model"
+"origin" "5416 4712 352"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"angles" "0 45 0"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"origin" "6104 5372 380"
+"angles" "0 270 0"
+}
+{
+"classname" "client_model"
+"origin" "6108 6044 504"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"angles" "0 360 0"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"origin" "6152 4724 368"
+"angles" "0 180 0"
+}
+{
+"classname" "client_model"
+"origin" "5516 6164 556"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"angles" "0 180 0"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"origin" "5048 6072 544"
+"angles" "0 225 0"
+}
+{
+"classname" "client_model"
+"origin" "4592 6240 616"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"angles" "0 180 0"
+}
+{
+"classname" "client_model"
+"origin" "4208 6020 576"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"angles" "0 270 0"
+}
+{
+"classname" "client_model"
+"angles" "0 225 0"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"origin" "2100 1896 292"
+}
+{
+"classname" "model_static"
+"targetname" "book"
+"angles" "-25 0 0"
+"origin" "4338 3808 193"
+"model" "models/objects/finca/misc/open_book.md3"
+}
+{
+"classname" "model_static"
+"angles" "0 180 0"
+"origin" "2696 -624 160"
+"model" "models/objects/liner/lights/wall_light.md3"
+}
+{
+"classname" "model_static"
+"angles" "0 180 0"
+"model" "models/objects/liner/lights/wall_light.md3"
+"origin" "2696 -368 160"
+}
+{
+"classname" "model_static"
+"angles" "0 0 0"
+"model" "models/objects/liner/lights/wall_light.md3"
+"origin" "2552 -624 160"
+}
+{
+"classname" "model_static"
+"angles" "0 0 0"
+"origin" "2552 -368 160"
+"model" "models/objects/liner/lights/wall_light.md3"
+}
+{
+"classname" "model_static"
+"origin" "2696 -368 384"
+"model" "models/objects/liner/lights/wall_light.md3"
+"angles" "0 180 0"
+}
+{
+"classname" "model_static"
+"angles" "0 0 0"
+"model" "models/objects/liner/lights/wall_light.md3"
+"origin" "2552 -368 384"
+}
+{
+"classname" "model_static"
+"model" "models/objects/liner/lights/wall_light.md3"
+"origin" "2696 -624 384"
+"angles" "0 180 0"
+}
+{
+"classname" "model_static"
+"angles" "0 0 0"
+"origin" "2552 -624 384"
+"model" "models/objects/liner/lights/wall_light.md3"
+}
+{
+"classname" "fx_play_effect"
+"origin" "3552 2448 992"
+"targetname" "jettrail2"
+"spawnflags" "1"
+"effect" "levels/cem_jet"
+"brushChild" "jetchild"
+"brushParent" "jets"
+}
+{
+"classname" "fx_play_effect"
+"effect" "levels/cem_jet"
+"spawnflags" "1"
+"targetname" "jettrail3"
+"origin" "3520 2416 992"
+"brushChild" "jetchild"
+"brushParent" "jets"
+}
+{
+"classname" "fx_play_effect"
+"origin" "3552 2384 992"
+"targetname" "jettrail4"
+"spawnflags" "1"
+"effect" "levels/cem_jet"
+"brushChild" "jetchild"
+"brushParent" "jets"
+}
+{
+"classname" "fx_play_effect"
+"effect" "levels/cem_jet"
+"spawnflags" "1"
+"targetname" "jettrail5"
+"origin" "3584 2352 992"
+"brushChild" "jetchild"
+"brushParent" "jets"
+}

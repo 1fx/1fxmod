@@ -1,0 +1,689 @@
+//These first few are sounds from the games pk3 files in the base folder
+
+just_wait
+{
+	number		"101"
+	text 		"Ya Ya Ya just just Wait"
+	sound		"sound/npc/air1/guard04/02wait.mp3"
+}
+
+go_away
+{
+	number		"102"
+	text		"go away!"
+	sound		"sound/npc/civ/english/male/go_away.mp3"
+}
+
+going_on
+{
+	number		"103"
+	text		"dude whats going on"
+	sound		"sound/npc/civ/english/male/goingon.mp3"
+}
+
+help
+{
+	number		"104"
+	text		"HELP!"
+	sound		"sound/npc/civ/english/male/help.mp3"
+}
+
+no
+{
+	number		"105"
+	text		"no, NOOOO"
+	sound		"sound/npc/civ/english/male/no.mp3"
+}
+
+run
+{
+	number		"106"
+	text		"RUN"
+	sound		"sound/npc/civ/english/male/run.mp3"
+}
+
+laugh
+{
+	number		"107"
+	text		"lol"
+	sound		"sound/npc/col10/scientist02/02laugh.mp3"
+}
+
+hello
+{
+	number		"108"
+	text		"hello"
+	sound		"sound/npc/civ/english/male/hello.mp3"
+}
+great_shot
+{
+	number		"109"
+	text		"Ha great shot"
+	sound		"sound/npc/col9/pilot/greatshot.mp3"
+}
+behind_you
+{
+	number		"110"
+	text		"behind you"
+	sound		"sound/npc/fritsch/behindyou.mp3"
+}
+
+
+
+//These files are added and are in the sound folder of this pk3 file
+
+Ah_Shutup
+{
+	number		"111"
+	text		"Ahh SHUTUP"
+	sound		"sound/ahshutup.mp3"
+}
+askinyou
+{
+	number		"112"
+	text		"I don't remember askin you a goddamn thing"
+	sound		"sound/askinyou.mp3"
+}
+ass_kicking
+{
+	number		"113"
+	text		"I do the ass kicking around here"
+	sound		"sound/asskicking.mp3"
+}
+aww_crap
+{
+	number		"114"
+	text		"Awwww Crap"
+	sound		"sound/awwcrap.mp3"
+}
+be_blunt
+{
+	number		"115"
+	text		"if I may be so blunt, who gives a shit"
+	sound		"sound/beblunt.mp3"
+}
+bullshit
+{
+	number		"116"
+	text		"Bullshit"
+	sound		"sound/Bullshit.mp3"
+}
+cant_kill_me
+{
+	number		"117"
+	text		"hehe, you can't kill me suckka"
+	sound		"sound/cantkillme.mp3"
+}
+cock_sucker
+{
+	number		"118"
+	text		"you COCK SUCKER"
+	sound		"sound/cocksucker.mp3"
+}
+
+die_sob
+{
+	number		"119"
+	text		"DIE, you son of a bitch"
+	sound		"sound/diesob.mp3"
+}
+
+dumb_shit
+{
+	number		"120"
+	text		"look at the screen you dumbshit, I'm tryin to get your attention"
+	sound		"sound/dumbshit.mp3"
+}
+
+gay_people
+{
+	number		"121"
+	text		"the following people are gay"
+	sound		"sound/gaypeople.mp3"
+}
+
+gonna_cry
+{
+	number		"122"
+	text		"aww, jesus fuck, now he's gonna cry"
+	sound		"sound/gonnacry.mp3"
+}
+
+campin_again
+{
+	number		"123"
+	text		"he's campin again"
+	sound		"sound/hes_campin.wav"
+}
+
+holy_shit
+{
+	number		"124"
+	text		"HOLY SHIT"
+	sound		"sound/holyshit.mp3"
+}
+
+huh
+{
+	number		"125"
+	text		"huh"
+	sound		"sound/huh.mp3"
+}
+
+be_back
+{
+	number		"126"
+	text		"I'll be back"
+	sound		"sound/beback.mp3"
+}
+
+take_these_bastards_out
+{
+	number		"127"
+	text		"I'm gonna take these bastards out"
+	sound		"sound/bastards_out.wav"
+}
+
+jack_ass
+{
+	number		"128"
+	text		"You suck, ya jackass"
+	sound		"sound/jackass.mp3"
+}
+
+kiss_my_ass
+{
+	number		"129"
+	text		"why don't you, kiss my ass"
+	sound		"sound/kma.mp3"
+}
+
+shutup
+{
+	number 		"130"
+	text		"ha ha ha ha haa.. SHUTUP"
+	sound		"sound/lolshutup.mp3"
+}
+
+hm_yea
+{
+	number		"131"
+	text		"hm hm hmhm hm.. yeah"
+	sound		"sound/lolyeah.mp3"
+}
+
+loser
+{
+	number		"132"
+	text		"looser"
+	sound		"sound/loser.wav"
+}
+
+nailed_bastards
+{
+	number		"133"
+	text		"nailed those bastards"
+	sound		"sound/nailed_bastards.wav"
+}
+
+my_god
+{
+	number		"134"
+	text		"oh my god"
+	sound		"sound/ohmygod.mp3"
+}
+
+ok_bitch
+{
+	number		"135"
+	text		"ok bitch"
+	sound		"sound/ok_bitch.wav"
+}
+
+pissesmeoff
+{
+	number		"136"
+	text		"oh oh that pisses me off, that pisses me right off"
+	sound		"sound/pissesmeoff.mp3"
+}
+
+relax_tootse
+{
+	number		"137"
+	text		"relax tootse, don't get your panties in a bunch"
+	sound		"sound/relaxt.mp3"
+}
+
+stupidest_thing_ever
+{
+	number		"138"
+	text		"just when I thought you said the stupidest thing ever, you keep talkin"
+	sound		"sound/stupidest_thing.mp3"
+}
+
+son_of_a_bitch
+{
+	number		"139"
+	text		"son of a bitch"
+	sound		"sound/sonofabitch.mp3"
+}
+
+stinkonshit
+{
+	number		"140"
+	text		"I'm on you like stink on shit"
+	sound		"sound/stinkonshit.mp3"
+}
+
+stopwhining
+{
+	number		"141"
+	text		"stop whining"
+	sound		"sound/stopwhining.mp3"
+}
+surrounded_by_assholes
+{
+	number		"142"
+	text		"I knew it I'm surrounded by assholes"
+	sound		"sound/surrounded.mp3"
+}
+you_all_suck
+{
+	number		"143"
+	text		"you all SUCK"
+	sound		"sound/uallsuck.mp3"
+}
+you_are_a_bitch
+{
+	number		"144"
+	text		"you are a BITCH"
+	sound		"sound/urabitch.mp3"
+}
+
+whoopass
+{
+	number		"145"
+	text		"I'm gonna have ta open up a can a whoopass on ya now"
+	sound		"sound/whoopass.mp3"
+}
+
+yea_baby
+{
+	number		"146"
+	text		"yeah baby..haha ha ha ha"
+	sound		"sound/yeah_baby.wav"
+}
+
+you_guys_suck
+{
+	number		"147"
+	text		"you guys suck"
+	sound		"sound/youguyssuck.mp3"
+}
+
+damn_you_suck
+{
+	number		"148"
+	text		"damn.. you suck"
+	sound		"sound/yousuck.mp3"
+}
+beavis_laugh
+{	
+	number		"149"
+	text		"lol"
+	sound		"sound/lolbeavis.mp3"
+}
+
+this_is_bullshit
+{
+	number		"150"
+	text		"this is some bullshit"
+	sound		"sound/thissome.mp3"
+}
+believe_ass_hole
+{
+        number          "151"
+        text            "can you believe this ass hole"
+        sound           "sound/believethisasshole.mp3"
+}
+
+calling_shots
+{
+        number          "152"
+        text            "alright..i'm callin the shots"
+        sound           "sound/callingshots.mp3"
+}
+
+chalk_another_one
+{
+        number          "153"
+        text            "chalk me up another one boys"
+        sound           "sound/chalkanotherboys.mp3"
+}
+
+double_cross
+{
+        number          "154"
+        text            "com'ere you double crossing piece of shit"
+        sound           "sound/com'heredoublecross.mp3"
+}
+
+comin_for_ya
+{
+        number          "155"
+        text            "I'm comin for ya"
+        sound           "sound/comin'4ya.mp3"
+}
+
+dead_bitch
+{
+        number          "156"
+        text            "you're a dead bitch"
+        sound           "sound/deadbitch.mp3"
+}
+
+feck_sake
+{
+        number          "157"
+        text            "for feck's sake"
+        sound           "sound/feck'sake.mp3"
+}
+
+huge_cohonas
+{
+        number          "158"
+        text            "fight like men with HUGE COHONAS"
+        sound           "sound/fightlikemenhugecohon.mp3"
+}
+
+back_stab
+{
+        number          "159"
+        text            "you're goin' down you backstabbing prick"
+        sound           "sound/goin'downprick.mp3"
+}
+
+good_shooting
+{
+        number          "160"
+        text            "good shooting my friend"
+        sound           "sound/goodshootingfriend.mp3"
+}
+gotta_blade
+{
+        number          "161"
+        text            "Hey..he's gotta blade"
+        sound           "sound/gotablade.mp3"
+}
+
+got_another
+{
+        number          "162"
+        text            "Got me another one"
+        sound           "sound/gotanotherone.mp3"
+}
+
+got_bleeder
+{
+        number          "163"
+        text            "we got ourselves a bleeder"
+        sound           "sound/gotbleeder.mp3"
+}
+
+gotta_hurt
+{
+        number          "164"
+        text            "that's gotta hurt"
+        sound           "sound/gottahurt.mp3"
+}
+
+greased_ass
+{
+        number          "165"
+        text            "greased his ass"
+        sound           "sound/greasedhisass.mp3"
+}
+
+hotshot
+{
+        number          "166"
+        text            "com'on hotshot"
+        sound           "sound/hotshot.mp3"
+}
+
+i_own_you
+{
+        number          "167"
+        text            "I own you"
+        sound           "sound/iownyou.mp3"
+}
+
+keep_away
+{
+        number          "168"
+        text            "Keep away from me you cheap bastard"
+        sound           "sound/keepawaybastard.mp3"
+}
+
+lets_do_it
+{
+        number          "169"
+        text            "Let's Do It"
+        sound           "sound/lets do it.mp3"
+}
+
+kiss_my_ass
+{
+        number          "170"
+        text            "Kiss My Ass"
+        sound           "sound/kissass.mp3"
+}
+little_bastard
+{
+        number          "171"
+        text            "zip or fly yer little bastard"
+        sound           "sound/littlebastard.mp3"
+}
+
+lucky_punk
+{
+        number          "172"
+        text            "you feel lucky punk"
+        sound           "sound/luckypunk.mp3"
+}
+
+you_pay
+{
+        number          "173"
+        text            "NOW I'M GONNA MAKE YOU PAY"
+        sound           "sound/makeyoupay.mp3"
+}
+
+mama
+{
+        number          "174"
+        text            "you're mama put's out on weekends"
+        sound           "sound/mamaweekends.mp3"
+}
+
+reinforcements
+{
+        number          "175"
+        text            "we need reinforcements from the cafe"
+        sound           "sound/needreinforcments.mp3"
+}
+
+next
+{
+        number          "176"
+        text            "NEXT"
+        sound           "sound/next.mp3"
+}
+
+think_so
+{
+        number          "177"
+        text            "OH!..You Think So"
+        sound           "sound/youthinkso.mp3"
+}
+
+woo_hii_haa
+{
+        number          "178"
+        text            "woohiihaaa...this is to easy"
+        sound           "sound/ooohiihaatoeasy.mp3"
+}
+
+punk_mine
+{
+        number          "179"
+        text            "He's Mine..that punk's mine"
+        sound           "sound/punkmine.mp3"
+}
+
+run_fast
+{
+        number          "180"
+        text            "I suggest you run away...Fast"
+        sound           "sound/runfast.mp3"
+}
+
+scardy_kitten
+{
+        number          "181"
+        text            "your a little scardy kitten..baby boy"
+        sound           "sound/scaredy_kitten.mp3"
+}
+
+gotta_gun
+{
+        number          "182"
+        text            "SHIT!..he's gotta gun"
+        sound           "sound/shitgottagun.mp3"
+}
+
+big_mouth
+{
+        number          "183"
+        text            "I'm gonna shut that big mouth of your's"
+        sound           "sound/shutthatbigmouth.mp3"
+}
+
+sniper_roof
+{
+        number          "184"
+        text            "Sniper on the roof"
+        sound           "sound/sniponroof.mp3"
+}
+
+stand_still
+{
+        number          "185"
+        text            "stand still and I'll make it quick"
+        sound           "sound/standstill.mp3"
+}
+
+at_home
+{
+        number          "186"
+        text            "should'a stayed at home today"
+        sound           "sound/stayedathome.mp3"
+}
+
+don't_getit
+{
+        number          "187"
+        text            "you still don't get it do ya"
+        sound           "sound/stilldon'tgetit.mp3"
+}
+
+stop_running
+{
+        number          "188"
+        text            "stop running yer fat slim-ball"
+        sound           "sound/stoprunningslimball.mp3"
+}
+
+cowardly_sniper
+{
+        number          "189"
+        text            "take out that cowardly sniper"
+        sound           "sound/takecowardlysnip.mp3"
+}
+
+thankyou
+{
+        number          "190"
+        text            "Thank-you"
+        sound           "sound/thankyou.mp3"
+}
+
+the_hell
+{
+        number          "191"
+        text            "what the hell are you doin'"
+        sound           "sound/thehellar'youdoing.mp3"
+}
+
+is_to_easy
+{
+        number          "192"
+        text            "this is 2 easy"
+        sound           "sound/toeasy01.mp3"
+}
+
+wanna_go
+{
+        number          "193"
+        text            "you wanna go"
+        sound           "sound/wannago.mp3"
+}
+
+small_winky
+{
+        number          "194"
+        text            "you gotta small winky"
+        sound           "sound/winkie.mp3"
+}
+
+bangbang
+{
+        number          "195"
+        text            "That's Right...big yankie devil make bangbang all over your ass"
+        sound           "sound/yankiebangbang.mp3"
+}
+
+you_bastard
+{
+        number          "196"
+        text            "You Bastard"
+        sound           "sound/youbastard.mp3"
+}
+
+you_nutter
+{
+        number          "197"
+        text            "You Nutter"
+        sound           "sound/younutter.mp3"
+}
+
+your_mine
+{
+        number          "198"
+        text            "you're mine..MINE"
+        sound           "sound/yourmine.mp3"
+}
+
+bbq_ass
+{
+        number          "199"
+        text            "I'm gonna barbeque your ass"
+        sound           "sound/bbq ass.mp3"
+}
+
+com'on
+{
+        number          "200"
+        text            "com'on let's go"
+        sound           "sound/comon.mp3"
+}

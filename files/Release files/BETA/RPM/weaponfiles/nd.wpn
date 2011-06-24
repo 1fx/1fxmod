@@ -1,0 +1,341 @@
+// DO NOT MODIFLY THIS FILE
+// this file is here for reference incase you need to know what 
+// the default values are for your weapon mod files.
+
+
+KNIFE
+{
+	name		"Knife"
+
+	attack
+	{
+		clipSize		"1"
+		mp_damage		65
+		mp_extraClips		"5"
+
+	}
+	altattack
+	{
+		clipSize		"1"
+		mp_damage		80
+	}
+}
+
+US_Socom_PISTOL
+{
+	name		"US SOCOM"
+
+	attack
+	{
+		clipSize		"12"
+		mp_damage		40
+		mp_extraClips		"3"
+	}
+
+	altattack
+	{
+		mp_damage		70
+	}
+}
+
+M1911A1_PISTOL
+{
+	name		"M1911A1"
+	
+	attack
+	{
+		clipSize		"7"
+		mp_damage		50
+		mp_extraClips		"4"
+	}
+
+	altattack
+	{
+		mp_damage		70
+	}
+}
+
+USAS_SHOTGUN
+{
+	name		"USAS-12"
+
+	attack
+	{
+		clipSize		"10"
+
+		//damage per pellet, USAS has 12 pellets
+		mp_damage		15	
+		mp_extraClips		"2"
+	}
+}
+
+M590_SHOTGUN
+{
+	name		"M590"
+
+	attack
+	{
+		clipSize		"9"
+
+		//damage per pellet, M590 has 8 pellets
+		mp_damage		22
+		mp_extraClips		"2"
+	}
+
+	altattack
+	{
+		mp_damage		70
+	}
+}
+
+Uzi_SUBMACHINEGUN
+{
+	name		"Micro Uzi"
+
+	attack
+	{
+		clipSize		"30"
+		mp_damage		"40"
+		mp_extraClips		"3"
+	}
+}
+
+M3A1_SUBMACHINEGUN
+{
+	name		"M3A1"
+	
+	attack
+	{
+		clipSize		"30"
+		mp_damage		"50"
+		mp_extraClips		"3"
+	}
+}
+
+M4_ASSULT_RIFLE
+{
+	name		"M4"
+
+	attack
+	{
+		clipSize		"30"
+		mp_damage		"35"
+		mp_extraClips		"3"
+	}
+
+	altattack
+	{
+		mp_clipSize		"0"
+		mp_damage		"101"
+		mp_extraClips		"0"
+	}
+}
+
+AK74_ASSULT_RIFLE
+{
+	name		"AK74"
+
+	attack
+	{
+		clipSize		"30"
+		mp_damage		"45"
+		mp_extraClips		"3"
+	}
+
+	altattack
+	{
+		mp_damage		"75"
+	}
+}
+
+SNIPER_RIFLE
+{
+	name		"MSG90A1"
+
+	attack
+	{
+		clipSize		"5"
+		mp_damage		"120"
+		mp_extraClips		"3"
+	}
+}
+
+M60_MACHINEGUN
+{
+	name		"M60"
+
+	attack
+	{
+		clipSize		"99"
+		mp_damage		"55"
+		mp_extraClips		"1"
+	}
+}
+
+GRENADE_LAUNCHER
+{
+	name		"MM1"
+
+	attack
+	{
+		clipSize		"10"
+		mp_damage		"200"
+		mp_extraClips		"1"
+	}
+}
+
+RPG_LAUNCHER
+{
+	name		"RPG7"
+
+	attack
+	{
+		clipSize		"1"
+		mp_damage		"200"
+		mp_extraClips		"2"
+	}
+}
+
+FRAG_GRENADE
+{
+	name		"SMOHG92"
+
+	attack
+	{
+		clipSize		"1"
+		mp_damage		200
+		mp_extraClips		"1"
+	}
+
+	altattack
+	{
+		clipSize		"1"
+		mp_damage		200
+	}
+}
+
+FLASH_GRENADE
+{
+	name		"M84"
+
+	attack
+	{
+		clipSize		"1"
+		mp_damage		"5"
+		mp_extraClips		"1"
+	}
+
+	altattack
+	{
+		clipSize		"1"
+		mp_damage		5
+	}
+}
+
+FIRE_GRENADE
+{
+	name		"ANM14"
+
+	attack
+	{
+		clipSize		"1"
+		mp_damage		150
+		mp_extraClips		"1"
+	}
+
+	altattack
+	{
+		clipSize		"1"
+		mp_damage		200
+	}
+}
+
+SMOKE_GRENADE
+{
+	name		"M15"
+
+	attack
+	{
+		clipSize		"1"
+		mp_damage		1
+		mp_extraClips		"1"
+	}
+
+	altattack
+	{
+		clipSize		"1"
+		mp_damage		1
+	}
+}
+
+M67_GRENADE
+{
+	name		"M67"
+
+	attack
+	{
+		clipSize		"1"
+		mp_damage		200
+		mp_extraClips		"1"
+	}
+
+	altattack
+	{
+		clipSize		"1"
+		mp_damage		200
+	}
+}
+
+F1_GRENADE
+{
+	name		"F1"
+
+	attack
+	{
+		clipSize		"1"
+		mp_damage		200
+		mp_extraClips		"1"
+	}
+
+	altattack
+	{	
+		clipSize		"1"
+		mp_damage		200
+	}
+}
+
+L2A2_GRENADE
+{
+	name		"L2A2"
+	
+	attack
+	{
+		clipSize		"1"
+		mp_damage		200
+		mp_extraClips		"1"
+	}
+
+	altattack
+	{
+		clipSize		"1"
+		mp_damage		200
+	}
+}
+
+MDN11_GRENADE
+{
+	name		"MDN11"
+
+	attack
+	{
+		clipSize		"1"
+		mp_damage		200
+		mp_extraClips		"1"
+	}
+
+	altattack
+	{
+		clipSize		"1"
+		mp_damage		200
+	}
+}

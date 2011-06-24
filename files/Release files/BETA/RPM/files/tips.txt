@@ -1,0 +1,8 @@
+Did you know that you can do /stats <name>?
+Did you know that you can ignore people using /ignore <name/id>?
+Did you know that you can do /follow <name>?
+Did you know that in 1fx. Mod you can mute people for a specified amount of time?
+Did you know that you can see the Country someone is from in /stats <name/id> or /players?
+Did you know that 1fx. Mod has admin passwords for people with a dynamic IP address?
+Did you know that 1fx. Mod is the only Mod which has fixed the 333/1000 fps glitches?
+Did you know that 1fx. Mod will be freely available for everyone?

@@ -1,0 +1,39 @@
+mapcycle
+{
+	map0
+	{
+		command "map mp_finca"
+		cvars
+		{
+			scorelimit 0
+			timelimit 20
+			g_roundtimelimit 4
+			g_gametype h&s
+			g_motd "^mN^;e^rx^Lt ^LM^+i^7nigame is Cross The Bridge"
+		}
+	}
+	map1
+	{
+		command "map col9"
+		cvars
+		{
+			scorelimit 0
+			timelimit 10
+			g_roundtimelimit 2
+			g_gametype h&s
+			g_motd "^mN^;e^rx^Lt ^LM^+a^7p is pra6"
+		}
+	}
+	map2
+	{
+		command "map pra6"
+		cvars
+		{
+			scorelimit 0
+			timelimit 20
+			g_roundtimelimit 4
+			g_gametype h&s
+			g_motd "^mN^;e^rx^Lt ^LM^+a^7p is mp_finca"
+		}
+	}
+}

@@ -1,0 +1,72 @@
+// Bot settings are stored here
+
+GeneralBotInfo
+{
+	reflex			100
+	accuracy			100
+	turnspeed			0.50
+	turnspeed_combat		0.50
+	maxturn			360
+	perfectaim		1
+	chatability			1
+	chatfrequency		10
+	hatelevel			5
+	camper			1
+}
+
+BotWeaponWeights
+{
+	WP_NONE				100
+	WP_KNIFE			100
+	WP_M1911A1_PISTOL		100
+	WP_US_SOCOM_PISTOL		100
+	WP_M590_SHOTGUN			100
+	WP_MICRO_UZI_SUBMACHINEGUN	100
+	WP_M3A1_SUBMACHINEGUN		100
+	WP_USAS_12_SHOTGUN		100
+	WP_M4_ASSAULT_RIFLE		100
+	WP_AK74_ASSAULT_RIFLE		18
+	WP_MSG90A1_SNIPER_RIFLE		100
+	WP_M60_MACHINEGUN		100
+	WP_MM1_GRENADE_LAUNCHER		100	
+	WP_RPG7_LAUNCHER		100
+	WP_M84_GRENADE			100
+	WP_SMOHG92_GRENADE		100
+	WP_ANM14_GRENADE		100
+	WP_M15_GRENADE			100
+}
+
+
+
+BEGIN_CHAT_GROUPS
+
+// chat responses after death
+Died
+{
+	Kutter #d
+	ROT OP #d
+}
+
+// chat responses after kill
+Killed
+{
+	Haha dood! #t
+	OWNED #t
+}
+
+// chat responses as greeting
+GeneralGreetings
+{
+	Hallo
+}
+
+// chat responses to greeting
+ResponseGreetings
+{
+	Goeie dag!
+}
+
+// chat responses after accepting order
+OrderAccepted
+{
+}

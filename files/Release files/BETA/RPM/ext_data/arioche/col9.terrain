@@ -1,0 +1,30 @@
+col9
+{
+	altitudetexture
+	{
+		height 140
+		shader textures/colombia/grass_col9
+	}
+	altitudetexture
+	{
+		height 120
+		shader textures/colombia/floor_moss_col9
+	}
+	altitudetexture
+	{
+		height 50
+		shader textures/colombia/dirt_terrain1
+	}
+	altitudetexture
+	{
+		height 0
+		shader textures/colombia/mudside_col9
+	}
+	water
+	{
+		height 80
+		beach 20
+		shader textures/colombia/water_col9b
+	}
+}
+

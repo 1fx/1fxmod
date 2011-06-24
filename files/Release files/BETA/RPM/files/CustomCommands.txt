@@ -1,0 +1,12 @@
+// Sample file.
+// More information here: http://1fx.uk.to/index.php?/topic/281-exec-admin-command/
+5vs5
+{
+Command "5vs5" // command, /adm 5vs5 in this case
+ShortCommand "!test" // The shortcut command for in chat.
+Broadcast "Test" // The broadcast.
+Description "Applies settings for a 5vs5 game" // The info in /adm
+AdminLevel "4" // same
+Action "scorelimit 5; timelimit 10; map_restart" // The action.
+Message "Err" // The message ([Custom Admin action] Err.).
+}

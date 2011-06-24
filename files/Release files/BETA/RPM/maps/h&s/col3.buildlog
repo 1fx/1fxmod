@@ -1,0 +1,944 @@
+Boe's BSP2ENT v2 - modified to remove all un-needed stuff from ent files
+Conversion started on: 04/03/2011 - 14:45:15
+
+
+
+ ---------- new build started
+
+INFO: No redteam entry in worldspawn
+INFO: No blueteam entry in worldspawn
+
+ -- WORLDSPAWN ENTITY
+{
+"soundSet" "Jungle"
+"distancecull" "6000"
+"npcView" "1800"
+"music" "music/colombia/col2"
+"message" "&LEVELNAMES_COL3"
+"gridsize" "512 512 512"
+"classname" "worldspawn"
+}
+
+INFO: No spawnpoints found. Trying to find SP DM ent (USE AS REFERENCE!).
+... Failed
+
+WARNING: Blacklisted static model:
+{
+"model" "*51"
+"classname" "trigger_objective"
+"spawnflags" "1"
+"targetname" "objectivedone"
+"command" "addmain"
+"item" "5"
+"command2" "addsub"
+"item2" "1"
+}
+ -- BLACKLISTED ENTITIES:
+
+{
+"classname" "NPC_Colombian_Rebel"
+"angles" "0 90 0"
+"spawnflags" "3"
+"spawninFOV" "1"
+"targetname" "t36"
+"origin" "-1915 3417 978"
+"NPC" "1"
+}
+
+{
+"classname" "NPC_Colombian_EmplacedGunner"
+"angles" "0 315 0"
+"spawnflags" "3"
+"targetname" "t163"
+"spawninFOV" "1"
+"origin" "2929 -231 1138"
+"NPC" "1"
+}
+
+{
+"origin" "-1886 3346 928"
+"targetname" "t192"
+"startoff" "1"
+"classname" "pickup_armor_big"
+}
+
+{
+"classname" "pickup_health_small"
+"startoff" "1"
+"targetname" "t8"
+"origin" "3680 -1472 916"
+}
+
+{
+"classname" "pickup_ammo"
+"type" "40mm HE grenade"
+"origin" "3016 -16 1088"
+}
+
+{
+"classname" "pickup_armor_big"
+"angles" "0 45 0"
+"origin" "2882 -302 1088"
+}
+
+{
+"classname" "pickup_health_big"
+"origin" "3033 -47 1088"
+}
+
+{
+"count" "3"
+"targetname" "end_guys_1"
+"origin" "-2164 -156 996"
+"target" "t189"
+"classname" "target_counter"
+}
+
+{
+"origin" "-1556 2404 956"
+"count" "3"
+"targetname" "pre_ruins"
+"target" "t181"
+"classname" "target_counter"
+}
+
+{
+"spawninFOV" "1"
+"spawnflags" "3"
+"targetname" "t179"
+"origin" "-79 353 978"
+"classname" "NPC_Colombian_Commando"
+"NPC" "1"
+}
+
+{
+"origin" "145 -707 986"
+"angles" "0 90 0"
+"classname" "pickup_health_big"
+}
+
+{
+"origin" "74 -470 940"
+"angles" "0 270 0"
+"classname" "pickup_armor_big"
+}
+
+{
+"origin" "-300 3540 996"
+"count" "4"
+"targetname" "shaq_guys"
+"target" "t176"
+"classname" "target_counter"
+}
+
+{
+"targetname" "t175"
+"spawninFOV" "1"
+"origin" "-951 3857 1130"
+"spawnflags" "3"
+"classname" "NPC_Colombian_Sniper"
+"NPC" "1"
+}
+
+{
+"origin" "3036 2012 980"
+"count" "3"
+"targetname" "behind_bunker"
+"target" "t172"
+"classname" "target_counter"
+}
+
+{
+"origin" "3180 1836 924"
+"count" "4"
+"targetname" "after_ridge"
+"target" "t170"
+"classname" "target_counter"
+}
+
+{
+"origin" "3908 276 1028"
+"count" "2"
+"targetname" "ridge_runners"
+"target" "t164"
+"classname" "target_counter"
+}
+
+{
+"spawninFOV" "1"
+"killtarget" "ridge_runners"
+"spawnflags" "3"
+"targetname" "t163"
+"angles" "0 270 0"
+"origin" "3337 -567 970"
+"classname" "NPC_Colombian_Commando"
+"NPC" "1"
+}
+
+{
+"origin" "3260 -2860 948"
+"target" "t162"
+"targetname" "pre_bunker"
+"count" "2"
+"classname" "target_counter"
+}
+
+{
+"killtarget" "after_ridge"
+"spawninFOV" "1"
+"targetname" "t165"
+"spawnflags" "3"
+"origin" "3353 1881 962"
+"classname" "NPC_Colombian_Soldier"
+"NPC" "1"
+}
+
+{
+"spawninFOV" "1"
+"classname" "NPC_Colombian_Rebel"
+"angles" "0 45 0"
+"origin" "-767 -2807 986"
+"spawnflags" "2"
+"targetname" "t193"
+"NPC" "1"
+}
+
+{
+"origin" "2976 -272 1144"
+"target" "t155"
+"maxPitch" "10"
+"minPitch" "25"
+"maxYaw" "50"
+"minYaw" "50"
+"type" "Emplaced M60"
+"angles" "0 315 0"
+"classname" "emplaced_wpn"
+"accuracy" "0.7"
+"npcDmg" "10"
+}
+
+{
+"alwaysdrop" "true"
+"spawninFOV" "1"
+"origin" "-871 -2591 1002"
+"angles" "0 360 0"
+"spawnflags" "3"
+"classname" "NPC_Colombian_Sniper"
+"targetname" "t160"
+"NPC" "1"
+}
+
+{
+"classname" "info_player_start"
+"origin" "904 -4168 956"
+"angles" "0 135 0"
+}
+
+{
+"_color" "1.000000 0.501961 0.250980"
+"classname" "light"
+"light" "1500"
+"scale" "2"
+"origin" "64 184 964"
+}
+
+{
+"origin" "64 184 972"
+"scale" ".5"
+"light" "1500"
+"classname" "light"
+"_color" "1.000000 1.000000 0.509804"
+}
+
+{
+"spawninFOV" "1"
+"classname" "NPC_Colombian_Sniper"
+"spawnflags" "3"
+"angles" "0 225 0"
+"origin" "61 -2995 1050"
+"targetname" "t160"
+"NPC" "1"
+}
+
+{
+"spawninFOV" "1"
+"origin" "1154 -3221 1026"
+"angles" "0 135 0"
+"spawnflags" "3"
+"classname" "NPC_Colombian_Sniper"
+"targetname" "t160"
+"NPC" "1"
+}
+
+{
+"classname" "pickup_health_small"
+"origin" "-1760 3600 1004"
+}
+
+{
+"classname" "pickup_ammo"
+"origin" "-1792 3345 940"
+"size" "1"
+"type" "40mm HE grenade"
+}
+
+{
+"classname" "light"
+"scale" ".02"
+"light" "500"
+"origin" "-1600 3376 992"
+"_color" "1.000000 0.682353 0.529412"
+}
+
+{
+"_color" "1.000000 0.682353 0.529412"
+"origin" "-1600 3472 992"
+"light" "500"
+"scale" ".02"
+"classname" "light"
+}
+
+{
+"classname" "light"
+"scale" ".02"
+"light" "500"
+"origin" "-1600 3568 992"
+"_color" "1.000000 0.682353 0.529412"
+}
+
+{
+"spawninFOV" "1"
+"targetname" "t36"
+"origin" "-1697 3551 978"
+"spawnflags" "3"
+"angles" "0 270 0"
+"classname" "NPC_Colombian_Soldier"
+"NPC" "1"
+}
+
+{
+"spawninFOV" "1"
+"targetname" "t36"
+"origin" "-1821 3411 978"
+"spawnflags" "3"
+"angles" "0 90 0"
+"classname" "NPC_Colombian_Soldier"
+"NPC" "1"
+}
+
+{
+"origin" "-1812 3345 940"
+"classname" "pickup_ammo"
+"size" "1"
+"type" "12 gauge"
+}
+
+{
+"classname" "pickup_ammo"
+"origin" "-1828 3345 940"
+"size" "1"
+"type" "7.62mm"
+}
+
+{
+"classname" "ce_lght_lantern"
+"origin" "-1791 3604 1003"
+"ConfusEd" "1"
+}
+
+{
+"origin" "-1489 3632 1246"
+"classname" "ce_lght_hanging_light"
+"ConfusEd" "1"
+}
+
+{
+"classname" "light"
+"light" "1200"
+"scale" "3"
+"origin" "-1488 3632 1225"
+"_color" "1.000000 0.811765 0.619608"
+}
+
+{
+"classname" "light"
+"scale" "3"
+"light" "20"
+"origin" "-1793 3583 1020"
+"_color" "1.000000 0.682353 0.533333"
+}
+
+{
+"_color" "1.000000 0.682353 0.533333"
+"origin" "-1793 3519 996"
+"light" "20"
+"scale" "2"
+"classname" "light"
+}
+
+{
+"classname" "light"
+"scale" "3"
+"light" "20"
+"origin" "-1960 3468 1036"
+"_color" "1.000000 0.682353 0.533333"
+}
+
+{
+"classname" "info_null"
+"targetname" "t3"
+"origin" "-1440 3604 948"
+}
+
+{
+"classname" "info_NPCcover"
+"target" "t3"
+"origin" "-1488 3604 948"
+}
+
+{
+"classname" "info_null"
+"targetname" "t144"
+"origin" "-1880 3512 956"
+}
+
+{
+"classname" "info_NPCcover"
+"target" "t144"
+"origin" "-1880 3464 956"
+}
+
+{
+"origin" "-1866 3411 1003"
+"classname" "ce_lght_lantern"
+"ConfusEd" "1"
+}
+
+{
+"_color" "1.000000 0.682353 0.533333"
+"origin" "-1889 3411 1020"
+"light" "20"
+"scale" "3"
+"classname" "light"
+}
+
+{
+"classname" "light"
+"scale" "2"
+"light" "20"
+"origin" "-1961 3411 996"
+"_color" "1.000000 0.682353 0.533333"
+}
+
+{
+"origin" "-1736 3600 1004"
+"classname" "pickup_health_small"
+}
+
+{
+"_color" "1.000000 0.682353 0.533333"
+"origin" "-1960 3548 1036"
+"light" "20"
+"scale" "3"
+"classname" "light"
+}
+
+{
+"classname" "light"
+"scale" "2"
+"light" "20"
+"origin" "-1769 3431 996"
+"_color" "1.000000 0.682353 0.533333"
+}
+
+{
+"classname" "light"
+"scale" "2"
+"light" "20"
+"origin" "-1824 2968 1028"
+"_color" "1.000000 0.682353 0.533333"
+}
+
+{
+"classname" "ce_lght_lantern"
+"origin" "262 -506 976"
+"ConfusEd" "1"
+}
+
+{
+"classname" "light"
+"_color" "1.000000 0.739130 0.260870"
+"light" "2048"
+"scale" "0.1"
+"origin" "260 -472 1001"
+}
+
+{
+"origin" "212 -512 1001"
+"scale" "0.1"
+"light" "2048"
+"_color" "1.000000 0.739130 0.260870"
+"classname" "light"
+}
+
+{
+"classname" "light"
+"_color" "1.000000 0.739130 0.260870"
+"light" "2048"
+"scale" "0.1"
+"origin" "264 -552 1001"
+}
+
+{
+"classname" "script_runner"
+"targetname" "t102"
+"script" "common/leaving"
+"origin" "-3540 1188 948"
+}
+
+{
+"classname" "target_level_change"
+"targetname" "t159"
+"mapname" "col4"
+"origin" "-3940 1764 988"
+}
+
+{
+"spawninFOV" "1"
+"origin" "-705 -2745 970"
+"angles" "0 45 0"
+"classname" "NPC_Colombian_Rebel"
+"spawnflags" "2"
+"targetname" "t193"
+"NPC" "1"
+}
+
+{
+"spawninFOV" "1"
+"angles" "0 90 0"
+"killtarget" "pre_bunker"
+"classname" "NPC_Colombian_Commando"
+"origin" "2141 -3419 970"
+"targetname" "t161"
+"spawnflags" "3"
+"NPC" "1"
+}
+
+{
+"spawninFOV" "1"
+"killtarget" "pre_bunker"
+"origin" "1677 -3251 970"
+"classname" "NPC_Colombian_Commando"
+"angles" "0 90 0"
+"targetname" "t161"
+"spawnflags" "3"
+"NPC" "1"
+}
+
+{
+"killtarget" "after_ridge"
+"spawninFOV" "1"
+"targetname" "t165"
+"spawnflags" "3"
+"classname" "NPC_Colombian_Soldier"
+"origin" "3353 1785 962"
+"NPC" "1"
+}
+
+{
+"spawninFOV" "1"
+"killtarget" "ridge_runners"
+"spawnflags" "3"
+"targetname" "t163"
+"angles" "0 270 0"
+"classname" "NPC_Colombian_Commando"
+"origin" "3329 -655 970"
+"NPC" "1"
+}
+
+{
+"origin" "3042 -10 1088"
+"classname" "ce_lght_lantern"
+"ConfusEd" "1"
+}
+
+{
+"origin" "2984 -64 1114"
+"scale" "0.1"
+"light" "2048"
+"_color" "1.000000 0.739130 0.260870"
+"classname" "light"
+}
+
+{
+"classname" "light"
+"_color" "1.000000 0.739130 0.260870"
+"light" "2048"
+"scale" "0.1"
+"origin" "2992 -16 1114"
+}
+
+{
+"origin" "3044 -56 1114"
+"scale" "0.1"
+"light" "2048"
+"_color" "1.000000 0.739130 0.260870"
+"classname" "light"
+}
+
+{
+"targetname" "t171"
+"classname" "NPC_Colombian_Commando"
+"origin" "2689 529 1002"
+"angles" "0 90 0"
+"spawnflags" "3"
+"spawninFOV" "1"
+"NPC" "1"
+}
+
+{
+"targetname" "t171"
+"origin" "2681 441 1002"
+"classname" "NPC_Colombian_Commando"
+"angles" "0 90 0"
+"spawnflags" "3"
+"spawninFOV" "1"
+"NPC" "1"
+}
+
+{
+"classname" "NPC_Colombian_Soldier"
+"origin" "1793 2553 970"
+"spawnflags" "3"
+"targetname" "t171"
+"spawninFOV" "1"
+"NPC" "1"
+}
+
+{
+"targetname" "t173"
+"angles" "0 90 0"
+"classname" "NPC_Colombian_Soldier"
+"origin" "3729 1545 954"
+"spawnflags" "3"
+"spawninFOV" "1"
+"NPC" "1"
+}
+
+{
+"killtarget" "shaq_guys"
+"targetname" "t174"
+"angles" "0 315 0"
+"spawninFOV" "1"
+"spawnflags" "3"
+"origin" "1553 3057 974"
+"classname" "NPC_Colombian_Soldier"
+"NPC" "1"
+}
+
+{
+"killtarget" "shaq_guys"
+"targetname" "t174"
+"classname" "NPC_Colombian_Soldier"
+"origin" "1494 3110 974"
+"spawnflags" "3"
+"spawninFOV" "1"
+"angles" "0 315 0"
+"NPC" "1"
+}
+
+{
+"killtarget" "shaq_guys"
+"targetname" "t174"
+"spawninFOV" "1"
+"spawnflags" "3"
+"angles" "0 360 0"
+"classname" "NPC_Colombian_Commando"
+"origin" "249 3497 938"
+"NPC" "1"
+}
+
+{
+"killtarget" "shaq_guys"
+"targetname" "t174"
+"origin" "185 3497 938"
+"classname" "NPC_Colombian_Commando"
+"angles" "0 360 0"
+"spawnflags" "3"
+"spawninFOV" "1"
+"NPC" "1"
+}
+
+{
+"targetname" "t178"
+"spawninFOV" "1"
+"classname" "NPC_Colombian_Sniper"
+"spawnflags" "3"
+"origin" "-1007 2065 1074"
+"NPC" "1"
+}
+
+{
+"killtarget" "pre_ruins"
+"targetname" "t177"
+"classname" "NPC_Colombian_Soldier"
+"angles" "0 270 0"
+"spawnflags" "3"
+"origin" "-1809 2927 1002"
+"spawninFOV" "1"
+"NPC" "1"
+}
+
+{
+"killtarget" "pre_ruins"
+"targetname" "t177"
+"origin" "-1383 2857 970"
+"classname" "NPC_Colombian_Commando"
+"angles" "0 90 0"
+"spawnflags" "3"
+"spawninFOV" "1"
+"NPC" "1"
+}
+
+{
+"killtarget" "pre_ruins"
+"targetname" "t177"
+"spawninFOV" "1"
+"spawnflags" "3"
+"angles" "0 90 0"
+"classname" "NPC_Colombian_Commando"
+"origin" "-1447 2857 970"
+"NPC" "1"
+}
+
+{
+"spawninFOV" "1"
+"spawnflags" "3"
+"targetname" "t179"
+"classname" "NPC_Colombian_Rebel"
+"origin" "-79 417 978"
+"NPC" "1"
+}
+
+{
+"spawninFOV" "1"
+"spawnflags" "3"
+"targetname" "t179"
+"classname" "NPC_Colombian_Commando"
+"origin" "-71 289 978"
+"NPC" "1"
+}
+
+{
+"targetname" "t182"
+"spawninFOV" "1"
+"origin" "159 -705 1314"
+"spawnflags" "3"
+"angles" "0 90 0"
+"classname" "NPC_Colombian_Soldier"
+"NPC" "1"
+}
+
+{
+"classname" "NPC_Colombian_Commando"
+"origin" "753 -351 970"
+"targetname" "t185"
+"spawnflags" "3"
+"spawninFOV" "1"
+"NPC" "1"
+}
+
+{
+"origin" "793 -439 970"
+"classname" "NPC_Colombian_Commando"
+"targetname" "t185"
+"spawnflags" "3"
+"spawninFOV" "1"
+"NPC" "1"
+}
+
+{
+"killtarget" "end_guys_1"
+"targetname" "t186"
+"spawninFOV" "1"
+"origin" "-1833 -185 970"
+"spawnflags" "3"
+"angles" "0 360 0"
+"classname" "NPC_Colombian_Soldier"
+"NPC" "1"
+}
+
+{
+"killtarget" "end_guys_1"
+"targetname" "t186"
+"classname" "NPC_Colombian_Soldier"
+"angles" "0 360 0"
+"spawnflags" "3"
+"origin" "-1897 -185 970"
+"spawninFOV" "1"
+"NPC" "1"
+}
+
+{
+"killtarget" "end_guys_1"
+"angles" "0 45 0"
+"classname" "NPC_Colombian_Rebel"
+"origin" "-1959 -535 978"
+"targetname" "t186"
+"spawnflags" "3"
+"spawninFOV" "1"
+"NPC" "1"
+}
+
+{
+"targetname" "t191"
+"classname" "NPC_Colombian_Soldier"
+"angles" "0 315 0"
+"spawnflags" "3"
+"origin" "-3505 1031 978"
+"spawninFOV" "1"
+"NPC" "1"
+}
+
+{
+"targetname" "t191"
+"spawninFOV" "1"
+"origin" "-3585 1079 978"
+"spawnflags" "3"
+"angles" "0 315 0"
+"classname" "NPC_Colombian_Soldier"
+"NPC" "1"
+}
+
+{
+"classname" "pickup_health_small"
+"origin" "-8 -2936 1000"
+"angles" "0 45 0"
+}
+
+{
+"angles" "0 360 0"
+"origin" "-859 -2547 952"
+"classname" "pickup_health_small"
+}
+
+{
+"model" "*51"
+"classname" "trigger_objective"
+"spawnflags" "1"
+"targetname" "objectivedone"
+"command" "addmain"
+"item" "5"
+"command2" "addsub"
+"item2" "1"
+}
+
+{
+"origin" "120 -476 976"
+"type" "40mm HE grenade"
+"classname" "pickup_ammo"
+}
+
+{
+"origin" "3000 -40 1088"
+"type" "12 gauge"
+"classname" "pickup_ammo"
+}
+
+{
+"targetname" "t173"
+"angles" "0 180 0"
+"classname" "NPC_Colombian_Soldier"
+"origin" "3761 1457 954"
+"spawnflags" "3"
+"spawninFOV" "1"
+"NPC" "1"
+}
+
+{
+"origin" "1820 2548 948"
+"target" "t236"
+"classname" "info_NPCcover"
+}
+
+{
+"origin" "1588 3028 948"
+"target" "t237"
+"classname" "info_NPCcover"
+}
+
+{
+"origin" "1580 3020 948"
+"target" "t238"
+"classname" "info_NPCcover"
+}
+
+{
+"origin" "1156 3604 988"
+"target" "t239"
+"classname" "info_NPCcover"
+}
+
+{
+"origin" "-1516 2980 956"
+"target" "t240"
+"classname" "info_NPCcover"
+}
+
+{
+"origin" "-1204 3628 948"
+"target" "t241"
+"classname" "info_NPCcover"
+}
+
+{
+"origin" "-1180 1796 1004"
+"target" "t242"
+"classname" "info_NPCcover"
+}
+
+{
+"origin" "-332 988 940"
+"target" "t243"
+"classname" "info_NPCcover"
+}
+
+{
+"origin" "-1820 -180 948"
+"target" "t244"
+"classname" "info_NPCcover"
+}
+
+{
+"origin" "-2660 68 972"
+"target" "t245"
+"classname" "info_NPCcover"
+}
+
+{
+"origin" "-2804 556 964"
+"target" "t246"
+"classname" "info_NPCcover"
+}
+
+{
+"origin" "-3388 556 964"
+"target" "t247"
+"classname" "info_NPCcover"
+}
+
+{
+"origin" "-3476 1012 964"
+"target" "t248"
+"classname" "info_NPCcover"
+}
+
+{
+"origin" "-3484 1004 964"
+"target" "t249"
+"classname" "info_NPCcover"
+}
+
+
+1 warnings.
+conversion O.K.

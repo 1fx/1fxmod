@@ -1,0 +1,24 @@
+// Change your General Bot settings here.
+// For Individual Bot settings, check the .bot files.
+// **************************************************
+{
+name		"ErnieTV"
+funname		"^7[^6R^7.^6S^7.^6I^7]^bErnie^{TV"
+identity	NPC_Female_Civilian/female_civilian_h2
+color1		7
+personality	/botfiles/ErnieTV.bot
+}
+{
+name		"Apperloo"
+funname		"^7Apperloo"
+identity	NPC_Czech_Sergeant/czech_sergeant_w1
+color1		7
+personality	/botfiles/Apperloo.bot
+}
+{
+name		"Pacifist"
+funname		"^6Pacifist"
+identity	NPC_Female_Civilian/female_civilian_h2
+color1		7
+personality	/botfiles/Pacifist.bot
+}

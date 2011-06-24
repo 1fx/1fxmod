@@ -1,0 +1,680 @@
+Boe's BSP2ENT v2 - modified to remove all un-needed stuff from ent files
+Conversion started on: 04/02/2011 - 17:18:39
+
+
+
+ ---------- new build started
+
+INFO: No redteam entry in worldspawn
+INFO: No blueteam entry in worldspawn
+
+ -- WORLDSPAWN ENTITY
+{
+"music" "music/colombia/col1"
+"gridsize" "256 256 512"
+"classname" "worldspawn"
+"dynamic_music" "OFF"
+"message" "&LEVELNAMES_COL2"
+"soundSet" "Jungle"
+}
+
+INFO: No spawnpoints found. Trying to find SP DM ent (USE AS REFERENCE!).
+... Failed
+
+WARNING: Blacklisted static model:
+{
+"model" "*1"
+"classname" "func_wall"
+"spawnflags" "1"
+"targetname" "truck_wall"
+}
+WARNING: Blacklisted static model:
+{
+"model" "*3"
+"targetname" "heli_blocker"
+"classname" "func_wall"
+}
+WARNING: Blacklisted static model:
+{
+"model" "*4"
+"targetname" "truck_block"
+"classname" "func_wall"
+"spawnflags" "0"
+}
+WARNING: Blacklisted static model:
+{
+"model" "*7"
+"classname" "trigger_objective"
+"command" "addsub"
+"item" "2"
+"targetname" "objective03"
+}
+WARNING: Blacklisted static model:
+{
+"model" "*32"
+"targetname" "objective02"
+"item" "1"
+"command" "completesub"
+"classname" "trigger_objective"
+}
+WARNING: Blacklisted static model:
+{
+"model" "*33"
+"classname" "trigger_objective"
+"command" "addsub"
+"item" "1"
+"targetname" "objective01"
+}
+WARNING: Blacklisted static model:
+{
+"model" "*34"
+"targetname" "objective04"
+"item" "2"
+"command" "completesub"
+"classname" "trigger_objective"
+}
+ -- BLACKLISTED ENTITIES:
+
+{
+"classname" "info_NPCcover"
+"target" "t19"
+"origin" "-1524 4036 252"
+}
+
+{
+"classname" "traitor_handler"
+"origin" "80 192 424"
+}
+
+{
+"model" "*1"
+"classname" "func_wall"
+"spawnflags" "1"
+"targetname" "truck_wall"
+}
+
+{
+"classname" "pickup_weapon"
+"type" "M4"
+"origin" "835 801 280"
+}
+
+{
+"classname" "pickup_armor_small"
+"origin" "896 808 248"
+}
+
+{
+"classname" "pickup_ammo"
+"origin" "-1416 4152 272"
+"type" "5.56mm"
+}
+
+{
+"classname" "pickup_armor_big"
+"origin" "-1382 4162 272"
+}
+
+{
+"model" "*3"
+"targetname" "heli_blocker"
+"classname" "func_wall"
+}
+
+{
+"classname" "script_runner"
+"targetname" "t17"
+"script" "common/leaving"
+"origin" "-1604 4708 268"
+}
+
+{
+"targetname" "tojungle_counter"
+"origin" "172 332 332"
+"classname" "target_counter"
+"count" "3"
+"target" "t18"
+}
+
+{
+"spawninFOV" "1"
+"targetname" "sniper3"
+"killtarget" "tojungle_counter"
+"origin" "129 -1727 674"
+"spawnflags" "7"
+"spawnscript" "col2/sniper_set_rocket"
+"angles" "0 90 0"
+"classname" "NPC_Colombian_Rebel"
+"NPC" "1"
+}
+
+{
+"targetname" "sniper2"
+"spawninFOV" "1"
+"killtarget" "tojungle_counter"
+"origin" "-1327 -1159 778"
+"spawnflags" "7"
+"spawnscript" "col2/sniper_set"
+"navigation" "OFF"
+"angles" "0 45 0"
+"classname" "NPC_Colombian_Rebel"
+"NPC" "1"
+}
+
+{
+"classname" "NPC_Marine_Civilian"
+"spawnflags" "6"
+"targetname" "redshirt1"
+"ICARUSname" "redshirt1"
+"origin" "305 97 294"
+"angles" "0 270 0"
+"deathscript" "col2/redshirt1_death"
+"NPC" "1"
+}
+
+{
+"model" "*4"
+"targetname" "truck_block"
+"classname" "func_wall"
+"spawnflags" "0"
+}
+
+{
+"ICARUSname" "truck"
+"targetname" "truck"
+"classname" "ce_vh_truck_personnel_rotated"
+"angles" "0 230 0"
+"origin" "1408 2128 232"
+"ConfusEd" "1"
+}
+
+{
+"classname" "script_runner"
+"script" "col2/chopper_stuff"
+"targetname" "chopper_flight"
+"origin" "196 364 332"
+}
+
+{
+"classname" "target_play_music"
+"music" "music/colombia/col1"
+"speed" "fast"
+"targetname" "music_fast"
+"origin" "196 380 332"
+}
+
+{
+"classname" "pickup_health_small"
+"origin" "-1058 3684 198"
+}
+
+{
+"origin" "914 718 246"
+"classname" "pickup_health_small"
+}
+
+{
+"classname" "script_runner"
+"targetname" "sniper_script"
+"script" "col2/sniper"
+"origin" "172 -476 204"
+"spawnflags" "1"
+}
+
+{
+"model" "*7"
+"classname" "trigger_objective"
+"command" "addsub"
+"item" "2"
+"targetname" "objective03"
+}
+
+{
+"origin" "904 696 328"
+"classname" "pickup_weapon_M67"
+}
+
+{
+"killtarget" "kt_1"
+"classname" "NPC_Colombian_Rebel"
+"angles" "0 360 0"
+"spawnflags" "15"
+"origin" "-1079 3793 254"
+"targetname" "t16"
+"NPC" "1"
+}
+
+{
+"classname" "func_brushmodel_child"
+"targetname" "chopper_child"
+"brushParent" "chopper"
+"origin" "-88 -560 280"
+}
+
+{
+"classname" "light"
+"_color" "1.000000 0.874510 0.619608"
+"light" "1200"
+"scale" ".1"
+"origin" "468 678 306"
+}
+
+{
+"classname" "script_runner"
+"targetname" "tojungle"
+"script" "col2/tojungle"
+"spawnflags" "0"
+"origin" "164 364 332"
+}
+
+{
+"origin" "172 -540 204"
+"script" "col2/start_new"
+"spawnflags" "1"
+"targetname" "t15"
+"classname" "script_runner"
+}
+
+{
+"classname" "script_runner"
+"spawnflags" "0"
+"script" "col2/mullinshere"
+"targetname" "t12"
+"origin" "308 716 260"
+}
+
+{
+"deathscript" "common/failedb"
+"origin" "201 769 294"
+"targetname" "anderson"
+"ICARUSname" "anderson"
+"spawnflags" "4"
+"angles" "0 225 0"
+"classname" "NPC_Jack_Anderson"
+"ignoredeath" "1"
+"NPC" "1"
+}
+
+{
+"classname" "target_level_change"
+"targetname" "t11"
+"mapname" "col3"
+"origin" "-1620 4972 292"
+}
+
+{
+"origin" "88 -536 224"
+"classname" "info_player_start"
+"angles" "0 45 0"
+}
+
+{
+"light" "15"
+"classname" "light"
+"_color" "1.000000 0.610236 0.255906"
+"origin" "-48 -476 284"
+"scale" "2"
+}
+
+{
+"deathscript" "common/failedb"
+"spawnscript" "col2/pilot"
+"spawnflags" "6"
+"targetname" "skip"
+"ICARUSname" "skip"
+"origin" "-85 -461 294"
+"classname" "NPC_Marine_Pilot"
+"angles" "0 90 0"
+"brushParent" "chopper"
+"brushChild" "chopper_child"
+"NPC" "1"
+}
+
+{
+"deathscript" "common/failedb"
+"spawnflags" "6"
+"classname" "NPC_Butch"
+"origin" "-201 -615 254"
+"ICARUSname" "butch"
+"targetname" "butch"
+"angles" "0 180 0"
+"NPC" "1"
+}
+
+{
+"deathscript" "common/failedb"
+"angles" "0 180 0"
+"classname" "NPC_Marine_Soldier"
+"origin" "793 437 296"
+"targetname" "shemp"
+"spawnflags" "7"
+"NPC" "1"
+}
+
+{
+"deathscript" "common/failedb"
+"angles" "0 45 0"
+"targetname" "larry"
+"classname" "NPC_Marine_Soldier"
+"ICARUSname" "larry"
+"origin" "97 -443 250"
+"spawnflags" "6"
+"setskin" "marine_camo3"
+"NPC" "1"
+}
+
+{
+"deathscript" "common/failedb"
+"angles" "0 135 0"
+"targetname" "curly"
+"classname" "NPC_Marine_Soldier"
+"ICARUSname" "curly"
+"origin" "-203 -535 250"
+"spawnflags" "6"
+"setskin" "marine_washington"
+"NPC" "1"
+}
+
+{
+"deathscript" "common/failedb"
+"angles" "0 180 0"
+"classname" "NPC_Marine_Soldier"
+"origin" "675 441 296"
+"targetname" "bob"
+"spawnflags" "7"
+"NPC" "1"
+}
+
+{
+"deathscript" "common/failedb"
+"angles" "0 360 0"
+"origin" "65 613 298"
+"classname" "NPC_Marine_Soldier"
+"ICARUSname" "moe"
+"targetname" "moe"
+"spawnflags" "6"
+"setskin" "marine_camo2"
+"NPC" "1"
+}
+
+{
+"origin" "108 820 260"
+"script" "col2/observer_new"
+"spawnflags" "1"
+"classname" "script_runner"
+"targetname" "t14"
+}
+
+{
+"origin" "560 682 286"
+"angles" "0 90 0"
+"classname" "ce_eq_com_equip_popup"
+"targetname" "radio"
+"ConfusEd" "1"
+}
+
+{
+"classname" "ce_eq_com_equip_sdish"
+"angles" "0 315 0"
+"origin" "610 694 310"
+"ConfusEd" "1"
+}
+
+{
+"origin" "495 680 286"
+"angles" "0 90 0"
+"classname" "ce_eq_com_equip_phone"
+"ConfusEd" "1"
+}
+
+{
+"origin" "468 678 286"
+"angles" "0 90 0"
+"classname" "ce_lght_lantern"
+"ConfusEd" "1"
+}
+
+{
+"origin" "820 854 329"
+"scale" ".1"
+"light" "1200"
+"_color" "1.000000 0.874510 0.619608"
+"classname" "light"
+}
+
+{
+"classname" "ce_lght_lantern"
+"angles" "0 90 0"
+"origin" "820 854 309"
+"ConfusEd" "1"
+}
+
+{
+"killtarget" "kt_2"
+"classname" "NPC_Colombian_Soldier"
+"angles" "0 360 0"
+"spawnflags" "3"
+"origin" "-1241 3847 266"
+"targetname" "t16"
+"NPC" "1"
+}
+
+{
+"classname" "pickup_weapon_M67"
+"origin" "880 696 328"
+}
+
+{
+"model" "*32"
+"targetname" "objective02"
+"item" "1"
+"command" "completesub"
+"classname" "trigger_objective"
+}
+
+{
+"model" "*33"
+"classname" "trigger_objective"
+"command" "addsub"
+"item" "1"
+"targetname" "objective01"
+}
+
+{
+"model" "*34"
+"targetname" "objective04"
+"item" "2"
+"command" "completesub"
+"classname" "trigger_objective"
+}
+
+{
+"origin" "-775 -1647 762"
+"spawnflags" "15"
+"targetname" "sniper02"
+"classname" "NPC_Colombian_Sniper"
+"angles" "0 70 0"
+"killtarget" "sniper_death"
+"navigation" "OFF"
+"spawnscript" "col2/sniper_set"
+"spawninFOV" "1"
+"NPC" "1"
+}
+
+{
+"classname" "pickup_health_small"
+"origin" "892 718 246"
+}
+
+{
+"targetname" "kt_1"
+"origin" "-1641 4631 274"
+"spawnflags" "3"
+"angles" "0 270 0"
+"classname" "NPC_Colombian_Soldier"
+"NPC" "1"
+}
+
+{
+"classname" "NPC_Colombian_Soldier"
+"angles" "0 270 0"
+"spawnflags" "3"
+"origin" "-1705 4631 274"
+"targetname" "kt_2"
+"NPC" "1"
+}
+
+{
+"origin" "-1058 3664 198"
+"classname" "pickup_health_small"
+}
+
+{
+"origin" "-316 580 268"
+"targetname" "larryhere"
+"classname" "info_NPCnav"
+}
+
+{
+"angles" "0 315 0"
+"origin" "-337 89 298"
+"ICARUSname" "redshirt2"
+"targetname" "redshirt2"
+"spawnflags" "6"
+"classname" "NPC_Marine_Civilian"
+"deathscript" "col2/redshirt2_death"
+"NPC" "1"
+}
+
+{
+"origin" "180 364 332"
+"targetname" "sniper_death"
+"script" "col2/sniper_death"
+"classname" "script_runner"
+}
+
+{
+"classname" "info_NPCnav"
+"targetname" "moehere"
+"origin" "260 1348 268"
+}
+
+{
+"classname" "NPC_Colombian_Rebel"
+"angles" "0 135 0"
+"spawnscript" "col2/sniper_set"
+"spawnflags" "15"
+"origin" "1713 -1719 674"
+"targetname" "sniper4"
+"spawninFOV" "1"
+"killtarget" "tojungle_counter"
+"NPC" "1"
+}
+
+{
+"spawninFOV" "1"
+"targetname" "sniper5"
+"origin" "-682 1391 762"
+"spawnflags" "7"
+"spawnscript" "col2/sniper_set"
+"angles" "0 315 0"
+"classname" "NPC_Colombian_Rebel"
+"killtarget" "tojungle_counter"
+"NPC" "1"
+}
+
+{
+"origin" "44 780 268"
+"targetname" "butchhere"
+"classname" "info_NPCnav"
+}
+
+{
+"origin" "548 732 268"
+"targetname" "butch_tent"
+"classname" "info_NPCnav"
+}
+
+{
+"origin" "196 348 332"
+"spawnflags" "0"
+"script" "col2/dead_snipers"
+"targetname" "t18"
+"classname" "script_runner"
+}
+
+{
+"classname" "info_NPCnav"
+"targetname" "curlyhere"
+"origin" "-36 980 268"
+}
+
+{
+"origin" "-1424 4128 272"
+"classname" "pickup_ammo"
+"type" "5.56mm"
+}
+
+{
+"classname" "info_NPCcover"
+"target" "t20"
+"origin" "-492 3892 292"
+}
+
+{
+"classname" "info_NPCcover"
+"target" "t21"
+"origin" "1108 3020 292"
+}
+
+{
+"classname" "info_NPCcover"
+"target" "t22"
+"origin" "1260 868 316"
+}
+
+{
+"classname" "info_NPCcover"
+"target" "t23"
+"origin" "428 1300 284"
+}
+
+{
+"classname" "info_NPCcover"
+"target" "t24"
+"origin" "-180 836 276"
+}
+
+{
+"classname" "info_NPCcover"
+"target" "t25"
+"origin" "628 420 276"
+}
+
+{
+"classname" "info_NPCcover"
+"target" "t26"
+"origin" "828 420 276"
+}
+
+{
+"classname" "info_NPCcover"
+"target" "t27"
+"origin" "1236 300 300"
+}
+
+{
+"classname" "info_NPCcover"
+"target" "t28"
+"origin" "1436 -356 308"
+}
+
+{
+"classname" "info_NPCcover"
+"target" "t29"
+"origin" "1020 -820 308"
+}
+
+
+7 warnings.
+conversion O.K.

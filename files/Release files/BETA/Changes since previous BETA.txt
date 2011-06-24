@@ -1,0 +1,23 @@
+Changes since rev 601
+- Added check in refresh so you can't accidentally refresh when a new round starts.
+- Added check for country in stats (so it won't display N/A when the server owner specifies to disable them).
+- Added multiple names found in /stats.
+- Added proper Deathmatch kill messages.
+- Added proper Deathmatch join message.
+- Fixed server changing to the next map in the cycle when a mapcycle was set (between Competition Mode rounds).
+- Fixed random spawnpoint in DM/TDM gametypes.
+- Fixed bug in !map check when ARENA file didn't exist.
+- Fixed doors with spawnflag 604 not opening(doors from 2k3 ents).
+- Fixed door closing when not looking at it, causing you to be stuck in the door.
+- Fixed doors not opening when not facing it.
+- Fixed forced to spectators due afk double text.
+- Fixed /stats <name> possible incorrect name display.
+- Fixed too many players in team text.
+- Fixed issue where people could respawn by switching teams if they died very early in the round.
+
+Hide&Seek:
+- Fixed cagefight starting when there was no hideSeek_cagefight in the .ent.
+- Fixed briefcase not spawning.
+- Fixed issues in cagefight with incorrect winners. 
+
+// Boe!Man 5/27/11 - 10:01 AM

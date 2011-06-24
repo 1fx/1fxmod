@@ -1,0 +1,1681 @@
+{
+"classname" "worldspawn"
+"message" "Colombia: Marine Base Camp"
+"music" "music/colombia/col1_fast"
+"redteam" "prometheus"
+"blueteam" "marine"
+}
+{
+"classname" "info_player_intermission"
+"origin" "1268 -750 746"
+"angles" "0 128 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "2"
+"origin" "-1744 4192 254"
+"angles" "0 270 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "2"
+"origin" "-1680 4192 254"
+"angles" "0 270 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "2"
+"origin" "-1616 4192 254"
+"angles" "0 270 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "2"
+"origin" "-1552 4192 254"
+"angles" "0 270 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "2"
+"origin" "-1744 4272 254"
+"angles" "0 270 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "2"
+"origin" "-1680 4272 254"
+"angles" "0 270 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "2"
+"origin" "-1616 4272 254"
+"angles" "0 270 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "2"
+"origin" "-1552 4272 254"
+"angles" "0 270 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "2"
+"origin" "-1680 4336 254"
+"angles" "0 270 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "2"
+"origin" "-1616 4336 254"
+"angles" "0 270 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "80 -752 250"
+"angles" "0 90 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "144 -752 250"
+"angles" "0 90 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "208 -752 250"
+"angles" "0 90 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "272 -752 250"
+"angles" "0 90 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "336 -752 250"
+"angles" "0 90 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "400 -752 250"
+"angles" "0 90 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "464 -752 250"
+"angles" "0 90 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "528 -752 250"
+"angles" "0 90 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "592 -752 250"
+"angles" "0 90 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "656 -752 250"
+"angles" "0 90 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "80 -624 250"
+"angles" "0 90 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "144 -624 250"
+"angles" "0 90 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "208 -624 250"
+"angles" "0 90 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "272 -624 250"
+"angles" "0 90 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "336 -624 250"
+"angles" "0 90 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "400 -624 250"
+"angles" "0 90 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "464 -624 250"
+"angles" "0 90 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "528 -624 250"
+"angles" "0 90 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "592 -624 250"
+"angles" "0 90 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "656 -624 250"
+"angles" "0 90 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "80 -496 250"
+"angles" "0 90 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "144 -496 250"
+"angles" "0 90 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "208 -496 250"
+"angles" "0 90 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "272 -496 250"
+"angles" "0 90 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "336 -496 250"
+"angles" "0 90 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "400 -496 250"
+"angles" "0 90 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "464 -496 250"
+"angles" "0 90 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "528 -496 250"
+"angles" "0 90 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "592 -496 250"
+"angles" "0 90 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "656 -496 250"
+"angles" "0 90 0"
+}
+{
+"model" "*2"
+"classname" "trigger_hurt"
+"targetname" "truck_hurt01"
+"dmg" "10"
+"spawnflags" "1"
+}
+{
+"model" "*5"
+"classname" "func_static"
+"origin" "-48 -612 392"
+"targetname" "chopper"
+"ICARUSname" "chopper"
+"parent" "1"
+}
+{
+"model" "*6"
+"classname" "trigger_multiple"
+"spawnflags" "1"
+"targetname" "t11"
+"target" "objective04"
+}
+{
+"model" "*8"
+"classname" "trigger_multiple"
+"spawnflags" "1"
+"target" "t16"
+"targetname" "ridge_runners"
+}
+{
+"model" "*9"
+"classname" "trigger_multiple"
+"target" "t15"
+"spawnflags" "9"
+}
+{
+"model" "*10"
+"classname" "trigger_multiple"
+"spawnflags" "8"
+"target" "t12"
+}
+{
+"model" "*11"
+"classname" "trigger_multiple"
+"spawnflags" "9"
+"target" "t11"
+}
+{
+"model" "*12"
+"classname" "func_breakable_brush"
+"health" "10"
+}
+{
+"model" "*13"
+"classname" "func_breakable_brush"
+"targetname" "t8"
+"health" "10"
+}
+{
+"model" "*14"
+"classname" "func_breakable_brush"
+"target" "t8"
+"health" "20"
+}
+{
+"model" "*15"
+"classname" "func_breakable_brush"
+"health" "10"
+}
+{
+"model" "*16"
+"classname" "func_breakable_brush"
+}
+{
+"model" "*17"
+"classname" "func_breakable_brush"
+"targetname" "t7"
+"health" "10"
+}
+{
+"model" "*18"
+"classname" "func_breakable_brush"
+"target" "t7"
+"targetname" "t6"
+"health" "20"
+}
+{
+"model" "*19"
+"classname" "func_breakable_brush"
+"targetname" "t3"
+"health" "10"
+}
+{
+"model" "*20"
+"classname" "func_breakable_brush"
+"targetname" "t5"
+"health" "10"
+}
+{
+"model" "*21"
+"classname" "func_breakable_brush"
+"target" "t5"
+"health" "20"
+}
+{
+"model" "*22"
+"classname" "func_breakable_brush"
+"health" "10"
+}
+{
+"model" "*23"
+"classname" "func_breakable_brush"
+"targetname" "t1"
+"health" "10"
+}
+{
+"model" "*24"
+"classname" "func_breakable_brush"
+"target" "t1"
+"health" "20"
+}
+{
+"model" "*25"
+"classname" "func_breakable_brush"
+"health" "20"
+}
+{
+"model" "*26"
+"classname" "func_breakable_brush"
+"health" "20"
+}
+{
+"model" "*27"
+"classname" "func_breakable_brush"
+"health" "20"
+}
+{
+"model" "*28"
+"classname" "func_rotating"
+"origin" "-48 -612 432"
+"speed" "800"
+"targetname" "chopper_spinner"
+"ICARUSname" "chopper_spinner"
+}
+{
+"model" "*29"
+"classname" "func_breakable_brush"
+"health" "20"
+}
+{
+"model" "*30"
+"classname" "func_breakable_brush"
+"health" "20"
+}
+{
+"model" "*31"
+"classname" "trigger_multiple"
+"spawnflags" "9"
+"target" "t14"
+}
+{
+"model" "*35"
+"classname" "trigger_multiple"
+"target" "t17"
+"spawnflags" "8"
+}
+{
+"model" "*36"
+"classname" "trigger_hurt"
+"spawnflags" "1"
+"dmg" "10"
+"targetname" "truck_hurt02"
+}
+{
+"model" "*37"
+"classname" "trigger_hurt"
+"spawnflags" "1"
+"dmg" "300"
+"targetname" "truck_hurt"
+}
+{
+"classname" "info_notnull"
+"targetname" "t19"
+"origin" "-1572 3996 276"
+}
+{
+"classname" "info_notnull"
+"targetname" "killanderson"
+"origin" "204 772 292"
+}
+{
+"classname" "info_notnull"
+"origin" "-44 980 284"
+"targetname" "curlyhere"
+"angles" "0 270 0"
+}
+{
+"classname" "info_notnull"
+"origin" "194 1114 284"
+"targetname" "satherhere"
+"angles" "0 315 0"
+}
+{
+"classname" "info_notnull"
+"angles" "0 360 0"
+"targetname" "moehere"
+"origin" "96 920 284"
+}
+{
+"classname" "info_notnull"
+"origin" "1008 456 284"
+"targetname" "shemphere"
+"angles" "0 180 0"
+}
+{
+"classname" "info_notnull"
+"angles" "0 90 0"
+"targetname" "bobhere"
+"origin" "254 566 284"
+}
+{
+"classname" "info_notnull"
+"angles" "0 360 0"
+"targetname" "skiphere"
+"origin" "663 55 284"
+}
+{
+"classname" "info_notnull"
+"targetname" "run"
+"origin" "-1700 5268 236"
+"angles" "0 90 0"
+}
+{
+"classname" "info_notnull"
+"origin" "308 52 348"
+"targetname" "kill_redshirt1"
+}
+{
+"classname" "info_notnull"
+"targetname" "kill_redshirt2"
+"origin" "-308 60 348"
+}
+{
+"classname" "info_notnull"
+"origin" "112 776 284"
+"targetname" "butchhere"
+"angles" "0 360 0"
+}
+{
+"classname" "info_notnull"
+"targetname" "t20"
+"origin" "-436 3948 316"
+}
+{
+"classname" "info_notnull"
+"targetname" "t21"
+"origin" "1172 3060 316"
+}
+{
+"classname" "info_notnull"
+"targetname" "t22"
+"origin" "1340 876 340"
+}
+{
+"classname" "info_notnull"
+"targetname" "t23"
+"origin" "372 1300 308"
+}
+{
+"classname" "info_notnull"
+"targetname" "t24"
+"origin" "-116 836 300"
+}
+{
+"classname" "info_notnull"
+"targetname" "t25"
+"origin" "564 420 300"
+}
+{
+"classname" "info_notnull"
+"targetname" "t26"
+"origin" "892 420 300"
+}
+{
+"classname" "info_notnull"
+"targetname" "t27"
+"origin" "1180 300 324"
+}
+{
+"classname" "info_notnull"
+"targetname" "t28"
+"origin" "1500 -356 332"
+}
+{
+"classname" "info_notnull"
+"targetname" "t29"
+"origin" "1020 -892 332"
+}
+{
+"classname" "target_speaker"
+"origin" "64 -612 272"
+"spawnflags" "1"
+"targetname" "huey_hover01"
+"noise" "sound/ambience/colombia/huey_hovering.wav"
+"brushChild" "chopper_child"
+"brushParent" "chopper"
+}
+{
+"classname" "target_location"
+"message" "Red Spawn"
+"origin" "320 -576 320"
+}
+{
+"classname" "target_location"
+"message" "Camp"
+"origin" "0 512 320"
+}
+{
+"classname" "target_location"
+"message" "Camp"
+"origin" "768 512 320"
+}
+{
+"classname" "target_location"
+"message" "Camp"
+"origin" "768 1024 320"
+}
+{
+"classname" "target_location"
+"message" "Camp"
+"origin" "-256 512 320"
+}
+{
+"classname" "target_location"
+"message" "Camp"
+"origin" "-256 1024 320"
+}
+{
+"classname" "target_location"
+"message" "Outside Camp"
+"origin" "1152 2944 320"
+}
+{
+"classname" "target_location"
+"message" "Outside Camp"
+"origin" "640 3456 320"
+}
+{
+"classname" "target_location"
+"message" "Outside Camp"
+"origin" "128 3968 320"
+}
+{
+"classname" "target_location"
+"message" "Outside Camp"
+"origin" "-256 4224 320"
+}
+{
+"classname" "target_location"
+"message" "Outside Camp"
+"origin" "-512 3968 320"
+}
+{
+"classname" "target_location"
+"message" "Outside Camp"
+"origin" "-1024 3784 320"
+}
+{
+"classname" "target_location"
+"message" "Blue Spawn"
+"origin" "-1648 4232 320"
+}
+{
+"classname" "target_location"
+"message" "North Mountain"
+"origin" "-1600 5056 320"
+}
+{
+"classname" "target_location"
+"message" "North-East Mountain"
+"origin" "256 4864 568"
+}
+{
+"classname" "target_location"
+"message" "North-East Mountain"
+"origin" "672 4512 568"
+}
+{
+"classname" "target_location"
+"message" "North-East Mountain"
+"origin" "1216 4032 568"
+}
+{
+"classname" "target_location"
+"message" "North-East Mountain"
+"origin" "1728 3520 568"
+}
+{
+"classname" "target_location"
+"message" "East Mountain"
+"origin" "2304 1792 792"
+}
+{
+"classname" "target_location"
+"message" "East Mountain"
+"origin" "2560 -128 800"
+}
+{
+"classname" "target_location"
+"message" "East Mountain"
+"origin" "2304 -2368 792"
+}
+{
+"classname" "target_location"
+"message" "South Mountain"
+"origin" "0 -1792 792"
+}
+{
+"classname" "target_location"
+"message" "West Mountain"
+"origin" "-1792 -1024 792"
+}
+{
+"classname" "target_location"
+"message" "West Mountain"
+"origin" "-1792 0 792"
+}
+{
+"classname" "target_location"
+"message" "North-West Mountain"
+"origin" "-768 2304 792"
+}
+{
+"classname" "client_model"
+"origin" "1464 -168 552"
+"model" "models/objects/colombia/jungle/tree02.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree08.md3"
+"origin" "1320 -720 512"
+}
+{
+"classname" "client_model"
+"origin" "1400 72 768"
+"model" "models/objects/colombia/jungle/tree09.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/plant_lrg01.md3"
+"origin" "1384 -632 296"
+}
+{
+"classname" "client_model"
+"origin" "1280 -312 288"
+"model" "models/objects/colombia/jungle/fern_lrg01.md3"
+}
+{
+"classname" "client_model"
+"angles" "0 180 0"
+"origin" "1320 992 784"
+"model" "models/objects/colombia/jungle/tree09.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree09.md3"
+"origin" "1432 -408 776"
+"angles" "0 270 0"
+}
+{
+"classname" "client_model"
+"angles" "0 135 0"
+"origin" "1440 -1192 552"
+"model" "models/objects/colombia/jungle/tree02.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree02.md3"
+"origin" "1456 -824 552"
+"angles" "0 180 0"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree02.md3"
+"origin" "1264 784 552"
+"angles" "0 45 0"
+}
+{
+"classname" "client_model"
+"angles" "0 90 0"
+"origin" "1496 344 552"
+"model" "models/objects/colombia/jungle/tree02.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree02.md3"
+"origin" "1272 248 552"
+"angles" "0 90 0"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree02.md3"
+"origin" "1872 -1136 872"
+"angles" "0 135 0"
+}
+{
+"classname" "client_model"
+"angles" "0 270 0"
+"origin" "1872 -608 872"
+"model" "models/objects/colombia/jungle/tree02.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree02.md3"
+"origin" "1840 256 872"
+"angles" "0 270 0"
+}
+{
+"classname" "client_model"
+"angles" "0 270 0"
+"origin" "1840 704 872"
+"model" "models/objects/colombia/jungle/tree02.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree02.md3"
+"origin" "1864 1296 880"
+"angles" "0 270 0"
+}
+{
+"classname" "client_model"
+"angles" "0 270 0"
+"origin" "1864 1816 872"
+"model" "models/objects/colombia/jungle/tree02.md3"
+}
+{
+"classname" "client_model"
+"angles" "0 315 0"
+"origin" "1872 984 880"
+"model" "models/objects/colombia/jungle/tree02.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree02.md3"
+"origin" "1896 -176 856"
+"angles" "0 315 0"
+}
+{
+"classname" "client_model"
+"origin" "1472 680 496"
+"model" "models/objects/colombia/jungle/tree08.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree08.md3"
+"origin" "632 1944 752"
+}
+{
+"classname" "client_model"
+"origin" "1416 1112 592"
+"model" "models/objects/colombia/jungle/tree08.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree08.md3"
+"origin" "1880 496 848"
+}
+{
+"classname" "client_model"
+"origin" "1912 64 784"
+"model" "models/objects/colombia/jungle/tree08.md3"
+"angles" "0 135 0"
+}
+{
+"classname" "client_model"
+"angles" "0 135 0"
+"model" "models/objects/colombia/jungle/tree08.md3"
+"origin" "1904 -384 840"
+}
+{
+"classname" "client_model"
+"origin" "1904 -872 824"
+"model" "models/objects/colombia/jungle/tree08.md3"
+"angles" "0 360 0"
+}
+{
+"classname" "client_model"
+"angles" "0 360 0"
+"model" "models/objects/colombia/jungle/tree08.md3"
+"origin" "1928 -1472 832"
+}
+{
+"classname" "client_model"
+"angles" "0 45 0"
+"origin" "1264 -48 288"
+"model" "models/objects/colombia/jungle/plant_lrg01.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/plant_lrg01.md3"
+"origin" "1376 536 296"
+"angles" "0 45 0"
+}
+{
+"classname" "client_model"
+"angles" "0 135 0"
+"origin" "1520 136 296"
+"model" "models/objects/colombia/jungle/plant_lrg01.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/fern_lrg01.md3"
+"origin" "1368 -184 288"
+}
+{
+"classname" "client_model"
+"origin" "1224 120 288"
+"model" "models/objects/colombia/jungle/fern_lrg01.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/fern_lrg01.md3"
+"origin" "1376 232 288"
+}
+{
+"classname" "client_model"
+"angles" "0 135 0"
+"origin" "1592 -8 288"
+"model" "models/objects/colombia/jungle/fern_lrg01.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/fern_lrg01.md3"
+"origin" "1416 864 288"
+"angles" "0 135 0"
+}
+{
+"classname" "client_model"
+"angles" "0 225 0"
+"origin" "1256 1168 288"
+"model" "models/objects/colombia/jungle/fern_lrg01.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree09.md3"
+"origin" "1232 -1288 784"
+"angles" "0 135 0"
+}
+{
+"classname" "client_model"
+"angles" "0 270 0"
+"origin" "1072 -824 784"
+"model" "models/objects/colombia/jungle/tree09.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree09.md3"
+"origin" "904 -1224 752"
+"angles" "0 315 0"
+}
+{
+"classname" "client_model"
+"angles" "0 90 0"
+"origin" "824 -1848 1096"
+"model" "models/objects/colombia/jungle/tree09.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree09.md3"
+"origin" "296 -1672 1112"
+"angles" "0 180 0"
+}
+{
+"classname" "client_model"
+"angles" "0 225 0"
+"origin" "-216 -1640 1104"
+"model" "models/objects/colombia/jungle/tree09.md3"
+}
+{
+"classname" "client_model"
+"angles" "0 135 0"
+"origin" "1448 -1848 1112"
+"model" "models/objects/colombia/jungle/tree09.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree09.md3"
+"origin" "-896 -1584 1208"
+"angles" "0 270 0"
+}
+{
+"classname" "client_model"
+"angles" "0 90 0"
+"origin" "-1256 -1760 1216"
+"model" "models/objects/colombia/jungle/tree09.md3"
+}
+{
+"classname" "client_model"
+"angles" "0 45 0"
+"origin" "-1592 -1272 1224"
+"model" "models/objects/colombia/jungle/tree09.md3"
+}
+{
+"classname" "client_model"
+"angles" "0 180 0"
+"origin" "-1720 -664 1216"
+"model" "models/objects/colombia/jungle/tree09.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree09.md3"
+"origin" "-1752 -144 1232"
+"angles" "0 135 0"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree09.md3"
+"origin" "-1800 536 1232"
+"angles" "0 225 0"
+}
+{
+"classname" "client_model"
+"angles" "0 180 0"
+"origin" "-1448 872 1192"
+"model" "models/objects/colombia/jungle/tree09.md3"
+}
+{
+"classname" "client_model"
+"angles" "0 135 0"
+"origin" "-1344 1344 1240"
+"model" "models/objects/colombia/jungle/tree09.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree09.md3"
+"origin" "-1688 1600 1224"
+"angles" "0 270 0"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree09.md3"
+"origin" "-808 1272 1184"
+"angles" "0 135 0"
+}
+{
+"classname" "client_model"
+"angles" "0 225 0"
+"origin" "-584 1472 1184"
+"model" "models/objects/colombia/jungle/tree09.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree09.md3"
+"origin" "-728 1872 1184"
+"angles" "0 135 0"
+}
+{
+"classname" "client_model"
+"angles" "0 315 0"
+"origin" "464 1880 1040"
+"model" "models/objects/colombia/jungle/tree09.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree09.md3"
+"origin" "-1232 296 1008"
+"angles" "0 315 0"
+}
+{
+"classname" "client_model"
+"angles" "0 180 0"
+"origin" "-1296 40 1040"
+"model" "models/objects/colombia/jungle/tree09.md3"
+}
+{
+"classname" "client_model"
+"angles" "0 135 0"
+"origin" "-1128 -736 1072"
+"model" "models/objects/colombia/jungle/tree09.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree02.md3"
+"origin" "-1408 1712 992"
+"angles" "0 270 0"
+}
+{
+"classname" "client_model"
+"angles" "0 180 0"
+"origin" "-864 1472 992"
+"model" "models/objects/colombia/jungle/tree02.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree02.md3"
+"origin" "-1648 1392 984"
+"angles" "0 45 0"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree02.md3"
+"origin" "-1888 896 992"
+"angles" "0 315 0"
+}
+{
+"classname" "client_model"
+"angles" "0 225 0"
+"origin" "-1904 1504 984"
+"model" "models/objects/colombia/jungle/tree02.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree02.md3"
+"origin" "-1936 400 984"
+"angles" "0 225 0"
+}
+{
+"classname" "client_model"
+"angles" "0 225 0"
+"origin" "-1856 64 992"
+"model" "models/objects/colombia/jungle/tree02.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree02.md3"
+"origin" "-1808 -144 984"
+"angles" "0 270 0"
+}
+{
+"classname" "client_model"
+"angles" "0 135 0"
+"origin" "-1904 -416 992"
+"model" "models/objects/colombia/jungle/tree02.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree02.md3"
+"origin" "-1856 -960 1000"
+"angles" "0 225 0"
+}
+{
+"classname" "client_model"
+"angles" "0 225 0"
+"origin" "-1424 -1488 992"
+"model" "models/objects/colombia/jungle/tree02.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree02.md3"
+"origin" "-1872 -1416 984"
+"angles" "0 225 0"
+}
+{
+"classname" "client_model"
+"angles" "0 360 0"
+"origin" "-1072 -1840 992"
+"model" "models/objects/colombia/jungle/tree02.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree02.md3"
+"origin" "-1856 -1872 984"
+"angles" "0 360 0"
+}
+{
+"classname" "client_model"
+"angles" "0 225 0"
+"origin" "-768 -1888 984"
+"model" "models/objects/colombia/jungle/tree02.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree02.md3"
+"origin" "-344 -1880 952"
+"angles" "0 90 0"
+}
+{
+"classname" "client_model"
+"angles" "0 135 0"
+"origin" "64 -1856 880"
+"model" "models/objects/colombia/jungle/tree02.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree02.md3"
+"origin" "440 -1832 880"
+"angles" "0 225 0"
+}
+{
+"classname" "client_model"
+"angles" "0 225 0"
+"origin" "616 -1656 856"
+"model" "models/objects/colombia/jungle/tree02.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree08.md3"
+"origin" "-1472 1160 944"
+"angles" "0 90 0"
+}
+{
+"classname" "client_model"
+"angles" "0 90 0"
+"origin" "-1232 1576 944"
+"model" "models/objects/colombia/jungle/tree08.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree08.md3"
+"origin" "-1776 696 944"
+"angles" "0 225 0"
+}
+{
+"classname" "client_model"
+"angles" "0 360 0"
+"origin" "-1592 976 952"
+"model" "models/objects/colombia/jungle/tree08.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree08.md3"
+"origin" "-1944 200 944"
+"angles" "0 135 0"
+}
+{
+"classname" "client_model"
+"angles" "0 135 0"
+"origin" "-1864 -672 952"
+"model" "models/objects/colombia/jungle/tree08.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree08.md3"
+"origin" "-1368 -976 952"
+"angles" "0 135 0"
+}
+{
+"classname" "client_model"
+"angles" "0 90 0"
+"origin" "-1040 -1648 952"
+"model" "models/objects/colombia/jungle/tree08.md3"
+}
+{
+"classname" "client_model"
+"angles" "0 180 0"
+"origin" "40 -1616 832"
+"model" "models/objects/colombia/jungle/tree08.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree08.md3"
+"origin" "448 -1712 840"
+"angles" "0 225 0"
+}
+{
+"classname" "client_model"
+"angles" "0 135 0"
+"origin" "-1192 -168 776"
+"model" "models/objects/colombia/jungle/tree08.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree08.md3"
+"origin" "-1320 224 800"
+"angles" "0 135 0"
+}
+{
+"classname" "client_model"
+"angles" "0 225 0"
+"origin" "992 -1832 880"
+"model" "models/objects/colombia/jungle/tree02.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree02.md3"
+"origin" "1704 -1904 872"
+"angles" "0 225 0"
+}
+{
+"classname" "client_model"
+"angles" "0 270 0"
+"origin" "1208 -760 296"
+"model" "models/objects/colombia/jungle/plant_lrg01.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree09.md3"
+"origin" "-160 1952 1096"
+"angles" "0 225 0"
+}
+{
+"classname" "client_model"
+"angles" "0 225 0"
+"origin" "1872 1936 1096"
+"model" "models/objects/colombia/jungle/tree09.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree09.md3"
+"origin" "1616 1432 1096"
+"angles" "0 90 0"
+}
+{
+"classname" "client_model"
+"angles" "0 90 0"
+"origin" "656 2528 928"
+"model" "models/objects/colombia/jungle/tree09.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree09.md3"
+"origin" "104 3032 992"
+"angles" "0 180 0"
+}
+{
+"classname" "client_model"
+"angles" "0 225 0"
+"origin" "-328 3456 944"
+"model" "models/objects/colombia/jungle/tree09.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree09.md3"
+"origin" "-640 3144 944"
+"angles" "0 315 0"
+}
+{
+"classname" "client_model"
+"angles" "0 135 0"
+"origin" "-1080 2976 976"
+"model" "models/objects/colombia/jungle/tree09.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree09.md3"
+"origin" "-1624 2952 968"
+"angles" "0 270 0"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree09.md3"
+"origin" "-1040 4472 1032"
+"angles" "0 360 0"
+}
+{
+"classname" "client_model"
+"angles" "0 225 0"
+"origin" "-464 5096 1048"
+"model" "models/objects/colombia/jungle/tree09.md3"
+}
+{
+"classname" "client_model"
+"origin" "1888 2392 696"
+"model" "models/objects/colombia/jungle/tree08.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree08.md3"
+"origin" "1840 1544 832"
+"angles" "0 270 0"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree08.md3"
+"origin" "224 1816 744"
+}
+{
+"classname" "client_model"
+"origin" "624 2288 800"
+"model" "models/objects/colombia/jungle/tree08.md3"
+"angles" "0 270 0"
+}
+{
+"classname" "client_model"
+"angles" "0 135 0"
+"model" "models/objects/colombia/jungle/tree08.md3"
+"origin" "408 2896 680"
+}
+{
+"classname" "client_model"
+"origin" "-64 3264 680"
+"model" "models/objects/colombia/jungle/tree08.md3"
+"angles" "0 315 0"
+}
+{
+"classname" "client_model"
+"angles" "0 135 0"
+"model" "models/objects/colombia/jungle/tree08.md3"
+"origin" "-520 3280 680"
+}
+{
+"classname" "client_model"
+"origin" "-856 3016 680"
+"model" "models/objects/colombia/jungle/tree08.md3"
+"angles" "0 90 0"
+}
+{
+"classname" "client_model"
+"angles" "0 135 0"
+"model" "models/objects/colombia/jungle/tree08.md3"
+"origin" "-1256 2680 680"
+}
+{
+"classname" "client_model"
+"origin" "-568 2528 800"
+"model" "models/objects/colombia/jungle/tree08.md3"
+"angles" "0 315 0"
+}
+{
+"classname" "client_model"
+"angles" "0 315 0"
+"model" "models/objects/colombia/jungle/tree08.md3"
+"origin" "-112 2456 800"
+}
+{
+"classname" "client_model"
+"origin" "-1472 2360 800"
+"model" "models/objects/colombia/jungle/tree08.md3"
+"angles" "0 225 0"
+}
+{
+"classname" "client_model"
+"angles" "0 45 0"
+"model" "models/objects/colombia/jungle/tree08.md3"
+"origin" "-752 4792 792"
+}
+{
+"classname" "client_model"
+"origin" "64 5424 776"
+"model" "models/objects/colombia/jungle/tree08.md3"
+"angles" "0 135 0"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree02.md3"
+"origin" "-456 1952 904"
+"angles" "0 90 0"
+}
+{
+"classname" "client_model"
+"angles" "0 90 0"
+"origin" "672 2688 696"
+"model" "models/objects/colombia/jungle/tree02.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree02.md3"
+"origin" "136 3160 696"
+"angles" "0 180 0"
+}
+{
+"classname" "client_model"
+"angles" "0 180 0"
+"origin" "-496 3040 768"
+"model" "models/objects/colombia/jungle/tree02.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree02.md3"
+"origin" "-928 2768 800"
+"angles" "0 225 0"
+}
+{
+"classname" "client_model"
+"angles" "0 315 0"
+"origin" "-1384 3000 736"
+"model" "models/objects/colombia/jungle/tree02.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree02.md3"
+"origin" "-1024 2336 792"
+"angles" "0 315 0"
+}
+{
+"classname" "client_model"
+"angles" "0 315 0"
+"origin" "-272 5304 792"
+"model" "models/objects/colombia/jungle/tree02.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree02.md3"
+"origin" "-16 5024 760"
+"angles" "0 270 0"
+}
+{
+"classname" "client_model"
+"angles" "0 135 0"
+"origin" "-904 4592 824"
+"model" "models/objects/colombia/jungle/tree02.md3"
+}
+{
+"classname" "client_model"
+"angles" "0 360 0"
+"origin" "1808 2776 904"
+"model" "models/objects/colombia/jungle/tree09.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree09.md3"
+"origin" "1624 3296 952"
+}
+{
+"classname" "client_model"
+"angles" "0 360 0"
+"origin" "1712 3776 984"
+"model" "models/objects/colombia/jungle/tree09.md3"
+}
+{
+"classname" "client_model"
+"angles" "0 16 0"
+"model" "models/objects/colombia/jungle/tree09.md3"
+"origin" "1128 2960 696"
+}
+{
+"classname" "client_model"
+"origin" "1280 3456 664"
+"model" "models/objects/colombia/jungle/tree02.md3"
+}
+{
+"classname" "client_model"
+"angles" "0 360 0"
+"origin" "1112 3956 952"
+"model" "models/objects/colombia/jungle/tree09.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree09.md3"
+"origin" "512 4236 872"
+}
+{
+"classname" "client_model"
+"angles" "0 360 0"
+"origin" "-16 4412 728"
+"model" "models/objects/colombia/jungle/tree09.md3"
+}
+{
+"classname" "client_model"
+"angles" "0 -100 0"
+"model" "models/objects/colombia/jungle/tree09.md3"
+"origin" "440 4748 968"
+}
+{
+"classname" "client_model"
+"angles" "0 -148 0"
+"origin" "808 4492 968"
+"model" "models/objects/colombia/jungle/tree09.md3"
+}
+{
+"classname" "client_model"
+"angles" "0 135 0"
+"model" "models/objects/colombia/jungle/tree08.md3"
+"origin" "552 4536 688"
+}
+{
+"classname" "client_model"
+"origin" "752 3992 616"
+"model" "models/objects/colombia/jungle/tree08.md3"
+"angles" "0 135 0"
+}
+{
+"classname" "client_model"
+"angles" "0 135 0"
+"model" "models/objects/colombia/jungle/tree08.md3"
+"origin" "1456 4120 744"
+}
+{
+"classname" "client_model"
+"origin" "-528 4472 528"
+"model" "models/objects/colombia/jungle/tree08.md3"
+"angles" "0 135 0"
+}
+{
+"classname" "client_model"
+"angles" "0 360 0"
+"origin" "-1744 3472 776"
+"model" "models/objects/colombia/jungle/tree09.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree09.md3"
+"origin" "-1880 3992 728"
+"angles" "0 -56 0"
+}
+{
+"classname" "client_model"
+"angles" "0 -120 0"
+"origin" "-1856 4560 712"
+"model" "models/objects/colombia/jungle/tree09.md3"
+}
+{
+"classname" "client_model"
+"angles" "0 135 0"
+"model" "models/objects/colombia/jungle/tree08.md3"
+"origin" "-1488 4832 432"
+}
+{
+"classname" "client_model"
+"origin" "-1848 4896 456"
+"model" "models/objects/colombia/jungle/tree08.md3"
+"angles" "0 40 0"
+}
+{
+"classname" "client_model"
+"angles" "0 -184 0"
+"model" "models/objects/colombia/jungle/tree08.md3"
+"origin" "-1808 4160 424"
+}
+{
+"classname" "client_model"
+"angles" "0 360 0"
+"origin" "-1416 5352 680"
+"model" "models/objects/colombia/jungle/tree09.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree09.md3"
+"origin" "-1704 5632 824"
+"angles" "0 40 0"
+}
+{
+"classname" "client_model"
+"angles" "0 -48 0"
+"origin" "-1248 5800 704"
+"model" "models/objects/colombia/jungle/tree09.md3"
+}
+{
+"classname" "client_model"
+"model" "models/objects/colombia/jungle/tree09.md3"
+"origin" "-1832 5152 704"
+"angles" "0 -48 0"
+}
+{
+"classname" "client_model"
+"angles" "0 135 0"
+"origin" "-1224 -1248 952"
+"model" "models/objects/colombia/jungle/tree08.md3"
+}
+{
+"classname" "model_static"
+"model" "models/objects/common/sandbag_end.md3"
+"origin" "205 86 244"
+}
+{
+"classname" "model_static"
+"model" "models/objects/common/sandbag_corner.md3"
+"angles" "0 270 0"
+"origin" "288 40 244"
+}
+{
+"classname" "model_static"
+"model" "models/objects/common/sandbag_section.md3"
+"angles" "0 270 0"
+"origin" "288 40 244"
+}
+{
+"classname" "model_static"
+"origin" "384 40 244"
+"model" "models/objects/common/sandbag_end.md3"
+"angles" "0 270 0"
+}
+{
+"classname" "model_static"
+"origin" "-288 88 248"
+"angles" "0 360 0"
+"model" "models/objects/common/sandbag_corner.md3"
+}
+{
+"classname" "model_static"
+"origin" "-288 88 248"
+"model" "models/objects/common/sandbag_end.md3"
+}
+{
+"classname" "model_static"
+"angles" "0 90 0"
+"model" "models/objects/common/sandbag_end.md3"
+"origin" "-430 5 248"
+}
+{
+"classname" "model_static"
+"origin" "-431 42 248"
+"angles" "0 270 0"
+"model" "models/objects/common/sandbag_section.md3"
+}
+{
+"classname" "hideseek_cage"
+"origin" 102 890 288"
+}

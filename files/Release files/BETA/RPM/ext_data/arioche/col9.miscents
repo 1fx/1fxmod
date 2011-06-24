@@ -1,0 +1,31 @@
+col9
+{
+	miscent
+	{
+		height 130
+		maxheight 180
+		model
+		{
+			name models\objects\colombia\jungle\tree08
+			frequency 18
+			minscale .7
+			maxscale 2.0
+			seed 1234
+		}
+
+	}
+	miscent
+	{
+		height 130
+		model
+		{
+			name models\objects\colombia\jungle\tree09
+			frequency 12
+			minscale .4
+			maxscale 1.3
+			seed 1234
+		}
+
+	}
+}
+

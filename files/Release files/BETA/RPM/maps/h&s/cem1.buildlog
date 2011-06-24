@@ -1,0 +1,990 @@
+Boe's BSP2ENT v2 - modified to remove all un-needed stuff from ent files
+Conversion started on: 04/02/2011 - 00:26:19
+
+
+
+ ---------- new build started
+
+INFO: No music entry in worldspawn
+INFO: No redteam entry in worldspawn
+INFO: No blueteam entry in worldspawn
+
+ -- WORLDSPAWN ENTITY
+{
+"spawnscript" "cem1/part1"
+"gridsize" "128 128 256"
+"classname" "worldspawn"
+"chopsize" "512"
+"dynamic_music" "OFF"
+"message" "&LEVELNAMES_CEM1"
+}
+
+INFO: No spawnpoints found. Trying to find SP DM ent (USE AS REFERENCE!).
+... Failed
+
+ -- BLACKLISTED ENTITIES:
+
+{
+"classname" "info_NPCnav"
+"origin" "4468 4380 164"
+"targetname" "mib2_nav01"
+}
+
+{
+"origin" "2052 -268 284"
+"classname" "info_NPCnav"
+}
+
+{
+"origin" "4357 4019 174"
+"spawnflags" "16"
+"ICARUSname" "sam"
+"angles" "0 280 0"
+"classname" "NPC_Sam_Suit"
+"targetname" "sam"
+"NPC" "1"
+}
+
+{
+"origin" "4213 3689 174"
+"setskin" "civilian_male_b1"
+"ICARUSname" "civ2"
+"spawnflags" "4"
+"classname" "NPC_Civilian_NoItems"
+"targetname" "civ2"
+"NPC" "1"
+}
+
+{
+"classname" "ce_misc_flag_waving"
+"angles" "0 270 0"
+"skin" "4"
+"origin" "2563 3073 436"
+"ConfusEd" "1"
+}
+
+{
+"targetname" "sergeant"
+"classname" "NPC_Honor_Guard_Comm"
+"angles" "0 5 0"
+"ICARUSname" "sergeant"
+"origin" "3521 3961 174"
+"navigation" "OFF"
+"spawnflags" "4"
+"NPC" "1"
+}
+
+{
+"classname" "func_brushmodel_child"
+"brushParent" "jets"
+"targetname" "jetchild"
+"origin" "3512 2360 992"
+}
+
+{
+"classname" "ref_tag"
+"angles" "0 135 0"
+"targetname" "jet1"
+"origin" "840 2760 992"
+}
+
+{
+"classname" "NPC_Mullins_Suit"
+"ICARUSname" "mullins"
+"angles" "0 315 0"
+"origin" "4301 3973 174"
+"spawnflags" "16"
+"targetname" "mullins"
+"NPC" "1"
+}
+
+{
+"origin" "2316 -812 116"
+"targetname" "endmusic"
+"music" "music/misc/end_credits"
+"classname" "target_play_music"
+"speed" "off"
+}
+
+{
+"skin" "1"
+"ICARUSname" "ordertruck"
+"origin" "1616 -512 32"
+"angles" "0 180 0"
+"classname" "ce_vh_truck_personnel"
+"ConfusEd" "1"
+}
+
+{
+"targetname" "order01"
+"angles" "0 30 0"
+"origin" "2065 -519 306"
+"ICARUSname" "order01"
+"spawninFOV" "1"
+"spawnflags" "5"
+"classname" "NPC_Order_Soldier"
+"reports" "false"
+"NPC" "1"
+}
+
+{
+"targetname" "endcam02"
+"origin" "2336 -848 152"
+"angles" "7 60 0"
+"classname" "ref_tag"
+}
+
+{
+"targetname" "guard01"
+"spawnflags" "5"
+"ICARUSname" "guard01"
+"angles" "0 90 0"
+"classname" "NPC_Shop_Guards_CEM1"
+"origin" "2625 -655 50"
+"reports" "false"
+"NPC" "1"
+}
+
+{
+"angles" "0 180 0"
+"targetname" "mib2"
+"spawnflags" "1"
+"origin" "4809 4537 178"
+"classname" "NPC_Men_in_Black2"
+"ICARUSname" "mib2"
+"NPC" "1"
+}
+
+{
+"angles" "0 180 0"
+"ICARUSname" "mib1"
+"targetname" "mib1"
+"origin" "4809 4361 178"
+"spawnflags" "1"
+"classname" "NPC_Men_in_Black1"
+"NPC" "1"
+}
+
+{
+"origin" "4512 3920 200"
+"angles" "0 145 0"
+"targetname" "cam6"
+"classname" "ref_tag"
+}
+
+{
+"ICARUSname" "limo01"
+"origin" "7680 4448 128"
+"angles" "0 270 0"
+"classname" "ce_vh_limo"
+"ConfusEd" "1"
+}
+
+{
+"classname" "script_runner"
+"targetname" "t1"
+"script" "cem1/part1"
+"origin" "5188 4356 132"
+}
+
+{
+"classname" "ref_tag"
+"angles" "2 100 0"
+"targetname" "cam1"
+"origin" "4648 3288 240"
+}
+
+{
+"targetname" "marine1"
+"classname" "NPC_Honor_Guard"
+"angles" "0 360 0"
+"ICARUSname" "marine1"
+"origin" "3481 3865 174"
+"navigation" "OFF"
+"spawnflags" "4"
+"NPC" "1"
+}
+
+{
+"targetname" "priest"
+"classname" "NPC_Priest"
+"angles" "0 360 0"
+"ICARUSname" "priest"
+"origin" "4321 3807 174"
+"NPC" "1"
+}
+
+{
+"origin" "4213 3761 174"
+"angles" "0 360 0"
+"classname" "NPC_Female_Civilian"
+"spawnflags" "4"
+"ICARUSname" "civ1"
+"targetname" "civ1"
+"NPC" "1"
+}
+
+{
+"origin" "4417 4025 174"
+"ICARUSname" "michaels"
+"angles" "0 270 0"
+"classname" "NPC_Director_Michaels"
+"spawnflags" "16"
+"targetname" "michaels"
+"NPC" "1"
+}
+
+{
+"origin" "5104 4304 152"
+"classname" "info_player_start"
+"angles" "0 360 0"
+}
+
+{
+"origin" "4400 3856 236"
+"_color" "0.745763 1.000000 0.966102"
+"scale" ".1"
+"light" "200"
+"classname" "light"
+}
+
+{
+"classname" "light"
+"light" "200"
+"scale" ".1"
+"_color" "0.745763 1.000000 0.966102"
+"origin" "4560 3856 236"
+}
+
+{
+"classname" "light"
+"light" "200"
+"scale" ".1"
+"_color" "0.745763 1.000000 0.966102"
+"origin" "4400 3632 236"
+}
+
+{
+"origin" "4560 3632 236"
+"_color" "0.745763 1.000000 0.966102"
+"scale" ".1"
+"light" "200"
+"classname" "light"
+}
+
+{
+"classname" "light"
+"light" "200"
+"scale" ".1"
+"_color" "0.745763 1.000000 0.966102"
+"origin" "4480 3744 236"
+}
+
+{
+"targetname" "marine2"
+"origin" "3481 3801 174"
+"ICARUSname" "marine2"
+"angles" "0 360 0"
+"classname" "NPC_Honor_Guard"
+"navigation" "OFF"
+"spawnflags" "4"
+"NPC" "1"
+}
+
+{
+"targetname" "marine3"
+"classname" "NPC_Honor_Guard"
+"angles" "0 360 0"
+"ICARUSname" "marine3"
+"origin" "3481 3737 174"
+"navigation" "OFF"
+"spawnflags" "4"
+"NPC" "1"
+}
+
+{
+"targetname" "marine4"
+"origin" "3481 3673 174"
+"ICARUSname" "marine4"
+"angles" "0 360 0"
+"classname" "NPC_Honor_Guard"
+"navigation" "OFF"
+"spawnflags" "4"
+"NPC" "1"
+}
+
+{
+"targetname" "marine5"
+"classname" "NPC_Honor_Guard"
+"angles" "0 360 0"
+"ICARUSname" "marine5"
+"origin" "3481 3609 174"
+"navigation" "OFF"
+"spawnflags" "4"
+"NPC" "1"
+}
+
+{
+"targetname" "marine6"
+"origin" "3481 3545 174"
+"ICARUSname" "marine6"
+"angles" "0 360 0"
+"classname" "NPC_Honor_Guard"
+"navigation" "OFF"
+"spawnflags" "4"
+"NPC" "1"
+}
+
+{
+"targetname" "marine7"
+"classname" "NPC_Honor_Guard"
+"angles" "0 360 0"
+"ICARUSname" "marine7"
+"origin" "3481 3481 174"
+"navigation" "OFF"
+"spawnflags" "4"
+"NPC" "1"
+}
+
+{
+"origin" "4470 3566 207"
+"targetname" "cam2"
+"angles" "-5 110 0"
+"classname" "ref_tag"
+}
+
+{
+"origin" "5188 4340 132"
+"script" "cem1/part2"
+"targetname" "go_part2"
+"classname" "script_runner"
+}
+
+{
+"classname" "ref_tag"
+"angles" "0 230 0"
+"targetname" "cam5"
+"origin" "3707 4083 205"
+}
+
+{
+"classname" "ref_tag"
+"angles" "0 135 0"
+"targetname" "cam3"
+"origin" "4475 3775 205"
+}
+
+{
+"origin" "3599 3967 205"
+"targetname" "cam4"
+"angles" "0 200 0"
+"classname" "ref_tag"
+}
+
+{
+"classname" "ref_tag"
+"targetname" "cam7"
+"angles" "0 225 0"
+"origin" "4468 4164 200"
+}
+
+{
+"origin" "4468 4376 200"
+"angles" "0 225 0"
+"targetname" "cam8"
+"classname" "ref_tag"
+}
+
+{
+"origin" "2783 3248 301"
+"targetname" "cam5a"
+"angles" "-30 230 0"
+"classname" "ref_tag"
+}
+
+{
+"classname" "ref_tag"
+"angles" "13 270 0"
+"targetname" "cam5b"
+"origin" "4480 3824 205"
+}
+
+{
+"classname" "script_runner"
+"targetname" "go_part3_start"
+"script" "cem1/part3_start"
+"origin" "5188 4324 132"
+}
+
+{
+"origin" "5188 4308 132"
+"script" "cem1/part3"
+"targetname" "go_part3"
+"classname" "script_runner"
+}
+
+{
+"classname" "ref_tag"
+"targetname" "cam9"
+"angles" "0 335 0"
+"origin" "4633 4501 200"
+}
+
+{
+"origin" "4253 4501 200"
+"angles" "0 300 0"
+"targetname" "cam10"
+"classname" "ref_tag"
+}
+
+{
+"classname" "light"
+"light" "2100"
+"scale" ".05"
+"origin" "2120 -256 356"
+"_color" "1.000000 0.967742 0.810484"
+}
+
+{
+"_color" "1.000000 0.967742 0.810484"
+"origin" "2416 -256 356"
+"scale" ".05"
+"light" "2100"
+"classname" "light"
+}
+
+{
+"_color" "1.000000 0.967742 0.810484"
+"origin" "2120 -480 356"
+"scale" ".05"
+"light" "2100"
+"classname" "light"
+}
+
+{
+"classname" "light"
+"light" "2100"
+"scale" ".05"
+"origin" "2416 -480 356"
+"_color" "1.000000 0.967742 0.810484"
+}
+
+{
+"_color" "1.000000 0.967742 0.810484"
+"origin" "2408 -752 348"
+"scale" ".08"
+"light" "2100"
+"classname" "light"
+}
+
+{
+"_color" "1.000000 0.967742 0.810484"
+"origin" "2048 -504 108"
+"scale" ".05"
+"light" "1550"
+"classname" "light"
+}
+
+{
+"classname" "light"
+"light" "1550"
+"scale" ".05"
+"origin" "2040 -760 108"
+"_color" "1.000000 0.967742 0.810484"
+}
+
+{
+"classname" "light"
+"light" "500"
+"scale" ".05"
+"origin" "2120 -256 108"
+"_color" "1.000000 0.967742 0.810484"
+}
+
+{
+"classname" "light"
+"light" "850"
+"scale" ".05"
+"origin" "2064 -808 356"
+"_color" "1.000000 0.967742 0.810484"
+}
+
+{
+"_color" "0.768627 1.000000 0.937255"
+"origin" "2144 -176 140"
+"scale" ".05"
+"light" "1000"
+"classname" "light"
+}
+
+{
+"classname" "light"
+"light" "1000"
+"scale" ".05"
+"origin" "2400 -176 140"
+"_color" "0.768627 1.000000 0.937255"
+}
+
+{
+"scale" "2"
+"classname" "light"
+"light" "10"
+"_color" "1.000000 1.000000 0.917647"
+"origin" "2656 -624 160"
+}
+
+{
+"origin" "2656 -624 144"
+"_color" "1.000000 0.919355 0.620968"
+"light" "350"
+"classname" "light"
+"scale" ".1"
+}
+
+{
+"origin" "2656 -368 160"
+"_color" "1.000000 1.000000 0.917647"
+"light" "10"
+"classname" "light"
+"scale" "2"
+}
+
+{
+"scale" ".1"
+"classname" "light"
+"light" "350"
+"_color" "1.000000 0.919355 0.620968"
+"origin" "2656 -368 144"
+}
+
+{
+"origin" "2592 -624 160"
+"_color" "1.000000 1.000000 0.917647"
+"light" "10"
+"classname" "light"
+"scale" "2"
+}
+
+{
+"scale" ".1"
+"classname" "light"
+"light" "350"
+"_color" "1.000000 0.919355 0.620968"
+"origin" "2592 -624 144"
+}
+
+{
+"scale" "2"
+"classname" "light"
+"light" "10"
+"_color" "1.000000 1.000000 0.917647"
+"origin" "2592 -368 160"
+}
+
+{
+"origin" "2592 -368 144"
+"_color" "1.000000 0.919355 0.620968"
+"light" "350"
+"classname" "light"
+"scale" ".1"
+}
+
+{
+"_color" "1.000000 0.967742 0.810484"
+"origin" "2416 -480 180"
+"scale" ".05"
+"light" "2100"
+"classname" "light"
+}
+
+{
+"classname" "light"
+"light" "2100"
+"scale" ".08"
+"origin" "2408 -752 172"
+"_color" "1.000000 0.967742 0.810484"
+}
+
+{
+"classname" "light"
+"light" "2100"
+"scale" ".05"
+"origin" "2232 -488 180"
+"_color" "1.000000 0.967742 0.810484"
+}
+
+{
+"scale" "2"
+"classname" "light"
+"light" "10"
+"_color" "1.000000 1.000000 0.917647"
+"origin" "2656 -368 384"
+}
+
+{
+"origin" "2656 -368 368"
+"_color" "1.000000 0.919355 0.620968"
+"light" "500"
+"classname" "light"
+"scale" ".1"
+}
+
+{
+"origin" "2592 -368 384"
+"_color" "1.000000 1.000000 0.917647"
+"light" "10"
+"classname" "light"
+"scale" "2"
+}
+
+{
+"scale" ".1"
+"classname" "light"
+"light" "500"
+"_color" "1.000000 0.919355 0.620968"
+"origin" "2592 -368 368"
+}
+
+{
+"origin" "2656 -624 384"
+"_color" "1.000000 1.000000 0.917647"
+"light" "10"
+"classname" "light"
+"scale" "2"
+}
+
+{
+"scale" ".1"
+"classname" "light"
+"light" "500"
+"_color" "1.000000 0.919355 0.620968"
+"origin" "2656 -624 368"
+}
+
+{
+"scale" "2"
+"classname" "light"
+"light" "10"
+"_color" "1.000000 1.000000 0.917647"
+"origin" "2592 -624 384"
+}
+
+{
+"origin" "2592 -624 368"
+"_color" "1.000000 0.919355 0.620968"
+"light" "500"
+"classname" "light"
+"scale" ".1"
+}
+
+{
+"origin" "2296 -728 0"
+"angles" "0 135 0"
+"classname" "ce_vh_forklift"
+"ConfusEd" "1"
+}
+
+{
+"classname" "light"
+"light" "1000"
+"scale" ".05"
+"origin" "2016 -256 140"
+"_color" "0.768627 1.000000 0.937255"
+}
+
+{
+"_color" "0.768627 1.000000 0.937255"
+"origin" "2016 -504 140"
+"scale" ".05"
+"light" "1000"
+"classname" "light"
+}
+
+{
+"classname" "light"
+"light" "1000"
+"scale" ".05"
+"origin" "2016 -736 140"
+"_color" "0.768627 1.000000 0.937255"
+}
+
+{
+"classname" "light"
+"light" "1000"
+"scale" ".05"
+"origin" "2016 -496 356"
+"_color" "0.768627 1.000000 0.937255"
+}
+
+{
+"_color" "0.768627 1.000000 0.937255"
+"origin" "2008 -256 356"
+"scale" ".05"
+"light" "1000"
+"classname" "light"
+}
+
+{
+"classname" "light"
+"light" "1000"
+"scale" ".05"
+"origin" "2144 -184 356"
+"_color" "0.768627 1.000000 0.937255"
+}
+
+{
+"_color" "0.768627 1.000000 0.937255"
+"origin" "2400 -184 356"
+"scale" ".05"
+"light" "1000"
+"classname" "light"
+}
+
+{
+"_color" "0.768627 1.000000 0.937255"
+"origin" "2256 -840 140"
+"scale" ".05"
+"light" "1000"
+"classname" "light"
+}
+
+{
+"classname" "light"
+"light" "1000"
+"scale" ".05"
+"origin" "2624 -800 132"
+"_color" "0.768627 1.000000 0.937255"
+}
+
+{
+"_color" "0.768627 1.000000 0.937255"
+"origin" "2624 -832 364"
+"scale" ".05"
+"light" "1000"
+"classname" "light"
+}
+
+{
+"targetname" "guard02"
+"spawnflags" "5"
+"origin" "2249 -427 50"
+"classname" "NPC_Shop_Guards_CEM1"
+"angles" "0 315 0"
+"ICARUSname" "guard02"
+"reports" "false"
+"NPC" "1"
+}
+
+{
+"targetname" "endcam01"
+"classname" "ref_tag"
+"angles" "0 90 0"
+"origin" "2340 -419 79"
+}
+
+{
+"targetname" "order02"
+"angles" "0 130 0"
+"classname" "NPC_Order_Soldier"
+"spawnflags" "5"
+"spawninFOV" "1"
+"ICARUSname" "order02"
+"origin" "2553 -783 50"
+"reports" "false"
+"NPC" "1"
+}
+
+{
+"classname" "ref_tag"
+"angles" "0 140 0"
+"origin" "2608 -811 83"
+"targetname" "endcam03"
+}
+
+{
+"classname" "script_runner"
+"targetname" "go_part4"
+"script" "cem1/part4"
+"origin" "2212 -828 132"
+}
+
+{
+"_color" "1.000000 0.967742 0.810484"
+"origin" "1840 -512 180"
+"scale" ".05"
+"light" "2100"
+"classname" "light"
+}
+
+{
+"classname" "light"
+"light" "2100"
+"scale" ".05"
+"origin" "1528 -512 180"
+"_color" "1.000000 0.967742 0.810484"
+}
+
+{
+"fov" "80"
+"angles" "-15 -176 0"
+"origin" "4360 3810 191"
+"targetname" "newcam1"
+"classname" "ref_tag"
+}
+
+{
+"fov" "70"
+"angles" "7 139 0"
+"origin" "4515 3765 186"
+"targetname" "newcam2"
+"classname" "ref_tag"
+}
+
+{
+"fov" "70"
+"angles" "12 166 0"
+"origin" "4452 3993 206"
+"targetname" "newcam3"
+"classname" "ref_tag"
+}
+
+{
+"fov" "70"
+"angles" "9 -125 0"
+"origin" "4446 4110 198"
+"targetname" "newcam4"
+"classname" "ref_tag"
+}
+
+{
+"fov" "80"
+"angles" "23 -113 0"
+"origin" "4395 4380 221"
+"targetname" "newcam5"
+"classname" "ref_tag"
+}
+
+{
+"fov" "80"
+"angles" "6 -35 0"
+"origin" "4572 4548 224"
+"targetname" "newcam6"
+"classname" "ref_tag"
+}
+
+{
+"fov" "80"
+"angles" "18 -54 0"
+"origin" "4291 4427 212"
+"targetname" "newcam7"
+"classname" "ref_tag"
+}
+
+{
+"fov" "80"
+"angles" "-8 132 0"
+"origin" "2473 -695 75"
+"targetname" "newcam8"
+"classname" "ref_tag"
+}
+
+{
+"classname" "ref_tag"
+"targetname" "cu1"
+"origin" "4300 3930 208"
+"angles" "0 84 0"
+"fov" "40"
+}
+
+{
+"classname" "ref_tag"
+"targetname" "cu2"
+"origin" "4448 3997 208"
+"angles" "0 141 0"
+"fov" "40"
+}
+
+{
+"origin" "844 3717 992"
+"targetname" "jet2"
+"angles" "0 90 0"
+"classname" "ref_tag"
+}
+
+{
+"ICARUSname" "mercedes03"
+"classname" "ce_vh_luxurysedan"
+"angles" "0 90 0"
+"skin" "1"
+"origin" "8050 4552 129"
+"ConfusEd" "1"
+}
+
+{
+"ICARUSname" "mercedes02"
+"origin" "8050 4338 129"
+"skin" "1"
+"angles" "0 90 0"
+"classname" "ce_vh_luxurysedan"
+"ConfusEd" "1"
+}
+
+{
+"classname" "ce_vh_luxurysedan"
+"angles" "0 90 0"
+"skin" "1"
+"origin" "7287 4450 129"
+"ICARUSname" "mercedes01"
+"ConfusEd" "1"
+}
+
+{
+"fov" "80"
+"angles" "7 -80 0"
+"origin" "4339 4390 214"
+"targetname" "threecam1"
+"classname" "ref_tag"
+}
+
+{
+"classname" "light"
+"light" "200"
+"scale" ".2"
+"_color" "0.745763 1.000000 0.966102"
+"origin" "4368 3808 212"
+}
+
+{
+"classname" "info_NPCnav"
+"origin" "2060 -516 284"
+}
+
+{
+"origin" "2084 -220 284"
+"classname" "info_NPCnav"
+}
+
+{
+"classname" "info_NPCnav"
+"origin" "2140 -204 284"
+}
+
+{
+"targetname" "order1_nav01"
+"origin" "2260 -204 284"
+"classname" "info_NPCnav"
+}
+
+{
+"origin" "4572 4532 164"
+"classname" "info_NPCnav"
+}
+
+{
+"classname" "info_NPCnav"
+"origin" "4812 4540 164"
+}
+
+
+0 warnings.
+conversion O.K.

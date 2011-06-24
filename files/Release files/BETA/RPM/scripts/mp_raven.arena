@@ -1,0 +1,5 @@
+{
+	map "mp_raven"
+	longname "Raven Office"
+	type "dm tdm ctf inf elim"
+}

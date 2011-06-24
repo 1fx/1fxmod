@@ -1,0 +1,1497 @@
+{
+"classname" "worldspawn"
+"message" "Prague: Train Station"
+"music" "music/inf_shop"
+"blueteam" "prometheus"
+"redteam" "shop"
+}
+{
+"classname" "info_player_intermission"
+"origin" "442 -1767 179"
+"angles" "0 136 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "2"
+"origin" "-1490 784 240"
+"angles" "0 0 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "2"
+"origin" "-1245 784 240"
+"angles" "0 0 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "2"
+"origin" "-1245 644 240"
+"angles" "0 90 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "2"
+"origin" "-1490 644 240"
+"angles" "0 90 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "2"
+"origin" "-1245 509 240"
+"angles" "0 90 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "2"
+"origin" "-1490 509 240"
+"angles" "0 0 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "2"
+"origin" "-1128	465 240"
+"angles" "0 90 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "-1115 -1483 -25"
+"angles" "0 0 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "-1115 -1590 -25"
+"angles" "0 0 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "-1115 -1697 -25"
+"angles" "0 0 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "-1115 -1804 -25"
+"angles" "0 0 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "-1115 -1911 -25"
+"angles" "0 0 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "-1050 -1483 -25"
+"angles" "0 0 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "-1050 -1590 -25"
+"angles" "0 0 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "-1050 -1697 -25"
+"angles" "0 0 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "-1050 -1804 -25"
+"angles" "0 0 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "-1050 -1911 -25"
+"angles" "0 0 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "-985 -1483 -25"
+"angles" "0 0 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "-985 -1590 -25"
+"angles" "0 0 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "-985 -1697 -25"
+"angles" "0 0 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "-985 -1804 -25"
+"angles" "0 0 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "-985 -1911 -25"
+"angles" "0 0 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "-920 -1483 -25"
+"angles" "0 0 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "-920 -1590 -25"
+"angles" "0 0 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "-920 -1697 -25"
+"angles" "0 0 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "-920 -1804 -25"
+"angles" "0 0 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "-920 -1911 -25"
+"angles" "0 0 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "-855 -1483 -25"
+"angles" "0 0 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "-855 -1590 -25"
+"angles" "0 0 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "-855 -1697 -25"
+"angles" "0 0 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "-855 -1804 -25"
+"angles" "0 0 0"
+}
+{
+"classname" "gametype_player"
+"gametype" "inf"
+"spawnflags" "1"
+"origin" "-855 -1911 -25"
+"angles" "0 0 0"
+}
+{
+"model" "*8"
+"origin" "514 0 32"
+"classname" "func_static"
+"parent" "1"
+"targetname" "train"
+"ICARUSname" "train"
+}
+{
+"model" "*11"
+"origin" "-728 624 280"
+"spawnflags" "76"
+"classname" "door_rotating"
+}
+{
+"model" "*12"
+"origin" "-40 624 280"
+"spawnflags" "76"
+"classname" "door_rotating"
+}
+{
+"model" "*15"
+"origin" "-1220 -1184 64"
+"classname" "func_static"
+}
+{
+"model" "*19"
+"classname" "func_breakable_brush"
+}
+{
+"model" "*20"
+"classname" "func_breakable_brush"
+}
+{
+"model" "*21"
+"classname" "func_breakable_brush"
+}
+{
+"model" "*22"
+"classname" "func_breakable_brush"
+}
+{
+"model" "*23"
+"classname" "func_breakable_brush"
+}
+{
+"model" "*24"
+"classname" "func_breakable_brush"
+}
+{
+"model" "*25"
+"classname" "func_breakable_brush"
+}
+{
+"model" "*26"
+"classname" "func_breakable_brush"
+}
+{
+"model" "*27"
+"classname" "func_breakable_brush"
+}
+{
+"model" "*28"
+"classname" "func_breakable_brush"
+}
+{
+"model" "*29"
+"classname" "func_breakable_brush"
+}
+{
+"model" "*30"
+"classname" "func_breakable_brush"
+"targetname" "t75"
+}
+{
+"model" "*31"
+"classname" "func_breakable_brush"
+"target" "t75"
+}
+{
+"model" "*32"
+"classname" "func_breakable_brush"
+}
+{
+"model" "*33"
+"classname" "func_breakable_brush"
+}
+{
+"model" "*34"
+"classname" "func_breakable_brush"
+"target" "t180"
+}
+{
+"model" "*35"
+"classname" "func_breakable_brush"
+"material" "2"
+}
+{
+"model" "*36"
+"classname" "func_breakable_brush"
+"target" "t71"
+"splashDamage" "200"
+"splashRadius" "256"
+}
+{
+"model" "*37"
+"classname" "func_breakable_brush"
+"target" "t70"
+"splashDamage" "200"
+"splashRadius" "256"
+}
+{
+"model" "*38"
+"classname" "func_breakable_brush"
+"material" "2"
+}
+{
+"model" "*39"
+"classname" "func_breakable_brush"
+"material" "2"
+}
+{
+"model" "*40"
+"classname" "func_breakable_brush"
+"target" "t67"
+"targetname" "t71"
+}
+{
+"model" "*41"
+"classname" "func_breakable_brush"
+}
+{
+"model" "*42"
+"classname" "func_breakable_brush"
+"material" "2"
+}
+{
+"model" "*43"
+"classname" "func_breakable_brush"
+"target" "t66"
+"targetname" "t72"
+}
+{
+"model" "*44"
+"classname" "func_breakable_brush"
+"targetname" "t65"
+}
+{
+"model" "*45"
+"classname" "func_breakable_brush"
+"target" "t65"
+}
+{
+"model" "*46"
+"classname" "func_breakable_brush"
+"material" "2"
+}
+{
+"model" "*47"
+"classname" "func_breakable_brush"
+}
+{
+"model" "*48"
+"classname" "func_breakable_brush"
+"material" "2"
+}
+{
+"model" "*49"
+"classname" "func_breakable_brush"
+"material" "2"
+}
+{
+"model" "*50"
+"classname" "func_breakable_brush"
+"material" "2"
+}
+{
+"model" "*51"
+"classname" "func_breakable_brush"
+"target" "t62"
+"targetname" "t70"
+}
+{
+"model" "*52"
+"classname" "func_breakable_brush"
+"material" "2"
+}
+{
+"model" "*53"
+"classname" "func_breakable_brush"
+"material" "2"
+}
+{
+"model" "*54"
+"classname" "func_breakable_brush"
+"material" "2"
+}
+{
+"model" "*55"
+"classname" "func_breakable_brush"
+}
+{
+"model" "*56"
+"classname" "func_breakable_brush"
+}
+{
+"model" "*64"
+"origin" "-128 -624 64"
+"spawnflags" "76"
+"classname" "door_rotating"
+}
+{
+"model" "*65"
+"origin" "-1172 146 64"
+"spawnflags" "76"
+"classname" "door_rotating"
+"openagles" "0 -90 0"
+}
+{
+"model" "*66"
+"origin" "-632 -564 64"
+"classname" "door_rotating"
+"spawnflags" "76"
+}
+{
+"model" "*73"
+"origin" "1120 -152 272"
+"wait" "3"
+"spawnflags" "76"
+"classname" "door_rotating"
+}
+{
+"model" "*74"
+"origin" "288 -580 64"
+"spawnflags" "76"
+"classname" "door_rotating"
+}
+{
+"model" "*75"
+"origin" "-640 648 56"
+"classname" "door_rotating"
+"spawnflags" "76"
+}
+{
+"model" "*76"
+"origin" "-512 648 56"
+"classname" "door_rotating"
+"spawnflags" "76"
+}
+{
+"model" "*77"
+"origin" "-960 -996 64"
+"classname" "door_rotating"
+"spawnflags" "76"
+}
+{
+"model" "*78"
+"origin" "-1092 872 248"
+"spawnflags" "76"
+"classname" "door_rotating"
+}
+{
+"model" "*123"
+"target" "t72"
+"classname" "func_breakable_brush"
+"splashDamage" "200"
+"splashRadius" "256"
+}
+{
+"model" "*133"
+"classname" "func_breakable_brush"
+"material" "2"
+}
+{
+"model" "*134"
+"classname" "func_breakable_brush"
+"material" "2"
+}
+{
+"model" "*135"
+"classname" "func_breakable_brush"
+"material" "2"
+}
+{
+"model" "*136"
+"classname" "func_breakable_brush"
+"material" "2"
+}
+{
+"model" "*137"
+"classname" "func_breakable_brush"
+"material" "2"
+}
+{
+"model" "*143"
+"origin" "-128 -1012 64"
+"classname" "door_rotating"
+"spawnflags" "76"
+}
+{
+"model" "*148"
+"origin" "1120 200 280"
+"classname" "door_rotating"
+"spawnflags" "76"
+}
+{
+"model" "*151"
+"classname" "func_breakable_brush"
+"material" "2"
+}
+{
+"model" "*152"
+"classname" "func_breakable_brush"
+"material" "2"
+}
+{
+"model" "*153"
+"classname" "func_breakable_brush"
+"material" "2"
+}
+{
+"model" "*154"
+"classname" "func_breakable_brush"
+"material" "2"
+}
+{
+"model" "*155"
+"classname" "func_breakable_brush"
+"material" "2"
+}
+{
+"model" "*156"
+"classname" "func_breakable_brush"
+"material" "2"
+}
+{
+"model" "*157"
+"classname" "func_breakable_brush"
+"targetname" "t135"
+"material" "2"
+}
+{
+"model" "*158"
+"classname" "func_breakable_brush"
+"target" "t135"
+"material" "2"
+}
+{
+"model" "*159"
+"classname" "func_breakable_brush"
+"material" "2"
+}
+{
+"model" "*160"
+"classname" "func_breakable_brush"
+"material" "2"
+}
+{
+"model" "*161"
+"classname" "func_breakable_brush"
+"material" "2"
+}
+{
+"model" "*162"
+"classname" "func_breakable_brush"
+"material" "2"
+}
+{
+"model" "*163"
+"classname" "func_breakable_brush"
+"material" "2"
+}
+{
+"model" "*164"
+"classname" "func_breakable_brush"
+"material" "2"
+}
+{
+"model" "*165"
+"classname" "func_breakable_brush"
+"material" "2"
+}
+{
+"model" "*166"
+"splashRadius" "256"
+"splashDamage" "200"
+"target" "t136"
+"classname" "func_breakable_brush"
+}
+{
+"model" "*167"
+"targetname" "t136"
+"target" "t137"
+"classname" "func_breakable_brush"
+}
+{
+"model" "*168"
+"splashRadius" "256"
+"splashDamage" "200"
+"target" "t140"
+"classname" "func_breakable_brush"
+}
+{
+"model" "*169"
+"targetname" "t140"
+"target" "t141"
+"classname" "func_breakable_brush"
+}
+{
+"model" "*170"
+"classname" "func_breakable_brush"
+"target" "t142"
+"splashDamage" "200"
+"splashRadius" "256"
+}
+{
+"model" "*171"
+"classname" "func_breakable_brush"
+"target" "t143"
+"targetname" "t142"
+}
+{
+"model" "*172"
+"classname" "func_breakable_brush"
+"target" "t144"
+"splashDamage" "200"
+"splashRadius" "256"
+}
+{
+"model" "*173"
+"classname" "func_breakable_brush"
+"target" "t145"
+"targetname" "t144"
+}
+{
+"model" "*174"
+"classname" "func_breakable_brush"
+}
+{
+"model" "*175"
+"classname" "func_breakable_brush"
+}
+{
+"model" "*176"
+"classname" "func_breakable_brush"
+}
+{
+"model" "*177"
+"classname" "func_breakable_brush"
+}
+{
+"model" "*178"
+"classname" "func_breakable_brush"
+"material" "2"
+}
+{
+"model" "*179"
+"classname" "func_breakable_brush"
+"material" "2"
+}
+{
+"model" "*185"
+"origin" "1152 904 280"
+"spawnflags" "76"
+"classname" "door_rotating"
+}
+{
+"model" "*190"
+"classname" "func_breakable_brush"
+"targetname" "t180"
+}
+{
+"classname" "1fx_teleport"
+"origin" "-1279 3 40"
+"minimumhiders" "5"
+"spawnflags" "76"
+"target" "cremationroom"
+}
+{
+"classname" "1fx_teleport"
+"origin" "-6145 -338 50"
+"spawnflags" "76"
+"target" "bioweaponfacility"
+}
+{
+"classname" "1fx_teleport"
+"origin" "-6971 -251 260"
+"spawnflags" "76"
+"target" "insidetrain"
+}
+{
+"classname" "1fx_teleport"
+"origin" "-5733 -1596 50"
+"spawnflags" "76"
+"target" "redbase"
+}
+{
+"classname" "1fx_position"
+"targetname" "cremationroom"
+"origin" "-5431 576 84"
+"angles" "0 180 0"
+}
+{
+"classname" "1fx_position"
+"targetname" "bioweaponfacility"
+"origin" "-6599 -291 305"
+"angles" "0 180 0"
+}
+{
+"classname" "1fx_position"
+"targetname" "insidetrain"
+"origin" "-6318 -1677 84"
+"angles" "0 90 0"
+}
+{
+"classname" "1fx_position"
+"targetname" "redbase"
+"origin" "-1115 -1483 -25"
+"angles" "0 0 0"
+}
+{
+"classname" "1fx_position"
+"targetname" "redbase"
+"origin" "-1115 -1590 -25"
+"angles" "0 0 0"
+}
+{
+"classname" "model_static"
+"model" "models/objects/finca/lamps/lightbulb2.md3"
+"origin" "1216 114 440"
+}
+{
+"classname" "model_static"
+"model" "models/objects/liner/lights/wall_light.md3"
+"angles" "0 270 0"
+"origin" "104 696 176"
+}
+{
+"classname" "model_static"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"origin" "-256 360 208"
+}
+{
+"origin" "2568 -1480 448"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"classname" "model_static"
+"angles" "0 -40 0"
+}
+{
+"origin" "2480 -1856 432"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"classname" "model_static"
+}
+{
+"classname" "model_static"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"origin" "2368 -2304 464"
+"angles" "0 -72 0"
+}
+{
+"origin" "2432 -504 400"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"classname" "model_static"
+"angles" "0 56 0"
+}
+{
+"angles" "0 56 0"
+"classname" "model_static"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"origin" "2824 -352 384"
+}
+{
+"angles" "0 -112 0"
+"origin" "1912 -2336 400"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"classname" "model_static"
+}
+{
+"origin" "-1512 -2072 376"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"classname" "model_static"
+"angles" "0 -112 0"
+}
+{
+"angles" "0 -88 0"
+"classname" "model_static"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"origin" "-872 -2528 360"
+}
+{
+"origin" "-1456 -1912 368"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"classname" "model_static"
+"angles" "0 -88 0"
+}
+{
+"angles" "0 -112 0"
+"classname" "model_static"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"origin" "-1856 552 616"
+}
+{
+"origin" "-1808 952 512"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"classname" "model_static"
+"angles" "0 -136 0"
+}
+{
+"angles" "0 -96 0"
+"classname" "model_static"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"origin" "-2048 1128 640"
+}
+{
+"origin" "-1352 1544 560"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"classname" "model_static"
+"angles" "0 -192 0"
+}
+{
+"angles" "0 -240 0"
+"classname" "model_static"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"origin" "-1880 1592 648"
+}
+{
+"angles" "0 56 0"
+"classname" "model_static"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"origin" "2320 400 400"
+}
+{
+"origin" "2712 552 384"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"classname" "model_static"
+"angles" "0 56 0"
+}
+{
+"origin" "2320 1032 400"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"classname" "model_static"
+}
+{
+"angles" "0 -40 0"
+"classname" "model_static"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"origin" "2528 736 448"
+}
+{
+"angles" "0 32 0"
+"classname" "model_static"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"origin" "2320 1464 416"
+}
+{
+"angles" "0 -96 0"
+"classname" "model_static"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"origin" "-688 -1296 192"
+}
+{
+"origin" "-392 -1272 192"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"classname" "model_static"
+"angles" "0 -144 0"
+}
+{
+"origin" "-256 552 208"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"classname" "model_static"
+}
+{
+"origin" "-576 360 208"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"classname" "model_static"
+}
+{
+"classname" "model_static"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"origin" "-576 552 208"
+}
+{
+"origin" "-616 736 208"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"classname" "model_static"
+}
+{
+"classname" "model_static"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"origin" "-416 736 208"
+}
+{
+"origin" "-416 960 208"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"classname" "model_static"
+}
+{
+"classname" "model_static"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"origin" "-616 960 208"
+}
+{
+"origin" "-416 1600 208"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"classname" "model_static"
+}
+{
+"classname" "model_static"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"origin" "-616 1600 208"
+}
+{
+"classname" "model_static"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"origin" "-416 1344 208"
+}
+{
+"origin" "-616 1344 208"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"classname" "model_static"
+}
+{
+"origin" "-416 1152 208"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"classname" "model_static"
+}
+{
+"classname" "model_static"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"origin" "-616 1152 208"
+}
+{
+"origin" "-192 736 208"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"classname" "model_static"
+}
+{
+"classname" "model_static"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"origin" "-768 1600 353"
+"angles" "-19 0 0"
+}
+{
+"angles" "-19 0 0"
+"origin" "-768 1344 353"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"classname" "model_static"
+}
+{
+"classname" "model_static"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"origin" "-768 1152 353"
+"angles" "-19 0 0"
+}
+{
+"angles" "-19 0 0"
+"origin" "-768 960 353"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"classname" "model_static"
+}
+{
+"classname" "model_static"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"origin" "-768 736 353"
+"angles" "-19 0 0"
+}
+{
+"angles" "-19 0 0"
+"origin" "-768 552 353"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"classname" "model_static"
+}
+{
+"classname" "model_static"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"origin" "-768 360 353"
+"angles" "-19 0 0"
+}
+{
+"angles" "19 0 0"
+"origin" "-64 360 353"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"classname" "model_static"
+}
+{
+"classname" "model_static"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"origin" "-64 552 353"
+"angles" "19 0 0"
+}
+{
+"angles" "19 0 0"
+"origin" "-64 736 353"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"classname" "model_static"
+}
+{
+"angles" "0 0 -19"
+"origin" "-640 1664 353"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"classname" "model_static"
+}
+{
+"classname" "model_static"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"origin" "-416 1664 353"
+"angles" "0 0 -19"
+}
+{
+"angles" "0 0 19"
+"origin" "-128 256 353"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"classname" "model_static"
+}
+{
+"classname" "model_static"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"origin" "-352 256 353"
+"angles" "0 0 19"
+}
+{
+"angles" "0 0 19"
+"origin" "-768 256 353"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"classname" "model_static"
+}
+{
+"classname" "model_static"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"origin" "-544 256 353"
+"angles" "0 0 19"
+}
+{
+"angles" "0 180 0"
+"classname" "model_static"
+"model" "models/objects/liner/lights/wall_light.md3"
+"origin" "192 -848 118"
+}
+{
+"classname" "model_static"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"origin" "-96 -824 152"
+}
+{
+"targetname" "trainlight07"
+"brushParent" "train"
+"brushChild" "insidetrain"
+"classname" "model_static"
+"model" "models/objects/finca/lamps/wall_light2.md3"
+"angles" "0 270 0"
+"origin" "-1724 120 88"
+}
+{
+"targetname" "trainlight06"
+"brushParent" "train"
+"brushChild" "insidetrain"
+"classname" "model_static"
+"model" "models/objects/finca/lamps/wall_light2.md3"
+"angles" "0 270 0"
+"origin" "-1596 120 88"
+}
+{
+"targetname" "trainlight05"
+"brushParent" "train"
+"brushChild" "insidetrain"
+"origin" "-1468 120 88"
+"angles" "0 270 0"
+"model" "models/objects/finca/lamps/wall_light2.md3"
+"classname" "model_static"
+}
+{
+"targetname" "trainlight04"
+"brushParent" "train"
+"brushChild" "insidetrain"
+"origin" "-1340 120 88"
+"angles" "0 270 0"
+"model" "models/objects/finca/lamps/wall_light2.md3"
+"classname" "model_static"
+}
+{
+"targetname" "trainlight03"
+"brushParent" "train"
+"brushChild" "insidetrain"
+"classname" "model_static"
+"model" "models/objects/finca/lamps/wall_light2.md3"
+"angles" "0 270 0"
+"origin" "-1212 120 88"
+}
+{
+"targetname" "trainlight02"
+"brushParent" "train"
+"brushChild" "insidetrain"
+"classname" "model_static"
+"model" "models/objects/finca/lamps/wall_light2.md3"
+"angles" "0 270 0"
+"origin" "-1084 120 88"
+}
+{
+"targetname" "trainlight01"
+"brushParent" "train"
+"brushChild" "insidetrain"
+"origin" "-956 120 88"
+"angles" "0 270 0"
+"model" "models/objects/finca/lamps/wall_light2.md3"
+"classname" "model_static"
+}
+{
+"origin" "0 -1116 216"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"classname" "model_static"
+}
+{
+"origin" "-6636 -1480 88"
+"angles" "0 270 0"
+"model" "models/objects/finca/lamps/wall_light2.md3"
+"classname" "model_static"
+}
+{
+"origin" "-6508 -1480 88"
+"angles" "0 270 0"
+"model" "models/objects/finca/lamps/wall_light2.md3"
+"classname" "model_static"
+}
+{
+"classname" "model_static"
+"model" "models/objects/finca/lamps/wall_light2.md3"
+"angles" "0 270 0"
+"origin" "-6380 -1480 88"
+}
+{
+"classname" "model_static"
+"model" "models/objects/finca/lamps/wall_light2.md3"
+"angles" "0 270 0"
+"origin" "-6252 -1480 88"
+}
+{
+"origin" "-6124 -1480 88"
+"angles" "0 270 0"
+"model" "models/objects/finca/lamps/wall_light2.md3"
+"classname" "model_static"
+}
+{
+"origin" "-5996 -1480 88"
+"angles" "0 270 0"
+"model" "models/objects/finca/lamps/wall_light2.md3"
+"classname" "model_static"
+}
+{
+"classname" "model_static"
+"model" "models/objects/finca/lamps/wall_light2.md3"
+"angles" "0 270 0"
+"origin" "-5868 -1480 88"
+}
+{
+"origin" "-6816 -276 284"
+"model" "models/objects/hospital/misc/spray_bottle.md3"
+"classname" "model_static"
+"angles" "0 306 0"
+}
+{
+"ICARUSname" "tree02"
+"origin" "-5080 -2088 240"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"classname" "model_static"
+"angles" "0 -32 0"
+}
+{
+"angles" "0 16 0"
+"classname" "model_static"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"origin" "-5080 -1944 208"
+"ICARUSname" "tree01"
+}
+{
+"ICARUSname" "tree03"
+"origin" "-5080 -2264 232"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"classname" "model_static"
+"angles" "0 40 0"
+}
+{
+"angles" "0 -64 0"
+"classname" "model_static"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"origin" "-5904 -2088 240"
+"ICARUSname" "tree02a"
+}
+{
+"ICARUSname" "tree02b"
+"origin" "-6560 -2088 240"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"classname" "model_static"
+"angles" "0 0 0"
+}
+{
+"ICARUSname" "tree01a"
+"origin" "-6224 -1944 208"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"classname" "model_static"
+"angles" "0 16 0"
+}
+{
+"angles" "0 8 0"
+"classname" "model_static"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"origin" "-5488 -2264 232"
+"ICARUSname" "tree03a"
+}
+{
+"ICARUSname" "tree03b"
+"origin" "-5912 -2264 232"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"classname" "model_static"
+"angles" "0 40 0"
+}
+{
+"angles" "0 72 0"
+"classname" "model_static"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"origin" "-6344 -2264 232"
+"ICARUSname" "tree03c"
+}
+{
+"ICARUSname" "tree03d"
+"origin" "-6768 -2264 232"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"classname" "model_static"
+"angles" "0 -88 0"
+}
+{
+"angles" "0 -16 0"
+"classname" "model_static"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"origin" "-5584 -1944 208"
+"ICARUSname" "tree01b"
+}
+{
+"ICARUSname" "tree04a"
+"origin" "-5096 -1256 208"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"classname" "model_static"
+"angles" "0 16 0"
+}
+{
+"angles" "0 16 0"
+"classname" "model_static"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"origin" "-6240 -1256 208"
+"ICARUSname" "tree04c"
+}
+{
+"ICARUSname" "tree04b"
+"origin" "-5600 -1256 208"
+"model" "models/objects/colombia/jungle/tree06.md3"
+"classname" "model_static"
+"angles" "0 -16 0"
+}
+{
+"origin" "192 -688 118"
+"model" "models/objects/liner/lights/wall_light.md3"
+"classname" "model_static"
+"angles" "0 180 0"
+}
+{
+"classname" "model_static"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"origin" "1376 960 208"
+}
+{
+"origin" "1176 960 208"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"classname" "model_static"
+}
+{
+"classname" "model_static"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"origin" "1376 1600 208"
+}
+{
+"origin" "1176 1600 208"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"classname" "model_static"
+}
+{
+"origin" "1376 1344 208"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"classname" "model_static"
+}
+{
+"classname" "model_static"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"origin" "1176 1344 208"
+}
+{
+"classname" "model_static"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"origin" "1376 1152 208"
+}
+{
+"origin" "1176 1152 208"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"classname" "model_static"
+}
+{
+"classname" "model_static"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"origin" "1504 256 353"
+"angles" "0 0 19"
+}
+{
+"angles" "0 0 19"
+"origin" "1280 256 353"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"classname" "model_static"
+}
+{
+"classname" "model_static"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"origin" "864 256 353"
+"angles" "0 0 19"
+}
+{
+"angles" "0 0 19"
+"origin" "1088 256 353"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"classname" "model_static"
+}
+{
+"angles" "-19 0 0"
+"origin" "824 736 353"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"classname" "model_static"
+}
+{
+"classname" "model_static"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"origin" "824 552 353"
+"angles" "-19 0 0"
+}
+{
+"angles" "-19 0 0"
+"origin" "824 360 353"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"classname" "model_static"
+}
+{
+"classname" "model_static"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"origin" "1552 360 353"
+"angles" "19 0 0"
+}
+{
+"angles" "19 0 0"
+"origin" "1552 552 353"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"classname" "model_static"
+}
+{
+"classname" "model_static"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"origin" "1552 736 353"
+"angles" "19 0 0"
+}
+{
+"angles" "19 0 0"
+"origin" "1552 1104 353"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"classname" "model_static"
+}
+{
+"angles" "19 0 0"
+"origin" "1552 1288 353"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"classname" "model_static"
+}
+{
+"classname" "model_static"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"origin" "1552 1472 353"
+"angles" "19 0 0"
+}
+{
+"origin" "1216 -78 440"
+"model" "models/objects/finca/lamps/lightbulb2.md3"
+"classname" "model_static"
+}
+{
+"origin" "1896 -920 15"
+"model" "models/objects/common/trucksandbag.md3"
+"classname" "model_static"
+"angles" "0 180 0"
+}
+{
+"classname" "model_static"
+"model" "models/objects/Colombia/vehicles/truck_flatbed.md3"
+"origin" "1896 -992 -64"
+"angles" "0 270 0"
+"skin" "2"
+}
+{
+"classname" "model_static"
+"model" "models/objects/Colombia/vehicles/truck_personnel.md3"
+"origin" "-425 -2010 -80"
+"angles" "0 270 0"
+"skin" "2"
+}
+{
+"classname" "model_static"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"origin" "-768 552 208"
+}
+{
+"classname" "model_static"
+"model" "models/objects/finca/lamps/lightbulb1.md3"
+"origin" "-768 360 208"
+}
+{
+"origin" "-1343	661 309"
+"message" "Control Station"
+"classname" "target_location"
+}
+{
+"origin" "900 -1506 120"
+"message" "Front Area"
+"classname" "target_location"
+}
+{
+"origin" "-419 -14 213"
+"message" "Main Platform"
+"classname" "target_location"
+}
+{
+"origin" "1327 -733 255"
+"message" "Waiting Room"
+"classname" "target_location"
+}
+{
+"origin" "220 1305 226"
+"message" "Factory"
+"classname" "target_location"
+}
+{
+"origin" "-918 -760 101"
+"message" "Bathroom"
+"classname" "target_location"
+}
+{
+"origin" "-6815 381 211"
+"message" "Bio-weapon Facility"
+"classname" "target_location"
+}
+{
+"origin" "-6153 30 96"
+"message" "Cremation Room"
+"classname" "target_location"
+}
+{
+"origin" "-6219 -1550 95"
+"message" "Inside Train"
+"classname" "target_location"
+}

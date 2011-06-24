@@ -1,0 +1,48 @@
+col9
+{
+	altitudetexture
+	{
+		height 140
+		shader textures/colombia/grass_col9
+	}
+	altitudetexture
+	{
+		height 90
+		maxheight 110
+		shader textures/colombia/floor_moss_col9
+		model
+		{
+			name models\objects\colombia\jungle\tree08
+			frequency 35
+			minscale .7
+			maxscale 2.0
+			seed 1234
+		}
+
+	}
+	altitudetexture
+	{
+		height 90
+		model
+		{
+			name models\objects\colombia\jungle\tree09
+			frequency 25
+			minscale .4
+			maxscale 1.3
+			seed 1234
+		}
+
+	}
+	altitudetexture
+	{
+		height 0
+		shader textures/colombia/mudside_col9
+	}
+	water
+	{
+		height 80
+		beach 10
+		shader textures/colombia/water_col9b
+	}
+}
+

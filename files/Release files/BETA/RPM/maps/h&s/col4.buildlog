@@ -1,0 +1,1549 @@
+Boe's BSP2ENT v2 - modified to remove all un-needed stuff from ent files
+Conversion started on: 04/11/2011 - 23:49:15
+
+
+
+ ---------- new build started
+
+INFO: No redteam entry in worldspawn
+INFO: No blueteam entry in worldspawn
+
+ -- WORLDSPAWN ENTITY
+{
+"soundSet" "Jungle_wind"
+"music" "music/colombia/col2"
+"gridsize" "256 256 512"
+"classname" "worldspawn"
+"message" "&LEVELNAMES_COL4"
+}
+
+INFO: No spawnpoints found. Trying to find SP DM ent (USE AS REFERENCE!).
+... Failed
+
+WARNING: Blacklisted static model:
+{
+"model" "*46"
+"targetname" "green_light"
+"spawnflags" "1"
+"classname" "func_wall"
+}
+WARNING: Blacklisted static model:
+{
+"model" "*61"
+"targetname" "t72"
+"classname" "func_wall"
+}
+WARNING: Blacklisted static model:
+{
+"model" "*62"
+"classname" "func_wall"
+"targetname" "stop_explosion"
+}
+WARNING: Blacklisted static model:
+{
+"model" "*64"
+"classname" "trigger_objective"
+"spawnflags" "1"
+"command" "completesub"
+"item" "3"
+"targetname" "completesub3"
+}
+WARNING: Blacklisted static model:
+{
+"model" "*65"
+"targetname" "gategoal"
+"classname" "trigger_objective"
+"spawnflags" "1"
+"item" "4"
+"command" "addsub"
+}
+WARNING: Blacklisted static model:
+{
+"model" "*66"
+"classname" "trigger_objective"
+"spawnflags" "1"
+"command" "addsub"
+"item" "3"
+}
+WARNING: Blacklisted static model:
+{
+"model" "*73"
+"actAngle" "0 90 0"
+"loopSound" "sound/misc/tripwire/trip_loop"
+"endSound" "sound/misc/tripwire/trip_done"
+"startSound" "sound/misc/tripwire/trip_start"
+"targetname" "trip_wire"
+"classname" "trigger_toolbox"
+"spawnflags" "3"
+"holdtime" "5"
+"icon" "hud/wire_cutters"
+"target" "t3"
+}
+WARNING: Blacklisted static model:
+{
+"model" "*80"
+"actAngle" "0 360 0"
+"target" "t72"
+"icon" "hud/wire_cutters"
+"holdtime" "6"
+"spawnflags" "3"
+"classname" "trigger_toolbox"
+"targetname" "t74"
+"endSound" "sound/misc/tripwire/trip_done"
+"startSound" "sound/misc/tripwire/trip_start"
+"loopSound" "sound/misc/tripwire/trip_loop"
+}
+WARNING: Blacklisted static model:
+{
+"model" "*86"
+"item" "4"
+"command" "completesub"
+"spawnflags" "1"
+"classname" "trigger_objective"
+"targetname" "gatecomplete"
+}
+WARNING: Blacklisted static model:
+{
+"model" "*92"
+"classname" "func_wall"
+"spawnflags" "0"
+"targetname" "red_light"
+}
+WARNING: Blacklisted static model:
+{
+"model" "*97"
+"origin" "-1840 -5124 1330"
+"classname" "func_wall"
+"ICARUSname" "sam_support"
+}
+WARNING: Blacklisted static model:
+{
+"model" "*98"
+"origin" "-1840 -5124 1296"
+"classname" "func_wall"
+"ICARUSname" "sam_base"
+}
+WARNING: Blacklisted static model:
+{
+"model" "*112"
+"actAngle" "0 270 0"
+"loopSound" "sound/misc/tripwire/trip_loop"
+"endSound" "sound/misc/tripwire/trip_done"
+"startSound" "sound/misc/tripwire/trip_start"
+"targetname" "trip_wire"
+"classname" "trigger_toolbox"
+"spawnflags" "3"
+"holdtime" "5"
+"icon" "hud/wire_cutters"
+"target" "t3"
+}
+WARNING: Blacklisted static model:
+{
+"model" "*113"
+"actAngle" "0 180 0"
+"target" "t72"
+"icon" "hud/wire_cutters"
+"holdtime" "6"
+"spawnflags" "3"
+"classname" "trigger_toolbox"
+"targetname" "t74"
+"endSound" "sound/misc/tripwire/trip_done"
+"startSound" "sound/misc/tripwire/trip_start"
+"loopSound" "sound/misc/tripwire/trip_loop"
+}
+ -- BLACKLISTED ENTITIES:
+
+{
+"classname" "pickup_ammo"
+"type" "7.62mm"
+"startoff" "1"
+"origin" "-3720 3112 968"
+"targetname" "t270"
+}
+
+{
+"classname" "target_deactivate"
+"targetname" "t268"
+"target" "t269"
+"origin" "924 2244 1084"
+}
+
+{
+"classname" "pickup_armor_big"
+"origin" "4650 -3334 920"
+}
+
+{
+"classname" "pickup_health_small"
+"origin" "-5592 -1632 936"
+}
+
+{
+"classname" "info_NPCcover"
+"target" "t254"
+"origin" "500 1716 1004"
+}
+
+{
+"accuracy" "0"
+"ICARUSname" "huey_gun02"
+"origin" "2633 6906 1968"
+"type" "Emplaced M60"
+"targetname" "huey_gun02"
+"minYaw" "0"
+"minPitch" "5"
+"maxYaw" "15"
+"maxPitch" "35"
+"brushParent" "heli"
+"brushChild" "heli_child"
+"angles" "0 0 180"
+"classname" "emplaced_wpn"
+}
+
+{
+"origin" "-1788 -5224 1364"
+"targetname" "sam01_child"
+"brushParent" "sam_01"
+"classname" "func_brushmodel_child"
+}
+
+{
+"classname" "target_activate"
+"target" "t249"
+"origin" "2012 -5092 1244"
+"targetname" "sam_02_on"
+}
+
+{
+"classname" "script_runner"
+"targetname" "t244"
+"script" "col4/sam_01"
+"origin" "2012 -4932 1244"
+}
+
+{
+"classname" "script_runner"
+"targetname" "t241"
+"script" "col4/heli_bunker"
+"origin" "2132 -5020 1084"
+}
+
+{
+"classname" "script_runner"
+"targetname" "t240"
+"script" "col4/heli_liftoff"
+"origin" "868 2060 1084"
+}
+
+{
+"classname" "script_runner"
+"targetname" "t239"
+"script" "col4/heli_flyover"
+"origin" "-5812 -588 1004"
+}
+
+{
+"spawnscript" "col4/new_sniper_tower2"
+"angles" "0 90 0"
+"spawnflags" "1"
+"origin" "2121 -87 954"
+"targetname" "t240"
+"killtarget" "3snipers"
+"spawninFOV" "1"
+"classname" "NPC_Colombian_Sniper"
+"NPC" "1"
+}
+
+{
+"classname" "pickup_health_small"
+"origin" "1650 -4850 1068"
+}
+
+{
+"classname" "pickup_armor_big"
+"origin" "2022 -4986 1080"
+"startoff" "1"
+"targetname" "t266"
+}
+
+{
+"classname" "pickup_ammo"
+"type" "5.56mm"
+"origin" "1304 -5392 1164"
+}
+
+{
+"classname" "ce_lght_lantern"
+"origin" "-3831 3007 936"
+"ConfusEd" "1"
+}
+
+{
+"type" "5.56mm"
+"origin" "-3544 3624 984"
+"classname" "pickup_ammo"
+}
+
+{
+"origin" "-3656 3332 984"
+"classname" "pickup_health_small"
+"startoff" "1"
+"targetname" "t271"
+}
+
+{
+"origin" "-3488 3760 936"
+"classname" "pickup_armor_small"
+}
+
+{
+"origin" "668 -4996 1124"
+"script" "common/leaving"
+"targetname" "t121"
+"classname" "script_runner"
+}
+
+{
+"classname" "ce_eq_com_equip_phone"
+"target" "rs2"
+"origin" "436 1529 1015"
+"ConfusEd" "1"
+}
+
+{
+"model" "*46"
+"targetname" "green_light"
+"spawnflags" "1"
+"classname" "func_wall"
+}
+
+{
+"origin" "1750 -4926 1128"
+"targetname" "gate_on"
+"target" "t120"
+"classname" "target_activate"
+}
+
+{
+"classname" "target_counter"
+"target" "t119"
+"targetname" "trip01guys"
+"count" "2"
+"origin" "-5424 832 940"
+}
+
+{
+"classname" "NPC_Colombian_Rebel"
+"targetname" "t118"
+"spawnflags" "9"
+"origin" "4673 -3495 986"
+"spawninFOV" "1"
+"NPC" "1"
+}
+
+{
+"classname" "target_counter"
+"count" "3"
+"target" "t118"
+"origin" "4812 -3556 972"
+"targetname" "tent_counter"
+}
+
+{
+"origin" "4658 -3024 963"
+"angles" "0 180 0"
+"classname" "ce_eq_com_equip_phone"
+"ConfusEd" "1"
+}
+
+{
+"origin" "4657 -2938 963"
+"angles" "0 225 0"
+"classname" "ce_eq_com_equip_popup"
+"ConfusEd" "1"
+}
+
+{
+"model" "*61"
+"targetname" "t72"
+"classname" "func_wall"
+}
+
+{
+"model" "*62"
+"classname" "func_wall"
+"targetname" "stop_explosion"
+}
+
+{
+"classname" "target_deactivate"
+"targetname" "stopdmg"
+"target" "fwreactor2"
+"delay" "2"
+"origin" "322 4450 1010"
+}
+
+{
+"classname" "pickup_ammo"
+"origin" "4640 -3224 922"
+"type" "5.56mm"
+}
+
+{
+"classname" "pickup_ammo"
+"type" "7.62mm"
+"origin" "2080 -40 902"
+}
+
+{
+"classname" "pickup_ammo"
+"amount" "5"
+"type" "40mm HE grenade"
+"origin" "464 1492 1018"
+}
+
+{
+"classname" "pickup_ammo"
+"type" "5.56mm"
+"size" "2"
+"amount" "60"
+"origin" "428 1564 1018"
+}
+
+{
+"model" "*64"
+"classname" "trigger_objective"
+"spawnflags" "1"
+"command" "completesub"
+"item" "3"
+"targetname" "completesub3"
+}
+
+{
+"model" "*65"
+"targetname" "gategoal"
+"classname" "trigger_objective"
+"spawnflags" "1"
+"item" "4"
+"command" "addsub"
+}
+
+{
+"model" "*66"
+"classname" "trigger_objective"
+"spawnflags" "1"
+"command" "addsub"
+"item" "3"
+}
+
+{
+"classname" "NPC_Colombian_Commando"
+"spawnflags" "11"
+"targetname" "emplace1"
+"origin" "465 2593 994"
+"spawninFOV" "1"
+"NPC" "1"
+}
+
+{
+"classname" "pickup_health_big"
+"origin" "4630 -2980 964"
+}
+
+{
+"classname" "pickup_armor_small"
+"origin" "592 1496 992"
+}
+
+{
+"origin" "4646 -2968 982"
+"_color" "0.986239 1.000000 0.472477"
+"light" "120"
+"classname" "light"
+}
+
+{
+"targetname" "t258"
+"origin" "2193 -5771 1126"
+"spawnflags" "11"
+"classname" "NPC_Colombian_Rebel"
+"spawninFOV" "1"
+"NPC" "1"
+}
+
+{
+"classname" "script_runner"
+"targetname" "switch"
+"script" "col4/exit"
+"origin" "1702 -5014 1096"
+}
+
+{
+"classname" "script_runner"
+"targetname" "intentscript"
+"script" "col4/intent"
+"origin" "3900 -3260 1044"
+}
+
+{
+"classname" "NPC_Colombian_Soldier_Elite"
+"spawnflags" "11"
+"origin" "4505 -3111 962"
+"targetname" "intent02"
+"spawninFOV" "1"
+"NPC" "1"
+}
+
+{
+"angles" "0 135 0"
+"targetname" "t256"
+"killtarget" "badguy4"
+"classname" "NPC_Colombian_Soldier_Elite"
+"spawnflags" "11"
+"origin" "3529 -4527 986"
+"spawninFOV" "1"
+"NPC" "1"
+}
+
+{
+"classname" "NPC_Colombian_Commando"
+"targetname" "comm01"
+"spawnflags" "11"
+"origin" "-3055 4121 986"
+"spawninFOV" "1"
+"NPC" "1"
+}
+
+{
+"classname" "NPC_Colombian_Soldier"
+"origin" "4921 -1687 986"
+"targetname" "ambush3"
+"spawnflags" "15"
+"NPC" "1"
+}
+
+{
+"angles" "0 180 0"
+"origin" "2851 787 1342"
+"ICARUSname" "snipertower"
+"targetname" "snipertower"
+"spawnflags" "15"
+"classname" "NPC_Colombian_Soldier"
+"spawninFOV" "1"
+"spawnscript" "col4/new_sniper_tower2"
+"NPC" "1"
+}
+
+{
+"spawnflags" "11"
+"classname" "NPC_Colombian_Soldier"
+"origin" "465 1681 1026"
+"spawninFOV" "1"
+"targetname" "t255"
+"NPC" "1"
+}
+
+{
+"spawnflags" "11"
+"angles" "0 270 0"
+"origin" "473 3201 950"
+"classname" "NPC_Colombian_Soldier"
+"spawninFOV" "1"
+"targetname" "t253"
+"NPC" "1"
+}
+
+{
+"classname" "NPC_Colombian_Soldier"
+"spawnflags" "11"
+"targetname" "sniper2"
+"origin" "-4511 2121 954"
+"spawninFOV" "1"
+"NPC" "1"
+}
+
+{
+"angles" "0 225 0"
+"classname" "NPC_Colombian_Soldier"
+"spawnflags" "15"
+"targetname" "sniper2"
+"origin" "-4015 2089 1298"
+"spawninFOV" "1"
+"NPC" "1"
+}
+
+{
+"origin" "-92 -5324 1156"
+"targetname" "endgame"
+"mapname" "col6"
+"classname" "target_level_change"
+}
+
+{
+"origin" "-5703 -1671 986"
+"targetname" "sniper1"
+"spawnflags" "3"
+"classname" "NPC_Colombian_Soldier"
+"spawninFOV" "1"
+"killtarget" "trip01guys"
+"angles" "0 270 0"
+"NPC" "1"
+}
+
+{
+"classname" "light"
+"origin" "528 1584 1064"
+"light" "200"
+}
+
+{
+"angles" "0 90 0"
+"classname" "info_player_start"
+"origin" "-5176 -3688 940"
+}
+
+{
+"origin" "-5740 -252 980"
+"target" "trip_wire"
+"targetname" "t2"
+"classname" "target_deactivate"
+}
+
+{
+"classname" "target_deactivate"
+"targetname" "t3"
+"target" "cause_explosion"
+"origin" "-5298 -50 956"
+}
+
+{
+"model" "*73"
+"actAngle" "0 90 0"
+"loopSound" "sound/misc/tripwire/trip_loop"
+"endSound" "sound/misc/tripwire/trip_done"
+"startSound" "sound/misc/tripwire/trip_start"
+"targetname" "trip_wire"
+"classname" "trigger_toolbox"
+"spawnflags" "3"
+"holdtime" "5"
+"icon" "hud/wire_cutters"
+"target" "t3"
+}
+
+{
+"origin" "724 1620 964"
+"script" "col4/b1"
+"targetname" "t1"
+"classname" "script_runner"
+}
+
+{
+"classname" "target_deactivate"
+"targetname" "seton"
+"target" "t74"
+"origin" "-1964 4052 1012"
+}
+
+{
+"origin" "-1500 3912 956"
+"target" "t74"
+"targetname" "t72"
+"classname" "target_deactivate"
+}
+
+{
+"model" "*80"
+"actAngle" "0 360 0"
+"target" "t72"
+"icon" "hud/wire_cutters"
+"holdtime" "6"
+"spawnflags" "3"
+"classname" "trigger_toolbox"
+"targetname" "t74"
+"endSound" "sound/misc/tripwire/trip_done"
+"startSound" "sound/misc/tripwire/trip_start"
+"loopSound" "sound/misc/tripwire/trip_loop"
+}
+
+{
+"classname" "NPC_Colombian_Soldier"
+"spawnflags" "3"
+"targetname" "sniper1"
+"origin" "-5943 -1415 970"
+"spawninFOV" "1"
+"killtarget" "trip01guys"
+"angles" "0 270 0"
+"NPC" "1"
+}
+
+{
+"spawnflags" "11"
+"classname" "NPC_Colombian_Rebel"
+"origin" "243 3419 986"
+"spawninFOV" "1"
+"targetname" "t253"
+"NPC" "1"
+}
+
+{
+"spawnflags" "11"
+"angles" "0 360 0"
+"origin" "457 2937 950"
+"classname" "NPC_Colombian_Commando"
+"spawninFOV" "1"
+"targetname" "t253"
+"NPC" "1"
+}
+
+{
+"spawnflags" "11"
+"angles" "0 90 0"
+"classname" "NPC_Colombian_Commando"
+"origin" "609 2921 950"
+"spawninFOV" "1"
+"targetname" "t253"
+"NPC" "1"
+}
+
+{
+"spawnflags" "1"
+"origin" "977 2057 994"
+"targetname" "post2"
+"classname" "NPC_Colombian_Soldier"
+"NPC" "1"
+}
+
+{
+"spawnflags" "9"
+"classname" "NPC_Colombian_Soldier"
+"targetname" "post3"
+"origin" "921 1553 986"
+"spawninFOV" "1"
+"NPC" "1"
+}
+
+{
+"origin" "4545 -3543 986"
+"classname" "NPC_Colombian_Soldier"
+"spawnflags" "9"
+"targetname" "t118"
+"spawninFOV" "1"
+"NPC" "1"
+}
+
+{
+"classname" "NPC_Colombian_Soldier"
+"origin" "4633 -3599 986"
+"spawnflags" "9"
+"targetname" "t118"
+"spawninFOV" "1"
+"NPC" "1"
+}
+
+{
+"origin" "3897 -1719 962"
+"classname" "NPC_Colombian_Commando"
+"targetname" "ambush3"
+"spawnflags" "15"
+"NPC" "1"
+}
+
+{
+"origin" "-3055 4193 986"
+"spawnflags" "11"
+"targetname" "comm02"
+"classname" "NPC_Colombian_Commando"
+"spawninFOV" "1"
+"NPC" "1"
+}
+
+{
+"angles" "0 315 0"
+"targetname" "t256"
+"killtarget" "badguy1"
+"origin" "3897 -4903 986"
+"spawnflags" "11"
+"classname" "NPC_Colombian_Soldier_Elite"
+"spawninFOV" "1"
+"NPC" "1"
+}
+
+{
+"origin" "4505 -3207 962"
+"spawnflags" "11"
+"classname" "NPC_Colombian_Soldier"
+"targetname" "intent01"
+"spawninFOV" "1"
+"NPC" "1"
+}
+
+{
+"classname" "NPC_Colombian_Commando"
+"targetname" "sniper2"
+"spawnflags" "11"
+"origin" "-3759 1585 986"
+"spawninFOV" "1"
+"NPC" "1"
+}
+
+{
+"origin" "1077 -5311 1154"
+"spawnflags" "11"
+"targetname" "badguy1"
+"classname" "NPC_Colombian_Commando"
+"spawninFOV" "1"
+"NPC" "1"
+}
+
+{
+"classname" "NPC_Colombian_Commando"
+"targetname" "badguy2"
+"spawnflags" "15"
+"origin" "1705 -5439 1122"
+"spawninFOV" "1"
+"NPC" "1"
+}
+
+{
+"classname" "NPC_Colombian_Rebel"
+"spawnflags" "3"
+"targetname" "bobdog2"
+"origin" "2407 -5023 1130"
+"spawninFOV" "1"
+"NPC" "1"
+}
+
+{
+"light" "60"
+"_color" "1.000000 0.781893 0.448560"
+"classname" "light"
+"origin" "1968 -5016 1292"
+}
+
+{
+"origin" "409 1945 1002"
+"targetname" "emplace2"
+"spawnflags" "11"
+"classname" "NPC_Colombian_Commando"
+"NPC" "1"
+}
+
+{
+"classname" "NPC_Colombian_Commando"
+"spawnflags" "11"
+"targetname" "emplace3"
+"origin" "1217 1905 946"
+"spawninFOV" "1"
+"NPC" "1"
+}
+
+{
+"classname" "script_runner"
+"script" "col4/tower01"
+"spawnflags" "1"
+"origin" "24 4608 1064"
+"targetname" "t89"
+}
+
+{
+"model" "*86"
+"item" "4"
+"command" "completesub"
+"spawnflags" "1"
+"classname" "trigger_objective"
+"targetname" "gatecomplete"
+}
+
+{
+"origin" "2790 600 1368"
+"spawnflags" "0"
+"script" "col4/tower02"
+"targetname" "t106"
+"classname" "script_runner"
+}
+
+{
+"spawnflags" "15"
+"targetname" "ambush3"
+"origin" "4557 -1693 986"
+"classname" "NPC_Colombian_Soldier_Elite"
+"NPC" "1"
+}
+
+{
+"targetname" "t258"
+"classname" "NPC_Colombian_Soldier"
+"spawnflags" "11"
+"origin" "2381 -5485 1122"
+"NPC" "1"
+}
+
+{
+"classname" "NPC_Colombian_Commando"
+"targetname" "badguy4"
+"spawnflags" "11"
+"origin" "1149 -5311 1154"
+"spawninFOV" "1"
+"NPC" "1"
+}
+
+{
+"origin" "444 1492 1018"
+"amount" "60"
+"size" "2"
+"type" "7.62mm belt"
+"classname" "pickup_ammo"
+}
+
+{
+"type" "7.62mm belt"
+"origin" "4640 -3256 922"
+"classname" "pickup_ammo"
+}
+
+{
+"classname" "pickup_ammo"
+"origin" "4640 -3288 922"
+"type" "40mm HE grenade"
+}
+
+{
+"spawninFOV" "1"
+"angles" "0 270 0"
+"classname" "NPC_Colombian_Soldier"
+"spawnflags" "41"
+"targetname" "t119"
+"origin" "-5007 817 982"
+"spawnscript" "col3/colombian_grass"
+"NPC" "1"
+}
+
+{
+"spawninFOV" "1"
+"origin" "-4335 1329 974"
+"targetname" "t119"
+"spawnflags" "41"
+"classname" "NPC_Colombian_Soldier"
+"spawnscript" "col3/colombian_grass"
+"NPC" "1"
+}
+
+{
+"model" "*92"
+"classname" "func_wall"
+"spawnflags" "0"
+"targetname" "red_light"
+}
+
+{
+"classname" "info_NPCcover"
+"target" "t226"
+"origin" "3268 220 948"
+}
+
+{
+"origin" "3300 -492 948"
+"target" "t227"
+"classname" "info_NPCcover"
+}
+
+{
+"origin" "4204 -1692 948"
+"target" "t229"
+"classname" "info_NPCcover"
+}
+
+{
+"classname" "info_NPCcover"
+"target" "t230"
+"origin" "4468 -3444 932"
+}
+
+{
+"origin" "4436 -3356 932"
+"target" "t231"
+"classname" "info_NPCcover"
+}
+
+{
+"classname" "info_NPCcover"
+"target" "t232"
+"origin" "4612 -3356 932"
+}
+
+{
+"origin" "4780 -2724 932"
+"target" "t233"
+"classname" "info_NPCcover"
+}
+
+{
+"classname" "info_NPCcover"
+"target" "t234"
+"origin" "5428 -2212 932"
+}
+
+{
+"origin" "4876 -1588 932"
+"target" "t235"
+"classname" "info_NPCcover"
+}
+
+{
+"origin" "2500 500 932"
+"target" "t236"
+"classname" "info_NPCcover"
+}
+
+{
+"targetname" "t237"
+"angles" "0 270 0"
+"origin" "-3519 3705 986"
+"spawnflags" "9"
+"classname" "NPC_Colombian_Commando"
+"spawninFOV" "1"
+"killtarget" "comm02"
+"NPC" "1"
+}
+
+{
+"targetname" "t237"
+"spawninFOV" "1"
+"classname" "NPC_Colombian_Commando"
+"spawnflags" "9"
+"origin" "-3687 3377 986"
+"angles" "0 270 0"
+"killtarget" "comm01"
+"NPC" "1"
+}
+
+{
+"targetname" "t237"
+"angles" "0 270 0"
+"origin" "-3535 3033 986"
+"spawnflags" "9"
+"classname" "NPC_Colombian_Soldier_Elite"
+"spawninFOV" "1"
+"NPC" "1"
+}
+
+{
+"classname" "light"
+"_color" "0.100000 0.129630 0.200000"
+"light" "800"
+"scale" "0.08"
+"origin" "-3896 2432 1000"
+}
+
+{
+"origin" "-3832 2640 1000"
+"scale" "0.08"
+"light" "800"
+"_color" "0.100000 0.129630 0.200000"
+"classname" "light"
+}
+
+{
+"classname" "light"
+"_color" "0.100000 0.129630 0.200000"
+"light" "800"
+"scale" "0.08"
+"origin" "-3736 2912 1000"
+}
+
+{
+"origin" "-3632 3200 1000"
+"scale" "0.08"
+"light" "800"
+"_color" "0.100000 0.129630 0.200000"
+"classname" "light"
+}
+
+{
+"classname" "light"
+"_color" "0.100000 0.129630 0.200000"
+"light" "800"
+"scale" "0.08"
+"origin" "-3592 3440 1000"
+}
+
+{
+"origin" "-3584 3576 1000"
+"scale" "0.08"
+"light" "800"
+"_color" "0.100000 0.129630 0.200000"
+"classname" "light"
+}
+
+{
+"classname" "pickup_health_small"
+"origin" "-3656 3308 984"
+"startoff" "1"
+"targetname" "t271"
+}
+
+{
+"type" "5.56mm"
+"classname" "pickup_ammo"
+"origin" "-3544 3648 984"
+}
+
+{
+"origin" "-3792 3008 961"
+"scale" "0.1"
+"light" "1024"
+"_color" "1.000000 0.739130 0.260870"
+"classname" "light"
+}
+
+{
+"classname" "light"
+"_color" "1.000000 0.739130 0.260870"
+"light" "1024"
+"scale" "0.1"
+"origin" "-3840 2976 961"
+}
+
+{
+"origin" "-3671 3759 936"
+"classname" "ce_lght_lantern"
+"ConfusEd" "1"
+}
+
+{
+"origin" "-3672 3792 961"
+"scale" "0.1"
+"light" "2048"
+"_color" "1.000000 0.739130 0.260870"
+"classname" "light"
+}
+
+{
+"classname" "light"
+"_color" "1.000000 0.739130 0.260870"
+"light" "2048"
+"scale" "0.1"
+"origin" "-3632 3760 961"
+}
+
+{
+"origin" "-3680 3728 961"
+"scale" "0.1"
+"light" "2048"
+"_color" "1.000000 0.739130 0.260870"
+"classname" "light"
+}
+
+{
+"origin" "-3471 3263 985"
+"classname" "ce_lght_lantern"
+"ConfusEd" "1"
+}
+
+{
+"origin" "-3512 3264 1024"
+"scale" "0.1"
+"light" "1024"
+"_color" "1.000000 0.739130 0.260870"
+"classname" "light"
+}
+
+{
+"classname" "light"
+"_color" "1.000000 0.739130 0.260870"
+"light" "1024"
+"scale" "0.1"
+"origin" "-3472 3224 1024"
+}
+
+{
+"origin" "-3472 3296 1024"
+"scale" "0.1"
+"light" "1024"
+"_color" "1.000000 0.739130 0.260870"
+"classname" "light"
+}
+
+{
+"origin" "-3735 2463 936"
+"classname" "ce_lght_lantern"
+"ConfusEd" "1"
+}
+
+{
+"classname" "light"
+"_color" "1.000000 0.739130 0.260870"
+"light" "2048"
+"scale" "0.1"
+"origin" "-3728 2512 984"
+}
+
+{
+"origin" "-3784 2472 984"
+"scale" "0.1"
+"light" "2048"
+"_color" "1.000000 0.739130 0.260870"
+"classname" "light"
+}
+
+{
+"classname" "light"
+"_color" "1.000000 0.739130 0.260870"
+"light" "2048"
+"scale" "0.1"
+"origin" "-3752 2408 984"
+}
+
+{
+"origin" "1304 -5416 1164"
+"type" "5.56mm"
+"classname" "pickup_ammo"
+}
+
+{
+"origin" "1670 -4850 1068"
+"classname" "pickup_health_small"
+}
+
+{
+"origin" "2034 -5074 1080"
+"classname" "ce_lght_lantern"
+"ConfusEd" "1"
+}
+
+{
+"origin" "2032 -5040 1104"
+"scale" "0.1"
+"light" "1024"
+"_color" "1.000000 0.739130 0.260870"
+"classname" "light"
+}
+
+{
+"classname" "light"
+"_color" "1.000000 0.739130 0.260870"
+"light" "1024"
+"scale" "0.1"
+"origin" "2072 -5072 1104"
+}
+
+{
+"origin" "2024 -5104 1104"
+"scale" "0.1"
+"light" "1024"
+"_color" "1.000000 0.739130 0.260870"
+"classname" "light"
+}
+
+{
+"classname" "ce_lght_lantern"
+"origin" "2464 -5119 1304"
+"ConfusEd" "1"
+}
+
+{
+"classname" "light"
+"_color" "1.000000 0.739130 0.260870"
+"light" "1024"
+"scale" "0.1"
+"origin" "2432 -5072 1328"
+}
+
+{
+"origin" "2408 -5112 1328"
+"scale" "0.1"
+"light" "1024"
+"_color" "1.000000 0.739130 0.260870"
+"classname" "light"
+}
+
+{
+"classname" "light"
+"_color" "1.000000 0.739130 0.260870"
+"light" "1024"
+"scale" "0.1"
+"origin" "2400 -5160 1328"
+}
+
+{
+"classname" "ce_lght_lantern"
+"origin" "2354 -4934 1080"
+"ConfusEd" "1"
+}
+
+{
+"classname" "light"
+"_color" "1.000000 0.739130 0.260870"
+"light" "1024"
+"scale" "0.1"
+"origin" "2304 -4936 1120"
+}
+
+{
+"origin" "2328 -4996 1120"
+"scale" "0.1"
+"light" "1024"
+"_color" "1.000000 0.739130 0.260870"
+"classname" "light"
+}
+
+{
+"script" "col4/heli_guns"
+"origin" "2877 6590 1988"
+"targetname" "gunson"
+"classname" "script_runner"
+}
+
+{
+"classname" "func_brushmodel_child"
+"brushParent" "heli"
+"targetname" "heli_child"
+"origin" "2677 6778 2012"
+}
+
+{
+"scale" "0.5"
+"light" "256"
+"_color" "1.000000 0.333333 0.050980"
+"origin" "2677 6778 1984"
+"classname" "light"
+}
+
+{
+"classname" "light"
+"origin" "2633 6906 1952"
+"_color" "0.756863 0.756863 1.000000"
+"light" "120"
+"scale" "0.5"
+}
+
+{
+"scale" "0.5"
+"light" "120"
+"_color" "0.756863 0.756863 1.000000"
+"origin" "2633 6650 1952"
+"classname" "light"
+}
+
+{
+"script" "col4/heli_guns"
+"classname" "script_runner"
+"targetname" "gunsoff"
+"origin" "2941 6590 1988"
+}
+
+{
+"classname" "light"
+"origin" "2717 6778 2096"
+"_color" "1.000000 1.000000 0.717647"
+"light" "256"
+"scale" "0.5"
+}
+
+{
+"script" "col4/heli_cave_exit"
+"origin" "-3556 4036 956"
+"spawnflags" "0"
+"classname" "script_runner"
+"targetname" "t63"
+}
+
+{
+"model" "*97"
+"origin" "-1840 -5124 1330"
+"classname" "func_wall"
+"ICARUSname" "sam_support"
+}
+
+{
+"model" "*98"
+"origin" "-1840 -5124 1296"
+"classname" "func_wall"
+"ICARUSname" "sam_base"
+}
+
+{
+"origin" "2032 -4932 1244"
+"script" "col4/sam_02"
+"targetname" "t247"
+"classname" "script_runner"
+}
+
+{
+"classname" "script_runner"
+"targetname" "t248"
+"script" "col4/sam_03"
+"origin" "2052 -4932 1244"
+}
+
+{
+"origin" "2052 -5092 1244"
+"target" "t250"
+"classname" "target_activate"
+"targetname" "sam_03_on"
+}
+
+{
+"origin" "-5044 -3692 1044"
+"script" "col4/col4_heli"
+"spawnflags" "0"
+"classname" "script_runner"
+"targetname" "yesone"
+}
+
+{
+"classname" "func_brushmodel_child"
+"brushParent" "sam_02"
+"targetname" "sam02_child"
+"origin" "-1840 -5224 1364"
+}
+
+{
+"origin" "-1892 -5224 1364"
+"targetname" "sam03_child"
+"brushParent" "sam_03"
+"classname" "func_brushmodel_child"
+}
+
+{
+"spawninFOV" "1"
+"targetname" "heli_guy01"
+"angles" "0 135 0"
+"spawnflags" "11"
+"origin" "3889 -255 986"
+"classname" "NPC_Colombian_Soldier"
+"killtarget" "tent_counter"
+"NPC" "1"
+}
+
+{
+"classname" "NPC_Colombian_Soldier"
+"origin" "3942 -281 986"
+"spawnflags" "11"
+"angles" "0 135 0"
+"targetname" "heli_guy02"
+"spawninFOV" "1"
+"killtarget" "tent_counter"
+"NPC" "1"
+}
+
+{
+"spawninFOV" "1"
+"targetname" "heli_guy03"
+"angles" "0 135 0"
+"spawnflags" "11"
+"origin" "3995 -315 986"
+"classname" "NPC_Colombian_Soldier"
+"killtarget" "tent_counter"
+"NPC" "1"
+}
+
+{
+"classname" "NPC_Colombian_Soldier"
+"origin" "4048 -341 986"
+"spawnflags" "11"
+"angles" "0 135 0"
+"targetname" "heli_guy04"
+"spawninFOV" "1"
+"killtarget" "tent_counter"
+"NPC" "1"
+}
+
+{
+"accuracy" "0"
+"ICARUSname" "huey_gun01"
+"classname" "emplaced_wpn"
+"angles" "0 0 180"
+"brushChild" "heli_child"
+"brushParent" "heli"
+"maxPitch" "35"
+"maxYaw" "15"
+"minPitch" "5"
+"minYaw" "0"
+"targetname" "huey_gun01"
+"type" "Emplaced M60"
+"origin" "2633 6650 1968"
+}
+
+{
+"targetname" "t255"
+"spawninFOV" "1"
+"origin" "681 1497 986"
+"classname" "NPC_Colombian_Soldier"
+"spawnflags" "11"
+"angles" "0 90 0"
+"NPC" "1"
+}
+
+{
+"classname" "info_NPCcover"
+"target" "t257"
+"origin" "3860 -4340 956"
+}
+
+{
+"origin" "-5568 -1616 936"
+"classname" "pickup_health_small"
+}
+
+{
+"model" "*112"
+"actAngle" "0 270 0"
+"loopSound" "sound/misc/tripwire/trip_loop"
+"endSound" "sound/misc/tripwire/trip_done"
+"startSound" "sound/misc/tripwire/trip_start"
+"targetname" "trip_wire"
+"classname" "trigger_toolbox"
+"spawnflags" "3"
+"holdtime" "5"
+"icon" "hud/wire_cutters"
+"target" "t3"
+}
+
+{
+"origin" "-5764 36 980"
+"target" "trip_wire"
+"targetname" "t3"
+"classname" "target_deactivate"
+}
+
+{
+"model" "*113"
+"actAngle" "0 180 0"
+"target" "t72"
+"icon" "hud/wire_cutters"
+"holdtime" "6"
+"spawnflags" "3"
+"classname" "trigger_toolbox"
+"targetname" "t74"
+"endSound" "sound/misc/tripwire/trip_done"
+"startSound" "sound/misc/tripwire/trip_start"
+"loopSound" "sound/misc/tripwire/trip_loop"
+}
+
+{
+"classname" "target_deactivate"
+"targetname" "t72"
+"target" "t74"
+"origin" "-1996 3932 1012"
+}
+
+{
+"classname" "pickup_ammo"
+"type" "7.62mm"
+"startoff" "1"
+"origin" "-3720 3088 968"
+"targetname" "t270"
+}
+
+{
+"classname" "pickup_ammo"
+"type" "5.56mm"
+"size" "2"
+"amount" "60"
+"origin" "448 1564 1018"
+}
+
+
+14 warnings.
+conversion O.K.
