@@ -236,6 +236,7 @@ vmCvar_t	g_forcevote;
 
 // Boe!Man 3/6/11
 vmCvar_t	g_customCommandsFile;
+vmCvar_t	g_tipsFile;
 vmCvar_t	g_banfile;
 vmCvar_t	hideSeek_Extra;
 vmCvar_t	hideSeek_Nades;
@@ -469,7 +470,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_autoEvenTeams, "g_autoEvenTeams", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 
 	{ &server_enableServerMsgs, "server_enableServerMsgs", "1", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
-	{ &server_enableTips, "server_enableTips", "1", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
+	{ &server_enableTips, "server_enableTips", "0", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_msgInterval, "server_msgInterval", "5", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_msgDelay, "server_msgDelay", "2", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_message1, "server_message1", "Welcome to 1fx. Mod.", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
@@ -529,7 +530,8 @@ static cvarTable_t gameCvarTable[] =
 
 	{ &g_alternateMap, "g_alternateMap", "0", CVAR_ROM|CVAR_INTERNAL|CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_enableCustomCommands, "g_enableCustomCommands", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
-	{ &g_customCommandsFile,			"g_customCommandsFile",			"CustomCommands.txt",	CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  }, // Boe!Man 3/6/11: So users can change if desired.
+	{ &g_customCommandsFile,			"g_customCommandsFile",			"files/CustomCommands.txt",	CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  }, // Boe!Man 3/6/11: So users can change if desired.
+	{ &g_tipsFile,						"g_tipsFile",					"files/Tips.txt",	CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  }, // Boe!Man 6/24/11: So users can change if desired.
 	{ &hideSeek_Extra,			"hideSeek_Extra",			"11011",	CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  }, // Boe!Man 3/6/11: So users can change if desired.
 	{ &hideSeek_Nades,			"hideSeek_Nades",			"1111",	CVAR_ARCHIVE|CVAR_LATCH,	0.0,	0.0,  0, qfalse  }, // Boe!Man 3/6/11: So users can change if desired.
 	{ &hideSeek_Weapons,		"hideSeek_Weapons",			"111",	CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  }, // Boe!Man 3/6/11: So users can change if desired.

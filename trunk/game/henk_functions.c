@@ -28,9 +28,9 @@ void Henk_Tip(void){
 	fileHandle_t f;
 	int len, i, start, count;
 
-	len = trap_FS_FOpenFile( "tips.txt", &f, FS_READ_TEXT); 
+	len = trap_FS_FOpenFile( g_tipsFile.string, &f, FS_READ_TEXT); 
 	if (!f) { 
-		Com_Printf("Can't open tips.txt\n");
+		Com_Printf("Can't open %s\n", g_tipsFile.string);
 		level.tipMsg = level.time+(server_msgInterval.integer*60000); // Boe!Man 6/17/11: If the tips file isn't found, do update the interval so it doesn't attempt to open the file every x msecs.
 		return;
 	}
@@ -47,7 +47,7 @@ void Henk_Tip(void){
 	}
 	trap_FS_FCloseFile(f);
 
-	trap_SendServerCommand( -1, va("chat -1 \"%sT%si%sp %sof %st%she Day: %s\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, Tips[irand(0, count-1)].tip ) );		
+	trap_SendServerCommand( -1, va("chat -1 \"%sR%sa%sn%sd%so%sm Tip: %s\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, Tips[irand(0, count-1)].tip ) );		
 	level.tipMsg = level.time+(server_msgInterval.integer*60000);
 }
 
