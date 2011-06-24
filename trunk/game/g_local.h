@@ -714,6 +714,7 @@ typedef struct
 	qboolean	messagedisplay;
 	qboolean	messagedisplay1;
 	qboolean	messagedisplay2;
+	int			zombie;
 
 	// Henk 26/01/10 -> Current RPG/M4/MM1 holders
 	char		RPGloc[64];

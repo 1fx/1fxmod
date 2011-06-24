@@ -2708,16 +2708,24 @@ void Henk_CheckZombie(void){
 		level.messagedisplay1 = qfalse;
 	}
 
-	if(level.time >= level.gametypeStartTime+10000 && level.messagedisplay2 == qfalse){
+	if(level.time >= level.gametypeStartTime+5000 && level.zombie == -1 && level.time <= level.gametypeStartTime+10000){
 		random = irand(0, level.numConnectedClients);
 		ent = &g_entities[level.sortedClients[random]];
 		if(ent->client->sess.team == TEAM_RED && ent->client->pers.connected == CON_CONNECTED){
-		trap_SendServerCommand(-1, va("print \"^3[H&Z] ^7%s suddenly turned into a zombie!\n\"", ent->client->pers.netname) );
-		trap_SendServerCommand( -1, va("cp \"%s ^7has turned into a zombie!\n\"", ent->client->pers.netname));
-		// turn into zombie
-		CloneBody(ent, ent->s.number);
-		ent->client->sess.firstzombie = qtrue;
-		level.messagedisplay2 = qtrue;
+		level.zombie = ent->s.number;
+		trap_SendServerCommand( ent->s.number, va("cp \"You will turn into a zombie in 5 seconds!\n\""));
+		}
+	}
+
+	if(level.time >= level.gametypeStartTime+10000 && level.messagedisplay2 == qfalse){
+		if(level.zombie != -1){
+			trap_SendServerCommand(-1, va("print \"^3[H&Z] ^7%s suddenly turned into a zombie!\n\"", ent->client->pers.netname) );
+			trap_SendServerCommand( -1, va("cp \"%s ^7has turned into a zombie!\n\"", ent->client->pers.netname));
+			// turn into zombie
+			CloneBody(ent, ent->s.number);
+			ent->client->sess.firstzombie = qtrue;
+			level.messagedisplay2 = qtrue;
+			level.zombie = -1;
 		}
 	}
 
@@ -3155,7 +3163,9 @@ void G_RunFrame( int levelTime )
 					trap_UnlinkEntity (ent);
 					ClientSpawn(ent);
 					TeleportPlayer(ent, g_entities[ent->client->sess.zombiebody].r.currentOrigin, vec3_origin, qtrue);
-					G_FreeEntity(&g_entities[ent->client->sess.zombiebody]);
+					//G_FreeEntity(&g_entities[ent->client->sess.zombiebody]);
+					g_entities[ent->client->sess.zombiebody].nextthink = level.time+2000;
+					g_entities[ent->client->sess.zombiebody].think = G_FreeEntity;
 					ent->client->sess.zombie = qfalse;
 					ent->client->sess.zombiebody = -1;
 				}

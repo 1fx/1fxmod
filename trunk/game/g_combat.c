@@ -690,15 +690,17 @@ void player_die(
 
 	// If the dismember bit is set then make sure the body queue dismembers
 	// the location that was hit
-	if(current_gametype.value != GT_HZ){
 	if ( hitLocation & HL_DISMEMBERBIT )
 	{
+		if(current_gametype.value == GT_HZ && self->client->sess.team == TEAM_RED){
+	}else
 		CopyToBodyQue (self, hitLocation & (~HL_DISMEMBERBIT), hitDir );
 	}
 	else
 	{
+		if(current_gametype.value == GT_HZ && self->client->sess.team == TEAM_RED){
+		}else
 		CopyToBodyQue (self, HL_NONE, hitDir );
-	}
 	}
 
 	// the body can still be gibbed
