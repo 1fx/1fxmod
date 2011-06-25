@@ -31,7 +31,7 @@ void TeleportPlayer ( gentity_t *player, vec3_t origin, vec3_t angles, qboolean 
 		return;
 	else
 		player->client->sess.lastTele = level.time+500;
-	Com_Printf("%s is teleporting to %s\n", player->client->pers.netname, vtos(origin));
+	//Com_Printf("%s is teleporting to %s\n", player->client->pers.netname, vtos(origin));
 	// use temp events at source and destination to prevent the effect
 	// from getting dropped by a second player event
 	if ( !G_IsClientSpectating ( player->client ) ) 

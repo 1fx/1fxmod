@@ -19,6 +19,43 @@ void trap_UnlinkEntity( gentity_t *ent ) {
 	trap_UnlinkEntity1(ent);
 }
 
+// sort of sscanf found here
+// http://cboard.cprogramming.com/c-programming/18092-sscanf-source-code.html
+int (readFromStr)( char *src, char *format, ... )
+{
+  va_list ap;
+  float *f;
+  int conv = 0, *i, index;
+  char *a, *fp, *sp = src, buf[512] = {'\0'};
+
+  va_start ( ap, format );
+  for ( fp = format; *fp != '\0'; fp++ ) {
+    for ( index = 0; *sp != '\0' && *sp != ' '; index++ )
+      buf[index] = *sp++;
+    while ( *sp == ' ' ) sp++;
+    while ( *fp != '%' ) fp++;
+    if ( *fp == '%' ) {
+      switch ( *++fp ) {
+      case 'i':
+        i = va_arg ( ap, int * );
+        *i = atoi ( buf );
+        break;
+      case 'f':
+        f = va_arg ( ap, float * );
+        *f = (float)atof ( buf );
+        break;
+      case 's':
+        a = va_arg ( ap, char * );
+        strncpy ( a, buf, strlen ( buf ) + 1 );
+        break;
+      }
+      conv++;
+    }
+  }
+  va_end ( ap );
+  return conv;
+}
+
 void Henk_Tip(void){
 	qboolean tip = qfalse;
 	char buf[1024];

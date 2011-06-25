@@ -1526,15 +1526,11 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 	qboolean begin = qtrue;
 	char buf[10000];
 	char asd[128] = "";
-	char last[128], lastip[64] = "";
-	char fileName[128];
+	char last[128];
 	qboolean done = qfalse;
 
 	line = line;
 	memset( buf, 0, sizeof(buf) );
-	memset( lastip, 0, sizeof(lastip) );
-	memset( fileName, 0, sizeof(fileName) );
-	memset( last, 0, sizeof(last) );
 	len = trap_FS_FOpenFile( file, &f, FS_READ_TEXT);
 	if(!f){
 		Com_Printf("Error while opening %s\n", file);
@@ -1575,13 +1571,13 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 					break;
 				}
 			}
-			trap_FS_Write(asd, strlen(asd), f);
+			//trap_FS_Write(asd, strlen(asd), f);
 			//Com_Printf("Written %s\n", asd);
 			//Q_strncpyz(newbuf+strlen(newbuf), asd, sizeof(newbuf));
 			}else{
 				strncpy(last, buf+StartPos, EndPos-StartPos); 
 				done = qtrue;
-				//Com_Printf("Last: %s\n", asd);
+				//Com_Printf("Last1: %s\n", asd);
 			}
 			break;
 		}
@@ -1607,18 +1603,19 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 				}else{
 					Com_sprintf(asd, sizeof(asd), "%s\n", asd);
 					trap_FS_Write(asd, strlen(asd), f);
-					Com_Printf("Written %s\n", asd);
+					//Com_Printf("Written %s\n", asd);
 				}
 			}else{
-			Com_sprintf(asd, sizeof(asd), "%s\n", asd);
-			trap_FS_Write(asd, strlen(asd), f);
-			Com_Printf("Written %s\n", asd);
+				Com_sprintf(asd, sizeof(asd), "%s\n", asd);
+				trap_FS_Write(asd, strlen(asd), f);
+				//Com_Printf("Written %s\n", asd);
 			}
 			//Com_Printf("New buf length: %i\n", strlen(newbuf));
 			//Com_Printf("Added %s\n", asd);
 			}else{
 				done = qtrue;
 				strncpy(last, buf+StartPos, EndPos-StartPos); 
+				last[(EndPos-StartPos)-1] = '\0';
 				Com_Printf("Final: %s\n", last);
 			}
 		}
@@ -1626,13 +1623,6 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 	trap_FS_FCloseFile(f);
 	if(done && strlen(last) >= 1){ // && !strstr(newbuf, last)
 	// Clear ban info
-	for(i=0;i<strlen(last);i++){
-		if(last[i] == '\\'){
-			strncpy(lastip, last, i);
-			break;
-		}
-	}
-	Com_Printf("Last ip: %s\n", lastip);
 	if(ban){
 	// End
 		if(subnet){
@@ -3488,7 +3478,7 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 	int r, lcount = -1, Start = 0;
 	char xip[64], arg[32] = "\0";
 	qboolean passwordlist = qfalse;
-
+	qboolean last = qfalse;
 	if(shortCmd){
 		trap_Argv( 1, arg, sizeof( arg ) );
 		if(strstr(arg, "pass"))
@@ -3542,7 +3532,12 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 				return;
 			}
 			//if(passwordlist)
-				Q_strncpyz(xip, buf+StartPos, (EndPos-StartPos)+1);
+		//#ifdef Q3_VM
+		//	Q_strncpyz(xip, buf+StartPos, (EndPos-StartPos));
+		//#else
+			Q_strncpyz(xip, buf+StartPos, (EndPos-StartPos)+1);
+		//s#endif
+				
 			//else
 				//Q_strncpyz(xip, buf+StartPos, EndPos-StartPos);
 			lcount = -1;
@@ -3552,16 +3547,23 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 					break;
 				}
 			}
+			
 			if(lcount == -1){
+				last = qtrue;
 				lcount = strlen(buf); // last line
 			}
 			memset(name, 0, sizeof(name));
+			memset(level1, 0, sizeof(level1));
 #ifdef Q3_VM
-			strncpy(name, buf+EndPos+1, (lcount-(EndPos+1))-1);
-			strncpy(level1, buf+lcount, 1);
+				Q_strncpyz(name, buf+EndPos+1, (lcount-(EndPos+1))-1);
+				Q_strncpyz(level1, buf+(lcount-1), 2);
+				if(atoi(level1) < 1 || atoi(level1) > 5){
+					Q_strncpyz(name, buf+EndPos+1, (lcount-(EndPos+1)));
+					Q_strncpyz(level1, buf+lcount, 2);
+				}
 #else
-			strncpy(name, buf+EndPos+1, (lcount-(EndPos+1))-2);
-			strncpy(level1, buf+(lcount-1), 1);
+			Q_strncpyz(name, buf+EndPos+1, (lcount-(EndPos+1))-1);
+			Q_strncpyz(level1, buf+(lcount-1), 2);
 #endif
 			//Com_Printf("IP: %s\n", xip);
 			//Com_Printf("Name: %s\n", name);

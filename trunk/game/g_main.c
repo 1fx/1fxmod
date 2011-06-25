@@ -2723,7 +2723,7 @@ void Henk_CheckZombie(void){
 		if(level.zombie == -1 && TeamCount1(TEAM_BLUE) == 0 && level.time >= level.zombietime+10000){
 			random = irand(0, level.numConnectedClients);
 			ent = &g_entities[level.sortedClients[random]];
-			if(ent->client->sess.team == TEAM_RED && ent->client->pers.connected == CON_CONNECTED && !G_IsClientDead(g_entities[level.zombie].client)){
+			if(ent->client->sess.team == TEAM_RED && ent->client->pers.connected == CON_CONNECTED && !G_IsClientDead(ent)){
 				level.zombie = ent->s.number;
 				level.zombietime = level.time+5000;
 				trap_SendServerCommand( ent->s.number, va("cp \"You will turn into a zombie in 5 seconds!\n\""));
@@ -3231,7 +3231,8 @@ void G_RunFrame( int levelTime )
 				trap_UnlinkEntity (ent);
 				ClientSpawn ( ent );
 				}
-			}else if(current_gametype.value == GT_HZ && G_IsClientDead(ent->client) && ent->client->sess.team == TEAM_BLUE){
+			}else if(current_gametype.value == GT_HZ && G_IsClientDead(ent->client)){
+				if(ent->client->sess.team == TEAM_BLUE || TeamCount1(TEAM_BLUE) == 0 && ent->client->sess.team == TEAM_RED){
 				if(ent->client->sess.zombie == qfalse){
 					if ( ent->client->sess.ghost )
 					{
@@ -3249,6 +3250,7 @@ void G_RunFrame( int levelTime )
 				trap_UnlinkEntity (ent);
 				ClientSpawn ( ent );
 				}
+			}
 			}
 		}
 		if ( ent->inuse )
