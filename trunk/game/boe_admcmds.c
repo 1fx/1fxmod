@@ -3893,7 +3893,7 @@ void Henk_Map(int argNum, gentity_t *adm, qboolean shortCmd){
 		}
 
 		if(!Henk_DoesMapSupportGametype(gametype, map)){
-			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7This map does not support the gametype %s.\n\"", gametype));
+			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7This map does not support the gametype %s, please add it in the ARENA file.\n\"", gametype));
 			return;
 		}
 

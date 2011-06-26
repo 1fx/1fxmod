@@ -2723,7 +2723,7 @@ void Henk_CheckZombie(void){
 		if(level.zombie == -1 && TeamCount1(TEAM_BLUE) == 0 && level.time >= level.zombietime+10000){
 			random = irand(0, level.numConnectedClients);
 			ent = &g_entities[level.sortedClients[random]];
-			if(ent->client->sess.team == TEAM_RED && ent->client->pers.connected == CON_CONNECTED && !G_IsClientDead(ent)){
+			if(ent->client->sess.team == TEAM_RED && ent->client->pers.connected == CON_CONNECTED && !G_IsClientDead(ent->client)){
 				level.zombie = ent->s.number;
 				level.zombietime = level.time+5000;
 				trap_SendServerCommand( ent->s.number, va("cp \"You will turn into a zombie in 5 seconds!\n\""));
@@ -3171,9 +3171,6 @@ void G_RunFrame( int levelTime )
 
 		if(ent->client->sess.zombie == qtrue && ent->client->sess.zombiebody != -1 && current_gametype.value == GT_HZ){
 				if(g_entities[ent->client->sess.zombiebody].s.pos.trType == TR_STATIONARY){
-					vec3_t temp;
-					//trap_SendServerCommand(-1, va("print\"^3[Debug] ^7Teleport angles: %s.\n\"", vtos(ent->client->ps.viewangles)));
-					VectorCopy(ent->client->ps.viewangles, temp);
 					SetTeam(ent, "blue", NULL, qtrue);
 					G_StopFollowing ( ent );
 					ent->client->ps.pm_flags &= ~PMF_GHOST;
@@ -3181,8 +3178,9 @@ void G_RunFrame( int levelTime )
 					ent->client->sess.ghost = qfalse;
 					trap_UnlinkEntity (ent);
 					ClientSpawn(ent);
-					//trap_SendServerCommand(-1, va("print\"^3[Debug] ^7Teleport angles: %s.\n\"", vtos(temp)));
-					TeleportPlayer(ent, g_entities[ent->client->sess.zombiebody].r.currentOrigin, temp, qtrue);
+					trap_SendServerCommand(-1, va("print\"^3[Debug] ^7Teleport angles: %s.\n\"", vtos(ent->client->sess.tempangles)));
+					TeleportPlayer(ent, g_entities[ent->client->sess.zombiebody].r.currentOrigin, ent->client->sess.tempangles, qtrue);
+					SetClientViewAngle(ent, ent->client->sess.tempangles, qfalse);
 					//G_FreeEntity(&g_entities[ent->client->sess.zombiebody]);
 					g_entities[ent->client->sess.zombiebody].nextthink = level.time+1000;
 					g_entities[ent->client->sess.zombiebody].think = G_FreeEntity;

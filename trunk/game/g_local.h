@@ -341,6 +341,7 @@ typedef struct
 	int			zombiebody;
 	qboolean	firstzombie;
 	int			lastpush;
+	vec3_t		tempangles;
 } clientSession_t;
 
 // Boe!Man 3/30/10

@@ -463,7 +463,8 @@ SetClientViewAngle
 void SetClientViewAngle( gentity_t *ent, vec3_t angle, qboolean teleport )
 {
 	int			i;
-	if(ent->client->pers.twisted && teleport){
+	if(ent->client->pers.twisted && teleport == qtrue){
+		Com_Printf("Returning\n");
 		return;
 	}
 		// set the delta angle
@@ -2163,7 +2164,7 @@ void ClientSpawn(gentity_t *ent)
 		client->pers.netnameTime = level.time;
 		ClientUserinfoChanged ( client->ps.clientNum );
 	}
-	if(current_gametype.value != GT_HS){
+	if(current_gametype.value != GT_HS && current_gametype.value != GT_HZ){
 		if(level.gametypeData->teams && client->sess.team != TEAM_SPECTATOR && !strstr(level.gametypeTeam[client->sess.team], client->pers.identity->mTeam)){ // this skin does not belong to this team so change their Identity
 			trap_SendServerCommand(ent->s.number, va("print \"^3[Info] ^7Your skin has been changed because it did not match your team.\n\"") );
 			ClientUserinfoChanged ( client->ps.clientNum );
