@@ -3342,6 +3342,9 @@ void Boe_adm_f ( gentity_t *ent )
 		}else if(!g_passwordAdmins.integer){ // Boe!Man 3/31/11: Else display an alternate message, instead of the "You don't have Admin powers!" message (confusing).
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Access denied: No password logins allowed by the server!\n\""));
 			return;
+		}else if(adm){
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Access denied: You already got Admin powers!\n\""));
+			return;
 		}
 	}
 
