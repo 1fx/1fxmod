@@ -921,18 +921,52 @@ Boe_AddToList
 int Boe_AddToList(const char *string, const char* file, const char* type, gentity_t* ent)
 {
 	int				len;
+	char			buf[15000] = "\0";
+	char			buf2[15000] = "\0";
 	fileHandle_t	f;
-	len = trap_FS_FOpenFile( file, &f, FS_APPEND_TEXT );
+	qboolean		clonecheck = qfalse;
+
+	if(type == "Clonecheck"){ // Boe!Man 6/29/11: Check if it's an alias file - if yes, we need to append the name to the front in order to save us a lot of hassle of processing everything differently later.
+		clonecheck = qtrue;
+		memset(buf, 0, sizeof(buf)); // Clean the buffers.
+		memset(buf2, 0, sizeof(buf2));
+		len = trap_FS_FOpenFile( file, &f, FS_READ_TEXT );
+		if(!f){
+			if(ent && ent->client){
+				trap_SendServerCommand( ent-g_entities, va("print \"^1[Error] ^7Cannot open %s file\n\"", type));
+			}
+			else
+			{
+				Com_Printf("^1ERROR: Cannot open %s file.\n", type);
+			}
+			return -1;
+		}
+		if(len > 15000){
+			if(ent && ent->client){
+				trap_SendServerCommand( ent-g_entities, va("print \"^1[Error] ^7List full, unable to add %s.\n\"", type));
+			}
+			else
+			{
+				Com_Printf("^1ERROR: List full, Unable to add %s.\n", type);
+			}
+			return 0;
+		}
+		trap_FS_Read(buf, len, f); // Write to buffer.
+		trap_FS_FCloseFile(f); // Close and reopen file in write mode.
+		trap_FS_FOpenFile( file, &f, FS_WRITE_TEXT );
+	}else{
+		len = trap_FS_FOpenFile( file, &f, FS_APPEND_TEXT );
+	}
 
     if (!f)
 	{
 		if(ent && ent->client)
 		{
-			trap_SendServerCommand( ent-g_entities, va("print \"^1Error opening %s File\n\"", type));
+			trap_SendServerCommand( ent-g_entities, va("print \"^1[Error] ^7Cannot open %s file\n\"", type));
 		}
 		else
 		{
-			Com_Printf("^1Error opening %s File\n", type);
+			Com_Printf("^1ERROR: Cannot open %s file.\n", type);
 		}
 	    return -1;
 	}
@@ -943,16 +977,22 @@ int Boe_AddToList(const char *string, const char* file, const char* type, gentit
 
 		if(ent && ent->client)
 		{
-			trap_SendServerCommand( ent-g_entities, va("print \"^3List full, Unable to add %s.\n\"", type));
+			trap_SendServerCommand( ent-g_entities, va("print \"^1[Error] ^7List full, unable to add %s.\n\"", type));
 		}
 		else
 		{
-			Com_Printf("^3List full, Unable to add %s.\n", type);
+			Com_Printf("^1ERROR: List full, Unable to add %s.\n", type);
 		}
 		return 0;
 	}
-	trap_FS_Write(string, strlen(string), f);
-	trap_FS_Write("\n", 1, f);
+
+	if(clonecheck){
+		Com_sprintf( buf2, sizeof(buf2), "%s\n%s", string, buf);
+		trap_FS_Write(buf2, strlen(buf2), f);
+	}else{
+		trap_FS_Write(string, strlen(string), f);
+		trap_FS_Write("\n", 1, f);
+	}
 	trap_FS_FCloseFile(f);
 
 	return 1;

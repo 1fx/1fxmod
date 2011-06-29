@@ -224,6 +224,7 @@ vmCvar_t	cm_sb;
 
 // Boe!Man 12/13/10: Clonecheck CVARs.
 vmCvar_t	g_aliasCheck;
+vmCvar_t	g_aliasCount;
 vmCvar_t	g_alternateMap;
 
 // Boe!Man 1/26/11
@@ -505,6 +506,7 @@ static cvarTable_t gameCvarTable[] =
 
 	// Boe!Man 12/13/10
 	{ &g_aliasCheck, "g_aliasCheck", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
+	{ &g_aliasCount, "g_aliasCount", "10", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 
 	// Henk 19/01/10 -> Set default value of weapons and disable the cvar(Only in H&S though)
 	{ NULL,					"disable_weapon_knife",					"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 

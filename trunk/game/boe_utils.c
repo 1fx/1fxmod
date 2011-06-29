@@ -1392,8 +1392,8 @@ void Boe_Print_File (gentity_t *ent, char *file, qboolean clonecheckstats, int i
 		if (j != 0){
 		for(i = 0; i<=j; i++){
 			if(packet[i] == '\n'){
-				// Boe!Man 12/13/10: FIX ME - add g_aliasLines x & display from new to old till x
-				if (aliasCount >= 10){
+				// Boe!Man 6/29/11: Display only the amount of lines they specified to display.
+				if (aliasCount >= g_aliasCount.integer){
 					return;
 				}
 				if(clonecheckstats == qfalse){

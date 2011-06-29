@@ -465,6 +465,7 @@ void Boe_calcMatchScores (void);
 
 // Boe!Man 12/13/10
 extern vmCvar_t	g_aliasCheck;
+extern vmCvar_t	g_aliasCount;
 
 // Henkie 01/02/11
 extern vmCvar_t g_alternateMap;
