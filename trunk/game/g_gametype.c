@@ -643,9 +643,24 @@ void G_ResetGametype ( qboolean fullRestart, qboolean cagefight )
 		level.timelimithit = qfalse; // allow timelimit hit message
 		// Henkie 23/02/10 -> Cache the sounds' index
 		level.clicksound = G_SoundIndex("sound/misc/menus/click.wav");
-		Com_sprintf(level.M4loc, sizeof(level.M4loc), "%s", "Not given yet");
-		Com_sprintf(level.RPGloc, sizeof(level.RPGloc), "%s", "Not given yet");
-		Com_sprintf(level.MM1loc, sizeof(level.MM1loc), "%s", "Not given yet");
+
+		// Boe!Man 6/29/11: Also set the appropriate message if the weapon's been disabled.
+		if(hideSeek_Weapons.string[1] == '0'){ // M4
+			Com_sprintf(level.M4loc, sizeof(level.M4loc), "%s", "Disabled");
+		}else{
+			Com_sprintf(level.M4loc, sizeof(level.M4loc), "%s", "Not given yet");
+		}
+		if(hideSeek_Weapons.string[0] == '0'){ // RPG
+			Com_sprintf(level.RPGloc, sizeof(level.RPGloc), "%s", "Disabled");
+		}else{
+			Com_sprintf(level.RPGloc, sizeof(level.RPGloc), "%s", "Not given yet");
+		}
+		if(hideSeek_Weapons.string[2] == '0'){ // MM1
+			Com_sprintf(level.MM1loc, sizeof(level.MM1loc), "%s", "Disabled");
+		}else{
+			Com_sprintf(level.MM1loc, sizeof(level.MM1loc), "%s", "Not given yet");
+		}
+
 		memset(level.firstname, 0, sizeof(level.firstname));
 		memset(level.secondname, 0, sizeof(level.secondname));
 		memset(level.thirdname, 0, sizeof(level.thirdname));
