@@ -318,10 +318,10 @@ void Boe_TimeLimit(int argNum, gentity_t *ent, qboolean shortCmd){ // Boe!Man 1/
 		}else if(cm_enabled.integer > 1 && cm_enabled.integer < 5){
 			trap_Cvar_Set("cm_tl", va("%i", number));
 			trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Match timelimit changed to %i by %s.\n\"", number, ent->client->pers.netname));
-			trap_Cvar_Set("timelimit", va("%i", number));
+			Boe_setTrackedCvar(16, number); // Boe!Man 6/30/11: Set the timelimit CVAR without track message, to avoid the [Rcon Action] message.
 		}
 	}else{
-		trap_SendConsoleCommand( EXEC_APPEND, va("timelimit %i\n", number));
+		Boe_setTrackedCvar(16, number); // Boe!Man 6/30/11: Set the timelimit CVAR without track message, to avoid the [Rcon Action] message.
 		trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Timelimit changed to %i by %s.\n\"", number, ent->client->pers.netname));
 	}
 	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sT%si%sm%se%sl%simit %i!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, number));
@@ -356,10 +356,10 @@ void Boe_ScoreLimit(int argNum, gentity_t *ent, qboolean shortCmd){ // Boe!Man 1
 		}else if(cm_enabled.integer > 1 && cm_enabled.integer < 5){
 			trap_Cvar_Set("cm_sl", va("%i", number));
 			trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Match scorelimit changed to %i by %s.\n\"", number, ent->client->pers.netname));
-			trap_Cvar_Set("scorelimit", va("%i", number));
+			Boe_setTrackedCvar(15, number); // Boe!Man 6/30/11: Set the scorelimit CVAR without track message, to avoid the [Rcon Action] message.
 		}
 	}else{
-		trap_SendConsoleCommand( EXEC_APPEND, va("scorelimit %i\n", number));
+		Boe_setTrackedCvar(15, number); // Boe!Man 6/30/11: Set the scorelimit CVAR without track message, to avoid the [Rcon Action] message.
 		trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Scorelimit changed to %i by %s.\n\"", number, ent->client->pers.netname));
 	}
 	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sS%sc%so%sr%se%slimit %i!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, number));

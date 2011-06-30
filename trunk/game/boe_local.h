@@ -13,7 +13,7 @@
 #define INF_STRING "1fx. Mod"
 #define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod"
 #ifdef Q3_VM
-#define INF_VERSION_DATE "6/14/11"
+#define INF_VERSION_DATE "6/30/11"
 #else
 #define YEAR ((((__DATE__ [9] - '0')) * 10 + (__DATE__ [10] - '0')))
 
@@ -108,7 +108,8 @@
 // 0.58t		Beta (hotfix)					568(/578)	4/23/11		// Sent out to BETA group on 4/23/11
 // 0.58t		Release Candidate				601			5/8/11		// Sent out to BETA group on 5/9/11
 // 0.58			Release							615			5/27/11		// Sent out to BETA group on 5/27/11
-// 0.59t		Alpha							622			6/2/11
+// 0.59t		1st Alpha						622			6/2/11
+// 0.59t		2nd Alpha						687			6/30/11
 
 
 //===================================================================
@@ -569,3 +570,6 @@ void Boe_mapEvents (void);
 
 void CloneBody( gentity_t *ent , int number);
 void DropRandom( gentity_t *ent, int zombies);
+
+// Boe!Man 6/30/11: CVAR function.
+void Boe_setTrackedCvar(int num, int value);

@@ -3401,4 +3401,23 @@ void G_ShutdownGhoul ( void )
 	level.serverGhoul2 = NULL;
 }
 
+/*
+================
+Boe_setTrackedCvar
+6/30/11 - 6:47 PM
+Purpose: Set a Tracked CVAR without track message (useful for Admin commands and such).
+================
+*/
 
+void Boe_setTrackedCvar(int num, int value)
+{
+	cvarTable_t	*cv;
+	cv = gameCvarTable;
+
+	cv[num].trackChange = qfalse;
+	trap_Cvar_Set(cv[num].cvarName, va("%i", value));
+	G_UpdateCvars(); // Boe!Man 6/30/11: Update it manually this time.
+	cv[num].trackChange = qtrue;
+
+	return;
+}
