@@ -2189,6 +2189,11 @@ void G_Say ( gentity_t *ent, gentity_t *target, int mode, const char *chatText )
 	// Save off the chat text
 	Q_strncpyz( text, chatText, sizeof(text) );
 
+	if(ent && ent->client){ // Henk 03/07/11 -> Reset inactivity timer when chatting
+		ent->client->inactivityTime = level.time + g_inactivity.integer * 1000;
+		ent->client->inactivityWarning = qfalse;
+	}
+
 	if ( target && target->inuse) 
 	{
 		//G_LogPrintf("Too target?..\n");
