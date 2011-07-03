@@ -926,7 +926,7 @@ int Boe_AddToList(const char *string, const char* file, const char* type, gentit
 	fileHandle_t	f;
 	qboolean		clonecheck = qfalse;
 
-	if(type == "Clonecheck"){ // Boe!Man 6/29/11: Check if it's an alias file - if yes, we need to append the name to the front in order to save us a lot of hassle of processing everything differently later.
+	if(strstr(type, "Clonecheck")){ // Boe!Man 6/29/11: Check if it's an alias file - if yes, we need to append the name to the front in order to save us a lot of hassle of processing everything differently later.
 		clonecheck = qtrue;
 		memset(buf, 0, sizeof(buf)); // Clean the buffers.
 		memset(buf2, 0, sizeof(buf2));
