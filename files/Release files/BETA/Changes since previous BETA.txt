@@ -1,23 +1,68 @@
-Changes since rev 601
-- Added check in refresh so you can't accidentally refresh when a new round starts.
-- Added check for country in stats (so it won't display N/A when the server owner specifies to disable them).
-- Added multiple names found in /stats.
-- Added proper Deathmatch kill messages.
-- Added proper Deathmatch join message.
-- Fixed server changing to the next map in the cycle when a mapcycle was set (between Competition Mode rounds).
-- Fixed random spawnpoint in DM/TDM gametypes.
-- Fixed bug in !map check when ARENA file didn't exist.
-- Fixed doors with spawnflag 604 not opening(doors from 2k3 ents).
-- Fixed door closing when not looking at it, causing you to be stuck in the door.
-- Fixed doors not opening when not facing it.
-- Fixed forced to spectators due afk double text.
-- Fixed /stats <name> possible incorrect name display.
-- Fixed too many players in team text.
-- Fixed issue where people could respawn by switching teams if they died very early in the round.
+Changes since rev 615
+1fx. Core:
+- Improved banlist loading speed.
+- Added /ignore, which will ignore the specified person(can be ID or name).
+- Added fix for 333fps and 1000 fps glitches.
+- Added remaining mute time in stats.
+- Added g_customWeaponFile CVAR to enable loading of Custom Weapon files.
+- Added blocking of "Joining team" broadcast if the g_matchDisableEvents CVAR is set to 1 and Competition Mode is active.
+- Added improved error handling for when crashes occur (or when a user decides to switch the map/shut down the server) during Competition Mode.
+- Added "reachable_object" entity class (similar to "sun" in 2k3 Mod).
+- Added Devmap command.
+- Added proper messaging for Altmaps & Devmaps alike.
+- Added g_pause CVAR (used to set the Admin level of (Un)Pause).
+- Added full synonym for adminremove.
+- Added Admin List (/adm list, used to view all Admin commands).
+- Added Competition Mode commands in the Admin List (/adm) when warming up.
+- Added Random Tips, a CVAR to enable them (server_enableTips) and a CVAR to select the file location (g_tipsFile).
+- Added g_aliasCount CVAR.
+- Changed baninfo system (no extra baninfo files required anymore).
+- Changed the following CVAR names (to reflect better readability):
+    g_instagib to g_instaGib.
+- Changed g_matchDisableSounds CVAR to g_matchDisableEvents.
+- Changed the default location of the Custom Commands file to "files/CustomCommands.txt".
+- Changed hideSeek_Weapons/hideSeek_Extra CVARs to Latched (changes are effective upon (map) restart).
+- Changed the logging of Aliases, now displays the new ones first.
+- Fixed forced to spec due inactivity when chatting.
+- Fixed Admins not being able to make use of g_adminSpec if logged in to the password system.
+- Fixed every admin was able to do s-admin chat, but couldn't see it.
+- Fixed stats which name shorted every name to 3 chars.
+- Fixed Admins being able to spec the other team in various cases if Competition Mode was enabled.
+- Fixed always 1st stats for RPM 0.7.
+- Fixed no reason/by in banlist sometimes.
+- Fixed issue with uppercase teams in teleporters.
+- Fixed issue where both side teleporters were spawned too high.
+- Fixed teleporter high jump.
+- Fixed if 2 people on the same IP were muted than 1 couldn't get unmuted.
+- Fixed incorrect available outfitting when nades were disabled.
+- Fixed Altmap command not correctly working when letters were capitalized.
+- Fixed bug where ALL admins could see the Admin List (!al/!adl).
+- Fixed connecting people were already forced into a team.
+- Fixed /stats not working with non letters(dots, comma's etc..).
+- Fixed if twisted teleport would untwist you.
+- Fixed banlist crashing when no reason was given.
+- Fixed randomly appearing weird banlist layout.
+- Fixed respawn due to no weapons spam.
+- Fixed issues with weird admin/ban list layouts.
+- Fixed duplicate lines when removing from adminlist/banlist.
+- Fixed Admins being able to spam that they've been granted their Admin level.
+- Fixed double message when setting timelimit/scorelimit via Admin.
+- Updated default Configuration file.
+- Updated Admin list (/adm, /adm list).
+- Removed the check which caused people to see the "You've just died message".
+- Removed referee tokens.
 
 Hide&Seek:
-- Fixed cagefight starting when there was no hideSeek_cagefight in the .ent.
-- Fixed briefcase not spawning.
-- Fixed issues in cagefight with incorrect winners. 
+- Added hideSeek_roundstartdelay CVAR.
+- Fixed issue where cagewinners didn't get an extra point.
+- Fixed no NEXT sound in #n.
+- Fixed issue with M4 give-a-way.
+- Fixed nade/rpg knockback.
+- Fixed briefcase not spawning when there were no seekers.
+- Fixed issue with g_roundstartdelay(is now hideSeek_roundstartdelay).
+- Fixed issue where a disabled weapon would represent a state of "Not given yet".
 
-// Boe!Man 5/27/11 - 10:01 AM
+Zombies:
+- WORK IN PROGRESS.
+
+// Boe!Man 7/4/11 - 6:27 PM
