@@ -1255,6 +1255,8 @@ if(current_gametype.value == GT_HZ && attacker && targ && mod == MOD_KNIFE){
 			CloneBody(attacker, targ->s.number);
 			damage = 0;
 			trap_SendServerCommand(-1, va("print \"^3[H&Z] ^7%s was zombified by %s.\n\"", targ->client->pers.netname, attacker->client->pers.netname) );
+		}else if(attacker->client->sess.team == TEAM_RED && targ->client->sess.team == TEAM_BLUE){
+			damage = 12;
 		}
 	}
 }

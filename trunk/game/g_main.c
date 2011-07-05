@@ -3180,7 +3180,7 @@ void G_RunFrame( int levelTime )
 					ent->client->sess.ghost = qfalse;
 					trap_UnlinkEntity (ent);
 					ClientSpawn(ent);
-					trap_SendServerCommand(-1, va("print\"^3[Debug] ^7Teleport angles: %s.\n\"", vtos(ent->client->sess.tempangles)));
+					//trap_SendServerCommand(-1, va("print\"^3[Debug] ^7Teleport angles: %s.\n\"", vtos(ent->client->sess.tempangles)));
 					TeleportPlayer(ent, g_entities[ent->client->sess.zombiebody].r.currentOrigin, ent->client->sess.tempangles, qtrue);
 					SetClientViewAngle(ent, ent->client->sess.tempangles, qfalse);
 					//G_FreeEntity(&g_entities[ent->client->sess.zombiebody]);
