@@ -1283,8 +1283,26 @@ void ClientUserinfoChanged( int clientNum )
 				}else
 					client->pers.identity = &bg_identities[1];
 			}
-		}else if(current_gametype.value == GT_HZ && ent->client->sess.team == TEAM_BLUE){
-			client->pers.identity = BG_FindIdentity ( "NPC_Virus_Male/virus_male" );
+		}else if(current_gametype.value == GT_HZ){
+			if(client->sess.team == TEAM_BLUE){
+				if(!client->pers.identity){
+					client->pers.identity = BG_FindIdentity ( s );
+				}
+
+				// Boe!Man 7/10/11: Use "female" as indicator in the skin name (to identify it as one).
+				if(strstr(client->pers.identity->mCharacter->mModel, "female")){
+					client->pers.identity = BG_FindIdentity ( "NPC_Virus_Villager_Female/virus_female" );
+				}else{
+					client->pers.identity = BG_FindIdentity ( "NPC_Virus_Male/virus_male" );
+				}
+			}else if(client->sess.team == TEAM_RED){
+				if(client->pers.identity){
+					if(strstr(client->pers.identity->mName, "NPC_Virus_Male/virus_male") || strstr(client->pers.identity->mName, "NPC_Virus_Villager_Female/virus_female")){
+						trap_SendServerCommand ( client - &level.clients[0], "print \"^3[H&Z] ^7You cannot use that skin.\n\"" );
+						client->pers.identity = &bg_identities[1]; // Henk 21/02/10 -> Changed from return to skin 1(could prevent hiders with seekers skin)
+					}
+				}
+			}
 		}else{
 		// Lookup the identity by name and if it cant be found then pick a random one
 		client->pers.identity = BG_FindIdentity ( s );
