@@ -1296,6 +1296,7 @@ void ClientUserinfoChanged( int clientNum )
 					client->pers.identity = BG_FindIdentity ( "NPC_Virus_Male/virus_male" );
 				}
 			}else if(client->sess.team == TEAM_RED){
+				client->pers.identity = BG_FindIdentity ( s );
 				if(client->pers.identity){
 					if(strstr(client->pers.identity->mName, "NPC_Virus_Male/virus_male") || strstr(client->pers.identity->mName, "NPC_Virus_Villager_Female/virus_female")){
 						trap_SendServerCommand ( client - &level.clients[0], "print \"^3[H&Z] ^7You cannot use that skin.\n\"" );
