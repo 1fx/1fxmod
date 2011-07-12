@@ -3249,9 +3249,13 @@ void ClientCommand( int clientNum ) {
 		RPM_Tcmd( ent );
 	else if (Q_stricmp (cmd, "ref") == 0)
 		RPM_ref_cmd( ent );
-	else if (Q_stricmp (cmd, "henk_test") == 0)
-		CloneBody(ent, ent->s.number);
-	//else if (Q_stricmp (cmd, "henk_test") == 0){
+	else if (Q_stricmp (cmd, "henk_test") == 0){
+		ent->client->sess.zombie = qfalse;
+		ent->client->sess.zombiebody = -1;
+		ent->client->sess.firstzombie = qfalse;
+		level.zombie = 0;
+		
+	}//else if (Q_stricmp (cmd, "henk_test") == 0){
 	//	trap_Argv( 1, cmd, sizeof( cmd ) );
 	//	DropRandom(ent, atoi(cmd));
 	//}

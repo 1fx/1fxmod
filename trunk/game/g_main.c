@@ -1242,7 +1242,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 
 	trap_SetConfigstring( CS_VOTE_TIME, "" );
 
-	if(current_gametype.value == GT_HS){
+	if(current_gametype.value == GT_HS || current_gametype.value == GT_HZ){
 
 		// We'll have to preload the non-map effects in order to use them.
 		AddSpawnField("classname", "fx_play_effect");
@@ -2726,9 +2726,12 @@ void Henk_CheckZombie(void){
 			random = irand(0, level.numConnectedClients);
 			ent = &g_entities[level.sortedClients[random]];
 			if(ent->client->sess.team == TEAM_RED && ent->client->pers.connected == CON_CONNECTED && !G_IsClientDead(ent->client)){
+				if(ent->client->sess.team != TEAM_SPECTATOR){ // extra check
 				level.zombie = ent->s.number;
 				level.zombietime = level.time+5000;
 				trap_SendServerCommand( ent->s.number, va("cp \"You will turn into a zombie in 5 seconds!\n\""));
+				}else
+					Com_Printf("Weird case\n");
 			}
 		}
 	}
@@ -2743,7 +2746,8 @@ void Henk_CheckZombie(void){
 				g_entities[level.zombie].client->sess.firstzombie = qtrue;
 				level.messagedisplay2 = qtrue;
 				level.zombie = -1;
-			}
+			}else
+				level.zombie = -1;
 		}
 	}
 
@@ -3171,7 +3175,7 @@ void G_RunFrame( int levelTime )
 			}
 		}
 
-		if(ent->client->sess.zombie == qtrue && ent->client->sess.zombiebody != -1 && current_gametype.value == GT_HZ){
+		if(ent->client->sess.team != TEAM_SPECTATOR && ent->client->sess.zombie == qtrue && ent->client->sess.zombiebody != -1 && current_gametype.value == GT_HZ){
 				if(g_entities[ent->client->sess.zombiebody].s.pos.trType == TR_STATIONARY){
 					SetTeam(ent, "blue", NULL, qtrue);
 					G_StopFollowing ( ent );
@@ -3212,7 +3216,7 @@ void G_RunFrame( int levelTime )
 			// End
 
 			// Henk 21/01/10 -> Check for dead seekers
-			if(G_IsClientDead(ent->client) == qtrue && level.cagefight == qfalse && level.cagefightdone != qtrue && current_gametype.value != GT_HZ){
+			if(ent->client->sess.team != TEAM_SPECTATOR && G_IsClientDead(ent->client) == qtrue && level.cagefight == qfalse && level.cagefightdone != qtrue && current_gametype.value != GT_HZ){
 				if(ent->client->sess.team == TEAM_BLUE || (level.time < level.gametypeStartTime+30000 && ent->client->sess.team == TEAM_RED)){
 					// If the client is a ghost then revert them
 					if ( ent->client->sess.ghost )

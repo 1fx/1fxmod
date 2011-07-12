@@ -1296,6 +1296,20 @@ void ClientThink_real( gentity_t *ent )
 			client->ps.speed = g_speed.value-110;
 		}else
 			client->ps.speed = g_speed.value;
+	}else if(current_gametype.value == GT_HZ){
+		if(client->sess.firstzombie == qtrue){
+			client->ps.speed = g_speed.value+70;
+			if(level.time >= client->sess.SpeedAnimation){
+				if(ent->r.currentOrigin[1] != client->sess.oldvelocity[1] || ent->r.currentOrigin[2] != client->sess.oldvelocity[2] ){
+					G_PlayEffect ( G_EffectIndex("arm2smallsmoke"), client->ps.origin, ent->pos1);
+					client->sess.SpeedAnimation = level.time+10;
+					VectorCopy(ent->r.currentOrigin,client->sess.oldvelocity);
+				}
+			}
+		}else{
+			client->ps.speed = g_speed.value;
+		}
+		client->ps.gravity = g_gravity.value;
 	}else{
 	client->ps.gravity = g_gravity.value;
 	client->ps.speed = g_speed.value;

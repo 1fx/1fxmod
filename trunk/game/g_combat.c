@@ -369,6 +369,12 @@ void player_die(
 			}
 		}
 	}
+	if(self && self->client && current_gametype.value == GT_HZ){
+		if(self->client->sess.team == TEAM_RED && mod != MOD_TEAMCHANGE){
+				SetTeam(self, "blue", NULL, qtrue);
+				respawn(self);
+			}
+	}
 
 	G_LogPrintf("Kill: %i %i %i: %s killed %s by %s\n",
 		killer, self->s.number, meansOfDeath, killerName,
@@ -692,15 +698,19 @@ void player_die(
 	// the location that was hit
 	if ( hitLocation & HL_DISMEMBERBIT )
 	{
-		if(current_gametype.value == GT_HZ && self->client->sess.team == TEAM_RED && mod == MOD_TEAMCHANGE){
-	}else
-		CopyToBodyQue (self, hitLocation & (~HL_DISMEMBERBIT), hitDir );
+		if(current_gametype.value == GT_HZ){
+			if(mod != MOD_TEAMCHANGE)
+				CopyToBodyQue (self, hitLocation & (~HL_DISMEMBERBIT), hitDir );
+		}else
+			CopyToBodyQue (self, hitLocation & (~HL_DISMEMBERBIT), hitDir );
 	}
 	else
 	{
-		if(current_gametype.value == GT_HZ && self->client->sess.team == TEAM_RED && mod == MOD_TEAMCHANGE){
+		if(current_gametype.value == GT_HZ){
+			if(mod != MOD_TEAMCHANGE)
+				CopyToBodyQue (self, HL_NONE, hitDir );
 		}else
-		CopyToBodyQue (self, HL_NONE, hitDir );
+			CopyToBodyQue (self, HL_NONE, hitDir );
 	}
 
 	// the body can still be gibbed

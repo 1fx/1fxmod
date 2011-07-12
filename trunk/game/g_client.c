@@ -1738,9 +1738,11 @@ void ClientBegin( int clientNum, qboolean setTime )
 	// count current clients and rank for scoreboard
 	CalculateRanks();
 
-	if(client->sess.team == TEAM_SPECTATOR && current_gametype.value == GT_HS && setTime && client->pers.connected == CON_CONNECTED){
+	if(client->sess.team == TEAM_SPECTATOR && setTime && client->pers.connected == CON_CONNECTED && (current_gametype.value == GT_HS || current_gametype.value == GT_HZ)){
 		if(!(ent->r.svFlags & SVF_BOT))
 		SetTeam(ent, ChooseTeam(), NULL, qfalse); 
+		else if(current_gametype.value == GT_HZ)
+			SetTeam(ent, "red", NULL, qfalse);
 	}
 #ifdef _BOE_DBG
 	if (strstr(boe_log.string, "1"))
@@ -2006,7 +2008,7 @@ void ClientSpawn(gentity_t *ent)
 		G_UpdateOutfitting ( ent->s.number );
 		}
 		// Prevent the client from picking up a whole bunch of stuff
-		if(current_gametype.value != GT_HZ)
+		//if(current_gametype.value != GT_HZ)
 		client->ps.pm_flags |= PMF_LIMITED_INVENTORY;
 	}
 	else

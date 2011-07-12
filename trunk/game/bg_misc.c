@@ -7,6 +7,7 @@
 
 #ifdef QAGAME
 #include "g_local.h"
+#include "boe_local.h"
 #endif
 
 #ifdef UI_EXPORTS
@@ -1005,7 +1006,7 @@ qboolean BG_CanItemBeGrabbed( int gametype, const entityState_t *ent, const play
 			// See if this player is under limited inventory restrictions.  The truth is that
 			// all players on the server will be under the same restrictions, but by doing it this
 			// way its easy to get info to the bg-code.
-			if ( ps->pm_flags & PMF_LIMITED_INVENTORY )
+			if ( ps->pm_flags & PMF_LIMITED_INVENTORY && current_gametype.value != GT_HZ )
 			{
 				int			primary   = 0;
 				int			secondary = 0;
