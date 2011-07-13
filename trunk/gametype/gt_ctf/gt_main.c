@@ -369,7 +369,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 						char clientname[MAX_QPATH];
 						trap_Cmd_GetClientName ( arg1, clientname, MAX_QPATH );
 						trap_Cvar_VariableStringBuffer ( "server_redteamprefix", msg, 19 );
-						trap_Cvar_VariableStringBuffer ( "server_color1", color2, 4 );
+						trap_Cvar_VariableStringBuffer ( "server_color1", color1, 4 );
 						trap_Cvar_VariableStringBuffer ( "server_color2", color2, 4 );
 						trap_Cvar_VariableStringBuffer ( "server_color3", color3, 4 );
 						trap_Cvar_VariableStringBuffer ( "server_color4", color4, 4 );
@@ -396,7 +396,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 						char clientname[MAX_QPATH];
 						trap_Cmd_GetClientName ( arg1, clientname, MAX_QPATH );
 						trap_Cvar_VariableStringBuffer ( "server_blueteamprefix", msg, 19 );
-						trap_Cvar_VariableStringBuffer ( "server_color1", color2, 4 );
+						trap_Cvar_VariableStringBuffer ( "server_color1", color1, 4 );
 						trap_Cvar_VariableStringBuffer ( "server_color2", color2, 4 );
 						trap_Cvar_VariableStringBuffer ( "server_color3", color3, 4 );
 						trap_Cvar_VariableStringBuffer ( "server_color4", color4, 4 );

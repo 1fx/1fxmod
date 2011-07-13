@@ -1393,7 +1393,7 @@ void Boe_Add_bAdmin_f(int argNum, gentity_t *adm, qboolean shortCmd)
 	// Boe!Man 1/14/11
 	if(adm && adm->client)	{
 		if(Boe_AddToList(id2, g_adminfile.string, "Admin", NULL)) {
-		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is now a %sB^7-%sA%sd%sm%si%sn", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is now a %s", level.time + 5000, g_entities[idnum].client->pers.netname, server_badminprefix.string));
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was made B-Admin by %s.\n\"", g_entities[idnum].client->pers.netname, adm->client->pers.cleanName));
 		Boe_adminLog ("Add B-Admin", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
@@ -1401,7 +1401,7 @@ void Boe_Add_bAdmin_f(int argNum, gentity_t *adm, qboolean shortCmd)
 	}
 	else {
 		if(Boe_AddToList(id2, g_adminfile.string, "Admin", NULL)) {
-		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is now a %sB^7-%sA%sd%sm%si%sn", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is now a %s", level.time + 5000, g_entities[idnum].client->pers.netname, server_badminprefix.string));
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s is now a B-Admin.\n\"", g_entities[idnum].client->pers.netname));
 		Boe_adminLog ("Add B-Admin", va("%s", "RCON"), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
@@ -1459,7 +1459,7 @@ void Boe_Add_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd)
 	// Boe!Man 1/14/10
 	if(adm && adm->client)	{
 		if(Boe_AddToList(id2, g_adminfile.string, "Admin", NULL)) {
-		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is now an %sA%sd%sm%si%sn", level.time + 5000, g_entities[idnum].client->pers.netname, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is now an %s", level.time + 5000, g_entities[idnum].client->pers.netname, server_adminprefix.string));
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was made Admin by %s.\n\"", g_entities[idnum].client->pers.netname, adm->client->pers.cleanName));
 		Boe_adminLog ("Add Admin", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
@@ -1467,7 +1467,7 @@ void Boe_Add_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd)
 	}
 	else {
 		if(Boe_AddToList(id2, g_adminfile.string, "Admin", NULL)) {
-		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is now an %sA%sd%sm%si%sn", level.time + 5000, g_entities[idnum].client->pers.netname, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is now an %s", level.time + 5000, g_entities[idnum].client->pers.netname, server_adminprefix.string));
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s is now an Admin.\n\"", g_entities[idnum].client->pers.netname));
 		Boe_adminLog ("Add Admin", va("%s", "RCON"), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
@@ -1526,7 +1526,7 @@ void Boe_Add_sAdmin_f(int argNum, gentity_t *adm, qboolean shortCmd)
 	// Boe!Man 1/14/11
 	if(adm && adm->client)	{
 		if(Boe_AddToList(id2, g_adminfile.string, "Admin", NULL)) {
-		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is now a %sS^7-%sA%sd%sm%si%sn", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is now a %s", level.time + 5000, g_entities[idnum].client->pers.netname, server_sadminprefix.string));
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was made S-Admin by %s.\n\"", g_entities[idnum].client->pers.netname, adm->client->pers.cleanName));
 		Boe_adminLog ("Add S-Admin", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
@@ -1534,7 +1534,7 @@ void Boe_Add_sAdmin_f(int argNum, gentity_t *adm, qboolean shortCmd)
 	}
 	else {
 		if(Boe_AddToList(id2, g_adminfile.string, "Admin", NULL)) {
-		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is now a %sS^7-%sA%sd%sm%si%sn", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is now a %s", level.time + 5000, g_entities[idnum].client->pers.netname, server_sadminprefix.string));
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s is now a S-Admin.\n\"", g_entities[idnum].client->pers.netname));
 		Boe_adminLog ("Add S-Admin", va("%s", "RCON"), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
