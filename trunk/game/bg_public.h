@@ -1147,4 +1147,14 @@ void		*trap_VM_LocalTempAlloc( int size );
 void		trap_VM_LocalTempFree( int size );					// free must be in opposite order of allocation!
 const char	*trap_VM_LocalStringAlloc ( const char *source );
 
+// Boe!Man 7/12/11: Fixing definitions for compiling under linux systems.
+#ifdef __linux__
+#define min(x,y) ((x)<(y)?(x):(y))
+#define max(x,y) ((x)>(y)?(x):(y))
+
+// Some declarations so we can make the gcc compiler stfu for now.
+extern  vmCvar_t    current_gametype;
+extern  vmCvar_t	hideSeek_Extra;
+#endif
+
 #endif // __BG_PUBLIC_H__

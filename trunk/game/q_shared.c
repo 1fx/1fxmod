@@ -838,15 +838,18 @@ int Q_stricmp (const char *s1, const char *s2) {
 
 
 char *Q_strlwr( char *s1 ) {
-#ifdef Q3_VM // Henk -> Fix for dll compile.
+#if (defined(Q3_VM) || defined(__linux__)) // Boe!Man 7/13/11: strlwr is NOT ANSI standard. And as previously discovered, the standard code using tolower(char) is buggy.
     char	*s;
 
     s = s1;
 	while ( *s ) {
+#if (defined(__linux__)) // Boe!Man 7/13/11: We fix that with our own piece of code which checks if the char is actually uppercase, and then 'converts' it if nessecary.
+		if(isupper(*s))
+#endif
 		*s = tolower(*s);
 		s++;
 	}
-	#else
+#elif (defined(WIN32)) // Henk -> Fix for dll compile.
 	s1 = strlwr(s1);
 #endif
     return s1;

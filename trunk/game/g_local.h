@@ -8,6 +8,12 @@
 #include "../gametype/gt_public.h"
 #include "../ghoul2/g2.h"
 
+// Boe!Man 7/12/11: Fixing definitions for compiling under linux systems.
+#ifdef __linux__
+#define min(x,y) ((x)<(y)?(x):(y))
+#define max(x,y) ((x)>(y)?(x):(y))
+#endif
+
 //==================================================================
 
 // the "gameversion" client command will print this plus compile date

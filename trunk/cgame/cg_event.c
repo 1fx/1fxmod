@@ -3,7 +3,7 @@
 // cg_event.c -- handle entity events at snapshot or playerstate transitions
 
 #include "cg_local.h"
-#include "..\ghoul2\g2.h"
+#include "../ghoul2/g2.h"
 #include "../../ui/menudef.h"
 
 //==========================================================================

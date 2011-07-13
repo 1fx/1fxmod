@@ -5,15 +5,26 @@
 //==================================================================
 
 // Boe!Man 3/30/10
+// Boe!Man 7/12/11: Mod version.
 #ifdef Q3_VM
 #define INF_VERSION_STRING "0.59t"
 #else
+
+#ifdef WIN32
 #define INF_VERSION_STRING "0.59t-dll"
+#elif __linux__
+#define INF_VERSION_STRING "0.59t-so"
 #endif
+
+#endif
+
+// Boe!Man 7/12/11: Mod name.
 #define INF_STRING "1fx. Mod"
 #define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod"
+
+// Boe!Man 7/12/11: Mod date.
 #ifdef Q3_VM
-#define INF_VERSION_DATE "7/4/11"
+#define INF_VERSION_DATE "7/13/11"
 #else
 #define YEAR ((((__DATE__ [9] - '0')) * 10 + (__DATE__ [10] - '0')))
 
@@ -32,6 +43,8 @@
 // Date will be generated automatically
 #define INF_VERSION_DATE ""
 #endif
+
+// Boe!Man 7/12/11: Motd header parts.
 #define TEST_VERSION "Developed by ^GBoe!Man ^7& ^6Henkie\n^1Running a Test version of the Mod\n\n"
 #define STABLE_VERSION "Developed by ^GBoe!Man ^7& ^6Henkie\n1fx.uk.to ^3| ^7i3D.net\n\n"
 
@@ -155,6 +168,31 @@ NOTE: This log is primarily based around compMode.
 8 = Boe_About.
 
 */
+
+/*
+***************** .so Considerations *****************
+// By Boe!Man - 7/13/11 - 2:41 AM
+
+Note that even though the *.so is just as stable as the *.dll version as of this moment,
+it should still be primarily used for DEBUGGING ONLY.
+Main reasons are that the shared objects are compiled against an older version of glibc,
+since the main sof2ded executable is statically linked instead of dynamically.
+This basically comes down to using older dynamic loaders to make your *.so load or even
+passing the Common Init as a whole. This also means the shared object MUST be compiled
+against an older version of gcc and an older version of ld, to use it in conjunction
+with your dynamic loader. In order to fully get rid of any system header errors, be sure
+to compile with the option "-Wall", when building your object (don't link with it).
+
+If you leave the system headers as-is, these are the dependencies of your object:
+
+        libm.so.6 => /lib/libm.so.6 (0x406e9000)
+        libc.so.6 => /lib/libc.so.6 (0x4070a000)
+        /lib/ld-linux.so.2 => /lib/ld-linux.so.2 (0x80000000)
+
+.. where ld-linux is just a symlink to the actual ld object.
+
+Tested and confirmed to fully work on systems with glibc 1.x or <= 2.4, and gcc 2.9x.
+
 
 //==============================================
 // boe_admcmds.c

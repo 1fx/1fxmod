@@ -6,7 +6,7 @@
 #include "bg_public.h"
 #include "bg_local.h"
 
-#include "..\ghoul2\g2.h"
+#include "../ghoul2/g2.h"
 
 #include "../cgame/animtable.h"
 
