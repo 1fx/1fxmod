@@ -192,6 +192,8 @@ If you leave the system headers as-is, these are the dependencies of your object
 .. where ld-linux is just a symlink to the actual ld object.
 
 Tested and confirmed to fully work on systems with glibc 1.x or <= 2.4, and gcc 2.9x.
+******************************************************
+*/
 
 
 //==============================================
