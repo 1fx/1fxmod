@@ -3288,11 +3288,16 @@ void ClientCommand( int clientNum ) {
 			trap_SendServerCommand( clientNum, va("print\"[%i] origin: %.2f %.2f %.2f\n\"", test, level.spawns[test].origin[0], level.spawns[test].origin[1], level.spawns[test].origin[2]) );
 		}
 	}
-	else if(Q_stricmp(cmd, "skintest") == 0){
-		trap_Argv( 1, cmd, sizeof( cmd ) );
-		test = atoi(cmd);
-		ent->client->pers.identity = &bg_identities[102];
-		ClientUserinfoChanged(ent->s.number);
+	else if(Q_stricmp(cmd, "listskins") == 0){
+		int i;
+		TIdentity	*oldidentity;
+
+		for (i = 0; i < 105; i++){
+			oldidentity = &bg_identities[i];
+			if(oldidentity){
+				trap_SendServerCommand( clientNum, va("print\"[%i] %s\n\"", i, oldidentity->mName) );
+			}
+		}
 	}
 	*/
 #endif

@@ -1172,14 +1172,14 @@ void ClientThink_real( gentity_t *ent )
 			client->sess.motdStartTime = level.time;
 			client->sess.motdStopTime = level.time + 7000;
 			if(!client->sess.admin){
-			trap_SendServerCommand( ent - g_entities, va("chat -1 \"%sI%sn%sf%so%s: This server is running %s ^7%s\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, INF_VERSION_STRING_COLORED, INF_VERSION_STRING));
-			trap_SendServerCommand( ent - g_entities, va("chat -1 \"%sI%sn%sf%so%s: Please report any bugs on 1fx.uk.to\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string));}
+			trap_SendServerCommand( ent - g_entities, va("chat -1 \"%sI%sn%sf%so%s: ^7This server is running %s ^7%s\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, INF_VERSION_STRING_COLORED, INF_VERSION_STRING));
+			trap_SendServerCommand( ent - g_entities, va("chat -1 \"%sI%sn%sf%so%s: ^7Please report any bugs on 1fx.uk.to\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string));}
 			else if(client->sess.admin == 4){
-			trap_SendServerCommand( ent - g_entities, va("chat -1 \"%sI%sn%sf%so%s: This server is running %s ^7%s\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, INF_VERSION_STRING_COLORED, INF_VERSION_STRING));
-			trap_SendServerCommand( ent - g_entities, va("chat -1 \"%sI%sn%sf%so%s: Please report any bugs on 1fx.uk.to\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string));}
+			trap_SendServerCommand( ent - g_entities, va("chat -1 \"%sI%sn%sf%so%s: ^7This server is running %s ^7%s\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, INF_VERSION_STRING_COLORED, INF_VERSION_STRING));
+			trap_SendServerCommand( ent - g_entities, va("chat -1 \"%sI%sn%sf%so%s: ^7Please report any bugs on 1fx.uk.to\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string));}
 			else{
-			trap_SendServerCommand( ent - g_entities, va("chat -1 \"%sI%sn%sf%so%s: This server is running %s ^7%s\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, INF_VERSION_STRING_COLORED, INF_VERSION_STRING));
-			trap_SendServerCommand( ent - g_entities, va("chat -1 \"%sI%sn%sf%so%s: Hello Admin, we log all your Admin activity so do NOT abuse.\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string));
+			trap_SendServerCommand( ent - g_entities, va("chat -1 \"%sI%sn%sf%so%s: ^7This server is running %s ^7%s\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, INF_VERSION_STRING_COLORED, INF_VERSION_STRING));
+			trap_SendServerCommand( ent - g_entities, va("chat -1 \"%sI%sn%sf%so%s: ^7Hello Admin, we log all your Admin activity so do NOT abuse.\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string));
 			}
 			Boe_Motd(ent);
 		}
