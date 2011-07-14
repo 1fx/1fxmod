@@ -2206,13 +2206,13 @@ void Boe_mapEvents (void){
 		}
 		else if(level.mapAction == 2){
 			if(level.time == level.mapSwitchCount + 1000){
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s%sa%sp ^7%s in 4!", level.time + 1000, level.mapPrefix, server_color5.string, server_color6.string, level.mapSwitchName));}
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7%s in 4!", level.time + 1000, level.mapPrefix, level.mapSwitchName));}
 			else if(level.time == level.mapSwitchCount + 2000){
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s%sa%sp ^7%s in 3!", level.time + 1000, level.mapPrefix, server_color5.string, server_color6.string, level.mapSwitchName));}
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7%s in 3!", level.time + 1000, level.mapPrefix, level.mapSwitchName));}
 			else if(level.time == level.mapSwitchCount + 3000){
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s%sa%sp ^7%s in 2!", level.time + 1000, level.mapPrefix, server_color5.string, server_color6.string, level.mapSwitchName));}
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7%s in 2!", level.time + 1000, level.mapPrefix, level.mapSwitchName));}
 			else if(level.time == level.mapSwitchCount + 4000){
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s%sa%sp ^7%s in 1!", level.time + 1000, level.mapPrefix, server_color5.string, server_color6.string, level.mapSwitchName));}
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7%s in 1!", level.time + 1000, level.mapPrefix, level.mapSwitchName));}
 			else if(level.time == level.mapSwitchCount + 5000){
 				if(strstr(level.mapPrefix, va("%sD", server_color1.string))){
 					trap_SendConsoleCommand( EXEC_APPEND, va("devmap %s\n", level.mapSwitchName));	
