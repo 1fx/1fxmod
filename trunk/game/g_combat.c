@@ -1099,7 +1099,7 @@ int G_Damage (
 		// Henk 18/01/10 ->  Knife damage and stun function
 		if(client->sess.team == TEAM_BLUE && attacker->client->sess.team == TEAM_RED){ // if target is a seeker
 			damage = 0;
-			if(mod == 1){ // hider has stunned a seeker
+			if(mod == 1 && level.messagedisplay){ // hider has stunned a seeker
 			// Add ammo to hider
 			ammoindex=weaponData[WP_KNIFE].attack[ATTACK_ALTERNATE].ammoIndex;
 				if(level.time >= level.gametypeStartTime+30000){
@@ -1110,13 +1110,13 @@ int G_Damage (
 					if(attacker->client->ps.ammo[ammoindex] < 5)
 					attacker->client->ps.ammo[ammoindex]+=1;
 				}
-			}else if(mod == 257){ // Henk 22/01/10 -> Add throw knife
+			}else if(mod == 257 && level.messagedisplay){ // Henk 22/01/10 -> Add throw knife
 				client->sess.slowtime = level.time+4000; // after 4 seconds slowdown stops
 				attacker->client->sess.speedtime = level.time+4000; // after 4 seconds speedup stops
 
 				trap_SendServerCommand(attacker->s.number, va("cp \"@^7You have stunned %s\n\"", client->pers.netname)); // notify the hider
 				trap_SendServerCommand(targ->s.number, va("cp \"@^7You got stunned by %s\n\"", attacker->client->pers.netname)); // notify the seeker
-			}else if(mod == MOD_M4_ASSAULT_RIFLE){ // Henk 22/01/10 -> Add M4 bullet stun
+			}else if(mod == MOD_M4_ASSAULT_RIFLE && level.messagedisplay){ // Henk 22/01/10 -> Add M4 bullet stun
 				client->sess.slowtime = level.time+4000; // after 4 seconds slowdown stops
 				attacker->client->sess.speedtime = level.time+4000; // after 4 seconds speedup stops
 
