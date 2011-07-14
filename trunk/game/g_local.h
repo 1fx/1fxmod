@@ -348,6 +348,7 @@ typedef struct
 	qboolean	firstzombie;
 	int			lastpush;
 	vec3_t		tempangles;
+	int			killtime;		// Boe!Man 7/15/11: Zombies can't do /kill after they've just been stunned.
 } clientSession_t;
 
 // Boe!Man 3/30/10

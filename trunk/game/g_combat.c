@@ -1266,6 +1266,7 @@ if(current_gametype.value == GT_HZ && attacker && targ && mod == MOD_KNIFE){
 			damage = 0;
 			trap_SendServerCommand(-1, va("print \"^3[H&Z] ^7%s was zombified by %s.\n\"", targ->client->pers.netname, attacker->client->pers.netname) );
 		}else if(attacker->client->sess.team == TEAM_RED && targ->client->sess.team == TEAM_BLUE){
+			targ->client->sess.killtime = level.time + 10000; // Boe!Man 7/15/11: Don't allow the zombie to kill himself in the next 10 secs.
 			damage = 12;
 		}
 	}
