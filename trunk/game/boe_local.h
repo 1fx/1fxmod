@@ -124,7 +124,7 @@
 // 0.59t		1st Alpha						622			6/2/11
 // 0.59t		2nd Alpha						687			6/30/11
 // 0.59t		1st Beta						693			7/4/11		// Sent out to BETA group on 7/4/11
-// 0.59t		2nd Beta						709			7/15/11		// Sent out to BETA group on 7/15/11
+// 0.59t		2nd Beta						710			7/15/11		// Sent out to BETA group on 7/15/11
 
 
 //===================================================================

@@ -1290,9 +1290,13 @@ void ClientUserinfoChanged( int clientNum )
 				}
 
 				// Boe!Man 7/10/11: Use "female" as indicator in the skin name (to identify it as one).
-				if(strstr(client->pers.identity->mCharacter->mModel, "female")){
-					client->pers.identity = BG_FindIdentity ( "NPC_Virus_Villager_Female/virus_female" );
-				}else{
+				if(client->pers.identity){ // Boe!Man 7/15/11: Only check for mModel when it's actually valid.
+					if(strstr(client->pers.identity->mCharacter->mModel, "female")){
+						client->pers.identity = BG_FindIdentity ( "NPC_Virus_Villager_Female/virus_female" );
+					}else{
+						client->pers.identity = BG_FindIdentity ( "NPC_Virus_Male/virus_male" );
+					}
+				}else{ // Boe!Man 7/15/11: Only when it's valid. If not, default to male..
 					client->pers.identity = BG_FindIdentity ( "NPC_Virus_Male/virus_male" );
 				}
 			}else if(client->sess.team == TEAM_RED){
