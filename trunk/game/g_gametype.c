@@ -583,7 +583,7 @@ void G_ResetGametype ( qboolean fullRestart, qboolean cagefight )
 				else{
 					// Get Ready
 					if(current_gametype.value != GT_HS && current_gametype.value != GT_HZ)
-					trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sG%se%st %sr%se%sa%sdy!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+					trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sG%se%st %sr%se%sa%sdy!", level.time + (g_roundstartdelay.integer * 1000), server_color1.string, server_color2.string, server_color3.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 				}
 			}
 			#ifdef _BOE_DBG

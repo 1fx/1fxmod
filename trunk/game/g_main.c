@@ -2751,7 +2751,7 @@ void Henk_CheckZombie(void){
 		}
 	}
 
-	if(level.time >= level.gametypeStartTime+20000 && level.messagedisplay == qfalse && level.gametypeStartTime >= 5000){
+	if(level.time >= level.gametypeStartTime+8000 && level.messagedisplay == qfalse && level.gametypeStartTime >= 5000){
 		trap_SendServerCommand(-1, va("print \"^3[H&Z] ^7Shotguns distributed.\n\"") );
 		trap_SendServerCommand( -1, va("cp \"^7%sS%sh%so%st%sg%suns distributed!\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		Boe_GlobalSound( G_SoundIndex("sound/misc/menus/click.wav")); 
