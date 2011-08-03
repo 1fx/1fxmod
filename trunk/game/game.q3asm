@@ -29,7 +29,7 @@ g_mover
 g_session
 g_spawn
 g_svcmds
-..\g_syscalls
+./../g_syscalls
 g_target
 g_team
 g_trigger
