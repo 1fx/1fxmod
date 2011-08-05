@@ -664,19 +664,24 @@ void Boe_Remove_Clan_Member(int argNum, gentity_t *adm, qboolean shortCmd)
 {
 	int			idnum;
 	char		*id;
+	qboolean	clanmem;
 
 	idnum = Boe_ClientNumFromArg(adm, argNum, "removeclan <idnumber>", "remove", qfalse, qtrue, shortCmd);
 
 	///if invalid client etc.. idnum will == -1 and we abort
-	if(idnum < 0)
+	if(idnum < 0){
 		return;
+	}
 
 	///make sure they are not admins even if not on list
-	g_entities[idnum].client->sess.clanMember = 0;
+	if(g_entities[idnum].client->sess.clanMember){
+		g_entities[idnum].client->sess.clanMember = 0;
+		clanmem = qtrue;
+	}
 
 	id = g_entities[idnum].client->pers.boe_id;
 
-	if(Boe_Remove_from_list(id, g_clanfile.string, "Clan", NULL, qfalse, qfalse, qfalse))
+	if(Boe_Remove_from_list(id, g_clanfile.string, "Clan", NULL, qfalse, qfalse, qfalse) || clanmem == qtrue)
 	{
 		if(adm && adm->client)	{
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is no longer a %sC%sl%sa%sn %sm%se%smber!", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color4.string, server_color5.string, server_color6.string));
