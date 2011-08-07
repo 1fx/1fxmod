@@ -1599,7 +1599,11 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 	// don't do the "xxx connected" messages if they were caried over from previous level
 	if ( firstTime )
 	{
-		trap_SendServerCommand( -1, va("print \"%s" S_COLOR_WHITE " is connecting...\n\"", client->pers.netname) );
+		if(g_checkCountry.integer > 0){
+			trap_SendServerCommand( -1, va("print \"%s ^5[%s]^7 is connecting...\n\"", client->pers.cleanName, client->sess.country) );
+		}else{
+			trap_SendServerCommand( -1, va("print \"%s ^7 is connecting...\n\"", client->pers.cleanName));
+		}
 	}
 
 	//Ryan	we'll do this later
