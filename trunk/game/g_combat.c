@@ -1146,8 +1146,10 @@ int G_Damage (
 			if(client->sess.team == TEAM_RED){
 				if(client->ps.weapon == WP_RPG7_LAUNCHER && client->ps.weaponstate == WEAPON_READY && mod == WP_KNIFE){
 					if(attacker->client->ps.stats[STAT_WEAPONS] & ( 1 << WP_M4_ASSAULT_RIFLE )){
-						return 0;
-					}
+						if(!g_friendlyFire.integer){ // Boe!Man 8/10/11: Don't steal the weapon but do the team damage with Friendly Fire on.
+							return 0;
+						}
+					}else{
 						rpgammo[0] = client->ps.ammo[weaponData[WP_RPG7_LAUNCHER].attack[ATTACK_NORMAL].ammoIndex];
 						rpgammo[1] = client->ps.clip[ATTACK_NORMAL][WP_RPG7_LAUNCHER];
 						client->ps.clip[ATTACK_NORMAL][WP_RPG7_LAUNCHER] = 0;
@@ -1165,10 +1167,13 @@ int G_Damage (
 						trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s ^7has stolen the RPG from %s.\n\"", attacker->client->pers.netname, client->pers.netname));
 						trap_SendServerCommand(attacker->s.number, va("cp \"^7You have stolen the %sR%sP%sG^7!\n\"", server_color1.string, server_color2.string, server_color3.string));
 						trap_SendServerCommand(targ->s.number, va("cp \"%s ^7stole your %sR%sP%sG^7!\n\"", attacker->client->pers.netname, server_color1.string, server_color2.string, server_color3.string));
+					}
 				}else if(client->ps.weapon == WP_M4_ASSAULT_RIFLE && client->ps.weaponstate == WEAPON_READY && mod == WP_KNIFE){
 					if(attacker->client->ps.stats[STAT_WEAPONS] & ( 1 << WP_RPG7_LAUNCHER )){
-						return 0;
-					}
+						if(!g_friendlyFire.integer){
+							return 0;
+						}
+					}else{
 						m4ammo[0] = client->ps.ammo[weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_ALTERNATE].ammoIndex];
 						m4ammo[1] = client->ps.ammo[weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_NORMAL].ammoIndex];
 						m4ammo[2] = client->ps.clip[ATTACK_NORMAL][WP_M4_ASSAULT_RIFLE];
@@ -1193,6 +1198,7 @@ int G_Damage (
 						trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s ^7has taken the M4 from %s.\n\"", attacker->client->pers.netname, client->pers.netname));
 						trap_SendServerCommand(attacker->s.number, va("cp \"^7You have stolen the %sM%s4^7!\n\"", server_color1.string, server_color2.string));
 						trap_SendServerCommand(targ->s.number, va("cp \"%s ^7stole your %sM%s4^7!\n\"", attacker->client->pers.netname, server_color1.string, server_color2.string));
+					}
 				}
 			}
 			if(!g_friendlyFire.integer){
