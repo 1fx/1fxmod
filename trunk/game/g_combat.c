@@ -1195,7 +1195,15 @@ int G_Damage (
 						trap_SendServerCommand(targ->s.number, va("cp \"%s ^7stole your %sM%s4^7!\n\"", attacker->client->pers.netname, server_color1.string, server_color2.string));
 				}
 			}
-			damage = 0;
+			if(!g_friendlyFire.integer){
+				damage = 0;
+			}else if(g_friendlyFire.integer && (attacker->client->ps.weapon == WP_M4_ASSAULT_RIFLE || attacker->client->ps.weapon >= 12)){
+				damage = 0;
+			}
+			/* NOTE (ajay#5#): This is debug, remove later. */
+			else{ 
+				Com_Printf("Attacker weap: %i\nClient weap: %i\n", attacker->client->ps.weapon, client->ps.weapon);
+			}
 		}
 	
 		if(level.time > level.gametypeRoundTime && mod != MOD_POP){
