@@ -664,7 +664,7 @@ void Boe_Remove_Clan_Member(int argNum, gentity_t *adm, qboolean shortCmd)
 {
 	int			idnum;
 	char		*id;
-	qboolean	clanmem;
+	qboolean	clanmem = qfalse;
 
 	idnum = Boe_ClientNumFromArg(adm, argNum, "removeclan <idnumber>", "remove", qfalse, qtrue, shortCmd);
 
@@ -1956,6 +1956,7 @@ void Boe_Remove_Admin_f (int argNum, gentity_t *adm, qboolean shortCmd)
 {
 	int				idnum;
 	char			*id;
+	qboolean		admin = qfalse;
 
 #ifdef _BOE_DBG
 	if (strstr(boe_log.string, "1"))
@@ -1975,12 +1976,14 @@ void Boe_Remove_Admin_f (int argNum, gentity_t *adm, qboolean shortCmd)
 			Com_Printf("This client is currently not an Admin.\n");
 		}
 		return;
+	}else{
+		admin = qtrue;
 	}
 	
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 	g_entities[idnum].client->sess.admin = 0;
-	// Boe!Man 1/6/10: Fix, succesfully writes the Admin out of the file.
-	if(Boe_Remove_from_list(id, g_adminfile.string, "admin", NULL, qfalse, qtrue, qfalse)){
+	// Boe!Man 1/6/10: Fix, succesfully writes the Admin out of the file. -- Update 8/10/11: Do display the broadcast even if he's not written out of the file. We already verified he was an Admin.
+	if(Boe_Remove_from_list(id, g_adminfile.string, "admin", NULL, qfalse, qtrue, qfalse) || admin  == qtrue){
 		if(adm && adm->client){
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7is no longer an %sA%sd%sm%si%sn", level.time + 5000, g_entities[idnum].client->pers.netname, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s ^7was removed as Admin by %s.\n\"", g_entities[idnum].client->pers.netname,adm->client->pers.netname));
