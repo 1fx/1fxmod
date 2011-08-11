@@ -1147,13 +1147,14 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 				counts[TEAM_BLUE] = TeamCount1(TEAM_BLUE);
 				counts[TEAM_RED] = TeamCount1(TEAM_RED);
 				// Henk 19/01/10 -> Team balance hiders/seekers
-				if(counts[TEAM_RED] >= 4 && counts[TEAM_RED] <= 8){
+				// Boe!Man 8/12/11: Modified the code (lowered) so there's ALWAYS room for one extra seeker (else it will result in both teams being locked in specific team layouts).
+				if(counts[TEAM_RED] >= 4 && counts[TEAM_RED] <= 7){
 					seekers = 2;
-				}else if(counts[TEAM_RED] >= 9 && counts[TEAM_RED] <= 13){
+				}else if(counts[TEAM_RED] >= 8 && counts[TEAM_RED] <= 12){
 					seekers = 3;
-				}else if(counts[TEAM_RED] >= 14 && counts[TEAM_RED] <= 18){
+				}else if(counts[TEAM_RED] >= 13 && counts[TEAM_RED] <= 17){
 					seekers = 4;
-				}else if(counts[TEAM_RED] >= 19){
+				}else if(counts[TEAM_RED] >= 18){
 					seekers = 5;
 				}
 				else{
