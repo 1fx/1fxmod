@@ -491,9 +491,9 @@ void EvenTeams_HS (gentity_t *adm, qboolean aet)
 		seekers = 1;
 	}else if(totalplayers >= 6 && totalplayers <= 10){ // hiders = totalplayers-seekers
 		seekers = 2;
-	}else if(totalplayers >= 12 && totalplayers <= 16){ // hiders = totalplayers-seekers
+	}else if(totalplayers >= 11 && totalplayers <= 16){ // hiders = totalplayers-seekers
 		seekers = 3;
-	}else if(totalplayers >= 18 && totalplayers <= 22){ // hiders = totalplayers-seekers
+	}else if(totalplayers >= 17 && totalplayers <= 22){ // hiders = totalplayers-seekers
 		seekers = 4;
 	}else if(totalplayers >= 23){
 		seekers = 5;
