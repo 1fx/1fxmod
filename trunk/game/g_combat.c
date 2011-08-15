@@ -1152,6 +1152,7 @@ int G_Damage (
 					}else{
 						rpgammo[0] = client->ps.ammo[weaponData[WP_RPG7_LAUNCHER].attack[ATTACK_NORMAL].ammoIndex];
 						rpgammo[1] = client->ps.clip[ATTACK_NORMAL][WP_RPG7_LAUNCHER];
+						client->ps.ammo[weaponData[WP_RPG7_LAUNCHER].attack[ATTACK_NORMAL].ammoIndex] = 0; // Boe!Man 8/16/11: Properly empty the sucker.
 						client->ps.clip[ATTACK_NORMAL][WP_RPG7_LAUNCHER] = 0;
 						client->ps.clip[ATTACK_ALTERNATE][WP_RPG7_LAUNCHER] = 0;
 						client->ps.stats[STAT_WEAPONS] &= ~(1<<WP_RPG7_LAUNCHER);

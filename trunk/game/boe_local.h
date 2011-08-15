@@ -24,7 +24,7 @@
 
 // Boe!Man 7/12/11: Mod date.
 #ifdef Q3_VM
-#define INF_VERSION_DATE "7/15/11"
+#define INF_VERSION_DATE "8/16/11"
 #else
 #define YEAR ((((__DATE__ [9] - '0')) * 10 + (__DATE__ [10] - '0')))
 
