@@ -158,6 +158,7 @@ void P_WorldEffects( gentity_t *ent )
 		// End Boe!Man
 		if(ent->r.currentOrigin[2] <= level.nolower[2] && !G_IsClientDead(ent->client) && level.autoNoLowerActive == qfalse){
 			//trap_SendServerCommand( ent->s.number, va("print \"nolower = %.2f.\n\"", level.nolower[2]) );
+			trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s ^7was killed for being lower.\n\"", ent->client->pers.netname));
 			G_Damage(ent, NULL, NULL, NULL, NULL, 10000, 0, MOD_TRIGGER_HURT, 0);
 		}
 	}
