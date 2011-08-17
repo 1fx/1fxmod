@@ -303,9 +303,9 @@ void RPM_lockTeam(gentity_t *ent, qboolean referee, char *team)
 				if(ent && ent->client){
 					// Boe!Man 2/15/11: We need H&S messages as well.
 					if(current_gametype.value == GT_HS){
-						trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7has un%sl%so%sc%sk%se%sd the %s", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, server_hiderteamprefix.string ) );
+						trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7has %su%sn%sl%so%sc%sked the %s", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, server_hiderteamprefix.string ) );
 					}else{
-						trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7has un%sl%so%sc%sk%se%sd the %s ^7team", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, server_redteamprefix.string ) );
+						trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7has %su%sn%sl%so%sc%sked the %s ^7team", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, server_redteamprefix.string ) );
 					}
 					if (ent->client->sess.admin > 1){
 						if(current_gametype.value == GT_HS){
@@ -319,10 +319,10 @@ void RPM_lockTeam(gentity_t *ent, qboolean referee, char *team)
 					}
 				}else{
 					if(current_gametype.value == GT_HS){
-						trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7have been un%sl%so%sc%sk%se%sd!", level.time + 5000, server_hiderteamprefix.string, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string ) );
+						trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7have been %su%sn%sl%so%sc%sked!", level.time + 5000, server_hiderteamprefix.string, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string ) );
 						trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Hiders have been unlocked.\n\""));
 					}else{
-						trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7team has been un%sl%so%sc%sk%se%sd!", level.time + 5000, server_redteamprefix.string, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string ) );
+						trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7team has been %su%sn%sl%so%sc%sked!", level.time + 5000, server_redteamprefix.string, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string ) );
 						trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Red team has been unlocked.\n\""));
 					}
 				}
@@ -367,9 +367,9 @@ void RPM_lockTeam(gentity_t *ent, qboolean referee, char *team)
 				if(ent && ent->client){
 					// Boe!Man 2/15/11: We need H&S messages as well.
 					if(current_gametype.value == GT_HS){
-						trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7has un%sl%so%sc%sk%se%sd the %s", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, server_seekerteamprefix.string ) );
+						trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7has %su%sn%sl%so%sc%sked the %s", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, server_seekerteamprefix.string ) );
 					}else{
-						trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7has un%sl%so%sc%sk%se%sd the %s ^7team", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, server_blueteamprefix.string ) );
+						trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7has %su%sn%sl%so%sc%skedthe %s ^7team", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, server_blueteamprefix.string ) );
 					}
 					if (ent->client->sess.admin > 1){
 						if(current_gametype.value == GT_HS){
@@ -383,10 +383,10 @@ void RPM_lockTeam(gentity_t *ent, qboolean referee, char *team)
 					}
 				}else{
 					if(current_gametype.value == GT_HS){
-						trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7have been un%sl%so%sc%sk%se%sd!", level.time + 5000, server_seekerteamprefix.string, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string ) );
+						trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7have been %su%sn%sl%so%sc%sked!", level.time + 5000, server_seekerteamprefix.string, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string ) );
 						trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Seekers have been unlocked.\n\""));
 					}else{
-						trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7team has been un%sl%so%sc%sk%se%sd!", level.time + 5000, server_blueteamprefix.string, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string ) );
+						trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7team has been %su%sn%sl%so%sc%sked!", level.time + 5000, server_blueteamprefix.string, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string ) );
 						trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Blue team has been unlocked.\n\""));
 					}
 				}
@@ -429,14 +429,14 @@ void RPM_lockTeam(gentity_t *ent, qboolean referee, char *team)
 			{
 				level.specsLocked = 0;
 				if(ent && ent->client){
-					trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7has un%sl%so%sc%sk%se%sd the spectators", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string) );
+					trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7has %su%sn%sl%so%sc%sked the spectators", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string) );
 					if (ent->client->sess.admin > 1)
 					trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7%s has unlocked the Spectators.\n\"", ent->client->pers.netname));
 					else
 					trap_SendServerCommand( -1, va("print \"^3[Referee Action] ^7%s has unlocked the Spectators.\n\"", ent->client->pers.netname));
 				}else{
 					// BOE FIXME: We need a CVAR for specs!
-					trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^7Spectators have been un%sl%so%sc%sk%se%sd!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string ) );
+					trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^7Spectators have been %su%sn%sl%so%sc%sked!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string ) );
 					trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Spectators have been unlocked.\n\""));
 				}
 			}
@@ -464,7 +464,7 @@ void RPM_lockTeam(gentity_t *ent, qboolean referee, char *team)
 				level.redLocked = 0;
 				level.blueLocked = 0;
 				if(ent && ent->client){
-					trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7has un%sl%so%sc%sk%se%sd all the teams", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string) );
+					trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7has %su%sn%sl%so%sc%sked all the teams", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string) );
 					if (ent->client->sess.admin > 1)
 					trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7%s has unlocked all the teams.\n\"", ent->client->pers.netname));
 					else

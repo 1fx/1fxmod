@@ -3337,28 +3337,37 @@ void Henk_Unlock(int argNum, gentity_t *adm, qboolean shortCmd){
 				Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 				if(team == TEAM_FREE){
 					if(adm && adm->client){
-							trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7has un%sl%so%sc%sk%se%sd all the teams", level.time + 5000, adm->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string) );
+							trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7has %su%sn%sl%so%sc%sked ^7all the teams", level.time + 5000, adm->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string) );
 							trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7%s has unlocked all the teams.\n\"", adm->client->pers.netname));
 					}else{
-							trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3All ^7the teams has been un%sl%so%sc%sk%se%sd!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string ) );
+							trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3All ^7the teams have been %su%sn%sl%so%sc%sked", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string ) );
 							trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7All the teams have been unlocked.\n\""));
 					}
 				}else{
 					if(adm && adm->client){
-							trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7has un%sl%so%sc%sk%se%sd the %s ^7team", level.time + 5000, adm->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, colorTeam ) );
+							trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7has %su%sn%sl%so%sc%sked ^7the %s ^7team", level.time + 5000, adm->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, colorTeam ) );
 							trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7%s has unlocked the %s team.\n\"", adm->client->pers.netname, strTeam));
 					}else{
-							trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7team has been un%sl%so%sc%sk%se%sd!", level.time + 5000, colorTeam, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string ) );
+							trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7team has been %su%sn%sl%so%sc%sked", level.time + 5000, colorTeam, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string ) );
 							trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7%s team has been unlocked.\n\"", strTeam));
 					}
 				}
 			}
 			else
 			{
-				if(team == TEAM_FREE)
-					trap_SendServerCommand( adm->s.number, va("print \"^3[Info] ^7None of the teams are locked.\n\""));
-				else
-					trap_SendServerCommand( adm->s.number, va("print \"^3[Info] ^7The %s team is not locked.\n\"", strTeam));
+				if(team == TEAM_FREE){
+					if(adm && adm->client){
+						trap_SendServerCommand( adm->s.number, va("print \"^3[Info] ^7None of the teams are locked.\n\""));
+					}else{
+						Com_Printf("None of the teams are locked.\n");
+					}
+				}else{
+					if(adm && adm->client){
+						trap_SendServerCommand( adm->s.number, va("print \"^3[Info] ^7The %s team is not locked.\n\"", strTeam));
+					}else{
+						Com_Printf(va("The %s team is not locked.\n", strTeam));
+					}
+				}
 			}
 }
 
