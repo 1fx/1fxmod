@@ -331,13 +331,15 @@ void DoTeleport(gentity_t *ent, vec3_t origin){
 	G_SpawnGEntityFromSpawnVars(qtrue);
 }
 
+/* NOTE (ajay#1#): New M4/RPG giveaway code, keep an eye on this.. */
 // Henk 31/03/11 -> New M4 give away code
 int GetM4Winner(int rpgwinner){
 	int i;
-	int winners = 0;
-	int clients[32];
+	int winners[32];
+	int winnercount = 0;
+	int deaths[32];
+	int deathcount = 0; // id
 	int timeofdeath = 0; // time
-	int deaths = 0; // id
 
 	if(TeamCount1(TEAM_RED) < 2)
 		return 100;
@@ -353,26 +355,27 @@ int GetM4Winner(int rpgwinner){
 			continue;
 
 		if(ent->client->sess.timeOfDeath == 1 && ent->s.number != rpgwinner){ // this guy really won the round
-			clients[winners] = ent->s.number;
-			winners += 1;
+			winners[winnercount] = ent->s.number;
+			winnercount += 1;
 		}else if(ent->client->sess.timeOfDeath == 0){ // weird case didn't die and won
 			continue;
 		}else if(ent->client->sess.timeOfDeath > 1){ // this is the time at which he died
 			if(ent->client->sess.timeOfDeath > timeofdeath && ent->s.number != rpgwinner){
 				timeofdeath = ent->client->sess.timeOfDeath;
-				clients[deaths] = ent->s.number;
-				deaths += 1;
+				deaths[deathcount] = ent->s.number;
+				deathcount += 1;
 			}else if(ent->client->sess.timeOfDeath == timeofdeath){// multiple
 				// probably never happens
 			}
 		}
 	}
-	if(winners == 1){
-		return clients[0];
-	}else if(winners == 0 && deaths >= 1){
-		return clients[irand(0, deaths-1)];
-	}else if(winners > 1){
-		return clients[irand(0, winners-1)];
+	if(winnercount == 1){
+		return winners[0];
+	}else if(winnercount == 0 && deathcount >= 1){
+		//return clients[irand(0, deaths-1)]; 
+		return deaths[deathcount-1]; // Boe!Man 8/18/11: return the last person that got written to the integer, i.e. the one that lasted the longest.
+	}else if(winnercount > 1){
+		return winners[irand(0, winnercount-1)];
 	}
 
 	return -1; // fail
@@ -381,10 +384,11 @@ int GetM4Winner(int rpgwinner){
 // Henk 30/03/11 -> New RPG give away code
 int GetRpgWinner(void){
 	int i;
-	int winners = 0;
-	int clients[32];
+	int winners[32];
+	int winnercount = 0;
+	int deaths[32];
+	int deathcount = 0; // id
 	int timeofdeath = 0; // time
-	int deaths = 0; // id
 	if(TeamCount1(TEAM_RED) < 1)
 		return 100;
 	for ( i = 0; i < level.numConnectedClients; i ++ )
@@ -398,27 +402,29 @@ int GetRpgWinner(void){
 			continue;
 
 		if(ent->client->sess.timeOfDeath == 1){ // this guy really won the round
-			clients[winners] = ent->s.number;
-			winners += 1;
+			winners[winnercount] = ent->s.number; // Boe!Man 8/18/11: Write it to a separate integer, or else it'll overwrite something from the death integer or vice versa..
+			winnercount += 1;
 		}else if(ent->client->sess.timeOfDeath == 0){ // weird case didn't die and won
 			continue;
 		}else if(ent->client->sess.timeOfDeath > 1){ // this is the time at which he died
 			if(ent->client->sess.timeOfDeath > timeofdeath){
 				timeofdeath = ent->client->sess.timeOfDeath;
-				clients[deaths] = ent->s.number;
-				deaths += 1;
+				deaths[deathcount] = ent->s.number;
+				deathcount += 1;
 			}else if(ent->client->sess.timeOfDeath == timeofdeath){// multiple
 				// probably never happens
 			}
 		}
 	}
 
-	if(winners == 1){
-		return clients[0];
-	}else if(winners == 0 && deaths >= 1){
-		return clients[irand(0, deaths-1)];
-	}else if(winners > 1){
-		return clients[irand(0, winners-1)];
+	if(winnercount == 1){
+		return winners[0];
+	}else if(winnercount == 0 && deathcount >= 1){
+		// Boe!Man 8/18/11: No no no no! Don't return a random value, we need to sort out which client lasted the longest!
+		//return clients[irand(0, deaths-1)];
+		return deaths[deathcount-1]; // So return the last person that got written to the integer, i.e. the one that lasted the longest.
+	}else if(winnercount > 1){
+		return winners[irand(0, winnercount-1)];
 	}
 	return -1; // fail
 }
