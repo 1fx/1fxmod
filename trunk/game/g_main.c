@@ -260,6 +260,9 @@ vmCvar_t	g_customWeaponFile;
 // Boe!man 6/17/11
 vmCvar_t	g_pause;
 
+// Boe!Man 8/18/11
+vmCvar_t	g_dropLocationMessage;
+
 #ifdef _BOE_DBG
 vmCvar_t	boe_log;
 #endif
@@ -558,6 +561,9 @@ static cvarTable_t gameCvarTable[] =
 
 	// Boe!Man 5/28/11
 	{ &g_customWeaponFile,			"g_customWeaponFile",		 "none",		CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
+
+	// Boe!Man 8/18/11
+	{ &g_dropLocationMessage,			"g_dropLocationMessage",		 "1",		CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue },
 
 #ifdef _BOE_DBG
 	// Boe!Man: Debug CVAR.

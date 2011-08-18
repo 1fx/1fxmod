@@ -569,6 +569,7 @@ gentity_t *G_DropItem( gentity_t *ent, gitem_t *item, float angle )
 	vec3_t		angles;
 	gentity_t*	dropped;
 	gentity_t  *test;
+	char		location[128] = "\0";
 
 	VectorCopy( ent->s.apos.trBase, angles );
 	angles[YAW] += angle;
@@ -582,22 +583,30 @@ gentity_t *G_DropItem( gentity_t *ent, gitem_t *item, float angle )
 
 	if ( item->giType == IT_GAMETYPE )
 	{
-		if(current_gametype.value == GT_HS){
-			trap_GT_SendEvent ( GTEV_ITEM_DROPPED, level.time, level.gametypeItems[item->giTag].id, ent->s.number, 0, 0, 0 );
-			trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s ^7has dropped the briefcase.\n\"", ent->client->pers.netname)); // Henkie 24/02/10 -> Add drop briefcase msg
-		}else{
-		if(strstr(g_gametype.string, "ctf")){
-			if(item->quantity == 101){ // blue flag
-				test = Team_GetLocation(dropped);
-				//trap_SendServerCommand( -1, va("chat -1 \"%sI%sn%sf%so%s: %s ^7has dropped the Blue Flag at %s\n\"", server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, ent->client->pers.netname, test->message));
-				trap_SendServerCommand( -1, va("print \"^3[CTF] %s ^7has dropped the Blue Flag at %s.\n\"", ent->client->pers.cleanName, test->message));
-			}
-			if(item->quantity == 100){ // red flag
-				test = Team_GetLocation(dropped);
-				//trap_SendServerCommand( -1, va("chat -1 \"%sI%sn%sf%so%s: %s ^7has dropped the Red Flag at %s\n\"", server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, ent->client->pers.netname, test->message));
-				trap_SendServerCommand( -1, va("print \"^3[CTF] %s ^7has dropped the Red Flag at %s.\n\"", ent->client->pers.cleanName, test->message));
+		// Boe!Man 8/19/11: Add drop location message for all major gametypes (using a simplified system). Do note that this should remain disabled during the scrim itself (public/match warmup are allowed).
+		if(g_dropLocationMessage.integer >= 1 && cm_enabled.integer <= 1){
+			test = Team_GetLocation(dropped);
+			if(test){
+				strncpy(location, va(" at %s", test->message), sizeof(location));
 			}
 		}
+
+		if(current_gametype.value == GT_HS){
+			trap_GT_SendEvent ( GTEV_ITEM_DROPPED, level.time, level.gametypeItems[item->giTag].id, ent->s.number, 0, 0, 0 );
+			trap_SendServerCommand(-1, va("print\"^3[H&S] %s ^7has dropped the briefcase%s.\n\"", ent->client->pers.netname, location)); // Henkie 24/02/10 -> Add drop briefcase msg
+		}else{
+			if(current_gametype.value == GT_CTF){
+				if(item->quantity == 101){ // Blue flag.
+					trap_SendServerCommand( -1, va("print \"^3[CTF] %s ^7has dropped the Blue Flag%s.\n\"", ent->client->pers.netname, location));
+				}
+				if(item->quantity == 100){ // Red flag.
+					trap_SendServerCommand( -1, va("print \"^3[CTF] %s ^7has dropped the Red Flag%s.\n\"", ent->client->pers.netname, location));
+				}
+			}else if(current_gametype.value == GT_INF){
+				if(item->quantity == 100){ // Briefcase.
+					trap_SendServerCommand( -1, va("print \"^3[INF] %s ^7has dropped the briefcase%s.\n\"", ent->client->pers.netname, location));
+				}
+			}
 		trap_GT_SendEvent ( GTEV_ITEM_DROPPED, level.time, item->quantity, ent->s.number, 0, 0, 0 );
 		}
 	}

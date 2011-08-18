@@ -24,7 +24,7 @@
 
 // Boe!Man 7/12/11: Mod date.
 #ifdef Q3_VM
-#define INF_VERSION_DATE "8/16/11"
+#define INF_VERSION_DATE "8/18/11"
 #else
 #define YEAR ((((__DATE__ [9] - '0')) * 10 + (__DATE__ [10] - '0')))
 
@@ -615,3 +615,6 @@ void DropRandom( gentity_t *ent, int zombies);
 
 // Boe!Man 6/30/11: CVAR function.
 void Boe_setTrackedCvar(int num, int value);
+
+// Boe!Man 8/18/11: CVAR for Drop messages in H&S/INF/CTF.
+extern	vmCvar_t	g_dropLocationMessage;

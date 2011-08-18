@@ -251,7 +251,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 					trap_Cvar_VariableStringBuffer ( "server_color5", color5, 4 );
 					trap_Cvar_VariableStringBuffer ( "server_color6", color6, 4 );
 					trap_Cmd_TextMessage ( -1, va("@The %s ^7Flag has %sr%se%st%su%sr%sned!", msg, color1, color2, color3, color4, color5, color6 ));
-					trap_Cmd_TextMessage( -1, va("^3[CTF] ^7The Red Flag has returned\n\""));
+					trap_Cmd_TextMessage( -1, va("^3[CTF] ^7The Red Flag has returned.\n\""));
 					trap_Cmd_StartGlobalSound ( gametype.flagReturnSound );
 					gametype.redFlagDropTime = 0;
 					return 1;
@@ -266,7 +266,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 					trap_Cvar_VariableStringBuffer ( "server_color5", color5, 4 );
 					trap_Cvar_VariableStringBuffer ( "server_color6", color6, 4 );
 					trap_Cmd_TextMessage ( -1, va("@The %s ^7Flag has %sr%se%st%su%sr%sned!", msg, color1, color2, color3, color4, color5, color6 ));
-					trap_Cmd_TextMessage( -1, va("^3[CTF] ^7The Blue Flag has returned\n\""));
+					trap_Cmd_TextMessage( -1, va("^3[CTF] ^7The Blue Flag has returned.\n\""));
 					trap_Cmd_StartGlobalSound ( gametype.flagReturnSound );
 					gametype.blueFlagDropTime = 0;
 					return 1;
@@ -327,7 +327,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 						trap_Cvar_VariableStringBuffer ( "server_color5", color5, 4 );
 						trap_Cvar_VariableStringBuffer ( "server_color6", color6, 4 );
 						trap_Cmd_TextMessage ( -1, va("@%s has %st%sa%sk%se%sn the %s ^7Flag!", clientname, color2, color3, color4, color5, color6, msg ) );
-						trap_Cmd_TextMessage( -1, va("^3[CTF] %s ^7has taken the Blue Flag\n\"", clientname));
+						trap_Cmd_TextMessage( -1, va("^3[CTF] %s ^7has taken the Blue Flag.\n\"", clientname));
 						trap_Cmd_StartGlobalSound ( gametype.flagTakenSound );
 						trap_Cmd_RadioMessage ( arg1, "got_it" );
 						gametype.blueFlagDropTime = 0;
@@ -348,7 +348,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 						trap_Cvar_VariableStringBuffer ( "server_color5", color5, 4 );
 						trap_Cvar_VariableStringBuffer ( "server_color6", color6, 4 );
 						trap_Cmd_TextMessage ( -1, va("@%s has %st%sa%sk%se%sn the %s ^7Flag!", clientname, color2, color3, color4, color5, color6, msg ) );
-						trap_Cmd_TextMessage( -1, va("^3[CTF] %s ^7has taken the Red Flag\n\"", clientname));
+						trap_Cmd_TextMessage( -1, va("^3[CTF] %s ^7has taken the Red Flag.\n\"", clientname));
 						trap_Cmd_StartGlobalSound ( gametype.flagTakenSound );
 						trap_Cmd_RadioMessage ( arg1, "got_it" );
 						gametype.redFlagDropTime = 0;
@@ -376,7 +376,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 						trap_Cvar_VariableStringBuffer ( "server_color5", color5, 4 );
 						trap_Cvar_VariableStringBuffer ( "server_color6", color6, 4 );
 						trap_Cmd_TextMessage ( -1, va("@%s has %sc%sa%sp%st%su%sred the %s ^7Flag!", clientname , color1, color2, color3, color4, color5, color6, msg) );
-						trap_Cmd_TextMessage( -1, va("^3[CTF] %s ^7has captured the Red Flag\n\"", clientname));
+						trap_Cmd_TextMessage( -1, va("^3[CTF] %s ^7has captured the Red Flag.\n\"", clientname));
 						trap_Cmd_ResetItem ( ITEM_REDFLAG );
 						trap_Cmd_StartGlobalSound ( gametype.flagCaptureSound );
 						trap_Cmd_AddTeamScore ( arg2, 1 );
@@ -403,7 +403,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 						trap_Cvar_VariableStringBuffer ( "server_color5", color5, 4 );
 						trap_Cvar_VariableStringBuffer ( "server_color6", color6, 4 );
 						trap_Cmd_TextMessage ( -1, va("@%s has %sc%sa%sp%st%su%sred the %s ^7Flag!", clientname , color1, color2, color3, color4, color5, color6, msg) );
-						trap_Cmd_TextMessage( -1, va("^3[CTF] %s ^7has captured the Blue Flag\n\"", clientname));
+						trap_Cmd_TextMessage( -1, va("^3[CTF] %s ^7has captured the Blue Flag.\n\"", clientname));
 						trap_Cmd_ResetItem ( ITEM_BLUEFLAG );
 						trap_Cmd_StartGlobalSound ( gametype.flagCaptureSound );
 						trap_Cmd_AddTeamScore ( arg2, 1 );
