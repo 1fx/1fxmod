@@ -2014,12 +2014,22 @@ qboolean G_RadiusDamage (
 				}else{
 					ammoindex=weaponData[WP_F1_GRENADE].attack[ATTACK_ALTERNATE].ammoIndex;
 					attacker->client->ps.ammo[ammoindex]+=1;
+
+					if (!(attacker->client->ps.stats[STAT_WEAPONS] & (1<<WP_F1_GRENADE))){ // Boe!Man 8/22/11: Make sure the attacker has the weapon, if not, re-add it (fixes bug which made weapon disappear on last throw).
+						attacker->client->ps.stats[STAT_WEAPONS] |= (1 << WP_F1_GRENADE);
+					}
+					
 					trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7Surface is not empty.\n\""));
 				}
 			}else{
-			ammoindex=weaponData[WP_F1_GRENADE].attack[ATTACK_ALTERNATE].ammoIndex;
-			attacker->client->ps.ammo[ammoindex]+=1;
-			trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7Surface is too high.\n\""));
+				ammoindex=weaponData[WP_F1_GRENADE].attack[ATTACK_ALTERNATE].ammoIndex;
+				attacker->client->ps.ammo[ammoindex]+=1;
+
+				if (!(attacker->client->ps.stats[STAT_WEAPONS] & (1<<WP_F1_GRENADE))){ // Boe!Man 8/22/11: Make sure the attacker has the weapon, if not, re-add it (fixes bug which made weapon disappear on last throw).
+					attacker->client->ps.stats[STAT_WEAPONS] |= (1 << WP_F1_GRENADE);
+				}
+
+				trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7Surface is too high.\n\""));
 			}
 		}
 
@@ -2030,6 +2040,11 @@ qboolean G_RadiusDamage (
 					if(attacker->client->sess.mdnAttempts < 3){
 						attacker->client->sess.mdnAttempts += 1;
 						attacker->client->ps.ammo[ammoindex]+=1;
+
+						if (!(attacker->client->ps.stats[STAT_WEAPONS] & (1<<WP_MDN11_GRENADE))){ // Boe!Man 8/22/11: Make sure the attacker has the weapon, if not, re-add it (fixes bug which made weapon disappear on last throw).
+							attacker->client->ps.stats[STAT_WEAPONS] |= (1 << WP_MDN11_GRENADE);
+						}
+						
 						trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7MDN box failed %i of %i: You cannot throw a box at a person.\n\"", attacker->client->sess.mdnAttempts, g_boxAttempts.integer)); 
 					}else{
 						trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7MDN box failed too many times: not adding ammo.\n\"")); 
