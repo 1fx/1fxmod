@@ -3379,7 +3379,7 @@ void Boe_adm_f ( gentity_t *ent )
 	if (!Q_stricmp ( arg1, "?" )||!Q_stricmp ( arg1, "" )||!Q_stricmp(arg1, "list"))
 	{
 	if (adm > 1){
-		trap_SendServerCommand( ent-g_entities, va("print \" \n^3Lvl   Commands         Arguments     Explanation\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \" \n^3Lvl   Commands         Arguments      Explanation\n\""));
 		trap_SendServerCommand( ent-g_entities, va("print \" ----------------------------------------------------------\n\""));
 		// Boe!Man 6/17/11: If they want to print the whole list of admin commands, be sure to do so.
 		if(!Q_stricmp(arg1, "list")){
@@ -3434,7 +3434,7 @@ void Boe_adm_f ( gentity_t *ent )
 			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   p   pop          <i/n>          ^7[^3Pop a player^7]\n\"", g_pop.integer));
 			}
 		if (g_strip.integer == levelx){
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   s   strip         <i/n>         ^7[^3Remove weapons from a player^7]\n\"", g_strip.integer));
+			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   s   strip        <i/n>          ^7[^3Remove weapons from a player^7]\n\"", g_strip.integer));
 			}
 		if (g_mute.integer == levelx){
 			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   m   mute         <i/n> <time>   ^7[^3Mute a player^7]\n\"", g_mute.integer));
