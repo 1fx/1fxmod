@@ -1139,7 +1139,7 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 			}
 		}
 
-		if ( g_teamForceBalance.integer && forced == qfalse || current_gametype.value == GT_HS && forced == qfalse ) 
+		if ( g_teamForceBalance.integer && forced == qfalse /*|| current_gametype.value == GT_HS && forced == qfalse */) // Boe!Man 8/25/11: Don't force balance in H&S, the CVAR is defaulted to 1. In some cases users don't want it. 
 		{
 			int		counts[TEAM_NUM_TEAMS];
 
