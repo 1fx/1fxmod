@@ -2190,6 +2190,36 @@ void G_Say ( gentity_t *ent, gentity_t *target, int mode, const char *chatText )
 			G_LogPrintf( "sayteam: %s: %s\n", ent->client->pers.netname, chatText );
 			break;
 	}
+
+	// Boe!Man 8/25/11: Also log special chat when the CVAR is enabled.
+	if(g_logSpecialChat.integer){
+		switch ( mode )
+		{
+			case ADM_TALK:
+				G_LogPrintf( "admtalk: %s: %s\n", ent->client->pers.netname, chatText );
+				break;
+
+			case ADM_CHAT:
+				G_LogPrintf( "admchat: %s: %s\n", ent->client->pers.netname, chatText );
+				break;
+
+			case SADM_CHAT:
+				G_LogPrintf( "sadmchat: %s: %s\n", ent->client->pers.netname, chatText );
+				break;
+
+			case CLAN_TALK:
+				G_LogPrintf( "clantalk: %s: %s\n", ent->client->pers.netname, chatText );
+				break;
+			
+			case CLAN_CHAT:
+				G_LogPrintf( "clanchat: %s: %s\n", ent->client->pers.netname, chatText );
+				break;
+
+			case CADM_CHAT:
+				G_LogPrintf( "heyadmin: %s: %s\n", ent->client->pers.netname, chatText );
+				break;
+		}
+	}
 	
 	//G_LogPrintf("Getting prefix..\n");
 	// Generate the chat prefix
@@ -2310,7 +2340,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		}
 	}
 	else if ((strstr(p, "!ac")) || (strstr(p, "!AC")) || (strstr(p, "!aC")) || (strstr(p, "!Ac"))) {
-		if (ent->client->sess.admin && !strstr(Q_strlwr(test), "!acl")){ // Boe!Man 3/23/11: Check if they didn't mean to add a clan member..
+		if (/*ent->client->sess.admin && */!strstr(Q_strlwr(test), "!acl")){ // Boe!Man 3/23/11: Check if they didn't mean to add a clan member..
 			p = ConcatArgs(1);
 			for(i=0;i<=strlen(p);i++){
 				if(p[i] == '!' && (p[i+1] == 'a' || p[i+1] == 'A') && (p[i+2] == 'c' || p[i+2] == 'C')){
@@ -2329,7 +2359,14 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 				a += 1;
 				}
 			}
-			mode = ADM_CHAT;
+
+			// Boe!Man 8/25/11: If a non-admin is using Admin Chat, force it to Hey Admin instead.
+			if(ent->client->sess.admin){
+				mode = ADM_CHAT;
+			}else{
+				mode = CADM_CHAT;
+			}
+
 			acmd = qtrue;
 			strcpy(p, newp);
 		}else if(!strstr(Q_strlwr(test), "!acl")){
@@ -2445,7 +2482,13 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 				a += 1;
 				}
 			}
-			mode = CADM_CHAT;
+
+			// Boe!Man 8/25/11: If an admin is using Hey Admin, force it to Admin Chat instead.
+			if(ent->client->sess.admin){
+				mode = ADM_CHAT;
+			}else{
+				mode = CADM_CHAT;
+			}
 			acmd = qtrue;
 			strcpy(p, newp);
 	}

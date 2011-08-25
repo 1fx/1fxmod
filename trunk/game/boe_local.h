@@ -618,3 +618,6 @@ void Boe_setTrackedCvar(int num, int value);
 
 // Boe!Man 8/18/11: CVAR for Drop messages in H&S/INF/CTF.
 extern	vmCvar_t	g_dropLocationMessage;
+
+// Boe!Man 8/25/11: CVAR for logging special Chats (Hey Admin, Admin Chat, Clan Chat, etc.).
+extern	vmCvar_t	g_logSpecialChat;

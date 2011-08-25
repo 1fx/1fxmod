@@ -263,6 +263,9 @@ vmCvar_t	g_pause;
 // Boe!Man 8/18/11
 vmCvar_t	g_dropLocationMessage;
 
+// Boe!Man 8/25/11
+vmCvar_t	g_logSpecialChat;
+
 #ifdef _BOE_DBG
 vmCvar_t	boe_log;
 #endif
@@ -564,6 +567,9 @@ static cvarTable_t gameCvarTable[] =
 
 	// Boe!Man 8/18/11
 	{ &g_dropLocationMessage,			"g_dropLocationMessage",		 "1",		CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue },
+
+	// Boe!Man 8/25/11
+	{ &g_logSpecialChat,			"g_logSpecialChat",		 "1",		CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue },
 
 #ifdef _BOE_DBG
 	// Boe!Man: Debug CVAR.
