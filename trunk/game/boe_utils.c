@@ -2241,3 +2241,44 @@ void Boe_mapEvents (void){
 		}
 	return;
 }
+
+/*
+================
+Boe_displayTokens
+8/25/11 - 2:17 PM
+================
+*/
+
+void Boe_displayTokens ( gentity_t *ent )
+{
+	// Header.
+	trap_SendServerCommand( ent-g_entities, va("print \"\n^3Key      Explanation\n\""));
+	trap_SendServerCommand( ent-g_entities, va("print \"--------------------------------------\n\""));
+	// Tokens body.
+	trap_SendServerCommand( ent-g_entities, va("print \"^7#b       [^3Health in bar format^7]\n"));
+	trap_SendServerCommand( ent-g_entities, va("print \"^7#B       [^3Armor in bar format^7]\n"));
+	trap_SendServerCommand( ent-g_entities, va("print \"^7#h       [^3Health colored^7]\n"));
+	trap_SendServerCommand( ent-g_entities, va("print \"^7#H       [^3Health non-colored^7]\n"));
+	trap_SendServerCommand( ent-g_entities, va("print \"^7#a       [^3Armor colored^7]\n"));
+	trap_SendServerCommand( ent-g_entities, va("print \"^7#A       [^3Armor non-colored^7]\n"));
+	trap_SendServerCommand( ent-g_entities, va("print \"^7#d^1/^7#D    [^3Last player that hurt you^7]\n"));
+	trap_SendServerCommand( ent-g_entities, va("print \"^7#t^1/^7#T    [^3Last player that you hurt^7]\n"));
+	trap_SendServerCommand( ent-g_entities, va("print \"^7#n^1/^7#N    [^3Shows the server g_motd (usually next map)^7]\n"));
+	if(current_gametype.value != GT_DM){ // Don't show closest team-mate in DM (there is none).
+		trap_SendServerCommand( ent-g_entities, va("print \"^7#f^1/^7#F    [^3Shows your closest team-mate name^7]\n"));
+	}
+	trap_SendServerCommand( ent-g_entities, va("print \"^7#e^1/^7#E    [^3Shows your closest enemy name^7]\n"));
+	trap_SendServerCommand( ent-g_entities, va("print \"^7#l^1/^7#L    [^3Shows your current location^7]\n"));
+	trap_SendServerCommand( ent-g_entities, va("print \"^7#z^1/^7#Z    [^3Shows the last connected player name^7]\n"));
+
+	// H&S tokens (only show them when it's actually H&S).
+	if(current_gametype.value == GT_HS){
+		trap_SendServerCommand( ent-g_entities, va("print \"\n^7#r^1/^7#R    [^3Shows players' name that holds RPG or its location^7]\n"));
+		trap_SendServerCommand( ent-g_entities, va("print \"^7#c^1/^7#C    [^3Shows players' name that holds M4 or its location^7]\n"));
+		trap_SendServerCommand( ent-g_entities, va("print \"^7#m^1/^7#M    [^3Shows players' name that holds MM1 or its location^7]\n"));
+	}
+
+	trap_SendServerCommand( ent-g_entities, va("print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\""));
+
+	return;
+}

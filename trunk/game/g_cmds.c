@@ -3284,6 +3284,8 @@ void ClientCommand( int clientNum ) {
 		Boe_Display_Sounds2( ent );
 	else if (Q_stricmp (cmd, "extrasounds") == 0)
 		Boe_Display_ExtraSounds( ent );
+	else if (Q_stricmp (cmd, "tokens") == 0)
+		Boe_displayTokens ( ent );
 
 	// Boe!Man 4/3/10
 #ifndef PUB_RELEASE
