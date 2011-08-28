@@ -708,7 +708,8 @@ gentity_t* G_DropWeapon ( gentity_t* ent, weapon_t weapon, int pickupDelay )
 	gitem_t*	item;
 	vec3_t		angles;
 	// Henk 26/01/10 -> Store location of dropped weapons
-	char		location[64];	
+	char		location[64];
+	qboolean	noloc = qfalse;
 
 	if ( weapon <= WP_KNIFE || weapon >= WP_NUM_WEAPONS )
 	{
@@ -803,22 +804,38 @@ gentity_t* G_DropWeapon ( gentity_t* ent, weapon_t weapon, int pickupDelay )
 
 	if(current_gametype.value == GT_HS){
 		// Henk 26/01/10 -> Show people that special weapons have been dropped and on what location.
-		Team_GetLocationMsg(dropped, location, sizeof(location));
+		// Boe!Man 8/28/11: Show "Dropped" instead of nothing and no location in the message when there's no valid location found.
+		if(!Team_GetLocationMsg(dropped, location, sizeof(location))){
+			noloc = qtrue;
+			strncpy(location, "Dropped", sizeof(location));
+		}
 		if(weapon == WP_RPG7_LAUNCHER){
 			Com_sprintf(level.RPGloc, sizeof(level.RPGloc), "%s", location);
 			level.RPGent = dropped->s.number;
 			level.RPGTime = level.time+500;
-			trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s has dropped the RPG at %s.\n\"", ent->client->pers.netname, level.RPGloc));
+			if(!noloc){
+				trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s has dropped the RPG at %s.\n\"", ent->client->pers.netname, level.RPGloc));
+			}else{
+				trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s has dropped the RPG.\n\"", ent->client->pers.netname));
+			}
 		}else if(weapon == WP_M4_ASSAULT_RIFLE){
 			Com_sprintf(level.M4loc, sizeof(level.M4loc), "%s", location);
 			level.M4ent = dropped->s.number;
 			level.M4Time = level.time+500;
-			trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s has dropped the M4 at %s.\n\"", ent->client->pers.netname, level.M4loc));
+			if(!noloc){
+				trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s has dropped the M4 at %s.\n\"", ent->client->pers.netname, level.M4loc));
+			}else{
+				trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s has dropped the M4.\n\"", ent->client->pers.netname));
+			}
 		}else if(weapon == WP_MM1_GRENADE_LAUNCHER){
 			Com_sprintf(level.MM1loc, sizeof(level.MM1loc), "%s", location);
 			level.MM1ent = dropped->s.number;
 			level.MM1Time = level.time+500;
-			trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s has dropped the MM1 at %s.\n\"", ent->client->pers.netname, level.MM1loc));
+			if(!noloc){
+				trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s has dropped the MM1 at %s.\n\"", ent->client->pers.netname, level.MM1loc));
+			}else{
+				trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s has dropped the MM1.\n\"", ent->client->pers.netname));
+			}
 		}
 		ent->client->ps.weapon = WP_KNIFE;
 		ent->client->ps.weaponstate = WEAPON_READY;
