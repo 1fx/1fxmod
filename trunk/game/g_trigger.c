@@ -417,7 +417,6 @@ void trigger_ReachableObject_touch ( gentity_t *self, gentity_t *other, trace_t 
 
 void ReachableObject_events ( gentity_t *self ){
 	int		i;
-	char	*status;
 
 	// Boe!Man 6/14/11: Cycle through the clients - see what clients need to be respawned.
 	for(i=0;i<level.numConnectedClients;i++){
@@ -428,13 +427,6 @@ void ReachableObject_events ( gentity_t *self ){
 				// Boe!Man 6/13/11: Gametype restart.
 				G_ResetGametype(qfalse, qfalse);
 			}else{
-				if(level.clients[level.sortedClients[i]].sess.lastIdentityChange){
-					status = ".";
-					level.clients[level.sortedClients[i]].sess.lastIdentityChange = qfalse;
-				}else{
-					status = ".";
-					level.clients[level.sortedClients[i]].sess.lastIdentityChange = qtrue;
-				}
 				level.clients[level.sortedClients[i]].sess.noTeamChange = qfalse;
 				trap_UnlinkEntity (&g_entities[level.sortedClients[i]]);
 				ClientSpawn(&g_entities[level.sortedClients[i]]);

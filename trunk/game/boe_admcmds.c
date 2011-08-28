@@ -2092,7 +2092,7 @@ void Boe_Uppercut (int argNum, gentity_t *adm, qboolean shortCmd)
 {
 	gentity_t		*ent;
 	int				idnum;
-	char			*status;
+//	char			*status;
 	int				uclevel;
 	char			arg[64] = "\0";
 	idnum = Boe_ClientNumFromArg(adm, argNum, "uppercut <idnumber>", "uppercut", qtrue, qtrue, shortCmd);
@@ -2136,6 +2136,8 @@ void Boe_Uppercut (int argNum, gentity_t *adm, qboolean shortCmd)
 	// Boe!Man 11/2/10: Added client sound.
 	Boe_ClientSound(ent, G_SoundIndex("sound/weapons/rpg7/fire01.mp3"));
 	
+	/* NOTE (ajay#1#): lastIdentityChange issue: interesting, I don't know why we included this. Keeping this for archival purposes. */
+	/*
 	if(g_entities[idnum].client->sess.lastIdentityChange)	{
 		status = ".";
 		g_entities[idnum].client->sess.lastIdentityChange = qfalse;
@@ -2144,6 +2146,7 @@ void Boe_Uppercut (int argNum, gentity_t *adm, qboolean shortCmd)
 		status = ".";
 		g_entities[idnum].client->sess.lastIdentityChange = qtrue;
 	}
+	*/
 	
 	if(adm && adm->client){
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,^7%s was %su%sp%sp%se%sr%scut by %s", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, adm->client->pers.netname));
@@ -2276,7 +2279,7 @@ void Boe_Respawn (int argNum, gentity_t *adm, qboolean shortCmd)
 	gentity_t		*ent;
 //	qboolean		ghost;
 	int				idnum;
-	char	*status;
+//	char	*status;
 
 	idnum = Boe_ClientNumFromArg(adm, argNum, "respawn <idnumber>", "respawn", qfalse, qtrue, shortCmd);
 	if(idnum < 0) return;
@@ -2305,7 +2308,8 @@ void Boe_Respawn (int argNum, gentity_t *adm, qboolean shortCmd)
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 	Boe_ClientSound(ent, G_SoundIndex("sound/ambience/vehicles/telephone_pole.mp3"));
 
-
+	/* NOTE (ajay#1#): lastIdentityChange issue: interesting, I don't know why we included this. Keeping this for archival purposes. */
+	/*
 	if(ent->client->sess.lastIdentityChange){
 		status = ".";
 		ent->client->sess.lastIdentityChange = qfalse;
@@ -2314,6 +2318,7 @@ void Boe_Respawn (int argNum, gentity_t *adm, qboolean shortCmd)
 		status = ".";
 		ent->client->sess.lastIdentityChange = qtrue;
 	}
+	*/
 	
 	if(adm && adm->client){
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,^7%s was %sr%se%ss%sp%sa%swned by %s", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, adm->client->pers.netname));
