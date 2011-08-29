@@ -2212,6 +2212,7 @@ void ClientSpawn(gentity_t *ent)
 	if(current_gametype.value != GT_HS && current_gametype.value != GT_HZ){
 		if(level.gametypeData->teams && client->sess.team != TEAM_SPECTATOR && !strstr(level.gametypeTeam[client->sess.team], client->pers.identity->mTeam)){ // this skin does not belong to this team so change their Identity
 			trap_SendServerCommand(ent->s.number, va("print \"^3[Info] ^7Your skin has been changed because it did not match your team.\n\"") );
+			client->sess.extraIdChanges = 0; // Boe!Man 8/29/11: Also reset the extraIdChanges because this will bug it.
 			ClientUserinfoChanged ( client->ps.clientNum );
 		}
 	}
