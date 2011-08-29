@@ -1401,7 +1401,6 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 				ent->client->sess.kills = 0;
 				ent->client->sess.deaths = 0;
 				ent->client->sess.timeOfDeath = 0; // Boe!Man 8/29/11: Also reset this when switching team (so seekers that won won't get RPG for example).
-				trap_SendServerCommand(-1, va("print \"^3[Debug] ^7%i -> %s.\n\"", ent->client->sess.timeOfDeath, ent->client->pers.cleanName) );
 			}
 
 			CalculateRanks();
@@ -1420,7 +1419,6 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 	ent->client->sess.kills = 0;
 	ent->client->sess.deaths = 0;
 	ent->client->sess.timeOfDeath = 0; // Boe!Man 8/29/11: Also reset this when switching team (so seekers that won won't get RPG for example).
-	trap_SendServerCommand(-1, va("print \"^3[Debug] ^7%i -> %s.\n\"", ent->client->sess.timeOfDeath, ent->client->pers.cleanName) );
 	}
 
 	CalculateRanks();
