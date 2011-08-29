@@ -349,6 +349,9 @@ typedef struct
 	int			lastpush;
 	vec3_t		tempangles;
 	int			killtime;		// Boe!Man 7/15/11: Zombies can't do /kill after they've just been stunned.
+
+	int			extraIdChanges;	// Boe!Man 8/29/11: Identity changes within the second. Limit id change after 10 of these have happened.
+	int			identityLimit;	// Boe!Man 8/29/11: Limit the identity change for 60 seconds (level.time + 60000).
 } clientSession_t;
 
 // Boe!Man 3/30/10

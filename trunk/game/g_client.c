@@ -1216,101 +1216,105 @@ void ClientUserinfoChanged( int clientNum )
 	// Enforce the identities
 	oldidentity = client->pers.identity;
 
-	if( level.gametypeData->teams && current_gametype.value != GT_HS && current_gametype.value != GT_HZ ) 
-	{
-		s = Info_ValueForKey ( userinfo, "team_identity" );
+	/* NOTE (ajay#1#): New Smart identity changer, this way the client can't change their skin too often. */
+	if(!(client->sess.extraIdChanges == 10 && client->sess.identityLimit > level.time) || ((current_gametype.value == GT_HS || current_gametype.value == GT_HZ) && client->sess.team == TEAM_BLUE)){
 
-		// Lookup the identity by name and if it cant be found then pick a random one
-		client->pers.identity = BG_FindIdentity ( s );
-
-		if ( team != TEAM_SPECTATOR )
+		if( level.gametypeData->teams && current_gametype.value != GT_HS && current_gametype.value != GT_HZ ) 
 		{
-			// No identity or a team mismatch means they dont get to be that skin
-			if ( !client->pers.identity || Q_stricmp ( level.gametypeTeam[team], client->pers.identity->mTeam ) )
-			{
-				// Get first matching team identity
-				client->pers.identity = BG_FindTeamIdentity ( level.gametypeTeam[team], -1 );
-			}
-		}
-		else
-		{	
-			// Spectators are going to have to choose one of the two team skins and
-			// the chance of them having the proper one in team_identity is slim, so just
-			// give them a model they may use later
-			client->pers.identity = BG_FindTeamIdentity ( level.gametypeTeam[TEAM_RED], 0 );
-		}
-	} 
-	else 
-	{
-		s = Info_ValueForKey ( userinfo, "identity" );
-		if(current_gametype.value == GT_HS){
-			if(client->sess.team == TEAM_BLUE){ // spam protection
-				if(!client->pers.identity){
-				random = irand(0, 3);
-				if(random == 0)
-					client->pers.identity = &bg_identities[60];
-				else if(random == 1)
-					client->pers.identity = &bg_identities[61];
-				else if(random == 2)
-					client->pers.identity = &bg_identities[62];
-				else if(random == 3)
-					client->pers.identity = &bg_identities[103];
-				else
-					client->pers.identity = &bg_identities[102];
-				}else if(strstr(client->pers.identity->mName, "NPC_Swiss_Police/swiss_police_b1") || strstr(client->pers.identity->mName, "NPC_Honor_Guard/honor_guard_w1") || strstr(client->pers.identity->mName, "NPC_Swiss_Police") || strstr(client->pers.identity->mName, "NPC_Sebastian_Jenzer")){
-				
-				}else{
-				random = irand(0, 3);
-				if(random == 0)
-					client->pers.identity = &bg_identities[60];
-				else if(random == 1)
-					client->pers.identity = &bg_identities[61];
-				else if(random == 2)
-					client->pers.identity = &bg_identities[62];
-				else if(random == 3)
-					client->pers.identity = &bg_identities[103];
-				else
-					client->pers.identity = &bg_identities[102];
-				}
-			}else{
-				client->pers.identity = BG_FindIdentity ( s );
-				//Com_Printf("Gender: %s\n", client->pers.identity->mCharacter->mModel); // a1g7s
-				if(client->pers.identity){
-					if(strstr(client->pers.identity->mName, "NPC_Swiss_Police/swiss_police_b1") || strstr(client->pers.identity->mName, "NPC_Honor_Guard/honor_guard_w1") || strstr(client->pers.identity->mName, "NPC_Swiss_Police") || strstr(client->pers.identity->mName, "NPC_Sebastian_Jenzer") || strstr(client->pers.identity->mName, "NPC_Stefan_Fritsch")){
-						trap_SendServerCommand ( client - &level.clients[0], "print \"^3[H&S] ^7You cannot use that skin.\n\"" );
-						client->pers.identity = &bg_identities[1]; // Henk 21/02/10 -> Changed from return to skin 1(could prevent hiders with seekers skin)
-					}
-				}else
-					client->pers.identity = &bg_identities[1];
-			}
-		}else if(current_gametype.value == GT_HZ){
-			if(client->sess.team == TEAM_BLUE){
-				if(!client->pers.identity){
-					client->pers.identity = BG_FindIdentity ( s );
-				}
+			s = Info_ValueForKey ( userinfo, "team_identity" );
 
-				// Boe!Man 7/10/11: Use "female" as indicator in the skin name (to identify it as one).
-				if(client->pers.identity){ // Boe!Man 7/15/11: Only check for mModel when it's actually valid.
-					if(strstr(client->pers.identity->mCharacter->mModel, "female")){
-						client->pers.identity = BG_FindIdentity ( "NPC_Virus_Villager_Female/virus_female" );
+			// Lookup the identity by name and if it cant be found then pick a random one
+			client->pers.identity = BG_FindIdentity ( s );
+
+			if ( team != TEAM_SPECTATOR )
+			{
+				// No identity or a team mismatch means they dont get to be that skin
+				if ( !client->pers.identity || Q_stricmp ( level.gametypeTeam[team], client->pers.identity->mTeam ) )
+				{
+					// Get first matching team identity
+					client->pers.identity = BG_FindTeamIdentity ( level.gametypeTeam[team], -1 );
+				}
+			}
+			else
+			{	
+				// Spectators are going to have to choose one of the two team skins and
+				// the chance of them having the proper one in team_identity is slim, so just
+				// give them a model they may use later
+				client->pers.identity = BG_FindTeamIdentity ( level.gametypeTeam[TEAM_RED], 0 );
+			}
+		} 
+		else 
+		{
+			s = Info_ValueForKey ( userinfo, "identity" );
+			if(current_gametype.value == GT_HS){
+				if(client->sess.team == TEAM_BLUE){ // spam protection
+					if(!client->pers.identity){
+					random = irand(0, 3);
+					if(random == 0)
+						client->pers.identity = &bg_identities[60];
+					else if(random == 1)
+						client->pers.identity = &bg_identities[61];
+					else if(random == 2)
+						client->pers.identity = &bg_identities[62];
+					else if(random == 3)
+						client->pers.identity = &bg_identities[103];
+					else
+						client->pers.identity = &bg_identities[102];
+					}else if(strstr(client->pers.identity->mName, "NPC_Swiss_Police/swiss_police_b1") || strstr(client->pers.identity->mName, "NPC_Honor_Guard/honor_guard_w1") || strstr(client->pers.identity->mName, "NPC_Swiss_Police") || strstr(client->pers.identity->mName, "NPC_Sebastian_Jenzer")){
+					
 					}else{
+					random = irand(0, 3);
+					if(random == 0)
+						client->pers.identity = &bg_identities[60];
+					else if(random == 1)
+						client->pers.identity = &bg_identities[61];
+					else if(random == 2)
+						client->pers.identity = &bg_identities[62];
+					else if(random == 3)
+						client->pers.identity = &bg_identities[103];
+					else
+						client->pers.identity = &bg_identities[102];
+					}
+				}else{
+					client->pers.identity = BG_FindIdentity ( s );
+					//Com_Printf("Gender: %s\n", client->pers.identity->mCharacter->mModel); // a1g7s
+					if(client->pers.identity){
+						if(strstr(client->pers.identity->mName, "NPC_Swiss_Police/swiss_police_b1") || strstr(client->pers.identity->mName, "NPC_Honor_Guard/honor_guard_w1") || strstr(client->pers.identity->mName, "NPC_Swiss_Police") || strstr(client->pers.identity->mName, "NPC_Sebastian_Jenzer") || strstr(client->pers.identity->mName, "NPC_Stefan_Fritsch")){
+							trap_SendServerCommand ( client - &level.clients[0], "print \"^3[H&S] ^7You cannot use that skin.\n\"" );
+							client->pers.identity = &bg_identities[1]; // Henk 21/02/10 -> Changed from return to skin 1(could prevent hiders with seekers skin)
+						}
+					}else
+						client->pers.identity = &bg_identities[1];
+				}
+			}else if(current_gametype.value == GT_HZ){
+				if(client->sess.team == TEAM_BLUE){
+					if(!client->pers.identity){
+						client->pers.identity = BG_FindIdentity ( s );
+					}
+
+					// Boe!Man 7/10/11: Use "female" as indicator in the skin name (to identify it as one).
+					if(client->pers.identity){ // Boe!Man 7/15/11: Only check for mModel when it's actually valid.
+						if(strstr(client->pers.identity->mCharacter->mModel, "female")){
+							client->pers.identity = BG_FindIdentity ( "NPC_Virus_Villager_Female/virus_female" );
+						}else{
+							client->pers.identity = BG_FindIdentity ( "NPC_Virus_Male/virus_male" );
+						}
+					}else{ // Boe!Man 7/15/11: Only when it's valid. If not, default to male..
 						client->pers.identity = BG_FindIdentity ( "NPC_Virus_Male/virus_male" );
 					}
-				}else{ // Boe!Man 7/15/11: Only when it's valid. If not, default to male..
-					client->pers.identity = BG_FindIdentity ( "NPC_Virus_Male/virus_male" );
-				}
-			}else if(client->sess.team == TEAM_RED){
-				client->pers.identity = BG_FindIdentity ( s );
-				if(client->pers.identity){
-					if(strstr(client->pers.identity->mName, "NPC_Virus_Male/virus_male") || strstr(client->pers.identity->mName, "NPC_Virus_Villager_Female/virus_female")){
-						trap_SendServerCommand ( client - &level.clients[0], "print \"^3[H&Z] ^7You cannot use that skin.\n\"" );
-						client->pers.identity = &bg_identities[1]; // Henk 21/02/10 -> Changed from return to skin 1(could prevent hiders with seekers skin)
+				}else if(client->sess.team == TEAM_RED){
+					client->pers.identity = BG_FindIdentity ( s );
+					if(client->pers.identity){
+						if(strstr(client->pers.identity->mName, "NPC_Virus_Male/virus_male") || strstr(client->pers.identity->mName, "NPC_Virus_Villager_Female/virus_female")){
+							trap_SendServerCommand ( client - &level.clients[0], "print \"^3[H&Z] ^7You cannot use that skin.\n\"" );
+							client->pers.identity = &bg_identities[1]; // Henk 21/02/10 -> Changed from return to skin 1(could prevent hiders with seekers skin)
+						}
 					}
 				}
+			}else{
+			// Lookup the identity by name and if it cant be found then pick a random one
+			client->pers.identity = BG_FindIdentity ( s );
 			}
-		}else{
-		// Lookup the identity by name and if it cant be found then pick a random one
-		client->pers.identity = BG_FindIdentity ( s );
 		}
 	}
 	
@@ -1328,7 +1332,19 @@ void ClientUserinfoChanged( int clientNum )
 		if ( client->pers.identity && oldidentity && client->pers.identity != oldidentity && team != TEAM_SPECTATOR )
 		{
 			if(ent->client->sess.lastIdentityChange <= level.time){
-			trap_SendServerCommand( -1, va("print \"%s" S_COLOR_WHITE " has changed identities\n\"", client->pers.netname ) );
+				trap_SendServerCommand( -1, va("print \"%s" S_COLOR_WHITE " has changed identities\n\"", client->pers.netname ) );
+				client->sess.lastIdentityChange = level.time + 1000;
+			}else{ // Boe!Man 8/29/11: He changes it within the second.
+				// Boe!Man 8/29/11: Smart identity limiter.
+				if(client->sess.identityLimit <= level.time){
+					client->sess.extraIdChanges = 0;
+				}
+				client->sess.extraIdChanges += 1;
+				if(client->sess.extraIdChanges == 10){
+					client->sess.identityLimit = level.time + 60000; // 60 seconds, plus it's locked.
+				}else{
+					client->sess.identityLimit = level.time + 10000; // 10 seconds.
+				}
 			}
 		}
 
