@@ -188,25 +188,38 @@ qboolean IsValidCommand(char *cmd, char *string){
 }
 
 int TiedPlayers(void){
-	int i, highscore = 0, count = 0;
 	gentity_t *ent;
+	int i, highscore = 0, count = 0;
+	int winners[32];
+
 	for(i=0;i<level.numConnectedClients;i++){
 		ent = &g_entities[level.sortedClients[i]];
 		if(ent->client->sess.team == TEAM_RED){
 			if(ent->client->sess.kills == highscore){
+				winners[count] = ent->s.number;
 				count += 1;
-				highscore = ent->client->sess.kills;
+				//highscore = ent->client->sess.kills; // Boe - useless.
 			}else if(ent->client->sess.kills > highscore){
+				winners[0] = ent->s.number;
 				count = 1;
 				highscore = ent->client->sess.kills;
 			}
 		}
 	}
+
+	if(count >= 2){ // Boe!Man 8/30/11: If there are tied players.
+		for(i = 0; i < count; i++){
+			g_entities[winners[i]].client->sess.cageFighter = qtrue;
+		}
+	}
+
+	level.mapHighScore = highscore; // Boe!Man 8/30/11: Set the highest score (to make sure everybody gets in the cage if all have 0 points).
 	return count;
 }
 
 void InitCagefight(void){
 	int i, count = 0;
+
 	vec3_t spawns[33];
 	if(level.time < level.cagefighttimer){
 		return;
@@ -274,28 +287,37 @@ void InitCagefight(void){
 	level.messagedisplay1 = qtrue; // stop RPG/M4 stuff
 	SpawnCage(level.hideseek_cage, NULL, qtrue);
 	SpawnCage(level.hideseek_cage, NULL, qtrue); // 2 to be sure no parts are missing
-	for(i=0;i<=level.numConnectedClients;i++){
-		if(g_entities[level.sortedClients[i]].client->sess.team == TEAM_RED){
+
+	//for(i=0;i<=level.numConnectedClients;i++){
+	for(i = 0; i <= MAX_CLIENTS; i++){
+		if(level.clients[i].pers.connected != CON_CONNECTED)
+		{
+			continue;
+		}
+
+		if(level.clients[i].sess.team == TEAM_RED && (level.clients[i].sess.cageFighter == qtrue || level.mapHighScore == 0)){
 			//respawn ( &g_entities[level.sortedClients[i]] );
-			TeleportPlayer(&g_entities[level.sortedClients[i]], spawns[count], g_entities[level.sortedClients[i]].client->ps.viewangles, qtrue);
+			TeleportPlayer(&g_entities[i], spawns[count], level.clients[i].ps.viewangles, qtrue);
 			count += 1;
-			g_entities[level.sortedClients[i]].client->ps.stats[STAT_WEAPONS] = 0;
-			memset ( g_entities[level.sortedClients[i]].client->ps.ammo, 0, sizeof(g_entities[level.sortedClients[i]].client->ps.ammo) );
-			memset ( g_entities[level.sortedClients[i]].client->ps.clip, 0, sizeof(g_entities[level.sortedClients[i]].client->ps.clip) );
+			level.clients[i].ps.stats[STAT_WEAPONS] = 0;
+			memset ( level.clients[i].ps.ammo, 0, sizeof(level.clients[i].ps.ammo) );
+			memset ( level.clients[i].ps.clip, 0, sizeof(level.clients[i].ps.clip) );
 			//g_entities[level.lastalive[0]].client->ps.ammo[weaponData[WP_RPG7_LAUNCHER].attack[ATTACK_NORMAL].ammoIndex]=2;
-			g_entities[level.sortedClients[i]].client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_KNIFE );
-			g_entities[level.sortedClients[i]].client->ps.clip[ATTACK_NORMAL][WP_KNIFE]=1;
-			g_entities[level.sortedClients[i]].client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_AK74_ASSAULT_RIFLE );
+			level.clients[i].ps.stats[STAT_WEAPONS] |= ( 1 << WP_KNIFE );
+			level.clients[i].ps.clip[ATTACK_NORMAL][WP_KNIFE]=1;
+			level.clients[i].ps.stats[STAT_WEAPONS] |= ( 1 << WP_AK74_ASSAULT_RIFLE );
 			//g_entities[level.lastalive[0]].client->ps.clip[ATTACK_NORMAL][WP_RPG7_LAUNCHER]=1;
 			//g_entities[level.lastalive[0]].client->ps.firemode[WP_RPG7_LAUNCHER] = BG_FindFireMode ( WP_RPG7_LAUNCHER, ATTACK_NORMAL, WP_FIREMODE_AUTO );
-			g_entities[level.sortedClients[i]].client->ps.weapon = WP_AK74_ASSAULT_RIFLE;
-			g_entities[level.sortedClients[i]].client->ps.weaponstate = WEAPON_READY;
-			g_entities[level.sortedClients[i]].client->ps.weaponTime = 0;
-			g_entities[level.sortedClients[i]].client->ps.weaponAnimTime = 0;
-			g_entities[level.sortedClients[i]].client->ps.stats[STAT_FROZEN] = 10000;
-		}else if(g_entities[level.sortedClients[i]].client->sess.team == TEAM_BLUE){
-			G_Damage (&g_entities[level.sortedClients[i]], NULL, NULL, NULL, NULL, 10000, 0, MOD_POP, HL_HEAD|HL_FOOT_RT|HL_FOOT_LT|HL_LEG_UPPER_RT|HL_LEG_UPPER_LT|HL_HAND_RT|HL_HAND_LT|HL_WAIST|HL_CHEST|HL_NECK);
-		}
+			level.clients[i].ps.weapon = WP_AK74_ASSAULT_RIFLE;
+			level.clients[i].ps.weaponstate = WEAPON_READY;
+			level.clients[i].ps.weaponTime = 0;
+			level.clients[i].ps.weaponAnimTime = 0;
+			level.clients[i].ps.stats[STAT_FROZEN] = 10000;
+		}else if(level.clients[i].sess.team == TEAM_BLUE){
+			G_Damage (&g_entities[i], NULL, NULL, NULL, NULL, 10000, 0, MOD_POP, HL_HEAD|HL_FOOT_RT|HL_FOOT_LT|HL_LEG_UPPER_RT|HL_LEG_UPPER_LT|HL_HAND_RT|HL_HAND_LT|HL_WAIST|HL_CHEST|HL_NECK);
+		}else if(level.clients[i].sess.team != TEAM_SPECTATOR){ // Boe!Man 8/30/11: Means the client is a Red player that wasn't qualified to play in the cage fight. Pop as well.
+			G_Damage (&g_entities[i], NULL, NULL, NULL, NULL, 10000, 0, MOD_POP, HL_HEAD|HL_FOOT_RT|HL_FOOT_LT|HL_LEG_UPPER_RT|HL_LEG_UPPER_LT|HL_HAND_RT|HL_HAND_LT|HL_WAIST|HL_CHEST|HL_NECK);
+		} // Boe!Man 9/4/11: Else would be spectator only, no need to do anything.
 	}
 	// when it ends execute this:
 	//Com_Printf("Updating scores..\n");

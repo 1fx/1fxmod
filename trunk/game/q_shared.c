@@ -1229,6 +1229,7 @@ void Info_SetValueForKey( char *s, const char *key, const char *value ) {
 	char	newi[MAX_INFO_STRING];
 
 	if ( strlen( s ) >= MAX_INFO_STRING ) {
+		/* FIXME (ajay#9#): Server crashes here, add a debug message later, interested in what it is. */
 		Com_Error( ERR_DROP, "Info_SetValueForKey: oversize infostring" );
 	}
 

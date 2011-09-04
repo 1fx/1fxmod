@@ -339,6 +339,7 @@ typedef struct
 
 	qboolean	pausespawn;
 	int			cagescore;
+	qboolean	cageFighter;	// Boe!Man 8/30/11: qtrue for being a tied player (and thus anticipating in the cagefight).
 	int			invisibletime;
 	int			fpschecks;
 	int			IgnoredClients[33];
@@ -783,6 +784,7 @@ typedef struct
 	qboolean	aetdone;
 	int			cagefighttimer;
 	qboolean	startcage;
+	int			mapHighScore;			// Boe!Man 8/30/11: The client with the highest score (used for determining if he's a tied player).
 	qboolean	timelimitMsg;
 	char		cagewinner[36];
 

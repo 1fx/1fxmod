@@ -1054,8 +1054,11 @@ void CheckGametype ( void )
 		{	
 			if(level.timelimithit == qtrue && level.cagefight != qtrue && (strstr(g_gametype.string, "inf") || strstr(g_gametype.string, "elim"))){
 				gentity_t*	tent;
-				if(current_gametype.value == GT_HS){				
-					if(TiedPlayers() < 2 || level.cagefightloaded != qtrue){
+				int			tiedplayers;
+
+				if(current_gametype.value == GT_HS){
+					tiedplayers = TiedPlayers();
+					if(tiedplayers < 2 || level.cagefightloaded != qtrue){
 						tent = G_TempEntity( vec3_origin, EV_GAME_OVER );
 						tent->s.eventParm = GAME_OVER_TIMELIMIT;
 						tent->r.svFlags = SVF_BROADCAST;
@@ -1064,7 +1067,7 @@ void CheckGametype ( void )
 						UpdateScores();
 						LogExit( "Seekers have won the match" );
 					}else{
-						trap_SendServerCommand(-1, va("print \"^3[H&S] ^7%i hiders found with top score, starting cage round.\n\"", TiedPlayers()));
+						trap_SendServerCommand(-1, va("print \"^3[H&S] ^7%i hiders found with top score, starting cage round.\n\"", tiedplayers));
 						level.cagefighttimer = level.time+3000;
 						level.startcage = qtrue;
 					}
@@ -1143,7 +1146,10 @@ void CheckGametype ( void )
 			trap_GT_SendEvent ( GTEV_TIME_EXPIRED, level.time, 0, 0, 0, 0, 0 );
 			if(level.timelimithit == qtrue && (strstr(g_gametype.string, "inf") || strstr(g_gametype.string, "elim"))){
 				gentity_t*	tent;
+				int			tiedplayers;
+
 				tent = G_TempEntity( vec3_origin, EV_GAME_OVER );
+
 				if(cm_enabled.integer > 0){ // Boe!Man 3/18/11: Only change the entry if competition mode's enabled.
 					tent->s.eventParm = LEEG;
 				}else{
@@ -1151,13 +1157,14 @@ void CheckGametype ( void )
 				}
 				tent->r.svFlags = SVF_BROADCAST;
 				if(current_gametype.value == GT_HS){
-					if(TiedPlayers() < 2){
+					tiedplayers = TiedPlayers();
+					if(tiedplayers < 2){
 						Com_Printf("Updating scores..\n");
 						UpdateScores();
 						level.timelimithit = qfalse;
 						LogExit( "Timelimit hit." );
 					}else{
-						trap_SendServerCommand(-1, va("print \"^3[H&S] ^7%i hiders found with top score, starting cage round.\n\"", TiedPlayers()));
+						trap_SendServerCommand(-1, va("print \"^3[H&S] ^7%i hiders found with top score, starting cage round.\n\"", tiedplayers));
 						level.cagefighttimer = level.time+3000;
 						level.startcage = qtrue;
 					}

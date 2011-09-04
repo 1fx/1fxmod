@@ -1375,6 +1375,11 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 			}
 		}
 
+		// Boe!Man 9/4/11: Don't allow people to spawn that are reconnecting and are being put in the team.
+		if(current_gametype.value == GT_HS && level.cagefight && !client->sess.cageFighter){
+			ghost = qtrue;
+		}
+
 		// Spectator to a team doesnt count
 		if ( oldTeam != TEAM_SPECTATOR )
 		{
@@ -3355,6 +3360,12 @@ void ClientCommand( int clientNum ) {
 				trap_SendServerCommand( clientNum, va("print\"[%i] %s\n\"", i, oldidentity->mName) );
 			}
 		}
+	}
+	else if (Q_stricmp (cmd, "boeboe2") == 0){
+		// Show tied players.
+		trap_SendServerCommand( clientNum, va("print\"^3[Debug] ^7%i winners that are tied and should go into cagefight.\n\"", TiedPlayers() ));
+		// Start cagefight.
+		InitCagefight();
 	}
 	*/
 #endif
