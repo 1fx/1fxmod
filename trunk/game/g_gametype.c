@@ -1065,6 +1065,7 @@ void CheckGametype ( void )
 						level.timelimithit = qfalse;
 						Com_Printf("Updating scores..\n");
 						UpdateScores();
+						trap_GT_SendEvent ( GTEV_TEAM_ELIMINATED, level.time, TEAM_RED, 0, 0, 0, 0 ); // Boe!Man 9/6/11: Add this here to prevent the gametype not being properly ended (when timelimit's hit).
 						LogExit( "Seekers have won the match" );
 					}else{
 						trap_SendServerCommand(-1, va("print \"^3[H&S] ^7%i hiders found with top score, starting cage round.\n\"", tiedplayers));
