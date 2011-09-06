@@ -1058,7 +1058,7 @@ void CheckGametype ( void )
 
 				if(current_gametype.value == GT_HS){
 					tiedplayers = TiedPlayers();
-					if(tiedplayers < 2 || level.cagefightloaded != qtrue){
+					if(tiedplayers < 2 || !level.cagefightloaded){
 						tent = G_TempEntity( vec3_origin, EV_GAME_OVER );
 						tent->s.eventParm = GAME_OVER_TIMELIMIT;
 						tent->r.svFlags = SVF_BROADCAST;
@@ -1158,7 +1158,7 @@ void CheckGametype ( void )
 				tent->r.svFlags = SVF_BROADCAST;
 				if(current_gametype.value == GT_HS){
 					tiedplayers = TiedPlayers();
-					if(tiedplayers < 2){
+					if(tiedplayers < 2 || !level.cagefightloaded){
 						Com_Printf("Updating scores..\n");
 						UpdateScores();
 						level.timelimithit = qfalse;
