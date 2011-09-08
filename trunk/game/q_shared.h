@@ -840,7 +840,7 @@ void Vector4Scale( const vec4_t in, vec_t scale, vec4_t out );
 void VectorRotate( vec3_t in, vec3_t matrix[3], vec3_t out );
 
 #ifndef __LCC__
-#ifndef	__linux__
+#ifndef	__GNUC__
 
 static ID_INLINE int VectorToInt(vec3_t vec)
 {

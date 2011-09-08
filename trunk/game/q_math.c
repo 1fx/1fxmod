@@ -805,6 +805,7 @@ __declspec( naked ) int BoxOnPlaneSide (vec3_t emins, vec3_t emaxs, struct cplan
 	static int bops_initialized;
 	static int Ljmptab[8];
 
+#ifndef	__GNUC__ // Boe!Man 9/9/11: Inline asm isn't compatible with GNU compiler (so that automatically includes MinGW). Doh!
 	__asm {
 
 		push ebx
@@ -1028,6 +1029,7 @@ LSetSides:
 Lerror:
 		int 3
 	}
+#endif
 }
 #pragma warning( default: 4035 )
 
