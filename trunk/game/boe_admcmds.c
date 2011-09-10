@@ -766,7 +766,12 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 					memset(string1, 0, sizeof(string1));
 					numberofclients = 0;
 					num = -1;
-				    numb[strlen(numb)-1] = '\0';
+					/* NOTE (ajay#7#): Fixed issue with comparing names here, added debug info in case it crashes (in case it goes out of bounds, which I doubt), remove later. */
+				    //numb[strlen(numb)-1] = '\0';
+				    Com_Printf("ns\n");
+				    numb[strlen(numb)] = '\0';
+				    Com_Printf("ne\n");
+				    /* END ajay */
 					for(x=0;x<level.numConnectedClients;x++){
 						//trap_SendServerCommand(-1, va("print\"^3[Debug] ^7%s comparing with %s.\n\"", g_entities[level.sortedClients[x]].client->pers.cleanName,numb));
 						if(strstr(Q_strlwr(g_entities[level.sortedClients[x]].client->pers.cleanName), Q_strlwr(numb))){
