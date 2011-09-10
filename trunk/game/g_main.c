@@ -1152,7 +1152,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 		AddSpawnField("classname", "gametype_item");
 		AddSpawnField("targetname", "briefcase");
 		AddSpawnField("gametype", "inf");
-		AddSpawnField("origin", "999 999 999");
+		AddSpawnField("origin", "9999 9999 9999"); // Boe!Man 9/10/11: "999 999 999" bugs in a few maps (start solid), so changed the origin a bit.
 		trap_UnlinkEntity(&g_entities[G_SpawnGEntityFromSpawnVars(qtrue)]);
 	}
 
