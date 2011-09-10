@@ -1231,7 +1231,8 @@ void Info_SetValueForKey( char *s, const char *key, const char *value ) {
 	char	newi[MAX_INFO_STRING];
 
 	if ( strlen( s ) >= MAX_INFO_STRING ) {
-		/* FIXME (ajay#9#): Server crashes here, add a debug message later, interested in what it is. */
+		/* FIXME (ajay#9#): Server crashes here, added a debug message, interested in what it is. Keep an eye on this. */
+		Boe_crashLog(va("Info_SetValueForKey bigger than MAX_INFO_STRING -> s len: %i, MAX_INFO_STRING len: 512, s string: %s\n", strlen(s), s)); 
 		Com_Error( ERR_DROP, "Info_SetValueForKey: oversize infostring" );
 	}
 
