@@ -2569,6 +2569,15 @@ void CheckVote( void )
 	if ( level.voteExecuteTime && level.voteExecuteTime < level.time ) 
 	{
 		level.voteExecuteTime = 0;
+		// Boe!Man 9/10/11: Fix for calling a vote for a map defaulting to INF under H&S/H&Z.
+		if(strstr(level.voteString, "map")){
+			if(current_gametype.value == GT_HS){
+				trap_Cvar_Set( "g_gametype", "h&s");
+			}else if(current_gametype.value == GT_HZ){
+				trap_Cvar_Set( "g_gametype", "h&z");
+			}
+		}
+		
 		trap_SendConsoleCommand( EXEC_APPEND, va("%s\n", level.voteString ) );
 	}
 
