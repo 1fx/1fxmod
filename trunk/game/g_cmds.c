@@ -3405,7 +3405,7 @@ void Boe_adm_f ( gentity_t *ent )
 	
 	adm = ent->client->sess.admin;
 	if(!Q_stricmp(arg1, "login")){ // Boe!Man 4/3/11: Very small optimize.
-		if(g_passwordAdmins.integer && !adm){ // only check if its enabled // Boe!Man 6/28/11: And check if they're admin-less still.
+		if(g_passwordAdmins.integer && !adm){ // only check if its enabled -- Boe!Man 6/28/11: And check if they're admin-less still.
 			if(!Q_stricmp(arg2, "none")){ // no password set so deny access.
 				trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Access denied: Default password can't be used!\n\""));
 				return;
