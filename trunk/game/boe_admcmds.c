@@ -1914,13 +1914,13 @@ void Boe_subnetBan (int argNum, gentity_t *adm, qboolean shortCmd){
 
 	if (adm && adm->client){
 		Com_sprintf (info, sizeof(info), "%s\\%s//%s||%s",
-		g_entities[idnum].client->pers.ip,
+		ip,
 		g_entities[idnum].client->pers.cleanName,
 		adm->client->pers.cleanName,
 		reason);
 	}else{
 		Com_sprintf (info, sizeof(info), "%s\\%s//%s||%s",
-		g_entities[idnum].client->pers.ip,
+		ip,
 		g_entities[idnum].client->pers.cleanName,
 		"RCON",
 		reason);
@@ -1930,20 +1930,20 @@ void Boe_subnetBan (int argNum, gentity_t *adm, qboolean shortCmd){
 		if(adm && adm->client)	{
 			if(!*reason){
 				trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"Subnetbanned by %s\"\n", idnum, adm->client->pers.netname));
-				Boe_adminLog ("Subnetban", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));}
+				Boe_adminLog ("Subnetban", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", ip, g_entities[idnum].client->pers.cleanName));}
 			else{
 				trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"Subnetbanned by %s for: %s\"\n", idnum, adm->client->pers.netname, reason));
 				trap_SendServerCommand( adm-g_entities, va("print \"%s was Subnetbanned by %s!\n\"", g_entities[idnum].client->pers.netname, adm->client->pers.netname));
-				Boe_adminLog ("Subnetban", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
+				Boe_adminLog ("Subnetban", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", ip, g_entities[idnum].client->pers.cleanName));
 			}
 		}
 		else{
 			if(!*reason){
-				Boe_adminLog ("Subnetban", va("%s", "RCON"), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
+				Boe_adminLog ("Subnetban", va("%s", "RCON"), va("%s\\%s", ip, g_entities[idnum].client->pers.cleanName));
 				trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"Subnetbanned!\"\n", idnum));
 			}else{
 				Com_Printf("%s was subnetbanned!\n", g_entities[idnum].client->pers.cleanName);
-				Boe_adminLog ("Subnetban", va("%s", "RCON"), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
+				Boe_adminLog ("Subnetban", va("%s", "RCON"), va("%s\\%s", ip, g_entities[idnum].client->pers.cleanName));
 				trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"Subnetbanned for: %s\"\n", idnum, reason));
 			}
 		}
