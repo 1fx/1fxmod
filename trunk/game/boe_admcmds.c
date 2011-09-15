@@ -1209,8 +1209,9 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 				}
 			}
 			memset(by, 0, sizeof(by));
-#ifdef Q3_VM
+#if(defined(Q3_VM) || defined(__GNUC__))
 			Q_strncpyz(by, buf+tempend+2, lcount-(tempend+2)+1);
+/* TODO (ajay#1#): Check if this is indeed bugged under MSVC. The QVM method works fine under gcc. */
 #else
 			Q_strncpyz(by, buf+tempend+2, lcount-(tempend+2));
 #endif
@@ -1675,6 +1676,8 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 	// Clear ban info
 	if(ban){
 	// End
+		// Boe!Man 9/16/11: For the ban log/message it's healthier to delete the newline so it won't mess up messaging.
+		last[strlen(last)-1] = '\0';
 		if(subnet){
 			if(ent && ent->client)
 				Boe_adminLog ("Subnet Unban", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), va("%s", last));
