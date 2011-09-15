@@ -1273,8 +1273,8 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 			}
 			column3[spaces] = '\0';
 			length = strlen(by);
-			if(length > 20){
-				by[20] = '\0';
+			if(length > 16){
+				by[16] = '\0';
 			}
 			if(adm){
 				// Boe!Man 1/24/11: Print the banline as well (for easy unbanning).
