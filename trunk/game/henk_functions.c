@@ -1132,7 +1132,7 @@ void PrintCustom(int numb){
 	while(group)
 	{
 		trap_GPG_FindPairValue(group, "Command", "none", name);
-		for(i=0;i<27-strlen(name);i++){
+		for(i=0;i<28-strlen(name);i++){
 			spaces[i] = ' ';
 		}
 		spaces[i] = '\0';

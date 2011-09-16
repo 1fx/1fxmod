@@ -3565,11 +3565,11 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 	//wrapper for interface
 	if(adm){
 		trap_SendServerCommand( adm-g_entities, va("print \"^7[^3Adminlist^7]\n\n\""));
-		trap_SendServerCommand( adm-g_entities, va("print \"^3 #   Lvl   Name               IP\n\""));
+		trap_SendServerCommand( adm-g_entities, va("print \"^3 #    Lvl  Name               IP\n\""));
 		trap_SendServerCommand( adm-g_entities, va("print \"^7------------------------------------------------------------------------\n\""));
 	}else{
 		Com_Printf("^7[^3Adminlist^7]\n\n");
-		Com_Printf("^3 #   Lvl   Name               IP\n");
+		Com_Printf("^3 #    Lvl  Name               IP\n");
 		Com_Printf("^7------------------------------------------------------------------------\n");
 	}
 	if(passwordlist)
