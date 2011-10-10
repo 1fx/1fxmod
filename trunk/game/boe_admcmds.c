@@ -3551,7 +3551,7 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 	qboolean last = qfalse;
 	if(shortCmd){
 		trap_Argv( 1, arg, sizeof( arg ) );
-		if(strstr(arg, "pass"))
+		if(strstr(Q_strlwr(arg), "pass")) // Boe!Man 10/10/11: Fix for "pass" arg not working when capitalised.
 			passwordlist = qtrue;
 		else
 			trap_Argv( 2, arg, sizeof( arg ) );
