@@ -3,7 +3,7 @@
 del /q vm
 mkdir vm
 cd vm
-set cc=..\..\..\bin\sof2lcc -A -DQ3_VM -DMISSIONPACK -D_BOE_DBG -S -Wf-target=bytecode -Wf-g -I..\..\cgame -I..\..\game -I..\..\ui %1
+set cc=..\..\..\bin\sof2lcc -A -DQ3_VM -DQAGAME -DMISSIONPACK -D_BOE_DBG -S -Wf-target=bytecode -Wf-g -I..\..\cgame -I..\..\game -I..\..\ui %1
 
 %cc%  ../g_main.c
 @if errorlevel 1 goto quit
@@ -46,6 +46,8 @@ set cc=..\..\..\bin\sof2lcc -A -DQ3_VM -DMISSIONPACK -D_BOE_DBG -S -Wf-target=by
 @if errorlevel 1 goto quit
 %cc%  ../rpm_refcmds.c
 @if errorlevel 1 goto quit
+%cc%  ../rpm_functions.c
+@if errorlevel 1 goto quit
 
 %cc%  ../g_active.c
 @if errorlevel 1 goto quit
@@ -87,6 +89,10 @@ set cc=..\..\..\bin\sof2lcc -A -DQ3_VM -DMISSIONPACK -D_BOE_DBG -S -Wf-target=by
 @if errorlevel 1 goto quit
 %cc% ../henkENT.c
 @if errorlevel 1 goto quit
+%cc% ../henk_functions.c
+@if errorlevel 1 goto quit
+%cc% ../henk_hs.c
+@if errorlevel 1 goto quit
 
 ..\..\..\bin\sof2asm -f ../game
 @if errorlevel 1 goto quit
@@ -99,3 +105,4 @@ copy *.qvm "..\..\..\base\vm"
 cd ..
 
 pause
+echo ""
