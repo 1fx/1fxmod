@@ -3775,23 +3775,31 @@ qboolean ConsoleCommand( void )
 
 #endif
 
+	// Boe!Man 10/31/11: Removing the original addip/removeip system since it doesn't get used. Updating it to use the current ban system.
+
 	if (Q_stricmp (cmd, "addip") == 0)
 	{
 		Svcmd_AddIP_f();
 		return qtrue;
 	}
-
+	
+	// Boe!Man 11/04/11: This is obsolete and doesn't get used (they can use unban/subnetunban instead). Removed.
+	/*
 	if (Q_stricmp (cmd, "removeip") == 0)
 	{
 		Svcmd_RemoveIP_f();
 		return qtrue;
 	}
+	*/
 
 	if (Q_stricmp (cmd, "listip") == 0)
 	{
-		trap_SendConsoleCommand( EXEC_NOW, "g_banIPs\n" );
+		// Boe!Man 10/31/11: This gets replaced with the 1fx. Mod-style banlist.
+		trap_SendConsoleCommand( EXEC_NOW, "banlist\n" );
 		return qtrue;
 	}
+	
+	// End Boe!Man 10/31/11
 
 	if (Q_stricmp (cmd, "gametype_restart" ) == 0 )
 	{

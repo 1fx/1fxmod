@@ -591,19 +591,17 @@ void Boe_Kick(int argNum, gentity_t *ent, qboolean shortCmd){
 		if(id < 0) return;
 		strcpy(reason, GetReason());
 		trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"%s\"\n", id, reason));
-		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s was %sk%si%sc%sk%se%sd ^7by %s", level.time + 5000, g_entities[id].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, ent->client->pers.netname));
-		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was kicked by %s.\n\"", g_entities[id].client->pers.netname,ent->client->pers.netname));
-		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-		Boe_adminLog ("Kick", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), va("%s\\%s", g_entities[id].client->pers.ip, g_entities[id].client->pers.cleanName));
 	}else{
 		id = Boe_ClientNumFromArg(ent, 2, "kick <id> <reason>", "Kick", qfalse, qfalse, qfalse);
 		if(id < 0) return;
 		trap_Argv( 3, arg3, sizeof( arg3 ) );
 		trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"%s\"\n", id, arg3));
-		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s was %sk%si%sc%sk%se%sd ^7by %s", level.time + 5000, g_entities[id].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, ent->client->pers.netname));
-		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was kicked by %s.\n\"", g_entities[id].client->pers.netname,ent->client->pers.netname));
-		Boe_adminLog ("Kick", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), va("%s\\%s", g_entities[id].client->pers.ip, g_entities[id].client->pers.cleanName));
 	}
+	// Boe!Man 11/04/11: To save compiled bytes, just do all this stuff at once without looking at the type of chat system.
+	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+	Boe_adminLog ("Kick", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), va("%s\\%s", g_entities[id].client->pers.ip, g_entities[id].client->pers.cleanName));
+	//trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was kicked by %s.\n\"", g_entities[id].client->pers.netname,ent->client->pers.netname));
+	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s was %sk%si%sc%sk%se%sd ^7by %s", level.time + 5000, g_entities[id].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, ent->client->pers.netname));
 }
 
 /*
@@ -1144,18 +1142,55 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 	int		spaces = 0, length = 0, z;
 	fileHandle_t f;
 	char            buf[15000] = "\0";
+	// Boe!Man 11/04/11: We use this in order to send as little packets as possible. Packet max size is 1024 minus some overhead, 1000 char. max should take care of this. (adm only, RCON remains unaffected).
+	char			buf2[1000] = "\0";
+	// End Boe!Man 11/04/11
 	int len, i, count = 0, EndPos = -1, StartPos = 0;
 	qboolean begin = qtrue;
 	int r, lcount = -1, tempend;
 	char fileName[128];
+	
+	// Boe!Man 11/04/11: Init the file (and buffer) before the wrapper so that in case errors occur the default wrapper isn't printed yet.
+	if(subnet){
+		strcpy(fileName, "users/subnetbans.txt");
+	}else{
+		strcpy(fileName, g_banfile.string);
+	}
+
+	len = trap_FS_FOpenFile(fileName, &f, FS_READ);
+	if(!test){
+		if(adm){
+			trap_SendServerCommand( adm-g_entities, va("print \"Error while reading %s\n\"", fileName));
+		}else{
+			Com_Printf("Error while reading %s\n", fileName);
+		}
+		return;
+	}
+	// Boe!Man 11/04/11: Improved error handling.
+	if(len > 15000){
+		if(adm){
+			trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7File maximum length reached (current len: %i, max allowed: 15000).\n\"", len));
+		}else{
+			Com_Printf("Error: File maximum length reached (current len: %i, max allowed: 15000).\n", len);
+		}
+		return;
+	}
+	trap_FS_Read( buf, len, f );
+	buf[len] = '\0';
+	trap_FS_FCloseFile(f);
+	
 	//wrapper for interface
 	if(adm){
-		if(subnet)
-			trap_SendServerCommand( adm-g_entities, va("print \"^3[Subnetbanlist]^7\n\n\""));
-		else
-			trap_SendServerCommand( adm-g_entities, va("print \"^3[Banlist]^7\n\n\""));
-		trap_SendServerCommand( adm-g_entities, va("print \"^3 #    IP              Name                Reason             By\n\""));
-		trap_SendServerCommand( adm-g_entities, va("print \"^7------------------------------------------------------------------------\n\""));
+		if(subnet){
+			Q_strcat(buf2, sizeof(buf2), "^3[Subnetbanlist]^7\n\n");
+			//trap_SendServerCommand( adm-g_entities, va("print \"^3[Subnetbanlist]^7\n\n\""));
+		}else{
+			Q_strcat(buf2, sizeof(buf2), "^3[Banlist]^7\n\n");
+			//trap_SendServerCommand( adm-g_entities, va("print \"^3[Banlist]^7\n\n\""));
+		}
+		Q_strcat(buf2, sizeof(buf2), "^3 #    IP              Name                Reason             By\n^7------------------------------------------------------------------------\n");
+		//trap_SendServerCommand( adm-g_entities, va("print \"^3 #    IP              Name                Reason             By\n\""));
+		//trap_SendServerCommand( adm-g_entities, va("print \"^7------------------------------------------------------------------------\n\""));
 	}else{
 		if(subnet)
 			Com_Printf("^3[Subnetbanlist]^7\n\n");
@@ -1164,19 +1199,7 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 		Com_Printf("^3 #    IP              Name                Reason             By\n");
 		Com_Printf("^7------------------------------------------------------------------------\n");
 	}
-	if(subnet)
-		strcpy(fileName, "users/subnetbans.txt");
-	else
-		strcpy(fileName, g_banfile.string);
-
-	len = trap_FS_FOpenFile(fileName, &f, FS_READ);
-	if(!test){
-		Com_Printf("Error while reading %s\n", fileName);
-		return;
-	}
-	trap_FS_Read( buf, len, f );
-	buf[len] = '\0';
-	trap_FS_FCloseFile(f);
+	
 	// We parse the buffer, each IP follow it to the file in baninfo(if exists), if empty ignore and LINES +1(CUZ IT IS A LINE IN BANLIST!)
 	for(i=0;i<len;i++){
 		if(begin && buf[i] == '\n'){
@@ -1279,14 +1302,22 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 			}
 			if(adm){
 				// Boe!Man 1/24/11: Print the banline as well (for easy unbanning).
-				if(count <= 9){
-					trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7]   %s%s%s%s%s%s%s\n", count, ip, column1, name, column2, reason, column3, by)); // Boe!Man 9/16/10: Print ban.
-				//trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7]   %s%s%s%s%s\n", count, ip, column1, name, column2, reason)); // Boe!Man 9/16/10: Print ban.
 				
+				// Boe!Man 11/04/11: Put packet through to clients if char size would exceed 1000 and reset buf2.
+				if((strlen(buf2)+strlen(va("[^3%i^7]   %s%s%s%s%s%s%s\n", count, ip, column1, name, column2, reason, column3, by))) > 1000){
+					trap_SendServerCommand( adm-g_entities, va("print \"%s\"", buf2));
+					memset(buf2, 0, sizeof(buf2)); // Boe!Man 11/04/11: Properly empty the buffer.
+				}
+				
+				if(count <= 9){
+					Q_strcat(buf2, sizeof(buf2), va("[^3%i^7]   %s%s%s%s%s%s%s\n", count, ip, column1, name, column2, reason, column3, by));
+					//trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7]   %s%s%s%s%s%s%s\n", count, ip, column1, name, column2, reason, column3, by)); // Boe!Man 9/16/10: Print ban.
 				}else if(count > 9 && count < 100){
-					trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7]  %s%s%s%s%s%s%s\n", count, ip, column1, name, column2, reason, column3, by)); // Boe!Man 9/16/10: Print ban.
+					Q_strcat(buf2, sizeof(buf2), va("[^3%i^7]  %s%s%s%s%s%s%s\n", count, ip, column1, name, column2, reason, column3, by));
+					//trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7]  %s%s%s%s%s%s%s\n", count, ip, column1, name, column2, reason, column3, by)); // Boe!Man 9/16/10: Print ban.
 				}else{
-					trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7] %s%s%s%s%s%s%s\n", count, ip, column1, name, column2, reason, column3, by)); // Boe!Man 9/16/10: Print ban.
+					Q_strcat(buf2, sizeof(buf2), va("[^3%i^7] %s%s%s%s%s%s%s\n", count, ip, column1, name, column2, reason, column3, by));
+					//trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7] %s%s%s%s%s%s%s\n", count, ip, column1, name, column2, reason, column3, by)); // Boe!Man 9/16/10: Print ban.
 				}
 			}else{
 				if(count <= 9){
@@ -1303,7 +1334,15 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 		}
 	}
 	// End
-	trap_SendServerCommand( adm-g_entities, va("print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\""));
+	
+	// Boe!Man 11/04/11: Fix for RCON not properly showing footer of banlist.
+	if(adm){
+		trap_SendServerCommand( adm-g_entities, va("print \"%s\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\"", buf2)); // Boe!Man 11/04/11: Also send the last buf2 (that wasn't filled as a whole yet).
+		//trap_SendServerCommand( adm-g_entities, va("print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\""));
+	}else{
+		Com_Printf("\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n");
+	}
+	
 	return;
 }
 
@@ -1930,26 +1969,30 @@ void Boe_subnetBan (int argNum, gentity_t *adm, qboolean shortCmd){
 	}
 
 	if(Boe_AddToList(info, "users/subnetbans.txt", "Subnet ban", adm)){
-		if(adm && adm->client)	{
+		if(adm && adm->client){
 			if(!*reason){
 				trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"Subnetbanned by %s\"\n", idnum, adm->client->pers.netname));
 				Boe_adminLog ("Subnetban", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", ip, g_entities[idnum].client->pers.cleanName));}
 			else{
 				trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"Subnetbanned by %s for: %s\"\n", idnum, adm->client->pers.netname, reason));
-				trap_SendServerCommand( adm-g_entities, va("print \"%s was Subnetbanned by %s!\n\"", g_entities[idnum].client->pers.netname, adm->client->pers.netname));
+				//trap_SendServerCommand( adm-g_entities, va("print \"%s was Subnetbanned by %s!\n\"", g_entities[idnum].client->pers.netname, adm->client->pers.netname));
 				Boe_adminLog ("Subnetban", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", ip, g_entities[idnum].client->pers.cleanName));
 			}
+			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s was %ss%su%sb%sn%se%stbanned ^7by %s", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, adm->client->pers.netname));
 		}
 		else{
 			if(!*reason){
 				Boe_adminLog ("Subnetban", va("%s", "RCON"), va("%s\\%s", ip, g_entities[idnum].client->pers.cleanName));
 				trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"Subnetbanned!\"\n", idnum));
 			}else{
-				Com_Printf("%s was subnetbanned!\n", g_entities[idnum].client->pers.cleanName);
+				//Com_Printf("%s was subnetbanned!\n", g_entities[idnum].client->pers.cleanName);
 				Boe_adminLog ("Subnetban", va("%s", "RCON"), va("%s\\%s", ip, g_entities[idnum].client->pers.cleanName));
 				trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"Subnetbanned for: %s\"\n", idnum, reason));
 			}
+			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s was %ss%su%sb%sn%se%stbanned", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		}
+		// Assume success.
+		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 	}
 }
 
@@ -2073,9 +2116,9 @@ void Boe_Ban_f (int argNum, gentity_t *adm, qboolean shortCmd)
 			}
 			else{
 				trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"Banned by %s for: %s\"\n", idnum, adm->client->pers.netname, reason));
-				trap_SendServerCommand( adm-g_entities, va("print \"%s was banned by %s!\n\"", g_entities[idnum].client->pers.netname, adm->client->pers.netname));
 				Boe_adminLog ("Ban", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
 			}
+			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s was %sb%sa%sn%sn%se%sd ^7by %s", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, adm->client->pers.netname));
 		}
 		else{
 			if(!*reason){
@@ -2087,8 +2130,13 @@ void Boe_Ban_f (int argNum, gentity_t *adm, qboolean shortCmd)
 				Boe_adminLog ("Ban", va("%s", "RCON"), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
 				trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"Banned for: %s\"\n", idnum, reason));
 			}
+			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s was %sb%sa%sn%sn%se%sd", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		}
+		// Assume success.
+		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 	}
+	
+	return;
 }
 
 /*

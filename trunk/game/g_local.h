@@ -1040,7 +1040,7 @@ void		G_AddClientSpawn				( gentity_t* ent, team_t team );
 // g_svcmds.c
 //
 qboolean	ConsoleCommand					( void );
-void		G_ProcessIPBans					( void );
+//void		G_ProcessIPBans					( void );
 qboolean	G_FilterPacket					( char *from );
 
 //

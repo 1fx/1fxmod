@@ -1031,7 +1031,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	level.cagefightloaded = qfalse;
 	G_RegisterCvars();
 
-	G_ProcessIPBans();
+	//G_ProcessIPBans();
 
 	// Load the list of arenas
 	G_LoadArenas ( );

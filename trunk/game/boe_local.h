@@ -24,7 +24,7 @@
 
 // Boe!Man 7/12/11: Mod date.
 #ifdef Q3_VM
-#define INF_VERSION_DATE "9/20/11"
+#define INF_VERSION_DATE "11/05/11"
 #else
 #define YEAR ((((__DATE__ [9] - '0')) * 10 + (__DATE__ [10] - '0')))
 
@@ -559,7 +559,7 @@ void Henk_BanList(int argNum, gentity_t *adm, qboolean shortCmd);
 void Svcmd_EntityList_f(void);
 //void Svcmd_CancelVote_f(void);
 void Svcmd_AddIP_f(void);
-void Svcmd_RemoveIP_f(void);
+//void Svcmd_RemoveIP_f(void);
 void Svcmd_ExtendTime_f(void);
 qboolean IsClientMuted(gentity_t *ent, qboolean message);
 qboolean AddMutedClient(gentity_t *ent, int time);

@@ -102,7 +102,7 @@ static qboolean StringToFilter (char *s, ipFilter_t *f)
 =================
 UpdateIPBans
 =================
-*/
+
 static void UpdateIPBans (void)
 {
 	byte	b[4];
@@ -122,6 +122,7 @@ static void UpdateIPBans (void)
 
 	trap_Cvar_Set( "g_banIPs", iplist );
 }
+*/
 
 /*
 =================
@@ -162,7 +163,7 @@ qboolean G_FilterPacket (char *from)
 =================
 AddIP
 =================
-*/
+
 static void AddIP( char *str )
 {
 	int		i;
@@ -192,12 +193,13 @@ static void AddIP( char *str )
 
 	UpdateIPBans();
 }
+*/
 
 /*
 =================
 G_ProcessIPBans
 =================
-*/
+
 void G_ProcessIPBans(void)
 {
 	char *s, *t;
@@ -205,7 +207,7 @@ void G_ProcessIPBans(void)
 
 	Q_strncpyz( str, g_banIPs.string, sizeof(str) );
 
-	for (t = s = g_banIPs.string; *t; /* */ ) {
+	for (t = s = g_banIPs.string; *t; /* */ /* ) { // extra comment start - boe 11/04/11
 		s = strchr(s, ' ');
 		if (!s)
 			break;
@@ -216,25 +218,129 @@ void G_ProcessIPBans(void)
 		t = s;
 	}
 }
-
+*/
 
 /*
 =================
 Svcmd_AddIP_f
+Updated by Boe!Man - 10/31/11
+
+Usage: addip <ip-subnet> <name> <reason>
+
+arg 1: If three digits are found in the IP, and the length isn't > 15 or < 7, the IP is considered valid. If there are less dots found, it's considered a subnet (though len >= 7).
+arg 2: No name specified will result in N/A.
+arg 3: No reason specified will result in N/A.
+
+By will always (!) be "RCON".
 =================
 */
 void Svcmd_AddIP_f (void)
 {
-	char		str[MAX_TOKEN_CHARS];
+	char		arg[64];
+	char		banentry[512];
+	int			i = 0;
+	qboolean	subnet = qfalse;
+	// General info.
+	char		ip[MAX_IP];
+	char		name[64];
+	char		reason[64];
+	// Locals for arg char loop.
+	int			dots = 0;
+	// Locals for arg reason loop.
+	char *temp = "";
+	
 
 	if ( trap_Argc() < 2 ) {
-		Com_Printf("Usage:  addip <ip-mask>\n");
+		Com_Printf("Usage:  addip <IP/Subnet> <banned IP (client) name> <reason>\n");
 		return;
 	}
 
-	trap_Argv( 1, str, sizeof( str ) );
-
-	AddIP( str );
+	trap_Argv( 1, arg, sizeof(arg)); // IP or Subnet.
+	
+	// Boe!Man 10/31/11: Basic routine check on arg.
+	if(strlen(arg) < 7 || strlen(arg) > 16){
+		Com_Printf("Error: IP or Subnet doesn't seem to be valid. Length should be 7-16.\n");
+		return;
+	}
+	
+	for(i = 0; i<strlen(arg);i++){
+		if(!henk_isdigit(arg[i]) && arg[i] != 46){
+			Com_Printf("Error: IP or Subnet can only contain digits and separators (dots).\n");
+			return;
+		}else if(arg[i] == 46){ // 46 = dot.
+			dots++;
+			if(dots > 3){
+				Com_Printf("Error: Not a valid IP!\n");
+				return;
+			}
+		}
+	}
+	
+	// Boe!Man 10/31/11: Passed the check, now checking if we're dealing with a part of an IP (which we treat as subnet).
+	if(dots < 3 && dots >= 1){ // Dealing with subnet.
+		// Boe!Man 11/04/11: Minimum size should be 7 or else it'll be useless.
+		if(strlen(arg) < 7){
+			Com_Printf("Error: Minimum IP size for adding a subnet is 7.\n");
+			return;
+		}
+		Q_strncpyz(ip, arg, 7); // Subnet only takes 7.
+		subnet = qtrue;
+	}else if(dots != 3){ // Huh? This definitely isn't a valid IP.
+		Com_Printf("Error: Not a valid IP!\n");
+		return;
+	}else{ // Definitely an IP.
+		Q_strncpyz(ip, arg, sizeof(ip));
+	}
+	
+	// Boe!Man 10/31/11: Check if they supplied a name and reason, if not, fill them out with "N/A".
+	memset(arg, 0, sizeof(arg)); // Clean buffer.
+	trap_Argv( 2, arg, sizeof(arg)); // Name.
+	if(strlen(arg) > 0){
+		Q_strncpyz(name, arg, sizeof(name));
+	}else{
+		Q_strncpyz(name, "N/A", sizeof(name));
+	}
+	
+	memset(arg, 0, sizeof(arg)); // Clean buffer.
+	trap_Argv( 3, arg, sizeof(arg)); // Reason arg 0.
+	
+	// Boe!Man 11/05/11: Only go through with this if there's actually a reason, no need to waste useful resources.
+	if(strlen(arg) > 0){
+		temp = va("%s", arg);
+		for(i=0;i<=25;i++){
+			trap_Argv( 4+i, arg, sizeof(arg)); // Reason arg 0 + 1.
+			if(strlen(arg) > 0){
+				temp = va("%s %s", temp, arg); // we fill this array up with 25 arguments
+			}
+		}
+	}
+	
+	if(strlen(temp) > 0){ // Boe!Man 11/05/11
+		Q_strncpyz(reason, temp, sizeof(reason));
+	}else{
+		Q_strncpyz(reason, "N/A", sizeof(reason));
+	}
+	
+	// Boe!Man 10/31/11: Write to buffer with sprintf.
+	Com_sprintf (banentry, sizeof(banentry), "%s\\%s//%s||%s", ip, name, "RCON", reason);
+	
+	// Boe!Man 10/31/11: We're going to add it to the list now.
+	if(!subnet){ // Regular ban.
+		if(Boe_AddToList(banentry, g_banfile.string, "Ban", NULL)){
+			Com_Printf(va("Success adding [%s] to the banlist (name: %s, reason: %s).\n", ip, name, reason));
+		}else{
+			Com_Printf(va("Couldn't open file for writing while trying to add %s.\n", ip));
+		}
+	}else{
+		if(Boe_AddToList(banentry, "users/subnetbans.txt", "Subnet ban", NULL)){
+			Com_Printf(va("Success adding [%s] to the subnetbanlist (name: %s, reason: %s).\n", ip, name, reason));
+		}else{
+			Com_Printf(va("Couldn't open file for writing while trying to add %s.\n", ip));
+		}
+	}
+	
+	return;
+//	AddIP( str );
 
 }
 
@@ -242,7 +348,7 @@ void Svcmd_AddIP_f (void)
 =================
 Svcmd_RemoveIP_f
 =================
-*/
+
 void Svcmd_RemoveIP_f (void)
 {
 	ipFilter_t	f;
@@ -272,6 +378,7 @@ void Svcmd_RemoveIP_f (void)
 
 	Com_Printf ( "Didn't find %s.\n", str );
 }
+*/
 
 /*
 ===================
