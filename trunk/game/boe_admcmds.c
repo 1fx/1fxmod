@@ -2629,10 +2629,13 @@ void Boe_Broadcast(int argNum, gentity_t *adm, qboolean shortCmd){
 		trap_Argv(1, buffer, sizeof(buffer));
 		buffer2 = ConcatArgs1( 2 );
 		if(strlen(buffer2) < 1){
-		for(i=StartAfterCommand(va("%s", buffer));i<=strlen(buffer);i++){
-			buffer1[z] = buffer[i];
-			z+= 1;
-		}
+			// Boe!Man 12/11/11: If someone's trying to broadcast nothing, buffer start will be 0. Don't allow admins to broadcast the actual "!br" command.
+			if(StartAfterCommand(va("%s", buffer)) != 0){
+				for(i=StartAfterCommand(va("%s", buffer));i<=strlen(buffer);i++){
+					buffer1[z] = buffer[i];
+					z+= 1;
+				}
+			}
 		buffer1[z] = '\0';
 		}else{
 			strcpy(buffer1, buffer2);
