@@ -24,7 +24,7 @@
 
 // Boe!Man 7/12/11: Mod date.
 #ifdef Q3_VM
-#define INF_VERSION_DATE "11/05/11"
+#define INF_VERSION_DATE "12/11/11"
 #else
 #define YEAR ((((__DATE__ [9] - '0')) * 10 + (__DATE__ [10] - '0')))
 
@@ -168,6 +168,11 @@ NOTE: This log is primarily based around compMode.
 6 = G_ResetGametype (RT_NONE check).
 7 = Boe_calcMatchScores.
 8 = Boe_About.
+
+For '3' in the boe_log CVAR:
+NOTE: This log is ONLY used for temporary printf debug msgs (such as rev changes).
+1 = Mute check in TMI.
+
 
 */
 

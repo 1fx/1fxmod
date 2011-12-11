@@ -3196,9 +3196,12 @@ void ClientCommand( int clientNum ) {
 	if (Q_stricmp (cmd, "tell") == 0) 
 	{
 		// Boe!Man 1/30/10: We need to make sure the clients aren't muted.. And otherwise prevent them talking.
-		if(ent->client->sess.mute){
+		/*if(ent->client->sess.mute){
 		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You are currently muted by an Admin.\n\"") );
 		return;
+		}*/
+		if(IsClientMuted(ent, qtrue)){
+			return;
 		}
 		Cmd_Tell_f ( ent );
 		return;
@@ -3207,9 +3210,12 @@ void ClientCommand( int clientNum ) {
 	if (Q_stricmp (cmd, "vsay_team") == 0) 
 	{
 		// Boe!Man 1/30/10: We need to make sure the clients aren't muted.. And otherwise prevent them talking.
-		if(ent->client->sess.mute){
+		/*if(ent->client->sess.mute){
 		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You are currently muted by an Admin.\n\"") );
 		return;
+		}*/
+		if(IsClientMuted(ent, qtrue)){
+			return;
 		}
 		Cmd_Voice_f (ent, SAY_TEAM, qfalse, qfalse);
 		return;
@@ -3623,16 +3629,23 @@ void Boe_adm_f ( gentity_t *ent )
 	// Henk loop through my admin command array
 	
 	if (!Q_stricmp ( arg1, "chat" ) || !Q_stricmp ( arg1, "adminchat" )){
+		/*
 		if(ent->client->sess.mute){
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You are currently muted by admin.\n\"") );
+			return;
+		}*/
+		if(IsClientMuted(ent, qtrue)){
 			return;
 		}
 		Cmd_Say_f (ent, ADM_CHAT, qfalse);
 		return;
 	}
 	if (!Q_stricmp ( arg1, "talk" ) || !Q_stricmp ( arg1, "admintalk" )){
-		if(ent->client->sess.mute){
+		/*if(ent->client->sess.mute){
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You are currently muted by admin.\n\"") );
+			return;
+		}*/
+		if(IsClientMuted(ent, qtrue)){
 			return;
 		}
 		Cmd_Say_f (ent, ADM_TALK, qfalse);
@@ -3640,11 +3653,14 @@ void Boe_adm_f ( gentity_t *ent )
 	}
 
 	if (!Q_stricmp ( arg1, "clanchat" )){
-		if(ent->client->sess.mute){
+		/*if(ent->client->sess.mute){
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You are currently muted by admin.\n\"") );
 			return;
+		}*/
+		if(IsClientMuted(ent, qtrue)){
+			return;
 		}else if(!ent->client->sess.clanMember){
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You are no clan member\n\"") );
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You are no clan member.\n\"") );
 			return;
 		}
 		Cmd_Say_f (ent, CLAN_CHAT, qfalse);

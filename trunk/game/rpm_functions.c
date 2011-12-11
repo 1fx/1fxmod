@@ -842,6 +842,11 @@ void RPM_UpdateTMI(void)
 	}
 
 	level.lastTMIupdate = level.time;
+	
+	#ifdef _BOE_DBG
+	if (strstr(boe_log.string, "3"))
+		G_LogPrintf("1s\n");
+	#endif
 
 	entry[0] = 0;
 	infoString[0] = 0;
@@ -851,8 +856,9 @@ void RPM_UpdateTMI(void)
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
 		cl = &level.clients[level.sortedClients[i]];
-
-		IsClientMuted(&g_entities[cl->ps.clientNum], qfalse);
+		
+		//IsClientMuted(&g_entities[cl->ps.clientNum], qfalse);
+		IsClientMuted(&g_entities[level.sortedClients[i]], qfalse);
 		if (G_IsClientSpectating(cl))// || G_IsClientDead (cl)) 
 		{
 			continue;
@@ -937,6 +943,10 @@ void RPM_UpdateTMI(void)
 		else if(cl->sess.proClient > 4.0)
 			trap_SendServerCommand(level.sortedClients[i], va("tmi %i%s", numAdded, infoString));
 	}
+	#ifdef _BOE_DBG
+	if (strstr(boe_log.string, "3"))
+		G_LogPrintf("1e\n");
+	#endif
 }
 
 /*

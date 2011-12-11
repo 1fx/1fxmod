@@ -573,7 +573,7 @@ qboolean IsClientMuted(gentity_t *ent, qboolean message){
 					remainS = ((level.mutedClients[i].startTime+((level.mutedClients[i].time*60)*1000)-level.time)/1000);
 					if(message)
 					trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You were muted for %i minutes, %i:%02i minutes remaining.\n\"", level.mutedClients[i].time, remain, remainS-(remain*60)) );
-					ent->client->sess.mute = qtrue;
+					//ent->client->sess.mute = qtrue;
 					return qtrue;
 				}else{
 					trap_SendServerCommand(-1, va("print \"^3[Auto action] ^7%s has been unmuted.\n\"", ent->client->pers.netname) );
@@ -623,6 +623,8 @@ qboolean AddMutedClient(gentity_t *ent, int time){
 			level.mutedClients[i].used = qtrue;
 			level.mutedClients[i].time = time;
 			level.mutedClients[i].startTime = level.time;
+			// Boe!Man 12/11/11: Handle this globally.
+			ent->client->sess.mute = qtrue;
 			return qtrue;
 		}
 	}

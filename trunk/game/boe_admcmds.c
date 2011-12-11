@@ -2863,7 +2863,8 @@ void Boe_Mute (int argNum, gentity_t *adm, qboolean mute, qboolean shortCmd)
 			}
 			AddMutedClient(&g_entities[idnum], time); // fix me: slots of muted clients(20) could be full.. never happens i guess
 			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-			g_entities[idnum].client->sess.mute = qtrue;
+			// Boe!Man 12/11/11: AddMutedClient handles this now.
+			//g_entities[idnum].client->sess.mute = qtrue;
 			Com_sprintf( merged, sizeof(merged), "%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName);
 			if(adm && adm->client){
 				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7was %sm%su%st%se%sd by %s", level.time + 5000, g_entities[idnum].client->pers.netname, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, adm->client->pers.netname));
@@ -2889,7 +2890,8 @@ void Boe_Mute (int argNum, gentity_t *adm, qboolean mute, qboolean shortCmd)
 		else{
 			RemoveMutedClient(&g_entities[idnum]);
 			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-			g_entities[idnum].client->sess.mute = qfalse;
+			// Boe!Man 12/11/11: RemoveMutedClient does this as well.
+			//g_entities[idnum].client->sess.mute = qfalse;
 			if(adm && adm->client){
 				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7was %su%sn%sm%su%st%sed by %s", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, adm->client->pers.netname));
 				trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s ^7was unmuted by %s.\n\"", g_entities[idnum].client->pers.netname, adm->client->pers.netname));
