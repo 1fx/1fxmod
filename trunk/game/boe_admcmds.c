@@ -61,6 +61,19 @@ void Boe_CompMode(int argNum, gentity_t *ent, qboolean shotCmd){
 		}
 		return;
 	}
+	
+	// Boe!Man 1/3/12: Disable Compmode when a user is changing maps.
+	if(level.mapAction){
+        if(level.mapAction == 1 || level.mapAction == 3){
+            Com_Printf("^3[Info] ^7A map restart is already in progress.\n");
+        }else if(level.mapAction == 2 || level.mapAction == 4){
+            Com_Printf("^3[Info] ^7A map switch is already in progress.\n");
+        }else{
+            Com_Printf("^3[Info] ^7Something appears to be wrong. Please report to an developer using this error code: 2L\n");
+        }
+        return;
+    }
+    
 	if(g_compMode.integer == 0){
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sC%so%sm%sp%se%stition mode enabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
