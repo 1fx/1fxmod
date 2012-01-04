@@ -7,7 +7,7 @@
 // Boe!Man 3/30/10
 // Boe!Man 7/12/11: Mod version.
 #ifdef Q3_VM
-#define INF_VERSION_STRING "0.59t"
+#define INF_VERSION_STRING "0.59"
 #else
 
 #ifdef WIN32
@@ -24,7 +24,7 @@
 
 // Boe!Man 7/12/11: Mod date.
 #ifdef Q3_VM
-#define INF_VERSION_DATE "12/11/11"
+#define INF_VERSION_DATE "1/4/12"
 #else
 #define YEAR ((((__DATE__ [9] - '0')) * 10 + (__DATE__ [10] - '0')))
 
@@ -125,7 +125,8 @@
 // 0.59t		2nd Alpha						687			6/30/11
 // 0.59t		1st Beta						693			7/4/11		// Sent out to BETA group on 7/4/11
 // 0.59t		2nd Beta						710			7/15/11		// Sent out to BETA group on 7/15/11
-// 0.59t		1st Release Candidate			749			9/20/11		// Sent out to BETA group on 9/20/11
+// 0.59t		Release Candidate				749			9/20/11		// Sent out to BETA group on 9/20/11
+// 0.59			Release							759			1/4/12		// Sent out to BETA group on 1/4/12, to public on 1/5/12
 
 
 //===================================================================
