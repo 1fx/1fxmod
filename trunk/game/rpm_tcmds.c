@@ -59,6 +59,11 @@ void RPM_Tcmd ( gentity_t *ent )
 		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Competition Mode must be enabled to use team commands!\n\""));
 		return;
 	}
+	
+	if(ent->client->sess.team == TEAM_SPECTATOR){
+		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Access Denied: You are currently not in a valid team!\n\""));
+		return;
+	}
 
 	// Boe!Man 11/16/10: Updated /tcmd help screen.
 	if (!Q_stricmp ( arg1, "?" )||!Q_stricmp ( arg1, "" )){
@@ -369,7 +374,7 @@ void RPM_lockTeam(gentity_t *ent, qboolean referee, char *team)
 					if(current_gametype.value == GT_HS){
 						trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7has %su%sn%sl%so%sc%sked the %s", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, server_seekerteamprefix.string ) );
 					}else{
-						trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7has %su%sn%sl%so%sc%skedthe %s ^7team", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, server_blueteamprefix.string ) );
+						trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7has %su%sn%sl%so%sc%sked the %s ^7team", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, server_blueteamprefix.string ) );
 					}
 					if (ent->client->sess.admin > 1){
 						if(current_gametype.value == GT_HS){

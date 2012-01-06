@@ -7,13 +7,13 @@
 // Boe!Man 3/30/10
 // Boe!Man 7/12/11: Mod version.
 #ifdef Q3_VM
-#define INF_VERSION_STRING "0.59"
+#define INF_VERSION_STRING "0.60t"
 #else
 
 #ifdef WIN32
-#define INF_VERSION_STRING "0.59t-dll"
+#define INF_VERSION_STRING "0.60t-dll"
 #elif __linux__
-#define INF_VERSION_STRING "0.59t-so"
+#define INF_VERSION_STRING "0.60t-so"
 #endif
 
 #endif
@@ -24,7 +24,7 @@
 
 // Boe!Man 7/12/11: Mod date.
 #ifdef Q3_VM
-#define INF_VERSION_DATE "1/4/12"
+#define INF_VERSION_DATE "1/7/12"
 #else
 #define YEAR ((((__DATE__ [9] - '0')) * 10 + (__DATE__ [10] - '0')))
 
