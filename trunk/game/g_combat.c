@@ -421,10 +421,13 @@ void player_die(
 				// don't add score
 			}else{
 			if(current_gametype.value == GT_HS && self->client){
+				// Boe!Man 1/7/12: Also add the points to the kills with the special weapons.
 				if(self->client->ps.stats[STAT_WEAPONS] & ( 1 << WP_M4_ASSAULT_RIFLE )){
 					G_AddScore( attacker, 2 );
+					attacker->client->sess.kills++;
 				}else if(self->client->ps.stats[STAT_WEAPONS] & ( 1 << WP_RPG7_LAUNCHER )){
 					G_AddScore( attacker, 3 );
+					attacker->client->sess.kills += 2;
 				}else{
 					G_AddScore( attacker, 1 );
 				}
