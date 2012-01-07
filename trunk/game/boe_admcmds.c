@@ -3860,7 +3860,7 @@ void Henk_Gametype(int argNum, gentity_t *adm, qboolean shortCmd){
 			trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype h&s\n"));
 			strcpy(gametype, "h&s");
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sG%sa%sm%se%st%sype ^7Hide&Seek!", level.time + 3500, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-		}else if(strstr(lwrP, "h&z")){
+		}else if(strstr(lwrP, "h&z") || strstr(lwrP, "zombies")){
 			trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype h&z\n"));
 			strcpy(gametype, "h&z");
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sG%sa%sm%se%st%sype ^7Zombies!", level.time + 3500, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
