@@ -52,12 +52,12 @@ Boe_CompMode
 */
 
 void Boe_CompMode(int argNum, gentity_t *ent, qboolean shotCmd){
-	// Boe!Man 1/19/11: Disable Compmode in H&S.
-	if(current_gametype.value == GT_HS){
+	// Boe!Man 1/19/11: Disable Compmode in H&S. -- Update 1/8/12: And of course in H&Z.
+	if(current_gametype.value == GT_HS || current_gametype.value == GT_HZ){
 		if(ent && ent->client){
-			trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7You cannot enable Competition Mode in Hide&Seek.\n\""));
+			trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7You cannot enable Competition Mode in this gametype.\n\""));
 		}else{
-			Com_Printf("^7You cannot enable Competition Mode in Hide&Seek.\n");
+			Com_Printf("^7You cannot enable Competition Mode in this gametype.\n");
 		}
 		return;
 	}
