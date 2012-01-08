@@ -654,6 +654,8 @@ void nolower(gentity_t *ent)
 		level.autoNoLowerUpdateTime = level.time + 10000;
 	}
 	level.nolower1 = qtrue;
+	// Boe!Man 1/8/12: nolower2 is qtrue (since a nolower entity has been found).
+	level.nolower2 = qtrue;
 }
 
 /*QUAKED fx_play_effect (.2 .5 .8) (-8 -8 -8) (8 8 8) START_OFF

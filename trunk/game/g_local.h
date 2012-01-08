@@ -670,7 +670,7 @@ typedef struct
 	char			mapname[64];
 	vec3_t			nolower; // location of nolower
 	qboolean		nolower1; // true for nolower
-	qboolean		nolower2; // true for nolower
+	qboolean		nolower2; // Boe!Man 1/8/12: qtrue if 'nolower' entity has been found.
 	// Henk 06/04/10 -> Add TMI for RPM scoreboard compatiblity
 	int				lastTMIupdate;
 

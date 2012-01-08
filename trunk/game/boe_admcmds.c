@@ -474,6 +474,15 @@ void Boe_NoLower(int argNum, gentity_t *ent, qboolean shortCmd){
 		}
 		return;
 	}
+	// Boe!Man 1/8/12: If people want to use nolower but if there's no such entity found, inform the user.
+	if(!level.nolower2){
+		if(ent && ent->client){
+			trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7No entity found to toggle nolower.\n\""));
+		}else{
+			Com_Printf("No entity found to toggle nolower.\n");
+		}
+		return;
+	}
 
 	if(level.nolower1 == qtrue){
 		level.nolower1 = qfalse;
