@@ -2116,19 +2116,27 @@ void Boe_Ban_f (int argNum, gentity_t *adm, qboolean shortCmd)
 		trap_Argv( argNum+1, arg, sizeof( arg ) );
 		strcpy(reason, arg);
 	}
-		if (adm && adm->client){
-			Com_sprintf (banid, sizeof(banid), "%s\\%s//%s||%s",
-			g_entities[idnum].client->pers.ip,
-			g_entities[idnum].client->pers.cleanName,
-			adm->client->pers.cleanName,
-			reason);
-		}else{
-			Com_sprintf (banid, sizeof(banid), "%s\\%s//%s||%s",
-			g_entities[idnum].client->pers.ip,
-			g_entities[idnum].client->pers.cleanName,
-			"RCON",
-			reason);
+	
+	// Boe!Man 1/9/12: Check for unsupported characters in the reason and replace them.
+	for(i=0;i<strlen(reason);i++){
+		if(reason[i] == 92){ // Boe!Man 1/9/12: Backslash (92 on ASCII table), unsupported character in SoF2. 
+			reason[i] = 32; // If found, convert to space (32 on ASCII table).
 		}
+	}
+	
+	if (adm && adm->client){
+		Com_sprintf (banid, sizeof(banid), "%s\\%s//%s||%s",
+		g_entities[idnum].client->pers.ip,
+		g_entities[idnum].client->pers.cleanName,
+		adm->client->pers.cleanName,
+		reason);
+	}else{
+		Com_sprintf (banid, sizeof(banid), "%s\\%s//%s||%s",
+		g_entities[idnum].client->pers.ip,
+		g_entities[idnum].client->pers.cleanName,
+		"RCON",
+		reason);
+	}
 
 	if(Boe_AddToList(banid, g_banfile.string, "Ban", adm)){
 		if(adm && adm->client)	{
