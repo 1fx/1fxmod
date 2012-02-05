@@ -1636,7 +1636,7 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 	fileHandle_t	f;
 	int len, CurrentLine = 0, StartPos = 0, EndPos = -1, i;
 	qboolean begin = qtrue;
-	char buf[10000];
+	char buf[15000]; // Boe!Man 2/5/12: Max buf 15000 so unban gets compatible with large files.
 	char asd[128] = "";
 	char last[128];
 	qboolean done = qfalse;
@@ -1648,8 +1648,12 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 		Com_Printf("Error while opening %s\n", file);
 		return;
 	}
-	if(len >= 9999){
-		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7List is too large.\n\""));
+	if(len >= 15000){
+		if(ent && ent->client){
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7List is too large.\n\""));
+		}else{
+			Com_Printf("List is too large.\n");
+		}
 		return;
 	}
 	trap_FS_Read( buf, len, f );
@@ -1728,34 +1732,47 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 				done = qtrue;
 				strncpy(last, buf+StartPos, EndPos-StartPos); 
 				last[(EndPos-StartPos)-1] = '\0';
-				Com_Printf("Final: %s\n", last);
+				//Com_Printf("Final: %s\n", last);
 			}
 		}
 	}
 	trap_FS_FCloseFile(f);
 	if(done && strlen(last) >= 1){ // && !strstr(newbuf, last)
 	// Clear ban info
-	if(ban){
-	// End
-		// Boe!Man 9/16/11: For the ban log/message it's healthier to delete the newline so it won't mess up messaging.
-		last[strlen(last)-1] = '\0';
-		if(subnet){
-			if(ent && ent->client)
-				Boe_adminLog ("Subnet Unban", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), va("%s", last));
-			else 
-				Boe_adminLog ("Subnet Unban", "RCON", va("%s", last));
+		if(ban){
+		// End
+			// Boe!Man 9/16/11: For the ban log/message it's healthier to delete the newline so it won't mess up messaging.
+			last[strlen(last)-1] = '\0';
+			if(subnet){
+				if(ent && ent->client)
+					Boe_adminLog ("Subnet Unban", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), va("%s", last));
+				else 
+					Boe_adminLog ("Subnet Unban", "RCON", va("%s", last));
+			}else{
+				if(ent && ent->client)
+					Boe_adminLog ("Unban", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), va("%s", last));
+				else 
+					Boe_adminLog ("Unban", "RCON", va("%s", last));
+			}
+			if(ent && ent->client){
+				trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7%s has been Unbanned.\n\"", last));
+			}else{
+				Com_Printf("%s has been Unbanned.\n", last);
+			}
+		//return qtrue;
 		}else{
-			if(ent && ent->client)
-				Boe_adminLog ("Unban", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), va("%s", last));
-			else 
-				Boe_adminLog ("Unban", "RCON", va("%s", last));
+			if(ent && ent->client){
+				trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7%s has been removed from the list.\n\"", last));
+			}else{
+				Com_Printf("%s has been removed from the list.\n", last);
+			}
 		}
-		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7%s has been Unbanned.\n\"", last));
-	//return qtrue;
-	}else
-		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7%s has been removed from the list.\n\"", last));
 	}else{
-		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Could not find line %i.\n\"", line));
+		if(ent && ent->client){
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Could not find line %i.\n\"", line));
+		}else{
+			Com_Printf("Could not find line %i.\n", line);
+		}
 	}
 }
 
