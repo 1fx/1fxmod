@@ -3971,28 +3971,27 @@ void Henk_Map(int argNum, gentity_t *adm, qboolean shortCmd){
 	trap_Argv( argNum, arg, sizeof( arg ) );
 	trap_Argv( argNum-1, arg0, sizeof( arg0 ) );
 
-	// Boe!Man 4/6/11: Check if the client wishes to load an alternative ent.
-	if(shortCmd){
-		if(strstr(Q_strlwr(arg), "!altmap")){ // Boe!Man 6/10/11: The server will load a normal map when a player capitalizes one letter.. Fix for that.
-			trap_Cvar_Set( "g_alternateMap", "1");
-			trap_Cvar_Update ( &g_alternateMap );
-			altAction = 1; // alt
-		}else if(strstr(Q_strlwr(arg), "!devmap")){ // Boe!Man 6/10/11: Add support for dev maps.
-			altAction = 2; // dev
-		}
-	}else{
-		if(strstr(Q_strlwr(arg0), "altmap")){
-			trap_Cvar_Set( "g_alternateMap", "1");
-			trap_Cvar_Update ( &g_alternateMap );
-			altAction = 1;
-		}else if(strstr(Q_strlwr(arg0), "devmap")){
-			altAction = 2;
-		}
-	}
-
 	// Boe!Man 2/26/11: Pre-check if the map switch is already in progress. No need to waste resources.
 	if(level.mapSwitch == qfalse){
-	// Boe!Man 2/26/11: We get the gametype parameter. Also added support for uppercase arguments.
+		// Boe!Man 4/6/11: Check if the client wishes to load an alternative ent.
+		if(shortCmd){
+			if(strstr(Q_strlwr(arg), "!altmap")){ // Boe!Man 6/10/11: The server will load a normal map when a player capitalizes one letter.. Fix for that.
+				trap_Cvar_Set( "g_alternateMap", "1");
+				trap_Cvar_Update ( &g_alternateMap );
+				altAction = 1; // alt
+			}else if(strstr(Q_strlwr(arg), "!devmap")){ // Boe!Man 6/10/11: Add support for dev maps.
+				altAction = 2; // dev
+			}
+		}else{
+			if(strstr(Q_strlwr(arg0), "altmap")){
+				trap_Cvar_Set( "g_alternateMap", "1");
+				trap_Cvar_Update ( &g_alternateMap );
+				altAction = 1;
+			}else if(strstr(Q_strlwr(arg0), "devmap")){
+				altAction = 2;
+			}
+		}
+		// Boe!Man 2/26/11: We get the gametype parameter. Also added support for uppercase arguments.
 		if(strlen(arg) >= 3){
 			if(shortCmd){
 				gt = Q_strlwr(GetReason());
