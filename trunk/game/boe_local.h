@@ -127,6 +127,7 @@
 // 0.59t		2nd Beta						710			7/15/11		// Sent out to BETA group on 7/15/11
 // 0.59t		Release Candidate				749			9/20/11		// Sent out to BETA group on 9/20/11
 // 0.59			Release							759			1/4/12		// Sent out to BETA group on 1/4/12, to public on 1/5/12
+// 0.60t		1st Alpha						770			4/21/12
 
 
 //===================================================================
