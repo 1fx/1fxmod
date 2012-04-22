@@ -116,7 +116,9 @@ typedef enum
 
 	GTEV_CLIENT_DEATH,			// void ( int clientID, int clientTeam, int killerID, int killerTeam );
 
-	GTEV_MAX
+	GTEV_MAX,
+	
+	GTEV_PAUSE					// Boe!Man 4/22/12: Send this when the game's paused. Only CTF uses this at the moment.
 
 } gametypeEvent_t;
 

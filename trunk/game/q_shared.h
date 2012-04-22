@@ -1845,7 +1845,4 @@ typedef enum
 
 } ForceReload_e;
 
-// Boe!Man 4/22/12: Missing prototype for calling Boe_CrashLog in q_shared.c
-void	QDECL Boe_crashLog	(const char *text);
-
 #endif	// __Q_SHARED_H

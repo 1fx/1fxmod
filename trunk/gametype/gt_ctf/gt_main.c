@@ -167,46 +167,49 @@ void GT_RunFrame ( int time )
 	char msg[20];
 	gametype.time = time;
 
-	// See if we need to return the red flag yet
-	if ( gametype.redFlagDropTime && time - gametype.redFlagDropTime > gt_flagReturnTime.integer * 1000 )
-	{
-		trap_Cmd_ResetItem ( ITEM_REDFLAG );
-		trap_Cvar_VariableStringBuffer ( "server_redteamprefix", msg, 19 );
-		trap_Cvar_VariableStringBuffer ( "server_color1", color1, 4 );
-		trap_Cvar_VariableStringBuffer ( "server_color2", color2, 4 );
-		trap_Cvar_VariableStringBuffer ( "server_color3", color3, 4 );
-		trap_Cvar_VariableStringBuffer ( "server_color4", color4, 4 );
-		trap_Cvar_VariableStringBuffer ( "server_color5", color5, 4 );
-		trap_Cvar_VariableStringBuffer ( "server_color6", color6, 4 );
-		trap_Cmd_TextMessage ( -1, va("@The %s ^7Flag has %sr%se%st%su%sr%sned!", msg, color1, color2, color3, color4, color5, color6 ));
-		trap_Cmd_TextMessage( -1, va("^3[CTF] ^7The Red Flag has returned\n\""));
-		trap_Cmd_StartGlobalSound ( gametype.flagReturnSound );
-		gametype.redFlagDropTime = 0;
-		//trap_Cmd_ResetItem ( ITEM_REDFLAG );
-		//trap_Cmd_TextMessage ( -1, "The Red Flag has returned!" );
-		//trap_Cmd_StartGlobalSound ( gametype.flagReturnSound );
-		//gametype.redFlagDropTime = 0;
-	}
+	// Boe!Man 4/22/12: Only check if flags need to be returned when the game is NOT paused.
+	if(!gametype.paused){
+		// See if we need to return the red flag yet
+		if ( gametype.redFlagDropTime && time - gametype.redFlagDropTime > gt_flagReturnTime.integer * 1000 )
+		{
+			trap_Cmd_ResetItem ( ITEM_REDFLAG );
+			trap_Cvar_VariableStringBuffer ( "server_redteamprefix", msg, 19 );
+			trap_Cvar_VariableStringBuffer ( "server_color1", color1, 4 );
+			trap_Cvar_VariableStringBuffer ( "server_color2", color2, 4 );
+			trap_Cvar_VariableStringBuffer ( "server_color3", color3, 4 );
+			trap_Cvar_VariableStringBuffer ( "server_color4", color4, 4 );
+			trap_Cvar_VariableStringBuffer ( "server_color5", color5, 4 );
+			trap_Cvar_VariableStringBuffer ( "server_color6", color6, 4 );
+			trap_Cmd_TextMessage ( -1, va("@The %s ^7Flag has %sr%se%st%su%sr%sned!", msg, color1, color2, color3, color4, color5, color6 ));
+			trap_Cmd_TextMessage( -1, va("^3[CTF] ^7The Red Flag has returned\n\""));
+			trap_Cmd_StartGlobalSound ( gametype.flagReturnSound );
+			gametype.redFlagDropTime = 0;
+			//trap_Cmd_ResetItem ( ITEM_REDFLAG );
+			//trap_Cmd_TextMessage ( -1, "The Red Flag has returned!" );
+			//trap_Cmd_StartGlobalSound ( gametype.flagReturnSound );
+			//gametype.redFlagDropTime = 0;
+		}
 
-	// See if we need to return the blue flag yet
-	if ( gametype.blueFlagDropTime && time - gametype.blueFlagDropTime > gt_flagReturnTime.integer * 1000 )
-	{
-		trap_Cmd_ResetItem ( ITEM_BLUEFLAG );
-		trap_Cvar_VariableStringBuffer ( "server_blueteamprefix", msg, 19 );
-		trap_Cvar_VariableStringBuffer ( "server_color1", color1, 4 );
-		trap_Cvar_VariableStringBuffer ( "server_color2", color2, 4 );
-		trap_Cvar_VariableStringBuffer ( "server_color3", color3, 4 );
-		trap_Cvar_VariableStringBuffer ( "server_color4", color4, 4 );
-		trap_Cvar_VariableStringBuffer ( "server_color5", color5, 4 );
-		trap_Cvar_VariableStringBuffer ( "server_color6", color6, 4 );
-		trap_Cmd_TextMessage ( -1, va("@The %s ^7Flag has %sr%se%st%su%sr%sned!", msg, color1, color2, color3, color4, color5, color6 ));
-		trap_Cmd_TextMessage( -1, va("^3[CTF] ^7The Blue Flag has returned\n\""));
-		trap_Cmd_StartGlobalSound ( gametype.flagReturnSound );
-		gametype.blueFlagDropTime = 0;
-		//trap_Cmd_ResetItem ( ITEM_BLUEFLAG );
-		//trap_Cmd_TextMessage ( -1, "The Blue Flag has returned!" );
-		//trap_Cmd_StartGlobalSound ( gametype.flagReturnSound );
-		//gametype.blueFlagDropTime = 0;
+		// See if we need to return the blue flag yet
+		if ( gametype.blueFlagDropTime && time - gametype.blueFlagDropTime > gt_flagReturnTime.integer * 1000 )
+		{
+			trap_Cmd_ResetItem ( ITEM_BLUEFLAG );
+			trap_Cvar_VariableStringBuffer ( "server_blueteamprefix", msg, 19 );
+			trap_Cvar_VariableStringBuffer ( "server_color1", color1, 4 );
+			trap_Cvar_VariableStringBuffer ( "server_color2", color2, 4 );
+			trap_Cvar_VariableStringBuffer ( "server_color3", color3, 4 );
+			trap_Cvar_VariableStringBuffer ( "server_color4", color4, 4 );
+			trap_Cvar_VariableStringBuffer ( "server_color5", color5, 4 );
+			trap_Cvar_VariableStringBuffer ( "server_color6", color6, 4 );
+			trap_Cmd_TextMessage ( -1, va("@The %s ^7Flag has %sr%se%st%su%sr%sned!", msg, color1, color2, color3, color4, color5, color6 ));
+			trap_Cmd_TextMessage( -1, va("^3[CTF] ^7The Blue Flag has returned\n\""));
+			trap_Cmd_StartGlobalSound ( gametype.flagReturnSound );
+			gametype.blueFlagDropTime = 0;
+			//trap_Cmd_ResetItem ( ITEM_BLUEFLAG );
+			//trap_Cmd_TextMessage ( -1, "The Blue Flag has returned!" );
+			//trap_Cmd_StartGlobalSound ( gametype.flagReturnSound );
+			//gametype.blueFlagDropTime = 0;
+		}
 	}
 
 	GT_UpdateCvars ( );
@@ -229,6 +232,8 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 	char color6[5];
 	char msg[20];
 	char clientname[MAX_QPATH];
+	int diff;
+	
 	switch ( cmd )
 	{
 		case GTEV_ITEM_DEFEND:
@@ -237,6 +242,28 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 				trap_Cmd_AddClientScore ( arg1, 5 );
 			}
 			return 0;
+		
+		// Boe!Man 4/22/12: Pause code.	
+		case GTEV_PAUSE:
+			if(arg0){ // 1 so pause the gametype as well.
+				gametype.paused = 1;
+				gametype.pauseTime = time;
+			}else{
+				diff = time - gametype.pauseTime;
+				// Check if there are any flags dropped.
+				if(gametype.blueFlagDropTime){ // Blue flag was dropped before the pause.
+					gametype.blueFlagDropTime += diff;
+				}
+				if(gametype.redFlagDropTime){ // NOT else if because BOTH flags can be dropped..
+					gametype.redFlagDropTime += diff;
+				}
+				
+				// Reset timer.
+				gametype.paused = 0;
+				gametype.pauseTime = 0;
+			}
+			return 0;
+		// End Boe!Man 4/22/12
 
 		case GTEV_ITEM_STUCK:
 			switch ( arg0 )

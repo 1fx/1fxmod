@@ -74,6 +74,11 @@ void RPM_Pause (gentity_t *adm)
 	}
 
 	level.pause = 6;
+	
+	// Boe!Man 4/22/12: When in CTF, flags should be freezed as well. Let the gt know this by sending this command.
+	if(current_gametype.value == GT_CTF){
+		trap_GT_SendEvent ( GTEV_PAUSE, level.time, 1, 0, 0, 0, 0);
+	}
 
 	//trap_SetConfigstring( CS_LEVEL_START_TIME, va("%i", level.startTime ) );
 	//trap_SetConfigstring ( CS_GAMETYPE_TIMER, va("%i", level.gametypeRoundTime) );
@@ -145,6 +150,11 @@ void RPM_Unpause (gentity_t *adm)
 		if(!level.pause)
 		{
 			level.unpausetime = 0;
+			
+			// Boe!Man 4/22/12: When in CTF, flags should be unfreezed as well. Let the gt know this by sending this command.
+			if(current_gametype.value == GT_CTF){
+				trap_GT_SendEvent ( GTEV_PAUSE, level.time, 0, 0, 0, 0, 0);
+			}
 
 			///RxCxW - 08.30.06 - 03:06pm #reset clients (scoreboard) display time
 			trap_SetConfigstring( CS_LEVEL_START_TIME, va("%i", level.startTime ) );

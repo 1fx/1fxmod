@@ -19,6 +19,11 @@ typedef struct gametypeLocals_s
 
 	int		redCaptureEffect;
 	int		blueCaptureEffect;
+	
+	// Boe!Man 4/22/12: We use this for pause stuff.
+	int			pauseTime;		// Restore time.
+	int			paused;			// 1 when paused.
+	
 
 } gametypeLocals_t;
 

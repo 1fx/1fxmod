@@ -1268,8 +1268,6 @@ void Info_SetValueForKey( char *s, const char *key, const char *value ) {
 	if (strlen(newi) + strlen(s) >= MAX_INFO_STRING)
 	{
 		Com_Printf ("Infostring length exceeded: '%s' + '%s'. Please report to a dev.\n", newi, s);
-		/* NOTE (ajay#3#): Debug info, remove later. */
-		Boe_crashLog(va("Infostring length exceeded: '%s' + '%s'. Please report to a dev.\n", newi, s)); 
 	}
 
 	strcat (newi, s);
