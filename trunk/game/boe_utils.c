@@ -10,7 +10,7 @@
 RPM_WeaponMod
 ================
 */
-void RPM_WeaponMod ()
+void RPM_WeaponMod (void)
 {
 	void			*GP2, *group, *attackType;
 	char			name[64], tmpStr[64];
