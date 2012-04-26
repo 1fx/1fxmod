@@ -721,7 +721,7 @@ qboolean ClientInactivityTimer( gclient_t *client ) {
 	//Ryan, fixed so if we pause then unpause the incativity doesnt
 	//drop everyone, also admins can't be dropped
 	else if ( level.pause ||
-		client->sess.admin ||
+		//client->sess.admin || // Boe!Man 4/26/12: No-one can think of a situation where Admins shouldn't be forceteamed, so I changed this.
 		client->pers.cmd.forwardmove || 
 		client->pers.cmd.rightmove || 
 		client->pers.cmd.upmove ||
