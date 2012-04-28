@@ -1267,7 +1267,12 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 			if(buf[lcount+2] != '\n'){
 			for(r=lcount;r<strlen(buf);r++){
 				if(buf[r] == '\n'){
-					lcount = r-1;
+					if(buf[r-1] == 13){ // Boe!Man 4/28/12: Carriage return. For some reason, this ALWAYS messes up under Windows (cause of the two line end modes, CR+LF). Cut the CR as well.
+						lcount = r-2;
+					}else{ // Only LF seems to be used. Default to value -1.
+						lcount = r-1;
+					}
+					// End Boe!Man 4/28/12
 					break;
 				}else
 					lcount = r+1;
