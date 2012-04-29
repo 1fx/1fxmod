@@ -1454,8 +1454,15 @@ void Boe_Add_bAdmin_f(int argNum, gentity_t *adm, qboolean shortCmd)
 
 	//Com_Printf("Arg: %s\n", arg);
 	if(!Q_stricmp(arg, "pass")){
-		AddToPasswordList(&g_entities[idnum], 2);
-		g_entities[idnum].client->sess.admin = 2;
+		if(g_passwordAdmins.integer){
+			AddToPasswordList(&g_entities[idnum], 2);
+			g_entities[idnum].client->sess.admin = 2;
+		}else{
+			if(adm)
+			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Access denied: No password logins allowed by the server!\n\""));
+			else
+			Com_Printf("Access denied: No password logins allowed by the server!\n");
+		}
 		return;
 	}
 
@@ -1520,8 +1527,15 @@ void Boe_Add_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd)
 	}
 
 	if(!Q_stricmp(arg, "pass")){
-		AddToPasswordList(&g_entities[idnum], 3);
-		g_entities[idnum].client->sess.admin = 3;
+		if(g_passwordAdmins.integer){
+			AddToPasswordList(&g_entities[idnum], 3);
+			g_entities[idnum].client->sess.admin = 3;
+		}else{
+			if(adm)
+			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Access denied: No password logins allowed by the server!\n\""));
+			else
+			Com_Printf("Access denied: No password logins allowed by the server!\n");
+		}
 		return;
 	}
 
@@ -1587,8 +1601,15 @@ void Boe_Add_sAdmin_f(int argNum, gentity_t *adm, qboolean shortCmd)
 	}
 
 	if(!Q_stricmp(arg, "pass")){
-		AddToPasswordList(&g_entities[idnum], 4);
-		g_entities[idnum].client->sess.admin = 4;
+		if(g_passwordAdmins.integer){
+			AddToPasswordList(&g_entities[idnum], 4);
+			g_entities[idnum].client->sess.admin = 4;
+		}else{
+			if(adm)
+			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Access denied: No password logins allowed by the server!\n\""));
+			else
+			Com_Printf("Access denied: No password logins allowed by the server!\n");
+		}
 		return;
 	}
 
@@ -3665,6 +3686,15 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 		trap_Argv( argNum, arg, sizeof( arg ) );
 	if(strstr(arg, "pass"))
 		passwordlist = qtrue;
+	
+	// Boe!Man 4/29/12: If the password login system isn't allowed by the server, by all means, also disallow the showing of the list.
+	if(passwordlist && !g_passwordAdmins.integer){
+		if(adm)
+		trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Access denied: No password logins allowed by the server!\n\""));
+		else
+		Com_Printf("Access denied: No password logins allowed by the server!\n");
+		return;
+	}
 
 	memset(buffer, 0, sizeof(buffer));
 	//wrapper for interface
