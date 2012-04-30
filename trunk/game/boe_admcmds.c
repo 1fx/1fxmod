@@ -2073,6 +2073,9 @@ void Boe_Remove_Admin_f (int argNum, gentity_t *adm, qboolean shortCmd)
 	int				idnum;
 	char			*id;
 	qboolean		admin = qfalse;
+	// Boe!Man 4/30/12: Also create a passID (with only the first octet).
+	char			passID[MAX_BOE_ID];
+	char			*passID2 = passID;
 
 #ifdef _BOE_DBG
 	if (strstr(boe_log.string, "1"))
@@ -2096,10 +2099,15 @@ void Boe_Remove_Admin_f (int argNum, gentity_t *adm, qboolean shortCmd)
 		admin = qtrue;
 	}
 	
+	// Boe!Man 4/30/12: Write the pass ID, with the name + first 3 chars of the IP (which should represent the first octet).
+	Com_sprintf(passID2, MAX_BOE_ID, "%s\\%c%c%c", g_entities[idnum].client->pers.cleanName, g_entities[idnum].client->pers.ip[0], g_entities[idnum].client->pers.ip[1], g_entities[idnum].client->pers.ip[2]);
+	
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 	g_entities[idnum].client->sess.admin = 0;
-	// Boe!Man 1/6/10: Fix, succesfully writes the Admin out of the file. -- Update 8/10/11: Do display the broadcast even if he's not written out of the file. We already verified he was an Admin.
-	if(Boe_Remove_from_list(id, g_adminfile.string, "admin", NULL, qfalse, qtrue, qfalse) || admin  == qtrue){
+	// Boe!Man 1/6/10: Fix, succesfully writes the Admin out of the file.
+	// Update 8/10/11: Do display the broadcast even if he's not written out of the file. We already verified he was an Admin.
+	// Update 4/30/12: Added the password Admin check. First we check if the user is on the regular file, then we check for the pass file. If all fails, just display the broadcast.
+	if(Boe_Remove_from_list(id, g_adminfile.string, "admin", NULL, qfalse, qtrue, qfalse) || Boe_Remove_from_list(passID2, g_adminPassFile.string, "admin", NULL, qfalse, qtrue, qfalse) || admin  == qtrue){
 		if(adm && adm->client){
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7is no longer an %sA%sd%sm%si%sn", level.time + 5000, g_entities[idnum].client->pers.netname, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s ^7was removed as Admin by %s.\n\"", g_entities[idnum].client->pers.netname,adm->client->pers.netname));
