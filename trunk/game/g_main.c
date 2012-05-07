@@ -2915,8 +2915,13 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 		}else{
 			if(hideSeek_Extra.string[BRIEFCASE] == '1'){
 				spawnPoint = G_SelectRandomSpawnPoint ( TEAM_BLUE );
-				G_RealSpawnGametypeItem1 ( BG_FindGametypeItem (0), spawnPoint->origin, spawnPoint->angles, qtrue );			
-				trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Not enough seekers: Briefcase was spawned in the blue base.\n\""));
+				// Boe!Man 5/7/12: Fixing crash issue. The briefcase MUST have a location to spawn.
+				if(spawnPoint){
+					G_RealSpawnGametypeItem1 ( BG_FindGametypeItem (0), spawnPoint->origin, spawnPoint->angles, qtrue );			
+					trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Not enough seekers: Briefcase was spawned in the blue base.\n\""));
+				}else{
+					trap_SendServerCommand(-1, va("print\"^3[H&S] ^7The briefcase could not be spawned.\n\""));
+				}
 				//trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Not enough seekers for briefcase to spawn.\n\""));
 			}
 		}
@@ -2943,13 +2948,18 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 			// End
 		}else if(rpgwinner >= 100 && m4winner < 100){
 				spawnPoint = G_SelectRandomSpawnPoint ( TEAM_BLUE );
-				dropped = G_DropItem2(spawnPoint->origin, spawnPoint->angles, BG_FindWeaponItem ( WP_RPG7_LAUNCHER ));
-				dropped->count  = 1&0xFF;
-				dropped->count += ((2<<8) & 0xFF00);
-				Com_sprintf(level.RPGloc, sizeof(level.RPGloc), "%s", "blue base");
-				level.RPGTime = level.time+1000;
-				level.RPGent = dropped->s.number;
-				trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Not enough hiders connected: RPG spawned in blue base\n\""));
+				// Boe!Man 5/7/12: Fixing crash issue. The RPG MUST have a location to spawn.
+				if(spawnPoint){
+					dropped = G_DropItem2(spawnPoint->origin, spawnPoint->angles, BG_FindWeaponItem ( WP_RPG7_LAUNCHER ));
+					dropped->count  = 1&0xFF;
+					dropped->count += ((2<<8) & 0xFF00);
+					Com_sprintf(level.RPGloc, sizeof(level.RPGloc), "%s", "blue base");
+					level.RPGTime = level.time+1000;
+					level.RPGent = dropped->s.number;
+					trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Not enough hiders connected: RPG spawned in blue base\n\""));
+				}else{
+					trap_SendServerCommand(-1, va("print\"^3[H&S] ^7The RPG could not be spawned.\n\""));
+				}
 		}else{ // Henk 26/01/10 -> Drop RPG at red spawn.
 				for(i=0;i<=200;i++){
 					random = irand(0, level.numConnectedClients);
@@ -3034,15 +3044,20 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 			}
 		}else{
 			spawnPoint = G_SelectRandomSpawnPoint ( TEAM_BLUE );
-			dropped = G_DropItem2(spawnPoint->origin, spawnPoint->angles, BG_FindWeaponItem ( WP_M4_ASSAULT_RIFLE ));
-			dropped->count  = 1&0xFF;
-			dropped->count += ((2<<8) & 0xFF00);
-			dropped->count += ((1 << 16) & 0xFF0000 );
-			dropped->count += ((2 << 24) & 0xFF000000 );
-			Com_sprintf(level.M4loc, sizeof(level.M4loc), "%s", "blue base");
-			level.M4Time = level.time+1000;
-			level.M4ent = dropped->s.number;
-			trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Not enough hiders connected: M4 spawned in blue base\n\""));
+			// Boe!Man 5/7/12: Fixing crash issue. The M4 MUST have a location to spawn.
+			if(spawnPoint){
+				dropped = G_DropItem2(spawnPoint->origin, spawnPoint->angles, BG_FindWeaponItem ( WP_M4_ASSAULT_RIFLE ));
+				dropped->count  = 1&0xFF;
+				dropped->count += ((2<<8) & 0xFF00);
+				dropped->count += ((1 << 16) & 0xFF0000 );
+				dropped->count += ((2 << 24) & 0xFF000000 );
+				Com_sprintf(level.M4loc, sizeof(level.M4loc), "%s", "blue base");
+				level.M4Time = level.time+1000;
+				level.M4ent = dropped->s.number;
+				trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Not enough hiders connected: M4 spawned in blue base\n\""));
+			}else{
+				trap_SendServerCommand(-1, va("print\"^3[H&S] ^7The M4 could not be spawned.\n\""));
+			}
 		}
 		}
 		level.messagedisplay1 = qtrue;
