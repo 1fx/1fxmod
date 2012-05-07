@@ -546,6 +546,28 @@ Spectator teleporters are not normally placed in the editor, but are created
 automatically near doors to allow spectators to move through them
 */
 void SP_trigger_teleport( gentity_t *self ) {
+	InitTrigger (self);
+
+	// unlike other triggers, we need to send this one to the client
+	// unless is a spectator trigger
+	if ( self->spawnflags & 1 ) {
+		self->r.svFlags |= SVF_NOCLIENT;
+	} else {
+		self->r.svFlags &= ~SVF_NOCLIENT;
+	}
+
+	// make sure the client precaches this sound
+	G_SoundIndex("sound/world/jumppad.wav");
+
+	self->s.eType = ET_TELEPORT_TRIGGER;
+	self->touch = trigger_teleporter_touch;
+
+	trap_LinkEntity (self);
+}
+
+
+
+void SP_1fx_teleport( gentity_t *self ) {
 	char			*origin;
 	origin = va("%.0f %.0f %.0f", self->r.currentOrigin[0], self->r.currentOrigin[1], self->r.currentOrigin[2]-30);
 	AddSpawnField("classname", "fx_play_effect");
