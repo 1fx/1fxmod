@@ -1614,7 +1614,10 @@ void Boe_Stats ( gentity_t *ent )
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Developer^7]   Yes\n"));
 	else
 #endif
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3IP^7]          %s\n", ip));
+	// Boe!Man 5/20/12: Check if g_publicIPs is set to 1. If not, hide in stats (this will prevent IP abuse by other players).
+	if(g_publicIPs.integer){
+		trap_SendServerCommand( ent-g_entities, va("print \"[^3IP^7]          %s\n", ip));
+	}
 	// Boe!Man 5/14/11: Check if the checking of countries is enabled.
 	if(g_checkCountry.integer){
 		trap_SendServerCommand( ent-g_entities, va("print \"[^3Country^7]     %s\n", country));
