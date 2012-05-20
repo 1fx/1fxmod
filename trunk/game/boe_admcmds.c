@@ -4125,7 +4125,7 @@ void Henk_Map(int argNum, gentity_t *adm, qboolean shortCmd){
 			strncpy(level.mapPrefix, va("%sM%sa%sp", server_color1.string, server_color2.string, server_color3.string), 63);
 		}
 
-		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7%s in 5!", level.time + 1000, level.mapPrefix, map));
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7%s ^7in 5!", level.time + 1000, level.mapPrefix, map));
 
 		if(strlen(gametype) > 0){ // Boe!Man 2/26/11: If there's actually a gametype found..
 			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Map switch to %s [%s] by %s.\n\"", map, gametype, adm->client->pers.netname));
