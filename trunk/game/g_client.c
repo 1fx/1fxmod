@@ -894,6 +894,11 @@ void G_UpdateOutfitting ( int clientNum )
 			client->pers.outfitting.items[OUTFITTING_GROUP_GRENADE] = 0;
 		}
 	client->ps.stats[STAT_WEAPONS] = 0; // Henk 15/01/11 -> Fix for disspearing shit
+	// Boe!Man 5/20/12: Fix for glitch so armor and goggles could be used simultaneously.
+	client->ps.stats[STAT_ARMOR] = 0;
+	client->ps.stats[STAT_GOGGLES] = 0;
+	// End Boe!Man 5/20/12
+	
 	memset ( client->ps.ammo, 0, sizeof(client->ps.ammo) );
 	memset ( client->ps.clip, 0, sizeof(client->ps.clip) );
 	}
