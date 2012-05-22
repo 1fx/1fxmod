@@ -380,15 +380,62 @@ void Boe_ScoreLimit(int argNum, gentity_t *ent, qboolean shortCmd){ // Boe!Man 1
 	Boe_adminLog (va("Scorelimit %i", number), va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), "none");
 }
 
+/*
+==========
+SetNades
+Recode by Boe: 5/22/12 - 9:25 PM
+Instead of forcing everything to on/off, check available weapons as well.
+==========
+*/
 void SetNades(char *status){
-	trap_Cvar_Set("disable_pickup_weapon_M84", status);
-	trap_Cvar_Set("disable_pickup_weapon_SMOHG92", status);
-	trap_Cvar_Set("disable_pickup_weapon_AN_M14", status);
-	trap_Cvar_Set("disable_pickup_weapon_M67", status);
-	trap_Cvar_Set("disable_pickup_weapon_F1", status);
-	trap_Cvar_Set("disable_pickup_weapon_L2A2", status);
-	trap_Cvar_Set("disable_pickup_weapon_MDN11", status);
-	trap_Cvar_Set("disable_pickup_weapon_M15", status);
+	weapon_t weapon;
+	char	 available[WP_NUM_WEAPONS+1];
+	
+	strncpy(available, availableWeapons.string, WP_NUM_WEAPONS);
+	
+	if(strstr(status, "0")){ // Manage internally, so we check for such strings. 0 means enable, so in H&S we check that CVAR.
+		if(current_gametype.value == GT_HS){
+			if(hideSeek_Nades.string[0] == '0')
+				trap_Cvar_Set("disable_pickup_weapon_SMOHG92", "1");
+			else
+				trap_Cvar_Set("disable_pickup_weapon_SMOHG92", "0");
+			if(hideSeek_Nades.string[1] == '0')
+				trap_Cvar_Set("disable_pickup_weapon_M84", "1");
+			else
+				trap_Cvar_Set("disable_pickup_weapon_M84", "0");
+			if(hideSeek_Nades.string[2] == '0')
+				trap_Cvar_Set("disable_pickup_weapon_M15", "1");
+			else
+				trap_Cvar_Set("disable_pickup_weapon_M15", "0");
+			if(hideSeek_Nades.string[3] == '0')
+				trap_Cvar_Set("disable_pickup_weapon_AN_M14", "1");
+			else
+				trap_Cvar_Set("disable_pickup_weapon_AN_M14", "0");
+		}else{ // If not H&S, check other gametypes. Since we might not want to enable all nades (it should respect availablenades CVAR), check for it.
+				for (weapon = WP_M67_GRENADE; weapon < WP_NUM_WEAPONS; weapon ++){
+					gitem_t* item = BG_FindWeaponItem ( weapon );
+					if (!item){
+						continue;
+					}
+					
+					if(available[weapon-1] == '1' || available[weapon-1] == '2'){
+						trap_Cvar_Set ( va("disable_%s", item->classname), "0" );
+					}else{
+						trap_Cvar_Set ( va("disable_%s", item->classname), "1" );
+					}
+				}
+		}
+	}else{ // Status is 0. Easy, disable everything.
+		trap_Cvar_Set("disable_pickup_weapon_M84", status);
+		trap_Cvar_Set("disable_pickup_weapon_SMOHG92", status);
+		trap_Cvar_Set("disable_pickup_weapon_AN_M14", status);
+		trap_Cvar_Set("disable_pickup_weapon_M67", status);
+		trap_Cvar_Set("disable_pickup_weapon_F1", status);
+		trap_Cvar_Set("disable_pickup_weapon_L2A2", status);
+		trap_Cvar_Set("disable_pickup_weapon_MDN11", status);
+		trap_Cvar_Set("disable_pickup_weapon_M15", status);
+	}
+	
 	G_UpdateAvailableWeapons(); // also set the original g_availableWeapons for the client :)
 }
 

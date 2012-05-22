@@ -363,7 +363,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &hideSeek_availableWeapons,	"hideSeek_availableWeapons", "200000000000022222222", CVAR_INTERNAL|CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
 	{ &availableWeapons,	"availableWeapons", "2222222222211", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
 	// Henk 01/04/10
-	{ &g_disableNades,	"g_disableNades", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
+	{ &g_disableNades,	"g_disableNades", "1", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
 	// End
 	{ &g_forceFollow,		"g_forceFollow",	 "1",			  CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 	{ &g_followEnemy,		"g_followEnemy",	 "1",			  CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
@@ -1201,23 +1201,6 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	G_RemapTeamShaders();
 	// Henk 22/01/11 -> New weapon cvars.
 	G_UpdateDisableCvars(); // Set the disabled_ cvars from availableWeapons and hideSeek_availableWeapons
-	
-	if(hideSeek_Nades.string[0] == '0')
-		trap_Cvar_Set("disable_pickup_weapon_SMOHG92", "1");
-	else
-		trap_Cvar_Set("disable_pickup_weapon_SMOHG92", "0");
-	if(hideSeek_Nades.string[1] == '0')
-		trap_Cvar_Set("disable_pickup_weapon_M84", "1");
-	else
-		trap_Cvar_Set("disable_pickup_weapon_M84", "0");
-	if(hideSeek_Nades.string[2] == '0')
-		trap_Cvar_Set("disable_pickup_weapon_M15", "1");
-	else
-		trap_Cvar_Set("disable_pickup_weapon_M15", "0");
-	if(hideSeek_Nades.string[3] == '0')
-		trap_Cvar_Set("disable_pickup_weapon_AN_M14", "1");
-	else
-		trap_Cvar_Set("disable_pickup_weapon_AN_M14", "0");
 
 	G_UpdateAvailableWeapons(); // also set the original g_availableWeapons for the client :)
 	// End
@@ -1229,16 +1212,13 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	}
 
 
-	// Set the available outfitting
-	if(current_gametype.value == GT_HS)
-		BG_SetAvailableOutfitting ( g_availableWeapons.string);//hideSeek_availableWeapons.string );
-	else{
-		if(g_disableNades.integer == 0)
-			SetNades("0");
-		else
-			SetNades("1");
-		BG_SetAvailableOutfitting(g_availableWeapons.string);
+	// Set the available outfitting -- Boe!Man 5/22/12: Update, now also checks H&S settings.
+	if(!g_disableNades.integer){
+		SetNades("0");
+	}else{
+		SetNades("1");
 	}
+	BG_SetAvailableOutfitting(g_availableWeapons.string);
 
 	// Initialize the gametype
 	if(current_gametype.value == GT_HS)
