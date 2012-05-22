@@ -190,6 +190,10 @@ struct gentity_s
 	int			score;
 	char		*broadcast;
 	char		*effect_touch;
+	
+	// Boe!Man 5/22/12: Noise for specific entities (e.g. booster).
+	char		*sound;
+	
 };
 
 typedef struct gspawn_s

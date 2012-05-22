@@ -136,6 +136,9 @@ field_t fields[] =
 	{"score",				FOFS(score),				F_INT},
 	{"broadcast",			FOFS(broadcast),			F_LSTRING},
 	{"effect_touch",		FOFS(effect_touch),			F_LSTRING},
+	
+	// Boe!Man 5/22/12: Sound set for some entities (like the booster).
+	{"sound",				FOFS(sound),				F_LSTRING},
 
 	{NULL}
 };

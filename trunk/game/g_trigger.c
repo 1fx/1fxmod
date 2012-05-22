@@ -254,6 +254,7 @@ void SP_target_push( gentity_t *self ) {
 
 void trigger_booster_touch (gentity_t *self, gentity_t *other, trace_t *trace ) {
 	vec3_t origin;
+	int	sound2;
 
 	if ( !other->client ) {
 		return;
@@ -293,7 +294,15 @@ void trigger_booster_touch (gentity_t *self, gentity_t *other, trace_t *trace ) 
 	origin[2] += 40;
 	G_PlayEffect ( G_EffectIndex("levels/shop7_toxiic_explosion"),origin, self->pos1);
 	//G_SpawnGEntityFromSpawnVars (qtrue);
-	Henk_CloseSound(other->r.currentOrigin, G_SoundIndex("sound/movers/doors/airlock_door01/airlock_open.mp3"));
+
+	// Boe!Man 5/22/12: Check if 'sound' is defined in the entity.
+	if(!self->sound){
+		sound2 = G_SoundIndex("sound/movers/doors/airlock_door01/airlock_open.mp3");
+	}else{ // User defined their own sound, use that instead.
+		sound2 = G_SoundIndex( self->sound );
+	}
+	Henk_CloseSound(other->r.currentOrigin, sound2);
+	// Boe!Man 5/22/12: End.
 
 	VectorCopy (self->s.origin2, other->client->ps.velocity);
 	other->client->ps.velocity[2] += self->up;
