@@ -463,7 +463,9 @@ void RPM_lockTeam(gentity_t *ent, qboolean referee, char *team)
 		}else if(team[0] == 'a' || team[0] == 'A')
 		{
 			// Boe!Man 1/21/11: There's no specific team for 'all'. So if we lock all teams, we make sure none of the teams are locked (and vice versa).
-			if(level.blueLocked || level.redLocked || level.specsLocked)
+			// Boe!Man 5/24/12: When unlocking all teams, we need ALL teams to be locked. If there's at least one team unlocked, we lock everything.
+			//if(level.blueLocked || level.redLocked || level.specsLocked) // Old stuff from 1/21/11.
+			if(level.blueLocked && level.redLocked && level.specsLocked)
 			{
 				level.specsLocked = 0;
 				level.redLocked = 0;
@@ -478,7 +480,7 @@ void RPM_lockTeam(gentity_t *ent, qboolean referee, char *team)
 					trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7All teams have been unlocked.\n\""));
 				}
 			}
-			else
+			else // Else at least one team is unlocked, meaning we lock all. Simple as that.
 			{
 				level.specsLocked = 1;
 				level.blueLocked = 1;
@@ -493,6 +495,7 @@ void RPM_lockTeam(gentity_t *ent, qboolean referee, char *team)
 					trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7All teams have been locked.\n\""));
 				}
 			}
+			// End Boe!Man 5/24/12.
 		}
 }
 
