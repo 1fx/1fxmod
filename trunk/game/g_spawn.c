@@ -1318,17 +1318,16 @@ void NV_misc_bsp(gentity_t *ent)
 {
 	char	temp[MAX_QPATH];
 	char	*out;
-	float	newAngle;
+	vec3_t	newAngle;
 	int		tempint;
 	vec3_t	mins, maxs;
 	//int		newBsp = 0;
 
-	G_SpawnFloat( "angles", "0", &newAngle );
-	if (newAngle != 0.0)
-	{
-		ent->s.angles[0] = newAngle;
-		ent->s.angles[1] = newAngle;
-		ent->s.angles[2] = newAngle;
+	// Boe!Man 5/24/12: Using a float isn't foolproof, use a vector instead.
+	if(G_SpawnVector("angles", "0 0 0", newAngle)){
+		ent->s.angles[0] = newAngle[0];
+		ent->s.angles[1] = newAngle[1];
+		ent->s.angles[2] = newAngle[2];
 #ifdef _SPMAPS	
 	VectorCopy( ent->s.angles, ent->savedAngles );
 #endif
