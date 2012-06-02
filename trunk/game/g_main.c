@@ -175,6 +175,9 @@ vmCvar_t	g_checkCountry;
 vmCvar_t	g_useNoLower;
 vmCvar_t	g_autoNoLower;
 
+// Boe!Man 6/2/12: CVAR for noroof.
+vmCvar_t	g_useNoRoof;
+
 // Boe!Man 4/15/10: Some level commands (Admin).
 vmCvar_t	g_nolower;
 vmCvar_t	g_nades;
@@ -477,6 +480,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_checkCountry, "g_checkCountry", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 	{ &g_useNoLower, "g_useNoLower", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_autoNoLower, "g_autoNoLower", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
+	{ &g_useNoRoof, "g_useNoRoof", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_autoEvenTeams, "g_autoEvenTeams", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 
 	{ &server_enableServerMsgs, "server_enableServerMsgs", "1", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },

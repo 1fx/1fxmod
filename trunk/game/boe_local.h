@@ -348,6 +348,9 @@ extern	vmCvar_t	g_crossTheBridge;
 // Boe!Man 5/28/11
 extern	vmCvar_t	g_customWeaponFile;
 
+// Boe!Man 6/2/12
+extern	vmCvar_t	g_useNoRoof;
+
 //==============================================
 // boe_utils.c
 //==============================================
