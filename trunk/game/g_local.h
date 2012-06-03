@@ -357,6 +357,12 @@ typedef struct
 
 	int			extraIdChanges;	// Boe!Man 8/29/11: Identity changes within the second. Limit id change after 10 of these have happened.
 	int			identityLimit;	// Boe!Man 8/29/11: Limit the identity change for 60 seconds (level.time + 60000).
+	
+	// Boe!Man 6/3/12: No roof.
+	int			noroofCheckTime;	// The level.time + 1000, for intervals.
+	qboolean	isOnRoof;			// True if the player is on roof.
+	int			isOnRoofTime;		// Seconds the player is already on roof. Checks against level.noroof[2].
+	
 } clientSession_t;
 
 // Boe!Man 3/30/10
@@ -672,9 +678,23 @@ typedef struct
 	// Boe!Man 3/30/10
 	int				lastConnectedClient;
 	char			mapname[64];
+	
+	// Nolower.
 	vec3_t			nolower; // location of nolower
 	qboolean		nolower1; // true for nolower
 	qboolean		nolower2; // Boe!Man 1/8/12: qtrue if 'nolower' entity has been found.
+	
+	// Boe!Man 6/2/12: Noroof.
+	vec3_t			noroof;
+	// level.noroof consists of three integers of value:
+	// [0]: If more then this number of players in red+blue, roof will be closed. 0 = closed at all times.
+	// [1]: Seconds before a player has to leave roof.
+	// [2]: The origin of importance (if the player is above this value: pop).
+	qboolean		noroof1; // True if noroof is enabled (g_useNoRoof == 1).
+	qboolean		noroof2; // True if noroof entity has been found.
+	int				noroof3; // "team" in the entity. Uses TEAM_* to check for the team.
+	
+	
 	// Henk 06/04/10 -> Add TMI for RPM scoreboard compatiblity
 	int				lastTMIupdate;
 

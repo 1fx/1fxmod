@@ -636,3 +636,6 @@ void Boe_displayTokens ( gentity_t *ent );
 
 // Boe!Man 5/20/12: CVAR for IP in /stats.
 extern	vmCvar_t	g_publicIPs;
+
+// Boe!Man 6/3/12: Roof check.
+void	Boe_checkRoof(gentity_t *ent);

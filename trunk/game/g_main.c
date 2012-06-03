@@ -1330,7 +1330,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 		Com_Error(ERR_FATAL, "Unexpected return on static value.");
 	}
 
-	if(g_useNoLower.integer == 1){
+	if(g_useNoLower.integer){
 		level.nolower1 = qtrue;
 		if (strstr(level.mapname, "mp_kam2")){
 			SpawnFence(1); // first one fails dunno why..
@@ -1344,6 +1344,13 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 		if (strstr(level.mapname, "mp_kam2")){
 			RemoveFence();
 		}
+	}
+	
+	// Boe!Man 6/2/12: Check for noroof.
+	if(g_useNoRoof.integer){
+		level.noroof1 = qtrue;
+	}else{
+		level.noroof1 = qfalse;
 	}
 
 	// Boe!Man 11/16/10: Scrim settings.

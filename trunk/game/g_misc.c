@@ -638,6 +638,9 @@ void fx_think( gentity_t *ent )
 	ent->nextthink = level.time + time;
 }
 
+/*
+nolower
+*/
 
 void nolower(gentity_t *ent)
 {
@@ -652,9 +655,35 @@ void nolower(gentity_t *ent)
 		}
 		level.autoNoLowerUpdateTime = level.time + 10000;
 	}
-	level.nolower1 = qtrue;
+	//level.nolower1 = qtrue; // We check this in InitGame.
 	// Boe!Man 1/8/12: nolower2 is qtrue (since a nolower entity has been found).
 	level.nolower2 = qtrue;
+}
+
+/*
+noroof
+*/
+
+void noroof(gentity_t *ent)
+{
+	if(G_SpawnVector("origin", "0 0 0", level.noroof)){
+		level.noroof2 = qtrue;
+	}
+	
+	if(ent->team){ // "team" is found in the entity.
+		// Check the full team names first.
+		if(strstr(ent->team, "red")){
+			level.noroof3 = TEAM_RED;
+		}else if(strstr(ent->team, "blue")){
+			level.noroof3 = TEAM_BLUE;
+		}else if(strstr(ent->team, "r")){
+			level.noroof3 = TEAM_RED;
+		}else if(strstr(ent->team, "b")){
+			level.noroof3 = TEAM_BLUE;
+		}else{ // All. No need to really check this, if the entity entry isn't found this will pretty much be the same too.
+			level.noroof3 = TEAM_FREE;
+		}
+	}
 }
 
 /*QUAKED fx_play_effect (.2 .5 .8) (-8 -8 -8) (8 8 8) START_OFF

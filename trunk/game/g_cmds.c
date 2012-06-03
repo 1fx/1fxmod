@@ -1407,6 +1407,10 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 				ent->client->sess.deaths = 0;
 				ent->client->sess.timeOfDeath = 0; // Boe!Man 8/29/11: Also reset this when switching team (so seekers that won won't get RPG for example).
 			}
+			
+			// Boe!Man 6/3/12: Reset noroof data when setting team.
+			ent->client->sess.isOnRoof = qfalse;
+			ent->client->sess.isOnRoofTime = 0;
 
 			CalculateRanks();
 
@@ -1425,6 +1429,10 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 	ent->client->sess.deaths = 0;
 	ent->client->sess.timeOfDeath = 0; // Boe!Man 8/29/11: Also reset this when switching team (so seekers that won won't get RPG for example).
 	}
+	
+	// Boe!Man 6/3/12: Reset noroof data when setting team.
+	ent->client->sess.isOnRoof = qfalse;
+	ent->client->sess.isOnRoofTime = 0;
 
 	CalculateRanks();
 

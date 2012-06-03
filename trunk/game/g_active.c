@@ -116,7 +116,7 @@ void P_WorldEffects( gentity_t *ent )
 	}
 
 	// Disable Nolower
-	if(level.nolower1 == qtrue /*&& !strstr(level.mapname, "mp_kam2")*/){ // if enabled
+	if(level.nolower1 && level.nolower2){ // if enabled -- Boe!Man 6/2/12: Also check for nolower2. This is qtrue when the entity was found.
 		// Boe!Man 3/1/11: Only enable autoNoLower for select maps, which can be put into the ent file.
 		if(g_autoNoLower.integer > 0 && !level.autoNoLower == 0){ 
 			if(level.time >= level.autoNoLowerUpdateTime){ // Don't check it too often.
@@ -162,7 +162,9 @@ void P_WorldEffects( gentity_t *ent )
 			G_Damage(ent, NULL, NULL, NULL, NULL, 10000, 0, MOD_TRIGGER_HURT, 0);
 		}
 	}
-
+	
+	// Boe!Man 6/3/12: Check for roof. This is best done in a seperate function.
+	Boe_checkRoof(ent);
 
 	// check for drowning
 	if ( waterlevel == 3 && (ent->watertype & CONTENTS_WATER)) 
