@@ -299,11 +299,9 @@ extern  vmCvar_t	g_popHighFps;
 extern	vmCvar_t	server_redteamprefix;
 extern	vmCvar_t	server_blueteamprefix;
 
-// Boe!Man 4/5/10
-// EMPTY
-
 // Boe!Man 4/15/10
 extern	vmCvar_t	g_nolower;
+extern	vmCvar_t	g_noroof;
 extern	vmCvar_t	g_nades;
 extern	vmCvar_t	g_sl;
 extern	vmCvar_t	g_tl;
@@ -449,6 +447,7 @@ void	Boe_XMute(int argNum, gentity_t *ent, qboolean ShortCmd);
 void	Boe_UnMute(int argNum, gentity_t *ent, qboolean ShortCmd);
 void	Boe_MapRestart(int argNum, gentity_t *ent, qboolean ShortCmd);
 void	Boe_NoLower(int argNum, gentity_t *ent, qboolean ShortCmd);
+void	Boe_NoRoof(int argNum, gentity_t *ent, qboolean shortCmd);
 void	Boe_NoNades(int argNum, gentity_t *ent, qboolean ShortCmd);
 void	Boe_TimeLimit(int argNum, gentity_t *ent, qboolean ShortCmd);
 void	Boe_ScoreLimit(int argNum, gentity_t *ent, qboolean ShortCmd);

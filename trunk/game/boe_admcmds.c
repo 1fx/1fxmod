@@ -571,6 +571,58 @@ void Boe_NoLower(int argNum, gentity_t *ent, qboolean shortCmd){
 
 /*
 ==========
+Boe_NoRoof
+==========
+*/
+
+void Boe_NoRoof(int argNum, gentity_t *ent, qboolean shortCmd){
+	// Boe!Man 2/27/11: If people don't want to use noroof they can specify to disable it.
+	if(g_useNoRoof.integer <= 0){
+		if(ent && ent->client){
+			trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7Noroof has been disabled on this server.\n\""));
+		}else{
+			Com_Printf("Noroof has been disabled on this server.\n");
+		}
+		return;
+	}
+	// Boe!Man 1/8/12: If people want to use noroof but if there's no such entity found, inform the user.
+	if(!level.noroof2){
+		if(ent && ent->client){
+			trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7No entity found to toggle noroof.\n\""));
+		}else{
+			Com_Printf("No entity found to toggle noroof.\n");
+		}
+		return;
+	}
+
+	if(level.noroof1 == qtrue){
+		level.noroof1 = qfalse;
+		
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sN%so%sr%so%so%sf disabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+		if(ent && ent->client){
+			trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Noroof disabled by %s.\n\"", ent->client->pers.netname));
+			Boe_adminLog ("Noroof Disabled", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), "none");
+		}else{
+			trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Noroof disabled.\n\""));
+			Boe_adminLog ("Noroof Disabled", va("RCON"), "none");
+		}
+	}else{
+		level.noroof1 = qtrue;
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sN%so%sr%so%so%sf enabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+		if(ent && ent->client){
+			trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7Noroof enabled by %s.\n\"", ent->client->pers.netname));
+			Boe_adminLog ("Noroof Enabled", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), "none");
+		}else{
+			trap_SendServerCommand(-1, va("print \"^3[Rcon Action] ^7Noroof enabled.\n\""));
+			Boe_adminLog ("Noroof Enabled", va("RCON"), "none");
+		}
+	}
+}
+
+/*
+==========
 Boe_MapRestart
 ==========
 */

@@ -180,6 +180,7 @@ vmCvar_t	g_useNoRoof;
 
 // Boe!Man 4/15/10: Some level commands (Admin).
 vmCvar_t	g_nolower;
+vmCvar_t	g_noroof;
 vmCvar_t	g_nades;
 vmCvar_t	g_sl;
 vmCvar_t	g_tl;
@@ -418,6 +419,7 @@ static cvarTable_t gameCvarTable[] =
 	//{ &g_333,						"g_333",				"3",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_forceteam,					"g_forceteam",			"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_nolower,					"g_nolower",			"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
+	{ &g_noroof,					"g_noroof",				"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_nades,						"g_nades",				"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_sl,						"g_sl",					"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_tl,						"g_tl",					"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
@@ -478,9 +480,9 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_enableTeamCmds, "g_enableTeamCmds", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 	{ &g_refpassword, "g_refpassword", "none", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 	{ &g_checkCountry, "g_checkCountry", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
-	{ &g_useNoLower, "g_useNoLower", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
+	{ &g_useNoLower, "g_useNoLower", "1", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse  },
 	{ &g_autoNoLower, "g_autoNoLower", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
-	{ &g_useNoRoof, "g_useNoRoof", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
+	{ &g_useNoRoof, "g_useNoRoof", "0", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse  },
 	{ &g_autoEvenTeams, "g_autoEvenTeams", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 
 	{ &server_enableServerMsgs, "server_enableServerMsgs", "1", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
