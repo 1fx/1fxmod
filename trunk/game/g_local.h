@@ -694,6 +694,11 @@ typedef struct
 	qboolean		noroof2; // True if noroof entity has been found.
 	int				noroof3; // "team" in the entity. Uses TEAM_* to check for the team.
 	
+	// Boe!Man 6/14/12: Global checks regarding noroof.
+	int				noroofGlobalTime;	// level.time + 5 sec for check w/ interval.
+	qboolean		noroofOpened;		// True if roof is opened.
+	qboolean		noroofChange;		// True if noroof needs to change (open/close).
+	
 	
 	// Henk 06/04/10 -> Add TMI for RPM scoreboard compatiblity
 	int				lastTMIupdate;

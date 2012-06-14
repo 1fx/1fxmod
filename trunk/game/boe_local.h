@@ -639,3 +639,4 @@ extern	vmCvar_t	g_publicIPs;
 
 // Boe!Man 6/3/12: Roof check.
 void	Boe_checkRoof(gentity_t *ent);
+void	Boe_checkRoofGlobal(void);

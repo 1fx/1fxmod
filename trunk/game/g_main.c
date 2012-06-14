@@ -3388,6 +3388,8 @@ void G_RunFrame( int levelTime )
 		}
 	}
 
+	// Boe!Man 6/14/12: Check noroof actions.
+	Boe_checkRoofGlobal();
 
 	// Check warmup rules
 	CheckWarmup();

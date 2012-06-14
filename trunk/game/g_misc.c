@@ -670,6 +670,10 @@ void noroof(gentity_t *ent)
 		level.noroof2 = qtrue;
 	}
 	
+	if(level.noroof[0]){ // It's not 0, so it can be opened for now..
+		level.noroofOpened = qtrue;
+	}
+	
 	if(ent->team){ // "team" is found in the entity.
 		// Check the full team names first.
 		if(strstr(ent->team, "red")){

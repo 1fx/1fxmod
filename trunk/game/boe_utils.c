@@ -2315,52 +2315,34 @@ void Boe_checkRoof ( gentity_t *ent )
 		return;
 	}
 	
-	// Boe!Man 6/3/12: Before we check the origin, maybe it's best to first check if the server owner defined any team max.
-	if(level.noroof[0] > 0){ // 0 = closed at all times, so check if he set anything here.
-		if((TeamCount(-1, TEAM_RED, NULL ) + TeamCount(-1, TEAM_BLUE, NULL )) < level.noroof[0]){
-			if(ent->client->sess.isOnRoof){ // It doesn't matter anymore if he's on roof, the player count is OK now, reset the timer.
+	// Boe!Man 6/3/12: Check for the player.
+	if(!level.noroofOpened){ // Roof must be opened, else don't check this.
+		if(!ent->client->sess.isOnRoof){ // Player ISN'T on roof, last time we checked.
+			if(ent->r.currentOrigin[2] >= level.noroof[2]){ // Well he is now. Check for the timeout.
+				if(!level.noroof[1]){ // 0 or less.. Meaning, instant pop. No need for further checks.
+					G_Damage(ent, NULL, NULL, NULL, NULL, 10000, 0, MOD_TRIGGER_HURT, 0);
+					trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s ^7was killed for not leaving the roof.\n\"", ent->client->pers.netname));
+				}else{
+					ent->client->sess.isOnRoof = qtrue; // The server owner specified a timer. So, first, the player initialised this process by being on roof.
+					trap_SendServerCommand( ent-g_entities, va("cp \"@%sL%se%sa%sv%se the roof within %s%.0f ^7seconds!\n\"", server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, server_color1.string, level.noroof[1]));
+					ent->client->sess.isOnRoofTime = 1;
+				}
+			}
+		}else{ // Player IS on roof.
+			if(ent->r.currentOrigin[2] < level.noroof[2]){ // He left the roof.
 				ent->client->sess.isOnRoof = qfalse;
 				ent->client->sess.isOnRoofTime = 0;
-			}
-			ent->client->sess.noroofCheckTime = level.time + 1000;
-			return;
-		}
-	}
-	
-	// Boe!Man 6/3/12: Also check if the entity is only meant for one team.
-	if(level.noroof3){ // If something's defined.
-		if(level.noroof3 != ent->client->sess.team){ // The team defined in the entity isn't the same the team the player is in. Simple, return. It's not for him.
-			ent->client->sess.noroofCheckTime = level.time + 1000;
-			return;
-		}
-	}
-	
-	// Boe!Man 6/3/12: We can proceed, the checks have been made, roof should be closed now. So check for the player.
-	if(!ent->client->sess.isOnRoof){ // Player ISN'T on roof, last time we checked.
-		if(ent->r.currentOrigin[2] >= level.noroof[2]){ // Well he is now. Check for the timeout.
-			if(!level.noroof[1]){ // 0 or less.. Meaning, instant pop. No need for further checks.
-				G_Damage(ent, NULL, NULL, NULL, NULL, 10000, 0, MOD_TRIGGER_HURT, 0);
-				trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s ^7was killed for not leaving the roof.\n\"", ent->client->pers.netname));
-			}else{
-				ent->client->sess.isOnRoof = qtrue; // The server owner specified a timer. So, first, the player initialised this process by being on roof.
-				trap_SendServerCommand( ent-g_entities, va("cp \"@%sL%se%sa%sv%se the roof in %s%.0f ^7seconds!\n\"", server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, server_color1.string, level.noroof[1]));
-				ent->client->sess.isOnRoofTime = 1;
-			}
-		}
-	}else{ // Player IS on roof.
-		if(ent->r.currentOrigin[2] < level.noroof[2]){ // He left the roof.
-			ent->client->sess.isOnRoof = qfalse;
-			ent->client->sess.isOnRoofTime = 0;
-			trap_SendServerCommand( ent-g_entities, va("cp \"@%sY%so%su %sa%sr%se no longer on the roof!\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-		}else{ // He's still on the roof.
-			if(level.noroof[1] == ent->client->sess.isOnRoofTime){ // Well, he waited it out. Pop him.
-				G_Damage(ent, NULL, NULL, NULL, NULL, 10000, 0, MOD_TRIGGER_HURT, 0);
-				trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s ^7was killed for not leaving the roof.\n\"", ent->client->pers.netname));
-				ent->client->sess.isOnRoof = qfalse;
-				ent->client->sess.isOnRoofTime = 0;
-			}else{ // Give him another warning.
-				trap_SendServerCommand( ent-g_entities, va("cp \"@%sL%se%sa%sv%se the roof in %s%.0f ^7seconds!\n\"", server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, server_color1.string, level.noroof[1] - ent->client->sess.isOnRoofTime));
-				ent->client->sess.isOnRoofTime += 1;
+				trap_SendServerCommand( ent-g_entities, va("cp \"@%sY%so%su %sa%sr%se no longer on the roof!\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+			}else{ // He's still on the roof.
+				if(level.noroof[1] == ent->client->sess.isOnRoofTime){ // Well, he waited it out. Pop him.
+					G_Damage(ent, NULL, NULL, NULL, NULL, 10000, 0, MOD_TRIGGER_HURT, 0);
+					trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s ^7was killed for not leaving the roof.\n\"", ent->client->pers.netname));
+					ent->client->sess.isOnRoof = qfalse;
+					ent->client->sess.isOnRoofTime = 0;
+				}else{ // Give him another warning.
+					trap_SendServerCommand( ent-g_entities, va("cp \"@%sL%se%sa%sv%se the roof within %s%.0f ^7seconds!\n\"", server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, server_color1.string, level.noroof[1] - ent->client->sess.isOnRoofTime));
+					ent->client->sess.isOnRoofTime += 1;
+				}
 			}
 		}
 	}
@@ -2368,4 +2350,97 @@ void Boe_checkRoof ( gentity_t *ent )
 	ent->client->sess.noroofCheckTime = level.time + 1000;
 	
 	return;
+}
+
+/*
+================
+Boe_checkRoofGlobal
+6/10/12 - 1:21 PM
+All global checks regarding noroof happen here (team counts, etc.).
+================
+*/
+
+void Boe_checkRoofGlobal ( void ) 
+{
+	int i;
+	
+	// Boe!Man 6/3/12: noroof1 = g_useNoRoof CVAR == 1, noroof2 = noroof entity has been found. Only proceed if this is true.
+	if(!level.noroof1 || !level.noroof2){ 
+		return;
+	}
+	
+	// Boe!Man 6/3/12: Do this with an interval. It's a shame to be cocky about something this small, so save resources.
+	if(level.noroofGlobalTime > level.time){
+		return;
+	}
+	
+	// Boe!Man 6/14/12: Roof change in progress.
+	if(level.noroofChange){
+		if(level.noroofOpened){
+			// Close it.
+			trap_SendServerCommand(-1, va("cp \"@%sR%so%so%sf closed!\n\"", server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+			trap_SendServerCommand(-1, va("print\"^3[Info] ^7Roof is now closed.\n\""));
+			
+			level.noroofOpened = qfalse;
+		}else{
+			// Open it.
+			
+			// Boe!Man 6/14/12: Also reset the client info.
+			for(i = 0; i <= MAX_CLIENTS; i++){
+				if(level.clients[i].pers.connected != CON_CONNECTED)
+				{
+					continue;
+				}
+				
+				level.clients[i].sess.isOnRoof = qfalse;
+				level.clients[i].sess.isOnRoofTime = 0;
+			}
+			trap_SendServerCommand(-1, va("cp \"@%sR%so%so%sf opened!\n\"", server_color3.string, server_color4.string, server_color5.string, server_color6.string));	
+			trap_SendServerCommand(-1, va("print\"^3[Info] ^7Roof is now opened.\n\""));
+			
+			level.noroofOpened = qtrue;
+		}
+		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+		level.noroofChange = qfalse;
+		level.noroofGlobalTime = level.time + 10000;
+		return;
+	}
+	
+	// Boe!Man 6/14/12: Check for a roof changes (regarding teams).
+	if(level.noroof[0] > 0){ // 0 = closed at all times, so check if he set anything here.
+		if(level.noroofOpened){ // If the roof is OPEN.
+			if(level.noroof3 == TEAM_FREE){ // 0 = TEAM_FREE, so all teams.
+				if((TeamCount(-1, TEAM_RED, NULL ) + TeamCount(-1, TEAM_BLUE, NULL )) < level.noroof[0]){
+					level.noroofChange = qtrue;
+				}
+			}else{
+				if((TeamCount(-1, level.noroof3, NULL )) < level.noroof[0]){
+					level.noroofChange = qtrue;
+				}
+			}
+		}else{
+			if(level.noroof3 == TEAM_FREE){ // 0 = TEAM_FREE, so all teams.
+				if((TeamCount(-1, TEAM_RED, NULL ) + TeamCount(-1, TEAM_BLUE, NULL )) >= level.noroof[0]){
+					level.noroofChange = qtrue;
+				}
+			}else{
+				if((TeamCount(-1, level.noroof3, NULL )) >= level.noroof[0]){
+					level.noroofChange = qtrue;
+				}
+			}
+		}
+	}
+	
+	// Boe!Man 6/14/12: Update interval.
+	if(level.noroofChange){
+		if(level.noroofOpened){ // Meaning it will be closed in 5 secs.
+			trap_SendServerCommand(-1, va("cp \"%sR%so%so%sf will be closed in 5 seconds!\n\"", server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+		}else{ // It will be opened in 5 seconds.
+			trap_SendServerCommand(-1, va("cp \"%sR%so%so%sf will be opened in 5 seconds!\n\"", server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+		}
+		
+		level.noroofGlobalTime = level.time + 5000;
+	}else{
+		level.noroofGlobalTime = level.time + 10000;
+	}
 }
