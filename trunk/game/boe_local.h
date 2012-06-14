@@ -24,7 +24,7 @@
 
 // Boe!Man 7/12/11: Mod date.
 #ifdef Q3_VM
-#define INF_VERSION_DATE "4/21/12"
+#define INF_VERSION_DATE "6/14/12"
 #else
 #define YEAR ((((__DATE__ [9] - '0')) * 10 + (__DATE__ [10] - '0')))
 
@@ -128,6 +128,7 @@
 // 0.59t		Release Candidate				749			9/20/11		// Sent out to BETA group on 9/20/11
 // 0.59			Release							759			1/4/12		// Sent out to BETA group on 1/4/12, to public on 1/5/12
 // 0.60t		1st Alpha						771			4/21/12
+// 0.60t		1st Beta						794			6/14/12		// Sent out to BETA group on 6/14/12
 
 
 //===================================================================
