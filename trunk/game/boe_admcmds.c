@@ -4402,3 +4402,74 @@ void Boe_Rounds(int argNum, gentity_t *ent, qboolean shortCmd)
 		}
 	}
 }
+
+/*
+==========
+Boe_ShuffleTeams
+==========
+*/
+
+void Boe_ShuffleTeams(int argNum, gentity_t *ent, qboolean shortCmd){
+	int i;
+	int	teamTotalRed = 0, teamTotalBlue = 0; // The counted team totals when shuffling.
+	int teamTotalRed2 = 0, teamTotalBlue2 = 0; // The actual team totals prior to shuffling.
+	int newTeam;
+	char newTeam2[4]; // red or blue.
+	char userinfo[MAX_INFO_STRING];
+	gentity_t* other;
+	
+	// Preserve team balance.
+	teamTotalRed2 = TeamCount(-1, TEAM_RED, NULL );
+	teamTotalBlue2 = TeamCount(-1, TEAM_BLUE, NULL );
+	
+	for(i = 0; i < level.numConnectedClients; i++){
+		
+		other = &g_entities[level.sortedClients[i]];
+		
+		// Boe!Man 6/16/12: Skip clients that are spectating..
+		if ( other->client->sess.team == TEAM_SPECTATOR){
+			continue;
+		}
+		
+		// Boe!Man 6/16/12: Start shuffling using irand, or put them to the team that needs more players when one is on its preserved rate.
+		if(teamTotalRed == teamTotalRed2){ // Blimey, we're on max.
+			newTeam = TEAM_BLUE;
+		}else if(teamTotalBlue == teamTotalBlue2){
+			newTeam = TEAM_RED;
+		}else{
+			newTeam = irand(1,2);
+		}
+		
+		if ( newTeam == TEAM_RED){
+			strncpy(newTeam2, "red", sizeof(newTeam2));
+			teamTotalRed += 1;
+		}else if(newTeam == TEAM_BLUE){
+			strncpy(newTeam2, "blue", sizeof(newTeam2));
+			teamTotalBlue += 1;
+		}
+		
+		if(other->r.svFlags & SVF_BOT){ // Reset bots to set them to another team
+			trap_GetUserinfo( level.sortedClients[i], userinfo, sizeof( userinfo ) );
+			Info_SetValueForKey( userinfo, "team", newTeam2 );
+			trap_SetUserinfo( level.sortedClients[i], userinfo );
+			other->client->sess.team = newTeam;
+			if(current_gametype.value != GT_HS){
+				other->client->pers.identity = BG_FindTeamIdentity ( level.gametypeTeam[newTeam], -1 );
+			}
+			ClientBegin(level.sortedClients[i], qfalse);
+		}else{
+			SetTeam( other, newTeam2, NULL, qtrue );
+		}
+	}
+	
+	// Boe!Man 6/16/12: Proper messaging/logging.
+	Boe_GlobalSound(G_SoundIndex("sound/misc/events/tut_lift02.mp3"));
+	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sS%sh%su%sf%sf%sle teams!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+	if(ent && ent->client){
+		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Shuffle teams by %s.\n\"", ent->client->pers.netname));
+		Boe_adminLog ("Shuffle Teams", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), "none");
+	}else{
+		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Shuffle teams.\n\""));
+		Boe_adminLog ("Shuffle Teams", va("RCON"), "none");
+	}
+}

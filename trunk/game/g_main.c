@@ -273,6 +273,9 @@ vmCvar_t	g_logSpecialChat;
 // Boe!Man 5/20/12
 vmCvar_t	g_publicIPs;
 
+// Boe!man 6/16/12
+vmCvar_t	g_shuffleteams;
+
 #ifdef _BOE_DBG
 vmCvar_t	boe_log;
 #endif
@@ -436,6 +439,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_adminremove,				"g_adminremove",		"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_pause,						"g_pause",				"3",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_adminlist,					"g_adminlist",			"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse }, // Boe!Man 6/17/11: Solved bug where ALL admins could see the list (wasn't added to the CVAR table and thus 0).
+	{ &g_shuffleteams,				"g_shuffleteams",		"3",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 
 	{ &g_clanfile,			"g_clanfile",			"users/clanmembers.txt",	CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  },
 	{ &g_banfile,			"g_banfile",			"users/bans.txt",		CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  },

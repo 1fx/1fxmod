@@ -350,6 +350,10 @@ extern	vmCvar_t	g_customWeaponFile;
 // Boe!Man 6/2/12
 extern	vmCvar_t	g_useNoRoof;
 
+// Boe!Man 6/16/12
+void Boe_ShuffleTeams(int argNum, gentity_t *ent, qboolean shortCmd);
+extern	vmCvar_t	g_shuffleteams;
+
 //==============================================
 // boe_utils.c
 //==============================================
