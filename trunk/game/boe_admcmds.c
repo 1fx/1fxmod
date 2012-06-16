@@ -4418,6 +4418,28 @@ void Boe_ShuffleTeams(int argNum, gentity_t *ent, qboolean shortCmd){
 	char userinfo[MAX_INFO_STRING];
 	gentity_t* other;
 	
+	// Boe!Man 6/16/12: Check first.
+	if(!level.gametypeData->teams){
+		if(ent && ent->client){
+			trap_SendServerCommand( adm - g_entities, va("print \"^3[Info] ^7Not playing a team game.\n\"") );
+		}else{
+			Com_Printf("Not playing a team game.\n");
+		}
+		
+		return;
+	}
+
+	if(level.blueLocked || level.redLocked){
+		if(ent && ent->client){
+			trap_SendServerCommand( adm - g_entities, va("print \"^3[Info] ^7Teams are locked.\n\"") );
+		}else{
+			Com_Printf("Teams are locked.\n");
+		}
+		
+		return;
+
+	}
+	
 	// Preserve team balance.
 	teamTotalRed2 = TeamCount(-1, TEAM_RED, NULL );
 	teamTotalBlue2 = TeamCount(-1, TEAM_BLUE, NULL );
@@ -4460,6 +4482,9 @@ void Boe_ShuffleTeams(int argNum, gentity_t *ent, qboolean shortCmd){
 		}else{
 			SetTeam( other, newTeam2, NULL, qtrue );
 		}
+		
+		// Boe!Man 6/16/12: Don't forget to (re-)spawn them..
+		ClientSpawn(other);
 	}
 	
 	// Boe!Man 6/16/12: Proper messaging/logging.
