@@ -4421,7 +4421,7 @@ void Boe_ShuffleTeams(int argNum, gentity_t *ent, qboolean shortCmd){
 	// Boe!Man 6/16/12: Check first.
 	if(!level.gametypeData->teams){
 		if(ent && ent->client){
-			trap_SendServerCommand( adm - g_entities, va("print \"^3[Info] ^7Not playing a team game.\n\"") );
+			trap_SendServerCommand( ent - g_entities, va("print \"^3[Info] ^7Not playing a team game.\n\"") );
 		}else{
 			Com_Printf("Not playing a team game.\n");
 		}
@@ -4431,7 +4431,7 @@ void Boe_ShuffleTeams(int argNum, gentity_t *ent, qboolean shortCmd){
 
 	if(level.blueLocked || level.redLocked){
 		if(ent && ent->client){
-			trap_SendServerCommand( adm - g_entities, va("print \"^3[Info] ^7Teams are locked.\n\"") );
+			trap_SendServerCommand( ent - g_entities, va("print \"^3[Info] ^7Teams are locked.\n\"") );
 		}else{
 			Com_Printf("Teams are locked.\n");
 		}
