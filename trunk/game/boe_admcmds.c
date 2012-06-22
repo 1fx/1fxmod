@@ -4463,10 +4463,10 @@ void Boe_ShuffleTeams(int argNum, gentity_t *ent, qboolean shortCmd){
 		}
 		
 		if ( newTeam == TEAM_RED){
-			strncpy(newTeam2, "red", sizeof(newTeam2));
+			Q_strncpyz(newTeam2, "red", 4);
 			teamTotalRed += 1;
 		}else if(newTeam == TEAM_BLUE){
-			strncpy(newTeam2, "blue", sizeof(newTeam2));
+			Q_strncpyz(newTeam2, "blue", 5);
 			teamTotalBlue += 1;
 		}
 		

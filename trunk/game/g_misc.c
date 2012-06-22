@@ -663,15 +663,25 @@ void nolower(gentity_t *ent)
 /*
 noroof
 */
+void noroof_initcheck(gentity_t *ent)
+{
+	if(level.noroof3 == TEAM_FREE){
+		if((TeamCount(-1, TEAM_RED, NULL ) + TeamCount(-1, TEAM_BLUE, NULL )) >= level.noroof[0]){
+			level.noroofOpened = qtrue;
+		}
+	}else{
+		if((TeamCount(-1, level.noroof3, NULL )) >= level.noroof[0]){
+			level.noroofOpened = qtrue;
+		}
+	}
+	
+	G_FreeEntity(ent);
+}
 
 void noroof(gentity_t *ent)
 {
 	if(G_SpawnVector("origin", "0 0 0", level.noroof)){
 		level.noroof2 = qtrue;
-	}
-	
-	if(level.noroof[0]){ // It's not 0, so it can be opened for now..
-		level.noroofOpened = qtrue;
 	}
 	
 	if(ent->team){ // "team" is found in the entity.
@@ -687,6 +697,13 @@ void noroof(gentity_t *ent)
 		}else{ // All. No need to really check this, if the entity entry isn't found this will pretty much be the same too.
 			level.noroof3 = TEAM_FREE;
 		}
+	}
+	
+	// Boe!Man 6/22/12: Fix roof opening/closing at the start of the map, while it should already be opened/closed.
+	if(level.noroof[0]){ // It's not 0, so it might be allowed to be open already. Check this in a seperate function.
+		ent->think = noroof_initcheck;
+		ent->nextthink = level.time + 1000; // Check in the next sec, so all client slots are filled.
+		level.noroofGlobalTime = level.time + 2000; // First check in the next two secs, definitely after the ent check.
 	}
 }
 

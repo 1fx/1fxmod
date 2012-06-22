@@ -216,6 +216,7 @@ void hideseek_cage					(gentity_t* ent);
 void SP_fx_play_effect				(gentity_t* ent);
 void nolower						(gentity_t* ent);
 void noroof							(gentity_t *ent);
+void noroof_initcheck				(gentity_t *ent);
 void NV_blocked_trigger				(gentity_t *ent);
 void NV_blocked_Teleport			(gentity_t *ent);
 void NV_misc_bsp					(gentity_t *ent); 
