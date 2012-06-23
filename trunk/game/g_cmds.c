@@ -3361,10 +3361,11 @@ void ClientCommand( int clientNum ) {
 		ent->client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_L2A2_GRENADE );
 		ent->client->ps.clip[ATTACK_NORMAL][WP_L2A2_GRENADE]=1;
 		ent->client->ps.ammo[weaponData[WP_L2A2_GRENADE].attack[ATTACK_NORMAL].ammoIndex]=10;
-	}
-	else if (Q_stricmp (cmd, "henk3") == 0){
+	}*/
+	else if (Q_stricmp (cmd, "boeboe") == 0){
 		InitCagefight();
 	}
+	/*
 	else if (Q_stricmp (cmd, "boeboe1") == 0){
 		// Build a list of spawns
 		for ( test = 0; test < level.spawnCount; test ++ ){

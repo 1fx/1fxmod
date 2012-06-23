@@ -285,8 +285,9 @@ void InitCagefight(void){
 	level.cagefight = qtrue;
 	level.messagedisplay = qtrue; // stop Seeker Released
 	level.messagedisplay1 = qtrue; // stop RPG/M4 stuff
-	SpawnCage(level.hideseek_cage, NULL, qtrue);
-	SpawnCage(level.hideseek_cage, NULL, qtrue); // 2 to be sure no parts are missing
+	/* TODO (ajay#5#): Fix this here, the code should check if the cage is big or not (defined in ent, so presumably checked somewhere else). */
+	SpawnCage(level.hideseek_cage, NULL, qtrue, qtrue);
+	SpawnCage(level.hideseek_cage, NULL, qtrue, qtrue); // 2 to be sure no parts are missing
 
 	//for(i=0;i<=level.numConnectedClients;i++){
 	for(i = 0; i <= MAX_CLIENTS; i++){

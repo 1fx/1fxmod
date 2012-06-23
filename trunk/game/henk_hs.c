@@ -200,52 +200,128 @@ void UpdateScores(void)
 }
 
 // 14/01/10: Custom commands by Henk
-void SpawnCage(vec3_t org, gentity_t *ent, qboolean autoremove) // Spawn a cage
+void SpawnCage(vec3_t org, gentity_t *ent, qboolean autoremove, qboolean big) // Spawn a cage
 {
+	// Boe!Man 6/22/12: Addition for big cage.
 	char			*origin;
 	int part, numb;
+	
 	for(part=1;part<=4;part++){
-	AddSpawnField("classname", "misc_bsp"); // blocker
-	AddSpawnField("bspmodel",	"instances/Generic/fence01");
-	if(part == 1){
-	origin = va("%.0f %.0f %.0f",
-		org[0], 
-		org[1]+126, 
-	org[2] - 50);
-	AddSpawnField("origin",		origin);
-	AddSpawnField("angles",		"0 360 0");
-	}else if(part == 2){
-	origin = va("%.0f %.0f %.0f",
-		org[0], 
-		org[1]-126, 
-	org[2] - 50);
-	AddSpawnField("origin",		origin);
-	AddSpawnField("angles",		"0 180 0");
-	}else if(part == 3){
-	origin = va("%.0f %.0f %.0f",
-		org[0]-126, 
-		org[1], 
-	org[2] - 50);
-	AddSpawnField("origin",		origin);
-	AddSpawnField("angles",		"0 -270 0");
-	}else if(part == 4){
-	origin = va("%.0f %.0f %.0f",
-		org[0]+126, 
-		org[1], 
-	org[2] - 50);
-	AddSpawnField("origin",		origin);
-	AddSpawnField("angles",		"0 -90 0");
-	}
-	AddSpawnField("model",		"trigger_hurt"); //blocked_trigger
-	AddSpawnField("count",		 "1");
-	AddSpawnField("hideseek",	 "1");
-	numb = G_SpawnGEntityFromSpawnVars(qtrue);
-	if(numb != -1 && !autoremove){
-	g_entities[numb].think = G_FreeEntity;
-	g_entities[numb].nextthink = level.time+12000;
-	}
-	level.numSpawnVars = 0;
-	level.numSpawnVarChars = 0;
+		AddSpawnField("classname", "misc_bsp"); // blocker
+		AddSpawnField("bspmodel",	"instances/Generic/fence01");
+		if(part == 1){
+			if(!big){
+				origin = va("%.0f %.0f %.0f",
+					org[0], 
+					org[1]+126, 
+				org[2] - 50);
+			}else{
+				origin = va("%.0f %.0f %.0f",
+					org[0]+126, 
+					org[1]+252, 
+				org[2] - 50);
+			}
+			AddSpawnField("origin",		origin);
+			AddSpawnField("angles",		"0 360 0");
+		}else if(part == 2){
+			if(!big){
+				origin = va("%.0f %.0f %.0f",
+					org[0], 
+					org[1]-126, 
+				org[2] - 50);
+			}else{
+				origin = va("%.0f %.0f %.0f",
+					org[0]-126, 
+					org[1]-252, 
+				org[2] - 50);
+			}
+			AddSpawnField("origin",		origin);
+			AddSpawnField("angles",		"0 180 0");
+		}else if(part == 3){
+			if(!big){
+				origin = va("%.0f %.0f %.0f",
+					org[0]-126, 
+					org[1], 
+				org[2] - 50);
+			}else{
+				origin = va("%.0f %.0f %.0f",
+					org[0]-252, 
+					org[1]-126, 
+				org[2] - 50);
+			}
+			AddSpawnField("origin",		origin);
+			AddSpawnField("angles",		"0 -270 0");
+		}else if(part == 4){
+			if(!big){
+				origin = va("%.0f %.0f %.0f",
+					org[0]+126, 
+					org[1], 
+				org[2] - 50);
+			}else{
+				origin = va("%.0f %.0f %.0f",
+					org[0]+252, 
+					org[1]+126, 
+				org[2] - 50);
+			}
+			AddSpawnField("origin",		origin);
+			AddSpawnField("angles",		"0 -90 0");
+		}
+		AddSpawnField("model",		"trigger_hurt"); //blocked_trigger
+		AddSpawnField("count",		 "1");
+		AddSpawnField("hideseek",	 "1");
+		numb = G_SpawnGEntityFromSpawnVars(qtrue);
+		if(numb != -1 && !autoremove){
+			g_entities[numb].think = G_FreeEntity;
+			g_entities[numb].nextthink = level.time+12000;
+		}
+		
+		level.numSpawnVars = 0;
+		level.numSpawnVarChars = 0;
+		
+		if(big){ // Boe!Man 6/22/12: Spawn the additional fences.
+			AddSpawnField("classname", "misc_bsp"); // blocker
+			AddSpawnField("bspmodel",	"instances/Generic/fence01");
+			if(part == 1){
+				origin = va("%.0f %.0f %.0f",
+					org[0]-126, 
+					org[1]+252,
+				org[2] - 50);
+				AddSpawnField("origin",		origin);
+				AddSpawnField("angles",		"0 360 0");
+			}else if(part == 2){
+				origin = va("%.0f %.0f %.0f",
+					org[0]+126, 
+					org[1]-252,
+				org[2] - 50);
+				AddSpawnField("origin",		origin);
+				AddSpawnField("angles",		"0 180 0");
+			}else if(part == 3){
+				origin = va("%.0f %.0f %.0f",
+					org[0]-252, 
+					org[1]+126, 
+				org[2] - 50);
+				AddSpawnField("origin",		origin);
+				AddSpawnField("angles",		"0 -270 0");
+			}else if(part == 4){
+				origin = va("%.0f %.0f %.0f",
+					org[0]+252, 
+					org[1]-126, 
+				org[2] - 50);
+				AddSpawnField("origin",		origin);
+				AddSpawnField("angles",		"0 -90 0");
+			}
+			AddSpawnField("model",		"trigger_hurt"); //blocked_trigger
+			AddSpawnField("count",		 "1");
+			AddSpawnField("hideseek",	 "1");
+			numb = G_SpawnGEntityFromSpawnVars(qtrue);
+			if(numb != -1 && !autoremove){
+				g_entities[numb].think = G_FreeEntity;
+				g_entities[numb].nextthink = level.time+12000;
+			}
+			
+			level.numSpawnVars = 0;
+			level.numSpawnVarChars = 0;
+		}
 	}
 }
 

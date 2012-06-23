@@ -533,7 +533,7 @@ void Boe_serverMsg (void);
 void Henk_Tip(void);
 
 // 1/14/10: Custom commands by Henk
-void	SpawnCage(vec3_t org, gentity_t *ent, qboolean autoremove);
+void	SpawnCage(vec3_t org, gentity_t *ent, qboolean autoremove, qboolean big);
 // Henk 23/01/10 -> Add BoxNade and StripHiders
 void	SpawnBox(vec3_t org);
 int		SpawnBoxEx(vec3_t org, vec3_t ang);

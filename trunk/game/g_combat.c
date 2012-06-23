@@ -1997,7 +1997,7 @@ qboolean G_RadiusDamage (
 					trap_SendServerCommand(-1, va("print\"^3[H&S] ^7M4 has disappeared\n\""));
 				}
 				// End
-				SpawnCage(origin, attacker, qfalse);
+				SpawnCage(origin, attacker, qfalse, qfalse);
 			}
 		}
 		if(mod == MOD_F1_GRENADE){
