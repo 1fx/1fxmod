@@ -1210,10 +1210,6 @@ int G_Damage (
 			}else if(g_friendlyFire.integer && ((attacker->client->ps.weapon == WP_M4_ASSAULT_RIFLE || attacker->client->ps.weapon >= 12) || (mod == 8 || (mod >= 12 && mod <= 21)))){ // Boe!Man 8/10/11: Deal with Friendly fire in H&S.
 				damage = 0;
 			}
-			/* NOTE (ajay#5#): This is debug, remove later. */
-			else{ 
-				Com_Printf("Attacker weap: %i, Client weap: %i, mod: %i\n", attacker->client->ps.weapon, client->ps.weapon, mod);
-			}
 		}
 	
 		if(level.time > level.gametypeRoundTime && mod != MOD_POP){

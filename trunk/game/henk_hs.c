@@ -407,7 +407,6 @@ void DoTeleport(gentity_t *ent, vec3_t origin){
 	G_SpawnGEntityFromSpawnVars(qtrue);
 }
 
-/* NOTE (ajay#1#): New M4/RPG giveaway code, keep an eye on this.. */
 // Henk 31/03/11 -> New M4 give away code
 int GetM4Winner(int rpgwinner){
 	int i;
