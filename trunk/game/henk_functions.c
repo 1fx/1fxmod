@@ -220,67 +220,145 @@ int TiedPlayers(void){
 void InitCagefight(void){
 	int i, count = 0;
 
-	vec3_t spawns[33];
+	vec3_t spawns[32];
 	if(level.time < level.cagefighttimer){
 		return;
 	}
 	level.startcage = qfalse;
 
 	G_ResetGametype(qfalse, qtrue);
-	for(i=0;i<=32;i++){
+	for(i=0;i<=31;i++){ // Boe!Man 6/30/12: 32, regardless of the amount of players. The recommended max for any gametype is 32, above, unsupported. So just spread them more equally instead of adding even more spawns.
 		VectorCopy(level.hideseek_cage, spawns[i]);
 	}
-	spawns[0][0] -= 105;
-	spawns[0][1] -= 105;
-	spawns[1][0] += 105;
-	spawns[1][1] += 105;
-	spawns[2][0] -= 105;
-	spawns[2][1] += 105;
-	spawns[3][0] += 105;
-	spawns[3][1] -= 105;
-	spawns[4][0] += 105; // fifth spawn
-	spawns[4][1] -= 0;
-	spawns[5][0] -= 105;
-	spawns[5][1] += 0;
-	spawns[6][0] -= 0;
-	spawns[6][1] += 105;
-	spawns[7][0] += 0;
-	spawns[7][1] -= 105;
-	spawns[8][0] += 105; // ninth spawn
-	spawns[8][1] -= 50;
-	spawns[9][0] -= 105;
-	spawns[9][1] += 50;
-	spawns[10][0] -= 50;
-	spawns[10][1] += 105;
-	spawns[11][0] += 50;
-	spawns[11][1] -= 105;
-	spawns[12][0] -= 50;
-	spawns[12][1] -= 105;
-	spawns[13][0] += 50;
-	spawns[13][1] += 105;
-	spawns[14][0] -= 105;
-	spawns[14][1] -= 50;
-	spawns[15][0] += 105;
-	spawns[15][1] += 50;
-	spawns[16][0] += 50;
-	spawns[16][1] -= 50;
-	spawns[17][0] += 50;
-	spawns[17][1] += 50;
-	spawns[18][0] -= 50;
-	spawns[18][1] += 50;
-	spawns[19][0] -= 50;
-	spawns[19][1] -= 50;
+	
+	/*if(!big){
+		spawns[0][0] -= 105;
+		spawns[0][1] -= 105;
+		spawns[1][0] += 105;
+		spawns[1][1] += 105;
+		spawns[2][0] -= 105;
+		spawns[2][1] += 105;
+		spawns[3][0] += 105;
+		spawns[3][1] -= 105;
+		spawns[4][0] += 105; // fifth spawn
+		spawns[4][1] -= 0;
+		spawns[5][0] -= 105;
+		spawns[5][1] += 0;
+		spawns[6][0] -= 0;
+		spawns[6][1] += 105;
+		spawns[7][0] += 0;
+		spawns[7][1] -= 105;
+		spawns[8][0] += 105; // ninth spawn
+		spawns[8][1] -= 50;
+		spawns[9][0] -= 105;
+		spawns[9][1] += 50;
+		spawns[10][0] -= 50;
+		spawns[10][1] += 105;
+		spawns[11][0] += 50;
+		spawns[11][1] -= 105;
+		spawns[12][0] -= 50;
+		spawns[12][1] -= 105;
+		spawns[13][0] += 50;
+		spawns[13][1] += 105;
+		spawns[14][0] -= 105;
+		spawns[14][1] -= 50;
+		spawns[15][0] += 105;
+		spawns[15][1] += 50;
+		spawns[16][0] += 50;
+		spawns[16][1] -= 50;
+		spawns[17][0] += 50;
+		spawns[17][1] += 50;
+		spawns[18][0] -= 50;
+		spawns[18][1] += 50;
+		spawns[19][0] -= 50;
+		spawns[19][1] -= 50;
 
-	spawns[20][0] += 0;
-	spawns[20][1] -= 50;
-	spawns[21][0] += 50;
-	spawns[21][1] += 0;
-	spawns[22][0] -= 0;
-	spawns[22][1] += 50;
-	spawns[23][0] -= 50;
-	spawns[23][1] -= 0;
-	spawns[24][0] -= 0;
-	spawns[24][1] -= 0;
+		spawns[20][0] += 0;
+		spawns[20][1] -= 50;
+		spawns[21][0] += 50;
+		spawns[21][1] += 0;
+		spawns[22][0] -= 0;
+		spawns[22][1] += 50;
+		spawns[23][0] -= 50;
+		spawns[23][1] -= 0;
+		spawns[24][0] -= 0;
+		spawns[24][1] -= 0;
+	}else{ // Boe!Man 6/30/12: Add big cage spawnpoints.
+	*/
+		// The absolute corners.
+		spawns[0][0] -= 231;
+		spawns[0][1] -= 231;
+		spawns[1][0] += 231;
+		spawns[1][1] += 231;
+		spawns[2][0] -= 231;
+		spawns[2][1] += 231;
+		spawns[3][0] += 231;
+		spawns[3][1] -= 231;
+		
+		// The center between the two cages, still on the 'outer' line.
+		spawns[4][0] -= 0;
+		spawns[4][1] -= 231;
+		spawns[5][0] += 0;
+		spawns[5][1] += 231;
+		spawns[6][0] -= 231;
+		spawns[6][1] -= 0;
+		spawns[7][0] += 231;
+		spawns[7][1] += 0;
+		
+		// The quarter between the cage, again, on the outer line.
+		spawns[8][0] -= 115.5;
+		spawns[8][1] -= 231;
+		spawns[9][0] += 115.5;
+		spawns[9][1] += 231;
+		spawns[10][0] -= 231;
+		spawns[10][1] -= 115.5;
+		spawns[11][0] += 231;
+		spawns[11][1] += 115.5;
+		
+		// The same, except the opposite quarter.
+		spawns[12][0] += 115.5;
+		spawns[12][1] -= 231;
+		spawns[13][0] -= 115.5;
+		spawns[13][1] += 231;
+		spawns[14][0] -= 231;
+		spawns[14][1] += 115.5;
+		spawns[15][0] += 231;
+		spawns[15][1] -= 115.5;
+		
+		// Now we begin spawning them in the 'inner cage', the original spawnpoints that we maintain.
+		spawns[16][0] -= 105;
+		spawns[16][1] -= 105;
+		spawns[17][0] += 105;
+		spawns[17][1] += 105;
+		spawns[18][0] -= 105;
+		spawns[18][1] += 105;
+		spawns[19][0] += 105;
+		spawns[19][1] -= 105;
+		
+		// Center of the inner cage.
+		spawns[20][0] -= 0;
+		spawns[20][1] -= 105;
+		spawns[21][0] += 0;
+		spawns[21][1] += 105;
+		spawns[22][0] -= 105;
+		spawns[22][1] += 0;
+		spawns[23][0] += 105;
+		spawns[23][1] -= 0;
+		
+		// Spawn one fella in the absolute center.
+		spawns[24][0] -= 0;
+		spawns[24][1] -= 0;
+		
+		// Have the extra ability to spawn four more, do this between the absolutes of the inner cage and the outer cage ( (231 - 105) / 2 + 105)
+		spawns[25][0] -= 168;
+		spawns[25][1] -= 168;
+		spawns[26][0] += 168;
+		spawns[26][1] += 168;
+		spawns[27][0] -= 168;
+		spawns[27][1] += 168;
+		spawns[28][0] += 168;
+		spawns[28][1] -= 168;
+	//}
 
 	level.cagefight = qtrue;
 	level.messagedisplay = qtrue; // stop Seeker Released
