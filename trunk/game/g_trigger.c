@@ -817,6 +817,13 @@ void NV_blocked_Teleport	(gentity_t *ent)
 
 void hideseek_cage(gentity_t *ent){
 	VectorCopy(ent->s.origin, level.hideseek_cage);
+	if(ent->size){
+		if(strstr(Q_strlwr(ent->size), "big")){
+			level.hideseek_cageSize = 2; // 2 = big.
+		}else if(strstr(Q_strlwr(ent->size), "none")){
+			level.hideseek_cageSize = 1; // 1 = none.
+		} // Else: "normal" or "regular", or "small", or anything else = 0.
+	}
 	G_FreeEntity(ent);
 	level.cagefightloaded = qtrue;
 }

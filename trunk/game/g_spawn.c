@@ -139,7 +139,10 @@ field_t fields[] =
 	
 	// Boe!Man 5/22/12: Sound set for some entities (like the booster).
 	{"sound",				FOFS(sound),				F_LSTRING},
-
+	
+	// Boe!Man 6/30/12: Add 'size' -> This is for hideseek_cage.
+	{"size",				FOFS(size),					F_LSTRING},
+	
 	{NULL}
 };
 

@@ -231,7 +231,7 @@ void InitCagefight(void){
 		VectorCopy(level.hideseek_cage, spawns[i]);
 	}
 	
-	/*if(!big){
+	if(!level.hideseek_cageSize){ // 0 = regular.
 		spawns[0][0] -= 105;
 		spawns[0][1] -= 105;
 		spawns[1][0] += 105;
@@ -241,12 +241,12 @@ void InitCagefight(void){
 		spawns[3][0] += 105;
 		spawns[3][1] -= 105;
 		spawns[4][0] += 105; // fifth spawn
-		spawns[4][1] -= 0;
+		//spawns[4][1] -= 0;
 		spawns[5][0] -= 105;
-		spawns[5][1] += 0;
-		spawns[6][0] -= 0;
+		//spawns[5][1] += 0;
+		//spawns[6][0] -= 0;
 		spawns[6][1] += 105;
-		spawns[7][0] += 0;
+		//spawns[7][0] += 0;
 		spawns[7][1] -= 105;
 		spawns[8][0] += 105; // ninth spawn
 		spawns[8][1] -= 50;
@@ -273,18 +273,17 @@ void InitCagefight(void){
 		spawns[19][0] -= 50;
 		spawns[19][1] -= 50;
 
-		spawns[20][0] += 0;
+		//spawns[20][0] += 0;
 		spawns[20][1] -= 50;
 		spawns[21][0] += 50;
-		spawns[21][1] += 0;
-		spawns[22][0] -= 0;
+		//spawns[21][1] += 0;
+		//spawns[22][0] -= 0;
 		spawns[22][1] += 50;
 		spawns[23][0] -= 50;
-		spawns[23][1] -= 0;
-		spawns[24][0] -= 0;
-		spawns[24][1] -= 0;
-	}else{ // Boe!Man 6/30/12: Add big cage spawnpoints.
-	*/
+		//spawns[23][1] -= 0;
+		//spawns[24][0] -= 0;
+		//spawns[24][1] -= 0;
+	}else if(level.hideseek_cageSize == 2){ // Boe!Man 6/30/12: 2 = Big cage. So, add big cage spawnpoints.
 		// The absolute corners.
 		spawns[0][0] -= 231;
 		spawns[0][1] -= 231;
@@ -296,14 +295,14 @@ void InitCagefight(void){
 		spawns[3][1] -= 231;
 		
 		// The center between the two cages, still on the 'outer' line.
-		spawns[4][0] -= 0;
+		//spawns[4][0] -= 0;
 		spawns[4][1] -= 231;
-		spawns[5][0] += 0;
+		//spawns[5][0] += 0;
 		spawns[5][1] += 231;
 		spawns[6][0] -= 231;
-		spawns[6][1] -= 0;
+		//spawns[6][1] -= 0;
 		spawns[7][0] += 231;
-		spawns[7][1] += 0;
+		//spawns[7][1] += 0;
 		
 		// The quarter between the cage, again, on the outer line.
 		spawns[8][0] -= 115.5;
@@ -336,18 +335,18 @@ void InitCagefight(void){
 		spawns[19][1] -= 105;
 		
 		// Center of the inner cage.
-		spawns[20][0] -= 0;
+		//spawns[20][0] -= 0;
 		spawns[20][1] -= 105;
-		spawns[21][0] += 0;
+		//spawns[21][0] += 0;
 		spawns[21][1] += 105;
 		spawns[22][0] -= 105;
-		spawns[22][1] += 0;
+		//spawns[22][1] += 0;
 		spawns[23][0] += 105;
-		spawns[23][1] -= 0;
+		//spawns[23][1] -= 0;
 		
 		// Spawn one fella in the absolute center.
-		spawns[24][0] -= 0;
-		spawns[24][1] -= 0;
+		//spawns[24][0] -= 0;
+		//spawns[24][1] -= 0;
 		
 		// Have the extra ability to spawn four more, do this between the absolutes of the inner cage and the outer cage ( (231 - 105) / 2 + 105)
 		spawns[25][0] -= 168;
@@ -358,14 +357,18 @@ void InitCagefight(void){
 		spawns[27][1] += 168;
 		spawns[28][0] += 168;
 		spawns[28][1] -= 168;
-	//}
+	}
 
 	level.cagefight = qtrue;
 	level.messagedisplay = qtrue; // stop Seeker Released
 	level.messagedisplay1 = qtrue; // stop RPG/M4 stuff
-	/* TODO (ajay#5#): Fix this here, the code should check if the cage is big or not (defined in ent, so presumably checked somewhere else). */
-	SpawnCage(level.hideseek_cage, NULL, qtrue, qtrue);
-	SpawnCage(level.hideseek_cage, NULL, qtrue, qtrue); // 2 to be sure no parts are missing
+	if(level.hideseek_cageSize == 2){ // Spawn big cage.
+		SpawnCage(level.hideseek_cage, NULL, qtrue, qtrue);
+		SpawnCage(level.hideseek_cage, NULL, qtrue, qtrue); // 2 to be sure no parts are missing
+	}else if(!level.hideseek_cageSize){
+		SpawnCage(level.hideseek_cage, NULL, qtrue, qfalse);
+		SpawnCage(level.hideseek_cage, NULL, qtrue, qfalse); // 2 to be sure no parts are missing
+	}
 
 	//for(i=0;i<=level.numConnectedClients;i++){
 	for(i = 0; i <= MAX_CLIENTS; i++){
@@ -376,8 +379,10 @@ void InitCagefight(void){
 
 		if(level.clients[i].sess.team == TEAM_RED && (level.clients[i].sess.cageFighter == qtrue || level.mapHighScore == 0)){
 			//respawn ( &g_entities[level.sortedClients[i]] );
-			TeleportPlayer(&g_entities[i], spawns[count], level.clients[i].ps.viewangles, qtrue);
-			count += 1;
+			if(level.hideseek_cageSize != 1){ // 1 = no cage at all, if this is the cage, don't teleport them to the 'cage'.
+				TeleportPlayer(&g_entities[i], spawns[count], level.clients[i].ps.viewangles, qtrue);
+				count += 1;
+			}
 			level.clients[i].ps.stats[STAT_WEAPONS] = 0;
 			memset ( level.clients[i].ps.ammo, 0, sizeof(level.clients[i].ps.ammo) );
 			memset ( level.clients[i].ps.clip, 0, sizeof(level.clients[i].ps.clip) );

@@ -194,6 +194,9 @@ struct gentity_s
 	// Boe!Man 5/22/12: Noise for specific entities (e.g. booster).
 	char		*sound;
 	
+	// Boe!Man 6/30/12: Size, for the hideseek_cage.
+	char		*size;
+	
 };
 
 typedef struct gspawn_s
@@ -803,6 +806,7 @@ typedef struct
 	int			rememberSeekKills;
 	int			lastseek;
 	vec3_t		hideseek_cage;
+	int			hideseek_cageSize;
 	qboolean	cagefightloaded;
 	qboolean	autoremove;
 	qboolean	cagefight;
