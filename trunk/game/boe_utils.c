@@ -2444,3 +2444,24 @@ void Boe_checkRoofGlobal ( void )
 		level.noroofGlobalTime = level.time + 10000;
 	}
 }
+
+/*
+================
+Boe_firstDigitOfInt
+7/4/12 - 6:49 PM
+Returns the first digit of the given integer.
+================
+*/
+
+int Boe_firstDigitOfInt(int i)
+{
+	if(!i){
+		return -1;
+	}
+		
+	while(i >= 10){
+		i /= 10;
+	}
+
+	return i;
+}
