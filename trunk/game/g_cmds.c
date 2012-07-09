@@ -3408,7 +3408,7 @@ Boe_Adm_f
 
 void Boe_adm_f ( gentity_t *ent )
 {
-	int		i, adm, levelx, to;
+	int		i, x, adm, levelx, to, oldcolour, sendsize;
 	char	arg1[MAX_STRING_TOKENS];
 	char	arg2[MAX_STRING_TOKENS];
 	gclient_t	*client;
@@ -3419,6 +3419,16 @@ void Boe_adm_f ( gentity_t *ent )
 	char action[512];
 	char message[512];
 	char broadcast[512];
+	
+	// Boe!Man 7/9/12: strcat everything to a 'big buffer', and afterwards send big packets to the client (to keep the packet size as small as possible).
+	// As of rev 804 (using default admin level values) big buffer sizes:
+	// /adm as S-Admin: 3912
+	// /adm list: 4207
+	// /adm as S-Admin w/ cm enabled: 4014
+	// /adm list w/ cm enabled: 4309
+	char bigbuf[4500] = "\0";
+	char sendbuf[1024] = "\0";
+	char *point;
 
 	client = ent->client;
 	trap_Argv( 1, arg1, sizeof( arg1 ) );
@@ -3470,162 +3480,204 @@ void Boe_adm_f ( gentity_t *ent )
 		// Boe!Man 9/21/10: We loop the print process and make sure they get in proper order.
 		for(levelx=2;levelx<=to;levelx++){
 		if (g_kick.integer == levelx){
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   k   kick         <i/n> <reason> ^7[^3Kick a player^7]\n\"", g_kick.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   k   kick         <i/n> <reason> ^7[^3Kick a player^7]\n", g_kick.integer));
 			}
 		if (g_addbadmin.integer == levelx){
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   ab  addbadmin    <i/n>          ^7[^3Add a Basic Admin^7]\n\"", g_addbadmin.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   ab  addbadmin    <i/n>          ^7[^3Add a Basic Admin^7]\n", g_addbadmin.integer));
 			}
 		if (g_addadmin.integer == levelx){
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   aa  addadmin     <i/n>          ^7[^3Add an Admin^7]\n\"", g_addadmin.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   aa  addadmin     <i/n>          ^7[^3Add an Admin^7]\n", g_addadmin.integer));
 			}
 		// Boe!Man 1/4/10: Fix with using Tab in the Admin list.
 		if (g_addsadmin.integer == levelx){
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   as  addsadmin    <i/n>          ^7[^3Add a Server Admin^7]\n\"", g_addsadmin.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   as  addsadmin    <i/n>          ^7[^3Add a Server Admin^7]\n", g_addsadmin.integer));
 			}
 		if (g_ban.integer == levelx){
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   ba  ban          <i/n> <reason> ^7[^3Ban a player^7]\n\"", g_ban.integer));
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   uba unban        <ip/line #>    ^7[^3Unban a banned IP^7]\n\"", g_ban.integer));
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   bl  banlist                     ^7[^3Shows the current banlist^7]\n\"", g_ban.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   ba  ban          <i/n> <reason> ^7[^3Ban a player^7]\n", g_ban.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   uba unban        <ip/line #>    ^7[^3Unban a banned IP^7]\n", g_ban.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   bl  banlist                     ^7[^3Shows the current banlist^7]\n", g_ban.integer));
 			}
 		if (g_subnetban.integer == levelx){
 			// Boe!Man 1/6/10: Reason added to the Subnetban command.
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   sb  subnetban    <i/n> <reason> ^7[^3Ban a players' subnet^7]\n\"", g_subnetban.integer));
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   sbu subnetunban  <ip/line #>    ^7[^3Unban a banned subnet^7]\n\"", g_subnetban.integer));
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   sbl subnetbanlist               ^7[^3Shows the current subnetbanlist^7]\n\"", g_subnetban.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   sb  subnetban    <i/n> <reason> ^7[^3Ban a players' subnet^7]\n", g_subnetban.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   sbu subnetunban  <ip/line #>    ^7[^3Unban a banned subnet^7]\n", g_subnetban.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   sbl subnetbanlist               ^7[^3Shows the current subnetbanlist^7]\n", g_subnetban.integer));
 			}
 		if (g_uppercut.integer == levelx){
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   uc  uppercut     <i/n>          ^7[^3Launch a player upwards^7]\n\"", g_uppercut.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   uc  uppercut     <i/n>          ^7[^3Launch a player upwards^7]\n", g_uppercut.integer));
 			}
 		if (g_twist.integer == levelx){
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   tw  twist        <i/n>          ^7[^3Twist a player^7]\n\"", g_twist.integer));
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   utw untwist      <i/n>          ^7[^3Untwist a twisted player^7]\n\"", g_twist.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   tw  twist        <i/n>          ^7[^3Twist a player^7]\n", g_twist.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   utw untwist      <i/n>          ^7[^3Untwist a twisted player^7]\n", g_twist.integer));
 			}
 		if (g_runover.integer == levelx){
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   ro  runover      <i/n>          ^7[^3Boost a player backwards^7]\n\"", g_runover.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   ro  runover      <i/n>          ^7[^3Boost a player backwards^7]\n", g_runover.integer));
 			}
 		if (g_mapswitch.integer == levelx){
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   mr  maprestart                  ^7[^3Restart the current map^7]\n\"", g_mapswitch.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   mr  maprestart                  ^7[^3Restart the current map^7]\n", g_mapswitch.integer));
 			}
 		if (g_flash.integer == levelx){
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   fl  flash        <i/n>          ^7[^3Flash a player^7]\n\"", g_flash.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   fl  flash        <i/n>          ^7[^3Flash a player^7]\n", g_flash.integer));
 			}
 		if (g_pop.integer == levelx){
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   p   pop          <i/n>          ^7[^3Pop a player^7]\n\"", g_pop.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   p   pop          <i/n>          ^7[^3Pop a player^7]\n", g_pop.integer));
 			}
 		if (g_strip.integer == levelx){
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   s   strip        <i/n>          ^7[^3Remove weapons from a player^7]\n\"", g_strip.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   s   strip        <i/n>          ^7[^3Remove weapons from a player^7]\n", g_strip.integer));
 			}
 		if (g_mute.integer == levelx){
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   m   mute         <i/n> <time>   ^7[^3Mute a player^7]\n\"", g_mute.integer));
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   um  unmute       <i/n>          ^7[^3Unmute a player^7]\n\"", g_mute.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   m   mute         <i/n> <time>   ^7[^3Mute a player^7]\n", g_mute.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   um  unmute       <i/n>          ^7[^3Unmute a player^7]\n", g_mute.integer));
 			}
 		if (g_plant.integer == levelx){
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   pl  plant        <i/n>          ^7[^3Plant a player in the ground^7]\n\"", g_plant.integer));
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   upl unplant      <i/n>          ^7[^3Unplant a planted player^7]\n\"", g_plant.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   pl  plant        <i/n>          ^7[^3Plant a player in the ground^7]\n", g_plant.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   upl unplant      <i/n>          ^7[^3Unplant a planted player^7]\n", g_plant.integer));
 			}
 		if (g_burn.integer == levelx){
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   b   burn         <i/n>          ^7[^3Burn a player^7]\n\"", g_burn.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   b   burn         <i/n>          ^7[^3Burn a player^7]\n", g_burn.integer));
 			}
 		if (g_eventeams.integer == levelx){
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   et  eventeams                   ^7[^3Make the teams even^7]\n\"", g_eventeams.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   et  eventeams                   ^7[^3Make the teams even^7]\n", g_eventeams.integer));
 			}
-		/*if (g_333.integer != 5){
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   333 333                         ^7[^3Enable/Disable 333 FPS jumps^7]\n\"", g_333.integer));
-			}*/
 		if (g_sl.integer == levelx && cm_enabled.integer != 1){
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   sl  scorelimit   <time>         ^7[^3Change the scorelimit^7]\n\"", g_sl.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   sl  scorelimit   <time>         ^7[^3Change the scorelimit^7]\n", g_sl.integer));
 			}
 		if (g_tl.integer == levelx && cm_enabled.integer != 1){
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   tl  timelimit    <time>         ^7[^3Change the timelimit^7]\n\"", g_tl.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   tl  timelimit    <time>         ^7[^3Change the timelimit^7]\n", g_tl.integer));
 			}
 		if (g_nolower.integer == levelx){
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   nl  nolower                     ^7[^3Enable/Disable Nolower^7]\n\"", g_nolower.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   nl  nolower                     ^7[^3Enable/Disable Nolower^7]\n", g_nolower.integer));
 			}
 		if (g_noroof.integer == levelx){
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   nr  noroof                      ^7[^3Enable/Disable Noroof^7]\n\"", g_noroof.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   nr  noroof                      ^7[^3Enable/Disable Noroof^7]\n", g_noroof.integer));
 			}
 		if (g_damage.integer == levelx){
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   nd  normaldamage                ^7[^3Toggle Normal damage^7]\n\"", g_damage.integer));
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   rd  realdamage                  ^7[^3Toggle Real damage^7]\n\"", g_damage.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   nd  normaldamage                ^7[^3Toggle Normal damage^7]\n", g_damage.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   rd  realdamage                  ^7[^3Toggle Real damage^7]\n", g_damage.integer));
 			}
 		if (g_ri.integer == levelx){
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   ri  ri           <time>         ^7[^3Change the respawn interval^7]\n\"", g_ri.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   ri  ri           <time>         ^7[^3Change the respawn interval^7]\n", g_ri.integer));
 			}
 		if (g_gr.integer == levelx){
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   gr  gametyperestart             ^7[^3Restart the current gametype^7]\n\"", g_gr.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   gr  gametyperestart             ^7[^3Restart the current gametype^7]\n", g_gr.integer));
 			}
 		if (g_clanvsall.integer == levelx){
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   cva clanvsall                   ^7[^3Clan versus other players^7]\n\"", g_clanvsall.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   cva clanvsall                   ^7[^3Clan versus other players^7]\n", g_clanvsall.integer));
 			}
 		if (g_swapteams.integer == levelx && cm_enabled.integer != 1){
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   sw  swapteams                   ^7[^3Swap the players from both teams^7]\n\"", g_swapteams.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   sw  swapteams                   ^7[^3Swap the players from both teams^7]\n", g_swapteams.integer));
 			}
 		if (g_lock.integer == levelx){
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   l   lock         <team>         ^7[^3Lock a team^7]\n\"", g_lock.integer));
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   ul  unlock       <team>         ^7[^3Unlock a team^7]\n\"", g_lock.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   l   lock         <team>         ^7[^3Lock a team^7]\n", g_lock.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   ul  unlock       <team>         ^7[^3Unlock a team^7]\n", g_lock.integer));
 			}
 		if (g_clan.integer == levelx){
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   acl addclan      <i/n>          ^7[^3Add a clan member^7]\n\"", g_clan.integer));
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   rcl removeclan   <i/n>          ^7[^3Remove a clan member^7]\n\"", g_clan.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   acl addclan      <i/n>          ^7[^3Add a clan member^7]\n", g_clan.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   rcl removeclan   <i/n>          ^7[^3Remove a clan member^7]\n", g_clan.integer));
 			}
 		if (g_broadcast.integer == levelx){
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   br  broadcast    <message>      ^7[^3Broadcast a message^7]\n\"", g_broadcast.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   br  broadcast    <message>      ^7[^3Broadcast a message^7]\n", g_broadcast.integer));
 			}
 		if (g_forceteam.integer == levelx){
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   ft  forceteam    <i/n> <team>   ^7[^3Force a player to join a team^7]\n\"", g_forceteam.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   ft  forceteam    <i/n> <team>   ^7[^3Force a player to join a team^7]\n", g_forceteam.integer));
 			}
 		if (g_nades.integer == levelx){
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   nn  nonades                     ^7[^3Enable or disable nades^7]\n\"", g_nades.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   nn  nonades                     ^7[^3Enable or disable nades^7]\n", g_nades.integer));
 			}
 		if (g_respawn.integer == levelx){
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   rs  respawn                     ^7[^3Respawn a player^7]\n\"", g_respawn.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   rs  respawn                     ^7[^3Respawn a player^7]\n", g_respawn.integer));
 			}
 		if (g_removeadmin.integer == levelx){
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   ra  removeadmin  <i/n>          ^7[^3Remove an Admin^7]\n\"", g_removeadmin.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   ra  removeadmin  <i/n>          ^7[^3Remove an Admin^7]\n", g_removeadmin.integer));
 			}
 		if (g_cm.integer == levelx){
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   cm  compmode                    ^7[^3Toggles Competition Mode^7]\n\"", g_cm.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   cm  compmode                    ^7[^3Toggles Competition Mode^7]\n", g_cm.integer));
 			}
 		if (g_mapswitch.integer == levelx){
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   g   gametype     <gametype>     ^7[^3Switch to the specified gametype^7]\n\"", g_mapswitch.integer));
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   map              <map name>     ^7[^3Switch to the specified map^7]\n\"", g_mapswitch.integer));
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   altmap           <map name>     ^7[^3Switch to the specified altmap^7]\n\"", g_mapswitch.integer));
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   devmap           <map name>     ^7[^3Switch to the specified devmap^7]\n\"", g_mapswitch.integer));
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   mapcycle                        ^7[^3Switch to the next map in the cycle^7]\n\"", g_mapswitch.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   g   gametype     <gametype>     ^7[^3Switch to the specified gametype^7]\n", g_mapswitch.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   map              <map name>     ^7[^3Switch to the specified map^7]\n", g_mapswitch.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   altmap           <map name>     ^7[^3Switch to the specified altmap^7]\n", g_mapswitch.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   devmap           <map name>     ^7[^3Switch to the specified devmap^7]\n", g_mapswitch.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   mapcycle                        ^7[^3Switch to the next map in the cycle^7]\n", g_mapswitch.integer));
 			}
 		if (g_pause.integer == levelx){
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   pa  pause                       ^7[^3Pause the game^7]\n\"", g_pause.integer));
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   upa unpause                     ^7[^3Resume the game^7]\n\"", g_pause.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   pa  pause                       ^7[^3Pause the game^7]\n", g_pause.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   upa unpause                     ^7[^3Resume the game^7]\n", g_pause.integer));
 			}
 		if (g_forcevote.integer == levelx){
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   pv  passvote                    ^7[^3Pass the running vote^7]\n\"", g_forcevote.integer));
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   cv  cancelvote                  ^7[^3Cancel the running vote^7]\n\"", g_forcevote.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   pv  passvote                    ^7[^3Pass the running vote^7]\n", g_forcevote.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   cv  cancelvote                  ^7[^3Cancel the running vote^7]\n", g_forcevote.integer));
 			}
 		if (g_adminlist.integer == levelx){
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   al  adminlist                   ^7[^3Show the Adminlist^7]\n\"", g_adminlist.integer));
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   al  adminlist    'pass'         ^7[^3Show the passworded Adminlist^7]\n\"", g_adminlist.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   al  adminlist                   ^7[^3Show the Adminlist^7]\n", g_adminlist.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   al  adminlist    'pass'         ^7[^3Show the passworded Adminlist^7]\n", g_adminlist.integer));
 			}
 		if (g_adminremove.integer == levelx){
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   adr adminremove  <line #>       ^7[^3Remove an Admin from the list^7]\n\"", g_adminremove.integer));
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   adr adminremove  <line #>'pass' ^7[^3Remove a passworded Admin from list^7]\n\"", g_adminremove.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   adr adminremove  <line #>       ^7[^3Remove an Admin from the list^7]\n", g_adminremove.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   adr adminremove  <line #>'pass' ^7[^3Remove a passworded Admin from list^7]\n", g_adminremove.integer));
 			}
 		if (g_3rd.integer == levelx){
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   3rd third                       ^7[^3Toggles Thirdperson on or off^7]\n\"", g_3rd.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   3rd third                       ^7[^3Toggles Thirdperson on or off^7]\n", g_3rd.integer));
 			}
 
 		// Boe!Man 6/17/11: Display competition mode Admin commands when it's enabled in the starting stage.
 		if(cm_enabled.integer == 1){
-			if(g_cm.integer == levelx){
-				trap_SendServerCommand( ent-g_entities, va("print \"\n^7[^3Competition Mode Commands^7] \n\""));
-				trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   rounds           'one/two'      ^7[^3Set number of rounds^7]\n\"", g_cm.integer));
-				trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   sw  swapteams                   ^7[^3Toggle auto swap^7]\n\"", g_cm.integer));
-				trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   sl  scorelimit   <time>         ^7[^3Change the match scorelimit^7]\n\"", g_cm.integer));
-				trap_SendServerCommand( ent-g_entities, va("print \"[^3%i^7]   tl  timelimit    <time>         ^7[^3Change the match timelimit^7]\n\"", g_cm.integer));
+			if(to != 5 && g_cm.integer == levelx || to == 5 && levelx == 5){
+				Q_strcat(bigbuf, sizeof(bigbuf), va("\n^7[^3Competition Mode Commands^7]\n"));
+				Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   rounds           'one/two'      ^7[^3Set number of rounds^7]\n", g_cm.integer));
+				Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   sw  swapteams                   ^7[^3Toggle auto swap^7]\n", g_cm.integer));
+				Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   sl  scorelimit   <time>         ^7[^3Change the match scorelimit^7]\n", g_cm.integer));
+				Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   tl  timelimit    <time>         ^7[^3Change the match timelimit^7]\n", g_cm.integer));
 			}
 		}
 		
 		// Boe!Man 9/21/10: End of Loop.
 		}
+		
+		// Boe!Man 7/9/12: Now process that loop. We put everything in a big buffer, split in packets of 1000 bytes ea (max is 1024, header should still be sent along with the packet).
+		//Com_Printf("The /adm buffer size is: %i\n", strlen(bigbuf));
+		if(strlen(bigbuf) <= 1000){ // Buffer is still small (could be used for limited B-Admins or so), just send the packet as a whole.
+			trap_SendServerCommand( ent-g_entities, va("print \"%s\"", bigbuf));
+		}else{
+			point = bigbuf; // pointer to bigbuf.
+			levelx = Boe_firstDigitOfInt(strlen(bigbuf));
+			
+			for(i=0;i<=levelx;i++){
+				if(i != levelx){
+					strncpy(sendbuf, point, 1000);
+					point += 1000;
+				}else{
+					//Com_Printf("Last packet size: %i\n", (strlen(bigbuf)-(levelx)*1000));
+					strncpy(sendbuf, point, (strlen(bigbuf)-(levelx)*1000));
+				}
+				
+				if(oldcolour == 1){
+					trap_SendServerCommand( ent-g_entities, va("print \"^3%s\"", sendbuf));
+				}else{
+					trap_SendServerCommand( ent-g_entities, va("print \"%s\"", sendbuf));
+				}
+				
+				x = 0;
+				oldcolour = -1;
+				sendsize = strlen(sendbuf);
+				while (oldcolour == -1){ // Check for the last colour, if we split the packet in a "yellow" colour, that won't get restored. Hence, search for it now.
+					if(sendbuf[sendsize-x] == '3' && sendbuf[sendsize-x-1] == '^'){
+						oldcolour = 1;
+						//Com_Printf("Old colour was yellow, supposeably. i = %i\n", i);
+					}else if(sendbuf[sendsize-x] == '7' && sendbuf[sendsize-x-1] == '^'){
+						oldcolour = 0;
+					}else if(x == 50){ // avoid endless loops. 50 should be sufficient.
+						oldcolour = 0;
+					}
+					x += 1;
+				}
+				
+				memset(sendbuf, 0, sizeof(sendbuf));
+			}
+		}
+					
+					
+		memset(bigbuf, 0, sizeof(bigbuf)); // Boe!Man 7/9/12: Clear memory (reset buffer).
 
 		if(g_enableCustomCommands.integer == 1){
 			trap_SendServerCommand( ent-g_entities, va("print \"\n^7[^3Custom Commands^7] \n\"")); // Boe!Man 3/6/11: Spaces fix (so layout doesn't mess up).
