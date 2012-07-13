@@ -623,6 +623,16 @@ void EvenTeams_HS (gentity_t *adm, qboolean aet)
 				lastConnected = ent;
 			}
 		} 
+		
+		// Boe!Man 7/13/12: Fix crash issue with auto eventeams too soon before entering the map.
+		if(lastConnected == NULL){
+			if(adm && adm->client){
+				trap_SendServerCommand( adm - g_entities, va("print \"^3[Info] ^7You cannot even the teams this fast.\n\"") );
+			}else if(!aet){
+				Com_Printf("You cannot even the teams this fast.\n");
+			}
+			return;
+		}
 
 		TossClientItems( lastConnected ); // Henk 19/01/11 -> Fixed items not dropping with !et
 		lastConnected->client->ps.stats[STAT_WEAPONS] = 0;

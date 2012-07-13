@@ -39,7 +39,7 @@ static admCmd_t AdminCommands[] =
 	{"!forceteam","forceteam", &g_forceteam.integer, &Adm_ForceTeam},
 	{"!nolower","nolower", &g_nolower.integer, &Boe_NoLower},
 	{"!noroof","noroof", &g_noroof.integer, &Boe_NoRoof},
-	{"!shuffeteams","shuffleteams", &g_shuffleteams.integer, &Boe_ShuffleTeams},
+	{"!shuffleteams","shuffleteams", &g_shuffleteams.integer, &Boe_ShuffleTeams},
 	{"!nonades","nonades", &g_nades.integer, &Boe_NoNades},
 	{"!scorelimit","scorelimit", &g_sl.integer, &Boe_ScoreLimit},
 	{"!timelimit","timelimit", &g_tl.integer, &Boe_TimeLimit},

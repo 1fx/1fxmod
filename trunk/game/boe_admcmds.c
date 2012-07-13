@@ -4415,7 +4415,17 @@ void Boe_ShuffleTeams(int argNum, gentity_t *ent, qboolean shortCmd){
 	char userinfo[MAX_INFO_STRING];
 	gentity_t* other;
 	
-	// Boe!Man 6/16/12: Check first.
+	// Boe!Man 7/13/12: Do not allow shuffleteams during Zombies.
+	if(current_gametype.value == GT_HZ){
+		if(ent && ent->client){
+			trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7You cannot shuffle the teams in this gametype.\n\""));
+		}else{
+			Com_Printf("^7You cannot shuffle the teams in this gametype.\n");
+		}
+		return;
+	}
+	
+	// Boe!Man 6/16/12: Check gt first.
 	if(!level.gametypeData->teams){
 		if(ent && ent->client){
 			trap_SendServerCommand( ent - g_entities, va("print \"^3[Info] ^7Not playing a team game.\n\"") );
@@ -4442,11 +4452,13 @@ void Boe_ShuffleTeams(int argNum, gentity_t *ent, qboolean shortCmd){
 	teamTotalBlue2 = TeamCount(-1, TEAM_BLUE, NULL );
 	
 	for(i = 0; i < level.numConnectedClients; i++){
-		
-		other = &g_entities[level.sortedClients[i]];
-		
 		// Boe!Man 6/16/12: Skip clients that are spectating..
-		if ( other->client->sess.team == TEAM_SPECTATOR){
+		if ( g_entities[level.sortedClients[i]].client->sess.team == TEAM_SPECTATOR){
+			continue;
+		}
+		
+		// Boe!Man 7/13/12: Skip IDs that aren't connected.
+		if (g_entities[level.sortedClients[i]].client->pers.connected != CON_CONNECTED){
 			continue;
 		}
 		
@@ -4457,31 +4469,52 @@ void Boe_ShuffleTeams(int argNum, gentity_t *ent, qboolean shortCmd){
 			newTeam = TEAM_RED;
 		}else{
 			newTeam = irand(1,2);
+			if(newTeam == TEAM_RED){
+				teamTotalRed += 1;
+			}else{
+				teamTotalBlue += 1;
+			}
 		}
 		
-		if ( newTeam == TEAM_RED){
-			Q_strncpyz(newTeam2, "red", 4);
-			teamTotalRed += 1;
-		}else if(newTeam == TEAM_BLUE){
-			Q_strncpyz(newTeam2, "blue", 5);
-			teamTotalBlue += 1;
+		// Boe!Man 7/13/12: Drop any gametype items they might have.
+		if(g_entities[level.sortedClients[i]].s.gametypeitems > 0){
+			G_DropGametypeItems (&g_entities[level.sortedClients[i]], 0 );
 		}
 		
-		if(other->r.svFlags & SVF_BOT){ // Reset bots to set them to another team
+		// Boe!Man 7/13/12: Remove their weps and set as ghost.
+		g_entities[level.sortedClients[i]].client->ps.stats[STAT_WEAPONS] = 0;
+		G_StartGhosting(&g_entities[level.sortedClients[i]]);
+		
+		// Boe!Man 7/13/12: Do the team changing.
+		g_entities[level.sortedClients[i]].client->sess.team = newTeam;
+		
+		// Boe!Man 7/13/12: Take care of the bots.
+		if(g_entities[level.sortedClients[i]].r.svFlags & SVF_BOT){ // Reset bots to set them to another team
 			trap_GetUserinfo( level.sortedClients[i], userinfo, sizeof( userinfo ) );
+			
+			if (newTeam == TEAM_RED){
+				Q_strncpyz(newTeam2, "red", 4);
+			}else if(newTeam == TEAM_BLUE){
+				Q_strncpyz(newTeam2, "blue", 5);
+			}
+			
 			Info_SetValueForKey( userinfo, "team", newTeam2 );
 			trap_SetUserinfo( level.sortedClients[i], userinfo );
-			other->client->sess.team = newTeam;
+			g_entities[level.sortedClients[i]].client->sess.team = newTeam;
 			if(current_gametype.value != GT_HS){
-				other->client->pers.identity = BG_FindTeamIdentity ( level.gametypeTeam[newTeam], -1 );
+				g_entities[level.sortedClients[i]].client->pers.identity = BG_FindTeamIdentity ( level.gametypeTeam[newTeam], -1 );
 			}
-			ClientBegin(level.sortedClients[i], qfalse);
-		}else{
-			SetTeam( other, newTeam2, NULL, qtrue );
 		}
 		
-		// Boe!Man 6/16/12: Don't forget to (re-)spawn them..
-		ClientSpawn(other);
+		// Boe!Man 7/13/12: Prep for change & respawn.
+		g_entities[level.sortedClients[i]].client->pers.identity = NULL;
+		ClientUserinfoChanged( level.sortedClients[i]);		
+		CalculateRanks();
+
+		G_StopFollowing(&g_entities[level.sortedClients[i]]);
+		G_StopGhosting(&g_entities[level.sortedClients[i]]);
+		trap_UnlinkEntity (&g_entities[level.sortedClients[i]]);
+		ClientSpawn(&g_entities[level.sortedClients[i]]);
 	}
 	
 	// Boe!Man 6/16/12: Proper messaging/logging.
