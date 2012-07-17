@@ -3644,11 +3644,15 @@ void Boe_adm_f ( gentity_t *ent )
 			
 			for(i=0;i<=levelx;i++){
 				if(i != levelx){
-					strncpy(sendbuf, point, 1000);
-					point += 1000;
+					if(point[999] == '^'){ // Boe!Man 7/17/12: Don't allow to copy in the middle of the color..
+						strncpy(sendbuf, point, 1001);
+						point += 1001;
+					}else{
+						strncpy(sendbuf, point, 1000);
+						point += 1000;
+					}
 				}else{
-					//Com_Printf("Last packet size: %i\n", (strlen(bigbuf)-(levelx)*1000));
-					strncpy(sendbuf, point, (strlen(bigbuf)-(levelx)*1000));
+					strncpy(sendbuf, point, strlen(point));
 				}
 				
 				if(oldcolour == 1){
