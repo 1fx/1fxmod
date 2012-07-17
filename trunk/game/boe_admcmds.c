@@ -3765,6 +3765,7 @@ void Henk_Unban(int argNum, gentity_t *adm, qboolean shortCmd){
 	}
 }
 
+/* TODO (ajay#8#): AdmList prints clanlist as well now, seperate functions for this when switching to other backend (as planned right now). */
 void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 	char	level[15], level1[3], name[64], test = ' ';
 	char	column1[20], column2[25];
@@ -3776,20 +3777,28 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 	int len, i, count = 0, EndPos = -1, StartPos = 0, CountLines = 0;
 	qboolean begin = qtrue;
 	int r, lcount = -1, Start = 0;
-	char xip[64], arg[32] = "\0";
-	qboolean passwordlist = qfalse;
+	char xip[64], arg[32] = "\0", temp[64] = "\0";
+	qboolean passwordlist = qfalse, clanList = qfalse;
 	qboolean last = qfalse;
 	if(shortCmd){
+		trap_Argv( 0, temp, sizeof( temp ) );
 		trap_Argv( 1, arg, sizeof( arg ) );
-		if(strstr(Q_strlwr(arg), "pass")) // Boe!Man 10/10/11: Fix for "pass" arg not working when capitalised.
+		if(strstr(Q_strlwr(arg), "pass")){// Boe!Man 10/10/11: Fix for "pass" arg not working when capitalised.
 			passwordlist = qtrue;
-		else
+		}else{
+			trap_Argv( 1, temp, sizeof( temp ) );
 			trap_Argv( 2, arg, sizeof( arg ) );
-		
-	}else
+		}
+	}else{
+		trap_Argv( argNum-1, temp, sizeof( temp ) );
 		trap_Argv( argNum, arg, sizeof( arg ) );
-	if(strstr(arg, "pass"))
+	}
+	
+	if(strstr(temp, "clanlist") || strstr(temp, "!cl")){
+		clanList = qtrue;
+	}else if(strstr(arg, "pass")){
 		passwordlist = qtrue;
+	}
 	
 	// Boe!Man 4/29/12: If the password login system isn't allowed by the server, by all means, also disallow the showing of the list.
 	if(passwordlist && !g_passwordAdmins.integer){
@@ -3803,23 +3812,56 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 	memset(buffer, 0, sizeof(buffer));
 	//wrapper for interface
 	if(adm){
-		trap_SendServerCommand( adm-g_entities, va("print \"^7[^3Adminlist^7]\n\n\""));
-		trap_SendServerCommand( adm-g_entities, va("print \"^3 #    Lvl  Name               IP\n\""));
+		if(!clanList){
+			trap_SendServerCommand( adm-g_entities, va("print \"^7[^3Adminlist^7]\n\n\""));
+			trap_SendServerCommand( adm-g_entities, va("print \"^3 #    Lvl  Name               IP\n\""));
+		}else{
+			trap_SendServerCommand( adm-g_entities, va("print \"^7[^3Clanlist^7]\n\n\""));
+			trap_SendServerCommand( adm-g_entities, va("print \"^3 #    Name               IP\n\""));
+		}
 		trap_SendServerCommand( adm-g_entities, va("print \"^7------------------------------------------------------------------------\n\""));
 	}else{
-		Com_Printf("^7[^3Adminlist^7]\n\n");
-		Com_Printf("^3 #    Lvl  Name               IP\n");
+		if(!clanList){
+			Com_Printf("^7[^3Adminlist^7]\n\n");
+			Com_Printf("^3 #    Lvl  Name               IP\n");
+		}else{
+			Com_Printf("^7[^3Clanlist^7]\n\n");
+			Com_Printf("^3 #    Name               IP\n");
+		}
 		Com_Printf("^7------------------------------------------------------------------------\n");
 	}
-	if(passwordlist)
+	if(passwordlist){
 		len = trap_FS_FOpenFile(g_adminPassFile.string, &f, FS_READ);
-	else
-		len = trap_FS_FOpenFile(g_adminfile.string, &f, FS_READ);
+	}else{
+		if(!clanList){
+			len = trap_FS_FOpenFile(g_adminfile.string, &f, FS_READ);
+		}else{
+			len = trap_FS_FOpenFile(g_clanfile.string, &f, FS_READ);
+		}
+	}
+	
 	if(!f){
-		if(passwordlist)
-			Com_Printf("Error while reading %s\n", g_adminPassFile.string);
-		else
-			Com_Printf("Error while reading %s\n", g_adminfile.string);
+		if(passwordlist){
+			if(adm){
+				trap_SendServerCommand( adm-g_entities, va("print \"Error while reading %s\n\"", g_adminPassFile.string));
+			}else{
+				Com_Printf("Error while reading %s\n", g_adminPassFile.string);
+			}
+		}else{
+			if(!clanList){
+				if(adm){
+					trap_SendServerCommand( adm-g_entities, va("print \"Error while reading %s\n\"", g_clanfile.string));
+				}else{
+					Com_Printf("Error while reading %s\n", g_clanfile.string);
+				}
+			}else{
+				if(adm){
+					trap_SendServerCommand( adm-g_entities, va("print \"Error while reading %s\n\"", g_adminfile.string));
+				}else{
+					Com_Printf("Error while reading %s\n", g_adminfile.string);
+				}
+			}
+		}
 		return;
 	}
 	trap_FS_Read( buf, len, f );
@@ -3844,15 +3886,19 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 		//#ifdef Q3_VM
 		//	Q_strncpyz(xip, buf+StartPos, (EndPos-StartPos));
 		//#else
-			Q_strncpyz(xip, buf+StartPos, (EndPos-StartPos)+1);
+		Q_strncpyz(xip, buf+StartPos, (EndPos-StartPos)+1);
 		//s#endif
 				
 			//else
 				//Q_strncpyz(xip, buf+StartPos, EndPos-StartPos);
 			lcount = -1;
-			for(r=i;r<strlen(buf);r++){
+			for(r=i;r<strlen(buf);r++){ // Boe!Man 7/17/12: Line of end mode fix.
 				if(buf[r] == '\n'){
-					lcount = r-1;
+					if(buf[r-1] == '\r'){
+						lcount = r-2;
+					}else{
+						lcount = r-1;
+					}
 					break;
 				}
 			}
@@ -3864,33 +3910,49 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 			memset(name, 0, sizeof(name));
 			memset(level1, 0, sizeof(level1));
 #ifdef Q3_VM
-				Q_strncpyz(name, buf+EndPos+1, (lcount-(EndPos+1))-1);
-				Q_strncpyz(level1, buf+(lcount-1), 2);
-				if(atoi(level1) < 1 || atoi(level1) > 5){
+				if(!clanList){
+					Q_strncpyz(name, buf+EndPos+1, (lcount-(EndPos+1))-1);
+					Q_strncpyz(level1, buf+(lcount-1), 2);
+				}else{
 					Q_strncpyz(name, buf+EndPos+1, (lcount-(EndPos+1)));
-					Q_strncpyz(level1, buf+lcount, 2);
+				}
+				if(atoi(level1) < 1 || atoi(level1) > 5){
+					if(!clanList){
+						Q_strncpyz(name, buf+EndPos+1, (lcount-(EndPos+1)));
+						Q_strncpyz(level1, buf+lcount, 2);
+					}else{
+						Q_strncpyz(name, buf+EndPos+1, lcount-(EndPos-1));
+					}
 				}
 #else
-			Q_strncpyz(name, buf+EndPos+1, (lcount-(EndPos+1))-1);
-			Q_strncpyz(level1, buf+(lcount-1), 2);
+			if(!clanList){
+				Q_strncpyz(name, buf+EndPos+1, (lcount-(EndPos))-1);
+				Q_strncpyz(level1, buf+(lcount), 2);
+			}else{
+				Q_strncpyz(name, buf+EndPos+1, lcount-(EndPos-1));
+			}
 #endif
 			//Com_Printf("IP: %s\n", xip);
-			//Com_Printf("Name: %s\n", name);
+			//Com_Printf("Name: %s", name);
 			//Com_Printf("Level: %s\n", level1);
 			count += 1;
-			length = strlen(level1);
-			if(length > 2){
-				level1[2] = '\0';
-				length = 2;
+			
+			if(!clanList){
+				length = strlen(level1);
+				if(length > 2){
+					level1[2] = '\0';
+					length = 2;
+				}
+				spaces = 3-length;
+				for(z=0;z<spaces;z++){
+				column1[z] = test;
+				}
+				column1[spaces] = '\0';
+				memset(level, 0, sizeof(level));
+				strcpy(level, va("[^3%c^7]", level1[0]));
+				level[strlen(level)] = '\0';
 			}
-			spaces = 3-length;
-			for(z=0;z<spaces;z++){
-			column1[z] = test;
-			}
-			column1[spaces] = '\0';
-			memset(level, 0, sizeof(level));
-			strcpy(level, va("[^3%c^7]", level1[0]));
-			level[strlen(level)] = '\0';
+			
 			if(passwordlist)
 				length = strlen(xip);
 			else
@@ -3908,25 +3970,39 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 			}
 			column2[spaces] = '\0';
 			if(adm){
-				if(count <= 9){
-					//trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7]   %s%s%s%s%s\n", count, level, column1, name, column2, xip)); // Boe!Man 9/16/10: Print ban.
-					if(passwordlist)
-						Com_sprintf(buffer+strlen(buffer), sizeof(buffer), "[^3%i^7]   %s%s%s%s%s\n", count, level, column1, xip, column2, name);
-					else
-						Com_sprintf(buffer+strlen(buffer), sizeof(buffer), "[^3%i^7]   %s%s%s%s%s\n", count, level, column1, name, column2, xip);
-				}else if(count > 9 && count < 100){
-					//trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7]  %s%s%s%s%s\n", count, level, column1, name, column2, xip)); // Boe!Man 9/16/10: Print ban.
-					if(passwordlist)
-						Com_sprintf(buffer+strlen(buffer), sizeof(buffer), "[^3%i^7]  %s%s%s%s%s\n", count, level, column1, xip, column2, name);
-					else
-						Com_sprintf(buffer+strlen(buffer), sizeof(buffer), "[^3%i^7]  %s%s%s%s%s\n", count, level, column1, name, column2, xip);
-				}else{
-					//trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7] %s%s%s%s%s\n", count, level, column1, name, column2, xip)); // Boe!Man 9/16/10: Print ban.
-					if(passwordlist)
-						Com_sprintf(buffer+strlen(buffer), sizeof(buffer), "[^3%i^7] %s%s%s%s%s\n", count, level, column1, xip, column2, name);
-					else
-						Com_sprintf(buffer+strlen(buffer), sizeof(buffer), "[^3%i^7] %s%s%s%s%s\n", count, level, column1, name, column2, xip);
+				if(!clanList){
+					if(count <= 9){
+						//trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7]   %s%s%s%s%s\n", count, level, column1, name, column2, xip)); // Boe!Man 9/16/10: Print ban.
+						if(passwordlist)
+							Com_sprintf(buffer+strlen(buffer), sizeof(buffer), "[^3%i^7]   %s%s%s%s%s\n", count, level, column1, xip, column2, name);
+						else
+							Com_sprintf(buffer+strlen(buffer), sizeof(buffer), "[^3%i^7]   %s%s%s%s%s\n", count, level, column1, name, column2, xip);
+					}else if(count > 9 && count < 100){
+						//trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7]  %s%s%s%s%s\n", count, level, column1, name, column2, xip)); // Boe!Man 9/16/10: Print ban.
+						if(passwordlist)
+							Com_sprintf(buffer+strlen(buffer), sizeof(buffer), "[^3%i^7]  %s%s%s%s%s\n", count, level, column1, xip, column2, name);
+						else
+							Com_sprintf(buffer+strlen(buffer), sizeof(buffer), "[^3%i^7]  %s%s%s%s%s\n", count, level, column1, name, column2, xip);
+					}else{
+						//trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7] %s%s%s%s%s\n", count, level, column1, name, column2, xip)); // Boe!Man 9/16/10: Print ban.
+						if(passwordlist)
+							Com_sprintf(buffer+strlen(buffer), sizeof(buffer), "[^3%i^7] %s%s%s%s%s\n", count, level, column1, xip, column2, name);
+						else
+							Com_sprintf(buffer+strlen(buffer), sizeof(buffer), "[^3%i^7] %s%s%s%s%s\n", count, level, column1, name, column2, xip);
+					}
+				}else{ // Boe!Man 7/17/12: Clanlist.
+					if(count <= 9){
+						//trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7]   %s%s%s%s%s\n", count, level, column1, name, column2, xip)); // Boe!Man 9/16/10: Print ban.
+							Com_sprintf(buffer+strlen(buffer), sizeof(buffer), "[^3%i^7]   %s%s%s\n", count, name, column2, xip);
+					}else if(count > 9 && count < 100){
+						//trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7]  %s%s%s%s%s\n", count, level, column1, name, column2, xip)); // Boe!Man 9/16/10: Print ban.
+							Com_sprintf(buffer+strlen(buffer), sizeof(buffer), "[^3%i^7]  %s%s%s\n", count, name, column2, xip);
+					}else{
+						//trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7] %s%s%s%s%s\n", count, level, column1, name, column2, xip)); // Boe!Man 9/16/10: Print ban.
+							Com_sprintf(buffer+strlen(buffer), sizeof(buffer), "[^3%i^7] %s%s%s%s%s\n", count, name, column2, xip);
+					}
 				}
+				
 				CountLines += 1;
 				if(CountLines == 10){
 					trap_SendServerCommand( adm-g_entities, va("print \"%s\"", buffer));
@@ -3934,16 +4010,27 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 					CountLines = 0;
 				}
 			}else{
-				if(count <= 9){
-					Com_Printf("[^3%i^7]   %s%s%s%s%s\n", count, level, column1, name, column2, xip);
-				}else if(count > 9 && count < 100){
-					Com_Printf("[^3%i^7]  %s%s%s%s%s\n", count, level, column1, name, column2, xip);
+				if(!clanList){
+					if(count <= 9){
+						Com_Printf("[^3%i^7]   %s%s%s%s%s\n", count, level, column1, name, column2, xip);
+					}else if(count > 9 && count < 100){
+						Com_Printf("[^3%i^7]  %s%s%s%s%s\n", count, level, column1, name, column2, xip);
+					}else{
+						Com_Printf("[^3%i^7] %s%s%s%s%s\n", count, level, column1, name, column2, xip);
+					}
 				}else{
-					Com_Printf("[^3%i^7] %s%s%s%s%s\n", count, level, column1, name, column2, xip);
+					if(count <= 9){
+						Com_Printf("[^3%i^7]   %s%s%s\n", count, name, column2, xip);
+					}else if(count > 9 && count < 100){
+						Com_Printf("[^3%i^7]  %s%s%s\n", count, name, column2, xip);
+					}else{
+						Com_Printf("[^3%i^7] %s%s%s\n", count, name, column2, xip);
+					}
 				}
 			}
 		}
 	}
+	
 	if(adm){
 		trap_SendServerCommand( adm-g_entities, va("print \"%s\"", buffer));
 

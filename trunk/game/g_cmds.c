@@ -71,6 +71,7 @@ static admCmd_t AdminCommands[] =
 	{"!cancel","cancelvote", &g_forcevote.integer, &Boe_cancelVote},
 	{"!mapcycle","mapcycle", &g_mapswitch.integer, &Boe_Mapcycle},
 	{"!adminlist","adminlist", &g_adminlist.integer, &Henk_Admlist},
+	{"!clanlist","clanlist", &g_clan.integer, &Henk_Admlist},
 	{"!adminremove","adminremove", &g_adminremove.integer, &Henk_AdminRemove},
 	// Boe!Man 1/22/11: End full synonyms.
 
@@ -136,6 +137,7 @@ static admCmd_t AdminCommands[] =
 	{"!mc","mapcycle", &g_mapswitch.integer, &Boe_Mapcycle},
 	{"!adl","adminlist", &g_adminlist.integer, &Henk_Admlist},
 	{"!al","adminlist", &g_adminlist.integer, &Henk_Admlist},
+	{"!cl","clanlist", &g_clan.integer, &Henk_Admlist},
 	{"!r","respawn", &g_respawn.integer, &Boe_Respawn},
 	{"!b","burn", &g_burn.integer, &Boe_Burn},
 	{"!u","uppercut", &g_uppercut.integer, &Boe_Uppercut},
