@@ -3783,9 +3783,11 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 	if(shortCmd){
 		trap_Argv( 0, temp, sizeof( temp ) );
 		trap_Argv( 1, arg, sizeof( arg ) );
-		if(strstr(Q_strlwr(arg), "pass")){// Boe!Man 10/10/11: Fix for "pass" arg not working when capitalised.
+		if(strstr(Q_strlwr(arg), "clanlist") || strstr(Q_strlwr(arg), "cl")){
+			clanList = qtrue;
+		}else if(strstr(Q_strlwr(arg), "pass")){// Boe!Man 10/10/11: Fix for "pass" arg not working when capitalised.
 			passwordlist = qtrue;
-		}else{
+		}else{ // Boe!Man 7/17/12: For another check.
 			trap_Argv( 1, temp, sizeof( temp ) );
 			trap_Argv( 2, arg, sizeof( arg ) );
 		}
@@ -3794,9 +3796,9 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 		trap_Argv( argNum, arg, sizeof( arg ) );
 	}
 	
-	if(strstr(temp, "clanlist") || strstr(temp, "!cl")){
+	if(strstr(Q_strlwr(temp), "cl")){
 		clanList = qtrue;
-	}else if(strstr(arg, "pass")){
+	}else if(strstr(Q_strlwr(arg), "pass") && !strstr(Q_strlwr(arg), "cl")){
 		passwordlist = qtrue;
 	}
 	
