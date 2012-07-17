@@ -3680,9 +3680,10 @@ void Henk_Flash(int argNum, gentity_t *adm, qboolean shortCmd){
 }
 
 void Henk_AdminRemove(int argNum, gentity_t *adm, qboolean shortCmd){
-	char	arg[32] = "\0", arg1[32] = "\0", buf[32] = "\0";
+	char	arg[32] = "\0", arg0[32] = "\0", arg1[32] = "\0", buf[32] = "\0";
 	int		i = 0, count = 0, iLine = 0;
-	qboolean password = qfalse;
+	qboolean password = qfalse, clanlist = qfalse;
+	
 	if(shortCmd){
 		trap_Argv( argNum, arg, sizeof( arg ) );
 		if(strstr(arg, "!") && !strstr(arg, " ")){
@@ -3700,46 +3701,98 @@ void Henk_AdminRemove(int argNum, gentity_t *adm, qboolean shortCmd){
 	if(shortCmd){
 		strcpy(arg, buf);
 		trap_Argv( 1, arg1, sizeof( arg1 ) );
-		if(strstr(arg1, "pass"))
+		if(strstr(arg1, "cl")){
+			clanlist = qtrue;
+		}else if(strstr(arg1, "pass")){
 			password = qtrue;
-		else
+		}else{
+			trap_Argv( 2, arg0, sizeof( arg0 ) );
 			trap_Argv( 3, arg1, sizeof( arg1 ) );
-		
-	}else
+		}
+	}else{
+		trap_Argv( argNum-1, arg0, sizeof( arg0 ) );
 		trap_Argv( argNum, arg1, sizeof( arg1 ) );
-	if(strstr(arg1, "pass"))
+	}
+	if(strstr(arg0, "cl")){
+		clanlist = qtrue;
+	}else if(strstr(arg0, "pass") || strstr(arg1, "pass")){
 		password = qtrue;
-		
-	if(password)
-		Com_Printf("pass\n");
-	else
-		Com_Printf("no pass\n");
+	}
 
 	if(strlen(arg) < 2 && strstr(arg, ".")){
-		if(shortCmd)
-			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid line, Usage: !adr <Line>.\n\""));
-		else
-			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid line, Usage: adm adminremove <Line>.\n\""));
+		if(!clanlist){
+			if(adm){
+				if(shortCmd)
+					trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid line, Usage: !adr <line>.\n\""));
+				else
+					trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid line, Usage: adm adminremove <line>.\n\""));
+			}else{
+				Com_Printf("Invalid line, Usage: rcon adminremove <line>.\n");
+			}
+		}else{
+			if(adm){
+				if(shortCmd)
+					trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid line, Usage: !clr <line>.\n\""));
+				else
+					trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid line, Usage: adm clanremove <line>.\n\""));
+			}else{
+				Com_Printf("Invalid line, Usage: rcon clanremove <line>.\n");
+			}
+		}
 		return;
 	}else if(strlen(arg) >= 1 && !strstr(arg, ".")){
 		// unban by line
 		iLine = atoi(arg);
 		if(password)
 			Henk_RemoveLineFromFile(adm, iLine, g_adminPassFile.string, qfalse, qfalse, qfalse, "");
+		else if(clanlist)
+			Henk_RemoveLineFromFile(adm, iLine, g_clanfile.string, qfalse, qfalse, qfalse, "");
 		else
 			Henk_RemoveLineFromFile(adm, iLine, g_adminfile.string, qfalse, qfalse, qfalse, "");
 		return;
 	}else if(strlen(arg) < 2){
-		if(shortCmd)
-			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid line, Usage: !adr <Line>.\n\""));
-		else
-			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid line, Usage: adm adminremove <Line>.\n\""));
+		if(!clanlist){
+			if(adm){
+				if(shortCmd)
+					trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid line, Usage: !adr <line>.\n\""));
+				else
+					trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid line, Usage: adm adminremove <line>.\n\""));
+			}else{
+				Com_Printf("Invalid line, Usage: rcon adminremove <line>.\n");
+			}
+		}else{
+			if(adm){
+				if(shortCmd)
+					trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid line, Usage: !clr <line>.\n\""));
+				else
+					trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid line, Usage: adm clanremove <line>.\n\""));
+			}else{
+				Com_Printf("Invalid line, Usage: rcon clanremove <line>.\n");
+			}
+		}
+		
 		return;
 	}else{
-			if(shortCmd)
-			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid line, Usage: !adr <Line>.\n\""));
-		else
-			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid line, Usage: adm adminremove <Line>.\n\""));
+		if(!clanlist){
+			if(adm){
+				if(shortCmd)
+					trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid line, Usage: !adr <line>.\n\""));
+				else
+					trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid line, Usage: adm adminremove <line>.\n\""));
+			}else{
+				Com_Printf("Invalid line, Usage: rcon adminremove <line>.\n");
+			}
+		}else{
+			if(adm){
+				if(shortCmd)
+					trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid line, Usage: !clr <line>.\n\""));
+				else
+					trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid line, Usage: adm clanremove <line>.\n\""));
+			}else{
+				Com_Printf("Invalid line, Usage: rcon clanremove <line>.\n");
+			}
+		}
+		
 		return;
 	}
 }
