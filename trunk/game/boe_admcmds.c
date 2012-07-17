@@ -3944,10 +3944,14 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 			}
 		}
 	}
-	trap_SendServerCommand( adm-g_entities, va("print \"%s\"", buffer));
+	if(adm){
+		trap_SendServerCommand( adm-g_entities, va("print \"%s\"", buffer));
 
-	// End
-	trap_SendServerCommand( adm-g_entities, va("print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\""));
+		// End
+		trap_SendServerCommand( adm-g_entities, va("print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\""));
+	}else{
+		Com_Printf("\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n");
+	}
 	return;
 }
 
