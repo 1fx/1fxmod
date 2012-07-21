@@ -1106,6 +1106,7 @@ void ClientThink_real( gentity_t *ent )
 		}
 	}
 	*/
+		
 	// following others may result in bad times, but we still want
 	// to check for follow toggles
 	if ( msec < 1 && client->sess.spectatorState != SPECTATOR_FOLLOW ) 
@@ -1269,19 +1270,15 @@ void ClientThink_real( gentity_t *ent )
 	}
 
 	if(current_gametype.value == GT_HS){
-		if(msec < 4){
-			client->ps.gravity = g_gravity.value+111; // 333fps/1000 fps fix.
-		}else{
-			// Boe!Man 7/21/12: Fix for MM1 gravity not maintaining balance with actual g_gravity CVAR (MM1 should always provide a gravity boost, no matter the actual g_gravity CVAR value).
-			if(client->ps.weapon == WP_MM1_GRENADE_LAUNCHER){
-				if(client->ps.gravity > 350){
-					client->ps.gravity = g_gravity.value-300;
-				}else{
-					client->ps.gravity = g_gravity.value;
-				}
+		// Boe!Man 7/21/12: Fix for MM1 gravity not maintaining balance with actual g_gravity CVAR (MM1 should always provide a gravity boost, no matter the actual g_gravity CVAR value).
+		if(client->ps.weapon == WP_MM1_GRENADE_LAUNCHER){
+			if(client->ps.gravity > 350){
+				client->ps.gravity = g_gravity.value-300;
 			}else{
 				client->ps.gravity = g_gravity.value;
 			}
+		}else{
+			client->ps.gravity = g_gravity.value;
 		}
 		if(client->ps.weapon == WP_RPG7_LAUNCHER && level.time > client->sess.slowtime){
 			client->ps.speed = g_speed.value+70;
@@ -1322,6 +1319,13 @@ void ClientThink_real( gentity_t *ent )
 	}else{
 	client->ps.gravity = g_gravity.value;
 	client->ps.speed = g_speed.value;
+	}
+	
+	// Boe!Man 7/21/12: New FPS fix (for all gametypes). Should be light on resources.
+	if(g_noHighFps.integer){
+		if(msec < 4 && ent->client->sess.team != TEAM_SPECTATOR){
+			client->ps.gravity += 111; // 333fps/1000 fps fix.
+		}
 	}
 
 	// set up for pmove

@@ -354,7 +354,7 @@ void G_RespawnClients ( qboolean force, team_t team, qboolean fullRestart )
 
 		ent->client->sess.noTeamChange = qfalse;
 		ent->client->sess.roundkills = 0;
-		ent->client->sess.fpschecks = 0;
+		//ent->client->sess.fpschecks = 0;
 		trap_UnlinkEntity (ent);
 		ClientSpawn ( ent );
 

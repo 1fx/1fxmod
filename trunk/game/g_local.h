@@ -348,7 +348,7 @@ typedef struct
 	int			cagescore;
 	qboolean	cageFighter;	// Boe!Man 8/30/11: qtrue for being a tied player (and thus anticipating in the cagefight).
 	int			invisibletime;
-	int			fpschecks;
+	//int			fpschecks;
 	int			IgnoredClients[33];
 	int			IgnoredClientCount;
 	qboolean	zombie;
