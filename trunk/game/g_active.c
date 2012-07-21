@@ -1270,7 +1270,7 @@ void ClientThink_real( gentity_t *ent )
 
 	if(current_gametype.value == GT_HS){
 		if(msec < 4){
-			client->ps.gravity = g_gravity.value+50; // 333fps/1000 fps fix.
+			client->ps.gravity = g_gravity.value+111; // 333fps/1000 fps fix.
 		}else{
 			// Boe!Man 7/21/12: Fix for MM1 gravity not maintaining balance with actual g_gravity CVAR (MM1 should always provide a gravity boost, no matter the actual g_gravity CVAR value).
 			if(client->ps.weapon == WP_MM1_GRENADE_LAUNCHER){
