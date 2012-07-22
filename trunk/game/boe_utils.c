@@ -2174,49 +2174,45 @@ Boe_mapEvents
 */
 
 void Boe_mapEvents (void){
-		if(level.mapAction == 1){
-			if (g_compMode.integer > 0 && cm_enabled.integer == 1){
-				if(level.time == level.mapSwitchCount + 2000){
-					trap_SendConsoleCommand( EXEC_APPEND, va("map_restart 0\n"));
-				}
-			}
-			else if (g_compMode.integer > 0 && cm_enabled.integer == 3){
-				if(level.time == level.mapSwitchCount + 2000){
-					/*
-					// Boe!Man 11/17/10: Is auto swap enabled? -- Update 1/24/11: Swap the teams when the round has just ended. -- Update 3/19/11: Swap the teams when the round has just started.. The temporary round.
-					if (cm_aswap.integer > 0){
-						Boe_SwapTeams(NULL);
-					}*/
-					trap_SendConsoleCommand( EXEC_APPEND, va("map_restart 0\n"));
-				}
-			}
-			else{
-			if(level.time == level.mapSwitchCount + 1000){
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp %sr%se%sstart in 4!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));}
-			else if(level.time == level.mapSwitchCount + 2000){
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp %sr%se%sstart in 3!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));}
-			else if(level.time == level.mapSwitchCount + 3000){
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp %sr%se%sstart in 2!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));}
-			else if(level.time == level.mapSwitchCount + 4000){
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp %sr%se%sstart in 1!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));}
-			else if(level.time == level.mapSwitchCount + 5000){
-				if(current_gametype.value == GT_HS){
-					trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype h&s\n"));
-				}
+	if(level.mapAction == 1){
+		if (g_compMode.integer > 0 && cm_enabled.integer == 1){
+			if(level.time >= level.mapSwitchCount + 2000){
 				trap_SendConsoleCommand( EXEC_APPEND, va("map_restart 0\n"));
 			}
+		}
+		else if (g_compMode.integer > 0 && cm_enabled.integer == 3){
+			if(level.time >= level.mapSwitchCount + 2000){
+				/*
+				// Boe!Man 11/17/10: Is auto swap enabled? -- Update 1/24/11: Swap the teams when the round has just ended. -- Update 3/19/11: Swap the teams when the round has just started.. The temporary round.
+				if (cm_aswap.integer > 0){
+					Boe_SwapTeams(NULL);
+				}*/
+				trap_SendConsoleCommand( EXEC_APPEND, va("map_restart 0\n"));
 			}
 		}
-		else if(level.mapAction == 2){
-			if(level.time == level.mapSwitchCount + 1000){
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7%s ^7in 4!", level.time + 1000, level.mapPrefix, level.mapSwitchName));}
-			else if(level.time == level.mapSwitchCount + 2000){
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7%s ^7in 3!", level.time + 1000, level.mapPrefix, level.mapSwitchName));}
-			else if(level.time == level.mapSwitchCount + 3000){
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7%s ^7in 2!", level.time + 1000, level.mapPrefix, level.mapSwitchName));}
-			else if(level.time == level.mapSwitchCount + 4000){
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7%s ^7in 1!", level.time + 1000, level.mapPrefix, level.mapSwitchName));}
-			else if(level.time == level.mapSwitchCount + 5000){
+		else{
+			if(level.time >= level.mapSwitchCount){
+				if(level.mapSwitchCount2){
+					trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp %sr%se%sstart in %i!", level.time + 1500, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, level.mapSwitchCount2));
+					level.mapSwitchCount2--;
+					level.mapSwitchCount = level.time + 1000;
+				}else{
+					if(current_gametype.value == GT_HS){
+						trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype h&s\n"));
+					}else if(current_gametype.value == GT_HZ){
+						trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype h&z\n"));
+					}
+				trap_SendConsoleCommand( EXEC_APPEND, va("map_restart 0\n"));
+				}
+			}
+		}
+	}else if(level.mapAction == 2){
+		if(level.time >= level.mapSwitchCount){
+			if(level.mapSwitchCount2){
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7%s ^7in %i!", level.time + 1500, level.mapPrefix, level.mapSwitchName, level.mapSwitchCount2));
+				level.mapSwitchCount2--;
+				level.mapSwitchCount = level.time + 1000;
+			}else{
 				if(strstr(level.mapPrefix, va("%sD", server_color1.string))){
 					trap_SendConsoleCommand( EXEC_APPEND, va("devmap %s\n", level.mapSwitchName));	
 				}else{
@@ -2224,24 +2220,23 @@ void Boe_mapEvents (void){
 				}
 			}
 		}
-		else if(level.mapAction == 3){
-			if(level.time == level.mapSwitchCount + 3000){
-				trap_Cvar_VariableStringBuffer ( "mapname", level.mapname, MAX_QPATH );
-				trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", level.mapname));
+	}else if(level.mapAction == 3){
+		if(level.time >= level.mapSwitchCount + 3000){
+			trap_Cvar_VariableStringBuffer ( "mapname", level.mapname, MAX_QPATH );
+			trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", level.mapname));
+		}
+	}
+	else if(level.mapAction == 4){
+		if(level.time >= level.mapSwitchCount){
+			if(level.mapSwitchCount2){
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp%sc%sy%scle in %i!", level.time + 1500, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, level.mapSwitchCount2));
+				level.mapSwitchCount2--;
+				level.mapSwitchCount = level.time + 1000;
+			}else{
+				trap_SendConsoleCommand( EXEC_APPEND, va("mapcycle\n"));
 			}
 		}
-		else if(level.mapAction == 4){
-			if(level.time == level.mapSwitchCount + 1000){
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp%sc%sy%scle in 4!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));}
-			else if(level.time == level.mapSwitchCount + 2000){
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp%sc%sy%scle in 3!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));}
-			else if(level.time == level.mapSwitchCount + 3000){
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp%sc%sy%scle in 2!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));}
-			else if(level.time == level.mapSwitchCount + 4000){
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp%sc%sy%scle in 1!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));}
-			else if(level.time == level.mapSwitchCount + 5000){
-				trap_SendConsoleCommand( EXEC_APPEND, va("mapcycle\n"));}
-		}
+	}
 	return;
 }
 

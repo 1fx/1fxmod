@@ -739,6 +739,7 @@ typedef struct
 	char		mapPrefix[64];
 	int			mapAction;
 	int			mapSwitchCount;
+	int			mapSwitchCount2; // For precision.
 	char		mapSwitchName[64];
 
 	// Boe!Man 11/16/10

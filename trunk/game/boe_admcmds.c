@@ -635,9 +635,10 @@ void Boe_MapRestart(int argNum, gentity_t *ent, qboolean shortCmd){
 		level.mapSwitch = qtrue;
 		level.mapAction = 1;
 		level.mapSwitchCount = level.time;
+		level.mapSwitchCount2 = 5; // Boe!Man 7/22/12: 5 seconds remaining on the timer.
 		if (g_compMode.integer == 0){
 			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Map restarted by %s.\n\"", ent->client->pers.netname));
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp %sr%se%sstart in 5!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+			//trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp %sr%se%sstart in 5!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		}else if (g_compMode.integer > 0 && cm_enabled.integer == 1){
 			if(cm_dr.integer == 1){ // Boe!Man 3/18/11: If dual rounds are enabled, the first round would be started.
 				trap_SendServerCommand(-1, va("print \"^3[Info] ^7First round started.\n\""));
@@ -670,9 +671,10 @@ void Boe_MapRestart(int argNum, gentity_t *ent, qboolean shortCmd){
 		level.mapSwitch = qtrue;
 		level.mapAction = 1;
 		level.mapSwitchCount = level.time;
+		level.mapSwitchCount2 = 5; // Boe!Man 7/22/12: 5 seconds remaining on the timer.
 		if (g_compMode.integer == 0){
 			trap_SendServerCommand(-1, va("print \"^3[Rcon Action] ^7Map restarted.\n\""));
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp %sr%se%sstart in 5!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+			//trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp %sr%se%sstart in 5!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		}else if (g_compMode.integer > 0 && cm_enabled.integer == 1){
 			trap_SendServerCommand(-1, va("print \"^3[Info] ^7First round started.\n\""));
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sF%si%sr%ss%st round started!", level.time + 3000, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
@@ -4356,6 +4358,7 @@ void Henk_Map(int argNum, gentity_t *adm, qboolean shortCmd){
 		level.mapSwitch = qtrue;
 		level.mapAction = 2;
 		level.mapSwitchCount = level.time;
+		level.mapSwitchCount2 = 5; // Boe!Man 7/22/12: 5 seconds remaining on the timer.
 		strcpy(level.mapSwitchName, map);
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 		
@@ -4367,7 +4370,7 @@ void Henk_Map(int argNum, gentity_t *adm, qboolean shortCmd){
 			strncpy(level.mapPrefix, va("%sM%sa%sp", server_color1.string, server_color2.string, server_color3.string), 63);
 		}
 
-		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7%s ^7in 5!", level.time + 1000, level.mapPrefix, map));
+		//trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7%s ^7in 5!", level.time + 1000, level.mapPrefix, map));
 
 		if(strlen(gametype) > 0){ // Boe!Man 2/26/11: If there's actually a gametype found..
 			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Map switch to %s [%s] by %s.\n\"", map, gametype, adm->client->pers.netname));
@@ -4454,9 +4457,10 @@ void Boe_Mapcycle (int argNum, gentity_t *ent, qboolean shortCmd){
 			level.mapSwitch = qtrue;
 			level.mapAction = 4; 
 			level.mapSwitchCount = level.time;
+			level.mapSwitchCount2 = 5; // Boe!Man 7/22/12: 5 seconds remaining on the timer.
 			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 			Boe_adminLog ("Mapcycle", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), "none");
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp%sc%sy%scle in 5!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+			//trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp%sc%sy%scle in 5!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Mapcycle by %s.\n\"", ent->client->pers.netname));
 			return;
 		}else{
@@ -4473,7 +4477,8 @@ void Boe_Mapcycle (int argNum, gentity_t *ent, qboolean shortCmd){
 			level.mapSwitch = qtrue;
 			level.mapAction = 4;
 			level.mapSwitchCount = level.time;
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp%sc%sy%scle in 5!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+			level.mapSwitchCount2 = 5; // Boe!Man 7/22/12: 5 seconds remaining on the timer.
+			//trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp%sc%sy%scle in 5!", level.time + 1000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 			trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Mapcycle.\n\""));
 			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 			Boe_adminLog ("Mapcycle", va("RCON"), "none");
