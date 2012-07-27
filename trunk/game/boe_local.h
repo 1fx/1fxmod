@@ -647,3 +647,6 @@ void	Boe_checkRoofGlobal(void);
 
 // Boe!Man 7/4/12: Very simple function that will help us in e.g. splitting specific packets (in size).
 int Boe_firstDigitOfInt(int i);
+
+// Boe!Man 7/27/12: Function that replaces arguments in the actual CustomCommand action.
+char *Boe_parseCustomCommandArgs(char *in);

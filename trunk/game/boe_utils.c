@@ -2460,3 +2460,66 @@ int Boe_firstDigitOfInt(int i)
 
 	return i;
 }
+
+/*
+================
+Boe_parseCustomCommandArgs
+7/27/12 - 2:40 PM
+Function that replaces arguments in the actual CustomCommand action.
+================
+*/
+
+char *Boe_parseCustomCommandArgs(char *in)
+{
+	char	*buf;
+	char	out[512] = "\0";
+	char	buf2[5] = "\0";
+	char	arg2[1];
+	char	arg[MAX_STRING_TOKENS];
+	int		pos = 0; // Position of out.
+	
+#ifndef PUB_RELEASE
+	Com_Printf("Boe_parseCustomCommandArgs: in: %s\n", in); // Debug.
+#endif
+	
+	buf = in;
+	while ( *buf ){
+		if(*buf == '%'){ // Check for the identifier of the arg.
+			if(strlen(buf) >= 5){ // Can't go out of bounds here, so check if there are at least 5 characters to process.
+				strncpy(buf2, buf, 5);
+				if(strstr(buf2, "%arg") && henk_isdigit(buf2[4])){ // Can't really go wrong here..
+					memset(arg, 0, sizeof(arg)); // Reset memory here.
+					arg2[0] = buf2[4]; // Copy the argument string to the new buffer, including a terminator.
+					arg2[1] = '\0';
+					trap_Argv(henk_atoi(arg2)+1, arg, sizeof(arg)); // Fetch arg.
+					#ifndef PUB_RELEASE
+					Com_Printf("Argument %i: %s\n", henk_atoi(arg2), arg);
+					#endif
+					Q_strcat(out, sizeof(out), arg); // Append the argument.
+					
+					// Set the new positions correctly (so we won't get any left overs or overwriting).
+					pos += (strlen(arg)-1);
+					buf += 4;
+				}else{ // If any of this fails, just grab the char and move on.
+					out[pos] = *buf;
+				}
+			}else{ // Same here..
+				out[pos] = *buf;
+			}
+		}else{ // Same..
+			out[pos] = *buf;
+		}
+		
+		// (Re-)Set pointers.
+		pos += 1;
+		buf++;
+	}
+	
+	buf = out;
+	
+#ifndef PUB_RELEASE
+	Com_Printf("Boe_parseCustomCommandArgs: out: %s\n", buf); // Debug.
+#endif
+
+	return buf;
+}

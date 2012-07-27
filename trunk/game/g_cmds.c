@@ -3421,6 +3421,7 @@ void Boe_adm_f ( gentity_t *ent )
 	char txtlevel[2];
 	char name[10];
 	char action[512];
+	char *action2;
 	char message[512];
 	char broadcast[512];
 	
@@ -3775,6 +3776,11 @@ void Boe_adm_f ( gentity_t *ent )
 				trap_GPG_FindPairValue(group, "AdminLevel", "5", txtlevel);
 				if(ent->client->sess.admin >= atoi(txtlevel)){
 					trap_GPG_FindPairValue(group, "Action", "say \"No custom action defined\"", action);
+					if(strstr(action, "%arg")){ // Boe!Man 7/27/12: Doesn't matter what argument, as long as there's an argument to be replaced, do it.
+						action2 = Boe_parseCustomCommandArgs(action);
+						memset(action, 0, sizeof(action));
+						strncpy(action, action2, strlen(action2));
+					}
 					trap_GPG_FindPairValue(group, "Broadcast", "Custom action applied", broadcast);
 					trap_GPG_FindPairValue(group, "Message", "Custom action has been applied.", message);
 					trap_SendServerCommand( -1, va("print \"^3[Custom Admin action] ^7%s.\n\"", message));
