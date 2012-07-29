@@ -276,6 +276,9 @@ vmCvar_t	g_publicIPs;
 // Boe!man 6/16/12
 vmCvar_t	g_shuffleteams;
 
+// Boe!Man 7/29/12
+vmCvar_t	g_preferSubnets;
+
 #ifdef _BOE_DBG
 vmCvar_t	boe_log;
 #endif
@@ -563,7 +566,7 @@ static cvarTable_t gameCvarTable[] =
 
 	{ &g_rpmEnt, "g_rpmEnt", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 
-	{ &g_passwordAdmins, "g_passwordAdmins", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
+	{ &g_passwordAdmins, "g_passwordAdmins", "0", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse  },
 	{ &g_badminPass, "g_badminPass", "none", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_adminPass, "g_adminPass", "none", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_sadminPass, "g_sadminPass", "none", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
@@ -586,6 +589,9 @@ static cvarTable_t gameCvarTable[] =
 	
 	// Boe!Man 5/20/12
 	{ &g_publicIPs,					"g_publicIPs",		 	"1",		CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue },
+	
+	// Boe!Man 7/29/12
+	{ &g_preferSubnets,				"g_preferSubnets",		 	"0",		CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
 
 #ifdef _BOE_DBG
 	// Boe!Man: Debug CVAR.
@@ -1025,17 +1031,19 @@ G_InitGame
 void G_InitGame( int levelTime, int randomSeed, int restart )
 {
 	int	i;
+	/*
 	char test[128];
 	char stable[128];
 	char version[64];
+	*/
 	// Boe!Man 3/30/10
 	Com_Printf ("------- Game Initialization -------\n");
 	Com_Printf ("Mod: %s %s\n", INF_STRING, INF_VERSION_STRING);
-#ifdef Q3_VM
+//#ifdef Q3_VM
 	Com_Printf ("Date: %s\n", INF_VERSION_DATE);
-#else
+/*#else
 	Com_Printf ("Date: %d/%d/%02d\n", MONTH+1, DAY, YEAR );
-#endif
+#endif*/
 	
 	srand( randomSeed );
 
@@ -1325,6 +1333,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	Boe_ParseChatSounds();
 
 	// Boe!Man 1/17/11: Check for modifications on the motd and version.
+	/*
 	strncpy(test, TEST_VERSION, 127);
 	strncpy(stable, STABLE_VERSION, 127);
 	strncpy(version, INF_VERSION_STRING_COLORED, 63);
@@ -1334,7 +1343,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 		Com_Error(ERR_FATAL, "Unexpected return on static value.");
 	}else if (version[2] != '1' || version[4] != 'x' || version[7] != '.' || version[11] != 'M' || version[13] != 'd'){
 		Com_Error(ERR_FATAL, "Unexpected return on static value.");
-	}
+	}*/
 
 	if(g_useNoLower.integer){
 		level.nolower1 = qtrue;
@@ -1357,6 +1366,13 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 		level.noroof1 = qtrue;
 	}else{
 		level.noroof1 = qfalse;
+	}
+	
+	// Boe!Man 7/29/12: Check for g_preferSubnets and g_passwordAdmins not both being set to 1 (incompatible).
+	if(g_passwordAdmins.integer && g_preferSubnets.integer){
+		trap_Cvar_Set("g_passwordAdmins", "0");
+		trap_Cvar_Update(&g_passwordAdmins);
+		Com_Printf("Info: g_passwordAdmins has been set to 0 due to g_preferSubnets being set to %i. Set g_preferSubnets to 0 to allow Admins to login using a password.\n", g_preferSubnets.integer);
 	}
 
 	// Boe!Man 11/16/10: Scrim settings.

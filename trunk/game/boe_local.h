@@ -23,6 +23,8 @@
 #define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod"
 
 // Boe!Man 7/12/11: Mod date.
+// Boe!Man 7/29/12: Month first causes confusion. Just hold on to the ISO standard for now (__DATE__).
+/*
 #ifdef Q3_VM
 #define INF_VERSION_DATE "6/14/12"
 #else
@@ -43,6 +45,8 @@
 // Date will be generated automatically
 #define INF_VERSION_DATE ""
 #endif
+*/
+#define INF_VERSION_DATE __DATE__
 
 // Boe!Man 7/12/11: Motd header parts.
 #define TEST_VERSION "Developed by ^GBoe!Man ^7& ^6Henkie\n^1Running a Test version of the Mod\n\n"
@@ -650,3 +654,6 @@ int Boe_firstDigitOfInt(int i);
 
 // Boe!Man 7/27/12: Function that replaces arguments in the actual CustomCommand action.
 char *Boe_parseCustomCommandArgs(char *in);
+
+// Boe!Man 7/29/12: CVAR that handles admins/clan members on subnet rather than Full IP -> This effectively disables the admin login system.
+extern	vmCvar_t	g_preferSubnets;

@@ -1482,11 +1482,14 @@ void Boe_id (int idnum)
 	int             i = 0;
 	char		    *ip = g_entities[idnum].client->pers.ip;
 	char			*id = g_entities[idnum].client->pers.boe_id;
+	char			*ip2;
+	char			ip20[MAX_IP];
 
 	if(g_entities[idnum].r.svFlags & SVF_BOT){
 		Com_sprintf(id, MAX_BOE_ID, "bot\\%s", g_entities[idnum].client->pers.cleanName);
 		return;
 	}
+	
 	//while(i < 6)
 	//{
 	//	*id++ = *ip++;
@@ -1496,7 +1499,13 @@ void Boe_id (int idnum)
 	//*id++ = '\\';
     //*id = '\0';
 
-	Com_sprintf(id, MAX_BOE_ID, "%s\\%s", ip, g_entities[idnum].client->pers.cleanName);
+	if(!g_preferSubnets.integer){ // Boe!Man 7/29/12: Normal and proper way.
+		Com_sprintf(id, MAX_BOE_ID, "%s\\%s", ip, g_entities[idnum].client->pers.cleanName);
+	}else{ // Add them on subnet, so also check that globally.
+		ip2 = ip20;
+		Q_strncpyz(ip2, g_entities[idnum].client->pers.ip, 7);
+		Com_sprintf(id, MAX_BOE_ID, "%s\\%s", ip2, g_entities[idnum].client->pers.cleanName);
+	}
 	//strcat(id, g_entities[idnum].client->pers.cleanName);
 	return;
 }
