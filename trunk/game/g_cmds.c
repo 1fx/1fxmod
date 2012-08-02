@@ -3572,6 +3572,9 @@ void Boe_adm_f ( gentity_t *ent )
 		if (g_swapteams.integer == levelx && cm_enabled.integer != 1){
 			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   sw  swapteams                   ^7[^3Swap the players from both teams^7]\n", g_swapteams.integer));
 			}
+		if (g_shuffleteams.integer == levelx){
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   sh  shuffleteams                ^7[^3Mix the teams at random^7]\n", g_shuffleteams.integer));
+			}
 		if (g_lock.integer == levelx){
 			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   l   lock         <team>         ^7[^3Lock a team^7]\n", g_lock.integer));
 			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   ul  unlock       <team>         ^7[^3Unlock a team^7]\n", g_lock.integer));
