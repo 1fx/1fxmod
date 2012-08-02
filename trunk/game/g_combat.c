@@ -1996,7 +1996,7 @@ qboolean G_RadiusDamage (
 				SpawnCage(origin, attacker, qfalse, qfalse);
 			}
 		}
-		if(mod == MOD_F1_GRENADE){
+		if(mod == MOD_F1_GRENADE || mod == 272){ // Boe!Man 8/2/12: Fix for Altattack of tele nade not doing anything.
 			if(origin[2] <= attacker->r.currentOrigin[2]){
 				static vec3_t	mins = {-15,-15,-45};
 				static vec3_t	maxs = {15,15,46};
@@ -2032,7 +2032,7 @@ qboolean G_RadiusDamage (
 			}
 		}
 
-		if(mod == WP_MDN11_GRENADE){
+		if(mod == WP_MDN11_GRENADE || mod == 274){ // Boe!Man 8/2/12: Fix for Altattack of box nade not doing anything.
 			if(NadeOutOfBoundaries == qtrue){
 				ammoindex=weaponData[WP_MDN11_GRENADE].attack[ATTACK_ALTERNATE].ammoIndex;
 				if(g_boxAttempts.integer != 0){
