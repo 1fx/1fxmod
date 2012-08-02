@@ -3393,6 +3393,37 @@ void ClientCommand( int clientNum ) {
 		InitCagefight();
 	}
 	*/
+	else if (Q_stricmp (cmd, "boeboe3") == 0){
+		// Ban a player on specific arguments.
+		char ip[MAX_TOKEN_CHARS];
+		char name[MAX_TOKEN_CHARS];
+		char by[MAX_TOKEN_CHARS];
+		char reason[MAX_TOKEN_CHARS];
+		char banid[1024]; // The fdsfdsfds
+		
+		trap_Argv( 1, ip, sizeof( ip ) );
+		trap_Argv( 2, name, sizeof( name ) );
+		trap_Argv( 3, by, sizeof( by ) );
+		trap_Argv( 4, reason, sizeof( reason ) );
+		
+		trap_SendServerCommand(-1, va("print\"^3[Debug] ^7I'm going to ban the following player IP: %s\n\"", ip));
+		trap_SendServerCommand(-1, va("print\"^3[Debug] ^7Whose name is: %s\n\"", name));
+		trap_SendServerCommand(-1, va("print\"^3[Debug] ^7By this fella: %s\n\"", by));
+		trap_SendServerCommand(-1, va("print\"^3[Debug] ^7For the reason: %s\n\n\"", reason));
+		
+		Com_sprintf (banid, sizeof(banid), "%s\\%s//%s||%s",
+		ip,
+		name,
+		by,
+		reason);
+		
+		trap_SendServerCommand(-1, va("print\"^3[Debug] ^7This is the sprintf string I just created (banid): %s\n\n\"", banid));
+		if(Boe_AddToList(banid, g_banfile.string, "Ban", NULL)){
+			trap_SendServerCommand(-1, va("print\"^3[Debug] ^7Succesfully written to the file: %s\n\"", g_banfile.string));
+		}else{
+			trap_SendServerCommand(-1, va("print\"^3[Debug] ^7Write fail to: %s\n\"", g_banfile.string));
+		}
+	}
 #endif
 	
 #ifdef _SOF2_BOTS

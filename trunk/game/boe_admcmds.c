@@ -1376,7 +1376,7 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 					lcount = r+1;
 			}
 			memset(reason, 0, sizeof(reason));
-#ifdef Q3_VM
+#if(defined(Q3_VM) || defined(__GNUC__))
 			strncpy(reason, buf+tempend, lcount-(tempend)+1);
 #else
 			strncpy(reason, buf+tempend, lcount-(tempend));
