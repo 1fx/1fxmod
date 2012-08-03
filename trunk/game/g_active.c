@@ -1324,7 +1324,11 @@ void ClientThink_real( gentity_t *ent )
 	// Boe!Man 7/21/12: New FPS fix (for all gametypes). Should be light on resources.
 	if(g_noHighFps.integer){
 		if(msec < 4 && ent->client->sess.team != TEAM_SPECTATOR){
-			client->ps.gravity += 111; // 333fps/1000 fps fix.
+			if(msec <= 2){ // Boe!Man 8/3/12: msec 3 = 333 FPS, anything below that is 500/1000, fix that by upping the gravity even more.
+				client->ps.gravity += 500;
+			}else{
+				client->ps.gravity += 111; // 333fps fix.
+			}
 		}
 	}
 
