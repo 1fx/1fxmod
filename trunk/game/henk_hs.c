@@ -7,10 +7,13 @@ void ShowScores(void)
 	char winner[128];
 	int i;
 
-	if(!strstr(level.cagewinner, "none"))
-		Com_sprintf(winner, sizeof(winner), "%s has won the round\n\n", level.cagewinner);
-	else
+	if(strstr(level.cagewinner, va("%s", server_seekerteamprefix.string))){ // Boe!Man 8/7/12: Meaning the seekers won, display msg.
+		Com_sprintf(winner, sizeof(winner), "%s\n\n", level.cagewinner);
+	}else if(!strstr(level.cagewinner, "none")){
+		Com_sprintf(winner, sizeof(winner), "%s ^7won the round!\n\n", level.cagewinner);
+	}else{ // This shouldn't happen anymore.
 		memset(winner, 0, sizeof(winner));
+	}
 
 	for ( i = 0; i < level.numConnectedClients; i ++ )
 	{
@@ -40,6 +43,8 @@ int Henk_GetScore (qboolean seekers)
 		int		score;
 	} Scores[128];
 	int count;
+	int firstnum = 0, secondnum = 0;
+	
 	trap_Cvar_VariableStringBuffer ( "mapname", mapname, MAX_QPATH );
 	if(seekers)
 		file = va("scores/s_%s.scores", mapname);
@@ -103,6 +108,7 @@ int Henk_GetScore (qboolean seekers)
 			if(seekers){
 				strcpy(level.Sfirstname, Scores[count].name);
 				level.Sfirstscore = Scores[count].score;
+				firstnum = count;
 			}else{
 				strcpy(level.firstname, Scores[count].name);
 				level.firstscore = Scores[count].score;
@@ -113,10 +119,11 @@ int Henk_GetScore (qboolean seekers)
 	highestscore = 0;
 	for(count=0;count<number;count++){
 		if(seekers){
-			if(Scores[count].score >= highestscore && !strstr(Scores[count].name, level.Sfirstname)){
+			if(Scores[count].score > highestscore && count != firstnum){
 				strcpy(level.Ssecondname, Scores[count].name);
 				level.Ssecondscore = Scores[count].score;
 				highestscore = Scores[count].score;
+				secondnum = count;
 			}
 		}else{
 			if(Scores[count].score >= highestscore && !strstr(Scores[count].name, level.firstname)){
@@ -129,7 +136,7 @@ int Henk_GetScore (qboolean seekers)
 	highestscore = 0;
 	for(count=0;count<number;count++){
 		if(seekers){
-			if(Scores[count].score >= highestscore && !strstr(Scores[count].name, level.Ssecondname) && !strstr(Scores[count].name, level.Sfirstname)){
+			if(Scores[count].score > highestscore && count != firstnum && count != secondnum){
 				strcpy(level.Sthirdname, Scores[count].name);
 				level.Sthirdscore = Scores[count].score;
 				highestscore = Scores[count].score;
@@ -167,6 +174,9 @@ int Henk_GetScore (qboolean seekers)
 	return 0;
 }
 
+// Boe!Man 8/7/12: Small recode of UpdateScores.
+// Only seekers should be added they way they're added now, with full scores, in the files. 
+// The winning hider should only be written to the file, do this later on (after we're done with the seekers etc., this also gives us time to sort the scores).
 void UpdateScores(void)
 {
 	int i;
@@ -174,27 +184,76 @@ void UpdateScores(void)
 	char filename[128];
 	int oldscore = 0;
 	char *SearchStr;
+	// Boe!Man 8/7/12: Hider stuff.
+	int highestScore = 0;
+	int highestHider; // level.sortedClients[i]
+	// Boe!Man 8/7/12: Stuff for the file buffer, to check if there's a duplicate.
+	int len = 0;
+	fileHandle_t f;
+	char buf[5000];
+	
+	// Boe!Man 8/7/12: Get the filename.
 	trap_Cvar_VariableStringBuffer ( "mapname", mapname, MAX_QPATH );
+	strcpy(filename, va("scores/s_%s.scores", mapname));
+	
+	// Boe!Man 8/7/12: Read file to buffer.
+	len = trap_FS_FOpenFile( filename, &f, FS_READ_TEXT);
+	
+	if (!f) { 
+		Boe_FileError(NULL, filename);
+		Henk_GetScore(qfalse);
+		Henk_GetScore(qtrue);
+		return;
+	}
+	
+	if(len > 5000){
+		len = 5000;
+	}
+	
+	// Read to buffer.
+	memset(buf, 0, sizeof(buf));
+	trap_FS_Read(buf, len, f);
+	buf[len] = '\0';
+	trap_FS_FCloseFile(f);
+	
+	// Next loop the clients, check for scores of red + blue.
 	for ( i = 0; i < level.numConnectedClients; i ++ )
 	{
 		gentity_t* ent = &g_entities[level.sortedClients[i]];
-		if(ent->client->sess.kills == 0)
+		
+		if(ent->client->sess.kills == 0){
 			continue;
-		if(ent->client->sess.team != TEAM_SPECTATOR){
-			if(ent->client->sess.team == TEAM_RED)
-				strcpy(filename, va("scores/h_%s.scores", mapname));
-			else if(ent->client->sess.team == TEAM_BLUE)
-				strcpy(filename, va("scores/s_%s.scores", mapname));
+		}
+		if(ent->client->sess.team == TEAM_SPECTATOR){ // Boe!Man 8/7/12: Continue on spec.
+			continue;
+		}
+		
+		if(ent->client->sess.team == TEAM_BLUE){
 			oldscore = Boe_NameListCheck ( 0, Q_strlwr(ent->client->pers.cleanName), filename, NULL, qfalse, qfalse, qfalse, qtrue, qfalse);
-			Boe_Remove_from_list(Q_strlwr(ent->client->pers.cleanName), filename, "Score", NULL, qfalse, qfalse, qtrue);
-			if(level.cagefight == qtrue)
-				SearchStr = va("%s:%i", Q_strlwr(ent->client->pers.cleanName), oldscore+(ent->client->sess.kills-ent->client->sess.cagescore));
-			else
-				SearchStr = va("%s:%i", Q_strlwr(ent->client->pers.cleanName), oldscore+ent->client->sess.kills);
-			Com_Printf("New string: %s\n", SearchStr);
-			Boe_AddToList(SearchStr, filename, "Score", NULL);
+			SearchStr = va("%s:%i", Q_strlwr(ent->client->pers.cleanName), ent->client->sess.kills);
+			if(!strstr(buf, SearchStr)){ // To avoid duplicates.
+				Boe_AddToList(SearchStr, filename, "Score", NULL);
+			}
+		}else{ // Red team.
+			if(ent->client->sess.kills > highestScore){
+				highestHider = i;
+				highestScore = ent->client->sess.kills;
+			}
 		}
 	}
+	
+	// Write highest hider score.
+	if(highestScore){
+		strcpy(filename, va("scores/h_%s.scores", mapname));
+		
+		oldscore = Boe_NameListCheck ( 0, Q_strlwr(g_entities[level.sortedClients[highestHider]].client->pers.cleanName), filename, NULL, qfalse, qfalse, qfalse, qtrue, qfalse);
+		Boe_Remove_from_list(Q_strlwr(g_entities[level.sortedClients[highestHider]].client->pers.cleanName), filename, "Score", NULL, qfalse, qfalse, qtrue);
+		SearchStr = va("%s:%i", Q_strlwr(g_entities[level.sortedClients[highestHider]].client->pers.cleanName), oldscore+1); // Add one, instead of his score.
+		Boe_AddToList(SearchStr, filename, "Score", NULL);
+	}else{ // highestScore wasn't filled.. Seekers won this time.
+		strcpy(level.cagewinner, va("%s ^7won the round!", server_seekerteamprefix.string));
+	}
+		
 	Henk_GetScore(qfalse);
 	Henk_GetScore(qtrue);
 }

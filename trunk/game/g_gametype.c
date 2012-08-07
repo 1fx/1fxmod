@@ -1240,14 +1240,13 @@ int G_GametypeCommand ( int cmd, int arg0, int arg1, int arg2, int arg3, int arg
 		//Dont play any sounds for the gametype stuff if we are ending the round
 		if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime)
 		{
-			{
 				gentity_t* tent;
 				tent = G_TempEntity( vec3_origin, EV_GLOBAL_SOUND );
 				tent->s.eventParm = arg0;
 				tent->r.svFlags = SVF_BROADCAST;	
-				break;
-			}	
 		}
+		// Boe!Man 8/7/12: This has been horribly wrong, fix for round ending in H&S messing up if timelimit was already hit (and possibly other gt's).
+		break;
 		//Ryan
 
 		case GTCMD_REGISTEREFFECT:
