@@ -1220,6 +1220,9 @@ extern  vmCvar_t	g_RpgStyle;
 extern  vmCvar_t	g_badminPass;
 extern  vmCvar_t	g_adminPass;
 extern  vmCvar_t	g_sadminPass;
+extern  vmCvar_t	g_badminPassword;
+extern  vmCvar_t	g_adminPassword;
+extern  vmCvar_t	g_sadminPassword;
 extern	vmCvar_t	g_adminPassFile;
 extern	vmCvar_t	g_logHits;
 

@@ -58,6 +58,9 @@ vmCvar_t	g_RpgStyle;
 vmCvar_t	g_badminPass;
 vmCvar_t	g_adminPass;
 vmCvar_t	g_sadminPass;
+vmCvar_t	g_badminPassword;
+vmCvar_t	g_adminPassword;
+vmCvar_t	g_sadminPassword;
 vmCvar_t	g_adminPassFile;
 vmCvar_t	g_log;
 vmCvar_t	g_logSync;
@@ -570,6 +573,11 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_badminPass, "g_badminPass", "none", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_adminPass, "g_adminPass", "none", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_sadminPass, "g_sadminPass", "none", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
+	// Boe!Man 9/1/12: Synonyms for the 'pass' CVARs.
+	{ &g_badminPassword, "g_badminPassword", "none", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
+	{ &g_adminPassword, "g_adminPassword", "none", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
+	{ &g_sadminPassword, "g_sadminPassword", "none", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
+	
 	{ &g_adminPassFile, "g_adminPassFile", "users/passfile.txt", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_shortCommandStyle, "g_shortCommandStyle", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 	{ &g_boxAttempts, "g_boxAttempts", "3",	CVAR_ARCHIVE,	0.0,	0.0,  0, qtrue  }, 
@@ -829,6 +837,31 @@ void G_UpdateCvars( void )
 						}
 					}
 				}
+				
+				// Boe!Man 9/1/12: Handle password CVAR synonyms here..
+				if (strstr(cv->cvarName, "adminPass")){
+					if(strstr(cv->cvarName, "badmin")){ // B-Admin synonym here..
+						if(strstr(cv->cvarName, "Password")){
+							trap_Cvar_Set("g_badminPass", cv->vmCvar->string);
+						}else{
+							trap_Cvar_Set("g_badminPassword", cv->vmCvar->string);
+						}
+					}else if(strstr(cv->cvarName, "g_admin")){ // Admin synonym here..
+						if(strstr(cv->cvarName, "Password")){
+							trap_Cvar_Set("g_adminPass", cv->vmCvar->string);
+						}else{
+							trap_Cvar_Set("g_adminPassword", cv->vmCvar->string);
+						}
+					}else if(strstr(cv->cvarName, "sadmin")){ // S-Admin synonym here..
+						if(strstr(cv->cvarName, "Password")){
+							trap_Cvar_Set("g_sadminPass", cv->vmCvar->string);
+						}else{
+							trap_Cvar_Set("g_sadminPassword", cv->vmCvar->string);
+						}
+					}
+				}
+				// End Boe!Man - CVAR synonyms.
+					
 
 				cv->modificationCount = cv->vmCvar->modificationCount;
 
@@ -1422,6 +1455,18 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 			G_LogPrintf("3e\n");
 		#endif
 	}
+	
+	// Boe!Man 9/1/12: Check CVAR synonyms at start up to keep them in sync.
+	if(!strstr(g_badminPassword.string, g_badminPass.string)){
+		trap_Cvar_Set("g_badminPassword", g_badminPass.string);
+	}
+	if(!strstr(g_adminPassword.string, g_adminPass.string)){
+		trap_Cvar_Set("g_adminPassword", g_adminPass.string);
+	}
+	if(!strstr(g_sadminPassword.string, g_sadminPass.string)){
+		trap_Cvar_Set("g_sadminPassword", g_sadminPass.string);
+	}
+	// End Boe!Man - CVAR synonyms.
 }
 
 /*
