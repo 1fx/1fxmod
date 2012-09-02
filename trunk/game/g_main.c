@@ -282,6 +282,9 @@ vmCvar_t	g_shuffleteams;
 // Boe!Man 7/29/12
 vmCvar_t	g_preferSubnets;
 
+// Boe!Man 9/2/12
+vmCvar_t	hideSeek_ExtendedRoundStats;
+
 #ifdef _BOE_DBG
 vmCvar_t	boe_log;
 #endif
@@ -562,6 +565,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &hideSeek_Extra,			"hideSeek_Extra",			"11011",	CVAR_ARCHIVE|CVAR_LATCH,	0.0,	0.0,  0, qfalse  }, // Boe!Man 3/6/11: So users can change if desired.
 	{ &hideSeek_Nades,			"hideSeek_Nades",			"1111",	CVAR_ARCHIVE|CVAR_LATCH,	0.0,	0.0,  0, qfalse  }, // Boe!Man 3/6/11: So users can change if desired.
 	{ &hideSeek_Weapons,		"hideSeek_Weapons",			"111",	CVAR_ARCHIVE|CVAR_LATCH,	0.0,	0.0,  0, qfalse  }, // Boe!Man 3/6/11: So users can change if desired.
+	{ &hideSeek_ExtendedRoundStats,		"hideSeek_ExtendedRoundStats",		"1",	CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  }, // Boe!Man 9/2/12: CVAR for extended round stats.
 
 	// Boe!Man 3/8/11: CVAR for the Admin logging.
 	{ &g_enableAdminLog, "g_enableAdminLog", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
@@ -2212,12 +2216,12 @@ void CheckIntermissionExit( void )
 
 	if(!level.awardTime)
 	{
+		level.awardTime = level.time;
+		level.lastAwardSent = level.time;
 		if(current_gametype.value == GT_HS)
 			ShowScores();
 		else
 			RPM_Awards();
-		level.awardTime = level.time;
-		level.lastAwardSent = level.time;
 		return;
 	}
 
@@ -3008,6 +3012,7 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 			level.RPGent = -1;
 			level.RPGTime = 0;
 			trap_SendServerCommand(-1, va("print\"^3[H&S] ^7RPG given to round winner %s.\n\"", g_entities[rpgwinner].client->pers.netname));
+			g_entities[rpgwinner].client->sess.takenRPG += 1;
 			trap_SendServerCommand(g_entities[rpgwinner].s.number, va("cp \"^7You now have the %sR%sP%sG^7!\n\"", server_color1.string, server_color2.string, server_color3.string));
 			// End
 		}else if(rpgwinner >= 100 && m4winner < 100){
@@ -3047,6 +3052,7 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 					level.RPGTime = 0;
 					level.lastalive[0] = -1;
 					trap_SendServerCommand(-1, va("print\"^3[H&S] ^7RPG given at random to %s.\n\"", g_entities[level.sortedClients[random]].client->pers.cleanName));
+					g_entities[level.sortedClients[random]].client->sess.takenRPG += 1;
 					trap_SendServerCommand(g_entities[level.sortedClients[random]].s.number, va("cp \"^7You now have the %sR%sP%sG^7!\n\"", server_color1.string, server_color2.string, server_color3.string));
 					break;
 				}
@@ -3071,6 +3077,7 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 			level.M4Time = 0;
 			level.M4ent = -1;
 			trap_SendServerCommand(-1, va("print\"^3[H&S] ^7M4 given to round winner %s.\n\"", g_entities[m4winner].client->pers.netname));
+			g_entities[m4winner].client->sess.takenM4 += 1;
 			trap_SendServerCommand(g_entities[m4winner].s.number, va("cp \"^7You now have the %sM%s4^7!\n\"", server_color1.string, server_color2.string));
 			// End
 		}else if(m4winner != 100){ // Henk 26/01/10 -> Drop M4 at red spawn.
@@ -3103,6 +3110,7 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 				level.M4Time = 0;
 				level.M4ent = -1;
 				trap_SendServerCommand(-1, va("print\"^3[H&S] ^7M4 given at random to %s.\n\"", g_entities[level.sortedClients[random]].client->pers.cleanName));
+				g_entities[level.sortedClients[random]].client->sess.takenM4 += 1;
 				trap_SendServerCommand(g_entities[level.sortedClients[random]].s.number, va("cp \"^7You now have the %sM%s4^7!\n\"", server_color1.string, server_color2.string));
 				break;
 			}

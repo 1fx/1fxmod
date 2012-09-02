@@ -366,6 +366,21 @@ typedef struct
 	qboolean	isOnRoof;			// True if the player is on roof.
 	int			isOnRoofTime;		// Seconds the player is already on roof. Checks against level.noroof[2].
 	
+	// Boe!Man 9/2/12: Advanced H&S scores.
+	// Hiders.
+	int			MM1HitsTaken;
+	int			RPGBoosts;
+	int			takenRPG;
+	int			takenM4;
+	int			stunAttacks;
+	int			seekersCaged;
+	int			weaponsStolen;
+	
+	// Seekers.
+	int			takenMM1;
+	int			stunned;
+	int			trappedInCage;
+	
 } clientSession_t;
 
 // Boe!Man 3/30/10
@@ -544,6 +559,11 @@ typedef struct {
 	int  startTime;
 	qboolean used;
 }muted_t;
+
+typedef struct {
+	char name[MAX_NAME_LENGTH];
+	int	 score;
+}hs_scores;
 
 typedef struct
 {
@@ -825,6 +845,7 @@ typedef struct
 	qboolean	crossTheBridge;
 
 	muted_t		mutedClients[21]; // Henk 28/01/11 -> Add new mute system.
+	hs_scores	advancedHsScores[12]; // Boe!Man 9/2/12: The advanced H&S score table.
 	//char		deadClients[1024]; // Henk 28/01/11 -> Add new mute system.
 	int         debugtime;
 	int			tipMsg;

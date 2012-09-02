@@ -658,3 +658,6 @@ char *Boe_parseCustomCommandArgs(char *in);
 
 // Boe!Man 7/29/12: CVAR that handles admins/clan members on subnet rather than Full IP -> This effectively disables the admin login system.
 extern	vmCvar_t	g_preferSubnets;
+
+// Boe!Man 9/2/12: CVAR that enables/disables the extended round stats in H&S.
+extern	vmCvar_t	hideSeek_ExtendedRoundStats;

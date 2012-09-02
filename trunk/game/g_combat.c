@@ -1110,6 +1110,8 @@ int G_Damage (
 					attacker->client->sess.speedtime = level.time+4000; // after 4 seconds speedup stops
 					trap_SendServerCommand(attacker->s.number, va("cp \"@^7You have stunned %s\n\"", client->pers.netname)); // notify the hider
 					trap_SendServerCommand(targ->s.number, va("cp \"@^7You got stunned by %s\n\"", attacker->client->pers.netname)); // notify the seeker
+					client->sess.stunned += 1; // Seeker got stunned, so stunned + 1 for the final scoreboard.
+					attacker->client->sess.stunAttacks += 1;
 					if(attacker->client->ps.ammo[ammoindex] < 5)
 					attacker->client->ps.ammo[ammoindex]+=1;
 				}
@@ -1119,12 +1121,16 @@ int G_Damage (
 
 				trap_SendServerCommand(attacker->s.number, va("cp \"@^7You have stunned %s\n\"", client->pers.netname)); // notify the hider
 				trap_SendServerCommand(targ->s.number, va("cp \"@^7You got stunned by %s\n\"", attacker->client->pers.netname)); // notify the seeker
+				client->sess.stunned += 1;
+				attacker->client->sess.stunAttacks += 1;
 			}else if(mod == MOD_M4_ASSAULT_RIFLE && level.messagedisplay){ // Henk 22/01/10 -> Add M4 bullet stun
 				client->sess.slowtime = level.time+4000; // after 4 seconds slowdown stops
 				attacker->client->sess.speedtime = level.time+4000; // after 4 seconds speedup stops
 
 				trap_SendServerCommand(attacker->s.number, va("cp \"@^7You have stunned %s\n\"", client->pers.netname)); // notify the hider
 				trap_SendServerCommand(targ->s.number, va("cp \"@^7You got stunned by %s\n\"", attacker->client->pers.netname)); // notify the seeker
+				client->sess.stunned += 1;
+				attacker->client->sess.stunAttacks += 1;
 			}
 		}else if(client->sess.team == TEAM_RED && attacker->client->sess.team == TEAM_BLUE){ // if target is a hider
 			if(mod != 1){
@@ -1141,6 +1147,7 @@ int G_Damage (
 					level.MM1Time = 0;
 					trap_SendServerCommand(-1, va("print\"^3[H&S] ^7First Blood: %s ^7has taken the MM1\n\"", attacker->client->pers.netname));
 					trap_SendServerCommand(attacker->s.number, va("cp \"^7You now have the %sM%sM%s1^7!\n\"", server_color1.string, server_color2.string, server_color3.string));
+					attacker->client->sess.takenMM1 += 1;
 					}
 					level.MM1given = qtrue; // only once each round :)
 				}
@@ -1171,6 +1178,7 @@ int G_Damage (
 						trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s ^7has stolen the RPG from %s.\n\"", attacker->client->pers.netname, client->pers.netname));
 						trap_SendServerCommand(attacker->s.number, va("cp \"^7You have stolen the %sR%sP%sG^7!\n\"", server_color1.string, server_color2.string, server_color3.string));
 						trap_SendServerCommand(targ->s.number, va("cp \"%s ^7stole your %sR%sP%sG^7!\n\"", attacker->client->pers.netname, server_color1.string, server_color2.string, server_color3.string));
+						attacker->client->sess.weaponsStolen += 1;
 					}
 				}else if(client->ps.weapon == WP_M4_ASSAULT_RIFLE && client->ps.weaponstate == WEAPON_READY && mod == WP_KNIFE){
 					if(attacker->client->ps.stats[STAT_WEAPONS] & ( 1 << WP_RPG7_LAUNCHER )){
@@ -1202,6 +1210,7 @@ int G_Damage (
 						trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s ^7has taken the M4 from %s.\n\"", attacker->client->pers.netname, client->pers.netname));
 						trap_SendServerCommand(attacker->s.number, va("cp \"^7You have stolen the %sM%s4^7!\n\"", server_color1.string, server_color2.string));
 						trap_SendServerCommand(targ->s.number, va("cp \"%s ^7stole your %sM%s4^7!\n\"", attacker->client->pers.netname, server_color1.string, server_color2.string));
+						attacker->client->sess.weaponsStolen += 1;
 					}
 				}
 			}
@@ -1783,6 +1792,7 @@ qboolean G_RadiusDamage (
 								if(g_entities[entityList1[ a ]].s.number == ent->s.number){ // seeker not at boundary
 									CageOutOfBoundaries = qfalse;
 									countCaught += 1;
+									ent->client->sess.trappedInCage += 1;
 									lastCaught = ent->s.number;
 									//trap_SendServerCommand(-1, va("print \"^3[H&S] ^7%s was trapped in a cage by %s\n\"", ent->client->pers.netname, attacker->client->pers.netname));
 									break; 
@@ -1793,6 +1803,10 @@ qboolean G_RadiusDamage (
 							break;
 						}
 					}
+				}
+			}else if(mod == 12){ // Boe!Man 9/2/12: Add score for MM1.
+				if(ent->client != NULL && ent->client->sess.team == TEAM_RED){
+					ent->client->sess.MM1HitsTaken += 1;
 				}
 			}
 			// End
@@ -1835,6 +1849,7 @@ qboolean G_RadiusDamage (
 						attacker->client->ps.velocity[0] *= 0.25f;
 						attacker->client->ps.velocity[1] *= 0.25f;
 					}
+					attacker->client->sess.RPGBoosts += 1;
 				}
 			}
 			// End
@@ -1976,10 +1991,12 @@ qboolean G_RadiusDamage (
 					trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7Seeker at boundary or hider caught in cage.\n\"")); 
 				}
 			}else{
-				if(lastCaught != -1 && countCaught == 1)
+				if(lastCaught != -1 && countCaught == 1){
 					trap_SendServerCommand(-1, va("print \"^3[H&S] ^7%s was trapped in a cage by %s\n\"", g_entities[lastCaught].client->pers.netname, attacker->client->pers.netname));
-				else if(countCaught > 1)
+				}else if(countCaught > 1){
 					trap_SendServerCommand(-1, va("print \"^3[H&S] ^7%i seekers were trapped in a cage by %s\n\"", countCaught, attacker->client->pers.netname));
+				}
+				attacker->client->sess.seekersCaged += 1;
 				// Check if ammo is empty
 				index = weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_ALTERNATE].ammoIndex;
 				index1 = weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_NORMAL].ammoIndex;

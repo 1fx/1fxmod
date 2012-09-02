@@ -17,11 +17,33 @@ void ShowScores(void)
 
 	for ( i = 0; i < level.numConnectedClients; i ++ )
 	{
-	trap_SendServerCommand( g_entities[level.sortedClients[i]].s.number, va("cp \"@^3%s\n\n%s^_ THE 3 BEST HIDERS IN THIS MAP ARE:\n\n^31st ^7%s with ^3%i ^7wins.\n^+2nd ^7%s with ^+%i ^7wins.\n^@3rd ^7%s with ^@%i ^7wins.\n\n"
-		"^y THE 3 BEST SEEKERS IN THIS MAP ARE:\n\n^31st ^7%s with ^3%i ^7kills.\n^+2nd ^7%s with ^+%i ^7kills.\n^@3rd ^7%s with ^@%i ^7kills.\n\"",
-				g_motd.string, winner,
-				level.firstname, level.firstscore, level.secondname, level.secondscore, level.thirdname, level.thirdscore,
-				level.Sfirstname, level.Sfirstscore, level.Ssecondname, level.Ssecondscore, level.Sthirdname, level.Sthirdscore));
+		// Boe!Man 9/2/12: Advanced H&S statistics.
+		if(hideSeek_ExtendedRoundStats.integer && level.time > level.awardTime + 8000){
+			trap_SendServerCommand( g_entities[level.sortedClients[i]].s.number, va("cp \"@^3%s\n\n^3Statistics for this map:\n\n"
+					"^_Rounds survived: ^3%i ^_by ^3%s\n"
+					"^_MM1 hits taken: ^3%i ^_by ^3%s\n"
+					"^_RPG boosts: ^3%i ^_by ^3%s\n"
+					"^_Taken RPG: ^3%i ^_by ^3%s\n"
+					"^_Taken M4: ^3%i ^_by ^3%s\n"
+					"^_Stun attacks: ^3%i ^_by ^3%s\n"
+					"^_Seekers caged: ^3%i ^_by ^3%s\n"
+					"^_Weapons stolen: ^3%i ^_by ^3%s\n\n"
+					"^yPoints: ^3%i ^yby ^3%s\n"
+					"^yTaken MM1: ^3%i ^yby ^3%s\n"
+					"^yStunned: ^3%i ^yby ^3%s\n"
+					"^yTrapped in cage: ^3%i ^yby ^3%s\n\"",
+					g_motd.string,
+					level.advancedHsScores[0].score, level.advancedHsScores[0].name, level.advancedHsScores[1].score, level.advancedHsScores[1].name, level.advancedHsScores[2].score, level.advancedHsScores[2].name, level.advancedHsScores[3].score, level.advancedHsScores[3].name,
+					level.advancedHsScores[4].score, level.advancedHsScores[4].name, level.advancedHsScores[5].score, level.advancedHsScores[5].name, level.advancedHsScores[6].score, level.advancedHsScores[6].name, level.advancedHsScores[7].score, level.advancedHsScores[7].name,
+					level.advancedHsScores[8].score, level.advancedHsScores[8].name, level.advancedHsScores[9].score, level.advancedHsScores[9].name, level.advancedHsScores[10].score, level.advancedHsScores[10].name, level.advancedHsScores[11].score, level.advancedHsScores[11].name
+			));
+		}else{
+			trap_SendServerCommand( g_entities[level.sortedClients[i]].s.number, va("cp \"@^3%s\n\n%s^_ THE 3 BEST HIDERS IN THIS MAP ARE:\n\n^31st ^7%s with ^3%i ^7wins.\n^+2nd ^7%s with ^+%i ^7wins.\n^@3rd ^7%s with ^@%i ^7wins.\n\n"
+					"^y THE 3 BEST SEEKERS IN THIS MAP ARE:\n\n^31st ^7%s with ^3%i ^7kills.\n^+2nd ^7%s with ^+%i ^7kills.\n^@3rd ^7%s with ^@%i ^7kills.\n\"",
+					g_motd.string, winner,
+					level.firstname, level.firstscore, level.secondname, level.secondscore, level.thirdname, level.thirdscore,
+					level.Sfirstname, level.Sfirstscore, level.Ssecondname, level.Ssecondscore, level.Sthirdname, level.Sthirdscore));
+		}
 	}
 }
 
@@ -177,6 +199,7 @@ int Henk_GetScore (qboolean seekers)
 // Boe!Man 8/7/12: Small recode of UpdateScores.
 // Only seekers should be added they way they're added now, with full scores, in the files. 
 // The winning hider should only be written to the file, do this later on (after we're done with the seekers etc., this also gives us time to sort the scores).
+// Boe!Man 9/2/12: The advanced score table is also added in this function as of now.
 void UpdateScores(void)
 {
 	int i;
@@ -221,6 +244,59 @@ void UpdateScores(void)
 	{
 		gentity_t* ent = &g_entities[level.sortedClients[i]];
 		
+		// Boe!Man 9/2/12: This is shitty, check for the advanced H&S scores. Kinda a performance hit.
+		// MM1 Hits.
+		if(ent->client->sess.MM1HitsTaken > level.advancedHsScores[1].score){
+			level.advancedHsScores[1].score = ent->client->sess.MM1HitsTaken;
+			strcpy(level.advancedHsScores[1].name, Q_strlwr(ent->client->pers.cleanName));
+		}
+		// RPG boosts.
+		if(ent->client->sess.RPGBoosts > level.advancedHsScores[2].score){
+			level.advancedHsScores[2].score = ent->client->sess.RPGBoosts;
+			strcpy(level.advancedHsScores[2].name, Q_strlwr(ent->client->pers.cleanName));
+		}
+		// Taken RPG.
+		if(ent->client->sess.takenRPG > level.advancedHsScores[3].score){
+			level.advancedHsScores[3].score = ent->client->sess.takenRPG;
+			strcpy(level.advancedHsScores[3].name, Q_strlwr(ent->client->pers.cleanName));
+		}
+		// Taken M4.
+		if(ent->client->sess.takenM4 > level.advancedHsScores[4].score){
+			level.advancedHsScores[4].score = ent->client->sess.takenM4;
+			strcpy(level.advancedHsScores[4].name, Q_strlwr(ent->client->pers.cleanName));
+		}
+		// Stun attacks.
+		if(ent->client->sess.stunAttacks > level.advancedHsScores[5].score){
+			level.advancedHsScores[5].score = ent->client->sess.stunAttacks;
+			strcpy(level.advancedHsScores[5].name, Q_strlwr(ent->client->pers.cleanName));
+		}
+		// Seekers caged.
+		if(ent->client->sess.seekersCaged > level.advancedHsScores[6].score){
+			level.advancedHsScores[6].score = ent->client->sess.seekersCaged;
+			strcpy(level.advancedHsScores[6].name, Q_strlwr(ent->client->pers.cleanName));
+		}
+		// Weapons stolen.
+		if(ent->client->sess.weaponsStolen > level.advancedHsScores[7].score){
+			level.advancedHsScores[7].score = ent->client->sess.weaponsStolen;
+			strcpy(level.advancedHsScores[7].name, Q_strlwr(ent->client->pers.cleanName));
+		}
+		// Taken MM1.
+		if(ent->client->sess.takenMM1 > level.advancedHsScores[9].score){
+			level.advancedHsScores[9].score = ent->client->sess.takenMM1;
+			strcpy(level.advancedHsScores[9].name, Q_strlwr(ent->client->pers.cleanName));
+		}
+		// Stunned.
+		if(ent->client->sess.stunned > level.advancedHsScores[10].score){
+			level.advancedHsScores[10].score = ent->client->sess.stunned;
+			strcpy(level.advancedHsScores[10].name, Q_strlwr(ent->client->pers.cleanName));
+		}
+		// Trapped in cage.
+		if(ent->client->sess.trappedInCage > level.advancedHsScores[11].score){
+			level.advancedHsScores[11].score = ent->client->sess.trappedInCage;
+			strcpy(level.advancedHsScores[11].name, Q_strlwr(ent->client->pers.cleanName));
+		}
+		
+		// Boe!Man 9/2/12: Don't continue just yet on these two, we need those advanced stats as well.
 		if(ent->client->sess.kills == 0){
 			continue;
 		}
@@ -234,11 +310,23 @@ void UpdateScores(void)
 			if(!strstr(buf, SearchStr)){ // To avoid duplicates.
 				Boe_AddToList(SearchStr, filename, "Score", NULL);
 			}
+			// Boe!Man 9/2/12: Also check for the highest blue player.
+			if(ent->client->sess.kills > level.advancedHsScores[8].score){
+				level.advancedHsScores[8].score = ent->client->sess.kills;
+				strcpy(level.advancedHsScores[8].name, Q_strlwr(ent->client->pers.cleanName));
+			}
 		}else{ // Red team.
 			if(ent->client->sess.kills > highestScore){
 				highestHider = i;
 				highestScore = ent->client->sess.kills;
 			}
+		}
+	}
+	
+	// Boe!Man 9/2/12: For the advanced H&S scoretable, check for things that aren't achieved by no-one and fill those slots with data.
+	for(i = 1; i < 12; i++){
+		if(!level.advancedHsScores[i].score){
+			strcpy(level.advancedHsScores[i].name, "none");
 		}
 	}
 	
@@ -250,8 +338,12 @@ void UpdateScores(void)
 		Boe_Remove_from_list(Q_strlwr(g_entities[level.sortedClients[highestHider]].client->pers.cleanName), filename, "Score", NULL, qfalse, qfalse, qtrue);
 		SearchStr = va("%s:%i", Q_strlwr(g_entities[level.sortedClients[highestHider]].client->pers.cleanName), oldscore+1); // Add one, instead of his score.
 		Boe_AddToList(SearchStr, filename, "Score", NULL);
+		// Boe!Man 9/2/12: Also add his score to the advanced table.
+		level.advancedHsScores[0].score = g_entities[level.sortedClients[highestHider]].client->sess.kills;
+		strcpy(level.advancedHsScores[0].name, Q_strlwr(g_entities[level.sortedClients[highestHider]].client->pers.cleanName));
 	}else{ // highestScore wasn't filled.. Seekers won this time.
 		strcpy(level.cagewinner, va("%s ^7won the round!", server_seekerteamprefix.string));
+		strcpy(level.advancedHsScores[0].name, "none");
 	}
 		
 	Henk_GetScore(qfalse);
