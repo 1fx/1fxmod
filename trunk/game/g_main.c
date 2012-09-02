@@ -2216,12 +2216,12 @@ void CheckIntermissionExit( void )
 
 	if(!level.awardTime)
 	{
-		level.awardTime = level.time;
-		level.lastAwardSent = level.time;
 		if(current_gametype.value == GT_HS)
 			ShowScores();
 		else
 			RPM_Awards();
+		level.awardTime = level.time;
+		level.lastAwardSent = level.time;
 		return;
 	}
 

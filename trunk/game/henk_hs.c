@@ -18,7 +18,7 @@ void ShowScores(void)
 	for ( i = 0; i < level.numConnectedClients; i ++ )
 	{
 		// Boe!Man 9/2/12: Advanced H&S statistics.
-		if(hideSeek_ExtendedRoundStats.integer && level.time > level.awardTime + 8000){
+		if(hideSeek_ExtendedRoundStats.integer && level.time > level.awardTime + 8000 && level.awardTime){
 			trap_SendServerCommand( g_entities[level.sortedClients[i]].s.number, va("cp \"@^3%s\n\n^3Statistics for this map:\n\n"
 					"^_Rounds survived: ^3%i ^_by ^3%s\n"
 					"^_MM1 hits taken: ^3%i ^_by ^3%s\n"
