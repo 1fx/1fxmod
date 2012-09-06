@@ -311,12 +311,34 @@ void G_AddRandomBot( int team )
 	char		*value;
 	char		*teamstr;
 	gclient_t	*cl;
+	char *desiredTeam;
+	char botName[MAX_QPATH];
 
+	desiredTeam = NULL;
+	if (level.gametypeData->teams)
+	{
+		desiredTeam = (char *)level.gametypeTeam[team];
+	}
 	num = 0;
 	
 	for ( n = 0; n < g_numBots ; n++ ) 
 	{
-		value = Info_ValueForKey( g_botInfos[n], "name" );
+		value = Info_ValueForKey( g_botInfos[n], "funname" );
+		if (!value[0])
+		{
+			value = Info_ValueForKey( g_botInfos[n], "name" );
+		}
+		// correct for adding 'bot' to the end of their name
+		///Com_sprintf(botName, MAX_QPATH, "%s"S_COLOR_WHITE"[BOT]", value);
+		if (desiredTeam)
+		{
+			teamstr = Info_ValueForKey( g_botInfos[n], "team");
+			if (Q_stricmp(desiredTeam, teamstr) && teamstr[0])
+			{
+				continue;
+			}
+			//Com_Printf(S_COLOR_YELLOW"G_AddRandomBot():- desiredTeam = %s / teamstr = %s\n", desiredTeam, teamstr);
+		}
 	
 		//
 		for ( i=0 ; i< g_maxclients.integer ; i++ ) 
@@ -337,7 +359,7 @@ void G_AddRandomBot( int team )
 				continue;
 			}
 			
-			if ( !Q_stricmp( value, cl->pers.netname ) ) 
+			if (!Q_stricmp(botName, cl->pers.netname ) ) 
 			{
 				break;
 			}
@@ -354,6 +376,17 @@ void G_AddRandomBot( int team )
 	for ( n = 0; n < g_numBots ; n++ ) 
 	{
 		value = Info_ValueForKey( g_botInfos[n], "name" );
+		///Com_sprintf(botName, MAX_QPATH, "%s"S_COLOR_WHITE"[BOT]", value);
+		// if we're after a team, only add bots define for that team
+		if (desiredTeam)
+		{
+			teamstr = Info_ValueForKey( g_botInfos[n], "team");
+			if (Q_stricmp(desiredTeam, teamstr) && teamstr[0])
+			{
+				continue;
+			}
+			//Com_Printf(S_COLOR_YELLOW"G_AddRandomBot():- final check, desiredTeam = %s / teamstr = %s\n", desiredTeam, teamstr);
+		}
 		//
 		for ( i=0 ; i< g_maxclients.integer ; i++ ) 
 		{
@@ -373,7 +406,7 @@ void G_AddRandomBot( int team )
 				continue;
 			}
 			
-			if ( !Q_stricmp( value, cl->pers.netname ) ) 
+			if ( !Q_stricmp(botName, cl->pers.netname ) ) 
 			{
 				break;
 			}
@@ -386,9 +419,18 @@ void G_AddRandomBot( int team )
 			if (num <= 0) 
 			{
 				skill = trap_Cvar_VariableValue( "g_botSkill" );
-				if (team == TEAM_RED) teamstr = "red";
-				else if (team == TEAM_BLUE) teamstr = "blue";
-				else teamstr = "";
+				if (team == TEAM_RED)
+				{
+					teamstr = "red";
+				}
+				else if (team == TEAM_BLUE)
+				{
+					teamstr = "blue";
+				}
+				else
+				{
+					teamstr = "";
+				}
 				strncpy(netname, value, sizeof(netname)-1);
 				netname[sizeof(netname)-1] = '\0';
 				Q_CleanStr(netname);
@@ -756,7 +798,11 @@ static void G_AddBot( const char *name, float skill, const char *team, int delay
 	Info_SetValueForKey( userinfo, "rate", "25000" );
 	Info_SetValueForKey( userinfo, "snaps", "20" );
 	Info_SetValueForKey( userinfo, "skill", va("%1.2f", skill) );
+	
+	// Boe!Man 9/6/12: Fixed bots not auto reloading at times.
+	Info_SetValueForKey( userinfo, "cg_autoReload", "1");
 
+		/*
 	if ( skill >= 1 && skill < 2 ) {
 		Info_SetValueForKey( userinfo, "handicap", "50" );
 	}
@@ -766,6 +812,13 @@ static void G_AddBot( const char *name, float skill, const char *team, int delay
 	else if ( skill >= 3 && skill < 4 ) {
 		Info_SetValueForKey( userinfo, "handicap", "90" );
 	}
+	*/
+	if ( skill >= 1 && skill < 2 ) {
+		Info_SetValueForKey( userinfo, "handicap", "60" );
+	}
+	else if ( skill >= 2 && skill < 3 ) {
+		Info_SetValueForKey( userinfo, "handicap", "85" );
+	}
 
 	key = "identity";
 	identity = Info_ValueForKey( botinfo, key );
@@ -774,11 +827,16 @@ static void G_AddBot( const char *name, float skill, const char *team, int delay
 		identity = "mullinsjungle";
 	}
 	Info_SetValueForKey( userinfo, key, identity );
-
+	// Boe!Man 9/6/12: Team_id for bots.
+	key = "team_identity";
+	Info_SetValueForKey( userinfo, key, identity );
+	// End Boe!Man 9/6/12
+	
 	s = Info_ValueForKey(botinfo, "personality");
 	if (!*s )
 	{
-		Info_SetValueForKey( userinfo, "personality", "botfiles/default.jkb" );
+		// Boe!Man 9/6/12: Change default.jkb to default.bot (fixes personality bug).
+		Info_SetValueForKey( userinfo, "personality", "botfiles/default.bot" );
 	}
 	else
 	{
@@ -937,13 +995,16 @@ void Svcmd_BotList_f( void ) {
 		if ( !*funname ) {
 			strcpy(funname, "");
 		}
-		strcpy(model, Info_ValueForKey( g_botInfos[i], "model" ));
+		//strcpy(model, Info_ValueForKey( g_botInfos[i], "model" ));
+		strcpy(model, Info_ValueForKey( g_botInfos[i], "identity" ));
 		if ( !*model ) {
-			strcpy(model, "visor/default");
+			//strcpy(model, "visor/default");
+			strcpy(model, "mullinsjungle");
 		}
 		strcpy(personality, Info_ValueForKey( g_botInfos[i], "personality"));
 		if (!*personality ) {
-			strcpy(personality, "botfiles/default.jkb");
+			//strcpy(personality, "botfiles/default.jkb");
+			strcpy(personality, "botfiles/default.bot");
 		}
 		trap_Printf(va("%-16s %-16s %-20s %-20s\n", name, model, personality, funname));
 	}
@@ -1068,7 +1129,8 @@ static void G_LoadBots( void ) {
 	dirptr  = dirlist;
 	for (i = 0; i < numdirs; i++, dirptr += dirlen+1) {
 		dirlen = strlen(dirptr);
-		strcpy(filename, "scripts/");
+		//strcpy(filename, "scripts/");
+		strcpy(filename, "botfiles/");
 		strcat(filename, dirptr);
 		G_LoadBotsFromFile(filename);
 	}
