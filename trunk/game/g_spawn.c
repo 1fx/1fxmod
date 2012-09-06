@@ -1164,7 +1164,9 @@ void SP_worldspawn( void )
 	RPM_UpdateLoadScreenMessage();
 	trap_SetConfigstring( CS_MOTD, g_motd.string );		// message of the day
 
-	G_SpawnString( "gravity", "800", &text );
+	// Boe!Man 9/6/12: Fix gravity resetting every round.
+	//G_SpawnString( "gravity", "800", &text );
+	G_SpawnString( "gravity", va("%d", g_gravity.integer), &text );
 	trap_Cvar_Set( "g_gravity", text );
 
 	// Handle all the worldspawn stuff common to both main bsp and sub bsp
