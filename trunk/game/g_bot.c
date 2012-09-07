@@ -582,6 +582,7 @@ void G_CheckMinimumPlayers( void )
 	int			minplayers;
 	int			humanplayers;
 	int			botplayers;
+	int			botspecs;
 	static int	checkminimumplayers_time;
 
 	if (level.intermissiontime) 
@@ -602,6 +603,16 @@ void G_CheckMinimumPlayers( void )
 	if (minplayers <= 0) 
 	{
 		return;
+	}
+	
+	// Boe!Man 9/7/12: Check how many bots are spectating. It's possible they cannot spawn, don't keep spawning them if they cannot be spawned.
+	botspecs = G_CountBotPlayers(TEAM_SPECTATOR);
+	if(botspecs){ // More bots or real ppl that are spectating then minplayers, check if they can be spawned, and if so, just kick them. Else, return.
+		if(botspecs > minplayers && !level.spawnCount){
+			return;
+		}else if(level.spawnCount){ // There are spawnpoints, so the bots are likely on another map, kick all bots and start re-adding them.
+			trap_SendConsoleCommand( EXEC_APPEND, va("kick allbots\n"));
+		}
 	}
 
 	if ( level.gametypeData->teams ) 
