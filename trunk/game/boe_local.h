@@ -661,3 +661,7 @@ extern	vmCvar_t	g_preferSubnets;
 
 // Boe!Man 9/2/12: CVAR that enables/disables the extended round stats in H&S.
 extern	vmCvar_t	hideSeek_ExtendedRoundStats;
+
+// Boe!Man 9/11/12: Preload effects in H&S/H&Z in this function.
+void Preload_Effects(void);
+

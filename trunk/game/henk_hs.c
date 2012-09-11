@@ -822,4 +822,77 @@ void EvenTeams_HS (gentity_t *adm, qboolean aet)
 		trap_SendServerCommand(-1, va("print\"^3[Auto Action] ^7Eventeams.\n\""));
 	}
 }
+
+// Boe!Man 9/11/12: Function to preload effects in H&S/H&Z.
+void Preload_Effects(void)
+{
+	// Boe!Man 9/11/12: Handle H&S/H&Z stuff.
+	if(current_gametype.value == GT_HS || current_gametype.value == GT_HZ){
+		// We'll have to preload the non-map effects in order to use them.
+		AddSpawnField("classname", "fx_play_effect");
+		AddSpawnField("effect", "flare_blue");
+		AddSpawnField("tempent", "1");
+		G_SpawnGEntityFromSpawnVars(qtrue);
+		G_FreeEntity(&g_entities[level.tempent]);
+
+		AddSpawnField("classname", "fx_play_effect");
+		AddSpawnField("effect", "flare_red");
+		AddSpawnField("tempent", "1");
+		G_SpawnGEntityFromSpawnVars(qtrue);
+		G_FreeEntity(&g_entities[level.tempent]);
+
+		AddSpawnField("classname", "fx_play_effect");
+		AddSpawnField("effect", "arm2smallsmoke");
+		AddSpawnField("tempent", "1");
+		G_SpawnGEntityFromSpawnVars(qtrue);
+		G_FreeEntity(&g_entities[level.tempent]);
+	}
+	
+	AddSpawnField("classname", "fx_play_effect");
+	AddSpawnField("effect", "misc/electrical");
+	AddSpawnField("tempent", "1");
+	G_SpawnGEntityFromSpawnVars(qtrue);
+	G_FreeEntity(&g_entities[level.tempent]);
+
+	AddSpawnField("classname", "fx_play_effect");
+	AddSpawnField("effect", "misc/electrical");
+	AddSpawnField("tempent", "1");
+	G_SpawnGEntityFromSpawnVars(qtrue);
+	G_FreeEntity(&g_entities[level.tempent]);
+
+	AddSpawnField("classname", "fx_play_effect");
+	AddSpawnField("effect", "gen_tendril1");
+	AddSpawnField("tempent", "1");
+	G_SpawnGEntityFromSpawnVars(qtrue);
+	G_FreeEntity(&g_entities[level.tempent]);
+
+	AddSpawnField("classname", "fx_play_effect");
+	AddSpawnField("effect", "levels/shop7_toxiic_explosion");
+	AddSpawnField("tempent", "1");
+	G_SpawnGEntityFromSpawnVars(qtrue);
+	G_FreeEntity(&g_entities[level.tempent]);
+
+	AddSpawnField("classname", "fx_play_effect");
+	AddSpawnField("effect", "effects/explosions/col9_boat_explosion");
+	AddSpawnField("tempent", "1");
+	G_SpawnGEntityFromSpawnVars(qtrue);
+	G_FreeEntity(&g_entities[level.tempent]);
+
+	AddSpawnField("classname", "fx_play_effect");
+	AddSpawnField("effect", "jon_sam_trail");
+	AddSpawnField("tempent", "1");
+	G_SpawnGEntityFromSpawnVars(qtrue);
+	G_FreeEntity(&g_entities[level.tempent]);
+
+	AddSpawnField("classname", "fx_play_effect");
+	AddSpawnField("effect", "effects/levels/hk6_spark_shower");
+	AddSpawnField("tempent", "1");
+	G_SpawnGEntityFromSpawnVars(qtrue);
+	G_FreeEntity(&g_entities[level.tempent]);
+	
+	
+	level.MM1Flare = -1;
+	level.M4Flare = -1;
+	level.RPGFlare = -1;
+}
 // End

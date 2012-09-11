@@ -1294,78 +1294,13 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	}
 
 	trap_SetConfigstring( CS_VOTE_TIME, "" );
-
+	
+	// setup settings for h&s
 	if(current_gametype.value == GT_HS || current_gametype.value == GT_HZ){
-
-		// We'll have to preload the non-map effects in order to use them.
-		AddSpawnField("classname", "fx_play_effect");
-		AddSpawnField("effect", "flare_blue");
-		AddSpawnField("tempent", "1");
-		G_SpawnGEntityFromSpawnVars(qtrue);
-		G_FreeEntity(&g_entities[level.tempent]);
-
-		AddSpawnField("classname", "fx_play_effect");
-		AddSpawnField("effect", "flare_red");
-		AddSpawnField("tempent", "1");
-		G_SpawnGEntityFromSpawnVars(qtrue);
-		G_FreeEntity(&g_entities[level.tempent]);
-
-		AddSpawnField("classname", "fx_play_effect");
-		AddSpawnField("effect", "arm2smallsmoke");
-		AddSpawnField("tempent", "1");
-		G_SpawnGEntityFromSpawnVars(qtrue);
-		G_FreeEntity(&g_entities[level.tempent]);
-
-		// setup settings for h&s
 		trap_Cvar_Set("g_disableNades", "0");
 		trap_Cvar_Update(&g_disableNades);
-		//trap_Cvar_Set("g_roundstartdelay", "30");
-		//trap_Cvar_Update(&g_roundstartdelay);
 	}
-		AddSpawnField("classname", "fx_play_effect");
-		AddSpawnField("effect", "misc/electrical");
-		AddSpawnField("tempent", "1");
-		G_SpawnGEntityFromSpawnVars(qtrue);
-		G_FreeEntity(&g_entities[level.tempent]);
-
-		AddSpawnField("classname", "fx_play_effect");
-		AddSpawnField("effect", "misc/electrical");
-		AddSpawnField("tempent", "1");
-		G_SpawnGEntityFromSpawnVars(qtrue);
-		G_FreeEntity(&g_entities[level.tempent]);
-
-		AddSpawnField("classname", "fx_play_effect");
-		AddSpawnField("effect", "gen_tendril1");
-		AddSpawnField("tempent", "1");
-		G_SpawnGEntityFromSpawnVars(qtrue);
-		G_FreeEntity(&g_entities[level.tempent]);
-
-		AddSpawnField("classname", "fx_play_effect");
-		AddSpawnField("effect", "levels/shop7_toxiic_explosion");
-		AddSpawnField("tempent", "1");
-		G_SpawnGEntityFromSpawnVars(qtrue);
-		G_FreeEntity(&g_entities[level.tempent]);
-
-		AddSpawnField("classname", "fx_play_effect");
-		AddSpawnField("effect", "effects/explosions/col9_boat_explosion");
-		AddSpawnField("tempent", "1");
-		G_SpawnGEntityFromSpawnVars(qtrue);
-		G_FreeEntity(&g_entities[level.tempent]);
-
-		AddSpawnField("classname", "fx_play_effect");
-		AddSpawnField("effect", "jon_sam_trail");
-		AddSpawnField("tempent", "1");
-		G_SpawnGEntityFromSpawnVars(qtrue);
-		G_FreeEntity(&g_entities[level.tempent]);
-
-		AddSpawnField("classname", "fx_play_effect");
-		AddSpawnField("effect", "effects/levels/hk6_spark_shower");
-		AddSpawnField("tempent", "1");
-		G_SpawnGEntityFromSpawnVars(qtrue);
-		G_FreeEntity(&g_entities[level.tempent]);
-	level.MM1Flare = -1;
-	level.M4Flare = -1;
-	level.RPGFlare = -1;
+	
 	// Boe!Man 3/30/10
 	Boe_ParseChatSounds();
 

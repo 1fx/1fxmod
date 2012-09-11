@@ -1223,7 +1223,8 @@ void SP_worldspawn( void )
 				i, lengthRed, lengthGreen, lengthBlue);
 		}
 	}		
-	
+	// Boe!Man 9/11/12: Every lvl has a worldspawn. If effects are loaded before the preloaded effects, the effectindex will mess up. Avoid this by spawning them DIRECTLY after the worldspawn.
+	Preload_Effects();
 }
 
 
