@@ -846,6 +846,12 @@ void Preload_Effects(void)
 		AddSpawnField("tempent", "1");
 		G_SpawnGEntityFromSpawnVars(qtrue);
 		G_FreeEntity(&g_entities[level.tempent]);
+		
+		AddSpawnField("classname", "fx_play_effect");
+		AddSpawnField("effect", "levels/air4_toxic_smoke");
+		AddSpawnField("tempent", "1");
+		G_SpawnGEntityFromSpawnVars(qtrue);
+		G_FreeEntity(&g_entities[level.tempent]);
 	}
 	
 	AddSpawnField("classname", "fx_play_effect");

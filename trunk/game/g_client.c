@@ -1005,7 +1005,13 @@ void G_UpdateOutfitting ( int clientNum )
 	{
 		default:
 		case MODELINDEX_ARMOR:
-			client->ps.stats[STAT_ARMOR] = MAX_HEALTH;
+			// Boe!Man 9/16/12: Give them invisible goggles in H&S if they're enabled.
+			if(current_gametype.value == GT_HS && hideSeek_Extra.string[GOGGLES] == '1' && ent->client->sess.team == TEAM_BLUE){
+				client->ps.stats[STAT_GOGGLES] = GOGGLES_NIGHTVISION;
+				client->ps.stats[STAT_ARMOR] = 100;
+			}else{
+				client->ps.stats[STAT_ARMOR] = MAX_HEALTH;
+			}
 			break;
 
 		case MODELINDEX_THERMAL:
@@ -1014,13 +1020,14 @@ void G_UpdateOutfitting ( int clientNum )
 
 		case MODELINDEX_NIGHTVISION:
 			if(current_gametype.value == GT_HS){
-				if(hideSeek_Extra.string[GOGGLES] == '1'){
-					client->ps.stats[STAT_GOGGLES] = GOGGLES_NIGHTVISION;
-					if(ent->client->sess.team == TEAM_BLUE)
-						client->ps.stats[STAT_ARMOR] = 100; 
+				if(hideSeek_Extra.string[GOGGLES] == '1' && ent->client->sess.team == TEAM_BLUE){
+						client->ps.stats[STAT_ARMOR] = 100;
 				}
-			}else
+				// Boe!Man 9/16/12: Do give them goggles if the invisible goggles are disabled, they just don't have any effect. And hiders will get 'em as well.
 				client->ps.stats[STAT_GOGGLES] = GOGGLES_NIGHTVISION;
+			}else{
+				client->ps.stats[STAT_GOGGLES] = GOGGLES_NIGHTVISION;
+			}
 			break;
 	}
 

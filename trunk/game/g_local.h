@@ -347,7 +347,10 @@ typedef struct
 	qboolean	pausespawn;
 	int			cagescore;
 	qboolean	cageFighter;	// Boe!Man 8/30/11: qtrue for being a tied player (and thus anticipating in the cagefight).
+	qboolean	invisibleGoggles; // Boe!Man 9/16/12: qtrue if they're on.
 	int			invisibletime;
+	int			invisibleCoolDown; // Boe!Man 9/16/12: level.time check that checks when you can use the invisible goggles again.
+	int			invisibleFxTime; // Boe!Man 9/16/12: level.time check that checks when the effect is being displayed again.
 	//int			fpschecks;
 	int			IgnoredClients[33];
 	int			IgnoredClientCount;

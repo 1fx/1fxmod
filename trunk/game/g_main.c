@@ -3239,20 +3239,6 @@ void G_RunFrame( int levelTime )
 			}
 
 		if(current_gametype.value == GT_HS || current_gametype.value == GT_HZ){
-
-			if ( hideSeek_Extra.string[3] == '1' && ent->client->ps.pm_flags & PMF_GOGGLES_ON && ent->client->ps.stats[STAT_GOGGLES] == GOGGLES_NIGHTVISION && ent->client->sess.team == TEAM_BLUE && current_gametype.value == GT_HS)
-			{
-				if(ent->client->ps.stats[STAT_ARMOR] <= 0){
-					trap_SendServerCommand(ent->s.number, va("print\"^3[H&S] ^7Invisibility goggles wore off.\n\""));
-					ent->client->ps.pm_flags &= ~(PMF_GOGGLES_ON);
-					ent->client->ps.stats[STAT_GOGGLES] = GOGGLES_NONE;
-				}
-				if(level.time >= ent->client->sess.invisibletime){
-					ent->client->ps.stats[STAT_ARMOR] -= 1;
-					ent->client->sess.invisibletime = level.time+100;
-				}
-			}
-
 			// Henk 27/02/10 -> Fix for dead ppl frozen
 			if(G_IsClientDead(ent->client) && ent->client->ps.stats[STAT_FROZEN])
 				ent->client->ps.stats[STAT_FROZEN] = 0;
