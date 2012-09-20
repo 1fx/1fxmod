@@ -2109,7 +2109,7 @@ void ClientSpawn(gentity_t *ent)
 
 	if ( ent->client->sess.team != TEAM_SPECTATOR )
 	{
-		G_KillBox( ent );
+		G_KillBox( ent, qfalse );
 		trap_LinkEntity (ent);
 
 		// force the base weapon up

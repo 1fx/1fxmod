@@ -1214,7 +1214,8 @@ int G_Damage (
 					}
 				}
 			}
-			if(!g_friendlyFire.integer){
+			// Boe!Man 9/20/12: Fix for telefrag not working.
+			if(!g_friendlyFire.integer && mod != MOD_TELEFRAG){
 				damage = 0;
 			}else if(g_friendlyFire.integer && ((attacker->client->ps.weapon == WP_M4_ASSAULT_RIFLE || attacker->client->ps.weapon >= 12) || (mod == 8 || (mod >= 12 && mod <= 21)))){ // Boe!Man 8/10/11: Deal with Friendly fire in H&S.
 				damage = 0;

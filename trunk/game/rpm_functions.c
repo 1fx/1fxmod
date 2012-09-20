@@ -779,8 +779,9 @@ void RPM_Obituary ( gentity_t *target, gentity_t *attacker, int mod, attackType_
 				break;
 
 			case MOD_TELEFRAG:
-				message = "tried to invade";
-				message2 = "'s personal space";
+				message = "was telefragged by";
+				//message = "tried to invade";
+				//message2 = "'s personal space";
 				break;
 
 			default:

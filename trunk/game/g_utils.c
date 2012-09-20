@@ -632,7 +632,7 @@ Kills all entities that would touch the proposed new positioning
 of ent.  Ent should be unlinked before calling this!
 =================
 */
-void G_KillBox (gentity_t *ent) {
+void G_KillBox (gentity_t *ent, qboolean teleport) {
 	int			i, num;
 	int			touch[MAX_GENTITIES];
 	gentity_t	*hit;
@@ -640,6 +640,16 @@ void G_KillBox (gentity_t *ent) {
 
 	VectorAdd( ent->client->ps.origin, ent->r.mins, mins );
 	VectorAdd( ent->client->ps.origin, ent->r.maxs, maxs );
+	// Boe!Man 9/20/12: Fix for small pbox with teleport.
+	if(teleport){
+		mins[0] -= 37;
+		mins[1] -= 37;
+		mins[2] -= 37;
+		maxs[0] += 37;
+		maxs[1] += 37;
+		maxs[2] += 37;
+	}
+	// End Boe!Man 9/20/12
 	num = trap_EntitiesInBox( mins, maxs, touch, MAX_GENTITIES );
 
 	for ( i = 0; i < num ; i++ ) 
@@ -657,8 +667,10 @@ void G_KillBox (gentity_t *ent) {
 		}
 
 		// nail it
-		if(current_gametype.value != GT_HZ)
-		G_Damage ( hit, ent, ent, NULL, NULL, 100000, DAMAGE_NO_PROTECTION, MOD_TELEFRAG, HL_NONE );
+		// Boe!Man 9/20/12: Fix for no telefrag in H&Z w/ teleport.
+		if(current_gametype.value != GT_HZ || current_gametype.value == GT_HZ && teleport){
+			G_Damage ( hit, ent, ent, NULL, NULL, 100000, DAMAGE_NO_PROTECTION, MOD_TELEFRAG, HL_NONE );
+		}
 	}
 
 }

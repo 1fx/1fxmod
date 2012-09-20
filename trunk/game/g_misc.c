@@ -73,7 +73,7 @@ void TeleportPlayer ( gentity_t *player, vec3_t origin, vec3_t angles, qboolean 
 	// kill anything at the destination
 	if ( !G_IsClientSpectating ( player->client ) ) 
 	{
-		G_KillBox (player);
+		G_KillBox (player, qtrue);
 	}
 
 	// save results of pmove

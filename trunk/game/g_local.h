@@ -931,7 +931,7 @@ int		G_IconIndex			( char *name );
 int		G_EffectIndex		( char *name );
 
 void	G_TeamCommand( team_t team, char *cmd );
-void	G_KillBox (gentity_t *ent);
+void	G_KillBox (gentity_t *ent, qboolean teleport);
 gentity_t *G_Find (gentity_t *from, int fieldofs, const char *match);
 int		G_RadiusList ( vec3_t origin, float radius,	gentity_t *ignore, qboolean takeDamage, gentity_t *ent_list[MAX_GENTITIES]);
 gentity_t *G_PickTarget (char *targetname);
