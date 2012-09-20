@@ -1007,7 +1007,7 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 	{
 		if (g_entities[num].client->sess.admin ){
 			// Boe!Man 1/4/10: Higher level Admin fix.
-			if(g_entities[num].client->sess.admin > ent->client->sess.admin){
+			if(g_entities[num].client->sess.admin > ent->client->sess.admin && !strstr(action, "forceteam")){
 				trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You cannot %s higher level Admins.\n\"", action));
 				return -1;
 			}
