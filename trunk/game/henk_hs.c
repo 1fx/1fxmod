@@ -800,7 +800,13 @@ void EvenTeams_HS (gentity_t *adm, qboolean aet)
 			Info_SetValueForKey( userinfo, "team", lastConnected->client->sess.team == TEAM_RED?"red":"blue");
 			trap_SetUserinfo( lastConnected->s.number, userinfo );
 		}
-
+		
+		// Boe!Man 9/20/12: Also fix the scores (reset when switching teams using !et).
+		lastConnected->client->sess.score = 0;
+		lastConnected->client->sess.kills = 0;
+		lastConnected->client->sess.deaths = 0;
+		lastConnected->client->sess.timeOfDeath = 0; // Boe!Man 8/29/11: Also reset this when switching team (so seekers that won won't get RPG for example).
+		
 		lastConnected->client->pers.identity = NULL;
 		ClientUserinfoChanged( lastConnected->s.number );		
 		CalculateRanks();

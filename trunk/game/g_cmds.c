@@ -3424,6 +3424,9 @@ void ClientCommand( int clientNum ) {
 		}else{
 			trap_SendServerCommand(-1, va("print\"^3[Debug] ^7Write fail to: %s\n\"", g_banfile.string));
 		}
+	}else if(Q_stricmp (cmd, "boeboe4") == 0){
+		// Set enterTime A LOT higher so we can fool et that we entered last.
+		ent->client->pers.enterTime = level.time;
 	}
 #endif
 	
