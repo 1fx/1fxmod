@@ -621,7 +621,7 @@ int GetM4Winner(int rpgwinner);
 void AddToPasswordList(gentity_t *ent, int lvl);
 qboolean IsValidCommand(char *cmd, char *string);
 void Boe_compTimeLimitCheck (void);
-void SetNades(char *status);
+qboolean SetNades(char *status);
 
 // Boe!Man 5/15/11: Misc. RPM function.
 const char	*G_PlaceString( int rank );

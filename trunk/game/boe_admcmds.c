@@ -387,9 +387,10 @@ Recode by Boe: 5/22/12 - 9:25 PM
 Instead of forcing everything to on/off, check available weapons as well.
 ==========
 */
-void SetNades(char *status){
+qboolean SetNades(char *status){
 	weapon_t weapon;
 	char	 available[WP_NUM_WEAPONS+1];
+	qboolean one = qfalse; // Boe!Man 9/20/12: If at least ONE nade is enabled, this is qtrue (also return value).
 	
 	strncpy(available, availableWeapons.string, WP_NUM_WEAPONS);
 	
@@ -420,6 +421,7 @@ void SetNades(char *status){
 					
 					if(available[weapon-1] == '1' || available[weapon-1] == '2'){
 						trap_Cvar_Set ( va("disable_%s", item->classname), "0" );
+						one = qtrue; // Boe!Man 9/20/12: No need to do this in H&S, they can't use !nonades.
 					}else{
 						trap_Cvar_Set ( va("disable_%s", item->classname), "1" );
 					}
@@ -437,6 +439,8 @@ void SetNades(char *status){
 	}
 	
 	G_UpdateAvailableWeapons(); // also set the original g_availableWeapons for the client :)
+	
+	return one;
 }
 
 /*
@@ -456,32 +460,46 @@ void Boe_NoNades(int argNum, gentity_t *ent, qboolean shortCmd){
 			Com_Printf("You cannot enable/disable Nades in Hide&Seek.\n");
 		}
 		return;
+	}else if(current_gametype.value == GT_HZ){ // Boe!Man 9/20/12: And H&Z.
+		if(ent && ent->client){
+			trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7You cannot enable/disable Nades in Humans&Zombies.\n\""));
+		}else{
+			Com_Printf("You cannot enable/disable Nades in Humans&Zombies.\n");
+		}
+		return;
 	}
 
 	if(g_disableNades.integer == 1){
 		g_disableNades.integer = 0;
 		trap_Cvar_Set("g_disableNades", "0");
-	    SetNades("0");
-		trap_Cvar_Update(&g_disableNades);
-		BG_SetAvailableOutfitting(g_availableWeapons.string);
-		for(i=0;i<level.numConnectedClients;i++){
-			level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
-			Com_Printf("Setting nades\n");
-			//level.clients[level.sortedClients[i]].ps.stats[STAT_OUTFIT_GRENADE] = bg_itemlist[bg_outfittingGroups[OUTFITTING_GROUP_GRENADE][3]].giTag;
-			G_UpdateOutfitting(g_entities[level.sortedClients[i]].s.number);
-			//level.clients[level.sortedClients[i]].ps.ammo[weaponData[WP_SMOHG92_GRENADE].attack[ATTACK_NORMAL].ammoIndex]=1;
-			//level.clients[level.sortedClients[i]].ps.stats[STAT_WEAPONS] |= ( 1 << WP_SMOHG92_GRENADE );
-			//level.clients[level.sortedClients[i]].ps.clip[ATTACK_NORMAL][WP_SMOHG92_GRENADE]=1;
-		}
-		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sN%sa%sd%se%ss %senabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-		if(ent && ent->client){
-			trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Nades enabled by %s.\n\"", ent->client->pers.netname));
-			Boe_adminLog ("Nades Enabled", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), "none");
-		}else{
-			trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Nades enabled.\n\""));
-			Boe_adminLog ("Nades Enabled", va("RCON"), "none");
-		}
+	    if(SetNades("0")){
+			trap_Cvar_Update(&g_disableNades);
+			BG_SetAvailableOutfitting(g_availableWeapons.string);
+			for(i=0;i<level.numConnectedClients;i++){
+				level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
+				Com_Printf("Setting nades\n");
+				//level.clients[level.sortedClients[i]].ps.stats[STAT_OUTFIT_GRENADE] = bg_itemlist[bg_outfittingGroups[OUTFITTING_GROUP_GRENADE][3]].giTag;
+				G_UpdateOutfitting(g_entities[level.sortedClients[i]].s.number);
+				//level.clients[level.sortedClients[i]].ps.ammo[weaponData[WP_SMOHG92_GRENADE].attack[ATTACK_NORMAL].ammoIndex]=1;
+				//level.clients[level.sortedClients[i]].ps.stats[STAT_WEAPONS] |= ( 1 << WP_SMOHG92_GRENADE );
+				//level.clients[level.sortedClients[i]].ps.clip[ATTACK_NORMAL][WP_SMOHG92_GRENADE]=1;
+			}
+			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sN%sa%sd%se%ss %senabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+			if(ent && ent->client){
+				trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Nades enabled by %s.\n\"", ent->client->pers.netname));
+				Boe_adminLog ("Nades Enabled", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), "none");
+			}else{
+				trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Nades enabled.\n\""));
+				Boe_adminLog ("Nades Enabled", va("RCON"), "none");
+			}
+	    }else{
+	    	if(ent && ent->client){
+	    		trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7No nades are set to be used on the server.\n\""));
+	    	}else{
+	    		Com_Printf("7No nades are set to be used on the server.\n");
+	    	}
+	    }
 	}else{
 		g_disableNades.integer = 1;
 		trap_Cvar_Set("g_disableNades", "1");
