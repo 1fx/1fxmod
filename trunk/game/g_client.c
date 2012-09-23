@@ -1789,10 +1789,11 @@ void ClientBegin( int clientNum, qboolean setTime )
 	CalculateRanks();
 
 	if(client->sess.team == TEAM_SPECTATOR && setTime && client->pers.connected == CON_CONNECTED && (current_gametype.value == GT_HS || current_gametype.value == GT_HZ)){
-		if(!(ent->r.svFlags & SVF_BOT))
-		SetTeam(ent, ChooseTeam(), NULL, qfalse); 
-		else if(current_gametype.value == GT_HZ)
+		if(current_gametype.value == GT_HZ){
 			SetTeam(ent, "red", NULL, qfalse);
+		else if(!(ent->r.svFlags & SVF_BOT)){
+			SetTeam(ent, ChooseTeam(), NULL, qfalse); 
+		}
 	}
 #ifdef _BOE_DBG
 	if (strstr(boe_log.string, "1"))

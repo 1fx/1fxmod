@@ -1170,7 +1170,8 @@ qboolean henk_ischar(char c){
 }
 
 char *ChooseTeam(){
-	int counts[2], seekers, maxhiders;
+	int counts[3], seekers = 0, maxhiders = 0;
+	
 	counts[TEAM_BLUE] = TeamCount1(TEAM_BLUE);
 	counts[TEAM_RED] = TeamCount1(TEAM_RED);
 	if(counts[TEAM_RED] >= 4 && counts[TEAM_RED] <= 8){
