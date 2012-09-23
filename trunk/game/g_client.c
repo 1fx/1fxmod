@@ -1791,7 +1791,7 @@ void ClientBegin( int clientNum, qboolean setTime )
 	if(client->sess.team == TEAM_SPECTATOR && setTime && client->pers.connected == CON_CONNECTED && (current_gametype.value == GT_HS || current_gametype.value == GT_HZ)){
 		if(current_gametype.value == GT_HZ){
 			SetTeam(ent, "red", NULL, qfalse);
-		else if(!(ent->r.svFlags & SVF_BOT)){
+		}else if(!(ent->r.svFlags & SVF_BOT)){
 			SetTeam(ent, ChooseTeam(), NULL, qfalse); 
 		}
 	}
