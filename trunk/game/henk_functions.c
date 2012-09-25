@@ -168,11 +168,16 @@ void Henk_Ignore(gentity_t *ent){
 
 qboolean IsValidCommand(char *cmd, char *string){
 	int i, z;
+	qboolean space = qfalse;
 	for(i=0;i<=strlen(string);i++){
+		if(string[i] == ' ')
+			space = qtrue;
 		if(string[i] == '!'){
 			for(z=1;z<=strlen(cmd)-1;z++){
 				if(string[i+z] != cmd[z]){
 					break; // invalid command
+				}else if(space){ // Henkie 25/09/2012 -> Fix issue with putting the short command in the middle of a sentence
+					return qfalse;
 				}else if(z == strlen(cmd)-1){
 					if(henk_isdigit(string[(i+z)+1]))
 						return qtrue;
@@ -1609,6 +1614,7 @@ part = 118;
 				//trap_GPG_FindPairValue(group, "c", "", country);
 				trap_GPG_FindPairValue(group, "e", "??", ext); // add ?? as default variable
 				trap_GP_Delete(&GP2);
+				Com_Printf("Found country\n");
 				strcpy(ent->client->sess.country, GetCountry(ext));
 				strcpy(ent->client->sess.countryext, ext);
 				return;
