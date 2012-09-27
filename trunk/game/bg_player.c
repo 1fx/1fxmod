@@ -413,6 +413,11 @@ qboolean BG_ParseItemFile ( void )
 	{
 		return qfalse;
 	}
+	
+	// Boe!Man 9/27/12: Native on newer Linux-based systems fix.
+#ifdef __linux__
+	bg_itemTemplates = NULL;
+#endif
 
 	baseGroup = trap_GP_GetBaseParseGroup ( ItemFile );
 	subGroup = trap_GPG_GetSubGroups ( baseGroup );
