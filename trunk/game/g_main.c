@@ -2760,22 +2760,24 @@ void Henk_CheckZombie(void){
 		}
 	}
 
-	if(level.time >= level.zombietime && level.messagedisplay2 == qfalse && TeamCount1(TEAM_RED) >= 2 && TeamCount1(TEAM_BLUE) == 0){
-		if(level.zombie != -1){
-			if(g_entities[level.zombie].client->sess.team != TEAM_SPECTATOR && !G_IsClientDead(g_entities[level.zombie].client)){
-				trap_SendServerCommand(-1, va("print \"^3[H&Z] ^7%s suddenly turned into a zombie!\n\"", g_entities[level.zombie].client->pers.netname) );
-				trap_SendServerCommand( -1, va("cp \"%s ^7has turned into a zombie!\n\"", g_entities[level.zombie].client->pers.netname));
-				// turn into zombie
-				CloneBody(&g_entities[level.zombie], g_entities[level.zombie].s.number);
-				g_entities[level.zombie].client->sess.firstzombie = qtrue;
-				level.messagedisplay2 = qtrue;
-				level.zombie = -1;
-			}else{
-				level.zombie = -1;
+	if(level.time >= level.zombietime && level.messagedisplay2 == qfalse){
+		if(TeamCount1(TEAM_RED) >= 2 && TeamCount1(TEAM_BLUE) == 0){
+			if(level.zombie != -1){
+				if(g_entities[level.zombie].client->sess.team != TEAM_SPECTATOR && !G_IsClientDead(g_entities[level.zombie].client)){
+					trap_SendServerCommand(-1, va("print \"^3[H&Z] ^7%s suddenly turned into a zombie!\n\"", g_entities[level.zombie].client->pers.netname) );
+					trap_SendServerCommand( -1, va("cp \"%s ^7has turned into a zombie!\n\"", g_entities[level.zombie].client->pers.netname));
+					// turn into zombie
+					CloneBody(&g_entities[level.zombie], g_entities[level.zombie].s.number);
+					g_entities[level.zombie].client->sess.firstzombie = qtrue;
+					level.messagedisplay2 = qtrue;
+					level.zombie = -1;
+				}else{
+					level.zombie = -1;
+				}
 			}
+		}else if(TeamCount1(TEAM_RED) < 2 && TeamCount1(TEAM_BLUE ) == 0 && level.zombie != -1){
+			level.zombie = -1;
 		}
-	}else if(level.time >= level.zombietime && level.messagedisplay2 == qfalse && TeamCount1(TEAM_RED) < 2 && TeamCount1(TEAM_BLUE ) == 0 && level.zombie != -1){ // Boe!Man 10/4/12: Time's up, a Zombie should be selected, but there's not enough players anymore.. Reset.
-		level.zombie = -1;
 	}
 
 	if(level.time >= level.gametypeStartTime+8000 && level.messagedisplay == qfalse && level.gametypeStartTime >= 5000){
