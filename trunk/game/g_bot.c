@@ -241,6 +241,7 @@ qboolean Henk_DoesMapSupportGametype ( const char* gametype, char *mapname )
 	const char* info;
 	const char*	type;
 	char*		token;
+	qboolean	nondefault = qfalse;	// Boe!Man 10/4/12: Is this is true, it's about H&S/H&Z that also works on "inf" gametype maps.
 
 	// Get the arena info for the current map 
 	info = G_GetArenaInfoByMap ( mapname );
@@ -253,6 +254,11 @@ qboolean Henk_DoesMapSupportGametype ( const char* gametype, char *mapname )
 
 	// Get the supported gametypes
 	type = Info_ValueForKey( info, "type" );
+	
+	// Boe!Man 10/4/12: Check if it's about H&S/H&Z, if so, set nondefault to true to check for "inf" as well.
+	if(strstr(gametype, "h&s") || strstr(gametype, "h&z")){
+		nondefault = qtrue;
+	}
 
 	while ( 1 )
 	{
@@ -265,6 +271,13 @@ qboolean Henk_DoesMapSupportGametype ( const char* gametype, char *mapname )
 		if ( Q_stricmp ( gametype, token ) == 0 )
 		{
 			return qtrue;
+		}
+		
+		// Check H&S/H&Z modes.
+		if(nondefault){
+			if( Q_stricmp( "inf", token) == 0 ){
+				return qtrue;
+			}
 		}
 	}
 
