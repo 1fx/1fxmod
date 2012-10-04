@@ -2770,9 +2770,12 @@ void Henk_CheckZombie(void){
 				g_entities[level.zombie].client->sess.firstzombie = qtrue;
 				level.messagedisplay2 = qtrue;
 				level.zombie = -1;
-			}else
+			}else{
 				level.zombie = -1;
+			}
 		}
+	}else if(level.time >= level.zombietime && level.messagedisplay2 == qfalse && TeamCount1(TEAM_RED) < 2 && TeamCount1(TEAM_BLUE ) == 0 && level.zombie != -1){ // Boe!Man 10/4/12: Time's up, a Zombie should be selected, but there's not enough players anymore.. Reset.
+		level.zombie = -1;
 	}
 
 	if(level.time >= level.gametypeStartTime+8000 && level.messagedisplay == qfalse && level.gametypeStartTime >= 5000){
