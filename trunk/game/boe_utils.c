@@ -2197,11 +2197,12 @@ void Boe_mapEvents (void){
 					level.mapSwitchCount2--;
 					level.mapSwitchCount = level.time + 1000;
 				}else{
+					/*
 					if(current_gametype.value == GT_HS){
 						trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype h&s\n"));
 					}else if(current_gametype.value == GT_HZ){
 						trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype h&z\n"));
-					}
+					}*/
 				trap_SendConsoleCommand( EXEC_APPEND, va("map_restart 0\n"));
 				}
 			}

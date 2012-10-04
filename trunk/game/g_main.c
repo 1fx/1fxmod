@@ -1110,10 +1110,14 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 			trap_Cvar_Set("current_gametype", "1");
 			trap_Cvar_Set( "g_gametype", "inf" );
 			trap_Cvar_Update(&g_gametype);
+			// Boe!Man 10/4/12: Reset g_gametype to set the gt latched, so it will remain effective upon the next /rcon map switch..
+			trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype h&s\n"));
 		}else if(strstr(g_gametype.string, "h&z")){
 			trap_Cvar_Set("current_gametype", "8");
 			trap_Cvar_Set( "g_gametype", "inf" );
 			trap_Cvar_Update(&g_gametype);
+			// Boe!Man 10/4/12: Reset g_gametype to set the gt latched, so it will remain effective upon the next /rcon map switch..
+			trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype h&z\n"));
 		}else if(strstr(g_gametype.string, "elim")){
 			trap_Cvar_Set("current_gametype", "7");
 		}else if(strstr(g_gametype.string, "tdm")){

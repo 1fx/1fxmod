@@ -4190,6 +4190,15 @@ void Henk_Gametype(int argNum, gentity_t *adm, qboolean shortCmd){
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sG%sa%sm%se%st%sype ^7Capture the Flag!", level.time + 3500, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		}else if(strstr(lwrP, "inf")){
 			trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype inf\n"));
+			// Boe!Man 10/4/12: Fix latch CVAR crap. It's either h&s or h&z, so ensure the latched value is GONE so we can properly reset it.
+			if(current_gametype.value == GT_HS || current_gametype.value == GT_HZ){
+				trap_Cvar_Set("g_gametype", "h&s");
+				trap_Cvar_Update(&g_gametype);
+				trap_Cvar_Set("g_gametype", "h&z");
+				trap_Cvar_Update(&g_gametype);
+				trap_Cvar_Set("g_gametype", "inf");
+				trap_Cvar_Update(&g_gametype);
+			}
 			strcpy(gametype, "inf");
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sG%sa%sm%se%st%sype ^7Infiltration!", level.time + 3500, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		}else if(strstr(lwrP, "tdm")){
@@ -4348,6 +4357,15 @@ void Henk_Map(int argNum, gentity_t *adm, qboolean shortCmd){
 				strcpy(gametype, "ctf");
 			}else if(strstr(gt, "inf")){
 				strcpy(gametype, "inf");
+				// Boe!Man 10/4/12: Fix latch CVAR crap. It's either h&s or h&z, so ensure the latched value is GONE so we can properly reset it.
+				if(current_gametype.value == GT_HS || current_gametype.value == GT_HZ){
+					trap_Cvar_Set("g_gametype", "h&s");
+					trap_Cvar_Update(&g_gametype);
+					trap_Cvar_Set("g_gametype", "h&z");
+					trap_Cvar_Update(&g_gametype);
+					trap_Cvar_Set("g_gametype", "inf");
+					trap_Cvar_Update(&g_gametype);
+				}
 			}else if(strstr(gt, "tdm")){
 				strcpy(gametype, "tdm");
 			}else if(strstr(gt, "dm")){
