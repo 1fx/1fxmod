@@ -4083,7 +4083,7 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 							Com_sprintf(buffer+strlen(buffer), sizeof(buffer), "[^3%i^7]  %s%s%s\n", count, name, column2, xip);
 					}else{
 						//trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7] %s%s%s%s%s\n", count, level, column1, name, column2, xip)); // Boe!Man 9/16/10: Print ban.
-							Com_sprintf(buffer+strlen(buffer), sizeof(buffer), "[^3%i^7] %s%s%s%s%s\n", count, name, column2, xip);
+							Com_sprintf(buffer+strlen(buffer), sizeof(buffer), "[^3%i^7] %s%s%s\n", count, name, column2, xip);
 					}
 				}
 				
