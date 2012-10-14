@@ -2258,9 +2258,9 @@ void ClientSpawn(gentity_t *ent)
 			ent->client->ps.ammo[weaponData[WP_KNIFE].attack[ATTACK_ALTERNATE].ammoIndex]=0;
 			ent->client->ps.weapon = WP_KNIFE;
 			ent->client->ps.weaponstate = WEAPON_READY;
-			if(level.crossTheBridge && ent->client->sess.team == TEAM_RED){ // Henk 27/02/10 -> In cross the bridge hiders spawn with 5 smokes // Boe: They start with 3 now. ;)
+			if(level.crossTheBridge && ent->client->sess.team == TEAM_RED){ // Henk 27/02/10 -> In cross the bridge hiders spawn with 5 smokes // Boe: They start with 4 now. ;)
 				ent->client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_M15_GRENADE);	
-				ent->client->ps.ammo[weaponData[WP_M15_GRENADE].attack[ATTACK_NORMAL].ammoIndex] = 2;
+				ent->client->ps.ammo[weaponData[WP_M15_GRENADE].attack[ATTACK_NORMAL].ammoIndex] = 3;
 				ent->client->ps.clip[ATTACK_NORMAL][WP_M15_GRENADE] = 1;
 				ent->client->ps.weapon = WP_M15_GRENADE;
 			}else if(level.crossTheBridge && ent->client->sess.team == TEAM_BLUE){
