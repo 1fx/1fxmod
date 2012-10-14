@@ -1222,7 +1222,14 @@ void SP_worldspawn( void )
 			Com_Error(ERR_DROP, "Style %d has inconsistent lengths: R %d, G %d, B %d", 
 				i, lengthRed, lengthGreen, lengthBlue);
 		}
-	}		
+	}
+	
+	// Boe!Man 10/14/12: New check for the CTB minigame.
+	trap_Cvar_VariableStringBuffer ( "mapname", level.mapname, MAX_QPATH );
+	G_SpawnString( "minigame", "", &text );
+	if(strstr(level.mapname, "col9") && current_gametype.value == GT_HS && strstr(text, "ctb")){
+		level.crossTheBridge = qtrue;
+	}
 	// Boe!Man 9/11/12: Every lvl has a worldspawn. If effects are loaded before the preloaded effects, the effectindex will mess up. Avoid this by spawning them DIRECTLY after the worldspawn.
 	Preload_Effects();
 }

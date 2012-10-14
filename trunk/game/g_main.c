@@ -259,7 +259,7 @@ vmCvar_t	server_rconprefix;
 vmCvar_t	server_specteamprefix;
 
 // Boe!Man 4/20/11
-vmCvar_t	g_crossTheBridge;
+//vmCvar_t	g_crossTheBridge;
 
 // Boe!Man 5/28/11
 vmCvar_t	g_customWeaponFile;
@@ -587,7 +587,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_boxAttempts, "g_boxAttempts", "3",	CVAR_ARCHIVE,	0.0,	0.0,  0, qtrue  }, 
 	{ &g_cageAttempts, "g_cageAttempts", "3",	CVAR_ARCHIVE,	0.0,	0.0,  0, qtrue  },
 	{ &g_RpgStyle, "g_RpgStyle", "0",	CVAR_ARCHIVE,	0.0,	0.0,  0, qtrue  },
-	{ &g_crossTheBridge, "g_crossTheBridge", "0",	CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  },
+//	{ &g_crossTheBridge, "g_crossTheBridge", "0",	CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  },
 	{ &g_noHighFps, "g_noHighFps", "0",	CVAR_ARCHIVE,	0.0,	0.0,  0, qtrue  },
 
 	// Boe!Man 5/28/11
@@ -1132,10 +1132,11 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 
 	// Boe!Man 2/5/11: Force col9 to be a H&S map only.
 	// Boe!Man 4/20/11: Removed on request: http://1fx.uk.to/index.php?/tracker/issue-198-col9-not-working-with-ctf/ -- We now check if the g_crossTheBridge CVAR is enabled.
-	trap_Cvar_VariableStringBuffer ( "mapname", level.mapname, MAX_QPATH );
+	// Boe!Man 10/14/12: A CVAR for this looks SO messy, FIX by checking this in the worldspawn.
+	/*trap_Cvar_VariableStringBuffer ( "mapname", level.mapname, MAX_QPATH );
 	if(strstr(level.mapname, "col9") && current_gametype.value == GT_HS && g_crossTheBridge.integer > 0){
 		level.crossTheBridge = qtrue;
-	}
+	}*/
 
 	// Set the current gametype
 	G_SetGametype(g_gametype.string);
