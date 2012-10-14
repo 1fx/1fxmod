@@ -610,7 +610,7 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace )
 		{	// normal radius of effect damage
 			if(trace->endpos[2] > 2900 && ent->splashMethodOfDeath == WP_M15_GRENADE && level.crossTheBridge){
 				if(ent->parent && ent->parent->client){
-					trap_SendServerCommand(ent->parent->s.number, va("print\"^3[H&S] ^7You cannot blind the seekers by nading their choppers!\n\""));
+					trap_SendServerCommand(ent->parent->s.number, va("print\"^3[Cross The Bridge] ^7You cannot blind the seekers by nading their choppers!\n\""));
 					G_FreeEntity(ent);
 				}
 			}else{
