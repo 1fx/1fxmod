@@ -1563,6 +1563,9 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 		for ( i = 0; i < level.maxclients; i++ )	{
 			if((g_entities[i].r.svFlags & SVF_BOT ) || isBot)
 				continue;
+			// Boe!Man 10/23/12: Fixed ipCount also counting ips of disconnected players.
+			if((g_entities[i].client->pers.connected != CON_CONNECTED))
+				continue;
 			if (!Q_stricmp(g_entities[i].client->pers.ip, ip))
 				ipCount++;
 		}
