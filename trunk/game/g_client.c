@@ -1560,13 +1560,11 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 		}
 		
 		// Boe!Man 10/30/11: Check for duplicate clients (based on IP).
-		for ( i = 0; i < level.maxclients; i++ )	{
-			if((g_entities[i].r.svFlags & SVF_BOT ) || isBot)
+		for(i = 0;i <= level.numConnectedClients; i++){
+		
+			if((g_entities[level.sortedClients[i]].r.svFlags & SVF_BOT ) || isBot)
 				continue;
-			// Boe!Man 10/23/12: Fixed ipCount also counting ips of disconnected players.
-			if((g_entities[i].client->pers.connected != CON_CONNECTED))
-				continue;
-			if (!Q_stricmp(g_entities[i].client->pers.ip, ip))
+			if (!Q_stricmp(g_entities[level.sortedClients[i]].client->pers.ip, ip))
 				ipCount++;
 		}
 		
@@ -1578,7 +1576,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 		//if(Boe_NameListCheck (clientNum, name, g_banlist.string, NULL, qtrue, qfalse, qfalse, qfalse))
 		//	return "Banned! [Name]";
 		// Boe!Man 2/8/10: Limiting the connections.
-		if ( ipCount >= g_maxIPConnections.integer ) 
+		if ( ipCount > g_maxIPConnections.integer ) 
 			return "Too many connections from your IP!";
 	}
 
