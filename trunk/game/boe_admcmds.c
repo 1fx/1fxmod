@@ -469,10 +469,10 @@ void Boe_NoNades(int argNum, gentity_t *ent, qboolean shortCmd){
 		return;
 	}
 
-	if(g_disableNades.integer == 1){
-		g_disableNades.integer = 0;
-		trap_Cvar_Set("g_disableNades", "0");
+	if(g_disableNades.integer == 1){		
 	    if(SetNades("0")){
+	    	g_disableNades.integer = 0;
+			trap_Cvar_Set("g_disableNades", "0");
 			trap_Cvar_Update(&g_disableNades);
 			BG_SetAvailableOutfitting(g_availableWeapons.string);
 			for(i=0;i<level.numConnectedClients;i++){
@@ -497,7 +497,7 @@ void Boe_NoNades(int argNum, gentity_t *ent, qboolean shortCmd){
 	    	if(ent && ent->client){
 	    		trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7No nades are set to be used on the server.\n\""));
 	    	}else{
-	    		Com_Printf("7No nades are set to be used on the server.\n");
+	    		Com_Printf("^7No nades are set to be used on the server.\n");
 	    	}
 	    }
 	}else{
