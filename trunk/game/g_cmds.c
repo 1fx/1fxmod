@@ -1982,17 +1982,22 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 	strcpy(star, server_starprefix.string);
 	strcpy(admin, "");
 	}else{
-	strcpy(star, "");
-	// Boe!Man 1/6/10: Admin prefixes. - Update 1/18/10: New CVARs for prefixes if the hoster wishes to change the values.
-	if(ent->client->sess.admin == 2){
-		strcpy(admin, server_badminprefix.string);
-	}else if(ent->client->sess.admin == 3){
-		strcpy(admin, server_adminprefix.string);
-	}else if(ent->client->sess.admin == 4){
-		strcpy(admin, server_sadminprefix.string);
-	}else{
-		strcpy(admin, "");
-	}
+		strcpy(star, "");
+		// Boe!Man 1/6/10: Admin prefixes. - Update 1/18/10: New CVARs for prefixes if the hoster wishes to change the values.
+		if(ent->client->sess.admin == 2){
+			strcpy(admin, server_badminprefix.string);
+		}else if(ent->client->sess.admin == 3){
+			strcpy(admin, server_adminprefix.string);
+		}else if(ent->client->sess.admin == 4){
+			strcpy(admin, server_sadminprefix.string);
+		}else{
+			strcpy(admin, "");
+		}
+		
+		// Boe!Man 11/5/12: Fix for space in chat when *adminprefix CVAR was empty but the client was still an Admin.
+		if(strlen(admin) > 0){
+			Q_strcat(admin, sizeof(admin), " ");
+		}
 	}
 	
 	// Boe!Man 1/17/10: Different kinds of Talking 'Modes'.
@@ -2068,7 +2073,7 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 								// Boe!Man 1/6/10: Adding the Admin prefix in front of the chat. - Update 1/17/10.
 								star, type, name, message, star)); // Boe!Man 1/17/10: Adding stars.
 	}else if(ent->client->sess.admin > 0){
-		trap_SendServerCommand( other-g_entities, va("%s %d \"%s%s %s%s\"", // Boe!Man 1/6/10: Adding prefixes. - Update 1/17/10: Adding Admin Talk/Chat prefixes. - Update 5/8/10: Solved message problem.
+		trap_SendServerCommand( other-g_entities, va("%s %d \"%s%s%s%s\"", // Boe!Man 1/6/10: Adding prefixes. - Update 1/17/10: Adding Admin Talk/Chat prefixes. - Update 5/8/10: Solved message problem.
 								mode == SAY_TEAM ? "tchat" : "chat",
 								ent->s.number,
 								// Boe!Man 1/6/10: Adding the Admin prefix in front of the chat. - Update 1/17/10.
