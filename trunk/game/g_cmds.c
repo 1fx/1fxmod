@@ -75,6 +75,7 @@ static admCmd_t AdminCommands[] =
 	{"!adminlist","adminlist", &g_adminlist.integer, &Henk_Admlist},
 	{"!clanlist","clanlist", &g_clan.integer, &Henk_Admlist},
 	{"!adminremove","adminremove", &g_adminremove.integer, &Henk_AdminRemove},
+	{"!friendlyfire","friendlyfire", &g_ff.integer, &Boe_friendlyFire},
 	// Boe!Man 1/22/11: End full synonyms.
 
 	{"!adr","adminremove", &g_adminremove.integer, &Henk_AdminRemove},
@@ -147,7 +148,8 @@ static admCmd_t AdminCommands[] =
 	{"!p","pop", &g_pop.integer, &Boe_pop},
 	{"!k","kick", &g_kick.integer, &Boe_Kick},
 	{"!m","mute", &g_mute.integer, &Boe_XMute},
-	{"!s","strip", &g_strip.integer, &Boe_Strip}
+	{"!s","strip", &g_strip.integer, &Boe_Strip},
+	{"!ff","friendlyfire", &g_ff.integer, &Boe_friendlyFire},
 	//{"!box","box", &g_strip.integer, &Henk_Box} // Boe!Man 4/8/11: Seems like a useless command?
 };
 

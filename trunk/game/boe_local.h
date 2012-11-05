@@ -360,6 +360,10 @@ extern	vmCvar_t	g_useNoRoof;
 void Boe_ShuffleTeams(int argNum, gentity_t *ent, qboolean shortCmd);
 extern	vmCvar_t	g_shuffleteams;
 
+// Boe!Man 11/5/12
+extern	vmCvar_t	g_ff;
+void Boe_friendlyFire(int argNum, gentity_t *ent, qboolean shortCmd);
+
 //==============================================
 // boe_utils.c
 //==============================================
@@ -665,4 +669,3 @@ extern	vmCvar_t	hideSeek_ExtendedRoundStats;
 
 // Boe!Man 9/11/12: Preload effects in H&S/H&Z in this function.
 void Preload_Effects(void);
-

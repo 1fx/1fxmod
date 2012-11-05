@@ -4724,3 +4724,38 @@ void Boe_ShuffleTeams(int argNum, gentity_t *ent, qboolean shortCmd){
 		Boe_adminLog ("Shuffle Teams", va("RCON"), "none");
 	}
 }
+
+
+
+/*
+==========
+Boe_friendlyFire
+==========
+*/
+
+void Boe_friendlyFire(int argNum, gentity_t *ent, qboolean shortCmd){
+	if(!g_friendlyFire.integer){ // Boe!Man 11/5/12: Disabled, enable it.
+		Boe_setTrackedCvar(18, 1);
+		
+		if(ent && ent->client){
+			Boe_adminLog ("Friendly Fire Enabled", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), "none");
+			trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Friendly fire enabled by %s.\n\"", ent->client->pers.netname));
+		}else{
+			Boe_adminLog ("Friendly Fire Enabled", va("RCON"), "none");
+			trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Friendly fire enabled.\n"));
+		}
+	}else{ // Boe!Man 11/5/12: Enabled, disable it.
+		Boe_setTrackedCvar(18, 0);
+		
+		if(ent && ent->client){
+			Boe_adminLog ("Friendly Fire Disabled", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), "none");
+			trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Friendly fire disabled by %s.\n\"", ent->client->pers.netname));
+		}else{
+			Boe_adminLog ("Friendly Fire Disabled", va("RCON"), "none");
+			trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Friendly fire disabled.\n"));
+		}
+	}
+	
+	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+	return;
+}
