@@ -442,6 +442,14 @@ void SP_terrain(gentity_t *ent)
 
 		trap_Cvar_VariableStringBuffer("RMG_seed", seed, MAX_QPATH);
 		trap_Cvar_VariableStringBuffer("RMG_mission", missionType, MAX_QPATH);
+		// Boe!Man 11/5/12.
+		// Fixed h&s/h&z with separate mission files bugging other clients.
+		// There's only one drawback, the server owner should keep these files in sync (inf, h&s, h&z) at ALL times to avoid random crashes etc.
+		if(strstr(missionType, "h&s") || strstr(missionType, "h&z")){
+			trap_Cvar_Set("RMG_mission", "inf");
+			G_UpdateCvars();
+			trap_Cvar_VariableStringBuffer("RMG_mission", missionType, MAX_QPATH);
+		}
 
 		trap_Cvar_VariableStringBuffer("RMG_soundset", soundSet, MAX_QPATH);
 		trap_SetConfigstring(CS_AMBIENT_SOUNDSETS, soundSet );

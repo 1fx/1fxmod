@@ -2252,8 +2252,13 @@ void Boe_mapEvents (void){
 		}
 	}else if(level.mapAction == 3){
 		if(level.time >= level.mapSwitchCount + 3000){
-			trap_Cvar_VariableStringBuffer ( "mapname", level.mapname, MAX_QPATH );
-			trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", level.mapname));
+			if(!RMG.integer){
+				trap_Cvar_VariableStringBuffer ( "mapname", level.mapname, MAX_QPATH );
+				trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", level.mapname));
+			}else{
+				// Boe!Man 11/5/12: It's a RMG map, make sure to call the rmgmap 0 command.
+				trap_SendConsoleCommand( EXEC_APPEND, va("rmgmap 0\n"));
+			}
 		}
 	}
 	else if(level.mapAction == 4){
