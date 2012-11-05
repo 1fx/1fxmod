@@ -572,6 +572,16 @@ void Boe_Tokens(gentity_t *ent, char *chatText, int mode, qboolean CheckSounds)
 			if ( g_voiceFloodCount.integer ) {
 				if ( ent->client->voiceFloodPenalty ) {
 					if ( ent->client->voiceFloodPenalty > level.time ) {
+						// Boe!Man 11/5/12: Fix for no text when on flood penalty.
+						chatText++;
+						n = atoi(chatText) - 1;
+						if(n > -1 && n < MAX_BOE_CHATS && *chatSounds[n].text && text) {
+							Q_strcat(newText, MAX_SAY_TEXT, chatSounds[n].text);
+							chatText++;
+						}
+						while (*chatText >= '0' && *chatText <= '9'){
+							chatText++;
+						}
 						playedSound = qtrue;
 						continue;
 					}
@@ -583,11 +593,30 @@ void Boe_Tokens(gentity_t *ent, char *chatText, int mode, qboolean CheckSounds)
 					ent->client->voiceFloodPenalty = level.time + g_voiceFloodPenalty.integer * 1000;
 					// Boe!Man 12/20/09 - Update 12/22/09 [Yellow color instead of Red].
 					trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Voice chat flooded, you will be able use voice chats again in %d seconds.\n\"", g_voiceFloodPenalty.integer ) );
+					// Boe!Man 11/5/12: Fix for no text when on flood penalty.
+					chatText++;
+					n = atoi(chatText) - 1;
+					if(n > -1 && n < MAX_BOE_CHATS && *chatSounds[n].text && text) {
+						Q_strcat(newText, MAX_SAY_TEXT, chatSounds[n].text);
+						chatText++;
+					}
+					while (*chatText >= '0' && *chatText <= '9'){
+						chatText++;
+					}
 					playedSound = qtrue;
 					continue;
 				}
 				if (g_compMode.integer > 0 && cm_enabled.integer > 1){ // Boe!Man 11/20/10: Meaning the scrim already started..
 					if (cm_devents.integer == 1){
+						chatText++;
+						n = atoi(chatText) - 1;
+						if(n > -1 && n < MAX_BOE_CHATS && *chatSounds[n].text && text) {
+							Q_strcat(newText, MAX_SAY_TEXT, chatSounds[n].text);
+							chatText++;
+						}
+						while (*chatText >= '0' && *chatText <= '9'){
+							chatText++;
+						}
 						trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Sounds are currently disabled in Competition Mode.\n\"" ) );
 						playedSound = qtrue;
 						continue;
