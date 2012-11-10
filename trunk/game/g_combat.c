@@ -1805,9 +1805,19 @@ qboolean G_RadiusDamage (
 						}
 					}
 				}
-			}else if(mod == 12){ // Boe!Man 9/2/12: Add score for MM1.
+			}else if(mod == WP_MM1_GRENADE_LAUNCHER){ // Boe!Man 9/2/12: Add score for MM1.
 				if(ent->client != NULL && ent->client->sess.team == TEAM_RED){
 					ent->client->sess.MM1HitsTaken += 1;
+					
+					// Boe!Man 11/10/12: Add small knockback for hiders.
+					VectorCopy(ent->client->ps.viewangles, rpgAngs);
+					AngleVectors( rpgAngs, NULL , NULL, rpgdir );
+					rpgdir[0] *= 0.0;
+					rpgdir[1] *= 0.0;
+					rpgdir[2] = 0.75;
+					VectorNormalize ( rpgdir );
+					G_ApplyKnockback(ent, rpgdir, 115);
+					ent->client->ps.velocity[1] -= 50.0f;
 				}
 			}
 			// End
