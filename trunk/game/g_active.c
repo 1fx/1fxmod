@@ -784,17 +784,17 @@ void ClientTimerActions( gentity_t *ent, int msec )
 	}
 
 	// Forgive voice chats
-	if ( g_voiceFloodCount.integer && ent->client->voiceFloodCount )
+	if ( g_voiceFloodCount.integer && ent->client->sess.voiceFloodCount )
 	{
 		int forgiveTime = 60000 / g_voiceFloodCount.integer;
 
-		client->voiceFloodTimer += msec;
-		while ( client->voiceFloodTimer >= forgiveTime ) 
+		client->sess.voiceFloodTimer += msec;
+		while ( client->sess.voiceFloodTimer >= forgiveTime ) 
 		{
 			// Forgive one voice chat
-			client->voiceFloodCount--;
+			client->sess.voiceFloodCount--;
 
-			client->voiceFloodTimer -= forgiveTime;
+			client->sess.voiceFloodTimer -= forgiveTime;
 		}
 	}
 }

@@ -384,6 +384,10 @@ typedef struct
 	int			stunned;
 	int			trappedInCage;
 	
+	int				voiceFloodTimer;		// Timer used to forgive voice chat flooding
+	int				voiceFloodCount;		// Amount of voice chats that need to be forgivin
+	int				voiceFloodPenalty;		// Time when a client can voice chat again
+	
 } clientSession_t;
 
 // Boe!Man 3/30/10
@@ -517,10 +521,6 @@ struct gclient_s
 	int			voteDelayTime;		// time when this client can vote again
 
 	char		*areabits;
-
-	int				voiceFloodTimer;		// Timer used to forgive voice chat flooding
-	int				voiceFloodCount;		// Amount of voice chats that need to be forgivin
-	int				voiceFloodPenalty;		// Time when a client can voice chat again
 
 	// Anti-lag information
 	gantilag_t		antilag[MAX_ANTILAG];

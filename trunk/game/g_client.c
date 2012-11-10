@@ -2128,6 +2128,13 @@ void ClientSpawn(gentity_t *ent)
 			client->ps.weaponAnimIdChoice = 0;
 			client->ps.weaponCallbackStep = 0;
 		}
+		
+		// Boe!Man 11/10/12: Do reset the voiceChat integers when spawning (only when flood check is enabled)..
+		if (g_voiceFloodCount.integer){
+			client->sess.voiceFloodPenalty = 0;
+			client->sess.voiceFloodTimer = 0;
+			client->sess.voiceFloodCount = 0;
+		}
 	}
 	else
 	{
@@ -2255,36 +2262,36 @@ void ClientSpawn(gentity_t *ent)
 		}
 	}
 	if(current_gametype.value == GT_HS || current_gametype.value == GT_HZ){
-			// Henk 19/01/10 -> Start with knife
-			ent->client->ps.ammo[weaponData[WP_KNIFE].attack[ATTACK_ALTERNATE].ammoIndex]=0;
-			ent->client->ps.weapon = WP_KNIFE;
-			ent->client->ps.weaponstate = WEAPON_READY;
-			if(level.crossTheBridge && ent->client->sess.team == TEAM_RED){ // Henk 27/02/10 -> In cross the bridge hiders spawn with 5 smokes // Boe: They start with 4 now. ;)
-				ent->client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_M15_GRENADE);	
-				ent->client->ps.ammo[weaponData[WP_M15_GRENADE].attack[ATTACK_NORMAL].ammoIndex] = 3;
-				ent->client->ps.clip[ATTACK_NORMAL][WP_M15_GRENADE] = 1;
-				ent->client->ps.weapon = WP_M15_GRENADE;
-			}else if(level.crossTheBridge && ent->client->sess.team == TEAM_BLUE){
-				Team_GetLocationMsg(ent, location, sizeof(location));
-				//Com_Printf("%c\n",location);
-				// Boe!Man 3/17/10: When seekers are spawned on the bridge they get an AK + nades.
-				if (strstr(location, "Bridge")){
-				ent->client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_AK74_ASSAULT_RIFLE);	
-				ent->client->ps.ammo[weaponData[WP_AK74_ASSAULT_RIFLE].attack[ATTACK_NORMAL].ammoIndex] = 175; // Boe!Man 3/17/10: The seekers ALWAYS run out, thus more clips, thus more ammo.
-				ent->client->ps.clip[ATTACK_NORMAL][WP_AK74_ASSAULT_RIFLE] = 7; // Boe!Man 3/17/10: We start with 7 bullets in the clip instead of the usual 5.
-				ent->client->ps.weapon = WP_AK74_ASSAULT_RIFLE;
-				ent->client->ps.firemode[WP_AK74_ASSAULT_RIFLE] = BG_FindFireMode ( WP_AK74_ASSAULT_RIFLE, ATTACK_NORMAL, WP_FIREMODE_AUTO ); // Boe!Man 3/17/10: Fix for shooting singles with AK74.
-				}
-				// Boe!Man 3/17/10: Seekers spawned in the watchtower get only the sniper (nades would be useless).
-				else if (strstr(location, "Seeker Watchtower")){
-				ent->client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_MSG90A1);	
-				ent->client->ps.ammo[weaponData[WP_MSG90A1].attack[ATTACK_NORMAL].ammoIndex] = 100;
-				ent->client->ps.clip[ATTACK_NORMAL][WP_MSG90A1] = 5;
-				ent->client->ps.weapon = WP_MSG90A1;
-				}
+		// Henk 19/01/10 -> Start with knife
+		ent->client->ps.ammo[weaponData[WP_KNIFE].attack[ATTACK_ALTERNATE].ammoIndex]=0;
+		ent->client->ps.weapon = WP_KNIFE;
+		ent->client->ps.weaponstate = WEAPON_READY;
+		if(level.crossTheBridge && ent->client->sess.team == TEAM_RED){ // Henk 27/02/10 -> In cross the bridge hiders spawn with 5 smokes // Boe: They start with 4 now. ;)
+			ent->client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_M15_GRENADE);	
+			ent->client->ps.ammo[weaponData[WP_M15_GRENADE].attack[ATTACK_NORMAL].ammoIndex] = 3;
+			ent->client->ps.clip[ATTACK_NORMAL][WP_M15_GRENADE] = 1;
+			ent->client->ps.weapon = WP_M15_GRENADE;
+		}else if(level.crossTheBridge && ent->client->sess.team == TEAM_BLUE){
+			Team_GetLocationMsg(ent, location, sizeof(location));
+			//Com_Printf("%c\n",location);
+			// Boe!Man 3/17/10: When seekers are spawned on the bridge they get an AK + nades.
+			if (strstr(location, "Bridge")){
+			ent->client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_AK74_ASSAULT_RIFLE);	
+			ent->client->ps.ammo[weaponData[WP_AK74_ASSAULT_RIFLE].attack[ATTACK_NORMAL].ammoIndex] = 175; // Boe!Man 3/17/10: The seekers ALWAYS run out, thus more clips, thus more ammo.
+			ent->client->ps.clip[ATTACK_NORMAL][WP_AK74_ASSAULT_RIFLE] = 7; // Boe!Man 3/17/10: We start with 7 bullets in the clip instead of the usual 5.
+			ent->client->ps.weapon = WP_AK74_ASSAULT_RIFLE;
+			ent->client->ps.firemode[WP_AK74_ASSAULT_RIFLE] = BG_FindFireMode ( WP_AK74_ASSAULT_RIFLE, ATTACK_NORMAL, WP_FIREMODE_AUTO ); // Boe!Man 3/17/10: Fix for shooting singles with AK74.
 			}
-			client->ps.stats[STAT_ARMOR]   = 0; // Henk 27/02/10 -> Fix that ppl start with no armor
-			client->ps.stats[STAT_GOGGLES] = GOGGLES_NONE;
+			// Boe!Man 3/17/10: Seekers spawned in the watchtower get only the sniper (nades would be useless).
+			else if (strstr(location, "Seeker Watchtower")){
+			ent->client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_MSG90A1);	
+			ent->client->ps.ammo[weaponData[WP_MSG90A1].attack[ATTACK_NORMAL].ammoIndex] = 100;
+			ent->client->ps.clip[ATTACK_NORMAL][WP_MSG90A1] = 5;
+			ent->client->ps.weapon = WP_MSG90A1;
+			}
+		}
+		client->ps.stats[STAT_ARMOR]   = 0; // Henk 27/02/10 -> Fix that ppl start with no armor
+		client->ps.stats[STAT_GOGGLES] = GOGGLES_NONE;
 	}
 }
 

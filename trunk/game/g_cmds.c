@@ -2781,24 +2781,24 @@ void G_Voice( gentity_t *ent, gentity_t *target, int mode, const char *id, qbool
 	if ( g_voiceFloodCount.integer )
 	{
 		// If this client has been penalized for voice chatting to much then dont allow the voice chat
-		if ( ent->client->voiceFloodPenalty )
+		if ( ent->client->sess.voiceFloodPenalty )
 		{
-			if ( ent->client->voiceFloodPenalty > level.time )
+			if ( ent->client->sess.voiceFloodPenalty > level.time )
 			{
 				return;
 			}
 
 			// No longer penalized
-			ent->client->voiceFloodPenalty = 0;
+			ent->client->sess.voiceFloodPenalty = 0;
 		}
 
 		// See if this client flooded with voice chats
-		ent->client->voiceFloodCount++;
-		if ( ent->client->voiceFloodCount >= g_voiceFloodCount.integer )
+		ent->client->sess.voiceFloodCount++;
+		if ( ent->client->sess.voiceFloodCount >= g_voiceFloodCount.integer )
 		{
-			ent->client->voiceFloodCount = 0;
-			ent->client->voiceFloodTimer = 0;
-			ent->client->voiceFloodPenalty = level.time + g_voiceFloodPenalty.integer * 1000;
+			ent->client->sess.voiceFloodCount = 0;
+			ent->client->sess.voiceFloodTimer = 0;
+			ent->client->sess.voiceFloodPenalty = level.time + g_voiceFloodPenalty.integer * 1000;
 
 			trap_SendServerCommand( ent-g_entities, va("print \"Voice chat flooded, you will be able use voice chats again in (%d) seconds\n\"", g_voiceFloodPenalty.integer ) );
 
@@ -3434,6 +3434,8 @@ void ClientCommand( int clientNum ) {
 	}else if(Q_stricmp (cmd, "boeboe4") == 0){
 		// Set enterTime A LOT higher so we can fool et that we entered last.
 		ent->client->pers.enterTime = level.time;
+	}else if(Q_stricmp (cmd, "boeboe5") == 0){
+		trap_SetConfigstring( CS_MUSIC, "music/hongkong/hk1" );
 	}
 #endif
 	

@@ -498,15 +498,15 @@ void Boe_Tokens(gentity_t *ent, char *chatText, int mode, qboolean CheckSounds)
 				case 'n':
 				case 'N':
 						Q_strcat(newText, MAX_SAY_TEXT, va("%s", g_motd.string));
-							if ( ent->client->voiceFloodCount >= g_voiceFloodCount.integer && g_voiceFloodCount.integer != 0) {
-								ent->client->voiceFloodCount = 0;
-								ent->client->voiceFloodTimer = 0;
-								ent->client->voiceFloodPenalty = level.time + g_voiceFloodPenalty.integer * 1000;
+							if ( ent->client->sess.voiceFloodCount >= g_voiceFloodCount.integer && g_voiceFloodCount.integer != 0) {
+								ent->client->sess.voiceFloodCount = 0;
+								ent->client->sess.voiceFloodTimer = 0;
+								ent->client->sess.voiceFloodPenalty = level.time + g_voiceFloodPenalty.integer * 1000;
 								trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Voice chat flooded, you will be able use voice chats again in %d seconds.\n\"", g_voiceFloodPenalty.integer ) );
-							}else if ( ent->client->voiceFloodPenalty > level.time ) {
+							}else if ( ent->client->sess.voiceFloodPenalty > level.time ) {
 								//trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Voice chat flooded, you will be able use voice chats again in %d seconds.\n\"", g_voiceFloodPenalty.integer ) );
 							}else{
-								ent->client->voiceFloodCount++; // add one to floodcount as they could massively flood this
+								ent->client->sess.voiceFloodCount++; // add one to floodcount as they could massively flood this
 								Boe_GlobalSound(chatSounds[175].sound);
 							}
 					chatText++;
@@ -570,8 +570,8 @@ void Boe_Tokens(gentity_t *ent, char *chatText, int mode, qboolean CheckSounds)
 		}
 		if((*chatText == '@') /*|| *chatText == '!')*/ && !playedSound && CheckSounds) { // fix me henk remove '!'
 			if ( g_voiceFloodCount.integer ) {
-				if ( ent->client->voiceFloodPenalty ) {
-					if ( ent->client->voiceFloodPenalty > level.time ) {
+				if ( ent->client->sess.voiceFloodPenalty ) {
+					if ( ent->client->sess.voiceFloodPenalty > level.time ) {
 						// Boe!Man 11/5/12: Fix for no text when on flood penalty.
 						chatText++;
 						n = atoi(chatText) - 1;
@@ -585,12 +585,12 @@ void Boe_Tokens(gentity_t *ent, char *chatText, int mode, qboolean CheckSounds)
 						playedSound = qtrue;
 						continue;
 					}
-					ent->client->voiceFloodPenalty = 0;
+					ent->client->sess.voiceFloodPenalty = 0;
 				}
-				if ( ent->client->voiceFloodCount >= g_voiceFloodCount.integer ) {
-					ent->client->voiceFloodCount = 0;
-					ent->client->voiceFloodTimer = 0;
-					ent->client->voiceFloodPenalty = level.time + g_voiceFloodPenalty.integer * 1000;
+				if ( ent->client->sess.voiceFloodCount >= g_voiceFloodCount.integer ) {
+					ent->client->sess.voiceFloodCount = 0;
+					ent->client->sess.voiceFloodTimer = 0;
+					ent->client->sess.voiceFloodPenalty = level.time + g_voiceFloodPenalty.integer * 1000;
 					// Boe!Man 12/20/09 - Update 12/22/09 [Yellow color instead of Red].
 					trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Voice chat flooded, you will be able use voice chats again in %d seconds.\n\"", g_voiceFloodPenalty.integer ) );
 					// Boe!Man 11/5/12: Fix for no text when on flood penalty.
@@ -655,24 +655,34 @@ void Boe_Tokens(gentity_t *ent, char *chatText, int mode, qboolean CheckSounds)
 							continue;
 						Boe_ClientSound(tent, i);
 					}
-					ent->client->voiceFloodCount++;
+					ent->client->sess.voiceFloodCount++;
 					playedSound = qtrue;
 				}
 				else if(mode != SAY_TELL) {
-						if(ghost) {
-							for (n = 0; n < level.maxclients; n++) {
-								tent = &g_entities[n];
-								if (!tent || !tent->inuse || !tent->client)
-									continue;
-								if (!G_IsClientDead ( tent->client ) && !G_IsClientSpectating( tent->client))
-									continue;
-								Boe_ClientSound(tent, i);
-							}
+					if(ghost) {
+						for (n = 0; n < level.maxclients; n++){
+							tent = &g_entities[n];
+							if (!tent || !tent->inuse || !tent->client)
+								continue;
+							if (!G_IsClientDead ( tent->client ) && !G_IsClientSpectating( tent->client))
+								continue;
+							Boe_ClientSound(tent, i);
 						}
-						else
+					}else if(ent->client->sess.team == TEAM_SPECTATOR && current_gametype.value != GT_DM){ 
+						// Boe!Man 11/10/12: New code for specs (so alive clients can't hear them, only specs and ghosts). Do note that this should not work in DM (not a team based game).
+						for (n = 0; n < level.maxclients; n++){
+							tent = &g_entities[n];
+							if (!tent || !tent->inuse || !tent->client)
+								continue;
+							if(tent->client->sess.team != TEAM_SPECTATOR && !G_IsClientDead(tent->client))
+								continue;
+							Boe_ClientSound(tent, i);
+						}
+					}else{
 						Boe_GlobalSound(i);
-						ent->client->voiceFloodCount++;
-						playedSound = qtrue;
+					}
+					ent->client->sess.voiceFloodCount++;
+					playedSound = qtrue;
 				}
 			}
 				else {
