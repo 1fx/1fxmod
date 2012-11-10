@@ -902,6 +902,12 @@ void Preload_Effects(void)
 	G_SpawnGEntityFromSpawnVars(qtrue);
 	G_FreeEntity(&g_entities[level.tempent]);
 	
+	AddSpawnField("classname", "fx_play_effect");
+	AddSpawnField("effect", "fire/blue_target_flame");
+	AddSpawnField("tempent", "1");
+	G_SpawnGEntityFromSpawnVars(qtrue);
+	G_FreeEntity(&g_entities[level.tempent]);
+	
 	
 	level.MM1Flare = -1;
 	level.M4Flare = -1;
