@@ -177,7 +177,9 @@ void RPM_Unpause (gentity_t *adm)
 				}
 				if(ent->client->sess.pausespawn == qtrue){
 				ent->client->ps.RealSpawnTimer = level.time+ent->client->ps.oldTimer;
+				#ifdef _DEBUG
 				Com_Printf("Waiting %i\n", ent->client->ps.oldTimer);
+				#endif
 				}
 				ent->client->ps.pm_type = PM_NORMAL;
 			}
@@ -344,7 +346,9 @@ void RPM_Refresh(gentity_t *ent)
 		trap_SendServerCommand (ent->s.number, "print\"^3[Info] ^7You shouldn't refresh at the start of a new round.\n\"" );
 		return;
 	}
+	#ifdef _DEBUG
 	Com_Printf("%i - %i\n", level.time, level.gametypeStartTime);
+	#endif
 	if (!G_IsClientSpectating ( ent->client ) )
 	{
 		ent->flags &= ~FL_GODMODE;

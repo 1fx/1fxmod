@@ -1241,7 +1241,9 @@ int G_Damage (
 		if(mod == MOD_ANM14_GRENADE && attacker->client->sess.team != targ->client->sess.team){
 			if(!targ && attacker->client->sess.team != TEAM_BLUE){ // no target so mm1 firenade SO do NOT slowdown blue
 				targ->client->sess.slowtime = level.time+1500;
+				#ifdef _DEBUG
 				Com_Printf("No target..\n");
+				#endif
 			}else if(targ->client->sess.team == TEAM_RED && attacker->client->sess.team == TEAM_BLUE){
 				targ->client->sess.slowtime = level.time+1500;
 			}else if(targ->client->sess.team == TEAM_BLUE && attacker->client->sess.team == TEAM_RED){

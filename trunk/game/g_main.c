@@ -2351,7 +2351,9 @@ void CheckExitRules( void )
 					Boe_calcMatchScores();
 				}else{
 					if(current_gametype.value == GT_HS){
+						#ifdef _DEBUG
 						Com_Printf("Updating scores..\n");
+						#endif
 						UpdateScores();
 						LogExit("Hiders have won");
 					}else
@@ -2414,7 +2416,9 @@ void CheckExitRules( void )
 				}
 				else{
 					if(current_gametype.value == GT_HS){
+						#ifdef _DEBUG
 						Com_Printf("Updating scores..\n");
+						#endif
 						UpdateScores();
 						LogExit("Seekers have won");
 					}else
@@ -2763,8 +2767,11 @@ void Henk_CheckZombie(void){
 				level.zombie = ent->s.number;
 				level.zombietime = level.time+5000;
 				trap_SendServerCommand( ent->s.number, va("cp \"You will turn into a zombie in 5 seconds!\n\""));
-				}else
+				}else{
+					#ifdef _DEBUG
 					Com_Printf("Weird case\n");
+					#endif
+				}
 			}
 		}
 	}

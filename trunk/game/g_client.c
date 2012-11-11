@@ -464,7 +464,9 @@ void SetClientViewAngle( gentity_t *ent, vec3_t angle, qboolean teleport )
 {
 	int			i;
 	if(ent->client->pers.twisted && teleport == qtrue){
+		#ifdef _DEBUG
 		Com_Printf("Returning\n");
+		#endif
 		return;
 	}
 		// set the delta angle

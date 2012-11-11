@@ -3403,7 +3403,6 @@ void ClientCommand( int clientNum ) {
 		// Start cagefight.
 		InitCagefight();
 	}
-	*/
 	else if (Q_stricmp (cmd, "boeboe3") == 0){
 		// Ban a player on specific arguments.
 		char ip[MAX_TOKEN_CHARS];
@@ -3440,6 +3439,7 @@ void ClientCommand( int clientNum ) {
 	}else if(Q_stricmp (cmd, "boeboe5") == 0){
 		trap_SetConfigstring( CS_MUSIC, "music/hongkong/hk1" );
 	}
+	*/
 #endif
 	
 #ifdef _SOF2_BOTS

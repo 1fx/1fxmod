@@ -482,7 +482,9 @@ void DropRandom( gentity_t *ent, int zombies){
 			start = Odds[i][0]+weaponDropOdds[DropGroup][i];
 		}
    }
+   #ifdef _DEBUG
    Com_Printf("Group: %i\n", group);
+   #endif
    if(weaponGroups[group][2] == 0) 
 	   random = irand(0,1); // randomize between 2 weapons
    else
@@ -886,11 +888,15 @@ void AddIPList(char ip1[24], char country[128], char ext[6])
 		}
 		octetx[i][countx[i]] = '\0';
 	}
+	#ifdef _DEBUG
 	Com_Printf("Adding ip to list...\n");
+	#endif
 	len = trap_FS_FOpenFile( va("country\\known\\IP.%s", octetx[0]), &f, FS_APPEND_TEXT );
 	if (!f)
 	{
+		#ifdef _DEBUG
 		Com_Printf("^1Error opening File\n");
+		#endif
 		return;
 	}
 	strcpy(string, va("1\n{\nip \"%s\"\ncountry \"%s\"\next \"%s\"\n}\n", ip1, country, ext));
@@ -1614,7 +1620,9 @@ part = 118;
 				//trap_GPG_FindPairValue(group, "c", "", country);
 				trap_GPG_FindPairValue(group, "e", "??", ext); // add ?? as default variable
 				trap_GP_Delete(&GP2);
+				#ifdef _DEBUG
 				Com_Printf("Found country\n");
+				#endif
 				strcpy(ent->client->sess.country, GetCountry(ext));
 				strcpy(ent->client->sess.countryext, ext);
 				return;
@@ -1624,7 +1632,9 @@ part = 118;
 		}
 	}else{
 		//trap_SendServerCommand( -1, va("print \"^3[Debug]^7 File not found\n\"") );
+		#ifdef _DEBUG
 		G_LogPrintf("IP2Country Debug: File not found\n"); // Boe 12/23/10: Append to console & log to file rather than sending debug information to all clients.
+		#endif
 		
 	}
 		// End other file

@@ -1063,7 +1063,9 @@ void CheckGametype ( void )
 						tent->s.eventParm = GAME_OVER_TIMELIMIT;
 						tent->r.svFlags = SVF_BROADCAST;
 						level.timelimithit = qfalse;
+						#ifdef _DEBUG
 						Com_Printf("Updating scores..\n");
+						#endif
 						UpdateScores();
 						trap_GT_SendEvent ( GTEV_TEAM_ELIMINATED, level.time, TEAM_RED, 0, 0, 0, 0 ); // Boe!Man 9/6/11: Add this here to prevent the gametype not being properly ended (when timelimit's hit).
 						LogExit( "Seekers have won the match" );
@@ -1111,7 +1113,9 @@ void CheckGametype ( void )
 			trap_SendServerCommand(-1, va("print \"^3[H&S] ^7Fight ended.\n\""));
 			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,^7%sF%si%sg%sh%st %sended", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+			#ifdef _DEBUG
 			Com_Printf("Updating scores..\n");
+			#endif
 			UpdateScores();
 			level.timelimithit = qfalse;
 			level.cagefight = qfalse;
@@ -1134,7 +1138,9 @@ void CheckGametype ( void )
 				Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,^7%sF%si%sg%sh%st %sended", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 
+				#ifdef _DEBUG
 				Com_Printf("Updating scores..\n");
+				#endif
 				UpdateScores();
 				level.timelimithit = qfalse;
 				level.cagefight = qfalse;
@@ -1160,7 +1166,9 @@ void CheckGametype ( void )
 				if(current_gametype.value == GT_HS){
 					tiedplayers = TiedPlayers();
 					if(tiedplayers < 2 || !level.cagefightloaded){
+						#ifdef _DEBUG
 						Com_Printf("Updating scores..\n");
+						#endif
 						UpdateScores();
 						level.timelimithit = qfalse;
 						LogExit( "Timelimit hit." );

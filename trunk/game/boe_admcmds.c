@@ -477,7 +477,9 @@ void Boe_NoNades(int argNum, gentity_t *ent, qboolean shortCmd){
 			BG_SetAvailableOutfitting(g_availableWeapons.string);
 			for(i=0;i<level.numConnectedClients;i++){
 				level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
+				#ifdef _DEBUG
 				Com_Printf("Setting nades\n");
+				#endif
 				//level.clients[level.sortedClients[i]].ps.stats[STAT_OUTFIT_GRENADE] = bg_itemlist[bg_outfittingGroups[OUTFITTING_GROUP_GRENADE][3]].giTag;
 				G_UpdateOutfitting(g_entities[level.sortedClients[i]].s.number);
 				//level.clients[level.sortedClients[i]].ps.ammo[weaponData[WP_SMOHG92_GRENADE].attack[ATTACK_NORMAL].ammoIndex]=1;
@@ -1167,7 +1169,9 @@ int Boe_Remove_from_list ( char *key, const char *file, const char* type, gentit
 		}
 		key++;
 	}
+	#ifdef _DEBUG
 	Com_Printf("Remove: opening %s\n", file);
+	#endif
 	len = trap_FS_FOpenFile( file, &f, FS_READ_TEXT);
 
 	if (!f)	{
@@ -1813,7 +1817,9 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 
 	trap_FS_FOpenFile( file, &f, FS_WRITE_TEXT);
 	if(!f){
+		#ifdef _DEBUG
 		Com_Printf("failed\n");
+		#endif
 		return;
 	}
 	trap_FS_Write("", 0, f); // clear file
@@ -1821,7 +1827,9 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 
 	trap_FS_FOpenFile( file, &f, FS_APPEND_TEXT);
 	if(!f){
+		#ifdef _DEBUG
 		Com_Printf("failed\n");
+		#endif
 		return;
 	}
 
@@ -3963,7 +3971,9 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 			begin = qtrue;
 			memset(xip, 0, sizeof(xip));
 			if((EndPos-StartPos)  < 1){
+				#ifdef _DEBUG
 				Com_Printf("Error: %i - %i\n", EndPos, StartPos);
+				#endif
 				return;
 			}
 			//if(passwordlist)

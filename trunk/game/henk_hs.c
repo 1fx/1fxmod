@@ -107,8 +107,10 @@ int Henk_GetScore (qboolean seekers)
 		}
 
 		*listP = '\0';
-		listP = listName;			
+		listP = listName;
+		#ifdef _DEBUG
 		Com_Printf("listName: %s\n", listName);
+		#endif
 		for(i=0;i<strlen(listName);i++){
 			if(listName[i] == ':'){
 				Q_strncpyz(Scores[number].name, listName, i+1);
@@ -117,7 +119,9 @@ int Henk_GetScore (qboolean seekers)
 			}
 		}
 		Scores[number].score = atoi(strScore);
+		#ifdef _DEBUG
 		Com_Printf("Found score -> name: %s -> score -> %i\n", Scores[number].name, Scores[number].score);	
+		#endif
 		number += 1;
 			
 		while(*bufP == '\n') {
@@ -189,8 +193,10 @@ int Henk_GetScore (qboolean seekers)
 	if(strlen(level.Sthirdname) < 1){
 		strcpy(level.Sthirdname, "none");
 	}
+	#ifdef _DEBUG
 	Com_Printf("Top 3 Hiders\n%s\n%s\n%s\n", level.firstname, level.secondname, level.thirdname);
 	Com_Printf("Top 3 Seekers\n%s\n%s\n%s\n", level.Sfirstname, level.Ssecondname, level.Sthirdname);
+	#endif
 	// end
 
 	return 0;
