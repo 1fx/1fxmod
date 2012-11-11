@@ -669,3 +669,6 @@ extern	vmCvar_t	hideSeek_ExtendedRoundStats;
 
 // Boe!Man 9/11/12: Preload effects in H&S/H&Z in this function.
 void Preload_Effects(void);
+
+// Boe!Man 11/11/12: Ripped old /howto command from 1fx. Hide&Seek for CTB.
+void Boe_Howto ( gentity_t *ent );

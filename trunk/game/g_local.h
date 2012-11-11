@@ -388,6 +388,9 @@ typedef struct
 	int				voiceFloodCount;		// Amount of voice chats that need to be forgivin
 	int				voiceFloodPenalty;		// Time when a client can voice chat again
 	
+	// Boe!Man 11/11/12: spamTime CVAR for CTB messages informing about /howto.
+	int			spamTime;
+	
 } clientSession_t;
 
 // Boe!Man 3/30/10

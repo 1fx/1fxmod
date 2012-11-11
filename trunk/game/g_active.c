@@ -1300,8 +1300,20 @@ void ClientThink_real( gentity_t *ent )
 			}
 		}else if(level.time <= client->sess.slowtime){
 			client->ps.speed = g_speed.value-110;
-		}else
+		}else{
 			client->ps.speed = g_speed.value;
+		}
+			
+		// Boe!Man 11/11/12: /howto messages for minigames, just CTB for now.
+		if(level.time > client->sess.spamTime && client->sess.spamTime != -1){
+			client->sess.spamTime = -1; // Boe!Man 10/5/10: Just display these at map restart/client begin.
+			if(level.crossTheBridge){
+				trap_SendServerCommand( ent-g_entities, va("chat -1 \"%sI%sn%sf%so%s: You're playing a mini-game instead of regular gameplay.\n\"", server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+				trap_SendServerCommand( ent-g_entities, va("chat -1 \"%sI%sn%sf%so%s: Don't know how this works? Type '/howto' to get a short tutorial.\n\"", server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+				//trap_SendServerCommand( ent-g_entities, va("chat -1 \"%sI%sn%sf%so%s: Brilliant ideas for another mini-game? Let us know!\n\"", server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+				//trap_SendServerCommand( ent-g_entities, va("chat -1 \"%sI%sn%sf%so%s: Development forums at 1fx.uk.to!\n\"", server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+			}
+		}
 	}else if(current_gametype.value == GT_HZ){
 		if(client->sess.firstzombie == qtrue){
 			client->ps.speed = g_speed.value+70;

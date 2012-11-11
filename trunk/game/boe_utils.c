@@ -2568,3 +2568,32 @@ char *Boe_parseCustomCommandArgs(char *in)
 
 	return buf;
 }
+
+/*
+============
+Boe_Howto
+By boe, 10/5/10 7:27 PM
+============
+*/
+
+void Boe_Howto ( gentity_t *ent )
+{
+	if (level.crossTheBridge){
+		trap_SendServerCommand( ent-g_entities, va("print \"\n^3You're playing: Cross The Bridge\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \"-------------------------------------------------------\n\n"));	
+		trap_SendServerCommand( ent-g_entities, va("print \"[^3General^7]\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \"This Mini-Game's purpose is for the hiders to cross the\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \"bridge. The seekers will be spawned strategically around\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \"the bridge. Seekers will get spawned in either a chopper\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \"(with AK74) or a watchtower (with sniper). Hiders will\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \"get 4 smokes: they must prevent the seekers killing them,\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \"these smokes will help them block their vision and crossing\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \"safely.\n\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \"\n[^3Rewards^7]\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \"Seekers will be awarded one point for each hider they kill.\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \"Hiders will get one point for crossing safely and a bonus\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \"point if they cross within 30 seconds.\n\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \"Have fun playing!\n"));
+		trap_SendServerCommand( ent-g_entities, va("print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\""));
+	}
+}

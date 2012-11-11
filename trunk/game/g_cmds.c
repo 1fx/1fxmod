@@ -3341,6 +3341,9 @@ void ClientCommand( int clientNum ) {
 		RPM_Tcmd( ent );
 	else if (Q_stricmp (cmd, "ref") == 0)
 		RPM_ref_cmd( ent );
+	// Boe!Man 10/5/10: New how-to command for CTB.
+	else if (Q_stricmp (cmd, "howto") == 0)
+		Boe_Howto( ent );
 	
 	
 #ifndef PUB_RELEASE
