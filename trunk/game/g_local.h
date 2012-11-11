@@ -391,6 +391,9 @@ typedef struct
 	// Boe!Man 11/11/12: spamTime CVAR for CTB messages informing about /howto.
 	int			spamTime;
 	
+	// Boe!Man 11/11/12: Used for determining how fast the hider crossed the bridge.
+	int			ctbStartTime;
+	
 } clientSession_t;
 
 // Boe!Man 3/30/10

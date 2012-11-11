@@ -529,13 +529,31 @@ void trigger_teleporter_touch (gentity_t *self, gentity_t *other, trace_t *trace
 
 	if(TeamCount1(TEAM_RED) < self->minimumhiders){
 		if(level.time >= other->client->sess.lastmsg){
-		trap_SendServerCommand(-1, va("print\"^3[Info] ^7There has to be a minimum of %i hiders to use this teleport.\n\"", self->minimumhiders));
+		trap_SendServerCommand(other->s.number, va("print\"^3[Info] ^7There has to be a minimum of %i hiders to use this teleport.\n\"", self->minimumhiders));
 		}
 		other->client->sess.lastmsg = level.time+10000;
 		return;
 	}
 	G_PlayEffect ( G_EffectIndex("misc/electrical"),other->client->ps.origin, other->pos1);
 	//G_SpawnGEntityFromSpawnVars (qtrue);
+	
+	// Boe!Man 11/11/12: Timers for Cross The Bridge go here.
+	if(current_gametype.value == GT_HS && level.crossTheBridge){
+		if(strstr(self->target, "bridge")){
+			other->client->sess.ctbStartTime = level.time;
+		}else if(strstr(self->target, "safe")){
+			if(other->client->sess.ctbStartTime){ // Must be greater then 0.
+				if((level.time - other->client->sess.ctbStartTime) < 20000){
+					trap_SendServerCommand ( other->s.number, va("print\"^3[Cross The Bridge] ^7You made it in %i seconds! You got a bonus point!\n\"", (level.time - other->client->sess.ctbStartTime) / 1000));
+					G_AddScore(other, 1);
+					other->client->sess.kills += 1;
+				}else{
+					trap_SendServerCommand ( other->s.number, va("print\"^3[Cross The Bridge] ^7You made it in %i seconds!\n\"", (level.time - other->client->sess.ctbStartTime) / 1000));
+				}
+			}
+		}
+	}
+	
 	dest = 	G_PickTarget( self->target );
 	if (!dest) {
 		Com_Printf ("Couldn't find teleporter destination\n");
