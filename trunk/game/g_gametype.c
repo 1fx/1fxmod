@@ -549,7 +549,7 @@ void G_ResetGametype ( qboolean fullRestart, qboolean cagefight )
 			}else
 			level.gametypeRoundTime = level.time + (g_roundtimelimit.integer * 60000);
 
-		#ifdef _BOE_DBG
+		#ifndef PUB_RELEASE
 			if (strstr(boe_log.string, "2"))
 				G_LogPrintf("6s\n");
 		#endif
@@ -586,18 +586,18 @@ void G_ResetGametype ( qboolean fullRestart, qboolean cagefight )
 					trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sG%se%st %sr%se%sa%sdy!", level.time + (g_roundstartdelay.integer * 1000), server_color1.string, server_color2.string, server_color3.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 				}
 			}
-			#ifdef _BOE_DBG
+			#ifndef PUB_RELEASE
 				if (strstr(boe_log.string, "2"))
 					G_LogPrintf("6e\n");
 			#endif
 
-			#ifdef _BOE_DBG
+			#ifndef PUB_RELEASE
 			if (strstr(boe_log.string, "1"))
 				G_LogPrintf("5s\n");
 			#endif
 			if (g_autoEvenTeams.integer == 1 && current_gametype.value != GT_HS){
 				EvenTeams(NULL, qtrue);}
-			#ifdef _BOE_DBG
+			#ifndef PUB_RELEASE
 			if (strstr(boe_log.string, "1"))
 				G_LogPrintf("5e\n");
 			#endif

@@ -232,7 +232,7 @@ void player_die(
 	attack		 = (mod >> 8) & 0xFF;
 	meansOfDeath = mod & 0xFF;
 
-#ifdef _BOE_DBG
+#ifndef PUB_RELEASE
 	if (strstr(boe_log.string, "1"))
 		G_LogPrintf("9s\n");
 #endif
@@ -720,7 +720,7 @@ void player_die(
 	self->die = body_die;
 
 	trap_LinkEntity (self);
-#ifdef _BOE_DBG
+#ifndef PUB_RELEASE
 	if (strstr(boe_log.string, "1"))
 		G_LogPrintf("9e\n");
 #endif

@@ -1071,7 +1071,7 @@ void ClientUserinfoChanged( int clientNum )
 	ent = g_entities + clientNum;
 	client = ent->client;
 	
-#ifdef _BOE_DBG
+#ifndef PUB_RELEASE
 	if (strstr(boe_log.string, "1"))
 		G_LogPrintf("6s\n");
 #endif
@@ -1466,7 +1466,7 @@ void ClientUserinfoChanged( int clientNum )
 	//if(!strcmp(s, userinfo))
 	//return;
 
-#ifdef _BOE_DBG
+#ifndef PUB_RELEASE
 	if (strstr(boe_log.string, "1"))
 		G_LogPrintf("6e\n");
 #endif
@@ -1509,7 +1509,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 	gentity_t	*ent;
 
 	ent = &g_entities[ clientNum ];
-#ifdef _BOE_DBG
+#ifndef PUB_RELEASE
 	if (strstr(boe_log.string, "1"))
 		G_LogPrintf("7s\n");
 #endif
@@ -1689,7 +1689,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 	memset(ent->client->sess.IgnoredClients, -1, sizeof(ent->client->sess.IgnoredClients));
 	ent->client->sess.IgnoredClientCount = 0;
 
-#ifdef _BOE_DBG
+#ifndef PUB_RELEASE
 	if (strstr(boe_log.string, "1"))
 		G_LogPrintf("7e\n");
 #endif
@@ -1723,7 +1723,7 @@ void ClientBegin( int clientNum, qboolean setTime )
 
 	client = level.clients + clientNum;
 
-#ifdef _BOE_DBG
+#ifndef PUB_RELEASE
 	if (strstr(boe_log.string, "1"))
 		G_LogPrintf("8s\n");
 #endif
@@ -1796,7 +1796,7 @@ void ClientBegin( int clientNum, qboolean setTime )
 			SetTeam(ent, ChooseTeam(), NULL, qfalse); 
 		}
 	}
-#ifdef _BOE_DBG
+#ifndef PUB_RELEASE
 	if (strstr(boe_log.string, "1"))
 		G_LogPrintf("8e\n");
 #endif

@@ -1878,7 +1878,7 @@ Updated 11/20/10 - 11:17 PM
 
 void Boe_About( gentity_t *ent )
 {
-	#ifdef _BOE_DBG
+	#ifndef PUB_RELEASE
 	if (strstr(boe_log.string, "2"))
 		G_LogPrintf("8s\n");
 	#endif
@@ -1943,7 +1943,7 @@ void Boe_About( gentity_t *ent )
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Clan URL^7]            %s\n", ClanURL.string));
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Hosted by^7]           %s\n", HostedBy.string));
 	trap_SendServerCommand( ent-g_entities, va("print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\""));
-	#ifdef _BOE_DBG
+	#ifndef PUB_RELEASE
 	if (strstr(boe_log.string, "2"))
 		G_LogPrintf("8e\n");
 	#endif
@@ -2042,7 +2042,7 @@ Boe_serverMsg
 void Boe_serverMsg (void)
 {
 	char	*message;
-	#ifdef _BOE_DBG
+	#ifndef PUB_RELEASE
 	if (strstr(boe_log.string, "1"))
 		G_LogPrintf("3s\n");
 	#endif
@@ -2075,7 +2075,7 @@ void Boe_serverMsg (void)
 
 	level.serverMsg = level.time + (server_msgDelay.integer * 1000);
 	trap_SendServerCommand( -1, va("chat -1 \"%sM%se%ss%ss%sa%sge: %s\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, message ) );
-	#ifdef _BOE_DBG
+	#ifndef PUB_RELEASE
 	if (strstr(boe_log.string, "1"))
 		G_LogPrintf("3e\n");
 	#endif
@@ -2090,7 +2090,7 @@ Boe_calcMatchScores
 
 void Boe_calcMatchScores (void)
 {
-	#ifdef _BOE_DBG
+	#ifndef PUB_RELEASE
 	if (strstr(boe_log.string, "2"))
 		G_LogPrintf("7s\n");
 	#endif
@@ -2127,7 +2127,7 @@ void Boe_calcMatchScores (void)
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sM%sa%st%sc%sh draw with %i - %i!", level.time + 10000, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, level.teamScores[TEAM_BLUE]+cm_sb.integer, level.teamScores[TEAM_RED]+cm_sr.integer));
 		LogExit("Match draw.");
 	}
-	#ifdef _BOE_DBG
+	#ifndef PUB_RELEASE
 	if (strstr(boe_log.string, "2"))
 		G_LogPrintf("7e\n");
 	#endif

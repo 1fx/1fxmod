@@ -854,7 +854,7 @@ void RPM_UpdateTMI(void)
 
 	level.lastTMIupdate = level.time;
 	
-	#ifdef _BOE_DBG
+	#ifndef PUB_RELEASE
 	if (strstr(boe_log.string, "3"))
 		G_LogPrintf("1s\n");
 	#endif
@@ -954,7 +954,7 @@ void RPM_UpdateTMI(void)
 		else if(cl->sess.proClient > 4.0)
 			trap_SendServerCommand(level.sortedClients[i], va("tmi %i%s", numAdded, infoString));
 	}
-	#ifdef _BOE_DBG
+	#ifndef PUB_RELEASE
 	if (strstr(boe_log.string, "3"))
 		G_LogPrintf("1e\n");
 	#endif
@@ -983,7 +983,7 @@ void RPM_Awards(void)
 	//char	*a, *b;
 	///End  - 01.12.06 - 09:26pm
 
-#ifdef _BOE_DBG
+#ifndef PUB_RELEASE
 	if (strstr(boe_log.string, "1"))
 		G_LogPrintf("1s\n");
 #endif
@@ -1224,7 +1224,7 @@ void RPM_Awards(void)
 			/////trap_SendServerCommand( -1, va("awards %s %s", a, b));
 			//Com_Printf("awards %s %s\n", a, b);
 
-#ifdef _BOE_DBG
+#ifndef PUB_RELEASE
 	if (strstr(boe_log.string, "1"))
 		G_LogPrintf("1e\n");
 #endif
