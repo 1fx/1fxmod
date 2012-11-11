@@ -135,6 +135,7 @@
 // 0.60t		1st Beta						794			6/14/12		// Sent out to BETA group on 6/14/12
 // 0.60t		2nd Beta						824			7/29/12		// Sent out to BETA group on 7/29/12
 // 0.60t		3rd Beta						851			10/4/12		// Sent out to BETA group on 10/4/12
+// 0.60t		1st Release Candidate			877			11/11/12	// Sent out to BETA group on 11/11/12
 
 
 //===================================================================
