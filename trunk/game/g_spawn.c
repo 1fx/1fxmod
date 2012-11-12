@@ -1229,6 +1229,8 @@ void SP_worldspawn( void )
 	G_SpawnString( "minigame", "", &text );
 	if(strstr(level.mapname, "col9") && current_gametype.value == GT_HS && strstr(text, "ctb")){
 		level.crossTheBridge = qtrue;
+		Com_Printf("Cross The Bridge entity file, reloading weapon file.\n");
+		RPM_WeaponMod();
 	}
 	// Boe!Man 9/11/12: Every lvl has a worldspawn. If effects are loaded before the preloaded effects, the effectindex will mess up. Avoid this by spawning them DIRECTLY after the worldspawn.
 	Preload_Effects();
