@@ -1278,7 +1278,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 
 	// Set the available outfitting -- Boe!Man 5/22/12: Update, now also checks H&S settings.
 	if(!g_disableNades.integer){
-		SetNades("0");
+		SetNades("0"); // 0 means disable_* CVAR to 0, so enabled.
 	}else{
 		SetNades("1");
 	}
@@ -1306,8 +1306,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	
 	// setup settings for h&s
 	if(current_gametype.value == GT_HS || current_gametype.value == GT_HZ){
-		trap_Cvar_Set("g_disableNades", "0");
-		trap_Cvar_Update(&g_disableNades);
+		SetNades("0"); // Enable them, but check them individually in that func cause' it's H&S.
 	}
 	
 	// Boe!Man 3/30/10
