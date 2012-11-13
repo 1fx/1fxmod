@@ -263,7 +263,7 @@ int Pickup_Backpack ( gentity_t* ent, gentity_t* other )
 	}
 
 	// Make sure you alwasy get grenades
-	if ( level.pickupsDisabled && g_disableNades.integer == 0 )
+	if ( level.pickupsDisabled && g_disableNades.integer == 0 && level.nadesFound)
 	{
 		weapon_t weapon = ps->stats[STAT_OUTFIT_GRENADE];
 

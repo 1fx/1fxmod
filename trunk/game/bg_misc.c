@@ -1169,25 +1169,42 @@ qboolean BG_CanItemBeGrabbed( int gametype, const entityState_t *ent, const play
 			{
 				return qtrue;
 			}
-
-			for ( i = 0; i < MAX_AMMO; i ++ )
-			{
-				int maxammo;
-
-				maxammo = BG_GetMaxAmmo ( ps, i );
-
-				if ( !maxammo || ps->ammo[i] >= maxammo )
+			
+			// Boe!Man 11/13/12: New code for ammo checking regarding no nades.
+			if(!g_disableNades.integer && level.nadesFound){ // If nades are set to be used and are actually found..
+				for ( i = 0; i < MAX_AMMO; i ++ )
 				{
-					continue;
+					int maxammo;
+
+					maxammo = BG_GetMaxAmmo ( ps, i );
+
+					if ( !maxammo || ps->ammo[i] >= maxammo )
+					{
+						continue;
+					}
+
+					return qtrue;
 				}
+			}else{
+				for ( i = 0; i < AMMO_M15; i ++ )
+				{
+					int maxammo;
 
-				return qtrue;
+					maxammo = BG_GetMaxAmmo ( ps, i );
+
+					if ( !maxammo || ps->ammo[i] >= maxammo )
+					{
+						continue;
+					}
+
+					return qtrue;
+				}
 			}
-
+			
 			// Grenades are a special case because they can be depleted by just throwing them.  
 			// Therefore we need to check to see if they have any of the grenades indicated in 
 			// their outfitting
-			if ( ps->pm_flags & PMF_LIMITED_INVENTORY )
+			if ( ps->pm_flags & PMF_LIMITED_INVENTORY && (!g_disableNades.integer && level.nadesFound))
 			{
 				// No grenades, then let the pick up the backpack
 				if ( !(ps->stats[STAT_WEAPONS] & (1<<ps->stats[STAT_OUTFIT_GRENADE])) )

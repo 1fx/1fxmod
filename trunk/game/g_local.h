@@ -858,6 +858,8 @@ typedef struct
 	//char		deadClients[1024]; // Henk 28/01/11 -> Add new mute system.
 	int         debugtime;
 	int			tipMsg;
+	
+	qboolean	nadesFound;		// Boe!Man 11/13/12: qtrue if nades are actually found.
 } level_locals_t;
 
 //

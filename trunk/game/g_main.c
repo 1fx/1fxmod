@@ -1278,7 +1278,10 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 
 	// Set the available outfitting -- Boe!Man 5/22/12: Update, now also checks H&S settings.
 	if(!g_disableNades.integer){
-		SetNades("0"); // 0 means disable_* CVAR to 0, so enabled.
+		// Boe!Man 11/13/12: New check for Nades, see if they are used at all in the server (faster !nn checking, and proper backpack fix).
+		if(SetNades("0")){ // 0 means disable_* CVAR to 0, so enabled.
+			level.nadesFound = qtrue;
+		}
 	}else{
 		SetNades("1");
 	}
