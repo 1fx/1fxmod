@@ -665,6 +665,8 @@ int GetRpgWinner(void){
 void StripHiders(void)
 {
 	int i;
+	char location[64];
+	
 	for ( i = 0; i < level.numConnectedClients; i ++ )
 	{
 		gentity_t* ent = &g_entities[level.sortedClients[i]];
@@ -675,6 +677,15 @@ void StripHiders(void)
 		// Henk 26/01/10 -> Dead clients dun have to be stripped
 		if(G_IsClientDead(ent->client))
 			continue;
+			
+		if(level.crossTheBridge){
+			Team_GetLocationMsg(ent, location, sizeof(location)); // Get the location..
+			// Boe!Man 11/13/12: Only hiders that actually crossed the bridge should get a point.
+			if (!strstr(location, "Safe")){
+				continue;
+			}
+		}
+			
 
 		ent->client->sess.timeOfDeath = 1;
 		ent->client->ps.zoomFov = 0;	///if they are looking through a scope go to normal view
