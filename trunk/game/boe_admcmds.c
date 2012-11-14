@@ -469,9 +469,9 @@ void Boe_NoNades(int argNum, gentity_t *ent, qboolean shortCmd){
 		return;
 	}else if(!level.nadesFound){
 		if(ent && ent->client){
-			trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7No nades are set to be used on the server.\n\""));
+			trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7No nades are set to be used (availableWeapons CVAR).\n\""));
 		}else{
-			Com_Printf("^7No nades are set to be used on the server.\n");
+			Com_Printf("^7No nades are set to be used (availableWeapons CVAR).\n");
 		}
 		return;
 	}
