@@ -7,13 +7,13 @@
 // Boe!Man 3/30/10
 // Boe!Man 7/12/11: Mod version.
 #ifdef Q3_VM
-#define INF_VERSION_STRING "0.60t"
+#define INF_VERSION_STRING "0.60"
 #else
 
 #ifdef WIN32
-#define INF_VERSION_STRING "0.60t-dll"
+#define INF_VERSION_STRING "0.60-dll"
 #elif __linux__
-#define INF_VERSION_STRING "0.60t-so"
+#define INF_VERSION_STRING "0.60-so"
 #endif
 
 #endif
@@ -136,6 +136,11 @@
 // 0.60t		2nd Beta						824			7/29/12		// Sent out to BETA group on 7/29/12
 // 0.60t		3rd Beta						851			10/4/12		// Sent out to BETA group on 10/4/12
 // 0.60t		1st Release Candidate			877			11/11/12	// Sent out to BETA group on 11/11/12
+
+// Branch 0.60 (LTS) - 0.70 (testing, BETA).
+//
+// -- LTS
+// 0.60			Release							885			11/23/12	// Sent out to public on 11/23/12
 
 
 //===================================================================
