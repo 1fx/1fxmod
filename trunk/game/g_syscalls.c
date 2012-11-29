@@ -1086,23 +1086,22 @@ const char *trap_VM_LocalStringAlloc ( const char *source )
 	return (const char *)syscall ( G_VM_LOCALSTRINGALLOC, source );
 }
 
-void trap_GT_Init ( const char* gametype, qboolean restart )
+void trap_GT_Init ( )
 {
-	syscall ( G_GT_INIT, gametype, restart );
+	gtCall ( GAMETYPE_INIT, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1);
 }
 
 void trap_GT_RunFrame ( int time )
 {
-	syscall ( G_GT_RUNFRAME, time );
+	gtCall ( GAMETYPE_RUN_FRAME, time, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 );
 }
 
 void trap_GT_Start ( int time )
 {
-	syscall ( G_GT_START, time );
+	gtCall ( GAMETYPE_START, time, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 );
 }
 
 int trap_GT_SendEvent ( int event, int time, int arg0, int arg1, int arg2, int arg3, int arg4 )
 {
-	return syscall ( G_GT_SENDEVENT, event, time, arg0, arg1, arg2, arg3, arg4 );
+	return gtCall ( GAMETYPE_EVENT, event, time, arg0, arg1, arg2, arg3, arg4, -1, -1, -1, -1, -1);
 }
-

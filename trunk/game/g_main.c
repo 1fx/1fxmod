@@ -669,8 +669,8 @@ int vmMain( int command, int arg0, int arg1, int arg2, int arg3, int arg4, int a
 		case GAME_CLIENT_COMMAND:
 			ClientCommand( arg0 );
 			return 0;
-		case GAME_GAMETYPE_COMMAND:
-			return G_GametypeCommand ( arg0, arg1, arg2, arg3, arg4, arg5 );
+		/*case GAME_GAMETYPE_COMMAND:
+			return G_GametypeCommand ( arg0, arg1, arg2, arg3, arg4, arg5 );*/
 		case GAME_RUN_FRAME:
 			G_RunFrame( arg0 );
 			return 0;
@@ -1287,12 +1287,15 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	BG_SetAvailableOutfitting(g_availableWeapons.string);
 
 	// Initialize the gametype
+	/*
 	if(current_gametype.value == GT_HS)
 		trap_GT_Init ( "h&s", restart );
 	else if(current_gametype.value == GT_HZ)
 		trap_GT_Init ( "h&z", restart );
 	else
-		trap_GT_Init ( g_gametype.string, restart );
+	*/
+	// Boe!Man 11/29/12: Now that the gametype is in the game, the gt can check what gametype it is using current_gametype.
+	trap_GT_Init ();
 
 	// Music
 	if ( RMG.integer )

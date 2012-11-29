@@ -1157,6 +1157,7 @@ void G_CheckClientTeamkill	( gentity_t *ent );
 void ClientThink			( int clientNum );
 void ClientEndFrame			( gentity_t *ent );
 void G_RunClient			( gentity_t *ent );
+void gametype_trigger_touch ( gentity_t *self, gentity_t *other, trace_t *trace );
 
 //
 // g_team.c
@@ -1549,7 +1550,7 @@ void		trap_VM_LocalTempFree( int size );					// free must be in opposite order o
 const char	*trap_VM_LocalStringAlloc ( const char *source );
 
 // Gametype traps
-void		trap_GT_Init		( const char* gametype, qboolean restart );
+void		trap_GT_Init		();
 void		trap_GT_RunFrame	( int time );
 void		trap_GT_Start		( int time );
 int			trap_GT_SendEvent	( int event, int time, int arg0, int arg1, int arg2, int arg3, int arg4 );
@@ -1592,3 +1593,8 @@ int StartAfterCommand(char *param);
 // Boe!Man: Debug CVAR.
 extern vmCvar_t	boe_log;
 #endif
+
+//==================================================================
+
+// Boe!Man 11/29/12: GT specific module handler.
+int gtCall( int command, int arg0, int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int arg7, int arg8, int arg9, int arg10, int arg11 );

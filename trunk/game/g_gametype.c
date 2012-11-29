@@ -1196,7 +1196,7 @@ G_GametypeCommand
 
 Handles a command coming from the current gametype VM
 =================
-*/
+
 int G_GametypeCommand ( int cmd, int arg0, int arg1, int arg2, int arg3, int arg4 )
 {
 	switch ( cmd )
@@ -1349,3 +1349,4 @@ int G_GametypeCommand ( int cmd, int arg0, int arg1, int arg2, int arg3, int arg
 
 	return -1;
 }
+*/
