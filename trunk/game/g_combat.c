@@ -232,7 +232,7 @@ void player_die(
 	attack		 = (mod >> 8) & 0xFF;
 	meansOfDeath = mod & 0xFF;
 
-#ifndef PUB_RELEASE
+#ifdef _DEBUG
 	if (strstr(boe_log.string, "1"))
 		G_LogPrintf("9s\n");
 #endif
@@ -720,7 +720,7 @@ void player_die(
 	self->die = body_die;
 
 	trap_LinkEntity (self);
-#ifndef PUB_RELEASE
+#ifdef _DEBUG
 	if (strstr(boe_log.string, "1"))
 		G_LogPrintf("9e\n");
 #endif
@@ -1086,7 +1086,7 @@ int G_Damage (
 		knockback = 0;
 	}
 
-#ifndef PUB_RELEASE
+#ifdef _DEBUG
 	if(attacker->client){
 			if(attacker->client->sess.dev == 2 && attacker->client->sess.henkgib == qtrue)
 				damage = damage*10;

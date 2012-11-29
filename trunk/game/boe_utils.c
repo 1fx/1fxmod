@@ -1517,7 +1517,7 @@ void Boe_Stats ( gentity_t *ent )
 	int			idnum, n;
 	char		*altname;
 //	char		*fps;
-#ifndef PUB_RELEASE
+#ifdef _DEBUG
 	qboolean	devmode = qfalse;
 #endif
 	float		accuracy = 0;
@@ -1550,7 +1550,7 @@ void Boe_Stats ( gentity_t *ent )
 		}else{
 			client0 = "N/A";
 			client1 = qtrue;}
-#ifndef PUB_RELEASE
+#ifdef _DEBUG
 		if (ent->client->sess.dev > 0)
 			devmode = qtrue;
 #endif
@@ -1620,7 +1620,7 @@ void Boe_Stats ( gentity_t *ent )
 		}else{
 			client0 = "N/A";
 			client1 = qtrue;}
-#ifndef PUB_RELEASE
+#ifdef _DEBUG
 		if (g_entities[idnum].client->sess.dev > 0)
 			devmode = qtrue;
 #endif
@@ -1648,7 +1648,7 @@ void Boe_Stats ( gentity_t *ent )
 	else{
 		trap_SendServerCommand( ent-g_entities, va("print \"[^3Admin^7]       %s\n", admin));
 	}
-#ifndef PUB_RELEASE
+#ifdef _DEBUG
 	if (devmode == qtrue)
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Developer^7]   Yes\n"));
 	else
@@ -1878,7 +1878,7 @@ Updated 11/20/10 - 11:17 PM
 
 void Boe_About( gentity_t *ent )
 {
-	#ifndef PUB_RELEASE
+	#ifdef _DEBUG
 	if (strstr(boe_log.string, "2"))
 		G_LogPrintf("8s\n");
 	#endif
@@ -1943,7 +1943,7 @@ void Boe_About( gentity_t *ent )
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Clan URL^7]            %s\n", ClanURL.string));
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Hosted by^7]           %s\n", HostedBy.string));
 	trap_SendServerCommand( ent-g_entities, va("print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\""));
-	#ifndef PUB_RELEASE
+	#ifdef _DEBUG
 	if (strstr(boe_log.string, "2"))
 		G_LogPrintf("8e\n");
 	#endif
@@ -2042,7 +2042,7 @@ Boe_serverMsg
 void Boe_serverMsg (void)
 {
 	char	*message;
-	#ifndef PUB_RELEASE
+	#ifdef _DEBUG
 	if (strstr(boe_log.string, "1"))
 		G_LogPrintf("3s\n");
 	#endif
@@ -2075,7 +2075,7 @@ void Boe_serverMsg (void)
 
 	level.serverMsg = level.time + (server_msgDelay.integer * 1000);
 	trap_SendServerCommand( -1, va("chat -1 \"%sM%se%ss%ss%sa%sge: %s\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, message ) );
-	#ifndef PUB_RELEASE
+	#ifdef _DEBUG
 	if (strstr(boe_log.string, "1"))
 		G_LogPrintf("3e\n");
 	#endif
@@ -2090,7 +2090,7 @@ Boe_calcMatchScores
 
 void Boe_calcMatchScores (void)
 {
-	#ifndef PUB_RELEASE
+	#ifdef _DEBUG
 	if (strstr(boe_log.string, "2"))
 		G_LogPrintf("7s\n");
 	#endif
@@ -2127,7 +2127,7 @@ void Boe_calcMatchScores (void)
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sM%sa%st%sc%sh draw with %i - %i!", level.time + 10000, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, level.teamScores[TEAM_BLUE]+cm_sb.integer, level.teamScores[TEAM_RED]+cm_sr.integer));
 		LogExit("Match draw.");
 	}
-	#ifndef PUB_RELEASE
+	#ifdef _DEBUG
 	if (strstr(boe_log.string, "2"))
 		G_LogPrintf("7e\n");
 	#endif
@@ -2523,7 +2523,7 @@ char *Boe_parseCustomCommandArgs(char *in)
 	char	arg[MAX_STRING_TOKENS];
 	int		pos = 0; // Position of out.
 	
-#ifndef PUB_RELEASE
+#ifdef _DEBUG
 	Com_Printf("Boe_parseCustomCommandArgs: in: %s\n", in); // Debug.
 #endif
 	
@@ -2537,7 +2537,7 @@ char *Boe_parseCustomCommandArgs(char *in)
 					arg2[0] = buf2[4]; // Copy the argument string to the new buffer, including a terminator.
 					arg2[1] = '\0';
 					trap_Argv(henk_atoi(arg2)+1, arg, sizeof(arg)); // Fetch arg.
-					#ifndef PUB_RELEASE
+					#ifdef _DEBUG
 					Com_Printf("Argument %i: %s\n", henk_atoi(arg2), arg);
 					#endif
 					Q_strcat(out, sizeof(out), arg); // Append the argument.
@@ -2562,7 +2562,7 @@ char *Boe_parseCustomCommandArgs(char *in)
 	
 	buf = out;
 	
-#ifndef PUB_RELEASE
+#ifdef _DEBUG
 	Com_Printf("Boe_parseCustomCommandArgs: out: %s\n", buf); // Debug.
 #endif
 

@@ -3325,7 +3325,7 @@ void ClientCommand( int clientNum ) {
 		Boe_displayTokens ( ent );
 
 	// Boe!Man 4/3/10
-#ifndef PUB_RELEASE
+#ifdef _DEBUG
 	else if (Q_stricmp (cmd, "dev") == 0)
 		Boe_dev_f( ent );
 #endif
@@ -3346,7 +3346,7 @@ void ClientCommand( int clientNum ) {
 		Boe_Howto( ent );
 	
 	
-#ifndef PUB_RELEASE
+#ifdef _DEBUG
 	/*else if (Q_stricmp (cmd, "henk_test") == 0){
 		ent->client->sess.zombie = qfalse;
 		ent->client->sess.zombiebody = -1;

@@ -295,7 +295,7 @@ typedef struct
 	qboolean			fileChecked;			// Used for checking if the client is an Admin at connect and/or name change.
 
 	// Boe!Man 4/3/10
-#ifndef PUB_RELEASE
+#ifdef _DEBUG
 	int					dev;					// If this is set to 1, the client is a Developer.
 	qboolean			henkgib;
 #endif
@@ -1588,7 +1588,7 @@ void	RPM_ReadyAll (void);
 void	RPM_Pause (gentity_t *adm);
 void	RPM_Unpause (gentity_t *adm);
 int StartAfterCommand(char *param);
-#ifndef PUB_RELEASE
+#ifdef _DEBUG
 // Boe!Man: Debug CVAR.
 extern vmCvar_t	boe_log;
 #endif

@@ -34,7 +34,7 @@ void RPM_Tcmd ( gentity_t *ent )
 	trap_Argv( 1, arg1, sizeof( arg1 ) );
 	trap_Argv( 2, arg2, sizeof( arg2 ) );
 
-	#ifndef PUB_RELEASE
+	#ifdef _DEBUG
 	if (strstr(boe_log.string, "2"))
 		G_LogPrintf("1s\n");
 	#endif
@@ -145,7 +145,7 @@ void RPM_Tcmd ( gentity_t *ent )
 		trap_SendServerCommand( ent-g_entities, va("print \"Usage: tcmd <command> <variable>\n\""));
 	}	
 
-	#ifndef PUB_RELEASE
+	#ifdef _DEBUG
 	if (strstr(boe_log.string, "2"))
 		G_LogPrintf("1e\n");
 	#endif
@@ -163,7 +163,7 @@ void RPM_TeamInfo (gentity_t *ent, char *team)
 	int	invitedcount = 0;
 	char *teamName;
 
-	#ifndef PUB_RELEASE
+	#ifdef _DEBUG
 	if (strstr(boe_log.string, "2"))
 		G_LogPrintf("2s\n");
 	#endif
@@ -287,7 +287,7 @@ void RPM_TeamInfo (gentity_t *ent, char *team)
 	}
 	trap_SendServerCommand( ent-g_entities, va("print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\""));
 
-	#ifndef PUB_RELEASE
+	#ifdef _DEBUG
 	if (strstr(boe_log.string, "2"))
 		G_LogPrintf("2e\n");
 	#endif

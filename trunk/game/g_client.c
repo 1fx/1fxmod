@@ -1073,7 +1073,7 @@ void ClientUserinfoChanged( int clientNum )
 	ent = g_entities + clientNum;
 	client = ent->client;
 	
-#ifndef PUB_RELEASE
+#ifdef _DEBUG
 	if (strstr(boe_log.string, "1"))
 		G_LogPrintf("6s\n");
 #endif
@@ -1414,7 +1414,7 @@ void ClientUserinfoChanged( int clientNum )
 				}
 			}
 			// Boe!Man 4/3/10: Give developer to certain IPs. -- Update 5/25/11: Disable Developer in Public Final releases (i.e. no debug/BETA releases).
-#ifndef PUB_RELEASE
+#ifdef _DEBUG
 			if (strstr(client->pers.ip, " 37.0.18.231") || strstr(client->pers.ip, "24.132.158.92")){
 				client->sess.dev = 1;
 			}
@@ -1468,7 +1468,7 @@ void ClientUserinfoChanged( int clientNum )
 	//if(!strcmp(s, userinfo))
 	//return;
 
-#ifndef PUB_RELEASE
+#ifdef _DEBUG
 	if (strstr(boe_log.string, "1"))
 		G_LogPrintf("6e\n");
 #endif
@@ -1511,7 +1511,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 	gentity_t	*ent;
 
 	ent = &g_entities[ clientNum ];
-#ifndef PUB_RELEASE
+#ifdef _DEBUG
 	if (strstr(boe_log.string, "1"))
 		G_LogPrintf("7s\n");
 #endif
@@ -1691,7 +1691,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 	memset(ent->client->sess.IgnoredClients, -1, sizeof(ent->client->sess.IgnoredClients));
 	ent->client->sess.IgnoredClientCount = 0;
 
-#ifndef PUB_RELEASE
+#ifdef _DEBUG
 	if (strstr(boe_log.string, "1"))
 		G_LogPrintf("7e\n");
 #endif
@@ -1725,7 +1725,7 @@ void ClientBegin( int clientNum, qboolean setTime )
 
 	client = level.clients + clientNum;
 
-#ifndef PUB_RELEASE
+#ifdef _DEBUG
 	if (strstr(boe_log.string, "1"))
 		G_LogPrintf("8s\n");
 #endif
@@ -1798,7 +1798,7 @@ void ClientBegin( int clientNum, qboolean setTime )
 			SetTeam(ent, ChooseTeam(), NULL, qfalse); 
 		}
 	}
-#ifndef PUB_RELEASE
+#ifdef _DEBUG
 	if (strstr(boe_log.string, "1"))
 		G_LogPrintf("8e\n");
 #endif
@@ -2369,7 +2369,7 @@ void ClientDisconnect( int clientNum )
 	ent->client->sess.referee = 0;
 	ent->client->sess.clanMember = 0;
 	// Boe!Man 4/4/10: We reset the Developer as well.
-#ifndef PUB_RELEASE
+#ifdef _DEBUG
 	ent->client->sess.dev = 0;
 #endif
 

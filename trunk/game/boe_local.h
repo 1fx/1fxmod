@@ -6,17 +6,17 @@
 
 // Boe!Man 3/30/10
 // Boe!Man 7/12/11: Mod version.
-#ifdef Q3_VM
-#define INF_VERSION_STRING "0.60"
-#else
+//#ifdef Q3_VM
+//#define INF_VERSION_STRING "0.60"
+//#else
 
 #ifdef WIN32
-#define INF_VERSION_STRING "0.60-dll"
+#define INF_VERSION_STRING "0.70t-dll"
 #elif __linux__
-#define INF_VERSION_STRING "0.60-so"
+#define INF_VERSION_STRING "0.70t-so"
 #endif
 
-#endif
+//#endif
 
 // Boe!Man 7/12/11: Mod name.
 #define INF_STRING "1fx. Mod"
@@ -455,7 +455,7 @@ void Boe_Add_Clan_Member(int argNum, gentity_t *adm, qboolean shortCmd);
 void Boe_Remove_Clan_Member(int argNum, gentity_t *adm, qboolean shortCmd);
 void RPM_Clan_Vs_All(gentity_t *adm);
 
-#ifndef PUB_RELEASE
+#ifdef _DEBUG
 void Boe_dev_f ( gentity_t *ent );
 #endif
 

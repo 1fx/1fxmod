@@ -2210,7 +2210,7 @@ void Boe_Remove_Admin_f (int argNum, gentity_t *adm, qboolean shortCmd)
 	char			passID[MAX_BOE_ID];
 	char			*passID2 = passID;
 
-#ifndef PUB_RELEASE
+#ifdef _DEBUG
 	if (strstr(boe_log.string, "1"))
 		G_LogPrintf("4s\n");
 #endif
@@ -2256,7 +2256,7 @@ void Boe_Remove_Admin_f (int argNum, gentity_t *adm, qboolean shortCmd)
 	// Boe!Man 10/16/10: He's not an Admin anymore so it doesn't matter if he was a B-Admin, Admin or S-Admin: either way he shouldn't be allowed to spec the opposite team.
 	g_entities[idnum].client->sess.adminspec = qfalse;
 
-#ifndef PUB_RELEASE
+#ifdef _DEBUG
 	if (strstr(boe_log.string, "1"))
 		G_LogPrintf("4e\n");
 #endif
@@ -3236,7 +3236,7 @@ void Boe_Strip (int argNum, gentity_t *adm, qboolean shortCmd)
 Boe_Dev_f
 ==========
 */
-#ifndef PUB_RELEASE
+#ifdef _DEBUG
 void Boe_dev_f ( gentity_t *ent )
 {
 
