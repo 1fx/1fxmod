@@ -126,6 +126,8 @@ void GT_Init ( void )
 {
 	gtItemDef_t		itemDef;
 	gtTriggerDef_t	triggerDef;
+	gitem_t*		item;
+	gentity_t*		find;
 
 	memset ( &gametype, 0, sizeof(gametype) );
 
@@ -151,7 +153,6 @@ void GT_Init ( void )
 	memset ( &itemDef, 0, sizeof(itemDef) );
 	
 	// Boe!Man 11/29/12: Register items per gametype.
-	gitem_t* item;
 	if(current_gametype.value == GT_INF || current_gametype.value == GT_HS){
 		item = BG_FindItem ("briefcase");
 		if (item){
@@ -174,7 +175,6 @@ void GT_Init ( void )
 	memset ( &triggerDef, 0, sizeof(triggerDef) );
 	
 	// Boe!Man 11/29/12: Register triggers per gametype.
-	gentity_t* find;
 	find = NULL;
 	if(current_gametype.value == GT_INF){
 		while ( NULL != (find = G_Find ( find, FOFS(classname), "gametype_trigger" ) ) )
@@ -341,12 +341,12 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 
 		case GTEV_ITEM_STUCK:
 			if(current_gametype.value == GT_INF){
+				gitem_t* item;
+				
 				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,%s", level.time + 5000, va("@The Briefcase has %sr%se%st%su%sr%sned!", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string)));
 				trap_SendServerCommand( -1, va("print \"^3[INF] ^7The briefcase has returned.\n\""));
 				
 				// Boe!Man 11/29/12: Reset item.
-				gitem_t* item;
-				
 				item = BG_FindGametypeItemByID ( ITEM_BRIEFCASE );
 				if (item){
 					G_ResetGametypeItem ( item );
