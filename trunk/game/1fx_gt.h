@@ -43,6 +43,9 @@ typedef struct gametypeLocals_s
 	// Boe!Man 4/22/12: We use this for pause stuff.
 	int			pauseTime;		// Restore time.
 	
+	// ELIM
+	int		captureSound;
+	
 } gametypeLocals_t;
 
 extern	gametypeLocals_t	gametype;

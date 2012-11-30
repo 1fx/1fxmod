@@ -141,6 +141,8 @@ void GT_Init ( void )
 		gametype.flagTakenSound   = G_SoundIndex ("sound/ctf_flag.mp3");
 		gametype.flagCaptureSound = G_SoundIndex ("sound/ctf_win.mp3");
 		gametype.flagReturnSound  = G_SoundIndex ("sound/ctf_return.mp3");
+	}else if(current_gametype.value == GT_ELIM){
+		gametype.captureSound	  = G_SoundIndex ( "sound/ctf_win.mp3" );
 	}
 
 	// Register the items
@@ -405,18 +407,22 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 			break;
 
 		case GTEV_TEAM_ELIMINATED:
-			if(current_gametype.value == GT_INF){
+			if(current_gametype.value == GT_INF || current_gametype.value == GT_ELIM){
 				switch ( arg0 )
 				{
 					case TEAM_RED:
 						trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,%s", level.time + 5000, va("@%s ^7team %se%sl%si%sm%si%snated!", server_redteamprefix.string, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string))); // Red team eliminated.
-						trap_SendServerCommand( -1, va("print\"^3[INF] ^7Red team eliminated.\n\""));
+						trap_SendServerCommand( -1, va("print\"^3[%s] ^7Red team eliminated.\n\"", Q_strupr(g_gametype.string)));
 						G_AddTeamScore ((team_t) TEAM_BLUE, 1);
 						// Boe!Man 11/29/12: Global sound.
 						if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime){
 						gentity_t* tent;
 						tent = G_TempEntity( vec3_origin, EV_GLOBAL_SOUND );
-						tent->s.eventParm = gametype.caseCaptureSound;
+						if(current_gametype.value == GT_INF){
+							tent->s.eventParm = gametype.caseCaptureSound;
+						}else{ // ELIM
+							tent->s.eventParm = gametype.captureSound;
+						}
 						tent->r.svFlags = SVF_BROADCAST;
 						}
 						
@@ -426,13 +432,17 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 
 					case TEAM_BLUE:
 						trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,%s", level.time + 5000, va("@%s ^7team %se%sl%si%sm%si%snated!", server_blueteamprefix.string, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string))); // Blue team eliminated.
-						trap_SendServerCommand( -1, va("print\"^3[INF] ^7Blue team eliminated.\n\""));
+						trap_SendServerCommand( -1, va("print\"^3[%s] ^7Blue team eliminated.\n\"", Q_strupr(g_gametype.string)));
 						G_AddTeamScore ((team_t) TEAM_RED, 1);
 						// Boe!Man 11/29/12: Global sound.
 						if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime){
 						gentity_t* tent;
 						tent = G_TempEntity( vec3_origin, EV_GLOBAL_SOUND );
-						tent->s.eventParm = gametype.caseCaptureSound;
+						if(current_gametype.value == GT_INF){
+							tent->s.eventParm = gametype.caseCaptureSound;
+						}else{ // ELIM
+							tent->s.eventParm = gametype.captureSound;
+						}
 						tent->r.svFlags = SVF_BROADCAST;
 						}
 						
@@ -449,6 +459,11 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 				trap_SendServerCommand( -1, va("print\"^3[INF] ^7Red team has defended the briefcase.\n\""));
 				G_AddTeamScore ((team_t) TEAM_RED, 1);
 				
+				// Boe!Man 11/29/12: Reset gametype.
+				level.gametypeResetTime = level.time + 5000;
+			}else if(current_gametype.value == GT_ELIM){
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,%s", level.time + 5000, va("@%sR%so%su%sn%sd %sDraw!", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string))); // Round Draw.
+				trap_SendServerCommand( -1, va("print\"^3[ELIM] ^7Round Draw.\n\""));
 				// Boe!Man 11/29/12: Reset gametype.
 				level.gametypeResetTime = level.time + 5000;
 			}
