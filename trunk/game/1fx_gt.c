@@ -143,7 +143,7 @@ void GT_Init ( void )
 		gametype.flagReturnSound  = G_SoundIndex ("sound/ctf_return.mp3");
 	}else if(current_gametype.value == GT_ELIM){
 		gametype.captureSound	  = G_SoundIndex ( "sound/ctf_win.mp3" );
-	}else if(current_gametype.value == GT_HS){
+	}else if(current_gametype.value == GT_HS || current_gametype.value == GT_HZ){
 		gametype.caseCaptureSound = G_SoundIndex ("sound/ctf_win.mp3");
 	}
 
@@ -221,9 +221,11 @@ void GT_Init ( void )
 	
 	// Boe!Man 11/29/12: Semi-debug, but we let the admin know the gt has been loaded.
 	if(current_gametype.value == GT_HS){
-			Com_Printf("Gametype initialized (h&s).\n");
+		Com_Printf("Gametype initialized: h&s\n");
+	}else if(current_gametype.value == GT_HZ){
+		Com_Printf("Gametype initialized: h&z\n");
 	}else{
-		Com_Printf("Gametype initialized (%s).\n", g_gametype.string);
+		Com_Printf("Gametype initialized: %s\n", g_gametype.string);
 	}
 }
 
@@ -481,6 +483,28 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 					case TEAM_BLUE:
 						break;
 				}
+			}else if(current_gametype.value == GT_HZ){
+				switch ( arg0 )
+				{
+					case TEAM_RED:
+						trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,%s", level.time + 5000, va("@%s ^7won!", server_zombieteamprefix.string))); // Zombies won.
+						trap_SendServerCommand( -1, va("print\"^3[H&Z] ^7Zombies won the match.\n\""));
+						G_AddTeamScore ((team_t) TEAM_BLUE, 1);
+						// Boe!Man 11/29/12: Global sound.
+						if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime){
+						gentity_t* tent;
+						tent = G_TempEntity( vec3_origin, EV_GLOBAL_SOUND );
+						tent->s.eventParm = gametype.caseCaptureSound;
+						tent->r.svFlags = SVF_BROADCAST;
+						}
+						
+						// Boe!Man 11/29/12: Reset gametype.
+						level.gametypeResetTime = level.time + 5000;
+						break;
+					
+					case TEAM_BLUE:
+						break;
+				}
 			}
 			break;
 
@@ -500,6 +524,21 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 			}else if(current_gametype.value == GT_HS){
 				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,%s", level.time + 5000, va("@%s ^7won!", server_hiderteamprefix.string))); // Hiders won.
 				trap_SendServerCommand( -1, va("print\"^3[H&S] ^7Hiders won the match.\n\""));
+				G_AddTeamScore ((team_t) TEAM_RED, 1);
+				// Boe!Man 11/29/12: Global sound.
+				if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime){
+				gentity_t* tent;
+				tent = G_TempEntity( vec3_origin, EV_GLOBAL_SOUND );
+				tent->s.eventParm = gametype.caseCaptureSound;
+				tent->r.svFlags = SVF_BROADCAST;
+				}
+				
+				// Boe!Man 11/29/12: Reset gametype.
+				level.gametypeResetTime = level.time + 5000;
+				break;
+			}else if(current_gametype.value == GT_HZ){
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,%s", level.time + 5000, va("@%s ^7won!", server_humanteamprefix.string))); // Humans won.
+				trap_SendServerCommand( -1, va("print\"^3[H&Z] ^7Humans won the match.\n\""));
 				G_AddTeamScore ((team_t) TEAM_RED, 1);
 				// Boe!Man 11/29/12: Global sound.
 				if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime){
@@ -603,8 +642,10 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 						}
 						break;
 				}
-			}else if(current_gametype.value == GT_HS){
-				return 1;
+			}else if(current_gametype.value == GT_HS || current_gametype.value == GT_HZ){
+				if(arg0 == ITEM_BRIEFCASE && arg2 == TEAM_BLUE){
+					return 1;
+				}
 			}
 			return 0;
 
