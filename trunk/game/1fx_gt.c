@@ -143,6 +143,8 @@ void GT_Init ( void )
 		gametype.flagReturnSound  = G_SoundIndex ("sound/ctf_return.mp3");
 	}else if(current_gametype.value == GT_ELIM){
 		gametype.captureSound	  = G_SoundIndex ( "sound/ctf_win.mp3" );
+	}else if(current_gametype.value == GT_HS){
+		gametype.caseCaptureSound = G_SoundIndex ("sound/ctf_win.mp3");
 	}
 
 	// Register the items
@@ -150,7 +152,7 @@ void GT_Init ( void )
 	
 	// Boe!Man 11/29/12: Register items per gametype.
 	gitem_t* item;
-	if(current_gametype.value == GT_INF){
+	if(current_gametype.value == GT_INF || current_gametype.value == GT_HS){
 		item = BG_FindItem ("briefcase");
 		if (item){
 			item->quantity = ITEM_BRIEFCASE;
@@ -218,7 +220,11 @@ void GT_Init ( void )
 	}
 	
 	// Boe!Man 11/29/12: Semi-debug, but we let the admin know the gt has been loaded.
-	Com_Printf("Gametype initialized (%s).\n", g_gametype.string);
+	if(current_gametype.value == GT_HS){
+			Com_Printf("Gametype initialized (h&s).\n");
+	}else{
+		Com_Printf("Gametype initialized (%s).\n", g_gametype.string);
+	}
 }
 
 /*
@@ -402,6 +408,9 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 						gametype.blueFlagDropTime = 0;
 						return 1;
 				}
+			}else if(current_gametype.value == GT_HS){
+				trap_SendServerCommand( -1, va("print \"^3[H&S] ^7The briefcase has disappeared.\n\""));
+				return 1;
 			}
 			
 			break;
@@ -450,6 +459,28 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 						level.gametypeResetTime = level.time + 5000;
 						break;
 				}
+			}else if(current_gametype.value == GT_HS){
+				switch ( arg0 )
+				{
+					case TEAM_RED:
+						trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,%s", level.time + 5000, va("@%s ^7won!", server_seekerteamprefix.string))); // Seekers won.
+						trap_SendServerCommand( -1, va("print\"^3[H&S] ^7Seekers won the match.\n\""));
+						G_AddTeamScore ((team_t) TEAM_BLUE, 1);
+						// Boe!Man 11/29/12: Global sound.
+						if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime){
+						gentity_t* tent;
+						tent = G_TempEntity( vec3_origin, EV_GLOBAL_SOUND );
+						tent->s.eventParm = gametype.caseCaptureSound;
+						tent->r.svFlags = SVF_BROADCAST;
+						}
+						
+						// Boe!Man 11/29/12: Reset gametype.
+						level.gametypeResetTime = level.time + 5000;
+						break;
+					
+					case TEAM_BLUE:
+						break;
+				}
 			}
 			break;
 
@@ -466,12 +497,28 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 				trap_SendServerCommand( -1, va("print\"^3[ELIM] ^7Round Draw.\n\""));
 				// Boe!Man 11/29/12: Reset gametype.
 				level.gametypeResetTime = level.time + 5000;
+			}else if(current_gametype.value == GT_HS){
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,%s", level.time + 5000, va("@%s ^7won!", server_hiderteamprefix.string))); // Hiders won.
+				trap_SendServerCommand( -1, va("print\"^3[H&S] ^7Hiders won the match.\n\""));
+				G_AddTeamScore ((team_t) TEAM_RED, 1);
+				// Boe!Man 11/29/12: Global sound.
+				if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime){
+				gentity_t* tent;
+				tent = G_TempEntity( vec3_origin, EV_GLOBAL_SOUND );
+				tent->s.eventParm = gametype.caseCaptureSound;
+				tent->r.svFlags = SVF_BROADCAST;
+				}
+				
+				// Boe!Man 11/29/12: Reset gametype.
+				level.gametypeResetTime = level.time + 5000;
+				break;
 			}
 			break;
 
 		case GTEV_ITEM_DROPPED:
 			if(current_gametype.value == GT_INF){
 				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,%s", level.time + 5000, va("@%s ^7has %sd%sr%so%sp%sp%sed the briefcase!", g_entities[arg1].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string))); // Dropped.
+				break;
 			}else if(current_gametype.value == GT_CTF){
 				switch (arg0)
 				{
@@ -556,6 +603,8 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 						}
 						break;
 				}
+			}else if(current_gametype.value == GT_HS){
+				return 1;
 			}
 			return 0;
 

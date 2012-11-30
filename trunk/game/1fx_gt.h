@@ -24,9 +24,9 @@ typedef struct gametypeLocals_s
 {
 	int		time;
 
-	// INF
+	// INF (and partly H&S)
 	int		caseTakenSound;
-	int		caseCaptureSound;
+	int		caseCaptureSound; // Also used in H&S.
 	int		caseReturnSound;
 
 	// CTF
