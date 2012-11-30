@@ -761,8 +761,27 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 						break;
 				}
 			}
-					
-			return 0;
+			
+		case GTEV_CLIENT_DEATH:
+			if(current_gametype.value == GT_TDM){
+				// arg0 = clientID;
+				// arg1 = clientTeam;
+				// arg2 = killerID
+				// arg3 = killerTeam
+				
+				// If another client killed this guy and wasnt on the same team, then
+				// augment the team score for the killer
+				if ( arg2 != -1 && arg3 != arg1 )
+				{
+					G_AddTeamScore ((team_t) arg3, 1);
+				}
+			}
+			break;
+		
+		default:
+			break;
+			
+		return 0;
 	}
 
 	return 0;
