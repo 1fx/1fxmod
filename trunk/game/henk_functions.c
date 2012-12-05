@@ -375,37 +375,36 @@ void InitCagefight(void){
 		SpawnCage(level.hideseek_cage, NULL, qtrue, qfalse); // 2 to be sure no parts are missing
 	}
 
-	//for(i=0;i<=level.numConnectedClients;i++){
-	for(i = 0; i <= MAX_CLIENTS; i++){
-		if(level.clients[i].pers.connected != CON_CONNECTED)
+	for(i = 0; i < level.numConnectedClients; i++){
+		if(level.clients[level.sortedClients[i]].pers.connected != CON_CONNECTED)
 		{
 			continue;
 		}
 
-		if(level.clients[i].sess.team == TEAM_RED && (level.clients[i].sess.cageFighter == qtrue || level.mapHighScore == 0)){
+		if(level.clients[level.sortedClients[i]].sess.team == TEAM_RED && (level.clients[level.sortedClients[i]].sess.cageFighter == qtrue || level.mapHighScore == 0)){
 			//respawn ( &g_entities[level.sortedClients[i]] );
 			if(level.hideseek_cageSize != 1){ // 1 = no cage at all, if this is the cage, don't teleport them to the 'cage'.
-				TeleportPlayer(&g_entities[i], spawns[count], level.clients[i].ps.viewangles, qtrue);
+				TeleportPlayer(&g_entities[level.sortedClients[i]], spawns[count], level.clients[level.sortedClients[i]].ps.viewangles, qtrue);
 				count += 1;
 			}
-			level.clients[i].ps.stats[STAT_WEAPONS] = 0;
-			memset ( level.clients[i].ps.ammo, 0, sizeof(level.clients[i].ps.ammo) );
-			memset ( level.clients[i].ps.clip, 0, sizeof(level.clients[i].ps.clip) );
+			level.clients[level.sortedClients[i]].ps.stats[STAT_WEAPONS] = 0;
+			memset ( level.clients[level.sortedClients[i]].ps.ammo, 0, sizeof(level.clients[level.sortedClients[i]].ps.ammo) );
+			memset ( level.clients[level.sortedClients[i]].ps.clip, 0, sizeof(level.clients[level.sortedClients[i]].ps.clip) );
 			//g_entities[level.lastalive[0]].client->ps.ammo[weaponData[WP_RPG7_LAUNCHER].attack[ATTACK_NORMAL].ammoIndex]=2;
-			level.clients[i].ps.stats[STAT_WEAPONS] |= ( 1 << WP_KNIFE );
-			level.clients[i].ps.clip[ATTACK_NORMAL][WP_KNIFE]=1;
-			level.clients[i].ps.stats[STAT_WEAPONS] |= ( 1 << WP_AK74_ASSAULT_RIFLE );
+			level.clients[level.sortedClients[i]].ps.stats[STAT_WEAPONS] |= ( 1 << WP_KNIFE );
+			level.clients[level.sortedClients[i]].ps.clip[ATTACK_NORMAL][WP_KNIFE]=1;
+			level.clients[level.sortedClients[i]].ps.stats[STAT_WEAPONS] |= ( 1 << WP_AK74_ASSAULT_RIFLE );
 			//g_entities[level.lastalive[0]].client->ps.clip[ATTACK_NORMAL][WP_RPG7_LAUNCHER]=1;
 			//g_entities[level.lastalive[0]].client->ps.firemode[WP_RPG7_LAUNCHER] = BG_FindFireMode ( WP_RPG7_LAUNCHER, ATTACK_NORMAL, WP_FIREMODE_AUTO );
-			level.clients[i].ps.weapon = WP_AK74_ASSAULT_RIFLE;
-			level.clients[i].ps.weaponstate = WEAPON_READY;
-			level.clients[i].ps.weaponTime = 0;
-			level.clients[i].ps.weaponAnimTime = 0;
-			level.clients[i].ps.stats[STAT_FROZEN] = 10000;
-		}else if(level.clients[i].sess.team == TEAM_BLUE){
-			G_Damage (&g_entities[i], NULL, NULL, NULL, NULL, 10000, 0, MOD_POP, HL_HEAD|HL_FOOT_RT|HL_FOOT_LT|HL_LEG_UPPER_RT|HL_LEG_UPPER_LT|HL_HAND_RT|HL_HAND_LT|HL_WAIST|HL_CHEST|HL_NECK);
-		}else if(level.clients[i].sess.team != TEAM_SPECTATOR){ // Boe!Man 8/30/11: Means the client is a Red player that wasn't qualified to play in the cage fight. Pop as well.
-			G_Damage (&g_entities[i], NULL, NULL, NULL, NULL, 10000, 0, MOD_POP, HL_HEAD|HL_FOOT_RT|HL_FOOT_LT|HL_LEG_UPPER_RT|HL_LEG_UPPER_LT|HL_HAND_RT|HL_HAND_LT|HL_WAIST|HL_CHEST|HL_NECK);
+			level.clients[level.sortedClients[i]].ps.weapon = WP_AK74_ASSAULT_RIFLE;
+			level.clients[level.sortedClients[i]].ps.weaponstate = WEAPON_READY;
+			level.clients[level.sortedClients[i]].ps.weaponTime = 0;
+			level.clients[level.sortedClients[i]].ps.weaponAnimTime = 0;
+			level.clients[level.sortedClients[i]].ps.stats[STAT_FROZEN] = 10000;
+		}else if(level.clients[level.sortedClients[i]].sess.team == TEAM_BLUE){
+			G_Damage (&g_entities[level.sortedClients[i]], NULL, NULL, NULL, NULL, 10000, 0, MOD_POP, HL_HEAD|HL_FOOT_RT|HL_FOOT_LT|HL_LEG_UPPER_RT|HL_LEG_UPPER_LT|HL_HAND_RT|HL_HAND_LT|HL_WAIST|HL_CHEST|HL_NECK);
+		}else if(level.clients[level.sortedClients[i]].sess.team != TEAM_SPECTATOR){ // Boe!Man 8/30/11: Means the client is a Red player that wasn't qualified to play in the cage fight. Pop as well.
+			G_Damage (&g_entities[level.sortedClients[i]], NULL, NULL, NULL, NULL, 10000, 0, MOD_POP, HL_HEAD|HL_FOOT_RT|HL_FOOT_LT|HL_LEG_UPPER_RT|HL_LEG_UPPER_LT|HL_HAND_RT|HL_HAND_LT|HL_WAIST|HL_CHEST|HL_NECK);
 		} // Boe!Man 9/4/11: Else would be spectator only, no need to do anything.
 	}
 	// when it ends execute this:
@@ -775,45 +774,6 @@ char *GetReason(void) {
 	return "";
 }
 
-// Boe!Man 1/10/10
-// This function is called alot, better optimize this -.-''
-int CheckAdmin(gentity_t *ent, char *buffer, qboolean otheradmins) {
-char		*numb;
-int			id;
-int			i;
-for(i=0;i<=g_maxclients.integer;i++){
-	numb = va("%i", i);
-	if(strstr(buffer, numb)){
-		id = atoi(numb);
-		if(i>=10){
-			break;
-		}
-	}
-}
-	memset(&numb, 0, sizeof(numb)); // clean buffer
-	if(id >= 0 && id <= g_maxclients.integer){
-		if(g_entities[id].client->sess.admin && otheradmins == qfalse){
-			trap_SendServerCommand(ent->s.number, va("print\"^3[Info] ^7You cannot use this command on other Admins.\n\""));
-			return -1;
-		}
-			else{
-				if ( g_entities[id].client->pers.connected != CON_DISCONNECTED )
-				{
-					if(ent && ent->client)
-					{
-						return id;
-					}else{
-						return -1;
-					}
-				}else{
-					return -1;
-				}
-			}
-	}else{
-	return -1;
-	}
-}
-
 int StartAfterCommand(char *param){
 	int i;
 	for(i=0;i<=strlen(param);i++){
@@ -822,177 +782,6 @@ int StartAfterCommand(char *param){
 		}
 	}
 	return 0;
-}
-
-/*
-====================
-IP2Country by Henkie
-4/1/10 - 12:04 AM
-====================
-*/
-
-void AddIPList(char ip1[24], char country[128], char ext[6])
-{
-	int				len;
-	fileHandle_t	f;
-	char			string[1024];
-	char	octet[4][4], octetx[4][4];
-	int		i, z, countx[4], loops = 0, count = 0;
-	char *IP;
-	//G_LogPrintf("Checking ip..\n");
-	IP = va("%s", ip1);
-	//Com_Printf("IP is: %s\n", ent->client->pers.ip);
-	// Set countx to zero, when you do not set the variable you get weird ass results.
-	countx[0] = 0;
-	countx[1] = 0;
-	countx[2] = 0;
-	countx[3] = 0;
-	// End
-	while(*IP){
-		if(*IP == '.')
-		{
-			for(i=0;i<count;i++){
-				if(loops == 0){
-				octet[0][i] = *--IP;
-				countx[0] += 1;
-				}else if(loops == 1){
-				octet[1][i] = *--IP;
-				countx[1] += 1;
-				}else if(loops == 2){
-				octet[2][i] = *--IP;
-				countx[2] += 1;
-				}
-			}
-			for(i=0;i<count;i++){
-				*++IP; // ignore this error, compiler says it does not have an effect
-			}
-			loops += 1;
-			count = 0;
-		}else{
-		count += 1;
-		}
-		IP++;
-		if(*IP == '\0'){
-			for(i=0;i<3;i++){
-				if(*--IP != '.'){
-				octet[3][i] = *IP;
-				countx[3] += 1;
-				}
-			}
-			break;
-		}
-	}
-	for(i=0;i<=3;i++){ // 4 octets
-		for(z=0;z<countx[i];z++){
-		octetx[i][z] = octet[i][countx[i]-(z+1)];
-		}
-		octetx[i][countx[i]] = '\0';
-	}
-	#ifdef _DEBUG
-	Com_Printf("Adding ip to list...\n");
-	#endif
-	len = trap_FS_FOpenFile( va("country\\known\\IP.%s", octetx[0]), &f, FS_APPEND_TEXT );
-	if (!f)
-	{
-		#ifdef _DEBUG
-		Com_Printf("^1Error opening File\n");
-		#endif
-		return;
-	}
-	strcpy(string, va("1\n{\nip \"%s\"\ncountry \"%s\"\next \"%s\"\n}\n", ip1, country, ext));
-
-	trap_FS_Write(string, strlen(string), f);
-	trap_FS_Write("\n", 1, f);
-	trap_FS_FCloseFile(f);
-
-}
-
-qboolean CheckIP(gentity_t *ent){ // Henk Update 12/05/10 -> Lag spike when file reaches 200kb, fix by splitting files
-	void	*GP2, *group;
-	char	*filePtr, *file, Files[1024];
-	char	ip1[24], country[128], ext[6];
-	int		fileCount;
-	char	octet[4][4], octetx[4][4];
-	int		i, z, countx[4], loops = 0, count = 0;
-	char *IP;
-
-	IP = va("%s", ent->client->pers.ip);
-	countx[0] = 0;
-	countx[1] = 0;
-	countx[2] = 0;
-	countx[3] = 0;
-	// End
-	while(*IP){
-		if(*IP == '.')
-		{
-			for(i=0;i<count;i++){
-				if(loops == 0){
-				octet[0][i] = *--IP;
-				countx[0] += 1;
-				}else if(loops == 1){
-				octet[1][i] = *--IP;
-				countx[1] += 1;
-				}else if(loops == 2){
-				octet[2][i] = *--IP;
-				countx[2] += 1;
-				}
-			}
-			for(i=0;i<count;i++){
-				*++IP; // ignore this error, compiler says it does not have an effect
-			}
-			loops += 1;
-			count = 0;
-		}else{
-		count += 1;
-		}
-		IP++;
-		if(*IP == '\0'){
-			for(i=0;i<3;i++){
-				if(*--IP != '.'){
-				octet[3][i] = *IP;
-				countx[3] += 1;
-				}
-			}
-			break;
-		}
-	}
-	for(i=0;i<=3;i++){ // 4 octets
-		for(z=0;z<countx[i];z++){
-		octetx[i][z] = octet[i][countx[i]-(z+1)];
-		}
-		octetx[i][countx[i]] = '\0';
-	}
-	fileCount = trap_FS_GetFileList( "country\\", va("IP.%s.%s", octetx[0], octetx[1]), Files, 1024 );
-	filePtr = Files;
-	file = va("country\\%s", filePtr);
-	GP2 = trap_GP_ParseFile(file, qtrue, qfalse);
-	if (!GP2)
-	{
-		// Boe!Man 11/12/10: Ignore file warnings!
-		//G_LogPrintf("Error in file: \"%s\" or file not found.\n", file);
-		return qfalse;
-	}
-		group = trap_GPG_GetSubGroups(GP2);
-
-		while(group)
-		{
-			trap_GPG_FindPairValue(group, "ip", "0", ip1);
-			if(strstr(ip1, ent->client->pers.ip)){
-				trap_GPG_FindPairValue(group, "country", "", country);
-				trap_GPG_FindPairValue(group, "ext", "", ext);
-				trap_GP_Delete(&GP2);
-				strcpy(ent->client->sess.country, country);
-				strcpy(ent->client->sess.countryext, ext);
-				//Com_Printf("Found in known list\n");
-				return qtrue;
-				break; // stop searching
-			}
-			group = trap_GPG_GetNext(group);
-		}
-		strcpy(ent->client->sess.countryext, "??");
-		trap_GP_Delete(&GP2);
-		//Com_Printf("Not found in known list\n");
-		return qfalse;
 }
 
 unsigned int henk_atoi( const char *string ) {

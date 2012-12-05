@@ -1657,7 +1657,7 @@ void Cmd_Follow_f( gentity_t *ent )
 	trap_Argv( 1, arg, sizeof( arg ) );
 
 	if(henk_ischar(arg[0])){
-		for(z=0;z<=level.numConnectedClients;z++){
+		for(z=0;z<level.numConnectedClients;z++){
 			//trap_SendServerCommand(-1, va("print\"^3[Debug] ^7%s comparing with %s.\n\"", g_entities[level.sortedClients[i]].client->pers.cleanName,numb));
 			if(strstr(Q_strlwr(g_entities[level.sortedClients[z]].client->pers.cleanName), Q_strlwr(arg))){
 				i = level.sortedClients[z];

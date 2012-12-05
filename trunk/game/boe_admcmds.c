@@ -199,7 +199,7 @@ void Boe_NormalDamage(int argNum, gentity_t *ent, qboolean shortCmd){
 	RPM_WeaponMod ();
 	//BG_InitWeaponStats(qfalse);
 	
-	for(i=0;i<=level.numConnectedClients;i++){
+	for(i=0;i<level.numConnectedClients;i++){
 		level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
 		G_UpdateOutfitting(g_entities[level.sortedClients[i]].s.number);
 		//ammoindex = weaponData[WP_KNIFE].attack[ATTACK_ALTERNATE].ammoIndex;
@@ -238,7 +238,7 @@ void Boe_RealDamage(int argNum, gentity_t *ent, qboolean shortCmd){
 	g_instaGib.integer = 1;
 	RPM_WeaponMod ();
 	//BG_InitWeaponStats(qfalse);
-	for(i=0;i<=level.numConnectedClients;i++){
+	for(i=0;i<level.numConnectedClients;i++){
 		level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
 		G_UpdateOutfitting(g_entities[level.sortedClients[i]].s.number);
 	}
@@ -508,7 +508,7 @@ void Boe_NoNades(int argNum, gentity_t *ent, qboolean shortCmd){
 		trap_Cvar_Update(&g_disableNades);
 		SetNades("1");
 		BG_SetAvailableOutfitting(g_availableWeapons.string);
-		for(i=0;i<=level.numConnectedClients;i++){
+		for(i=0;i<level.numConnectedClients;i++){
 			level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
 			G_UpdateOutfitting(g_entities[level.sortedClients[i]].s.number);
 		}
@@ -950,7 +950,7 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 				if(henk_isdigit(arg[0])){
 					num = atoi(arg);
 				}else{
-					for(i=0;i<=level.numConnectedClients;i++){
+					for(i=0;i<level.numConnectedClients;i++){
 						//trap_SendServerCommand(-1, va("print\"^3[Debug] ^7%s comparing with %s.\n\"", g_entities[level.sortedClients[i]].client->pers.cleanName,numb));
 						if(strstr(Q_strlwr(g_entities[level.sortedClients[i]].client->pers.cleanName), Q_strlwr(arg))){
 							num = level.sortedClients[i];
@@ -969,7 +969,7 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 		{
 			num = atoi( arg );
 		}else if(strlen(arg) >= 1){
-			for(i=0;i<=level.numConnectedClients;i++){
+			for(i=0;i<level.numConnectedClients;i++){
 				//trap_SendServerCommand(-1, va("print\"^3[Debug] ^7%s comparing with %s.\n\"", g_entities[level.sortedClients[i]].client->pers.cleanName,numb));
 				if(strstr(Q_strlwr(g_entities[level.sortedClients[i]].client->pers.cleanName), Q_strlwr(arg))){
 					num = level.sortedClients[i];
@@ -2337,18 +2337,6 @@ void Boe_Twist (int argNum, gentity_t *adm, qboolean shortCmd)
 	SetClientViewAngle(ent, lookdown, qfalse);
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 	ent->client->pers.twisted = qtrue;
-	
-	/*
-	for (i = 0; i < level.numConnectedClients; i++)	{
-		if (level.clients[level.sortedClients[i]].sess.admin){	
-			if(adm != NULL)
-				//CPx(level.sortedClients[i], va("print \"^7%s^7: ^3[%s] %s\n\"", adm->client->pers.netname, action, target));
-				trap_SendServerCommand(level.sortedClients[i], va("print \"^7%s^7: ^3[Twisted] ^7%s\n\"", adm->client->pers.netname, g_entities[idnum].client->pers.netname));
-			else 
-				trap_SendServerCommand(level.sortedClients[i], va("print \"^7ADMIN^7: ^3[Twisted] ^7%s\n\"", g_entities[idnum].client->pers.netname));
-		}
-	}
-	*/
 
 	if(adm && adm->client) {
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,^7%s was %st%sw%si%ss%st%sed by %s", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, adm->client->pers.netname));

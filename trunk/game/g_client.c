@@ -1562,7 +1562,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 		}
 		
 		// Boe!Man 10/30/11: Check for duplicate clients (based on IP).
-		for(i = 0;i <= level.numConnectedClients; i++){
+		for(i = 0;i < level.numConnectedClients; i++){
 		
 			if((g_entities[level.sortedClients[i]].r.svFlags & SVF_BOT ) || isBot)
 				continue;
