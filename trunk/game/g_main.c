@@ -282,6 +282,9 @@ vmCvar_t	g_shuffleteams;
 // Boe!Man 7/29/12
 vmCvar_t	g_preferSubnets;
 
+// Henk 10/30/12
+vmCvar_t g_clientDeathMessages;
+
 // Boe!Man 9/2/12
 vmCvar_t	hideSeek_ExtendedRoundStats;
 
@@ -609,6 +612,9 @@ static cvarTable_t gameCvarTable[] =
 	// Boe!Man 7/29/12
 	{ &g_preferSubnets,				"g_preferSubnets",		 	"0",		CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
 
+
+	//{ &g_clientDeathMessages,		"g_clientDeathMessages",		 	"0",		CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
+	//http://1fx.uk.to/index.php?/topic/1230-1fx-anticheat/page__view__findpost__p__13498
 #ifdef _DEBUG
 	// Boe!Man: Debug CVAR.
 	{ &boe_log, "boe_log", "0", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },

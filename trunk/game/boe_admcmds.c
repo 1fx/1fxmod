@@ -467,46 +467,44 @@ void Boe_NoNades(int argNum, gentity_t *ent, qboolean shortCmd){
 			Com_Printf("You cannot enable/disable Nades in Humans&Zombies.\n");
 		}
 		return;
-	}else if(!level.nadesFound){
-		if(ent && ent->client){
-			trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7No nades are set to be used (availableWeapons CVAR).\n\""));
-		}else{
-			Com_Printf("^7No nades are set to be used (availableWeapons CVAR).\n");
-		}
-		return;
 	}
 
 	if(g_disableNades.integer == 1){
 		g_disableNades.integer = 0;
 		trap_Cvar_Set("g_disableNades", "0");
-		trap_Cvar_Update(&g_disableNades);
-		SetNades("0");
-		BG_SetAvailableOutfitting(g_availableWeapons.string);
-		for(i=0;i<level.numConnectedClients;i++){
-			level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
-			#ifdef _DEBUG
-			Com_Printf("Setting nades\n");
-			#endif
-			//level.clients[level.sortedClients[i]].ps.stats[STAT_OUTFIT_GRENADE] = bg_itemlist[bg_outfittingGroups[OUTFITTING_GROUP_GRENADE][3]].giTag;
-			G_UpdateOutfitting(g_entities[level.sortedClients[i]].s.number);
-			//level.clients[level.sortedClients[i]].ps.ammo[weaponData[WP_SMOHG92_GRENADE].attack[ATTACK_NORMAL].ammoIndex]=1;
-			//level.clients[level.sortedClients[i]].ps.stats[STAT_WEAPONS] |= ( 1 << WP_SMOHG92_GRENADE );
-			//level.clients[level.sortedClients[i]].ps.clip[ATTACK_NORMAL][WP_SMOHG92_GRENADE]=1;
-		}
-		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sN%sa%sd%se%ss %senabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-		if(ent && ent->client){
-			trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Nades enabled by %s.\n\"", ent->client->pers.netname));
-			Boe_adminLog ("Nades Enabled", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), "none");
-		}else{
-			trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Nades enabled.\n\""));
-			Boe_adminLog ("Nades Enabled", va("RCON"), "none");
-		}
+	    if(SetNades("0")){
+			trap_Cvar_Update(&g_disableNades);
+			BG_SetAvailableOutfitting(g_availableWeapons.string);
+			for(i=0;i<level.numConnectedClients;i++){
+				level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
+				Com_Printf("Setting nades\n");
+				//level.clients[level.sortedClients[i]].ps.stats[STAT_OUTFIT_GRENADE] = bg_itemlist[bg_outfittingGroups[OUTFITTING_GROUP_GRENADE][3]].giTag;
+				G_UpdateOutfitting(g_entities[level.sortedClients[i]].s.number);
+				//level.clients[level.sortedClients[i]].ps.ammo[weaponData[WP_SMOHG92_GRENADE].attack[ATTACK_NORMAL].ammoIndex]=1;
+				//level.clients[level.sortedClients[i]].ps.stats[STAT_WEAPONS] |= ( 1 << WP_SMOHG92_GRENADE );
+				//level.clients[level.sortedClients[i]].ps.clip[ATTACK_NORMAL][WP_SMOHG92_GRENADE]=1;
+			}
+			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sN%sa%sd%se%ss %senabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+			if(ent && ent->client){
+				trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Nades enabled by %s.\n\"", ent->client->pers.netname));
+				Boe_adminLog ("Nades Enabled", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), "none");
+			}else{
+				trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Nades enabled.\n\""));
+				Boe_adminLog ("Nades Enabled", va("RCON"), "none");
+			}
+	    }else{
+	    	if(ent && ent->client){
+	    		trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7No nades are set to be used on the server.\n\""));
+	    	}else{
+	    		Com_Printf("7No nades are set to be used on the server.\n");
+	    	}
+	    }
 	}else{
 		g_disableNades.integer = 1;
 		trap_Cvar_Set("g_disableNades", "1");
-		trap_Cvar_Update(&g_disableNades);
 		SetNades("1");
+		trap_Cvar_Update(&g_disableNades);
 		BG_SetAvailableOutfitting(g_availableWeapons.string);
 		for(i=0;i<=level.numConnectedClients;i++){
 			level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
@@ -854,6 +852,7 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 	int numberofclients = 0;
 	char string[1024] = "\0";
 	char string1[64] = "\0";
+
 	trap_Argv( argNum, arg, sizeof( arg ) );
 	if(shortCmd){ // Henk 04/05/10 -> Handle the short admin commands.
 		num = -1;
@@ -1169,9 +1168,7 @@ int Boe_Remove_from_list ( char *key, const char *file, const char* type, gentit
 		}
 		key++;
 	}
-	#ifdef _DEBUG
 	Com_Printf("Remove: opening %s\n", file);
-	#endif
 	len = trap_FS_FOpenFile( file, &f, FS_READ_TEXT);
 
 	if (!f)	{
@@ -1269,70 +1266,51 @@ int Boe_Remove_from_list ( char *key, const char *file, const char* type, gentit
 Boe_BanList
 =============
 */
-
 void Henk_BanList(int argNum, gentity_t *adm, qboolean shortCmd){
+	int start;
+	int end;
+	start = trap_Milliseconds();
 	Boe_BanList(argNum, adm, shortCmd, qfalse);
+	end = trap_Milliseconds()-start;
+	Com_Printf(va("Banlist took %d ms\n", end));
 }
 
 void Henk_SubnetBanList(int argNum, gentity_t *adm, qboolean shortCmd){
 	Boe_BanList(argNum, adm, shortCmd, qtrue);
 }
 
+int banlist_callback(void *p_data, int num_fields, char **p_fields, char **p_col_names) {
+  //Com_Printf("NAME OF ID 1= %s\n", p_fields[0]);
+  return 0;
+}
+
 void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet){
-	char	ip[64], name[64], reason[64], by[64], test = ' ';
-	char	column1[20], column2[20], column3[20];
-	int		spaces = 0, length = 0, z;
-	fileHandle_t f;
-	char            buf[15000] = "\0";
 	// Boe!Man 11/04/11: We use this in order to send as little packets as possible. Packet max size is 1024 minus some overhead, 1000 char. max should take care of this. (adm only, RCON remains unaffected).
 	char			buf2[1000] = "\0";
 	// End Boe!Man 11/04/11
-	int len, i, count = 0, EndPos = -1, StartPos = 0;
-	qboolean begin = qtrue;
-	int r, lcount = -1, tempend;
 	char fileName[128];
-	
-	// Boe!Man 11/04/11: Init the file (and buffer) before the wrapper so that in case errors occur the default wrapper isn't printed yet.
-	if(subnet){
-		strcpy(fileName, "users/subnetbans.txt");
-	}else{
-		strcpy(fileName, g_banfile.string);
-	}
-
-	len = trap_FS_FOpenFile(fileName, &f, FS_READ);
-	if(!test){
+	// Henk comeback 19/09/12: Add SQLite back end
+	sqlite3 * db;
+	sqlite3_stmt *stmt;
+	int rc;
+	int start;
+	rc = sqlite3_open("1fx.db", &db);
+	//Com_Printf("Db status: %s\n", sqlite3_errmsg(db));
+	if(rc){
 		if(adm){
-			trap_SendServerCommand( adm-g_entities, va("print \"Error while reading %s\n\"", fileName));
+			trap_SendServerCommand( adm-g_entities, va("print \"Database error: %s\n\"", sqlite3_errmsg(db)));
 		}else{
-			Com_Printf("Error while reading %s\n", fileName);
+			Com_Printf("Database error: %s\n", sqlite3_errmsg(db));
 		}
 		return;
 	}
-	// Boe!Man 11/04/11: Improved error handling.
-	if(len > 15000){
-		if(adm){
-			trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7File maximum length reached (current len: %i, max allowed: 15000).\n\"", len));
-		}else{
-			Com_Printf("Error: File maximum length reached (current len: %i, max allowed: 15000).\n", len);
-		}
-		return;
-	}
-	trap_FS_Read( buf, len, f );
-	buf[len] = '\0';
-	trap_FS_FCloseFile(f);
-	
-	//wrapper for interface
 	if(adm){
 		if(subnet){
 			Q_strcat(buf2, sizeof(buf2), "^3[Subnetbanlist]^7\n\n");
-			//trap_SendServerCommand( adm-g_entities, va("print \"^3[Subnetbanlist]^7\n\n\""));
 		}else{
 			Q_strcat(buf2, sizeof(buf2), "^3[Banlist]^7\n\n");
-			//trap_SendServerCommand( adm-g_entities, va("print \"^3[Banlist]^7\n\n\""));
 		}
 		Q_strcat(buf2, sizeof(buf2), "^3 #    IP              Name                Reason             By\n^7------------------------------------------------------------------------\n");
-		//trap_SendServerCommand( adm-g_entities, va("print \"^3 #    IP              Name                Reason             By\n\""));
-		//trap_SendServerCommand( adm-g_entities, va("print \"^7------------------------------------------------------------------------\n\""));
 	}else{
 		if(subnet)
 			Com_Printf("^3[Subnetbanlist]^7\n\n");
@@ -1341,147 +1319,38 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 		Com_Printf("^3 #    IP              Name                Reason             By\n");
 		Com_Printf("^7------------------------------------------------------------------------\n");
 	}
-	
-	// We parse the buffer, each IP follow it to the file in baninfo(if exists), if empty ignore and LINES +1(CUZ IT IS A LINE IN BANLIST!)
-	for(i=0;i<len;i++){
-		if(begin && buf[i] == '\n'){
-			StartPos = i+1;
-			EndPos = -1;
-			begin = qfalse;
+
+	if(subnet){
+		strcpy(fileName, "users/subnetbans.txt");
+	}else{
+		strcpy(fileName, g_banfile.string);
+	}
+
+	rc = sqlite3_prepare(db, "select * from bans order by ID", -1, &stmt, 0);
+	if(rc!=SQLITE_OK){
+		if(adm){
+			trap_SendServerCommand( adm-g_entities, va("print \"Database SQL error: %s\n\"", sqlite3_errmsg(db)));
+		}else{
+			Com_Printf("Database SQL error: %s\n", sqlite3_errmsg(db));
 		}
-		if(buf[i] == '\\' && buf[i] != '\n'){
-			EndPos = i;
-			begin = qtrue;
-			memset(ip, 0, sizeof(ip));
-			strncpy(ip, buf+StartPos, EndPos-StartPos);
-			lcount = -1;
-			for(r=i;r<strlen(buf);r++){
-				if(buf[r] == '/' && buf[r+1] == '/'){
-					lcount = r;
-					break;
-				}
-			}
-			memset(name, 0, sizeof(name));
-			strncpy(name, buf+EndPos+1, lcount-(EndPos+1));
-			tempend = lcount;
-			name[strlen(name)] = '\0';
-			//Com_Printf("IP: %s\n", ip);
-			//Com_Printf("Name: %s\n", name);
-			for(r=lcount;r<strlen(buf);r++){
-				if(buf[r] == '|' && buf[r+1] == '|'){
-					lcount = r;
-					break;
-				}
-			}
-			memset(by, 0, sizeof(by));
-#if(defined(Q3_VM) || defined(__GNUC__))
-			Q_strncpyz(by, buf+tempend+2, lcount-(tempend+2)+1);
-/* TODO (ajay#1#): Check if this is indeed bugged under MSVC. The QVM method works fine under gcc. */
-#else
-			Q_strncpyz(by, buf+tempend+2, lcount-(tempend+2));
-#endif
-			//Com_Printf("BY: %s(%i-%i)\n", by, lcount, tempend+2);
-			//by[(lcount-tempend)+2] = '\0';
-			tempend = (tempend+4)+(lcount-(tempend+2));
-			//Com_Printf("By: %s\n", by);
-			if(buf[lcount+2] != '\n'){
-			for(r=lcount;r<strlen(buf);r++){
-				if(buf[r] == '\n'){
-					if(buf[r-1] == 13){ // Boe!Man 4/28/12: Carriage return. For some reason, this ALWAYS messes up under Windows (cause of the two line end modes, CR+LF). Cut the CR as well.
-						lcount = r-2;
-					}else{ // Only LF seems to be used. Default to value -1.
-						lcount = r-1;
-					}
-					// End Boe!Man 4/28/12
-					break;
-				}else
-					lcount = r+1;
-			}
-			memset(reason, 0, sizeof(reason));
-#if(defined(Q3_VM) || defined(__GNUC__))
-			strncpy(reason, buf+tempend, lcount-(tempend)+1);
-#else
-			strncpy(reason, buf+tempend, lcount-(tempend));
-#endif
-			//Com_Printf("Reason: %s\n", reason);
-			}else
-			strcpy(reason, "");
-			//Com_Printf("Reason: %s\n", reason);
-			count += 1; // Henk 25/01/11 -> Fix wrong ban lines.
-			// Start extracting and printing baninfo
-			
-			length = strlen(ip);
-			if(length > 15){
-				ip[15] = '\0';
-				length = 15;
-			}
-			spaces = 16-length;
-			for(z=0;z<spaces;z++){
-			column1[z] = test;
-			}
-			column1[spaces] = '\0';
-			//trap_SendServerCommand( adm-g_entities, va("print \"%s%s", ip, column1)); // Boe!Man 9/16/10: Print tier 1.
-			length = strlen(name);
-			if(length > 19){
-				name[19] = '\0';
-				length = 19;
-			}
-			spaces = 20-length;
-			for(z=0;z<spaces;z++){
-			column2[z] = test;
-			}
-			column2[spaces] = '\0';
-			//trap_SendServerCommand( adm-g_entities, va("print \"%s%s", name, column2)); // Boe!Man 9/16/10: Print tier 2.
-			length = strlen(reason);
-			if(length > 18){
-				reason[18] = '\0';
-				length = 18;
-			}
-			spaces = 19-length;
-			memset(column3, 0, sizeof(column3));
-			for(z=0;z<spaces;z++){
-			column3[z] = test;
-			}
-			column3[spaces] = '\0';
-			length = strlen(by);
-			if(length > 16){
-				by[16] = '\0';
-			}
+		return;
+	}else while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
+		if(rc == SQLITE_ROW){
+
 			if(adm){
-				// Boe!Man 1/24/11: Print the banline as well (for easy unbanning).
-				
 				// Boe!Man 11/04/11: Put packet through to clients if char size would exceed 1000 and reset buf2.
-				if((strlen(buf2)+strlen(va("[^3%i^7]   %s%s%s%s%s%s%s\n", count, ip, column1, name, column2, reason, column3, by))) > 1000){
+				if((strlen(buf2)+strlen(va("[^3%-3.3i^7] %-15.15s %-15.15s %-18.18s %-15.15s\n", sqlite3_column_int(stmt, 0), sqlite3_column_text(stmt, 1), sqlite3_column_text(stmt, 2), sqlite3_column_text(stmt, 4), sqlite3_column_text(stmt, 3)))) > 1000){
 					trap_SendServerCommand( adm-g_entities, va("print \"%s\"", buf2));
 					memset(buf2, 0, sizeof(buf2)); // Boe!Man 11/04/11: Properly empty the buffer.
 				}
-				
-				if(count <= 9){
-					Q_strcat(buf2, sizeof(buf2), va("[^3%i^7]   %s%s%s%s%s%s%s\n", count, ip, column1, name, column2, reason, column3, by));
-					//trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7]   %s%s%s%s%s%s%s\n", count, ip, column1, name, column2, reason, column3, by)); // Boe!Man 9/16/10: Print ban.
-				}else if(count > 9 && count < 100){
-					Q_strcat(buf2, sizeof(buf2), va("[^3%i^7]  %s%s%s%s%s%s%s\n", count, ip, column1, name, column2, reason, column3, by));
-					//trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7]  %s%s%s%s%s%s%s\n", count, ip, column1, name, column2, reason, column3, by)); // Boe!Man 9/16/10: Print ban.
-				}else{
-					Q_strcat(buf2, sizeof(buf2), va("[^3%i^7] %s%s%s%s%s%s%s\n", count, ip, column1, name, column2, reason, column3, by));
-					//trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7] %s%s%s%s%s%s%s\n", count, ip, column1, name, column2, reason, column3, by)); // Boe!Man 9/16/10: Print ban.
-				}
+				Q_strcat(buf2, sizeof(buf2), va("[^3%-3.3i^7] %-15.15s %-15.15s %-18.18s %-15.15s\n", sqlite3_column_int(stmt, 0), sqlite3_column_text(stmt, 1), sqlite3_column_text(stmt, 2), sqlite3_column_text(stmt, 4), sqlite3_column_text(stmt, 3)));
 			}else{
-				if(count <= 9){
-					Com_Printf("[^3%i^7]   %s%s%s%s%s%s%s\n", count, ip, column1, name, column2, reason, column3, by);
-				}else if(count > 9 && count < 100){
-					Com_Printf("[^3%i^7]  %s%s%s%s%s%s%s\n", count, ip, column1, name, column2, reason, column3, by);
-				}else{
-					Com_Printf("[^3%i^7] %s%s%s%s%s%s%s\n", count, ip, column1, name, column2, reason, column3, by);
-				}
+				Com_Printf("[^3%-3.3i^7] %-15.15s %-15.15s %-18.18s %-15.15s\n", sqlite3_column_int(stmt, 0), sqlite3_column_text(stmt, 1), sqlite3_column_text(stmt, 2), sqlite3_column_text(stmt, 4), sqlite3_column_text(stmt, 3));
 			}
-			//trap_SendServerCommand( adm-g_entities, va("print \"%s\n", by)); // Boe!Man 9/16/10: Print tier 4.
-			//trap_SendServerCommand( adm-g_entities, va("print \"%s\n%s\n%s\n%s\n\"", ip, name, reason, by)); // print result
-			// End
 		}
 	}
-	// End
-	
+	sqlite3_finalize(stmt);
+	sqlite3_close(db);	
 	// Boe!Man 11/04/11: Fix for RCON not properly showing footer of banlist.
 	if(adm){
 		trap_SendServerCommand( adm-g_entities, va("print \"%s\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\"", buf2)); // Boe!Man 11/04/11: Also send the last buf2 (that wasn't filled as a whole yet).
@@ -1817,9 +1686,7 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 
 	trap_FS_FOpenFile( file, &f, FS_WRITE_TEXT);
 	if(!f){
-		#ifdef _DEBUG
 		Com_Printf("failed\n");
-		#endif
 		return;
 	}
 	trap_FS_Write("", 0, f); // clear file
@@ -1827,9 +1694,7 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 
 	trap_FS_FOpenFile( file, &f, FS_APPEND_TEXT);
 	if(!f){
-		#ifdef _DEBUG
 		Com_Printf("failed\n");
-		#endif
 		return;
 	}
 
@@ -2210,7 +2075,7 @@ void Boe_Remove_Admin_f (int argNum, gentity_t *adm, qboolean shortCmd)
 	char			passID[MAX_BOE_ID];
 	char			*passID2 = passID;
 
-#ifdef _DEBUG
+#ifdef _BOE_DBG
 	if (strstr(boe_log.string, "1"))
 		G_LogPrintf("4s\n");
 #endif
@@ -2256,7 +2121,7 @@ void Boe_Remove_Admin_f (int argNum, gentity_t *adm, qboolean shortCmd)
 	// Boe!Man 10/16/10: He's not an Admin anymore so it doesn't matter if he was a B-Admin, Admin or S-Admin: either way he shouldn't be allowed to spec the opposite team.
 	g_entities[idnum].client->sess.adminspec = qfalse;
 
-#ifdef _DEBUG
+#ifdef _BOE_DBG
 	if (strstr(boe_log.string, "1"))
 		G_LogPrintf("4e\n");
 #endif
@@ -3236,7 +3101,7 @@ void Boe_Strip (int argNum, gentity_t *adm, qboolean shortCmd)
 Boe_Dev_f
 ==========
 */
-#ifdef _DEBUG
+#ifndef PUB_RELEASE
 void Boe_dev_f ( gentity_t *ent )
 {
 
@@ -3870,6 +3735,9 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 	char xip[64], arg[32] = "\0", temp[64] = "\0";
 	qboolean passwordlist = qfalse, clanList = qfalse;
 	qboolean last = qfalse;
+	int start;
+	int end;
+	start = trap_Milliseconds();
 	if(shortCmd){
 		trap_Argv( 0, temp, sizeof( temp ) );
 		trap_Argv( 1, arg, sizeof( arg ) );
@@ -3971,9 +3839,7 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 			begin = qtrue;
 			memset(xip, 0, sizeof(xip));
 			if((EndPos-StartPos)  < 1){
-				#ifdef _DEBUG
 				Com_Printf("Error: %i - %i\n", EndPos, StartPos);
-				#endif
 				return;
 			}
 			//if(passwordlist)
@@ -4093,7 +3959,7 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 							Com_sprintf(buffer+strlen(buffer), sizeof(buffer), "[^3%i^7]  %s%s%s\n", count, name, column2, xip);
 					}else{
 						//trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7] %s%s%s%s%s\n", count, level, column1, name, column2, xip)); // Boe!Man 9/16/10: Print ban.
-							Com_sprintf(buffer+strlen(buffer), sizeof(buffer), "[^3%i^7] %s%s%s\n", count, name, column2, xip);
+							Com_sprintf(buffer+strlen(buffer), sizeof(buffer), "[^3%i^7] %s%s%s%s%s\n", count, name, column2, xip);
 					}
 				}
 				
@@ -4133,6 +3999,8 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 	}else{
 		Com_Printf("\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n");
 	}
+	end = trap_Milliseconds()-start;
+	Com_Printf(va("Adminlist took %d ms\n", end));
 	return;
 }
 
@@ -4200,15 +4068,6 @@ void Henk_Gametype(int argNum, gentity_t *adm, qboolean shortCmd){
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sG%sa%sm%se%st%sype ^7Capture the Flag!", level.time + 3500, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		}else if(strstr(lwrP, "inf")){
 			trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype inf\n"));
-			// Boe!Man 10/4/12: Fix latch CVAR crap. It's either h&s or h&z, so ensure the latched value is GONE so we can properly reset it.
-			if(current_gametype.value == GT_HS || current_gametype.value == GT_HZ){
-				trap_Cvar_Set("g_gametype", "h&s");
-				trap_Cvar_Update(&g_gametype);
-				trap_Cvar_Set("g_gametype", "h&z");
-				trap_Cvar_Update(&g_gametype);
-				trap_Cvar_Set("g_gametype", "inf");
-				trap_Cvar_Update(&g_gametype);
-			}
 			strcpy(gametype, "inf");
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sG%sa%sm%se%st%sype ^7Infiltration!", level.time + 3500, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		}else if(strstr(lwrP, "tdm")){
@@ -4367,15 +4226,6 @@ void Henk_Map(int argNum, gentity_t *adm, qboolean shortCmd){
 				strcpy(gametype, "ctf");
 			}else if(strstr(gt, "inf")){
 				strcpy(gametype, "inf");
-				// Boe!Man 10/4/12: Fix latch CVAR crap. It's either h&s or h&z, so ensure the latched value is GONE so we can properly reset it.
-				if(current_gametype.value == GT_HS || current_gametype.value == GT_HZ){
-					trap_Cvar_Set("g_gametype", "h&s");
-					trap_Cvar_Update(&g_gametype);
-					trap_Cvar_Set("g_gametype", "h&z");
-					trap_Cvar_Update(&g_gametype);
-					trap_Cvar_Set("g_gametype", "inf");
-					trap_Cvar_Update(&g_gametype);
-				}
 			}else if(strstr(gt, "tdm")){
 				strcpy(gametype, "tdm");
 			}else if(strstr(gt, "dm")){
@@ -4733,39 +4583,4 @@ void Boe_ShuffleTeams(int argNum, gentity_t *ent, qboolean shortCmd){
 		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Shuffle teams.\n\""));
 		Boe_adminLog ("Shuffle Teams", va("RCON"), "none");
 	}
-}
-
-
-
-/*
-==========
-Boe_friendlyFire
-==========
-*/
-
-void Boe_friendlyFire(int argNum, gentity_t *ent, qboolean shortCmd){
-	if(!g_friendlyFire.integer){ // Boe!Man 11/5/12: Disabled, enable it.
-		Boe_setTrackedCvar(18, 1);
-		
-		if(ent && ent->client){
-			Boe_adminLog ("Friendly Fire Enabled", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), "none");
-			trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Friendly fire enabled by %s.\n\"", ent->client->pers.netname));
-		}else{
-			Boe_adminLog ("Friendly Fire Enabled", va("RCON"), "none");
-			trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Friendly fire enabled.\n"));
-		}
-	}else{ // Boe!Man 11/5/12: Enabled, disable it.
-		Boe_setTrackedCvar(18, 0);
-		
-		if(ent && ent->client){
-			Boe_adminLog ("Friendly Fire Disabled", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), "none");
-			trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Friendly fire disabled by %s.\n\"", ent->client->pers.netname));
-		}else{
-			Boe_adminLog ("Friendly Fire Disabled", va("RCON"), "none");
-			trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Friendly fire disabled.\n"));
-		}
-	}
-	
-	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-	return;
 }

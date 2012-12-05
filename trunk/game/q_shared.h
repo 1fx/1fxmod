@@ -75,6 +75,7 @@
 
 #else
 #define _CRT_SECURE_NO_WARNINGS
+//#include <Windows.h>
 #include <assert.h>
 #include <math.h>
 #include <stdio.h>
@@ -84,6 +85,7 @@
 #include <time.h>
 #include <ctype.h>
 #include <limits.h>
+#include "sqlite/sqlite3.h"
 #endif
 
 #ifdef _WIN32
