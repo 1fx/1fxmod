@@ -467,17 +467,26 @@ void Boe_NoNades(int argNum, gentity_t *ent, qboolean shortCmd){
 			Com_Printf("You cannot enable/disable Nades in Humans&Zombies.\n");
 		}
 		return;
+	}else if(!level.nadesFound){
+		if(ent && ent->client){
+			trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7No nades are set to be used (availableWeapons CVAR).\n\""));
+		}else{
+			Com_Printf("^7No nades are set to be used (availableWeapons CVAR).\n");
+		}
+		return;
 	}
 
 	if(g_disableNades.integer == 1){
 		g_disableNades.integer = 0;
 		trap_Cvar_Set("g_disableNades", "0");
-	    if(SetNades("0")){
-			trap_Cvar_Update(&g_disableNades);
-			BG_SetAvailableOutfitting(g_availableWeapons.string);
+		trap_Cvar_Update(&g_disableNades);
+	    SetNades("0");
+		BG_SetAvailableOutfitting(g_availableWeapons.string);
 			for(i=0;i<level.numConnectedClients;i++){
 				level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
+				#ifdef _DEBUG
 				Com_Printf("Setting nades\n");
+				#endif
 				//level.clients[level.sortedClients[i]].ps.stats[STAT_OUTFIT_GRENADE] = bg_itemlist[bg_outfittingGroups[OUTFITTING_GROUP_GRENADE][3]].giTag;
 				G_UpdateOutfitting(g_entities[level.sortedClients[i]].s.number);
 				//level.clients[level.sortedClients[i]].ps.ammo[weaponData[WP_SMOHG92_GRENADE].attack[ATTACK_NORMAL].ammoIndex]=1;
@@ -493,18 +502,11 @@ void Boe_NoNades(int argNum, gentity_t *ent, qboolean shortCmd){
 				trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Nades enabled.\n\""));
 				Boe_adminLog ("Nades Enabled", va("RCON"), "none");
 			}
-	    }else{
-	    	if(ent && ent->client){
-	    		trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7No nades are set to be used on the server.\n\""));
-	    	}else{
-	    		Com_Printf("7No nades are set to be used on the server.\n");
-	    	}
-	    }
 	}else{
 		g_disableNades.integer = 1;
 		trap_Cvar_Set("g_disableNades", "1");
-		SetNades("1");
 		trap_Cvar_Update(&g_disableNades);
+		SetNades("1");
 		BG_SetAvailableOutfitting(g_availableWeapons.string);
 		for(i=0;i<=level.numConnectedClients;i++){
 			level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
@@ -1168,7 +1170,9 @@ int Boe_Remove_from_list ( char *key, const char *file, const char* type, gentit
 		}
 		key++;
 	}
+	#ifdef _DEBUG
 	Com_Printf("Remove: opening %s\n", file);
+	#endif
 	len = trap_FS_FOpenFile( file, &f, FS_READ_TEXT);
 
 	if (!f)	{
