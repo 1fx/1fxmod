@@ -437,7 +437,7 @@ static char *BG_BuildSideSurfaceList(char *name, char *pattern, char *sideSurfac
 	sprintf(query, "select * from %s where ID=%i", name, name_id);
 	rc = sqlite3_prepare(db, query, -1, &stmt, 0);
 	if(rc!=SQLITE_OK){
-		Com_Printf("Database SQL error: %s\n", sqlite3_errmsg(db));
+		Com_Printf("^1Error: ^7Inview database: %s\n", sqlite3_errmsg(db));
 		return;
 	}else while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
 		if(rc == SQLITE_ROW){
@@ -641,7 +641,7 @@ sqlite3_stmt *stmt, *stmt1;
 	sprintf(query, "select * from weapon_anim where WEAPON_ID=%i", (int)weapon);
 	rc = sqlite3_prepare(db, query, -1, &stmt, 0);
 	if(rc!=SQLITE_OK){
-		Com_Printf("Database SQL error: %s\n", sqlite3_errmsg(db));
+		Com_Printf("^1Error: ^7Inview database: %s\n", sqlite3_errmsg(db));
 		return;
 	}else while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
 		if(rc == SQLITE_ROW){
@@ -655,7 +655,7 @@ sqlite3_stmt *stmt, *stmt1;
 			sprintf(query1, "select * from weapon_anim_info where ANIM_ID=%i", (int)sqlite3_column_int(stmt, 1));
 			rc1 = sqlite3_prepare(db, query1, -1, &stmt1, 0);
 			if(rc1!=SQLITE_OK){
-				Com_Printf("Database SQL error: %s\n", sqlite3_errmsg(db));
+				Com_Printf("^1Error: ^7Inview database: %s\n", sqlite3_errmsg(db));
 				return;
 			}else while((rc1 = sqlite3_step(stmt1)) != SQLITE_DONE){
 				if(rc1 == SQLITE_ROW){
@@ -745,7 +745,7 @@ static TBoltonWeapon *BG_ParseBolton(weapon_t weapon, sqlite3 * db)
 	sprintf(query, "select * from weaponmodel where WEAPON_ID=%i", (int)weapon);
 	rc = sqlite3_prepare(db, query, -1, &stmt, 0);
 	if(rc!=SQLITE_OK){
-		Com_Printf("Database SQL error: %s\n", sqlite3_errmsg(db));
+		Com_Printf("^1Error: ^7Inview database: %s\n", sqlite3_errmsg(db));
 		return;
 	}else while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
 		if(rc == SQLITE_ROW){
@@ -793,7 +793,7 @@ static qboolean BG_ParseWeaponGroup(TWeaponModel *weapon, weapon_t weaponID, sql
 	sprintf(query, "select * from weaponmodel where WEAPON_ID=%i", (int)weaponID);
 	rc = sqlite3_prepare(db, query, -1, &stmt, 0);
 	if(rc!=SQLITE_OK){
-		Com_Printf("Database SQL error: %s\n", sqlite3_errmsg(db));
+		Com_Printf("^1Error: ^7Inview database: %s\n", sqlite3_errmsg(db));
 		return;
 	}else while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
 		if(rc == SQLITE_ROW){
@@ -822,7 +822,7 @@ static qboolean BG_ParseWeaponGroup(TWeaponModel *weapon, weapon_t weaponID, sql
 				sprintf(query1, "select * from optionalpart where ID=%i", sqlite3_column_int(stmt, 17));
 				rc1 = sqlite3_prepare(db, query1, -1, &stmt1, 0);
 				if(rc1!=SQLITE_OK){
-						Com_Printf("Database SQL error: %s\n", sqlite3_errmsg(db));
+						Com_Printf("^1Error: ^7Inview database: %s\n", sqlite3_errmsg(db));
 						return;
 				}else while((rc = sqlite3_step(stmt1)) != SQLITE_DONE){
 					if(rc1 == SQLITE_ROW){
@@ -860,11 +860,10 @@ static qboolean BG_ParseWeapon(weapon_t weapon, sqlite3 * db)
 	int rc;
 	memset(&weaponParseInfo[weapon], 0, sizeof(TWeaponParseInfo));
 	weaponParseInfo[weapon].mName = bg_weaponNames[weapon];
-	Com_Printf("Parsing weapon %s\n", bg_weaponNames[weapon]);
 	sprintf(query, "select * from weapons where ID=%i", (int)weapon);
 	rc = sqlite3_prepare(db, query, -1, &stmt, 0);
 	if(rc!=SQLITE_OK){
-		Com_Printf("Database SQL error: %s\n", sqlite3_errmsg(db));
+		Com_Printf("^1Error: ^7Inview database: %s\n", sqlite3_errmsg(db));
 		return;
 	}else while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
 		if(rc == SQLITE_ROW){
@@ -878,7 +877,7 @@ static qboolean BG_ParseWeapon(weapon_t weapon, sqlite3 * db)
 	sprintf(query, "select * from sounds where WEAPON_ID=%i", (int)weapon);
 	rc = sqlite3_prepare(db, query, -1, &stmt, 0);
 	if(rc!=SQLITE_OK){
-		Com_Printf("Database SQL error: %s\n", sqlite3_errmsg(db));
+		Com_Printf("^1Error: ^7Inview database: %s\n", sqlite3_errmsg(db));
 		return;
 	}else while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
 		if(rc == SQLITE_ROW){
@@ -903,7 +902,6 @@ static qboolean BG_ParseWeapon(weapon_t weapon, sqlite3 * db)
 			i++;
 		}
 	}
-	Com_Printf("Test end\n");
 	BG_ParseWeaponGroup(&weaponParseInfo[weapon].mWeaponModel, weapon, db);
 	BG_ParseAnimGroup(weapon, db);
 
