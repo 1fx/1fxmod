@@ -1690,7 +1690,9 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 
 	trap_FS_FOpenFile( file, &f, FS_WRITE_TEXT);
 	if(!f){
+		#ifdef _DEBUG
 		Com_Printf("failed\n");
+		#endif
 		return;
 	}
 	trap_FS_Write("", 0, f); // clear file
@@ -1698,7 +1700,9 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 
 	trap_FS_FOpenFile( file, &f, FS_APPEND_TEXT);
 	if(!f){
+		#ifdef _DEBUG
 		Com_Printf("failed\n");
+		#endif
 		return;
 	}
 
@@ -2079,7 +2083,7 @@ void Boe_Remove_Admin_f (int argNum, gentity_t *adm, qboolean shortCmd)
 	char			passID[MAX_BOE_ID];
 	char			*passID2 = passID;
 
-#ifdef _BOE_DBG
+#ifdef _DEBUG
 	if (strstr(boe_log.string, "1"))
 		G_LogPrintf("4s\n");
 #endif
@@ -2125,7 +2129,7 @@ void Boe_Remove_Admin_f (int argNum, gentity_t *adm, qboolean shortCmd)
 	// Boe!Man 10/16/10: He's not an Admin anymore so it doesn't matter if he was a B-Admin, Admin or S-Admin: either way he shouldn't be allowed to spec the opposite team.
 	g_entities[idnum].client->sess.adminspec = qfalse;
 
-#ifdef _BOE_DBG
+#ifdef _DEBUG
 	if (strstr(boe_log.string, "1"))
 		G_LogPrintf("4e\n");
 #endif
@@ -3093,7 +3097,7 @@ void Boe_Strip (int argNum, gentity_t *adm, qboolean shortCmd)
 Boe_Dev_f
 ==========
 */
-#ifndef PUB_RELEASE
+#ifdef _DEBUG
 void Boe_dev_f ( gentity_t *ent )
 {
 
@@ -3727,9 +3731,6 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 	char xip[64], arg[32] = "\0", temp[64] = "\0";
 	qboolean passwordlist = qfalse, clanList = qfalse;
 	qboolean last = qfalse;
-	int start;
-	int end;
-	start = trap_Milliseconds();
 	if(shortCmd){
 		trap_Argv( 0, temp, sizeof( temp ) );
 		trap_Argv( 1, arg, sizeof( arg ) );
@@ -3831,7 +3832,9 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 			begin = qtrue;
 			memset(xip, 0, sizeof(xip));
 			if((EndPos-StartPos)  < 1){
+				#ifdef _DEBUG
 				Com_Printf("Error: %i - %i\n", EndPos, StartPos);
+				#endif
 				return;
 			}
 			//if(passwordlist)
@@ -3951,7 +3954,7 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 							Com_sprintf(buffer+strlen(buffer), sizeof(buffer), "[^3%i^7]  %s%s%s\n", count, name, column2, xip);
 					}else{
 						//trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7] %s%s%s%s%s\n", count, level, column1, name, column2, xip)); // Boe!Man 9/16/10: Print ban.
-							Com_sprintf(buffer+strlen(buffer), sizeof(buffer), "[^3%i^7] %s%s%s%s%s\n", count, name, column2, xip);
+							Com_sprintf(buffer+strlen(buffer), sizeof(buffer), "[^3%i^7] %s%s%s\n", count, name, column2, xip);
 					}
 				}
 				
@@ -3991,8 +3994,6 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 	}else{
 		Com_Printf("\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n");
 	}
-	end = trap_Milliseconds()-start;
-	Com_Printf(va("Adminlist took %d ms\n", end));
 	return;
 }
 
@@ -4060,6 +4061,15 @@ void Henk_Gametype(int argNum, gentity_t *adm, qboolean shortCmd){
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sG%sa%sm%se%st%sype ^7Capture the Flag!", level.time + 3500, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		}else if(strstr(lwrP, "inf")){
 			trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype inf\n"));
+			// Boe!Man 10/4/12: Fix latch CVAR crap. It's either h&s or h&z, so ensure the latched value is GONE so we can properly reset it.
+			if(current_gametype.value == GT_HS || current_gametype.value == GT_HZ){
+				trap_Cvar_Set("g_gametype", "h&s");
+				trap_Cvar_Update(&g_gametype);
+				trap_Cvar_Set("g_gametype", "h&z");
+				trap_Cvar_Update(&g_gametype);
+				trap_Cvar_Set("g_gametype", "inf");
+				trap_Cvar_Update(&g_gametype);
+			}
 			strcpy(gametype, "inf");
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sG%sa%sm%se%st%sype ^7Infiltration!", level.time + 3500, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		}else if(strstr(lwrP, "tdm")){
@@ -4218,6 +4228,15 @@ void Henk_Map(int argNum, gentity_t *adm, qboolean shortCmd){
 				strcpy(gametype, "ctf");
 			}else if(strstr(gt, "inf")){
 				strcpy(gametype, "inf");
+				// Boe!Man 10/4/12: Fix latch CVAR crap. It's either h&s or h&z, so ensure the latched value is GONE so we can properly reset it.
+				if(current_gametype.value == GT_HS || current_gametype.value == GT_HZ){
+					trap_Cvar_Set("g_gametype", "h&s");
+					trap_Cvar_Update(&g_gametype);
+					trap_Cvar_Set("g_gametype", "h&z");
+					trap_Cvar_Update(&g_gametype);
+					trap_Cvar_Set("g_gametype", "inf");
+					trap_Cvar_Update(&g_gametype);
+				}
 			}else if(strstr(gt, "tdm")){
 				strcpy(gametype, "tdm");
 			}else if(strstr(gt, "dm")){
