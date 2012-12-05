@@ -986,10 +986,18 @@ qboolean BG_ParseInviewFile(void)
 	sqlite3 * db;
 	int rc;
 	char query[128];
-	rc = sqlite3_open("inview.db", &db);
+	// Boe!Man 12/5/12
+	// The file can be on two locations. The DLL should always be in the fs_game folder, however, this could be misconfigured.
+	// The Mod takes care of this problem and should load the file correctly, even if misplaced.
+	rc = sqlite3_open_v2("./core/inview.db", &db, SQLITE_OPEN_READONLY, NULL); // Boe!Man 12/5/12: *_v2 can make sure an empty database is NOT created. After all, the inview db is READ ONLY.
 	if(rc){
-		Com_Printf("Database error: %s\n", sqlite3_errmsg(db));
-		return;
+		char fsGame[MAX_QPATH];
+		trap_Cvar_VariableStringBuffer("fs_game", fsGame, sizeof(fsGame));
+		rc = sqlite3_open_v2(va("./%s/core/inview.db", fsGame), &db, SQLITE_OPEN_READONLY, NULL);
+		if(rc){
+			Com_Printf("^1Error: ^7Inview database: %s\n", sqlite3_errmsg(db));
+			return;
+		}
 	}
 	weaponLeftHand[0] = 0;
 	weaponRightHand[0] = 0;
