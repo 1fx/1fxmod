@@ -419,8 +419,8 @@ qboolean BG_ParseItemFile ( void )
 	bg_itemTemplates = NULL;
 #endif
 
-	baseGroup = trap_GP_GetBaseParseGroup ( ItemFile );
-	subGroup = trap_GPG_GetSubGroups ( baseGroup );
+	baseGroup = (TGPGroup *)trap_GP_GetBaseParseGroup ( ItemFile );
+	subGroup = (TGPGroup *)trap_GPG_GetSubGroups ( baseGroup );
 	while(subGroup)
 	{
 		trap_GPG_GetName ( subGroup, temp );
@@ -431,7 +431,7 @@ qboolean BG_ParseItemFile ( void )
 			trap_GPG_FindPairValue ( subGroup, "Deathmatch", "yes", temp );
 			if (Q_stricmp( temp, "no") == 0)
 			{
-				subGroup = trap_GPG_GetNext ( subGroup );
+				subGroup = (TGPGroup *)trap_GPG_GetNext ( subGroup );
 				continue;
 			}
 
@@ -451,7 +451,7 @@ qboolean BG_ParseItemFile ( void )
 				item->mModel = trap_VM_LocalStringAlloc ( temp );
 			}
 
-			pairs = trap_GPG_GetPairs ( subGroup );
+			pairs = (TGPValue *)trap_GPG_GetPairs ( subGroup );
 			while(pairs)
 			{
 				trap_GPV_GetName ( pairs, temp );
@@ -482,12 +482,12 @@ qboolean BG_ParseItemFile ( void )
 				}
 
 				// Next pairs
-				pairs = trap_GPV_GetNext ( pairs );
+				pairs = (TGPValue *)trap_GPV_GetNext ( pairs );
 			}
 		}
 
 		// Next group
-		subGroup = trap_GPG_GetNext ( subGroup );
+		subGroup = (TGPGroup *)trap_GPG_GetNext ( subGroup );
 	}
 
 	trap_GP_Delete(&ItemFile);
@@ -960,8 +960,8 @@ int BG_ParseSkin ( const char* filename, char* pairs, int pairsSize )
 	numPairs  = 0;
 	end		  = pairs;
 	*end	  = 0;
-	basegroup = trap_GP_GetBaseParseGroup ( skinFile );
-	group	  = trap_GPG_GetSubGroups ( basegroup );
+	basegroup = (TGPGroup *)trap_GP_GetBaseParseGroup ( skinFile );
+	group	  = (TGPGroup *)trap_GPG_GetSubGroups ( basegroup );
 
 	while(group)
 	{
@@ -975,7 +975,7 @@ int BG_ParseSkin ( const char* filename, char* pairs, int pairsSize )
 
 			trap_GPG_FindPairValue ( group, "name", "", matName );
 
-			sub = trap_GPG_FindSubGroup ( group, "group");
+			sub = (TGPGroup *)trap_GPG_FindSubGroup ( group, "group");
 			if (sub)
 			{
 				trap_GPG_FindPairValue ( sub, "shader1", "", shaderName );
@@ -996,7 +996,7 @@ int BG_ParseSkin ( const char* filename, char* pairs, int pairsSize )
 			}
 		}
 
-		group = trap_GPG_GetNext ( group );
+		group = (TGPGroup *)trap_GPG_GetNext ( group );
 	}
 
 	trap_GP_Delete(&skinFile);
@@ -1412,7 +1412,7 @@ void BG_SetAvailableOutfitting ( const char* available )
 	}
 
 	// IF the availability has changed force a reload of the outfitting groups
-	if ( Q_strncmp ( available, bg_availableOutfitting, min(sizeof(bg_availableOutfitting),len) ) )
+	if ( Q_strncmp ( available, bg_availableOutfitting, minimum(sizeof(bg_availableOutfitting),len) ) )
 	{
 		bg_outfittingCount = 0;
 	}
@@ -1493,7 +1493,7 @@ void BG_DecompressOutfitting ( const char* compressed, goutfitting_t* outfitting
 		if ( bg_itemlist[bg_outfittingGroups[group][item]].giType == IT_WEAPON )
 		{
 			origitem = item;
-			while ( !BG_IsWeaponAvailableForOutfitting ( bg_itemlist[bg_outfittingGroups[group][item]].giTag, 2 ) ) // Fix for nades with /outfitting AAFFA
+			while ( !BG_IsWeaponAvailableForOutfitting ( (weapon_t)bg_itemlist[bg_outfittingGroups[group][item]].giTag, 2 ) ) // Fix for nades with /outfitting AAFFA
 			{
 				item++;
 				if ( bg_outfittingGroups[group][item] == -1 )
@@ -1672,7 +1672,7 @@ qboolean BG_ParseOutfittingTemplate ( const char* fileName, goutfitting_t* outfi
 	
 				// Make sure outfitting groups that have weapons that are not available
 				// do not show up
-				if ( !BG_IsWeaponAvailableForOutfitting ( item->giTag, 2 ) )
+				if ( !BG_IsWeaponAvailableForOutfitting ( (weapon_t)item->giTag, 2 ) )
 				{
 					trap_GP_Delete(&file);
 					return qfalse;

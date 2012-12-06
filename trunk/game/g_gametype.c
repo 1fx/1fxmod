@@ -809,7 +809,7 @@ qboolean G_ParseGametypeFile ( void )
 	}
 
 	// Grab the defined items
-	G_ParseGametypeItems ( trap_GPG_FindSubGroup ( gametypeGroup, "items" ) );
+	G_ParseGametypeItems ( (TGPGroup *)trap_GPG_FindSubGroup ( gametypeGroup, "items" ) );
 
 	// Free up the parser
 	trap_GP_Delete(&GP2);
@@ -957,13 +957,13 @@ void CheckGametype ( void )
 	if(level.gametypeData){
 	if ( level.gametypeData->respawnType == RT_INTERVAL )
 	{
-		team_t team;
+		int team;
 		for ( team = TEAM_RED; team < TEAM_SPECTATOR; team ++ )
 		{
 			if ( level.gametypeRespawnTime[team] && level.time > level.gametypeRespawnTime[team] )
 			{
 				// Respawn all dead clients
-				G_RespawnClients ( qfalse, team, qfalse );
+				G_RespawnClients ( qfalse, (team_t)team, qfalse );
 
 				// Next interval
 				level.gametypeRespawnTime[team] = 0;

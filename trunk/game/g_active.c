@@ -818,7 +818,7 @@ void ClientIntermissionThink( gclient_t *client )
 	if ( (client->buttons & BUTTON_ATTACK) & ( client->oldbuttons ^ client->buttons ) ) 
 	{
 		// this used to be an ^1 but once a player says ready, it should stick
-		client->readyToExit = 1;
+		client->readyToExit = qtrue;
 	}
 }
 
@@ -1383,7 +1383,7 @@ void ClientThink_real( gentity_t *ent )
 	pm.trace = trap_Trace;
 	pm.pointcontents = trap_PointContents;
 	pm.debugLevel = g_debugMove.integer;
-	pm.noFootsteps = ( g_dmflags.integer & DF_NO_FOOTSTEPS ) > 0;
+	pm.noFootsteps = (qboolean)(( g_dmflags.integer & DF_NO_FOOTSTEPS ) > 0);
 
 	pm.pmove_fixed = pmove_fixed.integer | client->pers.pmoveFixed;
 	pm.pmove_msec = pmove_msec.integer;

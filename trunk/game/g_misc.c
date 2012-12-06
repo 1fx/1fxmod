@@ -678,7 +678,7 @@ void noroof_initcheck(gentity_t *ent)
 			level.noroofOpened = qtrue;
 		}
 	}else{
-		if((TeamCount(-1, level.noroof3, NULL )) >= level.noroof[0]){
+		if((TeamCount(-1, (team_t)level.noroof3, NULL )) >= level.noroof[0]){
 			level.noroofOpened = qtrue;
 		}
 	}

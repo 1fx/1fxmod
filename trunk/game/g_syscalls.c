@@ -144,11 +144,11 @@ int trap_PointContents( const vec3_t point, int passEntityNum ) {
 
 
 qboolean trap_InPVS( const vec3_t p1, const vec3_t p2 ) {
-	return syscall( G_IN_PVS, p1, p2 );
+	return (qboolean)syscall( G_IN_PVS, p1, p2 );
 }
 
 qboolean trap_InPVSIgnorePortals( const vec3_t p1, const vec3_t p2 ) {
-	return syscall( G_IN_PVS_IGNORE_PORTALS, p1, p2 );
+	return (qboolean)syscall( G_IN_PVS_IGNORE_PORTALS, p1, p2 );
 }
 
 void trap_AdjustAreaPortalState( gentity_t *ent, qboolean open ) {
@@ -156,7 +156,7 @@ void trap_AdjustAreaPortalState( gentity_t *ent, qboolean open ) {
 }
 
 qboolean trap_AreasConnected( int area1, int area2 ) {
-	return syscall( G_AREAS_CONNECTED, area1, area2 );
+	return (qboolean)syscall( G_AREAS_CONNECTED, area1, area2 );
 }
 
 void trap_LinkEntity1( gentity_t *ent ) {
@@ -172,11 +172,11 @@ int trap_EntitiesInBox( const vec3_t mins, const vec3_t maxs, int *list, int max
 }
 
 qboolean trap_EntityContact( const vec3_t mins, const vec3_t maxs, const gentity_t *ent ) {
-	return syscall( G_ENTITY_CONTACT, mins, maxs, ent );
+	return (qboolean)syscall( G_ENTITY_CONTACT, mins, maxs, ent );
 }
 
 qboolean trap_EntityContactCapsule( const vec3_t mins, const vec3_t maxs, const gentity_t *ent ) {
-	return syscall( G_ENTITY_CONTACTCAPSULE, mins, maxs, ent );
+	return (qboolean)syscall( G_ENTITY_CONTACTCAPSULE, mins, maxs, ent );
 }
 
 int trap_BotAllocateClient( void ) {
@@ -192,7 +192,7 @@ void trap_GetUsercmd( int clientNum, usercmd_t *cmd ) {
 }
 
 qboolean trap_GetEntityToken( char *buffer, int bufferSize ) {
-	return syscall( G_GET_ENTITY_TOKEN, buffer, bufferSize );
+	return (qboolean)syscall( G_GET_ENTITY_TOKEN, buffer, bufferSize );
 }
 
 void *trap_BotGetMemoryGame(int size)
@@ -876,25 +876,25 @@ qhandle_t trap_G2API_RegisterSkin ( const char *skinName, int numPairs, const ch
 
 qboolean trap_G2API_SetSkin ( void* ghoul2, int modelIndex, qhandle_t customSkin)
 {
-	return syscall(G_G2_SETSKIN, ghoul2, modelIndex, customSkin );
+	return (qboolean)syscall(G_G2_SETSKIN, ghoul2, modelIndex, customSkin );
 }
 
 qboolean trap_G2API_GetAnimFileNameIndex ( void* ghoul2, qhandle_t modelIndex, const char* filename )
 {
-	return syscall(G_G2_GETANIMFILENAMEINDEX, ghoul2, modelIndex, filename );
+	return (qboolean)syscall(G_G2_GETANIMFILENAMEINDEX, ghoul2, modelIndex, filename );
 }
 
 qboolean trap_G2API_SetBoneAngles(void *ghoul2, int modelIndex, const char *boneName, const vec3_t angles, const int flags,
 								const int up, const int right, const int forward, qhandle_t *modelList,
 								int blendTime , int currentTime )
 {
-	return (syscall(G_G2_ANGLEOVERRIDE, ghoul2, modelIndex, boneName, angles, flags, up, right, forward, modelList, blendTime, currentTime));
+	return (qboolean)(syscall(G_G2_ANGLEOVERRIDE, ghoul2, modelIndex, boneName, angles, flags, up, right, forward, modelList, blendTime, currentTime));
 }
 
 qboolean trap_G2API_SetBoneAnim(void *ghoul2, const int modelIndex, const char *boneName, const int startFrame, const int endFrame,
 							  const int flags, const float animSpeed, const int currentTime, const float setFrame , const int blendTime )
 {
-	return syscall(G_G2_PLAYANIM, ghoul2, modelIndex, boneName, startFrame, endFrame, flags, PASSFLOAT(animSpeed), currentTime, PASSFLOAT(setFrame), blendTime);
+	return (qboolean)syscall(G_G2_PLAYANIM, ghoul2, modelIndex, boneName, startFrame, endFrame, flags, PASSFLOAT(animSpeed), currentTime, PASSFLOAT(setFrame), blendTime);
 }
 
 char *trap_G2API_GetGLAName(void *ghoul2, int modelIndex)
@@ -919,7 +919,7 @@ void trap_G2API_DuplicateGhoul2Instance(void *g2From, void **g2To)
 
 qboolean trap_G2API_RemoveGhoul2Model(void **ghlInfo, int modelIndex)
 {
-	return syscall(G_G2_REMOVEGHOUL2MODEL, ghlInfo, modelIndex);
+	return (qboolean)syscall(G_G2_REMOVEGHOUL2MODEL, ghlInfo, modelIndex);
 }
 
 /*

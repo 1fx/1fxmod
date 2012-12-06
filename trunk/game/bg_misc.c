@@ -49,7 +49,7 @@ gitem_t	bg_itemlist[] =
 				NULL,
 /* pickup */	NULL,		// pickup_name
 		0,					// quantity
-		0,					// giType (IT_*)
+		(itemType_t)0,					// giType (IT_*)
 		0,					// giTag
 /* precache */ "",			// precaches
 /* sounds */ ""				// sounds
@@ -1010,7 +1010,7 @@ qboolean BG_CanItemBeGrabbed( int gametype, const entityState_t *ent, const play
 			{
 				int			primary   = 0;
 				int			secondary = 0;
-				weapon_t	weapon;
+				int	weapon;
 
 				switch ( item->outfittingGroup )
 				{
@@ -1036,7 +1036,7 @@ qboolean BG_CanItemBeGrabbed( int gametype, const entityState_t *ent, const play
 						continue;
 					}
 
-					witem = BG_FindWeaponItem ( weapon );
+					witem = BG_FindWeaponItem ( (weapon_t)weapon );
 					if ( !witem )
 					{
 						continue;

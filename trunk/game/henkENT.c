@@ -87,7 +87,7 @@ qboolean G_ReadingFromEntFile(qboolean inSubBSP)
 	if (RMG.integer)
 		return qfalse;
 
-	return (entFile != 0);
+	return (qboolean)(entFile != 0);
 }
 static char token[MAX_TOKEN_CHARS];
 
