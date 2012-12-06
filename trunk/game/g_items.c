@@ -139,7 +139,7 @@ int Pickup_Weapon (gentity_t *ent, gentity_t *other, qboolean* autoswitch )
 			*autoswitch = qtrue;
 		}
 
-		other->client->ps.firemode[weaponNum] = BG_FindFireMode ( (weapon_t)weaponNum, ATTACK_NORMAL, WP_FIREMODE_AUTO );
+		other->client->ps.firemode[weaponNum] = BG_FindFireMode ( weaponNum, ATTACK_NORMAL, WP_FIREMODE_AUTO );
 	}
 
 	// Call add ammo with 0 ammo to force it to cap it at max
@@ -265,7 +265,7 @@ int Pickup_Backpack ( gentity_t* ent, gentity_t* other )
 	// Make sure you alwasy get grenades
 	if ( level.pickupsDisabled && g_disableNades.integer == 0 && level.nadesFound)
 	{
-		weapon_t weapon = (weapon_t)ps->stats[STAT_OUTFIT_GRENADE];
+		weapon_t weapon = ps->stats[STAT_OUTFIT_GRENADE];
 
 		// If the client doesnt even have a greande then we need to give them one
 		// and fill their clip.  They should have already been give ammo 
@@ -661,7 +661,7 @@ inventory.  Excluding the specified weapon
 */
 qboolean G_IsAmmoBeingShared ( gentity_t* ent, int ammoIndex, weapon_t exclude )
 {
-	int weapon;
+	weapon_t weapon;
 
 	// Need to figure out if this guy has any other guns that use the ammo for the gun
 	// being dropped.
@@ -674,7 +674,7 @@ qboolean G_IsAmmoBeingShared ( gentity_t* ent, int ammoIndex, weapon_t exclude )
 		}
 
 		// Dont include the weapon being dropped
-		if ( exclude == (weapon_t)weapon )
+		if ( exclude == weapon )
 		{
 			continue;
 		}
@@ -1022,7 +1022,7 @@ void G_SpawnItem (gentity_t *ent, gitem_t *item)
 	// Weapons can be disabled
 	if ( item->giType == IT_WEAPON )
 	{
-		if ( !BG_IsWeaponAvailableForOutfitting ( (weapon_t)item->giTag, 1 ) )
+		if ( !BG_IsWeaponAvailableForOutfitting ( item->giTag, 1 ) )
 		{
 			return;
 		}

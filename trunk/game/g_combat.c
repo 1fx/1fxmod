@@ -71,7 +71,7 @@ void TossClientItems( gentity_t *self )
 	// If we have a valid weapon to drop and it has ammo then drop it
 	if(current_gametype.value == GT_HS){
 		if ( weapon > WP_KNIFE && weapon < WP_NUM_WEAPONS && weapon != WP_RPG7_LAUNCHER && weapon != WP_M4_ASSAULT_RIFLE ){
-			G_DropWeapon ( self, (weapon_t)weapon, 0 );
+			G_DropWeapon ( self, weapon, 0 );
 		}
 		else if ( self->client->ps.stats[STAT_WEAPONS] & ( 1 << WP_RPG7_LAUNCHER ) ){
 			G_DropWeapon ( self, WP_RPG7_LAUNCHER, 0 );
@@ -82,7 +82,7 @@ void TossClientItems( gentity_t *self )
 		if ( weapon > WP_KNIFE && weapon < WP_NUM_WEAPONS &&
 			 (self->client->ps.ammo[ weaponData[weapon].attack[ATTACK_NORMAL].ammoIndex ] + self->client->ps.clip[weapon]) )
 		{
-			G_DropWeapon ( self, (weapon_t)weapon, 0 );
+			G_DropWeapon ( self, weapon, 0 );
 		}
 	}
 
@@ -230,7 +230,7 @@ void player_die(
 	int				meansOfDeath;
 	vec3_t			lookdown;
 
-	attack		 = (attackType_t)((mod >> 8) & 0xFF);
+	attack		 = (mod >> 8) & 0xFF;
 	meansOfDeath = mod & 0xFF;
 
 #ifdef _DEBUG

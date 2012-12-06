@@ -154,9 +154,9 @@ qboolean G_FilterPacket (char *from)
 
 	for (i=0 ; i<numIPFilters ; i++)
 		if ( (in & ipFilters[i].mask) == ipFilters[i].compare)
-			return (qboolean)(g_filterBan.integer != 0);
+			return g_filterBan.integer != 0;
 
-	return (qboolean)(g_filterBan.integer == 0);
+	return g_filterBan.integer == 0;
 }
 
 /*

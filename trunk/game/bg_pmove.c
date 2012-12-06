@@ -291,7 +291,7 @@ static float PM_CmdScale( usercmd_t *cmd )
 		return 0;
 	}
 
-	total = sqrt((float) cmd->forwardmove * cmd->forwardmove
+	total = sqrt( cmd->forwardmove * cmd->forwardmove
 		+ cmd->rightmove * cmd->rightmove + cmd->upmove * cmd->upmove );
 	scale = (float)pm->ps->speed * max / ( 127.0 * total );
 
@@ -2301,7 +2301,7 @@ static void PM_FinishWeaponChange( void )
 	// Default to auto (or next available fire mode).
 	if ( pm->ps->firemode[pm->ps->weapon] == WP_FIREMODE_NONE )
 	{
-		pm->ps->firemode[pm->ps->weapon] = BG_FindFireMode ( (weapon_t)pm->ps->weapon, ATTACK_NORMAL, WP_FIREMODE_AUTO );
+		pm->ps->firemode[pm->ps->weapon] = BG_FindFireMode ( pm->ps->weapon, ATTACK_NORMAL, WP_FIREMODE_AUTO );
 	}
 
 	// We don't want to play the 'takeout' anim for the grenades if we are about to reload anyway
@@ -2312,7 +2312,7 @@ static void PM_FinishWeaponChange( void )
 
 	PM_HandleWeaponAction(WACT_READY);
 
-	pm->ps->weaponTime = minimum(150,pm->ps->weaponTime);
+	pm->ps->weaponTime = min(150,pm->ps->weaponTime);
 
 	PM_StartTorsoAnim( pm->ps, weaponData[pm->ps->weapon].animRaise, pm->ps->weaponAnimTime ); // Henk 12/04/10 -> Faster weapon switch
 }
@@ -2871,7 +2871,7 @@ static void PM_Weapon( void )
 	// Select firemode.
 	if( attackButtons & BUTTON_FIREMODE )
 	{
-		pm->ps->firemode[pm->ps->weapon] = BG_FindFireMode( (weapon_t)pm->ps->weapon, ATTACK_NORMAL, pm->ps->firemode[pm->ps->weapon] + 1 );
+		pm->ps->firemode[pm->ps->weapon] = BG_FindFireMode( pm->ps->weapon, ATTACK_NORMAL, pm->ps->firemode[pm->ps->weapon] + 1 );
 	}
 
 	// Decrement burst fire counter if running.
@@ -3388,7 +3388,7 @@ static void PM_CheckLean( void )
 		{
 			int templeanTime = (float)leanDir * (float)LEAN_TIME * trace.fraction;
 
-			if ( fabs((float)templeanTime) < fabs(leanTime) )
+			if ( fabs(templeanTime) < fabs(leanTime) )
 			{
 				leanTime = templeanTime;
 			}

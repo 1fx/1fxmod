@@ -1193,3 +1193,487 @@ void HENK_COUNTRY(gentity_t *ent){
 	sqlite3_close(db);	
 	return;
 }
+
+char *GetCountry(char *ext){
+	char result[128];
+if(strstr(ext, "AU"))
+strcpy(result, "Australia");
+else if(strstr(ext, "MY"))
+strcpy(result, "Malaysia");
+else if(strstr(ext, "KR"))
+strcpy(result, "Kore");
+else if(strstr(ext, "CN"))
+strcpy(result, "China");
+else if(strstr(ext, "JP"))
+strcpy(result, "Japan");
+else if(strstr(ext, "IN"))
+strcpy(result, "India");
+else if(strstr(ext, "TW"))
+strcpy(result, "Taiwan");
+else if(strstr(ext, "HK"))
+strcpy(result, "Hong Kong");
+else if(strstr(ext, "TH"))
+strcpy(result, "Thailand");
+else if(strstr(ext, "VN"))
+strcpy(result, "Vietnam");
+else if(strstr(ext, "FR"))
+strcpy(result, "France");
+else if(strstr(ext, "EU"))
+strcpy(result, "Europe");
+else if(strstr(ext, "SE"))
+strcpy(result, "Sweden");
+else if(strstr(ext, "IT"))
+strcpy(result, "Italy");
+else if(strstr(ext, "DE"))
+strcpy(result, "Germany");
+else if(strstr(ext, "GB"))
+strcpy(result, "United Kingdom");
+else if(strstr(ext, "AE"))
+strcpy(result, "United Arab Emirates");
+else if(strstr(ext, "IL"))
+strcpy(result, "Israel");
+else if(strstr(ext, "UA"))
+strcpy(result, "Ukraine");
+else if(strstr(ext, "CZ"))
+strcpy(result, "Czech Republic");
+else if(strstr(ext, "RU"))
+strcpy(result, "Russian Federation");
+else if(strstr(ext, "KZ"))
+strcpy(result, "Kazakhstan");
+else if(strstr(ext, "PT"))
+strcpy(result, "Portugal");
+else if(strstr(ext, "GR"))
+strcpy(result, "Greece");
+else if(strstr(ext, "SA"))
+strcpy(result, "Saudi Arabia");
+else if(strstr(ext, "DK"))
+strcpy(result, "Denmark");
+else if(strstr(ext, "ES"))
+strcpy(result, "Spain");
+else if(strstr(ext, "IR"))
+strcpy(result, "Ira");
+else if(strstr(ext, "NO"))
+strcpy(result, "Norway");
+else if(strstr(ext, "US"))
+strcpy(result, "United States");
+else if(strstr(ext, "CA"))
+strcpy(result, "Canada");
+else if(strstr(ext, "MX"))
+strcpy(result, "Mexico");
+else if(strstr(ext, "BM"))
+strcpy(result, "Bermuda");
+else if(strstr(ext, "PR"))
+strcpy(result, "Puerto Rico");
+else if(strstr(ext, "VI"))
+strcpy(result, "Virgin Island");
+else if(strstr(ext, "BO"))
+strcpy(result, "Bolivia");
+else if(strstr(ext, "NL"))
+strcpy(result, "Netherlands");
+else if(strstr(ext, "NZ"))
+strcpy(result, "New Zealand");
+else if(strstr(ext, "SG"))
+strcpy(result, "Singapore");
+else if(strstr(ext, "ID"))
+strcpy(result, "Indonesia");
+else if(strstr(ext, "NP"))
+strcpy(result, "Nepal");
+else if(strstr(ext, "PH"))
+strcpy(result, "Philippines");
+else if(strstr(ext, "PG"))
+strcpy(result, "Papua New Guinea");
+else if(strstr(ext, "PK"))
+strcpy(result, "Pakistan");
+else if(strstr(ext, "BS"))
+strcpy(result, "Bahamas");
+else if(strstr(ext, "VC"))
+strcpy(result, "Saint Vincent and the Grenadines");
+else if(strstr(ext, "CL"))
+strcpy(result, "Chile");
+else if(strstr(ext, "NC"))
+strcpy(result, "New Caledonia");
+else if(strstr(ext, "AR"))
+strcpy(result, "Argentina");
+else if(strstr(ext, "DM"))
+strcpy(result, "Dominica");
+else if(strstr(ext, "TK"))
+strcpy(result, "Tokelau");
+else if(strstr(ext, "KH"))
+strcpy(result, "Cambodia");
+else if(strstr(ext, "MO"))
+strcpy(result, "Macau");
+else if(strstr(ext, "MV"))
+strcpy(result, "Maldives");
+else if(strstr(ext, "AF"))
+strcpy(result, "Afghanistan");
+else if(strstr(ext, "FJ"))
+strcpy(result, "Fiji");
+else if(strstr(ext, "MN"))
+strcpy(result, "Mongolia");
+else if(strstr(ext, "WF"))
+strcpy(result, "Wallis and Futuna");
+else if(strstr(ext, "BD"))
+strcpy(result, "Bangladesh");
+else if(strstr(ext, "IE"))
+strcpy(result, "Ireland");
+else if(strstr(ext, "AN"))
+strcpy(result, "Netherlands Antilles");
+else if(strstr(ext, "BE"))
+strcpy(result, "Belgium");
+else if(strstr(ext, "BZ"))
+strcpy(result, "Belize");
+else if(strstr(ext, "BR"))
+strcpy(result, "Brazil");
+else if(strstr(ext, "CH"))
+strcpy(result, "Switzerland");
+else if(strstr(ext, "ZA"))
+strcpy(result, "South Africa");
+else if(strstr(ext, "EG"))
+strcpy(result, "Egypt");
+else if(strstr(ext, "NG"))
+strcpy(result, "Nigeria");
+else if(strstr(ext, "TZ"))
+strcpy(result, "Tanzani");
+else if(strstr(ext, "ZM"))
+strcpy(result, "Zambia");
+else if(strstr(ext, "SN"))
+strcpy(result, "Senegal");
+else if(strstr(ext, "MG"))
+strcpy(result, "Madagascar");
+else if(strstr(ext, "AO"))
+strcpy(result, "Angola");
+else if(strstr(ext, "NA"))
+strcpy(result, "Namibia");
+else if(strstr(ext, "CI"))
+strcpy(result, "Cote D'Ivoire");
+else if(strstr(ext, "GH"))
+strcpy(result, "Ghana");
+else if(strstr(ext, "SD"))
+strcpy(result, "Sudan");
+else if(strstr(ext, "CM"))
+strcpy(result, "Cameroon");
+else if(strstr(ext, "MW"))
+strcpy(result, "Malawi");
+else if(strstr(ext, "KE"))
+strcpy(result, "Kenya");
+else if(strstr(ext, "GA"))
+strcpy(result, "Gabon");
+else if(strstr(ext, "ML"))
+strcpy(result, "Mali");
+else if(strstr(ext, "BJ"))
+strcpy(result, "Benin");
+else if(strstr(ext, "TD"))
+strcpy(result, "Chad");
+else if(strstr(ext, "BW"))
+strcpy(result, "Botswana");
+else if(strstr(ext, "LY"))
+strcpy(result, "Libyan Arab Jamahiriya");
+else if(strstr(ext, "CV"))
+strcpy(result, "Cape Verde");
+else if(strstr(ext, "RW"))
+strcpy(result, "Rwanda");
+else if(strstr(ext, "CG"))
+strcpy(result, "Congo");
+else if(strstr(ext, "UG"))
+strcpy(result, "Uganda");
+else if(strstr(ext, "MZ"))
+strcpy(result, "Mozambique");
+else if(strstr(ext, "GM"))
+strcpy(result, "Gambia");
+else if(strstr(ext, "LS"))
+strcpy(result, "Lesotho");
+else if(strstr(ext, "MU"))
+strcpy(result, "Mauritius");
+else if(strstr(ext, "ZW"))
+strcpy(result, "Zimbabwe");
+else if(strstr(ext, "BF"))
+strcpy(result, "Burkina Faso");
+else if(strstr(ext, "SL"))
+strcpy(result, "Sierra Leone");
+else if(strstr(ext, "SO"))
+strcpy(result, "Somalia");
+else if(strstr(ext, "CD"))
+strcpy(result, "Cong");
+else if(strstr(ext, "NE"))
+strcpy(result, "Niger");
+else if(strstr(ext, "CF"))
+strcpy(result, "Central African Republic");
+else if(strstr(ext, "SZ"))
+strcpy(result, "Swaziland");
+else if(strstr(ext, "TG"))
+strcpy(result, "Togo");
+else if(strstr(ext, "GN"))
+strcpy(result, "Guinea");
+else if(strstr(ext, "LR"))
+strcpy(result, "Liberia");
+else if(strstr(ext, "SC"))
+strcpy(result, "Seychelles");
+else if(strstr(ext, "MA"))
+strcpy(result, "Morocco");
+else if(strstr(ext, "DZ"))
+strcpy(result, "Algeria");
+else if(strstr(ext, "MR"))
+strcpy(result, "Mauritania");
+else if(strstr(ext, "DJ"))
+strcpy(result, "Djibouti");
+else if(strstr(ext, "A2"))
+strcpy(result, "Satellite Provider");
+else if(strstr(ext, "KM"))
+strcpy(result, "Comoros");
+else if(strstr(ext, "RE"))
+strcpy(result, "Reunion");
+else if(strstr(ext, "GQ"))
+strcpy(result, "Equatorial Guinea");
+else if(strstr(ext, "TN"))
+strcpy(result, "Tunisia");
+else if(strstr(ext, "TR"))
+strcpy(result, "Turkey");
+else if(strstr(ext, "BG"))
+strcpy(result, "Bulgaria");
+else if(strstr(ext, "MT"))
+strcpy(result, "Malta");
+else if(strstr(ext, "NI"))
+strcpy(result, "Nicaragua");
+else if(strstr(ext, "RS"))
+strcpy(result, "Serbia");
+else if(strstr(ext, "EE"))
+strcpy(result, "Estonia");
+else if(strstr(ext, "CY"))
+strcpy(result, "Cyprus");
+else if(strstr(ext, "LB"))
+strcpy(result, "Lebanon");
+else if(strstr(ext, "PL"))
+strcpy(result, "Poland");
+else if(strstr(ext, "LU"))
+strcpy(result, "Luxembourg");
+else if(strstr(ext, "FI"))
+strcpy(result, "Finland");
+else if(strstr(ext, "AT"))
+strcpy(result, "Austria");
+else if(strstr(ext, "PS"))
+strcpy(result, "Palestinian Territor");
+else if(strstr(ext, "AZ"))
+strcpy(result, "Azerbaijan");
+else if(strstr(ext, "SK"))
+strcpy(result, "Slovakia");
+else if(strstr(ext, "SI"))
+strcpy(result, "Slovenia");
+else if(strstr(ext, "AM"))
+strcpy(result, "Armenia");
+else if(strstr(ext, "RO"))
+strcpy(result, "Romania");
+else if(strstr(ext, "LV"))
+strcpy(result, "Latvia");
+else if(strstr(ext, "AL"))
+strcpy(result, "Albania");
+else if(strstr(ext, "TJ"))
+strcpy(result, "Tajikistan");
+else if(strstr(ext, "IS"))
+strcpy(result, "Iceland");
+else if(strstr(ext, "JO"))
+strcpy(result, "Jordan");
+else if(strstr(ext, "BY"))
+strcpy(result, "Belarus");
+else if(strstr(ext, "HU"))
+strcpy(result, "Hungary");
+else if(strstr(ext, "MK"))
+strcpy(result, "Macedonia");
+else if(strstr(ext, "IQ"))
+strcpy(result, "Iraq");
+else if(strstr(ext, "ME"))
+strcpy(result, "Montenegro");
+else if(strstr(ext, "HR"))
+strcpy(result, "Croatia");
+else if(strstr(ext, "GI"))
+strcpy(result, "Gibraltar");
+else if(strstr(ext, "YE"))
+strcpy(result, "Yemen");
+else if(strstr(ext, "BA"))
+strcpy(result, "Bosnia and Herzegovina");
+else if(strstr(ext, "LT"))
+strcpy(result, "Lithuania");
+else if(strstr(ext, "VA"))
+strcpy(result, "Holy See (Vatican City State)");
+else if(strstr(ext, "LI"))
+strcpy(result, "Liechtenstein");
+else if(strstr(ext, "IM"))
+strcpy(result, "Isle of Man");
+else if(strstr(ext, "CR"))
+strcpy(result, "Costa Rica");
+else if(strstr(ext, "PA"))
+strcpy(result, "Panama");
+else if(strstr(ext, "CU"))
+strcpy(result, "Cuba");
+else if(strstr(ext, "KY"))
+strcpy(result, "Cayman Islands");
+else if(strstr(ext, "JM"))
+strcpy(result, "Jamaica");
+else if(strstr(ext, "CO"))
+strcpy(result, "Colombia");
+else if(strstr(ext, "GT"))
+strcpy(result, "Guatemala");
+else if(strstr(ext, "MH"))
+strcpy(result, "Marshall Islands");
+else if(strstr(ext, "PE"))
+strcpy(result, "Peru");
+else if(strstr(ext, "AQ"))
+strcpy(result, "Antarctica");
+else if(strstr(ext, "QA"))
+strcpy(result, "Qatar");
+else if(strstr(ext, "BB"))
+strcpy(result, "Barbados");
+else if(strstr(ext, "AW"))
+strcpy(result, "Aruba");
+else if(strstr(ext, "MC"))
+strcpy(result, "Monaco");
+else if(strstr(ext, "KW"))
+strcpy(result, "Kuwait");
+else if(strstr(ext, "OM"))
+strcpy(result, "Oman");
+else if(strstr(ext, "AI"))
+strcpy(result, "Anguilla");
+else if(strstr(ext, "KN"))
+strcpy(result, "Saint Kitts and Nevis");
+else if(strstr(ext, "GD"))
+strcpy(result, "Grenada");
+else if(strstr(ext, "DO"))
+strcpy(result, "Dominican Republic");
+else if(strstr(ext, "PY"))
+strcpy(result, "Paraguay");
+else if(strstr(ext, "LC"))
+strcpy(result, "Saint Lucia");
+else if(strstr(ext, "GL"))
+strcpy(result, "Greenland");
+else if(strstr(ext, "UZ"))
+strcpy(result, "Uzbekistan");
+else if(strstr(ext, "VE"))
+strcpy(result, "Venezuela");
+else if(strstr(ext, "TC"))
+strcpy(result, "Turks and Caicos Islands");
+else if(strstr(ext, "AG"))
+strcpy(result, "Antigua and Barbuda");
+else if(strstr(ext, "BH"))
+strcpy(result, "Bahrain");
+else if(strstr(ext, "JE"))
+strcpy(result, "Jersey");
+else if(strstr(ext, "TV"))
+strcpy(result, "Tuvalu");
+else if(strstr(ext, "PF"))
+strcpy(result, "French Polynesia");
+else if(strstr(ext, "SB"))
+strcpy(result, "Solomon Islands");
+else if(strstr(ext, "VU"))
+strcpy(result, "Vanuatu");
+else if(strstr(ext, "GE"))
+strcpy(result, "Georgia");
+else if(strstr(ext, "LK"))
+strcpy(result, "Sri Lanka");
+else if(strstr(ext, "SY"))
+strcpy(result, "Syrian Arab Republic");
+else if(strstr(ext, "MD"))
+strcpy(result, "Moldov");
+else if(strstr(ext, "AX"))
+strcpy(result, "Aland Islands");
+else if(strstr(ext, "AS"))
+strcpy(result, "American Samoa");
+else if(strstr(ext, "AD"))
+strcpy(result, "Andorra");
+else if(strstr(ext, "FO"))
+strcpy(result, "Faroe Islands");
+else if(strstr(ext, "GG"))
+strcpy(result, "Guernsey");
+else if(strstr(ext, "KG"))
+strcpy(result, "Kyrgyzstan");
+else if(strstr(ext, "SM"))
+strcpy(result, "San Marino");
+else if(strstr(ext, "SJ"))
+strcpy(result, "Svalbard and Jan Mayen");
+else if(strstr(ext, "TM"))
+strcpy(result, "Turkmenistan");
+else if(strstr(ext, "GU"))
+strcpy(result, "Guam");
+else if(strstr(ext, "NU"))
+strcpy(result, "Niue");
+else if(strstr(ext, "AP"))
+strcpy(result, "Asia/Pacific Region");
+else if(strstr(ext, "MM"))
+strcpy(result, "Myanmar");
+else if(strstr(ext, "BN"))
+strcpy(result, "Brunei Darussalam");
+else if(strstr(ext, "FK"))
+strcpy(result, "Falkland Islands (Malvinas)");
+else if(strstr(ext, "HT"))
+strcpy(result, "Haiti");
+else if(strstr(ext, "UM"))
+strcpy(result, "United States Minor Outlying Islands");
+else if(strstr(ext, "FM"))
+strcpy(result, "Micronesi");
+else if(strstr(ext, "EC"))
+strcpy(result, "Ecuador");
+else if(strstr(ext, "HN"))
+strcpy(result, "Honduras");
+else if(strstr(ext, "SV"))
+strcpy(result, "El Salvador");
+else if(strstr(ext, "TT"))
+strcpy(result, "Trinidad and Tobago");
+else if(strstr(ext, "BV"))
+strcpy(result, "Bouvet Island");
+else if(strstr(ext, "CK"))
+strcpy(result, "Cook Islands");
+else if(strstr(ext, "A1"))
+strcpy(result, "Anonymous Proxy");
+else if(strstr(ext, "WS"))
+strcpy(result, "Samoa");
+else if(strstr(ext, "UY"))
+strcpy(result, "Uruguay");
+else if(strstr(ext, "MP"))
+strcpy(result, "Northern Mariana Islands");
+else if(strstr(ext, "PW"))
+strcpy(result, "Palau");
+else if(strstr(ext, "LA"))
+strcpy(result, "Lao People's Democratic Republic");
+else if(strstr(ext, "GY"))
+strcpy(result, "Guyana");
+else if(strstr(ext, "SR"))
+strcpy(result, "Suriname");
+else if(strstr(ext, "MS"))
+strcpy(result, "Montserrat");
+else if(strstr(ext, "PM"))
+strcpy(result, "Saint Pierre and Miquelon");
+else if(strstr(ext, "GP"))
+strcpy(result, "Guadeloupe");
+else if(strstr(ext, "MF"))
+strcpy(result, "Saint Martin");
+else if(strstr(ext, "BI"))
+strcpy(result, "Burundi");
+else if(strstr(ext, "ET"))
+strcpy(result, "Ethiopia");
+else if(strstr(ext, "BT"))
+strcpy(result, "Bhutan");
+else if(strstr(ext, "MQ"))
+strcpy(result, "Martinique");
+else if(strstr(ext, "IO"))
+strcpy(result, "British Indian Ocean Territory");
+else if(strstr(ext, "ER"))
+strcpy(result, "Eritrea");
+else if(strstr(ext, "GW"))
+strcpy(result, "Guinea-Bissau");
+else if(strstr(ext, "TO"))
+strcpy(result, "Tonga");
+else if(strstr(ext, "TL"))
+strcpy(result, "Timor-Leste");
+else if(strstr(ext, "ST"))
+strcpy(result, "Sao Tome and Principe");
+else if(strstr(ext, "GF"))
+strcpy(result, "French Guiana");
+else if(strstr(ext, "KI"))
+strcpy(result, "Kiribati");
+else if(strstr(ext, "NF"))
+strcpy(result, "Norfolk Island");
+else if(strstr(ext, "NR"))
+strcpy(result, "Nauru");
+else if(strstr(ext, "YT"))
+strcpy(result, "Mayotte");
+
+return result;
+}

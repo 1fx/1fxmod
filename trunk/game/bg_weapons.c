@@ -105,7 +105,7 @@ qboolean BG_InitAmmoStats(void)
 			{
 				if (Q_stricmp(ammoNames[i], name) == 0)
 				{
-					BG_ParseAmmoStats((ammo_t)i, topSubs);
+					BG_ParseAmmoStats(i, topSubs);
 					break;
 				}
 			}
@@ -325,10 +325,10 @@ static qboolean BG_ParseWeaponStats(weapon_t weaponNum, void *group)
 
 	weapon->classname = bg_weaponNames[weaponNum];
 	trap_GPG_FindPairValue(group, "category", "0", tmpStr);
-	weapon->category = (ECategory)atoi(tmpStr);
+	weapon->category = atoi(tmpStr);
 
 	trap_GPG_FindPairValue(group, "safe", "false", tmpStr);
-	weapon->safe = (qboolean)!Q_stricmp(tmpStr, "true");
+	weapon->safe = !Q_stricmp(tmpStr, "true");
 
 	trap_GPG_FindPairValue(group, "model", "", weapon->worldModel);
 
@@ -389,7 +389,7 @@ qboolean BG_InitWeaponStats(qboolean init)
 				{
 					if (Q_stricmp(bg_weaponNames[i], name) == 0)
 					{
-						BG_ParseWeaponStats((weapon_t)i, topSubs);
+						BG_ParseWeaponStats(i, topSubs);
 						break;
 					}
 				}
@@ -407,7 +407,7 @@ qboolean BG_InitWeaponStats(qboolean init)
 				{
 					if (Q_stricmp(bg_weaponNames[i], name) == 0)
 					{
-						BG_ParseWeaponStats((weapon_t)i, topSubs);
+						BG_ParseWeaponStats(i, topSubs);
 						break;
 					}
 				}
@@ -438,7 +438,7 @@ static char *BG_BuildSideSurfaceList(char *name, char *pattern, char *sideSurfac
 	rc = sqlite3_prepare(db, query, -1, &stmt, 0);
 	if(rc!=SQLITE_OK){
 		Com_Printf("^1Error: ^7Inview database: %s\n", sqlite3_errmsg(db));
-		return NULL;
+		return;
 	}else while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
 		if(rc == SQLITE_ROW){
 			if(name == "optionalpart"){
@@ -459,7 +459,7 @@ static char *BG_BuildSideSurfaceList(char *name, char *pattern, char *sideSurfac
 		}
 	}
 
-	output = (char *)trap_VM_LocalAlloc(0);
+	output = trap_VM_LocalAlloc(0);
 	return output;
 }
 
@@ -470,7 +470,7 @@ static char *BG_BuildList(void *group, char *pattern)
 	char		fieldName[256], fieldValue[256];
 	int			length;
 
-	output = (char *)trap_VM_LocalAlloc(0);
+	output = trap_VM_LocalAlloc(0);
 	length = strlen(pattern);
 
 	value = trap_GPG_GetPairs(group);
@@ -480,13 +480,13 @@ static char *BG_BuildList(void *group, char *pattern)
 		if (Q_stricmpn(fieldName, pattern, length) == 0)
 		{
 			trap_GPV_GetTopValue(value, fieldValue);
-			data = (char *)trap_VM_LocalAllocUnaligned(strlen(fieldValue)+1);
+			data = trap_VM_LocalAllocUnaligned(strlen(fieldValue)+1);
 			strcpy(data, fieldValue);
 		}
 		value = trap_GPV_GetNext(value);
 	}
 
-	data = (char *)trap_VM_LocalAllocUnaligned(1);
+	data = trap_VM_LocalAllocUnaligned(1);
 	*data = 0;
 
 	return output;
@@ -642,7 +642,7 @@ sqlite3_stmt *stmt, *stmt1;
 	rc = sqlite3_prepare(db, query, -1, &stmt, 0);
 	if(rc!=SQLITE_OK){
 		Com_Printf("^1Error: ^7Inview database: %s\n", sqlite3_errmsg(db));
-		return qfalse;
+		return;
 	}else while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
 		if(rc == SQLITE_ROW){
 
@@ -656,7 +656,7 @@ sqlite3_stmt *stmt, *stmt1;
 			rc1 = sqlite3_prepare(db, query1, -1, &stmt1, 0);
 			if(rc1!=SQLITE_OK){
 				Com_Printf("^1Error: ^7Inview database: %s\n", sqlite3_errmsg(db));
-				return qfalse;
+				return;
 			}else while((rc1 = sqlite3_step(stmt1)) != SQLITE_DONE){
 				if(rc1 == SQLITE_ROW){
 					info = (TAnimInfoWeapon *)trap_VM_LocalAlloc(sizeof(*info));
@@ -746,7 +746,7 @@ static TBoltonWeapon *BG_ParseBolton(weapon_t weapon, sqlite3 * db)
 	rc = sqlite3_prepare(db, query, -1, &stmt, 0);
 	if(rc!=SQLITE_OK){
 		Com_Printf("^1Error: ^7Inview database: %s\n", sqlite3_errmsg(db));
-		return NULL;
+		return;
 	}else while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
 		if(rc == SQLITE_ROW){
 			if(sqlite3_column_text(stmt, 10))
@@ -761,6 +761,22 @@ static TBoltonWeapon *BG_ParseBolton(weapon_t weapon, sqlite3 * db)
 			BG_OpenWeaponFrames((char *)sqlite3_column_text(stmt, 12));
 		}
 	}
+
+	/*sub = trap_GPG_FindSubGroup(boltonGroup, "rightside");
+	if (sub)
+	{
+ 		BG_BuildSideSurfaceList(sub, "surface", bolton->mRightSide);
+	}*/
+
+	/*sub = trap_GPG_FindSubGroup(boltonGroup, "joint");
+	if (sub)
+	{
+		trap_GPG_FindPairValue(sub, "bone", "", bolton->mJointBone);
+		trap_GPG_FindPairValue(sub, "parentBone", "", bolton->mJointParentBone);
+		trap_GPG_FindPairValue(sub, "fwd", "", bolton->mJointForward);
+		trap_GPG_FindPairValue(sub, "right", "", bolton->mJointRight);
+		trap_GPG_FindPairValue(sub, "up", "", bolton->mJointUp);
+	}*/
 	sqlite3_finalize(stmt);
 	return bolton;
 }
@@ -778,7 +794,7 @@ static qboolean BG_ParseWeaponGroup(TWeaponModel *weapon, weapon_t weaponID, sql
 	rc = sqlite3_prepare(db, query, -1, &stmt, 0);
 	if(rc!=SQLITE_OK){
 		Com_Printf("^1Error: ^7Inview database: %s\n", sqlite3_errmsg(db));
-		return qfalse;
+		return;
 	}else while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
 		if(rc == SQLITE_ROW){
 			strcpy(weapon->mName, (char *)sqlite3_column_text(stmt, 1));
@@ -807,7 +823,7 @@ static qboolean BG_ParseWeaponGroup(TWeaponModel *weapon, weapon_t weaponID, sql
 				rc1 = sqlite3_prepare(db, query1, -1, &stmt1, 0);
 				if(rc1!=SQLITE_OK){
 						Com_Printf("^1Error: ^7Inview database: %s\n", sqlite3_errmsg(db));
-						return qfalse;
+						return;
 				}else while((rc = sqlite3_step(stmt1)) != SQLITE_DONE){
 					if(rc1 == SQLITE_ROW){
 						strcpy(option->mName, (char *)sqlite3_column_text(stmt1, 1));
@@ -848,7 +864,7 @@ static qboolean BG_ParseWeapon(weapon_t weapon, sqlite3 * db)
 	rc = sqlite3_prepare(db, query, -1, &stmt, 0);
 	if(rc!=SQLITE_OK){
 		Com_Printf("^1Error: ^7Inview database: %s\n", sqlite3_errmsg(db));
-		return qfalse;
+		return;
 	}else while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
 		if(rc == SQLITE_ROW){
 			weaponParseInfo[weapon].mForeshorten = sqlite3_column_double(stmt, 2);
@@ -862,7 +878,7 @@ static qboolean BG_ParseWeapon(weapon_t weapon, sqlite3 * db)
 	rc = sqlite3_prepare(db, query, -1, &stmt, 0);
 	if(rc!=SQLITE_OK){
 		Com_Printf("^1Error: ^7Inview database: %s\n", sqlite3_errmsg(db));
-		return qfalse;
+		return;
 	}else while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
 		if(rc == SQLITE_ROW){
 			int count = 0;
@@ -908,6 +924,58 @@ static qboolean BG_ParseWeapon(weapon_t weapon, sqlite3 * db)
 	sqlite3_finalize(stmt);
 	BG_CloseWeaponFrames(numInitialFiles);
 	return qtrue;
+	/*
+	sub = trap_GPG_GetSubGroups(group);
+	while(sub)
+	{
+		trap_GPG_GetName(sub, name);
+
+		if (Q_stricmp(name, "surfaces") == 0)
+		{
+			surfaceCallbackName = trap_GPG_GetSubGroups(sub);
+			for(i=0;surfaceCallbackName && (i < MAX_SURFACE_CALLBACKS);i++)
+			{
+				trap_GPG_GetName(surfaceCallbackName, weaponParseInfo[weapon].mSurfaceCallbacks[i].mName);
+				surfaceCallbackValue = trap_GPG_GetPairs(surfaceCallbackName);
+				for(j=0;surfaceCallbackValue && (j<MAX_CALLBACK_SURFACES);j++)
+				{
+					trap_GPG_GetName(surfaceCallbackValue, weaponParseInfo[weapon].mSurfaceCallbacks[i].mOnOffSurfaces[j].mName);
+					trap_GPV_GetTopValue(surfaceCallbackValue, onOffVal);
+					assert(onOffVal);
+					weaponParseInfo[weapon].mSurfaceCallbacks[i].mOnOffSurfaces[j].mStatus=(!Q_stricmp(onOffVal,"on"))?1:0;
+					surfaceCallbackValue=trap_GPV_GetNext(surfaceCallbackValue);
+				}
+				surfaceCallbackName=trap_GPG_GetNext(surfaceCallbackName);
+			}
+
+		}
+		else if (Q_stricmp(name, "anim") == 0)
+		{
+			BG_ParseAnimGroup(weapon, sub);
+		}
+
+		sub = trap_GPG_GetNext(sub);
+	}
+
+	anims = weaponParseInfo[weapon].mAnimList;
+	while(anims)
+	{
+		infos = anims->mInfos;
+		while(infos)
+		{
+			for(i=0;i<infos->mNumChoices;i++)
+			{
+				BG_FindWeaponFrames(infos, i);
+			}
+			infos = infos->mNext;
+		}
+
+		anims = anims->mNext;
+	}
+
+	BG_CloseWeaponFrames(numInitialFiles);
+	*/
+	return qtrue;
 }
 
 qboolean BG_ParseInviewFile(void)
@@ -926,7 +994,7 @@ qboolean BG_ParseInviewFile(void)
 		rc = sqlite3_open_v2(va("./%s/core/inview.db", fsGame), &db, SQLITE_OPEN_READONLY, NULL);
 		if(rc){
 			Com_Printf("^1Error: ^7Inview database: %s\n", sqlite3_errmsg(db));
-			return qfalse;
+			return;
 		}
 	}
 	weaponLeftHand[0] = 0;
@@ -941,7 +1009,7 @@ qboolean BG_ParseInviewFile(void)
 
 	for(i=1;i<WP_NUM_WEAPONS;i++)
 	{
-		BG_ParseWeapon((weapon_t)i, db);
+		BG_ParseWeapon(i, db);
 	}
 
 #ifdef _DEBUG
@@ -1153,7 +1221,7 @@ Returns the max ammo a client can hold for the given ammo index
 int BG_GetMaxAmmo ( const playerState_t* ps, int ammoIndex )
 {
 	int			ammo;
-	int	weapon;
+	weapon_t	weapon;
 
 	if ( ammoIndex == AMMO_NONE )
 	{

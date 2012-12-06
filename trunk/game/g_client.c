@@ -947,7 +947,7 @@ void G_UpdateOutfitting ( int clientNum )
 		item = &bg_itemlist[bg_outfittingGroups[group][client->pers.outfitting.items[group]]];
 
 		// Henk 06/10/10 -> Fix for ravensoft's crappy weapon check
-		if(!BG_IsWeaponAvailableForOutfitting ( (weapon_t)item->giTag, 2 )){
+		if(!BG_IsWeaponAvailableForOutfitting ( item->giTag, 2 )){
 			//trap_SendServerCommand(ent->s.number, va("print\"^3[Info] ^7Your outfitting contains a disabled weapon.\n\""));
 			continue;
 		}
@@ -975,7 +975,7 @@ void G_UpdateOutfitting ( int clientNum )
 		// Set the default firemode for this weapon
 		if ( client->ps.firemode[item->giTag] == WP_FIREMODE_NONE )
 		{
-			client->ps.firemode[item->giTag] = BG_FindFireMode ( (weapon_t)item->giTag, ATTACK_NORMAL, WP_FIREMODE_AUTO );
+			client->ps.firemode[item->giTag] = BG_FindFireMode ( item->giTag, ATTACK_NORMAL, WP_FIREMODE_AUTO );
 		}
 	}
 
@@ -1405,7 +1405,7 @@ void ClientUserinfoChanged( int clientNum )
 				client->sess.admin = Boe_NameListCheck ( clientNum, ent->client->pers.boe_id, g_adminfile.string, NULL, qfalse, qtrue, qfalse, qfalse, qfalse);
 			}
 			if(!client->sess.clanMember){
-				client->sess.clanMember = (qboolean)Boe_NameListCheck (clientNum, ent->client->pers.boe_id, g_clanfile.string, NULL, qfalse, qfalse, qfalse, qfalse, qfalse);
+				client->sess.clanMember = Boe_NameListCheck (clientNum, ent->client->pers.boe_id, g_clanfile.string, NULL, qfalse, qfalse, qfalse, qfalse, qfalse);
 			}
 			if (g_aliasCheck.integer > 0){
 				clonecheck = va("users/aliases/%s.ip", client->pers.ip);
@@ -1614,7 +1614,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 	{
 		ent->r.svFlags |= SVF_BOT;
 		ent->inuse = qtrue;
-		if( !G_BotConnect( clientNum, (qboolean)!firstTime ) ) 
+		if( !G_BotConnect( clientNum, !firstTime ) ) 
 		{
 			return "BotConnectfailed";
 		}
@@ -1669,7 +1669,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 			client->sess.admin = Boe_NameListCheck ( clientNum, ent->client->pers.boe_id, g_adminfile.string, NULL, qfalse, qtrue, qfalse, qfalse, qfalse);
 		}
 		if(!client->sess.clanMember){
-			client->sess.clanMember = (qboolean)Boe_NameListCheck (clientNum, ent->client->pers.boe_id, g_clanfile.string, NULL, qfalse, qfalse, qfalse, qfalse, qfalse);
+			client->sess.clanMember = Boe_NameListCheck (clientNum, ent->client->pers.boe_id, g_clanfile.string, NULL, qfalse, qfalse, qfalse, qfalse, qfalse);
 		}
 	}
 	// Boe!Man 10/25/10: Checking for Clonecheck.
@@ -1857,14 +1857,14 @@ gspawn_t* G_SelectClientSpawnPoint ( gentity_t* ent,  qboolean plantsk )
 			{
 				//Ryan
 				//spawnPoint = G_SelectRandomSpawnPoint ( ent->client->sess.team );
-				spawnPoint = G_SelectRandomSpawnPoint ( (team_t)team );
+				spawnPoint = G_SelectRandomSpawnPoint ( team );
 				//Ryan
 			}
 			else
 			{
 				//Ryan
 				//spawnPoint = G_SelectRandomSafeSpawnPoint ( ent->client->sess.team, 1500 );
-				spawnPoint = G_SelectRandomSafeSpawnPoint ( (team_t)team, 1500 );
+				spawnPoint = G_SelectRandomSafeSpawnPoint ( team, 1500 );
 				//Ryan
 			}
 
@@ -1873,7 +1873,7 @@ gspawn_t* G_SelectClientSpawnPoint ( gentity_t* ent,  qboolean plantsk )
 				// don't spawn near other players if possible
 				//Ryan
 				//spawnPoint = G_SelectRandomSpawnPoint ( ent->client->sess.team );
-				spawnPoint = G_SelectRandomSpawnPoint ( (team_t)team );
+				spawnPoint = G_SelectRandomSpawnPoint ( team );
 				//Ryan
 			}
 
@@ -1891,7 +1891,7 @@ gspawn_t* G_SelectClientSpawnPoint ( gentity_t* ent,  qboolean plantsk )
 			// If none found use any spawn
 			if ( !spawnPoint )
 			{
-				spawnPoint = G_SelectRandomSafeSpawnPoint ( (team_t)-1, 1500 );
+				spawnPoint = G_SelectRandomSafeSpawnPoint ( -1, 1500 );
 			}
 
 			// Spawn at any deathmatch spawn, telefrag if needed
@@ -1903,7 +1903,7 @@ gspawn_t* G_SelectClientSpawnPoint ( gentity_t* ent,  qboolean plantsk )
 			// Spawn at any gametype spawn, telefrag if needed
 			if ( !spawnPoint )
 			{
-				spawnPoint = G_SelectRandomSpawnPoint ( (team_t)-1 );
+				spawnPoint = G_SelectRandomSpawnPoint ( -1 );
 			}
 		}
 	}
@@ -2124,7 +2124,7 @@ void ClientSpawn(gentity_t *ent)
 			client->ps.weaponTime = 500;
 
 			// Default to auto (or next available fire mode).
-			client->ps.firemode[client->ps.weapon] = BG_FindFireMode ( (weapon_t)client->ps.weapon, ATTACK_NORMAL, WP_FIREMODE_AUTO );
+			client->ps.firemode[client->ps.weapon] = BG_FindFireMode ( client->ps.weapon, ATTACK_NORMAL, WP_FIREMODE_AUTO );
 			BG_GetInviewAnim(client->ps.weapon,"idle",&idle);
 			client->ps.weaponAnimId = idle;
 			client->ps.weaponAnimIdChoice = 0;
@@ -2367,7 +2367,7 @@ void ClientDisconnect( int clientNum )
 	// Boe!Man 12/27/09: Resetting the Admin 'status' for the disconnected client here, so a future client with the same ID doesn't get his Admin status..
 	ent->client->sess.admin = 0;
 	ent->client->sess.referee = 0;
-	ent->client->sess.clanMember = qfalse;
+	ent->client->sess.clanMember = 0;
 	// Boe!Man 4/4/10: We reset the Developer as well.
 #ifdef _DEBUG
 	ent->client->sess.dev = 0;

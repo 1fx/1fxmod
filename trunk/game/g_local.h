@@ -9,7 +9,6 @@
 #include "../ghoul2/g2.h"
 
 // Boe!Man 7/12/11: Fixing definitions for compiling under linux (or cygwin/minGW) systems.
-// Henk 12/6/12: Seems like C++ compiler needs these things
 #ifdef __GNUC__
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -1599,4 +1598,3 @@ extern vmCvar_t	boe_log;
 
 // Boe!Man 11/29/12: GT specific module handler.
 int gtCall( int command, int arg0, int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int arg7, int arg8, int arg9, int arg10, int arg11 );
-void G_UpdateCvars(void);

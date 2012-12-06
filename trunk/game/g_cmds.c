@@ -12,7 +12,7 @@ typedef struct
 	char	*shortCmd; // short admin command, ex: !uc, !p(with space) -> HENK FIX ME: Need more entries here for uppercase.
 	char	*adminCmd; // full adm command for /adm and rcon
 	int		*adminLevel; // pointer to cvar value because we can't store a non constant value, so we store a pointer :).
-	void	(*Function)(int argNum, gentity_t *adm, qboolean shortCmd); // store pointer to the given function so we can call it later
+	void	(*Function)(); // store pointer to the given function so we can call it later
 } admCmd_t;
 
 static admCmd_t AdminCommands[] = 
@@ -624,7 +624,7 @@ void Cmd_Drop_f ( gentity_t* ent )
 	}else{
 
 		// Drop the weapon the client wanted to drop
-		dropped = G_DropWeapon ( ent, (weapon_t)atoi(ConcatArgs( 1 )), 1000 );
+		dropped = G_DropWeapon ( ent, atoi(ConcatArgs( 1 )), 1000 );
 		if ( !dropped )
 		{
 			//trap_SendServerCommand(ent->s.number, va("print\"^3[Info] ^7You don't have any item to drop\n\""));
@@ -735,7 +735,7 @@ void Cmd_Give_f (gentity_t *ent)
 	{
 		for ( i = WP_NONE + 1 ; i < WP_NUM_WEAPONS ; i++ ) 
 		{
-			int a;
+			attackType_t a;
 	
 			for ( a = ATTACK_NORMAL; a < ATTACK_MAX; a ++ )
 			{
@@ -859,7 +859,7 @@ void Cmd_Noclip_f( gentity_t *ent ) {
 	} else {
 		msg = "noclip ON\n";
 	}
-	ent->client->noclip = (qboolean)!ent->client->noclip;
+	ent->client->noclip = !ent->client->noclip;
 
 	trap_SendServerCommand( ent-g_entities, va("print \"%s\"", msg));
 }
@@ -1298,8 +1298,8 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 		//clear the invites if we are joining game play
 		if(team == TEAM_RED || team == TEAM_BLUE)
 		{
-			client->sess.invitedByRed = qfalse;
-			client->sess.invitedByBlue = qfalse;
+			client->sess.invitedByRed = 0;
+			client->sess.invitedByBlue = 0;
 		}
 	}
 
@@ -1313,8 +1313,8 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 
 		if(team == TEAM_RED || team == TEAM_BLUE)
 		{
-			client->sess.invitedByRed = qfalse;
-			client->sess.invitedByBlue = qfalse;
+			client->sess.invitedByRed = 0;
+			client->sess.invitedByBlue = 0;
 		}
 
 		if ( ghost )
@@ -1344,7 +1344,7 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 		client->sess.spectatorTime = level.time;
 	}
 
-	client->sess.team = (team_t)team;
+	client->sess.team = team;
 	client->sess.spectatorState = specState;
 	client->sess.spectatorClient = specClient;
 
@@ -3954,7 +3954,7 @@ qboolean ConsoleCommand( void )
 	if (Q_stricmp (cmd, "gametype_restart" ) == 0 )
 	{
 		trap_Argv( 1, cmd, sizeof( cmd ) );
-		G_ResetGametype ( (qboolean)(Q_stricmp ( cmd, "full" ) == 0), qfalse );
+		G_ResetGametype ( Q_stricmp ( cmd, "full" ) == 0, qfalse );
 		return qtrue;
 	}
 

@@ -487,7 +487,7 @@ void G_FireBullet ( gentity_t* ent, int weapon, int attack )
 		// KRIS
 
 		// Trace the bullet
-		G_TraceBullet ( (weapon_t)weapon, &tr, G2Trace, muzzlePoint, end, ent->s.number, MASK_SHOT, detailed );
+		G_TraceBullet ( weapon, &tr, G2Trace, muzzlePoint, end, ent->s.number, MASK_SHOT, detailed );
 
 		// KRIS 7/08/2003 11:07AM
 		if (!detailed)
@@ -960,8 +960,8 @@ gentity_t* G_FireProjectile ( gentity_t *ent, weapon_t weapon, attackType_t atta
 			dir[1] += flrand(-0.1 * inaccuracy, 0.1 * inaccuracy);
 			dir[2] += flrand(-0.1 * inaccuracy, 0.1 * inaccuracy);
 		}
-		
-		missile = G_CreateMissile( muzzlePoint, dir, attackDat->rV.velocity, minimum(projectileLifetime, 10000), ent, attack );
+
+		missile = G_CreateMissile( muzzlePoint, dir, attackDat->rV.velocity, min(projectileLifetime, 10000), ent, attack );
 
 		missile->classname = ammoData[attackDat->ammoIndex].name;
 		missile->s.weapon = weapon;
@@ -1087,7 +1087,7 @@ gentity_t* G_FireWeapon( gentity_t *ent, attackType_t attack )
 
 	if ( attackDat->weaponFlags & PROJECTILE_FIRE)
 	{
-		return G_FireProjectile ( ent, (weapon_t)ent->s.weapon, attack, projectileLifetime, flags );
+		return G_FireProjectile ( ent, ent->s.weapon, attack, projectileLifetime, flags );
 	}
 	else
 	{

@@ -388,7 +388,7 @@ Instead of forcing everything to on/off, check available weapons as well.
 ==========
 */
 qboolean SetNades(char *status){
-	int weapon;
+	weapon_t weapon;
 	char	 available[WP_NUM_WEAPONS+1];
 	qboolean one = qfalse; // Boe!Man 9/20/12: If at least ONE nade is enabled, this is qtrue (also return value).
 	
@@ -414,7 +414,7 @@ qboolean SetNades(char *status){
 				trap_Cvar_Set("disable_pickup_weapon_AN_M14", "0");
 		}else{ // If not H&S, check other gametypes. Since we might not want to enable all nades (it should respect availablenades CVAR), check for it.
 				for (weapon = WP_M67_GRENADE; weapon < WP_NUM_WEAPONS; weapon ++){
-					gitem_t* item = BG_FindWeaponItem ( (weapon_t)weapon );
+					gitem_t* item = BG_FindWeaponItem ( weapon );
 					if (!item){
 						continue;
 					}
@@ -763,7 +763,7 @@ void Boe_Add_Clan_Member(int argNum, gentity_t *adm, qboolean shortCmd)
 	if(idnum < 0)
 		return;
 
-	g_entities[idnum].client->sess.clanMember = qtrue;
+	g_entities[idnum].client->sess.clanMember = 1;
 
 	id = g_entities[idnum].client->pers.boe_id;
 
@@ -816,7 +816,7 @@ void Boe_Remove_Clan_Member(int argNum, gentity_t *adm, qboolean shortCmd)
 
 	///make sure they are not admins even if not on list
 	if(g_entities[idnum].client->sess.clanMember){
-		g_entities[idnum].client->sess.clanMember = qfalse;
+		g_entities[idnum].client->sess.clanMember = 0;
 		clanmem = qtrue;
 	}
 
@@ -864,7 +864,7 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 				if(henk_isdigit(arg[i+1]) && !henk_ischar(arg[i+2])){ // we check if the other 2 are chars(fixes !uc 1fx bug which uppercuts id 1)
 				num = atoi(va("%c%c", arg[i+1], arg[i+2]));
 				}else{
-					for(x=0;x<=20;x++){ // FIX ME HENK: could be out of bounds -> Could be improved by starting at i+3(?)
+					for(x=0;x<=20;x++){ // FIX ME HENK: could be out of bounds
 						if(arg[x] == ' '){
 							// Henk 08/09/10 -> Check for another arg in this.
 							for(y=1;y<=sizeof(arg);y++){
@@ -2859,7 +2859,7 @@ void Adm_ForceTeam(int argNum, gentity_t *adm, qboolean shortCmd)
 			trap_GetUserinfo( idnum, userinfo, sizeof( userinfo ) );
 			Info_SetValueForKey( userinfo, "team", str );
 			trap_SetUserinfo( idnum, userinfo );
-			g_entities[idnum].client->sess.team = (team_t)xteam;
+			g_entities[idnum].client->sess.team = xteam;
 			if(current_gametype.value != GT_HS)
 			g_entities[idnum].client->pers.identity = BG_FindTeamIdentity ( level.gametypeTeam[xteam], -1 );
 			ClientBegin( idnum, qfalse );
@@ -4553,7 +4553,7 @@ void Boe_ShuffleTeams(int argNum, gentity_t *ent, qboolean shortCmd){
 		G_StartGhosting(&g_entities[level.sortedClients[i]]);
 		
 		// Boe!Man 7/13/12: Do the team changing.
-		g_entities[level.sortedClients[i]].client->sess.team = (team_t)newTeam;
+		g_entities[level.sortedClients[i]].client->sess.team = newTeam;
 		
 		// Boe!Man 7/13/12: Take care of the bots.
 		if(g_entities[level.sortedClients[i]].r.svFlags & SVF_BOT){ // Reset bots to set them to another team
@@ -4567,7 +4567,7 @@ void Boe_ShuffleTeams(int argNum, gentity_t *ent, qboolean shortCmd){
 			
 			Info_SetValueForKey( userinfo, "team", newTeam2 );
 			trap_SetUserinfo( level.sortedClients[i], userinfo );
-			g_entities[level.sortedClients[i]].client->sess.team = (team_t)newTeam;
+			g_entities[level.sortedClients[i]].client->sess.team = newTeam;
 			if(current_gametype.value != GT_HS){
 				g_entities[level.sortedClients[i]].client->pers.identity = BG_FindTeamIdentity ( level.gametypeTeam[newTeam], -1 );
 			}

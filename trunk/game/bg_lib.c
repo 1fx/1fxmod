@@ -116,7 +116,7 @@ loop:	SWAPINIT(a, es);
 	}
 	pm = (char *)a + (n / 2) * es;
 	if (n > 7) {
-		pl = (char *)a;
+		pl = a;
 		pn = (char *)a + (n - 1) * es;
 		if (n > 40) {
 			d = (n / 8) * es;
@@ -126,7 +126,7 @@ loop:	SWAPINIT(a, es);
 		}
 		pm = med3(pl, pm, pn, cmp);
 	}
-	swap((char *)a, pm);
+	swap(a, pm);
 	pa = pb = (char *)a + es;
 
 	pc = pd = (char *)a + (n - 1) * es;
@@ -164,7 +164,7 @@ loop:	SWAPINIT(a, es);
 
 	pn = (char *)a + n * es;
 	r = min(pa - (char *)a, pb - pa);
-	vecswap((char *)a, pb - r, r);
+	vecswap(a, pb - r, r);
 	r = min(pd - pc, pn - pd - es);
 	vecswap(pb, pn - r, r);
 	if ((r = pb - pa) > es)

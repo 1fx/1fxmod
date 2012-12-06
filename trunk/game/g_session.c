@@ -79,9 +79,9 @@ void G_ReadSessionData( gclient_t *client )
 	///Ryan june 7 2003
 	client->sess.admin = adminSess;
 	client->sess.referee = refSess;
-	client->sess.clanMember = (qboolean)clanSess;		//RxCxW - 1.04.2005 - #ClanList
-	client->sess.invitedByRed = (qboolean)invitedByRed;
-	client->sess.invitedByBlue = (qboolean)invitedByBlue;
+	client->sess.clanMember = clanSess;		//RxCxW - 1.04.2005 - #ClanList
+	client->sess.invitedByRed = invitedByRed;
+	client->sess.invitedByBlue = invitedByBlue;
 	if(countrycheck == 1){
 	strcpy(client->sess.country, country);
 	strcpy(client->sess.countryext, ext);

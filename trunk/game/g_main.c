@@ -656,7 +656,7 @@ int vmMain( int command, int arg0, int arg1, int arg2, int arg3, int arg4, int a
 			G_ShutdownGame( arg0 );
 			return 0;
 		case GAME_CLIENT_CONNECT:
-			return (int)ClientConnect( arg0, (qboolean)arg1, (qboolean)arg2 );
+			return (int)ClientConnect( arg0, arg1, arg2 );
 		case GAME_CLIENT_THINK:
 			ClientThink( arg0 );
 			return 0;
@@ -910,7 +910,7 @@ Reversed -.-''
 */
 void G_UpdateDisableCvars ( void )
 {
-	int weapon;
+	weapon_t weapon;
 	char	 available[WP_NUM_WEAPONS+1];
 
 	if(current_gametype.value == GT_HS)
@@ -918,9 +918,9 @@ void G_UpdateDisableCvars ( void )
 	else
 		strcpy(available, availableWeapons.string);
 
-	for ( weapon = WP_KNIFE; weapon < WP_NUM_WEAPONS; weapon++)
+	for ( weapon = WP_KNIFE; weapon < WP_NUM_WEAPONS; weapon ++ )
 	{
-		gitem_t* item = BG_FindWeaponItem ( (weapon_t)weapon );
+		gitem_t* item = BG_FindWeaponItem ( weapon );
 		if ( !item )
 		{
 			continue;
@@ -944,14 +944,14 @@ Updates the g_availableWeapons cvar using the disable cvars.
 */
 void G_UpdateAvailableWeapons ( void )
 {
-	int weapon;
+	weapon_t weapon;
 	char	 available[WP_NUM_WEAPONS+1];
 
 	memset ( available, 0, sizeof(available) );
 
 	for ( weapon = WP_KNIFE; weapon < WP_NUM_WEAPONS; weapon ++ )
 	{
-		gitem_t* item = BG_FindWeaponItem ( (weapon_t)weapon );
+		gitem_t* item = BG_FindWeaponItem ( weapon );
 		if ( !item )
 		{
 			continue;
@@ -1264,7 +1264,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	{
 		BotAISetup( restart );
 		BotAILoadMap( restart );
-		G_InitBots( (qboolean)restart );
+		G_InitBots( restart );
 	}
 #endif
 
@@ -1802,7 +1802,7 @@ void FindIntermissionPoint( void )
 	ent = G_Find (NULL, FOFS(classname), "info_player_intermission");
 	if ( !ent )
 	{
-		gspawn_t* spawn = G_SelectRandomSpawnPoint ( (team_t)-1 );
+		gspawn_t* spawn = G_SelectRandomSpawnPoint ( -1 );
 		if ( spawn )
 		{
 			VectorCopy (spawn->origin, level.intermission_origin);
@@ -2213,13 +2213,13 @@ qboolean ScoreIsTied( void )
 
 	if ( level.gametypeData->teams )
 	{
-		return (qboolean)(level.teamScores[TEAM_RED] == level.teamScores[TEAM_BLUE]);
+		return level.teamScores[TEAM_RED] == level.teamScores[TEAM_BLUE];
 	}
 
 	a = level.clients[level.sortedClients[0]].sess.score;
 	b = level.clients[level.sortedClients[1]].sess.score;
 
-	return (qboolean)(a == b);
+	return a == b;
 }
 
 /*
