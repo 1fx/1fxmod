@@ -1159,18 +1159,26 @@ void HENK_COUNTRY(gentity_t *ent){
 	RealOctet[3] = atoi(octetx[3]);
 
 	IPnum = (RealOctet[0] * 16777216) + (RealOctet[1] * 65536) + (RealOctet[2] * 256) + (RealOctet[3]);
-	rc = sqlite3_open("country.db", &db);
-	//Com_Printf("Db status: %s\n", sqlite3_errmsg(db));
+	// Boe!Man 12/6/12
+	// The file can be on two locations. The DLL should always be in the fs_game folder, however, this could be misconfigured.
+	// The Mod takes care of this problem and should load the file correctly, even if misplaced.
+	rc = sqlite3_open_v2("./core/country.db", &db, SQLITE_OPEN_READONLY, NULL); // Boe!Man 12/5/12: *_v2 can make sure an empty database is NOT created. After all, the inview db is READ ONLY.
 	if(rc){
-		Com_Printf("Database error: %s\n", sqlite3_errmsg(db));
-		return;
+		char fsGame[MAX_QPATH];
+		trap_Cvar_VariableStringBuffer("fs_game", fsGame, sizeof(fsGame));
+		rc = sqlite3_open_v2(va("./%s/core/country.db", fsGame), &db, SQLITE_OPEN_READONLY, NULL);
+		if(rc){
+			Com_Printf("^1Error: ^7Country database: %s\n", sqlite3_errmsg(db));
+			return;
+		}
 	}
+
 	//SELECT table_index FROM country_index where 1 BETWEEN begin_ip AND end_ip
 	//SELECT ext,country FROM db6 where 1 BETWEEN begin_ip AND end_ip
 	rc = sqlite3_prepare(db, va("select table_index from country_index where %u BETWEEN begin_ip AND end_ip", IPnum), -1, &stmt, 0);
-	Com_Printf("Query: %s\n", va("select table_index from country_index where %u BETWEEN begin_ip AND end_ip", IPnum));
+	//Com_Printf("Query: %s\n", va("select table_index from country_index where %u BETWEEN begin_ip AND end_ip", IPnum));
 	if(rc!=SQLITE_OK){
-		Com_Printf("Database SQL error: %s\n", sqlite3_errmsg(db));
+		Com_Printf("^1Error: ^7Country database: %s\n", sqlite3_errmsg(db));
 		return;
 	}else while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
 		if(rc == SQLITE_ROW){
@@ -1179,9 +1187,9 @@ void HENK_COUNTRY(gentity_t *ent){
 		}
 	}
 	rc = sqlite3_prepare(db, va("select country,ext from db%i where %u BETWEEN begin_ip AND end_ip", table_index, IPnum), -1, &stmt, 0);
-	Com_Printf("Query: %s\n", va("select country,ext from db%i where %u BETWEEN begin_ip AND end_ip", table_index, IPnum));
+	//Com_Printf("Query: %s\n", va("select country,ext from db%i where %u BETWEEN begin_ip AND end_ip", table_index, IPnum));
 	if(rc!=SQLITE_OK){
-		Com_Printf("Database SQL error: %s\n", sqlite3_errmsg(db));
+		Com_Printf("^1Error: ^7Country database: %s\n", sqlite3_errmsg(db));
 		return;
 	}else while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
 		if(rc == SQLITE_ROW){
