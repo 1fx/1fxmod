@@ -1,7 +1,7 @@
 #include "g_local.h"
 #include "boe_local.h"
 
-char *GetCountry(char *ext);
+//char *GetCountry(char *ext);
 
 void trap_LinkEntity( gentity_t *ent ) {
 	if(ent == NULL){
@@ -1202,7 +1202,7 @@ void HENK_COUNTRY(gentity_t *ent){
 	return;
 }
 
-char *GetCountry(char *ext){
+/*char *GetCountry(char *ext){
 	char result[128];
 if(strstr(ext, "AU"))
 strcpy(result, "Australia");
@@ -1685,3 +1685,4 @@ strcpy(result, "Mayotte");
 
 return result;
 }
+*/
