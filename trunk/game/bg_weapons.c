@@ -995,6 +995,9 @@ qboolean BG_ParseInviewFile(void)
 		if(rc){
 			Com_Printf("^1Error: ^7Inview database: %s\n", sqlite3_errmsg(db));
 			return;
+		}else{
+			level.altPath = qtrue;
+			Q_strncpyz(level.altString, va("./%s", fsGame), sizeof(level.altString));
 		}
 	}
 	weaponLeftHand[0] = 0;

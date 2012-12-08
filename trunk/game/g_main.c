@@ -1322,6 +1322,9 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	
 	// Boe!Man 3/30/10
 	Boe_ParseChatSounds();
+	
+	// Boe!Man 12/8/12: Check database integrity.
+	Boe_userdataIntegrity();
 
 	// Boe!Man 1/17/11: Check for modifications on the motd and version.
 	/*

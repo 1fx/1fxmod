@@ -1294,19 +1294,19 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 	int				 rc;
 	
 	// Boe!Man 12/8/12: We still use *_v2 here, since we shouldn't create it as well (should be existing data already!).
-	rc = sqlite3_open_v2("userdata.db", &db, SQLITE_OPEN_READONLY, NULL);
+	if(!level.altPath){
+		rc = sqlite3_open_v2("./users/bans.db", &db, SQLITE_OPEN_READONLY, NULL);
+	}else{
+		rc = sqlite3_open_v2(va("%s/users/bans.db", level.altString), &db, SQLITE_OPEN_READONLY, NULL);
+	}
+	
 	if(rc){
-		char fsGame[MAX_QPATH];
-		trap_Cvar_VariableStringBuffer("fs_game", fsGame, sizeof(fsGame));
-		rc = sqlite3_open_v2(va("./%s/userdata.db", fsGame), &db, SQLITE_OPEN_READONLY, NULL);
-		if(rc){
-			if(adm){
-				trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7Userdata database: %s\n\"", sqlite3_errmsg(db)));
-			}else{
-				Com_Printf("^1Error: ^7Userdata database: %s\n", sqlite3_errmsg(db));
-			}
-			return;
+		if(adm){
+			trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7Userdata database: %s\n\"", sqlite3_errmsg(db)));
+		}else{
+			Com_Printf("^1Error: ^7Userdata database: %s\n", sqlite3_errmsg(db));
 		}
+		return;
 	}
 
 	if(adm){
@@ -1336,7 +1336,6 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 		return;
 	}else while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
 		if(rc == SQLITE_ROW){
-
 			if(adm){
 				// Boe!Man 11/04/11: Put packet through to clients if char size would exceed 1000 and reset buf2.
 				if((strlen(buf2)+strlen(va("[^3%-3.3i^7] %-15.15s %-15.15s %-18.18s %-15.15s\n", sqlite3_column_int(stmt, 0), sqlite3_column_text(stmt, 1), sqlite3_column_text(stmt, 2), sqlite3_column_text(stmt, 4), sqlite3_column_text(stmt, 3)))) > 1000){
@@ -1351,7 +1350,7 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 	}
 	
 	sqlite3_finalize(stmt);
-	sqlite3_close(db);	
+	sqlite3_close(db);
 	
 	// Boe!Man 11/04/11: Fix for RCON not properly showing footer of banlist.
 	if(adm){

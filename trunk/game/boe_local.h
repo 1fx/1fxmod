@@ -684,3 +684,5 @@ void Preload_Effects(void);
 
 // Boe!Man 11/11/12: Ripped old /howto command from 1fx. Hide&Seek for CTB.
 void Boe_Howto ( gentity_t *ent );
+
+void Boe_userdataIntegrity (void);

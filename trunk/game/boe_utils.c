@@ -2597,3 +2597,56 @@ void Boe_Howto ( gentity_t *ent )
 		trap_SendServerCommand( ent-g_entities, va("print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\""));
 	}
 }
+
+/*
+================
+Boe_userdataIntegrity
+12/8/12 - 9:49 AM
+Function that checks userdata prior to having a finished initgame.
+================
+*/
+// WORK IN PROGRESS
+void Boe_userdataIntegrity(void)
+{
+	sqlite3 		*db;
+	int				 rc, num;
+	char			 query[128];
+	sqlite3_stmt	*stmt;
+	
+	Com_Printf("Checking userdata integrity...\n");
+	
+	// The first thing we check is if the database exists on one of the two locations.
+	if(!level.altPath){
+		rc = sqlite3_open_v2("./userdata.db", &db, SQLITE_OPEN_READWRITE, NULL);
+	}else{
+		rc = sqlite3_open_v2(va("%s/userdata.db", level.altString), &db, SQLITE_OPEN_READWRITE, NULL);
+	}
+	
+	if(rc){
+		// The database cannot be found. We try to create it.
+		db = NULL;
+		if(!level.altPath){
+			rc = sqlite3_open_v2("./userdata.db", &db, SQLITE_OPEN_CREATE | SQLITE_OPEN_READWRITE, NULL);
+		}else{
+			Com_Printf("Opening %s\n", va("%s/userdata.db", level.altString));
+			rc = sqlite3_open_v2(va("%s/userdata.db", level.altString), &db, SQLITE_OPEN_CREATE | SQLITE_OPEN_READWRITE, NULL);
+		}
+		
+		if(rc){
+			Com_Printf("^1Error: ^7Userdata database: %s\n", sqlite3_errmsg(db));
+			Com_Printf("^1Continuing without userdata, contact the administrator.\n");
+			return;
+		}
+	}
+	// The database should be opened by now, see if it needs maintenance.
+	if(sqlite3_prepare_v2(db, "CREATE TABLE IF NOT EXISTS bans(ID INTEGER NOT NULL, IP VARCHAR(32), name VARCHAR(64), by VARCHAR(64), reason VARCHAR(128), PRIMARY KEY (ID))", -1, &stmt, 0) != SQLITE_OK){
+		Com_Printf("^1Error: ^7Userdata database: %s\n", sqlite3_errmsg(db));
+		return;
+	}
+	
+	sqlite3_finalize(stmt);
+	sqlite3_close(db);
+	Com_Printf("Succesfully finished checking userdata integrity.\n");
+	
+	return;
+}
