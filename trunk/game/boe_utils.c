@@ -2608,44 +2608,45 @@ Function that checks userdata prior to having a finished initgame.
 // WORK IN PROGRESS
 void Boe_userdataIntegrity(void)
 {
-	sqlite3 		*db;
-	int				 rc, num;
-	char			 query[128];
-	sqlite3_stmt	*stmt;
+	sqlite3     *db;
+	int			 rc, num;
 	
 	Com_Printf("Checking userdata integrity...\n");
 	
+	// Check bans.db first.
 	// The first thing we check is if the database exists on one of the two locations.
 	if(!level.altPath){
-		rc = sqlite3_open_v2("./userdata.db", &db, SQLITE_OPEN_READWRITE, NULL);
+		rc = sqlite3_open_v2("./users/bans.db", &db, SQLITE_OPEN_READWRITE, NULL);
 	}else{
-		rc = sqlite3_open_v2(va("%s/userdata.db", level.altString), &db, SQLITE_OPEN_READWRITE, NULL);
+		rc = sqlite3_open_v2(va("%s/users/bans.db", level.altString), &db, SQLITE_OPEN_READWRITE, NULL);
 	}
 	
 	if(rc){
 		// The database cannot be found. We try to create it.
-		db = NULL;
 		if(!level.altPath){
-			rc = sqlite3_open_v2("./userdata.db", &db, SQLITE_OPEN_CREATE | SQLITE_OPEN_READWRITE, NULL);
+			rc = sqlite3_open_v2("./users/bans.db", &db, SQLITE_OPEN_CREATE | SQLITE_OPEN_READWRITE, NULL);
 		}else{
-			Com_Printf("Opening %s\n", va("%s/userdata.db", level.altString));
-			rc = sqlite3_open_v2(va("%s/userdata.db", level.altString), &db, SQLITE_OPEN_CREATE | SQLITE_OPEN_READWRITE, NULL);
+			rc = sqlite3_open_v2(va("%s/users/bans.db", level.altString), &db, SQLITE_OPEN_CREATE | SQLITE_OPEN_READWRITE, NULL);
 		}
 		
 		if(rc){
+			Com_Printf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
+		}
+	}else{
+		// The database should be opened by now, see if it needs maintenance.
+		if(sqlite3_exec(db, "CREATE TABLE IF NOT EXISTS bans(ID INTEGER NOT NULL, IP VARCHAR(32), name VARCHAR(64), by VARCHAR(64), reason VARCHAR(128), PRIMARY KEY (ID))", 0, 0, 0) != SQLITE_OK){
 			Com_Printf("^1Error: ^7Userdata database: %s\n", sqlite3_errmsg(db));
-			Com_Printf("^1Continuing without userdata, contact the administrator.\n");
 			return;
 		}
-	}
-	// The database should be opened by now, see if it needs maintenance.
-	if(sqlite3_prepare_v2(db, "CREATE TABLE IF NOT EXISTS bans(ID INTEGER NOT NULL, IP VARCHAR(32), name VARCHAR(64), by VARCHAR(64), reason VARCHAR(128), PRIMARY KEY (ID))", -1, &stmt, 0) != SQLITE_OK){
-		Com_Printf("^1Error: ^7Userdata database: %s\n", sqlite3_errmsg(db));
-		return;
+		
+		if(sqlite3_exec(db, "CREATE TABLE IF NOT EXISTS subnetbans(ID INTEGER NOT NULL, IP VARCHAR(32), name VARCHAR(64), by VARCHAR(64), reason VARCHAR(128), PRIMARY KEY (ID))", 0, 0, 0) != SQLITE_OK){
+			Com_Printf("^1Error: ^7Userdata database: %s\n", sqlite3_errmsg(db));
+			return;
+		}
+		
+		sqlite3_close(db);
 	}
 	
-	sqlite3_finalize(stmt);
-	sqlite3_close(db);
 	Com_Printf("Succesfully finished checking userdata integrity.\n");
 	
 	return;
