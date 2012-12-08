@@ -1271,43 +1271,44 @@ Boe_BanList
 =============
 */
 void Henk_BanList(int argNum, gentity_t *adm, qboolean shortCmd){
-	int start;
-	int end;
-	start = trap_Milliseconds();
 	Boe_BanList(argNum, adm, shortCmd, qfalse);
-	end = trap_Milliseconds()-start;
-	Com_Printf(va("Banlist took %d ms\n", end));
 }
 
 void Henk_SubnetBanList(int argNum, gentity_t *adm, qboolean shortCmd){
 	Boe_BanList(argNum, adm, shortCmd, qtrue);
 }
 
+/*
 int banlist_callback(void *p_data, int num_fields, char **p_fields, char **p_col_names) {
   //Com_Printf("NAME OF ID 1= %s\n", p_fields[0]);
   return 0;
-}
+}*/
 
 void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet){
 	// Boe!Man 11/04/11: We use this in order to send as little packets as possible. Packet max size is 1024 minus some overhead, 1000 char. max should take care of this. (adm only, RCON remains unaffected).
-	char			buf2[1000] = "\0";
+	char			 buf2[1000] = "\0";
 	// End Boe!Man 11/04/11
-	char fileName[128];
 	// Henk comeback 19/09/12: Add SQLite back end
-	sqlite3 * db;
-	sqlite3_stmt *stmt;
-	int rc;
-	int start;
-	rc = sqlite3_open("1fx.db", &db);
-	//Com_Printf("Db status: %s\n", sqlite3_errmsg(db));
+	sqlite3			*db;
+	sqlite3_stmt	*stmt;
+	int				 rc;
+	
+	// Boe!Man 12/8/12: We still use *_v2 here, since we shouldn't create it as well (should be existing data already!).
+	rc = sqlite3_open_v2("userdata.db", &db, SQLITE_OPEN_READONLY, NULL);
 	if(rc){
-		if(adm){
-			trap_SendServerCommand( adm-g_entities, va("print \"Database error: %s\n\"", sqlite3_errmsg(db)));
-		}else{
-			Com_Printf("Database error: %s\n", sqlite3_errmsg(db));
+		char fsGame[MAX_QPATH];
+		trap_Cvar_VariableStringBuffer("fs_game", fsGame, sizeof(fsGame));
+		rc = sqlite3_open_v2(va("./%s/userdata.db", fsGame), &db, SQLITE_OPEN_READONLY, NULL);
+		if(rc){
+			if(adm){
+				trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7Userdata database: %s\n\"", sqlite3_errmsg(db)));
+			}else{
+				Com_Printf("^1Error: ^7Userdata database: %s\n", sqlite3_errmsg(db));
+			}
+			return;
 		}
-		return;
 	}
+
 	if(adm){
 		if(subnet){
 			Q_strcat(buf2, sizeof(buf2), "^3[Subnetbanlist]^7\n\n");
@@ -1316,26 +1317,21 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 		}
 		Q_strcat(buf2, sizeof(buf2), "^3 #    IP              Name                Reason             By\n^7------------------------------------------------------------------------\n");
 	}else{
-		if(subnet)
+		if(subnet){
 			Com_Printf("^3[Subnetbanlist]^7\n\n");
-		else
+		}else{
 			Com_Printf("^3[Banlist]^7\n\n");
+		}
 		Com_Printf("^3 #    IP              Name                Reason             By\n");
 		Com_Printf("^7------------------------------------------------------------------------\n");
-	}
-
-	if(subnet){
-		strcpy(fileName, "users/subnetbans.txt");
-	}else{
-		strcpy(fileName, g_banfile.string);
 	}
 
 	rc = sqlite3_prepare(db, "select * from bans order by ID", -1, &stmt, 0);
 	if(rc!=SQLITE_OK){
 		if(adm){
-			trap_SendServerCommand( adm-g_entities, va("print \"Database SQL error: %s\n\"", sqlite3_errmsg(db)));
+			trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7Userdata database: %s\n\"", sqlite3_errmsg(db)));
 		}else{
-			Com_Printf("Database SQL error: %s\n", sqlite3_errmsg(db));
+			Com_Printf("^1Error: ^7Userdata database: %s\n", sqlite3_errmsg(db));
 		}
 		return;
 	}else while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
@@ -1353,12 +1349,13 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 			}
 		}
 	}
+	
 	sqlite3_finalize(stmt);
 	sqlite3_close(db);	
+	
 	// Boe!Man 11/04/11: Fix for RCON not properly showing footer of banlist.
 	if(adm){
 		trap_SendServerCommand( adm-g_entities, va("print \"%s\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\"", buf2)); // Boe!Man 11/04/11: Also send the last buf2 (that wasn't filled as a whole yet).
-		//trap_SendServerCommand( adm-g_entities, va("print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\""));
 	}else{
 		Com_Printf("\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n");
 	}
