@@ -706,7 +706,7 @@ BotAISetupClient
 int BotAISetupClient(int client, struct bot_settings_s *settings, qboolean restart) {
 	bot_state_t *bs;
 
-	if (!botstates[client]) botstates[client] = B_Alloc(sizeof(bot_state_t)); //G_Alloc(sizeof(bot_state_t));
+	if (!botstates[client]) botstates[client] = (bot_state_t *)B_Alloc(sizeof(bot_state_t)); //G_Alloc(sizeof(bot_state_t));
 																			  //rww - G_Alloc bad! B_Alloc good.
 
 	memset(botstates[client], 0, sizeof(bot_state_t));
@@ -5498,7 +5498,7 @@ int BotAIShutdown( int restart ) {
 		//shutdown all the bots in the botlib
 		for (i = 0; i < MAX_CLIENTS; i++) {
 			if (botstates[i] && botstates[i]->inuse) {
-				BotAIShutdownClient(botstates[i]->client, restart);
+				BotAIShutdownClient(botstates[i]->client, (qboolean)restart);
 			}
 		}
 		//don't shutdown the bot library

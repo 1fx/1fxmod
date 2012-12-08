@@ -915,7 +915,9 @@ void AxisCopy( vec3_t in[3], vec3_t out[3] );
 void SetPlaneSignbits( struct cplane_s *out );
 int BoxOnPlaneSide (vec3_t emins, vec3_t emaxs, struct cplane_s *plane);
 
+#ifdef Q3_VM
 double fmod( double x, double y );
+#endif
 float	AngleMod(float a);
 float	LerpAngle (float from, float to, float frac);
 void	LerpVector ( vec3_t from, vec3_t to, float lerp, vec3_t out );

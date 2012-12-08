@@ -2,6 +2,7 @@
 //
 
 #include "g_local.h"
+#include "boe_local.h"
 
 qboolean G_SpawnString( const char *key, const char *defaultString, char **out ) 
 {
@@ -427,7 +428,7 @@ char *G_NewString( const char *string )
 	
 	l = strlen(string) + 1;
 
-	newb = trap_VM_LocalAlloc( l );
+	newb = (char *)trap_VM_LocalAlloc( l );
 
 	new_p = newb;
 
@@ -734,7 +735,7 @@ static void HandleEntityAdjustment(void)
 	{
 		sscanf( value, "%f %f %f", &angles[0], &angles[1], &angles[2] );
 
-		angles[1] = fmod(angles[1] + level.mRotationAdjust, 360.0);
+		angles[1] = fmod((float)angles[1] + level.mRotationAdjust, (float)360.0);
 		// damn VMs don't handle outputing a float that is compatible with sscanf in all cases
 		Com_sprintf(temp, MAX_QPATH, "%0.0f %0.0f %0.0f", angles[0], angles[1], angles[2]);
 		AddSpawnField("angles", temp);
@@ -750,7 +751,7 @@ static void HandleEntityAdjustment(void)
 		{
 			angles[1] = 0.0;
 		}
-		angles[1] = fmod(angles[1] + level.mRotationAdjust, 360.0);
+		angles[1] = fmod((float)angles[1] + level.mRotationAdjust, (float)360.0);
 		Com_sprintf(temp, MAX_QPATH, "%0.0f", angles[1]);
 		AddSpawnField("angle", temp);
 	}
@@ -766,7 +767,7 @@ static void HandleEntityAdjustment(void)
 	{
 		angles[0] = angles[1] = angles[2] = 0.0;
 	}
-	angles[1] = fmod(angles[1] + level.mRotationAdjust, 360.0);
+	angles[1] = fmod((float)angles[1] + level.mRotationAdjust, (float)360.0);
 	Com_sprintf(temp, MAX_QPATH, "%0.0f %0.0f %0.0f", angles[0], angles[1], angles[2]);
 	AddSpawnField("direction", temp);
 

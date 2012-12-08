@@ -247,7 +247,7 @@ void RPM_Clan_Vs_All(gentity_t *adm)
 				ent->client->ps.stats[STAT_WEAPONS] = 0;
 				TossClientItems( ent );
 				G_StartGhosting( ent );
-				sess->team = clanTeam;
+				sess->team = (team_t)clanTeam;
 
 			}
 			else {
@@ -262,7 +262,7 @@ void RPM_Clan_Vs_All(gentity_t *adm)
 				TossClientItems( ent );
 				G_StartGhosting( ent );
 
-				sess->team = othersTeam;
+				sess->team = (team_t)othersTeam;
 
 			}
 			else continue;

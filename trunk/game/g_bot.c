@@ -88,7 +88,7 @@ int G_ParseInfos( const char *buf, int max, char *infos[] ) {
 			}
 		}
 		//NOTE: extra space for arena number
-		infos[count] = trap_VM_LocalAlloc(strlen(info) + strlen("\\num\\") + strlen(va("%d", MAX_ARENAS)) + 1);
+		infos[count] = (char *)trap_VM_LocalAlloc(strlen(info) + strlen("\\num\\") + strlen(va("%d", MAX_ARENAS)) + 1);
 		if (infos[count]) {
 			strcpy(infos[count], info);
 			count++;
@@ -1291,7 +1291,7 @@ void G_RandomlyChooseOutfitting(gentity_t *ent, goutfitting_t *outfitting)
 				}
 */
 				// FIX ME - g_availableWeaponsString doesn't work for server!!!
-				if (BG_IsWeaponAvailableForOutfitting ( bg_itemlist[bg_outfittingGroups[i][j]].giTag, 2 ))
+				if (BG_IsWeaponAvailableForOutfitting ( (weapon_t)bg_itemlist[bg_outfittingGroups[i][j]].giTag, 2 ))
 				{
 					break;
 				}
