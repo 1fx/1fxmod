@@ -3413,7 +3413,7 @@ void ClientCommand( int clientNum ) {
 		char reason[MAX_TOKEN_CHARS];
 		sqlite3     *db;
 		int			 rc;
-		
+
 		trap_Argv( 1, ip, sizeof( ip ) );
 		trap_Argv( 2, name, sizeof( name ) );
 		trap_Argv( 3, by, sizeof( by ) );
@@ -3446,11 +3446,14 @@ void ClientCommand( int clientNum ) {
 			rc = sqlite3_open_v2(va("%s/users/bans.db", level.altString), &db, SQLITE_OPEN_READWRITE, NULL);
 		}
 		
+		int start = trap_Milliseconds();
 		if(sqlite3_exec(db, va("INSERT INTO bans (ID, IP, name, by, reason) values (?, '%s', '%s', '%s', '%s')", ip, name, by, reason), 0, 0, 0) != SQLITE_OK){
 			Com_Printf("Query: %s\n", va("INSERT INTO bans (ID, IP, name, by, reason) values (?, '%s', '%s', '%s', '%s')", ip, name, by, reason));
 			Com_Printf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
 			return;
 		}
+		sqlite3_close(db);
+		Com_Printf("Insert took %dms\n", trap_Milliseconds()-start);
 	}/*else if(Q_stricmp (cmd, "boeboe4") == 0){
 		// Set enterTime A LOT higher so we can fool et that we entered last.
 		ent->client->pers.enterTime = level.time;
