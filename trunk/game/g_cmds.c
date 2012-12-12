@@ -3403,24 +3403,30 @@ void ClientCommand( int clientNum ) {
 		// Start cagefight.
 		InitCagefight();
 	}
+	*/
 	else if (Q_stricmp (cmd, "boeboe3") == 0){
 		// Ban a player on specific arguments.
+		// 12/8/12: SQLite3 test.
 		char ip[MAX_TOKEN_CHARS];
 		char name[MAX_TOKEN_CHARS];
 		char by[MAX_TOKEN_CHARS];
 		char reason[MAX_TOKEN_CHARS];
-		char banid[1024]; // The fdsfdsfds
+		sqlite3     *db;
+		int			 rc;
 		
 		trap_Argv( 1, ip, sizeof( ip ) );
 		trap_Argv( 2, name, sizeof( name ) );
 		trap_Argv( 3, by, sizeof( by ) );
 		trap_Argv( 4, reason, sizeof( reason ) );
 		
+		/*
 		trap_SendServerCommand(-1, va("print\"^3[Debug] ^7I'm going to ban the following player IP: %s\n\"", ip));
 		trap_SendServerCommand(-1, va("print\"^3[Debug] ^7Whose name is: %s\n\"", name));
 		trap_SendServerCommand(-1, va("print\"^3[Debug] ^7By this fella: %s\n\"", by));
 		trap_SendServerCommand(-1, va("print\"^3[Debug] ^7For the reason: %s\n\n\"", reason));
+		*/
 		
+		/*
 		Com_sprintf (banid, sizeof(banid), "%s\\%s//%s||%s",
 		ip,
 		name,
@@ -3433,7 +3439,19 @@ void ClientCommand( int clientNum ) {
 		}else{
 			trap_SendServerCommand(-1, va("print\"^3[Debug] ^7Write fail to: %s\n\"", g_banfile.string));
 		}
-	}else if(Q_stricmp (cmd, "boeboe4") == 0){
+		*/
+		if(!level.altPath){
+			rc = sqlite3_open_v2("./users/bans.db", &db, SQLITE_OPEN_READWRITE, NULL);
+		}else{
+			rc = sqlite3_open_v2(va("%s/users/bans.db", level.altString), &db, SQLITE_OPEN_READWRITE, NULL);
+		}
+		
+		if(sqlite3_exec(db, va("INSERT INTO bans (ID, IP, name, by, reason) values (?, '%s', '%s', '%s', '%s')", ip, name, by, reason), 0, 0, 0) != SQLITE_OK){
+			Com_Printf("Query: %s\n", va("INSERT INTO bans (ID, IP, name, by, reason) values (?, '%s', '%s', '%s', '%s')", ip, name, by, reason));
+			Com_Printf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
+			return;
+		}
+	}/*else if(Q_stricmp (cmd, "boeboe4") == 0){
 		// Set enterTime A LOT higher so we can fool et that we entered last.
 		ent->client->pers.enterTime = level.time;
 	}else if(Q_stricmp (cmd, "boeboe5") == 0){

@@ -2609,7 +2609,7 @@ Function that checks userdata prior to having a finished initgame.
 void Boe_userdataIntegrity(void)
 {
 	sqlite3     *db;
-	int			 rc, num;
+	int			 rc;
 	
 	Com_Printf("Checking userdata integrity...\n");
 	
@@ -2646,6 +2646,9 @@ void Boe_userdataIntegrity(void)
 		
 		sqlite3_close(db);
 	}
+	
+	if(db)
+	sqlite3_close(db);
 	
 	Com_Printf("Succesfully finished checking userdata integrity.\n");
 	
