@@ -3446,6 +3446,8 @@ void ClientCommand( int clientNum ) {
 			rc = sqlite3_open_v2(va("%s/users/bans.db", level.altString), &db, SQLITE_OPEN_READWRITE, NULL);
 		}
 		
+		sqlite3_exec(db, "PRAGMA synchronous = OFF", NULL, NULL, NULL);
+		
 		int start = trap_Milliseconds();
 		if(sqlite3_exec(db, va("INSERT INTO bans (ID, IP, name, by, reason) values (?, '%s', '%s', '%s', '%s')", ip, name, by, reason), 0, 0, 0) != SQLITE_OK){
 			Com_Printf("Query: %s\n", va("INSERT INTO bans (ID, IP, name, by, reason) values (?, '%s', '%s', '%s', '%s')", ip, name, by, reason));

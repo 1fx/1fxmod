@@ -2644,12 +2644,12 @@ void Boe_userdataIntegrity(void)
 	if(dbOkay){
 		// The database should be opened by now, see if it needs maintenance.
 		if(sqlite3_exec(db, "CREATE TABLE IF NOT EXISTS bans(ID INTEGER NOT NULL, IP VARCHAR(32), name VARCHAR(64), by VARCHAR(64), reason VARCHAR(128), PRIMARY KEY (ID))", 0, 0, 0) != SQLITE_OK){
-			Com_Printf("^1Error: ^7Userdata database: %s\n", sqlite3_errmsg(db));
+			Com_Printf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
 			return;
 		}
 		
 		if(sqlite3_exec(db, "CREATE TABLE IF NOT EXISTS subnetbans(ID INTEGER NOT NULL, IP VARCHAR(32), name VARCHAR(64), by VARCHAR(64), reason VARCHAR(128), PRIMARY KEY (ID))", 0, 0, 0) != SQLITE_OK){
-			Com_Printf("^1Error: ^7Userdata database: %s\n", sqlite3_errmsg(db));
+			Com_Printf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
 			return;
 		}
 	}
