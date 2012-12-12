@@ -2610,6 +2610,7 @@ void Boe_userdataIntegrity(void)
 {
 	sqlite3     *db;
 	int			 rc;
+	qboolean	 dbOkay;
 	
 	Com_Printf("Checking userdata integrity...\n");
 	
@@ -2621,6 +2622,8 @@ void Boe_userdataIntegrity(void)
 		rc = sqlite3_open_v2(va("%s/users/bans.db", level.altString), &db, SQLITE_OPEN_READWRITE, NULL);
 	}
 	
+	dbOkay = qfalse;
+	
 	if(rc){
 		// The database cannot be found. We try to create it.
 		if(!level.altPath){
@@ -2631,8 +2634,14 @@ void Boe_userdataIntegrity(void)
 		
 		if(rc){
 			Com_Printf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
+		}else{
+			dbOkay = qtrue;
 		}
 	}else{
+		dbOkay = qtrue;
+	}
+	
+	if(dbOkay){
 		// The database should be opened by now, see if it needs maintenance.
 		if(sqlite3_exec(db, "CREATE TABLE IF NOT EXISTS bans(ID INTEGER NOT NULL, IP VARCHAR(32), name VARCHAR(64), by VARCHAR(64), reason VARCHAR(128), PRIMARY KEY (ID))", 0, 0, 0) != SQLITE_OK){
 			Com_Printf("^1Error: ^7Userdata database: %s\n", sqlite3_errmsg(db));
@@ -2643,11 +2652,9 @@ void Boe_userdataIntegrity(void)
 			Com_Printf("^1Error: ^7Userdata database: %s\n", sqlite3_errmsg(db));
 			return;
 		}
-		
-		sqlite3_close(db);
 	}
 	
-	if(db)
+	// Boe!Man 12/12/12: Close the bans database.
 	sqlite3_close(db);
 	
 	Com_Printf("Succesfully finished checking userdata integrity.\n");
