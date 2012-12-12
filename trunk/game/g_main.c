@@ -1091,7 +1091,9 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 /*#else
 	Com_Printf ("Date: %d/%d/%02d\n", MONTH+1, DAY, YEAR );
 #endif*/
-	
+	//Henk 12/10/12 -> Copy disk database to memory database.
+	LoadCountries();
+
 	srand( randomSeed );
 
 	// set some level globals
@@ -1322,7 +1324,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	
 	// Boe!Man 3/30/10
 	Boe_ParseChatSounds();
-	
+
 	// Boe!Man 12/8/12: Check database integrity.
 	Boe_userdataIntegrity();
 
@@ -1445,6 +1447,9 @@ void G_ShutdownGame( int restart )
 		G_LogPrintf("------------------------------------------------------------\n" );
 		trap_FS_FCloseFile( level.logFile );
 	}
+
+	//Henk 12/10/12 -> Detach and close memory database
+	UnloadCountries();
 
 	// write all the client session data so we can get it back
 	G_WriteSessionData();
