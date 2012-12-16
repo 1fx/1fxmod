@@ -1497,18 +1497,20 @@ restarts.
 */
 char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 {
-	char		*value;
-	gclient_t	*client;
-	char		userinfo[MAX_INFO_STRING];
+	char			*value;
+	gclient_t		*client;
+	char			userinfo[MAX_INFO_STRING];
 	//Ryan march 25 2003
-	char		ip[MAX_IP];
-	char		name[MAX_NETNAME];
-	char		*clonecheck;
-	int			n = 0;
-	int			i = 0, ipCount = 0;
+	char			ip[MAX_IP];
+	char			name[MAX_NETNAME];
+	char			*clonecheck;
+	int				n = 0;
+	int				i = 0, ipCount = 0, rc = SQLITE_ERROR;
+	sqlite3			*db;
+	sqlite3_stmt	*stmt;
     //Ryan
-	char		a[64] = "\0";
-	gentity_t	*ent;
+	char			a[64] = "\0";
+	gentity_t		*ent;
 
 	ent = &g_entities[ clientNum ];
 #ifdef _DEBUG
@@ -1570,13 +1572,36 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 				ipCount++;
 		}
 		
-		// Boe!Man 1/6/10: Obvious fix that banned clients don't "really" get banned.
-		if(Boe_NameListCheck (clientNum, ip, g_banfile.string, NULL, qtrue, qfalse, qfalse, qfalse, qfalse) > 0)
-			return "Banned! [IP]";
+		// Boe!Man 12/16/12: Check the database for bans.
+		// Boe!Man 12/12/12: Open database.
+		if(!level.altPath){
+			rc = sqlite3_open_v2("./users/bans.db", &db, SQLITE_OPEN_READWRITE, NULL);
+		}else{
+			rc = sqlite3_open_v2(va("%s/users/bans.db", level.altString), &db, SQLITE_OPEN_READWRITE, NULL);
+		}
+		
+		if(rc){
+			Com_Printf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
+			return "Database Error"; // On an error, decline all. The server owner should fix this..
+		}
+		
+		// Boe!Man 12/16/12: Check bans first, query the database.
+		rc = sqlite3_prepare(db, "select IP from bans", -1, &stmt, 0);
+		if(rc != SQLITE_OK){
+			Com_Printf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
+			return "Database Error";
+		}else while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
+			if(rc == SQLITE_ROW){
+				if(strstr(va("%s", sqlite3_column_text(stmt, 0)), ip)){
+					return "Banned! [IP]";
+				}
+			}
+		}
+		
 		if(Boe_NameListCheck (clientNum, ip, "users/subnetbans.txt", NULL, qfalse, qfalse, qtrue, qfalse, qfalse) > 0)
 			return "Banned! [Subnet]";
-		//if(Boe_NameListCheck (clientNum, name, g_banlist.string, NULL, qtrue, qfalse, qfalse, qfalse))
-		//	return "Banned! [Name]";
+		
+		
 		// Boe!Man 2/8/10: Limiting the connections.
 		if ( ipCount > g_maxIPConnections.integer ) 
 			return "Too many connections from your IP!";
