@@ -1326,7 +1326,11 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 		Com_Printf("^7------------------------------------------------------------------------\n");
 	}
 
-	rc = sqlite3_prepare(db, "select * from bans order by ID", -1, &stmt, 0);
+	if(subnet){
+		rc = sqlite3_prepare(db, "select * from subnetbans order by ID", -1, &stmt, 0);
+	}else{
+		rc = sqlite3_prepare(db, "select * from bans order by ID", -1, &stmt, 0);
+	}
 	if(rc!=SQLITE_OK){
 		if(adm){
 			trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7bans database: %s\n\"", sqlite3_errmsg(db)));
@@ -1985,20 +1989,25 @@ int Boe_NameListCheck (int num, const char *name, const char *file, gentity_t *e
 /*
 =================
 Boe_subnetBan
+12/16/12 - 11:36 AM
 =================
 */
-void Boe_subnetBan (int argNum, gentity_t *adm, qboolean shortCmd){
-	int				idnum;
-	char			reason[MAX_STRING_TOKENS] = "\0";
-	int i;
-	char arg[64];
-	char *temp = "";
-	char			ip[16];
-	char			info[1024];
-	qboolean first = qfalse;
+void Boe_subnetBan (int argNum, gentity_t *adm, qboolean shortCmd)
+{
+	int				 idnum, i, rc;
+	char			 reason[MAX_STRING_TOKENS] = "\0";
+	char			 arg[64];
+	char			 clientName[MAX_NETNAME], admName[MAX_NETNAME];
+	char			*temp = "";
+	char			ip[MAX_IP];
+	qboolean		 first = qfalse;
+	sqlite3			*db;
+	
 	idnum = Boe_ClientNumFromArg(adm, argNum, "subnetban <idnumber> <reason>", "subnetban", qfalse, qfalse, shortCmd);
-	if(idnum < 0)
+	if(idnum < 0){
 		return;
+	}
+	
 	if(adm){
 		if(shortCmd){
 			strcpy(reason, GetReason());
@@ -2019,48 +2028,90 @@ void Boe_subnetBan (int argNum, gentity_t *adm, qboolean shortCmd){
 		trap_Argv( argNum+1, arg, sizeof( arg ) );
 		strcpy(reason, arg);
 	}
+	
+	// Boe!Man 12/16/12: Store the 'subnet' in a seperate char array.
 	Q_strncpyz(ip, g_entities[idnum].client->pers.ip, 7);
-
-	if (adm && adm->client){
-		Com_sprintf (info, sizeof(info), "%s\\%s//%s||%s",
-		ip,
-		g_entities[idnum].client->pers.cleanName,
-		adm->client->pers.cleanName,
-		reason);
+	
+	// Boe!Man 1/9/12: Check for unsupported characters in the reason and replace them.
+	for(i=0;i<strlen(reason);i++){
+		if(reason[i] == 92 || reason[i] == 39){ // Boe!Man 1/9/12: Backslash (92 on ASCII table), unsupported character in SoF2. -- Update 12/12/12: Also check for single quote, that could possibly mess up the query.
+			reason[i] = 32; // If found, convert to space (32 on ASCII table).
+		}
+	}
+	// Boe!Man 12/12/12: Also check those in the names, SQLite has massive problems when using quotes in the (updated) query.
+	Q_strncpyz(clientName, g_entities[idnum].client->pers.cleanName, sizeof(clientName));
+	for(i=0; i<strlen(clientName); i++){
+		if(clientName[i] == 39){ // Boe!Man 12/12/12: Also check for single quote, that could mess up the query.
+			clientName[i] = 32; // If found, convert to space (32 on ASCII table).
+		}
+	}
+	if(adm){
+		Q_strncpyz(admName, adm->client->pers.cleanName, sizeof(admName));
+		for(i=0; i<strlen(admName); i++){
+			if(admName[i] == 39){ // Boe!Man 12/12/12: Also check for single quote, that could mess up the query.
+				admName[i] = 32; // If found, convert to space (32 on ASCII table).
+			}
+		}
+	}
+	
+	// Boe!Man 12/12/12: Open database.
+	if(!level.altPath){
+		rc = sqlite3_open_v2("./users/bans.db", &db, SQLITE_OPEN_READWRITE, NULL);
 	}else{
-		Com_sprintf (info, sizeof(info), "%s\\%s//%s||%s",
-		ip,
-		g_entities[idnum].client->pers.cleanName,
-		"RCON",
-		reason);
+		rc = sqlite3_open_v2(va("%s/users/bans.db", level.altString), &db, SQLITE_OPEN_READWRITE, NULL);
 	}
+	
+	if(rc){
+		if(adm){
+			trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7bans database: %s\n\"", sqlite3_errmsg(db)));
+		}else{
+			Com_Printf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
+		}
+		return;
+	}
+	
+	// Boe!Man 12/12/12: Insert query.
+	sqlite3_exec(db, "PRAGMA synchronous = OFF", NULL, NULL, NULL);
+	if(adm && adm->client){
+		if(sqlite3_exec(db, va("INSERT INTO subnetbans (IP, name, by, reason) values ('%s', '%s', '%s', '%s')", ip, clientName, admName, reason), 0, 0, 0) != SQLITE_OK){
+			trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7bans database: %s\n", sqlite3_errmsg(db)));
+			return;
+		}
+	}else{
+		if(sqlite3_exec(db, va("INSERT INTO subnetbans (IP, name, by, reason) values ('%s', '%s', '%s', '%s')", ip, clientName, "RCON", reason), 0, 0, 0) != SQLITE_OK){
+			Com_Printf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
+			return;
+		}
+	}
+	
+	// Boe!Man 12/12/12: Close database.
+	sqlite3_close(db);
 
-	if(Boe_AddToList(info, "users/subnetbans.txt", "Subnet ban", adm)){
-		if(adm && adm->client){
-			if(!*reason){
-				trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"Subnetbanned by %s\"\n", idnum, adm->client->pers.netname));
-				Boe_adminLog ("Subnetban", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", ip, g_entities[idnum].client->pers.cleanName));}
-			else{
-				trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"Subnetbanned by %s for: %s\"\n", idnum, adm->client->pers.netname, reason));
-				//trap_SendServerCommand( adm-g_entities, va("print \"%s was Subnetbanned by %s!\n\"", g_entities[idnum].client->pers.netname, adm->client->pers.netname));
-				Boe_adminLog ("Subnetban", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", ip, g_entities[idnum].client->pers.cleanName));
-			}
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s was %ss%su%sb%sn%se%stbanned ^7by %s", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, adm->client->pers.netname));
-		}
+	if(adm && adm->client){
+		if(!*reason){
+			trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"Subnetbanned by %s\"\n", idnum, adm->client->pers.netname));
+			Boe_adminLog ("Subnetban", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", ip, g_entities[idnum].client->pers.cleanName));}
 		else{
-			if(!*reason){
-				Boe_adminLog ("Subnetban", va("%s", "RCON"), va("%s\\%s", ip, g_entities[idnum].client->pers.cleanName));
-				trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"Subnetbanned!\"\n", idnum));
-			}else{
-				//Com_Printf("%s was subnetbanned!\n", g_entities[idnum].client->pers.cleanName);
-				Boe_adminLog ("Subnetban", va("%s", "RCON"), va("%s\\%s", ip, g_entities[idnum].client->pers.cleanName));
-				trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"Subnetbanned for: %s\"\n", idnum, reason));
-			}
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s was %ss%su%sb%sn%se%stbanned", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+			trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"Subnetbanned by %s for: %s\"\n", idnum, adm->client->pers.netname, reason));
+			//trap_SendServerCommand( adm-g_entities, va("print \"%s was Subnetbanned by %s!\n\"", g_entities[idnum].client->pers.netname, adm->client->pers.netname));
+			Boe_adminLog ("Subnetban", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", ip, g_entities[idnum].client->pers.cleanName));
 		}
-		// Assume success.
-		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s was %ss%su%sb%sn%se%stbanned ^7by %s", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, adm->client->pers.netname));
 	}
+	else{
+		if(!*reason){
+			Boe_adminLog ("Subnetban", va("%s", "RCON"), va("%s\\%s", ip, g_entities[idnum].client->pers.cleanName));
+			trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"Subnetbanned!\"\n", idnum));
+		}else{
+			//Com_Printf("%s was subnetbanned!\n", g_entities[idnum].client->pers.cleanName);
+			Boe_adminLog ("Subnetban", va("%s", "RCON"), va("%s\\%s", ip, g_entities[idnum].client->pers.cleanName));
+			trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"Subnetbanned for: %s\"\n", idnum, reason));
+		}
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s was %ss%su%sb%sn%se%stbanned", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+	}
+	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+	
+	return;
 }
 
 /*
@@ -2141,7 +2192,6 @@ Boe_Ban_f
 void Boe_Ban_f (int argNum, gentity_t *adm, qboolean shortCmd)
 {
 	int				 idnum, i, rc;
-	char             banid[1024]; // Henk 07/10/10 -> Needs to be bigger if we want to add reason so 128 -> 1024
 	char			 reason[MAX_STRING_TOKENS] = "\0";
 	char			 arg[64];
 	char			 clientName[MAX_NETNAME], admName[MAX_NETNAME];
@@ -2247,7 +2297,6 @@ void Boe_Ban_f (int argNum, gentity_t *adm, qboolean shortCmd)
 			trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"Banned!\"\n", idnum));
 		}
 		else{
-			Com_Printf("%s was banned!\n", g_entities[idnum].client->pers.cleanName);
 			Boe_adminLog ("Ban", va("%s", "RCON"), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
 			trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"Banned for: %s\"\n", idnum, reason));
 		}

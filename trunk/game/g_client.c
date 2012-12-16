@@ -1501,7 +1501,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 	gclient_t		*client;
 	char			userinfo[MAX_INFO_STRING];
 	//Ryan march 25 2003
-	char			ip[MAX_IP];
+	char			ip[MAX_IP], subnet[8];
 	char			name[MAX_NETNAME];
 	char			*clonecheck;
 	int				n = 0;
@@ -1582,14 +1582,14 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 		
 		if(rc){
 			Com_Printf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
-			return "Database Error"; // On an error, decline all. The server owner should fix this..
+			return "Server Error"; // On an error, decline all. The server owner should fix this..
 		}
 		
 		// Boe!Man 12/16/12: Check bans first, query the database.
 		rc = sqlite3_prepare(db, "select IP from bans", -1, &stmt, 0);
 		if(rc != SQLITE_OK){
 			Com_Printf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
-			return "Database Error";
+			return "Server Error";
 		}else while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
 			if(rc == SQLITE_ROW){
 				if(strstr(va("%s", sqlite3_column_text(stmt, 0)), ip)){
@@ -1597,10 +1597,20 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 				}
 			}
 		}
-		
-		if(Boe_NameListCheck (clientNum, ip, "users/subnetbans.txt", NULL, qfalse, qfalse, qtrue, qfalse, qfalse) > 0)
-			return "Banned! [Subnet]";
-		
+		// Boe!Man 12/16/12: Check subnetbans second.
+		Q_strncpyz(subnet, ip, 7);
+		// Query the database.
+		rc = sqlite3_prepare(db, "select IP from subnetbans", -1, &stmt, 0);
+		if(rc != SQLITE_OK){
+			Com_Printf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
+			return "Server Error";
+		}else while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
+			if(rc == SQLITE_ROW){
+				if(strstr(va("%s", sqlite3_column_text(stmt, 0)), subnet)){
+					return "Banned! [Subnet]";
+				}
+			}
+		}
 		
 		// Boe!Man 2/8/10: Limiting the connections.
 		if ( ipCount > g_maxIPConnections.integer ) 
