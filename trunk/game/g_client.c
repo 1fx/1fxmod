@@ -1586,29 +1586,25 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 		}
 		
 		// Boe!Man 12/16/12: Check bans first, query the database.
-		rc = sqlite3_prepare(db, "select IP from bans", -1, &stmt, 0);
+		rc = sqlite3_prepare(db, va("select IP from bans where IP='%s'", ip), -1, &stmt, 0);
 		if(rc != SQLITE_OK){
 			Com_Printf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
 			return "Server Error";
 		}else while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
 			if(rc == SQLITE_ROW){
-				if(strstr(va("%s", sqlite3_column_text(stmt, 0)), ip)){
-					return "Banned! [IP]";
-				}
+				return "Banned! [IP]";
 			}
 		}
 		// Boe!Man 12/16/12: Check subnetbans second.
 		Q_strncpyz(subnet, ip, 7);
 		// Query the database.
-		rc = sqlite3_prepare(db, "select IP from subnetbans", -1, &stmt, 0);
+		rc = sqlite3_prepare(db, va("select IP from subnetbans where IP='%s'", subnet), -1, &stmt, 0);
 		if(rc != SQLITE_OK){
 			Com_Printf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
 			return "Server Error";
 		}else while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
 			if(rc == SQLITE_ROW){
-				if(strstr(va("%s", sqlite3_column_text(stmt, 0)), subnet)){
-					return "Banned! [Subnet]";
-				}
+				return "Banned! [Subnet]";
 			}
 		}
 		
