@@ -1811,51 +1811,195 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 /*
 ==================
 Boe_Unban
+12/17/12 - 6:12 PM
 ==================
 */
 
 void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 {
-	int iLine;
+	int 			iLine, rc;
+	sqlite3			*db;
+	sqlite3_stmt	*stmt;
+	char			name[MAX_NETNAME];
+	char			ip2[MAX_IP];
+	
 
 	if(strlen(ip) < 2 && strstr(ip, ".")){
-		trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid IP, Usage: adm unban <IP/Line>.\n\""));
+		trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid IP, usage: adm unban <IP/Line>.\n\""));
 		return;
-	}else if(strlen(ip) >= 1 && !strstr(ip, ".")){
-		// unban by line
+	}
+	
+	// Boe!Man 12/17/12: Open the database.
+	if(!level.altPath){
+		rc = sqlite3_open_v2("./users/bans.db", &db, SQLITE_OPEN_READWRITE, NULL);
+	}else{
+		rc = sqlite3_open_v2(va("%s/users/bans.db", level.altString), &db, SQLITE_OPEN_READWRITE, NULL);
+	}
+	
+	if(rc){
+		if(adm){
+			trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7bans database: %s\n\"", sqlite3_errmsg(db)));
+		}else{
+			Com_Printf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
+		}
+		return;
+	}else{
+		sqlite3_exec(db, "PRAGMA synchronous = OFF", NULL, NULL, NULL);
+	}
+	
+	// Delete by line/record.
+	if(strlen(ip) >= 1 && !strstr(ip, ".") && !strstr(ip, "bot")){
+		// Boe!Man 12/17/12: Unban record from database.
 		iLine = atoi(ip);
-		if(subnet)
-			Henk_RemoveLineFromFile(adm, iLine, "users/subnetbans.txt", qtrue, qtrue, qfalse, "");
-		else
-			Henk_RemoveLineFromFile(adm, iLine, g_banfile.string, qfalse, qtrue, qfalse, "");
-		return;
-	}else if(strlen(ip) < 2){
-		trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid IP, Usage: adm unban <IP/Line>.\n\""));
-		return;
-	}
-
-	if(!subnet){
-		Henk_RemoveLineFromFile(adm, -1, g_banfile.string, qfalse, qtrue, qtrue, va("%s\\", ip)); // add \\ to prevent getting the admin his ip.
-			/*if(Boe_Remove_from_list(ip, g_banfile.string, "Ban", adm, qtrue, qfalse, qfalse )){
-				trap_SendServerCommand( adm-g_entities, va("print \"^3%s ^7has been Unbanned.\n\"", ip));				
-				//if(adm && adm->client)
-				//	Boe_adminLog (va("%s - UNBAN: %s", adm->client->pers.cleanName, ip  )) ;
-				//else 
-				//	Boe_adminLog (va("%s - UNBAN: %s", "RCON", ip  )) ;
-				
-				return;
-			}*/
-	}
-	else {
-		if(Boe_Remove_from_list(ip, "users/subnetbans.txt", "SubnetBan", adm, qtrue, qfalse, qfalse )){
-			trap_SendServerCommand( adm-g_entities, va("print \"^3%s's Subnet ^7has been Unbanned.\n\"", ip));
-			//if(adm && adm->client)
-			//	Boe_adminLog (va("%s - SUBNET UNBAN: %s", adm->client->pers.cleanName, ip  )) ;
-			//else 
-			//	Boe_adminLog (va("%s - SUBNET UNBAN: %s", "RCON", ip  )) ;
+		
+		// Boe!Man 12/17/12: First check if the record exists.
+		if(!subnet){
+			rc = sqlite3_prepare(db, va("select IP,name from bans where ID='%i' LIMIT 1", iLine), -1, &stmt, 0);
+		}else{
+			rc = sqlite3_prepare(db, va("select IP,name from subnetbans where ID='%i' LIMIT 1", iLine), -1, &stmt, 0);
+		}
+		
+		// Boe!Man 12/17/12: If the previous query failed, we're looking at a record that does not exist.
+		if(rc != SQLITE_OK){
+			if(adm && adm->client){
+				trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7bans database: %s\n", sqlite3_errmsg(db)));
+			}else{
+				Com_Printf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
+			}
+			
+			sqlite3_close(db);
 			return;
+		}else if((rc = sqlite3_step(stmt)) == SQLITE_DONE){
+			if(adm && adm->client){
+				trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Could not find line %i.\n\"", iLine));
+			}else{
+				Com_Printf("^3[Info] ^7Could not find line %i.\n", iLine);
+			}
+			
+			sqlite3_close(db);
+			return;
+		}else{ // Boe!Man 12/17/12: Store info for the unban line given to the Admin (to let him know it went correctly).
+			Q_strncpyz(ip2, sqlite3_column_text(stmt, 0), sizeof(ip2));
+			Q_strncpyz(name, sqlite3_column_text(stmt, 1), sizeof(name));
+		}
+		
+		// Boe!Man 12/17/12: If the previous query succeeded, we can delete the record.
+		if(!subnet){
+			rc = sqlite3_exec(db, va("DELETE FROM bans WHERE ID='%i'", iLine), 0, 0, 0);
+		}else{
+			rc = sqlite3_exec(db, va("DELETE FROM subnetbans WHERE ID='%i'", iLine), 0, 0, 0);
+		}
+		
+		if(rc != SQLITE_OK){
+			if(adm && adm->client){
+				trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7bans database: %s\n", sqlite3_errmsg(db)));
+			}else{
+				Com_Printf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
+			}
+			
+			sqlite3_close(db);
+			return;
+		}else{
+			if(adm && adm->client){
+				trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Unbanned %s (IP: %s) from line %i.\n\"", name, ip2, iLine));
+			}else{
+				Com_Printf("^3[Info] ^7Unbanned %s (IP: %s) from line %i.\n", name, ip2, iLine);
+			}
+		}
+	}else if(strlen(ip) < 3){
+		if(adm && adm->client){
+			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid IP, usage: adm unban <IP/Line>.\n\""));
+		}else{
+			Com_Printf("^3[Info] ^7Invalid IP, usage: adm unban <IP/Line>.\n");
+		}
+		
+		sqlite3_close(db);
+		return;
+	}else{ // Boe!Man 12/19/12: Delete by full IP.
+		// Boe!Man 12/17/12: First check if the record exists.
+		if(!subnet){
+			rc = sqlite3_prepare(db, va("select ID,name from bans where IP='%s' LIMIT 1", ip), -1, &stmt, 0);
+		}else{
+			rc = sqlite3_prepare(db, va("select ID,name from subnetbans where IP='%i' LIMIT 1", ip), -1, &stmt, 0);
+		}
+		
+		// Boe!Man 12/17/12: If the previous query failed, we're looking at a record that does not exist.
+		if(rc != SQLITE_OK){
+			if(adm && adm->client){
+				trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7bans database: %s\n", sqlite3_errmsg(db)));
+			}else{
+				Com_Printf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
+			}
+			
+			sqlite3_close(db);
+			return;
+		}else if((rc = sqlite3_step(stmt)) == SQLITE_DONE){
+			if(adm && adm->client){
+				trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Could not find IP %s.\n\"", ip));
+			}else{
+				Com_Printf("^3[Info] ^7Could not find IP %s.\n", ip);
+			}
+			
+			sqlite3_close(db);
+			return;
+		}else{ // Boe!Man 12/17/12: Store info for the unban line given to the Admin (to let him know it went correctly).
+			Q_strncpyz(ip2, sqlite3_column_text(stmt, 0), sizeof(ip2)); // ID in this case.
+			Q_strncpyz(name, sqlite3_column_text(stmt, 1), sizeof(name));
+		}
+		
+		// Boe!Man 12/17/12: If the previous query succeeded, we can delete the record.
+		if(!subnet){
+			rc = sqlite3_exec(db, va("DELETE FROM bans WHERE IP='%s'", ip), 0, 0, 0);
+		}else{
+			rc = sqlite3_exec(db, va("DELETE FROM subnetbans WHERE IP='%s'", ip), 0, 0, 0);
+		}
+		
+		if(rc != SQLITE_OK){
+			if(adm && adm->client){
+				trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7bans database: %s\n", sqlite3_errmsg(db)));
+			}else{
+				Com_Printf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
+			}
+			
+			sqlite3_close(db);
+			return;
+		}else{
+			if(adm && adm->client){
+				trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Unbanned %s (IP: %s) from line %s.\n\"", name, ip, ip2));
+			}else{
+				Com_Printf("^3[Info] ^7Unbanned %s (IP: %s) from line %s.\n", name, ip, ip2);
+			}
+			// Boe!Man 12/19/12: Copy the actual IP to ip2, for logging purposes.
+			Q_strncpyz(ip2, ip, sizeof(ip2));
 		}
 	}
+			
+			
+	// Boe!Man 12/17/12: Close the database.
+	if(db){
+		if(stmt){
+			sqlite3_finalize(stmt);
+		}
+		
+		sqlite3_close(db);
+	}
+	
+	// Boe!Man 12/19/12: Log the unban.
+	if(subnet){
+		if(adm && adm->client){
+			Boe_adminLog ("Subnet Unban", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", name, ip2));
+		}else{
+			Boe_adminLog ("Subnet Unban", "RCON", va("%s", name));
+		}
+	}else{
+		if(adm && adm->client){
+			Boe_adminLog ("Unban", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", name, ip2));
+		}else{
+			Boe_adminLog ("Unban", "RCON", va("%s", name));
+		}
+	}
+	
+	return;
 }
 
 /*
