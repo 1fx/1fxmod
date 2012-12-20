@@ -1327,9 +1327,9 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 	}
 
 	if(subnet){
-		rc = sqlite3_prepare(db, "select * from subnetbans order by ID", -1, &stmt, 0);
+		rc = sqlite3_prepare(db, "select ROWID,IP,name,by,reason from subnetbans order by ROWID", -1, &stmt, 0);
 	}else{
-		rc = sqlite3_prepare(db, "select * from bans order by ID", -1, &stmt, 0);
+		rc = sqlite3_prepare(db, "select ROWID,IP,name,by,reason from bans order by ROWID", -1, &stmt, 0);
 	}
 	if(rc!=SQLITE_OK){
 		if(adm){
@@ -1854,9 +1854,9 @@ void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 		
 		// Boe!Man 12/17/12: First check if the record exists.
 		if(!subnet){
-			rc = sqlite3_prepare(db, va("select IP,name from bans where ID='%i' LIMIT 1", iLine), -1, &stmt, 0);
+			rc = sqlite3_prepare(db, va("select IP,name from bans where ROWID='%i' LIMIT 1", iLine), -1, &stmt, 0);
 		}else{
-			rc = sqlite3_prepare(db, va("select IP,name from subnetbans where ID='%i' LIMIT 1", iLine), -1, &stmt, 0);
+			rc = sqlite3_prepare(db, va("select IP,name from subnetbans where ROWID='%i' LIMIT 1", iLine), -1, &stmt, 0);
 		}
 		
 		// Boe!Man 12/17/12: If the previous query failed, we're looking at a record that does not exist.
@@ -1885,9 +1885,9 @@ void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 		
 		// Boe!Man 12/17/12: If the previous query succeeded, we can delete the record.
 		if(!subnet){
-			rc = sqlite3_exec(db, va("DELETE FROM bans WHERE ID='%i'", iLine), 0, 0, 0);
+			rc = sqlite3_exec(db, va("DELETE FROM bans WHERE ROWID='%i'", iLine), 0, 0, 0);
 		}else{
-			rc = sqlite3_exec(db, va("DELETE FROM subnetbans WHERE ID='%i'", iLine), 0, 0, 0);
+			rc = sqlite3_exec(db, va("DELETE FROM subnetbans WHERE ROWID='%i'", iLine), 0, 0, 0);
 		}
 		
 		if(rc != SQLITE_OK){
@@ -1918,9 +1918,9 @@ void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 	}else{ // Boe!Man 12/19/12: Delete by full IP.
 		// Boe!Man 12/17/12: First check if the record exists.
 		if(!subnet){
-			rc = sqlite3_prepare(db, va("select ID,name from bans where IP='%s' LIMIT 1", ip), -1, &stmt, 0);
+			rc = sqlite3_prepare(db, va("select ROWID,name from bans where IP='%s' LIMIT 1", ip), -1, &stmt, 0);
 		}else{
-			rc = sqlite3_prepare(db, va("select ID,name from subnetbans where IP='%i' LIMIT 1", ip), -1, &stmt, 0);
+			rc = sqlite3_prepare(db, va("select ROWID,name from subnetbans where IP='%s' LIMIT 1", ip), -1, &stmt, 0);
 		}
 		
 		// Boe!Man 12/17/12: If the previous query failed, we're looking at a record that does not exist.
@@ -1980,7 +1980,8 @@ void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 		if(stmt){
 			sqlite3_finalize(stmt);
 		}
-		
+		// Boe!Man 12/20/12: Re-order the ROWIDs by issuing the VACUUM maintenance query.
+		sqlite3_exec(db, "VACUUM", NULL, NULL, NULL);
 		sqlite3_close(db);
 	}
 	
