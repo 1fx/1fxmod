@@ -2648,7 +2648,7 @@ void Boe_userdataIntegrity(void)
 			return;
 		}
 		
-		if(sqlite3_exec(db, "CREATE TABLE IF NOT EXISTS subnetbans(IP VARCHAR(24), name VARCHAR(36), by VARCHAR(36), reason VARCHAR(128))", 0, 0, 0) != SQLITE_OK){
+		if(sqlite3_exec(db, "CREATE TABLE IF NOT EXISTS subnetbans(IP VARCHAR(8), name VARCHAR(36), by VARCHAR(36), reason VARCHAR(128))", 0, 0, 0) != SQLITE_OK){
 			Com_Printf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
 			return;
 		}
