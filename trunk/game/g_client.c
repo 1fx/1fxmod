@@ -1066,7 +1066,6 @@ void ClientUserinfoChanged( int clientNum )
 	gclient_t	*client;
 	char		oldname[MAX_STRING_CHARS];
 	char		userinfo[MAX_INFO_STRING];
-	char		*clonecheck;
 	TIdentity	*oldidentity;
 	int random;
 
@@ -1390,9 +1389,9 @@ void ClientUserinfoChanged( int clientNum )
 				trap_SendServerCommand( -1, va("print \"%s renamed to %s\n\"", oldname, client->pers.netname) );
 				// Boe!Man 10/25/10: Checking Clonechecks and adding if needed.
 				if (g_aliasCheck.integer > 1){
-					clonecheck = va("users/aliases/%s.ip", client->pers.ip);
-					if(!Boe_NameListCheck ( clientNum, ent->client->pers.cleanName, clonecheck, NULL, qfalse, qfalse, qfalse, qfalse, qtrue)){
-						Boe_AddToList(ent->client->pers.cleanName, clonecheck, "Clonecheck", NULL);
+					if(!Boe_checkAlias(client->pers.ip, client->pers.cleanName)){
+						printf("We should add this guy..\n");
+						//Boe_AddToList(ent->client->pers.cleanName, clonecheck, "Clonecheck", NULL);
 					}
 				}
 				client->pers.netnameTime = level.time;
@@ -1408,9 +1407,9 @@ void ClientUserinfoChanged( int clientNum )
 				client->sess.clanMember = (qboolean)Boe_NameListCheck (clientNum, ent->client->pers.boe_id, g_clanfile.string, NULL, qfalse, qfalse, qfalse, qfalse, qfalse);
 			}
 			if (g_aliasCheck.integer > 0){
-				clonecheck = va("users/aliases/%s.ip", client->pers.ip);
-				if(!Boe_NameListCheck ( clientNum, ent->client->pers.cleanName, clonecheck, NULL, qfalse, qfalse, qfalse, qfalse, qtrue)){
-					Boe_AddToList(ent->client->pers.cleanName, clonecheck, "Clonecheck", NULL);
+				if(!Boe_checkAlias(client->pers.ip, client->pers.cleanName)){
+					//Boe_AddToList(ent->client->pers.cleanName, clonecheck, "Clonecheck", NULL);
+					printf("We should add this guy..\n");
 				}
 			}
 			// Boe!Man 4/3/10: Give developer to certain IPs. -- Update 5/25/11: Disable Developer in Public Final releases (i.e. no debug/BETA releases).

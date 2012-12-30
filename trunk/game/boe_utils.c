@@ -2657,7 +2657,114 @@ void Boe_userdataIntegrity(void)
 	// Boe!Man 12/12/12: Close the bans database.
 	sqlite3_close(db);
 	
+	// Now we check the alias database.
+	// The first thing we check is if the database exists on one of the two locations.
+	if(!level.altPath){
+		rc = sqlite3_open_v2("./users/aliases.db", &db, SQLITE_OPEN_READWRITE, NULL);
+	}else{
+		rc = sqlite3_open_v2(va("%s/users/aliases.db", level.altString), &db, SQLITE_OPEN_READWRITE, NULL);
+	}
+	
+	dbOkay = qfalse;
+	
+	if(rc){
+		// The database cannot be found. We try to create it.
+		if(!level.altPath){
+			rc = sqlite3_open_v2("./users/aliases.db", &db, SQLITE_OPEN_CREATE | SQLITE_OPEN_READWRITE, NULL);
+		}else{
+			rc = sqlite3_open_v2(va("%s/users/aliases.db", level.altString), &db, SQLITE_OPEN_CREATE | SQLITE_OPEN_READWRITE, NULL);
+		}
+		
+		if(rc){
+			Com_Printf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
+		}else{
+			dbOkay = qtrue;
+		}
+	}else{
+		dbOkay = qtrue;
+	}
+	
+	if(dbOkay){
+		// The database should be opened by now, see if it needs maintenance.
+		if(sqlite3_exec(db, "CREATE TABLE IF NOT EXISTS aliases_index('ID' INTEGER PRIMARY KEY NOT NULL, 'IP' varchar(24) NOT NULL)", 0, 0, 0) != SQLITE_OK){
+			Com_Printf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
+			return;
+		}
+		
+		if(sqlite3_exec(db, "CREATE TABLE IF NOT EXISTS aliases_names('ID' INTEGER, 'name' varchar(36))", 0, 0, 0) != SQLITE_OK){
+			Com_Printf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
+			return;
+		}
+	}
+	
+	// Boe!Man 12/30/12: Close the aliases database.
+	sqlite3_close(db);
+	
 	Com_Printf("Succesfully finished checking userdata integrity.\n");
 	
 	return;
+}
+
+/*
+================
+Boe_checkAlias
+12/30/12 - 12:05 PM
+Function that checks if the name used is already an alias.
+================
+*/
+
+qboolean Boe_checkAlias(char *ip, char *name2)
+{
+	char			name[MAX_NETNAME]; // name2 but without unsupported characters.
+	int				i, indexnr, rc;
+	sqlite3			*db;
+	sqlite3_stmt	*stmt;
+	char			query[256];
+	
+	Q_strncpyz(name, name2, sizeof(name)); // Boe!Man 12/30/12: Copy buffer and check for unsupported characters.
+	for(i = 0; i < strlen(name); i++){
+		if(name[i] == 39){ // Unsupported char in query.
+			name[i] = 32; // Convert to space.
+		}
+	}
+	
+	if(!level.altPath){
+		rc = sqlite3_open_v2("./users/aliases.db", &db, SQLITE_OPEN_READONLY, NULL);
+	}else{
+		rc = sqlite3_open_v2(va("%s/users/aliases.db", level.altString), &db, SQLITE_OPEN_READONLY, NULL);
+	}
+	if(rc){
+		Com_Printf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
+		return qtrue; // Boe!Man 12/30/12: We don't really know what to do here, just return as if the name is found, so that the code won't continue in this corrupted db.
+	}
+	
+	sprintf(query, "SELECT ID from aliases_index WHERE IP='%s'", ip);
+	sqlite3_prepare(db, query, -1, &stmt, 0);
+	memset(query, 0, sizeof(query));
+	if(sqlite3_step(stmt) == SQLITE_DONE){ // It wasn't found on the main table, we can safely assume this guy isn't on it. Return false.
+		sqlite3_finalize(stmt);
+		sqlite3_close(db);
+		return qfalse;
+	}else{
+		indexnr = sqlite3_column_int(stmt, 0);
+		if(!indexnr){ // Clearly got invalid data.
+			sqlite3_finalize(stmt);
+			sqlite3_close(db);
+			return qfalse; 
+		}
+	}
+	
+	sprintf(query, "SELECT ID from aliases_names WHERE ID='%i' AND name='%s'", indexnr, name);
+	sqlite3_prepare(db, query, -1, &stmt, 0);
+	if(sqlite3_step(stmt) == SQLITE_DONE){ // It wasn't found on the main table, we can safely assume this guy isn't on it. Return false.
+		sqlite3_finalize(stmt);
+		sqlite3_close(db);
+		return qfalse;
+	}else{ // He's on it. Return true.
+		sqlite3_finalize(stmt);
+		sqlite3_close(db);
+		return qtrue;
+	}
+	
+	return qfalse;
 }

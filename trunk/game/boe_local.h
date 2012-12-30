@@ -691,3 +691,4 @@ void LoadCountries(void);
 void UnloadCountries(void);
 
 void Boe_userdataIntegrity (void);
+qboolean Boe_checkAlias(char *ip, char *name2);
