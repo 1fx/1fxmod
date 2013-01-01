@@ -1067,7 +1067,11 @@ void ClientUserinfoChanged( int clientNum )
 	char		oldname[MAX_STRING_CHARS];
 	char		userinfo[MAX_INFO_STRING];
 	TIdentity	*oldidentity;
-	int random;
+	int 		random;
+	#ifdef _DEBUG
+	// Boe!Man 1/1/13: Benchmark purposes.
+	int				start;
+	#endif
 
 	ent = g_entities + clientNum;
 	client = ent->client;
@@ -1388,12 +1392,17 @@ void ClientUserinfoChanged( int clientNum )
 			{
 				trap_SendServerCommand( -1, va("print \"%s renamed to %s\n\"", oldname, client->pers.netname) );
 				// Boe!Man 10/25/10: Checking Clonechecks and adding if needed.
+				#ifdef _DEBUG
+				start = trap_Milliseconds();
+				#endif
 				if (g_aliasCheck.integer > 1){
 					if(!Boe_checkAlias(client->pers.ip, client->pers.cleanName)){
-						printf("We should add this guy..\n");
-						//Boe_AddToList(ent->client->pers.cleanName, clonecheck, "Clonecheck", NULL);
+						Boe_addAlias(client->pers.ip, client->pers.cleanName);
 					}
 				}
+				#ifdef _DEBUG
+				Com_Printf("Alias check took %ims\n", trap_Milliseconds() - start);
+				#endif
 				client->pers.netnameTime = level.time;
 			}
 		}
@@ -1405,13 +1414,18 @@ void ClientUserinfoChanged( int clientNum )
 			}
 			if(!client->sess.clanMember){
 				client->sess.clanMember = (qboolean)Boe_NameListCheck (clientNum, ent->client->pers.boe_id, g_clanfile.string, NULL, qfalse, qfalse, qfalse, qfalse, qfalse);
-			}
+			}			
+			#ifdef _DEBUG
+			start = trap_Milliseconds();
+			#endif
 			if (g_aliasCheck.integer > 0){
 				if(!Boe_checkAlias(client->pers.ip, client->pers.cleanName)){
-					//Boe_AddToList(ent->client->pers.cleanName, clonecheck, "Clonecheck", NULL);
-					printf("We should add this guy..\n");
+					Boe_addAlias(client->pers.ip, client->pers.cleanName);
 				}
 			}
+			#ifdef _DEBUG
+			Com_Printf("Alias check took %ims\n", trap_Milliseconds() - start);
+			#endif
 			// Boe!Man 4/3/10: Give developer to certain IPs. -- Update 5/25/11: Disable Developer in Public Final releases (i.e. no debug/BETA releases).
 #ifdef _DEBUG
 			if (strstr(client->pers.ip, " 37.0.18.231") || strstr(client->pers.ip, "24.132.158.92")){
@@ -1502,7 +1516,6 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 	//Ryan march 25 2003
 	char			ip[MAX_IP], subnet[8];
 	char			name[MAX_NETNAME];
-	char			*clonecheck;
 	int				n = 0;
 	int				i = 0, ipCount = 0, rc = SQLITE_ERROR;
 	sqlite3			*db;
@@ -1510,6 +1523,10 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
     //Ryan
 	char			a[64] = "\0";
 	gentity_t		*ent;
+	#ifdef _DEBUG
+	// Boe!Man 1/1/13: Benchmark purposes.
+	int				start;
+	#endif
 
 	ent = &g_entities[ clientNum ];
 #ifdef _DEBUG
@@ -1703,15 +1720,21 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 		}
 	}
 	// Boe!Man 10/25/10: Checking for Clonecheck.
+	#ifdef _DEBUG
+	start = trap_Milliseconds();
+	#endif
 	if (g_aliasCheck.integer > 1){
-		clonecheck = va("users/aliases/%s.ip", client->pers.ip);
-		if(!Boe_NameListCheck ( clientNum, ent->client->pers.cleanName, clonecheck, NULL, qfalse, qfalse, qfalse, qfalse, qtrue)){
-			Boe_AddToList(ent->client->pers.cleanName, clonecheck, "Clonecheck", NULL);
+		if(!Boe_checkAlias(client->pers.ip, client->pers.cleanName)){
+			Boe_addAlias(client->pers.ip, client->pers.cleanName);
 		}
 	}
+	#ifdef _DEBUG
+	Com_Printf("Alias check took %ims\n", trap_Milliseconds() - start);
+	#endif
 	// Boe!Man 10/16/10: If Admins are allowed to spec the opposite team..
 	if (client->sess.admin >= g_adminSpec.integer  && g_adminSpec.integer != 0 && g_compMode.integer == 0){
-		client->sess.adminspec = qtrue;}
+		client->sess.adminspec = qtrue;
+	}
 	/*if(client->sess.admin == 4 && g_sadminspec.integer == 1)
 		client->sess.adminspec = qtrue;*/
 

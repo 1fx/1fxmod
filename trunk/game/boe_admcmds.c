@@ -2220,11 +2220,13 @@ void Boe_subnetBan (int argNum, gentity_t *adm, qboolean shortCmd)
 	if(adm && adm->client){
 		if(sqlite3_exec(db, va("INSERT INTO subnetbans (IP, name, by, reason) values ('%s', '%s', '%s', '%s')", ip, clientName, admName, reason), 0, 0, 0) != SQLITE_OK){
 			trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7bans database: %s\n", sqlite3_errmsg(db)));
+			sqlite3_close(db);
 			return;
 		}
 	}else{
 		if(sqlite3_exec(db, va("INSERT INTO subnetbans (IP, name, by, reason) values ('%s', '%s', '%s', '%s')", ip, clientName, "RCON", reason), 0, 0, 0) != SQLITE_OK){
 			Com_Printf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
+			sqlite3_close(db);
 			return;
 		}
 	}
@@ -2413,11 +2415,13 @@ void Boe_Ban_f (int argNum, gentity_t *adm, qboolean shortCmd)
 	if(adm && adm->client){
 		if(sqlite3_exec(db, va("INSERT INTO bans (IP, name, by, reason) values ('%s', '%s', '%s', '%s')", g_entities[idnum].client->pers.ip, clientName, admName, reason), 0, 0, 0) != SQLITE_OK){
 			trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7bans database: %s\n", sqlite3_errmsg(db)));
+			sqlite3_close(db);
 			return;
 		}
 	}else{
 		if(sqlite3_exec(db, va("INSERT INTO bans (IP, name, by, reason) values ('%s', '%s', '%s', '%s')", g_entities[idnum].client->pers.ip, clientName, "RCON", reason), 0, 0, 0) != SQLITE_OK){
 			Com_Printf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
+			sqlite3_close(db);
 			return;
 		}
 	}

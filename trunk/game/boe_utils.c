@@ -2719,7 +2719,6 @@ qboolean Boe_checkAlias(char *ip, char *name2)
 	int				i, indexnr, rc;
 	sqlite3			*db;
 	sqlite3_stmt	*stmt;
-	char			query[256];
 	
 	Q_strncpyz(name, name2, sizeof(name)); // Boe!Man 12/30/12: Copy buffer and check for unsupported characters.
 	for(i = 0; i < strlen(name); i++){
@@ -2734,13 +2733,13 @@ qboolean Boe_checkAlias(char *ip, char *name2)
 		rc = sqlite3_open_v2(va("%s/users/aliases.db", level.altString), &db, SQLITE_OPEN_READONLY, NULL);
 	}
 	if(rc){
-		Com_Printf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
+		Com_Printf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
 		return qtrue; // Boe!Man 12/30/12: We don't really know what to do here, just return as if the name is found, so that the code won't continue in this corrupted db.
 	}
 	
-	sprintf(query, "SELECT ID from aliases_index WHERE IP='%s'", ip);
-	sqlite3_prepare(db, query, -1, &stmt, 0);
-	memset(query, 0, sizeof(query));
+	sqlite3_exec(db, "PRAGMA synchronous = OFF", NULL, NULL, NULL);
+	
+	sqlite3_prepare(db, va("SELECT ID from aliases_index WHERE IP='%s'", ip), -1, &stmt, 0);
 	if(sqlite3_step(stmt) == SQLITE_DONE){ // It wasn't found on the main table, we can safely assume this guy isn't on it. Return false.
 		sqlite3_finalize(stmt);
 		sqlite3_close(db);
@@ -2754,8 +2753,7 @@ qboolean Boe_checkAlias(char *ip, char *name2)
 		}
 	}
 	
-	sprintf(query, "SELECT ID from aliases_names WHERE ID='%i' AND name='%s'", indexnr, name);
-	sqlite3_prepare(db, query, -1, &stmt, 0);
+	sqlite3_prepare(db, va("SELECT ID from aliases_names WHERE ID='%i' AND name='%s'", indexnr, name), -1, &stmt, 0);
 	if(sqlite3_step(stmt) == SQLITE_DONE){ // It wasn't found on the main table, we can safely assume this guy isn't on it. Return false.
 		sqlite3_finalize(stmt);
 		sqlite3_close(db);
@@ -2767,4 +2765,99 @@ qboolean Boe_checkAlias(char *ip, char *name2)
 	}
 	
 	return qfalse;
+}
+
+/*
+================
+Boe_addAlias
+1/1/13 - 1:55 PM
+Function that adds an alias to the database.
+================
+*/
+
+void Boe_addAlias(char *ip, char *name2)
+{
+	char			name[MAX_NETNAME]; // name2 but without unsupported characters.
+	int				i, indexnr, rc, acount, diff;
+	sqlite3			*db;
+	sqlite3_stmt	*stmt;
+	
+	Q_strncpyz(name, name2, sizeof(name)); // Boe!Man 12/30/12: Copy buffer and check for unsupported characters.
+	for(i = 0; i < strlen(name); i++){
+		if(name[i] == 39){ // Unsupported char in query.
+			name[i] = 32; // Convert to space.
+		}
+	}
+	
+	if(!level.altPath){
+		rc = sqlite3_open_v2("./users/aliases.db", &db, SQLITE_OPEN_READWRITE, NULL);
+	}else{
+		rc = sqlite3_open_v2(va("%s/users/aliases.db", level.altString), &db, SQLITE_OPEN_READWRITE, NULL);
+	}
+	if(rc){
+		Com_Printf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
+		return; // Boe!Man 1/1/13: We don't really know what to do here, just return and don't add the guy.
+	}
+	
+	sqlite3_exec(db, "PRAGMA synchronous = OFF", NULL, NULL, NULL);
+	sqlite3_exec(db, "BEGIN TRANSACTION", NULL, NULL, NULL);
+	
+	sqlite3_prepare(db, va("SELECT ID from aliases_index WHERE IP='%s'", ip), -1, &stmt, 0);
+	if(sqlite3_step(stmt) == SQLITE_DONE){ // It wasn't found on the main table, we can safely assume this guy isn't on it.
+		sqlite3_finalize(stmt);
+		if(sqlite3_exec(db, va("INSERT INTO aliases_index (ID, IP) values (?, '%s')", ip), 0, 0, 0) != SQLITE_OK){
+			Com_Printf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
+			sqlite3_close(db);
+			return;
+		}
+		// Boe!Man 1/1/13: Try this again.
+		sqlite3_prepare(db, va("SELECT ID from aliases_index WHERE IP='%s'", ip), -1, &stmt, 0);
+		if(sqlite3_step(stmt) != SQLITE_DONE){
+			indexnr = sqlite3_column_int(stmt, 0);
+			sqlite3_finalize(stmt);
+			if(!indexnr){ // Clearly got invalid data.
+				Com_Printf("^1Error: ^7aliases database: couldn't fetch valid data from main table (1).\n");
+				sqlite3_close(db);
+				return; 
+			}
+		}else{
+			sqlite3_finalize(stmt);
+			sqlite3_close(db);
+			Com_Printf("^1Error: ^7aliases database: couldn't fetch valid data from main table (2).\n");
+			return;
+		}
+	}else{
+		indexnr = sqlite3_column_int(stmt, 0);
+		sqlite3_finalize(stmt);
+		if(!indexnr){ // Clearly got invalid data.
+			Com_Printf("^1Error: ^7aliases database: couldn't fetch valid data from main table (3).\n");
+			sqlite3_close(db);
+			return; 
+		}
+	}
+	
+	// Boe!Man 1/1/13: Now insert the data onto the next table.
+	// First we check how many aliases there are.
+	sqlite3_prepare(db, va("SELECT count(ID) from aliases_names WHERE ID='%i'", indexnr), -1, &stmt, 0);
+	acount = sqlite3_column_int(stmt, 0);
+	sqlite3_finalize(stmt);
+	if(acount >= g_aliasCount.integer){ // If this number is higher then the allowed aliases, delete some.
+		diff = acount - g_aliasCount.integer;
+		if(sqlite3_exec(db, va("DELETE FROM aliases_names WHERE ID='%i' LIMIT '%i'", indexnr, diff), 0, 0, 0) != SQLITE_OK){
+			Com_Printf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
+			sqlite3_close(db);
+			return;
+		}
+	}
+	
+	// Now insert new name into table.
+	if(sqlite3_exec(db, va("INSERT INTO aliases_names (ID, name) values ('%i', '%s')", indexnr, name), 0, 0, 0) != SQLITE_OK){
+		Com_Printf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
+		sqlite3_close(db);
+		return;
+	}
+	
+	sqlite3_exec(db, "COMMIT TRANSACTION", NULL, NULL, NULL);
+	sqlite3_close(db);
+	return;
 }
