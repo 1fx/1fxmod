@@ -2739,7 +2739,7 @@ qboolean Boe_checkAlias(char *ip, char *name2)
 	
 	sqlite3_exec(db, "PRAGMA synchronous = OFF", NULL, NULL, NULL);
 	
-	sqlite3_prepare(db, va("SELECT ID from aliases_index WHERE IP='%s'", ip), -1, &stmt, 0);
+	sqlite3_prepare(db, va("SELECT ID from aliases_index WHERE IP='%s' LIMIT 1", ip), -1, &stmt, 0);
 	if(sqlite3_step(stmt) == SQLITE_DONE){ // It wasn't found on the main table, we can safely assume this guy isn't on it. Return false.
 		sqlite3_finalize(stmt);
 		sqlite3_close(db);
@@ -2802,7 +2802,7 @@ void Boe_addAlias(char *ip, char *name2)
 	sqlite3_exec(db, "PRAGMA synchronous = OFF", NULL, NULL, NULL);
 	sqlite3_exec(db, "BEGIN TRANSACTION", NULL, NULL, NULL);
 	
-	sqlite3_prepare(db, va("SELECT ID from aliases_index WHERE IP='%s'", ip), -1, &stmt, 0);
+	sqlite3_prepare(db, va("SELECT ID from aliases_index WHERE IP='%s' LIMIT 1", ip), -1, &stmt, 0);
 	if(sqlite3_step(stmt) == SQLITE_DONE){ // It wasn't found on the main table, we can safely assume this guy isn't on it.
 		sqlite3_finalize(stmt);
 		if(sqlite3_exec(db, va("INSERT INTO aliases_index (ID, IP) values (?, '%s')", ip), 0, 0, 0) != SQLITE_OK){
@@ -2811,7 +2811,7 @@ void Boe_addAlias(char *ip, char *name2)
 			return;
 		}
 		// Boe!Man 1/1/13: Try this again.
-		sqlite3_prepare(db, va("SELECT ID from aliases_index WHERE IP='%s'", ip), -1, &stmt, 0);
+		sqlite3_prepare(db, va("SELECT ID from aliases_index WHERE IP='%s' LIMIT 1", ip), -1, &stmt, 0);
 		if(sqlite3_step(stmt) != SQLITE_DONE){
 			indexnr = sqlite3_column_int(stmt, 0);
 			sqlite3_finalize(stmt);
@@ -2838,7 +2838,7 @@ void Boe_addAlias(char *ip, char *name2)
 	
 	// Boe!Man 1/1/13: Now insert the data onto the next table.
 	// First we check how many aliases there are.
-	sqlite3_prepare(db, va("SELECT count(ID) from aliases_names WHERE ID='%i'", indexnr), -1, &stmt, 0);
+	sqlite3_prepare(db, va("SELECT count(ID) from aliases_names WHERE ID='%i' LIMIT 1", indexnr), -1, &stmt, 0);
 	acount = sqlite3_column_int(stmt, 0);
 	sqlite3_finalize(stmt);
 	if(acount >= g_aliasCount.integer){ // If this number is higher then the allowed aliases, delete some.
