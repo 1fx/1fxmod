@@ -2753,7 +2753,7 @@ qboolean Boe_checkAlias(char *ip, char *name2)
 		}
 	}
 	
-	sqlite3_prepare(db, va("SELECT ID from aliases_names WHERE ID='%i' AND name='%s'", indexnr, name), -1, &stmt, 0);
+	sqlite3_prepare(db, va("SELECT ID from aliases_names WHERE ID='%i' AND name='%s' LIMIT 1", indexnr, name), -1, &stmt, 0);
 	if(sqlite3_step(stmt) == SQLITE_DONE){ // It wasn't found on the main table, we can safely assume this guy isn't on it. Return false.
 		sqlite3_finalize(stmt);
 		sqlite3_close(db);
