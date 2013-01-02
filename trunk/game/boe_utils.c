@@ -2608,9 +2608,10 @@ Function that checks userdata prior to having a finished initgame.
 // WORK IN PROGRESS
 void Boe_userdataIntegrity(void)
 {
-	sqlite3     *db;
-	int			 rc;
-	qboolean	 dbOkay;
+	sqlite3     	*db;
+	sqlite3_stmt	*stmt;
+	int				 rc;
+	qboolean		 dbOkay;
 	
 	Com_Printf("Checking userdata integrity...\n");
 	
@@ -2645,17 +2646,19 @@ void Boe_userdataIntegrity(void)
 		// The database should be opened by now, see if it needs maintenance.
 		if(sqlite3_exec(db, "CREATE TABLE IF NOT EXISTS bans(IP VARCHAR(24), name VARCHAR(36), by VARCHAR(36), reason VARCHAR(128))", 0, 0, 0) != SQLITE_OK){
 			Com_Printf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
+			sqlite3_close(db);
 			return;
 		}
 		
 		if(sqlite3_exec(db, "CREATE TABLE IF NOT EXISTS subnetbans(IP VARCHAR(8), name VARCHAR(36), by VARCHAR(36), reason VARCHAR(128))", 0, 0, 0) != SQLITE_OK){
 			Com_Printf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
+			sqlite3_close(db);
 			return;
 		}
+		
+		// Boe!Man 12/12/12: Close the bans database.
+		sqlite3_close(db);
 	}
-	
-	// Boe!Man 12/12/12: Close the bans database.
-	sqlite3_close(db);
 	
 	// Now we check the alias database.
 	// The first thing we check is if the database exists on one of the two locations.
@@ -2685,20 +2688,48 @@ void Boe_userdataIntegrity(void)
 	}
 	
 	if(dbOkay){
+		sqlite3_exec(db, "PRAGMA synchronous = OFF", NULL, NULL, NULL);
+		sqlite3_exec(db, "BEGIN TRANSACTION", NULL, NULL, NULL);
+	
 		// The database should be opened by now, see if it needs maintenance.
 		if(sqlite3_exec(db, "CREATE TABLE IF NOT EXISTS aliases_index('ID' INTEGER PRIMARY KEY NOT NULL, 'IP' varchar(24) NOT NULL)", 0, 0, 0) != SQLITE_OK){
 			Com_Printf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
+			sqlite3_close(db);
 			return;
 		}
 		
 		if(sqlite3_exec(db, "CREATE TABLE IF NOT EXISTS aliases_names('ID' INTEGER, 'name' varchar(36))", 0, 0, 0) != SQLITE_OK){
 			Com_Printf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
+			sqlite3_close(db);
 			return;
 		}
+		
+		// Boe!Man 1/2/13: Check if we can delete all data from the tables if the index exceeds the (user) defined limit.
+		sqlite3_prepare(db, "SELECT count(ID) from aliases_index", -1, &stmt, 0);
+		if(sqlite3_step(stmt) != SQLITE_DONE){
+			// Boe!Man 1/2/13: Delete all data from the alias database if we hit the limit.
+			if(sqlite3_column_int(stmt, 0) > sql_aliasFlushCount.integer){
+				if(sqlite3_exec(db, "DELETE FROM aliases_index", 0, 0, 0) != SQLITE_OK){
+					Com_Printf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
+					sqlite3_finalize(stmt);
+					sqlite3_close(db);
+					return;
+				}
+				if(sqlite3_exec(db, "DELETE FROM aliases_names", 0, 0, 0) != SQLITE_OK){
+					Com_Printf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
+					sqlite3_finalize(stmt);
+					sqlite3_close(db);
+					return;
+				}
+				Com_Printf("Emptied aliases database due to the data exceeding the limit..\n");
+			}
+		}
+		sqlite3_finalize(stmt);
+
+		// Boe!Man 12/30/12: Close the aliases database.
+		sqlite3_exec(db, "COMMIT TRANSACTION", NULL, NULL, NULL);
+		sqlite3_close(db);
 	}
-	
-	// Boe!Man 12/30/12: Close the aliases database.
-	sqlite3_close(db);
 	
 	Com_Printf("Succesfully finished checking userdata integrity.\n");
 	

@@ -291,6 +291,9 @@ vmCvar_t	hideSeek_ExtendedRoundStats;
 // Boe!Man 11/5/12
 vmCvar_t	g_ff;
 
+// Boe!Man 1/2/13: --- SQLite3 Related CVARs ---
+vmCvar_t	sql_aliasFlushCount;
+
 #ifdef _DEBUG
 vmCvar_t	boe_log;
 #endif
@@ -611,10 +614,12 @@ static cvarTable_t gameCvarTable[] =
 	
 	// Boe!Man 7/29/12
 	{ &g_preferSubnets,				"g_preferSubnets",		 	"0",		CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
-
+	
+	// Boe!Man 1/2/13: --- SQLite3 Related CVARs ---
+	{ &sql_aliasFlushCount,			"sql_aliasFlushCount",		"7500",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 
 	//{ &g_clientDeathMessages,		"g_clientDeathMessages",		 	"0",		CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
-	//http://1fx.uk.to/index.php?/topic/1230-1fx-anticheat/page__view__findpost__p__13498
+	//http://1fx.uk.to/forums/index.php?/topic/1230-1fx-anticheat/page__view__findpost__p__13498
 #ifdef _DEBUG
 	// Boe!Man: Debug CVAR.
 	{ &boe_log, "boe_log", "0", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
