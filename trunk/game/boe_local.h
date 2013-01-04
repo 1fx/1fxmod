@@ -695,8 +695,11 @@ void UnloadCountries(void);
 // SQLite3 related defintions.
 
 void		Boe_userdataIntegrity	(void);
+
 qboolean	Boe_checkAlias			(char *ip, char *name2);
 void		Boe_addAlias			(char *ip, char *name2);
+void		Boe_printAliases		(gentity_t *ent, char *ip, char *name2);
 
 // Boe!Man 1/2/13: --- SQLite3 Related CVARs ---
 extern vmCvar_t		sql_aliasFlushCount;
+extern vmCvar_t		sql_timeBench;

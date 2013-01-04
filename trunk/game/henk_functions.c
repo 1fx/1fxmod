@@ -1230,8 +1230,10 @@ void HENK_COUNTRY(gentity_t *ent){
 	RealOctet[3] = atoi(octetx[3]);
 
 	IPnum = (RealOctet[0] * 16777216) + (RealOctet[1] * 65536) + (RealOctet[2] * 256) + (RealOctet[3]);
-
-	start = trap_Milliseconds();
+	
+	if(sql_timeBench.integer){
+		start = trap_Milliseconds();
+	}
 	rc = selectQuery;
 	
 	sqlite3_bind_int64(stmt, 1, IPnum);
@@ -1246,7 +1248,9 @@ void HENK_COUNTRY(gentity_t *ent){
 		}
 	}
 	sqlite3_reset(stmt);
-	end = trap_Milliseconds()-start;
-	Com_Printf(va("IP2Country took %d ms\n", end));
+	if(sql_timeBench.integer){
+		end = trap_Milliseconds()-start;
+		Com_Printf(va("IP2Country took %d ms\n", end));
+	}
 	return;
 }

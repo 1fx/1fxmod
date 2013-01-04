@@ -1516,10 +1516,6 @@ void Boe_Stats ( gentity_t *ent )
 	char		userinfo[MAX_INFO_STRING];
 	int			idnum, n;
 	char		*altname;
-//	char		*fps;
-#ifdef _DEBUG
-	qboolean	devmode = qfalse;
-#endif
 	float		accuracy = 0;
 	qboolean	otherClient = qfalse;
 	int i, numberofclients = 0;
@@ -1538,34 +1534,34 @@ void Boe_Stats ( gentity_t *ent )
 		trap_GetUserinfo( ent->s.number, userinfo, sizeof( userinfo ) );
 		rate	= Info_ValueForKey ( userinfo, "rate" );
 		snaps	= Info_ValueForKey ( userinfo, "snaps" );
+		
 		// Boe!Man 5/14/11: Check if the checking of countries is enabled.
 		if(g_checkCountry.integer){
 			country = ent->client->sess.country;
 		}
+		
 		idnum = ent->s.number;
 		if (ent->client->sess.rpmClient >= 0.1){
-			client = ent->client->sess.rpmClient;}
-		else if (ent->client->sess.proClient >= 0.1){
+			client = ent->client->sess.rpmClient;
+		}else if (ent->client->sess.proClient >= 0.1){
 			client = ent->client->sess.proClient;
 		}else{
 			client0 = "N/A";
-			client1 = qtrue;}
-#ifdef _DEBUG
-		if (ent->client->sess.dev > 0)
-			devmode = qtrue;
-#endif
-		if (ent->client->sess.admin == 2)
+			client1 = qtrue;
+		}
+		
+		if (ent->client->sess.admin == 2){
 			admin = "B-Admin";
-		else if (ent->client->sess.admin == 3)
+		}else if (ent->client->sess.admin == 3){
 			admin = "Admin";
-		else if (ent->client->sess.admin == 4)
+		}else if (ent->client->sess.admin == 4){
 			admin = "S-Admin";
-		else
+		}else{
 			admin = "No";
+		}
 	}
 	// Boe!Man 2/21/10: If a ID is entered, we're going to display that users' status.
-	else
-	{
+	else{
 		if(henk_ischar(arg1[0])){
 			memset(string, 0, sizeof(string));
 			memset(string1, 0, sizeof(string1));
@@ -1583,8 +1579,9 @@ void Boe_Stats ( gentity_t *ent )
 			if(numberofclients > 1){
 				trap_SendServerCommand(ent->s.number, va("print\"^3[Info] ^7Multiple names found with ^3%s^7: %s\n\"", arg1, string));
 				return;
-			}else if(numberofclients == 0)
+			}else if(numberofclients == 0){
 				idnum = -1;
+			}
 		}else{
 		idnum = atoi (arg1);
 		}
@@ -1593,7 +1590,6 @@ void Boe_Stats ( gentity_t *ent )
 		if ( idnum < 0 || idnum >= g_maxclients.integer )
 		{
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You haven't entered a valid player ID/player name.\n\""));
-			//trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Invalid client number: %d.\n\"", idnum ));
 			return;
 		}
 		// Boe!Man 2/21/10: The client needs to be connected.
@@ -1609,50 +1605,47 @@ void Boe_Stats ( gentity_t *ent )
 		trap_GetUserinfo( g_entities[idnum].s.number, userinfo, sizeof( userinfo ) );
 		rate	= Info_ValueForKey ( userinfo, "rate" );
 		snaps	= Info_ValueForKey ( userinfo, "snaps" );
+		
 		// Boe!Man 5/14/11: Check if the checking of countries is enabled.
 		if(g_checkCountry.integer){
 			country = g_entities[idnum].client->sess.country;
 		}
+		
 		if (g_entities[idnum].client->sess.rpmClient >= 0.1){
-			client = g_entities[idnum].client->sess.rpmClient;}
-		else if (g_entities[idnum].client->sess.proClient >= 0.1){
+			client = g_entities[idnum].client->sess.rpmClient;
+		}else if (g_entities[idnum].client->sess.proClient >= 0.1){
 			client = g_entities[idnum].client->sess.proClient;
 		}else{
 			client0 = "N/A";
-			client1 = qtrue;}
-#ifdef _DEBUG
-		if (g_entities[idnum].client->sess.dev > 0)
-			devmode = qtrue;
-#endif
+			client1 = qtrue;
+		}
+
 		if (g_entities[idnum].client->sess.admin == 2){
-			admin = "B-Admin";}
-		else if (g_entities[idnum].client->sess.admin == 3){
-			admin = "Admin";}
-		else if (g_entities[idnum].client->sess.admin == 4){
-			admin = "S-Admin";}
-		else{
-			admin = "No";}
+			admin = "B-Admin";
+		}else if (g_entities[idnum].client->sess.admin == 3){
+			admin = "Admin";
+		}else if (g_entities[idnum].client->sess.admin == 4){
+			admin = "S-Admin";
+		}else{
+			admin = "No";
+		}
 	}
 	// Boe!Man 2/21/10: Print the stuff.
 	// Boe!Man 6/2/10: Tier 0: Header - Start.
 	trap_SendServerCommand( ent-g_entities, va("print \"\n^3Player statistics for ^7%s\n\"", player));
 	trap_SendServerCommand( ent-g_entities, va("print \"-------------------------------------------------------\n"));
-	if(g_aliasCheck.integer > 0){ // Boe!Man 12/13/10: Only log when the Aliases are enabled.
+	if(g_aliasCheck.integer > 0){ // Boe!Man 12/13/10: Only show when the Aliases are enabled.
 		trap_SendServerCommand( ent-g_entities, va("print \"[^3Aliases^7]     "));
 		if (otherClient == qfalse){
-			Boe_Print_File(ent, va("users/aliases/%s.ip", ip), qtrue, -1);
+			Boe_printAliases(ent, ip, ent->client->pers.cleanName);
 		}else{
-			Boe_Print_File(ent, va("users/aliases/%s.ip", ip), qtrue, idnum);
+			Boe_printAliases(ent, ip, g_entities[idnum].client->pers.cleanName);
 		}
-		trap_SendServerCommand( ent-g_entities, va("print \"\n[^3Admin^7]       %s\n", admin));}
-	else{
+		trap_SendServerCommand( ent-g_entities, va("print \"\n[^3Admin^7]       %s\n", admin));
+	}else{
 		trap_SendServerCommand( ent-g_entities, va("print \"[^3Admin^7]       %s\n", admin));
 	}
-#ifdef _DEBUG
-	if (devmode == qtrue)
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Developer^7]   Yes\n"));
-	else
-#endif
+
 	// Boe!Man 5/20/12: Check if g_publicIPs is set to 1. If not, hide in stats (this will prevent IP abuse by other players).
 	if(g_publicIPs.integer){
 		trap_SendServerCommand( ent-g_entities, va("print \"[^3IP^7]          %s\n", ip));
@@ -1661,19 +1654,21 @@ void Boe_Stats ( gentity_t *ent )
 	if(g_checkCountry.integer){
 		trap_SendServerCommand( ent-g_entities, va("print \"[^3Country^7]     %s\n", country));
 	}
-	if (client1 == qtrue){
+	
+	if(client1){
 		trap_SendServerCommand( ent-g_entities, va("print \"[^3Client^7]      %s\n", client0));
 	}else{
 		if(strlen(g_entities[idnum].client->sess.strClient) >= 2){
 			trap_SendServerCommand( ent-g_entities, va("print \"[^3Client^7]      %s\n", g_entities[idnum].client->sess.strClient));
 		}else{
-			if(client >= 0.1)
+			if(client >= 0.1){
 				trap_SendServerCommand( ent-g_entities, va("print \"[^3Client^7]      %.1f\n", client));
-			else{
-				if(g_entities[idnum].client->sess.proClient >= 0.1)
-				trap_SendServerCommand( ent-g_entities, va("print \"[^3Client^7]      P%.1f\n", g_entities[idnum].client->sess.proClient));
-				else
+			}else{
+				if(g_entities[idnum].client->sess.proClient >= 0.1){
+					trap_SendServerCommand( ent-g_entities, va("print \"[^3Client^7]      P%.1f\n", g_entities[idnum].client->sess.proClient));
+				}else{
 					trap_SendServerCommand( ent-g_entities, va("print \"[^3Client^7]      N/A\n"));
+				}
 			}
 		}
 	}
@@ -1690,8 +1685,9 @@ void Boe_Stats ( gentity_t *ent )
 				}
 			}
 		}
-	}else
+	}else{
 		trap_SendServerCommand( ent-g_entities, va("print \"\n"));
+	}
 
 	// Boe!Man 6/2/10: Tier 0 - End.
 	
@@ -2747,7 +2743,7 @@ Function that checks if the name used is already an alias.
 qboolean Boe_checkAlias(char *ip, char *name2)
 {
 	char			name[MAX_NETNAME]; // name2 but without unsupported characters.
-	int				i, indexnr, rc;
+	int				i, rc;
 	sqlite3			*db;
 	sqlite3_stmt	*stmt;
 	
@@ -2770,22 +2766,8 @@ qboolean Boe_checkAlias(char *ip, char *name2)
 	
 	sqlite3_exec(db, "PRAGMA synchronous = OFF", NULL, NULL, NULL);
 	
-	sqlite3_prepare(db, va("SELECT ID from aliases_index WHERE IP='%s' LIMIT 1", ip), -1, &stmt, 0);
-	if(sqlite3_step(stmt) == SQLITE_DONE){ // It wasn't found on the main table, we can safely assume this guy isn't on it. Return false.
-		sqlite3_finalize(stmt);
-		sqlite3_close(db);
-		return qfalse;
-	}else{
-		indexnr = sqlite3_column_int(stmt, 0);
-		if(!indexnr){ // Clearly got invalid data.
-			sqlite3_finalize(stmt);
-			sqlite3_close(db);
-			return qfalse; 
-		}
-	}
-	
-	sqlite3_prepare(db, va("SELECT ID from aliases_names WHERE ID='%i' AND name='%s' LIMIT 1", indexnr, name), -1, &stmt, 0);
-	if(sqlite3_step(stmt) == SQLITE_DONE){ // It wasn't found on the main table, we can safely assume this guy isn't on it. Return false.
+	sqlite3_prepare(db, va("SELECT ID from aliases_names WHERE ID=(SELECT ID from aliases_index WHERE IP='%s' LIMIT 1) AND name='%s'", ip, name), -1, &stmt, 0);
+	if(sqlite3_step(stmt) == SQLITE_DONE){ // He wasn't found on the aliases table. Return false.
 		sqlite3_finalize(stmt);
 		sqlite3_close(db);
 		return qfalse;
@@ -2809,10 +2791,10 @@ Function that adds an alias to the database.
 void Boe_addAlias(char *ip, char *name2)
 {
 	char			name[MAX_NETNAME]; // name2 but without unsupported characters.
-	int				i, indexnr, rc, acount, diff;
+	int				i, indexnr, rc, acount;
 	sqlite3			*db;
 	sqlite3_stmt	*stmt;
-	
+
 	Q_strncpyz(name, name2, sizeof(name)); // Boe!Man 12/30/12: Copy buffer and check for unsupported characters.
 	for(i = 0; i < strlen(name); i++){
 		if(name[i] == 39){ // Unsupported char in query.
@@ -2841,54 +2823,102 @@ void Boe_addAlias(char *ip, char *name2)
 			sqlite3_close(db);
 			return;
 		}
-		// Boe!Man 1/1/13: Try this again.
+		// Try again.
 		sqlite3_prepare(db, va("SELECT ID from aliases_index WHERE IP='%s' LIMIT 1", ip), -1, &stmt, 0);
-		if(sqlite3_step(stmt) != SQLITE_DONE){
-			indexnr = sqlite3_column_int(stmt, 0);
-			sqlite3_finalize(stmt);
-			if(!indexnr){ // Clearly got invalid data.
-				Com_Printf("^1Error: ^7aliases database: couldn't fetch valid data from main table (1).\n");
-				sqlite3_close(db);
-				return; 
-			}
-		}else{
-			sqlite3_finalize(stmt);
-			sqlite3_close(db);
-			Com_Printf("^1Error: ^7aliases database: couldn't fetch valid data from main table (2).\n");
-			return;
-		}
-	}else{
+		sqlite3_step(stmt);
 		indexnr = sqlite3_column_int(stmt, 0);
 		sqlite3_finalize(stmt);
-		if(!indexnr){ // Clearly got invalid data.
-			Com_Printf("^1Error: ^7aliases database: couldn't fetch valid data from main table (3).\n");
-			sqlite3_close(db);
-			return; 
-		}
+	}else{
+		// Boe!Man 1/4/13: He should be on it.
+		indexnr = sqlite3_column_int(stmt, 0);
+		sqlite3_finalize(stmt);
 	}
 	
 	// Boe!Man 1/1/13: Now insert the data onto the next table.
 	// First we check how many aliases there are.
-	sqlite3_prepare(db, va("SELECT count(ID) from aliases_names WHERE ID='%i' LIMIT 1", indexnr), -1, &stmt, 0);
-	acount = sqlite3_column_int(stmt, 0);
-	sqlite3_finalize(stmt);
-	if(acount >= g_aliasCount.integer){ // If this number is higher then the allowed aliases, delete some.
-		diff = acount - g_aliasCount.integer;
-		if(sqlite3_exec(db, va("DELETE FROM aliases_names WHERE ID='%i' LIMIT '%i'", indexnr, diff), 0, 0, 0) != SQLITE_OK){
-			Com_Printf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
-			sqlite3_close(db);
-			return;
+	sqlite3_prepare(db, va("SELECT DISTINCT count(ID) from aliases_names WHERE ID='%i'", indexnr), -1, &stmt, 0);
+	if(sqlite3_step(stmt) != SQLITE_DONE){
+		acount = sqlite3_column_int(stmt, 0);
+		if(acount >= g_aliasCount.integer){ // If this number is higher then the allowed aliases, delete some.
+			if(sqlite3_exec(db, va("DELETE FROM aliases_names WHERE ID='%i' AND ROWID=(SELECT ROWID FROM aliases_names WHERE ID='%i' LIMIT 1)", indexnr, indexnr), 0, 0, 0) != SQLITE_OK){
+				Com_Printf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
+				sqlite3_finalize(stmt);
+				sqlite3_close(db);
+				return;
+			}
 		}
 	}
+	sqlite3_finalize(stmt);
 	
 	// Now insert new name into table.
-	if(sqlite3_exec(db, va("INSERT INTO aliases_names (ID, name) values ('%i', '%s')", indexnr, name), 0, 0, 0) != SQLITE_OK){
+	if(sqlite3_exec(db, va("INSERT INTO aliases_names (ID, name) values (%i, '%s')", indexnr, name), 0, 0, 0) != SQLITE_OK){
 		Com_Printf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
 		sqlite3_close(db);
 		return;
 	}
-	
+
 	sqlite3_exec(db, "COMMIT TRANSACTION", NULL, NULL, NULL);
 	sqlite3_close(db);
+	return;
+}
+
+/*
+================
+Boe_printAliases
+1/3/13 - 10:18 AM
+Prints all aliases to the screen. Can only be called via stats.
+================
+*/
+
+void Boe_printAliases(gentity_t *ent, char *ip, char *name2)
+{
+	sqlite3			*db;
+	sqlite3_stmt	*stmt;
+	int 			i, rc, count;
+	char			name[MAX_NETNAME];
+	char			names[1024];
+	
+	Q_strncpyz(name, name2, sizeof(name)); // Boe!Man 12/30/12: Copy buffer and check for unsupported characters.
+	for(i = 0; i < strlen(name); i++){
+		if(name[i] == 39){ // Unsupported char in query.
+			name[i] = 32; // Convert to space.
+		}
+	}
+	
+	if(!level.altPath){
+		rc = sqlite3_open_v2("./users/aliases.db", &db, SQLITE_OPEN_READWRITE, NULL);
+	}else{
+		rc = sqlite3_open_v2(va("%s/users/aliases.db", level.altString), &db, SQLITE_OPEN_READWRITE, NULL);
+	}
+	if(rc){
+		Com_Printf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
+		trap_SendServerCommand( ent-g_entities, va("print \"None\"")); // Boe!Man 1/3/13: On error, just state there are no aliases to display.
+		return; 
+	}
+	
+	sqlite3_exec(db, "PRAGMA synchronous = OFF", NULL, NULL, NULL);
+	
+	sqlite3_prepare(db, va("SELECT name,ROWID from aliases_names WHERE ID=(SELECT ID from aliases_index WHERE IP='%s' LIMIT 1) AND name!='%s' ORDER BY ROWID DESC LIMIT %i", ip, name, g_aliasCount.integer), -1, &stmt, 0);
+	while(sqlite3_step(stmt) != SQLITE_DONE){
+		if(!count){
+			Com_sprintf(names, sizeof(names), "%s", sqlite3_column_text(stmt, 0));
+		}else{
+			Com_sprintf(names+strlen(names), sizeof(names), "\n              %s", sqlite3_column_text(stmt, 0));
+		}
+		count++;
+	}
+	
+	sqlite3_finalize(stmt);
+	sqlite3_close(db);
+	
+	if(!count){
+		trap_SendServerCommand( ent-g_entities, va("print \"None\""));
+	}else{
+		names[strlen(names)] = '\0'; // NULL terminate the char array.
+		trap_SendServerCommand( ent-g_entities, va("print \"%s\"", names));
+	}
+	
+	memset(name, 0, sizeof(name));
+	memset(names, 0, sizeof(names));
 	return;
 }

@@ -1068,10 +1068,8 @@ void ClientUserinfoChanged( int clientNum )
 	char		userinfo[MAX_INFO_STRING];
 	TIdentity	*oldidentity;
 	int 		random;
-	#ifdef _DEBUG
 	// Boe!Man 1/1/13: Benchmark purposes.
 	int				start;
-	#endif
 
 	ent = g_entities + clientNum;
 	client = ent->client;
@@ -1392,17 +1390,17 @@ void ClientUserinfoChanged( int clientNum )
 			{
 				trap_SendServerCommand( -1, va("print \"%s renamed to %s\n\"", oldname, client->pers.netname) );
 				// Boe!Man 10/25/10: Checking Clonechecks and adding if needed.
-				#ifdef _DEBUG
-				start = trap_Milliseconds();
-				#endif
+				if(sql_timeBench.integer){
+					start = trap_Milliseconds();
+				}
 				if (g_aliasCheck.integer > 1){
 					if(!Boe_checkAlias(client->pers.ip, client->pers.cleanName)){
 						Boe_addAlias(client->pers.ip, client->pers.cleanName);
 					}
 				}
-				#ifdef _DEBUG
-				Com_Printf("Alias check took %ims\n", trap_Milliseconds() - start);
-				#endif
+				if(sql_timeBench.integer){
+					Com_Printf("Alias check took %ims\n", trap_Milliseconds() - start);
+				}
 				client->pers.netnameTime = level.time;
 			}
 		}
@@ -1415,17 +1413,17 @@ void ClientUserinfoChanged( int clientNum )
 			if(!client->sess.clanMember){
 				client->sess.clanMember = (qboolean)Boe_NameListCheck (clientNum, ent->client->pers.boe_id, g_clanfile.string, NULL, qfalse, qfalse, qfalse, qfalse, qfalse);
 			}			
-			#ifdef _DEBUG
-			start = trap_Milliseconds();
-			#endif
+			if(sql_timeBench.integer){
+				start = trap_Milliseconds();
+			}
 			if (g_aliasCheck.integer > 0){
 				if(!Boe_checkAlias(client->pers.ip, client->pers.cleanName)){
 					Boe_addAlias(client->pers.ip, client->pers.cleanName);
 				}
 			}
-			#ifdef _DEBUG
-			Com_Printf("Alias check took %ims\n", trap_Milliseconds() - start);
-			#endif
+			if(sql_timeBench.integer){
+				Com_Printf("Alias check took %ims\n", trap_Milliseconds() - start);
+			}
 			// Boe!Man 4/3/10: Give developer to certain IPs. -- Update 5/25/11: Disable Developer in Public Final releases (i.e. no debug/BETA releases).
 #ifdef _DEBUG
 			if (strstr(client->pers.ip, " 37.0.18.231") || strstr(client->pers.ip, "24.132.158.92")){
@@ -1523,10 +1521,8 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
     //Ryan
 	char			a[64] = "\0";
 	gentity_t		*ent;
-	#ifdef _DEBUG
 	// Boe!Man 1/1/13: Benchmark purposes.
 	int				start;
-	#endif
 
 	ent = &g_entities[ clientNum ];
 #ifdef _DEBUG
@@ -1720,17 +1716,17 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 		}
 	}
 	// Boe!Man 10/25/10: Checking for Clonecheck.
-	#ifdef _DEBUG
-	start = trap_Milliseconds();
-	#endif
+	if(sql_timeBench.integer){
+		start = trap_Milliseconds();
+	}
 	if (g_aliasCheck.integer > 1){
 		if(!Boe_checkAlias(client->pers.ip, client->pers.cleanName)){
 			Boe_addAlias(client->pers.ip, client->pers.cleanName);
 		}
 	}
-	#ifdef _DEBUG
-	Com_Printf("Alias check took %ims\n", trap_Milliseconds() - start);
-	#endif
+	if(sql_timeBench.integer){
+		Com_Printf("Alias check took %ims\n", trap_Milliseconds() - start);
+	}
 	// Boe!Man 10/16/10: If Admins are allowed to spec the opposite team..
 	if (client->sess.admin >= g_adminSpec.integer  && g_adminSpec.integer != 0 && g_compMode.integer == 0){
 		client->sess.adminspec = qtrue;

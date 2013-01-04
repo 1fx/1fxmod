@@ -293,6 +293,7 @@ vmCvar_t	g_ff;
 
 // Boe!Man 1/2/13: --- SQLite3 Related CVARs ---
 vmCvar_t	sql_aliasFlushCount;
+vmCvar_t	sql_timeBench;
 
 #ifdef _DEBUG
 vmCvar_t	boe_log;
@@ -617,6 +618,11 @@ static cvarTable_t gameCvarTable[] =
 	
 	// Boe!Man 1/2/13: --- SQLite3 Related CVARs ---
 	{ &sql_aliasFlushCount,			"sql_aliasFlushCount",		"7500",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
+	#ifdef _DEBUG
+	{ &sql_timeBench,				"sql_timeBench",			"1",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
+	#else
+	{ &sql_timeBench,				"sql_timeBench",			"0",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
+	#endif
 
 	//{ &g_clientDeathMessages,		"g_clientDeathMessages",		 	"0",		CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
 	//http://1fx.uk.to/forums/index.php?/topic/1230-1fx-anticheat/page__view__findpost__p__13498
