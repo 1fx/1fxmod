@@ -3403,7 +3403,6 @@ void ClientCommand( int clientNum ) {
 		// Start cagefight.
 		InitCagefight();
 	}
-	*/
 	else if (Q_stricmp (cmd, "boeboe3") == 0){
 		// Ban a player on specific arguments.
 		// 12/8/12: SQLite3 test.
@@ -3439,7 +3438,7 @@ void ClientCommand( int clientNum ) {
 		}else{
 			trap_SendServerCommand(-1, va("print\"^3[Debug] ^7Write fail to: %s\n\"", g_banfile.string));
 		}
-		*/
+		*/ /*
 		if(!level.altPath){
 			rc = sqlite3_open_v2("./users/bans.db", &db, SQLITE_OPEN_READWRITE, NULL);
 		}else{
@@ -3456,7 +3455,7 @@ void ClientCommand( int clientNum ) {
 		}
 		sqlite3_close(db);
 		Com_Printf("Insert took %dms\n", trap_Milliseconds()-start);
-	}/*else if(Q_stricmp (cmd, "boeboe4") == 0){
+	}else if(Q_stricmp (cmd, "boeboe4") == 0){
 		// Set enterTime A LOT higher so we can fool et that we entered last.
 		ent->client->pers.enterTime = level.time;
 	}else if(Q_stricmp (cmd, "boeboe5") == 0){

@@ -9,10 +9,12 @@ int selectQuery;
 int process_ddl_row(void * pData, int nColumns, 
         char **values, char **columns)
 {
+		sqlite3		*db;
+		
         if (nColumns != 1)
                 return 1; // Error
 
-        sqlite3* db = (sqlite3*)pData;
+        db = (sqlite3*)pData;
         sqlite3_exec(db, values[0], NULL, NULL, NULL);
 
         return 0;
@@ -21,12 +23,15 @@ int process_ddl_row(void * pData, int nColumns,
 int process_dml_row(void *pData, int nColumns, 
         char **values, char **columns)
 {
+		sqlite3		*db;
+		char *stmt;
+		
         if (nColumns != 1)
                 return 1; // Error
         
-        sqlite3* db = (sqlite3*)pData;
+        db = (sqlite3*)pData;
 
-        char *stmt = sqlite3_mprintf("insert into main.%q "
+        stmt = sqlite3_mprintf("insert into main.%q "
                 "select * from country.%q", values[0], values[0]);
         sqlite3_exec(db, stmt, NULL, NULL, NULL);
         sqlite3_free(stmt);     
