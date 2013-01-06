@@ -10,11 +10,15 @@
 //#define INF_VERSION_STRING "0.60"
 //#else
 
+/*
 #ifdef WIN32
 #define INF_VERSION_STRING "0.70t-dll"
 #elif __linux__
 #define INF_VERSION_STRING "0.70t-so"
 #endif
+*/
+// Boe!Man 1/6/13: One string to rule them all.
+#define INF_VERSION_STRING "0.70t"
 
 //#endif
 
@@ -144,6 +148,7 @@
 //
 // -- Testing and BETA
 // 0.70t		1st Alpha						895			11/30/12	// Sent out to BETA group on 11/30/12
+// 0.70t		2nd Alpha						933			1/6/13		// Sent out to BETA group on 1/6/13
 
 
 //===================================================================
