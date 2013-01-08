@@ -585,7 +585,7 @@ static void BG_FindWeaponFrames(TAnimInfoWeapon *animInfo, int choice)
 			// Get the name and break it down to just the filename without
 			// and extension			
 			trap_GPG_GetName ( group, temp );
-			strcpy(name, COM_SkipPath ( temp ));
+			Q_strncpyz(name, COM_SkipPath(temp), sizeof(name));
 			COM_StripExtension ( name, temp );
 			if ( Q_stricmp ( temp, animInfo->mAnim[choice] ) == 0 )
 			{
@@ -622,7 +622,7 @@ static void BG_CloseWeaponFrames(int upTo)
 		}
 	}
 	
-	// Boe!Man 1/8/13: Fix for crashing Linux server, apparently the engine does not properly flush this struct.
+	// Boe!Man & Henkie 1/8/13: Fix for crashing Linux server, apparently the engine does not properly flush this struct.
 	if(upTo == 0){
 		memset(weaponFrames, 0, sizeof(weaponFrames));
 	}
@@ -938,9 +938,11 @@ qboolean BG_ParseInviewFile(void)
 		}
 	}
 	
-	// Boe!Man 1/8/13: Fix for crashing Linux server, apparently the engine does not properly flush those structs.
+	// Boe!Man & Henkie 1/8/13: Fix for crashing Linux server, apparently the engine does not properly flush those structs and integers.
 	memset(frameGroup, 0, sizeof(frameGroup));
 	memset(weaponFrames, 0, sizeof(weaponFrames));
+	numWeaponFiles = 0;
+	numInitialFiles = 0;
 	
 	weaponLeftHand[0] = 0;
 	weaponRightHand[0] = 0;
