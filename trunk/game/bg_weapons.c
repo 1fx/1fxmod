@@ -621,6 +621,11 @@ static void BG_CloseWeaponFrames(int upTo)
 			trap_GP_Delete(&weaponFrames[i]);
 		}
 	}
+	
+	// Boe!Man 1/8/13: Fix for crashing Linux server, apparently the engine does not properly flush this struct.
+	if(upTo == 0){
+		memset(weaponFrames, 0, sizeof(weaponFrames));
+	}
 
 	numWeaponFiles = upTo;
 }
@@ -932,6 +937,11 @@ qboolean BG_ParseInviewFile(void)
 			Q_strncpyz(level.altString, va("./%s", fsGame), sizeof(level.altString));
 		}
 	}
+	
+	// Boe!Man 1/8/13: Fix for crashing Linux server, apparently the engine does not properly flush those structs.
+	memset(frameGroup, 0, sizeof(frameGroup));
+	memset(weaponFrames, 0, sizeof(weaponFrames));
+	
 	weaponLeftHand[0] = 0;
 	weaponRightHand[0] = 0;
 
