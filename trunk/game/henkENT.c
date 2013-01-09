@@ -13,6 +13,10 @@ qboolean G_LoadEntFile(void)
 	vmCvar_t mapname;
 	int len;
 	char alt[5];
+	
+	// Boe!Man 1/9/13: Memset the buffer, this fixes a crash under Linux.
+	memset(&buffer, 0, sizeof(*buffer));
+	
 	if(g_alternateMap.integer == 1){
 		strcpy(alt, "alt/");
 		trap_Cvar_Set( "g_alternateMap", "0");
@@ -72,7 +76,19 @@ qboolean G_LoadEntFile(void)
 		trap_FS_FCloseFile(entFile);
 		return qfalse;
 	}
-
+	
+	// Boe!Man 1/9/13: We accolate the buffer ourselves. This fixes a nasty crash within the Linux build.
+	buffer = (char *)malloc(len*sizeof(char));
+	#ifdef _DEBUG
+	if(buffer){
+		Com_Printf("Accolated %i bytes memory, available for entity file.\n", len);
+	}
+	#endif
+	if(!buffer){
+		Com_Printf("Error while accolating memory for entity file.\n");
+		return qfalse;
+	}
+	
 	trap_FS_Read(buffer, len, entFile);
 	buffer[len] = 0;
 	trap_FS_FCloseFile(entFile);
@@ -103,7 +119,11 @@ char *G_GetEntFileToken(void)
 
 	/// make sure incoming data is valid
 	if (!data){
-		buffer = NULL;
+		//buffer = NULL;
+		// Boe!Man 1/9/13: Free the buffer.
+		if(buffer){
+			free(buffer);
+		}
 		return NULL;
 	}
 
@@ -111,7 +131,11 @@ char *G_GetEntFileToken(void)
 		/// skip whitespace
 		data = SkipWhitespace(buffer, &hasNewLines);
 		if ( !data ){
-			buffer = NULL;
+			//buffer = NULL;
+			// Boe!Man 1/9/13: Free the buffer.
+			if(buffer){
+				free(buffer);
+			}
 			return NULL; /// EOF
 			///return token;
 		}
