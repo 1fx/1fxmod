@@ -1883,6 +1883,11 @@ void Boe_About( gentity_t *ent )
 	trap_SendServerCommand( ent-g_entities, va("print \"\n^3Server settings\n\""));
 	trap_SendServerCommand( ent-g_entities, va("print \"--------------------------------------\n\""));
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Mod used^7]            %s %s\n", INF_STRING, INF_VERSION_STRING));
+	#ifdef WIN32
+	trap_SendServerCommand( ent-g_entities, "print \"[^3Host platform^7]       Windows (*.dll)\n");
+	#elif __linux__
+	trap_SendServerCommand( ent-g_entities, "print \"[^3Host platform^7]       Linux (*.so)\n");
+	#endif
 	if (g_instaGib.integer > 0){
 		trap_SendServerCommand( ent-g_entities, va("print \"[^3Instagib^7]            Yes\n"));
 	}else{
