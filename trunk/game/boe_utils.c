@@ -2883,6 +2883,7 @@ void Boe_printAliases(gentity_t *ent, char *ip, char *name2)
 	char			name[MAX_NETNAME];
 	char			names[1024];
 	
+	count = 0;
 	Q_strncpyz(name, name2, sizeof(name)); // Boe!Man 12/30/12: Copy buffer and check for unsupported characters.
 	for(i = 0; i < strlen(name); i++){
 		if(name[i] == 39){ // Unsupported char in query.
