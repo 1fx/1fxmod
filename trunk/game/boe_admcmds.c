@@ -1315,14 +1315,14 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 		}else{
 			Q_strcat(buf2, sizeof(buf2), "^3[Banlist]^7\n\n");
 		}
-		Q_strcat(buf2, sizeof(buf2), "^3 #    IP              Name                Reason             By\n^7------------------------------------------------------------------------\n");
+		Q_strcat(buf2, sizeof(buf2), "^3 #    IP              Name            Reason             By\n^7------------------------------------------------------------------------\n");
 	}else{
 		if(subnet){
 			Com_Printf("^3[Subnetbanlist]^7\n\n");
 		}else{
 			Com_Printf("^3[Banlist]^7\n\n");
 		}
-		Com_Printf("^3 #    IP              Name                Reason             By\n");
+		Com_Printf("^3 #    IP              Name            Reason             By\n");
 		Com_Printf("^7------------------------------------------------------------------------\n");
 	}
 
