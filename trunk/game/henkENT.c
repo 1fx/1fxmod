@@ -1,6 +1,6 @@
 #include "g_local.h"
 #include "boe_local.h"
-#idef _spMaps
+#ifdef _spMaps
 
 ///RxCxW - 02.26.06 - 07:53pm #sp map
 /// Modified version from MANDOWN sdk
@@ -112,10 +112,10 @@ char *G_GetEntFileToken(void)
 {
 	qboolean hasNewLines = qfalse;
 	const char *data;
-	int c = 0, len;
-
+	int c = 0, len2;
+	
 	data = entBuffer;
-	len = 0;
+	len2 = 0;
 	token[0] = 0;
 
 	/// make sure incoming data is valid
@@ -123,6 +123,10 @@ char *G_GetEntFileToken(void)
 		// Boe!Man 1/9/13: Free the buffer.
 		trap_VM_LocalTempFree(len*sizeof(char));
 		entBuffer = NULL;
+		len = 0;
+		#ifdef _DEBUG
+		Com_Printf("Freed entity file buffer.\n");
+		#endif
 		return NULL;
 	}
 
@@ -133,6 +137,10 @@ char *G_GetEntFileToken(void)
 			// Boe!Man 1/9/13: Free the buffer.
 			trap_VM_LocalTempFree(len*sizeof(char));
 			entBuffer = NULL;
+			len = 0;
+			#ifdef _DEBUG
+			Com_Printf("Freed entity file buffer.\n");
+			#endif
 			return NULL; /// EOF
 			///return token;
 		}
@@ -165,31 +173,31 @@ char *G_GetEntFileToken(void)
 		while (1){
 			c = *data++;
 			if (c=='\"' || !c) {
-				token[len] = 0;
+				token[len2] = 0;
 				entBuffer = ( char * ) data;
 				return token;
 			}
-			if (len < MAX_TOKEN_CHARS) {
-				token[len] = c;
-				len++;
+			if (len2 < MAX_TOKEN_CHARS) {
+				token[len2] = c;
+				len2++;
 			}
 		}
 	}
 	///parse a regular word
 	do {
-		if (len < MAX_TOKEN_CHARS) {
-			token[len] = c;
-			len++;
+		if (len2 < MAX_TOKEN_CHARS) {
+			token[len2] = c;
+			len2++;
 		}
 		data++;
 		c = *data;
 	} while (c>32);
 
-	if (len == MAX_TOKEN_CHARS) {
+	if (len2 == MAX_TOKEN_CHARS) {
 		///Com_Printf ("Token exceeded %i chars, discarded.\n", MAX_TOKEN_CHARS);
-		len = 0;
+		len2 = 0;
 	} 
-	token[len] = 0;
+	token[len2] = 0;
 	entBuffer = (char *)data;
 
 	if (token[0] == 0 || token[0] == ' '){
