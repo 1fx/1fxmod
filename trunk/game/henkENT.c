@@ -1,21 +1,22 @@
 #include "g_local.h"
 #include "boe_local.h"
-#ifdef _spMaps
+#idef _spMaps
 
 ///RxCxW - 02.26.06 - 07:53pm #sp map
 /// Modified version from MANDOWN sdk
 static fileHandle_t entFile;
-char *entBuffer;
+char	*entBuffer;
+int		len;
 
 qboolean G_LoadEntFile(void)
 {
 	char entPath[128];
 	vmCvar_t mapname;
-	int len;
 	char alt[5];
 	
 	// Boe!Man 1/9/13: Memset the buffer, this fixes a crash under Linux.
-	memset(&entBuffer, 0, sizeof(entBuffer));
+	//memset(&entBuffer, 0, sizeof(entBuffer));
+	// Boe!Man 1/18/13: Not needed anymore, using local calls.
 	
 	if(g_alternateMap.integer == 1){
 		strcpy(alt, "alt/");
@@ -72,16 +73,16 @@ qboolean G_LoadEntFile(void)
 		Com_Printf(S_COLOR_YELLOW "Loading ent data from \"%s\"\n", entPath);
 
 	if (len >= 131072) {
-		Com_Printf( S_COLOR_RED "file too large: %s is %i, max allowed is %i", entPath, len, 131072);
+		Com_Printf( S_COLOR_RED "File too large: %s is %i, max allowed is %i", entPath, len, 131072);
 		trap_FS_FCloseFile(entFile);
 		return qfalse;
 	}
 	
 	// Boe!Man 1/9/13: We allocate the buffer ourselves. This fixes a nasty crash within the Linux build.
-	entBuffer = (char *)malloc(len*sizeof(char));
+	entBuffer = (char *)trap_VM_LocalTempAlloc(len*sizeof(char));
 	#ifdef _DEBUG
 	if(entBuffer){
-		Com_Printf("Allocated %i bytes memory, available for entity file.\n", len);
+		Com_Printf("Allocated %i bytes memory, available for entity file.\n", len*sizeof(char));
 	}
 	#endif
 	if(!entBuffer){
@@ -119,9 +120,9 @@ char *G_GetEntFileToken(void)
 
 	/// make sure incoming data is valid
 	if (!data){
-		//buffer = NULL;
 		// Boe!Man 1/9/13: Free the buffer.
-		free(entBuffer);
+		trap_VM_LocalTempFree(len*sizeof(char));
+		entBuffer = NULL;
 		return NULL;
 	}
 
@@ -129,9 +130,9 @@ char *G_GetEntFileToken(void)
 		/// skip whitespace
 		data = SkipWhitespace(entBuffer, &hasNewLines);
 		if ( !data ){
-			//buffer = NULL;
 			// Boe!Man 1/9/13: Free the buffer.
-			//free(entBuffer);
+			trap_VM_LocalTempFree(len*sizeof(char));
+			entBuffer = NULL;
 			return NULL; /// EOF
 			///return token;
 		}

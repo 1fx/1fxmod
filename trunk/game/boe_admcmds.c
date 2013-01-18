@@ -2345,7 +2345,13 @@ void Boe_Ban_f (int argNum, gentity_t *adm, qboolean shortCmd)
 	char			*temp = "";
 	qboolean		 first = qfalse;
 	sqlite3			*db;
-	int start = trap_Milliseconds();
+	int 			start; 
+	
+	// Boe!Man 1/18/13: Benchmark purposes.
+	if(sql_timeBench.integer){
+		start = trap_Milliseconds();
+	}
+	
 	idnum = Boe_ClientNumFromArg(adm, argNum, "ban <idnumber> <reason>", "ban", qfalse, qfalse, shortCmd);
 	if(idnum < 0){
 		return;
@@ -2452,7 +2458,11 @@ void Boe_Ban_f (int argNum, gentity_t *adm, qboolean shortCmd)
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s was %sb%sa%sn%sn%se%sd", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 	}
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-	Com_Printf("Ban took: %ims\n", trap_Milliseconds()-start);
+	
+	if(sql_timeBench.integer){
+		Com_Printf("Ban took: %ims\n", trap_Milliseconds()-start);
+	}
+	
 	return;
 }
 
