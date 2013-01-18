@@ -29,7 +29,9 @@ typedef char *  va_list;
 // Misc functions
 typedef int cmp_t(const void *, const void *);
 void qsort(void *a, size_t n, size_t es, cmp_t *cmp);
+#ifdef Q3_VM
 void	srand( unsigned seed );
+#endif
 int		rand( void );
 
 // String functions

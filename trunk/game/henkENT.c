@@ -5,7 +5,7 @@
 ///RxCxW - 02.26.06 - 07:53pm #sp map
 /// Modified version from MANDOWN sdk
 static fileHandle_t entFile;
-extern char *buffer;
+char *entBuffer;
 
 qboolean G_LoadEntFile(void)
 {
@@ -15,7 +15,7 @@ qboolean G_LoadEntFile(void)
 	char alt[5];
 	
 	// Boe!Man 1/9/13: Memset the buffer, this fixes a crash under Linux.
-	memset(&buffer, 0, sizeof(*buffer));
+	memset(&entBuffer, 0, sizeof(entBuffer));
 	
 	if(g_alternateMap.integer == 1){
 		strcpy(alt, "alt/");
@@ -77,20 +77,20 @@ qboolean G_LoadEntFile(void)
 		return qfalse;
 	}
 	
-	// Boe!Man 1/9/13: We accolate the buffer ourselves. This fixes a nasty crash within the Linux build.
-	buffer = (char *)malloc(len*sizeof(char));
+	// Boe!Man 1/9/13: We allocate the buffer ourselves. This fixes a nasty crash within the Linux build.
+	entBuffer = (char *)malloc(len*sizeof(char));
 	#ifdef _DEBUG
-	if(buffer){
-		Com_Printf("Accolated %i bytes memory, available for entity file.\n", len);
+	if(entBuffer){
+		Com_Printf("Allocated %i bytes memory, available for entity file.\n", len);
 	}
 	#endif
-	if(!buffer){
-		Com_Printf("Error while accolating memory for entity file.\n");
+	if(!entBuffer){
+		Com_Printf("Error while allocating memory for entity file.\n");
 		return qfalse;
 	}
 	
-	trap_FS_Read(buffer, len, entFile);
-	buffer[len] = 0;
+	trap_FS_Read(entBuffer, len, entFile);
+	entBuffer[len] = 0;
 	trap_FS_FCloseFile(entFile);
 
 	return qtrue;
@@ -113,7 +113,7 @@ char *G_GetEntFileToken(void)
 	const char *data;
 	int c = 0, len;
 
-	data = buffer;
+	data = entBuffer;
 	len = 0;
 	token[0] = 0;
 
@@ -121,21 +121,17 @@ char *G_GetEntFileToken(void)
 	if (!data){
 		//buffer = NULL;
 		// Boe!Man 1/9/13: Free the buffer.
-		if(buffer){
-			free(buffer);
-		}
+		free(entBuffer);
 		return NULL;
 	}
 
 	while (1){
 		/// skip whitespace
-		data = SkipWhitespace(buffer, &hasNewLines);
+		data = SkipWhitespace(entBuffer, &hasNewLines);
 		if ( !data ){
 			//buffer = NULL;
 			// Boe!Man 1/9/13: Free the buffer.
-			if(buffer){
-				free(buffer);
-			}
+			//free(entBuffer);
 			return NULL; /// EOF
 			///return token;
 		}
@@ -169,7 +165,7 @@ char *G_GetEntFileToken(void)
 			c = *data++;
 			if (c=='\"' || !c) {
 				token[len] = 0;
-				buffer = ( char * ) data;
+				entBuffer = ( char * ) data;
 				return token;
 			}
 			if (len < MAX_TOKEN_CHARS) {
@@ -193,7 +189,7 @@ char *G_GetEntFileToken(void)
 		len = 0;
 	} 
 	token[len] = 0;
-	buffer = (char *)data;
+	entBuffer = (char *)data;
 
 	if (token[0] == 0 || token[0] == ' '){
 		return NULL; /// EOF

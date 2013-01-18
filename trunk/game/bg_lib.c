@@ -100,6 +100,7 @@ static char *med3(char* a, char* b, char* c, cmp_t* cmp)
               :(cmp(b, c) > 0 ? b : (cmp(a, c) < 0 ? a : c ));
 }
 
+#ifdef Q3_VM
 void qsort( void* a, size_t n, size_t es, cmp_t* cmp)
 {
 	char *pa, *pb, *pc, *pd, *pl, *pm, *pn;
@@ -177,6 +178,7 @@ loop:	SWAPINIT(a, es);
 	}
 /*		qsort(pn - r, r / es, es, cmp);*/
 }
+#endif
 
 //==================================================================================
 
@@ -281,7 +283,7 @@ int toupper( int c ) {
 
 #endif
 //#ifndef _MSC_VER
-
+#ifdef Q3_VM
 void *memmove( void *dest, const void *src, size_t count ) {
 	int		i;
 
@@ -296,7 +298,7 @@ void *memmove( void *dest, const void *src, size_t count ) {
 	}
 	return dest;
 }
-
+#endif
 
 #if 0
 
@@ -760,6 +762,7 @@ double tan( double x ) {
 
 static int randSeed = 0;
 
+#ifdef Q3_VM
 void	srand( unsigned seed ) {
 	randSeed = seed;
 }
@@ -903,7 +906,7 @@ double _atof( const char **stringPtr ) {
 
 	return value * sign;
 }
-
+#endif
 
 // bk001120 - presumably needed for Mac
 //#if !defined ( _MSC_VER ) && ! defined ( __linux__ )

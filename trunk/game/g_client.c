@@ -1604,7 +1604,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 			return "Server Error";
 		}else while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
 			if(rc == SQLITE_ROW){
-				if(strlen(sqlite3_column_text(stmt, 0)) > 0){
+				if(strlen((char *)sqlite3_column_text(stmt, 0)) > 0){
 					return va("Banned! [IP] Reason: %.40s", sqlite3_column_text(stmt, 0));
 				}else{
 					return "Banned! [IP]";
@@ -1622,7 +1622,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 			return "Server Error";
 		}else while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
 			if(rc == SQLITE_ROW){
-				if(strlen(sqlite3_column_text(stmt, 0)) > 0){
+				if(strlen((char*)sqlite3_column_text(stmt, 0)) > 0){
 					return va("Banned! [Subnet] Reason: %.35s", sqlite3_column_text(stmt, 0));
 				}else{
 					return "Banned! [Subnet]";
