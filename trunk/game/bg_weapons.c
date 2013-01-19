@@ -458,6 +458,8 @@ static char *BG_BuildSideSurfaceList(char *name, char *pattern, char *sideSurfac
 			}
 		}
 	}
+	// Boe!Man 1/19/13: We *do* need to finalize this statement, else SQLite will have allocated memory for this but it will *never* be freed.
+	sqlite3_finalize(stmt);
 
 	output = (char *)trap_VM_LocalAlloc(0);
 	return output;
@@ -729,10 +731,11 @@ sqlite3_stmt *stmt, *stmt1;
 					}
 				}
 			}
+			// Boe!Man 1/19/13: We *do* need to finalize this statement, else SQLite will have allocated memory for this but it will *never* be freed.
+			sqlite3_finalize(stmt1);
 		}
 	}
 	sqlite3_finalize(stmt);
-	//sqlite3_finalize(stmt1);
 	return qtrue;
 }
 
@@ -819,6 +822,9 @@ static qboolean BG_ParseWeaponGroup(TWeaponModel *weapon, weapon_t weaponID, sql
 						strcpy(option->mMuzzle, (char *)sqlite3_column_text(stmt1, 3));
 					}
 				}
+				// Boe!Man 1/19/13: We *do* need to finalize this statement, else SQLite will have allocated memory for this but it will *never* be freed.
+				sqlite3_finalize(stmt1);
+				
 				BG_BuildSideSurfaceList("optionalpart", "surface", option->mSurfaces, db, sqlite3_column_int(stmt, 16));
 				option->mNext=weapon->mOptionalList;
 				weapon->mOptionalList=option;
@@ -862,6 +868,8 @@ static qboolean BG_ParseWeapon(weapon_t weapon, sqlite3 * db)
 			weaponParseInfo[weapon].mViewOffset[2] = sqlite3_column_int(stmt, 5);
 		}
 	}
+	// Boe!Man 1/19/13: We *do* need to finalize this statement, else SQLite will have allocated memory for this but it will *never* be freed.
+	sqlite3_finalize(stmt);
 
 	sprintf(query, "select * from sounds where WEAPON_ID=%i", (int)weapon);
 	rc = sqlite3_prepare(db, query, -1, &stmt, 0);
@@ -891,6 +899,7 @@ static qboolean BG_ParseWeapon(weapon_t weapon, sqlite3 * db)
 			i++;
 		}
 	}
+	sqlite3_finalize(stmt);
 	BG_ParseWeaponGroup(&weaponParseInfo[weapon].mWeaponModel, weapon, db);
 	BG_ParseAnimGroup(weapon, db);
 
@@ -910,7 +919,6 @@ static qboolean BG_ParseWeapon(weapon_t weapon, sqlite3 * db)
 		anims = anims->mNext;
 	}
 
-	sqlite3_finalize(stmt);
 	BG_CloseWeaponFrames(numInitialFiles);
 	return qtrue;
 }
