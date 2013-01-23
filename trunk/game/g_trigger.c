@@ -7,8 +7,11 @@
 void InitTrigger( gentity_t *self ) {
 	if (!VectorCompare (self->s.angles, vec3_origin))
 		G_SetMovedir (self->s.angles, self->movedir);
-	if(!strstr(self->classname, "teleport") && !strstr(self->model, "NV_MODEL") && !strstr(self->model, "BLOCKED_TRIGGER"))
-	trap_SetBrushModel( self, self->model ); // Henk -> This crashes teleports
+	
+	// Boe!Man 1/23/13: We do need to allow trigger_teleports to bypass this check..
+	if((!strstr(self->classname, "teleport") || strstr(self->classname, "trigger_teleport")) && !strstr(self->model, "NV_MODEL") && !strstr(self->model, "BLOCKED_TRIGGER")){
+		trap_SetBrushModel( self, self->model ); // Henk -> This crashes teleports
+	}
 	self->r.contents = CONTENTS_TRIGGER;		// replaces the -1 from trap_SetBrushModel
 	self->r.svFlags = SVF_NOCLIENT;
 }
@@ -527,32 +530,36 @@ void trigger_teleporter_touch (gentity_t *self, gentity_t *other, trace_t *trace
 		return;
 	}
 
-	if(TeamCount1(TEAM_RED) < self->minimumhiders){
-		if(level.time >= other->client->sess.lastmsg){
-		trap_SendServerCommand(other->s.number, va("print\"^3[Info] ^7There has to be a minimum of %i hiders to use this teleport.\n\"", self->minimumhiders));
+	// Boe!Man 1/23/13: Centralized code.
+	if(current_gametype.value == GT_HS){
+		if(TeamCount1(TEAM_RED) < self->minimumhiders){
+			if(level.time >= other->client->sess.lastmsg){
+			trap_SendServerCommand(other->s.number, va("print\"^3[Info] ^7There has to be a minimum of %i hiders to use this teleport.\n\"", self->minimumhiders));
+			}
+			other->client->sess.lastmsg = level.time+10000;
+			return;
 		}
-		other->client->sess.lastmsg = level.time+10000;
-		return;
-	}
-	G_PlayEffect ( G_EffectIndex("misc/electrical"),other->client->ps.origin, other->pos1);
-	//G_SpawnGEntityFromSpawnVars (qtrue);
 	
-	// Boe!Man 11/11/12: Timers for Cross The Bridge go here.
-	if(current_gametype.value == GT_HS && level.crossTheBridge){
-		if(strstr(self->target, "bridge")){
-			other->client->sess.ctbStartTime = level.time;
-		}else if(strstr(self->target, "safe")){
-			if(other->client->sess.ctbStartTime){ // Must be greater then 0.
-				if((level.time - other->client->sess.ctbStartTime) < 20000){
-					trap_SendServerCommand ( other->s.number, va("print\"^3[Cross The Bridge] ^7You made it in %i seconds! You got a bonus point!\n\"", (level.time - other->client->sess.ctbStartTime) / 1000));
-					G_AddScore(other, 1);
-					other->client->sess.kills += 1;
-				}else{
-					trap_SendServerCommand ( other->s.number, va("print\"^3[Cross The Bridge] ^7You made it in %i seconds!\n\"", (level.time - other->client->sess.ctbStartTime) / 1000));
+		// Boe!Man 11/11/12: Timers for Cross The Bridge go here.
+		if(level.crossTheBridge){
+			if(strstr(self->target, "bridge")){
+				other->client->sess.ctbStartTime = level.time;
+			}else if(strstr(self->target, "safe")){
+				if(other->client->sess.ctbStartTime){ // Must be greater then 0.
+					if((level.time - other->client->sess.ctbStartTime) < 20000){
+						trap_SendServerCommand ( other->s.number, va("print\"^3[Cross The Bridge] ^7You made it in %i seconds! You got a bonus point!\n\"", (level.time - other->client->sess.ctbStartTime) / 1000));
+						G_AddScore(other, 1);
+						other->client->sess.kills += 1;
+					}else{
+						trap_SendServerCommand ( other->s.number, va("print\"^3[Cross The Bridge] ^7You made it in %i seconds!\n\"", (level.time - other->client->sess.ctbStartTime) / 1000));
+					}
 				}
 			}
 		}
 	}
+	
+	G_PlayEffect ( G_EffectIndex("misc/electrical"),other->client->ps.origin, other->pos1);
+	//G_SpawnGEntityFromSpawnVars (qtrue);
 	
 	dest = 	G_PickTarget( self->target );
 	if (!dest) {
