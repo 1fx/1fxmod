@@ -1390,16 +1390,18 @@ void ClientUserinfoChanged( int clientNum )
 			{
 				trap_SendServerCommand( -1, va("print \"%s renamed to %s\n\"", oldname, client->pers.netname) );
 				// Boe!Man 10/25/10: Checking Clonechecks and adding if needed.
-				if(sql_timeBench.integer){
-					start = trap_Milliseconds();
-				}
-				if (g_aliasCheck.integer > 1){
+				if(g_aliasCheck.integer > 1 && !(ent->r.svFlags & SVF_BOT)){
+					if(sql_timeBench.integer){
+						start = trap_Milliseconds();
+					}
+					
 					if(!Boe_checkAlias(client->pers.ip, client->pers.cleanName)){
 						Boe_addAlias(client->pers.ip, client->pers.cleanName);
 					}
-				}
-				if(sql_timeBench.integer){
-					Com_Printf("Alias check took %ims\n", trap_Milliseconds() - start);
+					
+					if(sql_timeBench.integer){
+						Com_Printf("Alias check took %ims\n", trap_Milliseconds() - start);
+					}
 				}
 				client->pers.netnameTime = level.time;
 			}
@@ -1412,17 +1414,19 @@ void ClientUserinfoChanged( int clientNum )
 			}
 			if(!client->sess.clanMember){
 				client->sess.clanMember = (qboolean)Boe_NameListCheck (clientNum, ent->client->pers.boe_id, g_clanfile.string, NULL, qfalse, qfalse, qfalse, qfalse, qfalse);
-			}			
-			if(sql_timeBench.integer){
-				start = trap_Milliseconds();
 			}
-			if (g_aliasCheck.integer > 0){
+			if(g_aliasCheck.integer > 0){
+				if(sql_timeBench.integer){
+					start = trap_Milliseconds();
+				}
+				
 				if(!Boe_checkAlias(client->pers.ip, client->pers.cleanName)){
 					Boe_addAlias(client->pers.ip, client->pers.cleanName);
 				}
-			}
-			if(sql_timeBench.integer){
-				Com_Printf("Alias check took %ims\n", trap_Milliseconds() - start);
+				
+				if(sql_timeBench.integer){
+					Com_Printf("Alias check took %ims\n", trap_Milliseconds() - start);
+				}
 			}
 			// Boe!Man 4/3/10: Give developer to certain IPs. -- Update 5/25/11: Disable Developer in Public Final releases (i.e. no debug/BETA releases).
 #ifdef _DEBUG
@@ -1727,16 +1731,18 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 		}
 	}
 	// Boe!Man 10/25/10: Checking for Clonecheck.
-	if(sql_timeBench.integer){
-		start = trap_Milliseconds();
-	}
-	if (g_aliasCheck.integer > 1){
+	if(g_aliasCheck.integer > 1 && !(ent->r.svFlags & SVF_BOT)){
+		if(sql_timeBench.integer){
+			start = trap_Milliseconds();
+		}
+
 		if(!Boe_checkAlias(client->pers.ip, client->pers.cleanName)){
 			Boe_addAlias(client->pers.ip, client->pers.cleanName);
 		}
-	}
-	if(sql_timeBench.integer){
-		Com_Printf("Alias check took %ims\n", trap_Milliseconds() - start);
+
+		if(sql_timeBench.integer){
+			Com_Printf("Alias check took %ims\n", trap_Milliseconds() - start);
+		}
 	}
 	// Boe!Man 10/16/10: If Admins are allowed to spec the opposite team..
 	if (client->sess.admin >= g_adminSpec.integer  && g_adminSpec.integer != 0 && g_compMode.integer == 0){
