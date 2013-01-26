@@ -226,6 +226,33 @@ Tested and confirmed to fully work on systems with glibc 1.x or <= 2.4, and gcc 
 ******************************************************
 */
 
+/*
+*************** New .so Considerations ***************
+// By Boe!Man - 1/26/13 - 10:43 AM
+
+The above method will undoubtedly work in terms of compiling the Mod, but it's not
+entirely fool-proof and thus I went on looking for a new way of doing this.
+A generally better and apparently more stable way of compiling the *.so is by using
+the old glibc compiler, whereas the linker (ld in this case) links the object files
+into the dynamic object *and* some static libraries. This basically comes down to
+having a shared object with zero dependencies, which is still a shared library that
+can be opened with dlopen.
+
+Having the Mod compiled like this, we can actually change the dynamic loader on the
+host platform again, we could use fc4libs, 1fxlib 0.1 or even no dynamic loader at
+all if the host doesn't segfault!
+
+But it is generally recommended to keep the host and Mod libraries at a minimum
+distance of each other, therefore, if the host requires a LD_LIBRARY_PATH hack, 
+I chose to include the old 1fxlib (Woody) dynamic library loader in 1fxlib 0.31.
+This platform (1fxlib) has proven itself to be quite stable cross platform,
+which is the end goal after all.
+
+The repository now contains an updated game.sh, this file used to compile a QVM
+on Linux platforms, it can now be used to compile the Mod as sof2mp_gamei386.so
+on a Linux platform.
+******************************************************
+*/
 
 //==============================================
 // boe_admcmds.c
