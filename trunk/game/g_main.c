@@ -1458,6 +1458,14 @@ void G_ShutdownGame( int restart )
 		G_LogPrintf("------------------------------------------------------------\n" );
 		trap_FS_FCloseFile( level.logFile );
 	}
+	
+	// Boe!Man 1/27/13: Reset the internal g_alternateMap CVAR if an alt map is loaded and the map is restarted.
+	if(restart){
+		if(level.altEnt){
+			trap_Cvar_Set( "g_alternateMap", "1");
+			trap_Cvar_Update ( &g_alternateMap );
+		}
+	}
 
 	//Henk 12/10/12 -> Detach and close memory database
 	UnloadCountries();

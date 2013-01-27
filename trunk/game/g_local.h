@@ -863,7 +863,9 @@ typedef struct
 	qboolean	nadesFound;		// Boe!Man 11/13/12: qtrue if nades are actually found.
 	
 	qboolean	altPath;		// Boe!Man 12/8/12: This is checked during initgame (inview parsing), if the DLL is found outside the RPM dir (in the root directory), this is qtrue.
-	char		altString[16];		// Boe!Man 12/8/12: This is the path (including fs_game), this should speed up every country call (and others) quite a bit.
+	char		altString[16];	// Boe!Man 12/8/12: This is the path (including fs_game), this should speed up every country call (and others) quite a bit.
+	
+	qboolean	altEnt;			// Boe!Man 1/27/13: If this is true, an alternative ent was loaded and will be loaded again when a !mr is issued.
 } level_locals_t;
 
 //

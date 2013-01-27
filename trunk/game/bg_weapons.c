@@ -946,6 +946,10 @@ qboolean BG_ParseInviewFile(void)
 		}
 	}
 	
+	// Boe!Man 1/27/13: Fixed the code going out of bounds somewhere, because the availableWeapons CVAR was too large.
+	Q_strncpyz(availableWeapons.string, availableWeapons.string, WP_NUM_WEAPONS);
+	trap_Cvar_Update(&availableWeapons);
+	
 	// Boe!Man & Henkie 1/8/13: Fix for crashing Linux server, apparently the engine does not properly flush those structs and integers.
 	memset(frameGroup, 0, sizeof(frameGroup));
 	memset(weaponFrames, 0, sizeof(weaponFrames));

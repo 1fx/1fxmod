@@ -22,6 +22,7 @@ qboolean G_LoadEntFile(void)
 		strcpy(alt, "alt/");
 		trap_Cvar_Set( "g_alternateMap", "0");
 		trap_Cvar_Update ( &g_alternateMap );
+		level.altEnt = qtrue;
 	}else{
 		strcpy(alt, "");
 	}
@@ -60,6 +61,7 @@ qboolean G_LoadEntFile(void)
 					Com_Printf("Loading default ent now\n");
 					trap_Cvar_Set( "g_alternateMap", "0");
 					trap_Cvar_Update ( &g_alternateMap );
+					level.altEnt = qfalse;
 					return G_LoadEntFile();
 					}
 					return qfalse;
