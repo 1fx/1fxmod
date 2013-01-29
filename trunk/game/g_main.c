@@ -4,6 +4,10 @@
 #include "g_local.h"
 #include "boe_local.h"
 
+#ifdef __linux__
+char	memsys5[15728640]; // Boe!Man 1/29/13: Buffer of 15 MB, available for SQLite memory management (Linux).
+#endif
+
 level_locals_t	level;
 
 typedef struct
@@ -1102,6 +1106,11 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 /*#else
 	Com_Printf ("Date: %d/%d/%02d\n", MONTH+1, DAY, YEAR );
 #endif*/
+	// Boe!Man 1/29/13: Initialize the in-game memory-management buffer on Linux (SQLite3 memsys5).
+	#ifdef __linux__
+	sqlite3_config(SQLITE_CONFIG_HEAP, memsys5, 15728640, 64);
+	#endif
+	
 	//Henk 12/10/12 -> Copy disk database to memory database.
 	LoadCountries();
 

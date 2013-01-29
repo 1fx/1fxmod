@@ -728,6 +728,10 @@ void UnloadCountries(void);
 // =================================
 // SQLite3 related defintions.
 
+#ifdef __linux__
+extern char	memsys5[15728640]; // Boe!Man 1/29/13: Buffer of 15 MB, available for SQLite memory management (Linux).
+#endif
+
 void		Boe_userdataIntegrity	(void);
 
 qboolean	Boe_checkAlias			(char *ip, char *name2);

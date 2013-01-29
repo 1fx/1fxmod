@@ -163,7 +163,7 @@ gcc $buildoptions rpm_refcmds.c -o rpm_refcmds.o 2>> compile_log
 gcc $buildoptions rpm_tcmds.c -o rpm_tcmds.o 2>> compile_log
 gcc $buildoptions 1fx_gt.c -o 1fx_gt.o 2>> compile_log
 # SQLite
-gcc -s -fstack-check -DSQLITE_OMIT_LOAD_EXTENSION -fPIC -c ./sqlite/sqlite3.c -o ./sqlite/sqlite3.o 2>> compile_log
+gcc -s -fstack-check -DSQLITE_OMIT_LOAD_EXTENSION -DSQLITE_ENABLE_MEMSYS5 -fPIC -c ./sqlite/sqlite3.c -o ./sqlite/sqlite3.o 2>> compile_log
 echo "Now linking the shared object.."
 # There are several compile lines of interest.
 # The first one is the one we use everywhere, it's default as of revision 950. This compiles the Mod dynamically with static dependencies.
