@@ -3985,6 +3985,12 @@ qboolean ConsoleCommand( void )
 		Svcmd_ExtendTime_f();
 		return qtrue;
 	}
+	
+	if (Q_stricmp (cmd, "sql_stats" ) == 0 )
+	{
+		Boe_SQLStats();
+		return qtrue;
+	}
 
 	if (g_dedicated.integer) 
 	{

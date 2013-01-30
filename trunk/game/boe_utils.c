@@ -2928,3 +2928,41 @@ void Boe_printAliases(gentity_t *ent, char *ip, char *name2)
 	memset(names, 0, sizeof(names));
 	return;
 }
+
+/*
+================
+Boe_SQLStats
+1/30/13 - 12:36 PM
+Prints a sheet containing information regarding SQLite statistics.
+Accessible from RCON only. Mainly here for debug purposes.
+================
+*/
+
+void Boe_SQLStats(void)
+{
+	int		mem;
+	float	memInM;
+	
+	mem = sqlite3_memory_used();
+	memInM = mem;
+	memInM = memInM/1024/1024;
+	
+	Com_Printf("^3[SQLite3 Statistics]\n");
+	Com_Printf("--------------------------------------\n");
+	
+	// Boe!Man 1/30/13: Hard-coded statistics, i.e. things that never change.
+	#ifdef WIN32
+	Com_Printf("[^3Host platform^7]       Windows\n");
+	Com_Printf("[^3Memory allocator^7]    Native\n");
+	Com_Printf("[^3Heap limit^7]          None defined\n");
+	#elif __linux__
+	Com_Printf("[^3Host platform^7]       Linux\n");
+	Com_Printf("[^3Memory allocator^7]    memsys5\n");
+	Com_Printf("[^3Heap limit^7]          31457280B (30M)\n");
+	#endif
+	Com_Printf("[^3Mem in use^7]          %iB (%.2fM)\n", mem, memInM);
+	
+	Com_Printf("\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n");
+	
+	return;
+}
