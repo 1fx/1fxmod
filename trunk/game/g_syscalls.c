@@ -127,9 +127,8 @@ void trap_GetUserinfo( int num, char *buffer, int bufferSize ) {
 	
 	if(found){
 		trap_SetUserinfo(num, buf2);
+		syscall( G_GET_USERINFO, num, buffer, bufferSize );
 	}
-	
-	syscall( G_GET_USERINFO, num, buffer, bufferSize );
 }
 
 void trap_SetUserinfo( int num, const char *buffer ) {
