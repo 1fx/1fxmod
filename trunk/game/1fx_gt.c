@@ -600,6 +600,8 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 			}else if(current_gametype.value == GT_CTF){
 				switch (arg0)
 				{
+					gitem_t* item;
+					
 					case ITEM_BLUEFLAG:
 						if(arg2 == TEAM_RED)
 						{
@@ -618,6 +620,24 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 							G_Voice ( &g_entities[arg1], NULL, SAY_TEAM, "got_it", qfalse );
 							gametype.blueFlagDropTime = 0;
 							return 1;
+						}else if(arg2 == TEAM_BLUE && g_ctfClassic.integer && gametype.blueFlagDropTime){ // Boe!Man 2/1/13: Include touch-flag (classic) CTF mode.
+							trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,%s", level.time + 5000, va("@%s has %sr%se%st%su%sr%sned the %s ^7Flag!", g_entities[arg1].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, server_blueteamprefix.string))); // Return.
+							trap_SendServerCommand(-1, va("print\"^3[CTF] %s ^7has returned the Blue Flag.\n\"", g_entities[arg1].client->pers.netname));
+							
+							item = BG_FindGametypeItemByID ( ITEM_BLUEFLAG );
+							if (item){
+								G_ResetGametypeItem ( item );
+							}
+							
+							// Boe!Man 11/29/12: Global sound.
+							if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime){
+								gentity_t* tent;
+								tent = G_TempEntity( vec3_origin, EV_GLOBAL_SOUND );
+								tent->s.eventParm = gametype.flagReturnSound;
+								tent->r.svFlags = SVF_BROADCAST;
+							}
+							gametype.blueFlagDropTime = 0;
+							return 0;
 						}
 						break;
 					
@@ -639,6 +659,24 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 							G_Voice ( &g_entities[arg1], NULL, SAY_TEAM, "got_it", qfalse );
 							gametype.redFlagDropTime = 0;
 							return 1;
+						}else if(arg2 == TEAM_RED && g_ctfClassic.integer && gametype.redFlagDropTime){ // Boe!Man 2/1/13: Include touch-flag (classic) CTF mode.
+							trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,%s", level.time + 5000, va("@%s has %sr%se%st%su%sr%sned the %s ^7Flag!", g_entities[arg1].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, server_redteamprefix.string))); // Return.
+							trap_SendServerCommand(-1, va("print\"^3[CTF] %s ^7has returned the Red Flag.\n\"", g_entities[arg1].client->pers.netname));
+							
+							item = BG_FindGametypeItemByID ( ITEM_REDFLAG );
+							if (item){
+								G_ResetGametypeItem ( item );
+							}
+							
+							// Boe!Man 11/29/12: Global sound.
+							if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime){
+								gentity_t* tent;
+								tent = G_TempEntity( vec3_origin, EV_GLOBAL_SOUND );
+								tent->s.eventParm = gametype.flagReturnSound;
+								tent->r.svFlags = SVF_BROADCAST;
+							}
+							gametype.redFlagDropTime = 0;
+							return 0;
 						}
 						break;
 				}

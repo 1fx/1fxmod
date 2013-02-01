@@ -102,6 +102,7 @@ vmCvar_t	g_teamkillDamageMax;			// max damage one can do to teammates before bei
 vmCvar_t	g_teamkillDamageForgive;		// amount of teamkill damage forgiven each minute
 vmCvar_t	g_voiceFloodCount;				// Number of voice messages in one minute to be concidered flooding
 vmCvar_t	g_voiceFloodPenalty;			// Amount of time a void flooder must wait before they can use voice again
+vmCvar_t	g_ctfClassic;					// Boe!Man 2/1/13: Setting this to 1 enables classic CTF mode (touch flag = return).
 
 vmCvar_t	RMG;
 vmCvar_t	g_debugRMG;
@@ -378,6 +379,8 @@ static cvarTable_t gameCvarTable[] =
 
 	{ &g_respawnInterval, "g_respawnInterval", "15", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 	{ &g_respawnInvulnerability, "g_respawnInvulnerability", "5", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
+	
+	{ &g_ctfClassic, "g_ctfClassic", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue },
 
 	{ &RMG, "RMG", "0", 0, 0.0, 0.0, },
 	{ &g_debugRMG, "g_debugRMG", "0", 0, 0.0f, 0.0f },
