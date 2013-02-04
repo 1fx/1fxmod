@@ -2732,6 +2732,57 @@ void Boe_userdataIntegrity(void)
 		sqlite3_close(db);
 	}
 	
+	// Boe!Man 2/4/13: Also check the users.db, which handles Admins, Pass Admins and Clan Members.
+	// The first thing we check is if the database exists on one of the two locations.
+	if(!level.altPath){
+		rc = sqlite3_open_v2("./users/users.db", &db, SQLITE_OPEN_READWRITE, NULL);
+	}else{
+		rc = sqlite3_open_v2(va("%s/users/users.db", level.altString), &db, SQLITE_OPEN_READWRITE, NULL);
+	}
+	
+	dbOkay = qfalse;
+	
+	if(rc){
+		// The database cannot be found. We try to create it.
+		if(!level.altPath){
+			rc = sqlite3_open_v2("./users/users.db", &db, SQLITE_OPEN_CREATE | SQLITE_OPEN_READWRITE, NULL);
+		}else{
+			rc = sqlite3_open_v2(va("%s/users/users.db", level.altString), &db, SQLITE_OPEN_CREATE | SQLITE_OPEN_READWRITE, NULL);
+		}
+		
+		if(rc){
+			Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
+		}else{
+			dbOkay = qtrue;
+		}
+	}else{
+		dbOkay = qtrue;
+	}
+	
+	if(dbOkay){
+		// The database should be opened by now, see if it needs maintenance.
+		if(sqlite3_exec(db, "CREATE TABLE IF NOT EXISTS admins('IP' VARCHAR(24), 'name' VARCHAR(36), 'by' VARCHAR(36), 'level' INTEGER NOT NULL)", 0, 0, 0) != SQLITE_OK){
+			Com_Printf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
+			sqlite3_close(db);
+			return;
+		}
+		
+		if(sqlite3_exec(db, "CREATE TABLE IF NOT EXISTS passadmins('octet' VARCHAR(4), 'name' VARCHAR(36), 'by' VARCHAR(36), 'level' INTEGER NOT NULL)", 0, 0, 0) != SQLITE_OK){
+			Com_Printf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
+			sqlite3_close(db);
+			return;
+		}
+		
+		if(sqlite3_exec(db, "CREATE TABLE IF NOT EXISTS clanmembers('IP' VARCHAR(24), 'name' VARCHAR(36), 'by' VARCHAR(36))", 0, 0, 0) != SQLITE_OK){
+			Com_Printf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
+			sqlite3_close(db);
+			return;
+		}
+
+		// Boe!Man 2/4/13: Close the users database.
+		sqlite3_close(db);
+	}
+	
 	Com_Printf("Succesfully finished checking userdata integrity.\n");
 	
 	return;
