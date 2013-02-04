@@ -3956,284 +3956,110 @@ void Henk_Unban(int argNum, gentity_t *adm, qboolean shortCmd){
 	}
 }
 
-/* TODO (ajay#8#): AdmList prints clanlist as well now, seperate functions for this when switching to other backend (as planned right now). */
 void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
-	char	level[15], level1[3], name[64], test = ' ';
-	char	column1[20], column2[25];
-	int		spaces = 0, length = 0, z;
-	fileHandle_t f;
-	char buf[15000] = "\0";
-	char buffer[15000];
-	char *bufP = buffer;
-	int len, i, count = 0, EndPos = -1, StartPos = 0, CountLines = 0;
-	qboolean begin = qtrue;
-	int r, lcount = -1, Start = 0;
-	char xip[64], arg[32] = "\0", temp[64] = "\0";
-	qboolean passwordlist = qfalse, clanList = qfalse;
-	qboolean last = qfalse;
+	// Boe!Man 11/04/11: We use this in order to send as little packets as possible. Packet max size is 1024 minus some overhead, 1000 char. max should take care of this. (adm only, RCON remains unaffected).
+	char			 buf2[1000]		= "\0";
+	char			 arg[32]		= "\0";
+	char			 temp[64]		= "\0";
+	qboolean		 passwordList	= qfalse; // If this is true, the user wishes to see the passworded Admins.
+	// End Boe!Man 11/04/11
+	// Boe!Man 2/4/13: SQLite backend.
+	sqlite3			*db;
+	sqlite3_stmt	*stmt;
+	int				 rc;
+	
+	// Boe!Man 12/8/12: We still use *_v2 here, since we shouldn't create it as well (should be existing data already!).
+	if(!level.altPath){
+		rc = sqlite3_open_v2("./users/users.db", &db, SQLITE_OPEN_READONLY, NULL);
+	}else{
+		rc = sqlite3_open_v2(va("%s/users/users.db", level.altString), &db, SQLITE_OPEN_READONLY, NULL);
+	}
+	
+	if(rc){
+		if(adm){
+			trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n\"", sqlite3_errmsg(db)));
+		}else{
+			Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
+		}
+		return;
+	}
+	
+	// Boe!Man 2/4/13: Check for password argument.
 	if(shortCmd){
 		trap_Argv( 0, temp, sizeof( temp ) );
 		trap_Argv( 1, arg, sizeof( arg ) );
-		if(strstr(Q_strlwr(arg), "clanlist") || strstr(Q_strlwr(arg), "cl")){
-			clanList = qtrue;
-		}else if(strstr(Q_strlwr(arg), "pass")){// Boe!Man 10/10/11: Fix for "pass" arg not working when capitalised.
-			passwordlist = qtrue;
+		if(strstr(Q_strlwr(arg), "pass")){// Boe!Man 10/10/11: Fix for "pass" arg not working when capitalised.
+			passwordList = qtrue;
 		}else{ // Boe!Man 7/17/12: For another check.
-			trap_Argv( 1, temp, sizeof( temp ) );
-			trap_Argv( 2, arg, sizeof( arg ) );
+			trap_Argv( 1, temp, sizeof( temp ));
+			trap_Argv( 2, arg, sizeof( arg ));
 		}
 	}else{
 		trap_Argv( argNum-1, temp, sizeof( temp ) );
 		trap_Argv( argNum, arg, sizeof( arg ) );
 	}
 	
-	if(strstr(Q_strlwr(temp), "cl")){
-		clanList = qtrue;
-	}else if(strstr(Q_strlwr(arg), "pass") && !strstr(Q_strlwr(arg), "cl")){
-		passwordlist = qtrue;
+	if(strstr(Q_strlwr(arg), "pass")){
+		passwordList = qtrue;
 	}
 	
 	// Boe!Man 4/29/12: If the password login system isn't allowed by the server, by all means, also disallow the showing of the list.
-	if(passwordlist && !g_passwordAdmins.integer){
-		if(adm)
-		trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Access denied: No password logins allowed by the server!\n\""));
-		else
-		Com_Printf("Access denied: No password logins allowed by the server!\n");
+	if(passwordList && !g_passwordAdmins.integer){
+		if(adm){
+			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Access denied: No password logins allowed by the server!\n\""));
+		}else{
+			Com_Printf("Access denied: No password logins allowed by the server!\n");
+		}
 		return;
 	}
-
-	memset(buffer, 0, sizeof(buffer));
-	//wrapper for interface
+	
+	// Boe!Man 2/4/13: Display header.
 	if(adm){
-		if(!clanList){
-			trap_SendServerCommand( adm-g_entities, va("print \"^7[^3Adminlist^7]\n\n\""));
-			trap_SendServerCommand( adm-g_entities, va("print \"^3 #    Lvl  Name               IP\n\""));
-		}else{
-			trap_SendServerCommand( adm-g_entities, va("print \"^7[^3Clanlist^7]\n\n\""));
-			trap_SendServerCommand( adm-g_entities, va("print \"^3 #    Name               IP\n\""));
-		}
-		trap_SendServerCommand( adm-g_entities, va("print \"^7------------------------------------------------------------------------\n\""));
+		Q_strcat(buf2, sizeof(buf2), "^3[Adminlist]^7\n\n");
+		Q_strcat(buf2, sizeof(buf2), "^3 #     Lvl  IP              Name                  By\n^7------------------------------------------------------------------------\n");
 	}else{
-		if(!clanList){
-			Com_Printf("^7[^3Adminlist^7]\n\n");
-			Com_Printf("^3 #    Lvl  Name               IP\n");
-		}else{
-			Com_Printf("^7[^3Clanlist^7]\n\n");
-			Com_Printf("^3 #    Name               IP\n");
-		}
+		Com_Printf("^3[Adminlist]^7\n\n");
+		Com_Printf("^3 #     Lvl  IP              Name                  By\n");
 		Com_Printf("^7------------------------------------------------------------------------\n");
 	}
-	if(passwordlist){
-		len = trap_FS_FOpenFile(g_adminPassFile.string, &f, FS_READ);
-	}else{
-		if(!clanList){
-			len = trap_FS_FOpenFile(g_adminfile.string, &f, FS_READ);
-		}else{
-			len = trap_FS_FOpenFile(g_clanfile.string, &f, FS_READ);
-		}
-	}
 	
-	if(!f){
-		if(passwordlist){
-			if(adm){
-				trap_SendServerCommand( adm-g_entities, va("print \"Error while reading %s\n\"", g_adminPassFile.string));
-			}else{
-				Com_Printf("Error while reading %s\n", g_adminPassFile.string);
-			}
+	if(!passwordList){
+		rc = sqlite3_prepare(db, "select ROWID,level,IP,name,by from admins order by ROWID", -1, &stmt, 0);
+	}else{
+		rc = sqlite3_prepare(db, "select ROWID,level,octet,name,by from passadmins order by ROWID", -1, &stmt, 0);
+	}
+	if(rc!=SQLITE_OK){
+		if(adm){
+			trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n\"", sqlite3_errmsg(db)));
 		}else{
-			if(!clanList){
-				if(adm){
-					trap_SendServerCommand( adm-g_entities, va("print \"Error while reading %s\n\"", g_clanfile.string));
-				}else{
-					Com_Printf("Error while reading %s\n", g_clanfile.string);
-				}
-			}else{
-				if(adm){
-					trap_SendServerCommand( adm-g_entities, va("print \"Error while reading %s\n\"", g_adminfile.string));
-				}else{
-					Com_Printf("Error while reading %s\n", g_adminfile.string);
-				}
-			}
+			Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
 		}
 		return;
-	}
-	trap_FS_Read( buf, len, f );
-	buf[len] = '\0';
-	trap_FS_FCloseFile(f);
-
-	for(i=0;i<len;i++){
-		if(begin && buf[i] == '\n'){
-			StartPos = i+1;
-			EndPos = -1;
-			begin = qfalse;
-		}
-		if(buf[i] == '\\' && buf[i] != '\n'){
-			EndPos = i;
-			begin = qtrue;
-			memset(xip, 0, sizeof(xip));
-			if((EndPos-StartPos)  < 1){
-				#ifdef _DEBUG
-				Com_Printf("Error: %i - %i\n", EndPos, StartPos);
-				#endif
-				return;
-			}
-			//if(passwordlist)
-		//#ifdef Q3_VM
-		//	Q_strncpyz(xip, buf+StartPos, (EndPos-StartPos));
-		//#else
-		Q_strncpyz(xip, buf+StartPos, (EndPos-StartPos)+1);
-		//s#endif
-				
-			//else
-				//Q_strncpyz(xip, buf+StartPos, EndPos-StartPos);
-			lcount = -1;
-			for(r=i;r<strlen(buf);r++){ // Boe!Man 7/17/12: Line of end mode fix.
-				if(buf[r] == '\n'){
-					if(buf[r-1] == '\r'){
-						lcount = r-2;
-					}else{
-						lcount = r-1;
-					}
-					break;
-				}
-			}
-			
-			if(lcount == -1){
-				last = qtrue;
-				lcount = strlen(buf); // last line
-			}
-			memset(name, 0, sizeof(name));
-			memset(level1, 0, sizeof(level1));
-#ifdef Q3_VM
-				if(!clanList){
-					Q_strncpyz(name, buf+EndPos+1, (lcount-(EndPos+1))-1);
-					Q_strncpyz(level1, buf+(lcount-1), 2);
-				}else{
-					Q_strncpyz(name, buf+EndPos+1, (lcount-(EndPos+1)));
-				}
-				if(atoi(level1) < 1 || atoi(level1) > 5){
-					if(!clanList){
-						Q_strncpyz(name, buf+EndPos+1, (lcount-(EndPos+1)));
-						Q_strncpyz(level1, buf+lcount, 2);
-					}else{
-						Q_strncpyz(name, buf+EndPos+1, lcount-(EndPos-1));
-					}
-				}
-#else
-			if(!clanList){
-				Q_strncpyz(name, buf+EndPos+1, (lcount-(EndPos))-1);
-				Q_strncpyz(level1, buf+(lcount), 2);
-			}else{
-				Q_strncpyz(name, buf+EndPos+1, lcount-(EndPos-1));
-			}
-#endif
-			//Com_Printf("IP: %s\n", xip);
-			//Com_Printf("Name: %s", name);
-			//Com_Printf("Level: %s\n", level1);
-			count += 1;
-			
-			if(!clanList){
-				length = strlen(level1);
-				if(length > 2){
-					level1[2] = '\0';
-					length = 2;
-				}
-				spaces = 3-length;
-				for(z=0;z<spaces;z++){
-				column1[z] = test;
-				}
-				column1[spaces] = '\0';
-				memset(level, 0, sizeof(level));
-				strcpy(level, va("[^3%c^7]", level1[0]));
-				level[strlen(level)] = '\0';
-			}
-			
-			if(passwordlist)
-				length = strlen(xip);
-			else
-				length = strlen(name);
-			if(length > 18){
-				if(passwordlist)
-					xip[18] = '\0';
-				else
-					name[18] = '\0';
-				length = 18;
-			}
-			spaces = 19-length;
-			for(z=0;z<spaces;z++){
-			column2[z] = test;
-			}
-			column2[spaces] = '\0';
+	}else while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
+		if(rc == SQLITE_ROW){
 			if(adm){
-				if(!clanList){
-					if(count <= 9){
-						//trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7]   %s%s%s%s%s\n", count, level, column1, name, column2, xip)); // Boe!Man 9/16/10: Print ban.
-						if(passwordlist)
-							Com_sprintf(buffer+strlen(buffer), sizeof(buffer), "[^3%i^7]   %s%s%s%s%s\n", count, level, column1, xip, column2, name);
-						else
-							Com_sprintf(buffer+strlen(buffer), sizeof(buffer), "[^3%i^7]   %s%s%s%s%s\n", count, level, column1, name, column2, xip);
-					}else if(count > 9 && count < 100){
-						//trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7]  %s%s%s%s%s\n", count, level, column1, name, column2, xip)); // Boe!Man 9/16/10: Print ban.
-						if(passwordlist)
-							Com_sprintf(buffer+strlen(buffer), sizeof(buffer), "[^3%i^7]  %s%s%s%s%s\n", count, level, column1, xip, column2, name);
-						else
-							Com_sprintf(buffer+strlen(buffer), sizeof(buffer), "[^3%i^7]  %s%s%s%s%s\n", count, level, column1, name, column2, xip);
-					}else{
-						//trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7] %s%s%s%s%s\n", count, level, column1, name, column2, xip)); // Boe!Man 9/16/10: Print ban.
-						if(passwordlist)
-							Com_sprintf(buffer+strlen(buffer), sizeof(buffer), "[^3%i^7] %s%s%s%s%s\n", count, level, column1, xip, column2, name);
-						else
-							Com_sprintf(buffer+strlen(buffer), sizeof(buffer), "[^3%i^7] %s%s%s%s%s\n", count, level, column1, name, column2, xip);
-					}
-				}else{ // Boe!Man 7/17/12: Clanlist.
-					if(count <= 9){
-						//trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7]   %s%s%s%s%s\n", count, level, column1, name, column2, xip)); // Boe!Man 9/16/10: Print ban.
-							Com_sprintf(buffer+strlen(buffer), sizeof(buffer), "[^3%i^7]   %s%s%s\n", count, name, column2, xip);
-					}else if(count > 9 && count < 100){
-						//trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7]  %s%s%s%s%s\n", count, level, column1, name, column2, xip)); // Boe!Man 9/16/10: Print ban.
-							Com_sprintf(buffer+strlen(buffer), sizeof(buffer), "[^3%i^7]  %s%s%s\n", count, name, column2, xip);
-					}else{
-						//trap_SendServerCommand( adm-g_entities, va("print \"[^3%i^7] %s%s%s%s%s\n", count, level, column1, name, column2, xip)); // Boe!Man 9/16/10: Print ban.
-							Com_sprintf(buffer+strlen(buffer), sizeof(buffer), "[^3%i^7] %s%s%s\n", count, name, column2, xip);
-					}
+				// Boe!Man 11/04/11: Put packet through to clients if char size would exceed 1000 and reset buf2.
+				if((strlen(buf2)+strlen(va("[^3%-3.3i^7]  [^3%i^7]  %-15.15s %-21.21s %-21.21s\n", sqlite3_column_int(stmt, 0), sqlite3_column_int(stmt, 1), sqlite3_column_text(stmt, 2), sqlite3_column_text(stmt, 3), sqlite3_column_text(stmt, 4)))) > 1000){
+					trap_SendServerCommand( adm-g_entities, va("print \"%s\"", buf2));
+					memset(buf2, 0, sizeof(buf2)); // Boe!Man 11/04/11: Properly empty the buffer.
 				}
-				
-				CountLines += 1;
-				if(CountLines == 10){
-					trap_SendServerCommand( adm-g_entities, va("print \"%s\"", buffer));
-					memset(buffer, 0, sizeof(buffer));
-					CountLines = 0;
-				}
+				Q_strcat(buf2, sizeof(buf2), va("[^3%-3.3i^7]  [^3%i^7]  %-15.15s %-21.21s %-21.21s\n", sqlite3_column_int(stmt, 0), sqlite3_column_int(stmt, 1), sqlite3_column_text(stmt, 2), sqlite3_column_text(stmt, 3), sqlite3_column_text(stmt, 4)));
 			}else{
-				if(!clanList){
-					if(count <= 9){
-						Com_Printf("[^3%i^7]   %s%s%s%s%s\n", count, level, column1, name, column2, xip);
-					}else if(count > 9 && count < 100){
-						Com_Printf("[^3%i^7]  %s%s%s%s%s\n", count, level, column1, name, column2, xip);
-					}else{
-						Com_Printf("[^3%i^7] %s%s%s%s%s\n", count, level, column1, name, column2, xip);
-					}
-				}else{
-					if(count <= 9){
-						Com_Printf("[^3%i^7]   %s%s%s\n", count, name, column2, xip);
-					}else if(count > 9 && count < 100){
-						Com_Printf("[^3%i^7]  %s%s%s\n", count, name, column2, xip);
-					}else{
-						Com_Printf("[^3%i^7] %s%s%s\n", count, name, column2, xip);
-					}
-				}
+				Com_Printf("[^3%-3.3i^7]  [^3%i^7]  %-15.15s %-21.21s %-21.21s\n", sqlite3_column_int(stmt, 0), sqlite3_column_int(stmt, 1), sqlite3_column_text(stmt, 2), sqlite3_column_text(stmt, 3), sqlite3_column_text(stmt, 4));
 			}
 		}
 	}
 	
+	sqlite3_finalize(stmt);
+	sqlite3_close(db);
+	
+	// Boe!Man 11/04/11: Fix for RCON not properly showing footer of banlist.
 	if(adm){
-		trap_SendServerCommand( adm-g_entities, va("print \"%s\"", buffer));
-
-		// End
-		trap_SendServerCommand( adm-g_entities, va("print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\""));
+		trap_SendServerCommand( adm-g_entities, va("print \"%s\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\"", buf2)); // Boe!Man 11/04/11: Also send the last buf2 (that wasn't filled as a whole yet).
 	}else{
 		Com_Printf("\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n");
 	}
+	
 	return;
 }
 
