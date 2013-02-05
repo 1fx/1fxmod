@@ -296,9 +296,8 @@ extern	vmCvar_t	server_color4;
 extern	vmCvar_t	server_color5;
 extern	vmCvar_t	server_color6;
 
-void	Boe_Add_bAdmin_f (int argNum, gentity_t *adm, qboolean shortCmd);		// Prototype warnings.
-void	Boe_Add_Admin_f (int argNum, gentity_t *adm, qboolean shortCmd);		// Prototype warnings.
-void	Boe_Add_sAdmin_f (int argNum, gentity_t *adm, qboolean shortCmd);		// Prototype warnings.
+void	Boe_addAdmin (int argNum, gentity_t *adm, qboolean shortCmd);
+void	Boe_Add_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd, int level, char *commandName);
 void	Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet);
 void	Boe_Ban_f (int argNum, gentity_t *adm, qboolean shortCmd);				// Prototype warnings.
 void	Boe_Uppercut (int argNum, gentity_t *adm, qboolean shortCmd);

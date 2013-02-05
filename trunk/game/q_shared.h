@@ -1750,7 +1750,7 @@ typedef struct {
 
 // For ghoul2 axis use
 
-typedef enum Eorientations
+typedef enum
 {
 	ORIGIN = 0, 
 	POSITIVE_X,
@@ -1759,7 +1759,7 @@ typedef enum Eorientations
 	NEGATIVE_X,
 	NEGATIVE_Z,
 	NEGATIVE_Y
-};
+} Eorientations;
 /*
 Ghoul2 Insert End
 */

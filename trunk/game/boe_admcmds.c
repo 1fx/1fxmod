@@ -1425,93 +1425,58 @@ void Boe_FileError (gentity_t * ent, const char *file)
 
 /*
 ================
-Boe_Add_bAdmin_f
+Boe_addAdmin
+2/5/13 - 4:03 PM
+Function that acts as a wrapper around addbadmin, addadmin and addsadmin.
+Fetches the level the user wishes to add and then redirects them.
 ================
 */
 
-void Boe_Add_bAdmin_f(int argNum, gentity_t *adm, qboolean shortCmd)
+void Boe_addAdmin(int argNum, gentity_t *adm, qboolean shortCmd)
 {
-	int             idnum;
-	char			*id;
-	char			id2[64];
-	char			arg[64] = "\0";
+	char			command[64] = "\0";
 
-	idnum = Boe_ClientNumFromArg(adm, argNum, "addbadmin <idnumber>", "do this to", qfalse, qfalse, shortCmd);
-	if(idnum < 0) return;
-	// Boe!Man 4/27/11: RCON has to be able to do everything. However, there are a few things that should be excluded. Instead of processing which command was entered in the ClientNumFromArg func, we deploy this check in the addxadmin functions (to save resources).
-	if(!adm && g_entities[idnum].client->sess.admin > 1){
-		Com_Printf("You cannot use this command on other Admins.\n");
-		return;
-	}
-
-	if(shortCmd){
-		strcpy(arg, GetReason());
+	if(adm && adm->client){
+		trap_Argv(1, command, sizeof(command));
 	}else{
-		if(adm && adm->client){
-			trap_Argv(3, arg, sizeof(arg));
-		}else{
-			trap_Argv(2, arg, sizeof(arg));
-		}
+		trap_Argv(0, command, sizeof(command));
 	}
-
-	//Com_Printf("Arg: %s\n", arg);
-	if(!Q_stricmp(arg, "pass")){
-		if(g_passwordAdmins.integer){
-			AddToPasswordList(&g_entities[idnum], 2);
-			g_entities[idnum].client->sess.admin = 2;
-		}else{
-			if(adm)
-			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Access denied: No password logins allowed by the server!\n\""));
-			else
-			Com_Printf("Access denied: No password logins allowed by the server!\n");
-		}
-		return;
+	
+	if(strstr(command, "!ab") || strstr(command, "addbad")){
+		Boe_Add_Admin_f(argNum, adm, shortCmd, 2, "addbadmin");
+	}else if(strstr(command, "!aa") || strstr(command, "addad")){
+		Boe_Add_Admin_f(argNum, adm, shortCmd, 3, "addadmin");
+	}else{ // Must be add S-Admin..
+		Boe_Add_Admin_f(argNum, adm, shortCmd, 4, "addsadmin");
 	}
-
-	id = g_entities[idnum].client->pers.boe_id;
-
-	if(Boe_Remove_from_list(id, g_adminfile.string,	 "admin", NULL, qfalse, qtrue, qfalse));
-
-	g_entities[idnum].client->sess.admin = 2;
-	Q_strncpyz (id2, id, 64);
-	strcat ( id2, ":2" );
-
-	// Boe!Man 1/14/11
-	if(adm && adm->client)	{
-		if(Boe_AddToList(id2, g_adminfile.string, "Admin", NULL)) {
-		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is now a %s", level.time + 5000, g_entities[idnum].client->pers.netname, server_badminprefix.string));
-		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was made B-Admin by %s.\n\"", g_entities[idnum].client->pers.netname, adm->client->pers.cleanName));
-		Boe_adminLog ("Add B-Admin", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
-		}
-	}
-	else {
-		if(Boe_AddToList(id2, g_adminfile.string, "Admin", NULL)) {
-		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is now a %s", level.time + 5000, g_entities[idnum].client->pers.netname, server_badminprefix.string));
-		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s is now a B-Admin.\n\"", g_entities[idnum].client->pers.netname));
-		Boe_adminLog ("Add B-Admin", va("%s", "RCON"), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
-		}
-	}
-	// Boe!Man 10/16/10: Is the Admin level allowed to spec the opposite team?
-	if (g_adminSpec.integer <= 2 && g_adminSpec.integer != 0 && cm_enabled.integer < 2)
-		g_entities[idnum].client->sess.adminspec = qtrue;
+	
+	return;
 }
 
+
 /*
-===============
+================
 Boe_Add_Admin_f
-===============
+================
 */
 
-void Boe_Add_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd)
+void Boe_Add_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd, int level2, char *commandName)
 {
-	int             idnum;
-	char			*id;
-	char			id2[64];
-	char			arg[64] = "\0";
-	idnum = Boe_ClientNumFromArg(adm, argNum, "addadmin <idnumber>", "do this to", qfalse, qfalse, shortCmd);
-	if(idnum < 0) return;
+	int              idnum, i, rc;
+	char			 arg[64] = "\0";
+	char			 clientName[MAX_NETNAME];
+	char			 admName[MAX_NETNAME];
+	char			 ip[MAX_IP];
+	char			 admLevel[12];
+	char			 admLevelPrefixed[32];
+	qboolean		 passAdmin = qfalse;
+	sqlite3			*db;
+
+	idnum = Boe_ClientNumFromArg(adm, argNum, va("%s <idnumber/name>", commandName), "do this to", qfalse, qfalse, shortCmd);
+	if(idnum < 0){
+		return;
+	}
+	
 	// Boe!Man 4/27/11: RCON has to be able to do everything. However, there are a few things that should be excluded. Instead of processing which command was entered in the ClientNumFromArg func, we deploy this check in the addxadmin functions (to save resources).
 	if(!adm && g_entities[idnum].client->sess.admin > 1){
 		Com_Printf("You cannot use this command on other Admins.\n");
@@ -1530,127 +1495,111 @@ void Boe_Add_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd)
 
 	if(!Q_stricmp(arg, "pass")){
 		if(g_passwordAdmins.integer){
-			AddToPasswordList(&g_entities[idnum], 3);
-			g_entities[idnum].client->sess.admin = 3;
+			passAdmin = qtrue;
+			Q_strncpyz(ip, g_entities[idnum].client->pers.ip, 4);
 		}else{
-			if(adm)
-			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Access denied: No password logins allowed by the server!\n\""));
-			else
-			Com_Printf("Access denied: No password logins allowed by the server!\n");
+			if(adm){
+				trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Access denied: No password logins allowed by the server!\n\""));
+			}else{
+				Com_Printf("Access denied: No password logins allowed by the server!\n");
+			}
+			return;
 		}
-		return;
-	}
-
-	id = g_entities[idnum].client->pers.boe_id; 
-
-	if(Boe_Remove_from_list(id, g_adminfile.string, "admin", NULL, qfalse, qtrue, qfalse));
-
-	g_entities[idnum].client->sess.admin = 3;
-	Q_strncpyz (id2, id, 64);
-	strcat ( id2, ":3" );
-
-	// Boe!Man 1/14/10
-	if(adm && adm->client)	{
-		if(Boe_AddToList(id2, g_adminfile.string, "Admin", NULL)) {
-		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is now an %s", level.time + 5000, g_entities[idnum].client->pers.netname, server_adminprefix.string));
-		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was made Admin by %s.\n\"", g_entities[idnum].client->pers.netname, adm->client->pers.cleanName));
-		Boe_adminLog ("Add Admin", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
-		}
-	}
-	else {
-		if(Boe_AddToList(id2, g_adminfile.string, "Admin", NULL)) {
-		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is now an %s", level.time + 5000, g_entities[idnum].client->pers.netname, server_adminprefix.string));
-		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s is now an Admin.\n\"", g_entities[idnum].client->pers.netname));
-		Boe_adminLog ("Add Admin", va("%s", "RCON"), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
-		}
-	}
-	// Boe!Man 10/16/10: Is the Admin level allowed to spec the opposite team?
-	if (g_adminSpec.integer <= 3 && g_adminSpec.integer != 0 && cm_enabled.integer < 2)
-		g_entities[idnum].client->sess.adminspec = qtrue;
-}
-
-/*
-================
-Boe_Add_sAdmin_f
-================
-*/
-
-void Boe_Add_sAdmin_f(int argNum, gentity_t *adm, qboolean shortCmd)
-{
-	int             idnum;
-	char			*id;
-	char			id2[64];
-	char			arg[64] = "\0";
-
-	idnum = Boe_ClientNumFromArg(adm, argNum, "addsadmin <idnumber>", "do this to", qfalse, qfalse, shortCmd);
-	if(idnum < 0) return;
-	// Boe!Man 4/27/11: RCON has to be able to do everything. However, there are a few things that should be excluded. Instead of processing which command was entered in the ClientNumFromArg func, we deploy this check in the addxadmin functions (to save resources).
-	if(!adm && g_entities[idnum].client->sess.admin > 1){
-		Com_Printf("You cannot use this command on other Admins.\n");
-		return;
-	}
-
-	if(shortCmd){
-		strcpy(arg, GetReason());
 	}else{
-		if(adm && adm->client){
-			trap_Argv(3, arg, sizeof(arg));
-		}else{
-			trap_Argv(2, arg, sizeof(arg));
+		strcpy(ip, g_entities[idnum].client->pers.ip);
+	}
+	
+	// Boe!Man 12/12/12: Check the names, SQLite has massive problems when using quotes in the (updated) query.
+	Q_strncpyz(clientName, g_entities[idnum].client->pers.cleanName, sizeof(clientName));
+	for(i=0; i<strlen(clientName); i++){
+		if(clientName[i] == 39){ // Boe!Man 12/12/12: Also check for single quote, that could mess up the query.
+			clientName[i] = 32; // If found, convert to space (32 on ASCII table).
 		}
 	}
-
-	if(!Q_stricmp(arg, "pass")){
-		if(g_passwordAdmins.integer){
-			AddToPasswordList(&g_entities[idnum], 4);
-			g_entities[idnum].client->sess.admin = 4;
+	if(adm){
+		Q_strncpyz(admName, adm->client->pers.cleanName, sizeof(admName));
+		for(i=0; i<strlen(admName); i++){
+			if(admName[i] == 39){ // Boe!Man 12/12/12: Also check for single quote, that could mess up the query.
+				admName[i] = 32; // If found, convert to space (32 on ASCII table).
+			}
+		}
+	}else{
+		strcpy(admName, "RCON");
+	}
+	
+	// Boe!Man 2/5/13: Add Admin to the database.
+	// Boe!Man 2/5/13: Open database.
+	if(!level.altPath){
+		rc = sqlite3_open_v2("./users/users.db", &db, SQLITE_OPEN_READWRITE, NULL);
+	}else{
+		rc = sqlite3_open_v2(va("%s/users/users.db", level.altString), &db, SQLITE_OPEN_READWRITE, NULL);
+	}
+	
+	if(rc){
+		if(adm){
+			trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n\"", sqlite3_errmsg(db)));
 		}else{
-			if(adm)
-			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Access denied: No password logins allowed by the server!\n\""));
-			else
-			Com_Printf("Access denied: No password logins allowed by the server!\n");
+			Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
 		}
 		return;
 	}
-
-	id = g_entities[idnum].client->pers.boe_id; 
-
-	if(Boe_Remove_from_list(id, g_adminfile.string, "admin", NULL, qfalse, qtrue, qfalse));
-
-	g_entities[idnum].client->sess.admin = 4;
-	Q_strncpyz (id2, id, 64);
-	strcat ( id2, ":4" );
-
-	// Boe!Man 1/14/11
-	if(adm && adm->client)	{
-		if(Boe_AddToList(id2, g_adminfile.string, "Admin", NULL)) {
-		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is now a %s", level.time + 5000, g_entities[idnum].client->pers.netname, server_sadminprefix.string));
-		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was made S-Admin by %s.\n\"", g_entities[idnum].client->pers.netname, adm->client->pers.cleanName));
-		Boe_adminLog ("Add S-Admin", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
+	
+	// Boe!Man 2/5/13: Insert query.
+	sqlite3_exec(db, "PRAGMA synchronous = OFF", NULL, NULL, NULL);
+	if(!passAdmin){
+		if(sqlite3_exec(db, va("INSERT INTO admins (IP, name, by, level) values ('%s', '%s', '%s', '%i')", ip, clientName, admName, level2), 0, 0, 0) != SQLITE_OK){
+			if(adm){
+				trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n\"", sqlite3_errmsg(db)));
+			}else{
+				Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
+			}
+			sqlite3_close(db);
+			return;
+		}
+	}else{
+		if(sqlite3_exec(db, va("INSERT INTO passadmins (octet, name, by, level) values ('%s', '%s', '%s', '%i')", ip, clientName, admName, level2), 0, 0, 0) != SQLITE_OK){
+			if(adm){
+				trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n\"", sqlite3_errmsg(db)));
+			}else{
+				Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
+			}
+			sqlite3_close(db);
+			return;
 		}
 	}
-	else {
-		if(Boe_AddToList(id2, g_adminfile.string, "Admin", NULL)) {
-		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is now a %s", level.time + 5000, g_entities[idnum].client->pers.netname, server_sadminprefix.string));
-		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s is now a S-Admin.\n\"", g_entities[idnum].client->pers.netname));
-		Boe_adminLog ("Add S-Admin", va("%s", "RCON"), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
-		}
-	}
+	
+	// Boe!Man 2/5/13: Close database.
+	sqlite3_close(db);
 
+	g_entities[idnum].client->sess.admin = level2;
+	if(level2 == 2){
+		strcpy(admLevel, "B-Admin");
+		Q_strncpyz(admLevelPrefixed, server_badminprefix.string, sizeof(admLevelPrefixed));
+	}else if(level2 == 3){
+		strcpy(admLevel, "Admin");
+		Q_strncpyz(admLevelPrefixed, server_adminprefix.string, sizeof(admLevelPrefixed));
+	}else{
+		strcpy(admLevel, "S-Admin");
+		Q_strncpyz(admLevelPrefixed, server_sadminprefix.string, sizeof(admLevelPrefixed));
+	}
+	
+	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is now a %s", level.time + 5000, g_entities[idnum].client->pers.netname, admLevelPrefixed));
+	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+	if(adm){
+		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was made %s by %s.\n\"", g_entities[idnum].client->pers.netname, admLevel, adm->client->pers.cleanName));
+		Boe_adminLog (va("Add %s", admLevel), va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
+	}else{
+		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s is now a %s.\n\"", g_entities[idnum].client->pers.netname, admLevel));
+		Boe_adminLog (va("Add %s", admLevel), "RCON", va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
+	}
+	
 	// Boe!Man 10/16/10: Is the Admin level allowed to spec the opposite team?
-	if (g_adminSpec.integer <= 4 && g_adminSpec.integer != 0 && cm_enabled.integer < 2)
+	if (g_adminSpec.integer <= 2 && g_adminSpec.integer != 0 && cm_enabled.integer < 2){
 		g_entities[idnum].client->sess.adminspec = qtrue;
+	}
+	
+	return;
 }
-		/*
-		if(adm && adm->client)
-			SC_adminLog (va("%s - AddAdmin: %s", adm->client->pers.cleanName, g_entities[idnum].client->pers.cleanName  )) ;
-		else 
-			SC_adminLog (va("%s - AddAdmin: %s", "RCON", g_entities[idnum].client->pers.cleanName  )) ;
-		*/
 
 /*
 ================
