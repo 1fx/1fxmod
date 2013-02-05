@@ -1469,6 +1469,7 @@ void Boe_Add_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd, int level2, 
 	char			 ip[MAX_IP];
 	char			 admLevel[12];
 	char			 admLevelPrefixed[32];
+	char			 adminPassword[64];
 	qboolean		 passAdmin = qfalse;
 	sqlite3			*db;
 
@@ -1575,24 +1576,50 @@ void Boe_Add_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd, int level2, 
 	if(level2 == 2){
 		strcpy(admLevel, "B-Admin");
 		Q_strncpyz(admLevelPrefixed, server_badminprefix.string, sizeof(admLevelPrefixed));
+		if(passAdmin){
+			Q_strncpyz(adminPassword, g_badminPass.string, sizeof(adminPassword));
+		}
 	}else if(level2 == 3){
 		strcpy(admLevel, "Admin");
 		Q_strncpyz(admLevelPrefixed, server_adminprefix.string, sizeof(admLevelPrefixed));
+		if(passAdmin){
+			Q_strncpyz(adminPassword, g_adminPass.string, sizeof(adminPassword));
+		}
 	}else{
 		strcpy(admLevel, "S-Admin");
 		Q_strncpyz(admLevelPrefixed, server_sadminprefix.string, sizeof(admLevelPrefixed));
+		if(passAdmin){
+			Q_strncpyz(adminPassword, g_sadminPass.string, sizeof(adminPassword));
+		}
 	}
 	
 	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is now a %s", level.time + 5000, g_entities[idnum].client->pers.netname, admLevelPrefixed));
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 	if(adm){
-		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was made %s by %s.\n\"", g_entities[idnum].client->pers.netname, admLevel, adm->client->pers.cleanName));
+		if(!passAdmin){
+			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was made %s by %s.\n\"", g_entities[idnum].client->pers.netname, admLevel, adm->client->pers.cleanName));
+		}else{
+			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was added to the %s password list by %s.\n\"", g_entities[idnum].client->pers.netname, admLevel, adm->client->pers.cleanName));
+		}
 		Boe_adminLog (va("Add %s", admLevel), va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
 	}else{
-		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s is now a %s.\n\"", g_entities[idnum].client->pers.netname, admLevel));
+		if(!passAdmin){
+			trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s is now a %s.\n\"", g_entities[idnum].client->pers.netname, admLevel));
+		}else{
+			trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s was added to the %s password list.\n\"", g_entities[idnum].client->pers.netname, admLevel));
+		}
 		Boe_adminLog (va("Add %s", admLevel), "RCON", va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
 	}
 	
+	// Boe!Man 2/5/13: Inform a passworded Admin of the system he can now use.
+	if(passAdmin){
+		trap_SendServerCommand(g_entities[idnum].s.number, va("print\"^3[Info] ^7You need to login every time you enter the server.\n\""));
+		if(strstr(adminPassword, "none") && strlen(adminPassword) < 5){
+			trap_SendServerCommand(g_entities[idnum].s.number, va("print\"^3[Info] ^7Ask the server owner/a RCON holder to set a password for you to use.\n\""));
+		}else{
+			trap_SendServerCommand(g_entities[idnum].s.number, va("print\"^3[Info] ^7You can do so by entering '/adm login %s' in the console.\n\"", adminPassword));
+		}
+	}
 	// Boe!Man 10/16/10: Is the Admin level allowed to spec the opposite team?
 	if (g_adminSpec.integer <= level2 && g_adminSpec.integer != 0 && cm_enabled.integer < 2){
 		g_entities[idnum].client->sess.adminspec = qtrue;
