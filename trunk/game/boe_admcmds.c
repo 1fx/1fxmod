@@ -1594,7 +1594,7 @@ void Boe_Add_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd, int level2, 
 	}
 	
 	// Boe!Man 10/16/10: Is the Admin level allowed to spec the opposite team?
-	if (g_adminSpec.integer <= 2 && g_adminSpec.integer != 0 && cm_enabled.integer < 2){
+	if (g_adminSpec.integer <= level2 && g_adminSpec.integer != 0 && cm_enabled.integer < 2){
 		g_entities[idnum].client->sess.adminspec = qtrue;
 	}
 	
