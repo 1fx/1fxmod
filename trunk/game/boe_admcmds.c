@@ -4063,6 +4063,78 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 	return;
 }
 
+void Boe_clanList(int argNum, gentity_t *adm, qboolean shortCmd){
+	// Boe!Man 11/04/11: We use this in order to send as little packets as possible. Packet max size is 1024 minus some overhead, 1000 char. max should take care of this. (adm only, RCON remains unaffected).
+	char			 buf2[1000]		= "\0";
+	// End Boe!Man 11/04/11
+	// Boe!Man 2/4/13: SQLite backend.
+	sqlite3			*db;
+	sqlite3_stmt	*stmt;
+	int				 rc;
+	
+	// Boe!Man 12/8/12: We still use *_v2 here, since we shouldn't create it as well (should be existing data already!).
+	if(!level.altPath){
+		rc = sqlite3_open_v2("./users/users.db", &db, SQLITE_OPEN_READONLY, NULL);
+	}else{
+		rc = sqlite3_open_v2(va("%s/users/users.db", level.altString), &db, SQLITE_OPEN_READONLY, NULL);
+	}
+	
+	if(rc){
+		if(adm){
+			trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n\"", sqlite3_errmsg(db)));
+		}else{
+			Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
+		}
+		return;
+	}
+	
+	// Boe!Man 2/4/13: Display header.
+	if(adm){
+		Q_strcat(buf2, sizeof(buf2), "^3[Adminlist]^7\n\n");
+		Q_strcat(buf2, sizeof(buf2), "^3 #     IP              Name                  By\n^7------------------------------------------------------------------------\n");
+	}else{
+		Com_Printf("^3[Adminlist]^7\n\n");
+		Com_Printf("^3 #     IP              Name                  By\n");
+		Com_Printf("^7------------------------------------------------------------------------\n");
+	}
+	
+	rc = sqlite3_prepare(db, "select ROWID,IP,name,by from clanmembers order by ROWID", -1, &stmt, 0);
+
+	if(rc!=SQLITE_OK){
+		if(adm){
+			trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n\"", sqlite3_errmsg(db)));
+		}else{
+			Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
+		}
+		return;
+	}else while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
+		if(rc == SQLITE_ROW){
+			if(adm){
+				// Boe!Man 11/04/11: Put packet through to clients if char size would exceed 1000 and reset buf2.
+				if((strlen(buf2)+strlen(va("[^3%-3.3i^7]  %-15.15s %-21.21s %-21.21s\n", sqlite3_column_int(stmt, 0), sqlite3_column_text(stmt, 1), sqlite3_column_text(stmt, 2), sqlite3_column_text(stmt, 3)))) > 1000){
+					trap_SendServerCommand( adm-g_entities, va("print \"%s\"", buf2));
+					memset(buf2, 0, sizeof(buf2)); // Boe!Man 11/04/11: Properly empty the buffer.
+				}
+				Q_strcat(buf2, sizeof(buf2), va("[^3%-3.3i^7]  %-15.15s %-21.21s %-21.21s\n", sqlite3_column_int(stmt, 0), sqlite3_column_text(stmt, 1), sqlite3_column_text(stmt, 2), sqlite3_column_text(stmt, 3)));
+			}else{
+				Com_Printf("[^3%-3.3i^7]  %-15.15s %-21.21s %-21.21s\n", sqlite3_column_int(stmt, 0), sqlite3_column_text(stmt, 1), sqlite3_column_text(stmt, 2), sqlite3_column_text(stmt, 3));
+			}
+		}
+	}
+	
+	sqlite3_finalize(stmt);
+	sqlite3_close(db);
+	
+	// Boe!Man 11/04/11: Fix for RCON not properly showing footer of banlist.
+	if(adm){
+		trap_SendServerCommand( adm-g_entities, va("print \"%s\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\"", buf2)); // Boe!Man 11/04/11: Also send the last buf2 (that wasn't filled as a whole yet).
+	}else{
+		Com_Printf("\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n");
+	}
+	
+	return;
+}
+
 void Henk_SubnetUnban(int argNum, gentity_t *adm, qboolean shortCmd){
 	char	arg[32] = "\0", buf[32] = "\0";
 	int		i = 0, count = 0;
