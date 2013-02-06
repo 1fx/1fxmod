@@ -589,7 +589,8 @@ static void PM_WaterMove( void )
 PM_FlyMove
 ===================
 */
-static void PM_FlyMove( void ) 
+
+/*static void PM_FlyMove( void ) 
 {
 	int		i;
 	vec3_t	wishvel;
@@ -627,6 +628,7 @@ static void PM_FlyMove( void )
 
 	PM_StepSlideMove( qfalse );
 }
+*/
 
 
 /*
@@ -1151,6 +1153,8 @@ static void PM_CrashLand( int impactMaterial, vec3_t impactNormal )
 PM_CorrectAllSolid
 =============
 */
+
+/*
 static int PM_CorrectAllSolid( trace_t *trace ) 
 {
 	int			i, j, k;
@@ -1189,6 +1193,7 @@ static int PM_CorrectAllSolid( trace_t *trace )
 
 	return qfalse;
 }
+*/
 
 
 /*

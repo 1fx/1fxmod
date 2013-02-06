@@ -11,6 +11,7 @@
 // Boe!Man 7/12/11: Fixing definitions for compiling under linux (or cygwin/minGW) systems.
 // Henk 12/6/12: Seems like C++ compiler needs these things
 #ifdef __GNUC__
+float powf(float x, float y);
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 #endif

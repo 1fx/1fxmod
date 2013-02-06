@@ -3520,7 +3520,7 @@ float BotWeaponCanLead(bot_state_t *bs)
 }
 
 //	Calculate proper angle for ballistic weapon
-static float CalcWeaponAngle(float vel, float gravity, float targetRange)
+/*static float CalcWeaponAngle(float vel, float gravity, float targetRange)
 {
 	float angle = 0;
 	float val =  (gravity * targetRange) / (vel * vel);
@@ -3531,7 +3531,7 @@ static float CalcWeaponAngle(float vel, float gravity, float targetRange)
 		angle = 90;
 
 	return angle;
-}
+}*/
 
 void BotAimLeading(bot_state_t *bs, vec3_t headlevel, float leadAmount)
 {
@@ -5381,7 +5381,7 @@ int BotAIStartFrame(int time)
 	int i;
 	int elapsed_time, thinktime;
 	static int local_time;
-	static int botlib_residual;
+	//static int botlib_residual;
 	static int lastbotthink_time;
 
 	G_CheckBotSpawn();

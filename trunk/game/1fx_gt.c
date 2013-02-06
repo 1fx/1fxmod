@@ -33,7 +33,7 @@ static cvarTable_t gametypeCvarTable[] =
 	{ &gt_simpleScoring,	"gt_simpleScoring",		"0",  CVAR_ARCHIVE, 0.0f, 0.0f, 0, qfalse }, // INF, CTF
 	{ &gt_flagReturnTime,	"gt_flagReturnTime",	"30", CVAR_ARCHIVE, 0.0f, 0.0f, 0, qfalse }, // CTF
 
-	{ NULL, NULL, NULL, 0, 0.0f, 0.0f, 0, qfalse },
+	{ NULL, NULL, NULL, 0, 0.0f, 0.0f, 0, qfalse }
 };
 
 /*

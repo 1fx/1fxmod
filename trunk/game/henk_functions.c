@@ -777,10 +777,10 @@ qboolean IsClientMuted(gentity_t *ent, qboolean message){
 }
 
 char	*ConcatArgs1( int start ) {
-	int		i, c, tlen;
-	char	line[MAX_STRING_CHARS];
-	int		len;
-	char	arg[MAX_STRING_CHARS];
+	int			i, c, tlen;
+	static char	line[MAX_STRING_CHARS];
+	int			len;
+	char		arg[MAX_STRING_CHARS];
 
 	len = 0;
 	c = trap_Argc();
@@ -838,10 +838,11 @@ qboolean RemoveMutedClient(gentity_t *ent){
 
 
 char *GetReason(void) {
-	char	arg[256] = "\0"; // increase buffer so we can process more commands
-	char	*reason = "";
-	int i, z;
-	qboolean Do = qfalse;
+	static char	 arg[256] = "\0"; // increase buffer so we can process more commands
+	char		*reason = "";
+	int 		 i, z;
+	qboolean 	 Do = qfalse;
+	
 	trap_Argv( 1, arg, sizeof( arg ) );
 	for(i=0;i<256;i++){
 		if(arg[i] == ' '){

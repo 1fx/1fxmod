@@ -1,6 +1,7 @@
 // hide these nasty warnings
 
 #ifdef _WIN32
+#ifndef __GNUC__
 
 #pragma warning(disable : 4018)     // signed/unsigned mismatch
 #pragma warning(disable : 4032)
@@ -30,4 +31,5 @@
 #pragma warning(disable : 4220)		// varargs matches remaining parameters
 #pragma warning(disable : 4786)		//identifier was truncated
 
+#endif
 #endif

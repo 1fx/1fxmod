@@ -1064,8 +1064,6 @@ void ClientThink_real( gentity_t *ent )
 	gspawn_t	*G_SelectClientSpawnPoint ( gentity_t* ent,  qboolean plantsk );
 
 	vec3_t	dir, fireAngs;
-	//vec3_t  fireAngs;
-	float   knockback = 600.0;
 	
 	client = ent->client;
 

@@ -212,7 +212,7 @@ Updated: 3/13/11 - 7:10 PM
 ===================
 */
 
-void QDECL Boe_adminLog( const char *command, const char *by, const char *to, ... )
+void QDECL Boe_adminLog( const char *command, const char *by, const char *to, ...)
 {
 	char		string[1024] = "";
 	int			len, i;
@@ -230,7 +230,7 @@ void QDECL Boe_adminLog( const char *command, const char *by, const char *to, ..
 	trap_RealTime (&q);
 
 	Com_sprintf( string, sizeof(string), "%02i/%02i/%i %02i:%02i ", 1+q.tm_mon,q.tm_mday, q.tm_year+1900,q.tm_hour,q.tm_min); // Boe!Man 3/13/11: Write the date.
-	va_start( argptr, command );
+	va_start( argptr, to );
 	vsprintf( string + 17, command, argptr ); // Boe!Man 3/13/11: Append the command.
 	va_end( argptr);
 	// Boe!Man 3/13/11: Make sure the rest of the block gets filled with spaces.
@@ -242,7 +242,6 @@ void QDECL Boe_adminLog( const char *command, const char *by, const char *to, ..
 	string[38] = 'y';
 	string[39] = ' ';
 
-	va_start( argptr2, by);
 	if((strstr(by, "RCON")) && (!strstr(by, "\\"))){
 		vsprintf( string + 40, by, argptr2); // Boe!Man 3/13/11: Append RCON (as he did it).
 	}else{
@@ -790,7 +789,7 @@ int	Boe_FindClosestTeammate(gentity_t *ent, qboolean bot)
 
 		if(bot)
 		{
-			if (!other->r.svFlags & SVF_BOT)
+			if (!(other->r.svFlags & SVF_BOT))
 			{
 				continue;
 			}
@@ -848,7 +847,7 @@ int	Boe_FindClosestEnemy(gentity_t *ent, qboolean bot)
 
 		if(bot)
 		{
-			if (!other->r.svFlags & SVF_BOT)
+			if (!(other->r.svFlags & SVF_BOT))
 			{
 				continue;
 			}
@@ -1128,7 +1127,6 @@ void Boe_Players (gentity_t *ent)
 	char clan2;
 	char clan3;
 	char color;
-	char *column = "";
 	char column1[3];
 	char column2[100];
 	char column3[4];

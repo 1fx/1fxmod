@@ -429,7 +429,7 @@ char				weaponRightHand[MAX_QPATH];
 static char *BG_BuildSideSurfaceList(char *name, char *pattern, char *sideSurfaces[], sqlite3 * db, int name_id)
 {
 	char		*output;
-	int			length;
+	//int			length;
 	int			i = 0;
 	char query[128];
 	int rc;
@@ -441,7 +441,7 @@ static char *BG_BuildSideSurfaceList(char *name, char *pattern, char *sideSurfac
 		return NULL;
 	}else while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
 		if(rc == SQLITE_ROW){
-			if(name == "optionalpart"){
+			if(strstr(name,"optionalpart")){
 				if(sqlite3_column_text(stmt, 4))
 				sideSurfaces[0]=(char *)sqlite3_column_text(stmt, 4);
 				if(sqlite3_column_text(stmt, 5))
@@ -465,6 +465,7 @@ static char *BG_BuildSideSurfaceList(char *name, char *pattern, char *sideSurfac
 	return output;
 }
 
+/*
 static char *BG_BuildList(void *group, char *pattern)
 {
 	void		*value;
@@ -493,6 +494,7 @@ static char *BG_BuildList(void *group, char *pattern)
 
 	return output;
 }
+*/
 
 #define		MAX_WEAPON_FILES	10
 
@@ -635,12 +637,13 @@ static void BG_CloseWeaponFrames(int upTo)
 
 static qboolean BG_ParseAnimGroup(weapon_t weapon, sqlite3 * db)
 {
-	char			name[256];
+	//char			name[256];
 	TAnimWeapon		*anim;
 	TAnimInfoWeapon	*info;
 	char			value[256];
-	int				i,k;
-	char			temp[256];
+	int				k;
+	//int			i;
+	//char			temp[256];
 sqlite3_stmt *stmt, *stmt1;
 	int rc, rc1;
 	qboolean succes = qfalse;
@@ -742,8 +745,8 @@ sqlite3_stmt *stmt, *stmt1;
 static TBoltonWeapon *BG_ParseBolton(weapon_t weapon, sqlite3 * db)
 {
 	TBoltonWeapon	*bolton;
-	void			*sub;
-	char			temp[256];
+	//void			*sub;
+	//char			temp[256];
 	sqlite3_stmt *stmt;
 	int rc;
 	char query[128];
@@ -775,8 +778,8 @@ static TBoltonWeapon *BG_ParseBolton(weapon_t weapon, sqlite3 * db)
 
 static qboolean BG_ParseWeaponGroup(TWeaponModel *weapon, weapon_t weaponID, sqlite3 * db)
 {
-	void			*sub, *hand;
-	char			name[256];
+	//void			*sub, *hand;
+	//char			name[256];
 	TOptionalWeapon	*option;
 	char			temp[256];
 	sqlite3_stmt *stmt, *stmt1;
@@ -842,14 +845,15 @@ static qboolean BG_ParseWeaponGroup(TWeaponModel *weapon, weapon_t weaponID, sql
 
 static qboolean BG_ParseWeapon(weapon_t weapon, sqlite3 * db)
 {
-	void			*soundName, *surfaceCallbackName;
-	void			*soundValue, *surfaceCallbackValue;
-	char			onOffVal[256];
-	char			name[256];
-	int				i = 0, j;
+	//void			*soundName, *surfaceCallbackName;
+	//void			*soundValue, *surfaceCallbackValue;
+	//char			onOffVal[256];
+	//char			name[256];
+	int				i = 0;
 	TAnimWeapon		*anims;
 	TAnimInfoWeapon	*infos;
-	char			temp[256];
+	//int				j;
+	//char			temp[256];
 	char			query[128];
 	sqlite3_stmt *stmt;
 	int rc;
@@ -928,7 +932,7 @@ qboolean BG_ParseInviewFile(void)
 	int			i;
 	sqlite3 * db;
 	int rc;
-	char query[128];
+	//char query[128];
 	// Boe!Man 12/5/12
 	// The file can be on two locations. The DLL should always be in the fs_game folder, however, this could be misconfigured.
 	// The Mod takes care of this problem and should load the file correctly, even if misplaced.

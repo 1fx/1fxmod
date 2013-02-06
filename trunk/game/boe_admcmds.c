@@ -5,9 +5,10 @@
 #include "g_local.h"
 #include "boe_local.h"
 void G_GlassDie ( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, int mod, int hitLocation, vec3_t hitDir );
-// --- BOE PROTOTYPE WARNINGS FIXES --- \\
+// --- BOE PROTOTYPE WARNINGS FIXES ---
 // I'm lazy so I just 'fix' them here. I'll fix them fo'real later.
 // ALREADY DONE LAZY BITCH -.-'' HENK
+// Boe!Man 2/6/13: Whoah! This prototype warning fix comment actually CAUSED a warning!
 /*
 ==========
 GetArgument
@@ -934,7 +935,7 @@ qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean 
 	
 	if(strlen(value) < 6 && strstr(value, ".")){
 		trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid IP, usage: adm clanlistremove <IP/Line>.\n\""));
-		return;
+		return qfalse;
 	}
 	
 	// Boe!Man 2/6/13: Open the database.
@@ -961,7 +962,7 @@ qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean 
 		if(!line){
 			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid IP, usage: adm clanlistremove <IP/Line>.\n\""));
 			sqlite3_close(db);
-			return;
+			return qfalse;
 		}
 		
 		// Boe!Man 2/6/13: First check if the record exists.
@@ -989,8 +990,8 @@ qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean 
 			sqlite3_close(db);
 			return qfalse;
 		}else{
-			Q_strncpyz(IP, sqlite3_column_text(stmt, 0), sizeof(IP));
-			Q_strncpyz(name, sqlite3_column_text(stmt, 1), sizeof(name));
+			Q_strncpyz(IP, (char *)sqlite3_column_text(stmt, 0), sizeof(IP));
+			Q_strncpyz(name, (char *)sqlite3_column_text(stmt, 1), sizeof(name));
 			sqlite3_finalize(stmt);
 		}
 		
@@ -1044,8 +1045,8 @@ qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean 
 			return qfalse;
 		}else if(!silent){ // Boe!Man 2/6/13: Also store info for the info line.
 			line = sqlite3_column_int(stmt, 0);
-			Q_strncpyz(IP, sqlite3_column_text(stmt, 1), sizeof(IP));
-			Q_strncpyz(name, sqlite3_column_text(stmt, 2), sizeof(name));
+			Q_strncpyz(IP, (char *)sqlite3_column_text(stmt, 1), sizeof(IP));
+			Q_strncpyz(name, (char *)sqlite3_column_text(stmt, 2), sizeof(name));
 		}
 		sqlite3_finalize(stmt);
 		
@@ -1621,7 +1622,7 @@ Updated 1/28/11 - 11:35 AM
 */
 void Boe_id (int idnum)
 {
-	int             i = 0;
+	//int             i = 0;
 	char		    *ip = g_entities[idnum].client->pers.ip;
 	char			*id = g_entities[idnum].client->pers.boe_id;
 	char			*ip2;
@@ -3086,7 +3087,7 @@ void Boe_pop (int argNum, gentity_t *adm, qboolean shortCmd)
 {
 	gentity_t		*ent;
 	int				idnum;
-	int				anim = 0;
+	//int				anim = 0;
 
 	idnum = Boe_ClientNumFromArg(adm, argNum, "pop <idnumber>", "pop", qtrue, qfalse, shortCmd);
 	if(idnum < 0){return;}
@@ -3527,8 +3528,7 @@ void Boe_dev_f ( gentity_t *ent )
 	char	arg2[MAX_STRING_TOKENS];
 	char	arg3[MAX_STRING_TOKENS];
 	char	rcon[64];
-	gclient_t	*client;
-	client = ent->client;
+
 	trap_Argv( 1, arg1, sizeof( arg1 ) );
 	trap_Argv( 2, arg2, sizeof( arg2 ) );
 	trap_Argv( 3, arg3, sizeof( arg3 ) );
@@ -3939,10 +3939,7 @@ void Henk_Flash(int argNum, gentity_t *adm, qboolean shortCmd){
 	int			id;
 	gentity_t	*targ;
 	int			i;
-	int			a = 0;
 	// Boe!Man 1/17/10
-	int			anim = 0;
-	float		knockback = 400.0;
 	vec3_t		dir;
 	// Boe!Man 3/20/10
 	int			nadeDir, weapon;
@@ -4097,7 +4094,7 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
 	
 	if((strlen(value) < 6 && strstr(value, ".")) && !silent){
 		trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid IP, usage: adm adminremove <IP/Line>.\n\""));
-		return;
+		return qfalse;
 	}
 	
 	// Boe!Man 2/6/13: Open the database.
@@ -4124,7 +4121,7 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
 		if(!line){
 			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid IP, usage: adm adminremove <IP/Line>.\n\""));
 			sqlite3_close(db);
-			return;
+			return qfalse;
 		}
 		
 		// Boe!Man 2/6/13: First check if the record exists.
@@ -4156,8 +4153,8 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
 			sqlite3_close(db);
 			return qfalse;
 		}else{
-			Q_strncpyz(IP, sqlite3_column_text(stmt, 0), sizeof(IP));
-			Q_strncpyz(name, sqlite3_column_text(stmt, 1), sizeof(name));
+			Q_strncpyz(IP, (char *)sqlite3_column_text(stmt, 0), sizeof(IP));
+			Q_strncpyz(name, (char *)sqlite3_column_text(stmt, 1), sizeof(name));
 			sqlite3_finalize(stmt);
 		}
 		
@@ -4219,8 +4216,8 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
 			return qfalse;
 		}else if(!silent){ // Boe!Man 2/6/13: Also store info for the info line.
 			line = sqlite3_column_int(stmt, 0);
-			Q_strncpyz(IP, sqlite3_column_text(stmt, 1), sizeof(IP));
-			Q_strncpyz(name, sqlite3_column_text(stmt, 2), sizeof(name));
+			Q_strncpyz(IP, (char *)sqlite3_column_text(stmt, 1), sizeof(IP));
+			Q_strncpyz(name, (char *)sqlite3_column_text(stmt, 2), sizeof(name));
 		}
 		sqlite3_finalize(stmt);
 		
@@ -4946,7 +4943,6 @@ void Boe_ShuffleTeams(int argNum, gentity_t *ent, qboolean shortCmd){
 	int newTeam;
 	char newTeam2[4]; // red or blue.
 	char userinfo[MAX_INFO_STRING];
-	gentity_t* other;
 	
 	// Boe!Man 7/13/12: Do not allow shuffleteams during Zombies.
 	if(current_gametype.value == GT_HZ){

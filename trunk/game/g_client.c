@@ -534,6 +534,11 @@ void respawn( gentity_t *ent )
 			}
 			//Ryan
 			break;
+		
+		case RT_NORMAL:
+		case RT_DELAYED:
+		case RT_MAX:
+			break;		
 	}
 
 	// If they are a ghost then give a health point, but dont respawn
@@ -1524,7 +1529,6 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 	sqlite3			*db;
 	sqlite3_stmt	*stmt;
     //Ryan
-	char			a[64] = "\0";
 	gentity_t		*ent;
 	// Boe!Man 1/1/13: Benchmark purposes.
 	int				start;
@@ -1609,7 +1613,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 			return "Server Error";
 		}else while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
 			if(rc == SQLITE_ROW){
-				Q_strncpyz(reason, sqlite3_column_text(stmt, 0), sizeof(reason));
+				Q_strncpyz(reason, (char *)sqlite3_column_text(stmt, 0), sizeof(reason));
 				
 				// Boe!Man 2/6/13: Also close the database (and finalize) upon returning.
 				sqlite3_finalize(stmt);
@@ -1632,7 +1636,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 			return "Server Error";
 		}else while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
 			if(rc == SQLITE_ROW){
-				Q_strncpyz(reason, sqlite3_column_text(stmt, 0), sizeof(reason));
+				Q_strncpyz(reason, (char *)sqlite3_column_text(stmt, 0), sizeof(reason));
 				
 				// Boe!Man 2/6/13: Also close the database (and finalize) upon returning.
 				sqlite3_finalize(stmt);
