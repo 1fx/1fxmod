@@ -736,6 +736,7 @@ extern unsigned char	memsys5[31457280]; // Boe!Man 1/29/13: Buffer of 30 MB, ava
 
 void		Boe_userdataIntegrity	(void);
 void		Boe_SQLStats			(void); // Boe!Man 1/30/13: Can be called via RCON with sql_stats.
+void		Boe_convertNonSQLChars	(char *input);
 
 qboolean	Boe_checkAlias			(char *ip, char *name2);
 void		Boe_addAlias			(char *ip, char *name2);

@@ -1462,7 +1462,7 @@ Boe_Add_Admin_f
 
 void Boe_Add_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd, int level2, char *commandName)
 {
-	int              idnum, i, rc;
+	int              idnum, rc;
 	char			 arg[64] = "\0";
 	char			 clientName[MAX_NETNAME];
 	char			 admName[MAX_NETNAME];
@@ -1512,18 +1512,10 @@ void Boe_Add_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd, int level2, 
 	
 	// Boe!Man 12/12/12: Check the names, SQLite has massive problems when using quotes in the (updated) query.
 	Q_strncpyz(clientName, g_entities[idnum].client->pers.cleanName, sizeof(clientName));
-	for(i=0; i<strlen(clientName); i++){
-		if(clientName[i] == 39){ // Boe!Man 12/12/12: Also check for single quote, that could mess up the query.
-			clientName[i] = 32; // If found, convert to space (32 on ASCII table).
-		}
-	}
+	Boe_convertNonSQLChars(clientName);
 	if(adm){
 		Q_strncpyz(admName, adm->client->pers.cleanName, sizeof(admName));
-		for(i=0; i<strlen(admName); i++){
-			if(admName[i] == 39){ // Boe!Man 12/12/12: Also check for single quote, that could mess up the query.
-				admName[i] = 32; // If found, convert to space (32 on ASCII table).
-			}
-		}
+		Boe_convertNonSQLChars(admName);
 	}else{
 		strcpy(admName, "RCON");
 	}
@@ -2154,25 +2146,13 @@ void Boe_subnetBan (int argNum, gentity_t *adm, qboolean shortCmd)
 	Q_strncpyz(ip, g_entities[idnum].client->pers.ip, 7);
 	
 	// Boe!Man 1/9/12: Check for unsupported characters in the reason and replace them.
-	for(i=0;i<strlen(reason);i++){
-		if(reason[i] == 92 || reason[i] == 39){ // Boe!Man 1/9/12: Backslash (92 on ASCII table), unsupported character in SoF2. -- Update 12/12/12: Also check for single quote, that could possibly mess up the query.
-			reason[i] = 32; // If found, convert to space (32 on ASCII table).
-		}
-	}
+	Boe_convertNonSQLChars(reason);
 	// Boe!Man 12/12/12: Also check those in the names, SQLite has massive problems when using quotes in the (updated) query.
 	Q_strncpyz(clientName, g_entities[idnum].client->pers.cleanName, sizeof(clientName));
-	for(i=0; i<strlen(clientName); i++){
-		if(clientName[i] == 39){ // Boe!Man 12/12/12: Also check for single quote, that could mess up the query.
-			clientName[i] = 32; // If found, convert to space (32 on ASCII table).
-		}
-	}
+	Boe_convertNonSQLChars(clientName);
 	if(adm){
 		Q_strncpyz(admName, adm->client->pers.cleanName, sizeof(admName));
-		for(i=0; i<strlen(admName); i++){
-			if(admName[i] == 39){ // Boe!Man 12/12/12: Also check for single quote, that could mess up the query.
-				admName[i] = 32; // If found, convert to space (32 on ASCII table).
-			}
-		}
+		Boe_convertNonSQLChars(admName);
 	}
 	
 	// Boe!Man 12/12/12: Open database.
@@ -2355,25 +2335,13 @@ void Boe_Ban_f (int argNum, gentity_t *adm, qboolean shortCmd)
 	}
 	
 	// Boe!Man 1/9/12: Check for unsupported characters in the reason and replace them.
-	for(i=0;i<strlen(reason);i++){
-		if(reason[i] == 92 || reason[i] == 39){ // Boe!Man 1/9/12: Backslash (92 on ASCII table), unsupported character in SoF2. -- Update 12/12/12: Also check for single quote, that could possibly mess up the query.
-			reason[i] = 32; // If found, convert to space (32 on ASCII table).
-		}
-	}
+	Boe_convertNonSQLChars(reason);
 	// Boe!Man 12/12/12: Also check those in the names, SQLite has massive problems when using quotes in the (updated) query.
 	Q_strncpyz(clientName, g_entities[idnum].client->pers.cleanName, sizeof(clientName));
-	for(i=0; i<strlen(clientName); i++){
-		if(clientName[i] == 39){ // Boe!Man 12/12/12: Also check for single quote, that could mess up the query.
-			clientName[i] = 32; // If found, convert to space (32 on ASCII table).
-		}
-	}
+	Boe_convertNonSQLChars(clientName);
 	if(adm){
 		Q_strncpyz(admName, adm->client->pers.cleanName, sizeof(admName));
-		for(i=0; i<strlen(admName); i++){
-			if(admName[i] == 39){ // Boe!Man 12/12/12: Also check for single quote, that could mess up the query.
-				admName[i] = 32; // If found, convert to space (32 on ASCII table).
-			}
-		}
+		Boe_convertNonSQLChars(admName);
 	}
 	
 	// Boe!Man 12/12/12: Open database.

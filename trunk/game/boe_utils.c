@@ -2799,16 +2799,12 @@ Function that checks if the name used is already an alias.
 qboolean Boe_checkAlias(char *ip, char *name2)
 {
 	char			name[MAX_NETNAME]; // name2 but without unsupported characters.
-	int				i, rc;
+	int				rc;
 	sqlite3			*db;
 	sqlite3_stmt	*stmt;
 	
 	Q_strncpyz(name, name2, sizeof(name)); // Boe!Man 12/30/12: Copy buffer and check for unsupported characters.
-	for(i = 0; i < strlen(name); i++){
-		if(name[i] == 39){ // Unsupported char in query.
-			name[i] = 32; // Convert to space.
-		}
-	}
+	Boe_convertNonSQLChars(name);
 	
 	if(!level.altPath){
 		rc = sqlite3_open_v2("./users/aliases.db", &db, SQLITE_OPEN_READONLY, NULL);
@@ -2847,16 +2843,12 @@ Function that adds an alias to the database.
 void Boe_addAlias(char *ip, char *name2)
 {
 	char			name[MAX_NETNAME]; // name2 but without unsupported characters.
-	int				i, indexnr, rc, acount;
+	int				indexnr, rc, acount;
 	sqlite3			*db;
 	sqlite3_stmt	*stmt;
 
 	Q_strncpyz(name, name2, sizeof(name)); // Boe!Man 12/30/12: Copy buffer and check for unsupported characters.
-	for(i = 0; i < strlen(name); i++){
-		if(name[i] == 39){ // Unsupported char in query.
-			name[i] = 32; // Convert to space.
-		}
-	}
+	Boe_convertNonSQLChars(name);
 	
 	if(!level.altPath){
 		rc = sqlite3_open_v2("./users/aliases.db", &db, SQLITE_OPEN_READWRITE, NULL);
@@ -2930,17 +2922,13 @@ void Boe_printAliases(gentity_t *ent, char *ip, char *name2)
 {
 	sqlite3			*db;
 	sqlite3_stmt	*stmt;
-	int 			i, rc, count;
+	int 			rc, count;
 	char			name[MAX_NETNAME];
 	char			names[1024];
 	
 	count = 0;
 	Q_strncpyz(name, name2, sizeof(name)); // Boe!Man 12/30/12: Copy buffer and check for unsupported characters.
-	for(i = 0; i < strlen(name); i++){
-		if(name[i] == 39){ // Unsupported char in query.
-			name[i] = 32; // Convert to space.
-		}
-	}
+	Boe_convertNonSQLChars(name);
 	
 	if(!level.altPath){
 		rc = sqlite3_open_v2("./users/aliases.db", &db, SQLITE_OPEN_READWRITE, NULL);
@@ -3016,4 +3004,32 @@ void Boe_SQLStats(void)
 	Com_Printf("\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n");
 	
 	return;
+}
+
+/*
+================
+Boe_convertNonSQLChars
+2/6/13 - 1:38 PM
+Checks for malformed (incompatible) characters in query values (such as names).
+================
+*/
+
+void Boe_convertNonSQLChars(char *input)
+{
+    char	*s;
+
+    s = input;
+	while (*s) {
+		// Boe!Man 2/6/13
+		// Unsupported characters in a query:
+		// ==================================
+		// Single quote ('): 39 on the ASCII table.
+		// Backslash (\): 92 on the ASCII table.
+		if(*s == 39 || *s == 92){
+			*s = 32; // If found, convert to space (32 on ASCII table).
+		}
+		s++;
+	}
+	
+    return;
 }
