@@ -150,7 +150,9 @@ static admCmd_t AdminCommands[] =
 	{"!m","mute", &g_mute.integer, &Boe_XMute},
 	{"!s","strip", &g_strip.integer, &Boe_Strip},
 	{"!ff","friendlyfire", &g_ff.integer, &Boe_friendlyFire},
-	//{"!box","box", &g_strip.integer, &Henk_Box} // Boe!Man 4/8/11: Seems like a useless command?
+	#ifdef _awesomeToAbuse
+	{"!box","box", &g_strip.integer, &Henk_Box} // Boe!Man 4/8/11: Seems like a useless command? -- Update 2/6/13: Abuse in 1fx. INF FTW!
+	#endif
 };
 
 static int AdminCommandsSize = sizeof( AdminCommands ) / sizeof( AdminCommands[0] );
