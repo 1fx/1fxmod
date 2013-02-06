@@ -1013,7 +1013,7 @@ qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean 
 				Com_Printf("^3[Info] ^7Removed %s (IP: %s) from line %i.\n", name, IP, line);
 			}
 		}
-	}else{ // Remove by IP. Don't output this to the screen (except errors), because it's being called directly from /adm removeadmin if silent is true.
+	}else{ // Remove by IP. Don't output this to the screen (except errors), because it's being called directly from /adm removeclan if silent is true.
 		// Boe!Man 2/6/13: First check if the record exists.
 		rc = sqlite3_prepare(db, va("select ROWID,IP,name from clanmembers where IP='%s' LIMIT 1", value), -1, &stmt, 0);
 		
@@ -2473,65 +2473,52 @@ Boe_Remove_Admin_f
 */
 
 void Boe_Remove_Admin_f (int argNum, gentity_t *adm, qboolean shortCmd)
-
 {
 	int				idnum;
-	char			*id;
 	qboolean		admin = qfalse;
-	// Boe!Man 4/30/12: Also create a passID (with only the first octet).
-	char			passID[MAX_BOE_ID];
-	char			*passID2 = passID;
-
-#ifdef _DEBUG
-	if (strstr(boe_log.string, "1"))
-		G_LogPrintf("4s\n");
-#endif
-
-	idnum = Boe_ClientNumFromArg(adm, argNum, "removeadmin <idnumer>", "do this to", qfalse, qtrue, shortCmd);
-	if(idnum < 0) return;
-
-	id = g_entities[idnum].client->pers.boe_id;
+	char			octet[5];
 	
-	// Boe!Man 8/22/10: If the user's not an Admin we can safely skip this.
-	if (g_entities[idnum].client->sess.admin == 0){
-		if(adm && adm->client){
-			trap_SendServerCommand(adm-g_entities, va("print\"^3[Info] ^7This client is currently not an Admin.\n\"", g_entities[idnum].client->pers.netname));
-		}else{
-			Com_Printf("This client is currently not an Admin.\n");
-		}
+	idnum = Boe_ClientNumFromArg(adm, argNum, "removeadmin <idnumer>", "do this to", qfalse, qtrue, shortCmd);
+	if(idnum < 0){
 		return;
-	}else{
-		admin = qtrue;
 	}
 	
-	// Boe!Man 4/30/12: Write the pass ID, with the name + first 3 chars of the IP (which should represent the first octet).
-	Com_sprintf(passID2, MAX_BOE_ID, "%s\\%c%c%c", g_entities[idnum].client->pers.cleanName, g_entities[idnum].client->pers.ip[0], g_entities[idnum].client->pers.ip[1], g_entities[idnum].client->pers.ip[2]);
+	// Boe!Man 8/22/10: If the user's not an Admin we can safely skip this.
+	if (g_entities[idnum].client->sess.admin){
+		g_entities[idnum].client->sess.admin = 0;
+		admin = qtrue;
+	}else{
+		if(adm && adm->client){
+			trap_SendServerCommand(adm-g_entities, va("print\"^3[Info] ^7%s is not an Admin!\n\"", g_entities[idnum].client->pers.cleanName));
+		}else{
+			Com_Printf("^3[Info] ^7%s is not an Admin!\n", g_entities[idnum].client->pers.cleanName);
+		}
+		
+		return;
+	}
 	
-	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-	g_entities[idnum].client->sess.admin = 0;
+	// Boe!Man 4/30/12: Write the octet, with the first 3 chars of the IP (which should represent the first octet).
+	Q_strncpyz(octet, g_entities[idnum].client->pers.ip, 4);
+	
 	// Boe!Man 1/6/10: Fix, succesfully writes the Admin out of the file.
 	// Update 8/10/11: Do display the broadcast even if he's not written out of the file. We already verified he was an Admin.
 	// Update 4/30/12: Added the password Admin check. First we check if the user is on the regular file, then we check for the pass file. If all fails, just display the broadcast.
-	if(Boe_Remove_from_list(id, g_adminfile.string, "admin", NULL, qfalse, qtrue, qfalse) || Boe_Remove_from_list(passID2, g_adminPassFile.string, "admin", NULL, qfalse, qtrue, qfalse) || admin  == qtrue){
+	// Update 2/6/13: SQLite3 backend. Most of this was recoded.
+	if(Boe_removeAdminFromDb(adm, g_entities[idnum].client->pers.ip, qfalse, qfalse, qtrue) || Boe_removeAdminFromDb(adm, octet, qtrue, qfalse, qtrue) || admin){
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7is no longer an %sA%sd%sm%si%sn", level.time + 5000, g_entities[idnum].client->pers.netname, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 		if(adm && adm->client){
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7is no longer an %sA%sd%sm%si%sn", level.time + 5000, g_entities[idnum].client->pers.netname, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s ^7was removed as Admin by %s.\n\"", g_entities[idnum].client->pers.netname,adm->client->pers.netname));
-			Boe_adminLog ("Remove Admin", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
 		}
 		else{
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7is no longer an %sA%sd%sm%si%sn", level.time + 5000, g_entities[idnum].client->pers.netname, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 			trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s ^7was removed as Admin.\n\"", g_entities[idnum].client->pers.netname));
-			Boe_adminLog ("Remove Admin", va("%s", "RCON"), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
 		}
 	}
 
 	// Boe!Man 10/16/10: He's not an Admin anymore so it doesn't matter if he was a B-Admin, Admin or S-Admin: either way he shouldn't be allowed to spec the opposite team.
 	g_entities[idnum].client->sess.adminspec = qfalse;
-
-#ifdef _DEBUG
-	if (strstr(boe_log.string, "1"))
-		G_LogPrintf("4e\n");
-#endif
+	
+	return;
 }
 
 /*
@@ -4011,10 +3998,15 @@ void Henk_Flash(int argNum, gentity_t *adm, qboolean shortCmd){
 	}
 }
 
-void Henk_AdminRemove(int argNum, gentity_t *adm, qboolean shortCmd){
-	char	arg[32] = "\0", arg0[32] = "\0", arg1[32] = "\0", buf[32] = "\0";
-	int		i = 0, count = 0, iLine = 0;
-	qboolean password = qfalse, clanlist = qfalse;
+void Henk_AdminRemove(int argNum, gentity_t *adm, qboolean shortCmd)
+{
+	char		arg[32] = "\0";
+	char		arg0[32] = "\0";
+	char		arg1[32] = "\0";
+	char		buf[32] = "\0";
+	int			i = 0;
+	int			count = 0;
+	qboolean	passAdmin = qfalse;
 	
 	if(shortCmd){
 		trap_Argv( argNum, arg, sizeof( arg ) );
@@ -4026,109 +4018,251 @@ void Henk_AdminRemove(int argNum, gentity_t *adm, qboolean shortCmd){
 			count += 1;
 		}
 		buf[count+1] = '\0';
-	}else{
-		trap_Argv( argNum, arg, sizeof( arg ) );
-	}
-
-	if(shortCmd){
-		strcpy(arg, buf);
-		trap_Argv( 1, arg1, sizeof( arg1 ) );
-		if(strstr(arg1, "cl")){
-			clanlist = qtrue;
-		}else if(strstr(arg1, "pass")){
-			password = qtrue;
+		
+		trap_Argv(1, arg1, sizeof(arg1));
+		if(strstr(arg1, "pass")){
+			if(g_passwordAdmins.integer){
+				passAdmin = qtrue;
+			}else{
+				if(adm){
+					trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Access denied: No password logins allowed by the server!\n\""));
+				}else{
+					Com_Printf("Access denied: No password logins allowed by the server!\n");
+				}
+				return;
+			}
 		}else{
 			trap_Argv( 2, arg0, sizeof( arg0 ) );
 			trap_Argv( 3, arg1, sizeof( arg1 ) );
+			if(strstr(arg0, "pass") || strstr(arg1, "pass")){
+				if(g_passwordAdmins.integer){
+					passAdmin = qtrue;
+				}else{
+					if(adm){
+						trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Access denied: No password logins allowed by the server!\n\""));
+					}else{
+						Com_Printf("Access denied: No password logins allowed by the server!\n");
+					}
+					return;
+				}
+			}
+		}
+		
+		if(!strstr(buf, ".")){ // Boe!Man 2/6/13: No dot found, unban by line number.
+			Boe_removeAdminFromDb(adm, buf, passAdmin, qtrue, qfalse);
+		}else{ // Boe!Man 2/6/13: Dot found, unban by IP.
+			Boe_removeAdminFromDb(adm, buf, passAdmin, qfalse, qfalse);
 		}
 	}else{
+		trap_Argv( argNum, arg, sizeof( arg ) );
 		trap_Argv( argNum-1, arg0, sizeof( arg0 ) );
-		trap_Argv( argNum, arg1, sizeof( arg1 ) );
-	}
-	if(strstr(arg0, "cl")){
-		clanlist = qtrue;
-	}else if(strstr(arg0, "pass") || strstr(arg1, "pass")){
-		password = qtrue;
-	}
-
-	if(strlen(arg) < 2 && strstr(arg, ".")){
-		if(!clanlist){
-			if(adm){
-				if(shortCmd)
-					trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid line, Usage: !adr <line>.\n\""));
-				else
-					trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid line, Usage: adm adminremove <line>.\n\""));
+		trap_Argv( argNum+1, arg1, sizeof( arg1 ) );
+		
+		if(strstr(arg, "pass") || strstr(arg0, "pass") || strstr(arg1, "pass")){
+			if(g_passwordAdmins.integer){
+				passAdmin = qtrue;
 			}else{
-				Com_Printf("Invalid line, Usage: rcon adminremove <line>.\n");
-			}
-		}else{
-			if(adm){
-				if(shortCmd)
-					trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid line, Usage: !clr <line>.\n\""));
-				else
-					trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid line, Usage: adm clanremove <line>.\n\""));
-			}else{
-				Com_Printf("Invalid line, Usage: rcon clanremove <line>.\n");
-			}
-		}
-		return;
-	}else if(strlen(arg) >= 1 && !strstr(arg, ".")){
-		// unban by line
-		iLine = atoi(arg);
-		if(password)
-			Henk_RemoveLineFromFile(adm, iLine, g_adminPassFile.string, qfalse, qfalse, qfalse, "");
-		else if(clanlist)
-			Henk_RemoveLineFromFile(adm, iLine, g_clanfile.string, qfalse, qfalse, qfalse, "");
-		else
-			Henk_RemoveLineFromFile(adm, iLine, g_adminfile.string, qfalse, qfalse, qfalse, "");
-		return;
-	}else if(strlen(arg) < 2){
-		if(!clanlist){
-			if(adm){
-				if(shortCmd)
-					trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid line, Usage: !adr <line>.\n\""));
-				else
-					trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid line, Usage: adm adminremove <line>.\n\""));
-			}else{
-				Com_Printf("Invalid line, Usage: rcon adminremove <line>.\n");
-			}
-		}else{
-			if(adm){
-				if(shortCmd)
-					trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid line, Usage: !clr <line>.\n\""));
-				else
-					trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid line, Usage: adm clanremove <line>.\n\""));
-			}else{
-				Com_Printf("Invalid line, Usage: rcon clanremove <line>.\n");
+				if(adm){
+					trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Access denied: No password logins allowed by the server!\n\""));
+				}else{
+					Com_Printf("Access denied: No password logins allowed by the server!\n");
+				}
+				return;
 			}
 		}
 		
-		return;
-	}else{
-		if(!clanlist){
-			if(adm){
-				if(shortCmd)
-					trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid line, Usage: !adr <line>.\n\""));
-				else
-					trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid line, Usage: adm adminremove <line>.\n\""));
-			}else{
-				Com_Printf("Invalid line, Usage: rcon adminremove <line>.\n");
-			}
-		}else{
-			if(adm){
-				if(shortCmd)
-					trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid line, Usage: !clr <line>.\n\""));
-				else
-					trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid line, Usage: adm clanremove <line>.\n\""));
-			}else{
-				Com_Printf("Invalid line, Usage: rcon clanremove <line>.\n");
-			}
+		if(!strstr(arg, ".")){ // Boe!Man 2/6/13: No dot found, unban by line number.
+			Boe_removeAdminFromDb(adm, arg, passAdmin, qtrue, qfalse);
+		}else{ // Boe!Man 2/6/13: Dot found, unban by IP.
+			Boe_removeAdminFromDb(adm, arg, passAdmin, qfalse, qfalse);
 		}
-		
-		return;
 	}
 }
 
+/*
+=====================
+Boe_removeAdminFromDb
+2/6/13 - 6:23 PM
+=====================
+*/
+
+qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passAdmin, qboolean lineNumber, qboolean silent)
+{
+	sqlite3			*db;
+	sqlite3_stmt	*stmt;
+	int				 rc;
+	char			 IP[MAX_IP];
+	char			 name[MAX_NETNAME];
+	int				 line;
+	
+	if((strlen(value) < 6 && strstr(value, ".")) && !silent){
+		trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid IP, usage: adm adminremove <IP/Line>.\n\""));
+		return;
+	}
+	
+	// Boe!Man 2/6/13: Open the database.
+	if(!level.altPath){
+		rc = sqlite3_open_v2("./users/users.db", &db, SQLITE_OPEN_READWRITE, NULL);
+	}else{
+		rc = sqlite3_open_v2(va("%s/users/users.db", level.altString), &db, SQLITE_OPEN_READWRITE, NULL);
+	}
+	
+	if(rc){
+		if(adm && adm->client){
+			trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n\"", sqlite3_errmsg(db)));
+		}else{
+			Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
+		}
+		return qfalse;
+	}else{
+		sqlite3_exec(db, "PRAGMA synchronous = OFF", NULL, NULL, NULL);
+	}
+	
+	if(lineNumber){ // Delete by line/record.
+		line = atoi(value);
+		
+		if(!line){
+			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid IP, usage: adm adminremove <IP/Line>.\n\""));
+			sqlite3_close(db);
+			return;
+		}
+		
+		// Boe!Man 2/6/13: First check if the record exists.
+		if(!passAdmin){
+			rc = sqlite3_prepare(db, va("select IP,name from admins where ROWID='%i' LIMIT 1", line), -1, &stmt, 0);
+		}else{
+			rc = sqlite3_prepare(db, va("select octet,name from passadmins where ROWID='%i' LIMIT 1", line), -1, &stmt, 0);
+		}
+		
+		// Boe!Man 2/6/13: If the previous query failed, we're looking at a record that does not exist.
+		if(rc != SQLITE_OK){
+			if(adm && adm->client){
+				trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n", sqlite3_errmsg(db)));
+			}else{
+				Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
+			}
+			
+			sqlite3_finalize(stmt);
+			sqlite3_close(db);
+			return qfalse;
+		}else if((rc = sqlite3_step(stmt)) == SQLITE_DONE){
+			if(adm && adm->client){
+				trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Could not find line %i.\n\"", line));
+			}else{
+				Com_Printf("^3[Info] ^7Could not find line %i.\n", line);
+			}
+			
+			sqlite3_finalize(stmt);
+			sqlite3_close(db);
+			return qfalse;
+		}else{
+			Q_strncpyz(IP, sqlite3_column_text(stmt, 0), sizeof(IP));
+			Q_strncpyz(name, sqlite3_column_text(stmt, 1), sizeof(name));
+			sqlite3_finalize(stmt);
+		}
+		
+		// Boe!Man 2/6/13: If the previous query succeeded, we can delete the record.
+		if(!passAdmin){
+			rc = sqlite3_exec(db, va("DELETE FROM admins WHERE ROWID='%i'", line), 0, 0, 0);
+		}else{
+			rc = sqlite3_exec(db, va("DELETE FROM passadmins WHERE ROWID='%i'", line), 0, 0, 0);
+		}
+		
+		if(rc != SQLITE_OK){
+			if(adm && adm->client){
+				trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n", sqlite3_errmsg(db)));
+			}else{
+				Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
+			}
+			
+			sqlite3_close(db);
+			return qfalse;
+		}else{
+			if(adm && adm->client){
+				trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Removed %s (IP: %s) from line %i.\n\"", name, IP, line));
+			}else{
+				Com_Printf("^3[Info] ^7Removed %s (IP: %s) from line %i.\n", name, IP, line);
+			}
+		}
+	}else{ // Remove by IP. Don't output this to the screen (except errors), because it's being called directly from /adm removeadmin if silent is true.
+		// Boe!Man 2/6/13: First check if the record exists.
+		if(!passAdmin){
+			rc = sqlite3_prepare(db, va("select ROWID,IP,name from admins where IP='%s' LIMIT 1", value), -1, &stmt, 0);
+		}else{
+			rc = sqlite3_prepare(db, va("select ROWID,octet,name from passadmins where octet='%s' LIMIT 1", value), -1, &stmt, 0);
+		}
+		
+		// Boe!Man 2/6/13: If the previous query failed, we're looking at a record that does not exist.
+		if(rc != SQLITE_OK){
+			if(adm && adm->client){
+				trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n", sqlite3_errmsg(db)));
+			}else{
+				Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
+			}
+			
+			sqlite3_finalize(stmt);
+			sqlite3_close(db);
+			return qfalse;
+		}else if((rc = sqlite3_step(stmt)) == SQLITE_DONE){ // Should never happen.
+			if(adm && adm->client){
+				if(!silent){
+					trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Could not find IP '%s' in the database.\n\"", value));
+				}
+			}else{
+				if(!silent){
+					Com_Printf("^3[Info] ^7Could not find IP '%s' in the database.\n", value);
+				}
+			}
+			
+			sqlite3_finalize(stmt);
+			sqlite3_close(db);
+			return qfalse;
+		}else if(!silent){ // Boe!Man 2/6/13: Also store info for the info line.
+			line = sqlite3_column_int(stmt, 0);
+			Q_strncpyz(IP, sqlite3_column_text(stmt, 1), sizeof(IP));
+			Q_strncpyz(name, sqlite3_column_text(stmt, 2), sizeof(name));
+		}
+		sqlite3_finalize(stmt);
+		
+		// Boe!Man 2/6/13: If the previous query succeeded, we can delete the record.
+		if(!passAdmin){
+			rc = sqlite3_exec(db, va("DELETE FROM admins WHERE IP='%s'", value), 0, 0, 0);
+		}else{
+			rc = sqlite3_exec(db, va("DELETE FROM passadmins WHERE octet='%s'", value), 0, 0, 0);
+		}
+		
+		if(rc != SQLITE_OK){
+			if(adm && adm->client){
+				trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n", sqlite3_errmsg(db)));
+			}else{
+				Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
+			}
+			
+			sqlite3_close(db);
+			return qfalse;
+		}else if(!silent){
+			if(adm && adm->client){
+				trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Removed %s (IP: %s) from line %i.\n\"", name, IP, line));
+			}else{
+				Com_Printf("^3[Info] ^7Removed %s (IP: %s) from line %i.\n", name, IP, line);
+			}
+		}
+	}
+	
+	// Boe!Man 2/6/13: Close the database.
+	// Boe!Man 12/20/12: Re-order the ROWIDs by issuing the VACUUM maintenance query.
+	sqlite3_exec(db, "VACUUM", NULL, NULL, NULL);
+	sqlite3_close(db);
+	
+	// Boe!Man 2/6/13: Log the admin removal.
+	if(adm && adm->client){
+		Boe_adminLog ("Remove Admin", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", IP, name));
+	}else{
+		Boe_adminLog ("Remove Admin", "RCON", va("%s\\%s", IP, name));
+	}
+	
+	return qtrue;
+}
 
 void Henk_Unban(int argNum, gentity_t *adm, qboolean shortCmd){
 	char	arg[32] = "\0", buf[32] = "\0";

@@ -279,6 +279,7 @@ int		Boe_AddToList(const char *string, const char* file, const char* type, genti
 int		Boe_Remove_from_list( char *key, const char *file, const char* type, gentity_t *ent, qboolean unban, qboolean removeAdmin, qboolean scoreCheck);
 void	Boe_Unban(gentity_t *adm, char *ip, qboolean subnet);
 void	Henk_AdminRemove(int argNum, gentity_t *adm, qboolean shortCmd);
+qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passAdmin, qboolean lineNumber, qboolean silent);
 
 void	Boe_subnetBan(int argNum, gentity_t *adm, qboolean shortCmd);
 void	Boe_Remove_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd);
