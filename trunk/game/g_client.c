@@ -1518,6 +1518,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 	//Ryan march 25 2003
 	char			ip[MAX_IP], subnet[8];
 	char			name[MAX_NETNAME];
+	char			reason[128];
 	int				n = 0;
 	int				i = 0, ipCount = 0, rc = SQLITE_ERROR;
 	sqlite3			*db;
@@ -1608,8 +1609,13 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 			return "Server Error";
 		}else while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
 			if(rc == SQLITE_ROW){
-				if(strlen((char *)sqlite3_column_text(stmt, 0)) > 0){
-					return va("Banned! [IP] Reason: %.40s", sqlite3_column_text(stmt, 0));
+				Q_strncpyz(reason, sqlite3_column_text(stmt, 0), sizeof(reason));
+				
+				// Boe!Man 2/6/13: Also close the database (and finalize) upon returning.
+				sqlite3_finalize(stmt);
+				sqlite3_close(db);
+				if(strlen(reason) > 0){
+					return va("Banned! [IP] Reason: %.40s", reason);
 				}else{
 					return "Banned! [IP]";
 				}
@@ -1626,14 +1632,22 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 			return "Server Error";
 		}else while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
 			if(rc == SQLITE_ROW){
-				if(strlen((char*)sqlite3_column_text(stmt, 0)) > 0){
-					return va("Banned! [Subnet] Reason: %.35s", sqlite3_column_text(stmt, 0));
+				Q_strncpyz(reason, sqlite3_column_text(stmt, 0), sizeof(reason));
+				
+				// Boe!Man 2/6/13: Also close the database (and finalize) upon returning.
+				sqlite3_finalize(stmt);
+				sqlite3_close(db);
+				if(strlen(reason) > 0){
+					return va("Banned! [Subnet] Reason: %.35s", reason);
 				}else{
 					return "Banned! [Subnet]";
 				}
 			}
 		}
 		sqlite3_finalize(stmt);
+		
+		// Boe!Man 2/6/13: Don't forget to close the database.
+		sqlite3_close(db);
 		
 		// Boe!Man 2/8/10: Limiting the connections.
 		if ( ipCount > g_maxIPConnections.integer ) 
