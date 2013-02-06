@@ -492,6 +492,8 @@ qboolean BG_InitWeaponStats(qboolean init);
 void Boe_About( gentity_t *ent );
 void Boe_Add_Clan_Member(int argNum, gentity_t *adm, qboolean shortCmd);
 void Boe_Remove_Clan_Member(int argNum, gentity_t *adm, qboolean shortCmd);
+void Boe_removeClanMemberFromList(int argNum, gentity_t *adm, qboolean shortCmd);
+qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean lineNumber, qboolean silent);
 void RPM_Clan_Vs_All(gentity_t *adm);
 
 #ifdef _DEBUG

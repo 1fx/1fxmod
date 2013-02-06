@@ -768,10 +768,12 @@ void Boe_Add_Clan_Member(int argNum, gentity_t *adm, qboolean shortCmd)
 	// Boe!Man 2/6/13: Check if the client is already a clan member.
 	if(g_entities[idnum].client->sess.clanMember){
 		if(adm){
-			trap_SendServerCommand(adm-g_entities, va("print\"^3[Info] ^7%s is already a clan member.\n\"", g_entities[idnum].client->pers.netname));
+			trap_SendServerCommand(adm-g_entities, va("print\"^3[Info] ^7%s is already a Clan member.\n\"", g_entities[idnum].client->pers.cleanName));
 		}else{
-			Com_Printf("^3[Info] ^7%s ^7is already a clan member.\n", g_entities[idnum].client->pers.netname);
+			Com_Printf("^3[Info] ^7%s ^7is already a Clan member.\n", g_entities[idnum].client->pers.cleanName);
 		}
+		
+		return;
 	}
 	
 	// Boe!Man 12/12/12: Check the names, SQLite has massive problems when using quotes in the (updated) query.
@@ -820,10 +822,10 @@ void Boe_Add_Clan_Member(int argNum, gentity_t *adm, qboolean shortCmd)
 	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is now a %sC%sl%sa%sn %sm%se%smber!", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color4.string, server_color5.string, server_color6.string));
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 	if(adm){
-		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was made Clan member by %s.\n\"", g_entities[idnum].client->pers.netname, adm->client->pers.cleanName));
+		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was made Clan member by %s.\n\"", g_entities[idnum].client->pers.cleanName, adm->client->pers.cleanName));
 		Boe_adminLog ("Add Clan", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
 	}else{
-		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s is now a Clan member.\n\"", g_entities[idnum].client->pers.netname));
+		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s is now a Clan member.\n\"", g_entities[idnum].client->pers.cleanName));
 		Boe_adminLog ("Add Clan", "RCON", va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
 	}
 	
@@ -833,44 +835,254 @@ void Boe_Add_Clan_Member(int argNum, gentity_t *adm, qboolean shortCmd)
 /*
 ======================
 Boe_Remove_Clan_Member
+2/6/13 - 2:46 PM
 ======================
 */
 
 void Boe_Remove_Clan_Member(int argNum, gentity_t *adm, qboolean shortCmd)
 {
 	int			idnum;
-	char		*id;
-	qboolean	clanmem = qfalse;
+	qboolean	clanMem = qfalse;
 
 	idnum = Boe_ClientNumFromArg(adm, argNum, "removeclan <idnumber>", "remove", qfalse, qtrue, shortCmd);
-
-	///if invalid client etc.. idnum will == -1 and we abort
 	if(idnum < 0){
 		return;
 	}
-
-	///make sure they are not admins even if not on list
+	
 	if(g_entities[idnum].client->sess.clanMember){
 		g_entities[idnum].client->sess.clanMember = qfalse;
-		clanmem = qtrue;
+		clanMem = qtrue;
+	}else{
+		if(adm){
+			trap_SendServerCommand(adm-g_entities, va("print\"^3[Info] ^7%s is not a Clan member!\n\"", g_entities[idnum].client->pers.cleanName));
+		}else{
+			Com_Printf("^3[Info] ^7%s is not a Clan member!\n", g_entities[idnum].client->pers.cleanName);
+		}
+		
+		return;
 	}
-
-	id = g_entities[idnum].client->pers.boe_id;
-
-	if(Boe_Remove_from_list(id, g_clanfile.string, "Clan", NULL, qfalse, qfalse, qfalse) || clanmem == qtrue)
-	{
-		if(adm && adm->client)	{
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is no longer a %sC%sl%sa%sn %sm%se%smber!", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color4.string, server_color5.string, server_color6.string));
-			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was removed as Clan member by %s.\n\"", g_entities[idnum].client->pers.netname, adm->client->pers.cleanName));
-			Boe_adminLog ("Remove Clan", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
-		}else {
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is no longer a %sC%sl%sa%sn %sm%se%smber!", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color4.string, server_color5.string, server_color6.string));
-			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-			trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s is no longer a Clan member.\n\"", g_entities[idnum].client->pers.netname));
-			Boe_adminLog ("Remove Clan", va("%s", "RCON"), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
+	
+	if(Boe_removeClanMemberFromDb(adm, g_entities[idnum].client->pers.ip, qfalse, qtrue) || clanMem){
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is no longer a %sC%sl%sa%sn %sm%se%smber!", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color4.string, server_color5.string, server_color6.string));
+		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+		if(adm){
+			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was removed as Clan member by %s.\n\"", g_entities[idnum].client->pers.cleanName, adm->client->pers.cleanName));
+		}else{
+			trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s is no longer a Clan member.\n\"", g_entities[idnum].client->pers.cleanName));
 		}
 	}
+	
+	return;
+}
+
+/*
+============================
+Boe_removeClanMemberFromList
+2/6/13 - 4:40 PM
+============================
+*/
+void Boe_removeClanMemberFromList(int argNum, gentity_t *adm, qboolean shortCmd)
+{
+	char	arg[32] = "\0";
+	char	buf[32] = "\0";
+	int		i = 0;
+	int		count = 0;
+	
+	if(shortCmd){
+		trap_Argv( argNum, arg, sizeof( arg ) );
+		if(strstr(arg, "!") && !strstr(arg, " ")){
+			trap_Argv( argNum+1, arg, sizeof( arg ) );
+		}
+		for(i=StartAfterCommand(va("%s", arg));i<strlen(arg);i++){
+			buf[count] = arg[i];
+			count += 1;
+		}
+		buf[count+1] = '\0';
+		
+		if(!strstr(buf, ".")){ // Boe!Man 2/6/13: No dot found, unban by line number.
+			Boe_removeClanMemberFromDb(adm, buf, qtrue, qfalse);
+		}else{ // Boe!Man 2/6/13: Dot found, unban by IP.
+			Boe_removeClanMemberFromDb(adm, buf, qfalse, qfalse);
+		}
+	}else{
+		trap_Argv( argNum, arg, sizeof( arg ) );
+		if(!strstr(arg, ".")){ // Boe!Man 2/6/13: No dot found, unban by line number.
+			Boe_removeClanMemberFromDb(adm, arg, qtrue, qfalse);
+		}else{ // Boe!Man 2/6/13: Dot found, unban by IP.
+			Boe_removeClanMemberFromDb(adm, arg, qfalse, qfalse);
+		}
+	}
+}
+
+
+/*
+==========================
+Boe_removeClanMemberFromDb
+2/6/13 - 3:12 PM
+Acts as a general function when removing a clanmember (either direct ID or line).
+==========================
+*/
+
+qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean lineNumber, qboolean silent)
+{
+	sqlite3			*db;
+	sqlite3_stmt	*stmt;
+	int				 rc;
+	char			 IP[MAX_IP];
+	char			 name[MAX_NETNAME];
+	int				 line;
+	
+	if(strlen(value) < 6 && strstr(value, ".")){
+		trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid IP, usage: adm clanlistremove <IP/Line>.\n\""));
+		return;
+	}
+	
+	// Boe!Man 2/6/13: Open the database.
+	if(!level.altPath){
+		rc = sqlite3_open_v2("./users/users.db", &db, SQLITE_OPEN_READWRITE, NULL);
+	}else{
+		rc = sqlite3_open_v2(va("%s/users/users.db", level.altString), &db, SQLITE_OPEN_READWRITE, NULL);
+	}
+	
+	if(rc){
+		if(adm && adm->client){
+			trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n\"", sqlite3_errmsg(db)));
+		}else{
+			Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
+		}
+		return qfalse;
+	}else{
+		sqlite3_exec(db, "PRAGMA synchronous = OFF", NULL, NULL, NULL);
+	}
+	
+	if(lineNumber){ // Delete by line/record.
+		line = atoi(value);
+		
+		if(!line){
+			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid IP, usage: adm clanlistremove <IP/Line>.\n\""));
+			sqlite3_close(db);
+			return;
+		}
+		
+		// Boe!Man 2/6/13: First check if the record exists.
+		rc = sqlite3_prepare(db, va("select IP,name from clanmembers where ROWID='%i' LIMIT 1", line), -1, &stmt, 0);
+		
+		// Boe!Man 2/6/13: If the previous query failed, we're looking at a record that does not exist.
+		if(rc != SQLITE_OK){
+			if(adm && adm->client){
+				trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n", sqlite3_errmsg(db)));
+			}else{
+				Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
+			}
+			
+			sqlite3_finalize(stmt);
+			sqlite3_close(db);
+			return qfalse;
+		}else if((rc = sqlite3_step(stmt)) == SQLITE_DONE){
+			if(adm && adm->client){
+				trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Could not find line %i.\n\"", line));
+			}else{
+				Com_Printf("^3[Info] ^7Could not find line %i.\n", line);
+			}
+			
+			sqlite3_finalize(stmt);
+			sqlite3_close(db);
+			return qfalse;
+		}else{
+			Q_strncpyz(IP, sqlite3_column_text(stmt, 0), sizeof(IP));
+			Q_strncpyz(name, sqlite3_column_text(stmt, 1), sizeof(name));
+			sqlite3_finalize(stmt);
+		}
+		
+		// Boe!Man 2/6/13: If the previous query succeeded, we can delete the record.
+		rc = sqlite3_exec(db, va("DELETE FROM clanmembers WHERE ROWID='%i'", line), 0, 0, 0);
+		
+		if(rc != SQLITE_OK){
+			if(adm && adm->client){
+				trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n", sqlite3_errmsg(db)));
+			}else{
+				Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
+			}
+			
+			sqlite3_close(db);
+			return qfalse;
+		}else{
+			if(adm && adm->client){
+				trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Removed %s (IP: %s) from line %i.\n\"", name, IP, line));
+			}else{
+				Com_Printf("^3[Info] ^7Removed %s (IP: %s) from line %i.\n", name, IP, line);
+			}
+		}
+	}else{ // Remove by IP. Don't output this to the screen (except errors), because it's being called directly from /adm removeadmin if silent is true.
+		// Boe!Man 2/6/13: First check if the record exists.
+		rc = sqlite3_prepare(db, va("select ROWID,IP,name from clanmembers where IP='%s' LIMIT 1", value), -1, &stmt, 0);
+		
+		// Boe!Man 2/6/13: If the previous query failed, we're looking at a record that does not exist.
+		if(rc != SQLITE_OK){
+			if(adm && adm->client){
+				trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n", sqlite3_errmsg(db)));
+			}else{
+				Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
+			}
+			
+			sqlite3_finalize(stmt);
+			sqlite3_close(db);
+			return qfalse;
+		}else if((rc = sqlite3_step(stmt)) == SQLITE_DONE){ // Should never happen.
+			if(adm && adm->client){
+				if(!silent){
+					trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Could not find IP '%s' in the database.\n\"", value));
+				}
+			}else{
+				if(!silent){
+					Com_Printf("^3[Info] ^7Could not find IP '%s' in the database.\n", value);
+				}
+			}
+			
+			sqlite3_finalize(stmt);
+			sqlite3_close(db);
+			return qfalse;
+		}else if(!silent){ // Boe!Man 2/6/13: Also store info for the info line.
+			line = sqlite3_column_int(stmt, 0);
+			Q_strncpyz(IP, sqlite3_column_text(stmt, 1), sizeof(IP));
+			Q_strncpyz(name, sqlite3_column_text(stmt, 2), sizeof(name));
+		}
+		sqlite3_finalize(stmt);
+		
+		// Boe!Man 2/6/13: If the previous query succeeded, we can delete the record.
+		rc = sqlite3_exec(db, va("DELETE FROM clanmembers WHERE IP='%s'", value), 0, 0, 0);
+		
+		if(rc != SQLITE_OK){
+			if(adm && adm->client){
+				trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n", sqlite3_errmsg(db)));
+			}else{
+				Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
+			}
+			
+			sqlite3_close(db);
+			return qfalse;
+		}else if(!silent){
+			if(adm && adm->client){
+				trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Removed %s (IP: %s) from line %i.\n\"", name, IP, line));
+			}else{
+				Com_Printf("^3[Info] ^7Removed %s (IP: %s) from line %i.\n", name, IP, line);
+			}
+		}
+	}
+	
+	// Boe!Man 2/6/13: Close the database.
+	// Boe!Man 12/20/12: Re-order the ROWIDs by issuing the VACUUM maintenance query.
+	sqlite3_exec(db, "VACUUM", NULL, NULL, NULL);
+	sqlite3_close(db);
+	
+	// Boe!Man 2/6/13: Log the clan removal.
+	if(adm && adm->client){
+		Boe_adminLog ("Remove Clan", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", IP, name));
+	}else{
+		Boe_adminLog ("Remove Clan", "RCON", va("%s\\%s", IP, name));
+	}
+	
+	return qtrue;
 }
 
 /*
@@ -1870,6 +2082,7 @@ void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 				Com_Printf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
 			}
 			
+			sqlite3_finalize(stmt);
 			sqlite3_close(db);
 			return;
 		}else if((rc = sqlite3_step(stmt)) == SQLITE_DONE){
@@ -1879,12 +2092,14 @@ void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 				Com_Printf("^3[Info] ^7Could not find line %i.\n", iLine);
 			}
 			
+			sqlite3_finalize(stmt);
 			sqlite3_close(db);
 			return;
 		}else{ // Boe!Man 12/17/12: Store info for the unban line given to the Admin (to let him know it went correctly).
 			Q_strncpyz(ip2, (char *)sqlite3_column_text(stmt, 0), sizeof(ip2));
 			Q_strncpyz(name, (char *)sqlite3_column_text(stmt, 1), sizeof(name));
 		}
+		sqlite3_finalize(stmt);
 		
 		// Boe!Man 12/17/12: If the previous query succeeded, we can delete the record.
 		if(!subnet){
@@ -1934,6 +2149,7 @@ void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 				Com_Printf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
 			}
 			
+			sqlite3_finalize(stmt);
 			sqlite3_close(db);
 			return;
 		}else if((rc = sqlite3_step(stmt)) == SQLITE_DONE){
@@ -1943,12 +2159,15 @@ void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 				Com_Printf("^3[Info] ^7Could not find IP %s.\n", ip);
 			}
 			
+			sqlite3_finalize(stmt);
 			sqlite3_close(db);
 			return;
 		}else{ // Boe!Man 12/17/12: Store info for the unban line given to the Admin (to let him know it went correctly).
 			Q_strncpyz(ip2, (char *)sqlite3_column_text(stmt, 0), sizeof(ip2)); // ID in this case.
 			Q_strncpyz(name, (char *)sqlite3_column_text(stmt, 1), sizeof(name));
 		}
+		
+		sqlite3_finalize(stmt);
 		
 		// Boe!Man 12/17/12: If the previous query succeeded, we can delete the record.
 		if(!subnet){
@@ -1979,14 +2198,9 @@ void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 			
 			
 	// Boe!Man 12/17/12: Close the database.
-	if(db){
-		if(stmt){
-			sqlite3_finalize(stmt);
-		}
-		// Boe!Man 12/20/12: Re-order the ROWIDs by issuing the VACUUM maintenance query.
-		sqlite3_exec(db, "VACUUM", NULL, NULL, NULL);
-		sqlite3_close(db);
-	}
+	// Boe!Man 12/20/12: Re-order the ROWIDs by issuing the VACUUM maintenance query.
+	sqlite3_exec(db, "VACUUM", NULL, NULL, NULL);
+	sqlite3_close(db);
 	
 	// Boe!Man 12/19/12: Log the unban.
 	if(subnet){

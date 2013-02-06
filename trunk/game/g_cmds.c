@@ -50,7 +50,8 @@ static admCmd_t AdminCommands[] =
 	{"!gametyperestart","gametyperestart", &g_gr.integer, &Boe_GametypeRestart},
 	{"!addclan","addclan", &g_clan.integer, &Boe_Add_Clan_Member},
 	{"!removeclan","removeclan", &g_clan.integer, &Boe_Remove_Clan_Member},
-	{"!removeclanlist","removeclanlist", &g_clan.integer, &Henk_AdminRemove},
+	{"!removeclanlist","removeclanlist", &g_clan.integer, &Boe_removeClanMemberFromList},
+	{"!clanlistremove","clanlistremove", &g_clan.integer, &Boe_removeClanMemberFromList},
 	{"!compmode","compmode", &g_cm.integer, &Boe_CompMode},
 	{"!competitionmode","compmode", &g_cm.integer, &Boe_CompMode},
 	{"!banlist","banlist", &g_ban.integer, &Henk_BanList},
@@ -111,8 +112,8 @@ static admCmd_t AdminCommands[] =
 	{"!gr","gametyperestart", &g_gr.integer, &Boe_GametypeRestart},
 	{"!acl","addclan", &g_clan.integer, &Boe_Add_Clan_Member},
 	{"!rc","removeclan", &g_clan.integer, &Boe_Remove_Clan_Member},
-	{"!rcl","removeclanlist", &g_clan.integer, &Henk_AdminRemove},
-	{"!rcl","removeclan", &g_clan.integer, &Boe_Remove_Clan_Member},
+	{"!rcl","removeclanlist", &g_clan.integer, &Boe_removeClanMemberFromList},
+	{"!clr","clanlistremove", &g_clan.integer, &Boe_removeClanMemberFromList},
 	{"!3rd","3rd", &g_3rd.integer, &Boe_Third},
 	{"!third","third", &g_3rd.integer, &Boe_Third},
 	{"!cm","compmode", &g_cm.integer, &Boe_CompMode},
@@ -3652,7 +3653,7 @@ void Boe_adm_f ( gentity_t *ent )
 			}
 		if (g_clan.integer == levelx){
 			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   acl addclan      <i/n>          ^7[^3Add a clan member^7]\n", g_clan.integer));
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   rcl removeclan   <i/n>          ^7[^3Remove a clan member^7]\n", g_clan.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   rc  removeclan   <i/n>          ^7[^3Remove a clan member^7]\n", g_clan.integer));
 			}
 		if (g_broadcast.integer == levelx){
 			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   br  broadcast    <message>      ^7[^3Broadcast a message^7]\n", g_broadcast.integer));
