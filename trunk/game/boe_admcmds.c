@@ -755,46 +755,81 @@ Boe_Add_Clan_Member
 
 void Boe_Add_Clan_Member(int argNum, gentity_t *adm, qboolean shortCmd)
 {
-	int             idnum, onlist;
-	char			*id;
-
+	int              idnum, rc;
+	char			 clientName[MAX_NETNAME];
+	char			 admName[MAX_NETNAME];
+	sqlite3			*db;
+	
 	idnum = Boe_ClientNumFromArg(adm, argNum, "addclan <idnumber>", "do this to", qfalse, qtrue, shortCmd);
-
-	if(idnum < 0)
-		return;
-
-	g_entities[idnum].client->sess.clanMember = qtrue;
-
-	id = g_entities[idnum].client->pers.boe_id;
-
-	onlist = Boe_NameListCheck (0, id, g_clanfile.string, NULL, qfalse, qfalse, qfalse, qfalse, qfalse);
-
-	if(onlist){
-		if (adm && adm->client)
-			trap_SendServerCommand(adm-g_entities, va("print\"^3[Info] ^7%s is already a Clan Member.\n\"", g_entities[idnum].client->pers.netname));
-		else
-		Com_Printf("^3[Info] ^7%s ^7is already a Clan Member.\n", g_entities[idnum].client->pers.netname);
+	if(idnum < 0){
 		return;
 	}
-	if(onlist == -1)
-		return;
-
-	if(Boe_AddToList(id, g_clanfile.string, "Clan", NULL))
-	{
-		// Boe!Man 1/28/11: Fixed clan members getting added to the file twice.
-		if(adm && adm->client)	{
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is now a %sC%sl%sa%sn %sm%se%smber!", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color4.string, server_color5.string, server_color6.string));
-			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was made Clan member by %s.\n\"", g_entities[idnum].client->pers.netname, adm->client->pers.cleanName));
-			Boe_adminLog ("Add Clan", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
-		}else {
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is now a %sC%sl%sa%sn %sm%se%smber!", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color4.string, server_color5.string, server_color6.string));
-			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-			trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s is now a Clan member.\n\"", g_entities[idnum].client->pers.netname));
-			Boe_adminLog ("Add Clan", va("%s", "RCON"), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
+	
+	// Boe!Man 2/6/13: Check if the client is already a clan member.
+	if(g_entities[idnum].client->sess.clanMember){
+		if(adm){
+			trap_SendServerCommand(adm-g_entities, va("print\"^3[Info] ^7%s is already a clan member.\n\"", g_entities[idnum].client->pers.netname));
+		}else{
+			Com_Printf("^3[Info] ^7%s ^7is already a clan member.\n", g_entities[idnum].client->pers.netname);
 		}
 	}
+	
+	// Boe!Man 12/12/12: Check the names, SQLite has massive problems when using quotes in the (updated) query.
+	Q_strncpyz(clientName, g_entities[idnum].client->pers.cleanName, sizeof(clientName));
+	Boe_convertNonSQLChars(clientName);
+	if(adm){
+		Q_strncpyz(admName, adm->client->pers.cleanName, sizeof(admName));
+		Boe_convertNonSQLChars(admName);
+	}else{
+		strcpy(admName, "RCON");
+	}
+	
+	// Boe!Man 2/6/13: Add Clan Member to the database.
+	// Boe!Man 2/6/13: Open database.
+	if(!level.altPath){
+		rc = sqlite3_open_v2("./users/users.db", &db, SQLITE_OPEN_READWRITE, NULL);
+	}else{
+		rc = sqlite3_open_v2(va("%s/users/users.db", level.altString), &db, SQLITE_OPEN_READWRITE, NULL);
+	}
+	
+	if(rc){
+		if(adm){
+			trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n\"", sqlite3_errmsg(db)));
+		}else{
+			Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
+		}
+		return;
+	}
+	
+	// Boe!Man 2/6/13: Insert query.
+	sqlite3_exec(db, "PRAGMA synchronous = OFF", NULL, NULL, NULL);
+	if(sqlite3_exec(db, va("INSERT INTO clanmembers (IP, name, by) values ('%s', '%s', '%s')", g_entities[idnum].client->pers.ip, clientName, admName), 0, 0, 0) != SQLITE_OK){
+		if(adm){
+			trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n\"", sqlite3_errmsg(db)));
+		}else{
+			Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
+		}
+		sqlite3_close(db);
+		return;
+	}
+	
+	// Boe!Man 2/6/13: Close database.
+	sqlite3_close(db);
+
+	g_entities[idnum].client->sess.clanMember = qtrue;
+	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is now a %sC%sl%sa%sn %sm%se%smber!", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color4.string, server_color5.string, server_color6.string));
+	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+	if(adm){
+		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was made Clan member by %s.\n\"", g_entities[idnum].client->pers.netname, adm->client->pers.cleanName));
+		Boe_adminLog ("Add Clan", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
+	}else{
+		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s is now a Clan member.\n\"", g_entities[idnum].client->pers.netname));
+		Boe_adminLog ("Add Clan", "RCON", va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
+	}
+	
+	return;
 }
+
 /*
 ======================
 Boe_Remove_Clan_Member
