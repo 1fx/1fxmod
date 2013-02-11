@@ -1970,6 +1970,11 @@ TAnimWeapon* PM_GetAnimFromName ( char *animName, playerState_t *ps, int *animIn
 			else if(!strcmp(animName,"fire"))
 			{
 				aW=BG_GetInviewAnimFromIndex(ps->weapon,ps->weaponAnimId&~ANIM_TOGGLEBIT);
+				// Boe!Man 2/11/13: Apparently some clients have clients that contain more animations then our core inview database does. Fix this by checking the mName (fixes a crash).
+				if(aW->mName == NULL){
+					break;
+				}
+				
 				if((!strcmp(aW->mName,"prefire"))||strstr(aW->mName,"firetrans"))
 				{
 					// Get 'fire' anim.
