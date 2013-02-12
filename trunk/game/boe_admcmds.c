@@ -928,7 +928,7 @@ qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean 
 {
 	sqlite3			*db;
 	sqlite3_stmt	*stmt;
-	int				 rc;
+	int				 rc, i;
 	char			 IP[MAX_IP];
 	char			 name[MAX_NETNAME];
 	int				 line;
@@ -1067,6 +1067,20 @@ qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean 
 				trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Removed %s (IP: %s) from line %i.\n\"", name, IP, line));
 			}else{
 				Com_Printf("^3[Info] ^7Removed %s (IP: %s) from line %i.\n", name, IP, line);
+			}
+		}
+	}
+	
+	// Boe!Man 2/12/13: If the Clan Member is found on the server, remove his Clan status as well.
+	for(i = 0; i < level.numConnectedClients; i++){
+		if(strstr(g_entities[level.sortedClients[i]].client->pers.ip, IP) && g_entities[level.sortedClients[i]].client->sess.clanMember){
+			g_entities[level.sortedClients[i]].client->sess.clanMember = qfalse;
+			
+			// Boe!Man 2/12/13: Inform the Clan Member he's off the list..
+			if(adm){
+				trap_SendServerCommand(g_entities[level.sortedClients[i]].s.number, va("print\"^3[Info] ^7You were removed from the Clanlist by %s.\n\"", adm->client->pers.cleanName));
+			}else{
+				trap_SendServerCommand(g_entities[level.sortedClients[i]].s.number, va("print\"^3[Info] ^7You were removed from the Clanlist by RCON.\n\""));
 			}
 		}
 	}
@@ -4087,10 +4101,11 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
 {
 	sqlite3			*db;
 	sqlite3_stmt	*stmt;
-	int				 rc;
+	int				 rc, i;
 	char			 IP[MAX_IP];
 	char			 name[MAX_NETNAME];
 	int				 line;
+	int				 level2;
 	
 	if((strlen(value) < 6 && strstr(value, ".")) && !silent){
 		trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid IP, usage: adm adminremove <IP/Line>.\n\""));
@@ -4126,9 +4141,9 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
 		
 		// Boe!Man 2/6/13: First check if the record exists.
 		if(!passAdmin){
-			rc = sqlite3_prepare(db, va("select IP,name from admins where ROWID='%i' LIMIT 1", line), -1, &stmt, 0);
+			rc = sqlite3_prepare(db, va("select IP,name,level from admins where ROWID='%i' LIMIT 1", line), -1, &stmt, 0);
 		}else{
-			rc = sqlite3_prepare(db, va("select octet,name from passadmins where ROWID='%i' LIMIT 1", line), -1, &stmt, 0);
+			rc = sqlite3_prepare(db, va("select octet,name,level from passadmins where ROWID='%i' LIMIT 1", line), -1, &stmt, 0);
 		}
 		
 		// Boe!Man 2/6/13: If the previous query failed, we're looking at a record that does not exist.
@@ -4155,6 +4170,7 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
 		}else{
 			Q_strncpyz(IP, (char *)sqlite3_column_text(stmt, 0), sizeof(IP));
 			Q_strncpyz(name, (char *)sqlite3_column_text(stmt, 1), sizeof(name));
+			level2 = sqlite3_column_int(stmt, 2);
 			sqlite3_finalize(stmt);
 		}
 		
@@ -4184,9 +4200,9 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
 	}else{ // Remove by IP. Don't output this to the screen (except errors), because it's being called directly from /adm removeadmin if silent is true.
 		// Boe!Man 2/6/13: First check if the record exists.
 		if(!passAdmin){
-			rc = sqlite3_prepare(db, va("select ROWID,IP,name from admins where IP='%s' LIMIT 1", value), -1, &stmt, 0);
+			rc = sqlite3_prepare(db, va("select ROWID,IP,name,level from admins where IP='%s' LIMIT 1", value), -1, &stmt, 0);
 		}else{
-			rc = sqlite3_prepare(db, va("select ROWID,octet,name from passadmins where octet='%s' LIMIT 1", value), -1, &stmt, 0);
+			rc = sqlite3_prepare(db, va("select ROWID,octet,name,level from passadmins where octet='%s' LIMIT 1", value), -1, &stmt, 0);
 		}
 		
 		// Boe!Man 2/6/13: If the previous query failed, we're looking at a record that does not exist.
@@ -4218,6 +4234,7 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
 			line = sqlite3_column_int(stmt, 0);
 			Q_strncpyz(IP, (char *)sqlite3_column_text(stmt, 1), sizeof(IP));
 			Q_strncpyz(name, (char *)sqlite3_column_text(stmt, 2), sizeof(name));
+			level2 = sqlite3_column_int(stmt, 3);
 		}
 		sqlite3_finalize(stmt);
 		
@@ -4242,6 +4259,21 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
 				trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Removed %s (IP: %s) from line %i.\n\"", name, IP, line));
 			}else{
 				Com_Printf("^3[Info] ^7Removed %s (IP: %s) from line %i.\n", name, IP, line);
+			}
+		}
+	}
+	
+	// Boe!Man 2/12/13: If the Admin is found on the server, remove his Admin as well.
+	for(i = 0; i < level.numConnectedClients; i++){
+		if(strstr(g_entities[level.sortedClients[i]].client->pers.ip, IP) && g_entities[level.sortedClients[i]].client->sess.admin == level2){
+			g_entities[level.sortedClients[i]].client->sess.admin = 0;
+			g_entities[level.sortedClients[i]].client->sess.adminspec = qfalse;
+			
+			// Boe!Man 2/12/13: Inform the Admin he's off the list..
+			if(adm){
+				trap_SendServerCommand(g_entities[level.sortedClients[i]].s.number, va("print\"^3[Info] ^7You were removed from the Adminlist by %s.\n\"", adm->client->pers.cleanName));
+			}else{
+				trap_SendServerCommand(g_entities[level.sortedClients[i]].s.number, va("print\"^3[Info] ^7You were removed from the Adminlist by RCON.\n\""));
 			}
 		}
 	}
