@@ -661,7 +661,7 @@ void InitCagefight(void);
 void Henk_CloseSound ( vec3_t origin, int soundIndex);
 void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd);
 void Boe_clanList(int argNum, gentity_t *adm, qboolean shortCmd);
-qboolean CheckPasswordList(gentity_t *ent, char *pass);
+//qboolean CheckPasswordList(gentity_t *ent, char *pass);
 void PrintCustom(int numb);
 
 // Boe!Man 3/16/11
@@ -672,7 +672,7 @@ void	trap_LinkEntity1( gentity_t *ent );
 void	trap_UnlinkEntity1( gentity_t *ent );
 int GetRpgWinner(void);
 int GetM4Winner(int rpgwinner);
-void AddToPasswordList(gentity_t *ent, int lvl);
+//void AddToPasswordList(gentity_t *ent, int lvl);
 qboolean IsValidCommand(char *cmd, char *string);
 void Boe_compTimeLimitCheck (void);
 qboolean SetNades(char *status);
@@ -746,6 +746,10 @@ void		Boe_convertNonSQLChars	(char *input);
 qboolean	Boe_checkAlias			(char *ip, char *name2);
 void		Boe_addAlias			(char *ip, char *name2);
 void		Boe_printAliases		(gentity_t *ent, char *ip, char *name2);
+
+int			Boe_CheckAdmin			(char *ip, char *name2);
+int 		Boe_checkPassAdmin		(char *ip, char *name2, char *pass);
+qboolean	Boe_checkClanMember		(char *ip, char *name2);
 
 // Boe!Man 1/2/13: --- SQLite3 Related CVARs ---
 extern vmCvar_t		sql_aliasFlushCount;

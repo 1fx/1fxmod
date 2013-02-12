@@ -3031,3 +3031,151 @@ void Boe_convertNonSQLChars(char *input)
 	
     return;
 }
+
+/*
+================
+Boe_checkAdmin
+2/12/13 - 7:27 PM
+Function that checks if the client is an Admin.
+================
+*/
+
+int Boe_checkAdmin(char *ip, char *name2)
+{
+	char			name[MAX_NETNAME]; // name2 but without unsupported characters.
+	int				rc;
+	sqlite3			*db;
+	sqlite3_stmt	*stmt;
+	int				level2;
+	
+	G_ClientCleanName(name2, name, sizeof(name), qfalse); // Boe!Man 2/12/13: Get the cleanName first.
+	Q_strlwr(name); // And convert to lowercase. For some reason, this is really needed.
+	Boe_convertNonSQLChars(name);
+	
+	if(!level.altPath){
+		rc = sqlite3_open_v2("./users/users.db", &db, SQLITE_OPEN_READONLY, NULL);
+	}else{
+		rc = sqlite3_open_v2(va("%s/users/users.db", level.altString), &db, SQLITE_OPEN_READONLY, NULL);
+	}
+	if(rc){
+		Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
+		return 0; // Boe!Man 2/12/13: We don't really know what to do here, just return as if the client is no Admin, an Admin will notice the problem soon enough.
+	}
+	
+	sqlite3_exec(db, "PRAGMA synchronous = OFF", NULL, NULL, NULL);
+	
+	sqlite3_prepare(db, va("SELECT level from admins WHERE IP='%s' AND name='%s'", ip, name), -1, &stmt, 0);
+	if(sqlite3_step(stmt) == SQLITE_DONE){ // He wasn't found on the admin table.
+		sqlite3_finalize(stmt);
+		sqlite3_close(db);
+		return 0;
+	}else{ // He's on it. Return his level.
+		level2 = sqlite3_column_int(stmt, 0);
+		sqlite3_finalize(stmt);
+		sqlite3_close(db);
+		return level2;
+	}
+}
+
+/*
+================
+Boe_checkPassAdmin
+2/12/13 - 7:43 PM
+Function that checks if the client is a Passworded Admin.
+================
+*/
+
+int Boe_checkPassAdmin(char *ip, char *name2, char *pass)
+{
+	char			octet[4];
+	char			name[MAX_NETNAME]; // name2 but without unsupported characters.
+	int				rc;
+	sqlite3			*db;
+	sqlite3_stmt	*stmt;
+	int				level2;
+	int				passlvl;
+
+	if(!Q_stricmp(pass, g_badminPass.string)){
+		passlvl = 2;
+	}else if(!Q_stricmp(pass, g_adminPass.string)){
+		passlvl = 3;
+	}else if(!Q_stricmp(pass, g_sadminPass.string)){
+		passlvl = 4;
+	}
+	
+	Q_strncpyz(octet, ip, 4); // Boe!Man 2/12/13: Copy part of IP to the octet.
+	G_ClientCleanName(name2, name, sizeof(name), qtrue); // Boe!Man 2/12/13: Get the cleanName first.
+	Q_strlwr(name); // And convert to lowercase. For some reason, this is really needed.
+	Boe_convertNonSQLChars(name);
+	
+	if(!level.altPath){
+		rc = sqlite3_open_v2("./users/users.db", &db, SQLITE_OPEN_READONLY, NULL);
+	}else{
+		rc = sqlite3_open_v2(va("%s/users/users.db", level.altString), &db, SQLITE_OPEN_READONLY, NULL);
+	}
+	if(rc){
+		Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
+		return 0; // Boe!Man 2/12/13: We don't really know what to do here, just return as if the client is no Admin, an Admin will notice the problem soon enough.
+	}
+	
+	sqlite3_exec(db, "PRAGMA synchronous = OFF", NULL, NULL, NULL);
+	
+	sqlite3_prepare(db, va("SELECT level from passadmins WHERE octet='%s' AND name='%s'", octet, name), -1, &stmt, 0);
+	if(sqlite3_step(stmt) == SQLITE_DONE){ // He wasn't found on the admin table.
+		sqlite3_finalize(stmt);
+		sqlite3_close(db);
+		return 0;
+	}else{ // He's on it.
+		level2 = sqlite3_column_int(stmt, 0);
+		sqlite3_finalize(stmt);
+		sqlite3_close(db);
+		if(level2 == passlvl){ // He also entered the correct password, return his level.
+			return level2;
+		}else{
+			return 0;
+		}
+	}
+}
+
+/*
+================
+Boe_checkClanMember
+2/12/13 - 7:34 PM
+Function that checks if the client is a clan member.
+================
+*/
+
+qboolean Boe_checkClanMember(char *ip, char *name2)
+{
+	char			name[MAX_NETNAME]; // name2 but without unsupported characters.
+	int				rc;
+	sqlite3			*db;
+	sqlite3_stmt	*stmt;
+	
+	G_ClientCleanName(name2, name, sizeof(name), qtrue); // Boe!Man 2/12/13: Get the cleanName first.
+	Q_strlwr(name); // And convert to lowercase. For some reason, this is really needed.
+	Boe_convertNonSQLChars(name);
+	
+	if(!level.altPath){
+		rc = sqlite3_open_v2("./users/users.db", &db, SQLITE_OPEN_READONLY, NULL);
+	}else{
+		rc = sqlite3_open_v2(va("%s/users/users.db", level.altString), &db, SQLITE_OPEN_READONLY, NULL);
+	}
+	if(rc){
+		Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
+		return qfalse; // Boe!Man 2/12/13: We don't really know what to do here, just return as if the client is no clan member, an Admin will notice the problem soon enough.
+	}
+	
+	sqlite3_exec(db, "PRAGMA synchronous = OFF", NULL, NULL, NULL);
+	
+	sqlite3_prepare(db, va("SELECT name from clanmembers WHERE IP='%s' AND name='%s'", ip, name), -1, &stmt, 0);
+	if(sqlite3_step(stmt) == SQLITE_DONE){ // He wasn't found on the admin table.
+		sqlite3_finalize(stmt);
+		sqlite3_close(db);
+		return qfalse;
+	}else{ // He's on it. Return true.
+		sqlite3_finalize(stmt);
+		sqlite3_close(db);
+		return qtrue;
+	}
+}

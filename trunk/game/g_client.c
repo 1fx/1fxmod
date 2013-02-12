@@ -1412,13 +1412,13 @@ void ClientUserinfoChanged( int clientNum )
 			}
 		}
 	
-		// Boe!Man 12/30/09: Checking for Admin. --- Update 12/13/10
-		if(!ent->client->sess.fileChecked && !(ent->r.svFlags & SVF_BOT)){
+		// Boe!Man 12/30/09: Checking for Admin. --- Update 2/12/13
+		if(!client->sess.fileChecked && !(ent->r.svFlags & SVF_BOT)){
 			if(!client->sess.admin){
-				client->sess.admin = Boe_NameListCheck ( clientNum, ent->client->pers.boe_id, g_adminfile.string, NULL, qfalse, qtrue, qfalse, qfalse, qfalse);
+				client->sess.admin = Boe_checkAdmin(client->pers.ip, client->pers.cleanName);
 			}
 			if(!client->sess.clanMember){
-				client->sess.clanMember = (qboolean)Boe_NameListCheck (clientNum, ent->client->pers.boe_id, g_clanfile.string, NULL, qfalse, qfalse, qfalse, qfalse, qfalse);
+				client->sess.clanMember = Boe_checkClanMember(client->pers.ip, client->pers.cleanName);
 			}
 			if(g_aliasCheck.integer > 0){
 				if(sql_timeBench.integer){
@@ -1439,7 +1439,7 @@ void ClientUserinfoChanged( int clientNum )
 				client->sess.dev = 1;
 			}
 #endif
-			ent->client->sess.fileChecked = qtrue;
+			client->sess.fileChecked = qtrue;
 		}
 	}
 
@@ -1742,10 +1742,10 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 	// Boe!Man 12/30/09: Checking for Admin.
 	if(!ent->client->sess.fileChecked && !(ent->r.svFlags & SVF_BOT)){
 		if(!client->sess.admin){
-			client->sess.admin = Boe_NameListCheck ( clientNum, ent->client->pers.boe_id, g_adminfile.string, NULL, qfalse, qtrue, qfalse, qfalse, qfalse);
+			client->sess.admin = Boe_checkAdmin(client->pers.ip, client->pers.cleanName);
 		}
 		if(!client->sess.clanMember){
-			client->sess.clanMember = (qboolean)Boe_NameListCheck (clientNum, ent->client->pers.boe_id, g_clanfile.string, NULL, qfalse, qfalse, qfalse, qfalse, qfalse);
+			client->sess.clanMember = Boe_checkClanMember(client->pers.ip, client->pers.cleanName);
 		}
 	}
 	// Boe!Man 10/25/10: Checking for Clonecheck.

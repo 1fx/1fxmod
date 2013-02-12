@@ -4447,7 +4447,7 @@ void Boe_clanList(int argNum, gentity_t *adm, qboolean shortCmd){
 	
 	// Boe!Man 2/4/13: Display header.
 	if(adm){
-		Q_strcat(buf2, sizeof(buf2), "^3[Adminlist]^7\n\n");
+		Q_strcat(buf2, sizeof(buf2), "^3[Clanlist]^7\n\n");
 		Q_strcat(buf2, sizeof(buf2), "^3 #     IP              Name                  By\n^7------------------------------------------------------------------------\n");
 	}else{
 		Com_Printf("^3[Adminlist]^7\n\n");

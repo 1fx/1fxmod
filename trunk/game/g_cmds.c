@@ -3518,13 +3518,22 @@ void Boe_adm_f ( gentity_t *ent )
 				trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Access denied: Default password can't be used!\n\""));
 				return;
 			}else if(!Q_stricmp(arg2, g_adminPass.string) || !Q_stricmp(arg2, g_sadminPass.string) || !Q_stricmp(arg2, g_badminPass.string)){ // good password, now check if he's in admin list
-				if(CheckPasswordList(ent, arg2)){
-					// got admin message
-					return;
-				}else{
-					trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Access denied: Invalid password!\n\""));
-					return;
+				levelx = Boe_checkPassAdmin(ent->client->pers.ip, ent->client->pers.cleanName, arg2);
+				if(levelx){
+					ent->client->sess.admin = levelx;
+					if(levelx == 2){
+						trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s has been granted B-Admin.\n\"", ent->client->pers.cleanName));
+					}else if(levelx == 3){
+						trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s has been granted Admin.\n\"", ent->client->pers.cleanName));
+					}else if(levelx == 4){
+						trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s has been granted S-Admin.\n\"", ent->client->pers.cleanName));
+					}
+					// Boe!Man 5/27/11: Is the Admin level allowed to spec the opposite team?
+					if (g_adminSpec.integer <= ent->client->sess.admin && g_adminSpec.integer != 0 && cm_enabled.integer < 2){
+						ent->client->sess.adminspec = qtrue;
+					}
 				}
+				return;
 			}else{ // wrong password
 				trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Access denied: Invalid password!\n\""));
 				return;

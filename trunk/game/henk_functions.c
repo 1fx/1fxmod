@@ -943,7 +943,7 @@ void InitSpawn(int choice) // load bsp models before players loads a map(SOF2 cl
 	G_SpawnGEntityFromSpawnVars(qfalse);
 }	
 
-void AddToPasswordList(gentity_t *ent, int lvl){
+/*void AddToPasswordList(gentity_t *ent, int lvl){
 	int len;
 	fileHandle_t f;
 	char str[512], octet[4];
@@ -967,9 +967,9 @@ void AddToPasswordList(gentity_t *ent, int lvl){
 
 	trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s has been added to the %s list.\n\"", ent->client->pers.netname, levelstr));
 
-}
+}*/
 
-qboolean CheckPasswordList(gentity_t *ent, char *pass){
+/*qboolean CheckPasswordList(gentity_t *ent, char *pass){
 	fileHandle_t f;
 	int len, i, start, end;
 	char lvl, passlvl;
@@ -1031,7 +1031,7 @@ qboolean CheckPasswordList(gentity_t *ent, char *pass){
 	// - Password was leaked to some idiot who's not on the list.
 	// We are going to log this.
 	return qfalse;
-}
+}*/
 
 void RemoveFence(void){
 	int i;
