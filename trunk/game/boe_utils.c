@@ -1677,9 +1677,10 @@ void Boe_Stats ( gentity_t *ent )
 		for(i=0;i<=20;i++){
 			if(level.mutedClients[i].used == qtrue){
 				if(strstr(level.mutedClients[i].ip,  g_entities[idnum].client->pers.ip)){
-						remain = ((level.mutedClients[i].startTime+((level.mutedClients[i].time*60)*1000)-level.time)/1000)/60;
-						remainS = ((level.mutedClients[i].startTime+((level.mutedClients[i].time*60)*1000)-level.time)/1000);
-						trap_SendServerCommand(  ent-g_entities, va("print \"[^3Mute^7]        %i:%02i minutes remaining\n\n", remain, remainS-(remain*60)));
+					remain = ((level.mutedClients[i].startTime+((level.mutedClients[i].time*60)*1000)-level.time)/1000)/60;
+					remainS = ((level.mutedClients[i].startTime+((level.mutedClients[i].time*60)*1000)-level.time)/1000);
+					trap_SendServerCommand(  ent-g_entities, va("print \"[^3Mute^7]        %i:%02i minutes remaining\n\n", remain, remainS-(remain*60)));
+					break; // Boe!Man 2/15/13: Duplicate line fix and speed optimize.
 				}
 			}
 		}
