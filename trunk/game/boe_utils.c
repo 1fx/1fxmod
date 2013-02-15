@@ -568,6 +568,9 @@ void Boe_Tokens(gentity_t *ent, char *chatText, int mode, qboolean CheckSounds)
 			}
 		}
 		if((*chatText == '@') /*|| *chatText == '!')*/ && !playedSound && CheckSounds) { // fix me henk remove '!'
+		chatText++;
+		if(*chatText >= '0' && *chatText <= '9'){ // Boe!Man 2/15/13: Only continue if there are indeed sounds after the '@' char. If not, the client probably meant something else.
+			chatText--;
 			if ( g_voiceFloodCount.integer ) {
 				if ( ent->client->sess.voiceFloodPenalty ) {
 					if ( ent->client->sess.voiceFloodPenalty > level.time ) {
@@ -689,7 +692,10 @@ void Boe_Tokens(gentity_t *ent, char *chatText, int mode, qboolean CheckSounds)
 				} 
 				while (*chatText >= '0' && *chatText <= '9')
 					chatText++;
+			}else{
+				chatText--;
 			}
+		}
 		while(*newTextp)
 		{newTextp++;}
 
