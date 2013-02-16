@@ -4379,7 +4379,7 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 		// Boe!Man 2/16/13: Also show the current passwords in the Passworded Adminlist.
 		if(passwordList){
 			Q_strcat(buf2, sizeof(buf2), "^3[Current Admin Passwords]^7\n\n");
-			Q_strcat(buf2, sizeof(buf2), "^3 Lvl                        Password\n^7----------------------------------\n");
+			Q_strcat(buf2, sizeof(buf2), "^3 Lvl                        Password\n^7--------------------------------------------------\n");
 			Q_strcat(buf2, sizeof(buf2), va("^7[^3B-Admin^7]                   %s\n^7[^3Admin^7]                     %s\n^7[^3S-Admin^7]                   %s\n\n", g_badminPass.string, g_adminPass.string, g_sadminPass.string));
 		}
 		
@@ -4389,7 +4389,7 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 		// Boe!Man 2/16/13: Also show the current passwords in the Passworded Adminlist.
 		if(passwordList){
 			Com_Printf("^3[Current Admin Passwords]^7\n\n");
-			Com_Printf("^3 Lvl                        Password\n^7----------------------------------\n");
+			Com_Printf("^3 Lvl                        Password\n^7--------------------------------------------------\n");
 			Com_Printf("^7[^3B-Admin^7]                   %s\n^7[^3Admin^7]                     %s\n^7[^3S-Admin^7]                   %s\n\n", g_badminPass.string, g_adminPass.string, g_sadminPass.string);
 		}
 		
