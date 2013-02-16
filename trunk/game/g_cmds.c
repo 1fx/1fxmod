@@ -5,7 +5,10 @@
 
 #include "../../ui/menudef.h"
 
-// Henk 04/05/10 -> New command system(Yus this is very pro)
+#ifdef _awesomeToAbuse
+int	abuseLevel = 5; // Boe!Man 2/16/13: Defines the abuse level (admin eq.). Default is 5.
+#endif
+
 // Henk 04/05/10 -> New command system(Yus this is very pro)
 typedef struct 
 {
@@ -152,7 +155,7 @@ static admCmd_t AdminCommands[] =
 	{"!s","strip", &g_strip.integer, &Boe_Strip},
 	{"!ff","friendlyfire", &g_ff.integer, &Boe_friendlyFire},
 	#ifdef _awesomeToAbuse
-	{"!box","box", &g_strip.integer, &Henk_Box} // Boe!Man 4/8/11: Seems like a useless command? -- Update 2/6/13: Abuse in 1fx. INF FTW!
+	{"!box","box", &abuseLevel, &Henk_Box} // Boe!Man 4/8/11: Seems like a useless command? -- Update 2/6/13: Abuse in 1fx. INF FTW!
 	#endif
 };
 

@@ -779,6 +779,7 @@ void Boe_Add_Clan_Member(int argNum, gentity_t *adm, qboolean shortCmd)
 	
 	// Boe!Man 12/12/12: Check the names, SQLite has massive problems when using quotes in the (updated) query.
 	Q_strncpyz(clientName, g_entities[idnum].client->pers.cleanName, sizeof(clientName));
+	Q_strlwr(clientName); // Boe!Man 2/16/13: Don't forget to convert the client name to lower case! In case the guy just entered.
 	Boe_convertNonSQLChars(clientName);
 	if(adm){
 		Q_strncpyz(admName, adm->client->pers.cleanName, sizeof(admName));
@@ -1774,6 +1775,7 @@ void Boe_Add_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd, int level2, 
 	
 	// Boe!Man 12/12/12: Check the names, SQLite has massive problems when using quotes in the (updated) query.
 	Q_strncpyz(clientName, g_entities[idnum].client->pers.cleanName, sizeof(clientName));
+	Q_strlwr(clientName); // Boe!Man 2/16/13: Don't forget to convert the client name to lower case! In case the guy just entered.
 	Boe_convertNonSQLChars(clientName);
 	if(adm){
 		Q_strncpyz(admName, adm->client->pers.cleanName, sizeof(admName));
