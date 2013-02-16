@@ -1704,6 +1704,7 @@ void Boe_addAdmin(int argNum, gentity_t *adm, qboolean shortCmd)
 	}else{
 		trap_Argv(0, command, sizeof(command));
 	}
+	Q_strlwr(command); // Boe!Man 2/16/13: Fix capitalized Admin commands resulting in adding S-Admin by converting the command to lower case.
 	
 	if(strstr(command, "!ab") || strstr(command, "addbad")){
 		Boe_Add_Admin_f(argNum, adm, shortCmd, 2, "addbadmin");
