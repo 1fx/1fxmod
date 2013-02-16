@@ -1869,12 +1869,13 @@ void Boe_Add_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd, int level2, 
 	}
 	
 	// Boe!Man 2/5/13: Inform a passworded Admin of the system he can now use.
+	// Boe!Man 2/16/13: Only inform the Admin via chat. The Admin won't notice if it's being broadcast via console.
 	if(passAdmin){
-		trap_SendServerCommand(g_entities[idnum].s.number, va("print\"^3[Info] ^7You need to login every time you enter the server.\n\""));
+		trap_SendServerCommand(g_entities[idnum].s.number, va("chat -1 \"%sI%sn%sf%so%s: ^7You need to login every time you enter the server.\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string));
 		if(strstr(adminPassword, "none") && strlen(adminPassword) < 5){
-			trap_SendServerCommand(g_entities[idnum].s.number, va("print\"^3[Info] ^7Ask the server owner/a RCON holder to set a password for you to use.\n\""));
+			trap_SendServerCommand(g_entities[idnum].s.number, va("chat -1 \"%sI%sn%sf%so%s: ^7Ask the server owner/a RCON holder to set a password for you to use.\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string));
 		}else{
-			trap_SendServerCommand(g_entities[idnum].s.number, va("print\"^3[Info] ^7You can do so by entering '/adm login %s' in the console.\n\"", adminPassword));
+			trap_SendServerCommand(g_entities[idnum].s.number, va("chat -1 \"%sI%sn%sf%so%s: ^7You can do so by entering '/adm login %s' in the console.\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, adminPassword));
 		}
 	}
 	// Boe!Man 10/16/10: Is the Admin level allowed to spec the opposite team?
@@ -4375,9 +4376,23 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 	
 	// Boe!Man 2/4/13: Display header.
 	if(adm){
+		// Boe!Man 2/16/13: Also show the current passwords in the Passworded Adminlist.
+		if(passwordList){
+			Q_strcat(buf2, sizeof(buf2), "^3[Current Admin Passwords]^7\n\n");
+			Q_strcat(buf2, sizeof(buf2), "^3 Lvl                        Password\n^7----------------------------------\n");
+			Q_strcat(buf2, sizeof(buf2), va("^7[^3B-Admin^7]                   %s\n^7[^3Admin^7]                     %s\n^7[^3S-Admin^7]                   %s\n\n", g_badminPass.string, g_adminPass.string, g_sadminPass.string));
+		}
+		
 		Q_strcat(buf2, sizeof(buf2), "^3[Adminlist]^7\n\n");
 		Q_strcat(buf2, sizeof(buf2), "^3 #     Lvl  IP              Name                  By\n^7------------------------------------------------------------------------\n");
 	}else{
+		// Boe!Man 2/16/13: Also show the current passwords in the Passworded Adminlist.
+		if(passwordList){
+			Com_Printf("^3[Current Admin Passwords]^7\n\n");
+			Com_Printf("^3 Lvl                        Password\n^7----------------------------------\n");
+			Com_Printf("^7[^3B-Admin^7]                   %s\n^7[^3Admin^7]                     %s\n^7[^3S-Admin^7]                   %s\n\n", g_badminPass.string, g_adminPass.string, g_sadminPass.string);
+		}
+		
 		Com_Printf("^3[Adminlist]^7\n\n");
 		Com_Printf("^3 #     Lvl  IP              Name                  By\n");
 		Com_Printf("^7------------------------------------------------------------------------\n");
