@@ -153,6 +153,7 @@
 // 0.70t		4th Alpha						951			1/26/13		// Sent out to BETA group on 1/26/13
 // 0.70t		5th Alpha						957			1/30/13		// Sent out to BETA group on 1/30/13
 // 0.70t		1st Beta						981			2/16/13		// Sent out to BETA group on 2/16/13
+// 0.70t		2nd Beta						987			2/17/13		// Sent out to BETA group on 2/17/13
 
 
 //===================================================================
