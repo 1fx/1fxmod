@@ -3479,6 +3479,18 @@ void Henk_Box (int argNum, gentity_t *adm, qboolean shortCmd)
 	g_entities[test].nextthink = level.time+5000;
 	}
 }
+
+void Boe_freakOut(int argNum, gentity_t *adm, qboolean shortCmd)
+{
+	int			idnum;
+	
+	idnum = Boe_ClientNumFromArg(adm, argNum, "freakout <idnumber>", "freakout", qtrue, qtrue, shortCmd);
+	if(idnum < 0){
+		return;
+	}
+
+	Boe_ClientSound(&g_entities[idnum], G_SoundIndex("sound/misc/outtakes/ben_g.mp3"));
+}
 #endif
 
 
