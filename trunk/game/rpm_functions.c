@@ -979,13 +979,27 @@ void RPM_Awards(void)
 	//float avgtime = 0.0, playerTime = 0.0;
 	int avgtime = 0, playerTime = 0;
 	statinfo_t     *stat;
-	static gentity_t *bestOverall = NULL, *headshooter = NULL, *killer = NULL;
-	static gentity_t *accurate = NULL, *bestRatio = NULL, *explosive = NULL, *knifer = NULL;
+	// Boe!Man 2/20/13: No need to be static again, the struct already is.
+	gentity_t *bestOverall = NULL, *headshooter = NULL, *killer = NULL;
+	gentity_t *accurate = NULL, *bestRatio = NULL, *explosive = NULL, *knifer = NULL;
 	gentity_t *ent;
-
-	///RxCxW - 01.12.06 - 09:26pm #TEST - for award debug :p
-	//char	*a, *b;
-	///End  - 01.12.06 - 09:26pm
+	
+	/*
+	Boe!Man 2/20/13: Oh noooess this is crappy. ;_; But there's no other fix for dynlib it seems.
+	Structure:
+	[0] - bestOverall
+	[1] - headshooter
+	[2] - killer
+	[3] - accurate
+	[4] - bestRatio
+	[5] - explosive
+	[6] - knifer
+	*/
+	typedef struct {
+		char name[MAX_NETNAME];
+		int  number;
+	}scores_t;
+	static scores_t		bestScores[7];
 
 #ifdef _DEBUG
 	if (strstr(boe_log.string, "1"))
@@ -1164,8 +1178,59 @@ void RPM_Awards(void)
 				}
 			}
 		}
+		
+		// Boe!Man 2/20/13: Put data in struct. Nasty piece of code but effective.
+		if(bestOverall){
+			Q_strncpyz(bestScores[0].name, g_entities[bestOverall->s.number].client->pers.netname, sizeof(bestScores[0].name));
+			bestScores[0].number = bestOverall->s.number;
+		}else{
+			strcpy(bestScores[0].name, "None");
+			bestScores[0].number = -1;
+		}
+		if(headshooter){
+			Q_strncpyz(bestScores[1].name, g_entities[headshooter->s.number].client->pers.netname, sizeof(bestScores[1].name));
+			bestScores[1].number = headshooter->s.number;
+		}else{
+			strcpy(bestScores[1].name, "None");
+			bestScores[1].number = -1;
+		}
+		if(killer){
+			Q_strncpyz(bestScores[2].name, g_entities[killer->s.number].client->pers.netname, sizeof(bestScores[2].name));
+			bestScores[2].number = killer->s.number;
+		}else{
+			strcpy(bestScores[2].name, "None");
+			bestScores[2].number = -1;
+		}
+		if(accurate){
+			Q_strncpyz(bestScores[3].name, g_entities[accurate->s.number].client->pers.netname, sizeof(bestScores[3].name));
+			bestScores[3].number = accurate->s.number;
+		}else{
+			strcpy(bestScores[3].name, "None");
+			bestScores[3].number = -1;
+		}
+		if(bestRatio){
+			Q_strncpyz(bestScores[4].name, g_entities[bestRatio->s.number].client->pers.netname, sizeof(bestScores[4].name));
+			bestScores[4].number = bestRatio->s.number;
+		}else{
+			strcpy(bestScores[4].name, "None");
+			bestScores[4].number = -1;
+		}
+		if(explosive){
+			Q_strncpyz(bestScores[5].name, g_entities[explosive->s.number].client->pers.netname, sizeof(bestScores[5].name));
+			bestScores[5].number = explosive->s.number;
+		}else{
+			strcpy(bestScores[5].name, "None");
+			bestScores[5].number = -1;
+		}
+		if(knifer){
+			Q_strncpyz(bestScores[6].name, g_entities[knifer->s.number].client->pers.netname, sizeof(bestScores[6].name));
+			bestScores[6].number = knifer->s.number;
+		}else{
+			strcpy(bestScores[6].name, "None");
+			bestScores[6].number = -1;
+		}
 	}
-
+	
 	for (i = 0; i < level.maxclients ; i++)
 	{
 		ent = g_entities + i;
@@ -1180,80 +1245,50 @@ void RPM_Awards(void)
 			continue;
 		///End  - 01.12.06 - 03:03pm
 
-		///RxCxW - #Version 0.5 Had awards too #Version
-		///if(ent->client->sess.rpmClient < RPM_VERSION)
 		if(ent->client->sess.rpmClient < 0.5)
 		{
-			///RxCxW - 01.12.06 - 09:21pm
-#ifdef _DEBUG
-			if(knifer == NULL)
-				knifer = ent;
-			if(explosive == NULL)
-				explosive = ent;
-			if(headshooter == NULL)
-				explosive = ent;
-#endif
-
-			///CJJ - 2.5.2005 - Added a text based awards system for older RPM clients
-			///We should spam them instead
-			///trap_SendServerCommand( i, va("cp \"You are ^1NOT ^7using ^1R^4P^3M^7 %s.\nYou cannot see the awards without it.\nGet the ^$NEWEST ^7[SC] ^4VERSION ^7at\n^1http://clanforums.ath.cx/\n\nFor more information check out the\n^1R^4P^3M^7 OFFICIAL SITE: ^1www.rpm-mod.tk\n\"", RPM_VERSION_STRING));
 			trap_SendServerCommand( i, va("cp \"^1Best Overall: ^7%s - %i\n^1Headshots: ^7%s - %i\n^1Killer: ^7%s - %i\n^1Accurate: ^7%s - %.2f percent\n^1Best Ratio: ^7%s - %.2f\n^1Nades: ^7%s - %i detonated\n^1Knifer: ^7%s - %i shanked",
-				g_entities[bestOverall->s.number].client->pers.netname,
+				bestScores[0].name,
 				overallScore,
-				g_entities[headshooter->s.number].client->pers.netname,
+				bestScores[1].name,
 				headshots,
-				g_entities[killer->s.number].client->pers.netname,
+				bestScores[2].name,
 				damage,
-				g_entities[accurate->s.number].client->pers.netname,
+				bestScores[3].name,
 				accuracy,
-				g_entities[bestRatio->s.number].client->pers.netname,
+				bestScores[4].name,
 				ratio,
-				g_entities[explosive->s.number].client->pers.netname,
+				bestScores[5].name,
 				explosiveKills,
-				g_entities[knifer->s.number].client->pers.netname,
+				bestScores[6].name,
 				knifeKills ));
 			continue;
 		}
 		if(!level.awardTime)
 		{
-			///RxCxW - 01.12.06 - 09:21pm
-			if(knifer == NULL)
-				knifer = ent;
-			if(explosive == NULL)
-				explosive = ent;
-
-			//a = va("awards %i %i %i %i %i %i %i %.2f %i %.2f %i %i\n", bestOverall->s.number, overallScore, headshooter->s.number, headshots, killer->s.number, damage, accurate->s.number, accuracy, bestRatio->s.number, ratio, explosive->s.number, explosiveKills);
-			//b = va("%i %i", knifer->s.number, knifeKills );
-			////b = va("%i %i", bestOverall->s.number, overallScore );
-			/////trap_SendServerCommand( -1, va("awards %s %s", a, b));
-			//Com_Printf("awards %s %s\n", a, b);
-
-#ifdef _DEBUG
-	if (strstr(boe_log.string, "1"))
-		G_LogPrintf("1e\n");
-#endif
-
-#ifdef Q3_VM
-			///End  - 01.12.06 - 09:23pm
 			trap_SendServerCommand( -1, va("awards %i %i %i %i %i %i %i %.2f %i %.2f %i %i %i %i", 
-				bestOverall->s.number,
+				bestScores[0].number,
 				overallScore,
-				headshooter->s.number, 
+				bestScores[1].number,
 				headshots, 
-				killer->s.number, 
+				bestScores[2].number,
 				damage, 
-				accurate->s.number, 
-				accuracy, 
-				bestRatio->s.number, 
+				bestScores[3].number,
+				accuracy,
+				bestScores[4].number,
 				ratio, 
-				explosive->s.number,
+				bestScores[5].number,
 				explosiveKills,	
-				knifer->s.number, 
+				bestScores[6].number,
 				knifeKills 
 				));
-#endif
 		}
 	}
+	
+	#ifdef _DEBUG
+	if (strstr(boe_log.string, "1"))
+		G_LogPrintf("1e\n");
+	#endif
 }
 
 
