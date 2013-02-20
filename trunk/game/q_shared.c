@@ -838,23 +838,22 @@ int Q_stricmp (const char *s1, const char *s2) {
 
 
 char *Q_strlwr( char *s1 ) {
-#if (defined(Q3_VM) || defined(__GNUC__)) // Boe!Man 7/13/11: strlwr is NOT ANSI standard. And as previously discovered, the standard code using tolower(char) is buggy.
+// Boe!Man 7/13/11: strlwr is NOT ANSI standard. And as previously discovered, the standard code using tolower(char) is buggy, at least on gcc 2.95.
+// We fix that with our own piece of code which checks if the char is actually uppercase, and then 'converts' it if nessecary.
+#ifdef __GNUC__
     char	*s;
 
     s = s1;
 	while ( *s ) {
-#if (defined(__GNUC__)) // Boe!Man 7/13/11: We fix that with our own piece of code which checks if the char is actually uppercase, and then 'converts' it if nessecary.
-		if(isupper(*s))
-#endif
-		*s = tolower(*s);
+		if(isupper(*s)){
+			*s = tolower(*s);
+		}
 		s++;
 	}
-#elif (defined(WIN32)) // Henk -> Fix for dll compile.
+#elif _WIN32 // Henk -> Fix for dll compile (MSVC).
 	s1 = strlwr(s1);
 #endif
     return s1;
-
-	
 }
 
 char *Q_strupr( char *s1 ) {
