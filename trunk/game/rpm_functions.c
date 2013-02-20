@@ -1266,7 +1266,7 @@ void RPM_Awards(void)
 		}
 		if(!level.awardTime)
 		{
-			trap_SendServerCommand( -1, va("awards %i %i %i %i %i %i %i %.2f %i %.2f %i %i %i %i", 
+			trap_SendServerCommand( i, va("awards %i %i %i %i %i %i %i %.2f %i %.2f %i %i %i %i", 
 				bestScores[0].number,
 				overallScore,
 				bestScores[1].number,
