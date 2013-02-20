@@ -251,6 +251,7 @@ void UpdateScores(void)
 		gentity_t* ent = &g_entities[level.sortedClients[i]];
 		
 		// Boe!Man 9/2/12: This is shitty, check for the advanced H&S scores. Kinda a performance hit.
+		/* FIXME (ajay#9#): NO Q_STRLWR IN CLEANNAME WHEN SWITCHING TO SQLITE [!!!!!!!!!] */
 		// MM1 Hits.
 		if(ent->client->sess.MM1HitsTaken > level.advancedHsScores[1].score){
 			level.advancedHsScores[1].score = ent->client->sess.MM1HitsTaken;

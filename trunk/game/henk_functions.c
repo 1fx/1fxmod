@@ -188,6 +188,7 @@ void Henk_Ignore(gentity_t *ent){
 	char arg1[32];
 	int i, numberofclients, idnum = -1, z, temparray[33], count = 0;
 	char string[1024] = "\0", string1[64] = "\0";
+	char cleanName[MAX_NETNAME];
 
 	trap_Argv( 1, arg1, sizeof( arg1 ) );
 	if(strlen(arg1) < 1){
@@ -202,7 +203,8 @@ void Henk_Ignore(gentity_t *ent){
 			numberofclients = 0;
 			for(i=0;i<level.numConnectedClients;i++){
 				//trap_SendServerCommand(-1, va("print\"^3[Debug] ^7%s comparing with %s.\n\"", g_entities[level.sortedClients[i]].client->pers.cleanName,numb));
-				if(strstr(Q_strlwr(g_entities[level.sortedClients[i]].client->pers.cleanName), Q_strlwr(arg1))){
+				Q_strncpyz(cleanName, g_entities[level.sortedClients[i]].client->pers.cleanName, sizeof(cleanName));
+				if(strstr(Q_strlwr(cleanName), Q_strlwr(arg1))){
 					idnum = level.sortedClients[i];
 					numberofclients += 1;
 					Com_sprintf(string1, sizeof(string1), "^1[#%i] ^7%s, ",  idnum, g_entities[level.sortedClients[i]].client->pers.cleanName);

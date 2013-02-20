@@ -246,7 +246,7 @@ void QDECL Boe_adminLog( const char *command, const char *by, const char *to, ..
 		vsprintf( string + 40, by, argptr2); // Boe!Man 3/13/11: Append RCON (as he did it).
 	}else{
 		strncpy(temp, by, sizeof(temp));
-		vsprintf( string + 40, Q_strlwr(temp), argptr2); // Boe!Man 3/13/11: Append the Admin who did it.
+		vsprintf( string + 40, temp, argptr2); // Boe!Man 3/13/11: Append the Admin who did it.
 	}
 	va_end( argptr2 );
 	// Boe!Man 3/13/11: Make sure the rest of the block gets filled with spaces.
@@ -264,7 +264,7 @@ void QDECL Boe_adminLog( const char *command, const char *by, const char *to, ..
 
 		va_start( argptr, to);
 		strncpy(temp, to, sizeof(temp));
-		vsprintf( string + 93, Q_strlwr(temp), argptr); // Boe!Man 3/13/11: Append the client who got it (can't be RCON).
+		vsprintf( string + 93, temp, argptr); // Boe!Man 3/13/11: Append the client who got it (can't be RCON).
 		va_end( argptr );
 	}
 		
@@ -1525,6 +1525,7 @@ void Boe_Stats ( gentity_t *ent )
 	int i, numberofclients = 0;
 	char string[1024] = "\0";
 	char string1[64] = "\0";
+	char		cleanName[MAX_NETNAME];
 	int remain, remainS;
 
 	trap_Argv( 1, arg1, sizeof( arg1 ) );  // Boe!Man 2/21/10: Getting the client ID.
@@ -1571,8 +1572,10 @@ void Boe_Stats ( gentity_t *ent )
 			memset(string1, 0, sizeof(string1));
 			numberofclients = 0;
 			for(i=0;i<level.numConnectedClients;i++){
+				Q_strncpyz(cleanName, g_entities[level.sortedClients[i]].client->pers.cleanName, sizeof(cleanName)); // Boe!Man 2/20/13: With NULL terminator.
+				Q_strlwr(cleanName);
 				//trap_SendServerCommand(-1, va("print\"^3[Debug] ^7%s comparing with %s.\n\"", g_entities[level.sortedClients[i]].client->pers.cleanName,numb));
-				if(strstr(Q_strlwr(g_entities[level.sortedClients[i]].client->pers.cleanName), Q_strlwr(arg1))){
+				if(strstr(cleanName, Q_strlwr(arg1))){
 					idnum = level.sortedClients[i];
 					numberofclients += 1;
 					Com_sprintf(string1, sizeof(string1), "^1[#%i] ^7%s, ",  idnum, g_entities[level.sortedClients[i]].client->pers.cleanName);
@@ -3056,7 +3059,6 @@ int Boe_checkAdmin(char *ip, char *name2)
 	int				level2;
 	
 	G_ClientCleanName(name2, name, sizeof(name), qfalse); // Boe!Man 2/12/13: Get the cleanName first.
-	Q_strlwr(name); // And convert to lowercase. For some reason, this is really needed.
 	Boe_convertNonSQLChars(name);
 	
 	if(!level.altPath){
@@ -3112,7 +3114,6 @@ int Boe_checkPassAdmin(char *ip, char *name2, char *pass)
 	
 	Q_strncpyz(octet, ip, 4); // Boe!Man 2/12/13: Copy part of IP to the octet.
 	G_ClientCleanName(name2, name, sizeof(name), qtrue); // Boe!Man 2/12/13: Get the cleanName first.
-	Q_strlwr(name); // And convert to lowercase. For some reason, this is really needed.
 	Boe_convertNonSQLChars(name);
 	
 	if(!level.altPath){
@@ -3160,7 +3161,6 @@ qboolean Boe_checkClanMember(char *ip, char *name2)
 	sqlite3_stmt	*stmt;
 	
 	G_ClientCleanName(name2, name, sizeof(name), qtrue); // Boe!Man 2/12/13: Get the cleanName first.
-	Q_strlwr(name); // And convert to lowercase. For some reason, this is really needed.
 	Boe_convertNonSQLChars(name);
 	
 	if(!level.altPath){

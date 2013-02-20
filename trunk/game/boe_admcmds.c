@@ -779,7 +779,6 @@ void Boe_Add_Clan_Member(int argNum, gentity_t *adm, qboolean shortCmd)
 	
 	// Boe!Man 12/12/12: Check the names, SQLite has massive problems when using quotes in the (updated) query.
 	Q_strncpyz(clientName, g_entities[idnum].client->pers.cleanName, sizeof(clientName));
-	Q_strlwr(clientName); // Boe!Man 2/16/13: Don't forget to convert the client name to lower case! In case the guy just entered.
 	Boe_convertNonSQLChars(clientName);
 	if(adm){
 		Q_strncpyz(admName, adm->client->pers.cleanName, sizeof(admName));
@@ -1117,6 +1116,7 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 	int numberofclients = 0;
 	char string[1024] = "\0";
 	char string1[64] = "\0";
+	char cleanName[MAX_NETNAME];
 
 	trap_Argv( argNum, arg, sizeof( arg ) );
 	if(shortCmd){ // Henk 04/05/10 -> Handle the short admin commands.
@@ -1176,7 +1176,8 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 				    /* END ajay */
 					for(x=0;x<level.numConnectedClients;x++){
 						//trap_SendServerCommand(-1, va("print\"^3[Debug] ^7%s comparing with %s.\n\"", g_entities[level.sortedClients[x]].client->pers.cleanName,numb));
-						if(strstr(Q_strlwr(g_entities[level.sortedClients[x]].client->pers.cleanName), Q_strlwr(numb))){
+						Q_strncpyz(cleanName, g_entities[level.sortedClients[x]].client->pers.cleanName, sizeof(cleanName));
+						if(strstr(Q_strlwr(cleanName), Q_strlwr(numb))){
 							//Com_Printf("%s\n", g_entities[level.sortedClients[x]].client->pers.cleanName);
 							num = level.sortedClients[x];
 							numberofclients += 1;
@@ -1215,7 +1216,8 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 				}else{
 					for(i=0;i<level.numConnectedClients;i++){
 						//trap_SendServerCommand(-1, va("print\"^3[Debug] ^7%s comparing with %s.\n\"", g_entities[level.sortedClients[i]].client->pers.cleanName,numb));
-						if(strstr(Q_strlwr(g_entities[level.sortedClients[i]].client->pers.cleanName), Q_strlwr(arg))){
+						Q_strncpyz(cleanName, g_entities[level.sortedClients[i]].client->pers.cleanName, sizeof(cleanName));
+						if(strstr(Q_strlwr(cleanName), Q_strlwr(arg))){
 							num = level.sortedClients[i];
 							break;
 						}
@@ -1234,7 +1236,8 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 		}else if(strlen(arg) >= 1){
 			for(i=0;i<level.numConnectedClients;i++){
 				//trap_SendServerCommand(-1, va("print\"^3[Debug] ^7%s comparing with %s.\n\"", g_entities[level.sortedClients[i]].client->pers.cleanName,numb));
-				if(strstr(Q_strlwr(g_entities[level.sortedClients[i]].client->pers.cleanName), Q_strlwr(arg))){
+				Q_strncpyz(cleanName, g_entities[level.sortedClients[i]].client->pers.cleanName, sizeof(cleanName));
+				if(strstr(Q_strlwr(cleanName), Q_strlwr(arg))){
 					num = level.sortedClients[i];
 				break;
 				}
@@ -1260,7 +1263,7 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 	{
 		if(ent && ent->client)
 		{
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7This client has been disconnected.\n\""));
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7This client is not connected.\n\""));
 		}
 		else
 		{
@@ -1776,7 +1779,6 @@ void Boe_Add_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd, int level2, 
 	
 	// Boe!Man 12/12/12: Check the names, SQLite has massive problems when using quotes in the (updated) query.
 	Q_strncpyz(clientName, g_entities[idnum].client->pers.cleanName, sizeof(clientName));
-	Q_strlwr(clientName); // Boe!Man 2/16/13: Don't forget to convert the client name to lower case! In case the guy just entered.
 	Boe_convertNonSQLChars(clientName);
 	if(adm){
 		Q_strncpyz(admName, adm->client->pers.cleanName, sizeof(admName));

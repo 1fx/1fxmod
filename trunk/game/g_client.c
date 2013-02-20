@@ -1543,7 +1543,6 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 	// Boe!Man 12/25/09: Get their name and store a clean copy (without colors) of it.
     value = Info_ValueForKey (userinfo, "name");
 	G_ClientCleanName( value, name, sizeof(name), qfalse );
-	Q_strlwr(name);
 	
 	//value = Info_ValueForKey (userinfo, "cl_guid");
 	//Com_sprintf ( guid, sizeof(guid), value );

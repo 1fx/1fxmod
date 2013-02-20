@@ -1651,6 +1651,7 @@ void Cmd_Follow_f( gentity_t *ent )
 {
 	int		i, z;
 	char	arg[MAX_TOKEN_CHARS];
+	char	cleanName[MAX_NETNAME];
 
 	if ( trap_Argc() != 2 ) 
 	{
@@ -1662,11 +1663,13 @@ void Cmd_Follow_f( gentity_t *ent )
 	}
 
 	trap_Argv( 1, arg, sizeof( arg ) );
+	Q_strlwr(arg);
 
 	if(henk_ischar(arg[0])){
 		for(z=0;z<level.numConnectedClients;z++){
+			Q_strncpyz(cleanName, g_entities[level.sortedClients[z]].client->pers.cleanName, sizeof(cleanName));
 			//trap_SendServerCommand(-1, va("print\"^3[Debug] ^7%s comparing with %s.\n\"", g_entities[level.sortedClients[i]].client->pers.cleanName,numb));
-			if(strstr(Q_strlwr(g_entities[level.sortedClients[z]].client->pers.cleanName), Q_strlwr(arg))){
+			if(strstr(Q_strlwr(cleanName), arg)){
 				i = level.sortedClients[z];
 				break;
 			}
@@ -2533,15 +2536,16 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	// Henk loop through my admin command array
 	// Boe!Man 1/8/11: Only go through this cycle if the client indeed has admin powers. If not, save on resources.
 	if(ent->client->sess.admin > 0){
+	Q_strlwr(test);
 	if(acmd != qtrue){
 		for(i=0;i<AdminCommandsSize;i++){
-			if(strstr(Q_strlwr(test), Q_strlwr(AdminCommands[i].shortCmd)) && IsValidCommand(AdminCommands[i].shortCmd, test)){
+			if(strstr(test, Q_strlwr(AdminCommands[i].shortCmd)) && IsValidCommand(AdminCommands[i].shortCmd, test)){
 				command = qtrue;
 				if(ent->client->sess.admin >= *AdminCommands[i].adminLevel){
 					AdminCommands[i].Function(1, ent, qtrue);
 					break;
 				}else{
-					if(ent->client->sess.referee == 1 && strstr(Q_strlwr(test), "!l")){ // exception for referee lock
+					if(ent->client->sess.referee == 1 && strstr(test, "!l")){ // exception for referee lock
 						Henk_Lock(1, ent, qtrue);
 					}
 					trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
@@ -2560,7 +2564,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			while(group){
 				trap_GPG_FindPairValue(group, "ShortCommand", "none", name);
 				if(!strstr(name, "none")){
-					if(strstr(Q_strlwr(test), Q_strlwr(name))){
+					if(strstr(test, Q_strlwr(name))){
 						command = qtrue;
 						trap_GPG_FindPairValue(group, "AdminLevel", "5", txtlevel);
 						if(ent->client->sess.admin >= atoi(txtlevel)){
@@ -3467,6 +3471,9 @@ void ClientCommand( int clientNum ) {
 		ent->client->pers.enterTime = level.time;
 	}else if(Q_stricmp (cmd, "boeboe5") == 0){
 		trap_SetConfigstring( CS_MUSIC, "music/hongkong/hk1" );
+	}
+	else if(Q_stricmp(cmd, "boeboe6") == 0){ // Boe!Man 2/20/13: Print clean name.
+		Com_Printf("Your cleanName: %s\n", ent->client->pers.cleanName);
 	}
 	*/
 #endif
