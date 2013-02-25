@@ -14,236 +14,143 @@ void ShowScores(void)
 	}else{ // This shouldn't happen anymore.
 		memset(winner, 0, sizeof(winner));
 	}
-
-	for ( i = 0; i < level.numConnectedClients; i ++ )
-	{
-		// Boe!Man 9/2/12: Advanced H&S statistics.
-		if(hideSeek_ExtendedRoundStats.integer && level.time > level.awardTime + 8000 && level.awardTime){
-			trap_SendServerCommand( g_entities[level.sortedClients[i]].s.number, va("cp \"@^3%s\n\n^3Statistics for this map:\n\n"
-					"^_Rounds survived: ^3%i ^_by ^3%s\n"
-					"^_MM1 hits taken: ^3%i ^_by ^3%s\n"
-					"^_RPG boosts: ^3%i ^_by ^3%s\n"
-					"^_Taken RPG: ^3%i ^_by ^3%s\n"
-					"^_Taken M4: ^3%i ^_by ^3%s\n"
-					"^_Stun attacks: ^3%i ^_by ^3%s\n"
-					"^_Seekers caged: ^3%i ^_by ^3%s\n"
-					"^_Weapons stolen: ^3%i ^_by ^3%s\n\n"
-					"^yPoints: ^3%i ^yby ^3%s\n"
-					"^yTaken MM1: ^3%i ^yby ^3%s\n"
-					"^yStunned: ^3%i ^yby ^3%s\n"
-					"^yTrapped in cage: ^3%i ^yby ^3%s\n\"",
-					g_motd.string,
-					level.advancedHsScores[0].score, level.advancedHsScores[0].name, level.advancedHsScores[1].score, level.advancedHsScores[1].name, level.advancedHsScores[2].score, level.advancedHsScores[2].name, level.advancedHsScores[3].score, level.advancedHsScores[3].name,
-					level.advancedHsScores[4].score, level.advancedHsScores[4].name, level.advancedHsScores[5].score, level.advancedHsScores[5].name, level.advancedHsScores[6].score, level.advancedHsScores[6].name, level.advancedHsScores[7].score, level.advancedHsScores[7].name,
-					level.advancedHsScores[8].score, level.advancedHsScores[8].name, level.advancedHsScores[9].score, level.advancedHsScores[9].name, level.advancedHsScores[10].score, level.advancedHsScores[10].name, level.advancedHsScores[11].score, level.advancedHsScores[11].name
-			));
-		}else{
-			trap_SendServerCommand( g_entities[level.sortedClients[i]].s.number, va("cp \"@^3%s\n\n%s^_ THE 3 BEST HIDERS IN THIS MAP ARE:\n\n^31st ^7%s with ^3%i ^7wins.\n^+2nd ^7%s with ^+%i ^7wins.\n^@3rd ^7%s with ^@%i ^7wins.\n\n"
-					"^y THE 3 BEST SEEKERS IN THIS MAP ARE:\n\n^31st ^7%s with ^3%i ^7kills.\n^+2nd ^7%s with ^+%i ^7kills.\n^@3rd ^7%s with ^@%i ^7kills.\n\"",
-					g_motd.string, winner,
-					level.firstname, level.firstscore, level.secondname, level.secondscore, level.thirdname, level.thirdscore,
-					level.Sfirstname, level.Sfirstscore, level.Ssecondname, level.Ssecondscore, level.Sthirdname, level.Sthirdscore));
-		}
+	
+	// Boe!Man 9/2/12: Advanced H&S statistics.
+	if(hideSeek_ExtendedRoundStats.integer && level.time > level.awardTime + 8000 && level.awardTime){
+		trap_SendServerCommand( -1, va("cp \"@^3%s\n\n^3Statistics for this map:\n\n"
+				"^_Rounds survived: ^3%i ^_by ^3%s\n"
+				"^_MM1 hits taken: ^3%i ^_by ^3%s\n"
+				"^_RPG boosts: ^3%i ^_by ^3%s\n"
+				"^_Taken RPG: ^3%i ^_by ^3%s\n"
+				"^_Taken M4: ^3%i ^_by ^3%s\n"
+				"^_Stun attacks: ^3%i ^_by ^3%s\n"
+				"^_Seekers caged: ^3%i ^_by ^3%s\n"
+				"^_Weapons stolen: ^3%i ^_by ^3%s\n\n"
+				"^yPoints: ^3%i ^yby ^3%s\n"
+				"^yTaken MM1: ^3%i ^yby ^3%s\n"
+				"^yStunned: ^3%i ^yby ^3%s\n"
+				"^yTrapped in cage: ^3%i ^yby ^3%s\n\"",
+				g_motd.string,
+				level.advancedHsScores[0].score, level.advancedHsScores[0].name, level.advancedHsScores[1].score, level.advancedHsScores[1].name, level.advancedHsScores[2].score, level.advancedHsScores[2].name, level.advancedHsScores[3].score, level.advancedHsScores[3].name,
+				level.advancedHsScores[4].score, level.advancedHsScores[4].name, level.advancedHsScores[5].score, level.advancedHsScores[5].name, level.advancedHsScores[6].score, level.advancedHsScores[6].name, level.advancedHsScores[7].score, level.advancedHsScores[7].name,
+				level.advancedHsScores[8].score, level.advancedHsScores[8].name, level.advancedHsScores[9].score, level.advancedHsScores[9].name, level.advancedHsScores[10].score, level.advancedHsScores[10].name, level.advancedHsScores[11].score, level.advancedHsScores[11].name
+		));
+	}else{
+		trap_SendServerCommand( -1, va("cp \"@^3%s\n\n%s^_ THE 3 BEST HIDERS IN THIS MAP ARE:\n\n^31st ^7%s with ^3%i ^7wins.\n^+2nd ^7%s with ^+%i ^7wins.\n^@3rd ^7%s with ^@%i ^7wins.\n\n"
+				"^y THE 3 BEST SEEKERS IN THIS MAP ARE:\n\n^31st ^7%s with ^3%i ^7kills.\n^+2nd ^7%s with ^+%i ^7kills.\n^@3rd ^7%s with ^@%i ^7kills.\n\"",
+				g_motd.string, winner,
+				level.top3Hiders[0].name, level.top3Hiders[0].score, level.top3Hiders[1].name, level.top3Hiders[1].score, level.top3Hiders[2].name, level.top3Hiders[2].score,
+				level.top3Seekers[0].name, level.top3Seekers[0].score, level.top3Seekers[1].name, level.top3Seekers[1].score, level.top3Seekers[2].name, level.top3Seekers[2].score));
 	}
 }
 
+/*
+================
+Henk_GetScore
+Recode by boe - 2/25/13 - 6:25 PM
+Get scores for the end-scoreboard (H&S).
+================
+*/
 int Henk_GetScore (qboolean seekers)
 {
-	int             len;
-	fileHandle_t	f;
-	char            buf[15000];
-	char			listName[64];
-	char			*listP = listName;
-	char			*bufP = buf;
-	char			*file;
-	int number = 0, highestscore = 0;
-	char			mapname[64];
-	char			strScore[12];
-	int i;
-	struct {
-		char	name[64];
-		int		score;
-	} Scores[128];
-	int count;
-	int firstnum = 0, secondnum = 0;
+	char			mapname[64]; // Stores the current map name (used for table name).
+	int				rc, spotsTaken;
+	sqlite3			*db;
+	sqlite3_stmt	*stmt;
+	qboolean		dbOkay;
 	
-	trap_Cvar_VariableStringBuffer ( "mapname", mapname, MAX_QPATH );
-	if(seekers)
-		file = va("scores/s_%s.scores", mapname);
-	else
-		file = va("scores/h_%s.scores", mapname);
-	len = trap_FS_FOpenFile( file, &f, FS_READ_TEXT); 
-
-	if (!f) { 
-		len = trap_FS_FOpenFile( file, &f, FS_APPEND_TEXT);   
-		if (!f) {  
-			Boe_FileError(NULL, file);
-			return -1;
-		}
-		trap_FS_FCloseFile( f ); 
-		len = trap_FS_FOpenFile( file, &f, FS_READ_TEXT); 
-
-		if (!f) { 
-			Boe_FileError(NULL, file);
-			return -1;
-		}
+	if(!level.altPath){
+		rc = sqlite3_open_v2("./users/scores.db", &db, SQLITE_OPEN_READONLY, NULL);
+	}else{
+		rc = sqlite3_open_v2(va("%s/users/scores.db", level.altString), &db, SQLITE_OPEN_READONLY, NULL);
 	}
-	if(f >= 5){
-		Com_Printf("%i of 64 max handles used\n", f);
-		G_LogPrintf( "!=!=!=!=!=!=!=!=WARNING=!=!=!=!=!=!=!=!=!=! File handles are not closing properly  [handle count: ( %i )]\n", f );
+	if(rc){
+		Com_Printf("^1Error: ^7scores database: %s\n", sqlite3_errmsg(db));
+		dbOkay = qfalse;
+	}else{
+		dbOkay = qtrue;
 	}
-
-	if(len > 15000)	{
-		len = 15000;
-	}
-	memset( buf, 0, sizeof(buf) );
-	trap_FS_Read( buf, len, f );
-	buf[len] = '\0';
-	trap_FS_FCloseFile( f );
-
-	while( *bufP != '\0') {
-		while(*bufP != '\n' && *bufP != '\0') {
-			*listP++ = *bufP++;
-		}
-
-		*listP = '\0';
-		listP = listName;
-		#ifdef _DEBUG
-		Com_Printf("listName: %s\n", listName);
-		#endif
-		for(i=0;i<strlen(listName);i++){
-			if(listName[i] == ':'){
-				Q_strncpyz(Scores[number].name, listName, i+1);
-				Q_strncpyz(strScore, (listName+i)+1, strlen(listName)-i);
-				//Com_Printf("%s - %i\n", strScore, strlen(listName)-i);
+	
+	// Boe!Man 2/25/13: Only do this if the connection to the database is successfull.
+	if(dbOkay){
+		spotsTaken = 0;
+		trap_Cvar_VariableStringBuffer("mapname", mapname, MAX_QPATH);
+		if(seekers){
+			sqlite3_prepare(db, va("SELECT name,score FROM %s WHERE team='%i' ORDER BY score DESC LIMIT 3", mapname, TEAM_BLUE), -1, &stmt, 0);
+			while(sqlite3_step(stmt) == SQLITE_ROW && spotsTaken < 3){
+				strncpy(level.top3Seekers[spotsTaken].name, sqlite3_column_text(stmt, 0), sizeof(level.top3Seekers[spotsTaken].name));
+				level.top3Seekers[spotsTaken].score = sqlite3_column_int(stmt, 1);
+				spotsTaken++;
 			}
-		}
-		Scores[number].score = atoi(strScore);
-		#ifdef _DEBUG
-		Com_Printf("Found score -> name: %s -> score -> %i\n", Scores[number].name, Scores[number].score);	
-		#endif
-		number += 1;
+			sqlite3_finalize(stmt);
+			if(spotsTaken < 3){ // If there are less then 3 seekers found, fill up with none-data.
+				while(spotsTaken < 3){
+					strcpy(level.top3Seekers[spotsTaken].name, "none");
+					level.top3Seekers[spotsTaken].score = 0;
+					spotsTaken++;
+				}
+			}
+		}else{ // Hiders.
+			sqlite3_prepare(db, va("SELECT name,count(*) as b FROM %s WHERE team='%i' GROUP BY name ORDER BY b DESC LIMIT 3", mapname, TEAM_RED), -1, &stmt, 0);
 			
-		while(*bufP == '\n') {
-			bufP++;
-		}
-	}	
-	// start parsing top 3 hiders
-	for(count=0;count<number;count++){
-		if(Scores[count].score >= highestscore){
-			if(seekers){
-				strcpy(level.Sfirstname, Scores[count].name);
-				level.Sfirstscore = Scores[count].score;
-				firstnum = count;
-			}else{
-				strcpy(level.firstname, Scores[count].name);
-				level.firstscore = Scores[count].score;
+			while(sqlite3_step(stmt) == SQLITE_ROW && spotsTaken < 3){
+				strncpy(level.top3Hiders[spotsTaken].name, sqlite3_column_text(stmt, 0), sizeof(level.top3Hiders[spotsTaken].name));
+				level.top3Hiders[spotsTaken].score = sqlite3_column_int(stmt, 1);
+				spotsTaken++;
 			}
-			highestscore = Scores[count].score;
-		}
-	}
-	highestscore = 0;
-	for(count=0;count<number;count++){
-		if(seekers){
-			if(Scores[count].score > highestscore && count != firstnum){
-				strcpy(level.Ssecondname, Scores[count].name);
-				level.Ssecondscore = Scores[count].score;
-				highestscore = Scores[count].score;
-				secondnum = count;
-			}
-		}else{
-			if(Scores[count].score >= highestscore && !strstr(Scores[count].name, level.firstname)){
-				strcpy(level.secondname, Scores[count].name);
-				level.secondscore = Scores[count].score;
-				highestscore = Scores[count].score;
+			sqlite3_finalize(stmt);
+			if(spotsTaken < 3){ // If there are less then 3 seekers found, fill up with none-data.
+				while(spotsTaken < 3){
+					strcpy(level.top3Hiders[spotsTaken].name, "none");
+					level.top3Hiders[spotsTaken].score = 0;
+					spotsTaken++;
+				}
 			}
 		}
+		sqlite3_close(db);
 	}
-	highestscore = 0;
-	for(count=0;count<number;count++){
-		if(seekers){
-			if(Scores[count].score > highestscore && count != firstnum && count != secondnum){
-				strcpy(level.Sthirdname, Scores[count].name);
-				level.Sthirdscore = Scores[count].score;
-				highestscore = Scores[count].score;
-			}
-		}else{
-			if(Scores[count].score >= highestscore && !strstr(Scores[count].name, level.secondname) && !strstr(Scores[count].name, level.firstname)){
-				strcpy(level.thirdname, Scores[count].name);
-				level.thirdscore = Scores[count].score;
-				highestscore = Scores[count].score;
-			}
-		}
-	}
-	if(strlen(level.firstname) < 1){
-		strcpy(level.firstname, "none");
-	}
-	if(strlen(level.secondname) < 1){
-		strcpy(level.secondname, "none");
-	}
-	if(strlen(level.thirdname) < 1){
-		strcpy(level.thirdname, "none");
-	}
-	if(strlen(level.Sfirstname) < 1){
-		strcpy(level.Sfirstname, "none");
-	}
-	if(strlen(level.Ssecondname) < 1){
-		strcpy(level.Ssecondname, "none");
-	}
-	if(strlen(level.Sthirdname) < 1){
-		strcpy(level.Sthirdname, "none");
-	}
-	#ifdef _DEBUG
-	Com_Printf("Top 3 Hiders\n%s\n%s\n%s\n", level.firstname, level.secondname, level.thirdname);
-	Com_Printf("Top 3 Seekers\n%s\n%s\n%s\n", level.Sfirstname, level.Ssecondname, level.Sthirdname);
-	#endif
-	// end
-
+	
 	return 0;
 }
 
-// Boe!Man 8/7/12: Small recode of UpdateScores.
-// Only seekers should be added they way they're added now, with full scores, in the files. 
-// The winning hider should only be written to the file, do this later on (after we're done with the seekers etc., this also gives us time to sort the scores).
-// Boe!Man 9/2/12: The advanced score table is also added in this function as of now.
+/*
+================
+UpdateScores
+Recode by boe - 2/25/13 - 5:47 PM
+Update the scores in the database (H&S).
+================
+*/
 void UpdateScores(void)
 {
-	int i;
-	char mapname[64];
-	char filename[128];
-	int oldscore = 0;
-	char *SearchStr;
-	// Boe!Man 8/7/12: Hider stuff.
-	int highestScore = 0;
-	int highestHider; // level.sortedClients[i]
-	// Boe!Man 8/7/12: Stuff for the file buffer, to check if there's a duplicate.
-	int len = 0;
-	fileHandle_t f;
-	char buf[5000];
+	char			mapname[64]; // Stores the current map name (used for table name).
+	int				rc, i;
+	int				highestHider = 0, highestScore = 0;
+	sqlite3			*db;
+	qboolean		dbOkay;
+	char			clientName[MAX_NETNAME]; // Query compatible-name.
 	
-	// Boe!Man 8/7/12: Get the filename.
-	trap_Cvar_VariableStringBuffer ( "mapname", mapname, MAX_QPATH );
-	strcpy(filename, va("scores/s_%s.scores", mapname));
-	
-	// Boe!Man 8/7/12: Read file to buffer.
-	len = trap_FS_FOpenFile( filename, &f, FS_READ_TEXT);
-	
-	if (!f) { 
-		Boe_FileError(NULL, filename);
-		Henk_GetScore(qfalse);
-		Henk_GetScore(qtrue);
-		return;
+	if(!level.altPath){
+		rc = sqlite3_open_v2("./users/scores.db", &db, SQLITE_OPEN_CREATE | SQLITE_OPEN_READWRITE, NULL);
+	}else{
+		rc = sqlite3_open_v2(va("%s/users/scores.db", level.altString), &db, SQLITE_OPEN_CREATE | SQLITE_OPEN_READWRITE, NULL);
+	}
+	if(rc){
+		Com_Printf("^1Error: ^7scores database: %s\n", sqlite3_errmsg(db));
+		dbOkay = qfalse;
+	}else{
+		dbOkay = qtrue;
+		sqlite3_exec(db, "PRAGMA synchronous = OFF", NULL, NULL, NULL);
+		sqlite3_exec(db, "BEGIN TRANSACTION", NULL, NULL, NULL);
 	}
 	
-	if(len > 5000){
-		len = 5000;
+	// Boe!Man 2/25/13: Check if a table for the mapname exists yet.
+	// Start by fetching the mapname.
+	trap_Cvar_VariableStringBuffer("mapname", mapname, MAX_QPATH);
+	if(sqlite3_exec(db, va("CREATE TABLE IF NOT EXISTS %s('name' VARCHAR(36), 'team' INTEGER NOT NULL, 'score' INTEGER)", mapname), 0, 0, 0) != SQLITE_OK){
+		Com_Printf("^1Error: ^7scores database: %s\n", sqlite3_errmsg(db));
+		sqlite3_close(db);
+		dbOkay = qfalse;
 	}
-	
-	// Read to buffer.
-	memset(buf, 0, sizeof(buf));
-	trap_FS_Read(buf, len, f);
-	buf[len] = '\0';
-	trap_FS_FCloseFile(f);
 	
 	// Next loop the clients, check for scores of red + blue.
 	for ( i = 0; i < level.numConnectedClients; i ++ )
@@ -251,56 +158,55 @@ void UpdateScores(void)
 		gentity_t* ent = &g_entities[level.sortedClients[i]];
 		
 		// Boe!Man 9/2/12: This is shitty, check for the advanced H&S scores. Kinda a performance hit.
-		/* FIXME (ajay#9#): NO Q_STRLWR IN CLEANNAME WHEN SWITCHING TO SQLITE [!!!!!!!!!] */
 		// MM1 Hits.
 		if(ent->client->sess.MM1HitsTaken > level.advancedHsScores[1].score){
 			level.advancedHsScores[1].score = ent->client->sess.MM1HitsTaken;
-			strcpy(level.advancedHsScores[1].name, Q_strlwr(ent->client->pers.cleanName));
+			strcpy(level.advancedHsScores[1].name, ent->client->pers.cleanName);
 		}
 		// RPG boosts.
 		if(ent->client->sess.RPGBoosts > level.advancedHsScores[2].score){
 			level.advancedHsScores[2].score = ent->client->sess.RPGBoosts;
-			strcpy(level.advancedHsScores[2].name, Q_strlwr(ent->client->pers.cleanName));
+			strcpy(level.advancedHsScores[2].name, ent->client->pers.cleanName);
 		}
 		// Taken RPG.
 		if(ent->client->sess.takenRPG > level.advancedHsScores[3].score){
 			level.advancedHsScores[3].score = ent->client->sess.takenRPG;
-			strcpy(level.advancedHsScores[3].name, Q_strlwr(ent->client->pers.cleanName));
+			strcpy(level.advancedHsScores[3].name, ent->client->pers.cleanName);
 		}
 		// Taken M4.
 		if(ent->client->sess.takenM4 > level.advancedHsScores[4].score){
 			level.advancedHsScores[4].score = ent->client->sess.takenM4;
-			strcpy(level.advancedHsScores[4].name, Q_strlwr(ent->client->pers.cleanName));
+			strcpy(level.advancedHsScores[4].name, ent->client->pers.cleanName);
 		}
 		// Stun attacks.
 		if(ent->client->sess.stunAttacks > level.advancedHsScores[5].score){
 			level.advancedHsScores[5].score = ent->client->sess.stunAttacks;
-			strcpy(level.advancedHsScores[5].name, Q_strlwr(ent->client->pers.cleanName));
+			strcpy(level.advancedHsScores[5].name, ent->client->pers.cleanName);
 		}
 		// Seekers caged.
 		if(ent->client->sess.seekersCaged > level.advancedHsScores[6].score){
 			level.advancedHsScores[6].score = ent->client->sess.seekersCaged;
-			strcpy(level.advancedHsScores[6].name, Q_strlwr(ent->client->pers.cleanName));
+			strcpy(level.advancedHsScores[6].name, ent->client->pers.cleanName);
 		}
 		// Weapons stolen.
 		if(ent->client->sess.weaponsStolen > level.advancedHsScores[7].score){
 			level.advancedHsScores[7].score = ent->client->sess.weaponsStolen;
-			strcpy(level.advancedHsScores[7].name, Q_strlwr(ent->client->pers.cleanName));
+			strcpy(level.advancedHsScores[7].name, ent->client->pers.cleanName);
 		}
 		// Taken MM1.
 		if(ent->client->sess.takenMM1 > level.advancedHsScores[9].score){
 			level.advancedHsScores[9].score = ent->client->sess.takenMM1;
-			strcpy(level.advancedHsScores[9].name, Q_strlwr(ent->client->pers.cleanName));
+			strcpy(level.advancedHsScores[9].name, ent->client->pers.cleanName);
 		}
 		// Stunned.
 		if(ent->client->sess.stunned > level.advancedHsScores[10].score){
 			level.advancedHsScores[10].score = ent->client->sess.stunned;
-			strcpy(level.advancedHsScores[10].name, Q_strlwr(ent->client->pers.cleanName));
+			strcpy(level.advancedHsScores[10].name, ent->client->pers.cleanName);
 		}
 		// Trapped in cage.
 		if(ent->client->sess.trappedInCage > level.advancedHsScores[11].score){
 			level.advancedHsScores[11].score = ent->client->sess.trappedInCage;
-			strcpy(level.advancedHsScores[11].name, Q_strlwr(ent->client->pers.cleanName));
+			strcpy(level.advancedHsScores[11].name, ent->client->pers.cleanName);
 		}
 		
 		// Boe!Man 9/2/12: Don't continue just yet on these two, we need those advanced stats as well.
@@ -312,49 +218,62 @@ void UpdateScores(void)
 		}
 		
 		if(ent->client->sess.team == TEAM_BLUE){
-			oldscore = Boe_NameListCheck ( 0, Q_strlwr(ent->client->pers.cleanName), filename, NULL, qfalse, qfalse, qfalse, qtrue, qfalse);
-			SearchStr = va("%s:%i", Q_strlwr(ent->client->pers.cleanName), ent->client->sess.kills);
-			if(!strstr(buf, SearchStr)){ // To avoid duplicates.
-				Boe_AddToList(SearchStr, filename, "Score", NULL);
+			// Boe!Man 2/25/13: Add to table.
+			if(dbOkay && ent->client->sess.kills){ // No need to do this for a player with zero points.
+				Q_strncpyz(clientName, ent->client->pers.cleanName, sizeof(clientName));
+				Boe_convertNonSQLChars(clientName);
+				
+				if(sqlite3_exec(db, va("INSERT INTO %s VALUES('%s', %i, %i)", mapname, clientName, TEAM_BLUE, ent->client->sess.kills), 0, 0, 0) != SQLITE_OK){
+					Com_Printf("^1Error: ^7scores database: %s\n", sqlite3_errmsg(db));
+				}
 			}
 			// Boe!Man 9/2/12: Also check for the highest blue player.
 			if(ent->client->sess.kills > level.advancedHsScores[8].score){
 				level.advancedHsScores[8].score = ent->client->sess.kills;
-				strcpy(level.advancedHsScores[8].name, Q_strlwr(ent->client->pers.cleanName));
+				strcpy(level.advancedHsScores[8].name, ent->client->pers.cleanName);
 			}
 		}else{ // Red team.
 			if(ent->client->sess.kills > highestScore){
-				highestHider = i;
+				highestHider = ent->s.number;
 				highestScore = ent->client->sess.kills;
 			}
 		}
 	}
 	
-	// Boe!Man 9/2/12: For the advanced H&S scoretable, check for things that aren't achieved by no-one and fill those slots with data.
+	// Boe!Man 9/2/12: For the advanced H&S scoretable, check for things that aren't achieved by anyone and fill those slots with data.
 	for(i = 1; i < 12; i++){
 		if(!level.advancedHsScores[i].score){
 			strcpy(level.advancedHsScores[i].name, "none");
 		}
 	}
-	
+
 	// Write highest hider score.
 	if(highestScore){
-		strcpy(filename, va("scores/h_%s.scores", mapname));
+		Q_strncpyz(clientName, g_entities[highestHider].client->pers.cleanName, sizeof(clientName));
+		Boe_convertNonSQLChars(clientName);
 		
-		oldscore = Boe_NameListCheck ( 0, Q_strlwr(g_entities[level.sortedClients[highestHider]].client->pers.cleanName), filename, NULL, qfalse, qfalse, qfalse, qtrue, qfalse);
-		Boe_Remove_from_list(Q_strlwr(g_entities[level.sortedClients[highestHider]].client->pers.cleanName), filename, "Score", NULL, qfalse, qfalse, qtrue);
-		SearchStr = va("%s:%i", Q_strlwr(g_entities[level.sortedClients[highestHider]].client->pers.cleanName), oldscore+1); // Add one, instead of his score.
-		Boe_AddToList(SearchStr, filename, "Score", NULL);
+		if(dbOkay){
+			if(sqlite3_exec(db, va("INSERT INTO %s VALUES('%s', %i, ?)", mapname, clientName, TEAM_RED), 0, 0, 0) != SQLITE_OK){
+				Com_Printf("^1Error: ^7scores database: %s\n", sqlite3_errmsg(db));
+			}
+		}
+		
 		// Boe!Man 9/2/12: Also add his score to the advanced table.
-		level.advancedHsScores[0].score = g_entities[level.sortedClients[highestHider]].client->sess.kills;
-		strcpy(level.advancedHsScores[0].name, Q_strlwr(g_entities[level.sortedClients[highestHider]].client->pers.cleanName));
+		level.advancedHsScores[0].score = g_entities[highestHider].client->sess.kills;
+		strcpy(level.advancedHsScores[0].name, g_entities[highestHider].client->pers.cleanName);
 	}else{ // highestScore wasn't filled.. Seekers won this time.
 		strcpy(level.cagewinner, va("%s ^7won the round!", server_seekerteamprefix.string));
 		strcpy(level.advancedHsScores[0].name, "none");
 	}
-		
-	Henk_GetScore(qfalse);
-	Henk_GetScore(qtrue);
+	
+	// Boe!Man 12/30/12: Close the scores database.
+	if(dbOkay){
+		sqlite3_exec(db, "COMMIT TRANSACTION", NULL, NULL, NULL);
+		sqlite3_close(db);
+	}
+	
+	Henk_GetScore(qfalse); // For the hiders.
+	Henk_GetScore(qtrue);  // For the seekers.
 }
 
 // 14/01/10: Custom commands by Henk

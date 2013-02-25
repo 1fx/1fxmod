@@ -750,7 +750,7 @@ qboolean	Boe_checkAlias			(char *ip, char *name2);
 void		Boe_addAlias			(char *ip, char *name2);
 void		Boe_printAliases		(gentity_t *ent, char *ip, char *name2);
 
-int			Boe_CheckAdmin			(char *ip, char *name2);
+int			Boe_checkAdmin			(char *ip, char *name2);
 int 		Boe_checkPassAdmin		(char *ip, char *name2, char *pass);
 qboolean	Boe_checkClanMember		(char *ip, char *name2);
 

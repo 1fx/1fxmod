@@ -572,7 +572,7 @@ typedef struct {
 }muted_t;
 
 typedef struct {
-	char name[MAX_NAME_LENGTH];
+	char name[MAX_NETNAME];
 	int	 score;
 }hs_scores;
 
@@ -780,7 +780,6 @@ typedef struct
 	qboolean	timelimithit;
 
 	// Henk 15/01/10 -> RPG Effect
-	int			rpgeffect;
 	char		*effect;
 
 	// Henk 19/01/10 -> Last alive hiders
@@ -813,21 +812,6 @@ typedef struct
 	int			M4Time;
 	int			MM1Time;
 
-	// Henk 20/02/10 -> Top 3 hiders
-	char		firstname[64];
-	char		secondname[64];
-	char		thirdname[64];
-	int			firstscore;
-	int			secondscore;
-	int			thirdscore;
-	// Henk 02/03/10 -> Top 3 seekers
-	char		Sfirstname[64];
-	char		Ssecondname[64];
-	char		Sthirdname[64];
-	int			Sfirstscore;
-	int			Ssecondscore;
-	int			Sthirdscore;
-
 	// Henk 22/02/10 -> Removes seeker released lag
 	int			clicksound;
 
@@ -857,6 +841,8 @@ typedef struct
 
 	muted_t		mutedClients[21]; // Henk 28/01/11 -> Add new mute system.
 	hs_scores	advancedHsScores[12]; // Boe!Man 9/2/12: The advanced H&S score table.
+	hs_scores	top3Hiders[3];
+	hs_scores	top3Seekers[3];
 	//char		deadClients[1024]; // Henk 28/01/11 -> Add new mute system.
 	int         debugtime;
 	int			tipMsg;
