@@ -58,7 +58,7 @@ void LoadCountries(){
 		trap_Cvar_VariableStringBuffer("fs_game", fsGame, sizeof(fsGame));
 		rc = sqlite3_open_v2(va("./%s/core/country.db", fsGame), &db, SQLITE_OPEN_READONLY, NULL);
 		if(rc){
-			Com_Printf("^1Error: ^7Country database: %s\n", sqlite3_errmsg(db));
+			G_LogPrintf("^1Error: ^7Country database: %s\n", sqlite3_errmsg(db));
 			return;
 		}else{
 			alt = qtrue;
@@ -1255,7 +1255,7 @@ void HENK_COUNTRY(gentity_t *ent){
 	
 	sqlite3_bind_int64(stmt, 1, IPnum);
 	if(rc!=SQLITE_OK){
-		Com_Printf("^1Error: ^7Country database: %s\n", sqlite3_errmsg(memory));
+		G_LogPrintf("^1Error: ^7Country database: %s\n", sqlite3_errmsg(memory));
 		return;
 	}else while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
 		if(rc == SQLITE_ROW){

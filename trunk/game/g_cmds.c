@@ -3461,7 +3461,7 @@ void ClientCommand( int clientNum ) {
 		int start = trap_Milliseconds();
 		if(sqlite3_exec(db, va("INSERT INTO bans (ID, IP, name, by, reason) values (?, '%s', '%s', '%s', '%s')", ip, name, by, reason), 0, 0, 0) != SQLITE_OK){
 			Com_Printf("Query: %s\n", va("INSERT INTO bans (ID, IP, name, by, reason) values (?, '%s', '%s', '%s', '%s')", ip, name, by, reason));
-			Com_Printf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
+			G_LogPrintf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
 			return;
 		}
 		sqlite3_close(db);

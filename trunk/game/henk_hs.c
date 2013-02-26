@@ -65,7 +65,7 @@ int Henk_GetScore (qboolean seekers)
 		rc = sqlite3_open_v2(va("%s/users/scores.db", level.altString), &db, SQLITE_OPEN_READONLY, NULL);
 	}
 	if(rc){
-		Com_Printf("^1Error: ^7scores database: %s\n", sqlite3_errmsg(db));
+		G_LogPrintf("^1Error: ^7scores database: %s\n", sqlite3_errmsg(db));
 		dbOkay = qfalse;
 	}else{
 		dbOkay = qtrue;
@@ -135,7 +135,7 @@ void UpdateScores(void)
 		rc = sqlite3_open_v2(va("%s/users/scores.db", level.altString), &db, SQLITE_OPEN_CREATE | SQLITE_OPEN_READWRITE, NULL);
 	}
 	if(rc){
-		Com_Printf("^1Error: ^7scores database: %s\n", sqlite3_errmsg(db));
+		G_LogPrintf("^1Error: ^7scores database: %s\n", sqlite3_errmsg(db));
 		dbOkay = qfalse;
 	}else{
 		dbOkay = qtrue;
@@ -147,7 +147,7 @@ void UpdateScores(void)
 	// Start by fetching the mapname.
 	trap_Cvar_VariableStringBuffer("mapname", mapname, MAX_QPATH);
 	if(sqlite3_exec(db, va("CREATE TABLE IF NOT EXISTS %s('name' VARCHAR(36), 'team' INTEGER NOT NULL, 'score' INTEGER)", mapname), 0, 0, 0) != SQLITE_OK){
-		Com_Printf("^1Error: ^7scores database: %s\n", sqlite3_errmsg(db));
+		G_LogPrintf("^1Error: ^7scores database: %s\n", sqlite3_errmsg(db));
 		sqlite3_close(db);
 		dbOkay = qfalse;
 	}
@@ -224,7 +224,7 @@ void UpdateScores(void)
 				Boe_convertNonSQLChars(clientName);
 				
 				if(sqlite3_exec(db, va("INSERT INTO %s VALUES('%s', %i, %i)", mapname, clientName, TEAM_BLUE, ent->client->sess.kills), 0, 0, 0) != SQLITE_OK){
-					Com_Printf("^1Error: ^7scores database: %s\n", sqlite3_errmsg(db));
+					G_LogPrintf("^1Error: ^7scores database: %s\n", sqlite3_errmsg(db));
 				}
 			}
 			// Boe!Man 9/2/12: Also check for the highest blue player.
@@ -254,7 +254,7 @@ void UpdateScores(void)
 		
 		if(dbOkay){
 			if(sqlite3_exec(db, va("INSERT INTO %s VALUES('%s', %i, ?)", mapname, clientName, TEAM_RED), 0, 0, 0) != SQLITE_OK){
-				Com_Printf("^1Error: ^7scores database: %s\n", sqlite3_errmsg(db));
+				G_LogPrintf("^1Error: ^7scores database: %s\n", sqlite3_errmsg(db));
 			}
 		}
 		

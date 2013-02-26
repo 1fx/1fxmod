@@ -799,7 +799,7 @@ void Boe_Add_Clan_Member(int argNum, gentity_t *adm, qboolean shortCmd)
 		if(adm){
 			trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n\"", sqlite3_errmsg(db)));
 		}else{
-			Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
+			G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
 		}
 		return;
 	}
@@ -810,7 +810,7 @@ void Boe_Add_Clan_Member(int argNum, gentity_t *adm, qboolean shortCmd)
 		if(adm){
 			trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n\"", sqlite3_errmsg(db)));
 		}else{
-			Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
+			G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
 		}
 		sqlite3_close(db);
 		return;
@@ -949,7 +949,7 @@ qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean 
 		if(adm && adm->client){
 			trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n\"", sqlite3_errmsg(db)));
 		}else{
-			Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
+			G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
 		}
 		return qfalse;
 	}else{
@@ -973,7 +973,7 @@ qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean 
 			if(adm && adm->client){
 				trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n", sqlite3_errmsg(db)));
 			}else{
-				Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
+				G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
 			}
 			
 			sqlite3_finalize(stmt);
@@ -1002,7 +1002,7 @@ qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean 
 			if(adm && adm->client){
 				trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n", sqlite3_errmsg(db)));
 			}else{
-				Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
+				G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
 			}
 			
 			sqlite3_close(db);
@@ -1023,7 +1023,7 @@ qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean 
 			if(adm && adm->client){
 				trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n", sqlite3_errmsg(db)));
 			}else{
-				Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
+				G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
 			}
 			
 			sqlite3_finalize(stmt);
@@ -1057,7 +1057,7 @@ qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean 
 			if(adm && adm->client){
 				trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n", sqlite3_errmsg(db)));
 			}else{
-				Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
+				G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
 			}
 			
 			sqlite3_close(db);
@@ -1576,7 +1576,7 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 		if(adm){
 			trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7bans database: %s\n\"", sqlite3_errmsg(db)));
 		}else{
-			Com_Printf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
+			G_LogPrintf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
 		}
 		return;
 	}
@@ -1607,7 +1607,7 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 		if(adm){
 			trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7bans database: %s\n\"", sqlite3_errmsg(db)));
 		}else{
-			Com_Printf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
+			G_LogPrintf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
 		}
 		return;
 	}else while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
@@ -1805,7 +1805,7 @@ void Boe_Add_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd, int level2, 
 		if(adm){
 			trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n\"", sqlite3_errmsg(db)));
 		}else{
-			Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
+			G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
 		}
 		return;
 	}
@@ -1817,7 +1817,7 @@ void Boe_Add_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd, int level2, 
 			if(adm){
 				trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n\"", sqlite3_errmsg(db)));
 			}else{
-				Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
+				G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
 			}
 			sqlite3_close(db);
 			return;
@@ -1827,7 +1827,7 @@ void Boe_Add_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd, int level2, 
 			if(adm){
 				trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n\"", sqlite3_errmsg(db)));
 			}else{
-				Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
+				G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
 			}
 			sqlite3_close(db);
 			return;
@@ -2082,7 +2082,7 @@ void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 		if(adm){
 			trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7bans database: %s\n\"", sqlite3_errmsg(db)));
 		}else{
-			Com_Printf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
+			G_LogPrintf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
 		}
 		return;
 	}else{
@@ -2106,7 +2106,7 @@ void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 			if(adm && adm->client){
 				trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7bans database: %s\n", sqlite3_errmsg(db)));
 			}else{
-				Com_Printf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
+				G_LogPrintf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
 			}
 			
 			sqlite3_finalize(stmt);
@@ -2139,7 +2139,7 @@ void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 			if(adm && adm->client){
 				trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7bans database: %s\n", sqlite3_errmsg(db)));
 			}else{
-				Com_Printf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
+				G_LogPrintf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
 			}
 			
 			sqlite3_close(db);
@@ -2173,7 +2173,7 @@ void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 			if(adm && adm->client){
 				trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7bans database: %s\n", sqlite3_errmsg(db)));
 			}else{
-				Com_Printf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
+				G_LogPrintf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
 			}
 			
 			sqlite3_finalize(stmt);
@@ -2207,7 +2207,7 @@ void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 			if(adm && adm->client){
 				trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7bans database: %s\n", sqlite3_errmsg(db)));
 			}else{
-				Com_Printf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
+				G_LogPrintf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
 			}
 			
 			sqlite3_close(db);
@@ -2445,7 +2445,7 @@ void Boe_subnetBan (int argNum, gentity_t *adm, qboolean shortCmd)
 		if(adm){
 			trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7bans database: %s\n\"", sqlite3_errmsg(db)));
 		}else{
-			Com_Printf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
+			G_LogPrintf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
 		}
 		return;
 	}
@@ -2460,7 +2460,7 @@ void Boe_subnetBan (int argNum, gentity_t *adm, qboolean shortCmd)
 		}
 	}else{
 		if(sqlite3_exec(db, va("INSERT INTO subnetbans (IP, name, by, reason) values ('%s', '%s', '%s', '%s')", ip, clientName, "RCON", reason), 0, 0, 0) != SQLITE_OK){
-			Com_Printf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
+			G_LogPrintf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
 			sqlite3_close(db);
 			return;
 		}
@@ -2621,7 +2621,7 @@ void Boe_Ban_f (int argNum, gentity_t *adm, qboolean shortCmd)
 		if(adm){
 			trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7bans database: %s\n\"", sqlite3_errmsg(db)));
 		}else{
-			Com_Printf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
+			G_LogPrintf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
 		}
 		return;
 	}
@@ -2636,7 +2636,7 @@ void Boe_Ban_f (int argNum, gentity_t *adm, qboolean shortCmd)
 		}
 	}else{
 		if(sqlite3_exec(db, va("INSERT INTO bans (IP, name, by, reason) values ('%s', '%s', '%s', '%s')", g_entities[idnum].client->pers.ip, clientName, "RCON", reason), 0, 0, 0) != SQLITE_OK){
-			Com_Printf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
+			G_LogPrintf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
 			sqlite3_close(db);
 			return;
 		}
@@ -4150,7 +4150,7 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
 		if(adm && adm->client){
 			trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n\"", sqlite3_errmsg(db)));
 		}else{
-			Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
+			G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
 		}
 		return qfalse;
 	}else{
@@ -4178,7 +4178,7 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
 			if(adm && adm->client){
 				trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n", sqlite3_errmsg(db)));
 			}else{
-				Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
+				G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
 			}
 			
 			sqlite3_finalize(stmt);
@@ -4212,7 +4212,7 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
 			if(adm && adm->client){
 				trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n", sqlite3_errmsg(db)));
 			}else{
-				Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
+				G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
 			}
 			
 			sqlite3_close(db);
@@ -4237,7 +4237,7 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
 			if(adm && adm->client){
 				trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n", sqlite3_errmsg(db)));
 			}else{
-				Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
+				G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
 			}
 			
 			sqlite3_finalize(stmt);
@@ -4276,7 +4276,7 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
 			if(adm && adm->client){
 				trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n", sqlite3_errmsg(db)));
 			}else{
-				Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
+				G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
 			}
 			
 			sqlite3_close(db);
@@ -4363,7 +4363,7 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 		if(adm){
 			trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n\"", sqlite3_errmsg(db)));
 		}else{
-			Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
+			G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
 		}
 		return;
 	}
@@ -4430,7 +4430,7 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 		if(adm){
 			trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n\"", sqlite3_errmsg(db)));
 		}else{
-			Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
+			G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
 		}
 		return;
 	}else while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
@@ -4481,7 +4481,7 @@ void Boe_clanList(int argNum, gentity_t *adm, qboolean shortCmd){
 		if(adm){
 			trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n\"", sqlite3_errmsg(db)));
 		}else{
-			Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
+			G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
 		}
 		return;
 	}
@@ -4502,7 +4502,7 @@ void Boe_clanList(int argNum, gentity_t *adm, qboolean shortCmd){
 		if(adm){
 			trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n\"", sqlite3_errmsg(db)));
 		}else{
-			Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
+			G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
 		}
 		return;
 	}else while((rc = sqlite3_step(stmt)) != SQLITE_DONE){

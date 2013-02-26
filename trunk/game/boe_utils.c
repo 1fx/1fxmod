@@ -2643,7 +2643,7 @@ void Boe_userdataIntegrity(void)
 		}
 		
 		if(rc){
-			Com_Printf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
+			G_LogPrintf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
 		}else{
 			dbOkay = qtrue;
 		}
@@ -2654,13 +2654,13 @@ void Boe_userdataIntegrity(void)
 	if(dbOkay){
 		// The database should be opened by now, see if it needs maintenance.
 		if(sqlite3_exec(db, "CREATE TABLE IF NOT EXISTS bans(IP VARCHAR(24), name VARCHAR(36), by VARCHAR(36), reason VARCHAR(128))", 0, 0, 0) != SQLITE_OK){
-			Com_Printf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
+			G_LogPrintf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
 			sqlite3_close(db);
 			return;
 		}
 		
 		if(sqlite3_exec(db, "CREATE TABLE IF NOT EXISTS subnetbans(IP VARCHAR(8), name VARCHAR(36), by VARCHAR(36), reason VARCHAR(128))", 0, 0, 0) != SQLITE_OK){
-			Com_Printf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
+			G_LogPrintf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
 			sqlite3_close(db);
 			return;
 		}
@@ -2688,7 +2688,7 @@ void Boe_userdataIntegrity(void)
 		}
 		
 		if(rc){
-			Com_Printf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
+			G_LogPrintf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
 		}else{
 			dbOkay = qtrue;
 		}
@@ -2702,13 +2702,13 @@ void Boe_userdataIntegrity(void)
 	
 		// The database should be opened by now, see if it needs maintenance.
 		if(sqlite3_exec(db, "CREATE TABLE IF NOT EXISTS aliases_index('ID' INTEGER PRIMARY KEY NOT NULL, 'IP' varchar(24) NOT NULL)", 0, 0, 0) != SQLITE_OK){
-			Com_Printf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
+			G_LogPrintf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
 			sqlite3_close(db);
 			return;
 		}
 		
 		if(sqlite3_exec(db, "CREATE TABLE IF NOT EXISTS aliases_names('ID' INTEGER, 'name' varchar(36))", 0, 0, 0) != SQLITE_OK){
-			Com_Printf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
+			G_LogPrintf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
 			sqlite3_close(db);
 			return;
 		}
@@ -2719,13 +2719,13 @@ void Boe_userdataIntegrity(void)
 			// Boe!Man 1/2/13: Delete all data from the alias database if we hit the limit.
 			if(sqlite3_column_int(stmt, 0) > sql_aliasFlushCount.integer){
 				if(sqlite3_exec(db, "DELETE FROM aliases_index", 0, 0, 0) != SQLITE_OK){
-					Com_Printf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
+					G_LogPrintf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
 					sqlite3_finalize(stmt);
 					sqlite3_close(db);
 					return;
 				}
 				if(sqlite3_exec(db, "DELETE FROM aliases_names", 0, 0, 0) != SQLITE_OK){
-					Com_Printf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
+					G_LogPrintf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
 					sqlite3_finalize(stmt);
 					sqlite3_close(db);
 					return;
@@ -2759,7 +2759,7 @@ void Boe_userdataIntegrity(void)
 		}
 		
 		if(rc){
-			Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
+			G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
 		}else{
 			dbOkay = qtrue;
 		}
@@ -2770,19 +2770,19 @@ void Boe_userdataIntegrity(void)
 	if(dbOkay){
 		// The database should be opened by now, see if it needs maintenance.
 		if(sqlite3_exec(db, "CREATE TABLE IF NOT EXISTS admins('IP' VARCHAR(24), 'name' VARCHAR(36), 'by' VARCHAR(36), 'level' INTEGER NOT NULL)", 0, 0, 0) != SQLITE_OK){
-			Com_Printf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
+			G_LogPrintf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
 			sqlite3_close(db);
 			return;
 		}
 		
 		if(sqlite3_exec(db, "CREATE TABLE IF NOT EXISTS passadmins('octet' VARCHAR(4), 'name' VARCHAR(36), 'by' VARCHAR(36), 'level' INTEGER NOT NULL)", 0, 0, 0) != SQLITE_OK){
-			Com_Printf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
+			G_LogPrintf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
 			sqlite3_close(db);
 			return;
 		}
 		
 		if(sqlite3_exec(db, "CREATE TABLE IF NOT EXISTS clanmembers('IP' VARCHAR(24), 'name' VARCHAR(36), 'by' VARCHAR(36))", 0, 0, 0) != SQLITE_OK){
-			Com_Printf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
+			G_LogPrintf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
 			sqlite3_close(db);
 			return;
 		}
@@ -2820,7 +2820,7 @@ qboolean Boe_checkAlias(char *ip, char *name2)
 		rc = sqlite3_open_v2(va("%s/users/aliases.db", level.altString), &db, SQLITE_OPEN_READONLY, NULL);
 	}
 	if(rc){
-		Com_Printf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
+		G_LogPrintf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
 		return qtrue; // Boe!Man 12/30/12: We don't really know what to do here, just return as if the name is found, so that the code won't continue in this corrupted db.
 	}
 	
@@ -2864,7 +2864,7 @@ void Boe_addAlias(char *ip, char *name2)
 		rc = sqlite3_open_v2(va("%s/users/aliases.db", level.altString), &db, SQLITE_OPEN_READWRITE, NULL);
 	}
 	if(rc){
-		Com_Printf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
+		G_LogPrintf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
 		return; // Boe!Man 1/1/13: We don't really know what to do here, just return and don't add the guy.
 	}
 	
@@ -2875,7 +2875,7 @@ void Boe_addAlias(char *ip, char *name2)
 	if(sqlite3_step(stmt) == SQLITE_DONE){ // It wasn't found on the main table, we can safely assume this guy isn't on it.
 		sqlite3_finalize(stmt);
 		if(sqlite3_exec(db, va("INSERT INTO aliases_index (ID, IP) values (?, '%s')", ip), 0, 0, 0) != SQLITE_OK){
-			Com_Printf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
+			G_LogPrintf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
 			sqlite3_close(db);
 			return;
 		}
@@ -2897,7 +2897,7 @@ void Boe_addAlias(char *ip, char *name2)
 		acount = sqlite3_column_int(stmt, 0);
 		if(acount >= g_aliasCount.integer){ // If this number is higher then the allowed aliases, delete some.
 			if(sqlite3_exec(db, va("DELETE FROM aliases_names WHERE ID='%i' AND ROWID=(SELECT ROWID FROM aliases_names WHERE ID='%i' LIMIT 1)", indexnr, indexnr), 0, 0, 0) != SQLITE_OK){
-				Com_Printf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
+				G_LogPrintf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
 				sqlite3_finalize(stmt);
 				sqlite3_close(db);
 				return;
@@ -2908,7 +2908,7 @@ void Boe_addAlias(char *ip, char *name2)
 	
 	// Now insert new name into table.
 	if(sqlite3_exec(db, va("INSERT INTO aliases_names (ID, name) values (%i, '%s')", indexnr, name), 0, 0, 0) != SQLITE_OK){
-		Com_Printf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
+		G_LogPrintf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
 		sqlite3_close(db);
 		return;
 	}
@@ -2944,7 +2944,7 @@ void Boe_printAliases(gentity_t *ent, char *ip, char *name2)
 		rc = sqlite3_open_v2(va("%s/users/aliases.db", level.altString), &db, SQLITE_OPEN_READWRITE, NULL);
 	}
 	if(rc){
-		Com_Printf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
+		G_LogPrintf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
 		trap_SendServerCommand( ent-g_entities, va("print \"None\"")); // Boe!Man 1/3/13: On error, just state there are no aliases to display.
 		return; 
 	}
@@ -3067,7 +3067,7 @@ int Boe_checkAdmin(char *ip, char *name2)
 		rc = sqlite3_open_v2(va("%s/users/users.db", level.altString), &db, SQLITE_OPEN_READONLY, NULL);
 	}
 	if(rc){
-		Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
+		G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
 		return 0; // Boe!Man 2/12/13: We don't really know what to do here, just return as if the client is no Admin, an Admin will notice the problem soon enough.
 	}
 	
@@ -3122,7 +3122,7 @@ int Boe_checkPassAdmin(char *ip, char *name2, char *pass)
 		rc = sqlite3_open_v2(va("%s/users/users.db", level.altString), &db, SQLITE_OPEN_READONLY, NULL);
 	}
 	if(rc){
-		Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
+		G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
 		return 0; // Boe!Man 2/12/13: We don't really know what to do here, just return as if the client is no Admin, an Admin will notice the problem soon enough.
 	}
 	
@@ -3169,7 +3169,7 @@ qboolean Boe_checkClanMember(char *ip, char *name2)
 		rc = sqlite3_open_v2(va("%s/users/users.db", level.altString), &db, SQLITE_OPEN_READONLY, NULL);
 	}
 	if(rc){
-		Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
+		G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
 		return qfalse; // Boe!Man 2/12/13: We don't really know what to do here, just return as if the client is no clan member, an Admin will notice the problem soon enough.
 	}
 	
