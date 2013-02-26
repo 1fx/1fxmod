@@ -65,7 +65,7 @@ vmCvar_t	g_sadminPass;
 vmCvar_t	g_badminPassword;
 vmCvar_t	g_adminPassword;
 vmCvar_t	g_sadminPassword;
-vmCvar_t	g_adminPassFile;
+//vmCvar_t	g_adminPassFile;
 vmCvar_t	g_log;
 vmCvar_t	g_logSync;
 vmCvar_t	g_logHits;
@@ -114,7 +114,7 @@ vmCvar_t	server_motd3;					// or decides to view it using the /motd command.
 vmCvar_t	server_motd4;
 vmCvar_t	server_motd5;
 vmCvar_t	server_motd6;
-vmCvar_t	g_adminfile;					// Stores the admins in the server.
+//vmCvar_t	g_adminfile;					// Stores the admins in the server.
 vmCvar_t	g_addbadmin;					// Adds a B-Admin to the Admin file.
 vmCvar_t	g_addadmin;						// Adds an Admin to the Admin file.
 vmCvar_t	g_addsadmin;					// Adds a S-Admin to the Admin file.
@@ -175,7 +175,7 @@ vmCvar_t	g_weaponModFlags;
 vmCvar_t	g_allowthirdperson;
 vmCvar_t	g_weaponswitch;
 vmCvar_t	g_compMode;	
-vmCvar_t	g_clanfile;
+//vmCvar_t	g_clanfile;
 vmCvar_t	g_enableTeamCmds;
 vmCvar_t	g_refpassword;
 vmCvar_t	g_checkCountry;
@@ -250,7 +250,7 @@ vmCvar_t	g_forcevote;
 // Boe!Man 3/6/11
 vmCvar_t	g_customCommandsFile;
 vmCvar_t	g_tipsFile;
-vmCvar_t	g_banfile;
+//vmCvar_t	g_banfile;
 vmCvar_t	hideSeek_Extra;
 vmCvar_t	hideSeek_Nades;
 vmCvar_t	hideSeek_Weapons;
@@ -422,7 +422,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &server_motd5, "server_motd5", "", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &server_motd6, "server_motd6", "", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 
-	{ &g_adminfile,			"g_adminfile", "users/admins.txt", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
+	//{ &g_adminfile,			"g_adminfile", "users/admins.txt", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 
 	// Boe!Man 3/30/10: --- ADMIN--- Updated: 3/30/10
 	{ &g_kick,						"g_kick",				"3",				CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
@@ -468,8 +468,8 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_shuffleteams,				"g_shuffleteams",		"3",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_ff,						"g_ff",					"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 
-	{ &g_clanfile,			"g_clanfile",			"users/clanmembers.txt",	CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  },
-	{ &g_banfile,			"g_banfile",			"users/bans.txt",		CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  },
+//	{ &g_clanfile,			"g_clanfile",			"users/clanmembers.txt",	CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  },
+//	{ &g_banfile,			"g_banfile",			"users/bans.txt",		CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  },
 
 	{ &server_color1, "server_color1", "^G", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_color2, "server_color2", "^g", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
@@ -600,7 +600,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_adminPassword, "g_adminPassword", "none", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_sadminPassword, "g_sadminPassword", "none", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	
-	{ &g_adminPassFile, "g_adminPassFile", "users/passfile.txt", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
+	//{ &g_adminPassFile, "g_adminPassFile", "users/passfile.txt", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_shortCommandStyle, "g_shortCommandStyle", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 	{ &g_boxAttempts, "g_boxAttempts", "3",	CVAR_ARCHIVE,	0.0,	0.0,  0, qtrue  }, 
 	{ &g_cageAttempts, "g_cageAttempts", "3",	CVAR_ARCHIVE,	0.0,	0.0,  0, qtrue  },

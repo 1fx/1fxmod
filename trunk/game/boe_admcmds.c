@@ -1330,9 +1330,11 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 /*
 =============
 Boe_AddToList
+Rid of this since SQLite, yay!
 =============
 */
 
+/*
 int Boe_AddToList(const char *string, const char* file, const char* type, gentity_t* ent)
 {
 	int				len;
@@ -1412,13 +1414,16 @@ int Boe_AddToList(const char *string, const char* file, const char* type, gentit
 
 	return 1;
 }
+*/
 
 /*
 ====================
 Boe_Remove_from_list
+This can also go as of SQLite. :-)
 ====================
 */
 
+/*
 int Boe_Remove_from_list ( char *key, const char *file, const char* type, gentity_t *ent, qboolean unban, qboolean removeAdmin, qboolean scoreCheck)
 {
 	int				len = 0, removed = 0;
@@ -1530,6 +1535,7 @@ int Boe_Remove_from_list ( char *key, const char *file, const char* type, gentit
 	}
 	return removed;
 }
+*/
 
 /*
 =============
@@ -2244,8 +2250,10 @@ void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 /*
 ==================
 Boe_NameListCheck
+Removed by Boe: 2/26/13 - 3:22 PM
+This function is old and crappy coded etc etc. and best of all, it's obsolete after the switch to SQLite. Yipppiiieee!
 ==================
-*/
+
 
 int Boe_NameListCheck (int num, const char *name, const char *file, gentity_t *ent, qboolean banCheck, qboolean admCheck, qboolean subnetCheck, qboolean scoreCheck, qboolean cloneCheck)
 {
@@ -2368,6 +2376,7 @@ int Boe_NameListCheck (int num, const char *name, const char *file, gentity_t *e
 	}	
 	return 0;
 }
+*/
 
 /*
 =================

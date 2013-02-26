@@ -223,7 +223,8 @@ void G_ProcessIPBans(void)
 /*
 =================
 Svcmd_AddIP_f
-Updated by Boe!Man - 10/31/11
+Initial recode by Boe!Man - 10/31/11
+SQLite bacakend update by Boe!Man - 2/26/13
 
 Usage: addip <ip-subnet> <name> <reason>
 
@@ -237,8 +238,7 @@ By will always (!) be "RCON".
 void Svcmd_AddIP_f (void)
 {
 	char		arg[64];
-	char		banentry[512];
-	int			i = 0;
+	int			i = 0, rc;
 	qboolean	subnet = qfalse;
 	// General info.
 	char		ip[MAX_IP];
@@ -247,11 +247,12 @@ void Svcmd_AddIP_f (void)
 	// Locals for arg char loop.
 	int			dots = 0;
 	// Locals for arg reason loop.
-	char *temp = "";
-	
+	char 		*temp = "";
+	// Boe!Man 2/26/13: Add SQLite support.
+	sqlite3		*db;
 
 	if ( trap_Argc() < 2 ) {
-		Com_Printf("Usage:  addip <IP/Subnet> <banned IP (client) name> <reason>\n");
+		Com_Printf("Usage:  addip <IP/Subnet> <clientname> <reason>\n");
 		return;
 	}
 
@@ -321,27 +322,38 @@ void Svcmd_AddIP_f (void)
 		Q_strncpyz(reason, "N/A", sizeof(reason));
 	}
 	
-	// Boe!Man 10/31/11: Write to buffer with sprintf.
-	Com_sprintf (banentry, sizeof(banentry), "%s\\%s//%s||%s", ip, name, "RCON", reason);
+	// Boe!Man 2/26/13: Prepare database.
+	if(!level.altPath){
+		rc = sqlite3_open_v2("./users/bans.db", &db, SQLITE_OPEN_READWRITE, NULL);
+	}else{
+		rc = sqlite3_open_v2(va("%s/users/bans.db", level.altString), &db, SQLITE_OPEN_READWRITE, NULL);
+	}
+	if(rc){
+		Com_Printf("Error: bans database: %s\n", sqlite3_errmsg(db));
+		return;
+	}
 	
-	// Boe!Man 10/31/11: We're going to add it to the list now.
+	// Boe!Man 2/26/13: Be extra careful, all entries can contain malformed characters for the query. Check 'm all.
+	Boe_convertNonSQLChars(name);
+	Boe_convertNonSQLChars(ip);
+	Boe_convertNonSQLChars(reason);
+	
+	// Boe!Man 2/26/13: We're going to add it to the database now.
 	if(!subnet){ // Regular ban.
-		if(Boe_AddToList(banentry, g_banfile.string, "Ban", NULL)){
-			Com_Printf(va("Success adding [%s] to the banlist (name: %s, reason: %s).\n", ip, name, reason));
+		if(sqlite3_exec(db, va("INSERT INTO bans (IP, name, by, reason) values ('%s', '%s', 'RCON', '%s')", ip, name, reason), 0, 0, 0) != SQLITE_OK){
+			Com_Printf("Error: bans database: %s\n", sqlite3_errmsg(db));
 		}else{
-			Com_Printf(va("Couldn't open file for writing while trying to add %s.\n", ip));
+			Com_Printf(va("Success adding [%s] to the banlist (name: %s, reason: %s).\n", ip, name, reason));
 		}
 	}else{
-		if(Boe_AddToList(banentry, "users/subnetbans.txt", "Subnet ban", NULL)){
-			Com_Printf(va("Success adding [%s] to the subnetbanlist (name: %s, reason: %s).\n", ip, name, reason));
+		if(sqlite3_exec(db, va("INSERT INTO subnetbans (IP, name, by, reason) values ('%s', '%s', 'RCON', '%s')", ip, name, reason), 0, 0, 0) != SQLITE_OK){
+			Com_Printf("Error: bans database: %s\n", sqlite3_errmsg(db));
 		}else{
-			Com_Printf(va("Couldn't open file for writing while trying to add %s.\n", ip));
+			Com_Printf(va("Success adding [%s] to the subnetbanlist (name: %s, reason: %s).\n", ip, name, reason));
 		}
 	}
 	
-	return;
-//	AddIP( str );
-
+	sqlite3_close(db);
 }
 
 /*

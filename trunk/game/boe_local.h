@@ -269,7 +269,7 @@ int		Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const 
 extern	vmCvar_t	g_kick;
 //extern	admCmd_t AdminCommands[124];
 
-extern  vmCvar_t	g_adminfile;
+//extern  vmCvar_t	g_adminfile;
 extern	vmCvar_t	g_adminlog;
 extern	vmCvar_t	g_addbadmin;
 extern	vmCvar_t	g_addadmin;
@@ -277,8 +277,8 @@ extern	vmCvar_t	g_addsadmin;
 
 void	Boe_FileError (gentity_t * ent, const char *file);
 void	Boe_id (int);
-int		Boe_AddToList(const char *string, const char* file, const char* type, gentity_t* ent);
-int		Boe_Remove_from_list( char *key, const char *file, const char* type, gentity_t *ent, qboolean unban, qboolean removeAdmin, qboolean scoreCheck);
+//int		Boe_AddToList(const char *string, const char* file, const char* type, gentity_t* ent);
+//int		Boe_Remove_from_list( char *key, const char *file, const char* type, gentity_t *ent, qboolean unban, qboolean removeAdmin, qboolean scoreCheck);
 void	Boe_Unban(gentity_t *adm, char *ip, qboolean subnet);
 void	Henk_AdminRemove(int argNum, gentity_t *adm, qboolean shortCmd);
 qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passAdmin, qboolean lineNumber, qboolean silent);
@@ -384,7 +384,7 @@ extern	vmCvar_t	g_autoNoLower;
 // Boe!Man 3/6/11
 extern	vmCvar_t	g_customCommandsFile;
 extern	vmCvar_t	g_tipsFile;
-extern	vmCvar_t	g_banfile;
+//extern	vmCvar_t	g_banfile;
 extern  vmCvar_t	hideSeek_Nades;
 extern  vmCvar_t	hideSeek_Weapons;
 
@@ -488,7 +488,7 @@ extern	vmCvar_t	ClanURL;
 extern	vmCvar_t	HostedBy;
 
 // Henk 19/04/10 -> Fix all prototypes warning(Yes im bored)
-int Boe_NameListCheck (int num, const char *name, const char *file, gentity_t *ent, qboolean banCheck, qboolean admCheck, qboolean subnetCheck, qboolean scoreCheck, qboolean cloneCheck);
+//int Boe_NameListCheck (int num, const char *name, const char *file, gentity_t *ent, qboolean banCheck, qboolean admCheck, qboolean subnetCheck, qboolean scoreCheck, qboolean cloneCheck);
 void G_UpdateOutfitting ( int clientNum );
 void G_DropGametypeItems ( gentity_t* self, int delayPickup );
 int trap_RealTime( qtime_t *qtime );

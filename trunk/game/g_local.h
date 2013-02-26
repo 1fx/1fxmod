@@ -1251,7 +1251,7 @@ extern  vmCvar_t	g_sadminPass;
 extern  vmCvar_t	g_badminPassword;
 extern  vmCvar_t	g_adminPassword;
 extern  vmCvar_t	g_sadminPassword;
-extern	vmCvar_t	g_adminPassFile;
+//extern	vmCvar_t	g_adminPassFile;
 extern	vmCvar_t	g_logHits;
 
 extern	vmCvar_t	g_dmflags;
@@ -1303,7 +1303,7 @@ extern  vmCvar_t	g_weaponModFlags; // Henk 08/04/10
 extern  vmCvar_t	g_allowthirdperson;
 extern  vmCvar_t	g_weaponswitch;
 extern	vmCvar_t	g_compMode;
-extern  vmCvar_t	g_clanfile;
+//extern  vmCvar_t	g_clanfile;
 extern  vmCvar_t	g_enableTeamCmds;
 extern  vmCvar_t	g_refpassword;
 extern  vmCvar_t	g_checkCountry;
