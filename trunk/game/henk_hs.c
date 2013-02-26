@@ -233,7 +233,7 @@ void UpdateScores(void)
 				strcpy(level.advancedHsScores[8].name, ent->client->pers.cleanName);
 			}
 		}else{ // Red team.
-			if(ent->client->sess.kills > highestScore){
+			if(ent->client->sess.score > highestScore){
 				highestHider = ent->s.number;
 				highestScore = ent->client->sess.kills;
 			}
