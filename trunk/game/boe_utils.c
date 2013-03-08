@@ -2707,7 +2707,7 @@ void Boe_userdataIntegrity(void)
 			return;
 		}
 		
-		if(sqlite3_exec(db, "CREATE TABLE IF NOT EXISTS aliases_names('ID' INTEGER, 'name' varchar(36))", 0, 0, 0) != SQLITE_OK){
+		if(sqlite3_exec(db, "CREATE TABLE IF NOT EXISTS aliases_names('ID' INTEGER, 'name' varchar(36) collate nocase)", 0, 0, 0) != SQLITE_OK){
 			G_LogPrintf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
 			sqlite3_close(db);
 			return;
@@ -2769,19 +2769,19 @@ void Boe_userdataIntegrity(void)
 	
 	if(dbOkay){
 		// The database should be opened by now, see if it needs maintenance.
-		if(sqlite3_exec(db, "CREATE TABLE IF NOT EXISTS admins('IP' VARCHAR(24), 'name' VARCHAR(36), 'by' VARCHAR(36), 'level' INTEGER NOT NULL)", 0, 0, 0) != SQLITE_OK){
+		if(sqlite3_exec(db, "CREATE TABLE IF NOT EXISTS admins('IP' VARCHAR(24), 'name' VARCHAR(36) collate nocase, 'by' VARCHAR(36), 'level' INTEGER NOT NULL)", 0, 0, 0) != SQLITE_OK){
 			G_LogPrintf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
 			sqlite3_close(db);
 			return;
 		}
 		
-		if(sqlite3_exec(db, "CREATE TABLE IF NOT EXISTS passadmins('octet' VARCHAR(4), 'name' VARCHAR(36), 'by' VARCHAR(36), 'level' INTEGER NOT NULL)", 0, 0, 0) != SQLITE_OK){
+		if(sqlite3_exec(db, "CREATE TABLE IF NOT EXISTS passadmins('octet' VARCHAR(4), 'name' VARCHAR(36) collate nocase, 'by' VARCHAR(36), 'level' INTEGER NOT NULL)", 0, 0, 0) != SQLITE_OK){
 			G_LogPrintf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
 			sqlite3_close(db);
 			return;
 		}
 		
-		if(sqlite3_exec(db, "CREATE TABLE IF NOT EXISTS clanmembers('IP' VARCHAR(24), 'name' VARCHAR(36), 'by' VARCHAR(36))", 0, 0, 0) != SQLITE_OK){
+		if(sqlite3_exec(db, "CREATE TABLE IF NOT EXISTS clanmembers('IP' VARCHAR(24), 'name' VARCHAR(36) collate nocase, 'by' VARCHAR(36))", 0, 0, 0) != SQLITE_OK){
 			G_LogPrintf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
 			sqlite3_close(db);
 			return;
