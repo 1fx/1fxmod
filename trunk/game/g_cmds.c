@@ -4137,7 +4137,7 @@ qboolean ConsoleCommand( void )
 		
 		// Boe!Man 3/11/13: Cleanup...
 		Boe_removeAdminFromDb(NULL, "127.0.0.1", qfalse, qfalse, qtrue);
-		Boe_removeAdminFromDb(NULL, "h4x", qtrue, qfalse, qtrue);
+		Boe_removeAdminFromDb(NULL, "h4x0r0r", qtrue, qfalse, qtrue);
 		Boe_removeClanMemberFromDb(NULL, "41.41.41.41", qfalse, qtrue);
 		Com_Printf("\nSuccess checking users.db!\n\n");
 		
