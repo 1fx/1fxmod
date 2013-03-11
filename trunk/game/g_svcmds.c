@@ -56,6 +56,7 @@ char	*ConcatArgs( int start );
 StringToFilter
 =================
 */
+/*
 static qboolean StringToFilter (char *s, ipFilter_t *f)
 {
 	char	num[128];
@@ -97,6 +98,7 @@ static qboolean StringToFilter (char *s, ipFilter_t *f)
 
 	return qtrue;
 }
+*/
 
 /*
 =================
