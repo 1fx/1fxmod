@@ -3435,6 +3435,8 @@ void Boe_Mute (int argNum, gentity_t *adm, qboolean mute, qboolean shortCmd)
 }
 
 #ifdef _awesomeToAbuse
+// Boe!Man 3/17/13: Disabled due to this command taking a lot of entities from the server, resulting in a server crash.
+/*
 void Henk_Box (int argNum, gentity_t *adm, qboolean shortCmd)
 {
 	gentity_t	*ent;
@@ -3490,6 +3492,7 @@ void Henk_Box (int argNum, gentity_t *adm, qboolean shortCmd)
 	g_entities[test].nextthink = level.time+5000;
 	}
 }
+*/
 
 void Boe_freakOut(int argNum, gentity_t *adm, qboolean shortCmd)
 {

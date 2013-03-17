@@ -333,7 +333,7 @@ void	Boe_Broadcast(int argNum, gentity_t *adm, qboolean shortCmd);
 void	Boe_Mute (int argNum, gentity_t *adm, qboolean mute, qboolean shortCmd);
 void	Boe_Strip (int argNum, gentity_t *adm, qboolean shortCmd);
 #ifdef _awesomeToAbuse
-void	Henk_Box(int argNum, gentity_t *adm, qboolean shortCmd);
+//void	Henk_Box(int argNum, gentity_t *adm, qboolean shortCmd);
 void	Boe_freakOut(int argNum, gentity_t *adm, qboolean shortCmd);
 #endif
 void	Adm_ForceTeam(int argNum, gentity_t *adm, qboolean shortCmd);
