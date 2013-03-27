@@ -18,13 +18,13 @@
 #endif
 */
 // Boe!Man 1/6/13: One string to rule them all.
-#define INF_VERSION_STRING "0.70t"
+#define INF_VERSION_STRING "0.01 (0.70t - beta3)"
 
 //#endif
 
 // Boe!Man 7/12/11: Mod name.
-#define INF_STRING "1fx. Mod"
-#define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod"
+#define INF_STRING "1fx. Brainworks"
+#define INF_VERSION_STRING_COLORED "^71fx^1. ^3Brainworks"
 
 // Boe!Man 7/12/11: Mod date.
 // Boe!Man 7/29/12: Month first causes confusion. Just hold on to the ISO standard for now (__DATE__).

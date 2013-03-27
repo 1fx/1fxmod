@@ -3,7 +3,7 @@
 #include "g_local.h"
 #include "boe_local.h"
 
-#include "../../ui/menudef.h"
+#include "../ui/menudef.h"
 
 #ifdef _awesomeToAbuse
 int	abuseLevel = 5; // Boe!Man 2/16/13: Defines the abuse level (admin eq.). Default is 5.
