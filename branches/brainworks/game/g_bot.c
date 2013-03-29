@@ -778,10 +778,13 @@ qboolean G_BotConnect( int clientNum, qboolean restart ) {
 	settings.skill = atof( Info_ValueForKey( userinfo, "skill" ) );
 	Q_strncpyz( settings.team, Info_ValueForKey( userinfo, "team" ), sizeof(settings.team) );
 
+	// TEMP REMOVAL
+	/*
 	if (!BotAISetupClient( clientNum, &settings, restart )) {
 		trap_DropClient( clientNum, "BotAISetupClient failed" );
 		return qfalse;
 	}
+	*/
 
 	return qtrue;
 }
@@ -1220,7 +1223,10 @@ void G_InitBots( qboolean restart )
 	trap_Cvar_Register( &bot_minplayers, "bot_minplayers", "0", CVAR_SERVERINFO, 0.0, 0.0 );
 
 	//rww - new bot route stuff
+	// TEMP REMOVAL
+	/*
 	LoadPath_ThisLevel();
+	*/
 }
 
 //Ryan march 8 2004 7:24

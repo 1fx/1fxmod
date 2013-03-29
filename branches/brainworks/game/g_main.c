@@ -700,8 +700,11 @@ int vmMain( int command, int arg0, int arg1, int arg2, int arg3, int arg4, int a
 			return 0;
 		case GAME_CONSOLE_COMMAND:
 			return ConsoleCommand();
+		// TEMP REMOVAL
+		/*
 		case BOTAI_START_FRAME:
 			return BotAIStartFrame( arg0 );
+		*/
 		case GAME_SPAWN_RMG_ENTITY:
 			if (G_ParseSpawnVars(qfalse))
 			{

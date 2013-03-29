@@ -1425,6 +1425,8 @@ if(current_gametype.value == GT_HZ && attacker && targ && mod == MOD_KNIFE){
 			client->damage_fromWorld = qtrue;
 		}
 
+		// TEMP REMOVAL
+		/*
 		if (attacker && attacker->client)
 		{
 			BotDamageNotification(client, attacker);
@@ -1433,6 +1435,7 @@ if(current_gametype.value == GT_HZ && attacker && targ && mod == MOD_KNIFE){
 		{
 			BotDamageNotification(client, inflictor);
 		}
+		*/
 	}
 
 	if (targ->client)

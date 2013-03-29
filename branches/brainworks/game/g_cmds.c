@@ -3202,11 +3202,15 @@ void ClientCommand( int clientNum ) {
 	trap_Argv( 0, cmd, sizeof( cmd ) );
 
 	//rww - redirect bot commands
+	// TEMP REMOVAL
+	/*
 	if (strstr(cmd, "bot_") && AcceptBotCommand(cmd, ent))
 	{
 		return;
 	}
 	//end rww
+	*/
+	
 	if (Q_stricmp (cmd, "say") == 0) {
 		// Boe!Man 1/30/10: We need to make sure the clients aren't muted.. And otherwise prevent them talking.
 		if(IsClientMuted(ent, qtrue)){

@@ -41,7 +41,7 @@
 //#define SPECIAL_PRE_CACHE	1
 
 //#ifdef _DEBUG
-#define _SOF2_BOTS
+//#define _SOF2_BOTS
 //#endif
 #define _spMaps
 
