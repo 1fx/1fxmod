@@ -2026,18 +2026,16 @@ qboolean G_RadiusDamage (
 		}
 		if(mod == MOD_F1_GRENADE || mod == 272){ // Boe!Man 8/2/12: Fix for Altattack of tele nade not doing anything.
 			if(origin[2] <= attacker->r.currentOrigin[2]){
-				static vec3_t	mins = {-15,-15,-45};
-				static vec3_t	maxs = {15,15,46};
+				vec3_t	mins = {-10,-10,-25};
+				vec3_t	maxs = {10,10,26};
 				vec3_t			org1, org2;
 				trace_t			tr;
-				tr.fraction = 0.0f;
 				VectorCopy(origin, org1);
 				VectorCopy(origin, org2);
 				org1[2] += 50;
 				trap_Trace ( &tr, org1, mins, maxs, org2, attacker->s.number, MASK_ALL); //MASK_SOLID
-				if ( !tr.startsolid && !tr.allsolid )
-				{
-				DoTeleport(attacker, origin);
+				if ( !tr.startsolid && !tr.allsolid ){
+					DoTeleport(attacker, origin);
 				}else{
 					ammoindex=weaponData[WP_F1_GRENADE].attack[ATTACK_ALTERNATE].ammoIndex;
 					attacker->client->ps.ammo[ammoindex]+=1;
