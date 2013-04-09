@@ -516,7 +516,12 @@ trigger_teleport
 
 void trigger_teleporter_touch (gentity_t *self, gentity_t *other, trace_t *trace ) {
 	gentity_t	*dest;
-	char	*origin2;
+	gentity_t	*ent;
+	char		*origin2;
+	int 		i;
+	qboolean 	roundShouldEnd;				// Boe!Man 4/9/13: For cross the bridge.
+	char 		loc[MAX_LOCATIONS];			// Boe!Man 4/9/13: Current location per hider.
+	
 	origin2 = va("%.0f %.0f %.0f", self->r.currentOrigin[0], self->r.currentOrigin[1], self->r.currentOrigin[2]+30);
 	if ( !other->client ) {
 		return;
@@ -542,6 +547,8 @@ void trigger_teleporter_touch (gentity_t *self, gentity_t *other, trace_t *trace
 	
 		// Boe!Man 11/11/12: Timers for Cross The Bridge go here.
 		if(level.crossTheBridge){
+			roundShouldEnd = qfalse;
+				
 			if(strstr(self->target, "bridge")){
 				other->client->sess.ctbStartTime = level.time;
 			}else if(strstr(self->target, "safe")){
@@ -553,6 +560,9 @@ void trigger_teleporter_touch (gentity_t *self, gentity_t *other, trace_t *trace
 					}else{
 						trap_SendServerCommand ( other->s.number, va("print\"^3[Cross The Bridge] ^7You made it in %i seconds!\n\"", (level.time - other->client->sess.ctbStartTime) / 1000));
 					}
+					
+					// Boe!Man 4/9/13: If all the hiders crossed, the round should end as well. Setting this to qtrue triggers the check.
+					roundShouldEnd = qtrue;
 				}
 			}
 		}
@@ -568,6 +578,24 @@ void trigger_teleporter_touch (gentity_t *self, gentity_t *other, trace_t *trace
 	}
 
 	TeleportPlayer( other, dest->s.origin, dest->s.angles, qfalse );
+	
+	// Boe!Man 4/9/13: This isn't really resource friendly, but still better than waiting a pretty long while for the round to end in CTB.
+	if(level.crossTheBridge && roundShouldEnd){
+		for(i = 0; i < level.numConnectedClients; i++){
+			ent = &g_entities[level.sortedClients[i]];
+			if(ent->client->sess.team == TEAM_RED && !G_IsClientDead(ent->client)){
+				Team_GetLocationMsg(ent, loc, sizeof(loc));
+				if(!strstr(loc, "Safe")){
+					roundShouldEnd = qfalse;
+					break;
+				}
+			}
+		}
+			
+		if(roundShouldEnd){
+			trap_GT_SendEvent ( GTEV_TIME_EXPIRED, level.time, 0, 0, 0, 0, 0 ); // Hiders won.
+		}
+	}
 }
 
 
