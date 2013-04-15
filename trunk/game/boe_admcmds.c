@@ -3235,21 +3235,43 @@ void Adm_ForceTeam(int argNum, gentity_t *adm, qboolean shortCmd)
 	qboolean	pass = qfalse;
 	char		team;
 	char		merged[64];
-	char userinfo[MAX_INFO_STRING];
+	qboolean	all = qfalse; // Boe!Man 4/15/13: If this is true, forceteam all players to a specific team.
+	char		userinfo[MAX_INFO_STRING];
+	
 	// find the player
 	if(shortCmd == qtrue){
 		idnum = Boe_ClientNumFromArg(adm, 1, "forceteam <idnumber>", "forceteam", qfalse, qtrue, shortCmd);
 	}else{
-		if(adm)
+		if(adm){
 			idnum = Boe_ClientNumFromArg(adm, 2, "forceteam <idnumber>", "forceteam", qfalse, qtrue, shortCmd);
-		else
+		}else{
 			idnum = Boe_ClientNumFromArg(adm, 1, "forceteam <idnumber>", "forceteam", qfalse, qtrue, shortCmd);
+		}
 	}
-	if(idnum < 0) return;
+		
+	if(idnum < 0){
+		// Boe!Man 4/15/13: Check for "all".
+		if(shortCmd){
+			trap_Argv(1, str, sizeof(str));
+		}else{
+			if(adm && adm->client){
+				trap_Argv( 2, str, sizeof( str ) );
+			}else{
+				trap_Argv( 1, str, sizeof( str ) );
+			}
+		}
+		
+		if(strstr(Q_strlwr(str), "all")){
+			all = qtrue;
+		}else{
+			return;
+		}
+	}
 
 	// set the team
 	if(shortCmd == qtrue){
 		trap_Argv(1, str, sizeof(str));
+		
 		for(i=0;i<strlen(str);i++){
 			if(pass == qtrue && str[i] == ' '){
 				team = str[i+1];
@@ -3285,11 +3307,12 @@ void Adm_ForceTeam(int argNum, gentity_t *adm, qboolean shortCmd)
 		}
 	}else{
 		// Boe!Man 1/13/11: Fix for Forceteam not working with RCON system.
-		if(adm && adm->client)
+		if(adm && adm->client){
 			trap_Argv( 3, str, sizeof( str ) );
-		else
+		}else{
 			trap_Argv( 2, str, sizeof( str ) );
-
+		}
+		
 		if(str[0] == 's' || str[0] == 'S'){
 				strcpy(str, "spectator");
 				xteam = TEAM_SPECTATOR;
@@ -3304,31 +3327,62 @@ void Adm_ForceTeam(int argNum, gentity_t *adm, qboolean shortCmd)
 				return;
 			}
 	}
-	if(g_entities[idnum].client){
-		if(g_entities[idnum].r.svFlags & SVF_BOT){ // Henk 25/01/11 -> Reset bots to set them to another team
-			trap_GetUserinfo( idnum, userinfo, sizeof( userinfo ) );
-			Info_SetValueForKey( userinfo, "team", str );
-			trap_SetUserinfo( idnum, userinfo );
-			g_entities[idnum].client->sess.team = (team_t)xteam;
-			if(current_gametype.value != GT_HS)
-			g_entities[idnum].client->pers.identity = BG_FindTeamIdentity ( level.gametypeTeam[xteam], -1 );
-			ClientBegin( idnum, qfalse );
-		}else
-		SetTeam( &g_entities[idnum], str, NULL, qtrue );
-	}else{
-		trap_SendServerCommand(adm->s.number, va("print\"^3[Info] Error, no client on id %i.\n\"", idnum));
-		return;
-	}
-	Com_sprintf( merged, sizeof(merged), "%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName);
-	// Boe!Man 2/13/11: Proper messaging..
-	if(adm){
-		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7was %sf%so%sr%sc%se%steamed by %s", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, adm->client->pers.netname));
-		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s ^7was forceteamed by %s.\n\"", g_entities[idnum].client->pers.netname,adm->client->pers.netname));
-		Boe_adminLog (va("Forceteam to %c", team), va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), merged);
-	}else{
-		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7was %sf%so%sr%sc%se%steamed", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s ^7was forceteamed.\n\"", g_entities[idnum].client->pers.netname));
-		Boe_adminLog (va("Forceteam to %c", team), va("%s", "RCON"), merged);
+	
+	// Boe!Man 4/15/13: Check if we can forceteam all.
+	if(!all){
+		if(g_entities[idnum].client){
+			if(g_entities[idnum].r.svFlags & SVF_BOT){ // Henk 25/01/11 -> Reset bots to set them to another team
+				trap_GetUserinfo( idnum, userinfo, sizeof( userinfo ) );
+				Info_SetValueForKey( userinfo, "team", str );
+				trap_SetUserinfo( idnum, userinfo );
+				g_entities[idnum].client->sess.team = (team_t)xteam;
+				if(current_gametype.value != GT_HS)
+					g_entities[idnum].client->pers.identity = BG_FindTeamIdentity ( level.gametypeTeam[xteam], -1 );
+				ClientBegin( idnum, qfalse );
+			}else{
+				SetTeam( &g_entities[idnum], str, NULL, qtrue );
+			}
+		}else{
+			trap_SendServerCommand(adm->s.number, va("print\"^3[Info] Error, no client on id %i.\n\"", idnum));
+			return;
+		}
+		
+		Com_sprintf( merged, sizeof(merged), "%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName);
+		// Boe!Man 2/13/11: Proper messaging..
+		if(adm){
+			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7was %sf%so%sr%sc%se%steamed by %s", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, adm->client->pers.netname));
+			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s ^7was forceteamed by %s.\n\"", g_entities[idnum].client->pers.cleanName,adm->client->pers.cleanName));
+			Boe_adminLog (va("Forceteam to %c", team), va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), merged);
+		}else{
+			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7was %sf%so%sr%sc%se%steamed", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+			trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s ^7was forceteamed.\n\"", g_entities[idnum].client->pers.cleanName));
+			Boe_adminLog (va("Forceteam to %c", team), va("%s", "RCON"), merged);
+		}
+	}else{ // Boe!Man 4/15/13: Forceteam all.
+		for(i=0; i<level.numConnectedClients; i++){
+			if(g_entities[level.sortedClients[i]].r.svFlags & SVF_BOT){ // Henk 25/01/11 -> Reset bots to set them to another team
+				trap_GetUserinfo( g_entities[level.sortedClients[i]].s.number, userinfo, sizeof( userinfo ) );
+				Info_SetValueForKey( userinfo, "team", str );
+				trap_SetUserinfo( g_entities[level.sortedClients[i]].s.number, userinfo );
+				g_entities[level.sortedClients[i]].client->sess.team = (team_t)xteam;
+				if(current_gametype.value != GT_HS)
+					g_entities[level.sortedClients[i]].client->pers.identity = BG_FindTeamIdentity ( level.gametypeTeam[xteam], -1 );
+				ClientBegin( g_entities[level.sortedClients[i]].s.number, qfalse );
+			}else{
+				SetTeam( &g_entities[level.sortedClients[i]], str, NULL, qtrue );
+			}
+		}
+		
+		// Boe!Man 4/15/13: Messaging for 'all'.
+		if(adm){
+			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@Everybody was %sf%so%sr%sc%se%steamed by %s", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, adm->client->pers.netname));
+			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Everybody was forceteamed by %s.\n\"", adm->client->pers.cleanName));
+			Boe_adminLog (va("Forceteam to %c", team), va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "All");
+		}else{
+			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@Everybody was %sf%so%sr%sc%se%steamed", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+			trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Everybody was forceteamed.\n\""));
+			Boe_adminLog (va("Forceteam to %c", team), va("%s", "RCON"), "All");
+		}
 	}
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 }

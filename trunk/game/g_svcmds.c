@@ -518,12 +518,13 @@ gclient_t	*ClientForString( const char *s ) {
 }
 
 /*
+// Boe!Man 4/15/13: Removed this old function - it's not used anymore.
 ===================
 Svcmd_ForceTeam_f
 
 forceteam <player> <team>
 ===================
-*/
+
 void Svcmd_ForceTeam_f( void )
 {
 	gclient_t	*cl;
@@ -541,6 +542,7 @@ void Svcmd_ForceTeam_f( void )
 	trap_Argv( 2, str, sizeof( str ) );
 	SetTeam( &g_entities[cl - level.clients], str, NULL, qfalse );
 }
+*/
 
 /*
 ===================
