@@ -1081,3 +1081,62 @@ void SP_sun(gentity_t* ent){
 	ent->touch = trigger_ReachableObject_touch;
 	trap_LinkEntity (ent);
 }
+
+/*
+==================
+SP_accelerator
+4/15/13 - 9:41 PM
+==================
+*/
+
+void SP_accelerator_delay (gentity_t *self){
+	AddSpawnField("classname", "fx_play_effect");
+	AddSpawnField("effect", "explosions/phosphorus_trail");
+	AddSpawnField("count", "-1");
+	AddSpawnField("wait", "1");
+	AddSpawnField("origin", va("%0.f %0.f %0.f", self->r.currentOrigin[0]+(self->health*25), self->r.currentOrigin[1], self->r.currentOrigin[2]-10));
+	G_SpawnGEntityFromSpawnVars (qtrue);
+	
+	self->health++;
+	if(self->health < 5){ // Boe!Man 4/15/13: Only spawn four flares, after that, free the accelerator.
+		self->nextthink = level.time + 200;
+	}else{
+		G_FreeEntity(self);
+	}
+}
+
+void SP_accelerator(gentity_t *ent){
+	trace_t		tr;
+	vec3_t		dest;
+	vec3_t		src;
+	int			i;
+	
+	// Boe!Man 4/15/13: Determine the solid ground to spawn upon.
+	VectorSet( ent->r.mins, -ITEM_RADIUS, -ITEM_RADIUS, -ITEM_RADIUS );
+	VectorSet( ent->r.maxs, ITEM_RADIUS, ITEM_RADIUS, ITEM_RADIUS );
+	VectorSet( src, ent->s.origin[0], ent->s.origin[1], ent->s.origin[2] + 1 );
+	VectorSet( dest, ent->s.origin[0], ent->s.origin[1], ent->s.origin[2] - 4096 );
+	trap_Trace( &tr, src, ent->r.mins, ent->r.maxs, dest, ent->s.number, MASK_SOLID );
+	
+	if (tr.startsolid){
+		Com_Printf ("Accelerator: %s startsolid at %s\n", ent->classname, vtos(ent->s.origin));
+		G_FreeEntity( ent );
+		return;
+	}
+	
+	// Boe!Man 4/15/13: Spawn the initial effect.
+	AddSpawnField("classname", "fx_play_effect");
+	AddSpawnField("effect", "explosions/phosphorus_trail");
+	AddSpawnField("count", "-1");
+	AddSpawnField("wait", "1");
+	AddSpawnField("origin", va("%0.f %0.f %0.f", tr.endpos[0], tr.endpos[1], tr.endpos[2]-10));
+	G_SpawnGEntityFromSpawnVars (qtrue);
+	
+	// Boe!Man 4/15/13: Copy this origin to the "accelerator" entity, this way the additional flares can copy its origin.
+	VectorCopy(tr.endpos, ent->r.currentOrigin);
+	ent->think = SP_accelerator_delay;
+	ent->nextthink = level.time + 200;
+	ent->health = 1; // No delay option? Using health as counter for the entities spawned.
+	
+	trap_LinkEntity(ent);
+}

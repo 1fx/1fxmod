@@ -216,6 +216,7 @@ void SP_booster						(gentity_t* ent);
 void SP_teleporter					(gentity_t* ent);
 void SP_sun							(gentity_t* ent);
 void hideseek_cage					(gentity_t* ent);
+void SP_accelerator					(gentity_t* ent);
 									
 void SP_fx_play_effect				(gentity_t* ent);
 void nolower						(gentity_t* ent);
@@ -311,6 +312,7 @@ spawn_t	spawns[] =
 	{"teleporter",					SP_teleporter},
 	{"reachable_object",			SP_sun},
 	{"hideseek_cage",				hideseek_cage},
+	{"accelerator",					SP_accelerator},
 	// The following classnames are instantly removed when spawned.  The RMG 
 	// shares instances with single player which is what causes these things
 	// to attempt to spawn

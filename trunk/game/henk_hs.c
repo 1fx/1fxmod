@@ -845,6 +845,12 @@ void Preload_Effects(void)
 	G_SpawnGEntityFromSpawnVars(qtrue);
 	G_FreeEntity(&g_entities[level.tempent]);
 	
+	// Boe!Man 4/15/13: Effect for the accelerator.
+	AddSpawnField("classname", "fx_play_effect");
+	AddSpawnField("effect", "explosions/phosphorus_trail");
+	AddSpawnField("tempent", "1");
+	G_SpawnGEntityFromSpawnVars(qtrue);
+	G_FreeEntity(&g_entities[level.tempent]);
 	
 	level.MM1Flare = -1;
 	level.M4Flare = -1;
