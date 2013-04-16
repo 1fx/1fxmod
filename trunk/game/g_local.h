@@ -396,6 +396,9 @@ typedef struct
 	// Boe!Man 11/11/12: Used for determining how fast the hider crossed the bridge.
 	int			ctbStartTime;
 	
+	// Boe!Man 4/16/13: Used for accelerator, this is basically level.time + 5000 (the cooldown).
+	int			acceleratorCooldown;
+	
 } clientSession_t;
 
 // Boe!Man 3/30/10

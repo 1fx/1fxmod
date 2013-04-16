@@ -1089,19 +1089,94 @@ SP_accelerator
 ==================
 */
 
+void SP_accelerator_touch (gentity_t *self, gentity_t *other, trace_t *trace ) {
+	vec3_t origin;
+	vec3_t	dir;
+	vec3_t  fireAngs;
+	int	sound2;
+
+	if ( !other->client ) {
+		return;
+	}
+
+	if ( other->client->ps.pm_type == PM_DEAD ) {
+		return;
+	}
+
+	if (G_IsClientSpectating ( other->client ) ) 
+	{
+		return;
+	}
+
+	if(other->client->sess.lastjump >= level.time){
+		return;
+	}
+	
+	// Boe!Man 4/16/13: If he's already "accelerating", return.
+	if(other->client->sess.acceleratorCooldown){
+		return;
+	}
+
+	if(self->team){
+		if(!strstr(self->team, "all")){
+			if(other->client->sess.team == TEAM_RED && !strstr(self->team, "red") || other->client->sess.team == TEAM_BLUE && !strstr(self->team, "blue")){
+				if(level.time >= other->client->sess.lastmsg){
+					if(strstr(self->team, "red")){
+						trap_SendServerCommand ( other->s.number, va("cp\"@^7Accelerator is for %s ^7team only!", server_redteamprefix.string));
+					}else if(strstr(self->team, "blue")){
+						trap_SendServerCommand ( other->s.number, va("cp\"@^7Accelerator is for %s ^7team only!", server_blueteamprefix.string));
+					}
+					
+					other->client->sess.lastmsg = level.time + 5000;
+				}
+				return;
+			}
+		}
+	}
+
+	// Boe!Man 5/22/12: Check if 'sound' is defined in the entity.
+	if(!self->sound){
+		sound2 = G_SoundIndex("sound/movers/doors/airlock_door01/airlock_open.mp3");
+	}else{ // User defined their own sound, use that instead.
+		sound2 = G_SoundIndex( self->sound );
+	}
+	Henk_CloseSound(other->r.currentOrigin, sound2);
+	// Boe!Man 5/22/12: End.
+
+	// Boe!Man 4/16/13: Apply the knockback.
+	VectorCopy(self->s.angles, fireAngs);
+	AngleVectors( fireAngs, dir, NULL, NULL );	
+	dir[0] *= 1.0;
+	dir[1] *= 1.0;
+	dir[2] = 0.0;
+	VectorNormalize ( dir );
+	other->client->ps.velocity[2] = 20;
+	G_ApplyKnockback(other, dir, self->speed);
+	
+	// Boe!Man 4/16/13: Set the acceleratorCooldown variable, this will be handled in the clienthink_real function.
+	other->client->sess.acceleratorCooldown = level.time + 5000;
+}
+
 void SP_accelerator_delay (gentity_t *self){
 	AddSpawnField("classname", "fx_play_effect");
 	AddSpawnField("effect", "explosions/phosphorus_trail");
 	AddSpawnField("count", "-1");
 	AddSpawnField("wait", "1");
-	AddSpawnField("origin", va("%0.f %0.f %0.f", self->r.currentOrigin[0]+(self->health*25), self->r.currentOrigin[1], self->r.currentOrigin[2]-10));
+	
+	if(self->s.angles[YAW] == 0 || self->s.angles[YAW] == 360)
+		AddSpawnField("origin", va("%0.f %0.f %0.f", self->r.currentOrigin[0]+(self->health*25), self->r.currentOrigin[1], self->r.currentOrigin[2]-10));
+	else if(self->s.angles[YAW] == 90)
+		AddSpawnField("origin", va("%0.f %0.f %0.f", self->r.currentOrigin[0], self->r.currentOrigin[1]+(self->health*25), self->r.currentOrigin[2]-10));
+	else if(self->s.angles[YAW] == 180)
+		AddSpawnField("origin", va("%0.f %0.f %0.f", self->r.currentOrigin[0]-(self->health*25), self->r.currentOrigin[1], self->r.currentOrigin[2]-10));
+	else if(self->s.angles[YAW] == 270)
+		AddSpawnField("origin", va("%0.f %0.f %0.f", self->r.currentOrigin[0], self->r.currentOrigin[1]-(self->health*25), self->r.currentOrigin[2]-10));
+		
 	G_SpawnGEntityFromSpawnVars (qtrue);
 	
 	self->health++;
 	if(self->health < 5){ // Boe!Man 4/15/13: Only spawn four flares, after that, free the accelerator.
 		self->nextthink = level.time + 200;
-	}else{
-		G_FreeEntity(self);
 	}
 }
 
@@ -1137,6 +1212,20 @@ void SP_accelerator(gentity_t *ent){
 	ent->think = SP_accelerator_delay;
 	ent->nextthink = level.time + 200;
 	ent->health = 1; // No delay option? Using health as counter for the entities spawned.
+	
+	// Boe!Man 4/16/13: Copy the proper angels (only allow 90/180/270/360).
+	for(i = 0; i <= 360; i += 90){
+		if(ent->s.angles[YAW] > i-90 && ent->s.angles[YAW] <= i){
+			ent->s.angles[YAW] = i;
+		}else{
+			break;
+		}
+	}
+	
+	// Boe!Man 4/16/13: Set the other properties of the entity.
+	ent->r.contents = CONTENTS_TRIGGER;
+	ent->r.svFlags &= ~SVF_NOCLIENT;
+	ent->touch = SP_accelerator_touch;
 	
 	trap_LinkEntity(ent);
 }

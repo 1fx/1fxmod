@@ -1319,8 +1319,17 @@ void ClientThink_real( gentity_t *ent )
 		}
 		client->ps.gravity = g_gravity.value;
 	}else{
-	client->ps.gravity = g_gravity.value;
-	client->ps.speed = g_speed.value;
+		client->ps.gravity = g_gravity.value;
+		client->ps.speed = g_speed.value;
+	}
+	
+	// Boe!Man 4/16/13: The accelerator can be used in all gametypes, though they are probably used only in H&S/H&Z...
+	if(client->sess.acceleratorCooldown){
+		if(client->sess.acceleratorCooldown > level.time){
+			client->ps.speed += (g_speed.value / 5000) * (client->sess.acceleratorCooldown - level.time);
+		}else{
+			client->sess.acceleratorCooldown = 0;
+		}
 	}
 	
 	// Boe!Man 7/21/12: New FPS fix (for all gametypes). Should be light on resources.
