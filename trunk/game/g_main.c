@@ -299,6 +299,7 @@ vmCvar_t	g_ff;
 // Boe!Man 1/2/13: --- SQLite3 Related CVARs ---
 vmCvar_t	sql_aliasFlushCount;
 vmCvar_t	sql_timeBench;
+vmCvar_t	sql_backupInterval;
 
 #ifdef _DEBUG
 vmCvar_t	boe_log;
@@ -625,6 +626,7 @@ static cvarTable_t gameCvarTable[] =
 	
 	// Boe!Man 1/2/13: --- SQLite3 Related CVARs ---
 	{ &sql_aliasFlushCount,			"sql_aliasFlushCount",		"7500",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
+	{ &sql_backupInterval,			"sql_backupInterval",		"21600000",			CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse }, // Boe!Man 5/27/13: 6 hours is default (in msec).
 	#ifdef _DEBUG
 	{ &sql_timeBench,				"sql_timeBench",			"1",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	#else
@@ -1350,6 +1352,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	Boe_ParseChatSounds();
 
 	// Boe!Man 12/8/12: Check database integrity.
+	level.sqlBackupTime = sql_backupInterval.integer; // Boe!Man 5/27/13: Also set the initial backup value for the in-memory databases.
 	Boe_userdataIntegrity();
 
 	// Boe!Man 1/17/11: Check for modifications on the motd and version.
@@ -3385,7 +3388,22 @@ void G_RunFrame( int levelTime )
 				G_LogPrintf("2\n");
 		#endif
 		trap_Cvar_VariableStringBuffer ( "mapname", level.mapname, MAX_QPATH );
-		trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", level.mapname));}
+		trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", level.mapname));
+	}
+	
+	// Boe!Man 5/27/13: The automatic in-memory to disk backup. Note this only happens on servers without a mapcycle.
+	if(level.time >= level.sqlBackupTime && sql_backupInterval.integer){
+		// Boe!Man 5/27/13: Ensure the player count is 0, else re-check in the next minute.
+		if(level.numConnectedClients){
+			level.sqlBackupTime = level.time + 60000;
+		}else{
+			Boe_backupInMemoryDbs("users.db", usersDb);
+			Boe_backupInMemoryDbs("aliases.db", aliasesDb);
+			Boe_backupInMemoryDbs("bans.db", bansDb);
+			
+			level.sqlBackupTime = level.time + sql_backupInterval.integer;
+		}
+	}
 
 	// Boe!Man 11/2/10: New Map Switch/Restart system.
 	if (level.mapSwitch == qtrue /* && level.mapSwitchCount == level.time */){

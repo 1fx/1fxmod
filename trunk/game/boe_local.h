@@ -767,3 +767,4 @@ void		UnloadCountries			(void);
 // Boe!Man 1/2/13: --- SQLite3 Related CVARs ---
 extern vmCvar_t		sql_aliasFlushCount;
 extern vmCvar_t		sql_timeBench;
+extern vmCvar_t		sql_backupInterval;

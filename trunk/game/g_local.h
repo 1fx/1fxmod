@@ -856,6 +856,9 @@ typedef struct
 	char		altString[16];	// Boe!Man 12/8/12: This is the path (including fs_game), this should speed up every country call (and others) quite a bit.
 	
 	qboolean	altEnt;			// Boe!Man 1/27/13: If this is true, an alternative ent was loaded and will be loaded again when a !mr is issued.
+	
+	int			sqlBackupTime;	// Boe!Man 5/27/13: The interval for backing up the in-memory databases to disk.
+	
 } level_locals_t;
 
 //
