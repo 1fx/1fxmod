@@ -3240,14 +3240,62 @@ Unloads userdata in-memory databases to free up memory.
 
 void Boe_unloadUserdataDbs(void)
 {
+	Boe_backupInMemoryDbs("users.db", usersDb);
 	sqlite3_exec(usersDb, "DETACH DATABASE users", NULL, NULL, NULL);
 	sqlite3_close(usersDb);
 	
+	Boe_backupInMemoryDbs("aliases.db", aliasesDb);
 	sqlite3_exec(aliasesDb, "DETACH DATABASE aliases", NULL, NULL, NULL);
 	sqlite3_close(aliasesDb);
 	
+	Boe_backupInMemoryDbs("bans.db", bansDb);
 	sqlite3_exec(bansDb, "DETACH DATABASE bans", NULL, NULL, NULL);
 	sqlite3_close(bansDb);
 	
 	Com_Printf("Unloaded userdata databases.\n");
+}
+
+/*
+================
+Boe_backupInMemoryDbs
+5/27/13 - 1:46 PM
+Backs up in-memory databases to disk.
+================
+*/
+
+void Boe_backupInMemoryDbs(char *fileName, sqlite3 *db)
+{
+	sqlite3_backup	*pBackup;    // Boe!Man 5/27/13: Backup handle used to copy data.
+	sqlite3			*pFile;
+	int				rc;
+	
+	if(!level.altPath){
+		rc = sqlite3_open(va("./users/%s", fileName), &pFile);
+	}else{
+		rc = sqlite3_open(va("%s/users/%s", level.altString, fileName), &pFile);
+	}
+	
+	if(rc){
+		G_LogPrintf("Critical error backing up in-memory database %s: %s\n", fileName, sqlite3_errmsg(pFile));
+		return;
+	}
+	
+	pBackup = sqlite3_backup_init(pFile, "main", db, "main");
+	
+	do{
+		rc = sqlite3_backup_step(pBackup, 5);
+		if(rc==SQLITE_OK || rc==SQLITE_BUSY || rc==SQLITE_LOCKED){
+	  		sqlite3_sleep(50);
+		}
+	} while(rc==SQLITE_OK || rc==SQLITE_BUSY || rc==SQLITE_LOCKED);
+
+	// Boe!Man 5/27/13: Release resources allocated by backup_init().
+	sqlite3_backup_finish(pBackup);
+
+	rc = sqlite3_errcode(pFile);
+	if(rc){
+		G_LogPrintf("SQLite3 error while backing up data in %s: %s\n", fileName, sqlite3_errmsg(pFile));
+	}
+	
+	sqlite3_close(pFile);
 }

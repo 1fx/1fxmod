@@ -753,6 +753,7 @@ int 		Boe_checkPassAdmin		(char *ip, char *name2, char *pass);
 qboolean	Boe_checkClanMember		(char *ip, char *name2);
 
 void		Boe_unloadUserdataDbs	(void);
+void		Boe_backupInMemoryDbs	(char *filename, sqlite3 *db);
 
 // Boe!Man 5/27/13: In-memory database functions and declarations.
 sqlite3 	*aliasesDb;
