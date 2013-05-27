@@ -1090,7 +1090,6 @@ SP_accelerator
 */
 
 void SP_accelerator_touch (gentity_t *self, gentity_t *other, trace_t *trace ) {
-	vec3_t origin;
 	vec3_t	dir;
 	vec3_t  fireAngs;
 	int	sound2;

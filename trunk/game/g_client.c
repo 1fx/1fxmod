@@ -1593,17 +1593,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 		}
 		
 		// Boe!Man 12/16/12: Check the database for bans.
-		// Boe!Man 12/12/12: Open database.
-		if(!level.altPath){
-			rc = sqlite3_open_v2("./users/bans.db", &db, SQLITE_OPEN_READWRITE, NULL);
-		}else{
-			rc = sqlite3_open_v2(va("%s/users/bans.db", level.altString), &db, SQLITE_OPEN_READWRITE, NULL);
-		}
-		
-		if(rc){
-			G_LogPrintf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
-			return "Server Error"; // On an error, decline all. The server owner should fix this..
-		}
+		db = bansDb;
 		
 		// Boe!Man 12/16/12: Check bans first, query the database.
 		rc = sqlite3_prepare(db, va("select reason from bans where IP='%s'", ip), -1, &stmt, 0);
@@ -1616,7 +1606,6 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 				
 				// Boe!Man 2/6/13: Also close the database (and finalize) upon returning.
 				sqlite3_finalize(stmt);
-				sqlite3_close(db);
 				if(strlen(reason) > 0){
 					return va("Banned! [IP] Reason: %.40s", reason);
 				}else{
@@ -1639,7 +1628,6 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 				
 				// Boe!Man 2/6/13: Also close the database (and finalize) upon returning.
 				sqlite3_finalize(stmt);
-				sqlite3_close(db);
 				if(strlen(reason) > 0){
 					return va("Banned! [Subnet] Reason: %.35s", reason);
 				}else{
@@ -1648,9 +1636,6 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 			}
 		}
 		sqlite3_finalize(stmt);
-		
-		// Boe!Man 2/6/13: Don't forget to close the database.
-		sqlite3_close(db);
 		
 		// Boe!Man 2/8/10: Limiting the connections.
 		if ( ipCount > g_maxIPConnections.integer ) 
@@ -2398,8 +2383,6 @@ void ClientDisconnect( int clientNum )
 	gentity_t	*ent;
 	gentity_t	*tent;
 	int			i;
-	int time = 0;
-	int spectime = 0;
 
 	// cleanup if we are kicking a bot that
 	// hasn't spawned yet

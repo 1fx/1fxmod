@@ -731,9 +731,6 @@ void Preload_Effects(void);
 void Boe_Howto ( gentity_t *ent );
 
 unsigned int henk_atoi( const char *string ); // unsigned int version of atoi
-// Henk 12/10/12 -> Memory database load/unload calls.
-void LoadCountries(void);
-void UnloadCountries(void);
 
 
 // =================================
@@ -754,6 +751,15 @@ void		Boe_printAliases		(gentity_t *ent, char *ip, char *name2);
 int			Boe_checkAdmin			(char *ip, char *name2);
 int 		Boe_checkPassAdmin		(char *ip, char *name2, char *pass);
 qboolean	Boe_checkClanMember		(char *ip, char *name2);
+
+// Boe!Man 5/27/13: In-memory database functions and declarations.
+sqlite3 	*aliasesDb;
+sqlite3 	*bansDb;
+sqlite3 	*usersDb;
+char		tempName[16];
+
+void		LoadCountries			(void);
+void		UnloadCountries			(void);
 
 // Boe!Man 1/2/13: --- SQLite3 Related CVARs ---
 extern vmCvar_t		sql_aliasFlushCount;

@@ -5,7 +5,6 @@
 void ShowScores(void)
 {
 	char winner[128];
-	int i;
 
 	if(strstr(level.cagewinner, va("%s", server_seekerteamprefix.string))){ // Boe!Man 8/7/12: Meaning the seekers won, display msg.
 		Com_sprintf(winner, sizeof(winner), "%s\n\n", level.cagewinner);

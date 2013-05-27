@@ -240,7 +240,7 @@ By will always (!) be "RCON".
 void Svcmd_AddIP_f (void)
 {
 	char		arg[64];
-	int			i = 0, rc;
+	int			i = 0;
 	qboolean	subnet = qfalse;
 	// General info.
 	char		ip[MAX_IP];
@@ -325,15 +325,7 @@ void Svcmd_AddIP_f (void)
 	}
 	
 	// Boe!Man 2/26/13: Prepare database.
-	if(!level.altPath){
-		rc = sqlite3_open_v2("./users/bans.db", &db, SQLITE_OPEN_READWRITE, NULL);
-	}else{
-		rc = sqlite3_open_v2(va("%s/users/bans.db", level.altString), &db, SQLITE_OPEN_READWRITE, NULL);
-	}
-	if(rc){
-		Com_Printf("Error: bans database: %s\n", sqlite3_errmsg(db));
-		return;
-	}
+	db = bansDb;
 	
 	// Boe!Man 2/26/13: Be extra careful, all entries can contain malformed characters for the query. Check 'm all.
 	Boe_convertNonSQLChars(name);
@@ -354,8 +346,6 @@ void Svcmd_AddIP_f (void)
 			Com_Printf(va("Success adding [%s] to the subnetbanlist (name: %s, reason: %s).\n", ip, name, reason));
 		}
 	}
-	
-	sqlite3_close(db);
 }
 
 /*

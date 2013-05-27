@@ -756,7 +756,7 @@ Boe_Add_Clan_Member
 
 void Boe_Add_Clan_Member(int argNum, gentity_t *adm, qboolean shortCmd)
 {
-	int              idnum, rc;
+	int              idnum;
 	char			 clientName[MAX_NETNAME];
 	char			 admName[MAX_NETNAME];
 	sqlite3			*db;
@@ -788,36 +788,18 @@ void Boe_Add_Clan_Member(int argNum, gentity_t *adm, qboolean shortCmd)
 	}
 	
 	// Boe!Man 2/6/13: Add Clan Member to the database.
-	// Boe!Man 2/6/13: Open database.
-	if(!level.altPath){
-		rc = sqlite3_open_v2("./users/users.db", &db, SQLITE_OPEN_READWRITE, NULL);
-	}else{
-		rc = sqlite3_open_v2(va("%s/users/users.db", level.altString), &db, SQLITE_OPEN_READWRITE, NULL);
-	}
-	
-	if(rc){
-		if(adm){
-			trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n\"", sqlite3_errmsg(db)));
-		}else{
-			G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
-		}
-		return;
-	}
+	// Boe!Man 5/27/13: Open database.
+	db = usersDb;
 	
 	// Boe!Man 2/6/13: Insert query.
-	sqlite3_exec(db, "PRAGMA synchronous = OFF", NULL, NULL, NULL);
 	if(sqlite3_exec(db, va("INSERT INTO clanmembers (IP, name, by) values ('%s', '%s', '%s')", g_entities[idnum].client->pers.ip, clientName, admName), 0, 0, 0) != SQLITE_OK){
 		if(adm){
 			trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n\"", sqlite3_errmsg(db)));
 		}else{
 			G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
 		}
-		sqlite3_close(db);
 		return;
 	}
-	
-	// Boe!Man 2/6/13: Close database.
-	sqlite3_close(db);
 
 	g_entities[idnum].client->sess.clanMember = qtrue;
 	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is now a %sC%sl%sa%sn %sm%se%smber!", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color4.string, server_color5.string, server_color6.string));
@@ -938,30 +920,14 @@ qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean 
 		return qfalse;
 	}
 	
-	// Boe!Man 2/6/13: Open the database.
-	if(!level.altPath){
-		rc = sqlite3_open_v2("./users/users.db", &db, SQLITE_OPEN_READWRITE, NULL);
-	}else{
-		rc = sqlite3_open_v2(va("%s/users/users.db", level.altString), &db, SQLITE_OPEN_READWRITE, NULL);
-	}
-	
-	if(rc){
-		if(adm && adm->client){
-			trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n\"", sqlite3_errmsg(db)));
-		}else{
-			G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
-		}
-		return qfalse;
-	}else{
-		sqlite3_exec(db, "PRAGMA synchronous = OFF", NULL, NULL, NULL);
-	}
+	// Boe!Man 5/27/13: Open the database.
+	db = usersDb;
 	
 	if(lineNumber){ // Delete by line/record.
 		line = atoi(value);
 		
 		if(!line){
 			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid IP, usage: adm clanlistremove <IP/Line>.\n\""));
-			sqlite3_close(db);
 			return qfalse;
 		}
 		
@@ -977,7 +943,6 @@ qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean 
 			}
 			
 			sqlite3_finalize(stmt);
-			sqlite3_close(db);
 			return qfalse;
 		}else if((rc = sqlite3_step(stmt)) == SQLITE_DONE){
 			if(adm && adm->client){
@@ -987,7 +952,6 @@ qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean 
 			}
 			
 			sqlite3_finalize(stmt);
-			sqlite3_close(db);
 			return qfalse;
 		}else{
 			Q_strncpyz(IP, (char *)sqlite3_column_text(stmt, 0), sizeof(IP));
@@ -1005,7 +969,6 @@ qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean 
 				G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
 			}
 			
-			sqlite3_close(db);
 			return qfalse;
 		}else{
 			if(adm && adm->client){
@@ -1027,7 +990,6 @@ qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean 
 			}
 			
 			sqlite3_finalize(stmt);
-			sqlite3_close(db);
 			return qfalse;
 		}else if((rc = sqlite3_step(stmt)) == SQLITE_DONE){ // Should never happen.
 			if(adm && adm->client){
@@ -1041,7 +1003,6 @@ qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean 
 			}
 			
 			sqlite3_finalize(stmt);
-			sqlite3_close(db);
 			return qfalse;
 		}else if(!silent){ // Boe!Man 2/6/13: Also store info for the info line.
 			line = sqlite3_column_int(stmt, 0);
@@ -1060,7 +1021,6 @@ qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean 
 				G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
 			}
 			
-			sqlite3_close(db);
 			return qfalse;
 		}else if(!silent){
 			if(adm && adm->client){
@@ -1085,10 +1045,8 @@ qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean 
 		}
 	}
 	
-	// Boe!Man 2/6/13: Close the database.
 	// Boe!Man 12/20/12: Re-order the ROWIDs by issuing the VACUUM maintenance query.
 	sqlite3_exec(db, "VACUUM", NULL, NULL, NULL);
-	sqlite3_close(db);
 	
 	// Boe!Man 2/6/13: Log the clan removal.
 	if(adm && adm->client){
@@ -1550,12 +1508,6 @@ void Henk_SubnetBanList(int argNum, gentity_t *adm, qboolean shortCmd){
 	Boe_BanList(argNum, adm, shortCmd, qtrue);
 }
 
-/*
-int banlist_callback(void *p_data, int num_fields, char **p_fields, char **p_col_names) {
-  //Com_Printf("NAME OF ID 1= %s\n", p_fields[0]);
-  return 0;
-}*/
-
 void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet){
 	// Boe!Man 11/04/11: We use this in order to send as little packets as possible. Packet max size is 1024 minus some overhead, 1000 char. max should take care of this. (adm only, RCON remains unaffected).
 	char			 buf2[1000] = "\0";
@@ -1565,21 +1517,7 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 	sqlite3_stmt	*stmt;
 	int				 rc;
 	
-	// Boe!Man 12/8/12: We still use *_v2 here, since we shouldn't create it as well (should be existing data already!).
-	if(!level.altPath){
-		rc = sqlite3_open_v2("./users/bans.db", &db, SQLITE_OPEN_READONLY, NULL);
-	}else{
-		rc = sqlite3_open_v2(va("%s/users/bans.db", level.altString), &db, SQLITE_OPEN_READONLY, NULL);
-	}
-	
-	if(rc){
-		if(adm){
-			trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7bans database: %s\n\"", sqlite3_errmsg(db)));
-		}else{
-			G_LogPrintf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
-		}
-		return;
-	}
+	db = bansDb;
 
 	if(adm){
 		if(subnet){
@@ -1626,7 +1564,6 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 	}
 	
 	sqlite3_finalize(stmt);
-	sqlite3_close(db);
 	
 	// Boe!Man 11/04/11: Fix for RCON not properly showing footer of banlist.
 	if(adm){
@@ -1735,7 +1672,7 @@ Boe_Add_Admin_f
 
 void Boe_Add_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd, int level2, char *commandName)
 {
-	int              idnum, rc;
+	int              idnum;
 	char			 arg[64] = "\0";
 	char			 clientName[MAX_NETNAME];
 	char			 admName[MAX_NETNAME];
@@ -1795,23 +1732,9 @@ void Boe_Add_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd, int level2, 
 	
 	// Boe!Man 2/5/13: Add Admin to the database.
 	// Boe!Man 2/5/13: Open database.
-	if(!level.altPath){
-		rc = sqlite3_open_v2("./users/users.db", &db, SQLITE_OPEN_READWRITE, NULL);
-	}else{
-		rc = sqlite3_open_v2(va("%s/users/users.db", level.altString), &db, SQLITE_OPEN_READWRITE, NULL);
-	}
-	
-	if(rc){
-		if(adm){
-			trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n\"", sqlite3_errmsg(db)));
-		}else{
-			G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
-		}
-		return;
-	}
+	db = usersDb;
 	
 	// Boe!Man 2/5/13: Insert query.
-	sqlite3_exec(db, "PRAGMA synchronous = OFF", NULL, NULL, NULL);
 	if(!passAdmin){
 		if(sqlite3_exec(db, va("INSERT INTO admins (IP, name, by, level) values ('%s', '%s', '%s', '%i')", ip, clientName, admName, level2), 0, 0, 0) != SQLITE_OK){
 			if(adm){
@@ -1819,7 +1742,6 @@ void Boe_Add_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd, int level2, 
 			}else{
 				G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
 			}
-			sqlite3_close(db);
 			return;
 		}
 	}else{
@@ -1829,13 +1751,9 @@ void Boe_Add_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd, int level2, 
 			}else{
 				G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
 			}
-			sqlite3_close(db);
 			return;
 		}
 	}
-	
-	// Boe!Man 2/5/13: Close database.
-	sqlite3_close(db);
 
 	g_entities[idnum].client->sess.admin = level2;
 	if(level2 == 2){
@@ -2071,23 +1989,8 @@ void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 		return;
 	}
 	
-	// Boe!Man 12/17/12: Open the database.
-	if(!level.altPath){
-		rc = sqlite3_open_v2("./users/bans.db", &db, SQLITE_OPEN_READWRITE, NULL);
-	}else{
-		rc = sqlite3_open_v2(va("%s/users/bans.db", level.altString), &db, SQLITE_OPEN_READWRITE, NULL);
-	}
-	
-	if(rc){
-		if(adm){
-			trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7bans database: %s\n\"", sqlite3_errmsg(db)));
-		}else{
-			G_LogPrintf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
-		}
-		return;
-	}else{
-		sqlite3_exec(db, "PRAGMA synchronous = OFF", NULL, NULL, NULL);
-	}
+	// Boe!Man 5/27/13: Open the database.
+	db = bansDb;
 	
 	// Delete by line/record.
 	if(strlen(ip) >= 1 && !strstr(ip, ".") && !strstr(ip, "bot")){
@@ -2110,7 +2013,6 @@ void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 			}
 			
 			sqlite3_finalize(stmt);
-			sqlite3_close(db);
 			return;
 		}else if((rc = sqlite3_step(stmt)) == SQLITE_DONE){
 			if(adm && adm->client){
@@ -2120,7 +2022,6 @@ void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 			}
 			
 			sqlite3_finalize(stmt);
-			sqlite3_close(db);
 			return;
 		}else{ // Boe!Man 12/17/12: Store info for the unban line given to the Admin (to let him know it went correctly).
 			Q_strncpyz(ip2, (char *)sqlite3_column_text(stmt, 0), sizeof(ip2));
@@ -2142,7 +2043,6 @@ void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 				G_LogPrintf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
 			}
 			
-			sqlite3_close(db);
 			return;
 		}else{
 			if(adm && adm->client){
@@ -2158,7 +2058,6 @@ void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 			Com_Printf("^3[Info] ^7Invalid IP, usage: adm unban <IP/Line>.\n");
 		}
 		
-		sqlite3_close(db);
 		return;
 	}else{ // Boe!Man 12/19/12: Delete by full IP.
 		// Boe!Man 12/17/12: First check if the record exists.
@@ -2177,7 +2076,6 @@ void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 			}
 			
 			sqlite3_finalize(stmt);
-			sqlite3_close(db);
 			return;
 		}else if((rc = sqlite3_step(stmt)) == SQLITE_DONE){
 			if(adm && adm->client){
@@ -2187,7 +2085,6 @@ void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 			}
 			
 			sqlite3_finalize(stmt);
-			sqlite3_close(db);
 			return;
 		}else{ // Boe!Man 12/17/12: Store info for the unban line given to the Admin (to let him know it went correctly).
 			Q_strncpyz(ip2, (char *)sqlite3_column_text(stmt, 0), sizeof(ip2)); // ID in this case.
@@ -2210,7 +2107,6 @@ void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 				G_LogPrintf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
 			}
 			
-			sqlite3_close(db);
 			return;
 		}else{
 			if(adm && adm->client){
@@ -2223,11 +2119,9 @@ void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 		}
 	}
 			
-			
-	// Boe!Man 12/17/12: Close the database.
+	
 	// Boe!Man 12/20/12: Re-order the ROWIDs by issuing the VACUUM maintenance query.
 	sqlite3_exec(db, "VACUUM", NULL, NULL, NULL);
-	sqlite3_close(db);
 	
 	// Boe!Man 12/19/12: Log the unban.
 	if(subnet){
@@ -2386,7 +2280,7 @@ Boe_subnetBan
 */
 void Boe_subnetBan (int argNum, gentity_t *adm, qboolean shortCmd)
 {
-	int				 idnum, i, rc;
+	int				 idnum, i;
 	char			 reason[MAX_STRING_TOKENS] = "\0";
 	char			 arg[64];
 	char			 clientName[MAX_NETNAME], admName[MAX_NETNAME];
@@ -2434,40 +2328,21 @@ void Boe_subnetBan (int argNum, gentity_t *adm, qboolean shortCmd)
 		Boe_convertNonSQLChars(admName);
 	}
 	
-	// Boe!Man 12/12/12: Open database.
-	if(!level.altPath){
-		rc = sqlite3_open_v2("./users/bans.db", &db, SQLITE_OPEN_READWRITE, NULL);
-	}else{
-		rc = sqlite3_open_v2(va("%s/users/bans.db", level.altString), &db, SQLITE_OPEN_READWRITE, NULL);
-	}
-	
-	if(rc){
-		if(adm){
-			trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7bans database: %s\n\"", sqlite3_errmsg(db)));
-		}else{
-			G_LogPrintf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
-		}
-		return;
-	}
+	// Boe!Man 5/27/13: Open database.
+	db = bansDb;
 	
 	// Boe!Man 12/12/12: Insert query.
-	sqlite3_exec(db, "PRAGMA synchronous = OFF", NULL, NULL, NULL);
 	if(adm && adm->client){
 		if(sqlite3_exec(db, va("INSERT INTO subnetbans (IP, name, by, reason) values ('%s', '%s', '%s', '%s')", ip, clientName, admName, reason), 0, 0, 0) != SQLITE_OK){
 			trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7bans database: %s\n", sqlite3_errmsg(db)));
-			sqlite3_close(db);
 			return;
 		}
 	}else{
 		if(sqlite3_exec(db, va("INSERT INTO subnetbans (IP, name, by, reason) values ('%s', '%s', '%s', '%s')", ip, clientName, "RCON", reason), 0, 0, 0) != SQLITE_OK){
 			G_LogPrintf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
-			sqlite3_close(db);
 			return;
 		}
 	}
-	
-	// Boe!Man 12/12/12: Close database.
-	sqlite3_close(db);
 
 	if(adm && adm->client){
 		if(!*reason){
@@ -2560,7 +2435,7 @@ Boe_Ban_f
 
 void Boe_Ban_f (int argNum, gentity_t *adm, qboolean shortCmd)
 {
-	int				 idnum, i, rc;
+	int				 idnum, i;
 	char			 reason[MAX_STRING_TOKENS] = "\0";
 	char			 arg[64];
 	char			 clientName[MAX_NETNAME], admName[MAX_NETNAME];
@@ -2611,39 +2486,20 @@ void Boe_Ban_f (int argNum, gentity_t *adm, qboolean shortCmd)
 	}
 	
 	// Boe!Man 12/12/12: Open database.
-	if(!level.altPath){
-		rc = sqlite3_open_v2("./users/bans.db", &db, SQLITE_OPEN_READWRITE, NULL);
-	}else{
-		rc = sqlite3_open_v2(va("%s/users/bans.db", level.altString), &db, SQLITE_OPEN_READWRITE, NULL);
-	}
-	
-	if(rc){
-		if(adm){
-			trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7bans database: %s\n\"", sqlite3_errmsg(db)));
-		}else{
-			G_LogPrintf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
-		}
-		return;
-	}
+	db = bansDb;
 	
 	// Boe!Man 12/12/12: Insert query.
-	sqlite3_exec(db, "PRAGMA synchronous = OFF", NULL, NULL, NULL);
 	if(adm && adm->client){
 		if(sqlite3_exec(db, va("INSERT INTO bans (IP, name, by, reason) values ('%s', '%s', '%s', '%s')", g_entities[idnum].client->pers.ip, clientName, admName, reason), 0, 0, 0) != SQLITE_OK){
 			trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7bans database: %s\n", sqlite3_errmsg(db)));
-			sqlite3_close(db);
 			return;
 		}
 	}else{
 		if(sqlite3_exec(db, va("INSERT INTO bans (IP, name, by, reason) values ('%s', '%s', '%s', '%s')", g_entities[idnum].client->pers.ip, clientName, "RCON", reason), 0, 0, 0) != SQLITE_OK){
 			G_LogPrintf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
-			sqlite3_close(db);
 			return;
 		}
 	}
-	
-	// Boe!Man 12/12/12: Close database.
-	sqlite3_close(db);
 
 	if(adm && adm->client){
 		if(!*reason){
@@ -4196,30 +4052,14 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
 		return qfalse;
 	}
 	
-	// Boe!Man 2/6/13: Open the database.
-	if(!level.altPath){
-		rc = sqlite3_open_v2("./users/users.db", &db, SQLITE_OPEN_READWRITE, NULL);
-	}else{
-		rc = sqlite3_open_v2(va("%s/users/users.db", level.altString), &db, SQLITE_OPEN_READWRITE, NULL);
-	}
-	
-	if(rc){
-		if(adm && adm->client){
-			trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n\"", sqlite3_errmsg(db)));
-		}else{
-			G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
-		}
-		return qfalse;
-	}else{
-		sqlite3_exec(db, "PRAGMA synchronous = OFF", NULL, NULL, NULL);
-	}
+	// Boe!Man 5/27/13: Open the database.
+	db = usersDb;
 	
 	if(lineNumber){ // Delete by line/record.
 		line = atoi(value);
 		
 		if(!line){
 			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid IP, usage: adm adminremove <IP/Line>.\n\""));
-			sqlite3_close(db);
 			return qfalse;
 		}
 		
@@ -4239,7 +4079,6 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
 			}
 			
 			sqlite3_finalize(stmt);
-			sqlite3_close(db);
 			return qfalse;
 		}else if((rc = sqlite3_step(stmt)) == SQLITE_DONE){
 			if(adm && adm->client){
@@ -4249,7 +4088,6 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
 			}
 			
 			sqlite3_finalize(stmt);
-			sqlite3_close(db);
 			return qfalse;
 		}else{
 			Q_strncpyz(IP, (char *)sqlite3_column_text(stmt, 0), sizeof(IP));
@@ -4272,7 +4110,6 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
 				G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
 			}
 			
-			sqlite3_close(db);
 			return qfalse;
 		}else{
 			if(adm && adm->client){
@@ -4298,7 +4135,6 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
 			}
 			
 			sqlite3_finalize(stmt);
-			sqlite3_close(db);
 			return qfalse;
 		}else if((rc = sqlite3_step(stmt)) == SQLITE_DONE){ // Should never happen.
 			if(adm && adm->client){
@@ -4312,7 +4148,6 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
 			}
 			
 			sqlite3_finalize(stmt);
-			sqlite3_close(db);
 			return qfalse;
 		}else if(!silent){ // Boe!Man 2/6/13: Also store info for the info line.
 			line = sqlite3_column_int(stmt, 0);
@@ -4336,7 +4171,6 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
 				G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
 			}
 			
-			sqlite3_close(db);
 			return qfalse;
 		}else if(!silent){
 			if(adm && adm->client){
@@ -4362,10 +4196,8 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
 		}
 	}
 	
-	// Boe!Man 2/6/13: Close the database.
 	// Boe!Man 12/20/12: Re-order the ROWIDs by issuing the VACUUM maintenance query.
 	sqlite3_exec(db, "VACUUM", NULL, NULL, NULL);
-	sqlite3_close(db);
 	
 	// Boe!Man 2/6/13: Log the admin removal.
 	if(adm && adm->client){
@@ -4409,21 +4241,8 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 	sqlite3_stmt	*stmt;
 	int				 rc;
 	
-	// Boe!Man 12/8/12: We still use *_v2 here, since we shouldn't create it as well (should be existing data already!).
-	if(!level.altPath){
-		rc = sqlite3_open_v2("./users/users.db", &db, SQLITE_OPEN_READONLY, NULL);
-	}else{
-		rc = sqlite3_open_v2(va("%s/users/users.db", level.altString), &db, SQLITE_OPEN_READONLY, NULL);
-	}
-	
-	if(rc){
-		if(adm){
-			trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n\"", sqlite3_errmsg(db)));
-		}else{
-			G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
-		}
-		return;
-	}
+	// Boe!Man 5/27/13: Open users database.
+	db = usersDb;
 	
 	// Boe!Man 2/4/13: Check for password argument.
 	if(shortCmd){
@@ -4506,7 +4325,6 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 	}
 	
 	sqlite3_finalize(stmt);
-	sqlite3_close(db);
 	
 	// Boe!Man 11/04/11: Fix for RCON not properly showing footer of banlist.
 	if(adm){
@@ -4527,21 +4345,8 @@ void Boe_clanList(int argNum, gentity_t *adm, qboolean shortCmd){
 	sqlite3_stmt	*stmt;
 	int				 rc;
 	
-	// Boe!Man 12/8/12: We still use *_v2 here, since we shouldn't create it as well (should be existing data already!).
-	if(!level.altPath){
-		rc = sqlite3_open_v2("./users/users.db", &db, SQLITE_OPEN_READONLY, NULL);
-	}else{
-		rc = sqlite3_open_v2(va("%s/users/users.db", level.altString), &db, SQLITE_OPEN_READONLY, NULL);
-	}
-	
-	if(rc){
-		if(adm){
-			trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n\"", sqlite3_errmsg(db)));
-		}else{
-			G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
-		}
-		return;
-	}
+	// Boe!Man 5/27/13: Open database.
+	db = usersDb;
 	
 	// Boe!Man 2/4/13: Display header.
 	if(adm){
@@ -4578,7 +4383,6 @@ void Boe_clanList(int argNum, gentity_t *adm, qboolean shortCmd){
 	}
 	
 	sqlite3_finalize(stmt);
-	sqlite3_close(db);
 	
 	// Boe!Man 11/04/11: Fix for RCON not properly showing footer of banlist.
 	if(adm){

@@ -48,7 +48,9 @@ void LoadCountries(){
 	char fsGame[MAX_QPATH];
 	qboolean alt;
 	
-	start = trap_Milliseconds();
+	if(sql_timeBench.integer){
+		start = trap_Milliseconds();
+	}
 	
 	// Boe!Man 12/6/12
 	// The file can be on two locations. The DLL should always be in the fs_game folder, however, this could be misconfigured.
@@ -89,7 +91,10 @@ void LoadCountries(){
 	sqlite3_exec(memory, "COMMIT", NULL, NULL, NULL);
 
 	selectQuery = sqlite3_prepare_v2(memory, "select country,ext from countries where ? BETWEEN begin_ip AND end_ip", -1, &stmt, 0);
-	Com_Printf("Country database loaded in %d ms\n", trap_Milliseconds()-start);
+	
+	if(sql_timeBench.integer){
+		Com_Printf("Country database loaded in %d ms\n", trap_Milliseconds()-start);
+	}
 }
 
 void UnloadCountries(){
@@ -153,7 +158,6 @@ int (readFromStr)( char *src, char *format, ... )
 }
 
 void Henk_Tip(void){
-	qboolean tip = qfalse;
 	char buf[1024];
     struct test{
 		char tip[256]; // Boe!Man 6/13/11: Ease down on those massive buffers.. The QVM compiler is chocking in them. A size of 255 for a tip should be sufficient (?).
