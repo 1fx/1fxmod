@@ -3229,3 +3229,25 @@ qboolean Boe_checkClanMember(char *ip, char *name2)
 		return qtrue;
 	}
 }
+
+/*
+================
+Boe_unloadUserdataDbs
+5/27/13 - 12:55 PM
+Unloads userdata in-memory databases to free up memory.
+================
+*/
+
+void Boe_unloadUserdataDbs(void)
+{
+	sqlite3_exec(usersDb, "DETACH DATABASE users", NULL, NULL, NULL);
+	sqlite3_close(usersDb);
+	
+	sqlite3_exec(aliasesDb, "DETACH DATABASE aliases", NULL, NULL, NULL);
+	sqlite3_close(aliasesDb);
+	
+	sqlite3_exec(bansDb, "DETACH DATABASE bans", NULL, NULL, NULL);
+	sqlite3_close(bansDb);
+	
+	Com_Printf("Unloaded userdata databases.\n");
+}

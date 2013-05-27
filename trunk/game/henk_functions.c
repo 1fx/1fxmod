@@ -101,7 +101,7 @@ void UnloadCountries(){
 	sqlite3_finalize(stmt);
 	sqlite3_exec(memory, "DETACH DATABASE country", NULL, NULL, NULL);
 	sqlite3_close(memory);	
-	Com_Printf("Unloaded country database\n");
+	Com_Printf("Unloaded country database.\n");
 }
 
 void trap_LinkEntity( gentity_t *ent ) {

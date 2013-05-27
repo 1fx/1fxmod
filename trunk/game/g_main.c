@@ -1482,6 +1482,9 @@ void G_ShutdownGame( int restart )
 
 	//Henk 12/10/12 -> Detach and close memory database
 	UnloadCountries();
+	
+	// Boe!Man 5/27/13: Also detach and close userdata databases.
+	Boe_unloadUserdataDbs();
 
 	// write all the client session data so we can get it back
 	G_WriteSessionData();
