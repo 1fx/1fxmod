@@ -53,7 +53,7 @@
 #define INF_VERSION_DATE __DATE__
 
 // Boe!Man 7/12/11: Motd header parts.
-#define TEST_VERSION "Developed by ^GBoe!Man ^7& ^6Henkie\n^1Running a Test version of the Mod\n\n"
+#define TEST_VERSION "Developed by ^GBoe!Man ^7& ^6Henkie\n^1Beta/Test Release of 1fx. Mod\n\n"
 #define STABLE_VERSION "Developed by ^GBoe!Man ^7& ^6Henkie\n1fx.uk.to ^3| ^7i3D.net\n\n"
 
 // 1fx. Mod

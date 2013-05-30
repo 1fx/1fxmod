@@ -161,10 +161,11 @@ void Boe_Motd (gentity_t *ent)
 	//char	*header2 = va("Developed by ^GBoe!Man ^7& ^6Henkie\nv1servers.com ^3| ^71fx.ipbfree.com\n\n");
 	char *header2;
 
-	if(strstr(INF_VERSION_STRING, "t"))
+#ifdef _DEBUG
 		header2 = va("%s", TEST_VERSION);
-	else
+#else
 		header2 = va("%s", STABLE_VERSION);
+#endif
 
 	strcpy(name, ent->client->pers.netname);
 
