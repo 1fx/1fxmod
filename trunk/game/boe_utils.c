@@ -2637,7 +2637,7 @@ int process_dml_row2(void *pData, int nColumns,
         stmt = sqlite3_mprintf("insert into main.%q "
                 "select * from %s.%q", values[0], tempName, values[0]);
         sqlite3_exec(db, stmt, NULL, NULL, NULL);
-        sqlite3_free(stmt);     
+        sqlite3_free(stmt);
 
         return 0;
 }
@@ -2807,7 +2807,7 @@ void Boe_userdataIntegrity(void)
 			}
 		}
 		sqlite3_finalize(stmt);
-		sqlite3_exec(db, "COMMIT TRANSACTION", NULL, NULL, NULL);
+		sqlite3_exec(db, "COMMIT", NULL, NULL, NULL);
 		
 		// Boe!Man 5/27/13: No errors, load the database into memory.
 		sqlite3_open(":memory:", &aliasesDb);
@@ -2829,7 +2829,7 @@ void Boe_userdataIntegrity(void)
 		
 		// Boe!Man 5/17/13: Copy the data from the backup to the in-memory database.
 		sqlite3_exec(aliasesDb, "BEGIN", NULL, NULL, NULL);
-		sqlite3_exec(aliasesDb, "SELECT ID FROM aliases.sqlite_master WHERE type='table'", &process_dml_row2, aliasesDb, NULL);
+		sqlite3_exec(aliasesDb, "SELECT name FROM aliases.sqlite_master WHERE type='table'", &process_dml_row2, aliasesDb, NULL);
 		sqlite3_exec(aliasesDb, "COMMIT", NULL, NULL, NULL);
 	}
 	
@@ -3009,7 +3009,7 @@ void Boe_addAlias(char *ip, char *name2)
 		return;
 	}
 
-	sqlite3_exec(db, "COMMIT TRANSACTION", NULL, NULL, NULL);
+	sqlite3_exec(db, "COMMIT", NULL, NULL, NULL);
 	return;
 }
 

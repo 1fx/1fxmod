@@ -267,7 +267,7 @@ void UpdateScores(void)
 	
 	// Boe!Man 12/30/12: Close the scores database.
 	if(dbOkay){
-		sqlite3_exec(db, "COMMIT TRANSACTION", NULL, NULL, NULL);
+		sqlite3_exec(db, "COMMIT", NULL, NULL, NULL);
 		sqlite3_close(db);
 	}
 	
