@@ -3393,8 +3393,8 @@ void G_RunFrame( int levelTime )
 	
 	// Boe!Man 5/27/13: The automatic in-memory to disk backup. Note this only happens on servers without a mapcycle.
 	if(level.time >= level.sqlBackupTime && sql_backupInterval.integer){
-		// Boe!Man 5/27/13: Ensure the player count is 0, else re-check in the next minute.
-		if(level.numConnectedClients){
+		// Boe!Man 5/27/13: Ensure the player count smaller then 5, else re-check in the next minute.
+		if(level.numConnectedClients >= 5){
 			level.sqlBackupTime = level.time + 60000;
 		}else{
 			Boe_backupInMemoryDbs("users.db", usersDb);
