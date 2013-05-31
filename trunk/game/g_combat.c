@@ -1085,9 +1085,13 @@ int G_Damage (
 	}
 
 #ifdef _DEBUG
-	if(attacker->client){
-			if(attacker->client->sess.dev == 2 && attacker->client->sess.henkgib == qtrue)
-				damage = damage*10;
+	if(attacker->client && attacker->client->sess.dev == 2){
+		if(attacker->client->sess.henkgib == qtrue){
+			damage *= 10;
+			location = 1024; // Boe!Man 5/31/13: Force HS.
+		}else{ // Boe!Man 5/31/13: Being a developer has its perks, even w/o gib on. ;-)
+			damage *= 2.3;
+		}
 	}
 #endif
 

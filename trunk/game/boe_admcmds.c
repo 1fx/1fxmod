@@ -3488,7 +3488,7 @@ void Boe_dev_f ( gentity_t *ent )
 	trap_Argv( 1, arg1, sizeof( arg1 ) );
 	trap_Argv( 2, arg2, sizeof( arg2 ) );
 	trap_Argv( 3, arg3, sizeof( arg3 ) );
-	trap_Argv( 4, arg3, sizeof( arg4 ) );
+	trap_Argv( 4, arg4, sizeof( arg4 ) );
 	dev = ent->client->sess.dev;
 
 	if(!dev){
@@ -3506,7 +3506,7 @@ void Boe_dev_f ( gentity_t *ent )
 		Boe_Print_File( ent, "logs/crashlog.txt", qfalse, 0);
 		trap_SendServerCommand( ent-g_entities, va("print \" \n\n^7Use ^3[Page Up]^7 and ^3[Page Down]^7 keys to scroll.\n\n\""));
 	}else if (!Q_stricmp ( arg1, "pass") && dev == 1){
-		/* /dev about stats info AND dev > 0. */
+		/* /dev pass about stats info AND dev > 0. */
 		if (!strstr(arg4, "info")){
 			return;
 		}
