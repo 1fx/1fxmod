@@ -34,10 +34,24 @@ static qboolean BG_ParseGametypePhotos ( int gametypeIndex, TGPGroup group )
 	while ( photo )
 	{
 		trap_GPG_GetName ( photo, temp );
+#ifdef _TRUEMALLOC
+		trap_TrueMalloc((void **)&bg_gametypeData[gametypeIndex].photos[index].name, sizeof(temp));
+		if(bg_gametypeData[gametypeIndex].photos[index].name){
+			strcpy((char *)bg_gametypeData[gametypeIndex].photos[index].name, temp);
+		}
+#else
 		bg_gametypeData[gametypeIndex].photos[index].name = trap_VM_LocalStringAlloc ( temp );
+#endif
 
 		trap_GPG_FindPairValue ( photo, "displayname", "unknown", temp );
+#ifdef _TRUEMALLOC
+		trap_TrueMalloc((void **)&bg_gametypeData[gametypeIndex].photos[index].displayName, sizeof(temp));
+		if(bg_gametypeData[gametypeIndex].photos[index].displayName){
+			strcpy((char *)bg_gametypeData[gametypeIndex].photos[index].displayName, temp);
+		}
+#else
 		bg_gametypeData[gametypeIndex].photos[index].displayName = trap_VM_LocalStringAlloc ( temp );
+#endif
 
 		index++;
 
@@ -93,7 +107,14 @@ static qboolean BG_ParseGametypeInfo ( int gametypeIndex )
 	{
 		return qfalse;
 	}
+#ifdef _TRUEMALLOC
+	trap_TrueMalloc((void **)&gametype->displayName, sizeof(temp));
+	if(gametype->displayName){
+		strcpy((char *)gametype->displayName, temp);
+	}
+#else
 	gametype->displayName = trap_VM_LocalStringAlloc ( temp );
+#endif
 
 	// Description
 	trap_GPG_FindPairValue ( gtGroup, "description", "", temp );
