@@ -1544,11 +1544,17 @@ void	trap_SnapVector( float *v );
 
 int			trap_CM_RegisterTerrain(const char *config);
 
+// Boe!Man 6/3/13: Dyanmic vm memory allocation.
+#ifdef _TRUEMALLOC
+void		trap_TrueMalloc(void **ptr, int size);
+void		trap_TrueFree(void **ptr);
+#else
 void		*trap_VM_LocalAlloc ( int size );
 void		*trap_VM_LocalAllocUnaligned ( int size );			// WARNING!!!! USE WITH CAUTION!!! BEWARE OF DOG!!!
 void		*trap_VM_LocalTempAlloc( int size );
 void		trap_VM_LocalTempFree( int size );					// free must be in opposite order of allocation!
 const char	*trap_VM_LocalStringAlloc ( const char *source );
+#endif
 
 // Gametype traps
 void		trap_GT_Init		();

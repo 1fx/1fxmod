@@ -1079,6 +1079,18 @@ void trap_GetWorldBounds ( vec3_t mins, vec3_t maxs )
 	syscall ( G_GET_WORLD_BOUNDS, mins, maxs );
 }
 
+// Boe!Man 6/3/13: Dyanmic vm memory allocation.
+#ifdef _TRUEMALLOC
+void trap_TrueMalloc(void **ptr, int size)
+{
+	syscall(G_TRUEMALLOC, ptr, size);
+}
+
+void trap_TrueFree(void **ptr)
+{
+	syscall(G_TRUEFREE, ptr);
+}
+#else
 void *trap_VM_LocalAlloc ( int size )
 {
 	return (void *)syscall ( G_VM_LOCALALLOC, size );
@@ -1103,6 +1115,7 @@ const char *trap_VM_LocalStringAlloc ( const char *source )
 {
 	return (const char *)syscall ( G_VM_LOCALSTRINGALLOC, source );
 }
+#endif
 
 void trap_GT_Init ( )
 {
