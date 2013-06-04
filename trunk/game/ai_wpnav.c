@@ -285,7 +285,7 @@ checkprint:
 		gLastPrintedIndex = bestindex;
 		Com_Printf(S_COLOR_YELLOW "Waypoint %i\nFlags - %i (%s)\nOrigin - (%i %i %i)\n", (int)(gWPArray[bestindex]->index), (int)(gWPArray[bestindex]->flags), flagstr, (int)(gWPArray[bestindex]->origin[0]), (int)(gWPArray[bestindex]->origin[1]), (int)(gWPArray[bestindex]->origin[2]));
 #ifdef _TRUEMALLOC
-		trap_TrueFree(flagstr);
+		trap_TrueFree((void **)flagstr);
 #else
 		trap_VM_LocalTempFree(MAX_FLAGSTR_SIZE);
 #endif
@@ -1560,7 +1560,7 @@ int LoadPathData(const char *filename)
 	len = trap_FS_FOpenFile(routePath, &f, FS_READ);
 
 #ifdef _TRUEMALLOC
-	trap_TrueFree(routePath);
+	trap_TrueFree((void **)routePath);
 #else
 	B_TempFree(1024); //routePath
 #endif
@@ -1745,8 +1745,8 @@ int LoadPathData(const char *filename)
 	}
 
 #ifdef _TRUEMALLOC
-	trap_TrueFree(fileString);
-	trap_TrueFree(currentVar);
+	trap_TrueFree((void **)fileString);
+	trap_TrueFree((void **)currentVar);
 #else
 	B_TempFree(524288); //fileString
 	B_TempFree(2048); //currentVar
@@ -1910,7 +1910,7 @@ int SavePathData(const char *filename)
 	trap_FS_FOpenFile(routePath, &f, FS_WRITE);
 
 #ifdef _TRUEMALLOC
-	trap_TrueFree(routePath);
+	trap_TrueFree((void **)routePath);
 #else
 	B_TempFree(1024); //routePath
 #endif
@@ -2009,8 +2009,8 @@ int SavePathData(const char *filename)
 	trap_FS_Write(fileString, strlen(fileString), f);
 
 #ifdef _TRUEMALLOC
-	trap_TrueFree(fileString);
-	trap_TrueFree(storeString);
+	trap_TrueFree((void **)fileString);
+	trap_TrueFree((void **)storeString);
 #else
 	B_TempFree(524288); //fileString
 	B_TempFree(4096); //storeString

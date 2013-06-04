@@ -734,7 +734,14 @@ qboolean G_ParseGametypeItems ( TGPGroup* itemsGroup )
 		if ( !item )
 		{
 			item = &bg_itemlist[ MODELINDEX_GAMETYPE_ITEM + itemCount ];
+#ifdef _TRUEMALLOC
+			trap_TrueMalloc((void **)&item->pickup_name, sizeof(temp));
+			if(item->pickup_name){
+				strcpy((char *)item->pickup_name, temp);
+			}
+#else
 			item->pickup_name = (char *)trap_VM_LocalStringAlloc ( temp );
+#endif
 			itemCount++;
 		}
 

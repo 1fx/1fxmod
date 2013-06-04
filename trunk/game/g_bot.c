@@ -88,9 +88,17 @@ int G_ParseInfos( const char *buf, int max, char *infos[] ) {
 			}
 		}
 		//NOTE: extra space for arena number
+#ifdef _TRUEMALLOC
+		trap_TrueMalloc((void **)&infos[count], strlen(info) + strlen("\\num\\") + strlen(va("%d", MAX_ARENAS)) + 1);
+#else
 		infos[count] = (char *)trap_VM_LocalAlloc(strlen(info) + strlen("\\num\\") + strlen(va("%d", MAX_ARENAS)) + 1);
+#endif
 		if (infos[count]) {
+#if _TRUEMALLOC
+			strcpy((char *)infos[count], info);
+#else
 			strcpy(infos[count], info);
+#endif
 			count++;
 		}
 	}

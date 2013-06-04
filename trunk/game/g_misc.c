@@ -548,14 +548,28 @@ void SP_terrain(gentity_t *ent)
 			trap_GetConfigstring ( CS_GAMETYPE_REDTEAM, temp, MAX_QPATH );
 			if ( Q_stricmp ( temp, level.gametypeTeam[TEAM_RED] ) )
 			{
+#ifdef _TRUEMALLOC
+				trap_TrueMalloc((void **)&level.gametypeTeam[TEAM_RED], sizeof(temp));
+				if(level.gametypeTeam[TEAM_RED]){
+					strcpy((char *)level.gametypeTeam[TEAM_RED], temp);
+				}
+#else
 				level.gametypeTeam[TEAM_RED] = trap_VM_LocalStringAlloc ( temp );
+#endif
 			}
 
 			// Blue team change from RMG ?
 			trap_GetConfigstring ( CS_GAMETYPE_BLUETEAM, temp, MAX_QPATH );
 			if ( Q_stricmp ( temp, level.gametypeTeam[TEAM_BLUE] ) )
 			{
+#ifdef _TRUEMALLOC
+				trap_TrueMalloc((void **)&level.gametypeTeam[TEAM_BLUE], sizeof(temp));
+				if(level.gametypeTeam[TEAM_BLUE]){
+					strcpy((char *)level.gametypeTeam[TEAM_BLUE], temp);
+				}
+#else
 				level.gametypeTeam[TEAM_BLUE] = trap_VM_LocalStringAlloc ( temp );
+#endif
 			}
 		}
 	}

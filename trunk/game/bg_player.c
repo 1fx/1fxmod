@@ -187,15 +187,33 @@ TInventoryTemplate *BG_ParseInventory ( TGPGroup group )
 		// If the group name isnt item then 'Item' then its not an inventory item
 		if ( Q_stricmp ( temp, "Item") == 0)
 		{
+#ifdef _TRUEMALLOC
+			trap_TrueMalloc((void **)&inv, sizeof(*inv));
+#else
 			inv = (TInventoryTemplate *)trap_VM_LocalAlloc ( sizeof(*inv));
+#endif
 
 			// Name of the item
 			trap_GPG_FindPairValue ( subGroup, "Name||Name1", "", temp );
+#ifdef _TRUEMALLOC
+			trap_TrueMalloc((void **)&inv->mName, sizeof(temp));
+			if(inv->mName){
+				strcpy((char *)inv->mName, temp);
+			}
+#else
 			inv->mName = trap_VM_LocalStringAlloc ( temp );
+#endif
 
 			// Bolt for the item
 			trap_GPG_FindPairValue ( subGroup, "Bolt", "", temp );
+#ifdef _TRUEMALLOC
+			trap_TrueMalloc((void **)&inv->mBolt, sizeof(temp));
+			if(inv->mBolt){
+				strcpy((char *)inv->mBolt, temp);
+			}
+#else
 			inv->mBolt = trap_VM_LocalStringAlloc ( temp );
+#endif
 
 			trap_GPG_FindPairValue ( subGroup, "mp_onback||onback", "no", temp );
 			if ( !Q_stricmp ( temp, "yes" ) )
@@ -240,9 +258,16 @@ TSkinTemplate *BG_ParseSkins( TCharacterTemplate* character, TGPGroup group )
 	trap_GPG_FindPairValue ( group, "SkinFile", "", temp );
 	if ( temp[0] )
 	{
+#ifdef _TRUEMALLOC
+		trap_TrueMalloc((void **)&skin, sizeof(*skin));
+		trap_TrueMalloc((void **)&skin->mSkin, sizeof(temp));
+		if(skin->mSkin){
+			strcpy((char *)skin->mSkin, temp);
+		}
+#else
 		skin = (TSkinTemplate *) trap_VM_LocalAlloc ( sizeof(*skin) );
-
 		skin->mSkin = trap_VM_LocalStringAlloc ( temp );
+#endif
 		skin->mNext = character->mSkins;
 		character->mSkins = skin;
 	}
@@ -256,12 +281,18 @@ TSkinTemplate *BG_ParseSkins( TCharacterTemplate* character, TGPGroup group )
 		// If the groups name isnt 'Skin' then skip it
 		if ( Q_stricmp( temp, "Skin") == 0 )
 		{
-			// Allocate memory for the skin
-			skin = (TSkinTemplate *) trap_VM_LocalAlloc ( sizeof(*skin) );
-
-			// Grab the skin filename
+			// Allocate memory for the skin & grab the skin filename
 			trap_GPG_FindPairValue ( subGroup, "File", "", temp );
+#ifdef _TRUEMALLOC
+			trap_TrueMalloc((void **)&skin, sizeof(*skin));
+			trap_TrueMalloc((void **)&skin->mSkin, sizeof(temp));
+			if(skin->mSkin){
+				strcpy((char *)skin->mSkin, temp);
+			}
+#else
+			skin = (TSkinTemplate *) trap_VM_LocalAlloc ( sizeof(*skin) );
 			skin->mSkin = trap_VM_LocalStringAlloc ( temp );
+#endif
 
 #ifdef SPECIAL_PRE_CACHE
 			f = 0;
@@ -300,18 +331,40 @@ TSkinTemplate *BG_ParseSkins( TCharacterTemplate* character, TGPGroup group )
 				trap_GPG_FindPairValue ( subGroup, "mp_identity", "", temp );
 				if ( !temp[0] )
 				{
+#ifdef _TRUEMALLOC
+					Q_strncpyz(temp, va("%s/%s", character->mName, skin->mSkin), sizeof(temp));
+					trap_TrueMalloc((void **)&identity->mName, sizeof(temp));
+					if(identity->mName){
+						strcpy((char *)identity->mName, temp);
+					}
+#else
 					identity->mName = trap_VM_LocalStringAlloc ( va("%s/%s", character->mName, skin->mSkin ) );
+#endif
 				}
 				else
 				{
+#ifdef _TRUEMALLOC
+					trap_TrueMalloc((void **)&identity->mName, sizeof(temp));
+					if(identity->mName){
+						strcpy((char *)identity->mName, temp);
+					}
+#else
 					identity->mName = trap_VM_LocalStringAlloc ( temp );
+#endif
 				}
 
 				// Team name?
 				trap_GPG_FindPairValue ( subGroup, "mp_team", "", temp );
 				if ( temp[0] )
 				{
+#ifdef _TRUEMALLOC
+					trap_TrueMalloc((void **)&identity->mTeam, sizeof(temp));
+					if(identity->mTeam){
+						strcpy((char *)identity->mTeam, temp);
+					}
+#else
 					identity->mTeam = trap_VM_LocalStringAlloc ( temp );
+#endif
 				}
 				else
 				{
@@ -355,13 +408,24 @@ TModelSounds *BG_ParseModelSounds( TGPGroup group )
 	while(pairs)
 	{
 		// Allocate memory for the sounds
+#ifdef _TRUEMALLOC
+		trap_TrueMalloc((void **)&sounds, sizeof(*sounds));
+#else
 		sounds = (TModelSounds*) trap_VM_LocalAlloc ( sizeof(*sounds) );
+#endif
 		sounds->mNext = top;
 		top = sounds;
 
 		// Grab the sounds name
 		trap_GPV_GetName ( pairs, temp );
+#ifdef _TRUEMALLOC
+		trap_TrueMalloc((void **)&sounds->mName, sizeof(temp));
+		if(sounds->mName){
+			strcpy((char *)sounds->mName, temp);
+		}
+#else
 		sounds->mName = trap_VM_LocalStringAlloc ( temp );
+#endif
 
 		// Start with no sounds
 		sounds->mCount = 0;
@@ -377,8 +441,15 @@ TModelSounds *BG_ParseModelSounds( TGPGroup group )
 			{
 				// Add the sound to the list
 				trap_GPV_GetName ( list, temp );
-				sounds->mSounds[sounds->mCount++] = trap_VM_LocalStringAlloc ( temp );
-
+				sounds->mCount++;
+#ifdef _TRUEMALLOC
+				trap_TrueMalloc((void **)&sounds->mSounds[sounds->mCount], sizeof(temp));
+				if(sounds->mSounds[sounds->mCount]){
+					strcpy((char *)sounds->mSounds[sounds->mCount], temp);
+				}
+#else
+				sounds->mSounds[sounds->mCount] = trap_VM_LocalStringAlloc ( temp );
+#endif
 				list = trap_GPV_GetNext ( list );
 			}
 		}
@@ -436,19 +507,37 @@ qboolean BG_ParseItemFile ( void )
 			}
 
 			// Allocate the item template and link it up to the item list
+#ifdef _TRUEMALLOC
+			trap_TrueMalloc((void **)&item, sizeof(*item));
+#else
 			item = (TItemTemplate *) trap_VM_LocalAlloc ( sizeof(*item) );
+#endif
 			item->mNext   = bg_itemTemplates;
 			bg_itemTemplates = item;
 
 			// Name of the item
 			trap_GPG_FindPairValue ( subGroup, "Name", "", temp );
+#ifdef _TRUEMALLOC
+			trap_TrueMalloc((void **)&item->mName, sizeof(temp));
+			if(item->mName){
+				strcpy((char *)item->mName, temp);
+			}
+#else
 			item->mName = trap_VM_LocalStringAlloc ( temp );
+#endif
 
 			// Model for the item
 			trap_GPG_FindPairValue ( subGroup, "Model", "", temp );
 			if ( temp[0] )
 			{
+#ifdef _TRUEMALLOC
+				trap_TrueMalloc((void **)&item->mModel, sizeof(temp));
+				if(item->mModel){
+					strcpy((char *)item->mModel, temp);
+				}
+#else
 				item->mModel = trap_VM_LocalStringAlloc ( temp );
+#endif
 			}
 
 			pairs = (TGPValue *)trap_GPG_GetPairs ( subGroup );
@@ -460,25 +549,47 @@ qboolean BG_ParseItemFile ( void )
 				if ( Q_stricmpn ( temp, "offsurf", 7) == 0)
 				{
 					// Allocate the surface structure and link it into the list
+#ifdef _TRUEMALLOC
+					trap_TrueMalloc((void **)&surf, sizeof(*surf));
+#else
 					surf = (TSurfaceList *) trap_VM_LocalAlloc ( sizeof(*surf) );
+#endif
 					surf->mNext = item->mOffList;
 					item->mOffList = surf;
 
 					// Name of the surface to turn off
 					trap_GPV_GetTopValue ( pairs, temp );
+#ifdef _TRUEMALLOC
+					trap_TrueMalloc((void **)&surf->mName, sizeof(temp));
+					if(surf->mName){
+						strcpy((char *)surf->mName, temp);
+					}
+#else
 					surf->mName = trap_VM_LocalStringAlloc ( temp );
+#endif
 				}
 				// Surface on?
 				else if ( Q_stricmpn( temp, "onsurf", 6) == 0)
 				{
 					// Allocate the surface structure and link it into the list
+#ifdef _TRUEMALLOC
+					trap_TrueMalloc((void **)&surf, sizeof(*surf));
+#else
 					surf = (TSurfaceList *) trap_VM_LocalAlloc(sizeof(*surf));
+#endif
 					surf->mNext = item->mOnList;
 					item->mOnList = surf;
 
 					// Name of the surface to turn off
 					trap_GPV_GetTopValue ( pairs, temp );
+#ifdef _TRUEMALLOC
+					trap_TrueMalloc((void **)&surf->mName, sizeof(temp));
+					if(surf->mName){
+						strcpy((char *)surf->mName, temp);
+					}
+#else
 					surf->mName = trap_VM_LocalStringAlloc ( temp );
+#endif
 				}
 
 				// Next pairs
@@ -685,15 +796,26 @@ qboolean BG_ParseNPCFiles ( void )
 				// Is there a parent template?
 				trap_GPG_FindPairValue ( subGroup, "ParentTemplate", "", temp );
 				if ( temp[0] )
-				{					
+				{
+#ifdef _TRUEMALLOC
+					trap_TrueMalloc((void **)&currentParent, sizeof(temp));
+					if(currentParent){
+						strcpy((char *)currentParent, temp);
+					}
+#else
 					currentParent = trap_VM_LocalStringAlloc ( temp );
+#endif
 				}
 			}
 			// A new character template
 			else if ( Q_stricmp( temp, "CharacterTemplate") == 0)
 			{
 				// Allocate the new template and link it into the global list.
+#ifdef _TRUEMALLOC
+				trap_TrueMalloc((void **)&newTemplate, sizeof(*newTemplate));
+#else
 				newTemplate = (TCharacterTemplate *)trap_VM_LocalAlloc (sizeof(*newTemplate));
+#endif
 				newTemplate->mNext = bg_characterTemplates;
 				bg_characterTemplates = newTemplate;
 
@@ -712,21 +834,42 @@ qboolean BG_ParseNPCFiles ( void )
 				trap_GPG_FindPairValue ( subGroup, "Name", "", temp );
 				if ( temp[0] )
 				{
+#ifdef _TRUEMALLOC
+					trap_TrueMalloc((void **)&newTemplate->mName, sizeof(temp));
+					if(newTemplate->mName){
+						strcpy((char *)newTemplate->mName, temp);
+					}
+#else
 					newTemplate->mName = trap_VM_LocalStringAlloc ( temp );
+#endif
 				}
 
 				// Template formal name
 				trap_GPG_FindPairValue ( subGroup, "FormalName", "", temp );
 				if ( temp[0] )
 				{
+#ifdef _TRUEMALLOC
+					trap_TrueMalloc((void **)&newTemplate->mFormalName, sizeof(temp));
+					if(newTemplate->mFormalName){
+						strcpy((char *)newTemplate->mFormalName, temp);
+					}
+#else
 					newTemplate->mFormalName = trap_VM_LocalStringAlloc ( temp );
+#endif
 				}
 
 				// Template model 
 				trap_GPG_FindPairValue ( subGroup, "Model", "", temp );
 				if ( temp[0] )
 				{
+#ifdef _TRUEMALLOC
+					trap_TrueMalloc((void **)&newTemplate->mModel, sizeof(temp));
+					if(newTemplate->mModel){
+						strcpy((char *)newTemplate->mModel, temp);
+					}
+#else
 					newTemplate->mModel = trap_VM_LocalStringAlloc ( temp );
+#endif
 				}
 
 				// Use the current parent

@@ -66,8 +66,16 @@ static qboolean BG_ParseAmmoStats(ammo_t ammoNum, void *group)
 	ammo = &ammoData[ammoNum];
 	memset(ammo, 0, sizeof(ammoData_t));
 
+#ifdef _TRUEMALLOC
+	trap_TrueMalloc((void **)&ammo->name, sizeof(ammoNames[ammoNum]));
+	if(ammo->name){
+		strcpy((char *)ammo->name, ammoNames[ammoNum]);
+		Q_strlwr ( (char *)ammo->name );
+	}
+#else
 	ammo->name = (char*)trap_VM_LocalStringAlloc ( ammoNames[ammoNum] );
 	Q_strlwr ( ammo->name );
+#endif
 
 	// Get the scale of the gore for this bullet
 	trap_GPG_FindPairValue(group, "mp_goreScale||goreScale", "1", tmpStr );
@@ -142,7 +150,14 @@ static qboolean BG_ParseAttackStats ( int weaponNum, attackData_t* attack, void 
 	if ( Q_stricmp ( tmpStr, "none" ) )
 	{
 		Q_strlwr ( tmpStr );
+#ifdef _TRUEMALLOC
+		trap_TrueMalloc((void **)&attack->melee, sizeof(tmpStr));
+		if(attack->melee){
+			strcpy((char *)attack->melee, tmpStr);
+		}
+#else
 		attack->melee = trap_VM_LocalStringAlloc ( tmpStr );
+#endif
 	}
 
 	trap_GPG_FindPairValue(attacksub, "name", "NONE", attack->name);
@@ -461,7 +476,11 @@ static char *BG_BuildSideSurfaceList(char *name, char *pattern, char *sideSurfac
 	// Boe!Man 1/19/13: We *do* need to finalize this statement, else SQLite will have allocated memory for this but it will *never* be freed.
 	sqlite3_finalize(stmt);
 
+#ifdef _TRUEMALLOC
+	trap_TrueMalloc((void **)&output, 0);
+#else
 	output = (char *)trap_VM_LocalAlloc(0);
+#endif
 	return output;
 }
 
@@ -532,7 +551,11 @@ static TNoteTrack *BG_FindNoteTracks(void *group)
 		trap_GPG_GetName(sub, name);
 		if (Q_stricmp(name, "notetrack") == 0)
 		{
+#ifdef _TRUEMALLOC
+			trap_TrueMalloc((void **)&current, sizeof(*current));
+#else
 			current = (TNoteTrack *)trap_VM_LocalAlloc(sizeof(*current));
+#endif
 			memset(current, 0, sizeof(*current));
 
 			// last character is automatically 0 cuz of the memset
@@ -655,8 +678,11 @@ sqlite3_stmt *stmt, *stmt1;
 		return qfalse;
 	}else while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
 		if(rc == SQLITE_ROW){
-
+#ifdef _TRUEMALLOC
+			trap_TrueMalloc((void **)&anim, sizeof(*anim));
+#else
 			anim = (TAnimWeapon *)trap_VM_LocalAlloc(sizeof(*anim));
+#endif
 			memset(anim, 0, sizeof(*anim));
 
 			anim->mNext = weaponParseInfo[weapon].mAnimList;
@@ -669,7 +695,11 @@ sqlite3_stmt *stmt, *stmt1;
 				return qfalse;
 			}else while((rc1 = sqlite3_step(stmt1)) != SQLITE_DONE){
 				if(rc1 == SQLITE_ROW){
+#ifdef _TRUEMALLOC
+					trap_TrueMalloc((void **)&info, sizeof(*info));
+#else
 					info = (TAnimInfoWeapon *)trap_VM_LocalAlloc(sizeof(*info));
+#endif
 					memset(info, 0, sizeof(*info));
 					info->mNext = anim->mInfos;
 					anim->mInfos = info;
@@ -694,7 +724,11 @@ sqlite3_stmt *stmt, *stmt1;
 
 					if(sqlite3_column_text(stmt1, 3)){
 						strcpy(value, (char *)sqlite3_column_text(stmt1, 3));
+#ifdef _TRUEMALLOC
+						trap_TrueMalloc((void **)&info->mAnim[info->mNumChoices], strlen(value)+1);
+#else
 						info->mAnim[info->mNumChoices] = (char *)trap_VM_LocalAlloc(strlen(value)+1);
+#endif
 						strcpy(info->mAnim[info->mNumChoices], value);
 						info->mNumChoices++;
 					}// anim
@@ -704,13 +738,21 @@ sqlite3_stmt *stmt, *stmt1;
 						memset(value, 0, sizeof(value));
 						if(sqlite3_column_text(stmt1, 3+k)){ // anim 1
 							strcpy(value, (char *)sqlite3_column_text(stmt1, 3+k));
+#ifdef _TRUEMALLOC
+							trap_TrueMalloc((void **)&info->mAnim[info->mNumChoices], strlen(value)+1);
+#else
 							info->mAnim[info->mNumChoices] = (char *)trap_VM_LocalAlloc(strlen(value)+1);
+#endif
 							strcpy(info->mAnim[info->mNumChoices], value);
 							succes = qtrue;
 						}else if(sqlite3_column_text(stmt1, 7+k)){
 							memset(value, 0, sizeof(value));
 							strcpy(value, (char *)sqlite3_column_text(stmt1, 7+k)); // animNoLerp1
+#ifdef _TRUEMALLOC
+							trap_TrueMalloc((void **)&info->mAnim[info->mNumChoices], strlen(value)+1);
+#else
 							info->mAnim[info->mNumChoices] = (char *)trap_VM_LocalAlloc(strlen(value)+1);
+#endif
 							strcpy(info->mAnim[info->mNumChoices], value);
 							succes = qtrue;
 						}
@@ -719,14 +761,22 @@ sqlite3_stmt *stmt, *stmt1;
 						memset(value, 0, sizeof(value));
 						if(sqlite3_column_text(stmt1, 18+k)){
 							strcpy(value, (char *)sqlite3_column_text(stmt1, 18+k)); // transition1
+#ifdef _TRUEMALLOC
+							trap_TrueMalloc((void **)&info->mTransition[info->mNumChoices], strlen(value)+1);
+#else
 							info->mTransition[info->mNumChoices] = (char *)trap_VM_LocalAlloc(strlen(value)+1);
+#endif
 							strcpy(info->mTransition[info->mNumChoices], value);
 						}
 
 						memset(value, 0, sizeof(value));
 						if(sqlite3_column_text(stmt1, 21+k)){
 							strcpy(value, (char *)sqlite3_column_text(stmt1, 21+k)); // end1
+#ifdef _TRUEMALLOC
+							trap_TrueMalloc((void **)&info->mEnd[info->mNumChoices], strlen(value)+1);
+#else
 							info->mEnd[info->mNumChoices] = (char *)trap_VM_LocalAlloc(strlen(value)+1);
+#endif
 							strcpy(info->mEnd[info->mNumChoices], value);
 						}
 						info->mNumChoices++;
@@ -751,7 +801,11 @@ static TBoltonWeapon *BG_ParseBolton(weapon_t weapon, sqlite3 * db)
 	int rc;
 	char query[128];
 
+#ifdef _TRUEMALLOC
+	trap_TrueMalloc((void **)&bolton, sizeof(*bolton));
+#else
 	bolton = (TBoltonWeapon *)trap_VM_LocalAlloc(sizeof(*bolton));
+#endif
 	memset(bolton, 0, sizeof(*bolton));
 	sprintf(query, "select * from weaponmodel where WEAPON_ID=%i", (int)weapon);
 	rc = sqlite3_prepare(db, query, -1, &stmt, 0);
@@ -812,7 +866,11 @@ static qboolean BG_ParseWeaponGroup(TWeaponModel *weapon, weapon_t weaponID, sql
 			if(sqlite3_column_int(stmt, 16)){
 				BG_BuildSideSurfaceList("rightside", "surface", weapon->mRightSideSurfaces, db, sqlite3_column_int(stmt, 16));
 			}else if(sqlite3_column_int(stmt, 17)){
+#ifdef _TRUEMALLOC
+				trap_TrueMalloc((void **)&option, sizeof(*option));
+#else
 				option = (TOptionalWeapon *)trap_VM_LocalAlloc(sizeof(*option));
+#endif
 				memset(option, 0, sizeof(*option));
 				sprintf(query1, "select * from optionalpart where ID=%i", sqlite3_column_int(stmt, 17));
 				rc1 = sqlite3_prepare(db, query1, -1, &stmt1, 0);

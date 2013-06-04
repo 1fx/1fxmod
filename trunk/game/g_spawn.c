@@ -429,8 +429,11 @@ char *G_NewString( const char *string )
 	int		i,l;
 	
 	l = strlen(string) + 1;
-
+#ifdef _TRUEMALLOC
+	trap_TrueMalloc((void **)&newb, l);
+#else
 	newb = (char *)trap_VM_LocalAlloc( l );
+#endif
 
 	new_p = newb;
 
@@ -1139,13 +1142,27 @@ void SP_worldspawn( void )
 		G_SpawnString( "redteam", "", &text );
 		if ( text && *text )
 		{
+#ifdef _TRUEMALLOC
+			trap_TrueMalloc((void **)&level.gametypeTeam[TEAM_RED], sizeof(text));
+			if(level.gametypeTeam[TEAM_RED]){
+				strcpy((char *)level.gametypeTeam[TEAM_RED], text);
+			}
+#else
 			level.gametypeTeam[TEAM_RED] = trap_VM_LocalStringAlloc ( text );
+#endif
 		}
 
 		G_SpawnString( "blueteam", "", &text );
 		if ( text && *text )
 		{
+#ifdef _TRUEMALLOC
+			trap_TrueMalloc((void **)&level.gametypeTeam[TEAM_BLUE], sizeof(text));
+			if(level.gametypeTeam[TEAM_BLUE]){
+				strcpy((char *)level.gametypeTeam[TEAM_BLUE], text);
+			}
+#else
 			level.gametypeTeam[TEAM_BLUE] = trap_VM_LocalStringAlloc ( text );
+#endif			
 		}
 
 		if ( !level.gametypeTeam[TEAM_RED]  ||
