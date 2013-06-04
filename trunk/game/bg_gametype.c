@@ -120,7 +120,14 @@ static qboolean BG_ParseGametypeInfo ( int gametypeIndex )
 	trap_GPG_FindPairValue ( gtGroup, "description", "", temp );
 	if ( temp[0] )
 	{
+#ifdef _TRUEMALLOC
+	trap_TrueMalloc((void **)&gametype->description, sizeof(temp));
+	if(gametype->description){
+		strcpy((char *)gametype->description, temp);
+	}
+#else
 		gametype->description = trap_VM_LocalStringAlloc ( temp );
+#endif
 	}
 
 	// Are pickups enabled?
@@ -165,7 +172,14 @@ static qboolean BG_ParseGametypeInfo ( int gametypeIndex )
 	trap_GPG_FindPairValue ( gtGroup, "basegametype", "", temp );
 	if ( temp[0] )
 	{
+#ifdef _TRUEMALLOC
+		trap_TrueMalloc((void **)&gametype->basegametype, sizeof(temp));
+		if(gametype->basegametype){
+			strcpy((char *)gametype->basegametype, temp);
+		}
+#else
 		gametype->basegametype = trap_VM_LocalStringAlloc ( temp );
+#endif
 	}
 	// Ryan
 
@@ -218,12 +232,26 @@ qboolean BG_BuildGametypeList ( void )
 		strcat(filename, fileptr );
 
 		// Fill in what we know so far
+#ifdef _TRUEMALLOC
+		trap_TrueMalloc((void **)&bg_gametypeData[bg_gametypeCount].script, sizeof(filename));
+		if(bg_gametypeData[bg_gametypeCount].script){
+			strcpy((char *)bg_gametypeData[bg_gametypeCount].script, filename);
+		}
+#else
 		bg_gametypeData[bg_gametypeCount].script = trap_VM_LocalStringAlloc ( filename );
+#endif
 
 		// Kill the dot so we can use the filename as the short name
 		s  = strchr ( fileptr, '.' );
 		*s = '\0';
+#ifdef _TRUEMALLOC
+		trap_TrueMalloc((void **)&bg_gametypeData[bg_gametypeCount].name, sizeof(fileptr));
+		if(bg_gametypeData[bg_gametypeCount].name){
+			strcpy((char *)bg_gametypeData[bg_gametypeCount].name, fileptr);
+		}
+#else
 		bg_gametypeData[bg_gametypeCount].name   = trap_VM_LocalStringAlloc ( fileptr );
+#endif
 		
 		// TODO: Parse the gametype file
 		BG_ParseGametypeInfo ( bg_gametypeCount++ );
