@@ -33,7 +33,7 @@ void *B_TempAlloc(int size)
 #ifdef _TRUEMALLOC
 void B_TempFree(char *ptr)
 {
-	trap_TrueFree((void **)ptr);
+	trap_TrueFree((void **)&ptr);
 }
 #else
 void B_TempFree(int size)
@@ -838,8 +838,8 @@ void BotUtilizePersonality(bot_state_t *bs)
 	}
 
 #ifdef _TRUEMALLOC
-	trap_TrueFree((void **)group);
-	trap_TrueFree((void **)readbuf);
+	trap_TrueFree((void **)&group);
+	trap_TrueFree((void **)&readbuf);
 #else
 	trap_VM_LocalTempFree(65536);
 	trap_VM_LocalTempFree(1024);

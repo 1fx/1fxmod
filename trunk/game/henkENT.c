@@ -128,7 +128,7 @@ char *G_GetEntFileToken(void)
 	if (!data){
 		// Boe!Man 1/9/13: Free the buffer.
 #ifdef _TRUEMALLOC
-		trap_TrueFree((void **)entBuffer);
+		trap_TrueFree((void **)&entBuffer);
 #else
 		trap_VM_LocalTempFree(len*sizeof(char));
 		entBuffer = NULL;
@@ -146,7 +146,7 @@ char *G_GetEntFileToken(void)
 		if ( !data ){
 			// Boe!Man 1/9/13: Free the buffer.
 #ifdef _TRUEMALLOC
-			trap_TrueFree((void **)entBuffer);
+			trap_TrueFree((void **)&entBuffer);
 #else
 			trap_VM_LocalTempFree(len*sizeof(char));
 			entBuffer = NULL;
