@@ -280,6 +280,7 @@ typedef struct
 	int					score;					// total score
 	int					kills;					// number of kills
 	int					deaths;					// number of deaths
+	int					deathTime;				// level.time of when the player last died to avoid the client switching teams to respawn.
 	qboolean			ghost;					// Whether or not the player is a ghost (sticks past team change)
 	int					teamkillDamage;			// amount of damage death to teammates
 	int					teamkillForgiveTime;	// time when team damage will be forgivin
