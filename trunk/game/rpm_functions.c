@@ -951,6 +951,11 @@ void RPM_UpdateTMI(void)
 	{
 		cl = &level.clients[level.sortedClients[i]];
 		
+		// Boe!Man 6/5/13: Don't send if the player is timing out..
+		if(cl->ps.ping >= 999)
+		{
+			continue;
+		}
 
 //RxCxW - 1.20.2005 - #scoreboard #Version compatiblity
 		if(cl->sess.rpmClient > 0.6)	
