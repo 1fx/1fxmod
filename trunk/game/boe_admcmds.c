@@ -397,22 +397,30 @@ qboolean SetNades(char *status){
 	
 	if(strstr(status, "0")){ // Manage internally, so we check for such strings. 0 means enable, so in H&S we check that CVAR.
 		if(current_gametype.value == GT_HS){
-			if(hideSeek_Nades.string[0] == '0')
+			if(level.crossTheBridge){
+				// Boe!Man 6/6/13: CTB has different settings (only smoke is enabled).
 				trap_Cvar_Set("disable_pickup_weapon_SMOHG92", "1");
-			else
-				trap_Cvar_Set("disable_pickup_weapon_SMOHG92", "0");
-			if(hideSeek_Nades.string[1] == '0')
 				trap_Cvar_Set("disable_pickup_weapon_M84", "1");
-			else
-				trap_Cvar_Set("disable_pickup_weapon_M84", "0");
-			if(hideSeek_Nades.string[2] == '0')
-				trap_Cvar_Set("disable_pickup_weapon_M15", "1");
-			else
 				trap_Cvar_Set("disable_pickup_weapon_M15", "0");
-			if(hideSeek_Nades.string[3] == '0')
 				trap_Cvar_Set("disable_pickup_weapon_AN_M14", "1");
-			else
-				trap_Cvar_Set("disable_pickup_weapon_AN_M14", "0");
+			}else{
+				if(hideSeek_Nades.string[0] == '0')
+					trap_Cvar_Set("disable_pickup_weapon_SMOHG92", "1");
+				else
+					trap_Cvar_Set("disable_pickup_weapon_SMOHG92", "0");
+				if(hideSeek_Nades.string[1] == '0')
+					trap_Cvar_Set("disable_pickup_weapon_M84", "1");
+				else
+					trap_Cvar_Set("disable_pickup_weapon_M84", "0");
+				if(hideSeek_Nades.string[2] == '0')
+					trap_Cvar_Set("disable_pickup_weapon_M15", "1");
+				else
+					trap_Cvar_Set("disable_pickup_weapon_M15", "0");
+				if(hideSeek_Nades.string[3] == '0')
+					trap_Cvar_Set("disable_pickup_weapon_AN_M14", "1");
+				else
+					trap_Cvar_Set("disable_pickup_weapon_AN_M14", "0");
+			}
 		}else{ // If not H&S, check other gametypes. Since we might not want to enable all nades (it should respect availablenades CVAR), check for it.
 				for (weapon = WP_M67_GRENADE; weapon < WP_NUM_WEAPONS; weapon ++){
 					gitem_t* item = BG_FindWeaponItem ( (weapon_t)weapon );
