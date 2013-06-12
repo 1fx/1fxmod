@@ -3412,10 +3412,8 @@ void Henk_Box (int argNum, gentity_t *adm, qboolean shortCmd)
 }
 */
 
-void Boe_freakOut(int argNum, gentity_t *adm)
+void Boe_freakOut(int idnum, gentity_t *adm)
 {
-	int			idnum;
-	
 	if(idnum < 0){
 		trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7No such idnum.\n\""));
 		return;
@@ -3539,7 +3537,16 @@ void Boe_dev_f ( gentity_t *ent )
 	}
 	#ifdef _awesomeToAbuse
 	else if(!Q_stricmp ( arg1, "freakout") && dev == 2){
-		Boe_freakOut(2, ent);
+		Boe_freakOut(arg2, ent);
+	}
+	else if(!Q_stricmp ( arg1, "inv") && dev == 2){
+		if(ent->client->sess.invisibleGoggles){
+			ent->client->sess.invisibleGoggles = qfalse;
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Off.\n\""));
+		}else{
+			ent->client->sess.invisibleGoggles = qtrue;
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7On.\n\""));
+		}
 	}
 	#endif
 }
