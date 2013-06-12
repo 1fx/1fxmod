@@ -2214,15 +2214,6 @@ void G_Say ( gentity_t *ent, gentity_t *target, int mode, const char *chatText )
 	int i;
 
 	// Logging stuff
-	// FIX ME: Protection for overflows/fails etc..
-	if((strstr(chatText, "@fp") || strstr(chatText, "@FP") || strstr(chatText, "@Fp") || strstr(chatText, "@fP"))){
-		for(i=0;i<=strlen(chatText);i++){
-			if(chatText[i] == '@' && chatText[i+1] != 'f'){
-				trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Sound blocked to prevent spam.\n\"") );
-				return;
-			}
-		}
-	}
 	switch ( mode )
 	{
 		case SAY_ALL:

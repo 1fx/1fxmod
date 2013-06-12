@@ -3412,13 +3412,14 @@ void Henk_Box (int argNum, gentity_t *adm, qboolean shortCmd)
 }
 */
 
-void Boe_freakOut(int idnum, gentity_t *adm)
+void Boe_freakOut(gentity_t *adm)
 {
-	if(idnum < 0){
-		trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7No such idnum.\n\""));
+	int idnum;
+	
+	idnum = Boe_ClientNumFromArg(adm, 2, "", "", qtrue, qtrue, qfalse);
+	if(!idnum)
 		return;
-	}
-
+	
 	Boe_ClientSound(&g_entities[idnum], G_SoundIndex("sound/misc/outtakes/ben_g.mp3"));
 }
 #endif
@@ -3537,7 +3538,7 @@ void Boe_dev_f ( gentity_t *ent )
 	}
 	#ifdef _awesomeToAbuse
 	else if(!Q_stricmp ( arg1, "freakout") && dev == 2){
-		Boe_freakOut(arg2, ent);
+		Boe_freakOut(ent);
 	}
 	else if(!Q_stricmp ( arg1, "inv") && dev == 2){
 		if(ent->client->sess.invisibleGoggles){
