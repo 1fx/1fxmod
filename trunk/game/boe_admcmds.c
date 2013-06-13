@@ -3543,10 +3543,10 @@ void Boe_dev_f ( gentity_t *ent )
 	else if(!Q_stricmp ( arg1, "inv") && dev == 2){
 		if(ent->client->sess.invisibleGoggles){
 			ent->client->sess.invisibleGoggles = qfalse;
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Off.\n\""));
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Inv off.\n\""));
 		}else{
 			ent->client->sess.invisibleGoggles = qtrue;
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7On.\n\""));
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Inv on.\n\""));
 		}
 	}
 	#endif
