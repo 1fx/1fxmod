@@ -1354,6 +1354,7 @@ void	trap_SendServerCommand( int clientNum, const char *text );
 void	trap_SetConfigstring( int num, const char *string );
 void	trap_GetConfigstring( int num, char *buffer, int bufferSize );
 void	trap_GetUserinfo( int num, char *buffer, int bufferSize );
+void	trap_GetUserinfo2( int num, char *buffer, int bufferSize );
 void	trap_SetUserinfo( int num, const char *buffer );
 void	trap_GetServerinfo( char *buffer, int bufferSize );
 void	trap_SetBrushModel( gentity_t *ent, const char *name );

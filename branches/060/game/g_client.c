@@ -2492,3 +2492,34 @@ gentity_t* G_FindNearbyClient ( vec3_t origin, team_t team, float radius, gentit
 
 	return NULL;
 }
+
+/*
+================
+trap_GetUserinfo
+6/20/13 - 10:57 AM
+Function with the weird movement fix, relays call to the real trap_GetUserinfo.
+================
+*/
+
+void trap_GetUserinfo( int num, char *buffer, int bufferSize ) {
+	char		buf2[MAX_INFO_STRING];
+	qboolean	found;
+	int 		i;
+	
+	trap_GetUserinfo2( num, buffer, bufferSize );
+	
+	// Boe!Man 1/31/13: Fix for weird movement when people connect/change teams etc. with unsupported characters in their names.
+	Q_strncpyz(buf2, buffer, sizeof(buf2));
+	for(i = 0; i < strlen(buffer); i++){
+		if(buf2[i] <= 0){ // Boe!Man 1/31/13: Any ASCII character that is esentially malformed, we change by resetting this character to a dot.
+			buf2[i] = 46; // Convert to dot.
+			found = qtrue;
+		}
+	}
+	
+	if(found){
+		trap_SetUserinfo(num, buf2);
+	}
+
+	trap_GetUserinfo2( num, buffer, bufferSize );
+}

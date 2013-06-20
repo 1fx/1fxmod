@@ -109,7 +109,7 @@ void trap_GetConfigstring( int num, char *buffer, int bufferSize ) {
 	syscall( G_GET_CONFIGSTRING, num, buffer, bufferSize );
 }
 
-void trap_GetUserinfo( int num, char *buffer, int bufferSize ) {
+void trap_GetUserinfo2( int num, char *buffer, int bufferSize ) {
 	syscall( G_GET_USERINFO, num, buffer, bufferSize );
 }
 

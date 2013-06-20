@@ -7,7 +7,7 @@
 // Boe!Man 3/30/10
 // Boe!Man 7/12/11: Mod version.
 #ifdef Q3_VM
-#define INF_VERSION_STRING "0.60"
+#define INF_VERSION_STRING "0.61t"
 #else
 
 #ifdef WIN32
