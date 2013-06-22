@@ -256,7 +256,7 @@ void GT_RunFrame ( int time )
 			}
 			
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,%s", level.time + 5000, va("@The %s ^7Flag has %sr%se%st%su%sr%sned!", server_redteamprefix.string, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string)));
-			trap_SendServerCommand( -1, va("print \"^3[INF] ^7The Red Flag has returned.\n\""));
+			trap_SendServerCommand( -1, va("print \"^3[CTF] ^7The Red Flag has returned.\n\""));
 			
 			// Boe!Man 11/29/12: Global sound.
 			if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime){
