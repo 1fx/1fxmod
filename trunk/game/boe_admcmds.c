@@ -3459,7 +3459,8 @@ void Boe_Strip (int argNum, gentity_t *adm, qboolean shortCmd)
 	client->ps.weaponstate = WEAPON_READY;
 	client->ps.weaponTime = 0;
 	client->ps.weaponAnimTime = 0;
-	client->ps.stats[STAT_OUTFIT_GRENADE] = bg_itemlist[bg_outfittingGroups[-1][client->pers.outfitting.items[-1]]].giTag;
+	// Boe!Man 6/23/13: Fixed crash bug in Linux, simply because 'bg_outfittingGroups[-1][client->pers.outfitting.items[-1]]' equals 0.
+	client->ps.stats[STAT_OUTFIT_GRENADE] = bg_itemlist[0].giTag;
 
 	// Boe!Man 1/13/11: Fix messages + global sound.
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
