@@ -324,7 +324,9 @@ static float LittleFloat (const float *l) { return FloatSwap(l); }
 
 typedef unsigned char 		byte;
 typedef unsigned short		word;
+#ifndef __linux__
 typedef unsigned long		ulong;
+#endif
 
 typedef enum {qfalse, qtrue}	qboolean;
 
