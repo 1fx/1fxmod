@@ -111,7 +111,7 @@ void *Thread_countryInit(){
 	// Boe!Man 6/25/13: The game can use the country system now..
 	level.countryInitialized = qtrue;
 	
-	pthread_exit(&countryInit);
+	pthread_exit(NULL);
 	return NULL;
 }
 

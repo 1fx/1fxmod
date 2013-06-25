@@ -1499,6 +1499,11 @@ void G_ShutdownGame( int restart )
 
 	// write all the client session data so we can get it back
 	G_WriteSessionData();
+	
+	#ifdef __linux__
+	sqlite3_shutdown();
+	memset(memsys5, 0, sizeof(memsys5));
+	#endif
 
 #ifdef _SOF2_BOTS
 	if ( trap_Cvar_VariableIntegerValue( "bot_enable" ) )
