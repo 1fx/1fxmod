@@ -1542,7 +1542,7 @@ void Boe_Stats ( gentity_t *ent )
 		snaps	= Info_ValueForKey ( userinfo, "snaps" );
 		
 		// Boe!Man 5/14/11: Check if the checking of countries is enabled.
-		if(g_checkCountry.integer){
+		if(g_checkCountry.integer && level.countryInitialized){
 			country = ent->client->sess.country;
 		}
 		
@@ -1615,7 +1615,7 @@ void Boe_Stats ( gentity_t *ent )
 		snaps	= Info_ValueForKey ( userinfo, "snaps" );
 		
 		// Boe!Man 5/14/11: Check if the checking of countries is enabled.
-		if(g_checkCountry.integer){
+		if(g_checkCountry.integer && level.countryInitialized){
 			country = g_entities[idnum].client->sess.country;
 		}
 		
@@ -1659,7 +1659,7 @@ void Boe_Stats ( gentity_t *ent )
 		trap_SendServerCommand( ent-g_entities, va("print \"[^3IP^7]          %s\n", ip));
 	}
 	// Boe!Man 5/14/11: Check if the checking of countries is enabled.
-	if(g_checkCountry.integer){
+	if(g_checkCountry.integer && level.countryInitialized){
 		trap_SendServerCommand( ent-g_entities, va("print \"[^3Country^7]     %s\n", country));
 	}
 	

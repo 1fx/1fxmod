@@ -1683,12 +1683,13 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 	// get and distribute relevent paramters
 	//G_LogPrintf( "ClientConnect: %i\n", clientNum );
 	// Boe!Man 3/31/10: First off we search in the Country database.
-	if(g_checkCountry.integer == 1 && !strstr(ent->client->sess.country, "noneandempty")){
+	if(g_checkCountry.integer && level.countryInitialized && !strstr(ent->client->sess.country, "noneandempty")){
 		if(strstr(ent->client->pers.ip, "bot")){
 			strcpy(ent->client->sess.country, "None");
 			strcpy(ent->client->sess.countryext, "??");
-		}else
-		HENK_COUNTRY(ent);
+		}else{
+			HENK_COUNTRY(ent);
+		}
 	}
 	//G_LogPrintf( "HENK_COUNTRY done..\n" );
 	// Boe!Man 3/30/10: We use this for several things.. Including MOTD and Admin.
@@ -1701,7 +1702,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 	// don't do the "xxx connected" messages if they were caried over from previous level
 	if ( firstTime )
 	{
-		if(g_checkCountry.integer > 0){
+		if(g_checkCountry.integer && level.countryInitialized){
 			trap_SendServerCommand( -1, va("print \"%s ^5[%s]^7 is connecting...\n\"", client->pers.cleanName, client->sess.country) );
 		}else{
 			trap_SendServerCommand( -1, va("print \"%s ^7 is connecting...\n\"", client->pers.cleanName));

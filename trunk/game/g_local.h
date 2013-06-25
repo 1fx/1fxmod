@@ -858,7 +858,8 @@ typedef struct
 	
 	qboolean	altEnt;			// Boe!Man 1/27/13: If this is true, an alternative ent was loaded and will be loaded again when a !mr is issued.
 	
-	int			sqlBackupTime;	// Boe!Man 5/27/13: The interval for backing up the in-memory databases to disk.
+	int			sqlBackupTime;		// Boe!Man 5/27/13: The interval for backing up the in-memory databases to disk.
+	qboolean	countryInitialized; // Boe!Man 6/25/13: True if the country database is fully initialized.
 	
 } level_locals_t;
 

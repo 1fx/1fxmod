@@ -2,9 +2,9 @@
 #include "boe_local.h"
 
 // Country memory database
-sqlite3 *memory;
-sqlite3_stmt *stmt;
-int selectQuery;
+sqlite3			*memory;
+sqlite3_stmt	*stmt;
+int				selectQuery;
 
 int process_ddl_row(void * pData, int nColumns, 
         char **values, char **columns)
@@ -39,14 +39,12 @@ int process_dml_row(void *pData, int nColumns,
         return 0;
 }
 
-//Henk 12/10/12 -> Copy country database to an in memory database.
-// Select query from disk takes ~80ms, from memory 0ms.
-void LoadCountries(){
-	int rc;
-	sqlite3 * db;
-	int start;
-	char fsGame[MAX_QPATH];
-	qboolean alt;
+void *Thread_countryInit(){
+	int 		rc, i;
+	sqlite3 	*db;
+	int 		start;
+	char 		fsGame[MAX_QPATH];
+	qboolean	alt;
 	
 	if(sql_timeBench.integer){
 		start = trap_Milliseconds();
@@ -71,8 +69,6 @@ void LoadCountries(){
 
 	//SELECT table_index FROM country_index where 1 BETWEEN begin_ip AND end_ip
 	//SELECT ext,country FROM db6 where 1 BETWEEN begin_ip AND end_ip
-	sqlite3_open(":memory:", &memory);
-
 	sqlite3_exec(db, "BEGIN", NULL, NULL, NULL);
 	sqlite3_exec(db, "SELECT sql FROM sqlite_master WHERE sql NOT NULL", &process_ddl_row, memory, NULL);
 	sqlite3_exec(db, "COMMIT", NULL, NULL, NULL);
@@ -94,6 +90,48 @@ void LoadCountries(){
 	
 	if(sql_timeBench.integer){
 		Com_Printf("Country database loaded in %d ms\n", trap_Milliseconds()-start);
+	}
+	
+	// Boe!Man 6/25/13: Parse the clients their country now.
+	for (i = 0; i < level.numConnectedClients; i++){
+		gentity_t* ent = &g_entities[level.sortedClients[i]];
+
+		if (ent->client->pers.connected != CON_CONNECTED)
+			continue;
+			
+		if (ent->r.svFlags & SVF_BOT)
+			continue;
+		
+		HENK_COUNTRY(ent);
+	}
+
+	
+	// Boe!Man 6/25/13: The game can use the country system now..
+	level.countryInitialized = qtrue;
+	
+	pthread_exit(NULL);
+    return NULL;
+}
+
+//Henk 12/10/12 -> Copy country database to an in memory database.
+// Select query from disk takes ~80ms, from memory 0ms.
+void LoadCountries(){
+	pthread_t	countryInit; // Boe!Man 6/25/13: The reference to the thread.
+	
+	// Boe!Man 6/25/13: Initialize the in-memory database from the main thread.
+	sqlite3_open_v2(":memory:", &memory, SQLITE_OPEN_READWRITE, NULL);
+
+	// Boe!Man 6/25/13: Try to init the thread.
+	if(pthread_create(&countryInit, NULL, &Thread_countryInit, NULL) != 0){
+		#ifdef _DEBUG
+		Com_Error(ERR_FATAL, "Couldn't create Country initialization thread.");
+		#else
+		G_LogPrintf("Couldn't ininitalize Country database due to thread creation failing..\n"); // Don't throw a fatal error out of debug mode.
+		trap_Cvar_Set("g_checkCountry", "0");
+		trap_Cvar_Update(&g_checkCountry);
+		G_ShutdownGame(1); // Restart the game module.
+		return;
+		#endif
 	}
 }
 

@@ -1097,7 +1097,7 @@ G_InitGame
 */
 void G_InitGame( int levelTime, int randomSeed, int restart )
 {
-	int	i;
+	int			i;
 	/*
 	char test[128];
 	char stable[128];
@@ -1116,12 +1116,8 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	sqlite3_config(SQLITE_CONFIG_HEAP, memsys5, 31457280, 64);
 	sqlite3_soft_heap_limit(31457280);
 	#endif
-	
-	//Henk 12/10/12 -> Copy disk database to memory database.
-	// Boe!Man 6/25/13: Only load if g_checkCountry is enabled.
-	if(g_checkCountry.integer){
-		LoadCountries();
-	}
+	// Boe!Man 6/25/13: Enable multithreading for SQLite.
+	sqlite3_config(SQLITE_CONFIG_MULTITHREAD);
 
 	srand( randomSeed );
 
@@ -1132,6 +1128,12 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	level.nolower[2] = -10000000;
 	level.cagefightloaded = qfalse;
 	G_RegisterCvars();
+	
+	//Henk 12/10/12 -> Copy disk database to memory database.
+	// Boe!Man 6/25/13: Only load if g_checkCountry is enabled, do this *after* the CVARs are initialized.
+	if(g_checkCountry.integer){
+		LoadCountries();
+	}
 
 	//G_ProcessIPBans();
 
