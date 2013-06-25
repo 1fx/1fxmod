@@ -1113,6 +1113,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 #endif*/
 	#ifdef __linux__
 	// Boe!Man 1/29/13: Initialize the in-game memory-management buffer on Linux (SQLite3 memsys5).
+	memset(memsys5, 0, sizeof(memsys5));
 	sqlite3_config(SQLITE_CONFIG_HEAP, memsys5, 31457280, 64);
 	sqlite3_soft_heap_limit(31457280);
 	#endif
@@ -1489,7 +1490,9 @@ void G_ShutdownGame( int restart )
 	}
 
 	//Henk 12/10/12 -> Detach and close memory database
-	UnloadCountries();
+	if(g_checkCountry.integer){
+		UnloadCountries();
+	}
 	
 	// Boe!Man 5/27/13: Also detach and close userdata databases.
 	Boe_unloadUserdataDbs();

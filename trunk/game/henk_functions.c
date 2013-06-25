@@ -2,9 +2,11 @@
 #include "boe_local.h"
 
 // Country memory database
-sqlite3			*memory;
-sqlite3_stmt	*stmt;
-int				selectQuery;
+pthread_t			countryInit; // Boe!Man 6/25/13: The reference to the thread.
+sqlite3				*memory;
+sqlite3_stmt		*stmt;
+int					selectQuery;
+void				*pthreadStack;
 
 int process_ddl_row(void * pData, int nColumns, 
         char **values, char **columns)
@@ -109,18 +111,18 @@ void *Thread_countryInit(){
 	// Boe!Man 6/25/13: The game can use the country system now..
 	level.countryInitialized = qtrue;
 	
-	pthread_exit(NULL);
-    return NULL;
+	pthread_exit(&countryInit);
+	return NULL;
 }
 
 //Henk 12/10/12 -> Copy country database to an in memory database.
 // Select query from disk takes ~80ms, from memory 0ms.
 void LoadCountries(){
-	pthread_t	countryInit; // Boe!Man 6/25/13: The reference to the thread.
-	
 	// Boe!Man 6/25/13: Initialize the in-memory database from the main thread.
+	memory = NULL;
+	
 	sqlite3_open_v2(":memory:", &memory, SQLITE_OPEN_READWRITE, NULL);
-
+	
 	// Boe!Man 6/25/13: Try to init the thread.
 	if(pthread_create(&countryInit, NULL, &Thread_countryInit, NULL) != 0){
 		#ifdef _DEBUG
@@ -136,9 +138,12 @@ void LoadCountries(){
 }
 
 void UnloadCountries(){
+	pthread_join(countryInit, NULL); // Boe!Man 6/25/13: Wait for the thread to exit.
+	
 	sqlite3_finalize(stmt);
 	sqlite3_exec(memory, "DETACH DATABASE country", NULL, NULL, NULL);
-	sqlite3_close(memory);	
+	sqlite3_close(memory);
+	
 	Com_Printf("Unloaded country database.\n");
 }
 
