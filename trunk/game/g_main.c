@@ -511,7 +511,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_compMode, "g_compMode", "0", CVAR_ROM|CVAR_INTERNAL, 0.0, 0.0, 0, qfalse  },
 	{ &g_enableTeamCmds, "g_enableTeamCmds", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 	{ &g_refpassword, "g_refpassword", "none", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
-	{ &g_checkCountry, "g_checkCountry", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
+	{ &g_checkCountry, "g_checkCountry", "1", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qtrue  },
 	{ &g_useNoLower, "g_useNoLower", "1", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse  },
 	{ &g_autoNoLower, "g_autoNoLower", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_useNoRoof, "g_useNoRoof", "0", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse  },
@@ -1118,7 +1118,10 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	#endif
 	
 	//Henk 12/10/12 -> Copy disk database to memory database.
-	LoadCountries();
+	// Boe!Man 6/25/13: Only load if g_checkCountry is enabled.
+	if(g_checkCountry.integer){
+		LoadCountries();
+	}
 
 	srand( randomSeed );
 
