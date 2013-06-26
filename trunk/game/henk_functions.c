@@ -1,12 +1,21 @@
 #include "g_local.h"
 #include "boe_local.h"
+#ifdef __linux__
+// Boe!Man 6/26/13: LinuxThreads implementation. I know, headers are always bad in seperate files, but we want to avoid declaring syscall twice..
+#include <sys/types.h>
+#include <unistd.h>
+#include <signal.h>
+#include <sys/wait.h>
+#endif
 
 // Country memory database
 pthread_t			countryInit; // Boe!Man 6/25/13: The reference to the thread.
 sqlite3				*memory;
 sqlite3_stmt		*stmt;
 int					selectQuery;
-void				*pthreadStack;
+#ifdef __linux__
+static pid_t		pid; // Boe!Man 6/26/13: The PID of the Thread Manager (LinuxThreads).
+#endif
 
 int process_ddl_row(void * pData, int nColumns, 
         char **values, char **columns)
@@ -51,6 +60,11 @@ void *Thread_countryInit(){
 	if(sql_timeBench.integer){
 		start = trap_Milliseconds();
 	}
+	
+	// Boe!Man 6/26/13: The PID of the thread manager needs to be stored, so we can forcefully terminate it later on.
+	#ifdef __linux__
+	pid = getppid();
+	#endif
 	
 	// Boe!Man 12/6/12
 	// The file can be on two locations. The DLL should always be in the fs_game folder, however, this could be misconfigured.
@@ -145,6 +159,14 @@ void UnloadCountries(){
 	sqlite3_close(memory);
 	
 	Com_Printf("Unloaded country database.\n");
+	
+	// Boe!Man 6/26/13: Thanks to LinuxThreads, also kill the Thread Manager. This "fixes" a crash on "new" (> Linux 2.4) systems.
+	#ifdef __linux__
+	kill(pid, SIGTERM);
+	usleep(5000);
+	kill(pid, SIGKILL);
+	pid = -1;
+	#endif
 }
 
 void trap_LinkEntity( gentity_t *ent ) {
