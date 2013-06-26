@@ -757,16 +757,16 @@ qboolean	Boe_checkClanMember		(char *ip, char *name2);
 void		Boe_unloadUserdataDbs	(void);
 void		Boe_backupInMemoryDbs	(char *filename, sqlite3 *db);
 
-// Boe!Man 5/27/13: In-memory database functions and declarations.
-sqlite3 	*aliasesDb;
-sqlite3 	*bansDb;
-sqlite3 	*usersDb;
-char		tempName[16];
+// Boe!Man 5/27/13: In-memory databases.
+extern		sqlite3 	*aliasesDb;
+extern		sqlite3 	*bansDb;
+extern		sqlite3 	*usersDb;
+extern		char		tempName[16];
 
 void		LoadCountries			(void);
 void		UnloadCountries			(void);
 
 // Boe!Man 1/2/13: --- SQLite3 Related CVARs ---
-extern vmCvar_t		sql_aliasFlushCount;
-extern vmCvar_t		sql_timeBench;
-extern vmCvar_t		sql_backupInterval;
+extern 		vmCvar_t		sql_aliasFlushCount;
+extern		vmCvar_t		sql_timeBench;
+extern		vmCvar_t		sql_backupInterval;
