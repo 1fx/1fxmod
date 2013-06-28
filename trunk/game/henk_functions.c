@@ -10,9 +10,7 @@
 
 // Country memory database
 pthread_t			countryInit; // Boe!Man 6/25/13: The reference to the thread.
-sqlite3				*memory;
-sqlite3_stmt		*stmt;
-int					selectQuery;
+sqlite3				*countryDb;
 #ifdef __linux__
 static pid_t		pid; // Boe!Man 6/26/13: The PID of the Thread Manager (LinuxThreads).
 #endif
@@ -53,7 +51,7 @@ int process_dml_row(void *pData, int nColumns,
 void *Thread_countryInit(){
 	int 		rc, i;
 	sqlite3 	*db;
-	int 		start;
+	int 		start = 0;
 	char 		fsGame[MAX_QPATH];
 	qboolean	alt;
 	
@@ -75,34 +73,30 @@ void *Thread_countryInit(){
 		rc = sqlite3_open_v2(va("./%s/core/country.db", fsGame), &db, SQLITE_OPEN_READONLY, NULL);
 		if(rc){
 			G_LogPrintf("^1Error: ^7Country database: %s\n", sqlite3_errmsg(db));
-			return;
+			return NULL;
 		}else{
 			alt = qtrue;
 		}
 	}else{
 		alt = qfalse;
 	}
-
-	//SELECT table_index FROM country_index where 1 BETWEEN begin_ip AND end_ip
-	//SELECT ext,country FROM db6 where 1 BETWEEN begin_ip AND end_ip
+	
 	sqlite3_exec(db, "BEGIN", NULL, NULL, NULL);
-	sqlite3_exec(db, "SELECT sql FROM sqlite_master WHERE sql NOT NULL", &process_ddl_row, memory, NULL);
+	sqlite3_exec(db, "SELECT sql FROM sqlite_master WHERE sql NOT NULL", &process_ddl_row, countryDb, NULL);
 	sqlite3_exec(db, "COMMIT", NULL, NULL, NULL);
 	sqlite3_close(db);
 	
 	// Boe!Man 1/29/13: Do attach the proper database, based on where the library is located.
 	if(!alt){
-		sqlite3_exec(memory, "ATTACH DATABASE './core/country.db' as country", NULL, NULL, NULL);
+		sqlite3_exec(countryDb, "ATTACH DATABASE './core/country.db' as country", NULL, NULL, NULL);
 	}else{
-		sqlite3_exec(memory, va("ATTACH DATABASE './%s/core/country.db' as country", fsGame), NULL, NULL, NULL);
+		sqlite3_exec(countryDb, va("ATTACH DATABASE './%s/core/country.db' as country", fsGame), NULL, NULL, NULL);
 	}
 	
 	// Copy the data from the backup to the in memory
-	sqlite3_exec(memory, "BEGIN", NULL, NULL, NULL);
-	sqlite3_exec(memory, "SELECT name FROM country.sqlite_master WHERE type='table'", &process_dml_row, memory, NULL);
-	sqlite3_exec(memory, "COMMIT", NULL, NULL, NULL);
-
-	selectQuery = sqlite3_prepare_v2(memory, "select country,ext from countries where ? BETWEEN begin_ip AND end_ip", -1, &stmt, 0);
+	sqlite3_exec(countryDb, "BEGIN", NULL, NULL, NULL);
+	sqlite3_exec(countryDb, "SELECT name FROM country.sqlite_master WHERE type='table'", &process_dml_row, countryDb, NULL);
+	sqlite3_exec(countryDb, "COMMIT", NULL, NULL, NULL);
 	
 	if(sql_timeBench.integer){
 		Com_Printf("Country database loaded in %d ms\n", trap_Milliseconds()-start);
@@ -133,9 +127,9 @@ void *Thread_countryInit(){
 // Select query from disk takes ~80ms, from memory 0ms.
 void LoadCountries(){
 	// Boe!Man 6/25/13: Initialize the in-memory database from the main thread.
-	memory = NULL;
+	countryDb = NULL;
 	
-	sqlite3_open_v2(":memory:", &memory, SQLITE_OPEN_READWRITE, NULL);
+	sqlite3_open_v2(":memory:", &countryDb, SQLITE_OPEN_READWRITE, NULL);
 	
 	// Boe!Man 6/25/13: Try to init the thread.
 	if(pthread_create(&countryInit, NULL, &Thread_countryInit, NULL) != 0){
@@ -153,10 +147,9 @@ void LoadCountries(){
 
 void UnloadCountries(){
 	pthread_join(countryInit, NULL); // Boe!Man 6/25/13: Wait for the thread to exit.
-	
-	sqlite3_finalize(stmt);
-	sqlite3_exec(memory, "DETACH DATABASE country", NULL, NULL, NULL);
-	sqlite3_close(memory);
+
+	sqlite3_exec(countryDb, "DETACH DATABASE country", NULL, NULL, NULL);
+	sqlite3_close(countryDb);
 	
 	Com_Printf("Unloaded country database.\n");
 	
@@ -1200,7 +1193,6 @@ void PrintCustom(int numb){
 
 void SpawnFence(int choice) // big cage
 {
-	int result;
 	AddSpawnField("classname", "misc_bsp"); // blocker
 	if (choice == 1){
 	AddSpawnField("bspmodel",	"instances/Generic/fence01");
@@ -1224,9 +1216,8 @@ void SpawnFence(int choice) // big cage
 	AddSpawnField("count",		 "1");
 	AddSpawnField("nolower",	"1");
 
-	result = G_SpawnGEntityFromSpawnVars(qtrue);
-	//Com_Printf("Spawning %i result: %i\n", choice, result);
-
+	G_SpawnGEntityFromSpawnVars(qtrue);
+	
 	level.numSpawnVars = 0;
 	level.numSpawnVarChars = 0;
 }
@@ -1252,17 +1243,18 @@ void HENK_COUNTRY(gentity_t *ent){
 	char	*IP;
 	int		count = 0;
 	int		i, z, countx[4], loops = 0;
-
-	char	octet[4][4], octetx[4][4];
-	int		RealOctet[4];
+	int 	start = 0;
+	int 	rc;
+	
+	char				octet[4][4], octetx[4][4];
+	int					RealOctet[4];
 	unsigned int		IPnum;
+	sqlite3_stmt		*stmt;
+	int					tableNum = -1;
 
-	int start;
-	int end;
-	int rc;
-	//Com_sprintf(IP, 24, ent->client->pers.ip);
+	
 	IP = va("%s", ent->client->pers.ip);
-	//Com_Printf("IP is: %s\n", ent->client->pers.ip);
+	
 	// Set countx to zero, when you do not set the variable you get weird ass results.
 	countx[0] = 0;
 	countx[1] = 0;
@@ -1320,11 +1312,27 @@ void HENK_COUNTRY(gentity_t *ent){
 	if(sql_timeBench.integer){
 		start = trap_Milliseconds();
 	}
-	rc = selectQuery;
 	
-	sqlite3_bind_int64(stmt, 1, IPnum);
-	if(rc!=SQLITE_OK){
-		G_LogPrintf("^1Error: ^7Country database: %s\n", sqlite3_errmsg(memory));
+	rc = sqlite3_prepare(countryDb, va("SELECT table_index from country_index WHERE %u BETWEEN begin_ip AND end_ip", IPnum), -1, &stmt, 0);
+	if(rc != SQLITE_OK){
+		Com_Printf("^1Error: ^7Country database: %s\n", sqlite3_errmsg(countryDb));
+		sqlite3_finalize(stmt);
+		return;
+	}else while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
+		tableNum = sqlite3_column_int(stmt, 0);
+		break;
+	}
+	sqlite3_finalize(stmt);
+	
+	// Boe!Man 6/28/13: Check if the table number has been found.
+	if(tableNum == -1)
+		return;
+	
+	
+	rc = sqlite3_prepare(countryDb, va("SELECT country,ext from db%i WHERE %u BETWEEN begin_ip AND end_ip", tableNum, IPnum), -1, &stmt, 0);
+	if(rc != SQLITE_OK){
+		Com_Printf("^1Error: ^7Country database: %s\n", sqlite3_errmsg(countryDb));
+		sqlite3_finalize(stmt);
 		return;
 	}else while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
 		if(rc == SQLITE_ROW){
@@ -1333,10 +1341,10 @@ void HENK_COUNTRY(gentity_t *ent){
 			break;
 		}
 	}
-	sqlite3_reset(stmt);
+	sqlite3_finalize(stmt);
+	
 	if(sql_timeBench.integer){
-		end = trap_Milliseconds()-start;
-		Com_Printf(va("IP2Country took %d ms\n", end));
+		Com_Printf(va("IP2Country took %d ms\n", trap_Milliseconds()-start));
 	}
 	return;
 }

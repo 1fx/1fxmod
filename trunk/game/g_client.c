@@ -1684,7 +1684,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 	//G_LogPrintf( "ClientConnect: %i\n", clientNum );
 	// Boe!Man 3/31/10: First off we search in the Country database.
 	if(g_checkCountry.integer && level.countryInitialized && !strstr(ent->client->sess.country, "noneandempty")){
-		if(strstr(ent->client->pers.ip, "bot")){
+		if(isBot){
 			strcpy(ent->client->sess.country, "None");
 			strcpy(ent->client->sess.countryext, "??");
 		}else{
