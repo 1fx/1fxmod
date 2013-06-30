@@ -18,7 +18,11 @@
 #endif
 */
 // Boe!Man 1/6/13: One string to rule them all.
+#ifdef _RELEASE	// Boe!Man 6/30/13: Major and minor version throughout a development cycle.
+#define INF_VERSION_STRING "0.70t - rc3"
+#elif _NIGHTLY	// Boe!Man 6/30/13: Debug release w/ symbols and other debugging stuff. Should never be released to the public.
 #define INF_VERSION_STRING "0.70t"
+#endif
 
 //#endif
 
@@ -157,7 +161,7 @@
 // 0.70t		3rd Beta						1000		3/11/13		// Sent out to BETA group on 3/11/13
 // 0.70t		1st Release Candidate			1017		5/27/13		// Sent out to BETA group on 5/27/13
 // 0.70t		2nd Release Candidate			1022		5/30/13		// Sent out to BETA group on 5/30/13
-// 0.70t		3rd Release Candidate			1049		6/29/13		// Sent out to BETA group on 6/29/13
+// 0.70t		3rd Release Candidate			1050		6/30/13		// Sent out to BETA group on 6/30/13
 
 
 //===================================================================
@@ -176,7 +180,7 @@ within the string, example: you want to watch option 1 and
 
 You have the option to NOT compile this function , so in final 
 releases this CVAR can be left out. To exclude this function,
-simply leave out (-D_BOE_DBG).
+simply build with NDEBUG instead of _DEBUG (or simply leave it out).
 
 -------------
 For '1' in the boe_log CVAR:

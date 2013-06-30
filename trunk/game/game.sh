@@ -24,11 +24,11 @@ echo -n "Enter your choice and press [ENTER]: "
 read choice
 
 if [ "$choice" == "1" ]; then
-	buildoptions="-s -O2 -fstack-check -DNDEBUG -DMISSIONPACK -DQAGAME -D_SOF2 -fPIC -c"
+	buildoptions="-s -O2 -fstack-check -DNDEBUG -DMISSIONPACK -DQAGAME -D_SOF2 -D_RELEASE -fPIC -c"
 	clear
 	echo -e "Building a \e[00;36mPublic release build\e[00m" 
 elif [ "$choice" == "2" ]; then
-	buildoptions="-s -O2 -fstack-check -D_DEBUG -DDEBUG -DBUILDING_REF_GL -DDebugSoF2 -DMISSIONPACK -DQAGAME -D_SOF2 -D_BOE_DBG -fPIC -c"
+	buildoptions="-s -O2 -fstack-check -D_DEBUG -DDEBUG -DBUILDING_REF_GL -DDebugSoF2 -DMISSIONPACK -DQAGAME -D_SOF2 -D_RELEASE -fPIC -c"
 	clear
 	echo -e "Building a \e[00;36mTest/Beta release build\e[00m" 
 else
