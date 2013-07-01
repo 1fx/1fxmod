@@ -3281,22 +3281,23 @@ void Boe_backupInMemoryDbs(char *fileName, sqlite3 *db)
 		return;
 	}
 	
+	// Boe!Man 7/1/13: Fixed the backup being very slow when databases are relatively full, can especially be noted when restarting the map.
+	sqlite3_exec(pFile, "PRAGMA synchronous = OFF", NULL, NULL, NULL);
+	sqlite3_exec(pFile, "BEGIN TRANSACTION", NULL, NULL, NULL);
+	
 	pBackup = sqlite3_backup_init(pFile, "main", db, "main");
 	
-	do{
-		rc = sqlite3_backup_step(pBackup, 5);
-		if(rc==SQLITE_OK || rc==SQLITE_BUSY || rc==SQLITE_LOCKED){
-	  		sqlite3_sleep(50);
-		}
-	} while(rc==SQLITE_OK || rc==SQLITE_BUSY || rc==SQLITE_LOCKED);
-
-	// Boe!Man 5/27/13: Release resources allocated by backup_init().
-	sqlite3_backup_finish(pBackup);
+	if(pBackup){
+		sqlite3_backup_step(pBackup, -1);
+      	// Boe!Man 5/27/13: Release resources allocated by backup_init().
+		sqlite3_backup_finish(pBackup);
+	}
 
 	rc = sqlite3_errcode(pFile);
 	if(rc){
 		G_LogPrintf("SQLite3 error while backing up data in %s: %s\n", fileName, sqlite3_errmsg(pFile));
 	}
 	
+	sqlite3_exec(pFile, "COMMIT", NULL, NULL, NULL);
 	sqlite3_close(pFile);
 }
