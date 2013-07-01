@@ -149,6 +149,7 @@
 //
 // -- LTS
 // 0.60			Release							885			11/23/12	// Sent out to public on 11/23/12
+// 0.61			Release							1056		7/1/13		// Sent out to public on 7/1/13
 //
 // -- Testing and BETA
 // 0.70t		1st Alpha						895			11/30/12	// Sent out to BETA group on 11/30/12
