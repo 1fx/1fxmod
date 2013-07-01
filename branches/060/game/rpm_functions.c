@@ -1233,14 +1233,9 @@ void RPM_Awards(void)
 			/////trap_SendServerCommand( -1, va("awards %s %s", a, b));
 			//Com_Printf("awards %s %s\n", a, b);
 
-#ifndef PUB_RELEASE
-	if (strstr(boe_log.string, "1"))
-		G_LogPrintf("1e\n");
-#endif
-
 #ifdef Q3_VM
 			///End  - 01.12.06 - 09:23pm
-			trap_SendServerCommand( -1, va("awards %i %i %i %i %i %i %i %.2f %i %.2f %i %i %i %i", 
+			trap_SendServerCommand( i, va("awards %i %i %i %i %i %i %i %.2f %i %.2f %i %i %i %i", 
 				bestOverall->s.number,
 				overallScore,
 				headshooter->s.number, 
@@ -1259,6 +1254,11 @@ void RPM_Awards(void)
 #endif
 		}
 	}
+	
+#ifndef PUB_RELEASE
+	if (strstr(boe_log.string, "1"))
+		G_LogPrintf("1e\n");
+#endif
 }
 
 
