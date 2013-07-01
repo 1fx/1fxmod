@@ -1690,6 +1690,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 	ent->client->pers.statinfo.lastclient_hurt = -1;
 	memset(ent->client->sess.IgnoredClients, -1, sizeof(ent->client->sess.IgnoredClients));
 	ent->client->sess.IgnoredClientCount = 0;
+	ent->client->sess.deathTime = 0;
 
 #ifndef PUB_RELEASE
 	if (strstr(boe_log.string, "1"))

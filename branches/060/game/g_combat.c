@@ -591,6 +591,7 @@ void player_die(
 	self->client->ps.zoomFov		= 0;			// Turn off zooming when we die
 	self->client->ps.stats[STAT_GAMETYPE_ITEMS] = 0;
 	self->client->ps.pm_flags &= ~(PMF_GOGGLES_ON|PMF_ZOOM_FLAGS);
+	self->client->sess.deathTime	= level.time;	// Boe!Man 6/5/13: Register time of death in the round.
 
 	self->s.angles[0]				= 0;
 	self->s.angles[2]				= 0;

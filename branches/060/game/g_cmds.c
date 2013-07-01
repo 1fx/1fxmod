@@ -1379,6 +1379,12 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 		{
 			ghost = qtrue;
 		}
+		
+		// Boe!Man 6/5/13: Check if the client wants to abuse the spec to team bug. Note this doesn't apply to H&S/H&Z.
+		if((current_gametype.value != GT_HS && current_gametype.value != GT_HZ) && client->sess.deathTime > level.gametypeJoinTime)
+		{
+			ghost = qtrue;
+		}
 
 		if(current_gametype.value == GT_HZ){
 			if(level.gametypeJoinTime && (level.time - level.gametypeJoinTime) > 10000){
