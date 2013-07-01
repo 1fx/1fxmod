@@ -617,12 +617,18 @@ void G_CheckMinimumPlayers( void )
 		return;
 	}
 	
-	// Boe!Man 9/7/12: Check how many bots are spectating. It's possible they cannot spawn, don't keep spawning them if they cannot be spawned.
-	if(!level.spawnCount){
-		if(level.time - level.startTime <= 10000 && G_CountBotPlayers(TEAM_SPECTATOR)){ // It's always possible the server owner adds them himself, so only do this check the first 10 secs (so the first run).
-			trap_SendConsoleCommand(EXEC_APPEND, "kick allbots\n" );
-		}
+	// Boe!Man 1/24/13: If there are bots in the queue, don't do anything yet. :-)
+	if(level.time - level.startTime < 1000 && BOT_SPAWN_QUEUE_DEPTH){
 		return;
+	}
+	
+	// Boe!Man 1/24/13: New code for bot checking during startup. With the new code this should be checked in the first round it makes.
+	if(level.time - level.startTime <= 12000){
+		if(!level.spawnCount){ // No need to check for spectating bots. They will be spectating if there are no spawns. Kick 'm all.
+			trap_SendConsoleCommand(EXEC_APPEND, "kick allbots\n" );
+		}else{ // Else we check the teams, if there are spectating bots found (which there will be if e.g. a new session is initialized), we kick those too.
+			Boe_kickSpecBots();
+		}
 	}
 
 	if ( level.gametypeData->teams ) 
@@ -1305,3 +1311,35 @@ void G_RandomlyChooseOutfitting(gentity_t *ent, goutfitting_t *outfitting)
 }
 // GRIM
 
+/*
+===============
+Boe_kickSpecBots
+===============
+*/
+void Boe_kickSpecBots(void) 
+{
+	int			i;
+	gclient_t	*cl;
+	
+	for (i= 0; i < g_maxclients.integer; i++){
+		cl = level.clients + i;
+
+		if ( cl->pers.connected != CON_CONNECTED ) 
+		{
+			continue;
+		}
+
+		if ( !(g_entities[cl->ps.clientNum].r.svFlags & SVF_BOT) ) 
+		{
+			continue;
+		}
+
+		if (cl->sess.team != TEAM_SPECTATOR)
+		{
+			continue;
+		}
+		
+		// Boe!Man 1/24/13: Finally, kick them if they are in the spectator team.
+		trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%i\"\n", cl->ps.clientNum) );
+	}
+}

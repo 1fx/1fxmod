@@ -1185,6 +1185,8 @@ qboolean G_BotConnect( int clientNum, qboolean restart );
 void Svcmd_AddBot_f( void );
 void Svcmd_BotList_f( void );
 void BotInterbreedEndMatch( void );
+void Boe_kickSpecBots(void);
+
 qboolean G_DoesMapSupportGametype ( const char* gametype );
 qboolean Henk_DoesMapSupportGametype(const char* gametype, char *mapname);
 //Ryan
