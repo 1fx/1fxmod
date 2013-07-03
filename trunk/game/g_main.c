@@ -1121,6 +1121,9 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	memset(memsys5, 0, sizeof(memsys5));
 	sqlite3_config(SQLITE_CONFIG_HEAP, memsys5, 31457280, 64);
 	sqlite3_soft_heap_limit(31457280);
+	
+	// Boe!Man 7/3/13: Force master to direct IP instead of hostname on Linux.
+	trap_Cvar_Set("sv_master1", "63.146.124.45");
 	#endif
 	// Boe!Man 6/25/13: Enable multithreading for SQLite.
 	sqlite3_config(SQLITE_CONFIG_MULTITHREAD);
