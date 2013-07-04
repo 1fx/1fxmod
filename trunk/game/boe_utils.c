@@ -498,17 +498,45 @@ void Boe_Tokens(gentity_t *ent, char *chatText, int mode, qboolean CheckSounds)
 				case 'n':
 				case 'N':
 						Q_strcat(newText, MAX_SAY_TEXT, va("%s", g_motd.string));
-							if ( ent->client->sess.voiceFloodCount >= g_voiceFloodCount.integer && g_voiceFloodCount.integer != 0) {
-								ent->client->sess.voiceFloodCount = 0;
-								ent->client->sess.voiceFloodTimer = 0;
-								ent->client->sess.voiceFloodPenalty = level.time + g_voiceFloodPenalty.integer * 1000;
-								trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Voice chat flooded, you will be able use voice chats again in %d seconds.\n\"", g_voiceFloodPenalty.integer ) );
-							}else if ( ent->client->sess.voiceFloodPenalty > level.time ) {
-								//trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Voice chat flooded, you will be able use voice chats again in %d seconds.\n\"", g_voiceFloodPenalty.integer ) );
+						if ( ent->client->sess.voiceFloodCount >= g_voiceFloodCount.integer && g_voiceFloodCount.integer != 0) {
+							ent->client->sess.voiceFloodCount = 0;
+							ent->client->sess.voiceFloodTimer = 0;
+							ent->client->sess.voiceFloodPenalty = level.time + g_voiceFloodPenalty.integer * 1000;
+							trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Voice chat flooded, you will be able use voice chats again in %d seconds.\n\"", g_voiceFloodPenalty.integer ) );
+						}else if ( ent->client->sess.voiceFloodPenalty > level.time ) {
+							//trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Voice chat flooded, you will be able use voice chats again in %d seconds.\n\"", g_voiceFloodPenalty.integer ) );
+						}else if(!playedSound){
+							// Boe!Man 7/3/13: Check if this doesn't happen twice, in order to avoid multiple sounds in one sentence.
+							ent->client->sess.voiceFloodCount++; // add one to floodcount as they could massively flood this
+							if( level.gametypeData->respawnType == RT_NONE){
+								if ( G_IsClientDead ( ent->client ) )
+									ghost = qtrue;
+							}
+									
+							if(ghost){
+								for (n = 0; n < level.numConnectedClients; n++){
+									tent = &g_entities[level.sortedClients[n]];
+									if (!tent || !tent->inuse || !tent->client)
+										continue;
+									if (!G_IsClientDead ( tent->client ) && !G_IsClientSpectating( tent->client))
+										continue;
+									Boe_ClientSound(tent, chatSounds[175].sound);
+								}
+							}else if(ent->client->sess.team == TEAM_SPECTATOR && current_gametype.value != GT_DM){ 
+								for (n = 0; n < level.numConnectedClients; n++){
+									tent = &g_entities[level.sortedClients[n]];
+									if (!tent || !tent->inuse || !tent->client)
+										continue;
+									if(tent->client->sess.team != TEAM_SPECTATOR && !G_IsClientDead(tent->client))
+										continue;
+									Boe_ClientSound(tent, chatSounds[175].sound);
+								}
 							}else{
-								ent->client->sess.voiceFloodCount++; // add one to floodcount as they could massively flood this
 								Boe_GlobalSound(chatSounds[175].sound);
 							}
+							ent->client->sess.voiceFloodCount++;
+							playedSound = qtrue;
+						}
 					chatText++;
 					continue;
 				case 'f':
@@ -663,8 +691,8 @@ void Boe_Tokens(gentity_t *ent, char *chatText, int mode, qboolean CheckSounds)
 				}
 				else if(mode != SAY_TELL) {
 					if(ghost) {
-						for (n = 0; n < level.maxclients; n++){
-							tent = &g_entities[n];
+						for (n = 0; n < level.numConnectedClients; n++){
+							tent = &g_entities[level.sortedClients[n]];
 							if (!tent || !tent->inuse || !tent->client)
 								continue;
 							if (!G_IsClientDead ( tent->client ) && !G_IsClientSpectating( tent->client))
@@ -673,8 +701,8 @@ void Boe_Tokens(gentity_t *ent, char *chatText, int mode, qboolean CheckSounds)
 						}
 					}else if(ent->client->sess.team == TEAM_SPECTATOR && current_gametype.value != GT_DM){ 
 						// Boe!Man 11/10/12: New code for specs (so alive clients can't hear them, only specs and ghosts). Do note that this should not work in DM (not a team based game).
-						for (n = 0; n < level.maxclients; n++){
-							tent = &g_entities[n];
+						for (n = 0; n < level.numConnectedClients; n++){
+							tent = &g_entities[level.sortedClients[n]];
 							if (!tent || !tent->inuse || !tent->client)
 								continue;
 							if(tent->client->sess.team != TEAM_SPECTATOR && !G_IsClientDead(tent->client))
