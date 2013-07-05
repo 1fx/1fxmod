@@ -27,7 +27,6 @@ void G_AddScore( gentity_t *ent, int score )
 		return;
 	}
 	if(level.cagefight && ent->client->sess.team == TEAM_RED){
-		ent->client->sess.kills += score;
 		ent->client->sess.cagescore += score;
 	}
 	ent->client->sess.score += score;
