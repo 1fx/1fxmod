@@ -1636,7 +1636,11 @@ void Cmd_Team_f( gentity_t *ent )
 
 	trap_Argv( 1, team, sizeof( team ) );
 	trap_Argv( 2, identity, sizeof( identity ) );
-
+	
+	// Boe!Man 7/5/13: Also toss the client items in H&S/H&Z (M4/RPG/MM1)..
+	if(identity[0] && (current_gametype.value == GT_HS || current_gametype.value == GT_HZ))
+		TossClientItems(ent);
+	
 	SetTeam( ent, team, identity[0]?identity:NULL, qfalse );
 
 	// Remember the team switch time so they cant do it again really quick

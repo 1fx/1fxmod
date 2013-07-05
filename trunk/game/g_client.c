@@ -2414,6 +2414,10 @@ void ClientDisconnect( int clientNum )
 	{
 		tent = G_TempEntity( ent->client->ps.origin, EV_PLAYER_TELEPORT_OUT );
 		tent->s.clientNum = ent->s.clientNum;
+		
+		// Boe!Man 7/5/13: Toss client weapons prior to resetting them in H&S/H&Z.
+		if(current_gametype.value == GT_HS || current_gametype.value == GT_HZ)
+			TossClientItems( ent );
 
 		// Dont drop weapons
 		ent->client->ps.stats[STAT_WEAPONS] = 0;
