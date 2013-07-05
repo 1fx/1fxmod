@@ -451,7 +451,7 @@ void player_die(
 			}
 		}
 	}
-	else if ( mod != MOD_TEAMCHANGE && current_gametype.value != GT_HZ )
+	else if ( mod != MOD_TEAMCHANGE && current_gametype.value != GT_HS && current_gametype.value != GT_HZ )
 	{
 		G_AddScore( self, g_suicidePenalty.integer );
 	}
@@ -1447,10 +1447,9 @@ if(current_gametype.value == GT_HZ && attacker && targ && mod == MOD_KNIFE){
 		targ->client->lasthurt_time = level.time;
 		targ->client->lasthurt_mod = mod;
 
-		if(attacker->client) // Henk 20/02/11 -> Fix for no lower kills
-		targ->client->pers.statinfo.lasthurtby = attacker->s.number;
 		if(attacker->client)
 		{
+			targ->client->pers.statinfo.lasthurtby = attacker->s.number;
 			attacker->client->pers.statinfo.lastclient_hurt = targ->s.number;
 		}
 		//Ryan
