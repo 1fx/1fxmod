@@ -163,6 +163,7 @@
 // 0.70t		1st Release Candidate			1017		5/27/13		// Sent out to BETA group on 5/27/13
 // 0.70t		2nd Release Candidate			1022		5/30/13		// Sent out to BETA group on 5/30/13
 // 0.70t		3rd Release Candidate			1050		6/30/13		// Sent out to BETA group on 6/30/13
+// 0.70			Release							1061		7/5/13		// Sent out to BETA group on 7/5/13
 
 
 //===================================================================
