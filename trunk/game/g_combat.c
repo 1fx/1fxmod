@@ -1865,7 +1865,7 @@ qboolean G_RadiusDamage (
 					}
 					attacker->client->sess.RPGBoosts += 1;
 				// Boe!Man 7/9/13: If the RPG hits a booster, boost the attacker (RPG holder).
-				}else if(ent->classname && strstr(ent->classname, "booster")){
+				}else if(ent->classname && strstr(ent->classname, "booster") && !attacker->client->ps.pm_flags & PMF_JUMPING){
 					attacker->client->ps.pm_flags |= PMF_JUMPING;
 					attacker->client->ps.groundEntityNum = ENTITYNUM_NONE;
 					attacker->client->ps.velocity[2] = 450;
