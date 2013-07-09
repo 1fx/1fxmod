@@ -2039,13 +2039,13 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 		*/
 	case ADM_CHAT:
 		strcpy(type, server_acprefix.string);
-		if (beep == qtrue){
+		if (beep == qtrue && g_specialChatSound.integer){
 			Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3"));
 		}
 		break;
 	case SADM_CHAT:
 		strcpy(type, server_scprefix.string);
-		if (beep == qtrue){
+		if (beep == qtrue && g_specialChatSound.integer){
 			Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3"));
 		}
 		break;
@@ -2063,13 +2063,13 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 		break;
 	case CADM_CHAT:
 		strcpy(type, server_caprefix.string);
-		if (beep == qtrue){
+		if (beep == qtrue && g_specialChatSound.integer){
 			Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3"));
 		}
 		break;
 	case CLAN_CHAT:
 		strcpy(type, server_ccprefix.string);
-		if (beep == qtrue){
+		if (beep == qtrue && g_specialChatSound.integer){
 			Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3"));
 		}
 		break;

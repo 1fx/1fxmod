@@ -708,6 +708,7 @@ extern	vmCvar_t	g_dropLocationMessage;
 
 // Boe!Man 8/25/11: CVAR for logging special Chats (Hey Admin, Admin Chat, Clan Chat, etc.).
 extern	vmCvar_t	g_logSpecialChat;
+extern	vmCvar_t	g_specialChatSound;
 void Boe_displayTokens ( gentity_t *ent );
 
 // Boe!Man 5/20/12: CVAR for IP in /stats.

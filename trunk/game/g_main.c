@@ -282,6 +282,7 @@ vmCvar_t	g_dropLocationMessage;
 
 // Boe!Man 8/25/11
 vmCvar_t	g_logSpecialChat;
+vmCvar_t	g_specialChatSound;
 
 // Boe!Man 5/20/12
 vmCvar_t	g_publicIPs;
@@ -622,6 +623,7 @@ static cvarTable_t gameCvarTable[] =
 
 	// Boe!Man 8/25/11
 	{ &g_logSpecialChat,			"g_logSpecialChat",		 "1",		CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
+	{ &g_specialChatSound,			"g_specialChatSound",	 "1",		CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 	
 	// Boe!Man 5/20/12
 	{ &g_publicIPs,					"g_publicIPs",		 	"1",		CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue },
