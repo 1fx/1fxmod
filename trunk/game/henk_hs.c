@@ -631,7 +631,7 @@ void EvenTeams_HS (gentity_t *adm, qboolean aet)
 	int		counts[TEAM_NUM_TEAMS];
 	int		diff = 0;
 	int		highTeam, i, j, lastConnectedTime;
-	gentity_t *lastConnected, *ent;
+	gentity_t *lastConnected, *lastConnected2, *ent;
 	clientSession_t	*sess;
 	int	seekers, maxhiders, totalplayers;
 
@@ -710,18 +710,27 @@ void EvenTeams_HS (gentity_t *adm, qboolean aet)
 
 			if(ent->client->pers.enterTime > lastConnectedTime)	{
 				lastConnectedTime = ent->client->pers.enterTime;
-				lastConnected = ent;
+				if(ent->client->sess.score > 0){
+					lastConnected2 = ent;
+				}else{
+					lastConnected = ent;
+				}
 			}
 		} 
 		
 		// Boe!Man 7/13/12: Fix crash issue with auto eventeams too soon before entering the map.
-		if(lastConnected == NULL){
+		if(lastConnected == NULL && lastConnected2 == NULL){
 			if(adm && adm->client){
 				trap_SendServerCommand( adm - g_entities, va("print \"^3[Info] ^7You cannot even the teams this fast.\n\"") );
 			}else if(!aet){
 				Com_Printf("You cannot even the teams this fast.\n");
 			}
 			return;
+		}
+		
+		// Boe!Man 7/9/13: Fix for people with points being ETed even though there are people with 0 points.
+		if(lastConnected2 != NULL && lastConnected == NULL){ // This means that there are people with points only. Force the last connected anyway.
+			lastConnected = lastConnected2;
 		}
 
 		TossClientItems( lastConnected ); // Henk 19/01/11 -> Fixed items not dropping with !et
