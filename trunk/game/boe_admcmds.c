@@ -1827,7 +1827,7 @@ Henk_RemoveLineFromFile
 
 Removes a zero based line from a file
 ================
-*/
+
 void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subnet, qboolean ban, qboolean banremove, char *banremovestring){
 	fileHandle_t	f;
 	int len, CurrentLine = 0, StartPos = 0, EndPos = -1, i;
@@ -1975,6 +1975,7 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 		}
 	}
 }
+*/
 
 /*
 ==================

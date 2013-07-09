@@ -1775,11 +1775,8 @@ qboolean G_RadiusDamage (
 	{
 		memset(entityList1, 0, sizeof(entityList1)); // clean memory where entitylist is stored to prevent problems
 		ent = &g_entities[entityList[ e ]];
-
+		
 		if(current_gametype.value == GT_HS){
-			
-			ent = &g_entities[entityList[ e ]];
-
 			// Henk 14/01/10 -> M4 Cage
 			if(mod == 264){ // m4
 				if(ent->client){
@@ -1821,6 +1818,7 @@ qboolean G_RadiusDamage (
 					VectorNormalize ( rpgdir );
 					G_ApplyKnockback(ent, rpgdir, 115);
 					ent->client->ps.velocity[1] -= 50.0f;
+					break;
 				}
 			}
 			// End
@@ -1842,6 +1840,7 @@ qboolean G_RadiusDamage (
 					attacker->client->ps.pm_flags |= PMF_JUMPING;
 					attacker->client->ps.groundEntityNum = ENTITYNUM_NONE;
 					attacker->client->ps.velocity[2] = 450;
+					break;
 				}
 			}
 
@@ -1865,11 +1864,12 @@ qboolean G_RadiusDamage (
 					}
 					attacker->client->sess.RPGBoosts += 1;
 				// Boe!Man 7/9/13: If the RPG hits a booster, boost the attacker (RPG holder).
-				}else if(ent->classname && strstr(ent->classname, "booster") && !attacker->client->ps.pm_flags & PMF_JUMPING){
+				}else if(ent->classname && strstr(ent->classname, "booster") && !(attacker->client->ps.pm_flags & PMF_JUMPING)){
 					attacker->client->ps.pm_flags |= PMF_JUMPING;
 					attacker->client->ps.groundEntityNum = ENTITYNUM_NONE;
 					attacker->client->ps.velocity[2] = 450;
 				}
+				break;
 			}
 			// End
 		}
