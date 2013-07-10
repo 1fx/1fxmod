@@ -1871,6 +1871,40 @@ qboolean G_RadiusDamage (
 				}
 				break;
 			}
+			
+			if((mod == MOD_F1_GRENADE || mod == 272) && strstr(ent->classname, "f1")){ // Boe!Man 8/2/12: Fix for Altattack of tele nade not doing anything.
+				if(origin[2] <= ent->origin_from[2]){
+					vec3_t	mins = {-10,-10,-25};
+					vec3_t	maxs = {10,10,26};
+					vec3_t			org1, org2;
+					trace_t			tr;
+					VectorCopy(origin, org1);
+					VectorCopy(origin, org2);
+					org1[2] += 50;
+					trap_Trace ( &tr, org1, mins, maxs, org2, attacker->s.number, MASK_ALL); //MASK_SOLID
+					if ( !tr.startsolid && !tr.allsolid ){
+						DoTeleport(attacker, origin);
+					}else{
+						ammoindex=weaponData[WP_F1_GRENADE].attack[ATTACK_ALTERNATE].ammoIndex;
+						attacker->client->ps.ammo[ammoindex]+=1;
+
+						if (!(attacker->client->ps.stats[STAT_WEAPONS] & (1<<WP_F1_GRENADE))){ // Boe!Man 8/22/11: Make sure the attacker has the weapon, if not, re-add it (fixes bug which made weapon disappear on last throw).
+							attacker->client->ps.stats[STAT_WEAPONS] |= (1 << WP_F1_GRENADE);
+						}
+						
+						trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7Surface is not empty.\n\""));
+					}
+				}else{
+					ammoindex=weaponData[WP_F1_GRENADE].attack[ATTACK_ALTERNATE].ammoIndex;
+					attacker->client->ps.ammo[ammoindex]+=1;
+
+					if (!(attacker->client->ps.stats[STAT_WEAPONS] & (1<<WP_F1_GRENADE))){ // Boe!Man 8/22/11: Make sure the attacker has the weapon, if not, re-add it (fixes bug which made weapon disappear on last throw).
+						attacker->client->ps.stats[STAT_WEAPONS] |= (1 << WP_F1_GRENADE);
+					}
+
+					trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7Surface is too high.\n\""));
+				}
+			}
 			// End
 		}
 
@@ -2030,39 +2064,6 @@ qboolean G_RadiusDamage (
 				}
 				// End
 				SpawnCage(origin, attacker, qfalse, qfalse);
-			}
-		}
-		if(mod == MOD_F1_GRENADE || mod == 272){ // Boe!Man 8/2/12: Fix for Altattack of tele nade not doing anything.
-			if(origin[2] <= attacker->r.currentOrigin[2]){
-				vec3_t	mins = {-10,-10,-25};
-				vec3_t	maxs = {10,10,26};
-				vec3_t			org1, org2;
-				trace_t			tr;
-				VectorCopy(origin, org1);
-				VectorCopy(origin, org2);
-				org1[2] += 50;
-				trap_Trace ( &tr, org1, mins, maxs, org2, attacker->s.number, MASK_ALL); //MASK_SOLID
-				if ( !tr.startsolid && !tr.allsolid ){
-					DoTeleport(attacker, origin);
-				}else{
-					ammoindex=weaponData[WP_F1_GRENADE].attack[ATTACK_ALTERNATE].ammoIndex;
-					attacker->client->ps.ammo[ammoindex]+=1;
-
-					if (!(attacker->client->ps.stats[STAT_WEAPONS] & (1<<WP_F1_GRENADE))){ // Boe!Man 8/22/11: Make sure the attacker has the weapon, if not, re-add it (fixes bug which made weapon disappear on last throw).
-						attacker->client->ps.stats[STAT_WEAPONS] |= (1 << WP_F1_GRENADE);
-					}
-					
-					trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7Surface is not empty.\n\""));
-				}
-			}else{
-				ammoindex=weaponData[WP_F1_GRENADE].attack[ATTACK_ALTERNATE].ammoIndex;
-				attacker->client->ps.ammo[ammoindex]+=1;
-
-				if (!(attacker->client->ps.stats[STAT_WEAPONS] & (1<<WP_F1_GRENADE))){ // Boe!Man 8/22/11: Make sure the attacker has the weapon, if not, re-add it (fixes bug which made weapon disappear on last throw).
-					attacker->client->ps.stats[STAT_WEAPONS] |= (1 << WP_F1_GRENADE);
-				}
-
-				trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7Surface is too high.\n\""));
 			}
 		}
 

@@ -230,6 +230,7 @@ gentity_t* G_CreateMissile( vec3_t org, vec3_t dir, float vel, int life, gentity
 	VectorCopy( org, missile->s.pos.trBase );
 	VectorScale( dir, vel, missile->s.pos.trDelta );
 	VectorCopy( org, missile->r.currentOrigin);
+	VectorCopy( org, missile->origin_from); // Boe!Man 7/10/13: Use this for grenades like the F1 (in H&S), to determine where the seeker threw it from.
 	SnapVector(missile->s.pos.trDelta);
 
 	return missile;
