@@ -186,7 +186,15 @@ void EvenTeams (gentity_t *adm, qboolean aet)
 	qboolean canBeMoved = qfalse;
 
 	if(current_gametype.value == GT_HS){
-		EvenTeams_HS(adm, aet);
+		if(level.cagefight){
+			if(adm && adm->client){
+				trap_SendServerCommand( adm - g_entities, va("print \"^3[Info] ^7You cannot even the teams during cagefight.\n\"") );
+			}else{ // Boe!Man 7/11/13: This can only happen by non-AET (since we're playing in the cage).
+				Com_Printf("You cannot even the teams during cagefight.\n");
+			}
+		}else{
+			EvenTeams_HS(adm, aet);
+		}
 		return;
 	}
 
