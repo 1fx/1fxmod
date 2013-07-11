@@ -536,11 +536,6 @@ void InitCagefight(void){
 	}
 
 	for(i = 0; i < level.numConnectedClients; i++){
-		if(level.clients[level.sortedClients[i]].pers.connected != CON_CONNECTED)
-		{
-			continue;
-		}
-
 		if(level.clients[level.sortedClients[i]].sess.team == TEAM_RED && (level.clients[level.sortedClients[i]].sess.cageFighter == qtrue || level.mapHighScore == 0)){
 			//respawn ( &g_entities[level.sortedClients[i]] );
 			if(level.hideseek_cageSize != 1){ // 1 = no cage at all, if this is the cage, don't teleport them to the 'cage'.
@@ -561,10 +556,8 @@ void InitCagefight(void){
 			level.clients[level.sortedClients[i]].ps.weaponTime = 0;
 			level.clients[level.sortedClients[i]].ps.weaponAnimTime = 0;
 			level.clients[level.sortedClients[i]].ps.stats[STAT_FROZEN] = 10000;
-		}else if(level.clients[level.sortedClients[i]].sess.team == TEAM_BLUE){
-			G_Damage (&g_entities[level.sortedClients[i]], NULL, NULL, NULL, NULL, 10000, 0, MOD_POP, HL_HEAD|HL_FOOT_RT|HL_FOOT_LT|HL_LEG_UPPER_RT|HL_LEG_UPPER_LT|HL_HAND_RT|HL_HAND_LT|HL_WAIST|HL_CHEST|HL_NECK);
-		}else if(level.clients[level.sortedClients[i]].sess.team != TEAM_SPECTATOR){ // Boe!Man 8/30/11: Means the client is a Red player that wasn't qualified to play in the cage fight. Pop as well.
-			G_Damage (&g_entities[level.sortedClients[i]], NULL, NULL, NULL, NULL, 10000, 0, MOD_POP, HL_HEAD|HL_FOOT_RT|HL_FOOT_LT|HL_LEG_UPPER_RT|HL_LEG_UPPER_LT|HL_HAND_RT|HL_HAND_LT|HL_WAIST|HL_CHEST|HL_NECK);
+		}else if(level.clients[level.sortedClients[i]].sess.team != TEAM_SPECTATOR){ // Boe!Man 8/30/11: Means the client is a Red or Blue player that wasn't qualified to play in the cage fight. Pop them.
+			G_Damage (&g_entities[level.sortedClients[i]], NULL, NULL, NULL, NULL, 10000, 0, MOD_POP, HL_NONE);
 		} // Boe!Man 9/4/11: Else would be spectator only, no need to do anything.
 	}
 	// when it ends execute this:
