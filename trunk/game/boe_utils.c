@@ -505,7 +505,7 @@ void Boe_Tokens(gentity_t *ent, char *chatText, int mode, qboolean CheckSounds)
 							trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Voice chat flooded, you will be able use voice chats again in %d seconds.\n\"", g_voiceFloodPenalty.integer ) );
 						}else if ( ent->client->sess.voiceFloodPenalty > level.time ) {
 							//trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Voice chat flooded, you will be able use voice chats again in %d seconds.\n\"", g_voiceFloodPenalty.integer ) );
-						}else if(!playedSound){
+						}else if(!playedSound && strlen(g_motd.string) > 0){
 							// Boe!Man 7/3/13: Check if this doesn't happen twice, in order to avoid multiple sounds in one sentence.
 							ent->client->sess.voiceFloodCount++; // add one to floodcount as they could massively flood this
 							if( level.gametypeData->respawnType == RT_NONE){
