@@ -2941,6 +2941,7 @@ void Boe_userdataIntegrity(void)
 	}
 	
 	Com_Printf("Succesfully finished checking userdata integrity.\n");
+	dbsLoaded = qtrue;
 	
 	return;
 }
@@ -3269,6 +3270,9 @@ Unloads userdata in-memory databases to free up memory.
 
 void Boe_unloadUserdataDbs(void)
 {
+	if(!dbsLoaded)
+		return;
+	
 	Boe_backupInMemoryDbs("users.db", usersDb);
 	sqlite3_exec(usersDb, "DETACH DATABASE users", NULL, NULL, NULL);
 	sqlite3_close(usersDb);

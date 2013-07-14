@@ -770,6 +770,7 @@ void		Boe_backupInMemoryDbs	(char *filename, sqlite3 *db);
 extern		sqlite3 	*aliasesDb;
 extern		sqlite3 	*bansDb;
 extern		sqlite3 	*usersDb;
+extern		qboolean 	dbsLoaded;
 extern		char		tempName[16];
 
 void		LoadCountries			(void);

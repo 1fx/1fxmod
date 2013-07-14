@@ -11,6 +11,7 @@ unsigned char	memsys5[31457280]; // Boe!Man 1/29/13: Buffer of 30 MB, available 
 sqlite3 		*aliasesDb;
 sqlite3 		*bansDb;
 sqlite3 		*usersDb;
+qboolean		dbsLoaded = qfalse;
 char			tempName[16];
 
 level_locals_t	level;
