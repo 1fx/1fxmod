@@ -51,13 +51,8 @@ int process_dml_row(void *pData, int nColumns,
 void *Thread_countryInit(){
 	int 		rc, i;
 	sqlite3 	*db;
-	int 		start = 0;
 	char 		fsGame[MAX_QPATH];
 	qboolean	alt;
-	
-	if(sql_timeBench.integer){
-		start = trap_Milliseconds();
-	}
 	
 	// Boe!Man 6/26/13: The PID of the thread manager needs to be stored, so we can forcefully terminate it later on.
 	#ifdef __linux__
@@ -97,10 +92,6 @@ void *Thread_countryInit(){
 	sqlite3_exec(countryDb, "BEGIN", NULL, NULL, NULL);
 	sqlite3_exec(countryDb, "SELECT name FROM country.sqlite_master WHERE type='table'", &process_dml_row, countryDb, NULL);
 	sqlite3_exec(countryDb, "COMMIT", NULL, NULL, NULL);
-	
-	if(sql_timeBench.integer){
-		Com_Printf("Country database loaded in %d ms\n", trap_Milliseconds()-start);
-	}
 	
 	// Boe!Man 6/25/13: Parse the clients their country now.
 	for (i = 0; i < level.numConnectedClients; i++){
