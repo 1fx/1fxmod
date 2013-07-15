@@ -19,7 +19,7 @@
 */
 // Boe!Man 1/6/13: One string to rule them all.
 #ifdef _RELEASE	// Boe!Man 6/30/13: Major and minor version throughout a development cycle.
-#define INF_VERSION_STRING "0.71t - beta1"
+#define INF_VERSION_STRING "0.71t - beta2"
 #elif _NIGHTLY	// Boe!Man 6/30/13: Debug release w/ symbols and other debugging stuff. Should never be released to the public.
 #define INF_VERSION_STRING "0.71t"
 #endif
@@ -165,6 +165,7 @@
 // 0.70t		3rd Release Candidate			1050		6/30/13		// Sent out to BETA group on 6/30/13
 // 0.70			Release							1062		7/5/13		// Sent out to public on 7/5/13
 // 0.71t		1st Beta						1076		7/12/13		// Sent out to BETA group on 7/12/13
+// 0.71t		2nd Beta						1084		7/15/13		// Sent out to BETA group on 7/15/13
 
 
 //===================================================================
