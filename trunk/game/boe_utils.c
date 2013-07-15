@@ -2296,6 +2296,10 @@ void Boe_mapEvents (void){
 				}else{
 					trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", level.mapSwitchName));
 				}
+				
+				// Boe!Man 7/15/13: Also re-set these values in case the map switch goes wrong.
+				level.mapSwitch = qfalse;
+				level.mapAction = 0;
 			}
 		}
 	}else if(level.mapAction == 3){
@@ -2307,6 +2311,10 @@ void Boe_mapEvents (void){
 				// Boe!Man 11/5/12: It's a RMG map, make sure to call the rmgmap 0 command.
 				trap_SendConsoleCommand( EXEC_APPEND, va("rmgmap 0\n"));
 			}
+			
+			// Boe!Man 7/15/13: Also re-set these values in case the map switch goes wrong.
+			level.mapSwitch = qfalse;
+			level.mapAction = 0;
 		}
 	}
 	else if(level.mapAction == 4){
@@ -2317,6 +2325,10 @@ void Boe_mapEvents (void){
 				level.mapSwitchCount = level.time + 1000;
 			}else{
 				trap_SendConsoleCommand( EXEC_APPEND, va("mapcycle\n"));
+				
+				// Boe!Man 7/15/13: Also re-set these values in case the map switch goes wrong.
+				level.mapSwitch = qfalse;
+				level.mapAction = 0;
 			}
 		}
 	}
