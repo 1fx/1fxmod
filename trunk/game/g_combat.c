@@ -1869,7 +1869,6 @@ qboolean G_RadiusDamage (
 					attacker->client->ps.groundEntityNum = ENTITYNUM_NONE;
 					attacker->client->ps.velocity[2] = 450;
 				}
-				break;
 			}
 			
 			if((mod == MOD_F1_GRENADE || mod == 272) && strstr(ent->classname, "f1")){ // Boe!Man 8/2/12: Fix for Altattack of tele nade not doing anything.
