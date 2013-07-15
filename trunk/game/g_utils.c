@@ -665,6 +665,11 @@ void G_KillBox (gentity_t *ent, qboolean teleport) {
 		{
 			continue;
 		}
+		
+		// Boe!Man 7/15/13: Don't do this when a seeker is trying to nade another seeker.
+		if (teleport && current_gametype.value == GT_HS && (ent->client->sess.team == TEAM_BLUE && hit->client->sess.team == TEAM_BLUE)){
+			continue;
+		}
 
 		// nail it
 		// Boe!Man 9/20/12: Fix for no telefrag in H&Z w/ teleport.
