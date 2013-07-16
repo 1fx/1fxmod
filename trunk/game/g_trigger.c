@@ -401,7 +401,6 @@ void trigger_ReachableObject_touch ( gentity_t *self, gentity_t *other, trace_t 
 		// Boe!Man 6/14/11: Strip the player.
 		// Henk 26/01/10 -> Dead clients dun have to be stripped
 		if(!G_IsClientDead(other->client)){
-			other->client->sess.timeOfDeath = 1;
 			other->client->ps.zoomFov = 0;	///if they are looking through a scope go to normal view
 			other->client->ps.pm_flags &= ~(PMF_GOGGLES_ON|PMF_ZOOM_FLAGS);
 			other->client->ps.stats[STAT_WEAPONS] = 0;

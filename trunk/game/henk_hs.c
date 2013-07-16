@@ -560,13 +560,11 @@ int GetRpgWinner(void){
 			winnercount += 1;
 		}else if(ent->client->sess.timeOfDeath == 0){ // weird case didn't die and won
 			continue;
-		}else if(ent->client->sess.timeOfDeath > 1){ // this is the time at which he died
+		}else if(ent->client->sess.timeOfDeath > 1 && ent->client->sess.timeOfDeath < level.gametypeStartTime){ // this is the time at which he died
 			if(ent->client->sess.timeOfDeath > timeofdeath){
 				timeofdeath = ent->client->sess.timeOfDeath;
 				deaths[deathcount] = ent->s.number;
 				deathcount += 1;
-			}else if(ent->client->sess.timeOfDeath == timeofdeath){// multiple
-				// probably never happens
 			}
 		}
 	}
