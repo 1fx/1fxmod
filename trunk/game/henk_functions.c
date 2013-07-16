@@ -346,7 +346,7 @@ qboolean IsValidCommand(char *cmd, char *string){
 int TiedPlayers(void){
 	gentity_t *ent;
 	int i, highscore = 0, count = 0;
-	int winners[32];
+	int winners[MAX_CLIENTS];
 
 	for(i=0;i<level.numConnectedClients;i++){
 		ent = &g_entities[level.sortedClients[i]];
@@ -853,7 +853,7 @@ char	*ConcatArgs1( int start ) {
 
 qboolean AddMutedClient(gentity_t *ent, int time){
 	int i;
-	for(i=0;i<=20;i++){
+	for(i = 0; i < MAX_CLIENTS; i++){
 		if(level.mutedClients[i].used == qfalse){
 			strcpy(level.mutedClients[i].ip, ent->client->pers.ip);
 			level.mutedClients[i].used = qtrue;
@@ -870,7 +870,7 @@ qboolean AddMutedClient(gentity_t *ent, int time){
 qboolean RemoveMutedClient(gentity_t *ent){
 	int i;
 	qboolean unmuted = qfalse;
-	for(i=0;i<=20;i++){
+	for(i = 0; i < MAX_CLIENTS; i++){
 		if(level.mutedClients[i].used == qtrue){
 			if(strstr(level.mutedClients[i].ip, ent->client->pers.ip)){
 				level.mutedClients[i].used = qfalse;

@@ -489,9 +489,9 @@ void DoTeleport(gentity_t *ent, vec3_t origin){
 // Henk 31/03/11 -> New M4 give away code
 int GetM4Winner(int rpgwinner){
 	int i;
-	int winners[32];
+	int winners[MAX_CLIENTS];
 	int winnercount = 0;
-	int deaths[32];
+	int deaths[MAX_CLIENTS];
 	int deathcount = 0; // id
 	int timeofdeath = 0; // time
 
@@ -538,9 +538,9 @@ int GetM4Winner(int rpgwinner){
 // Henk 30/03/11 -> New RPG give away code
 int GetRpgWinner(void){
 	int i;
-	int winners[32];
+	int winners[MAX_CLIENTS];
 	int winnercount = 0;
-	int deaths[32];
+	int deaths[MAX_CLIENTS];
 	int deathcount = 0; // id
 	int timeofdeath = 0; // time
 	if(TeamCount1(TEAM_RED) < 1)

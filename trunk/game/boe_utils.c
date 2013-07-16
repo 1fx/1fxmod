@@ -2476,7 +2476,7 @@ void Boe_checkRoofGlobal ( void )
 			// Open it.
 			
 			// Boe!Man 6/14/12: Also reset the client info.
-			for(i = 0; i <= MAX_CLIENTS; i++){
+			for(i = 0; i < MAX_CLIENTS; i++){
 				if(level.clients[i].pers.connected != CON_CONNECTED)
 				{
 					continue;
