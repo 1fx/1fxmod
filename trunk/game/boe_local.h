@@ -749,7 +749,7 @@ unsigned int henk_atoi( const char *string ); // unsigned int version of atoi
 // SQLite3 related defintions.
 
 #ifdef __linux__
-extern unsigned char	memsys5[31457280]; // Boe!Man 1/29/13: Buffer of 30 MB, available for SQLite memory management (Linux).
+extern unsigned char	memsys5[41943040]; // Boe!Man 1/29/13: Buffer of 40 MB, available for SQLite memory management (Linux).
 #endif
 
 void		Boe_userdataIntegrity	(void);

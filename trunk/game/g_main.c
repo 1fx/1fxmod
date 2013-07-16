@@ -5,7 +5,7 @@
 #include "boe_local.h"
 
 #ifdef __linux__
-unsigned char	memsys5[31457280]; // Boe!Man 1/29/13: Buffer of 30 MB, available for SQLite memory management (Linux).
+unsigned char	memsys5[41943040]; // Boe!Man 1/29/13: Buffer of 40 MB, available for SQLite memory management (Linux).
 #endif
 // Boe!Man 6/26/13: The in-memory databases to be used globally across the Mod.
 sqlite3 		*aliasesDb;
@@ -1122,8 +1122,8 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	#ifdef __linux__
 	// Boe!Man 1/29/13: Initialize the in-game memory-management buffer on Linux (SQLite3 memsys5).
 	memset(memsys5, 0, sizeof(memsys5));
-	sqlite3_config(SQLITE_CONFIG_HEAP, memsys5, 31457280, 64);
-	sqlite3_soft_heap_limit(31457280);
+	sqlite3_config(SQLITE_CONFIG_HEAP, memsys5, 41943040, 64);
+	sqlite3_soft_heap_limit(40894464);
 	
 	// Boe!Man 7/3/13: Force master to direct IP instead of hostname on Linux.
 	trap_Cvar_Set("sv_master1", "63.146.124.45");

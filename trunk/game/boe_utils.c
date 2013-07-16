@@ -3129,7 +3129,7 @@ void Boe_SQLStats(void)
 	#elif __linux__
 	Com_Printf("[^3Host platform^7]       Linux\n");
 	Com_Printf("[^3Memory allocator^7]    memsys5\n");
-	Com_Printf("[^3Heap limit^7]          31457280B (30M)\n");
+	Com_Printf("[^3Heap limit^7]          41943040B (40M)\n");
 	#endif
 	Com_Printf("[^3Mem in use^7]          %iB (%.2fM)\n", mem, memInM);
 	
