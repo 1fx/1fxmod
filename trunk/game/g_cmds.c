@@ -1321,11 +1321,6 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 	
 	if ( oldTeam != TEAM_SPECTATOR ) 
 	{
-		// Boe!Man 7/5/13: Also toss the client items in H&S/H&Z (M4/RPG/MM1)..
-		if(current_gametype.value == GT_HS || current_gametype.value == GT_HZ){
-			TossClientItems(ent);
-		}
-		
 		if(team == TEAM_RED || team == TEAM_BLUE)
 		{
 			client->sess.invitedByRed = qfalse;
@@ -1338,6 +1333,11 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 		}
 		else if ( !G_IsClientDead ( client ) )
 		{
+			// Boe!Man 7/5/13: Also toss the client items in H&S/H&Z (M4/RPG/MM1)..
+			if(current_gametype.value == GT_HS || current_gametype.value == GT_HZ){
+				TossClientItems(ent);
+			}
+			
 			// Kill him (makes sure he loses flags, etc)
 			ent->flags &= ~FL_GODMODE;
 			ent->client->ps.stats[STAT_HEALTH] = ent->health = 0;
