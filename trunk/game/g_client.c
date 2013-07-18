@@ -1753,6 +1753,11 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 	}
 	/*if(client->sess.admin == 4 && g_sadminspec.integer == 1)
 		client->sess.adminspec = qtrue;*/
+		
+	// Boe!Man 7/18/13: Fixed clients not getting their mute status back if they were muted prior to disconnecting.
+	if(IsClientMuted(ent, qfalse)){
+		ent->client->sess.mute = qtrue;
+	}
 
 	// Boe!Man 10/25/10: Make sure their stats are set correctly.
 	ent->client->pers.statinfo.lasthurtby = -1;
@@ -2317,7 +2322,7 @@ void ClientSpawn(gentity_t *ent)
 		ClientUserinfoChanged ( client->ps.clientNum );
 	}
 	if(current_gametype.value != GT_HS && current_gametype.value != GT_HZ){
-		if(level.gametypeData->teams && client->sess.team != TEAM_SPECTATOR && !strstr(level.gametypeTeam[client->sess.team], client->pers.identity->mTeam)){ // this skin does not belong to this team so change their Identity
+		if(!(level.gametypeTeam[client->sess.team] && client->pers.identity && client->pers.identity->mTeam) || (level.gametypeData->teams && client->sess.team != TEAM_SPECTATOR && !strstr(level.gametypeTeam[client->sess.team], client->pers.identity->mTeam))){ // this skin does not belong to this team so change their Identity
 			trap_SendServerCommand(ent->s.number, va("print \"^3[Info] ^7Your skin has been changed because it did not match your team.\n\"") );
 			client->sess.extraIdChanges = 0; // Boe!Man 8/29/11: Also reset the extraIdChanges because this will bug it.
 			ClientUserinfoChanged ( client->ps.clientNum );

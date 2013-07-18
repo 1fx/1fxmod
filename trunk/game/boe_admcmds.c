@@ -3308,10 +3308,8 @@ void Boe_Mute (int argNum, gentity_t *adm, qboolean mute, qboolean shortCmd)
 						time = 60;
 				}
 			}
-			AddMutedClient(&g_entities[idnum], time); // fix me: slots of muted clients(20) could be full.. never happens i guess
+			AddMutedClient(&g_entities[idnum], time);
 			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-			// Boe!Man 12/11/11: AddMutedClient handles this now.
-			//g_entities[idnum].client->sess.mute = qtrue;
 			Com_sprintf( merged, sizeof(merged), "%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName);
 			if(adm && adm->client){
 				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7was %sm%su%st%se%sd by %s", level.time + 5000, g_entities[idnum].client->pers.netname, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, adm->client->pers.netname));
@@ -4918,11 +4916,6 @@ void Boe_ShuffleTeams(int argNum, gentity_t *ent, qboolean shortCmd){
 	for(i = 0; i < level.numConnectedClients; i++){
 		// Boe!Man 6/16/12: Skip clients that are spectating..
 		if ( g_entities[level.sortedClients[i]].client->sess.team == TEAM_SPECTATOR){
-			continue;
-		}
-		
-		// Boe!Man 7/13/12: Skip IDs that aren't connected.
-		if (g_entities[level.sortedClients[i]].client->pers.connected != CON_CONNECTED){
 			continue;
 		}
 		

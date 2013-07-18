@@ -843,7 +843,8 @@ typedef struct
 
 	qboolean	crossTheBridge;
 
-	muted_t		mutedClients[MAX_CLIENTS]; // Henk 28/01/11 -> Add new mute system.
+	muted_t		mutedClients[MAX_CLIENTS];	// Henk 28/01/11 -> Add new mute system.
+	int			muteClientCount;			// Boe!Man 7/18/13: New way to save resources on this mute system.
 	hs_scores	advancedHsScores[12]; // Boe!Man 9/2/12: The advanced H&S score table.
 	hs_scores	top3Hiders[3];
 	hs_scores	top3Seekers[3];
