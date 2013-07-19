@@ -4874,7 +4874,7 @@ void Boe_ShuffleTeams(int argNum, gentity_t *ent, qboolean shortCmd){
 	int	teamTotalRed = 0, teamTotalBlue = 0; // The counted team totals when shuffling.
 	int teamTotalRed2 = 0, teamTotalBlue2 = 0; // The actual team totals prior to shuffling.
 	int newTeam;
-	char newTeam2[4]; // red or blue.
+	char newTeam2[5]; // red or blue.
 	char userinfo[MAX_INFO_STRING];
 	
 	// Boe!Man 7/13/12: Do not allow shuffleteams during Zombies.
@@ -4950,9 +4950,9 @@ void Boe_ShuffleTeams(int argNum, gentity_t *ent, qboolean shortCmd){
 			trap_GetUserinfo( level.sortedClients[i], userinfo, sizeof( userinfo ) );
 			
 			if (newTeam == TEAM_RED){
-				Q_strncpyz(newTeam2, "red", 4);
+				strncpy(newTeam2, "red", sizeof(newTeam2));
 			}else if(newTeam == TEAM_BLUE){
-				Q_strncpyz(newTeam2, "blue", 5);
+				strncpy(newTeam2, "blue", sizeof(newTeam2));
 			}
 			
 			Info_SetValueForKey( userinfo, "team", newTeam2 );
