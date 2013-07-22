@@ -1020,7 +1020,7 @@ void G_SetGametype ( const char* gametype )
 	char mapname[MAX_QPATH];
 	qboolean doit = qfalse;
 	qboolean check, check1;
-	if(strstr(gametype, "h&s")){
+	if(current_gametype.value == GT_HS){
 		gametype = "inf";
 		strcpy(realgametype, "h&s");
 		doit = qtrue;
@@ -1053,31 +1053,36 @@ void G_SetGametype ( const char* gametype )
 	 ///End  - 08.31.06 - 10:14pm
 	{
 		int i = 0;
+		
+		// Boe!Man 7/22/13: On H&S/H&Z, don't reset a map if the gametype isn't found so that we can ensure that all the game mechanics work.
+		if(current_gametype.value == GT_HS || current_gametype.value == GT_HZ){
+			Com_Printf("WARNING: Map does not support inf (or it is not added in the arena file)\n");
+		}else{
+			// Find a gametype it does support
+			for ( i = 0; i < bg_gametypeCount; i ++ )
+			{
+					if ( G_DoesMapSupportGametype ( bg_gametypeData[i].name ) )
+					{
+						break;
+					}
+			}
 
-		// Find a gametype it does support
-		for ( i = 0; i < bg_gametypeCount; i ++ )
-		{
-				if ( G_DoesMapSupportGametype ( bg_gametypeData[i].name ) )
-				{
-					break;
-				}
+			// This is bad, this means the map doesnt support any gametypes
+			if ( i >= bg_gametypeCount )
+			{
+				Com_Error ( ERR_FATAL, "map does not support any of the available gametypes" );
+			}
+
+			G_LogPrintf ( "gametype '%s' is not supported on this map and was defaulted to '%s'\n",
+						 gametype,
+						 bg_gametypeData[i].name );
+
+			gametype = bg_gametypeData[i].name;
+			trap_Cvar_Set( "g_gametype", gametype );
+			level.gametype = BG_FindGametype ( gametype );
+
+			trap_Cvar_Update( &g_gametype );
 		}
-
-		// This is bad, this means the map doesnt support any gametypes
-		if ( i >= bg_gametypeCount )
-		{
-			Com_Error ( ERR_FATAL, "map does not support any of the available gametypes" );
-		}
-
-		G_LogPrintf ( "gametype '%s' is not supported on this map and was defaulted to '%s'\n",
-					 gametype,
-					 bg_gametypeData[i].name );
-
-		gametype = bg_gametypeData[i].name;
-		trap_Cvar_Set( "g_gametype", gametype );
-		level.gametype = BG_FindGametype ( gametype );
-
-		trap_Cvar_Update( &g_gametype );
 	}
 
 	level.gametypeData = &bg_gametypeData[level.gametype];
