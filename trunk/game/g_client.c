@@ -27,7 +27,8 @@ void G_AddClientSpawn ( gentity_t* ent, team_t team )
 	static vec3_t	mins = {-15,-15,-45};
 	static vec3_t	maxs = {15,15,46};
 	vec3_t			end;
-	vec3_t			newAngle;
+	vec3_t			newAngles;
+	char			*newAngle;
 	trace_t			tr;
 
 	// Drop it to the ground, and if it starts solid just throw it out
@@ -65,10 +66,13 @@ void G_AddClientSpawn ( gentity_t* ent, team_t team )
 	VectorCopy ( ent->s.origin, level.spawns[level.spawnCount].origin );
 	
 	// Boe!Man 7/22/13: We use this code for determining the angle, using a float isn't fool-proof here (as with NV_misc_bsp).
-	if(G_SpawnVector("angles", "0 0 0", newAngle)){
-		level.spawns[level.spawnCount].angles[0] = newAngle[0];
-		level.spawns[level.spawnCount].angles[1] = newAngle[1];
-		level.spawns[level.spawnCount].angles[2] = newAngle[2];
+	if(G_SpawnVector("angles", "0 0 0", newAngles)){
+		level.spawns[level.spawnCount].angles[0] = newAngles[0];
+		level.spawns[level.spawnCount].angles[1] = newAngles[1];
+		level.spawns[level.spawnCount].angles[2] = newAngles[2];
+	}else if(G_SpawnString("angle", "0", &newAngle)){
+		VectorClear ( level.spawns[level.spawnCount].angles );
+		sscanf(newAngle, "%f", &level.spawns[level.spawnCount].angles[1]);
 	}else{
 		VectorClear ( level.spawns[level.spawnCount].angles );
 	}
