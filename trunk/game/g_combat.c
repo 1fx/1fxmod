@@ -2031,7 +2031,7 @@ qboolean G_RadiusDamage (
 			if(CageOutOfBoundaries == qtrue){
 				ammoindex=weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_ALTERNATE].ammoIndex;
 				if(g_cageAttempts.integer != 0){
-					if(attacker->client->sess.cageAttempts < 3){
+					if(attacker->client->sess.cageAttempts < g_cageAttempts.integer){
 						attacker->client->ps.ammo[ammoindex]+=1;
 						attacker->client->sess.cageAttempts += 1;
 						trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7M4 cage failed %i of %i: Seeker at boundary or hider caught in cage.\n\"", attacker->client->sess.cageAttempts, g_cageAttempts.integer)); 
@@ -2070,7 +2070,7 @@ qboolean G_RadiusDamage (
 			if(NadeOutOfBoundaries == qtrue){
 				ammoindex=weaponData[WP_MDN11_GRENADE].attack[ATTACK_ALTERNATE].ammoIndex;
 				if(g_boxAttempts.integer != 0){
-					if(attacker->client->sess.mdnAttempts < 3){
+					if(attacker->client->sess.mdnAttempts < g_boxAttempts.integer){
 						attacker->client->sess.mdnAttempts += 1;
 						attacker->client->ps.ammo[ammoindex]+=1;
 
