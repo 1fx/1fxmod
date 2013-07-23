@@ -182,6 +182,7 @@ struct gentity_s
 	char		*both_sides;
 	int			max_players;
 	int			min_players;
+	char		*invisible;
 	int			effect_index;
 	qboolean	disabled;
 	int			nolower;

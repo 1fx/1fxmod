@@ -907,7 +907,7 @@ void SP_teleporter(gentity_t* ent){
 	G_SetOrigin( ent,origin1 );
 	// origin_to until ground
 	
-	if(strstr(ent->both_sides, "yes")){
+	if(ent->both_sides && strstr(ent->both_sides, "yes")){
 		AddSpawnField("classname", "teleporter");
 		origin = va("%.0f %.0f %.0f", ent->origin_to[0], ent->origin_to[1], ent->origin_to[2]);
 		AddSpawnField("origin_from", origin);
@@ -917,9 +917,14 @@ void SP_teleporter(gentity_t* ent){
 		AddSpawnField("angles_from", origin);
 		origin = va("%.0f %.0f %.0f", ent->angles_from[0], ent->angles_from[1], ent->angles_from[2]);
 		AddSpawnField("angles_to", origin);
-		AddSpawnField("team", va("%s", ent->team));
-		AddSpawnField("min_players", va("%i", ent->min_players));
-		AddSpawnField("max_players",va("%i", ent->max_players));
+		if(ent->team)
+			AddSpawnField("team", va("%s", ent->team));
+		if(ent->min_players)
+			AddSpawnField("min_players", va("%i", ent->min_players));
+		if(ent->max_players)
+			AddSpawnField("max_players", va("%i", ent->max_players));
+		if(ent->invisible)
+			AddSpawnField("invisible", va("%s", ent->invisible));
 		AddSpawnField("both_sides", "no");
 		G_SpawnGEntityFromSpawnVars (qtrue);
 		/*
@@ -936,13 +941,15 @@ void SP_teleporter(gentity_t* ent){
 	}
 
 	//origin = va("%.0f %.0f %.0f", ent->r.currentOrigin[0], ent->r.currentOrigin[1], ent->r.currentOrigin[2]-30);
-	origin = va("%.0f %.0f %.0f", ent->r.currentOrigin[0], ent->r.currentOrigin[1], ent->r.currentOrigin[2]-30);
-	AddSpawnField("classname", "fx_play_effect");
-	AddSpawnField("effect", "fire/blue_target_flame");
-	AddSpawnField("origin", origin);
-	AddSpawnField("angles", "0 90 0");
-	AddSpawnField("count", "-1");
-	ent->effect_index = G_SpawnGEntityFromSpawnVars (qtrue);
+	if(!ent->invisible || !strstr(ent->invisible, "yes")){
+		origin = va("%.0f %.0f %.0f", ent->r.currentOrigin[0], ent->r.currentOrigin[1], ent->r.currentOrigin[2]-30);
+		AddSpawnField("classname", "fx_play_effect");
+		AddSpawnField("effect", "fire/blue_target_flame");
+		AddSpawnField("origin", origin);
+		AddSpawnField("angles", "0 90 0");
+		AddSpawnField("count", "-1");
+		ent->effect_index = G_SpawnGEntityFromSpawnVars (qtrue);
+	}
 	ent->r.contents = CONTENTS_TRIGGER;
 	ent->r.svFlags &= ~SVF_NOCLIENT;
 
