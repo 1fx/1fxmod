@@ -1873,14 +1873,14 @@ qboolean G_RadiusDamage (
 			
 			if((mod == MOD_F1_GRENADE || mod == 272) && strstr(ent->classname, "f1")){ // Boe!Man 8/2/12: Fix for Altattack of tele nade not doing anything.
 				if(origin[2] <= ent->origin_from[2]){
-					vec3_t	mins = {-10,-10,-25};
-					vec3_t	maxs = {10,10,26};
+					vec3_t	mins = {-12,-12,-31};
+					vec3_t	maxs = {12,12,32};
 					vec3_t			org1, org2;
 					trace_t			tr;
 					VectorCopy(origin, org1);
 					VectorCopy(origin, org2);
 					org1[2] += 50;
-					trap_Trace ( &tr, org1, mins, maxs, org2, attacker->s.number, MASK_ALL); //MASK_SOLID
+					trap_Trace ( &tr, org1, mins, maxs, org2, attacker->s.number, MASK_PLAYERSOLID); // Boe!Man 7/23/13: Used to be MASK_ALL, and before that MASK_SOLID. This seems to work best (MASK_PLAYERSOLID).
 					if ( !tr.startsolid && !tr.allsolid ){
 						DoTeleport(attacker, origin);
 					}else{
