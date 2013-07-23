@@ -3545,6 +3545,8 @@ void Boe_adm_f ( gentity_t *ent )
 					if (g_adminSpec.integer <= ent->client->sess.admin && g_adminSpec.integer != 0 && cm_enabled.integer < 2){
 						ent->client->sess.adminspec = qtrue;
 					}
+				}else{
+					trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Access denied: The password you entered is for another Admin level!\n\""));
 				}
 				return;
 			}else{ // wrong password
@@ -3555,7 +3557,7 @@ void Boe_adm_f ( gentity_t *ent )
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Access denied: No password logins allowed by the server!\n\""));
 			return;
 		}else if(adm){
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Access denied: You already got Admin powers!\n\""));
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Access denied: You already have Admin powers!\n\""));
 			return;
 		}
 	}
