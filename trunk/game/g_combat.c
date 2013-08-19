@@ -456,19 +456,19 @@ void player_die(
 	}
 
 	if(attacker->client){
-	if(attacker->client->pers.statinfo.killsinarow >= 3 && current_gametype.value != GT_HS){
-		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7is %so%sn %sf%si%sr%se ^7with %s%i ^7kills in a row.",
-				level.time + 5000,
-				attacker->client->pers.netname,
-				server_color1.string,
-				server_color2.string,
-				server_color3.string,
-				server_color4.string,
-				server_color5.string,
-				server_color6.string,
-				server_color4.string,
-				attacker->client->pers.statinfo.killsinarow));
-	}
+		if(attacker->client->pers.statinfo.killsinarow >= 3 && current_gametype.value != GT_HS){
+			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7is %so%sn %sf%si%sr%se ^7with %s%i ^7kills in a row.",
+					level.time + 5000,
+					attacker->client->pers.netname,
+					server_color1.string,
+					server_color2.string,
+					server_color3.string,
+					server_color4.string,
+					server_color5.string,
+					server_color6.string,
+					server_color4.string,
+					attacker->client->pers.statinfo.killsinarow));
+		}
 	}
 	if(g_clientDeathMessages.integer == 0) // Henk 10/30/12: If death messages being handled by the client don't print them here.
 	RPM_Obituary (self, attacker, meansOfDeath, attack, hitLocation);// Ryan: This is where the server handles the obituary functions now (after the scores are done)
@@ -1006,6 +1006,7 @@ int G_Damage (
 	int				m4ammo[4];
 	int				rpgammo[2];
 	attackData_t	*attack;
+	qboolean		teamDamage = qfalse;
 
 	if (!targ->takedamage)
 	{
@@ -1372,6 +1373,9 @@ if(current_gametype.value == GT_HZ && attacker && targ && mod == MOD_KNIFE){
 					//Admins will NOT get kicked!
 					attacker->client->sess.teamkillDamage	   += actualtake;
 					attacker->client->sess.teamkillForgiveTime  = level.time;
+					
+					// Boe!Man 8/19/13: It's team damage, check this bool later to see if it was fatal.
+					teamDamage = qtrue;
 				}
 			}
 		}
@@ -1540,6 +1544,11 @@ if(current_gametype.value == GT_HZ && attacker && targ && mod == MOD_KNIFE){
 
 			targ->enemy = attacker;
 			targ->die(targ, inflictor, attacker, take, mod, location, dir );
+			
+			// Boe!Man 8/19/13: Also reset the kills in a row integer (since we did team damage and killed the person).
+			if(teamDamage){
+				attacker->client->pers.statinfo.killsinarow = 0;
+			}
 		}
 		else if ( targ->pain )
 		{
