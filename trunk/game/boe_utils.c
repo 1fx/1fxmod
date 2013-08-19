@@ -2954,8 +2954,6 @@ void Boe_userdataIntegrity(void)
 	
 	Com_Printf("Succesfully finished checking userdata integrity.\n");
 	dbsLoaded = qtrue;
-	
-	return;
 }
 
 /*
@@ -3051,7 +3049,6 @@ void Boe_addAlias(char *ip, char *name2)
 	}
 
 	sqlite3_exec(db, "COMMIT", NULL, NULL, NULL);
-	return;
 }
 
 /*
@@ -3097,7 +3094,6 @@ void Boe_printAliases(gentity_t *ent, char *ip, char *name2)
 	
 	memset(name, 0, sizeof(name));
 	memset(names, 0, sizeof(names));
-	return;
 }
 
 /*
@@ -3134,8 +3130,6 @@ void Boe_SQLStats(void)
 	Com_Printf("[^3Mem in use^7]          %iB (%.2fM)\n", mem, memInM);
 	
 	Com_Printf("\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n");
-	
-	return;
 }
 
 /*
@@ -3162,8 +3156,6 @@ void Boe_convertNonSQLChars(char *input)
 		}
 		s++;
 	}
-	
-    return;
 }
 
 /*
@@ -3214,11 +3206,11 @@ int Boe_checkPassAdmin(char *ip, char *name2, char *pass)
 	int				level2;
 	int				passlvl;
 
-	if(!Q_stricmp(pass, g_badminPass.string)){
+	if(strstr(pass, g_badminPass.string)){
 		passlvl = 2;
-	}else if(!Q_stricmp(pass, g_adminPass.string)){
+	}else if(strstr(pass, g_adminPass.string)){
 		passlvl = 3;
-	}else if(!Q_stricmp(pass, g_sadminPass.string)){
+	}else if(strstr(pass, g_sadminPass.string)){
 		passlvl = 4;
 	}
 	

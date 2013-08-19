@@ -3530,7 +3530,7 @@ void Boe_adm_f ( gentity_t *ent )
 			if(!Q_stricmp(arg2, "none")){ // no password set so deny access.
 				trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Access denied: Default password can't be used!\n\""));
 				return;
-			}else if(!Q_stricmp(arg2, g_adminPass.string) || !Q_stricmp(arg2, g_sadminPass.string) || !Q_stricmp(arg2, g_badminPass.string)){ // good password, now check if he's in admin list
+			}else if(strstr(arg2, g_adminPass.string) || strstr(arg2, g_sadminPass.string) || strstr(arg2, g_badminPass.string)){ // good password, now check if he's in admin list
 				levelx = Boe_checkPassAdmin(ent->client->pers.ip, ent->client->pers.cleanName, arg2);
 				if(levelx){
 					ent->client->sess.admin = levelx;
