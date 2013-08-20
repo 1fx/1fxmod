@@ -3900,13 +3900,16 @@ void Henk_Flash(int argNum, gentity_t *adm, qboolean shortCmd){
 	float		x, y;
 	gentity_t	*missile;
 	trap_Argv( argNum, arg, sizeof( arg ) );
-	id = Boe_ClientNumFromArg (adm, argNum, "flash <id>", "flash", qtrue, qtrue, shortCmd);
-	if(id < 0){
-		if(strstr(arg, "all"))
-			all = qtrue;
-		else
+	// Boe!Man 8/20/13: Fixed flashing everybody resulting in an incorrect message and new method to prevent it for others.
+	if(shortCmd && strstr(arg, " all") || !shortCmd && strstr(arg, "all") && strlen(arg) == 3){
+		all = qtrue;
+	}else{
+		id = Boe_ClientNumFromArg (adm, argNum, "flash <id>", "flash", qtrue, qtrue, shortCmd);
+		if(id < 0){
 			return;
+		}
 	}
+	
 	if(!all)
 	targ = g_entities + id;
 	weapon = WP_M84_GRENADE;
