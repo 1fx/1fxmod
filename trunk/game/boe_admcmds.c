@@ -3125,8 +3125,9 @@ void Adm_ForceTeam(int argNum, gentity_t *adm, qboolean shortCmd)
 				trap_Argv( 1, str, sizeof( str ) );
 			}
 		}
+		Q_strlwr(str);
 		
-		if(strstr(Q_strlwr(str), "all")){
+		if(shortCmd && strstr(str, " all ") || !shortCmd && strstr(str, "all") && strlen(str) == 3){
 			all = qtrue;
 		}else{
 			return;
