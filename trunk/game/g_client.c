@@ -2145,6 +2145,8 @@ void ClientSpawn(gentity_t *ent)
 			client->ps.firemode[WP_KNIFE] = BG_FindFireMode ( WP_KNIFE, ATTACK_NORMAL, WP_FIREMODE_AUTO );
 			client->ps.weapon = WP_KNIFE;
 			client->ps.weaponstate = WEAPON_READY;
+			// Boe!Man 8/20/13: Also disable the goggles when respawning.
+			client->sess.invisibleGoggles = qfalse;
 		// End
 		}else{
 		G_UpdateOutfitting ( ent->s.number );
