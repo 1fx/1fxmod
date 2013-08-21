@@ -767,6 +767,7 @@ qboolean	Boe_checkClanMember		(char *ip, char *name2);
 
 void		Boe_unloadUserdataDbs	(void);
 void		Boe_backupInMemoryDbs	(char *filename, sqlite3 *db);
+void		Boe_SQLTableClear		(void);
 
 // Boe!Man 5/27/13: In-memory databases.
 extern		sqlite3 	*aliasesDb;

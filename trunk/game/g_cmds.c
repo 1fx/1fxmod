@@ -4018,6 +4018,12 @@ qboolean ConsoleCommand( void )
 		Boe_SQLStats();
 		return qtrue;
 	}
+	
+	if (Q_stricmp (cmd, "clear" ) == 0 )
+	{
+		Boe_SQLTableClear();
+		return qtrue;
+	}
 
 	if (g_dedicated.integer) 
 	{

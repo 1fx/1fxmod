@@ -3337,3 +3337,96 @@ void Boe_backupInMemoryDbs(char *fileName, sqlite3 *db)
 	sqlite3_exec(pFile, "COMMIT", NULL, NULL, NULL);
 	sqlite3_close(pFile);
 }
+
+/*
+================
+Boe_SQLTableClear
+8/21/13 - 11:18 AM
+Clears a userdata table.
+================
+*/
+
+void Boe_SQLTableClear(void)
+{
+	char	arg[MAX_STRING_TOKENS];
+	sqlite3	*db;
+	int		rc;
+	
+	// Fetch the argument so we can determine what list the user wishes to clear.
+	trap_Argv(1, arg, sizeof(arg));
+	Q_strlwr(arg);
+	
+	if(strstr(arg, "subnetbanlist")){
+		if(sqlite3_exec(bansDb, "DELETE FROM subnetbans", 0, 0, 0) != SQLITE_OK){
+			G_LogPrintf("^1Error: ^7Bans database: %s\n", sqlite3_errmsg(db));
+		}else{
+			sqlite3_exec(bansDb, "VACUUM", NULL, NULL, NULL);
+			Com_Printf("Successfully cleared all subnetbans from the database!\n");
+		}
+	}else if(strstr(arg, "banlist")){
+		if(sqlite3_exec(bansDb, "DELETE FROM bans", 0, 0, 0) != SQLITE_OK){
+			G_LogPrintf("^1Error: ^7Bans database: %s\n", sqlite3_errmsg(db));
+		}else{
+			sqlite3_exec(bansDb, "VACUUM", NULL, NULL, NULL);
+			Com_Printf("Successfully cleared all bans from the database!\n");
+		}
+	}else if(strstr(arg, "adminlist")){
+		if(sqlite3_exec(usersDb, "DELETE FROM admins", 0, 0, 0) != SQLITE_OK){
+			G_LogPrintf("^1Error: ^7Users database: %s\n", sqlite3_errmsg(db));
+		}else{
+			sqlite3_exec(usersDb, "VACUUM", NULL, NULL, NULL);
+			Com_Printf("Successfully cleared all admins from the database!\n");
+		}
+	}else if(strstr(arg, "passlist")){
+		if(sqlite3_exec(usersDb, "DELETE FROM passadmins", 0, 0, 0) != SQLITE_OK){
+			G_LogPrintf("^1Error: ^7Users database: %s\n", sqlite3_errmsg(db));
+		}else{
+			sqlite3_exec(usersDb, "VACUUM", NULL, NULL, NULL);
+			Com_Printf("Successfully cleared all passadmins from the database!\n");
+		}
+	}else if(strstr(arg, "clanlist")){
+		if(sqlite3_exec(usersDb, "DELETE FROM clanmembers", 0, 0, 0) != SQLITE_OK){
+			G_LogPrintf("^1Error: ^7Users database: %s\n", sqlite3_errmsg(db));
+		}else{
+			sqlite3_exec(usersDb, "VACUUM", NULL, NULL, NULL);
+			Com_Printf("Successfully cleared all clanmembers from the database!\n");
+		}
+	}else if(strstr(arg, "aliases")){
+		if(sqlite3_exec(aliasesDb, "DELETE FROM aliases_index", 0, 0, 0) != SQLITE_OK){
+			G_LogPrintf("^1Error: ^7Aliases database: %s\n", sqlite3_errmsg(db));
+		}else{
+			if(sqlite3_exec(aliasesDb, "DELETE FROM aliases_names", 0, 0, 0) != SQLITE_OK){
+				G_LogPrintf("^1Error: ^7Aliases database: %s\n", sqlite3_errmsg(db));
+			}else{
+				sqlite3_exec(aliasesDb, "VACUUM", NULL, NULL, NULL);
+				Com_Printf("Successfully cleared all aliases from the database!\n");
+			}
+		}
+	}else if(strstr(arg, "scores")){
+		if(!level.altPath){
+			rc = sqlite3_open_v2("./users/scores.db", &db, SQLITE_OPEN_READWRITE, NULL);
+		}else{
+			rc = sqlite3_open_v2(va("%s/users/scores.db", level.altString), &db, SQLITE_OPEN_READWRITE, NULL);
+		}
+		
+		if(rc){
+			G_LogPrintf("^1Error: ^7scores database: %s\n", sqlite3_errmsg(db));
+		}
+		
+		sqlite3_exec(db, "PRAGMA writable_schema = 1", NULL, NULL, NULL);
+		if(sqlite3_exec(db, "delete from sqlite_master where type = 'table'", 0, 0, 0) != SQLITE_OK){
+			G_LogPrintf("^1Error: ^7Scores database: %s\n", sqlite3_errmsg(db));
+		}
+		sqlite3_exec(db, "PRAGMA writable_schema = 0", NULL, NULL, NULL);
+		sqlite3_exec(db, "VACUUM", NULL, NULL, NULL);
+		if(sqlite3_exec(db, "PRAGMA INTEGRITY_CHECK", NULL, NULL, NULL) == SQLITE_OK){
+			Com_Printf("Successfully cleared the scores database!\n");
+		}else{
+			G_LogPrintf("^1Error: ^7Scores database was not successfully cleared (did not pass integrity check).\n");
+		}
+		
+		sqlite3_close(db);
+	}else{
+		Com_Printf("^3Info: ^7Invalid choice: %s. Valid choices are: subnetbanlist, adminlist, passlist, clanlist, aliases, scores.\n", arg);
+	}
+}
