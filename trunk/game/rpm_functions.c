@@ -175,11 +175,16 @@ void RPM_Unpause (gentity_t *adm)
 				{
 					continue;
 				}
+				if (!ent->client)
+				{
+					continue;
+				}
+				
 				if(ent->client->sess.pausespawn == qtrue){
-				ent->client->ps.RealSpawnTimer = level.time+ent->client->ps.oldTimer;
-				#ifdef _DEBUG
-				Com_Printf("Waiting %i\n", ent->client->ps.oldTimer);
-				#endif
+					ent->client->ps.RealSpawnTimer = level.time+ent->client->ps.oldTimer;
+					#ifdef _DEBUG
+					Com_Printf("Waiting %i\n", ent->client->ps.oldTimer);
+					#endif
 				}
 				ent->client->ps.pm_type = PM_NORMAL;
 			}
