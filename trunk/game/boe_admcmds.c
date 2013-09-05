@@ -1527,6 +1527,7 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 	// Boe!Man 8/29/13: We use the following variables for filter options.
 	char			arg[32];
 	char			arg2[32];
+	int				argCount;
 	char			filterIP[32] = "\0";
 	char			filterName[32] = "\0";
 	char			filterBy[32] = "\0";
@@ -1562,20 +1563,30 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 	}
 	
 	if(adm && !shortCmd || !adm){
-		if(trap_Argc() > 2){
+		argCount = trap_Argc();
+		if(adm && argCount > 2 || !adm && argCount > 1){
 			filterChecking = qtrue;
 			rc = argNum;
 			
-			while(rc+1 <= trap_Argc()){
+			while(rc <= argCount){
 				memset(arg, 0, sizeof(arg));
 				trap_Argv(rc, arg, sizeof(arg));
 				trap_Argv(rc+1, arg2, sizeof(arg2));
 				
-				if(!strstr(arg, "-")){
+				if(!strstr(arg, "-") || !strstr(arg, "-h") && strlen(arg2) == 0){
 					filterChecking = qfalse;
 					break;
 				}else{ // Valid argument it seems, so far.
 					if(strstr(arg, "-h")){ // Client wants help with this, no problem.
+						if(adm){
+							Q_strcat(buf2, sizeof(buf2), "** ^7There are several filter options for you to use.\n** ^5-i: ^7Filters on IP.\n** ^5-n: ^7Filters on name.\n** ^5-b: ^7Filters on banned by.\n\n** ^5Example usage: ^7/adm banlist -i 172.16 -n shoke -b boe\n");
+							trap_SendServerCommand( adm-g_entities, va("print \"%s\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\"", buf2));
+							memset(buf2, 0, sizeof(buf2)); // Boe!Man 11/04/11: Properly empty the buffer.
+						}else{
+							Com_Printf("** ^7There are several filter options for you to use.\n** ^5-i: ^7Filters on IP.\n** ^5-n: ^7Filters on name.\n** ^5-b: ^7Filters on banned by.\n\n** ^5Example usage: ^7/adm banlist -i 172.16 -n shoke -b boe\n");
+							Com_Printf("\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n");
+						}
+						return;
 					}else if(strstr(arg, "-i")){ // Client wants to filter on an IP.
 						strcpy(filterIP, arg2);
 						filterActive = qtrue;
