@@ -5,6 +5,11 @@
 #include "g_local.h"
 #include "boe_local.h"
 
+// Temp decl until SQLite functions gets into one specific file.
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
 /*
 ================
 RPM_WeaponMod
@@ -2698,14 +2703,31 @@ void Boe_userdataIntegrity(void)
 	sqlite3_stmt	*stmt;
 	int				 rc;
 	qboolean		 dbOkay;
+	struct stat st = {0};
 	
 	Com_Printf("Checking userdata integrity...\n");
 	
-	// Check bans.db first.
-	// The first thing we check is if the database exists on one of the two locations.
+	// Check bans.db first. Prior to doing that, check if the folder exists. If not, create it.
+	// After that, the first thing we check is if the database exists on one of the two locations.
 	if(!level.altPath){
+		if(stat("./users", &st) == -1){
+			#ifdef _WIN32
+			mkdir("./users");
+			#elif __linux__
+			mkdir("./users", 0755);
+			#endif
+		}
+		
 		rc = sqlite3_open_v2("./users/bans.db", &db, SQLITE_OPEN_READWRITE, NULL);
 	}else{
+		if(stat(va("%s/users/", level.altString), &st) == -1){
+			#ifdef _WIN32
+			mkdir(va("%s/users", level.altString));
+			#elif __linux__
+			mkdir(va("%s/users", level.altString), 0755);
+			#endif
+		}
+		
 		rc = sqlite3_open_v2(va("%s/users/bans.db", level.altString), &db, SQLITE_OPEN_READWRITE, NULL);
 	}
 	

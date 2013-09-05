@@ -1524,8 +1524,20 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 	sqlite3			*db;
 	sqlite3_stmt	*stmt;
 	int				 rc;
+	// Boe!Man 8/29/13: We use the following variables for filter options.
+	char			arg[32];
+	char			arg2[32];
+	char			filterIP[32] = "\0";
+	char			filterName[32] = "\0";
+	char			filterBy[32] = "\0";
+	char			filterQuery[144] = "\0";
+	qboolean		filterActive = qfalse;
+	qboolean		filterChecking = qfalse;
 	
 	db = bansDb;
+	
+	memset(filterQuery, 0, sizeof(filterQuery));
+	strcpy(filterQuery, " ");
 
 	if(adm){
 		if(subnet){
@@ -1533,21 +1545,131 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 		}else{
 			Q_strcat(buf2, sizeof(buf2), "^3[Banlist]^7\n\n");
 		}
-		Q_strcat(buf2, sizeof(buf2), "^3 #    IP              Name            Reason             By\n^7------------------------------------------------------------------------\n");
+		
+		// Boe!Man 9/5/13: Only check for filters iif the argument count is > 2 and we're working in the console.
+		if(!shortCmd){
+			Q_strcat(buf2, sizeof(buf2), "^5[Filter options]^7\n");
+		}
 	}else{
 		if(subnet){
 			Com_Printf("^3[Subnetbanlist]^7\n\n");
 		}else{
 			Com_Printf("^3[Banlist]^7\n\n");
 		}
+		
+		// Boe!Man 8/29/13: Check filter options.
+		Com_Printf("^5[Filter options]^7\n");
+	}
+	
+	if(adm && !shortCmd || !adm){
+		if(trap_Argc() > 2){
+			filterChecking = qtrue;
+			rc = argNum;
+			
+			while(rc+1 <= trap_Argc()){
+				memset(arg, 0, sizeof(arg));
+				trap_Argv(rc, arg, sizeof(arg));
+				trap_Argv(rc+1, arg2, sizeof(arg2));
+				
+				if(!strstr(arg, "-")){
+					filterChecking = qfalse;
+					break;
+				}else{ // Valid argument it seems, so far.
+					if(strstr(arg, "-h")){ // Client wants help with this, no problem.
+					}else if(strstr(arg, "-i")){ // Client wants to filter on an IP.
+						strcpy(filterIP, arg2);
+						filterActive = qtrue;
+					}else if(strstr(arg, "-n")){ // Client wants to filter on a name.
+						strcpy(filterName, arg2);
+						filterActive = qtrue;
+					}else if(strstr(arg, "-b")){ // Client wants to filter on by.
+						strcpy(filterBy, arg2);
+						filterActive = qtrue;
+					}else{ // Invalid argument, break.
+						if(adm){
+							Q_strcat(buf2, sizeof(buf2), va("** ^1Error: ^7Invalid argument: %s **\n", arg));
+						}else{
+							Com_Printf("** ^1Error: ^7Invalid argument: %s **\n", arg);
+						}
+						
+						filterChecking = qfalse;
+						break;
+					}
+				}
+				
+				rc += 2;
+			}
+		}
+			
+		if(!filterActive){
+			if(adm){
+				Q_strcat(buf2, sizeof(buf2), "** ^5None applied: ^7call the banlist with -h for more information **\n\n");
+			}else{
+				Com_Printf("** ^5None applied: ^7call the banlist with -h for more information **\n\n");
+			}
+		}else{
+			// Prepare query as well.
+			strcat(filterQuery, " WHERE ");
+			rc = 0;
+			
+			if(strlen(filterIP) > 0){
+				Boe_convertNonSQLChars(filterIP);
+				if(adm){
+					Q_strcat(buf2, sizeof(buf2), va("** ^5IP: ^7%s **\n", filterIP));
+				}else{
+					Com_Printf("** ^5IP: ^7%s **\n", filterIP);
+				}
+				strcat(filterQuery, va("IP LIKE '%%%s%%'", filterIP));
+				rc++;
+			}
+			
+			if(strlen(filterName) > 0){
+				Boe_convertNonSQLChars(filterName);
+				if(adm){
+					Q_strcat(buf2, sizeof(buf2), va("** ^5Name: ^7%s **\n", filterName));
+				}else{
+					Com_Printf("** ^5Name: ^7%s **\n", filterName);
+				}
+				if(rc){
+					strcat(filterQuery, " AND ");
+				}
+				strcat(filterQuery, va("name LIKE '%%%s%%'", filterName));
+				rc++;
+			}
+			
+			if(strlen(filterBy) > 0){
+				Boe_convertNonSQLChars(filterBy);
+				if(adm){
+					Q_strcat(buf2, sizeof(buf2), va("** ^5By: ^7%s **\n", filterBy));
+				}else{
+					Com_Printf("** ^5By: ^7%s **\n", filterBy);
+				}
+				if(rc){
+					strcat(filterQuery, " AND ");
+				}
+				strcat(filterQuery, va("by LIKE '%%%s%%'", filterBy));
+			}
+			
+			strcat(filterQuery, " ");
+			if(adm){
+				Q_strcat(buf2, sizeof(buf2), "\n");
+			}else{
+				Com_Printf("\n");
+			}
+		}
+	}
+	
+	if(adm){
+		Q_strcat(buf2, sizeof(buf2), "^3 #    IP              Name            Reason             By\n^7------------------------------------------------------------------------\n");
+	}else{
 		Com_Printf("^3 #    IP              Name            Reason             By\n");
 		Com_Printf("^7------------------------------------------------------------------------\n");
 	}
 
 	if(subnet){
-		rc = sqlite3_prepare(db, "select ROWID,IP,name,by,reason from subnetbans order by ROWID", -1, &stmt, 0);
+		rc = sqlite3_prepare(db, va("select ROWID,IP,name,by,reason from subnetbans%sorder by ROWID", filterQuery), -1, &stmt, 0);
 	}else{
-		rc = sqlite3_prepare(db, "select ROWID,IP,name,by,reason from bans order by ROWID", -1, &stmt, 0);
+		rc = sqlite3_prepare(db, va("select ROWID,IP,name,by,reason from bans%sorder by ROWID", filterQuery), -1, &stmt, 0);
 	}
 	if(rc!=SQLITE_OK){
 		if(adm){
@@ -1579,8 +1701,6 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 	}else{
 		Com_Printf("\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n");
 	}
-	
-	return;
 }
 
 /*
