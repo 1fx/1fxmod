@@ -107,6 +107,7 @@ void SP_gametype_trigger ( gentity_t* ent )
 			ent->targetname = strchr ( ent->targetname, '-' ) + 1;
 	}
 
+	/*
 	///RxCxW - 09.30.06 - 08:17pm #spMaps
 	if(!Q_stricmp(ent->model, "NV_MODEL")){
 		if (!VectorCompare (ent->s.angles, vec3_origin))
@@ -116,6 +117,7 @@ void SP_gametype_trigger ( gentity_t* ent )
 		//ent->s.eType = ET_GAMETYPE_TRIGGER;
 		return;
 	}
+	*/
 
 	InitTrigger (ent);
 }
