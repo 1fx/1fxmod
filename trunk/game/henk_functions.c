@@ -216,8 +216,12 @@ void Henk_Tip(void){
 
 	len = trap_FS_FOpenFile( g_tipsFile.string, &f, FS_READ_TEXT); 
 	if (!f) { 
-		Com_Printf("Can't open %s\n", g_tipsFile.string);
-		level.tipMsg = level.time+(server_msgInterval.integer*60000); // Boe!Man 6/17/11: If the tips file isn't found, do update the interval so it doesn't attempt to open the file every x msecs.
+		Com_Printf("Error opening tips file: %s\n", g_tipsFile.string);
+		// Boe!Man 9/18/13: Fixed tips re-checking every x msec even though the file couldn't be opened due to errors.
+		trap_Cvar_Set("server_enableTips", "0");
+		trap_Cvar_Update(&server_enableTips);
+		Com_Printf("Set server_enableTips to 0 due to error opening file.\n");
+		//level.tipMsg = level.time+(server_msgInterval.integer*60000); // Boe!Man 6/17/11: If the tips file isn't found, do update the interval so it doesn't attempt to open the file every x msecs.
 		return;
 	}
 	memset( buf, 0, sizeof(buf) );
