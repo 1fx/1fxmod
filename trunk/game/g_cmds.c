@@ -3477,6 +3477,9 @@ void ClientCommand( int clientNum ) {
 	else if(Q_stricmp(cmd, "boeboe6") == 0){ // Boe!Man 2/20/13: Print clean name.
 		Com_Printf("Your cleanName: %s\n", ent->client->pers.cleanName);
 	}
+	else if(Q_stricmp(cmd, "boeboe7") == 0){ // Boe!Man 9/18/13: Print a random tip.
+		Henk_Tip();
+	}
 	*/
 #endif
 	

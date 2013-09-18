@@ -209,10 +209,19 @@ int (readFromStr)( char *src, char *format, ... )
 void Henk_Tip(void){
 	char buf[1024];
     struct test{
-		char tip[256]; // Boe!Man 6/13/11: Ease down on those massive buffers.. The QVM compiler is chocking in them. A size of 255 for a tip should be sufficient (?).
+		char tip[128]; // Boe!Man 6/13/11: A size of 128 for a tip should be sufficient.
 	} Tips[64];
 	fileHandle_t f;
 	int len, i, start, count;
+	#ifdef WIN32
+	// Boe!Man 9/19/13
+	// The horror with Windows.. Sigh
+	// If SoF2 on Windows finds a CRLF it is ALWAYS a simple \n rather than a \r\n. This IS NOT the case in Linux, it neatly detects this behaviour.
+	// SoF2 however, obviously, messes this up. The file content length INCLUDES the \r, even though the buffer does not. They are appended at the end.
+	// This boolean is used as the result of a rather nasty hack to detect if CRLF is actually present in the file or not.
+	qboolean CRLF = qfalse;
+	int linecount = 0;
+	#endif
 
 	len = trap_FS_FOpenFile( g_tipsFile.string, &f, FS_READ_TEXT); 
 	if (!f) { 
@@ -230,15 +239,54 @@ void Henk_Tip(void){
 	count = 0;
 	for(i=0;i<len;i++){
 		if(buf[i] == '\n'){
-			Q_strncpyz(Tips[count].tip, buf+start, i-start);
-			count++;
+			#ifdef WIN32
+			if(i-start > 0){
+			#elif __linux__
+			if(buf[i-1] == '\r' && i-start > 1 || buf[i-1] != '\r' && i-start > 0){
+			#endif
+				Q_strncpyz(Tips[count].tip, buf+start, i-start+1);
+				count++;
+			}
 			start = i+1;
+			
+			#ifdef WIN32
+			linecount++;
+			#endif
+			
+			// Boe!Man 9/18/13: If there are already 64 tips loaded, break the process.
+			if(count == 64)
+				break;
 		}
 	}
+	// Boe!Man 9/18/13: Fetch the remaining line.
+	#ifdef WIN32
+	// Boe!Man 9/19/13: Check for the CRLF on Windows.
+	if(len >= 2 && buf[len-1] == 0){
+		CRLF = qtrue;
+	}
+	
+	if(CRLF ? (len > start+linecount && count != 64 && start != len) : (len > start && count != 64 && start != len)){
+	#elif __linux__
+	if(len > start && count != 64){
+	#endif
+		if(!count){
+			Q_strncpyz(Tips[count].tip, buf, sizeof(buf));	
+		}else{
+			Q_strncpyz(Tips[count].tip, buf+start, len);
+		}
+		count++;
+	}
 	trap_FS_FCloseFile(f);
-
-	trap_SendServerCommand( -1, va("chat -1 \"%sR%sa%sn%sd%so%sm Tip: %s\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, Tips[irand(0, count-1)].tip ) );		
-	level.tipMsg = level.time+(server_msgInterval.integer*60000);
+	
+	if(count > 0){
+		trap_SendServerCommand( -1, va("chat -1 \"%sR%sa%sn%sd%so%sm Tip: %s\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, Tips[irand(0, count-1)].tip ) );		
+		level.tipMsg = level.time+(server_msgInterval.integer*60000);
+	}else{
+		trap_Cvar_Set("server_enableTips", "0");
+		trap_Cvar_Update(&server_enableTips);
+		Com_Printf("Set server_enableTips to 0 due to no tips being present in file: %s.\n", g_tipsFile.string);
+	}
+	memset(Tips, 0, sizeof(Tips));
 }
 
 void Henk_Ignore(gentity_t *ent){
