@@ -56,6 +56,10 @@ int gtCall( int command, int arg0, int arg1, int arg2, int arg3, int arg4, int a
 			return 0;
 
 		case GAMETYPE_START:
+			if(current_gametype.value == GT_CTF){
+				gametype.redFlagDropTime = 0;
+				gametype.blueFlagDropTime = 0;
+			}
 			return 0;
 
 		case GAMETYPE_RUN_FRAME:
@@ -247,25 +251,23 @@ void GT_RunFrame ( int time )
 		// See if we need to return the red flag yet
 		if ( gametype.redFlagDropTime && time - gametype.redFlagDropTime > gt_flagReturnTime.integer * 1000 )
 		{
-			if(gametype.redFlagDropTime > level.gametypeStartTime){
-				// Boe!Man 11/29/12: Reset item.
-				gitem_t* item;
-				
-				item = BG_FindGametypeItemByID ( ITEM_REDFLAG );
-				if (item){
-					G_ResetGametypeItem ( item );
-				}
-				
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,%s", level.time + 5000, va("@The %s ^7Flag has %sr%se%st%su%sr%sned!", server_redteamprefix.string, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string)));
-				trap_SendServerCommand( -1, va("print \"^3[CTF] ^7The Red Flag has returned.\n\""));
-				
-				// Boe!Man 11/29/12: Global sound.
-				if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime){
-					gentity_t* tent;
-					tent = G_TempEntity( vec3_origin, EV_GLOBAL_SOUND );
-					tent->s.eventParm = gametype.flagReturnSound;
-					tent->r.svFlags = SVF_BROADCAST;
-				}
+			// Boe!Man 11/29/12: Reset item.
+			gitem_t* item;
+			
+			item = BG_FindGametypeItemByID ( ITEM_REDFLAG );
+			if (item){
+				G_ResetGametypeItem ( item );
+			}
+			
+			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,%s", level.time + 5000, va("@The %s ^7Flag has %sr%se%st%su%sr%sned!", server_redteamprefix.string, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string)));
+			trap_SendServerCommand( -1, va("print \"^3[CTF] ^7The Red Flag has returned.\n\""));
+			
+			// Boe!Man 11/29/12: Global sound.
+			if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime){
+				gentity_t* tent;
+				tent = G_TempEntity( vec3_origin, EV_GLOBAL_SOUND );
+				tent->s.eventParm = gametype.flagReturnSound;
+				tent->r.svFlags = SVF_BROADCAST;
 			}
 			
 			gametype.redFlagDropTime = 0;
@@ -273,25 +275,23 @@ void GT_RunFrame ( int time )
 		// See if we need to return the blue flag yet
 		if ( gametype.blueFlagDropTime && time - gametype.blueFlagDropTime > gt_flagReturnTime.integer * 1000 )
 		{
-			if(gametype.blueFlagDropTime > level.gametypeStartTime){
-				// Boe!Man 11/29/12: Reset item.
-				gitem_t* item;
-				
-				item = BG_FindGametypeItemByID ( ITEM_BLUEFLAG );
-				if (item){
-					G_ResetGametypeItem ( item );
-				}
-				
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,%s", level.time + 5000, va("@The %s ^7Flag has %sr%se%st%su%sr%sned!", server_blueteamprefix.string, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string)));
-				trap_SendServerCommand( -1, va("print \"^3[CTF] ^7The Blue Flag has returned.\n\""));
-				
-				// Boe!Man 11/29/12: Global sound.
-				if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime){
-					gentity_t* tent;
-					tent = G_TempEntity( vec3_origin, EV_GLOBAL_SOUND );
-					tent->s.eventParm = gametype.flagReturnSound;
-					tent->r.svFlags = SVF_BROADCAST;
-				}
+			// Boe!Man 11/29/12: Reset item.
+			gitem_t* item;
+			
+			item = BG_FindGametypeItemByID ( ITEM_BLUEFLAG );
+			if (item){
+				G_ResetGametypeItem ( item );
+			}
+			
+			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,%s", level.time + 5000, va("@The %s ^7Flag has %sr%se%st%su%sr%sned!", server_blueteamprefix.string, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string)));
+			trap_SendServerCommand( -1, va("print \"^3[CTF] ^7The Blue Flag has returned.\n\""));
+			
+			// Boe!Man 11/29/12: Global sound.
+			if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime){
+				gentity_t* tent;
+				tent = G_TempEntity( vec3_origin, EV_GLOBAL_SOUND );
+				tent->s.eventParm = gametype.flagReturnSound;
+				tent->r.svFlags = SVF_BROADCAST;
 			}
 			
 			gametype.blueFlagDropTime = 0;
