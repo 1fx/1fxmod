@@ -226,16 +226,13 @@ void G_ProcessIPBans(void)
 =================
 Svcmd_AddIP_f
 Initial recode by Boe!Man - 10/31/11
-SQLite bacakend update by Boe!Man - 2/26/13
+SQLite backend update by Boe!Man - 2/26/13
 Additions of Admin/Clans and partial recode by Boe!Man - 9/26/13
 
 Usage: addip <list> <ip-subnet> <name> <reason>
 
-arg 1: If three digits are found in the IP, and the length isn't > 15 or < 7, the IP is considered valid. If there are less dots found, it's considered a subnet (though len >= 7).
-arg 2: No name specified will result in N/A.
-arg 3: No reason specified will result in N/A.
-
-By will always (!) be "RCON".
+Where list is:
+	subnetbanlist, banlist, adminlist, passlist or clanlist.
 =================
 */
 void Svcmd_AddIP_f (void)
