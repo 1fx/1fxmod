@@ -1263,6 +1263,7 @@ extern  vmCvar_t	g_adminPassword;
 extern  vmCvar_t	g_sadminPassword;
 //extern	vmCvar_t	g_adminPassFile;
 extern	vmCvar_t	g_logHits;
+extern	vmCvar_t	g_logExtra;
 
 extern	vmCvar_t	g_dmflags;
 extern	vmCvar_t	g_scorelimit;

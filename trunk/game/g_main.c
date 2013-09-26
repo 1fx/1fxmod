@@ -75,6 +75,7 @@ vmCvar_t	g_sadminPassword;
 vmCvar_t	g_log;
 vmCvar_t	g_logSync;
 vmCvar_t	g_logHits;
+vmCvar_t	g_logExtra;
 vmCvar_t	g_allowVote;
 vmCvar_t	g_voteDuration;
 vmCvar_t	g_failedVoteDelay;
@@ -352,6 +353,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_log, "g_log", "logs/games.log", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_logSync, "g_logSync", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_logHits, "g_logHits", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
+	{ &g_logExtra,"g_logExtra","0", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 
 	{ &g_password, "g_password", "", CVAR_USERINFO, 0.0, 0.0, 0, qfalse  },
 

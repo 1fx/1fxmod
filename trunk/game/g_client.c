@@ -1694,7 +1694,9 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 	}
 
 	// get and distribute relevent paramters
-	//G_LogPrintf( "ClientConnect: %i\n", clientNum );
+	if(g_logExtra.integer){
+		G_LogPrintf("ClientConnect: [%i] %s\n", clientNum, client->pers.ip);
+	}
 	// Boe!Man 3/31/10: First off we search in the Country database.
 	if(g_checkCountry.integer && level.countryInitialized && !strstr(ent->client->sess.country, "noneandempty")){
 		if(isBot){
@@ -1735,7 +1737,9 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 
 	// Make sure they are unlinked
 	trap_UnlinkEntity ( ent );
-	//G_LogPrintf( "Client connected\n" );
+	if(g_logExtra.integer){
+		G_LogPrintf("Client connected: [%i]\n", clientNum);
+	}
 
 	// Boe!Man 12/30/09: Checking for Admin.
 	if(!ent->client->sess.fileChecked && !(ent->r.svFlags & SVF_BOT)){
@@ -2450,8 +2454,10 @@ void ClientDisconnect( int clientNum )
 		// Get rid of things that need to drop
 		TossClientItems( ent );
 	}
-
-	//G_LogPrintf( "ClientDisconnect: %i\n", clientNum );
+	
+	if(g_logExtra.integer){
+		G_LogPrintf("ClientDisconnect: [%i] %s\\%s\n", clientNum, ent->client->pers.ip, ent->client->pers.cleanName);
+	}
 
 	trap_UnlinkEntity (ent);
 	ent->s.modelindex = 0;
