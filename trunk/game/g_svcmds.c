@@ -227,8 +227,9 @@ void G_ProcessIPBans(void)
 Svcmd_AddIP_f
 Initial recode by Boe!Man - 10/31/11
 SQLite bacakend update by Boe!Man - 2/26/13
+Additions of Admin/Clans and partial recode by Boe!Man - 9/26/13
 
-Usage: addip <ip-subnet> <name> <reason>
+Usage: addip <list> <ip-subnet> <name> <reason>
 
 arg 1: If three digits are found in the IP, and the length isn't > 15 or < 7, the IP is considered valid. If there are less dots found, it's considered a subnet (though len >= 7).
 arg 2: No name specified will result in N/A.
@@ -240,111 +241,102 @@ By will always (!) be "RCON".
 void Svcmd_AddIP_f (void)
 {
 	char		arg[64];
-	int			i = 0;
-	qboolean	subnet = qfalse;
 	// General info.
 	char		ip[MAX_IP];
 	char		name[64];
 	char		reason[64];
-	// Locals for arg char loop.
-	int			dots = 0;
-	// Locals for arg reason loop.
-	char 		*temp = "";
 	// Boe!Man 2/26/13: Add SQLite support.
 	sqlite3		*db;
+	int			subnetSize = 0;
+	int			admLevel = 0;
 
-	if ( trap_Argc() < 2 ) {
-		Com_Printf("Usage:  addip <IP/Subnet> <clientname> <reason>\n");
-		return;
-	}
-
-	trap_Argv( 1, arg, sizeof(arg)); // IP or Subnet.
-	
-	// Boe!Man 10/31/11: Basic routine check on arg.
-	if(strlen(arg) < 7 || strlen(arg) > 16){
-		Com_Printf("Error: IP or Subnet doesn't seem to be valid. Length should be 7-16.\n");
+	if ( trap_Argc() < 4 ) {
+		Com_Printf("Usage:  addip <list> <IP/subnet> <clientname> <opt:reason/req:level>\n");
 		return;
 	}
 	
-	for(i = 0; i<strlen(arg);i++){
-		if(!henk_isdigit(arg[i]) && arg[i] != 46){
-			Com_Printf("Error: IP or Subnet can only contain digits and separators (dots).\n");
-			return;
-		}else if(arg[i] == 46){ // 46 = dot.
-			dots++;
-			if(dots > 3){
-				Com_Printf("Error: Not a valid IP!\n");
-				return;
-			}
+	trap_Argv(1, arg, sizeof(arg));
+	
+	// Fetch the IP and store it.
+	if(strstr(arg, "subnetban") || strstr(arg, "pass")){
+		if(strstr(arg, "pass")){
+			subnetSize = 4;
+		}else{
+			subnetSize = 7;
 		}
-	}
-	
-	// Boe!Man 10/31/11: Passed the check, now checking if we're dealing with a part of an IP (which we treat as subnet).
-	if(dots < 3 && dots >= 1){ // Dealing with subnet.
-		// Boe!Man 11/04/11: Minimum size should be 7 or else it'll be useless.
-		if(strlen(arg) < 7){
-			Com_Printf("Error: Minimum IP size for adding a subnet is 7.\n");
-			return;
+		
+		trap_Argv(2, arg, sizeof(arg));
+		if(strlen(arg) <= subnetSize){
+			Q_strncpyz(ip, arg, sizeof(arg));
+		}else if(strlen(arg) > subnetSize){
+			Q_strncpyz(ip, arg, subnetSize);
 		}
-		Q_strncpyz(ip, arg, 7); // Subnet only takes 7.
-		subnet = qtrue;
-	}else if(dots != 3){ // Huh? This definitely isn't a valid IP.
-		Com_Printf("Error: Not a valid IP!\n");
-		return;
-	}else{ // Definitely an IP.
+	}else{ // Another list, so store the full IP..
+		trap_Argv(2, arg, sizeof(arg));
 		Q_strncpyz(ip, arg, sizeof(ip));
 	}
-	
-	// Boe!Man 10/31/11: Check if they supplied a name and reason, if not, fill them out with "N/A".
-	memset(arg, 0, sizeof(arg)); // Clean buffer.
-	trap_Argv( 2, arg, sizeof(arg)); // Name.
-	if(strlen(arg) > 0){
-		Q_strncpyz(name, arg, sizeof(name));
-	}else{
-		Q_strncpyz(name, "N/A", sizeof(name));
-	}
-	
-	memset(arg, 0, sizeof(arg)); // Clean buffer.
-	trap_Argv( 3, arg, sizeof(arg)); // Reason arg 0.
-	
-	// Boe!Man 11/05/11: Only go through with this if there's actually a reason, no need to waste useful resources.
-	if(strlen(arg) > 0){
-		temp = va("%s", arg);
-		for(i=0;i<=25;i++){
-			trap_Argv( 4+i, arg, sizeof(arg)); // Reason arg 0 + 1.
-			if(strlen(arg) > 0){
-				temp = va("%s %s", temp, arg); // we fill this array up with 25 arguments
-			}
-		}
-	}
-	
-	if(strlen(temp) > 0){ // Boe!Man 11/05/11
-		Q_strncpyz(reason, temp, sizeof(reason));
-	}else{
-		Q_strncpyz(reason, "N/A", sizeof(reason));
-	}
-	
-	// Boe!Man 2/26/13: Prepare database.
-	db = bansDb;
-	
-	// Boe!Man 2/26/13: Be extra careful, all entries can contain malformed characters for the query. Check 'm all.
-	Boe_convertNonSQLChars(name);
 	Boe_convertNonSQLChars(ip);
-	Boe_convertNonSQLChars(reason);
 	
-	// Boe!Man 2/26/13: We're going to add it to the database now.
-	if(!subnet){ // Regular ban.
-		if(sqlite3_exec(db, va("INSERT INTO bans (IP, name, by, reason) values ('%s', '%s', 'RCON', '%s')", ip, name, reason), 0, 0, 0) != SQLITE_OK){
-			Com_Printf("Error: bans database: %s\n", sqlite3_errmsg(db));
+	// Fetch the client name.
+	trap_Argv(3, arg, sizeof(arg));
+	Q_strncpyz(name, arg, sizeof(name));
+	Boe_convertNonSQLChars(name);
+	
+	// Fetch the reason, if given.
+	trap_Argv(4, arg, sizeof(arg));
+	if(strlen(arg) > 0){
+		Q_strncpyz(reason, arg, sizeof(reason));
+		Boe_convertNonSQLChars(reason);
+	}
+	
+	trap_Argv(1, arg, sizeof(arg));
+	if(strstr(arg, "admin") || strstr(arg, "pass")){
+		admLevel = atoi(reason);
+		if(admLevel < 2 || admLevel > 4){
+			Com_Printf("^1Error: ^7Invalid admin level: %i.\n", admLevel);
+			return;
+		}
+	}
+	
+	// Boe!Man 9/26/13: We're going to add it to the database now.
+	if(strstr(arg, "banlist")){
+		db = bansDb;
+		
+		if(strstr(arg, "sub")){
+			Q_strncpyz(arg, "subnetbans", sizeof(arg));
 		}else{
-			Com_Printf(va("Success adding [%s] to the banlist (name: %s, reason: %s).\n", ip, name, reason));
+			Q_strncpyz(arg, "bans", sizeof(arg));
+		}
+		
+		if(sqlite3_exec(db, va("INSERT INTO %s (IP, name, by, reason) values ('%s', '%s', 'RCON', '%s')", arg, ip, name, reason), 0, 0, 0) != SQLITE_OK){
+			Com_Printf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
+		}else{
+			Com_Printf(va("Success adding [%s] to the %s (name: %s, reason: %s).\n", ip, strstr(arg, "sub") ? "subnetbanlist" : "banlist", name, reason));
+		}
+	}else if(strstr(arg, "admin") || strstr(arg, "pass")){
+		db = usersDb;
+		
+		if(strstr(arg, "pass")){
+			Q_strncpyz(arg, "passadmins", sizeof(arg));
+		}else{
+			Q_strncpyz(arg, "admins", sizeof(arg));
+		}
+		
+		if(sqlite3_exec(db, va("INSERT INTO %s (%s, name, by, level) values ('%s', '%s', 'RCON', '%i')", arg, strstr(arg, "pass") ? "octet" : "ip", ip, name, admLevel), 0, 0, 0) != SQLITE_OK){
+			Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
+		}else{
+			Com_Printf(va("Success adding [%s] to the %s (name: %s, level: %s).\n", ip, strstr(arg, "pass") ? "passlist" : "adminlist", name, reason));
+		}
+	}else if(strstr(arg, "clan")){
+		db = usersDb;
+		
+		if(sqlite3_exec(db, va("INSERT INTO clanmembers (IP, name, by) values ('%s', '%s', 'RCON')", ip, name), 0, 0, 0) != SQLITE_OK){
+			Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
+		}else{
+			Com_Printf(va("Success adding [%s] to the clanlist (name: %s).\n", ip, name));
 		}
 	}else{
-		if(sqlite3_exec(db, va("INSERT INTO subnetbans (IP, name, by, reason) values ('%s', '%s', 'RCON', '%s')", ip, name, reason), 0, 0, 0) != SQLITE_OK){
-			Com_Printf("Error: bans database: %s\n", sqlite3_errmsg(db));
-		}else{
-			Com_Printf(va("Success adding [%s] to the subnetbanlist (name: %s, reason: %s).\n", ip, name, reason));
-		}
+		Com_Printf("^3Info: ^7Invalid choice: %s. Valid choices are: subnetbanlist, banlist, adminlist, passlist, clanlist.\n", arg);	
 	}
 }
 

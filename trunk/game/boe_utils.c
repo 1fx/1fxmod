@@ -3449,6 +3449,6 @@ void Boe_SQLTableClear(void)
 		
 		sqlite3_close(db);
 	}else{
-		Com_Printf("^3Info: ^7Invalid choice: %s. Valid choices are: subnetbanlist, adminlist, passlist, clanlist, aliases, scores.\n", arg);
+		Com_Printf("^3Info: ^7Invalid choice: %s. Valid choices are: subnetbanlist, banlist, adminlist, passlist, clanlist, aliases, scores.\n", arg);
 	}
 }
