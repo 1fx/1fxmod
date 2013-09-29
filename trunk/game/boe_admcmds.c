@@ -1542,24 +1542,26 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 
 	if(adm){
 		if(subnet){
-			Q_strcat(buf2, sizeof(buf2), "^3[Subnetbanlist]^7\n\n");
+			Q_strcat(buf2, sizeof(buf2), "^3[Subnetbanlist]^7\n");
 		}else{
-			Q_strcat(buf2, sizeof(buf2), "^3[Banlist]^7\n\n");
+			Q_strcat(buf2, sizeof(buf2), "^3[Banlist]^7\n");
 		}
 		
 		// Boe!Man 9/5/13: Only check for filters iif the argument count is > 2 and we're working in the console.
 		if(!shortCmd){
-			Q_strcat(buf2, sizeof(buf2), "^5[Filter options]^7\n");
+			Q_strcat(buf2, sizeof(buf2), "^5[Filter options]^7\n\n");
+			Q_strcat(buf2, sizeof(buf2), "^5 Filter               Value\n^7--------------------------------------------------\n");
 		}
 	}else{
 		if(subnet){
-			Com_Printf("^3[Subnetbanlist]^7\n\n");
+			Com_Printf("^3[Subnetbanlist]^7\n");
 		}else{
-			Com_Printf("^3[Banlist]^7\n\n");
+			Com_Printf("^3[Banlist]^7\n");
 		}
 		
 		// Boe!Man 8/29/13: Check filter options.
-		Com_Printf("^5[Filter options]^7\n");
+		Com_Printf("^5[Filter options]^7\n\n");
+		Com_Printf("^5 Filter               Value\n^7--------------------------------------------------\n");
 	}
 	
 	if(adm && !shortCmd || !adm){
@@ -1579,11 +1581,19 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 				}else{ // Valid argument it seems, so far.
 					if(strstr(arg, "-h")){ // Client wants help with this, no problem.
 						if(adm){
-							Q_strcat(buf2, sizeof(buf2), "** ^7There are several filter options for you to use.\n** ^5-i: ^7Filters on IP.\n** ^5-n: ^7Filters on name.\n** ^5-b: ^7Filters on banned by.\n\n** ^5Example usage: ^7/adm banlist -i 172.16 -n shoke -b boe\n");
+							Q_strcat(buf2, sizeof(buf2), "^7[^1Help^7]                ^7There are several filter options for you to use:\n" \
+														 "^7[^5-i^7]                  ^7Filters on IP.\n" \
+									   					 "^7[^5-n^7]                  ^7Filters on name.\n" \
+									   					 "^7[^5-b^7]                  ^7Filters on banned by.\n\n" \
+									   					 "^7[^5Example usage]       ^7/adm banlist -i 172.16 -n shoke -b boe\n");
 							trap_SendServerCommand( adm-g_entities, va("print \"%s\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\"", buf2));
 							memset(buf2, 0, sizeof(buf2)); // Boe!Man 11/04/11: Properly empty the buffer.
 						}else{
-							Com_Printf("** ^7There are several filter options for you to use.\n** ^5-i: ^7Filters on IP.\n** ^5-n: ^7Filters on name.\n** ^5-b: ^7Filters on banned by.\n\n** ^5Example usage: ^7/adm banlist -i 172.16 -n shoke -b boe\n");
+							Com_Printf("^7[^1Help^7]                ^7There are several filter options for you to use:\n" \
+									   "^7[^5-i^7]                  ^7Filters on IP.\n" \
+									   "^7[^5-n^7]                  ^7Filters on name.\n" \
+									   "^7[^5-b^7]                  ^7Filters on banned by.\n\n" \
+									   "^7[^5Example usage]       ^7/adm banlist -i 172.16 -n shoke -b boe\n");
 							Com_Printf("\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n");
 						}
 						return;
@@ -1598,9 +1608,9 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 						filterActive = qtrue;
 					}else{ // Invalid argument, break.
 						if(adm){
-							Q_strcat(buf2, sizeof(buf2), va("** ^1Error: ^7Invalid argument: %s **\n", arg));
+							Q_strcat(buf2, sizeof(buf2), va("^7[^1Error^7]               ^7Invalid argument: %s\n", arg));
 						}else{
-							Com_Printf("** ^1Error: ^7Invalid argument: %s **\n", arg);
+							Com_Printf("^7[^1Error^7]               ^7Invalid argument: %s\n", arg);
 						}
 						
 						filterChecking = qfalse;
@@ -1614,9 +1624,9 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 			
 		if(!filterActive){
 			if(adm){
-				Q_strcat(buf2, sizeof(buf2), "** ^5None applied: ^7call the banlist with -h for more information **\n\n");
+				Q_strcat(buf2, sizeof(buf2), "^7[^5None applied^7]        ^7Call the banlist with -h for more information\n\n");
 			}else{
-				Com_Printf("** ^5None applied: ^7call the banlist with -h for more information **\n\n");
+				Com_Printf("^7[^5None applied^7]        ^7Call the banlist with -h for more information\n\n");
 			}
 		}else{
 			// Prepare query as well.
@@ -1626,9 +1636,9 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 			if(strlen(filterIP) > 0){
 				Boe_convertNonSQLChars(filterIP);
 				if(adm){
-					Q_strcat(buf2, sizeof(buf2), va("** ^5IP: ^7%s **\n", filterIP));
+					Q_strcat(buf2, sizeof(buf2), va("^7[^5IP^7]                  ^7%s\n", filterIP));
 				}else{
-					Com_Printf("** ^5IP: ^7%s **\n", filterIP);
+					Com_Printf("^7[^5IP^7]                  ^7%s\n", filterIP);
 				}
 				strcat(filterQuery, va("IP LIKE '%%%s%%'", filterIP));
 				rc++;
@@ -1637,9 +1647,9 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 			if(strlen(filterName) > 0){
 				Boe_convertNonSQLChars(filterName);
 				if(adm){
-					Q_strcat(buf2, sizeof(buf2), va("** ^5Name: ^7%s **\n", filterName));
+					Q_strcat(buf2, sizeof(buf2), va("^7[^5Name^7]                ^7%s\n", filterName));
 				}else{
-					Com_Printf("** ^5Name: ^7%s **\n", filterName);
+					Com_Printf("^7[^5Name^7]                ^7%s\n", filterName);
 				}
 				if(rc){
 					strcat(filterQuery, " AND ");
@@ -1651,9 +1661,9 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 			if(strlen(filterBy) > 0){
 				Boe_convertNonSQLChars(filterBy);
 				if(adm){
-					Q_strcat(buf2, sizeof(buf2), va("** ^5By: ^7%s **\n", filterBy));
+					Q_strcat(buf2, sizeof(buf2), va("^7[^5By^7]                  ^7%s\n", filterBy));
 				}else{
-					Com_Printf("** ^5By: ^7%s **\n", filterBy);
+					Com_Printf("^7[^5By^7]                  ^7%s\n", filterBy);
 				}
 				if(rc){
 					strcat(filterQuery, " AND ");
@@ -4409,25 +4419,25 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 	
 	// Boe!Man 2/4/13: Display header.
 	if(adm){
+		Q_strcat(buf2, sizeof(buf2), "^3[Adminlist]^7\n");
 		// Boe!Man 2/16/13: Also show the current passwords in the Passworded Adminlist.
 		if(passwordList){
-			Q_strcat(buf2, sizeof(buf2), "^3[Current Admin Passwords]^7\n\n");
-			Q_strcat(buf2, sizeof(buf2), "^3 Lvl                        Password\n^7--------------------------------------------------\n");
-			Q_strcat(buf2, sizeof(buf2), va("^7[^3B-Admin^7]                   %s\n^7[^3Admin^7]                     %s\n^7[^3S-Admin^7]                   %s\n\n", g_badminPass.string, g_adminPass.string, g_sadminPass.string));
+			Q_strcat(buf2, sizeof(buf2), "^5[Current Admin Passwords]^7\n\n");
+			Q_strcat(buf2, sizeof(buf2), "^5 Lvl                        Password\n^7--------------------------------------------------\n");
+			Q_strcat(buf2, sizeof(buf2), va("^7[^5B-Admin^7]                   %s\n^7[^5Admin^7]                     %s\n^7[^5S-Admin^7]                   %s\n", g_badminPass.string, g_adminPass.string, g_sadminPass.string));
 		}
 		
-		Q_strcat(buf2, sizeof(buf2), "^3[Adminlist]^7\n\n");
-		Q_strcat(buf2, sizeof(buf2), "^3 #     Lvl  IP              Name                  By\n^7------------------------------------------------------------------------\n");
+		Q_strcat(buf2, sizeof(buf2), "\n^3 #     Lvl  IP              Name                  By\n^7------------------------------------------------------------------------\n");
 	}else{
+		Com_Printf("^3[Adminlist]^7\n");
 		// Boe!Man 2/16/13: Also show the current passwords in the Passworded Adminlist.
 		if(passwordList){
-			Com_Printf("^3[Current Admin Passwords]^7\n\n");
-			Com_Printf("^3 Lvl                        Password\n^7--------------------------------------------------\n");
-			Com_Printf("^7[^3B-Admin^7]                   %s\n^7[^3Admin^7]                     %s\n^7[^3S-Admin^7]                   %s\n\n", g_badminPass.string, g_adminPass.string, g_sadminPass.string);
+			Com_Printf("^5[Current Admin Passwords]^7\n\n");
+			Com_Printf("^5 Lvl                        Password\n^7--------------------------------------------------\n");
+			Com_Printf("^7[^5B-Admin^7]                   %s\n^7[^5Admin^7]                     %s\n^7[^5S-Admin^7]                   %s\n", g_badminPass.string, g_adminPass.string, g_sadminPass.string);
 		}
 		
-		Com_Printf("^3[Adminlist]^7\n\n");
-		Com_Printf("^3 #     Lvl  IP              Name                  By\n");
+		Com_Printf("\n^3 #     Lvl  IP              Name                  By\n");
 		Com_Printf("^7------------------------------------------------------------------------\n");
 	}
 	
