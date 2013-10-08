@@ -174,52 +174,6 @@
 //===================================================================
 
 /*
-Boe_log CVAR.
--------------
-This CVAR is used for the debug of several functions, 
-writing a simple string to the games.log file, so the we can notice
-where the bug would be. This CVAR gets used often in new or updated
-functions and enabled at release, or when frequent crashes appear.
-Note you can select multiple options by simply putting multiple
-options in the CVAR itself (as it actually searches for the option
-within the string, example: you want to watch option 1 and
-3, so you update the CVAR to either '13' or '31').
-
-You have the option to NOT compile this function , so in final 
-releases this CVAR can be left out. To exclude this function,
-simply build with NDEBUG instead of _DEBUG (or simply leave it out).
-
--------------
-For '1' in the boe_log CVAR:
-1 = RPM Awards.
-2 = Auto restart (Kill server).
-3 = Server messages.
-4 = Remove Admin.
-5 = Auto even teams.
-6 = ClientUserInfoChanged.
-7 = ClientConnect.
-8 = ClientBegin.
-9 = player_die.
-
-For '2' in the boe_log CVAR:
-NOTE: This log is primarily based around compMode.
-1 = RPM_Tcmd.
-2 = RPM_TeamInfo.
-3 = G_InitGame (g_compMode check).
-4 = ExitLevel.
-5 = CheckExitRules.
-6 = G_ResetGametype (RT_NONE check).
-7 = Boe_calcMatchScores.
-8 = Boe_About.
-
-For '3' in the boe_log CVAR:
-NOTE: This log is ONLY used for temporary printf debug msgs (such as rev changes).
-1 = Mute check in TMI.
-
-
-*/
-
-/*
 ***************** .so Considerations *****************
 // By Boe!Man - 7/13/11 - 2:41 AM
 

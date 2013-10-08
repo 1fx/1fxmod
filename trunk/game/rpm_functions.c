@@ -862,11 +862,6 @@ void RPM_UpdateTMI(void)
 	}
 
 	level.lastTMIupdate = level.time;
-	
-	#ifdef _DEBUG
-	if (strstr(boe_log.string, "3"))
-		G_LogPrintf("1s\n");
-	#endif
 
 	entry[0] = 0;
 	infoString[0] = 0;
@@ -968,10 +963,6 @@ void RPM_UpdateTMI(void)
 		else if(cl->sess.proClient > 4.0)
 			trap_SendServerCommand(level.sortedClients[i], va("tmi %i%s", numAdded, infoString));
 	}
-	#ifdef _DEBUG
-	if (strstr(boe_log.string, "3"))
-		G_LogPrintf("1e\n");
-	#endif
 }
 
 /*
@@ -1010,11 +1001,6 @@ void RPM_Awards(void)
 		int  number;
 	}scores_t;
 	static scores_t		bestScores[7];
-
-#ifdef _DEBUG
-	if (strstr(boe_log.string, "1"))
-		G_LogPrintf("1s\n");
-#endif
 
 	if(!level.awardTime)
 	{
@@ -1294,11 +1280,6 @@ void RPM_Awards(void)
 				));
 		}
 	}
-	
-	#ifdef _DEBUG
-	if (strstr(boe_log.string, "1"))
-		G_LogPrintf("1e\n");
-	#endif
 }
 
 

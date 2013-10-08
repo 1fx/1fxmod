@@ -1603,7 +1603,7 @@ void	RPM_Unpause (gentity_t *adm);
 int StartAfterCommand(char *param);
 #ifdef _DEBUG
 // Boe!Man: Debug CVAR.
-extern vmCvar_t	boe_log;
+extern 	vmCvar_t	g_debug;
 #endif
 
 //==================================================================

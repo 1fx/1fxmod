@@ -310,7 +310,7 @@ vmCvar_t	sql_timeBench;
 vmCvar_t	sql_backupInterval;
 
 #ifdef _DEBUG
-vmCvar_t	boe_log;
+vmCvar_t	g_debug;
 #endif
 
 static cvarTable_t gameCvarTable[] = 
@@ -647,7 +647,7 @@ static cvarTable_t gameCvarTable[] =
 	//http://1fx.uk.to/forums/index.php?/topic/1230-1fx-anticheat/page__view__findpost__p__13498
 #ifdef _DEBUG
 	// Boe!Man: Debug CVAR.
-	{ &boe_log, "boe_log", "0", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
+	{ &g_debug, "1fx_debug", "0", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 #endif
 };
 
@@ -1424,10 +1424,6 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 
 	// Boe!Man 11/16/10: Scrim settings.
 	if (g_compMode.integer > 0){
-		#ifdef _DEBUG
-		if (strstr(boe_log.string, "2"))
-			G_LogPrintf("3s\n");
-		#endif
 		level.compMsgCount = level.time + 6000;
 		// Boe!Man 11/16/10: Scrim already initialized and map restarted? Start the actual scrim.
 		if (cm_enabled.integer == 1){
@@ -1464,10 +1460,6 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 			trap_Cvar_Set("g_compMode", "0");
 			level.compMsgCount = 0;
 		}
-		#ifdef _DEBUG
-		if (strstr(boe_log.string, "2"))
-			G_LogPrintf("3e\n");
-		#endif
 	}
 	
 	// Boe!Man 9/1/12: Check CVAR synonyms at start up to keep them in sync.
@@ -1983,27 +1975,14 @@ void ExitLevel (void)
 	int			i;
 	gclient_t	*cl;
 
-	#ifdef _DEBUG
-		if (strstr(boe_log.string, "2"))
-			G_LogPrintf("4s\n");
-	#endif
-
 	///Ryan march 21 2004 9:19am
 	if ((!*g_mapcycle.string || !Q_stricmp ( g_mapcycle.string, "none" ) || g_compMode.integer > 0 && cm_enabled.integer >= 1))
 	{
 		trap_SendServerCommand( -1, va("cp \"@ \n\""));
 		if (g_compMode.integer > 0 && cm_enabled.integer == 5){
-			#ifdef _DEBUG
-			if (strstr(boe_log.string, "2"))
-				G_LogPrintf("4 - 1\n");
-			#endif
 			trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", level.mapname ));
 		}
 		else{
-			#ifdef _DEBUG
-			if (strstr(boe_log.string, "2"))
-				G_LogPrintf("4 - 2\n");
-			#endif
 			trap_SendConsoleCommand( EXEC_APPEND, "map_restart 0\n" );
 		}
 		return;
@@ -2042,12 +2021,6 @@ void ExitLevel (void)
 			level.clients[i].pers.connected = CON_CONNECTING;
 		}
 	}
-
-	#ifdef _DEBUG
-		if (strstr(boe_log.string, "2"))
-			G_LogPrintf("4e\n");
-	#endif
-
 }
 
 /*
@@ -2399,10 +2372,6 @@ void CheckExitRules( void )
 				}
 				tent->r.svFlags = SVF_BROADCAST;	
 				tent->s.otherEntityNum = TEAM_RED;
-				#ifdef _DEBUG
-				if (strstr(boe_log.string, "2"))
-					G_LogPrintf("5\n");
-				#endif
 				if (g_compMode.integer > 0 && cm_enabled.integer == 2){
 					//LogExit(va("%s ^7team wins 1st round with %i - %i", server_redteamprefix, level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE] ));
 					if(cm_dr.integer == 1){ // Boe!Man 3/18/11: If dual rounds are enabled, make use of them and display the temporary stuff.
@@ -2464,10 +2433,6 @@ void CheckExitRules( void )
 				}
 				tent->r.svFlags = SVF_BROADCAST;	
 				tent->s.otherEntityNum = TEAM_BLUE;
-				#ifdef _DEBUG
-				if (strstr(boe_log.string, "2"))
-					G_LogPrintf("5\n");
-				#endif
 				if (g_compMode.integer > 0 && cm_enabled.integer == 2){
 					if(cm_dr.integer == 1){ // Boe!Man 3/18/11: If dual rounds are enabled, make use of them and display the temporary stuff.
 						trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7team wins the 1st round with %i - %i!", level.time + 10000, server_blueteamprefix.string, level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]));
@@ -3414,10 +3379,6 @@ void G_RunFrame( int levelTime )
 	// Boe!Man 8/25/10: Auto restart after 60000000 milliseconds, or 1000 minutes with an empty server. This ensures no crashes.
 	// FIX ME (Prio low): Bots aren't supported as of right now.
 	if ( level.time - level.startTime >= 60000000 && level.numConnectedClients == 0){
-		#ifdef _DEBUG
-			if (strstr(boe_log.string, "1"))
-				G_LogPrintf("2\n");
-		#endif
 		trap_Cvar_VariableStringBuffer ( "mapname", level.mapname, MAX_QPATH );
 		trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", level.mapname));
 	}

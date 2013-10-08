@@ -547,25 +547,25 @@ void G_ResetGametype ( qboolean fullRestart, qboolean cagefight )
 			break;
 
 		case RT_NONE:
-			if(current_gametype.value == GT_HS)
-				level.gametypeDelayTime = level.time + hideSeek_roundstartdelay.integer * 1000;
-			else
-			level.gametypeDelayTime = level.time + g_roundstartdelay.integer * 1000;
 			if(current_gametype.value == GT_HS){
-				if(cagefight == qtrue)
+				level.gametypeDelayTime = level.time + hideSeek_roundstartdelay.integer * 1000;
+			}else{
+				level.gametypeDelayTime = level.time + g_roundstartdelay.integer * 1000;
+			}
+			
+			if(current_gametype.value == GT_HS){
+				if(cagefight == qtrue){
 					level.gametypeRoundTime = level.time + (1*60000);
-				else
-				level.gametypeRoundTime = level.time + (g_roundtimelimit.integer * 60000); // Henk 22/01/10 -> Round time without startup delay // + g_roundstartdelay.integer * 1000;
+				}else{
+					level.gametypeRoundTime = level.time + (g_roundtimelimit.integer * 60000); // Henk 22/01/10 -> Round time without startup delay // + g_roundstartdelay.integer * 1000;
+				}
+				
 				if(level.crossTheBridge){
 					level.gametypeDelayTime = level.gametypeRoundTime;
 				}
-			}else
-			level.gametypeRoundTime = level.time + (g_roundtimelimit.integer * 60000);
-
-		#ifdef _DEBUG
-			if (strstr(boe_log.string, "2"))
-				G_LogPrintf("6s\n");
-		#endif
+			}else{
+				level.gametypeRoundTime = level.time + (g_roundtimelimit.integer * 60000);
+			}
 
 			if ( level.gametypeDelayTime != level.time )
 			{
@@ -599,21 +599,11 @@ void G_ResetGametype ( qboolean fullRestart, qboolean cagefight )
 					trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sG%se%st %sr%se%sa%sdy!", level.time + (g_roundstartdelay.integer * 1000), server_color1.string, server_color2.string, server_color3.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 				}
 			}
-			#ifdef _DEBUG
-				if (strstr(boe_log.string, "2"))
-					G_LogPrintf("6e\n");
-			#endif
 
-			#ifdef _DEBUG
-			if (strstr(boe_log.string, "1"))
-				G_LogPrintf("5s\n");
-			#endif
 			if (g_autoEvenTeams.integer == 1 && current_gametype.value != GT_HS){
-				EvenTeams(NULL, qtrue);}
-			#ifdef _DEBUG
-			if (strstr(boe_log.string, "1"))
-				G_LogPrintf("5e\n");
-			#endif
+				EvenTeams(NULL, qtrue);
+			}
+			
 			trap_SetConfigstring ( CS_GAMETYPE_TIMER, va("%i", level.gametypeRoundTime) );
 			break;
 	}

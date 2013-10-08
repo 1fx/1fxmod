@@ -34,11 +34,6 @@ void RPM_Tcmd ( gentity_t *ent )
 	trap_Argv( 1, arg1, sizeof( arg1 ) );
 	trap_Argv( 2, arg2, sizeof( arg2 ) );
 
-	#ifdef _DEBUG
-	if (strstr(boe_log.string, "2"))
-		G_LogPrintf("1s\n");
-	#endif
-
 	if ( !level.gametypeData->teams )
 	{
 		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Not playing a team game!\n\""));
@@ -143,12 +138,7 @@ void RPM_Tcmd ( gentity_t *ent )
 	{
 		trap_SendServerCommand( ent-g_entities, va("print \"Unknown Command  %s.\n\"", arg1));
 		trap_SendServerCommand( ent-g_entities, va("print \"Usage: tcmd <command> <variable>\n\""));
-	}	
-
-	#ifdef _DEBUG
-	if (strstr(boe_log.string, "2"))
-		G_LogPrintf("1e\n");
-	#endif
+	}
 }
 
 /*
@@ -162,11 +152,6 @@ void RPM_TeamInfo (gentity_t *ent, char *team)
 	int t, i;
 	int	invitedcount = 0;
 	char *teamName;
-
-	#ifdef _DEBUG
-	if (strstr(boe_log.string, "2"))
-		G_LogPrintf("2s\n");
-	#endif
 
 	t = ent->client->sess.team; // Boe!Man 11/16/10: 1 - Red, 2 - Blue, 3 - Spec.
 	if (t == 1){
@@ -286,11 +271,6 @@ void RPM_TeamInfo (gentity_t *ent, char *team)
 		}
 	}
 	trap_SendServerCommand( ent-g_entities, va("print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\""));
-
-	#ifdef _DEBUG
-	if (strstr(boe_log.string, "2"))
-		G_LogPrintf("2e\n");
-	#endif
 }
 
 /*

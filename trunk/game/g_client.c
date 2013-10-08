@@ -1091,11 +1091,6 @@ void ClientUserinfoChanged( int clientNum )
 
 	ent = g_entities + clientNum;
 	client = ent->client;
-	
-#ifdef _DEBUG
-	if (strstr(boe_log.string, "1"))
-		G_LogPrintf("6s\n");
-#endif
 
 	trap_GetUserinfo( clientNum, userinfo, sizeof( userinfo ) );
 	// check for malformed or illegal info strings
@@ -1500,11 +1495,6 @@ void ClientUserinfoChanged( int clientNum )
 	trap_SetConfigstring( CS_PLAYERS+clientNum, s );
 	//if(!strcmp(s, userinfo))
 	//return;
-
-#ifdef _DEBUG
-	if (strstr(boe_log.string, "1"))
-		G_LogPrintf("6e\n");
-#endif
 }
 
 
@@ -1547,10 +1537,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 	int				start;
 
 	ent = &g_entities[ clientNum ];
-#ifdef _DEBUG
-	if (strstr(boe_log.string, "1"))
-		G_LogPrintf("7s\n");
-#endif
+	
 	trap_GetUserinfo( clientNum, userinfo, sizeof( userinfo ) );
 	
 	// Boe!Man 12/25/09: Get their name and store a clean copy (without colors) of it.
@@ -1783,11 +1770,6 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 	ent->client->sess.IgnoredClientCount = 0;
 	ent->client->sess.deathTime = 0;
 
-#ifdef _DEBUG
-	if (strstr(boe_log.string, "1"))
-		G_LogPrintf("7e\n");
-#endif
-
 	return NULL;
 }
 
@@ -1816,12 +1798,6 @@ void ClientBegin( int clientNum, qboolean setTime )
 	ent = g_entities + clientNum;
 
 	client = level.clients + clientNum;
-
-#ifdef _DEBUG
-	if (strstr(boe_log.string, "1"))
-		G_LogPrintf("8s\n");
-#endif
-
 
 	if ( ent->r.linked ) 
 	{
@@ -1890,10 +1866,6 @@ void ClientBegin( int clientNum, qboolean setTime )
 			SetTeam(ent, ChooseTeam(), NULL, qfalse); 
 		}
 	}
-#ifdef _DEBUG
-	if (strstr(boe_log.string, "1"))
-		G_LogPrintf("8e\n");
-#endif
 }
 
 /*
