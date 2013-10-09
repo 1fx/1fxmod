@@ -647,7 +647,7 @@ static cvarTable_t gameCvarTable[] =
 	//http://1fx.uk.to/forums/index.php?/topic/1230-1fx-anticheat/page__view__findpost__p__13498
 #ifdef _DEBUG
 	// Boe!Man: Debug CVAR.
-	{ &g_debug, "1fx_debug", "0", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
+	{ &g_debug, "1fx_debug", "0", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0,  qfalse },
 #endif
 };
 
@@ -1113,19 +1113,15 @@ G_InitGame
 void G_InitGame( int levelTime, int randomSeed, int restart )
 {
 	int			i;
-	/*
-	char test[128];
-	char stable[128];
-	char version[64];
-	*/
+	#ifdef _DEBUG
+	qtime_t		q;
+	#endif
+
 	// Boe!Man 3/30/10
 	Com_Printf ("------- Game Initialization -------\n");
 	Com_Printf ("Mod: %s %s\n", INF_STRING, INF_VERSION_STRING);
-//#ifdef Q3_VM
 	Com_Printf ("Date: %s\n", INF_VERSION_DATE);
-/*#else
-	Com_Printf ("Date: %d/%d/%02d\n", MONTH+1, DAY, YEAR );
-#endif*/
+
 	#ifdef __linux__
 	// Boe!Man 1/29/13: Initialize the in-game memory-management buffer on Linux (SQLite3 memsys5).
 	memset(memsys5, 0, sizeof(memsys5));
@@ -1135,6 +1131,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	// Boe!Man 7/3/13: Force master to direct IP instead of hostname on Linux.
 	trap_Cvar_Set("sv_master1", "63.146.124.45");
 	#endif
+	
 	// Boe!Man 6/25/13: Enable multithreading for SQLite.
 	sqlite3_config(SQLITE_CONFIG_MULTITHREAD);
 
@@ -1147,6 +1144,15 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	level.nolower[2] = -10000000;
 	level.cagefightloaded = qfalse;
 	G_RegisterCvars();
+	
+	#ifdef _DEBUG
+	// Boe!Man 10/8/13: Init time for the debug database and write to it.
+	if(g_debug.integer){
+		trap_RealTime(&q);
+		strncpy(level.dateString, va("d%i%02i%02i_%02i%02i", q.tm_year+1900, q.tm_mon+1, q.tm_mday, q.tm_hour,q.tm_min), sizeof(level.dateString));
+		writeDebug(MODDBG_OVERRIDE, 1);
+	}
+	#endif
 	
 	//Henk 12/10/12 -> Copy disk database to memory database.
 	// Boe!Man 6/25/13: Only load if g_checkCountry is enabled, do this *after* the CVARs are initialized.

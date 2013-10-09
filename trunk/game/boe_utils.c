@@ -3427,3 +3427,67 @@ void Boe_SQLTableClear(void)
 		Com_Printf("^3Info: ^7Invalid choice: %s. Valid choices are: subnetbanlist, banlist, adminlist, passlist, clanlist, aliases, scores.\n", arg);
 	}
 }
+
+/*
+================
+writeDebug
+10/8/13 - 5:43 PM
+Writes debug info to database.
+================
+*/
+
+#ifdef _DEBUG
+void writeDebug(int section, int value)
+{
+	sqlite3 	*db;
+	int			rc;
+	char		fsGame[MAX_QPATH];
+
+	if(!g_debug.integer || (g_debug.integer != 1 && g_debug.integer != section && section > 0)){
+		return;
+	}
+	
+	if(!level.altPath){
+		rc = sqlite3_open_v2("./users/debug.db", &db, SQLITE_OPEN_READWRITE, NULL);
+	}else{
+		rc = sqlite3_open_v2(va("%s/users/debug.db", level.altString), &db, SQLITE_OPEN_READWRITE, NULL);
+	}
+	
+	if(rc){
+		// The database cannot be found. We try to create it.
+		if(!level.altPath){
+			rc = sqlite3_open_v2("./users/debug.db", &db, SQLITE_OPEN_CREATE | SQLITE_OPEN_READWRITE, NULL);
+		}else{
+			rc = sqlite3_open_v2(va("%s/users/debug.db", level.altString), &db, SQLITE_OPEN_CREATE | SQLITE_OPEN_READWRITE, NULL);
+		}
+		
+		if(rc){
+			if(section == MODDBG_OVERRIDE){
+				trap_Cvar_VariableStringBuffer("fs_game", fsGame, sizeof(fsGame));
+				rc = sqlite3_open_v2(va("%s/users/debug.db", fsGame), &db, SQLITE_OPEN_CREATE | SQLITE_OPEN_READWRITE, NULL);
+				if(rc){
+					G_LogPrintf("^1Error: ^7debug database: %s\n", sqlite3_errmsg(db));
+					return;
+				}
+			}else{
+				G_LogPrintf("^1Error: ^7debug database: %s\n", sqlite3_errmsg(db));
+				return;
+			}
+		}
+	}
+	
+	if(section == MODDBG_OVERRIDE){ // This could be the first or last write. Verify if the table exists.
+		if(sqlite3_exec(db, va("CREATE TABLE IF NOT EXISTS [%s] ('id' INTEGER PRIMARY KEY NOT NULL, 'x' INTEGER)", level.dateString), 0, 0, 0) != SQLITE_OK){
+			G_LogPrintf("^1Error: ^7debug database: %s\n", sqlite3_errmsg(db));
+			sqlite3_close(db);
+			return;
+		}
+	}
+	
+	if(sqlite3_exec(db, va("INSERT INTO [%s] (x) values (%i)", level.dateString, value), 0, 0, 0) != SQLITE_OK){
+		G_LogPrintf("^1Error: ^7debug database: %s\n", sqlite3_errmsg(db));
+	}
+	
+	sqlite3_close(db);
+}
+#endif
