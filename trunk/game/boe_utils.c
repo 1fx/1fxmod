@@ -3437,15 +3437,18 @@ Writes debug info to database.
 */
 
 #ifdef _DEBUG
-void writeDebug(int section, int value)
+void writeDebug(int section, char *message)
 {
 	sqlite3 	*db;
 	int			rc;
 	char		fsGame[MAX_QPATH];
+	char		msgSafe[64];
 
-	if(!g_debug.integer || (g_debug.integer != 1 && g_debug.integer != section && section > 0)){
+	if(!g_debug.integer || (g_debug.integer != MODDBG_ALL && !(g_debug.integer & section) && section > 0)){
 		return;
 	}
+	
+	Q_strncpyz(msgSafe, message, sizeof(msgSafe));
 	
 	if(!level.altPath){
 		rc = sqlite3_open_v2("./users/debug.db", &db, SQLITE_OPEN_READWRITE, NULL);
@@ -3462,7 +3465,7 @@ void writeDebug(int section, int value)
 		}
 		
 		if(rc){
-			if(section == MODDBG_OVERRIDE){
+			if(section == 0){
 				trap_Cvar_VariableStringBuffer("fs_game", fsGame, sizeof(fsGame));
 				rc = sqlite3_open_v2(va("%s/users/debug.db", fsGame), &db, SQLITE_OPEN_CREATE | SQLITE_OPEN_READWRITE, NULL);
 				if(rc){
@@ -3476,15 +3479,15 @@ void writeDebug(int section, int value)
 		}
 	}
 	
-	if(section == MODDBG_OVERRIDE){ // This could be the first or last write. Verify if the table exists.
-		if(sqlite3_exec(db, va("CREATE TABLE IF NOT EXISTS [%s] ('id' INTEGER PRIMARY KEY NOT NULL, 'x' INTEGER)", level.dateString), 0, 0, 0) != SQLITE_OK){
-			G_LogPrintf("^1Error: ^7debug database: %s\n", sqlite3_errmsg(db));
+	if(section == 0){ // This could be the first or last write. Verify if the table exists.
+		if(sqlite3_exec(db, va("CREATE TABLE IF NOT EXISTS [%s] ('id' INTEGER PRIMARY KEY NOT NULL, 'x' VARCHAR(64))", level.dateString), 0, 0, 0) != SQLITE_OK){
+			G_LogPrintf("^1Error creating db: ^7debug database: %s\n", sqlite3_errmsg(db));
 			sqlite3_close(db);
 			return;
 		}
 	}
 	
-	if(sqlite3_exec(db, va("INSERT INTO [%s] (x) values (%i)", level.dateString, value), 0, 0, 0) != SQLITE_OK){
+	if(sqlite3_exec(db, va("INSERT INTO [%s] (x) values ('%s')", level.dateString, msgSafe), 0, 0, 0) != SQLITE_OK){
 		G_LogPrintf("^1Error: ^7debug database: %s\n", sqlite3_errmsg(db));
 	}
 	

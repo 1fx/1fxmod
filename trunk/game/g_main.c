@@ -1150,7 +1150,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	if(g_debug.integer){
 		trap_RealTime(&q);
 		strncpy(level.dateString, va("d%i%02i%02i_%02i%02i", q.tm_year+1900, q.tm_mon+1, q.tm_mday, q.tm_hour,q.tm_min), sizeof(level.dateString));
-		writeDebug(MODDBG_OVERRIDE, 1);
+		writeDebug(0, g_debug.string);
 	}
 	#endif
 	
@@ -1519,6 +1519,12 @@ void G_ShutdownGame( int restart )
 	#ifdef __linux__
 	sqlite3_shutdown();
 	memset(memsys5, 0, sizeof(memsys5));
+	#endif
+	
+	#ifdef _DEBUG
+	if(g_debug.integer){
+		writeDebug(0, "Shutdown");
+	}
 	#endif
 
 #ifdef _SOF2_BOTS

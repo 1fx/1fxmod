@@ -437,7 +437,7 @@ void	QDECL Boe_adminLog( const char *command, const char *by, const char *to, ..
 void	QDECL Boe_crashLog	(const char *text);
 
 // Boe!Man 10/8/13: Debug write function.
-void writeDebug(int section, int value);
+void	writeDebug(int section, char *msg);
 
 // Henk 28/01/10 -> Add eventeams
 void	EvenTeams (gentity_t *adm, qboolean aet);

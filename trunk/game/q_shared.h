@@ -1044,9 +1044,9 @@ typedef enum {
 #ifdef _DEBUG
 // Boe!Man 10/9/13: Add options for 1fx_debug CVAR.
 typedef enum {
-	MODDBG_OVERRIDE = 0,
 	MODDBG_ALL = 1,
-	MODDBG_HIDESEEK = 2
+	MODDBG_HIDESEEK = 2,
+	MODDBG_ADMCMDS = 4
 } debugMode_t;
 #endif
 

@@ -49,6 +49,12 @@ void TossClientItems( gentity_t *self )
 	float		angle;
 	int			i;
 	gentity_t	*drop;
+	
+	#ifdef _DEBUG
+	if(g_debug.integer){
+		writeDebug(MODDBG_HIDESEEK, "TossClientItems start");
+	}
+	#endif
 
 	// drop the weapon if not a gauntlet or machinegun
 	weapon = self->s.weapon;
@@ -115,6 +121,12 @@ void TossClientItems( gentity_t *self )
 	}
 
 	self->client->ps.stats[STAT_GAMETYPE_ITEMS] = 0;
+	
+	#ifdef _DEBUG
+	if(g_debug.integer){
+		writeDebug(MODDBG_HIDESEEK, "TossClientItems end");
+	}
+	#endif
 }
 
 /*
@@ -1748,6 +1760,12 @@ qboolean G_RadiusDamage (
 	// End
 	int			index,index1;
 
+	#ifdef _DEBUG
+	if(g_debug.integer){
+		writeDebug(MODDBG_HIDESEEK, "G_RadiusDamage start");
+	}
+	#endif
+	
 	if ( radius < 1 )
 	{
 		radius = 1;
@@ -2094,6 +2112,12 @@ qboolean G_RadiusDamage (
 			missile->nextthink = level.time + 250;
 		}
 	}
+	
+	#ifdef _DEBUG
+	if(g_debug.integer){
+		writeDebug(MODDBG_HIDESEEK, "G_RadiusDamage end");
+	}
+	#endif
 
 	return hitClient;
 }
