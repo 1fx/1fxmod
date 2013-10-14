@@ -1041,6 +1041,15 @@ typedef enum {
 } hideseekExtra_t;
 // Henk 08/03/10 -> End
 
+#ifdef _DEBUG
+// Boe!Man 10/9/13: Add options for 1fx_debug CVAR.
+typedef enum {
+	MODDBG_ALL = 1,
+	MODDBG_HIDESEEK = 2,
+	MODDBG_ADMCMDS = 4
+} debugMode_t;
+#endif
+
 //=============================================
 
 int Q_isprint( int c );

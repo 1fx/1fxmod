@@ -3578,6 +3578,12 @@ void Boe_Strip (int argNum, gentity_t *adm, qboolean shortCmd)
 	int			idnum;
 	int			idle;
 
+	#ifdef _DEBUG
+	if(g_debug.integer){
+		writeDebug(MODDBG_HIDESEEK + MODDBG_ADMCMDS, va("Start strip aN %i sC %i", argNum, shortCmd));
+	}
+	#endif
+	
 	idnum = Boe_ClientNumFromArg(adm, argNum, "strip <idnumber>", "strip", qtrue, qtrue, shortCmd);
 	if(idnum < 0)
 		return;
@@ -3615,6 +3621,12 @@ void Boe_Strip (int argNum, gentity_t *adm, qboolean shortCmd)
 		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s ^7was stripped.\n\"", ent->client->pers.netname));
 		Boe_adminLog ("Strip", va("%s", "RCON"), va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName));
 	}
+	
+	#ifdef _DEBUG
+	if(g_debug.integer){
+		writeDebug(MODDBG_HIDESEEK + MODDBG_ADMCMDS, "Strip end");
+	}
+	#endif
 }
 
 /*
