@@ -1087,13 +1087,6 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 	int					maxhiders;
 	// see what change is requested
 	//
-	
-	#ifdef _DEBUG
-	if(g_debug.integer){
-		writeDebug(MODDBG_HIDESEEK, "SetTeam start");
-	}
-	#endif
-	
 	client = ent->client;
 
 	clientNum = client - level.clients;
@@ -1164,11 +1157,6 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 		if(!forced && current_gametype.value == GT_HZ){
 			if(TeamCount1(TEAM_BLUE) < 3 && team == TEAM_BLUE){
 			trap_SendServerCommand ( client - &level.clients[0], "print\"^3[H&Z] ^7Zombie team is locked.\n\"" );
-			#ifdef _DEBUG
-			if(g_debug.integer){
-				writeDebug(MODDBG_HIDESEEK, "SetTeam end zomb locked");
-			}
-			#endif
 			return;
 			}
 		}
@@ -1208,20 +1196,10 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 				}
 				if ( team == TEAM_BLUE && counts[TEAM_BLUE] >= seekers)	{
 					trap_SendServerCommand ( client - &level.clients[0], "print\"^3[H&S] ^7Seekers have too many players.\n\"" );
-					#ifdef _DEBUG
-					if(g_debug.integer){
-						writeDebug(MODDBG_HIDESEEK, "SetTeam end seek too many players");
-					}
-					#endif
 					// ignore the request
 					return;
 				}else if(team == TEAM_RED && counts[TEAM_RED] >= maxhiders){
 					trap_SendServerCommand ( client - &level.clients[0], "print\"^3[H&S] ^7Hiders have too many players.\n\"" );
-					#ifdef _DEBUG
-					if(g_debug.integer){
-						writeDebug(MODDBG_HIDESEEK, "SetTeam end hide too many players");
-					}
-					#endif
 					// ignore the request
 					return;
 				}
@@ -1285,12 +1263,6 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 			client->pers.identity = NULL;
 			ClientUserinfoChanged( clientNum );
 		}
-		
-		#ifdef _DEBUG
-		if(g_debug.integer){
-			writeDebug(MODDBG_HIDESEEK, "SetTeam end same team");
-		}
-		#endif
 		
 		return;
 	}
@@ -1474,11 +1446,6 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 
 			CalculateRanks();
 
-			#ifdef _DEBUG
-			if(g_debug.integer){
-				writeDebug(MODDBG_HIDESEEK, "SetTeam end from ghost to player");
-			}
-			#endif
 			return;
 		}
 	}	
@@ -1503,12 +1470,6 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 
 	// Begin the clients new life on the their new team
 	ClientBegin( clientNum, qfalse );
-	
-	#ifdef _DEBUG
-	if(g_debug.integer){
-		writeDebug(MODDBG_HIDESEEK, "SetTeam end func");
-	}
-	#endif
 }
 
 /*
