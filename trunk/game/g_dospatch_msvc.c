@@ -1,4 +1,10 @@
-#if defined (_WIN32) && !(__GNUC__)
+// Copyright (C) 2013 - Boe!Man, Henkie.
+//
+// g_dospatch_msvc.c - MSVC version of Q3 getstatus DoS patch (WIN32 only).
+
+//==================================================================
+
+#if defined (WIN32) && !(__GNUC__)
 #include "g_local.h" // we might need access to the print functions of sof
 #include <windows.h>
 

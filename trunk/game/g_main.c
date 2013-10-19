@@ -304,6 +304,8 @@ vmCvar_t	hideSeek_ExtendedRoundStats;
 // Boe!Man 11/5/12
 vmCvar_t	g_ff;
 
+vmCvar_t	g_dosPatch;
+
 // Boe!Man 1/2/13: --- SQLite3 Related CVARs ---
 vmCvar_t	sql_aliasFlushCount;
 vmCvar_t	sql_timeBench;
@@ -633,6 +635,9 @@ static cvarTable_t gameCvarTable[] =
 	
 	// Boe!Man 7/29/12
 	{ &g_preferSubnets,				"g_preferSubnets",		 	"0",		CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
+	
+	// Boe!Man 10/19/13
+	{ &g_dosPatch,					"g_DoSPatch",			 	"1",		CVAR_ROM, 0.0, 0.0, 0, qfalse },
 	
 	// Boe!Man 1/2/13: --- SQLite3 Related CVARs ---
 	{ &sql_aliasFlushCount,			"sql_aliasFlushCount",		"7500",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
@@ -1210,6 +1215,11 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	G_SetGametype(g_gametype.string);
 	// Give the game a uniqe id
 	trap_SetConfigstring ( CS_GAME_ID, va("%d", randomSeed ) );
+	
+	// Boe!Man 10/19/13: Execute the Q3 getstatus DoS patch if g_DoSPatch is set to > 0.
+	if(g_dosPatch.integer){
+		Patch_SV_ConnectionlessPacket();
+	}
 
 	if ( g_log.string[0] )
 	{

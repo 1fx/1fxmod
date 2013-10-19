@@ -1,51 +1,25 @@
-#include "g_local.h" // we might need access to the print functions of sof
-#ifdef (__GNUC__)
-#ifdef WIN32
-#include <windows.h>
-#endif
+// Copyright (C) 2013 - Boe!Man, Henkie.
+//
+// g_dospatch_gcc.c - MinGW (GCC) version of Q3 getstatus DoS patch (WIN32 only).
 
-static int requests = 0; // requests reset every second
+//==================================================================
+
+#if defined (__GNUC__) && (WIN32)
+#include "g_local.h" // we might need access to the print functions of sof
+#include <windows.h>
+
+void SV_ConnectionlessPacket_detour0();
+
+static int requests = 0; // requests, reset every second
 static unsigned long timer;
 static qboolean validRequest = qtrue;
 static int requestsPerSecond = 20; // Boe!Man 10/17/13: 20 per second should be more then sufficient.
 
-void SV_ConnectionlessPacket_detour0();
-
-// engine declarations
-typedef enum {
-    NA_BOT,
-    NA_BAD,                    // an address lookup failed
-    NA_LOOPBACK,
-    NA_BROADCAST,
-    NA_IP,
-    NA_IPX,
-    NA_BROADCAST_IPX
-} netadrtype_t;
-
-typedef struct {
-    netadrtype_t    type;
-
-    unsigned char    ip[4];
-    unsigned char    ipx[10];
-
-    unsigned short    port;
-} netadr_t;
-
-typedef struct {
-    qboolean    allowoverflow;    // if false, do a Com_Error
-    qboolean    overflowed;        // set to true if the buffer size failed (with allowoverflow set)
-    qboolean    oob;            // set to true if the buffer size failed (with allowoverflow set)
-    unsigned char    *data;
-    int        maxsize;
-    int        cursize;
-    int        readcount;
-    int        bit;                // for bitwise reads and writes
-} msg_t;
-
 char *AlignDWORD(unsigned long input){
-    static char output[9];
+	static char output[9];
     char tempStr[9];
     int n;
+    
     n = sprintf(tempStr, "%p", input);
     tempStr[n] = '\0';
     output[0] = tempStr[n-2];
@@ -57,6 +31,7 @@ char *AlignDWORD(unsigned long input){
     output[6] = tempStr[n-8];
     output[7] = tempStr[n-7];
     output[8] = '\0';
+    
     return output;
 }
 
