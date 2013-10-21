@@ -1216,10 +1216,12 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	// Give the game a uniqe id
 	trap_SetConfigstring ( CS_GAME_ID, va("%d", randomSeed ) );
 	
-	// Boe!Man 10/19/13: Execute the Q3 getstatus DoS patch if g_DoSPatch is set to > 0.
+	// Boe!Man 10/19/13: Execute the Q3 getstatus DoS patch if g_DoSPatch is set to > 0 and if we're on Windows.
+	#ifdef WIN32
 	if(g_dosPatch.integer){
 		Patch_SV_ConnectionlessPacket();
 	}
+	#endif
 
 	if ( g_log.string[0] )
 	{
