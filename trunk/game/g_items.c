@@ -570,6 +570,12 @@ gentity_t *G_DropItem( gentity_t *ent, gitem_t *item, float angle )
 	gentity_t*	dropped;
 	gentity_t  *test;
 	char		location[128] = "\0";
+	
+	#ifdef _DEBUG
+	if(g_debug.integer){
+		writeDebug(MODDBG_HIDESEEK, "G_DropItem start");
+	}
+	#endif
 
 	VectorCopy( ent->s.apos.trBase, angles );
 	angles[YAW] += angle;
@@ -611,6 +617,11 @@ gentity_t *G_DropItem( gentity_t *ent, gitem_t *item, float angle )
 		}
 	}
 
+	#ifdef _DEBUG
+	if(g_debug.integer){
+		writeDebug(MODDBG_HIDESEEK, "G_DropItem end");
+	}
+	#endif
 	return dropped;
 }
 
@@ -710,15 +721,31 @@ gentity_t* G_DropWeapon ( gentity_t* ent, weapon_t weapon, int pickupDelay )
 	// Henk 26/01/10 -> Store location of dropped weapons
 	char		location[64];
 	qboolean	noloc = qfalse;
+	
+	#ifdef _DEBUG
+	if(g_debug.integer){
+		writeDebug(MODDBG_HIDESEEK, "G_DropWeapon start");
+	}
+	#endif
 
 	if ( weapon <= WP_KNIFE || weapon >= WP_NUM_WEAPONS )
 	{
+		#ifdef _DEBUG
+		if(g_debug.integer){
+			writeDebug(MODDBG_HIDESEEK, "G_DropWeapon end1");
+		}
+		#endif
 		return NULL;
 	}
 
 	// Make sure they have the weapon
 	if ( !(ent->client->ps.stats[STAT_WEAPONS] & (1<<weapon) ) )
 	{
+		#ifdef _DEBUG
+		if(g_debug.integer){
+			writeDebug(MODDBG_HIDESEEK, "G_DropWeapon end2");
+		}
+		#endif
 		return NULL;
 	}
 
@@ -775,6 +802,11 @@ gentity_t* G_DropWeapon ( gentity_t* ent, weapon_t weapon, int pickupDelay )
 		dropped->s.eFlags |= EF_NOPICKUP;
 		Com_sprintf(level.M4loc, sizeof(level.M4loc), "%s", "Disappeared");
 		trap_SendServerCommand(-1, va("print\"^3[H&S] ^7M4 has disappeared\n\""));
+		#ifdef _DEBUG
+		if(g_debug.integer){
+			writeDebug(MODDBG_HIDESEEK, "G_DropWeapon end3");
+		}
+		#endif
 		return NULL;
 	}
 	// Dont allow the item to be picked up againt for 3 seconds if in a no pickup game, otherwise
@@ -840,7 +872,12 @@ gentity_t* G_DropWeapon ( gentity_t* ent, weapon_t weapon, int pickupDelay )
 		ent->client->ps.weapon = WP_KNIFE;
 		ent->client->ps.weaponstate = WEAPON_READY;
 	}
-
+	
+	#ifdef _DEBUG
+	if(g_debug.integer){
+		writeDebug(MODDBG_HIDESEEK, "G_DropWeapon end");
+	}
+	#endif
 	return dropped;
 }
 
