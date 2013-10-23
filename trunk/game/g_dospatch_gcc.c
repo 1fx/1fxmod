@@ -78,7 +78,7 @@ void Patch_SV_ConnectionlessPacket(){
     unsigned char buf[12] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
     int i;
     int currentByte = 0;
-    DWORD addr = 0x4768A0;
+    unsigned long addr = 0x4768A0;
     
     Com_Printf("Applying DoS protection... ");
     
