@@ -10,6 +10,9 @@
 #define TRIGGER_EXTRACTION		200
 
 // CTF
+#define REDFLAG					0
+#define BLUEFLAG				1
+
 #define	ITEM_REDFLAG			100
 #define ITEM_BLUEFLAG			101
 								
@@ -42,6 +45,9 @@ typedef struct gametypeLocals_s
 	
 	// Boe!Man 4/22/12: We use this for pause stuff.
 	int			pauseTime;		// Restore time.
+	
+	// Boe!Man 10/30/13: We use this to determine if the flag is taken.
+	qboolean	flagTaken[1];
 	
 	// ELIM
 	int		captureSound;

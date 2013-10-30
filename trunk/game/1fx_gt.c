@@ -271,6 +271,7 @@ void GT_RunFrame ( int time )
 			}
 			
 			gametype.redFlagDropTime = 0;
+			gametype.flagTaken[REDFLAG] = qfalse;
 		}
 		// See if we need to return the blue flag yet
 		if ( gametype.blueFlagDropTime && time - gametype.blueFlagDropTime > gt_flagReturnTime.integer * 1000 )
@@ -295,6 +296,7 @@ void GT_RunFrame ( int time )
 			}
 			
 			gametype.blueFlagDropTime = 0;
+			gametype.flagTaken[BLUEFLAG] = qfalse;
 		}
 	}
 }
@@ -390,6 +392,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 						}
 						
 						gametype.redFlagDropTime = 0;
+						gametype.flagTaken[REDFLAG] = qfalse;
 						return 1;
 						
 					case ITEM_BLUEFLAG:
@@ -412,6 +415,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 						}
 						
 						gametype.blueFlagDropTime = 0;
+						gametype.flagTaken[BLUEFLAG] = qfalse;
 						return 1;
 				}
 			}else if(current_gametype.value == GT_HS){
@@ -623,6 +627,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 							// Boe!Man 11/29/12: Radio message.
 							G_Voice ( &g_entities[arg1], NULL, SAY_TEAM, "got_it", qfalse );
 							gametype.blueFlagDropTime = 0;
+							gametype.flagTaken[BLUEFLAG] = qtrue;
 							return 1;
 						}else if(arg2 == TEAM_BLUE && g_ctfClassic.integer && gametype.blueFlagDropTime){ // Boe!Man 2/1/13: Include touch-flag (classic) CTF mode.
 							trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,%s", level.time + 5000, va("@%s has %sr%se%st%su%sr%sned the %s ^7Flag!", g_entities[arg1].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, server_blueteamprefix.string))); // Return.
@@ -641,6 +646,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 								tent->r.svFlags = SVF_BROADCAST;
 							}
 							gametype.blueFlagDropTime = 0;
+							gametype.flagTaken[BLUEFLAG] = qfalse;
 							return 0;
 						}
 						break;
@@ -662,6 +668,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 							// Boe!Man 11/29/12: Radio message.
 							G_Voice ( &g_entities[arg1], NULL, SAY_TEAM, "got_it", qfalse );
 							gametype.redFlagDropTime = 0;
+							gametype.flagTaken[REDFLAG] = qtrue;
 							return 1;
 						}else if(arg2 == TEAM_RED && g_ctfClassic.integer && gametype.redFlagDropTime){ // Boe!Man 2/1/13: Include touch-flag (classic) CTF mode.
 							trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,%s", level.time + 5000, va("@%s has %sr%se%st%su%sr%sned the %s ^7Flag!", g_entities[arg1].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, server_redteamprefix.string))); // Return.
@@ -680,6 +687,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 								tent->r.svFlags = SVF_BROADCAST;
 							}
 							gametype.redFlagDropTime = 0;
+							gametype.flagTaken[REDFLAG] = qfalse;
 							return 0;
 						}
 						break;
@@ -742,7 +750,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 
 						if ( item )
 						{
-							if ( ent->client->ps.stats[STAT_GAMETYPE_ITEMS] & (1<<item->giTag) )
+							if ( ent->client->ps.stats[STAT_GAMETYPE_ITEMS] & (1<<item->giTag) && ((g_ctfClassic.integer == 2 && !gametype.flagTaken[BLUEFLAG]) || g_ctfClassic.integer != 2))
 							{
 								trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,%s", level.time + 5000, va("@%s has %sc%sa%sp%st%su%sred the %s ^7Flag!", g_entities[arg1].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, server_redteamprefix.string)));
 								trap_SendServerCommand( -1, va("print\"^3[CTF] %s ^7has captured the Red Flag.\n\"", g_entities[arg1].client->pers.netname));
@@ -764,6 +772,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 									G_AddScore ( &g_entities[arg1], 10 );
 								}
 								gametype.redFlagDropTime = 0;
+								gametype.flagTaken[REDFLAG] = qfalse;
 								return 1;
 							}
 						}
@@ -775,7 +784,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 
 						if ( item )
 						{
-							if ( ent->client->ps.stats[STAT_GAMETYPE_ITEMS] & (1<<item->giTag) )
+							if ( ent->client->ps.stats[STAT_GAMETYPE_ITEMS] & (1<<item->giTag) && ((g_ctfClassic.integer == 2 && !gametype.flagTaken[REDFLAG]) || g_ctfClassic.integer != 2))
 							{
 								trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,%s", level.time + 5000, va("@%s has %sc%sa%sp%st%su%sred the %s ^7Flag!", g_entities[arg1].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, server_blueteamprefix.string)));
 								trap_SendServerCommand( -1, va("print\"^3[CTF] %s ^7has captured the Blue Flag.\n\"", g_entities[arg1].client->pers.netname));
@@ -797,6 +806,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 									G_AddScore ( &g_entities[arg1], 10 );
 								}
 								gametype.blueFlagDropTime = 0;
+								gametype.flagTaken[BLUEFLAG] = qfalse;
 								return 1;
 							}
 						}

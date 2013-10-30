@@ -959,23 +959,30 @@ void CheckGametype ( void )
 
 	// Handle respawn interval spawning
 	if(level.gametypeData){
-	if ( level.gametypeData->respawnType == RT_INTERVAL )
-	{
-		int team;
-		for ( team = TEAM_RED; team < TEAM_SPECTATOR; team ++ )
+		if ( level.gametypeData->respawnType == RT_INTERVAL )
 		{
-			if ( level.gametypeRespawnTime[team] && level.time > level.gametypeRespawnTime[team] )
-			{
-				// Respawn all dead clients
-				G_RespawnClients ( qfalse, (team_t)team, qfalse );
+			int team;
+			qboolean autoETDone = qfalse;
 
-				// Next interval
-				level.gametypeRespawnTime[team] = 0;
+			for ( team = TEAM_RED; team < TEAM_SPECTATOR; team ++ )
+			{
+				if ( level.gametypeRespawnTime[team] && level.time > level.gametypeRespawnTime[team] )
+				{
+					if(!autoETDone && g_autoEvenTeams.integer){
+						EvenTeams(NULL, qtrue);
+					}
+					autoETDone = qtrue;
+					
+					// Respawn all dead clients
+					G_RespawnClients ( qfalse, (team_t)team, qfalse );
+
+					// Next interval
+					level.gametypeRespawnTime[team] = 0;
+				}
 			}
 		}
-
 	}
-	}
+	
 	if(level.gametypeData){
 	// If we are in RT_NONE respawn mode then we need to look for everyone being dead
 	if ( level.gametypeData->respawnType == RT_NONE && level.gametypeStartTime ){
