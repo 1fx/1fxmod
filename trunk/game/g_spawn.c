@@ -130,6 +130,7 @@ field_t fields[] =
 	{"max_players",			FOFS(max_players),			F_INT},
 	{"min_players",			FOFS(min_players),			F_INT},
 	{"invisible",			FOFS(invisible),			F_LSTRING},
+	{"auto",				FOFS(autoSection),			F_LSTRING},
 	{"nolower",				FOFS(nolower),				F_INT},
 	{"hideseek",			FOFS(hideseek),				F_INT},
 

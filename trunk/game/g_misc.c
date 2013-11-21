@@ -3,6 +3,7 @@
 // g_misc.c
 
 #include "g_local.h"
+#include "boe_local.h"
 
 
 /*QUAKED func_group (0 0 0) ?
@@ -661,72 +662,175 @@ void fx_think( gentity_t *ent )
 }
 
 /*
-nolower
+=================================================================================
+nolower, noroof, nomiddle, nowhole.
+=================================================================================
 */
 
-void nolower(gentity_t *ent)
+typedef enum 
 {
-	G_SpawnVector("origin", "0", level.nolower);
-	// Boe!Man 3/1/11: Add the minimum players (if found).
-	if (ent->min_players > 0){
-		level.autoNoLower = ent->min_players;
-		if(ent->wait == 0){
-			level.autoNoLowerDelay = 10;
-		}else{
-			level.autoNoLowerDelay = ent->wait;
-		}
-		level.autoNoLowerUpdateTime = level.time + 10000;
+	NOLOWER,
+	NOROOF,
+	NOMIDDLE,
+	NOWHOLE
+} section_t;
+
+typedef enum
+{
+	INIT,
+	OPENING,
+	OPENED,
+	CLOSING,
+	CLOSED
+} sectionState_t;
+
+void g_sectionAutoCheck(gentity_t *ent){
+	qboolean addInstances = qfalse;
+	qboolean remInstances = qfalse;
+	gentity_t *ent2 = NULL;
+	
+	// Check what needs to be done depending on its current state.
+	switch(ent->sectionState){
+		case INIT:
+			if(((ent->team2 == TEAM_FREE) ? (TeamCount(-1, TEAM_RED, NULL ) + TeamCount(-1, TEAM_BLUE, NULL )) : (TeamCount(-1, (team_t)ent->team2, NULL ))) >= ent->min_players){
+				// Section should be open, so hide the linking entities.
+				ent->sectionState = OPENED;
+				remInstances = qtrue;
+			}
+			break;
+		case CLOSED:
+			if(((ent->team2 == TEAM_FREE) ? (TeamCount(-1, TEAM_RED, NULL ) + TeamCount(-1, TEAM_BLUE, NULL )) : (TeamCount(-1, (team_t)ent->team2, NULL ))) >= ent->min_players){
+				// Open the section.
+				ent->sectionState = OPENING;
+				trap_SendServerCommand(-1, va("cp \"%s will be opened in %0.f seconds!\n\"", ent->message, ent->wait));
+				trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s will be opened in %0.f seconds.\n\"", ent->message2, ent->wait));
+			}
+			break;
+		case OPENED:
+			if(((ent->team2 == TEAM_FREE) ? (TeamCount(-1, TEAM_RED, NULL ) + TeamCount(-1, TEAM_BLUE, NULL )) : (TeamCount(-1, (team_t)ent->team2, NULL ))) < ent->min_players){
+				// Close the section.
+				ent->sectionState = CLOSING;
+				trap_SendServerCommand(-1, va("cp \"%s will be closed in %0.f seconds!\n\"", ent->message, ent->wait));
+				trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s will be closed in %0.f seconds.\n\"", ent->message2, ent->wait));
+			}
+			break;
+		case CLOSING:
+			// Close it now, the wait has passed.
+			ent->sectionState = CLOSED;
+			addInstances = qtrue;
+			if(ent->section < NOMIDDLE)
+				level.noLROpened[ent->section] = qfalse;
+				
+			trap_SendServerCommand(-1, va("cp \"@%s closed!\n\"", ent->message));
+			trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s is now closed.\n\"", ent->message2));
+			break;
+		case OPENING:
+			// Open it now, the wait has passed.
+			ent->sectionState = OPENED;
+			remInstances = qtrue;
+			if(ent->section < NOMIDDLE)
+				level.noLROpened[ent->section] = qtrue;
+				
+			trap_SendServerCommand(-1, va("cp \"@%s opened!\n\"", ent->message));
+			trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s is now opened.\n\"", ent->message2));
+			break;
+		default:
+			break;		
 	}
-	//level.nolower1 = qtrue; // We check this in InitGame.
-	// Boe!Man 1/8/12: nolower2 is qtrue (since a nolower entity has been found).
-	level.nolower2 = qtrue;
-}
-
-/*
-noroof
-*/
-void noroof_initcheck(gentity_t *ent)
-{
-	if(level.noroof3 == TEAM_FREE){
-		if((TeamCount(-1, TEAM_RED, NULL ) + TeamCount(-1, TEAM_BLUE, NULL )) >= level.noroof[0]){
-			level.noroofOpened = qtrue;
+	
+	// Boe!Man 11/21/13: Something needs to be added or removed. Make sure this happens.
+	if(addInstances || remInstances){
+		while (NULL != (ent2 = G_Find ( ent2, FOFS(targetname), ent->classname ))){
+			if(ent2 != ent){ // Make sure we don't get the parent ent.
+				if(remInstances){ // Upon removal, just make sure they are not drawed and clients can't interact with them.
+					ent2->r.svFlags |= SVF_NOCLIENT;
+					ent2->s.eFlags |= EF_NODRAW;
+				}else{ // Same as removal, but the other way around.
+					ent2->r.svFlags &= ~SVF_NOCLIENT;
+					ent2->s.eFlags &= ~EF_NODRAW;
+				}
+			}
 		}
+	}
+	
+	// Boe!Man 11/22/13: When's our next check?
+	if(ent->sectionState == CLOSING || ent->sectionState == OPENING){
+		ent->nextthink = level.time + (int)ent->wait;
 	}else{
-		if((TeamCount(-1, (team_t)level.noroof3, NULL )) >= level.noroof[0]){
-			level.noroofOpened = qtrue;
-		}
+		ent->nextthink = level.time + 10000;
 	}
-	
-	G_FreeEntity(ent);
 }
 
-void noroof(gentity_t *ent)
-{
-	if(G_SpawnVector("origin", "0 0 0", level.noroof)){
-		level.noroof2 = qtrue;
-	}
+void g_blockSection(gentity_t *ent, int section){
+	if(section < NOMIDDLE){
+		G_SpawnVector("origin", "0", level.noLR[section]);
 	
-	if(ent->team){ // "team" is found in the entity.
-		// Check the full team names first.
-		if(strstr(ent->team, "red")){
-			level.noroof3 = TEAM_RED;
-		}else if(strstr(ent->team, "blue")){
-			level.noroof3 = TEAM_BLUE;
-		}else if(strstr(ent->team, "r")){
-			level.noroof3 = TEAM_RED;
-		}else if(strstr(ent->team, "b")){
-			level.noroof3 = TEAM_BLUE;
-		}else{ // All. No need to really check this, if the entity entry isn't found this will pretty much be the same too.
-			level.noroof3 = TEAM_FREE;
+		// Boe!Man 11/21/13: The entity is found.
+		level.noLREntFound[section] = qtrue;
+		
+		// Check if the nolower or noroof system is enabled to begin with..
+		if(level.noLR[section][2] != 0){
+			level.noLRActive[section] = qtrue;
 		}
 	}
 	
-	// Boe!Man 6/22/12: Fix roof opening/closing at the start of the map, while it should already be opened/closed.
-	if(level.noroof[0]){ // It's not 0, so it might be allowed to be open already. Check this in a seperate function.
-		ent->think = noroof_initcheck;
-		ent->nextthink = level.time + 1000; // Check in the next sec, so all client slots are filled.
-		level.noroofGlobalTime = level.time + 2000; // First check in the next two secs, definitely after the ent check.
+	// Boe!Man 11/21/13: Is auto nolower enabled?
+	if(ent->autoSection && strstr(ent->autoSection, "yes") && ent->min_players > 0){
+		if(!ent->wait){ // There should be a delay. Default is to wait 10 seconds.
+			ent->wait = 10;
+		}
+		
+		// Check if a team is defined.
+		if(ent->team && strlen(ent->team) > 0){
+			if(strstr(ent->team, "red")){
+				ent->team2 = TEAM_RED;
+			}else if(strstr(ent->team, "blue")){
+				ent->team2 = TEAM_BLUE;
+			}else if(strstr(ent->team, "r")){
+				ent->team2 = TEAM_RED;
+			}else if(strstr(ent->team, "b")){
+				ent->team2 = TEAM_BLUE;
+			}else{ // All.
+				ent->team2 = TEAM_FREE;
+			}
+		}else{ // All.
+			ent->team2 = TEAM_FREE;
+		}
+		
+		// The think function needs to know what section is about to be closed/opened.
+		ent->section = section;
+		ent->sectionState = INIT;
+		
+		// Boe!Man 11/21/13: Create the event.
+		ent->think = g_sectionAutoCheck;
+		ent->nextthink = level.time + 1000; // Check every 10 seconds, except the first time (init).
+	}else{ // No auto system.
+		G_FreeEntity(ent);
 	}
+}
+
+void nolower(gentity_t *ent){
+	ent->message = va("%sL%so%sw%se%sr", server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string);
+	ent->message2 = "Lower";
+	g_blockSection(ent, NOLOWER);
+}
+
+void noroof(gentity_t *ent){
+	ent->message = va("%sR%so%so%sf", server_color3.string, server_color4.string, server_color5.string, server_color6.string);
+	ent->message2 = "Roof";
+	g_blockSection(ent, NOROOF);
+}
+
+void nomiddle(gentity_t *ent){
+	ent->message = va("%sM%si%sd%sd%sl%se", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string);
+	ent->message2 = "Middle";
+	g_blockSection(ent, NOMIDDLE);
+}
+
+void nowhole(gentity_t *ent){
+	ent->message = va("%sW%sh%so%sl%se", server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string);
+	ent->message2 = "Whole";
+	g_blockSection(ent, NOWHOLE);
 }
 
 /*QUAKED fx_play_effect (.2 .5 .8) (-8 -8 -8) (8 8 8) START_OFF

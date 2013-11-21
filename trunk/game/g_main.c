@@ -188,7 +188,6 @@ vmCvar_t	g_refpassword;
 vmCvar_t	g_checkCountry;
 // Boe!Man 2/27/11: Some new CVARs for nolower.
 vmCvar_t	g_useNoLower;
-vmCvar_t	g_autoNoLower;
 
 // Boe!Man 6/2/12: CVAR for noroof.
 vmCvar_t	g_useNoRoof;
@@ -524,7 +523,6 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_refpassword, "g_refpassword", "none", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 	{ &g_checkCountry, "g_checkCountry", "1", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse  },
 	{ &g_useNoLower, "g_useNoLower", "1", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse  },
-	{ &g_autoNoLower, "g_autoNoLower", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_useNoRoof, "g_useNoRoof", "0", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse  },
 	{ &g_autoEvenTeams, "g_autoEvenTeams", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 
@@ -1146,7 +1144,6 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	memset( &level, 0, sizeof( level ) );
 	level.time = levelTime;
 	level.startTime = levelTime;
-	level.nolower[2] = -10000000;
 	level.cagefightloaded = qfalse;
 	G_RegisterCvars();
 	
@@ -1411,26 +1408,16 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	}*/
 
 	if(g_useNoLower.integer){
-		level.nolower1 = qtrue;
-		if (strstr(level.mapname, "mp_kam2")){
-			SpawnFence(1); // first one fails dunno why..
-			SpawnFence(1);
-			SpawnFence(2);
-			SpawnFence(3);
-			SpawnFence(4);
-		}
+		level.noLRActive[0] = qtrue;
 	}else{
-		level.nolower1 = qfalse;
-		if (strstr(level.mapname, "mp_kam2")){
-			RemoveFence();
-		}
+		level.noLRActive[0] = qfalse;
 	}
 	
 	// Boe!Man 6/2/12: Check for noroof.
 	if(g_useNoRoof.integer){
-		level.noroof1 = qtrue;
+		level.noLRActive[1] = qtrue;
 	}else{
-		level.noroof1 = qfalse;
+		level.noLRActive[1] = qfalse;
 	}
 	
 	// Boe!Man 7/29/12: Check for g_preferSubnets and g_passwordAdmins not both being set to 1 (incompatible).
@@ -3491,9 +3478,6 @@ void G_RunFrame( int levelTime )
 			level.compMsgCount = level.time + 3000;
 		}
 	}
-
-	// Boe!Man 6/14/12: Check noroof actions.
-	Boe_checkRoofGlobal();
 
 	// Check warmup rules
 	CheckWarmup();

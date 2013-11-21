@@ -551,7 +551,7 @@ void Boe_NoLower(int argNum, gentity_t *ent, qboolean shortCmd){
 		return;
 	}
 	// Boe!Man 1/8/12: If people want to use nolower but if there's no such entity found, inform the user.
-	if(!level.nolower2){
+	if(!level.noLREntFound[0]){
 		if(ent && ent->client){
 			trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7No entity found to toggle nolower.\n\""));
 		}else{
@@ -560,8 +560,8 @@ void Boe_NoLower(int argNum, gentity_t *ent, qboolean shortCmd){
 		return;
 	}
 
-	if(level.nolower1 == qtrue){
-		level.nolower1 = qfalse;
+	if(level.noLRActive[0] == qtrue){
+		level.noLRActive[0] = qfalse;
 		//trap_Cvar_Set("g_disablelower", "0");
 		//trap_Cvar_Update(&g_disablelower);
 		if (strstr(level.mapname, "mp_kam2")){
@@ -577,7 +577,7 @@ void Boe_NoLower(int argNum, gentity_t *ent, qboolean shortCmd){
 			Boe_adminLog ("Nolower Disabled", va("RCON"), "none");
 		}
 	}else{
-		level.nolower1 = qtrue;
+		level.noLRActive[0] = qtrue;
 		//trap_Cvar_Set("g_disablelower", "1");
 		//trap_Cvar_Update(&g_disablelower);
 		if (strstr(level.mapname, "mp_kam2")){
@@ -615,7 +615,7 @@ void Boe_NoRoof(int argNum, gentity_t *ent, qboolean shortCmd){
 		return;
 	}
 	// Boe!Man 1/8/12: If people want to use noroof but if there's no such entity found, inform the user.
-	if(!level.noroof2){
+	if(!level.noLREntFound[1]){
 		if(ent && ent->client){
 			trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7No entity found to toggle noroof.\n\""));
 		}else{
@@ -624,8 +624,8 @@ void Boe_NoRoof(int argNum, gentity_t *ent, qboolean shortCmd){
 		return;
 	}
 
-	if(level.noroof1 == qtrue){
-		level.noroof1 = qfalse;
+	if(level.noLRActive[1] == qtrue){
+		level.noLRActive[1] = qfalse;
 		
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sN%so%sr%so%so%sf disabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
@@ -637,7 +637,7 @@ void Boe_NoRoof(int argNum, gentity_t *ent, qboolean shortCmd){
 			Boe_adminLog ("Noroof Disabled", va("RCON"), "none");
 		}
 	}else{
-		level.noroof1 = qtrue;
+		level.noLRActive[1] = qtrue;
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sN%so%sr%so%so%sf enabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 		if(ent && ent->client){

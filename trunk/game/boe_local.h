@@ -349,7 +349,6 @@ extern	vmCvar_t	g_cm;
 
 // Boe!Man 3/1/11
 extern	vmCvar_t	g_useNoLower;
-extern	vmCvar_t	g_autoNoLower;
 
 // Boe!Man 3/6/11
 extern	vmCvar_t	g_customCommandsFile;
@@ -679,7 +678,6 @@ extern	vmCvar_t	g_publicIPs;
 
 // Boe!Man 6/3/12: Roof check.
 void	Boe_checkRoof(gentity_t *ent);
-void	Boe_checkRoofGlobal(void);
 
 // Boe!Man 7/4/12: Very simple function that will help us in e.g. splitting specific packets (in size).
 int Boe_firstDigitOfInt(int i);

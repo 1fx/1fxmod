@@ -182,6 +182,7 @@ struct gentity_s
 	char		*both_sides;
 	int			max_players;
 	int			min_players;
+	char		*autoSection;
 	char		*invisible;
 	int			effect_index;
 	qboolean	disabled;
@@ -200,6 +201,10 @@ struct gentity_s
 	// Boe!Man 6/30/12: Size, for the hideseek_cage.
 	char		*size;
 	
+	// Boe!Man 11/21/13: Used for the auto section block system.
+	team_t		team2;
+	int			section;
+	int			sectionState;
 };
 
 typedef struct gspawn_s
@@ -718,36 +723,14 @@ typedef struct
 	int				lastConnectedClient;
 	char			mapname[64];
 	
-	// Nolower.
-	vec3_t			nolower; // location of nolower
-	qboolean		nolower1; // true for nolower
-	qboolean		nolower2; // Boe!Man 1/8/12: qtrue if 'nolower' entity has been found.
-	
-	// Boe!Man 6/2/12: Noroof.
-	vec3_t			noroof;
-	// level.noroof consists of three integers of value:
-	// [0]: If more then this number of players in red+blue, roof will be closed. 0 = closed at all times.
-	// [1]: Seconds before a player has to leave roof.
-	// [2]: The origin of importance (if the player is above this value: pop).
-	qboolean		noroof1; // True if noroof is enabled (g_useNoRoof == 1).
-	qboolean		noroof2; // True if noroof entity has been found.
-	int				noroof3; // "team" in the entity. Uses TEAM_* to check for the team.
-	
-	// Boe!Man 6/14/12: Global checks regarding noroof.
-	int				noroofGlobalTime;	// level.time + 5 sec for check w/ interval.
-	qboolean		noroofOpened;		// True if roof is opened.
-	qboolean		noroofChange;		// True if noroof needs to change (open/close).
-	
-	
 	// Henk 06/04/10 -> Add TMI for RPM scoreboard compatiblity
 	int				lastTMIupdate;
-
-	// Boe!Man 3/1/11: Auto nolower system.
-	int			autoNoLower;	// Number of clients that need to be in the game in order for lower to open.
-	int			autoNoLowerUpdateTime; // Check for nolower again when this value has been reached (in conjunction with level.time).
-	qboolean	autoNoLowerActive;	   // qtrue for being active.
-	int			autoNoLowerDelay;		// The delay (closes in x seconds).
-	qboolean	autoNoLowerWait;		// qtrue when the delay is active.
+	
+	// Boe!Man 11/21/13: Nolower, Noroof combined into one system. This does *NOT* involve the auto system.
+	vec3_t			noLR[2];			// Location for nolower/noroof.
+	qboolean		noLRActive[2];		// If nolower or noroof is active.
+	qboolean		noLREntFound[2];	// If the nolower or noroof entity was found.
+	qboolean		noLROpened[2];		// If the current state is opened or closed.
 
 	int			redLocked;				// when set to 1 no one will be allowed to join team
 	int			blueLocked;

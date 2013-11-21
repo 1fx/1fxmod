@@ -115,48 +115,9 @@ void P_WorldEffects( gentity_t *ent )
 			ent->client->sess.slowtime = level.time+200;
 	}
 
-	// Disable Nolower
-	if(level.nolower1 && level.nolower2){ // if enabled -- Boe!Man 6/2/12: Also check for nolower2. This is qtrue when the entity was found.
-		// Boe!Man 3/1/11: Only enable autoNoLower for select maps, which can be put into the ent file.
-		if(g_autoNoLower.integer > 0 && !level.autoNoLower == 0){ 
-			if(level.time >= level.autoNoLowerUpdateTime){ // Don't check it too often.
-				if(level.autoNoLowerWait == qtrue){
-					trap_SendServerCommand(-1, va("print\"^3[Auto Action] ^7Lower closed.\n\""));
-					trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sL%so%sw%se%sr closed!", level.time + 5000, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-					Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-					if(strstr(level.mapname, "mp_kam2")){
-						SpawnFence(1);
-						SpawnFence(2);
-						SpawnFence(3);
-						SpawnFence(4);
-					}
-					level.autoNoLowerActive = qfalse;
-					level.autoNoLowerWait = qfalse;
-					level.autoNoLowerUpdateTime = level.time + 4000;
-				}else if(level.autoNoLowerActive == qfalse){
-					if(TeamCount1(TEAM_RED) + TeamCount1(TEAM_BLUE) >= level.autoNoLower){ // Open it.
-						trap_SendServerCommand(-1, va("print\"^3[Auto Action] ^7Lower opened.\n\""));
-						trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sL%so%sw%se%sr opened!", level.time + 5000, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-						Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-						if(strstr(level.mapname, "mp_kam2")){
-							RemoveFence();
-						}
-						level.autoNoLowerActive = qtrue;
-					}
-					level.autoNoLowerUpdateTime = level.time + 4000;
-				}else{
-					if(TeamCount1(TEAM_RED) + TeamCount1(TEAM_BLUE) < level.autoNoLower){ // Close it.
-						level.autoNoLowerWait = qtrue;
-						trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sC%sl%so%ss%si%sng lower in %i seconds!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, level.autoNoLowerDelay));
-						level.autoNoLowerUpdateTime = level.time + (level.autoNoLowerDelay * 1000);
-					}else{
-						level.autoNoLowerUpdateTime = level.time + 4000;
-					}
-				}
-			}
-		}
-		// End Boe!Man
-		if(ent->r.currentOrigin[2] <= level.nolower[2] && !G_IsClientDead(ent->client) && level.autoNoLowerActive == qfalse){
+	// Disable Lower.
+	if(level.noLRActive[0] && level.noLREntFound[0]){ // if enabled -- Boe!Man 6/2/12: Also check for nolower2. This is qtrue when the entity was found.
+		if(ent->r.currentOrigin[2] <= level.noLR[0][2] && !G_IsClientDead(ent->client)){
 			//trap_SendServerCommand( ent->s.number, va("print \"nolower = %.2f.\n\"", level.nolower[2]) );
 			trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s ^7was killed for being lower.\n\"", ent->client->pers.netname));
 			G_Damage(ent, NULL, NULL, NULL, NULL, 10000, 0, MOD_TRIGGER_HURT, 0);
