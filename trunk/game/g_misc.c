@@ -696,13 +696,15 @@ void g_sectionAutoCheck(gentity_t *ent){
 				// Section should be open, so hide the linking entities.
 				ent->sectionState = OPENED;
 				remInstances = qtrue;
+			}else{
+				ent->sectionState = CLOSED;
 			}
 			break;
 		case CLOSED:
 			if(((ent->team2 == TEAM_FREE) ? (TeamCount(-1, TEAM_RED, NULL ) + TeamCount(-1, TEAM_BLUE, NULL )) : (TeamCount(-1, (team_t)ent->team2, NULL ))) >= ent->min_players){
 				// Open the section.
 				ent->sectionState = OPENING;
-				trap_SendServerCommand(-1, va("cp \"%s will be opened in %0.f seconds!\n\"", ent->message, ent->wait));
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s will be opened in %0.f seconds!\n\"", level.time + 5000, ent->message, ent->wait));
 				trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s will be opened in %0.f seconds.\n\"", ent->message2, ent->wait));
 			}
 			break;
@@ -710,7 +712,7 @@ void g_sectionAutoCheck(gentity_t *ent){
 			if(((ent->team2 == TEAM_FREE) ? (TeamCount(-1, TEAM_RED, NULL ) + TeamCount(-1, TEAM_BLUE, NULL )) : (TeamCount(-1, (team_t)ent->team2, NULL ))) < ent->min_players){
 				// Close the section.
 				ent->sectionState = CLOSING;
-				trap_SendServerCommand(-1, va("cp \"%s will be closed in %0.f seconds!\n\"", ent->message, ent->wait));
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s will be closed in %0.f seconds!\n\"", level.time + 5000, ent->message, ent->wait));
 				trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s will be closed in %0.f seconds.\n\"", ent->message2, ent->wait));
 			}
 			break;
@@ -721,7 +723,7 @@ void g_sectionAutoCheck(gentity_t *ent){
 			if(ent->section < NOMIDDLE)
 				level.noLROpened[ent->section] = qfalse;
 				
-			trap_SendServerCommand(-1, va("cp \"@%s closed!\n\"", ent->message));
+			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s closed!\n\"", level.time + 5000, ent->message));
 			trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s is now closed.\n\"", ent->message2));
 			break;
 		case OPENING:
@@ -731,7 +733,7 @@ void g_sectionAutoCheck(gentity_t *ent){
 			if(ent->section < NOMIDDLE)
 				level.noLROpened[ent->section] = qtrue;
 				
-			trap_SendServerCommand(-1, va("cp \"@%s opened!\n\"", ent->message));
+			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s opened!\n\"", level.time + 5000, ent->message));
 			trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s is now opened.\n\"", ent->message2));
 			break;
 		default:
@@ -743,11 +745,9 @@ void g_sectionAutoCheck(gentity_t *ent){
 		while (NULL != (ent2 = G_Find ( ent2, FOFS(targetname), ent->classname ))){
 			if(ent2 != ent){ // Make sure we don't get the parent ent.
 				if(remInstances){ // Upon removal, just make sure they are not drawed and clients can't interact with them.
-					ent2->r.svFlags |= SVF_NOCLIENT;
-					ent2->s.eFlags |= EF_NODRAW;
+					trap_UnlinkEntity(ent2);
 				}else{ // Same as removal, but the other way around.
-					ent2->r.svFlags &= ~SVF_NOCLIENT;
-					ent2->s.eFlags &= ~EF_NODRAW;
+					trap_LinkEntity(ent2);
 				}
 			}
 		}
@@ -755,7 +755,7 @@ void g_sectionAutoCheck(gentity_t *ent){
 	
 	// Boe!Man 11/22/13: When's our next check?
 	if(ent->sectionState == CLOSING || ent->sectionState == OPENING){
-		ent->nextthink = level.time + (int)ent->wait;
+		ent->nextthink = level.time + (int)ent->wait * 1000;
 	}else{
 		ent->nextthink = level.time + 10000;
 	}
@@ -810,25 +810,37 @@ void g_blockSection(gentity_t *ent, int section){
 }
 
 void nolower(gentity_t *ent){
-	ent->message = va("%sL%so%sw%se%sr", server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string);
+	static char message[24];
+	
+	strncpy(message, va("%sL%so%sw%se%sr", server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string), sizeof(message));
+	ent->message = message;
 	ent->message2 = "Lower";
 	g_blockSection(ent, NOLOWER);
 }
 
 void noroof(gentity_t *ent){
-	ent->message = va("%sR%so%so%sf", server_color3.string, server_color4.string, server_color5.string, server_color6.string);
+	static char message[24];
+	
+	strncpy(message, va("%sR%so%so%sf", server_color3.string, server_color4.string, server_color5.string, server_color6.string), sizeof(message));
+	ent->message = message;
 	ent->message2 = "Roof";
 	g_blockSection(ent, NOROOF);
 }
 
 void nomiddle(gentity_t *ent){
-	ent->message = va("%sM%si%sd%sd%sl%se", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string);
+	static char message[24];
+	
+	strncpy(message, va("%sM%si%sd%sd%sl%se", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string), sizeof(message));
+	ent->message = message;
 	ent->message2 = "Middle";
 	g_blockSection(ent, NOMIDDLE);
 }
 
 void nowhole(gentity_t *ent){
-	ent->message = va("%sW%sh%so%sl%se", server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string);
+	static char message[24];
+	
+	strncpy(message, va("%sW%sh%so%sl%se", server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string), sizeof(message));
+	ent->message = message;
 	ent->message2 = "Whole";
 	g_blockSection(ent, NOWHOLE);
 }
