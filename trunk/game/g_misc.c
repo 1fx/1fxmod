@@ -742,7 +742,7 @@ void g_sectionAutoCheck(gentity_t *ent){
 	
 	// Boe!Man 11/21/13: Something needs to be added or removed. Make sure this happens.
 	if(addInstances || remInstances){
-		while (NULL != (ent2 = G_Find ( ent2, FOFS(targetname), ent->classname ))){
+		while (NULL != (ent2 = G_Find ( ent2, FOFS(target), ent->classname ))){
 			if(ent2 != ent){ // Make sure we don't get the parent ent.
 				if(remInstances){ // Upon removal, just make sure they are not drawed and clients can't interact with them.
 					trap_UnlinkEntity(ent2);
