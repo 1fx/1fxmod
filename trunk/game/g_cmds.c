@@ -40,8 +40,10 @@ static admCmd_t AdminCommands[] =
 	{"!strip","strip", &g_strip.integer, &Boe_Strip},
 	{"!removeadmin","removeadmin", &g_removeadmin.integer, &Boe_Remove_Admin_f},
 	{"!forceteam","forceteam", &g_forceteam.integer, &Adm_ForceTeam},
-	{"!nolower","nolower", &g_nolower.integer, &Boe_NoLower},
-	{"!noroof","noroof", &g_noroof.integer, &Boe_NoRoof},
+	{"!nolower","nolower", &g_nosection.integer, &Boe_NoLower},
+	{"!noroof","noroof", &g_nosection.integer, &Boe_NoRoof},
+	{"!nomiddle","nomiddle", &g_nosection.integer, &Boe_NoMiddle},
+	{"!nowhole","nowhole", &g_nosection.integer, &Boe_NoWhole},
 	{"!shuffleteams","shuffleteams", &g_shuffleteams.integer, &Boe_ShuffleTeams},
 	{"!shuffle","shuffle", &g_shuffleteams.integer, &Boe_ShuffleTeams},
 	{"!nonades","nonades", &g_nades.integer, &Boe_NoNades},
@@ -103,8 +105,10 @@ static admCmd_t AdminCommands[] =
 	{"!st","strip", &g_strip.integer, &Boe_Strip},
 	{"!ra","removeadmin", &g_removeadmin.integer, &Boe_Remove_Admin_f},
 	{"!ft","forceteam", &g_forceteam.integer, &Adm_ForceTeam},
-	{"!nl","nolower", &g_nolower.integer, &Boe_NoLower},
-	{"!nr","noroof", &g_noroof.integer, &Boe_NoRoof},
+	{"!nl","nolower", &g_nosection.integer, &Boe_NoLower},
+	{"!nr","noroof", &g_nosection.integer, &Boe_NoRoof},
+	{"!nm","nomiddle", &g_nosection.integer, &Boe_NoMiddle},
+	{"!nw","nowhole", &g_nosection.integer, &Boe_NoWhole},
 	{"!sh","shuffleteams", &g_shuffleteams.integer, &Boe_ShuffleTeams},
 	{"!nn","nonades", &g_nades.integer, &Boe_NoNades},
 	{"!sl","scorelimit", &g_sl.integer, &Boe_ScoreLimit},
@@ -3688,11 +3692,11 @@ void Boe_adm_f ( gentity_t *ent )
 		if (g_tl.integer == levelx && cm_enabled.integer != 1){
 			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   tl  timelimit    <time>         ^7[^3Change the timelimit^7]\n", g_tl.integer));
 			}
-		if (g_nolower.integer == levelx){
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   nl  nolower                     ^7[^3Enable/Disable Nolower^7]\n", g_nolower.integer));
-			}
-		if (g_noroof.integer == levelx){
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   nr  noroof                      ^7[^3Enable/Disable Noroof^7]\n", g_noroof.integer));
+		if (g_nosection.integer == levelx){
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   nl  nolower                     ^7[^3Enable/Disable Nolower^7]\n", g_nosection.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   nr  noroof                      ^7[^3Enable/Disable Noroof^7]\n", g_nosection.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   nm  nomiddle                    ^7[^3Enable/Disable Nomiddle^7]\n", g_nosection.integer));
+			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   nw  nowhole                     ^7[^3Enable/Disable Nowhole^7]\n", g_nosection.integer));
 			}
 		if (g_damage.integer == levelx){
 			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   nd  normaldamage                ^7[^3Toggle Normal damage^7]\n", g_damage.integer));

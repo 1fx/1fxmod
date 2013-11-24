@@ -684,72 +684,71 @@ typedef enum
 	CLOSED
 } sectionState_t;
 
-void g_sectionAutoCheck(gentity_t *ent){
-	qboolean addInstances = qfalse;
-	qboolean remInstances = qfalse;
+void g_sectionAddOrDelInstances(gentity_t *ent, qboolean add){
 	gentity_t *ent2 = NULL;
 	
-	// Check what needs to be done depending on its current state.
-	switch(ent->sectionState){
-		case INIT:
-			if(((ent->team2 == TEAM_FREE) ? (TeamCount(-1, TEAM_RED, NULL ) + TeamCount(-1, TEAM_BLUE, NULL )) : (TeamCount(-1, (team_t)ent->team2, NULL ))) >= ent->min_players){
-				// Section should be open, so hide the linking entities.
-				ent->sectionState = OPENED;
-				remInstances = qtrue;
-			}else{
-				ent->sectionState = CLOSED;
+	while (NULL != (ent2 = G_Find ( ent2, FOFS(target), ent->classname ))){
+		if(ent2 != ent){ // Make sure we don't get the parent ent.
+			if(!add){ // Upon removal, just make sure they are not drawed and clients can't interact with them.
+				trap_UnlinkEntity(ent2);
+			}else{ // Same as removal, but the other way around.
+				trap_LinkEntity(ent2);
 			}
-			break;
-		case CLOSED:
-			if(((ent->team2 == TEAM_FREE) ? (TeamCount(-1, TEAM_RED, NULL ) + TeamCount(-1, TEAM_BLUE, NULL )) : (TeamCount(-1, (team_t)ent->team2, NULL ))) >= ent->min_players){
-				// Open the section.
-				ent->sectionState = OPENING;
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s will be opened in %0.f seconds!\n\"", level.time + 5000, ent->message, ent->wait));
-				trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s will be opened in %0.f seconds.\n\"", ent->message2, ent->wait));
-			}
-			break;
-		case OPENED:
-			if(((ent->team2 == TEAM_FREE) ? (TeamCount(-1, TEAM_RED, NULL ) + TeamCount(-1, TEAM_BLUE, NULL )) : (TeamCount(-1, (team_t)ent->team2, NULL ))) < ent->min_players){
-				// Close the section.
-				ent->sectionState = CLOSING;
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s will be closed in %0.f seconds!\n\"", level.time + 5000, ent->message, ent->wait));
-				trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s will be closed in %0.f seconds.\n\"", ent->message2, ent->wait));
-			}
-			break;
-		case CLOSING:
-			// Close it now, the wait has passed.
-			ent->sectionState = CLOSED;
-			addInstances = qtrue;
-			if(ent->section < NOMIDDLE)
-				level.noLROpened[ent->section] = qfalse;
-				
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s closed!\n\"", level.time + 5000, ent->message));
-			trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s is now closed.\n\"", ent->message2));
-			break;
-		case OPENING:
-			// Open it now, the wait has passed.
-			ent->sectionState = OPENED;
-			remInstances = qtrue;
-			if(ent->section < NOMIDDLE)
-				level.noLROpened[ent->section] = qtrue;
-				
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s opened!\n\"", level.time + 5000, ent->message));
-			trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s is now opened.\n\"", ent->message2));
-			break;
-		default:
-			break;		
+		}
 	}
-	
-	// Boe!Man 11/21/13: Something needs to be added or removed. Make sure this happens.
-	if(addInstances || remInstances){
-		while (NULL != (ent2 = G_Find ( ent2, FOFS(target), ent->classname ))){
-			if(ent2 != ent){ // Make sure we don't get the parent ent.
-				if(remInstances){ // Upon removal, just make sure they are not drawed and clients can't interact with them.
-					trap_UnlinkEntity(ent2);
-				}else{ // Same as removal, but the other way around.
-					trap_LinkEntity(ent2);
+}
+
+void g_sectionAutoCheck(gentity_t *ent){
+	if(level.autoLRMWActive[ent->section]){
+		// Check what needs to be done depending on its current state.
+		switch(ent->sectionState){
+			case INIT:
+				if(((ent->team2 == TEAM_FREE) ? (TeamCount(-1, TEAM_RED, NULL ) + TeamCount(-1, TEAM_BLUE, NULL )) : (TeamCount(-1, (team_t)ent->team2, NULL ))) >= ent->min_players){
+					// Section should be open, so hide the linking entities.
+					ent->sectionState = OPENED;
+					g_sectionAddOrDelInstances(ent, qfalse);
+				}else{
+					ent->sectionState = CLOSED;
 				}
-			}
+				break;
+			case CLOSED:
+				if(((ent->team2 == TEAM_FREE) ? (TeamCount(-1, TEAM_RED, NULL ) + TeamCount(-1, TEAM_BLUE, NULL )) : (TeamCount(-1, (team_t)ent->team2, NULL ))) >= ent->min_players){
+					// Open the section.
+					ent->sectionState = OPENING;
+					trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s will be opened in %0.f seconds!\n\"", level.time + 5000, ent->message, ent->wait));
+					trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s will be opened in %0.f seconds.\n\"", ent->message2, ent->wait));
+				}
+				break;
+			case OPENED:
+				if(((ent->team2 == TEAM_FREE) ? (TeamCount(-1, TEAM_RED, NULL ) + TeamCount(-1, TEAM_BLUE, NULL )) : (TeamCount(-1, (team_t)ent->team2, NULL ))) < ent->min_players){
+					// Close the section.
+					ent->sectionState = CLOSING;
+					trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s will be closed in %0.f seconds!\n\"", level.time + 5000, ent->message, ent->wait));
+					trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s will be closed in %0.f seconds.\n\"", ent->message2, ent->wait));
+				}
+				break;
+			case CLOSING:
+				// Close it now, the wait has passed.
+				ent->sectionState = CLOSED;
+				g_sectionAddOrDelInstances(ent, qtrue);
+				if(ent->section < NOMIDDLE)
+					level.noLROpened[ent->section] = qfalse;
+					
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s closed!\n\"", level.time + 5000, ent->message));
+				trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s is now closed.\n\"", ent->message2));
+				break;
+			case OPENING:
+				// Open it now, the wait has passed.
+				ent->sectionState = OPENED;
+				g_sectionAddOrDelInstances(ent, qfalse);
+				if(ent->section < NOMIDDLE)
+					level.noLROpened[ent->section] = qtrue;
+					
+				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s opened!\n\"", level.time + 5000, ent->message));
+				trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s is now opened.\n\"", ent->message2));
+				break;
+			default:
+				break;		
 		}
 	}
 	
@@ -767,11 +766,6 @@ void g_blockSection(gentity_t *ent, int section){
 	
 		// Boe!Man 11/21/13: The entity is found.
 		level.noLREntFound[section] = qtrue;
-		
-		// Check if the nolower or noroof system is enabled to begin with..
-		if(level.noLR[section][2] != 0){
-			level.noLRActive[section] = qtrue;
-		}
 	}
 	
 	// Boe!Man 11/21/13: Is auto nolower enabled?
@@ -806,6 +800,30 @@ void g_blockSection(gentity_t *ent, int section){
 		ent->nextthink = level.time + 1000; // Check every 10 seconds, except the first time (init).
 	}else{ // No auto system.
 		G_FreeEntity(ent);
+	}
+}
+
+void g_checkSectionState(){
+	// Nolower.
+	if(g_useNoLower.integer){
+		level.noLRActive[NOLOWER] = qtrue;
+		level.autoLRMWActive[NOLOWER] = qtrue;
+	}
+	
+	// Noroof.
+	if(g_useNoRoof.integer){
+		level.noLRActive[NOROOF] = qtrue;
+		level.autoLRMWActive[NOROOF] = qtrue;
+	}
+	
+	// Nomiddle.
+	if(g_useNoMiddle.integer){
+		level.autoLRMWActive[NOMIDDLE] = qtrue;
+	}
+	
+	// Nowhole.
+	if(g_useNoWhole.integer){
+		level.autoLRMWActive[NOWHOLE] = qtrue;
 	}
 }
 

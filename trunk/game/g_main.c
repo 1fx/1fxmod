@@ -188,13 +188,12 @@ vmCvar_t	g_refpassword;
 vmCvar_t	g_checkCountry;
 // Boe!Man 2/27/11: Some new CVARs for nolower.
 vmCvar_t	g_useNoLower;
-
-// Boe!Man 6/2/12: CVAR for noroof.
 vmCvar_t	g_useNoRoof;
+vmCvar_t	g_useNoMiddle;
+vmCvar_t	g_useNoWhole;
 
 // Boe!Man 4/15/10: Some level commands (Admin).
-vmCvar_t	g_nolower;
-vmCvar_t	g_noroof;
+vmCvar_t	g_nosection;
 vmCvar_t	g_nades;
 vmCvar_t	g_sl;
 vmCvar_t	g_tl;
@@ -458,8 +457,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_eventeams,					"g_eventeams",			"2",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	//{ &g_333,						"g_333",				"3",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_forceteam,					"g_forceteam",			"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
-	{ &g_nolower,					"g_nolower",			"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
-	{ &g_noroof,					"g_noroof",				"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
+	{ &g_nosection,					"g_nosection",			"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_nades,						"g_nades",				"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_sl,						"g_sl",					"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_tl,						"g_tl",					"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
@@ -522,9 +520,13 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_enableTeamCmds, "g_enableTeamCmds", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 	{ &g_refpassword, "g_refpassword", "none", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 	{ &g_checkCountry, "g_checkCountry", "1", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse  },
-	{ &g_useNoLower, "g_useNoLower", "1", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse  },
-	{ &g_useNoRoof, "g_useNoRoof", "0", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse  },
 	{ &g_autoEvenTeams, "g_autoEvenTeams", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
+	
+	// Boe!Man 11/24/13: No section CVARs.
+	{ &g_useNoLower,	"g_useNoLower", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
+	{ &g_useNoRoof,		"g_useNoRoof",	"1", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
+	{ &g_useNoMiddle,	"g_useNoMiddle","1", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
+	{ &g_useNoWhole,	"g_useNoWhole",	"1", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 
 	{ &server_enableServerMsgs, "server_enableServerMsgs", "1", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_enableTips, "server_enableTips", "0", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
@@ -1341,13 +1343,6 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 
 	G_UpdateAvailableWeapons(); // also set the original g_availableWeapons for the client :)
 	// End
-	if(current_gametype.value != GT_HS){
-		//trap_Cvar_Set("g_disableNades", "1");
-		//trap_Cvar_Update(&g_disableNades);
-		//trap_Cvar_Set("g_roundstartdelay", "3");
-		//trap_Cvar_Update(&g_roundstartdelay);
-	}
-
 
 	// Boe!Man 11/13/12: New check for Nades, see if they are used at all in the server (faster !nn checking, and proper backpack fix).
 	if(SetNades("0")){ // 0 means disable_* CVAR to 0, so enabled.
@@ -1360,13 +1355,6 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	BG_SetAvailableOutfitting(g_availableWeapons.string);
 
 	// Initialize the gametype
-	/*
-	if(current_gametype.value == GT_HS)
-		trap_GT_Init ( "h&s", restart );
-	else if(current_gametype.value == GT_HZ)
-		trap_GT_Init ( "h&z", restart );
-	else
-	*/
 	// Boe!Man 11/29/12: Now that the gametype is in the game, the gt can check what gametype it is using current_gametype.
 	trap_GT_Init ();
 
@@ -1394,31 +1382,8 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	level.sqlBackupTime = sql_backupInterval.integer; // Boe!Man 5/27/13: Also set the initial backup value for the in-memory databases.
 	Boe_userdataIntegrity();
 
-	// Boe!Man 1/17/11: Check for modifications on the motd and version.
-	/*
-	strncpy(test, TEST_VERSION, 127);
-	strncpy(stable, STABLE_VERSION, 127);
-	strncpy(version, INF_VERSION_STRING_COLORED, 63);
-	if(test[15] != 'B' || test[18] != '!' || test[21] != 'n' || test[25] != '&' || test[29] != 'H' || test[32] != 'k' || test[38] != 'R' || test[43] != 'n' || test[48] != 'T' || test[53] != 'v' || test[68] != 'M'){
-		Com_Error(ERR_FATAL, "Unexpected return on static value.");
-	}else if (stable[15] != 'B' || stable[18] != '!' || stable[21] != 'n' || stable[25] != '&' || stable[29] != 'H' || stable[32] != 'k' || stable[36] != '1' || stable[40] != 'u' || stable[48] != '|' || stable[53] != '3'  || stable[56] != 'n'){
-		Com_Error(ERR_FATAL, "Unexpected return on static value.");
-	}else if (version[2] != '1' || version[4] != 'x' || version[7] != '.' || version[11] != 'M' || version[13] != 'd'){
-		Com_Error(ERR_FATAL, "Unexpected return on static value.");
-	}*/
-
-	if(g_useNoLower.integer){
-		level.noLRActive[0] = qtrue;
-	}else{
-		level.noLRActive[0] = qfalse;
-	}
-	
-	// Boe!Man 6/2/12: Check for noroof.
-	if(g_useNoRoof.integer){
-		level.noLRActive[1] = qtrue;
-	}else{
-		level.noLRActive[1] = qfalse;
-	}
+	// Boe!Man 11/24/13: Check the state.
+	g_checkSectionState();
 	
 	// Boe!Man 7/29/12: Check for g_preferSubnets and g_passwordAdmins not both being set to 1 (incompatible).
 	if(g_passwordAdmins.integer && g_preferSubnets.integer){

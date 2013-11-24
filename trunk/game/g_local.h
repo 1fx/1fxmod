@@ -726,11 +726,12 @@ typedef struct
 	// Henk 06/04/10 -> Add TMI for RPM scoreboard compatiblity
 	int				lastTMIupdate;
 	
-	// Boe!Man 11/21/13: Nolower, Noroof combined into one system. This does *NOT* involve the auto system.
+	// Boe!Man 11/21/13: Nolower, Noroof, Nomiddle and Nowhole combined into one system.
 	vec3_t			noLR[2];			// Location for nolower/noroof.
-	qboolean		noLRActive[2];		// If nolower or noroof is active.
-	qboolean		noLREntFound[2];	// If the nolower or noroof entity was found.
+	qboolean		noLRActive[2];		// If no* is active.
+	qboolean		noLREntFound[4];	// If the no* entity was found.
 	qboolean		noLROpened[2];		// If the current state is opened or closed.
+	qboolean		autoLRMWActive[4];	// True if the auto systems are active.
 
 	int			redLocked;				// when set to 1 no one will be allowed to join team
 	int			blueLocked;
@@ -1055,6 +1056,8 @@ void		ReachableObject_events			( gentity_t *self );
 // g_misc.c
 //
 void		TeleportPlayer					( gentity_t *player, vec3_t origin, vec3_t angles, qboolean nojump );
+void		g_checkSectionState				( void );
+void		g_sectionAddOrDelInstances		( gentity_t *ent, qboolean add );
 
 
 //

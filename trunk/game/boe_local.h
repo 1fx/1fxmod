@@ -326,8 +326,7 @@ extern	vmCvar_t	server_redteamprefix;
 extern	vmCvar_t	server_blueteamprefix;
 
 // Boe!Man 4/15/10
-extern	vmCvar_t	g_nolower;
-extern	vmCvar_t	g_noroof;
+extern	vmCvar_t	g_nosection;
 extern	vmCvar_t	g_nades;
 extern	vmCvar_t	g_sl;
 extern	vmCvar_t	g_tl;
@@ -349,6 +348,10 @@ extern	vmCvar_t	g_cm;
 
 // Boe!Man 3/1/11
 extern	vmCvar_t	g_useNoLower;
+extern	vmCvar_t	g_useNoRoof;
+extern	vmCvar_t	g_useNoMiddle;
+extern	vmCvar_t	g_useNoWhole;
+
 
 // Boe!Man 3/6/11
 extern	vmCvar_t	g_customCommandsFile;
@@ -370,9 +373,6 @@ void Boe_Rounds(int argNum, gentity_t *ent, qboolean shortCmd);
 
 // Boe!Man 5/28/11
 extern	vmCvar_t	g_customWeaponFile;
-
-// Boe!Man 6/2/12
-extern	vmCvar_t	g_useNoRoof;
 
 // Boe!Man 6/16/12
 void Boe_ShuffleTeams(int argNum, gentity_t *ent, qboolean shortCmd);
@@ -486,6 +486,8 @@ void	Boe_UnMute(int argNum, gentity_t *ent, qboolean ShortCmd);
 void	Boe_MapRestart(int argNum, gentity_t *ent, qboolean ShortCmd);
 void	Boe_NoLower(int argNum, gentity_t *ent, qboolean ShortCmd);
 void	Boe_NoRoof(int argNum, gentity_t *ent, qboolean shortCmd);
+void	Boe_NoMiddle(int argNum, gentity_t *ent, qboolean shortCmd);
+void	Boe_NoWhole(int argNum, gentity_t *ent, qboolean shortCmd);
 void	Boe_NoNades(int argNum, gentity_t *ent, qboolean ShortCmd);
 void	Boe_TimeLimit(int argNum, gentity_t *ent, qboolean ShortCmd);
 void	Boe_ScoreLimit(int argNum, gentity_t *ent, qboolean ShortCmd);

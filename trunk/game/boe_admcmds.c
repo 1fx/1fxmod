@@ -540,7 +540,8 @@ Boe_NoLower
 */
 
 void Boe_NoLower(int argNum, gentity_t *ent, qboolean shortCmd){
-	trap_Cvar_VariableStringBuffer ( "mapname", level.mapname, MAX_QPATH );
+	gentity_t *ent2 = NULL;
+	
 	// Boe!Man 2/27/11: If people don't want to use NoLower they can specify to disable it.
 	if(g_useNoLower.integer <= 0){
 		if(ent && ent->client){
@@ -562,11 +563,8 @@ void Boe_NoLower(int argNum, gentity_t *ent, qboolean shortCmd){
 
 	if(level.noLRActive[0] == qtrue){
 		level.noLRActive[0] = qfalse;
-		//trap_Cvar_Set("g_disablelower", "0");
-		//trap_Cvar_Update(&g_disablelower);
-		if (strstr(level.mapname, "mp_kam2")){
-			RemoveFence();
-		}
+		level.autoLRMWActive[0] = qfalse;
+		
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sN%so%sl%so%sw%ser disabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 		if(ent && ent->client){
@@ -576,16 +574,16 @@ void Boe_NoLower(int argNum, gentity_t *ent, qboolean shortCmd){
 			trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Nolower disabled.\n\""));
 			Boe_adminLog ("Nolower Disabled", va("RCON"), "none");
 		}
+		
+		// Boe!Man 11/24/13: Also open the section.
+		while (NULL != (ent2 = G_Find ( ent2, FOFS(classname), "nolower" ))){
+			g_sectionAddOrDelInstances(ent2, qfalse);
+			ent2->sectionState = 2; // Reset state to Opened.
+		}
 	}else{
 		level.noLRActive[0] = qtrue;
-		//trap_Cvar_Set("g_disablelower", "1");
-		//trap_Cvar_Update(&g_disablelower);
-		if (strstr(level.mapname, "mp_kam2")){
-			SpawnFence(1);
-			SpawnFence(2);
-			SpawnFence(3);
-			SpawnFence(4);
-		}
+		level.autoLRMWActive[0] = qtrue;
+		
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sN%so%sl%so%sw%ser enabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 		if(ent && ent->client){
@@ -605,6 +603,8 @@ Boe_NoRoof
 */
 
 void Boe_NoRoof(int argNum, gentity_t *ent, qboolean shortCmd){
+	gentity_t *ent2 = NULL;
+	
 	// Boe!Man 2/27/11: If people don't want to use noroof they can specify to disable it.
 	if(g_useNoRoof.integer <= 0){
 		if(ent && ent->client){
@@ -626,6 +626,7 @@ void Boe_NoRoof(int argNum, gentity_t *ent, qboolean shortCmd){
 
 	if(level.noLRActive[1] == qtrue){
 		level.noLRActive[1] = qfalse;
+		level.autoLRMWActive[1] = qfalse;
 		
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sN%so%sr%so%so%sf disabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
@@ -636,8 +637,16 @@ void Boe_NoRoof(int argNum, gentity_t *ent, qboolean shortCmd){
 			trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Noroof disabled.\n\""));
 			Boe_adminLog ("Noroof Disabled", va("RCON"), "none");
 		}
+		
+		// Boe!Man 11/24/13: Also open the section.
+		while (NULL != (ent2 = G_Find ( ent2, FOFS(classname), "noroof" ))){
+			g_sectionAddOrDelInstances(ent2, qfalse);
+			ent2->sectionState = 2; // Reset state to Opened.
+		}
 	}else{
 		level.noLRActive[1] = qtrue;
+		level.autoLRMWActive[1] = qtrue;
+		
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sN%so%sr%so%so%sf enabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 		if(ent && ent->client){
@@ -646,6 +655,128 @@ void Boe_NoRoof(int argNum, gentity_t *ent, qboolean shortCmd){
 		}else{
 			trap_SendServerCommand(-1, va("print \"^3[Rcon Action] ^7Noroof enabled.\n\""));
 			Boe_adminLog ("Noroof Enabled", va("RCON"), "none");
+		}
+	}
+}
+
+/*
+==========
+Boe_NoMiddle
+==========
+*/
+
+void Boe_NoMiddle(int argNum, gentity_t *ent, qboolean shortCmd){
+	gentity_t *ent2 = NULL;
+	
+	// Boe!Man 2/27/11: If people don't want to use nomiddle they can specify to disable it.
+	if(g_useNoMiddle.integer <= 0){
+		if(ent && ent->client){
+			trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7Nomiddle has been disabled on this server.\n\""));
+		}else{
+			Com_Printf("Nomiddle has been disabled on this server.\n");
+		}
+		return;
+	}
+	// Boe!Man 1/8/12: If people want to use nomiddle but if there's no such entity found, inform the user.
+	if(!level.noLREntFound[2]){
+		if(ent && ent->client){
+			trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7No entity found to toggle nomiddle.\n\""));
+		}else{
+			Com_Printf("No entity found to toggle nomiddle.\n");
+		}
+		return;
+	}
+
+	if(level.autoLRMWActive[2] == qtrue){
+		level.autoLRMWActive[2] = qfalse;
+		
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sN%so%sm%si%sd%sdle disabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+		if(ent && ent->client){
+			trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Nomiddle disabled by %s.\n\"", ent->client->pers.netname));
+			Boe_adminLog ("Nomiddle Disabled", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), "none");
+		}else{
+			trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Nomiddle disabled.\n\""));
+			Boe_adminLog ("Nomiddle Disabled", va("RCON"), "none");
+		}
+		
+		// Boe!Man 11/24/13: Also open the section.
+		while (NULL != (ent2 = G_Find ( ent2, FOFS(classname), "nomiddle" ))){
+			g_sectionAddOrDelInstances(ent2, qfalse);
+			ent2->sectionState = 2; // Reset state to Opened.
+		}
+	}else{
+		level.autoLRMWActive[2] = qtrue;
+		
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sN%so%sm%si%sd%sdle enabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+		if(ent && ent->client){
+			trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7Nomiddle enabled by %s.\n\"", ent->client->pers.netname));
+			Boe_adminLog ("Nomiddle Enabled", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), "none");
+		}else{
+			trap_SendServerCommand(-1, va("print \"^3[Rcon Action] ^7Nomiddle enabled.\n\""));
+			Boe_adminLog ("Nomiddle Enabled", va("RCON"), "none");
+		}
+	}
+}
+
+/*
+==========
+Boe_NoWhole
+==========
+*/
+
+void Boe_NoWhole(int argNum, gentity_t *ent, qboolean shortCmd){
+	gentity_t *ent2 = NULL;
+	
+	// Boe!Man 2/27/11: If people don't want to use nowhole they can specify to disable it.
+	if(g_useNoWhole.integer <= 0){
+		if(ent && ent->client){
+			trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7Nowhole has been disabled on this server.\n\""));
+		}else{
+			Com_Printf("Nowhole has been disabled on this server.\n");
+		}
+		return;
+	}
+	// Boe!Man 1/8/12: If people want to use nowhole but if there's no such entity found, inform the user.
+	if(!level.noLREntFound[3]){
+		if(ent && ent->client){
+			trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7No entity found to toggle nowhole.\n\""));
+		}else{
+			Com_Printf("No entity found to toggle nowhole.\n");
+		}
+		return;
+	}
+
+	if(level.autoLRMWActive[3] == qtrue){
+		level.autoLRMWActive[3] = qfalse;
+		
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sN%so%sw%sh%so%sle disabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+		if(ent && ent->client){
+			trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Nowhole disabled by %s.\n\"", ent->client->pers.netname));
+			Boe_adminLog ("Nowhole Disabled", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), "none");
+		}else{
+			trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Nowhole disabled.\n\""));
+			Boe_adminLog ("Nowhole Disabled", va("RCON"), "none");
+		}
+		
+		// Boe!Man 11/24/13: Also open the section.
+		while (NULL != (ent2 = G_Find ( ent2, FOFS(classname), "nowhole" ))){
+			g_sectionAddOrDelInstances(ent2, qfalse);
+			ent2->sectionState = 2; // Reset state to Opened.
+		}
+	}else{
+		level.autoLRMWActive[3] = qtrue;
+		
+		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sN%so%sw%sh%so%sle enabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+		if(ent && ent->client){
+			trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7Nowhole enabled by %s.\n\"", ent->client->pers.netname));
+			Boe_adminLog ("Nowhole Enabled", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), "none");
+		}else{
+			trap_SendServerCommand(-1, va("print \"^3[Rcon Action] ^7Nowhole enabled.\n\""));
+			Boe_adminLog ("Nowhole Enabled", va("RCON"), "none");
 		}
 	}
 }
