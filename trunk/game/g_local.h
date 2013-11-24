@@ -376,7 +376,7 @@ typedef struct
 	// Boe!Man 6/3/12: No roof.
 	int			noroofCheckTime;	// The level.time + 1000, for intervals.
 	qboolean	isOnRoof;			// True if the player is on roof.
-	int			isOnRoofTime;		// Seconds the player is already on roof. Checks against level.noroof[2].
+	int			isOnRoofTime;		// Seconds the player is already on roof. Checks against level.noLR[1][1].
 	
 	// Boe!Man 9/2/12: Advanced H&S scores.
 	// Hiders.

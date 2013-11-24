@@ -2394,7 +2394,7 @@ void Boe_checkRoof ( gentity_t *ent )
 					trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s ^7was killed for not leaving the roof.\n\"", ent->client->pers.netname));
 				}else{
 					ent->client->sess.isOnRoof = qtrue; // The server owner specified a timer. So, first, the player initialised this process by being on roof.
-					trap_SendServerCommand( ent-g_entities, va("cp \"@%sL%se%sa%sv%se the roof within %s%.0f ^7seconds!\n\"", server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, server_color1.string, level.noLR[0][1]));
+					trap_SendServerCommand( ent-g_entities, va("cp \"@%sL%se%sa%sv%se the roof within %s%.0f ^7seconds!\n\"", server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, server_color1.string, level.noLR[1][1]));
 					ent->client->sess.isOnRoofTime = 1;
 				}
 			}
@@ -2410,7 +2410,7 @@ void Boe_checkRoof ( gentity_t *ent )
 					ent->client->sess.isOnRoof = qfalse;
 					ent->client->sess.isOnRoofTime = 0;
 				}else{ // Give him another warning.
-					trap_SendServerCommand( ent-g_entities, va("cp \"@%sL%se%sa%sv%se the roof within %s%.0f ^7seconds!\n\"", server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, server_color1.string, level.noLR[0][1] - ent->client->sess.isOnRoofTime));
+					trap_SendServerCommand( ent-g_entities, va("cp \"@%sL%se%sa%sv%se the roof within %s%.0f ^7seconds!\n\"", server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, server_color1.string, level.noLR[1][1] - ent->client->sess.isOnRoofTime));
 					ent->client->sess.isOnRoofTime += 1;
 				}
 			}

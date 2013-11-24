@@ -131,7 +131,6 @@ field_t fields[] =
 	{"min_players",			FOFS(min_players),			F_INT},
 	{"invisible",			FOFS(invisible),			F_LSTRING},
 	{"auto",				FOFS(autoSection),			F_LSTRING},
-	{"nolower",				FOFS(nolower),				F_INT},
 	{"hideseek",			FOFS(hideseek),				F_INT},
 
 	// Boe!Man 6/3/11: Parts for the reachable object (sun).
@@ -223,7 +222,8 @@ void SP_accelerator					(gentity_t* ent);
 void SP_fx_play_effect				(gentity_t* ent);
 void nolower						(gentity_t* ent);
 void noroof							(gentity_t *ent);
-void noroof_initcheck				(gentity_t *ent);
+void nomiddle						(gentity_t *ent);
+void nowhole						(gentity_t *ent);
 void NV_blocked_trigger				(gentity_t *ent);
 void NV_blocked_Teleport			(gentity_t *ent);
 void NV_misc_bsp					(gentity_t *ent); 
@@ -308,6 +308,8 @@ spawn_t	spawns[] =
 	{"1fx_play_effect",				SP_fx_play_effect}, // internal use so we can clean it up
 	{"nolower",						nolower},
 	{"noroof",						noroof},
+	{"nomiddle",					nomiddle},
+	{"nowhole",						nowhole},
 	{"blocked_trigger",				NV_blocked_trigger},
 	{"blocked_teleporter",			NV_blocked_Teleport},
 	{"booster",						SP_booster},

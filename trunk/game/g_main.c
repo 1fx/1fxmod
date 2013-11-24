@@ -523,10 +523,10 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_autoEvenTeams, "g_autoEvenTeams", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 	
 	// Boe!Man 11/24/13: No section CVARs.
-	{ &g_useNoLower,	"g_useNoLower", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
-	{ &g_useNoRoof,		"g_useNoRoof",	"1", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
-	{ &g_useNoMiddle,	"g_useNoMiddle","1", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
-	{ &g_useNoWhole,	"g_useNoWhole",	"1", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
+	{ &g_useNoLower,	"g_useNoLower", "1", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse  },
+	{ &g_useNoRoof,		"g_useNoRoof",	"1", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse  },
+	{ &g_useNoMiddle,	"g_useNoMiddle","1", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse  },
+	{ &g_useNoWhole,	"g_useNoWhole",	"1", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse  },
 
 	{ &server_enableServerMsgs, "server_enableServerMsgs", "1", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_enableTips, "server_enableTips", "0", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
