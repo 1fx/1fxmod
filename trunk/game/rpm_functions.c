@@ -132,6 +132,12 @@ void RPM_Unpause (gentity_t *adm)
 			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7The game is not currently paused.\n\"") );
 		else
 			Com_Printf("The game is not currently paused.\n");
+			
+		#ifdef _DEBUG
+		if(g_debug.integer){
+			writeDebug(MODDBG_ADMCMDS, "End unpause not paused");
+		}
+		#endif
 		return;
 	}
 
@@ -147,15 +153,41 @@ void RPM_Unpause (gentity_t *adm)
 		tent->s.eventParm = G_SoundIndex("sound/misc/events/buzz02.wav");
 		tent->r.svFlags = SVF_BROADCAST;
 */
+
 		if(!level.pause)
 		{
+			#ifdef _DEBUG
+			if(g_debug.integer){
+				writeDebug(MODDBG_ADMCMDS, "unpausing....");
+			}
+			#endif
 			level.unpausetime = 0;
+			#ifdef _DEBUG
+			if(g_debug.integer){
+				writeDebug(MODDBG_ADMCMDS, "unpause set to 0");
+			}
+			#endif
 			
 			// Boe!Man 4/22/12: When in CTF, flags should be unfreezed as well. Let the gt know this by sending this command.
 			if(current_gametype.value == GT_CTF){
+				#ifdef _DEBUG
+				if(g_debug.integer){
+					writeDebug(MODDBG_ADMCMDS, "unpause sent event");
+				}
+				#endif
 				trap_GT_SendEvent ( GTEV_PAUSE, level.time, 0, 0, 0, 0, 0);
+				#ifdef _DEBUG
+				if(g_debug.integer){
+					writeDebug(MODDBG_ADMCMDS, "unpause event done");
+				}
+				#endif
 			}
 
+			#ifdef _DEBUG
+			if(g_debug.integer){
+				writeDebug(MODDBG_ADMCMDS, "unpause reset clients scoreboard");
+			}
+			#endif
 			///RxCxW - 08.30.06 - 03:06pm #reset clients (scoreboard) display time
 			trap_SetConfigstring( CS_LEVEL_START_TIME, va("%i", level.startTime ) );
 			trap_SetConfigstring ( CS_GAMETYPE_TIMER, va("%i", level.gametypeRoundTime) );
@@ -168,6 +200,12 @@ void RPM_Unpause (gentity_t *adm)
 				level.gametypeRespawnTime[TEAM_FREE] = level.time + g_respawnInterval.integer * 1000;
 			}
 
+			#ifdef _DEBUG
+			if(g_debug.integer){
+				writeDebug(MODDBG_ADMCMDS, "unpause resetting clients");
+			}
+			#endif
+			
 			for (i=0 ; i< level.maxclients ; i++)
 			{
 				ent = g_entities + i;
@@ -191,6 +229,12 @@ void RPM_Unpause (gentity_t *adm)
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sG%so %sG%so!", level.time + 2000, server_color2.string, server_color3.string, server_color4.string, server_color5.string) );
 		}
 	}
+	
+	#ifdef _DEBUG
+	if(g_debug.integer){
+		writeDebug(MODDBG_ADMCMDS, "unpause DONE");
+	}
+	#endif
 }
 
 void RPM_Clan_Vs_All(gentity_t *adm)

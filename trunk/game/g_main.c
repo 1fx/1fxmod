@@ -1392,6 +1392,12 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 		Com_Printf("Info: g_passwordAdmins has been set to 0 due to g_preferSubnets being set to %i. Set g_preferSubnets to 0 to allow Admins to login using a password.\n", g_preferSubnets.integer);
 	}
 
+	#ifdef _DEBUG
+	if(g_debug.integer){
+		writeDebug(MODDBG_CM, "Start CM check");
+	}
+	#endif
+	
 	// Boe!Man 11/16/10: Scrim settings.
 	if (g_compMode.integer > 0){
 		level.compMsgCount = level.time + 6000;
@@ -1431,6 +1437,12 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 			level.compMsgCount = 0;
 		}
 	}
+	
+	#ifdef _DEBUG
+	if(g_debug.integer){
+		writeDebug(MODDBG_CM, "End CM check");
+	}
+	#endif
 	
 	// Boe!Man 9/1/12: Check CVAR synonyms at start up to keep them in sync.
 	if(!strstr(g_badminPassword.string, g_badminPass.string)){

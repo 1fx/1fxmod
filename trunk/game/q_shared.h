@@ -1046,7 +1046,8 @@ typedef enum {
 typedef enum {
 	MODDBG_ALL = 1,
 	MODDBG_HIDESEEK = 2,
-	MODDBG_ADMCMDS = 4
+	MODDBG_ADMCMDS = 4,
+	MODDBG_CM = 8
 } debugMode_t;
 #endif
 
