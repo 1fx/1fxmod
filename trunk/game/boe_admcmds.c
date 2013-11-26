@@ -552,7 +552,7 @@ void Boe_NoLower(int argNum, gentity_t *ent, qboolean shortCmd){
 		return;
 	}
 	// Boe!Man 1/8/12: If people want to use nolower but if there's no such entity found, inform the user.
-	if(!level.noLREntFound[0]){
+	if(!level.noLRMWEntFound[0]){
 		if(ent && ent->client){
 			trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7No entity found to toggle nolower.\n\""));
 		}else{
@@ -615,7 +615,7 @@ void Boe_NoRoof(int argNum, gentity_t *ent, qboolean shortCmd){
 		return;
 	}
 	// Boe!Man 1/8/12: If people want to use noroof but if there's no such entity found, inform the user.
-	if(!level.noLREntFound[1]){
+	if(!level.noLRMWEntFound[1]){
 		if(ent && ent->client){
 			trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7No entity found to toggle noroof.\n\""));
 		}else{
@@ -678,7 +678,7 @@ void Boe_NoMiddle(int argNum, gentity_t *ent, qboolean shortCmd){
 		return;
 	}
 	// Boe!Man 1/8/12: If people want to use nomiddle but if there's no such entity found, inform the user.
-	if(!level.noLREntFound[2]){
+	if(!level.noLRMWEntFound[2]){
 		if(ent && ent->client){
 			trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7No entity found to toggle nomiddle.\n\""));
 		}else{
@@ -739,7 +739,7 @@ void Boe_NoWhole(int argNum, gentity_t *ent, qboolean shortCmd){
 		return;
 	}
 	// Boe!Man 1/8/12: If people want to use nowhole but if there's no such entity found, inform the user.
-	if(!level.noLREntFound[3]){
+	if(!level.noLRMWEntFound[3]){
 		if(ent && ent->client){
 			trap_SendServerCommand(ent-g_entities, va("print\"^3[Info] ^7No entity found to toggle nowhole.\n\""));
 		}else{

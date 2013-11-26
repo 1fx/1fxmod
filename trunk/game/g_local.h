@@ -729,8 +729,9 @@ typedef struct
 	// Boe!Man 11/21/13: Nolower, Noroof, Nomiddle and Nowhole combined into one system.
 	vec3_t			noLR[2];			// Location for nolower/noroof.
 	qboolean		noLRActive[2];		// If no* is active.
-	qboolean		noLREntFound[4];	// If the no* entity was found.
 	qboolean		noLROpened[2];		// If the current state is opened or closed.
+	
+	qboolean		noLRMWEntFound[4];	// If the no* entity was found.
 	qboolean		autoLRMWActive[4];	// True if the auto systems are active.
 
 	int			redLocked;				// when set to 1 no one will be allowed to join team

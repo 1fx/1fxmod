@@ -116,7 +116,7 @@ void P_WorldEffects( gentity_t *ent )
 	}
 
 	// Disable Lower.
-	if(level.noLRActive[0] && level.noLREntFound[0]){ // if enabled -- Boe!Man 6/2/12: Also check for nolower2. This is qtrue when the entity was found.
+	if(level.noLRActive[0] && level.noLRMWEntFound[0]){ // if enabled -- Boe!Man 6/2/12: Also check for nolower2. This is qtrue when the entity was found.
 		if(ent->r.currentOrigin[2] <= level.noLR[0][2] && !G_IsClientDead(ent->client)){
 			//trap_SendServerCommand( ent->s.number, va("print \"nolower = %.2f.\n\"", level.nolower[2]) );
 			trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s ^7was killed for being lower.\n\"", ent->client->pers.netname));

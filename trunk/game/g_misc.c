@@ -763,10 +763,15 @@ void g_sectionAutoCheck(gentity_t *ent){
 void g_blockSection(gentity_t *ent, int section){
 	if(section < NOMIDDLE){
 		G_SpawnVector("origin", "0", level.noLR[section]);
-	
-		// Boe!Man 11/21/13: The entity is found.
-		level.noLREntFound[section] = qtrue;
+		
+		// Boe!Man 11/26/13: Not depending on the original state, if this check fails, it's always disabled..
+		if(level.noLR[section][2] == 0){
+			level.noLRActive[section] = qfalse;
+		}
 	}
+	
+	// Boe!Man 11/21/13: The entity is found.
+	level.noLRMWEntFound[section] = qtrue;
 	
 	// Boe!Man 11/21/13: Is auto nolower enabled?
 	if(ent->autoSection && strstr(ent->autoSection, "yes") && ent->min_players > 0){

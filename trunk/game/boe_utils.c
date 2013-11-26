@@ -2366,7 +2366,7 @@ Boe_checkRoof
 void Boe_checkRoof ( gentity_t *ent ) 
 {	
 	// Boe!Man 11/22/13: Only proceed if this is true.
-	if(!level.noLRActive[1] || !level.noLREntFound[1]){ 
+	if(!level.noLRActive[1] || !level.noLRMWEntFound[1]){ 
 		return;
 	}
 	
