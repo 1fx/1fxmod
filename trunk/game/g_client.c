@@ -2424,6 +2424,11 @@ void ClientDisconnect( int clientNum )
 		}
 
 		// Get rid of things that need to drop
+		#ifdef _DEBUG
+		if(g_debug.integer){
+			writeDebug(MODDBG_HIDESEEK, "Tossclientitems disconnect");
+		}
+		#endif
 		TossClientItems( ent );
 	}
 	

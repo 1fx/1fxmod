@@ -756,6 +756,11 @@ void EvenTeams_HS (gentity_t *adm, qboolean aet)
 			lastConnected = lastConnected2;
 		}
 
+		#ifdef _DEBUG
+		if(g_debug.integer){
+			writeDebug(MODDBG_HIDESEEK, "TossClientItems Eventeams brick?");
+		}
+		#endif
 		TossClientItems( lastConnected ); // Henk 19/01/11 -> Fixed items not dropping with !et
 		lastConnected->client->ps.stats[STAT_WEAPONS] = 0;
 		G_StartGhosting( lastConnected );
