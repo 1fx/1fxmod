@@ -79,6 +79,7 @@ vmCvar_t	g_logExtra;
 vmCvar_t	g_allowVote;
 vmCvar_t	g_voteDuration;
 vmCvar_t	g_failedVoteDelay;
+vmCvar_t	g_callvote;
 vmCvar_t	g_teamAutoJoin;
 vmCvar_t	g_teamForceBalance;
 vmCvar_t	g_banIPs;
@@ -379,6 +380,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_allowVote, "g_allowVote", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 	{ &g_voteDuration, "g_voteDuration", "60", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 	{ &g_failedVoteDelay, "g_failedVoteDelay", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
+	{ &g_callvote, "g_callvote", "4", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 	{ &g_listEntity, "g_listEntity", "0", 0, 0.0, 0.0, 0, qfalse },
 
 	{ &g_smoothClients, "g_smoothClients", "1", 0, 0.0, 0.0, 0, qfalse},

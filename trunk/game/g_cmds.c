@@ -2989,6 +2989,11 @@ void Cmd_CallVote_f( gentity_t *ent )
 		trap_SendServerCommand( ent-g_entities, va("print \"You are not allowed to vote within %d minute of a failed vote.\n\"", g_failedVoteDelay.integer ) );
 		return;
 	}
+	
+	if( g_callvote.integer && ent->client->sess.admin < g_callvote.integer){
+		trap_SendServerCommand( ent-g_entities, "print \"Your admin level is too low to be able to call a vote.\n\"");
+		return;
+	}
 		
 	// Save the voting client id
 	level.voteClient = ent->s.number;
