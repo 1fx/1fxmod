@@ -45,11 +45,14 @@ int SV_ConnectionlessPacket_detour()
     
     if(level.time >= timer){
         timer = level.time + 1000;
+        // Boe!Man 12/16/13: Removed due to being a probable cause of additional lag.
+        /*
+        #ifdef _DEBUG
         if(requests >= requestsPerSecond){
-            #ifdef _DEBUG
             Com_Printf("Info: Too many requests per second: %i (%i allowed)\n", requests, requestsPerSecond);
-            #endif
         }
+        #endif
+        */
         requests = 0;
     }
     
