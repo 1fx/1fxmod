@@ -755,13 +755,24 @@ void EvenTeams_HS (gentity_t *adm, qboolean aet)
 		if(lastConnected2 != NULL && lastConnected == NULL){ // This means that there are people with points only. Force the last connected anyway.
 			lastConnected = lastConnected2;
 		}
-
+		
 		#ifdef _DEBUG
+		if(lastConnected == NULL){
+			if(g_debug.integer){
+				writeDebug(MODDBG_HIDESEEK, "TossClientItems -> LastConnected is NULL(?)");
+			}
+			trap_SendServerCommand(-1, va("print \"^3[Debug] ^7Something went terribly wrong in eventeams -> 1fx. Devs will want to know about this...\n\""));
+			continue;
+		}
+		
 		if(g_debug.integer){
 			writeDebug(MODDBG_HIDESEEK, "TossClientItems Eventeams brick?");
 		}
 		#endif
-		TossClientItems( lastConnected ); // Henk 19/01/11 -> Fixed items not dropping with !et
+		if(!G_IsClientDead ( lastConnected->client )){
+			TossClientItems( lastConnected ); // Henk 19/01/11 -> Fixed items not dropping with !et
+		}
+		
 		lastConnected->client->ps.stats[STAT_WEAPONS] = 0;
 		G_StartGhosting( lastConnected );
 
