@@ -630,12 +630,6 @@ void EvenTeams_HS (gentity_t *adm, qboolean aet)
 	gentity_t *lastConnected, *lastConnected2, *ent;
 	clientSession_t	*sess;
 	int	seekers, maxhiders, totalplayers;
-	
-	#ifdef _DEBUG
-	if(g_debug.integer){
-		writeDebug(MODDBG_HIDESEEK, "EvenTeams_HS start");
-	}
-	#endif
 
 	if(level.intermissiontime)
 		return;
@@ -647,11 +641,6 @@ void EvenTeams_HS (gentity_t *adm, qboolean aet)
 		}else if (aet == qfalse){
 			Com_Printf("Teams are locked.\n");
 		}
-		#ifdef _DEBUG
-		if(g_debug.integer){
-			writeDebug(MODDBG_HIDESEEK, "EvenTeams_HS end locked");
-		}
-		#endif
 		return;
 	}
 
@@ -690,12 +679,6 @@ void EvenTeams_HS (gentity_t *adm, qboolean aet)
 			trap_SendServerCommand( adm - g_entities, va("print \"^3[Info] ^7Teams are as even as possible.\n\"") );
 		else 
 			Com_Printf("Teams are as even as possible.\n");
-			
-		#ifdef _DEBUG
-		if(g_debug.integer){
-			writeDebug(MODDBG_HIDESEEK, "EvenTeams_HS end even as possible");
-		}
-		#endif
 		return;
 	}
 	// if less than 2 players difference, you cant make it any more even
@@ -704,11 +687,6 @@ void EvenTeams_HS (gentity_t *adm, qboolean aet)
 			trap_SendServerCommand( adm - g_entities, va("print \"^3[Info] ^7Teams are as even as possible.\n\"") );
 		else 
 			Com_Printf("Teams are as even as possible.\n");
-		#ifdef _DEBUG
-		if(g_debug.integer){
-			writeDebug(MODDBG_HIDESEEK, "EvenTeams_HS end even as possible 2");
-		}
-		#endif
 		return;
 	}
 
@@ -743,11 +721,6 @@ void EvenTeams_HS (gentity_t *adm, qboolean aet)
 			}else if(!aet){
 				Com_Printf("You cannot even the teams this fast.\n");
 			}
-			#ifdef _DEBUG
-			if(g_debug.integer){
-				writeDebug(MODDBG_HIDESEEK, "EvenTeams_HS end cannot even them this fast");
-			}
-			#endif
 			return;
 		}
 		
@@ -756,19 +729,6 @@ void EvenTeams_HS (gentity_t *adm, qboolean aet)
 			lastConnected = lastConnected2;
 		}
 		
-		#ifdef _DEBUG
-		if(lastConnected == NULL){
-			if(g_debug.integer){
-				writeDebug(MODDBG_HIDESEEK, "TossClientItems -> LastConnected is NULL(?)");
-			}
-			trap_SendServerCommand(-1, va("print \"^3[Debug] ^7Something went terribly wrong in eventeams -> 1fx. Devs will want to know about this...\n\""));
-			continue;
-		}
-		
-		if(g_debug.integer){
-			writeDebug(MODDBG_HIDESEEK, "TossClientItems Eventeams brick?");
-		}
-		#endif
 		if(!G_IsClientDead ( lastConnected->client )){
 			TossClientItems( lastConnected ); // Henk 19/01/11 -> Fixed items not dropping with !et
 		}
@@ -814,12 +774,6 @@ void EvenTeams_HS (gentity_t *adm, qboolean aet)
 		else
 		trap_SendServerCommand(-1, va("print\"^3[Auto Action] ^7Eventeams.\n\""));
 	}
-	
-	#ifdef _DEBUG
-	if(g_debug.integer){
-		writeDebug(MODDBG_HIDESEEK, "EvenTeams_HS end & DONE");
-	}
-	#endif
 }
 
 // Boe!Man 9/11/12: Function to preload effects in H&S/H&Z.
