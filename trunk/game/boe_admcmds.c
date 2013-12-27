@@ -1703,8 +1703,11 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 			
 			while(rc <= argCount){
 				memset(arg, 0, sizeof(arg));
+				memset(arg2, 0, sizeof(arg2));
 				trap_Argv(rc, arg, sizeof(arg));
 				trap_Argv(rc+1, arg2, sizeof(arg2));
+				Q_strlwr(arg);
+				Q_strlwr(arg2);
 				
 				if(!strstr(arg, "-") || !strstr(arg, "-h") && strlen(arg2) == 0){
 					filterChecking = qfalse;
