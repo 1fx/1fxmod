@@ -55,6 +55,16 @@ void TossClientItems( gentity_t *self )
 		writeDebug(MODDBG_HIDESEEK, "TossClientItems start");
 	}
 	#endif
+	
+	// Boe!Man 12/27/13: Don't toss client items during cagefight.
+	if(level.cagefight){
+		#ifdef _DEBUG
+		if(g_debug.integer){
+			writeDebug(MODDBG_HIDESEEK, "TossClientItems end CAGEFIGHT");
+		}
+		#endif
+		return;
+	}
 
 	// drop the weapon if not a gauntlet or machinegun
 	weapon = self->s.weapon;
