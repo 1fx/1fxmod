@@ -729,6 +729,11 @@ void EvenTeams_HS (gentity_t *adm, qboolean aet)
 			lastConnected = lastConnected2;
 		}
 		
+		// Boe!Man 1/1/14: Possible crash fix.
+		if(!lastConnected || !lastConnected->client){
+			continue;
+		}
+		
 		if(!G_IsClientDead ( lastConnected->client )){
 			TossClientItems( lastConnected ); // Henk 19/01/11 -> Fixed items not dropping with !et
 		}
