@@ -169,14 +169,9 @@ void trap_SendServerCommand2( int clientNum, const char *text );
 void trap_SendServerCommand( int clientNum, const char *text ) {
 	
         if( strlen( text ) > 2044 ) { // Henk 15/09/10 -> Scores reach 1022 length easily when there are more then 32 players.
-			char a[100]; 
-			trap_SendServerCommand2(-1, "^3[Debug] ^7Report this at 1fx.uk.to");
-			Boe_crashLog(va("overflow: name:[%s]",g_entities[clientNum].client->pers.netname)); // save this first incase of crash while copying memory
-			Q_strncpyz (a, text, 100);
-			Boe_crashLog(va("Data:[%s]", a)); // extra information
-			trap_SendServerCommand2(clientNum, a);
             return;
         }
+        
 		trap_SendServerCommand2(clientNum, text);
 } 
 
@@ -2784,10 +2779,6 @@ void G_Voice( gentity_t *ent, gentity_t *target, int mode, const char *id, qbool
 	char		name[MAX_SAY_TEXT];
 
 	if(strlen(id) > 64){
-		char	text[32] = "";
-		Q_strncpyz(text, id, sizeof(text));
-		//trap_SendServerCommand( ent-g_entities, va("print \"You have a very small penis.\n\"" ) ); // boe - lol'd
-		//Boe_crashLog(va("%s - %s - vsay_team: %s", ent->client->pers.cleanName, ent->client->pers.ip, text)) ;
 		return;
 	}
 

@@ -1499,6 +1499,9 @@ void G_ShutdownGame( int restart )
 	memset(memsys5, 0, sizeof(memsys5));
 	#endif
 	
+	// Boe!Man 1/2/14: Check if the engine threw a Com_Error in another function (also logs it upon succesfull detection).
+	logCrash();
+	
 	#ifdef _DEBUG
 	if(g_debug.integer){
 		writeDebug(0, "Shutdown");
@@ -1516,37 +1519,14 @@ void G_ShutdownGame( int restart )
 
 #ifndef GAME_HARD_LINKED
 
-void QDECL Com_Error ( int level, const char *fmt, ... )
+void QDECL Com_Error ( int level, const char *fmt, ... ) 
 {
 	va_list		argptr;
 	char		text[1024];
-	fileHandle_t	crashFile;
-
-	// Boe!Man 11/22/10: Appending the date & time.
-	qtime_t			q;
-	trap_RealTime	(&q);
-	// Boe!Man 11/22/10: For level inter is:
-	//					 - 0: ERR_FATAL				// exit the entire game with a popup window
-	//					 - 1: ERR_DROP				// print to console and disconnect from game
-	//					 - 2: ERR_SERVERDISCONNECT	// don't kill server
-	//					 - 3: ERR_DISCONNECT		// client disconnected from the server
-	//					 - 4: ERR_NEED_CD			// pop up the need-cd dialog
-	Com_sprintf( text, sizeof(text), "%02i/%02i/%i %02i:%02i - [%i] - ", 1+q.tm_mon,q.tm_mday, q.tm_year+1900,q.tm_hour,q.tm_min, level);
 
 	va_start (argptr, fmt);
-	vsprintf (text + 25, fmt, argptr);
+	vsprintf (text, fmt, argptr);
 	va_end (argptr);
-
-	// Boe!Man 11/22/10: Open and write to the crashinfo file.
-	trap_FS_FOpenFile( "logs/crashlog.txt", &crashFile, FS_APPEND_TEXT );
-
-	if (!crashFile){
-		return;
-	}
-
-	trap_FS_Write( text, strlen( text ), crashFile);
-	trap_FS_Write("\n", 1, crashFile);
-	trap_FS_FCloseFile(crashFile);
 
 	trap_Error( text );
 }

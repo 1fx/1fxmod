@@ -753,20 +753,14 @@ void Q_strncpyz( char *dest, const char *src, int destsize )
 {	// bk001129 - also NULL dest
 	if ( !dest ) 
 	{
-		//G_LogPrintf( "HENK_CRASH: NULL dest\n" );
-		//Boe_crashLog("HENK_CRASH: NULL dest\n" );
 		Com_Error( ERR_FATAL, "Q_strncpyz: NULL dest" );
 	}
 	if ( !src ) 
 	{
-		//G_LogPrintf( "HENK_CRASH: NULL src\n" );
-		//Boe_crashLog( "HENK_CRASH: NULL src\n" );
 		Com_Error( ERR_FATAL, "Q_strncpyz: NULL src" );
 	}
 	if ( destsize < 1 ) 
 	{
-		//G_LogPrintf( "HENK_CRASH: destsize < 1\n" );
-		//Boe_crashLog( "HENK_CRASH: destsize < 1\n" );
 		Com_Error(ERR_FATAL,"Q_strncpyz: destsize < 1" ); 
 	}
 

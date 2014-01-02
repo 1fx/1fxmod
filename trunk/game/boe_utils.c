@@ -1984,35 +1984,6 @@ void Boe_About( gentity_t *ent )
 }
 
 /*
-===================
-Boe_crashLog by boe
-4/2/10 - 1:48 PM
-Partly replaced by Com_Error system on 11/22/10 - 3:32 PM.
-===================
-*/
-
-void QDECL Boe_crashLog( const char *text)
-{
-	char		string[1024] = "";
-//	va_list		argptr;
-	qtime_t		q;
-	fileHandle_t	f;
-
-	trap_RealTime (&q);
-
-	Com_sprintf( string, sizeof(string), "%02i/%02i/%i %02i:%02i\n%s", 1+q.tm_mon,q.tm_mday, q.tm_year+1900,q.tm_hour,q.tm_min, text);
-		
-	trap_FS_FOpenFile("logs/crashlog.txt", &f, FS_APPEND_TEXT);
-	
-	if ( !f )
-		return;
-
-	trap_FS_Write( string, strlen( string ), f );
-	trap_FS_Write( "\n", 1, f);
-	trap_FS_FCloseFile(f);
-}
-
-/*
 ==================
 Boe_BarStat
 5/9/10 - 11:08 AM
@@ -3401,3 +3372,39 @@ void writeDebug(int section, char *message)
 	sqlite3_close(db);
 }
 #endif
+
+/*
+================
+logCrash
+10/8/13 - 5:43 PM
+Writes soft-crash information (triggered on Com_Error) to the crashlog file.
+================
+*/
+
+void logCrash(void)
+{
+	fileHandle_t	crashFile;
+	char			crashReason[128];
+	char			text[148];
+	qtime_t			q;
+	
+	// Boe!Man 1/2/14: Check if the server crashed.
+	trap_Cvar_VariableStringBuffer("com_errorMessage", crashReason, sizeof(crashReason));
+	if(crashReason == NULL || strlen(crashReason) == 0){
+		return;
+	}
+	
+	// Boe!Man 11/22/10: Appending the date & time.
+	trap_RealTime(&q);
+	
+	Com_sprintf(text, sizeof(text), "%02i/%02i/%i %02i:%02i - %s", 1+q.tm_mon,q.tm_mday, q.tm_year+1900,q.tm_hour,q.tm_min, crashReason);
+
+	// Boe!Man 11/22/10: Open and write to the crashinfo file.
+	trap_FS_FOpenFile("logs/crashlog.txt", &crashFile, FS_APPEND_TEXT);
+	if(!crashFile){
+		return;
+	}
+
+	trap_FS_Write(text, strlen(text), crashFile);
+	trap_FS_FCloseFile(crashFile);
+}

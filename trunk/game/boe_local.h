@@ -436,11 +436,13 @@ void	Boe_Stats( gentity_t *ent );
 
 void	QDECL Boe_adminLog( const char *command, const char *by, const char *to, ... );
 
-// Boe!Man 4/2/10: Crash log.
-void	QDECL Boe_crashLog	(const char *text);
-
 // Boe!Man 10/8/13: Debug write function.
+#ifdef _DEBUG
 void	writeDebug(int section, char *msg);
+#endif
+
+// Boe!Man 1/2/14: This function logs soft-crashes (triggered by Com_Error).
+void	logCrash(void);
 
 // Henk 28/01/10 -> Add eventeams
 void	EvenTeams (gentity_t *adm, qboolean aet);
