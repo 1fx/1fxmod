@@ -3397,7 +3397,7 @@ void logCrash(void)
 	// Boe!Man 11/22/10: Appending the date & time.
 	trap_RealTime(&q);
 	
-	Com_sprintf(text, sizeof(text), "%02i/%02i/%i %02i:%02i - %s", 1+q.tm_mon,q.tm_mday, q.tm_year+1900,q.tm_hour,q.tm_min, crashReason);
+	Com_sprintf(text, sizeof(text), "%02i/%02i/%i %02i:%02i - %s\n", 1+q.tm_mon,q.tm_mday, q.tm_year+1900,q.tm_hour,q.tm_min, crashReason);
 
 	// Boe!Man 11/22/10: Open and write to the crashinfo file.
 	trap_FS_FOpenFile("logs/crashlog.txt", &crashFile, FS_APPEND_TEXT);
