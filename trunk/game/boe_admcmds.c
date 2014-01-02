@@ -3020,7 +3020,7 @@ void Boe_Respawn (int argNum, gentity_t *adm, qboolean shortCmd)
 			ent->client->ps.pm_flags &= ~PMF_GHOST;
 			ent->client->ps.pm_type = PM_NORMAL;
 			ent->client->sess.ghost = qfalse;
-	}else if(!G_IsClientDead(ent->client) && !G_IsClientSpectating (ent->client)){ // Boe!Man 12/4/13: Needs to be alive in order to toss client items.
+	}else{
 		TossClientItems(ent);
 	}
 	
