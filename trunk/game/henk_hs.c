@@ -626,9 +626,8 @@ void EvenTeams_HS (gentity_t *adm, qboolean aet)
 {
 	int		counts[TEAM_NUM_TEAMS];
 	int		diff = 0;
-	int		highTeam, i, j, lastConnectedTime;
-	gentity_t *lastConnected, *lastConnected2, *ent;
-	clientSession_t	*sess;
+	int		highTeam, i;
+	gentity_t *lastConnected, *ent;
 	int	seekers, maxhiders, totalplayers;
 
 	if(level.intermissiontime)
@@ -691,47 +690,20 @@ void EvenTeams_HS (gentity_t *adm, qboolean aet)
 	}
 
 	for(i = 0; i < diff; i++){
-		lastConnectedTime = 0;
-		for ( j = 0; j < level.numConnectedClients ; j++ )	{
-			ent = &g_entities[level.sortedClients[j]];
-			sess = &ent->client->sess;
-
-			if ( ent->client->pers.connected != CON_CONNECTED 
-				&& ent->client->pers.connected != CON_CONNECTING )
-				continue;
-			if(sess->team != TEAM_RED && sess->team != TEAM_BLUE)
-				continue;
-			if(sess->team != highTeam)
-				continue;
-
-			if(ent->client->pers.enterTime > lastConnectedTime)	{
-				lastConnectedTime = ent->client->pers.enterTime;
-				if(ent->client->sess.score > 0){
-					lastConnected2 = ent;
-				}else{
-					lastConnected = ent;
-				}
-			}
-		} 
+		 lastConnected = findLastEnteredPlayer(highTeam, qfalse);
 		
 		// Boe!Man 7/13/12: Fix crash issue with auto eventeams too soon before entering the map.
-		if(lastConnected == NULL && lastConnected2 == NULL){
-			if(adm && adm->client){
-				trap_SendServerCommand( adm - g_entities, va("print \"^3[Info] ^7You cannot even the teams this fast.\n\"") );
-			}else if(!aet){
-				Com_Printf("You cannot even the teams this fast.\n");
+		if(lastConnected == NULL){
+			lastConnected = findLastEnteredPlayer(highTeam, qtrue); // Try to search for it again but also try to even the teams regardless of players with scores.
+		
+			if(lastConnected == NULL){
+				if(adm && adm->client){
+					trap_SendServerCommand( adm - g_entities, va("print \"^3[Info] ^7You cannot even the teams this fast.\n\"") );
+				}else if(!aet){
+					Com_Printf("You cannot even the teams this fast.\n");
+				}
+				return;
 			}
-			return;
-		}
-		
-		// Boe!Man 7/9/13: Fix for people with points being ETed even though there are people with 0 points.
-		if(lastConnected2 != NULL && lastConnected == NULL){ // This means that there are people with points only. Force the last connected anyway.
-			lastConnected = lastConnected2;
-		}
-		
-		// Boe!Man 1/1/14: Possible crash fix.
-		if(!lastConnected || !lastConnected->client){
-			continue;
 		}
 		
 		if(!G_IsClientDead ( lastConnected->client )){
@@ -779,6 +751,36 @@ void EvenTeams_HS (gentity_t *adm, qboolean aet)
 		else
 		trap_SendServerCommand(-1, va("print\"^3[Auto Action] ^7Eventeams.\n\""));
 	}
+}
+
+gentity_t* findLastEnteredPlayer(int highTeam, qboolean scoresAllowed)
+{
+	gentity_t *ent;
+	gentity_t *lastConnected = NULL;
+	clientSession_t	*sess;
+	int lastConnectedTime, i;
+	
+	lastConnectedTime = 0;
+	for (i = 0; i < level.numConnectedClients; i++ )	{
+		ent = &g_entities[level.sortedClients[i]];
+		sess = &ent->client->sess;
+
+		if (ent->client->pers.connected != CON_CONNECTED)
+			continue;
+		if(sess->team != TEAM_RED && sess->team != TEAM_BLUE)
+			continue;
+		if(sess->team != highTeam)
+			continue;
+		if(!scoresAllowed && sess->score)
+			continue;
+
+		if(ent->client->pers.enterTime > lastConnectedTime)	{
+			lastConnectedTime = ent->client->pers.enterTime;
+			lastConnected = ent;
+		}
+	}
+	
+	return lastConnected;
 }
 
 // Boe!Man 9/11/12: Function to preload effects in H&S/H&Z.
