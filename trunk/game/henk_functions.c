@@ -1150,18 +1150,6 @@ void InitSpawn(int choice) // load bsp models before players loads a map(SOF2 cl
 	return qfalse;
 }*/
 
-void RemoveFence(void){
-	int i;
-	for (i = 0; i < MAX_GENTITIES; i++)
-	{
-		if(g_entities[i].classname != NULL)
-		{
-			if(!strcmp(g_entities[i].classname, "misc_bsp") && g_entities[i].nolower == 1 )
-				G_FreeEntity( &g_entities[i] );
-		}
-	}
-}
-
 qboolean henk_isdigit(char c){ // by henk
 	if(c >= 48 && c <= 57){
 		return qtrue;
@@ -1242,37 +1230,6 @@ void PrintCustom(int numb){
 	}
 	trap_GP_Delete(&GP2);
 	trap_SendServerCommand( numb, va("print \"\n\""));
-}
-
-void SpawnFence(int choice) // big cage
-{
-	AddSpawnField("classname", "misc_bsp"); // blocker
-	if (choice == 1){
-	AddSpawnField("bspmodel",	"instances/Generic/fence01");
-	AddSpawnField("origin",		"-346 -309 -275");
-	AddSpawnField("angles",		"0 270 0");
-	}else if(choice == 2){
-	AddSpawnField("bspmodel",	"instances/Generic/fence01");
-	AddSpawnField("origin",		"-4073 -710 -275");
-	AddSpawnField("angles",		"0 90 0");
-	// Boe!Man 5/3/10: The solid walls.
-	}else if (choice == 3){
-	AddSpawnField("bspmodel",	"instances/Kamchatka/wall01");
-	AddSpawnField("origin",		"-1813 -210 -10");
-	AddSpawnField("angles",		"0 0 0");
-	}else if(choice == 4){
-	AddSpawnField("bspmodel",	"instances/Kamchatka/wall01");
-	AddSpawnField("origin",		"-2607 -825 -10");
-	AddSpawnField("angles",		"0 180 0");
-	}
-	AddSpawnField("model",		"trigger_hurt"); //blocked_trigger
-	AddSpawnField("count",		 "1");
-	AddSpawnField("nolower",	"1");
-
-	G_SpawnGEntityFromSpawnVars(qtrue);
-	
-	level.numSpawnVars = 0;
-	level.numSpawnVarChars = 0;
 }
 
 int FormatDamage(int damage){
