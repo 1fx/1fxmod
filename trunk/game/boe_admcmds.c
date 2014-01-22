@@ -3379,41 +3379,40 @@ void Adm_ForceTeam(int argNum, gentity_t *adm, qboolean shortCmd)
 	qboolean	all = qfalse; // Boe!Man 4/15/13: If this is true, forceteam all players to a specific team.
 	char		userinfo[MAX_INFO_STRING];
 	
-	// find the player
-	if(shortCmd == qtrue){
-		idnum = Boe_ClientNumFromArg(adm, 1, "forceteam <idnumber>", "forceteam", qfalse, qtrue, shortCmd);
+	// Boe!Man 4/15/13: Check for "all".
+	if(shortCmd){
+		trap_Argv(1, str, sizeof(str));
 	}else{
-		if(adm){
-			idnum = Boe_ClientNumFromArg(adm, 2, "forceteam <idnumber>", "forceteam", qfalse, qtrue, shortCmd);
+		if(adm && adm->client){
+			trap_Argv( 2, str, sizeof( str ) );
 		}else{
-			idnum = Boe_ClientNumFromArg(adm, 1, "forceteam <idnumber>", "forceteam", qfalse, qtrue, shortCmd);
+			trap_Argv( 1, str, sizeof( str ) );
 		}
 	}
-		
-	if(idnum < 0){
-		// Boe!Man 4/15/13: Check for "all".
-		if(shortCmd){
-			trap_Argv(1, str, sizeof(str));
+	Q_strlwr(str);
+	
+	if(shortCmd && strstr(str, " all ") || !shortCmd && strstr(str, "all") && strlen(str) == 3){
+		all = qtrue;
+	}else{
+		// find the player
+		if(shortCmd == qtrue){
+			idnum = Boe_ClientNumFromArg(adm, 1, "forceteam <idnumber>", "forceteam", qfalse, qtrue, shortCmd);
 		}else{
-			if(adm && adm->client){
-				trap_Argv( 2, str, sizeof( str ) );
+			if(adm){
+				idnum = Boe_ClientNumFromArg(adm, 2, "forceteam <idnumber>", "forceteam", qfalse, qtrue, shortCmd);
 			}else{
-				trap_Argv( 1, str, sizeof( str ) );
+				idnum = Boe_ClientNumFromArg(adm, 1, "forceteam <idnumber>", "forceteam", qfalse, qtrue, shortCmd);
 			}
 		}
-		Q_strlwr(str);
-		
-		if(shortCmd && strstr(str, " all ") || !shortCmd && strstr(str, "all") && strlen(str) == 3){
-			all = qtrue;
-		}else{
-			return;
-		}
+	}
+	
+	// Boe!Man 1/22/14: If "all" or the client wasn't found, return.
+	if(idnum < 0){
+		return;
 	}
 
 	// set the team
 	if(shortCmd == qtrue){
-		trap_Argv(1, str, sizeof(str));
-		
 		for(i=0;i<strlen(str);i++){
 			if(pass == qtrue && str[i] == ' '){
 				team = str[i+1];
