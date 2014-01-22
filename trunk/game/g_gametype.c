@@ -1118,7 +1118,7 @@ void CheckGametype ( void )
 			for ( i = 0; i < level.numConnectedClients; i ++ ){
 				if(!G_IsClientDead(g_entities[level.sortedClients[i]].client) && g_entities[level.sortedClients[i]].client->sess.team == TEAM_RED){
 					G_AddScore(&g_entities[level.sortedClients[i]], 100);
-					strcpy(level.cagewinner, g_entities[level.sortedClients[i]].client->pers.netname);
+					strncpy(level.cagewinner, g_entities[level.sortedClients[i]].client->pers.netname, sizeof(level.cagewinner));
 				}
 			}
 			trap_SendServerCommand(-1, va("print \"^3[H&S] ^7Fight ended.\n\""));

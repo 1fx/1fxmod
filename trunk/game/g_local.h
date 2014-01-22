@@ -825,7 +825,7 @@ typedef struct
 	qboolean	startcage;
 	int			mapHighScore;			// Boe!Man 8/30/11: The client with the highest score (used for determining if he's a tied player).
 	qboolean	timelimitMsg;
-	char		cagewinner[36];
+	char		cagewinner[MAX_NETNAME];
 
 	qboolean	crossTheBridge;
 
