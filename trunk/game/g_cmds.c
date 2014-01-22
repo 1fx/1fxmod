@@ -2903,13 +2903,6 @@ void Cmd_CallVote_f( gentity_t *ent )
 		return;
 	}
 
-	// No voting within the minute of a map change
-	if ( level.time - level.startTime < 1000 * 60 )
-	{
-		trap_SendServerCommand( ent-g_entities, "print \"Cannot vote within the first minute of a map change.\n\"" );
-		return;
-	}
-
 	if ( level.numConnectedClients > 1 && level.numVotingClients == 1 ) 
 	{
 		trap_SendServerCommand( ent-g_entities, "print \"You need at least 2 clients to call a vote.\n\"" );
