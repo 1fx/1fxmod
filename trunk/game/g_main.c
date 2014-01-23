@@ -302,6 +302,7 @@ vmCvar_t	hideSeek_ExtendedRoundStats;
 
 // Boe!Man 11/5/12
 vmCvar_t	g_ff;
+vmCvar_t	g_rename;
 
 vmCvar_t	g_dosPatch;
 
@@ -478,6 +479,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_adminlist,					"g_adminlist",			"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse }, // Boe!Man 6/17/11: Solved bug where ALL admins could see the list (wasn't added to the CVAR table and thus 0).
 	{ &g_shuffleteams,				"g_shuffleteams",		"3",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	{ &g_ff,						"g_ff",					"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
+	{ &g_rename,					"g_rename",				"4",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 
 //	{ &g_clanfile,			"g_clanfile",			"users/clanmembers.txt",	CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  },
 //	{ &g_banfile,			"g_banfile",			"users/bans.txt",		CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  },

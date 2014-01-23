@@ -384,7 +384,10 @@ extern	vmCvar_t	g_shuffleteams;
 
 // Boe!Man 11/5/12
 extern	vmCvar_t	g_ff;
+extern	vmCvar_t	g_rename;
+
 void Boe_friendlyFire(int argNum, gentity_t *ent, qboolean shortCmd);
+void Boe_Rename(int argNum, gentity_t *ent, qboolean shortCmd);
 
 //==============================================
 // boe_utils.c

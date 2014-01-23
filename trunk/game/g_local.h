@@ -291,6 +291,7 @@ typedef struct
 	int					teamkillDamage;			// amount of damage death to teammates
 	int					teamkillForgiveTime;	// time when team damage will be forgivin
 	qboolean			noTeamChange;			// cant change teams when this is true (rt_none only)
+	qboolean			noNameChange;			// Can't change name when this is true.
 	
 	// Boe!Man 3/30/10
 	qboolean			firstTime;				// If this is set to 1, it's the first time the client's connecting.

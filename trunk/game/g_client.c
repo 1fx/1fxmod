@@ -1180,12 +1180,33 @@ void ClientUserinfoChanged( int clientNum )
 		}
 	}
 
-
 	// set name
 	Q_strncpyz ( oldname, client->pers.netname, sizeof( oldname ) );
 	s = Info_ValueForKey (userinfo, "name");
-	G_ClientCleanName( s, client->pers.netname, sizeof(client->pers.netname), level.gametypeData->teams?qfalse:qtrue );
+	
+	// ... only when the client is allowed to change their name.
+	if(!client->sess.noNameChange){
+		G_ClientCleanName( s, client->pers.netname, sizeof(client->pers.netname), level.gametypeData->teams?qfalse:qtrue );
 
+		// Boe!Man 3/30/10: We set the clean/net names.
+		G_ClientCleanName( s, client->pers.netname, sizeof(client->pers.netname), qtrue );
+		G_ClientCleanName( s, client->pers.talkname, sizeof(client->pers.talkname), qtrue );
+
+		if(strlen(client->pers.netname) > MAX_NETNAME - 3)
+		{
+		client->pers.netname[MAX_NETNAME - 3] = '\0';
+		}
+		if(strlen(client->pers.talkname) > MAX_NETNAME - 3)
+		{
+			client->pers.talkname[MAX_NETNAME - 3] = '\0';
+		}
+		strcat(client->pers.netname, S_COLOR_WHITE);
+		strcat(client->pers.talkname, S_COLOR_WHITE);
+		
+		// Boe!Man 12/27/09: Sets if the client gets Admin.
+		G_ClientCleanName( s, client->pers.cleanName, sizeof(client->pers.cleanName), qfalse );
+	}
+	
 	if ( client->sess.team == TEAM_SPECTATOR ) 
 	{
 		if ( client->sess.spectatorState == SPECTATOR_SCOREBOARD ) 
@@ -1193,24 +1214,6 @@ void ClientUserinfoChanged( int clientNum )
 			Q_strncpyz( client->pers.netname, "scoreboard", sizeof(client->pers.netname) );
 		}
 	}
-
-	// Boe!Man 3/30/10: We set the clean/net names.
-	G_ClientCleanName( s, client->pers.netname, sizeof(client->pers.netname), qtrue );
-	G_ClientCleanName( s, client->pers.talkname, sizeof(client->pers.talkname), qtrue );
-
-	if(strlen(client->pers.netname) > MAX_NETNAME - 3)
-	{
-	client->pers.netname[MAX_NETNAME - 3] = '\0';
-	}
-	if(strlen(client->pers.talkname) > MAX_NETNAME - 3)
-	{
-		client->pers.talkname[MAX_NETNAME - 3] = '\0';
-	}
-	strcat(client->pers.netname, S_COLOR_WHITE);
-	strcat(client->pers.talkname, S_COLOR_WHITE);
-	
-	// Boe!Man 12/27/09: Sets if the client gets Admin.
-	G_ClientCleanName( s, client->pers.cleanName, sizeof(client->pers.cleanName), qfalse );
 
 	// Boe!Man 12/27/09
 	Boe_id(clientNum);
@@ -2443,6 +2446,7 @@ void ClientDisconnect( int clientNum )
 	ent->client->sess.admin = 0;
 	ent->client->sess.referee = 0;
 	ent->client->sess.clanMember = qfalse;
+	ent->client->sess.noNameChange = qfalse;
 	// Boe!Man 4/4/10: We reset the Developer as well.
 #ifdef _DEBUG
 	ent->client->sess.dev = 0;

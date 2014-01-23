@@ -82,6 +82,7 @@ static admCmd_t AdminCommands[] =
 	{"!clanlist","clanlist", &g_clan.integer, &Boe_clanList},
 	{"!adminremove","adminremove", &g_adminremove.integer, &Henk_AdminRemove},
 	{"!friendlyfire","friendlyfire", &g_ff.integer, &Boe_friendlyFire},
+	{"!rename","rename", &g_rename.integer, &Boe_Rename},
 	// Boe!Man 1/22/11: End full synonyms.
 
 	{"!adr","adminremove", &g_adminremove.integer, &Henk_AdminRemove},
@@ -158,6 +159,7 @@ static admCmd_t AdminCommands[] =
 	{"!m","mute", &g_mute.integer, &Boe_XMute},
 	{"!s","strip", &g_strip.integer, &Boe_Strip},
 	{"!ff","friendlyfire", &g_ff.integer, &Boe_friendlyFire},
+	{"!rn","rename", &g_rename.integer, &Boe_Rename}
 };
 
 static int AdminCommandsSize = sizeof( AdminCommands ) / sizeof( AdminCommands[0] );

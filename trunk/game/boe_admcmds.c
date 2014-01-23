@@ -5297,3 +5297,58 @@ void Boe_friendlyFire(int argNum, gentity_t *ent, qboolean shortCmd){
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 	return;
 }
+
+/*
+==========
+Boe_Rename
+==========
+*/
+
+void Boe_Rename(int argNum, gentity_t *ent, qboolean shortCmd){
+	int idnum;
+	char newName[MAX_NETNAME];
+	char userinfo[MAX_INFO_STRING];
+	qboolean unlock = qfalse;
+	
+	idnum = Boe_ClientNumFromArg(ent, argNum, "rename <idnumber/name> <new name>", "rename", qfalse, qfalse, shortCmd);
+	if(idnum < 0){
+		return;
+	}
+	
+	// Fetch the new name from the arguments given.
+	if(shortCmd){
+		strncpy(newName, GetReason(), sizeof(newName));
+	}else{
+		trap_Argv(argNum + 1, newName, sizeof(newName));
+	}
+	
+	if(strlen(newName) == 0){
+		if(!g_entities[idnum].client->sess.noNameChange){
+			if(ent && ent->client){
+				trap_SendServerCommand( ent - g_entities, va("print \"^3[Info] ^7You cannot set an empty name or unlock someone that's not locked from changing names.\n\"") );
+			}else{
+				Com_Printf("You cannot set an empty name or unlock someone that's not locked from changing names.\n");
+			}
+			
+			return;
+		}else{
+			unlock = qtrue;
+			g_entities[idnum].client->sess.noNameChange = qfalse;
+			ClientUserinfoChanged(idnum);
+			return;
+		}
+	}else if(strlen(newName) > MAX_NETNAME){
+		newName[MAX_NETNAME] = '\0'; // Make sure to NULL terminate it if the argument given is too large.
+	}
+	
+	trap_GetUserinfo(idnum, userinfo, sizeof(userinfo));
+	Info_SetValueForKey(userinfo, "name", newName);
+	trap_SetUserinfo(idnum, userinfo);
+	
+	G_ClientCleanName( newName, g_entities[idnum].client->pers.netname, sizeof(g_entities[idnum].client->pers.netname), qtrue );
+	G_ClientCleanName( newName, g_entities[idnum].client->pers.talkname, sizeof(g_entities[idnum].client->pers.talkname), qtrue );
+	G_ClientCleanName( newName, g_entities[idnum].client->pers.cleanName, sizeof(g_entities[idnum].client->pers.cleanName), qfalse );
+	g_entities[idnum].client->sess.noNameChange = qtrue;
+	
+	ClientUserinfoChanged(idnum);
+}
