@@ -866,20 +866,23 @@ Boe_Kick
 */
 
 void Boe_Kick(int argNum, gentity_t *ent, qboolean shortCmd){
-	int id;
-	char	arg3[MAX_STRING_TOKENS];
-	char	reason[256];
+	int		id;
+	char	reason[32];
+	
 	if(shortCmd){
 		id = Boe_ClientNumFromArg(ent, 1, "kick <id> <reason>", "Kick", qfalse, qfalse, qtrue);
-		if(id < 0) return;
-		strcpy(reason, GetReason());
-		trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"%s\"\n", id, reason));
+		strncpy(reason, GetReason(), sizeof(reason));
 	}else{
 		id = Boe_ClientNumFromArg(ent, 2, "kick <id> <reason>", "Kick", qfalse, qfalse, qfalse);
-		if(id < 0) return;
-		trap_Argv( 3, arg3, sizeof( arg3 ) );
-		trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"%s\"\n", id, arg3));
+		trap_Argv(3, reason, sizeof(reason));
 	}
+	
+	if(id < 0){
+		return;
+	}
+	
+	trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"%s\"\n", id, reason));
+	
 	// Boe!Man 11/04/11: To save compiled bytes, just do all this stuff at once without looking at the type of chat system.
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 	Boe_adminLog ("Kick", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), va("%s\\%s", g_entities[id].client->pers.ip, g_entities[id].client->pers.cleanName));
