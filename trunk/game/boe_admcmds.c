@@ -5309,9 +5309,10 @@ Boe_Rename
 
 void Boe_Rename(int argNum, gentity_t *ent, qboolean shortCmd){
 	int idnum;
+	char oldName[MAX_NETNAME];
+	char oldNameClean[MAX_NETNAME];
 	char newName[MAX_NETNAME];
 	char userinfo[MAX_INFO_STRING];
-	qboolean unlock = qfalse;
 	
 	idnum = Boe_ClientNumFromArg(ent, argNum, "rename <idnumber/name> <new name>", "rename", qfalse, qfalse, shortCmd);
 	if(idnum < 0){
@@ -5335,9 +5336,17 @@ void Boe_Rename(int argNum, gentity_t *ent, qboolean shortCmd){
 			
 			return;
 		}else{
-			unlock = qtrue;
 			g_entities[idnum].client->sess.noNameChange = qfalse;
 			ClientUserinfoChanged(idnum);
+			
+			// Broadcast the unlock.
+			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^3%s ^7can now %sr%se%sn%sa%sm%se ^7again!", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+			if(ent && ent->client){
+				trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7%s can now rename again!\n\"", g_entities[idnum].client->pers.cleanName));
+			}else{
+				trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7%s can now rename again!\n\"", g_entities[idnum].client->pers.cleanName));
+			}
+			
 			return;
 		}
 	}else if(strlen(newName) > MAX_NETNAME){
@@ -5348,10 +5357,25 @@ void Boe_Rename(int argNum, gentity_t *ent, qboolean shortCmd){
 	Info_SetValueForKey(userinfo, "name", newName);
 	trap_SetUserinfo(idnum, userinfo);
 	
+	// Fetch the old name to use in the broadcasts/logging.
+	strncpy(oldName, g_entities[idnum].client->pers.netname, sizeof(oldName));
+	strncpy(oldNameClean, g_entities[idnum].client->pers.cleanName, sizeof(oldNameClean));
+	
 	G_ClientCleanName( newName, g_entities[idnum].client->pers.netname, sizeof(g_entities[idnum].client->pers.netname), qtrue );
 	G_ClientCleanName( newName, g_entities[idnum].client->pers.talkname, sizeof(g_entities[idnum].client->pers.talkname), qtrue );
 	G_ClientCleanName( newName, g_entities[idnum].client->pers.cleanName, sizeof(g_entities[idnum].client->pers.cleanName), qfalse );
 	g_entities[idnum].client->sess.noNameChange = qtrue;
 	
 	ClientUserinfoChanged(idnum);
+	
+	// Log and broadcast this change.
+	Boe_GlobalSound(G_SoundIndex("sound/misc/events/tut_lift02.mp3"));
+	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^3%s ^7was %sr%se%sn%sa%sm%sed to ^3%s^7!", level.time + 5000, oldName, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, g_entities[idnum].client->pers.netname));
+	if(ent && ent->client){
+		Boe_adminLog ("Renamed", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), va("%s\\%s\\%s", g_entities[idnum].client->pers.ip, oldNameClean, g_entities[idnum].client->pers.cleanName));
+		trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7%s was renamed to %s by %s.\n\"", oldNameClean, g_entities[idnum].client->pers.cleanName, ent->client->pers.cleanName));
+	}else{
+		Boe_adminLog ("Renamed", "RCON", va("%s\\%s\\%s", g_entities[idnum].client->pers.ip, oldNameClean, g_entities[idnum].client->pers.cleanName));
+		trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7%s was renamed to %s.\n", oldNameClean, g_entities[idnum].client->pers.cleanName));
+	}
 }
