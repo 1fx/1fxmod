@@ -527,6 +527,9 @@ struct gclient_s
 	int			invulnerableTime;	// invulnerable time
 	int			inactivityTime;		// kick players when time > this
 	qboolean	inactivityWarning;	// qtrue if the five seoond warning has been given
+	int			seekerAwayTime;		// seekers can't be stunned when time > this
+	int			seekerAway;			// if not 0 then this means that the seeker is away and the effect plays when time > this
+	int			seekerAwayEnt;		// entity number of the exclamation mark above the seeker his head
 	int			rewardTime;			// clear the EF_AWARD_IMPRESSIVE, etc when time > this
 
 	int			airOutTime;

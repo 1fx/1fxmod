@@ -2369,6 +2369,15 @@ void ClientSpawn(gentity_t *ent)
 		}
 		client->ps.stats[STAT_ARMOR]   = 0; // Henk 27/02/10 -> Fix that ppl start with no armor
 		client->ps.stats[STAT_GOGGLES] = GOGGLES_NONE;
+		
+		// Boe!Man 1/28/14: Also (re-)set some inactivity stuff.
+		if(!g_inactivity.integer || g_inactivity.integer >= 10){
+			client->seekerAwayTime = level.time + 10000;
+		}else{
+			client->seekerAwayTime = -1;
+		}
+		client->seekerAway = qfalse;
+		client->seekerAwayEnt = -1;
 	}
 }
 

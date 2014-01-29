@@ -119,7 +119,7 @@ void P_WorldEffects( gentity_t *ent )
 	if(level.noLRActive[0] && level.noLRMWEntFound[0]){ // if enabled -- Boe!Man 6/2/12: Also check for nolower2. This is qtrue when the entity was found.
 		if(ent->r.currentOrigin[2] <= level.noLR[0][2] && !G_IsClientDead(ent->client)){
 			//trap_SendServerCommand( ent->s.number, va("print \"nolower = %.2f.\n\"", level.nolower[2]) );
-			trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s ^7was killed for being lower.\n\"", ent->client->pers.netname));
+			trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s ^7was killed for being lower.\n\"", ent->client->pers.cleanName));
 			G_Damage(ent, NULL, NULL, NULL, NULL, 10000, 0, MOD_TRIGGER_HURT, 0);
 		}
 	}
@@ -1263,6 +1263,37 @@ void ClientThink_real( gentity_t *ent )
 				trap_SendServerCommand( ent-g_entities, va("chat -1 \"%sI%sn%sf%so%s: Don't know how this works? Type '/howto' to get a short tutorial.\n\"", server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 				//trap_SendServerCommand( ent-g_entities, va("chat -1 \"%sI%sn%sf%so%s: Brilliant ideas for another mini-game? Let us know!\n\"", server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 				//trap_SendServerCommand( ent-g_entities, va("chat -1 \"%sI%sn%sf%so%s: Development forums at 1fx.uk.to!\n\"", server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+			}
+		}
+		
+		// Boe!Man 1/28/14: Also check the inactivity stuff for seekers.
+		if(level.messagedisplay && client->sess.team == TEAM_BLUE){
+			vec3_t newOrigin;
+			
+			// The seeker moved.
+			if(client->pers.cmd.forwardmove || client->pers.cmd.rightmove || client->pers.cmd.upmove || (client->pers.cmd.buttons & (BUTTON_ATTACK|BUTTON_ALT_ATTACK))){
+				if(!client->seekerAway){
+					client->seekerAwayTime = level.time + 10000;
+				}else{ // He was away, now he's not anymore.
+					trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s ^7is not away anymore.\n\"", client->pers.cleanName));
+					client->seekerAway = qfalse;
+					client->seekerAwayTime = level.time + 10000;
+				}
+			}else if(!client->seekerAway && level.time > client->seekerAwayTime){
+				trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s ^7is now away.\n\"", client->pers.cleanName));
+				client->seekerAway = level.time + 500;
+				
+				VectorCopy(client->ps.origin, newOrigin);
+				newOrigin[0] += 5;
+				newOrigin[2] += 75;
+				G_PlayEffect ( G_EffectIndex("misc/exclaimation"), newOrigin, ent->pos1);
+			}else if(client->seekerAway && level.time > client->seekerAway){
+				client->seekerAway = level.time + 500;
+				
+				VectorCopy(client->ps.origin, newOrigin);
+				newOrigin[0] += 5;
+				newOrigin[2] += 75;
+				G_PlayEffect ( G_EffectIndex("misc/exclaimation"), newOrigin, ent->pos1);
 			}
 		}
 	}else if(current_gametype.value == GT_HZ){

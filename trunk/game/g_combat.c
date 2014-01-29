@@ -1144,35 +1144,37 @@ int G_Damage (
 		// Henk 18/01/10 ->  Knife damage and stun function
 		if(client->sess.team == TEAM_BLUE && attacker->client->sess.team == TEAM_RED){ // if target is a seeker
 			damage = 0;
-			if(mod == 1){ // hider has stunned a seeker
-			// Add ammo to hider
-			ammoindex=weaponData[WP_KNIFE].attack[ATTACK_ALTERNATE].ammoIndex;
-				if(level.messagedisplay){ // Boe!Man 7/15/11: No need to check for 30 seconds. If people alter hideSeek_RoundStartDelay this will be buggy.. Just check for the message (are seekers released yet?).
+			if(!client->seekerAway){ // Boe!Man 1/29/14: Make sure the seeker can be stunned.
+				if(mod == 1){ // hider has stunned a seeker
+				// Add ammo to hider
+				ammoindex=weaponData[WP_KNIFE].attack[ATTACK_ALTERNATE].ammoIndex;
+					if(level.messagedisplay){ // Boe!Man 7/15/11: No need to check for 30 seconds. If people alter hideSeek_RoundStartDelay this will be buggy.. Just check for the message (are seekers released yet?).
+						client->sess.slowtime = level.time+4000; // after 4 seconds slowdown stops
+						attacker->client->sess.speedtime = level.time+4000; // after 4 seconds speedup stops
+						trap_SendServerCommand(attacker->s.number, va("cp \"@^7You have stunned %s\n\"", client->pers.netname)); // notify the hider
+						trap_SendServerCommand(targ->s.number, va("cp \"@^7You got stunned by %s\n\"", attacker->client->pers.netname)); // notify the seeker
+						client->sess.stunned += 1; // Seeker got stunned, so stunned + 1 for the final scoreboard.
+						attacker->client->sess.stunAttacks += 1;
+						if(attacker->client->ps.ammo[ammoindex] < 5)
+						attacker->client->ps.ammo[ammoindex]+=1;
+					}
+				}else if(mod == 257){ // Henk 22/01/10 -> Add throw knife
 					client->sess.slowtime = level.time+4000; // after 4 seconds slowdown stops
 					attacker->client->sess.speedtime = level.time+4000; // after 4 seconds speedup stops
+
 					trap_SendServerCommand(attacker->s.number, va("cp \"@^7You have stunned %s\n\"", client->pers.netname)); // notify the hider
 					trap_SendServerCommand(targ->s.number, va("cp \"@^7You got stunned by %s\n\"", attacker->client->pers.netname)); // notify the seeker
-					client->sess.stunned += 1; // Seeker got stunned, so stunned + 1 for the final scoreboard.
+					client->sess.stunned += 1;
 					attacker->client->sess.stunAttacks += 1;
-					if(attacker->client->ps.ammo[ammoindex] < 5)
-					attacker->client->ps.ammo[ammoindex]+=1;
+				}else if(mod == MOD_M4_ASSAULT_RIFLE && level.messagedisplay){ // Henk 22/01/10 -> Add M4 bullet stun
+					client->sess.slowtime = level.time+4000; // after 4 seconds slowdown stops
+					attacker->client->sess.speedtime = level.time+4000; // after 4 seconds speedup stops
+
+					trap_SendServerCommand(attacker->s.number, va("cp \"@^7You have stunned %s\n\"", client->pers.netname)); // notify the hider
+					trap_SendServerCommand(targ->s.number, va("cp \"@^7You got stunned by %s\n\"", attacker->client->pers.netname)); // notify the seeker
+					client->sess.stunned += 1;
+					attacker->client->sess.stunAttacks += 1;
 				}
-			}else if(mod == 257){ // Henk 22/01/10 -> Add throw knife
-				client->sess.slowtime = level.time+4000; // after 4 seconds slowdown stops
-				attacker->client->sess.speedtime = level.time+4000; // after 4 seconds speedup stops
-
-				trap_SendServerCommand(attacker->s.number, va("cp \"@^7You have stunned %s\n\"", client->pers.netname)); // notify the hider
-				trap_SendServerCommand(targ->s.number, va("cp \"@^7You got stunned by %s\n\"", attacker->client->pers.netname)); // notify the seeker
-				client->sess.stunned += 1;
-				attacker->client->sess.stunAttacks += 1;
-			}else if(mod == MOD_M4_ASSAULT_RIFLE && level.messagedisplay){ // Henk 22/01/10 -> Add M4 bullet stun
-				client->sess.slowtime = level.time+4000; // after 4 seconds slowdown stops
-				attacker->client->sess.speedtime = level.time+4000; // after 4 seconds speedup stops
-
-				trap_SendServerCommand(attacker->s.number, va("cp \"@^7You have stunned %s\n\"", client->pers.netname)); // notify the hider
-				trap_SendServerCommand(targ->s.number, va("cp \"@^7You got stunned by %s\n\"", attacker->client->pers.netname)); // notify the seeker
-				client->sess.stunned += 1;
-				attacker->client->sess.stunAttacks += 1;
 			}
 		}else if(client->sess.team == TEAM_RED && attacker->client->sess.team == TEAM_BLUE){ // if target is a hider
 			if(mod != 1){
