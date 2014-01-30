@@ -351,11 +351,9 @@ void Touch_Item (gentity_t *ent, gentity_t *other, trace_t *trace)
 	}
 
 	if(current_gametype.value == GT_HS){
-		if(ent->item->giTag == WP_MM1_GRENADE_LAUNCHER && other->client->sess.team == TEAM_RED){
+		if((ent->item->giTag == WP_MM1_GRENADE_LAUNCHER || ent->item->giTag == WP_F1_GRENADE || ent->item->giTag == WP_MDN11_GRENADE || ent->item->giTag == WP_L2A2_GRENADE) && other->client->sess.team == TEAM_RED){
 			return;
-		}else if(ent->item->giTag == WP_M4_ASSAULT_RIFLE && other->client->sess.team == TEAM_BLUE){
-			return;
-		}else if(ent->item->giTag == WP_RPG7_LAUNCHER && other->client->sess.team == TEAM_BLUE){
+		}else if((ent->item->giTag == WP_M4_ASSAULT_RIFLE || ent->item->giTag == WP_RPG7_LAUNCHER) && other->client->sess.team == TEAM_BLUE){
 			return;
 		}
 	}else if(current_gametype.value == GT_HZ){
