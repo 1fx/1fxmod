@@ -309,7 +309,7 @@ vmCvar_t	g_dosPatch;
 // Boe!Man 1/2/13: --- SQLite3 Related CVARs ---
 vmCvar_t	sql_aliasFlushCount;
 vmCvar_t	sql_timeBench;
-vmCvar_t	sql_backupInterval;
+vmCvar_t	sql_automaticBackup;
 
 #ifdef _DEBUG
 vmCvar_t	g_debug;
@@ -645,7 +645,7 @@ static cvarTable_t gameCvarTable[] =
 	
 	// Boe!Man 1/2/13: --- SQLite3 Related CVARs ---
 	{ &sql_aliasFlushCount,			"sql_aliasFlushCount",		"7500",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
-	{ &sql_backupInterval,			"sql_backupInterval",		"21600000",			CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse }, // Boe!Man 5/27/13: 6 hours is default (in msec).
+	{ &sql_automaticBackup,			"sql_automaticBackup",		"1",			CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	#ifdef _DEBUG
 	{ &sql_timeBench,				"sql_timeBench",			"1",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
 	#else
@@ -1382,8 +1382,11 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	// Boe!Man 3/30/10
 	Boe_ParseChatSounds();
 
+	// Boe!Man 1/30/14: If we're not in a game that has rounds and the user wishes to have automatic backups (enabled by default), do this every 5 minutes.
+	if(sql_automaticBackup.integer && level.gametypeData->respawnType == RT_INTERVAL){
+		level.sqlBackupTime = level.time + 50000;
+	}
 	// Boe!Man 12/8/12: Check database integrity.
-	level.sqlBackupTime = sql_backupInterval.integer; // Boe!Man 5/27/13: Also set the initial backup value for the in-memory databases.
 	Boe_userdataIntegrity();
 
 	// Boe!Man 11/24/13: Check the state.
@@ -3355,18 +3358,14 @@ void G_RunFrame( int levelTime )
 		trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", level.mapname));
 	}
 	
-	// Boe!Man 5/27/13: The automatic in-memory to disk backup. Note this only happens on servers without a mapcycle.
-	if(level.time >= level.sqlBackupTime && sql_backupInterval.integer){
-		// Boe!Man 5/27/13: Ensure the player count smaller then 5, else re-check in the next minute.
-		if(level.numConnectedClients >= 5){
-			level.sqlBackupTime = level.time + 60000;
-		}else{
-			Boe_backupInMemoryDbs("users.db", usersDb);
-			Boe_backupInMemoryDbs("aliases.db", aliasesDb);
-			Boe_backupInMemoryDbs("bans.db", bansDb);
-			
-			level.sqlBackupTime = level.time + sql_backupInterval.integer;
-		}
+	// Boe!Man 5/27/13: The automatic in-memory to disk backup. Note this only happens when playing a game which doesn't have a round limit.
+	if(level.sqlBackupTime && level.time >= level.sqlBackupTime){
+		Boe_backupInMemoryDbs("users.db", usersDb);
+		Boe_backupInMemoryDbs("aliases.db", aliasesDb);
+		Boe_backupInMemoryDbs("bans.db", bansDb);
+		
+		// Do this again in the next 5 minutes.
+		level.sqlBackupTime = level.time + 50000;
 	}
 
 	// Boe!Man 11/2/10: New Map Switch/Restart system.

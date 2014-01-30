@@ -604,6 +604,13 @@ void G_ResetGametype ( qboolean fullRestart, qboolean cagefight )
 				EvenTeams(NULL, qtrue);
 			}
 			
+			// Boe!Man 1/30/14: We're in a gametype with rounds and the user wishes to have backups of the databases enabled, do this every start of another round.
+			if(sql_automaticBackup.integer){
+				Boe_backupInMemoryDbs("users.db", usersDb);
+				Boe_backupInMemoryDbs("aliases.db", aliasesDb);
+				Boe_backupInMemoryDbs("bans.db", bansDb);
+			}
+			
 			trap_SetConfigstring ( CS_GAMETYPE_TIMER, va("%i", level.gametypeRoundTime) );
 			break;
 	}
