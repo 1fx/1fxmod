@@ -75,49 +75,13 @@ void TossClientItems( gentity_t *self )
 
 	// If we have a valid weapon to drop and it has ammo then drop it
 	if(current_gametype.value == GT_HS){
-		#ifdef _DEBUG
-		if(g_debug.integer){
-			writeDebug(MODDBG_HIDESEEK, "TossClientItems start if");
-			writeDebug(MODDBG_HIDESEEK, va("TossClientItems weapon is %i", weapon));
-		}
-		#endif
 		if ( weapon > WP_KNIFE && weapon < WP_NUM_WEAPONS && weapon != WP_RPG7_LAUNCHER && weapon != WP_M4_ASSAULT_RIFLE ){
-			#ifdef _DEBUG
-			if(g_debug.integer){
-				writeDebug(MODDBG_HIDESEEK, "TossClientItems if1s");
-			}
-			#endif
 			G_DropWeapon ( self, (weapon_t)weapon, 0 );
-			#ifdef _DEBUG
-			if(g_debug.integer){
-				writeDebug(MODDBG_HIDESEEK, "TossClientItems if1e");
-			}
-			#endif
 		}
 		else if ( self->client->ps.stats[STAT_WEAPONS] & ( 1 << WP_RPG7_LAUNCHER ) ){
-			#ifdef _DEBUG
-			if(g_debug.integer){
-				writeDebug(MODDBG_HIDESEEK, "TossClientItems if2s");
-			}
-			#endif
 			G_DropWeapon ( self, WP_RPG7_LAUNCHER, 0 );
-			#ifdef _DEBUG
-			if(g_debug.integer){
-				writeDebug(MODDBG_HIDESEEK, "TossClientItems if2e");
-			}
-			#endif
 		}else if ( self->client->ps.stats[STAT_WEAPONS] & ( 1 << WP_M4_ASSAULT_RIFLE ) ){
-			#ifdef _DEBUG
-			if(g_debug.integer){
-				writeDebug(MODDBG_HIDESEEK, "TossClientItems if3s");
-			}
-			#endif
 			G_DropWeapon ( self, WP_M4_ASSAULT_RIFLE, 0 );
-			#ifdef _DEBUG
-			if(g_debug.integer){
-				writeDebug(MODDBG_HIDESEEK, "TossClientItems if3e");
-			}
-			#endif
 		}
 	}else{
 		if ( weapon > WP_KNIFE && weapon < WP_NUM_WEAPONS &&
