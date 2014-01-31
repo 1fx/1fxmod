@@ -2372,7 +2372,11 @@ void ClientSpawn(gentity_t *ent)
 		
 		// Boe!Man 1/28/14: Also (re-)set some inactivity stuff.
 		if(!g_inactivity.integer || g_inactivity.integer >= 10){
-			client->seekerAwayTime = level.time + 10000;
+			if(!level.messagedisplay){ // Seekers are still waiting to be released.
+				client->seekerAwayTime = level.time + (level.gametypeDelayTime - level.time) + 2000; // Give the seeker two initial seconds to get away prior to being away.
+			}else{
+				client->seekerAwayTime = level.time + 10000; // Or 10 seconds if he joins the team in the middle of a running game.
+			}
 		}else{
 			client->seekerAwayTime = -1;
 		}

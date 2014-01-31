@@ -2742,7 +2742,8 @@ void G_RunThink (gentity_t *ent)
 void SetupOutfitting(void)
 {
 	int i;
-	attackData_t *attack;
+	int start_ammo_type;
+
 	for ( i = 0; i < level.numConnectedClients; i ++ )
 	{
 		g_entities[level.sortedClients[i]].client->sess.timeOfDeath = 0;
@@ -2750,22 +2751,46 @@ void SetupOutfitting(void)
 		G_UpdateOutfitting ( g_entities[level.sortedClients[i]].s.number );
 		if(g_entities[level.sortedClients[i]].client->sess.team == TEAM_BLUE){
 			if(hideSeek_Extra.string[MDN11] == '1'){
-				attack = &weaponData[WP_MDN11_GRENADE].attack[ATTACK_NORMAL];
-				g_entities[level.sortedClients[i]].client->ps.ammo[weaponData[WP_MDN11_GRENADE].attack[ATTACK_NORMAL].ammoIndex]=attack->clipSize;
 				g_entities[level.sortedClients[i]].client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_MDN11_GRENADE );
-				g_entities[level.sortedClients[i]].client->ps.clip[ATTACK_NORMAL][WP_MDN11_GRENADE]=attack->extraClips;
+				start_ammo_type = weaponData[WP_MDN11_GRENADE].attack[ATTACK_NORMAL].ammoIndex;
+				g_entities[level.sortedClients[i]].client->ps.ammo[start_ammo_type] = weaponData[WP_MDN11_GRENADE].attack[ATTACK_NORMAL].clipSize;
+				g_entities[level.sortedClients[i]].client->ps.clip[ATTACK_NORMAL][WP_MDN11_GRENADE] = weaponData[WP_MDN11_GRENADE].attack[ATTACK_NORMAL].clipSize;
+				g_entities[level.sortedClients[i]].client->ps.firemode[WP_MDN11_GRENADE] = BG_FindFireMode ( WP_MDN11_GRENADE, ATTACK_NORMAL, WP_FIREMODE_AUTO );
+
+				// alt-fire ammo
+				start_ammo_type = weaponData[WP_MDN11_GRENADE].attack[ATTACK_ALTERNATE].ammoIndex;
+				if (AMMO_NONE != start_ammo_type)
+				{
+					g_entities[level.sortedClients[i]].client->ps.ammo[start_ammo_type] = ammoData[start_ammo_type].max;
+				}
 			}
 			if(hideSeek_Extra.string[F1] == '1'){
-				attack = &weaponData[WP_F1_GRENADE].attack[ATTACK_NORMAL];
-				g_entities[level.sortedClients[i]].client->ps.ammo[weaponData[WP_F1_GRENADE].attack[ATTACK_NORMAL].ammoIndex]=attack->clipSize;
 				g_entities[level.sortedClients[i]].client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_F1_GRENADE );
-				g_entities[level.sortedClients[i]].client->ps.clip[ATTACK_NORMAL][WP_F1_GRENADE]=attack->extraClips;
+				start_ammo_type = weaponData[WP_F1_GRENADE].attack[ATTACK_NORMAL].ammoIndex;
+				g_entities[level.sortedClients[i]].client->ps.ammo[start_ammo_type] = weaponData[WP_F1_GRENADE].attack[ATTACK_NORMAL].clipSize;
+				g_entities[level.sortedClients[i]].client->ps.clip[ATTACK_NORMAL][WP_F1_GRENADE] = weaponData[WP_F1_GRENADE].attack[ATTACK_NORMAL].clipSize;
+				g_entities[level.sortedClients[i]].client->ps.firemode[WP_F1_GRENADE] = BG_FindFireMode ( WP_F1_GRENADE, ATTACK_NORMAL, WP_FIREMODE_AUTO );
+
+				// alt-fire ammo
+				start_ammo_type = weaponData[WP_F1_GRENADE].attack[ATTACK_ALTERNATE].ammoIndex;
+				if (AMMO_NONE != start_ammo_type)
+				{
+					g_entities[level.sortedClients[i]].client->ps.ammo[start_ammo_type] = ammoData[start_ammo_type].max;
+				}
 			}
 			if(hideSeek_Extra.string[L2A2] == '1'){
-				attack = &weaponData[WP_L2A2_GRENADE].attack[ATTACK_NORMAL];
-				g_entities[level.sortedClients[i]].client->ps.ammo[weaponData[WP_L2A2_GRENADE].attack[ATTACK_NORMAL].ammoIndex]=attack->clipSize;
 				g_entities[level.sortedClients[i]].client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_L2A2_GRENADE );
-				g_entities[level.sortedClients[i]].client->ps.clip[ATTACK_NORMAL][WP_L2A2_GRENADE]=attack->extraClips;
+				start_ammo_type = weaponData[WP_L2A2_GRENADE].attack[ATTACK_NORMAL].ammoIndex;
+				g_entities[level.sortedClients[i]].client->ps.ammo[start_ammo_type] = weaponData[WP_L2A2_GRENADE].attack[ATTACK_NORMAL].clipSize;
+				g_entities[level.sortedClients[i]].client->ps.clip[ATTACK_NORMAL][WP_L2A2_GRENADE] = weaponData[WP_L2A2_GRENADE].attack[ATTACK_NORMAL].clipSize;
+				g_entities[level.sortedClients[i]].client->ps.firemode[WP_L2A2_GRENADE] = BG_FindFireMode ( WP_L2A2_GRENADE, ATTACK_NORMAL, WP_FIREMODE_AUTO );
+			
+				// alt-fire ammo
+				start_ammo_type = weaponData[WP_L2A2_GRENADE].attack[ATTACK_ALTERNATE].ammoIndex;
+				if (AMMO_NONE != start_ammo_type)
+				{
+					g_entities[level.sortedClients[i]].client->ps.ammo[start_ammo_type] = ammoData[start_ammo_type].max;
+				}
 			}
 		}
 	}
