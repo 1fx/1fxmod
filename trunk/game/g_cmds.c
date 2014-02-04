@@ -1275,7 +1275,7 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 	{
 		///RxCxW - 03.05.05 - 07:19am
 		///if ((team == TEAM_RED) && level.redLocked)
-		if ((team == TEAM_RED) && level.redLocked && client->sess.admin < 2) {
+		if ((team == TEAM_RED) && level.redLocked && (!client->sess.admin || (client->sess.admin && g_compMode.integer && cm_enabled.integer >= 1))){
 			// Boe!Man 2/15/11: H&S messages are different as they use another team prefix.
 			if(current_gametype.value == GT_HS){
 				trap_SendServerCommand(clientNum, va("cp \"@%s ^7are %sl%so%sc%sk%se%sd!\n\"", server_hiderteamprefix.string, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string ));
@@ -1288,7 +1288,7 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 			return;
 		}
 		///else if ((team == TEAM_BLUE) && level.blueLocked)
-		else if ((team == TEAM_BLUE) && level.blueLocked && client->sess.admin < 2) {
+		else if ((team == TEAM_BLUE) && level.blueLocked && (!client->sess.admin || (client->sess.admin && g_compMode.integer && cm_enabled.integer >= 1))){
 			// Boe!Man 2/15/11: H&S messages are different as they use another team prefix.
 			if(current_gametype.value == GT_HS){
 				trap_SendServerCommand(clientNum, va("cp \"@%s ^7are %sl%so%sc%sk%se%sd!\n\"", server_seekerteamprefix.string, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string ));
