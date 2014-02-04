@@ -1271,7 +1271,7 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 		return;
 	}
 
-	if (level.gametypeData->teams)
+	if (level.gametypeData->teams && !forced)
 	{
 		///RxCxW - 03.05.05 - 07:19am
 		///if ((team == TEAM_RED) && level.redLocked)
