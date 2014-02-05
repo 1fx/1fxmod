@@ -1446,3 +1446,70 @@ void NV_misc_bsp(gentity_t *ent)
 	}
 	
 }
+
+/*
+==============
+G_TransformPlayerToObject
+
+Transforms a player into an object.
+==============
+*/
+
+typedef struct 
+{
+	char	*modelName;
+	char	*angles;
+	int		originOffset;
+	qboolean isModel; // True if it's a model (md3), false if it's a solid object (bsp).
+} transformObject_t;
+
+static transformObject_t TransformObjects[] = 
+{
+	{"instances/Colombia/tree01",						"90 0 0",	20,		qfalse},
+	{"instances/Colombia/tree02",						"0 0 0",	-35,	qfalse},
+	{"instances/Colombia/tree06",						"0 0 0",	-35,	qfalse},
+	{"instances/Colombia/npc_jump1",					"0 0 0",	-35,	qfalse},
+	{"models/objects/common/trash_can_lid_1.md3",		"0 180 0",	-5,		qtrue},
+	{"models/objects/common/yugo.md3",					"0 180 0",	-39,	qtrue},
+	{"models/objects/common/toilet_1.md3",				"0 180 0",	-39,	qtrue},
+	{"models/objects/Airport/box_cart.md3",				"0 180 0",	-39,	qtrue},
+	{"models/objects/Prague/misc/pra3_chandelier.md3",	"0 180 0",	-39,	qtrue}
+};
+
+void G_TransformPlayerToObject(gentity_t *ent)
+{
+	int object, ii;
+	
+	// Boe!Man 2/5/14: First pick a random object.
+	object = irand(0, sizeof(TransformObjects) / sizeof(TransformObjects[0]) - 1);
+	
+	// Do this so the server knows where the player is.
+	VectorCopy( ent->client->ps.origin, ent->s.origin );
+	
+	// Put the object on the client their position.
+	if(!TransformObjects[object].isModel){
+		AddSpawnField("classname", "misc_bsp");
+		AddSpawnField("bspmodel", TransformObjects[object].modelName);
+	}else{
+		AddSpawnField("classname", "nv_model");
+		AddSpawnField("model", TransformObjects[object].modelName);
+		AddSpawnField("mins", "-16 -16 0");
+		AddSpawnField("maxs", "16 16 16");
+	}
+	AddSpawnField("origin", va("%0.f %0.f %0.f", ent->s.origin[0], ent->s.origin[1], ent->s.origin[2] + TransformObjects[object].originOffset));
+	AddSpawnField("angles", TransformObjects[object].angles);
+	
+	// Next we make sure the client is invisible.
+	ent->client->sess.invisibleGoggles = qtrue;
+	
+	// Plant the player.
+	if (ent->client->ps.pm_flags & PMF_DUCKED){
+		ent->client->ps.origin[2] -= 40;
+	}else{
+		ent->client->ps.origin[2] -= 65;
+	}
+	VectorCopy( ent->client->ps.origin, ent->s.origin );
+	
+	// .. and store the entity number for later usage.
+	ent->client->sess.transformedEntity = G_SpawnGEntityFromSpawnVars(qfalse);
+}

@@ -1045,13 +1045,21 @@ void InitSpawn(int choice) // load bsp models before players loads a map(SOF2 cl
 	}
 
 	AddSpawnField("classname", "misc_bsp"); // blocker
+	
 	if(choice == 1){
 	AddSpawnField("bspmodel",	"instances/Generic/fence01");
 	}else if(choice == 2){
 	AddSpawnField("bspmodel",	"instances/Colombia/npc_jump1");
-	}else{
+	}else if(choice == 3){
 	AddSpawnField("bspmodel",	"instances/Kamchatka/wall01");
+	}else if(choice == 4){
+		AddSpawnField("bspmodel",	"instances/Colombia/tree01");	
+	}else if(choice == 5){
+		AddSpawnField("bspmodel",	"instances/Colombia/tree02");
+	}else if(choice == 6){
+		AddSpawnField("bspmodel",	"instances/Colombia/tree06");
 	}
+	
 	AddSpawnField("origin",		"-4841 -4396 5000");
 	AddSpawnField("angles",		"0 90 0");
 	AddSpawnField("model",		"trigger_hurt"); //blocked_trigger

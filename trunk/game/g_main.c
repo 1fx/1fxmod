@@ -1308,9 +1308,17 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	// parse the key/value pairs and spawn gentities
 	G_SpawnEntitiesFromString(qfalse);
 
-	InitSpawn(1);
-	InitSpawn(2);
 	InitSpawn(3);
+	
+	if(current_gametype.value == GT_HS){
+		// Boe!Man 2/5/14: Specific BSPs get loaded for H&S as well.
+		InitSpawn(1);
+		InitSpawn(2);
+		InitSpawn(4);
+		InitSpawn(5);
+		InitSpawn(6);
+	}
+	
 	// Now parse the gametype information that we need.  This needs to be
 	// done after the entity spawn so that the items and triggers can be
 	// linked up properly

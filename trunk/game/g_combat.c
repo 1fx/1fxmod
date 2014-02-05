@@ -1847,13 +1847,35 @@ qboolean G_RadiusDamage (
 				}
 			}
 			// End
-
+			
+			// Boe!Man 2/4/14: The L2A2 nade is different for both hiders and seekers. For the seeker it's an uppercut grenade, for the hider a box.
 			if(mod == WP_L2A2_GRENADE){
 				if(ent == attacker){
-					Henk_CloseSound(attacker->r.currentOrigin, G_SoundIndex("sound/weapons/rpg7/fire01.mp3"));
-					attacker->client->ps.pm_flags |= PMF_JUMPING;
-					attacker->client->ps.groundEntityNum = ENTITYNUM_NONE;
-					attacker->client->ps.velocity[2] = 450;
+					if(attacker->client->sess.team == TEAM_BLUE){
+						// Uppercut grenade for the seeker.
+						Henk_CloseSound(attacker->r.currentOrigin, G_SoundIndex("sound/weapons/rpg7/fire01.mp3"));
+						attacker->client->ps.pm_flags |= PMF_JUMPING;
+						attacker->client->ps.groundEntityNum = ENTITYNUM_NONE;
+						attacker->client->ps.velocity[2] = 450;
+					}else if(attacker->client->sess.team == TEAM_RED){
+						// Box grenade for the hider.
+						if(attacker->client->ps.pm_flags & PMF_JUMPING){
+							trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7You cannot transform while jumping.\n\""));\
+							
+							// And give them their nade back if they don't have it.
+							ammoindex=weaponData[WP_L2A2_GRENADE].attack[ATTACK_ALTERNATE].ammoIndex;
+							attacker->client->ps.ammo[ammoindex]+=1;
+
+							if (!(attacker->client->ps.stats[STAT_WEAPONS] & (1<<WP_L2A2_GRENADE))){
+								attacker->client->ps.stats[STAT_WEAPONS] |= (1 << WP_L2A2_GRENADE);
+							}
+						}
+						
+						trap_SendServerCommand(-1, va("print \"^3[H&S] ^7%s transformed into something...\n\"", attacker->client->pers.cleanName));
+						G_TransformPlayerToObject(attacker);
+						
+						NadeOutOfBoundaries = qtrue; // Boe!Man 2/4/14: In this case, it means that we've hit the hider and this nade has thus succeeded.
+					}
 					break;
 				}
 			}
@@ -2078,9 +2100,7 @@ qboolean G_RadiusDamage (
 				// End
 				SpawnCage(origin, attacker, qfalse, qfalse);
 			}
-		}
-
-		if(mod == WP_MDN11_GRENADE || mod == 274){ // Boe!Man 8/2/12: Fix for Altattack of box nade not doing anything.
+		}else if(mod == WP_MDN11_GRENADE || mod == 274){ // Boe!Man 8/2/12: Fix for Altattack of box nade not doing anything.
 			if(NadeOutOfBoundaries == qtrue){
 				ammoindex=weaponData[WP_MDN11_GRENADE].attack[ATTACK_ALTERNATE].ammoIndex;
 				if(g_boxAttempts.integer != 0){
@@ -2106,6 +2126,11 @@ qboolean G_RadiusDamage (
 		}else if(mod == WP_MM1_GRENADE_LAUNCHER){
 			missile = NV_projectile( attacker, origin, dir, WP_ANM14_GRENADE, 0 );
 			missile->nextthink = level.time + 250;
+		}else if(mod == WP_L2A2_GRENADE){
+			if(attacker->client->sess.team == TEAM_RED && !NadeOutOfBoundaries){
+				attacker->client->ps.ammo[weaponData[WP_L2A2_GRENADE].attack[ATTACK_NORMAL].ammoIndex] += 1;
+				trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7The grenade must detonate near just you in order to transform.\n\""));
+			}
 		}
 	}
 

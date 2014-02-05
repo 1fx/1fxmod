@@ -362,7 +362,7 @@ typedef struct
 	int			invisibleCoolDown; // Boe!Man 9/16/12: level.time check that checks when you can use the invisible goggles again.
 	int			invisibleFxTime; // Boe!Man 9/16/12: level.time check that checks when the effect is being displayed again.
 	//int			fpschecks;
-	int			IgnoredClients[33];
+	int			IgnoredClients[MAX_CLIENTS];
 	int			IgnoredClientCount;
 	qboolean	zombie;
 	int			zombiebody;
@@ -370,6 +370,8 @@ typedef struct
 	int			lastpush;
 	vec3_t		tempangles;
 	int			killtime;		// Boe!Man 7/15/11: Zombies can't do /kill after they've just been stunned.
+	
+	int			transformedEntity;	// Boe!Man 2/5/14: Entity number of the entity that the player "transformed" into.
 
 	int			extraIdChanges;	// Boe!Man 8/29/11: Identity changes within the second. Limit id change after 10 of these have happened.
 	int			identityLimit;	// Boe!Man 8/29/11: Limit the identity change for 60 seconds (level.time + 60000).
