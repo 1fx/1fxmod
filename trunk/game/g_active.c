@@ -1296,6 +1296,30 @@ void ClientThink_real( gentity_t *ent )
 				G_PlayEffect ( G_EffectIndex("misc/exclaimation"), newOrigin, ent->pos1);
 			}
 		}
+		
+		// Check for clients being transformed, wanting to get out.
+		if(client->sess.transformedEntity && client->pers.cmd.buttons & BUTTON_RELOAD){
+			// Remove the models.
+			G_FreeEntity(&g_entities[client->sess.transformedEntity]);
+			client->sess.transformedEntity = 0;
+			
+			if(client->sess.transformedEntity2){
+				G_FreeEntity(&g_entities[client->sess.transformedEntity2]);
+				client->sess.transformedEntity2 = 0;
+			}
+			
+			// Unplant the player.
+			// Plant the player.
+			if (ent->client->ps.pm_flags & PMF_DUCKED){
+				ent->client->ps.origin[2] += 40;
+			}else{
+				ent->client->ps.origin[2] += 65;
+			}
+			VectorCopy( ent->client->ps.origin, ent->s.origin );
+		
+			// Reset his invisibility state.
+			client->sess.invisibleGoggles = qfalse;
+		}
 	}else if(current_gametype.value == GT_HZ){
 		if(client->sess.firstzombie == qtrue){
 			client->ps.speed = g_speed.value+70;

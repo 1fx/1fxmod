@@ -506,6 +506,30 @@ void G_ResetGametype ( qboolean fullRestart, qboolean cagefight )
 			other->client->sess.firstzombie = qfalse;
 			SetTeam(other, "red", NULL, qtrue);
 		}
+	}else if(current_gametype.value == GT_HS){
+		for ( i = 0; i < level.numConnectedClients; i ++ )
+		{
+			gentity_t* other = &g_entities[level.sortedClients[i]];
+
+			if ( other->client->pers.connected != CON_CONNECTED )
+			{
+				continue;
+			}
+			if ( other->client->sess.team == TEAM_SPECTATOR )
+			{
+				continue;
+			}
+			
+			// Reset the transformed entity if there is one.
+			if(other->client->sess.transformedEntity){
+				G_FreeEntity(&g_entities[other->client->sess.transformedEntity]);
+				other->client->sess.transformedEntity = 0;
+			}
+			if(other->client->sess.transformedEntity2){
+				G_FreeEntity(&g_entities[other->client->sess.transformedEntity2]);
+				other->client->sess.transformedEntity2 = 0;
+			}
+		}
 	}
 
 	// Reset the gametype itself

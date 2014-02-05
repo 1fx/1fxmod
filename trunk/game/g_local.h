@@ -372,6 +372,7 @@ typedef struct
 	int			killtime;		// Boe!Man 7/15/11: Zombies can't do /kill after they've just been stunned.
 	
 	int			transformedEntity;	// Boe!Man 2/5/14: Entity number of the entity that the player "transformed" into.
+	int			transformedEntity2;	// Boe!Man 2/5/14: Additional entity number when dealing with a model instead of BSP.
 
 	int			extraIdChanges;	// Boe!Man 8/29/11: Identity changes within the second. Limit id change after 10 of these have happened.
 	int			identityLimit;	// Boe!Man 8/29/11: Limit the identity change for 60 seconds (level.time + 60000).

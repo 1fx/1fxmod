@@ -1848,38 +1848,42 @@ qboolean G_RadiusDamage (
 			}
 			// End
 			
-			// Boe!Man 2/4/14: The L2A2 nade is different for both hiders and seekers. For the seeker it's an uppercut grenade, for the hider a box.
+			// Uppercut grenade for the seeker.
 			if(mod == WP_L2A2_GRENADE){
 				if(ent == attacker){
-					if(attacker->client->sess.team == TEAM_BLUE){
-						// Uppercut grenade for the seeker.
-						Henk_CloseSound(attacker->r.currentOrigin, G_SoundIndex("sound/weapons/rpg7/fire01.mp3"));
-						attacker->client->ps.pm_flags |= PMF_JUMPING;
-						attacker->client->ps.groundEntityNum = ENTITYNUM_NONE;
-						attacker->client->ps.velocity[2] = 450;
-					}else if(attacker->client->sess.team == TEAM_RED){
-						// Box grenade for the hider.
-						if(attacker->client->ps.pm_flags & PMF_JUMPING){
-							trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7You cannot transform while jumping.\n\""));\
-							
-							// And give them their nade back if they don't have it.
-							ammoindex=weaponData[WP_L2A2_GRENADE].attack[ATTACK_ALTERNATE].ammoIndex;
-							attacker->client->ps.ammo[ammoindex]+=1;
-
-							if (!(attacker->client->ps.stats[STAT_WEAPONS] & (1<<WP_L2A2_GRENADE))){
-								attacker->client->ps.stats[STAT_WEAPONS] |= (1 << WP_L2A2_GRENADE);
-							}
+					Henk_CloseSound(attacker->r.currentOrigin, G_SoundIndex("sound/weapons/rpg7/fire01.mp3"));
+					attacker->client->ps.pm_flags |= PMF_JUMPING;
+					attacker->client->ps.groundEntityNum = ENTITYNUM_NONE;
+					attacker->client->ps.velocity[2] = 450;
+					break;
+				}
+			}
+			
+			// Transform grenade for the hider.
+			if(mod == WP_M67_GRENADE){
+				if(ent == attacker){
+					// Box grenade for the hider.
+					if(!(attacker->client->ps.pm_flags & PMF_JUMPING)){
+						// Do some checks, a player shouldn't be near.
+						vec3_t	mins = {-75, -75, -DEFAULT_PLAYER_Z_MAX};
+						vec3_t	maxs = {75, 75, DEFAULT_PLAYER_Z_MAX};
+						vec3_t			org1, org2;
+						trace_t			tr;
+						VectorCopy(origin, org1);
+						VectorCopy(origin, org2);
+						org1[2] += 50;
+						trap_Trace ( &tr, org1, mins, maxs, org2, attacker->s.number, MASK_PLAYERSOLID); // Boe!Man 7/23/13: Used to be MASK_ALL, and before that MASK_SOLID. This seems to work best (MASK_PLAYERSOLID).
+						if ( !tr.startsolid && !tr.allsolid ){
+							trap_SendServerCommand(-1, va("print \"^3[H&S] ^7%s transformed into something...\n\"", attacker->client->pers.cleanName));
+							G_TransformPlayerToObject(attacker);
+						
+							NadeOutOfBoundaries = qtrue; // Boe!Man 2/4/14: In this case, it means that we've hit the hider and this nade has thus succeeded.
 						}
-						
-						trap_SendServerCommand(-1, va("print \"^3[H&S] ^7%s transformed into something...\n\"", attacker->client->pers.cleanName));
-						G_TransformPlayerToObject(attacker);
-						
-						NadeOutOfBoundaries = qtrue; // Boe!Man 2/4/14: In this case, it means that we've hit the hider and this nade has thus succeeded.
 					}
 					break;
 				}
 			}
-
+			
 			// Henk 18/01/10 -> RPG Boost
 			if(mod == WP_RPG7_LAUNCHER){
 				if(ent == attacker){ // RPG hits attacker self so boost him
@@ -2126,11 +2130,16 @@ qboolean G_RadiusDamage (
 		}else if(mod == WP_MM1_GRENADE_LAUNCHER){
 			missile = NV_projectile( attacker, origin, dir, WP_ANM14_GRENADE, 0 );
 			missile->nextthink = level.time + 250;
-		}else if(mod == WP_L2A2_GRENADE){
-			if(attacker->client->sess.team == TEAM_RED && !NadeOutOfBoundaries){
-				attacker->client->ps.ammo[weaponData[WP_L2A2_GRENADE].attack[ATTACK_NORMAL].ammoIndex] += 1;
-				trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7The grenade must detonate near just you in order to transform.\n\""));
+		}else if(mod == WP_M67_GRENADE && !NadeOutOfBoundaries){
+			// Give them their nade back if they don't have it.
+			ammoindex=weaponData[WP_M67_GRENADE].attack[ATTACK_ALTERNATE].ammoIndex;
+			attacker->client->ps.ammo[ammoindex]+=1;
+
+			if (!(attacker->client->ps.stats[STAT_WEAPONS] & (1<<WP_M67_GRENADE))){
+				attacker->client->ps.stats[STAT_WEAPONS] |= (1 << WP_M67_GRENADE);
 			}
+				
+			trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7The grenade must detonate near just you in order to transform.\n\""));
 		}
 	}
 

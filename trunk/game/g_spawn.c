@@ -1461,24 +1461,26 @@ typedef struct
 	char	*angles;
 	int		originOffset;
 	qboolean isModel; // True if it's a model (md3), false if it's a solid object (bsp).
+	char	*mins;
+	char	*maxs;
 } transformObject_t;
 
 static transformObject_t TransformObjects[] = 
 {
-	{"instances/Colombia/tree01",						"90 0 0",	20,		qfalse},
-	{"instances/Colombia/tree02",						"0 0 0",	-35,	qfalse},
-	{"instances/Colombia/tree06",						"0 0 0",	-35,	qfalse},
-	{"instances/Colombia/npc_jump1",					"0 0 0",	-35,	qfalse},
-	{"models/objects/common/trash_can_lid_1.md3",		"0 180 0",	-5,		qtrue},
-	{"models/objects/common/yugo.md3",					"0 180 0",	-39,	qtrue},
-	{"models/objects/common/toilet_1.md3",				"0 180 0",	-39,	qtrue},
-	{"models/objects/Airport/box_cart.md3",				"0 180 0",	-39,	qtrue},
-	{"models/objects/Prague/misc/pra3_chandelier.md3",	"0 180 0",	-39,	qtrue}
+	{"instances/Colombia/tree01",						"90 0 0",	20,		qfalse,		NULL,			NULL},
+	{"instances/Colombia/tree02",						"0 0 0",	-35,	qfalse,		NULL,			NULL},
+	{"instances/Colombia/tree06",						"0 0 0",	-35,	qfalse,		NULL,			NULL},
+	{"instances/Colombia/npc_jump1",					"0 0 0",	-35,	qfalse,		NULL,			NULL},
+	{"models/objects/common/trash_can_lid_1.md3",		"0 180 0",	-5,		qtrue,		"-17 -17 0",	"17 17 70"},
+	{"models/objects/common/yugo.md3",					"0 180 0",	-43,	qtrue,		"-50 -90 0",	"50 80 140"},
+	{"models/objects/common/toilet_1.md3",				"0 180 0",	-39,	qtrue,		"-17 -17 0",	"17 17 125"},
+	{"models/objects/Airport/box_cart.md3",				"0 180 0",	-39,	qtrue,		"-40 -70 0",	"40 55 150"},
+	{"models/objects/Prague/misc/pra3_chandelier.md3",	"0 180 0",	-39,	qtrue,		"-75 -75 0",	"75 75 175"}
 };
 
 void G_TransformPlayerToObject(gentity_t *ent)
 {
-	int object, ii;
+	int object;
 	
 	// Boe!Man 2/5/14: First pick a random object.
 	object = irand(0, sizeof(TransformObjects) / sizeof(TransformObjects[0]) - 1);
@@ -1493,8 +1495,6 @@ void G_TransformPlayerToObject(gentity_t *ent)
 	}else{
 		AddSpawnField("classname", "nv_model");
 		AddSpawnField("model", TransformObjects[object].modelName);
-		AddSpawnField("mins", "-16 -16 0");
-		AddSpawnField("maxs", "16 16 16");
 	}
 	AddSpawnField("origin", va("%0.f %0.f %0.f", ent->s.origin[0], ent->s.origin[1], ent->s.origin[2] + TransformObjects[object].originOffset));
 	AddSpawnField("angles", TransformObjects[object].angles);
@@ -1510,6 +1510,25 @@ void G_TransformPlayerToObject(gentity_t *ent)
 	}
 	VectorCopy( ent->client->ps.origin, ent->s.origin );
 	
-	// .. and store the entity number for later usage.
+	// Reset the transformed entity if there is one.
+	if(ent->client->sess.transformedEntity){
+		G_FreeEntity(&g_entities[ent->client->sess.transformedEntity]);
+		ent->client->sess.transformedEntity = 0;
+	}
+	if(ent->client->sess.transformedEntity2){
+		G_FreeEntity(&g_entities[ent->client->sess.transformedEntity2]);
+		ent->client->sess.transformedEntity2 = 0;
+	}
+	// And store the entity number for later usage.
 	ent->client->sess.transformedEntity = G_SpawnGEntityFromSpawnVars(qfalse);
+	
+	// Don't forget a blocked trigger for models.
+	if(TransformObjects[object].isModel){
+		AddSpawnField("classname", "blocked_trigger");
+		AddSpawnField("model", "BLOCKED_TRIGGER");
+		AddSpawnField("origin", va("%0.f %0.f %0.f", ent->s.origin[0], ent->s.origin[1], ent->s.origin[2] + TransformObjects[object].originOffset));
+		AddSpawnField("mins", TransformObjects[object].mins);
+		AddSpawnField("maxs", TransformObjects[object].maxs);
+		ent->client->sess.transformedEntity2 = G_SpawnGEntityFromSpawnVars(qfalse);
+	}
 }
