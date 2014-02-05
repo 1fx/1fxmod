@@ -5342,9 +5342,9 @@ void Boe_Rename(int argNum, gentity_t *ent, qboolean shortCmd){
 			// Broadcast the unlock.
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^3%s ^7can now %sr%se%sn%sa%sm%se ^7again!", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 			if(ent && ent->client){
-				trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7%s can now rename again!\n\"", g_entities[idnum].client->pers.cleanName));
+				trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7%s can now rename again.\n\"", g_entities[idnum].client->pers.cleanName));
 			}else{
-				trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7%s can now rename again!\n\"", g_entities[idnum].client->pers.cleanName));
+				trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7%s can now rename again.\n\"", g_entities[idnum].client->pers.cleanName));
 			}
 			
 			return;
