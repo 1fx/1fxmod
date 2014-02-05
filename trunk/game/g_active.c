@@ -1275,12 +1275,10 @@ void ClientThink_real( gentity_t *ent )
 				if(!client->seekerAway){
 					client->seekerAwayTime = level.time + 10000;
 				}else{ // He was away, now he's not anymore.
-					trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s ^7is not away anymore.\n\"", client->pers.cleanName));
 					client->seekerAway = qfalse;
 					client->seekerAwayTime = level.time + 10000;
 				}
 			}else if(!client->seekerAway && level.time > client->seekerAwayTime){
-				trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s ^7is now away.\n\"", client->pers.cleanName));
 				client->seekerAway = level.time + 500;
 				
 				VectorCopy(client->ps.origin, newOrigin);
