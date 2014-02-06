@@ -1272,20 +1272,11 @@ void ClientThink_real( gentity_t *ent )
 			
 			// The seeker moved.
 			if(client->pers.cmd.forwardmove || client->pers.cmd.rightmove || client->pers.cmd.upmove || (client->pers.cmd.buttons & (BUTTON_ATTACK|BUTTON_ALT_ATTACK))){
-				if(!client->seekerAway){
-					client->seekerAwayTime = level.time + 10000;
-				}else{ // He was away, now he's not anymore.
+				if(client->seekerAway){
 					client->seekerAway = qfalse;
-					client->seekerAwayTime = level.time + 10000;
 				}
-			}else if(!client->seekerAway && level.time > client->seekerAwayTime){
-				client->seekerAway = level.time + 500;
-				
-				VectorCopy(client->ps.origin, newOrigin);
-				newOrigin[0] += 5;
-				newOrigin[2] += 75;
-				G_PlayEffect ( G_EffectIndex("misc/exclaimation"), newOrigin, ent->pos1);
-			}else if(client->seekerAway && level.time > client->seekerAway){
+				client->seekerAwayTime = level.time + 10000;
+			}else if(level.time > client->seekerAwayTime){
 				client->seekerAway = level.time + 500;
 				
 				VectorCopy(client->ps.origin, newOrigin);
