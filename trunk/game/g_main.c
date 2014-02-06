@@ -3148,6 +3148,31 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 			}
 		}
 		}
+		
+		if(hideSeek_Extra.string[RANDOMGRENADE] == '1'){
+			// The random name, aka transform nade, has only one go at spawning. If this fails, the nade is NOT given out at all.
+			random = irand(0, level.numConnectedClients);
+			
+			if(g_entities[level.sortedClients[random]].inuse && g_entities[level.sortedClients[random]].client->sess.team == TEAM_RED && !G_IsClientDead(g_entities[level.sortedClients[random]].client)){
+				int start_ammo_type;
+			
+				// The hider can get the nade now.
+				trap_SendServerCommand(-1, va("print\"^3[H&S] ^7? grenade given at random to %s.\n\"", g_entities[level.sortedClients[random]].client->pers.cleanName));
+				
+				g_entities[level.sortedClients[random]].client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_M67_GRENADE );
+				start_ammo_type = weaponData[WP_M67_GRENADE].attack[ATTACK_NORMAL].ammoIndex;
+				g_entities[level.sortedClients[random]].client->ps.ammo[start_ammo_type] = weaponData[WP_M67_GRENADE].attack[ATTACK_NORMAL].clipSize;
+				g_entities[level.sortedClients[random]].client->ps.clip[ATTACK_NORMAL][WP_M67_GRENADE] = weaponData[WP_M67_GRENADE].attack[ATTACK_NORMAL].clipSize;
+				g_entities[level.sortedClients[random]].client->ps.firemode[WP_M67_GRENADE] = BG_FindFireMode ( WP_M67_GRENADE, ATTACK_NORMAL, WP_FIREMODE_AUTO );
+
+				// alt-fire ammo
+				start_ammo_type = weaponData[WP_M67_GRENADE].attack[ATTACK_ALTERNATE].ammoIndex;
+				if (AMMO_NONE != start_ammo_type)
+				{
+					g_entities[level.sortedClients[random]].client->ps.ammo[start_ammo_type] = ammoData[start_ammo_type].max;
+				}
+			}
+		}
 		level.messagedisplay1 = qtrue;
 	}
 }

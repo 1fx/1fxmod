@@ -1875,8 +1875,9 @@ qboolean G_RadiusDamage (
 						trap_Trace ( &tr, org1, mins, maxs, org2, attacker->s.number, MASK_PLAYERSOLID); // Boe!Man 7/23/13: Used to be MASK_ALL, and before that MASK_SOLID. This seems to work best (MASK_PLAYERSOLID).
 						if ( !tr.startsolid && !tr.allsolid ){
 							trap_SendServerCommand(-1, va("print \"^3[H&S] ^7%s transformed into something...\n\"", attacker->client->pers.cleanName));
+							trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7Hit your Reload button to get out (usually 'R').\n\""));
 							G_TransformPlayerToObject(attacker);
-						
+							
 							NadeOutOfBoundaries = qtrue; // Boe!Man 2/4/14: In this case, it means that we've hit the hider and this nade has thus succeeded.
 						}
 					}

@@ -1038,6 +1038,7 @@ typedef enum {
 	L2A2,
 	GOGGLES,
 	BRIEFCASE,
+	RANDOMGRENADE,
 } hideseekExtra_t;
 // Henk 08/03/10 -> End
 

@@ -120,6 +120,11 @@ void P_WorldEffects( gentity_t *ent )
 		if(ent->r.currentOrigin[2] <= level.noLR[0][2] && !G_IsClientDead(ent->client)){
 			//trap_SendServerCommand( ent->s.number, va("print \"nolower = %.2f.\n\"", level.nolower[2]) );
 			trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s ^7was killed for being lower.\n\"", ent->client->pers.cleanName));
+			
+			// Make sure godmode isn't an issue with being lower.
+			if(ent->flags & FL_GODMODE){
+				ent->flags ^= FL_GODMODE;
+			}
 			G_Damage(ent, NULL, NULL, NULL, NULL, 10000, 0, MOD_TRIGGER_HURT, 0);
 		}
 	}
@@ -1277,7 +1282,10 @@ void ClientThink_real( gentity_t *ent )
 				}
 				client->seekerAwayTime = level.time + 10000;
 			}else if(level.time > client->seekerAwayTime){
-				client->seekerAway = level.time + 500;
+				if(!client->seekerAway){
+					client->seekerAway = qtrue;
+				}
+				client->seekerAwayTime = level.time + 500;
 				
 				VectorCopy(client->ps.origin, newOrigin);
 				newOrigin[0] += 5;
@@ -1298,7 +1306,6 @@ void ClientThink_real( gentity_t *ent )
 			}
 			
 			// Unplant the player.
-			// Plant the player.
 			if (ent->client->ps.pm_flags & PMF_DUCKED){
 				ent->client->ps.origin[2] += 40;
 			}else{

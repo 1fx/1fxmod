@@ -1478,6 +1478,38 @@ static transformObject_t TransformObjects[] =
 	{"models/objects/Prague/misc/pra3_chandelier.md3",	"0 180 0",	-39,	qtrue,		"-75 -75 0",	"75 75 175"}
 };
 
+void TransformPlayerBack(gentity_t *self, gentity_t *other, trace_t *trace)
+{
+	if(other->client && other->client->sess.team != TEAM_BLUE){
+		return;
+	}
+	
+	if(!g_entities[self->hideseek].client || g_entities[self->hideseek].client->pers.connected != CON_CONNECTED){
+		G_FreeEntity(self);
+		return;
+	}
+	
+	// First unplant the player.
+	if (g_entities[self->hideseek].client->ps.pm_flags & PMF_DUCKED){
+		g_entities[self->hideseek].client->ps.origin[2] += 40;
+	}else{
+		g_entities[self->hideseek].client->ps.origin[2] += 65;
+	}
+	VectorCopy( g_entities[self->hideseek].client->ps.origin, g_entities[self->hideseek].s.origin );
+
+	// Reset his invisibility state.
+	g_entities[self->hideseek].client->sess.invisibleGoggles = qfalse;
+	
+	// Good, now we can free the entities spawned.
+	if(g_entities[self->hideseek].client->sess.transformedEntity2){
+		G_FreeEntity(&g_entities[g_entities[self->hideseek].client->sess.transformedEntity]);
+	}
+	
+	trap_SendServerCommand(-1, va("print \"^3[H&S] ^7%s scared %s back to %s original form!\n\"", other->client->pers.cleanName, g_entities[self->hideseek].client->pers.cleanName, (strstr(g_entities[self->hideseek].client->pers.identity->mCharacter->mModel, "female") ? "her" : "his")));
+	
+	G_FreeEntity(self);
+}
+
 void G_TransformPlayerToObject(gentity_t *ent)
 {
 	int object;
@@ -1530,5 +1562,13 @@ void G_TransformPlayerToObject(gentity_t *ent)
 		AddSpawnField("mins", TransformObjects[object].mins);
 		AddSpawnField("maxs", TransformObjects[object].maxs);
 		ent->client->sess.transformedEntity2 = G_SpawnGEntityFromSpawnVars(qfalse);
+		
+		// Make sure the seeker can pop the hider out.
+		g_entities[ent->client->sess.transformedEntity2].touch = TransformPlayerBack;
+		g_entities[ent->client->sess.transformedEntity2].hideseek = ent->s.number;
+	}else{
+		// Apply the use action on the bsp.
+		g_entities[ent->client->sess.transformedEntity].touch = TransformPlayerBack;
+		g_entities[ent->client->sess.transformedEntity].hideseek = ent->s.number;
 	}
 }
