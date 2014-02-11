@@ -174,7 +174,7 @@
 // 0.72t		2nd Beta						1145		12/4/13		// Sent out to BETA group on 12/4/13
 // 0.72t		3rd Beta						1150		12/18/13	// Sent out to BETA group on 12/18/13
 // 0.72			Release							1165		1/22/14		// Sent out to public on 1/22/14
-// 0.73t		1st Beta						1185		2/11/14		// Sent out to BETA group on 2/11/14
+// 0.73t		1st Beta						1186		2/11/14		// Sent out to BETA group on 2/11/14
 
 
 //===================================================================

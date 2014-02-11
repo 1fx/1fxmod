@@ -596,7 +596,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_enableCustomCommands, "g_enableCustomCommands", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 	{ &g_customCommandsFile,			"g_customCommandsFile",			"files/CustomCommands.txt",	CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  }, // Boe!Man 3/6/11: So users can change if desired.
 	{ &g_tipsFile,						"g_tipsFile",					"files/tips.txt",	CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  }, // Boe!Man 6/24/11: So users can change if desired.
-	{ &hideSeek_Extra,			"hideSeek_Extra",			"11011",	CVAR_ARCHIVE|CVAR_LATCH,	0.0,	0.0,  0, qfalse  }, // Boe!Man 3/6/11: So users can change if desired.
+	{ &hideSeek_Extra,			"hideSeek_Extra",			"110110",	CVAR_ARCHIVE|CVAR_LATCH,	0.0,	0.0,  0, qfalse  }, // Boe!Man 3/6/11: So users can change if desired.
 	{ &hideSeek_Nades,			"hideSeek_Nades",			"1111",	CVAR_ARCHIVE|CVAR_LATCH,	0.0,	0.0,  0, qfalse  }, // Boe!Man 3/6/11: So users can change if desired.
 	{ &hideSeek_Weapons,		"hideSeek_Weapons",			"111",	CVAR_ARCHIVE|CVAR_LATCH,	0.0,	0.0,  0, qfalse  }, // Boe!Man 3/6/11: So users can change if desired.
 	{ &hideSeek_ExtendedRoundStats,		"hideSeek_ExtendedRoundStats",		"1",	CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  }, // Boe!Man 9/2/12: CVAR for extended round stats.
