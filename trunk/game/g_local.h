@@ -1604,6 +1604,9 @@ int StartAfterCommand(char *param);
 extern 	vmCvar_t	g_debug;
 #endif
 
+// Boe!Man 2/17/14: Sets where the inview database is located.
+extern	vmCvar_t	g_inviewDb;
+
 //==================================================================
 
 // Boe!Man 11/29/12: GT specific module handler.

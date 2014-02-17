@@ -310,6 +310,7 @@ vmCvar_t	g_dosPatch;
 vmCvar_t	sql_aliasFlushCount;
 vmCvar_t	sql_timeBench;
 vmCvar_t	sql_automaticBackup;
+vmCvar_t	g_inviewDb;
 
 #ifdef _DEBUG
 vmCvar_t	g_debug;
@@ -644,12 +645,13 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_dosPatch,					"g_DoSPatch",			 	"1",		CVAR_ROM, 0.0, 0.0, 0, qfalse },
 	
 	// Boe!Man 1/2/13: --- SQLite3 Related CVARs ---
-	{ &sql_aliasFlushCount,			"sql_aliasFlushCount",		"7500",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
-	{ &sql_automaticBackup,			"sql_automaticBackup",		"1",			CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
+	{ &sql_aliasFlushCount,			"sql_aliasFlushCount",		"7500",				CVAR_ARCHIVE,				0.0f,   0.0f, 0,  qfalse },
+	{ &sql_automaticBackup,			"sql_automaticBackup",		"1",				CVAR_ARCHIVE,				0.0f,   0.0f, 0,  qfalse },
+	{ &g_inviewDb,					"g_inviewDb",				"core/inview.db",	CVAR_ARCHIVE|CVAR_LATCH,	0.0f,   0.0f, 0,  qfalse },
 	#ifdef _DEBUG
-	{ &sql_timeBench,				"sql_timeBench",			"1",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
+	{ &sql_timeBench,				"sql_timeBench",			"1",				CVAR_ARCHIVE,				0.0f,   0.0f, 0,  qfalse },
 	#else
-	{ &sql_timeBench,				"sql_timeBench",			"0",				CVAR_ARCHIVE,	0.0f,   0.0f, 0,  qfalse },
+	{ &sql_timeBench,				"sql_timeBench",			"0",				CVAR_ARCHIVE,				0.0f,   0.0f, 0,  qfalse },
 	#endif
 
 	//{ &g_clientDeathMessages,		"g_clientDeathMessages",		 	"0",		CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },

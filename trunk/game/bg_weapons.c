@@ -994,14 +994,14 @@ qboolean BG_ParseInviewFile(void)
 	// Boe!Man 12/5/12
 	// The file can be on two locations. The DLL should always be in the fs_game folder, however, this could be misconfigured.
 	// The Mod takes care of this problem and should load the file correctly, even if misplaced.
-	rc = sqlite3_open_v2("./core/inview.db", &db, SQLITE_OPEN_READONLY, NULL); // Boe!Man 12/5/12: *_v2 can make sure an empty database is NOT created. After all, the inview db is READ ONLY.
+	rc = sqlite3_open_v2(va("./%s", g_inviewDb.string), &db, SQLITE_OPEN_READONLY, NULL); // Boe!Man 12/5/12: *_v2 can make sure an empty database is NOT created. After all, the inview db is READ ONLY.
 	if(rc){
 		char fsGame[MAX_QPATH];
 		trap_Cvar_VariableStringBuffer("fs_game", fsGame, sizeof(fsGame));
-		rc = sqlite3_open_v2(va("./%s/core/inview.db", fsGame), &db, SQLITE_OPEN_READONLY, NULL);
+		rc = sqlite3_open_v2(va("./%s/%s", fsGame, g_inviewDb.string), &db, SQLITE_OPEN_READONLY, NULL);
 		if(rc){
 			G_LogPrintf("^1Error: ^7Inview database: %s\n", sqlite3_errmsg(db));
-			return qfalse;
+			Com_Error(ERR_FATAL, "^1Failed to load inview database: %s\n", sqlite3_errmsg(db));
 		}else{
 			level.altPath = qtrue;
 			Q_strncpyz(level.altString, va("./%s", fsGame), sizeof(level.altString));
