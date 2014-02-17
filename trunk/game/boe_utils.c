@@ -500,6 +500,13 @@ void Boe_Tokens(gentity_t *ent, char *chatText, int mode, qboolean CheckSounds)
 					}else
 						chatText++;
 					continue;
+				case '?':
+					if(current_gametype.value == GT_HS){
+					Q_strcat(newText, MAX_SAY_TEXT, va("%s", level.RandomNadeLoc));
+					chatText++;
+					}else
+						chatText++;
+					continue;
 				case 'n':
 				case 'N':
 						Q_strcat(newText, MAX_SAY_TEXT, va("%s", g_motd.string));

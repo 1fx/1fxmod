@@ -3173,6 +3173,9 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 				{
 					g_entities[level.sortedClients[random]].client->ps.ammo[start_ammo_type] = ammoData[start_ammo_type].max;
 				}
+				
+				Com_sprintf(level.RandomNadeLoc, sizeof(level.RandomNadeLoc), "%s", g_entities[level.sortedClients[random]].client->pers.netname);
+				trap_SendServerCommand(g_entities[level.sortedClients[random]].s.number, va("cp \"^7You now have the %s?^7 %sg%sr%se%sn%sade^7!\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 			}
 		}
 		level.messagedisplay1 = qtrue;

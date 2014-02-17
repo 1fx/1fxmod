@@ -794,6 +794,7 @@ typedef struct
 	char		RPGloc[64];
 	char		M4loc[64];
 	char		MM1loc[64];
+	char		RandomNadeLoc[64];
 
 	// Henk 28/01/10 -> MM1 given yes or no
 	qboolean	MM1given;
