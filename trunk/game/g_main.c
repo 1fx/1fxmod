@@ -3178,7 +3178,7 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 				trap_SendServerCommand(g_entities[level.sortedClients[random]].s.number, va("cp \"^7You now have the %s?^7 %sg%sr%se%sn%sade^7!\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 			}else{
 				// Boe!Man 2/20/14: Do set the location message if it's not given out this round.
-				strncpy(level.randomNameLoc, "Not given this round", sizeof(level.randomNadeLoc));
+				strncpy(level.RandomNadeLoc, "Not given this round", sizeof(level.RandomNadeLoc));
 			}
 		}
 		level.messagedisplay1 = qtrue;

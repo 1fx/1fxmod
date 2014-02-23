@@ -1507,6 +1507,7 @@ void TransformPlayerBack(gentity_t *self, gentity_t *other, trace_t *trace)
 	
 	trap_SendServerCommand(-1, va("print \"^3[H&S] ^7%s scared %s back to %s original form!\n\"", other->client->pers.cleanName, g_entities[self->hideseek].client->pers.cleanName, (strstr(g_entities[self->hideseek].client->pers.identity->mCharacter->mModel, "female") ? "her" : "his")));
 	
+	strncpy(level.RandomNadeLoc, "Disappeared", sizeof(level.RandomNadeLoc));
 	G_FreeEntity(self);
 }
 
