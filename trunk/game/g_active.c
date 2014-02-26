@@ -1306,15 +1306,14 @@ void ClientThink_real( gentity_t *ent )
 			}
 			
 			// Unplant the player.
-			if (ent->client->ps.pm_flags & PMF_DUCKED){
-				ent->client->ps.origin[2] += 40;
-			}else{
-				ent->client->ps.origin[2] += 65;
-			}
+			ent->client->ps.origin[2] += 65;
 			VectorCopy( ent->client->ps.origin, ent->s.origin );
 		
 			// Reset his invisibility state.
 			client->sess.invisibleGoggles = qfalse;
+			
+			// And reset the nade state.
+			strncpy(level.RandomNadeLoc, "Disappeared", sizeof(level.RandomNadeLoc));
 		}
 	}else if(current_gametype.value == GT_HZ){
 		if(client->sess.firstzombie == qtrue){
