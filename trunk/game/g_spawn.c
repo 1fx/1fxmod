@@ -1499,7 +1499,7 @@ void TransformPlayerBack(gentity_t *self, gentity_t *other, trace_t *trace)
 	// Good, now we can free the entities spawned.
 	if(g_entities[self->hideseek].client->sess.transformedEntity2){
 		G_FreeEntity(&g_entities[g_entities[self->hideseek].client->sess.transformedEntity]);
-		g_entities[g_entities[self->hideseek].client->sess.transformedEntity = 0;
+		g_entities[self->hideseek].client->sess.transformedEntity = 0;
 	}
 	
 	trap_SendServerCommand(-1, va("print \"^3[H&S] ^7%s scared %s back to %s original form!\n\"", other->client->pers.cleanName, g_entities[self->hideseek].client->pers.cleanName, (strstr(g_entities[self->hideseek].client->pers.identity->mCharacter->mModel, "female") ? "her" : "his")));

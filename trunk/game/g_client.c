@@ -2437,6 +2437,19 @@ void ClientDisconnect( int clientNum )
 		if(current_gametype.value != GT_HS && current_gametype.value != GT_HZ){
 			// Dont drop weapons
 			ent->client->ps.stats[STAT_WEAPONS] = 0;
+		}else if(current_gametype.value == GT_HS){
+			// Also check the random grenade.
+			if(hideSeek_Extra.string[RANDOMGRENADE] == '1' && ent->client->sess.transformedEntity){
+				G_FreeEntity(&g_entities[ent->client->sess.transformedEntity]);
+				ent->client->sess.transformedEntity = 0;
+				
+				if(ent->client->sess.transformedEntity2){
+					G_FreeEntity(&g_entities[ent->client->sess.transformedEntity2]);
+					ent->client->sess.transformedEntity2 = 0;
+				}
+				
+				strncpy(level.RandomNadeLoc, "Disappeared", sizeof(level.RandomNadeLoc));
+			}
 		}
 
 		// Get rid of things that need to drop
