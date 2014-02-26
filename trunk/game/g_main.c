@@ -3175,7 +3175,15 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 				}
 				
 				Com_sprintf(level.RandomNadeLoc, sizeof(level.RandomNadeLoc), "%s", g_entities[level.sortedClients[random]].client->pers.netname);
-				trap_SendServerCommand(g_entities[level.sortedClients[random]].s.number, va("cp \"^7You now have the %s?^7 %sg%sr%se%sn%sade^7!\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+				
+				// Boe!Man 2/26/14: Broadcast all the weapons the random nade carrier got, he might have RPG/M4 as well.
+				if(g_entities[level.sortedClients[random]].client->ps.stats[STAT_WEAPONS] & (1 << WP_RPG7_LAUNCHER)){
+					trap_SendServerCommand(g_entities[level.sortedClients[random]].s.number, va("cp \"^7You have the %sR%sP%sG ^7& %s?^7 %sg%srenade^7!\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+				}else if(g_entities[level.sortedClients[random]].client->ps.stats[STAT_WEAPONS] & (1 << WP_M4_ASSAULT_RIFLE)){
+					trap_SendServerCommand(g_entities[level.sortedClients[random]].s.number, va("cp \"^7You have the %sM%s4 ^7& %s?^7 %sg%sr%senade^7!\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+				}else{
+					trap_SendServerCommand(g_entities[level.sortedClients[random]].s.number, va("cp \"^7You now have the %s?^7 %sg%sr%se%sn%sade^7!\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+				}
 			}else{
 				// Boe!Man 2/20/14: Do set the location message if it's not given out this round.
 				strncpy(level.RandomNadeLoc, "Not given this round", sizeof(level.RandomNadeLoc));
