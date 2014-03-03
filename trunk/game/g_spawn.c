@@ -1485,6 +1485,7 @@ void TransformPlayerBack(gentity_t *self, gentity_t *other, trace_t *trace)
 	}
 	
 	if(!g_entities[self->hideseek].client || g_entities[self->hideseek].client->pers.connected != CON_CONNECTED || G_IsClientSpectating(g_entities[self->hideseek].client)){
+		trap_SendServerCommand(other-g_entities, "print \"^3[H&S] ^7Woops, nothing here!\n\"");
 		G_FreeEntity(self);
 		return;
 	}

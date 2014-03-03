@@ -83,6 +83,9 @@ int Pickup_Weapon (gentity_t *ent, gentity_t *other, qboolean* autoswitch )
 				level.MM1Time = 0;
 				trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s has taken the MM1.\n\"", other->client->pers.netname));
 				Com_sprintf(level.MM1loc, sizeof(level.MM1loc), "%s", other->client->pers.netname);
+			}else if(weaponNum == WP_M67_GRENADE){
+				trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s has taken the ? grenade.\n\"", other->client->pers.netname));
+				Com_sprintf(level.RandomNadeLoc, sizeof(level.RandomNadeLoc), "%s", other->client->pers.netname);
 			}
 		}
 	}
@@ -834,6 +837,13 @@ gentity_t* G_DropWeapon ( gentity_t* ent, weapon_t weapon, int pickupDelay )
 				trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s has dropped the MM1 at %s.\n\"", ent->client->pers.netname, level.MM1loc));
 			}else{
 				trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s has dropped the MM1.\n\"", ent->client->pers.netname));
+			}
+		}else if(weapon == WP_M67_GRENADE){
+			Com_sprintf(level.RandomNadeLoc, sizeof(level.RandomNadeLoc), "%s", location);
+			if(!noloc){
+				trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s has dropped the ? grenade at %s.\n\"", ent->client->pers.netname, location));
+			}else{
+				trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s has dropped the ? grenade.\n\"", ent->client->pers.netname));
 			}
 		}
 		ent->client->ps.weapon = WP_KNIFE;
