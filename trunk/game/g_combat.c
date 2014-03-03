@@ -2134,13 +2134,16 @@ qboolean G_RadiusDamage (
 		}else if(mod == WP_M67_GRENADE && !NadeOutOfBoundaries){
 			// Give them their nade back if they don't have it.
 			ammoindex=weaponData[WP_M67_GRENADE].attack[ATTACK_ALTERNATE].ammoIndex;
-			attacker->client->ps.ammo[ammoindex]+=1;
-
-			if (!(attacker->client->ps.stats[STAT_WEAPONS] & (1<<WP_M67_GRENADE))){
-				attacker->client->ps.stats[STAT_WEAPONS] |= (1 << WP_M67_GRENADE);
-			}
+			
+			// This can happen multiple times, so have some sort of check here.
+			if(!attacker->client->ps.ammo[ammoindex]){
+				attacker->client->ps.ammo[ammoindex]+=1;
+				trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7The grenade must detonate near just you in order to transform.\n\""));
 				
-			trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7The grenade must detonate near just you in order to transform.\n\""));
+				if (!(attacker->client->ps.stats[STAT_WEAPONS] & (1<<WP_M67_GRENADE))){
+					attacker->client->ps.stats[STAT_WEAPONS] |= (1 << WP_M67_GRENADE);
+				}
+			}
 		}
 	}
 
