@@ -1135,6 +1135,7 @@ void		G_RunThink							( gentity_t *ent );
 void QDECL	G_LogPrintf							( const char *fmt, ... );
 void		SendScoreboardMessageToAllClients	( void );
 void		CheckGametype						( void );
+qboolean	G_CheckAlive						( void );
 
 //
 // g_client.c

@@ -240,6 +240,10 @@ static inline float LittleFloat (const float l) { return FloatSwap(&l); }
 // just waste space and make big arrays static...
 #ifdef __linux__
 
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+
 // bk001205 - from Makefile
 #define stricmp strcasecmp
 

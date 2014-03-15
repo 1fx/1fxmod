@@ -6,7 +6,10 @@
 
 #ifdef __linux__
 unsigned char	memsys5[41943040]; // Boe!Man 1/29/13: Buffer of 40 MB, available for SQLite memory management (Linux).
+#elif WIN32
+fileHandle_t lock;
 #endif
+
 // Boe!Man 6/26/13: The in-memory databases to be used globally across the Mod.
 sqlite3 		*aliasesDb;
 sqlite3 		*bansDb;
@@ -1132,6 +1135,11 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	Com_Printf ("------- Game Initialization -------\n");
 	Com_Printf ("Mod: %s %s\n", INF_STRING, INF_VERSION_STRING);
 	Com_Printf ("Date: %s\n", INF_VERSION_DATE);
+	
+	// Boe!Man 3/14/14: Check if we can actually start the server.
+	if(G_CheckAlive()){
+		Com_Error(ERR_FATAL, "Another instance is running!");
+	}
 
 	#ifdef __linux__
 	// Boe!Man 1/29/13: Initialize the in-game memory-management buffer on Linux (SQLite3 memsys5).
@@ -1512,6 +1520,10 @@ void G_ShutdownGame( int restart )
 	#ifdef __linux__
 	sqlite3_shutdown();
 	memset(memsys5, 0, sizeof(memsys5));
+	#elif WIN32
+	if(lock){
+		trap_FS_FCloseFile(lock);
+	}
 	#endif
 	
 	// Boe!Man 1/2/14: Check if the engine threw a Com_Error in another function (also logs it upon succesfull detection).
@@ -3581,4 +3593,39 @@ void Boe_setTrackedCvar(int num, int value)
 	cv[num].trackChange = qtrue;
 
 	return;
+}
+
+/*
+================
+G_CheckAlive
+3/14/14 - 11:15 PM
+Purpose: Checks if the server is alive at this moment.
+================
+*/
+
+qboolean G_CheckAlive(void)
+{
+	#ifdef __linux__
+	struct flock fl;
+
+	fl.l_type = F_WRLCK;
+	fl.l_whence = SEEK_SET;
+	fl.l_start = 0;
+	fl.l_len = 1;
+
+	if((fdlock = open("srv.lck", O_WRONLY|O_CREAT, 0666)) == -1){
+		return qtrue;
+	}
+
+	if(fcntl(fdlock, F_SETLK, &fl) == -1){
+		return qtrue;
+	}
+	#elif WIN32
+	trap_FS_FOpenFile("srv.lck", &lock, FS_APPEND_SYNC);
+	if(!lock){
+		return qtrue;
+	}
+	#endif
+	
+	return qfalse;
 }
