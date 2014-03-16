@@ -6,9 +6,7 @@
 
 #ifdef __linux__
 unsigned char	memsys5[41943040]; // Boe!Man 1/29/13: Buffer of 40 MB, available for SQLite memory management (Linux).
-#elif WIN32
-fileHandle_t lock;
-#endif
+#endif // __linux__
 
 // Boe!Man 6/26/13: The in-memory databases to be used globally across the Mod.
 sqlite3 		*aliasesDb;
@@ -1520,11 +1518,7 @@ void G_ShutdownGame( int restart )
 	#ifdef __linux__
 	sqlite3_shutdown();
 	memset(memsys5, 0, sizeof(memsys5));
-	#elif WIN32
-	if(lock){
-		trap_FS_FCloseFile(lock);
-	}
-	#endif
+	#endif // __linux__
 	
 	// Boe!Man 1/2/14: Check if the engine threw a Com_Error in another function (also logs it upon succesfull detection).
 	logCrash();
@@ -3605,8 +3599,10 @@ Purpose: Checks if the server is alive at this moment.
 
 qboolean G_CheckAlive(void)
 {
+	// TODO: Windows implementation using LockFileEx.
 	#ifdef __linux__
 	struct flock fl;
+	int fdlock;
 
 	fl.l_type = F_WRLCK;
 	fl.l_whence = SEEK_SET;
@@ -3620,12 +3616,7 @@ qboolean G_CheckAlive(void)
 	if(fcntl(fdlock, F_SETLK, &fl) == -1){
 		return qtrue;
 	}
-	#elif WIN32
-	trap_FS_FOpenFile("srv.lck", &lock, FS_APPEND_SYNC);
-	if(!lock){
-		return qtrue;
-	}
-	#endif
+	#endif // __linux__
 	
 	return qfalse;
 }
