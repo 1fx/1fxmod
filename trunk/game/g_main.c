@@ -6,7 +6,10 @@
 
 #ifdef __linux__
 unsigned char	memsys5[41943040]; // Boe!Man 1/29/13: Buffer of 40 MB, available for SQLite memory management (Linux).
-#endif // __linux__
+#elif WIN32
+#include <windows.h>
+HANDLE lockFile;
+#endif
 
 // Boe!Man 6/26/13: The in-memory databases to be used globally across the Mod.
 sqlite3 		*aliasesDb;
@@ -1518,7 +1521,11 @@ void G_ShutdownGame( int restart )
 	#ifdef __linux__
 	sqlite3_shutdown();
 	memset(memsys5, 0, sizeof(memsys5));
-	#endif // __linux__
+	#elif WIN32
+	UnlockFile(lockFile, 0, 0, 0xffffff, 0xffffff);
+	CloseHandle(lockFile);
+	DeleteFile(TEXT("srv.lck"));
+	#endif
 	
 	// Boe!Man 1/2/14: Check if the engine threw a Com_Error in another function (also logs it upon succesfull detection).
 	logCrash();
@@ -3599,7 +3606,6 @@ Purpose: Checks if the server is alive at this moment.
 
 qboolean G_CheckAlive(void)
 {
-	// TODO: Windows implementation using LockFileEx.
 	#ifdef __linux__
 	struct flock fl;
 	int fdlock;
@@ -3616,7 +3622,30 @@ qboolean G_CheckAlive(void)
 	if(fcntl(fdlock, F_SETLK, &fl) == -1){
 		return qtrue;
 	}
-	#endif // __linux__
+	#elif WIN32
+	BOOL success;
+	
+	// Boe!Man 3/20/14: Open the lock file.
+	lockFile = CreateFile(TEXT("srv.lck"), GENERIC_WRITE, 0, NULL, CREATE_NEW, 0, NULL);
+	
+	if (lockFile == INVALID_HANDLE_VALUE){
+    	return qtrue;
+	}
+	
+	success = WriteFile(lockFile, TEXT("1fx. Mod server lock - Do not modify."), 37, NULL, NULL);
+	if(!success){
+		return qtrue;
+	}
+	
+	// Flush buffer.
+	FlushFileBuffers(lockFile);
+	
+	// Lock the whole file.
+	success = LockFile(lockFile, 0, 0, 0xffffffff, 0xffffffff);
+	if(!success){
+		return qtrue;
+	}
+	#endif
 	
 	return qfalse;
 }
