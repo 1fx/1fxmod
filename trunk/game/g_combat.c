@@ -1772,12 +1772,23 @@ qboolean G_RadiusDamage (
 		mins[i] = origin[i] - radius;
 		maxs[i] = origin[i] + radius;
 	}
-
-	if(mod == 264 && current_gametype.value == GT_HS){ // m4 cage
-		for ( i = 0 ; i < 3 ; i++ ) 
-		{
-			mins1[i] = origin[i] - 90;
-			maxs1[i] = origin[i] + 90;
+	
+	if(current_gametype.value == GT_HS){
+		if(mod == 264){ // m4 cage
+			for ( i = 0 ; i < 3 ; i++ ) 
+			{
+				mins1[i] = origin[i] - 90;
+				maxs1[i] = origin[i] + 90;
+			}
+		}else if(mod == WP_MDN11_GRENADE || mod == 274){
+			// Boe!Man 3/21/14: Custom check for the MDN11 grenade.
+			mins1[0] = -17;
+			mins1[1] = -13;
+			mins1[2] = -9;
+			
+			maxs1[0] = 17;
+			maxs1[1] = 53;
+			maxs1[2] = -9;
 		}
 	}
 	maxs1[2] += 50;

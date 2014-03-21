@@ -413,7 +413,7 @@ void SpawnBox		 (vec3_t org)
 	AddSpawnField("classname", "misc_bsp"); // blocker
 	AddSpawnField("bspmodel",	"instances/Colombia/npc_jump1");
 	AddSpawnField("origin",		origin);
-	AddSpawnField("angles",		"0 98 0");
+	AddSpawnField("angles",		"0 90 0");
 	AddSpawnField("model",		"trigger_hurt"); //blocked_trigger
 	AddSpawnField("count",		 "1");
 	AddSpawnField("hideseek",	 "1");
