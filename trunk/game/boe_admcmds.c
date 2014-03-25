@@ -3088,7 +3088,6 @@ void Boe_Runover (int argNum, gentity_t *adm, qboolean shortCmd)
 
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 	Boe_ClientSound(ent, G_SoundIndex("sound/ambience/vehicles/hit_scrape.mp3"));
-	ent->client->ps.weaponstate = WEAPON_FIRING;
 	ent->client->ps.velocity[2] = 20;
 	ent->client->ps.weaponTime = 3000;
 
