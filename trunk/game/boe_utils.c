@@ -2327,6 +2327,7 @@ void Boe_displayTokens ( gentity_t *ent )
 		trap_SendServerCommand( ent-g_entities, va("print \"\n^7#r^1/^7#R    [^3Shows players' name that holds RPG or its location^7]\n"));
 		trap_SendServerCommand( ent-g_entities, va("print \"^7#c^1/^7#C    [^3Shows players' name that holds M4 or its location^7]\n"));
 		trap_SendServerCommand( ent-g_entities, va("print \"^7#m^1/^7#M    [^3Shows players' name that holds MM1 or its location^7]\n"));
+		trap_SendServerCommand( ent-g_entities, va("print \"^7#?       [^3Shows players' name that holds '? grenade' or its location^7]\n"));
 	}
 
 	trap_SendServerCommand( ent-g_entities, va("print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\""));
