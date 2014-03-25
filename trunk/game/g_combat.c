@@ -1745,7 +1745,7 @@ qboolean G_RadiusDamage (
 	gentity_t	*ent, *tent;
 	int			entityList[MAX_GENTITIES], entityList1[MAX_GENTITIES];
 	int			numListedEntities;
-	vec3_t		mins, maxs, mins1, maxs1;
+	vec3_t		mins, maxs, mins1, maxs1, mins2, maxs2;
 	vec3_t		v;
 	vec3_t		dir, rpgAngs, rpgdir;
 	int			i, e, a;
@@ -1777,20 +1777,27 @@ qboolean G_RadiusDamage (
 		if(mod == 264){ // M4 cage.
 			// Boe!Man 3/25/14: Custom check for the M4 cage.
 			mins1[0] = origin[0] - 115;
-			mins1[1] = origin[1] - 3;
-			mins1[2] = origin[2] - 1;
+			mins1[1] = origin[1] - 25;
+			mins1[2] = origin[2] - 25;
 			
 			maxs1[0] = origin[0] + 115;
-			maxs1[1] = origin[1] + 3;
+			maxs1[1] = origin[1] + 25;
 			maxs1[2] = origin[2] + 213;
+			
+			// For the further check to see what or who was trapped.
+			for ( i = 0 ; i < 3 ; i++ ) 
+			{
+				mins2[i] = origin[i] - 90;
+				maxs2[i] = origin[i] + 90;
+			}
 		}else if(mod == WP_MDN11_GRENADE || mod == 274){
 			// Boe!Man 3/21/14: Custom check for the MDN11 grenade.
-			mins1[0] = origin[0] -17;
-			mins1[1] = origin[1] -13;
+			mins1[0] = origin[0] -22;
+			mins1[1] = origin[1] -17;
 			mins1[2] = origin[2] -9;
 			
-			maxs1[0] = origin[0] + 17;
-			maxs1[1] = origin[1] + 53;
+			maxs1[0] = origin[0] + 23;
+			maxs1[1] = origin[1] + 58;
 			maxs1[2] = origin[2] - 9;
 		}
 	}
@@ -1814,7 +1821,7 @@ qboolean G_RadiusDamage (
 					}
 					else if(ent->client->sess.team == TEAM_BLUE){ // seeker caught in radius
 						CageOutOfBoundaries = qtrue;
-						num = trap_EntitiesInBox( mins1, maxs1, entityList1, MAX_GENTITIES );
+						num = trap_EntitiesInBox( mins2, maxs2, entityList1, MAX_GENTITIES );
 						for ( a = 0 ; a < num ; a++ ) // Loop until seeker has been found in safe radius
 						{	
 							if(g_entities[entityList1[ a ]].client && g_entities[entityList1[ a ]].client->sess.team == TEAM_BLUE){
