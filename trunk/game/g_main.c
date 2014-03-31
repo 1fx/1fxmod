@@ -3632,14 +3632,6 @@ qboolean G_CheckAlive(void)
     	return qtrue;
 	}
 	
-	success = WriteFile(lockFile, TEXT("1fx. Mod server lock - Do not modify."), 37, NULL, NULL);
-	if(!success){
-		return qtrue;
-	}
-	
-	// Flush buffer.
-	FlushFileBuffers(lockFile);
-	
 	// Lock the whole file.
 	success = LockFile(lockFile, 0, 0, 0xffffffff, 0xffffffff);
 	if(!success){
