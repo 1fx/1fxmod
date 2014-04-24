@@ -1766,7 +1766,12 @@ qboolean G_RadiusDamage (
 	{
 		radius = 1;
 	}
-
+	
+	// Boe!Man 4/24/14: No matter where they throw that grenade, always check the origin around the hider only.
+	if(current_gametype.value == GT_HS && mod == WP_M67_GRENADE && attacker){
+		origin = attacker->r.currentOrigin;
+	}
+	
 	for ( i = 0 ; i < 3 ; i++ )
 	{
 		mins[i] = origin[i] - radius;
@@ -1882,27 +1887,12 @@ qboolean G_RadiusDamage (
 			
 			// Transform grenade for the hider.
 			if(mod == WP_M67_GRENADE){
-				if(ent == attacker){
-					// Box grenade for the hider.
-					if(!(attacker->client->ps.pm_flags & PMF_JUMPING)){
-						// Do some checks, a player shouldn't be near.
-						vec3_t	mins = {-75, -75, -DEFAULT_PLAYER_Z_MAX};
-						vec3_t	maxs = {75, 75, DEFAULT_PLAYER_Z_MAX};
-						vec3_t			org1, org2;
-						trace_t			tr;
-						VectorCopy(origin, org1);
-						VectorCopy(origin, org2);
-						org1[2] += 50;
-						trap_Trace ( &tr, org1, mins, maxs, org2, attacker->s.number, MASK_PLAYERSOLID); // Boe!Man 7/23/13: Used to be MASK_ALL, and before that MASK_SOLID. This seems to work best (MASK_PLAYERSOLID).
-						if ( !tr.startsolid && !tr.allsolid ){
-							trap_SendServerCommand(-1, va("print \"^3[H&S] ^7%s transformed into something...\n\"", attacker->client->pers.cleanName));
-							trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7Hit your Reload button to get out (usually 'R').\n\""));
-							G_TransformPlayerToObject(attacker);
-							
-							NadeOutOfBoundaries = qtrue; // Boe!Man 2/4/14: In this case, it means that we've hit the hider and this nade has thus succeeded.
-						}
+				// Check if a player was caught in the radius.
+				if(ent != attacker){
+					if(ent && ent->client){
+						NadeOutOfBoundaries = qtrue;
+						break;
 					}
-					break;
 				}
 			}
 			
@@ -2152,17 +2142,23 @@ qboolean G_RadiusDamage (
 		}else if(mod == WP_MM1_GRENADE_LAUNCHER){
 			missile = NV_projectile( attacker, origin, dir, WP_ANM14_GRENADE, 0 );
 			missile->nextthink = level.time + 250;
-		}else if(mod == WP_M67_GRENADE && !NadeOutOfBoundaries){
-			// Give them their nade back if they don't have it.
-			ammoindex=weaponData[WP_M67_GRENADE].attack[ATTACK_ALTERNATE].ammoIndex;
-			
-			// This can happen multiple times, so have some sort of check here.
-			if(!attacker->client->ps.ammo[ammoindex]){
-				attacker->client->ps.ammo[ammoindex]+=1;
-				trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7The grenade must detonate near just you in order to transform.\n\""));
+		}else if(mod == WP_M67_GRENADE){
+			if(!(attacker->client->ps.pm_flags & PMF_JUMPING) && attacker->client->ps.groundEntityNum != ENTITYNUM_NONE && !NadeOutOfBoundaries){
+				trap_SendServerCommand(-1, va("print \"^3[H&S] ^7%s transformed into something...\n\"", attacker->client->pers.cleanName));
+				trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7Hit your Reload button to get out (usually 'R').\n\""));
+				G_TransformPlayerToObject(attacker);
+			}else{
+				// Give them their nade back if they don't have it.
+				ammoindex=weaponData[WP_M67_GRENADE].attack[ATTACK_ALTERNATE].ammoIndex;
 				
-				if (!(attacker->client->ps.stats[STAT_WEAPONS] & (1<<WP_M67_GRENADE))){
-					attacker->client->ps.stats[STAT_WEAPONS] |= (1 << WP_M67_GRENADE);
+				// This can happen multiple times, so have some sort of check here.
+				if(!attacker->client->ps.ammo[ammoindex]){
+					attacker->client->ps.ammo[ammoindex]+=1;
+					trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7The grenade must detonate near just you in order to transform.\n\""));
+					
+					if (!(attacker->client->ps.stats[STAT_WEAPONS] & (1<<WP_M67_GRENADE))){
+						attacker->client->ps.stats[STAT_WEAPONS] |= (1 << WP_M67_GRENADE);
+					}
 				}
 			}
 		}
