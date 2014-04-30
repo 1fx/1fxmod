@@ -2338,8 +2338,14 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	char message[512];
 	char broadcast[512];
 
-	if(!ent || !ent->client)
+	if(!ent || !ent->client){
 		return;
+	}
+	
+	// Boe!Man 4/30/14: Check if the client said this while in-game and not in the loading screen (to avoid spam).
+	if(!ent->client->pers.enterTime){
+		return;
+	}
 
 	if ( trap_Argc () < 2 && !arg0 )
 		return;
