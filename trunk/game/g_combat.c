@@ -1725,6 +1725,17 @@ int G_MultipleDamageLocations(int hitLocation)
 	return (hitLocation);
 }
 
+/*
+================
+altAttack
+4/30/14 - 9:25 PM
+Convenience function to quickly get the alt attack mod value.
+================
+*/
+
+int altAttack(int weapon){
+	return weapon + 256;
+}
 
 /*
 ============
@@ -1768,7 +1779,7 @@ qboolean G_RadiusDamage (
 	}
 	
 	// Boe!Man 4/24/14: No matter where they throw that grenade, always check the origin around the hider only.
-	if(current_gametype.value == GT_HS && mod == WP_M67_GRENADE && attacker){
+	if(current_gametype.value == GT_HS && (mod == WP_M67_GRENADE || mod == altAttack(WP_M67_GRENADE)) && attacker){
 		origin = attacker->r.currentOrigin;
 	}
 	
@@ -1779,7 +1790,7 @@ qboolean G_RadiusDamage (
 	}
 	
 	if(current_gametype.value == GT_HS){
-		if(mod == 264){ // M4 cage.
+		if(mod == altAttack(MOD_M4_ASSAULT_RIFLE)){ // M4 cage.
 			// Boe!Man 3/25/14: Custom check for the M4 cage.
 			mins1[0] = origin[0] - 115;
 			mins1[1] = origin[1] - 25;
@@ -1795,7 +1806,7 @@ qboolean G_RadiusDamage (
 				mins2[i] = origin[i] - 90;
 				maxs2[i] = origin[i] + 90;
 			}
-		}else if(mod == WP_MDN11_GRENADE || mod == 274){
+		}else if(mod == MOD_MDN11_GRENADE || mod == altAttack(MOD_MDN11_GRENADE)){
 			// Boe!Man 3/21/14: Custom check for the MDN11 grenade.
 			mins1[0] = origin[0] -22;
 			mins1[1] = origin[1] -17;
@@ -1818,7 +1829,7 @@ qboolean G_RadiusDamage (
 		
 		if(current_gametype.value == GT_HS){
 			// Henk 14/01/10 -> M4 Cage
-			if(mod == 264){ // m4
+			if(mod == altAttack(MOD_M4_ASSAULT_RIFLE)){ // m4
 				if(ent->client){
 					if(ent->client->sess.team == TEAM_RED && G_IsClientDead(ent->client) == qfalse){ // check for hiders inside cage
 							CageOutOfBoundaries = qtrue;
@@ -1845,7 +1856,7 @@ qboolean G_RadiusDamage (
 						}
 					}
 				}
-			}else if(mod == WP_MM1_GRENADE_LAUNCHER){ // Boe!Man 9/2/12: Add score for MM1.
+			}else if(mod == MOD_MM1_GRENADE_LAUNCHER){ // Boe!Man 9/2/12: Add score for MM1.
 				if(ent->client != NULL && ent->client->sess.team == TEAM_RED){
 					ent->client->sess.MM1HitsTaken += 1;
 					
@@ -1864,7 +1875,7 @@ qboolean G_RadiusDamage (
 			// End
 
 			// Henk 23/01/10 -> Add	box nade.
-			if(mod == WP_MDN11_GRENADE){
+			if(mod == MOD_MDN11_GRENADE || mod == altAttack(MOD_MDN11_GRENADE)){
 				if(ent->client){
 					if(ent->client->sess.team == TEAM_RED || ent->client->sess.team == TEAM_BLUE){
 						NadeOutOfBoundaries = qtrue;
@@ -1875,7 +1886,7 @@ qboolean G_RadiusDamage (
 			// End
 			
 			// Uppercut grenade for the seeker.
-			if(mod == WP_L2A2_GRENADE){
+			if(mod == MOD_L2A2_GRENADE || mod == altAttack(MOD_L2A2_GRENADE)){
 				if(ent == attacker){
 					Henk_CloseSound(attacker->r.currentOrigin, G_SoundIndex("sound/weapons/rpg7/fire01.mp3"));
 					attacker->client->ps.pm_flags |= PMF_JUMPING;
@@ -1886,7 +1897,7 @@ qboolean G_RadiusDamage (
 			}
 			
 			// Transform grenade for the hider.
-			if(mod == WP_M67_GRENADE){
+			if(mod == MOD_M67_GRENADE || mod == altAttack(MOD_M67_GRENADE)){
 				// Check if a player was caught in the radius.
 				if(ent != attacker){
 					if(ent && ent->client){
@@ -1897,7 +1908,7 @@ qboolean G_RadiusDamage (
 			}
 			
 			// Henk 18/01/10 -> RPG Boost
-			if(mod == WP_RPG7_LAUNCHER){
+			if(mod == MOD_RPG7_LAUNCHER){
 				if(ent == attacker){ // RPG hits attacker self so boost him
 					if(g_RpgStyle.integer == 0){
 						attacker->client->ps.pm_flags |= PMF_JUMPING;
@@ -1923,7 +1934,7 @@ qboolean G_RadiusDamage (
 				}
 			}
 			
-			if((mod == MOD_F1_GRENADE || mod == 272) && strstr(ent->classname, "f1")){ // Boe!Man 8/2/12: Fix for Altattack of tele nade not doing anything.
+			if((mod == MOD_F1_GRENADE || mod == altAttack(MOD_F1_GRENADE)) && strstr(ent->classname, "f1")){ // Boe!Man 8/2/12: Fix for Altattack of tele nade not doing anything.
 				if(origin[2] <= ent->origin_from[2]){
 					vec3_t	mins = {-12,-12,-31};
 					vec3_t	maxs = {12,12,32};
@@ -2072,14 +2083,14 @@ qboolean G_RadiusDamage (
 	}
 
 	if(current_gametype.value == GT_HZ){
-			if(mod == WP_M67_GRENADE){
+			if(mod == MOD_M67_GRENADE || mod == altAttack(MOD_M67_GRENADE)){
 
 				G_CreateDamageArea ( origin, attacker, 0.00, radius, 30000, mod );
 			}
 	}
 
 	if(current_gametype.value == GT_HS){
-		if(mod == 264){
+		if(mod == altAttack(MOD_M4_ASSAULT_RIFLE)){
 			if(CageOutOfBoundaries == qtrue){
 				ammoindex=weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_ALTERNATE].ammoIndex;
 				if(g_cageAttempts.integer != 0){
@@ -2116,7 +2127,7 @@ qboolean G_RadiusDamage (
 				// End
 				SpawnCage(origin, attacker, qfalse, qfalse);
 			}
-		}else if(mod == WP_MDN11_GRENADE || mod == 274){ // Boe!Man 8/2/12: Fix for Altattack of box nade not doing anything.
+		}else if(mod == MOD_MDN11_GRENADE || mod == altAttack(MOD_MDN11_GRENADE)){ // Boe!Man 8/2/12: Fix for Altattack of box nade not doing anything.
 			if(NadeOutOfBoundaries == qtrue){
 				ammoindex=weaponData[WP_MDN11_GRENADE].attack[ATTACK_ALTERNATE].ammoIndex;
 				if(g_boxAttempts.integer != 0){
@@ -2142,7 +2153,7 @@ qboolean G_RadiusDamage (
 		}else if(mod == WP_MM1_GRENADE_LAUNCHER){
 			missile = NV_projectile( attacker, origin, dir, WP_ANM14_GRENADE, 0 );
 			missile->nextthink = level.time + 250;
-		}else if(mod == WP_M67_GRENADE){
+		}else if(mod == MOD_M67_GRENADE || mod == altAttack(MOD_M67_GRENADE)){
 			if(!(attacker->client->ps.pm_flags & PMF_JUMPING) && attacker->client->ps.groundEntityNum != ENTITYNUM_NONE && !NadeOutOfBoundaries){
 				trap_SendServerCommand(-1, va("print \"^3[H&S] ^7%s transformed into something...\n\"", attacker->client->pers.cleanName));
 				trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7Hit your Reload button to get out (usually 'R').\n\""));
