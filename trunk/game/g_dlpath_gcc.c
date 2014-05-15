@@ -9,7 +9,7 @@
 #include <windows.h>
 
 void autoDownloadDetour0();
-void autoDownloadDetour(char *message, double *clientNum, char *mapString)
+void autoDownloadDetour(char *message, int *clientNum, char *mapString)
 {
     if(!strstr(mapString, ".pk3")){
         G_LogPrintf("Auto D/L protection: ^1HACK ATTEMPT: ^7client %d tries to download \"%s\"\n", clientNum, mapString);
