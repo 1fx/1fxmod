@@ -5325,7 +5325,7 @@ void Boe_Rename(int argNum, gentity_t *ent, qboolean shortCmd){
 		trap_Argv(argNum + 1, newName, sizeof(newName));
 	}
 	
-	if(strlen(newName) == 0){
+	if(!newName || !newName[0] || newName[0] == '\\' || strlen(newName) == 0){
 		if(!g_entities[idnum].client->sess.noNameChange){
 			if(ent && ent->client){
 				trap_SendServerCommand( ent - g_entities, va("print \"^3[Info] ^7You cannot set an empty name or unlock someone that's not locked from changing names.\n\"") );
