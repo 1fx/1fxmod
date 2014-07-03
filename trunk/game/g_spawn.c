@@ -216,6 +216,7 @@ void SP_mission_player				(gentity_t* ent);
 void SP_booster						(gentity_t* ent);
 void SP_teleporter					(gentity_t* ent);
 void SP_sun							(gentity_t* ent);
+void SP_seekers						(gentity_t* ent);
 void hideseek_cage					(gentity_t* ent);
 void SP_accelerator					(gentity_t* ent);
 									
@@ -314,6 +315,7 @@ spawn_t	spawns[] =
 	{"blocked_teleporter",			NV_blocked_Teleport},
 	{"booster",						SP_booster},
 	{"teleporter",					SP_teleporter},
+	{"seekers",						SP_seekers},
 	{"reachable_object",			SP_sun},
 	{"hideseek_cage",				hideseek_cage},
 	{"accelerator",					SP_accelerator},

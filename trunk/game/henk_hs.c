@@ -651,18 +651,37 @@ void EvenTeams_HS (gentity_t *adm, qboolean aet)
 		if(adm && adm->client)
 			trap_SendServerCommand( adm - g_entities, va("print \"^3[Info] ^7You need atleast 3 players to use eventeams.\n\"") );
 		else 
-			Com_Printf("You need atleast 3 players to use eventeams.\n");
+			Com_Printf("You need at least 3 players to use eventeams.\n");
 		return;
-	}else if(totalplayers >= 3 && totalplayers <= 6){ // hiders = totalplayers-seekers
-		seekers = 1;
-	}else if(totalplayers >= 7 && totalplayers <= 11){ // hiders = totalplayers-seekers
-		seekers = 2;
-	}else if(totalplayers >= 12 && totalplayers <= 17){ // hiders = totalplayers-seekers
-		seekers = 3;
-	}else if(totalplayers >= 18 && totalplayers <= 23){ // hiders = totalplayers-seekers
-		seekers = 4;
-	}else if(totalplayers >= 24){
-		seekers = 5;
+	}
+	
+	if(level.customETHiderAmount[0]){
+		// The user put custom values here. Check them.
+		for(i = 0; i < 9; i++){
+			if(level.customETHiderAmount[i+1] == -1){
+				// It seems the maximum of hiders specified is reached. Use that amount of seekers.
+				seekers = i+1;
+				break;
+			}
+			
+			if(totalplayers >= level.customETHiderAmount[i] && totalplayers <= level.customETHiderAmount[i+1]){
+				seekers = i+1;
+				break;
+			}
+		}
+	}else{
+		// Check default code.
+		if(totalplayers >= 3 && totalplayers <= 6){ // hiders = totalplayers-seekers
+			seekers = 1;
+		}else if(totalplayers >= 7 && totalplayers <= 11){ // hiders = totalplayers-seekers
+			seekers = 2;
+		}else if(totalplayers >= 12 && totalplayers <= 17){ // hiders = totalplayers-seekers
+			seekers = 3;
+		}else if(totalplayers >= 18 && totalplayers <= 23){ // hiders = totalplayers-seekers
+			seekers = 4;
+		}else if(totalplayers >= 24){
+			seekers = 5;
+		}
 	}
 	maxhiders = totalplayers-seekers;
 	
