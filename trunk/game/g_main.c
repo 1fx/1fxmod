@@ -1236,7 +1236,9 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 		// Boe!Man 10/19/13: Execute the Q3 getstatus DoS patch if g_DoSPatch is set to > 0.
 		Patch_SV_ConnectionlessPacket();
 	}
+	#ifndef _MSC_VER
 	Patch_AutoDownloadExploit(); // Don't let this depend on any setting.
+	#endif
 	#endif
 
 	if ( g_log.string[0] )
