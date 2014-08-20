@@ -5368,7 +5368,7 @@ void Boe_Rename(int argNum, gentity_t *ent, qboolean shortCmd){
 	ClientUserinfoChanged(idnum);
 	
 	// Log and broadcast this change.
-	Boe_GlobalSound(G_SoundIndex("sound/misc/events/tut_lift02.mp3"));
+	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^3%s ^7was %sr%se%sn%sa%sm%sed to ^3%s^7!", level.time + 5000, oldName, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, g_entities[idnum].client->pers.netname));
 	if(ent && ent->client){
 		Boe_adminLog ("Renamed", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), va("%s\\%s\\%s", g_entities[idnum].client->pers.ip, oldNameClean, g_entities[idnum].client->pers.cleanName));
