@@ -1494,6 +1494,8 @@ G_ShutdownGame
 */
 void G_ShutdownGame( int restart )
 {
+	char fsGame[MAX_QPATH];
+
 	Com_Printf ("==== ShutdownGame ====\n");
 
 	if ( level.logFile )
@@ -1528,7 +1530,9 @@ void G_ShutdownGame( int restart )
 	#elif WIN32
 	UnlockFile(lockFile, 0, 0, 0xffffff, 0xffffff);
 	CloseHandle(lockFile);
-	DeleteFile(TEXT("srv.lck"));
+	
+	trap_Cvar_VariableStringBuffer("fs_game", fsGame, sizeof(fsGame));
+	DeleteFile(TEXT(va("%s\\srv.lck", fsGame)));	
 	#endif
 	
 	// Boe!Man 1/2/14: Check if the engine threw a Com_Error in another function (also logs it upon succesfull detection).
@@ -3627,10 +3631,13 @@ qboolean G_CheckAlive(void)
 		return qtrue;
 	}
 	#elif WIN32
+	char fsGame[MAX_QPATH];
 	BOOL success;
+
+	trap_Cvar_VariableStringBuffer("fs_game", fsGame, sizeof(fsGame));
 	
 	// Boe!Man 3/20/14: Open the lock file.
-	lockFile = CreateFile(TEXT("srv.lck"), GENERIC_WRITE, 0, NULL, CREATE_NEW, 0, NULL);
+	lockFile = CreateFile(TEXT(va("%s\\srv.lck", fsGame)), GENERIC_WRITE, 0, NULL, CREATE_NEW, 0, NULL);
 	
 	if (lockFile == INVALID_HANDLE_VALUE){
     	return qtrue;
