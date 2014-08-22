@@ -1101,13 +1101,27 @@ void ClientThink_real( gentity_t *ent )
 	if(level.awardTime)
 	{
 		ent->client->ps.pm_type = PM_FREEZE;
-		memset (&pm, 0, sizeof(pm));
+		memset(&pm, 0, sizeof(pm));
 		pm.ps = &client->ps;
 		pm.cmd = *ucmd;
-		Pmove (&pm);
+		Pmove(&pm);
 		return;
 	}
 	//Ryan
+
+	// Check for frozen players.
+	if(client->sess.freeze){
+		if(client->sess.freeze && ucmd->buttons & BUTTON_RELOAD){
+			client->sess.freeze = qfalse;
+			ent->client->ps.pm_type = PM_NORMAL;
+		}else{
+			ent->client->ps.pm_type = PM_FREEZE;
+			pm.ps = &client->ps;
+			pm.cmd = *ucmd;
+			Pmove(&pm);
+			return;
+		}
+	}
 
 	//
 	// check for exiting intermission

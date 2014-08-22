@@ -1492,12 +1492,9 @@ void TransformPlayerBack(gentity_t *self, gentity_t *other, trace_t *trace)
 		return;
 	}
 	
-	// First unplant the player.
-	g_entities[self->hideseek].client->ps.origin[2] += 65;
-	VectorCopy( g_entities[self->hideseek].client->ps.origin, g_entities[self->hideseek].s.origin );
-
-	// Reset his invisibility state.
-	g_entities[self->hideseek].client->sess.invisibleGoggles = qfalse;
+	// First we make sure he can walk again.
+	g_entities[self->hideseek].client->sess.freeze = qfalse;
+	g_entities[self->hideseek].client->sess.invisibleGoggles = qfalse; // And that others can see him again as well.
 	
 	// Good, now we can free the entities spawned.
 	if(g_entities[self->hideseek].client->sess.transformedEntity2){
@@ -1532,16 +1529,9 @@ void G_TransformPlayerToObject(gentity_t *ent)
 	AddSpawnField("origin", va("%0.f %0.f %0.f", ent->s.origin[0], ent->s.origin[1], ent->s.origin[2] + TransformObjects[object].originOffset));
 	AddSpawnField("angles", TransformObjects[object].angles);
 	
-	// Next we make sure the client is invisible.
-	ent->client->sess.invisibleGoggles = qtrue;
-	
-	// Plant the player.
-	if (ent->client->ps.pm_flags & PMF_DUCKED){
-		ent->client->ps.origin[2] -= 40;
-	}else{
-		ent->client->ps.origin[2] -= 65;
-	}
-	VectorCopy( ent->client->ps.origin, ent->s.origin );
+	// Take care of the player.
+	ent->client->sess.invisibleGoggles = qtrue; // Make sure he's invisible,
+	ent->client->sess.freeze = qtrue; // .. and that he can't move.
 	
 	// Reset the transformed entity if there is one.
 	if(ent->client->sess.transformedEntity){
