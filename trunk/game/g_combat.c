@@ -2154,7 +2154,7 @@ qboolean G_RadiusDamage (
 			missile = NV_projectile( attacker, origin, dir, WP_ANM14_GRENADE, 0 );
 			missile->nextthink = level.time + 250;
 		}else if(mod == MOD_M67_GRENADE || mod == altAttack(MOD_M67_GRENADE)){
-			if(!(attacker->client->ps.pm_flags & PMF_JUMPING) && attacker->client->ps.groundEntityNum != ENTITYNUM_NONE && !NadeOutOfBoundaries){
+			if(!(attacker->client->ps.pm_flags & PMF_JUMPING) && !NadeOutOfBoundaries){
 				trap_SendServerCommand(-1, va("print \"^3[H&S] ^7%s transformed into something...\n\"", attacker->client->pers.cleanName));
 				trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7Hit your Reload button to get out (usually 'R').\n\""));
 				G_TransformPlayerToObject(attacker);
@@ -2165,7 +2165,11 @@ qboolean G_RadiusDamage (
 				// This can happen multiple times, so have some sort of check here.
 				if(!attacker->client->ps.ammo[ammoindex]){
 					attacker->client->ps.ammo[ammoindex]+=1;
-					trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7The grenade must detonate near just you in order to transform.\n\""));
+					if(attacker->client->ps.pm_flags & PMF_JUMPING){
+						trap_SendServerCommand(attacker - g_entities, va("print \"^3[Info] ^7You're not allowed to jump while using this grenade.\n\""));
+					}else{
+						trap_SendServerCommand(attacker - g_entities, va("print \"^3[Info] ^7The grenade must detonate near just you in order to transform.\n\""));
+					}
 					
 					if (!(attacker->client->ps.stats[STAT_WEAPONS] & (1<<WP_M67_GRENADE))){
 						attacker->client->ps.stats[STAT_WEAPONS] |= (1 << WP_M67_GRENADE);
