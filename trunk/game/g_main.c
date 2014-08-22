@@ -1150,6 +1150,13 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	
 	// Boe!Man 7/3/13: Force master to direct IP instead of hostname on Linux.
 	trap_Cvar_Set("sv_master1", "63.146.124.45");
+
+	// Boe!Man 8/22/14: Also the 2nd master reports to our master server's direct IP.
+	// !!! If IP is changed, CHANGE THIS MANUALLY !!!
+	trap_Cvar_Set("sv_master2", "178.62.14.201");
+	#elif _WIN32
+	// Boe!Man 8/22/14: Windows users get the future proof DNS entry as their 2nd master entry.
+	trap_Cvar_Set("sv_master2", "1fxmod.org");
 	#endif
 	
 	// Boe!Man 6/25/13: Enable multithreading for SQLite.
