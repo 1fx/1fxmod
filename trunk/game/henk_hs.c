@@ -657,7 +657,7 @@ void EvenTeams_HS (gentity_t *adm, qboolean aet)
 	
 	if(level.customETHiderAmount[0]){
 		// The user put custom values here. Check them.
-		for(i = 0; i < 9; i++){
+		for(i = 0; i < sizeof(level.customETHiderAmount)-1; i++){
 			if(level.customETHiderAmount[i+1] == -1){
 				// It seems the maximum of hiders specified is reached. Use that amount of seekers.
 				seekers = i+1;
