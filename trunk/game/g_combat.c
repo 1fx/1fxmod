@@ -2154,7 +2154,7 @@ qboolean G_RadiusDamage (
 			missile = NV_projectile( attacker, origin, dir, WP_ANM14_GRENADE, 0 );
 			missile->nextthink = level.time + 250;
 		}else if(mod == MOD_M67_GRENADE || mod == altAttack(MOD_M67_GRENADE)){
-			if(!(attacker->client->ps.pm_flags & PMF_JUMPING) && !NadeOutOfBoundaries){
+			if (!(attacker->client->ps.pm_flags & PMF_JUMPING) && !NadeOutOfBoundaries && !attacker->client->sess.freeze){
 				trap_SendServerCommand(-1, va("print \"^3[H&S] ^7%s transformed into something...\n\"", attacker->client->pers.cleanName));
 				trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7Hit your Reload button to get out (usually 'R').\n\""));
 				G_TransformPlayerToObject(attacker);

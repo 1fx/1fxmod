@@ -1117,6 +1117,7 @@ void ClientThink_real( gentity_t *ent )
 		}else{
 			ent->client->ps.pm_type = PM_FREEZE;
 			pm.ps = &client->ps;
+			ucmd->buttons = -1;
 			pm.cmd = *ucmd;
 			Pmove(&pm);
 			return;
