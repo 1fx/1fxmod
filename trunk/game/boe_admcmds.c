@@ -1965,7 +1965,6 @@ void Boe_Add_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd, int level2, 
 	char			 ip[MAX_IP];
 	char			 admLevel[12];
 	char			 admLevelPrefixed[32];
-	char			 adminPassword[64];
 	qboolean		 passAdmin = qfalse;
 	sqlite3			*db;
 
@@ -1993,7 +1992,6 @@ void Boe_Add_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd, int level2, 
 	if(!Q_stricmp(arg, "pass")){
 		if(g_passwordAdmins.integer){
 			passAdmin = qtrue;
-			Q_strncpyz(ip, g_entities[idnum].client->pers.ip, 4);
 		}else{
 			if(adm){
 				trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Access denied: No password logins allowed by the server!\n\""));
@@ -2015,6 +2013,23 @@ void Boe_Add_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd, int level2, 
 	}else{
 		strcpy(admName, "RCON");
 	}
+
+	// Boe!Man 8/25/14: Instead of immediately inserting into the database, check if someone added this guy yet.
+	if (passAdmin){
+		if (Boe_checkPassAdmin2(clientName)){
+			if (adm){
+				trap_SendServerCommand(adm - g_entities, va("print \"^3[Info] ^7A client with this name was already added once!\n\""));
+				trap_SendServerCommand(adm - g_entities, va("print \"^3[Info] ^7He can now reset his password.\n\""));
+			}
+			else{
+				Com_Printf("A client with this name was already added once!\n");
+				Com_Printf("He can now reset his password.\n");
+			}
+			
+			g_entities[idnum].client->sess.setAdminPassword = qtrue;
+			return;
+		}
+	}
 	
 	// Boe!Man 2/5/13: Add Admin to the database.
 	// Boe!Man 2/5/13: Open database.
@@ -2031,7 +2046,7 @@ void Boe_Add_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd, int level2, 
 			return;
 		}
 	}else{
-		if(sqlite3_exec(db, va("INSERT INTO passadmins (octet, name, by, level) values ('%s', '%s', '%s', '%i')", ip, clientName, admName, level2), 0, 0, 0) != SQLITE_OK){
+		if(sqlite3_exec(db, va("INSERT INTO passadmins (name, by, level) values ('%s', '%s', '%i')", clientName, admName, level2), 0, 0, 0) != SQLITE_OK){
 			if(adm){
 				trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n\"", sqlite3_errmsg(db)));
 			}else{
@@ -2040,29 +2055,25 @@ void Boe_Add_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd, int level2, 
 			return;
 		}
 	}
-
-	g_entities[idnum].client->sess.admin = level2;
-	if(level2 == 2){
+	
+	if (level2 == 2){
 		strcpy(admLevel, "B-Admin");
 		Q_strncpyz(admLevelPrefixed, server_badminprefix.string, sizeof(admLevelPrefixed));
-		if(passAdmin){
-			Q_strncpyz(adminPassword, g_badminPass.string, sizeof(adminPassword));
-		}
-	}else if(level2 == 3){
+	}
+	else if (level2 == 3){
 		strcpy(admLevel, "Admin");
 		Q_strncpyz(admLevelPrefixed, server_adminprefix.string, sizeof(admLevelPrefixed));
-		if(passAdmin){
-			Q_strncpyz(adminPassword, g_adminPass.string, sizeof(adminPassword));
-		}
-	}else{
+	}
+	else{
 		strcpy(admLevel, "S-Admin");
 		Q_strncpyz(admLevelPrefixed, server_sadminprefix.string, sizeof(admLevelPrefixed));
-		if(passAdmin){
-			Q_strncpyz(adminPassword, g_sadminPass.string, sizeof(adminPassword));
-		}
+	}
+
+	if (!passAdmin){
+		trap_SetConfigstring(CS_GAMETYPE_MESSAGE, va("%i,@^7%s is now a %s", level.time + 5000, g_entities[idnum].client->pers.netname, admLevelPrefixed));
+		g_entities[idnum].client->sess.admin = level2;
 	}
 	
-	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is now a %s", level.time + 5000, g_entities[idnum].client->pers.netname, admLevelPrefixed));
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 	if(adm){
 		if(!passAdmin){
@@ -2083,15 +2094,15 @@ void Boe_Add_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd, int level2, 
 	// Boe!Man 2/5/13: Inform a passworded Admin of the system he can now use.
 	// Boe!Man 2/16/13: Only inform the Admin via chat. The Admin won't notice if it's being broadcast via console.
 	if(passAdmin){
+		g_entities[idnum].client->sess.setAdminPassword = qtrue;
+
 		trap_SendServerCommand(g_entities[idnum].s.number, va("chat -1 \"%sI%sn%sf%so%s: ^7You need to login every time you enter the server.\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string));
-		if(strstr(adminPassword, "none") && strlen(adminPassword) < 5){
-			trap_SendServerCommand(g_entities[idnum].s.number, va("chat -1 \"%sI%sn%sf%so%s: ^7Ask the server owner/a RCON holder to set a password for you to use.\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string));
-		}else{
-			trap_SendServerCommand(g_entities[idnum].s.number, va("chat -1 \"%sI%sn%sf%so%s: ^7You can do so by entering '/adm login %s' in the console.\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, adminPassword));
-		}
+		trap_SendServerCommand(g_entities[idnum].s.number, va("chat -1 \"%sI%sn%sf%so%s: ^7In order to do this, you need to set your own password.\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string));
+		trap_SendServerCommand(g_entities[idnum].s.number, va("chat -1 \"%sI%sn%sf%so%s: ^7Do this by executing the following command: /adm pass 'yourpassword'.\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string));
 	}
+
 	// Boe!Man 10/16/10: Is the Admin level allowed to spec the opposite team?
-	if (g_adminSpec.integer <= level2 && g_adminSpec.integer != 0 && cm_enabled.integer < 2){
+	if (!passAdmin && g_adminSpec.integer <= level2 && g_adminSpec.integer != 0 && cm_enabled.integer < 2){
 		g_entities[idnum].client->sess.adminspec = qtrue;
 	}
 	
@@ -2668,7 +2679,6 @@ void Boe_Remove_Admin_f (int argNum, gentity_t *adm, qboolean shortCmd)
 {
 	int				idnum;
 	qboolean		admin = qfalse;
-	char			octet[5];
 	
 	idnum = Boe_ClientNumFromArg(adm, argNum, "removeadmin <idnumer>", "do this to", qfalse, qtrue, shortCmd);
 	if(idnum < 0){
@@ -2689,14 +2699,11 @@ void Boe_Remove_Admin_f (int argNum, gentity_t *adm, qboolean shortCmd)
 		return;
 	}
 	
-	// Boe!Man 4/30/12: Write the octet, with the first 3 chars of the IP (which should represent the first octet).
-	Q_strncpyz(octet, g_entities[idnum].client->pers.ip, 4);
-	
 	// Boe!Man 1/6/10: Fix, succesfully writes the Admin out of the file.
 	// Update 8/10/11: Do display the broadcast even if he's not written out of the file. We already verified he was an Admin.
 	// Update 4/30/12: Added the password Admin check. First we check if the user is on the regular file, then we check for the pass file. If all fails, just display the broadcast.
 	// Update 2/6/13: SQLite3 backend. Most of this was recoded.
-	if(Boe_removeAdminFromDb(adm, g_entities[idnum].client->pers.ip, qfalse, qfalse, qtrue) || Boe_removeAdminFromDb(adm, octet, qtrue, qfalse, qtrue) || admin){
+	if(Boe_removeAdminFromDb(adm, g_entities[idnum].client->pers.ip, qfalse, qfalse, qtrue) || admin){
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7is no longer an %sA%sd%sm%si%sn", level.time + 5000, g_entities[idnum].client->pers.netname, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 		if(adm && adm->client){
@@ -4347,7 +4354,7 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
 		if(!passAdmin){
 			rc = sqlite3_prepare(db, va("select IP,name,level from admins where ROWID='%i' LIMIT 1", line), -1, &stmt, 0);
 		}else{
-			rc = sqlite3_prepare(db, va("select octet,name,level from passadmins where ROWID='%i' LIMIT 1", line), -1, &stmt, 0);
+			rc = sqlite3_prepare(db, va("select '',name,level from passadmins where ROWID='%i' LIMIT 1", line), -1, &stmt, 0);
 		}
 		
 		// Boe!Man 2/6/13: If the previous query failed, we're looking at a record that does not exist.
@@ -4392,19 +4399,26 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
 			
 			return qfalse;
 		}else{
-			if(adm && adm->client){
-				trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Removed %s (IP: %s) from line %i.\n\"", name, IP, line));
-			}else{
-				Com_Printf("^3[Info] ^7Removed %s (IP: %s) from line %i.\n", name, IP, line);
+			if (!passAdmin){
+				if (adm && adm->client){
+					trap_SendServerCommand(adm - g_entities, va("print \"^3[Info] ^7Removed %s (IP: %s) from line %i.\n\"", name, IP, line));
+				}
+				else{
+					Com_Printf("^3[Info] ^7Removed %s (IP: %s) from line %i.\n", name, IP, line);
+				}
+			}
+			else{
+				if (adm && adm->client){
+					trap_SendServerCommand(adm - g_entities, va("print \"^3[Info] ^7Removed %s from line %i.\n\"", name, line));
+				}
+				else{
+					Com_Printf("^3[Info] ^7Removed %s from line %i.\n", name, line);
+				}
 			}
 		}
-	}else{ // Remove by IP. Don't output this to the screen (except errors), because it's being called directly from /adm removeadmin if silent is true.
+	}else if(!passAdmin){ // Remove by IP. Don't output this to the screen (except errors), because it's being called directly from /adm removeadmin if silent is true.
 		// Boe!Man 2/6/13: First check if the record exists.
-		if(!passAdmin){
-			rc = sqlite3_prepare(db, va("select ROWID,IP,name,level from admins where IP='%s' LIMIT 1", value), -1, &stmt, 0);
-		}else{
-			rc = sqlite3_prepare(db, va("select ROWID,octet,name,level from passadmins where octet='%s' LIMIT 1", value), -1, &stmt, 0);
-		}
+		rc = sqlite3_prepare(db, va("select ROWID,IP,name,level from admins where IP='%s' LIMIT 1", value), -1, &stmt, 0);
 		
 		// Boe!Man 2/6/13: If the previous query failed, we're looking at a record that does not exist.
 		if(rc != SQLITE_OK){
@@ -4462,20 +4476,39 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
 	}
 	
 	// Boe!Man 2/12/13: If the Admin is found on the server, remove his Admin as well.
-	for(i = 0; i < level.numConnectedClients; i++){
-		if(strstr(g_entities[level.sortedClients[i]].client->pers.ip, IP) && g_entities[level.sortedClients[i]].client->sess.admin == level2){
-			g_entities[level.sortedClients[i]].client->sess.admin = 0;
-			g_entities[level.sortedClients[i]].client->sess.adminspec = qfalse;
-			
-			// Boe!Man 2/12/13: Inform the Admin he's off the list..
-			if(adm){
-				trap_SendServerCommand(g_entities[level.sortedClients[i]].s.number, va("print\"^3[Info] ^7You were removed from the Adminlist by %s.\n\"", adm->client->pers.cleanName));
-			}else{
-				trap_SendServerCommand(g_entities[level.sortedClients[i]].s.number, va("print\"^3[Info] ^7You were removed from the Adminlist by RCON.\n\""));
+	if (!passAdmin){
+		for (i = 0; i < level.numConnectedClients; i++){
+			if (strstr(g_entities[level.sortedClients[i]].client->pers.ip, IP) && g_entities[level.sortedClients[i]].client->sess.admin == level2){
+				g_entities[level.sortedClients[i]].client->sess.admin = 0;
+				g_entities[level.sortedClients[i]].client->sess.adminspec = qfalse;
+
+				// Boe!Man 2/12/13: Inform the Admin he's off the list..
+				if (adm){
+					trap_SendServerCommand(g_entities[level.sortedClients[i]].s.number, va("print\"^3[Info] ^7You were removed from the Adminlist by %s.\n\"", adm->client->pers.cleanName));
+				}
+				else{
+					trap_SendServerCommand(g_entities[level.sortedClients[i]].s.number, va("print\"^3[Info] ^7You were removed from the Adminlist by RCON.\n\""));
+				}
 			}
 		}
 	}
-	
+	else{
+		for (i = 0; i < level.numConnectedClients; i++){
+			if (strstr(g_entities[level.sortedClients[i]].client->pers.cleanName, name) && g_entities[level.sortedClients[i]].client->sess.admin == level2){
+				g_entities[level.sortedClients[i]].client->sess.admin = 0;
+				g_entities[level.sortedClients[i]].client->sess.adminspec = qfalse;
+
+				// Boe!Man 2/12/13: Inform the Admin he's off the list..
+				if (adm){
+					trap_SendServerCommand(g_entities[level.sortedClients[i]].s.number, va("print\"^3[Info] ^7You were removed from the Adminlist by %s.\n\"", adm->client->pers.cleanName));
+				}
+				else{
+					trap_SendServerCommand(g_entities[level.sortedClients[i]].s.number, va("print\"^3[Info] ^7You were removed from the Adminlist by RCON.\n\""));
+				}
+			}
+		}
+	}
+
 	// Boe!Man 12/20/12: Re-order the ROWIDs by issuing the VACUUM maintenance query.
 	sqlite3_exec(db, "VACUUM", NULL, NULL, NULL);
 	
@@ -4556,23 +4589,9 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 	// Boe!Man 2/4/13: Display header.
 	if(adm){
 		Q_strcat(buf2, sizeof(buf2), "^3[Adminlist]^7\n");
-		// Boe!Man 2/16/13: Also show the current passwords in the Passworded Adminlist.
-		if(passwordList){
-			Q_strcat(buf2, sizeof(buf2), "^5[Current Admin Passwords]^7\n\n");
-			Q_strcat(buf2, sizeof(buf2), "^5 Lvl                        Password\n^7--------------------------------------------------\n");
-			Q_strcat(buf2, sizeof(buf2), va("^7[^5B-Admin^7]                   %s\n^7[^5Admin^7]                     %s\n^7[^5S-Admin^7]                   %s\n", g_badminPass.string, g_adminPass.string, g_sadminPass.string));
-		}
-		
 		Q_strcat(buf2, sizeof(buf2), "\n^3 #     Lvl  IP              Name                  By\n^7------------------------------------------------------------------------\n");
 	}else{
 		Com_Printf("^3[Adminlist]^7\n");
-		// Boe!Man 2/16/13: Also show the current passwords in the Passworded Adminlist.
-		if(passwordList){
-			Com_Printf("^5[Current Admin Passwords]^7\n\n");
-			Com_Printf("^5 Lvl                        Password\n^7--------------------------------------------------\n");
-			Com_Printf("^7[^5B-Admin^7]                   %s\n^7[^5Admin^7]                     %s\n^7[^5S-Admin^7]                   %s\n", g_badminPass.string, g_adminPass.string, g_sadminPass.string);
-		}
-		
 		Com_Printf("\n^3 #     Lvl  IP              Name                  By\n");
 		Com_Printf("^7------------------------------------------------------------------------\n");
 	}
@@ -4580,7 +4599,7 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 	if(!passwordList){
 		rc = sqlite3_prepare(db, "select ROWID,level,IP,name,by from admins order by ROWID", -1, &stmt, 0);
 	}else{
-		rc = sqlite3_prepare(db, "select ROWID,level,octet,name,by from passadmins order by ROWID", -1, &stmt, 0);
+		rc = sqlite3_prepare(db, "select ROWID,level,'',name,by from passadmins order by ROWID", -1, &stmt, 0);
 	}
 	if(rc!=SQLITE_OK){
 		if(adm){

@@ -244,7 +244,6 @@ void Svcmd_AddIP_f (void)
 	char		reason[64];
 	// Boe!Man 2/26/13: Add SQLite support.
 	sqlite3		*db;
-	int			subnetSize = 0;
 	int			admLevel = 0;
 
 	if ( trap_Argc() < 4 ) {
@@ -255,18 +254,13 @@ void Svcmd_AddIP_f (void)
 	trap_Argv(1, arg, sizeof(arg));
 	
 	// Fetch the IP and store it.
-	if(strstr(arg, "subnetban") || strstr(arg, "pass")){
-		if(strstr(arg, "pass")){
-			subnetSize = 4;
-		}else{
-			subnetSize = 7;
-		}
+	if(strstr(arg, "subnetban")){
 		
 		trap_Argv(2, arg, sizeof(arg));
-		if(strlen(arg) <= subnetSize){
+		if(strlen(arg) <= 7){
 			Q_strncpyz(ip, arg, sizeof(arg));
-		}else if(strlen(arg) > subnetSize){
-			Q_strncpyz(ip, arg, subnetSize);
+		}else if(strlen(arg) > 7){
+			Q_strncpyz(ip, arg, 7);
 		}
 	}else{ // Another list, so store the full IP..
 		trap_Argv(2, arg, sizeof(arg));
@@ -319,10 +313,10 @@ void Svcmd_AddIP_f (void)
 			Q_strncpyz(arg, "admins", sizeof(arg));
 		}
 		
-		if(sqlite3_exec(db, va("INSERT INTO %s (%s, name, by, level) values ('%s', '%s', 'RCON', '%i')", arg, strstr(arg, "pass") ? "octet" : "ip", ip, name, admLevel), 0, 0, 0) != SQLITE_OK){
+		if(sqlite3_exec(db, va("INSERT INTO %s (%sname, by, level) values (%s'%s', 'RCON', '%i')", arg, strstr(arg, "pass") ? "" : "ip, ", strstr(arg, "pass") ? "" : va("'%s', ", ip), name, admLevel), 0, 0, 0) != SQLITE_OK){
 			Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
 		}else{
-			Com_Printf(va("Success adding [%s] to the %s (name: %s, level: %s).\n", ip, strstr(arg, "pass") ? "passlist" : "adminlist", name, reason));
+			Com_Printf(va("Success adding [%s] to the %s (%slevel: %s).\n", ip, strstr(arg, "pass") ? "passlist" : "adminlist", va("name: %s, ", name), reason));
 		}
 	}else if(strstr(arg, "clan")){
 		db = usersDb;

@@ -2797,10 +2797,9 @@ void Boe_userdataIntegrity(void)
 			return;
 		}
 		
-		if(sqlite3_exec(db, "CREATE TABLE IF NOT EXISTS passadmins('octet' VARCHAR(4), 'name' VARCHAR(36) collate nocase, 'by' VARCHAR(36), 'level' INTEGER NOT NULL)", 0, 0, 0) != SQLITE_OK){
+		if (sqlite3_exec(db, "CREATE TABLE IF NOT EXISTS passadmins('name' varchar(36) collate nocase, 'by' VARCHAR(36), 'level' INTEGER NOT NULL, 'pass' VARCHAR(36))", 0, 0, 0) != SQLITE_OK){
 			G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
 			sqlite3_close(db);
-			// Boe!Man 5/27/13: This is bad, drop with a fatal error.
 			Com_Error(ERR_FATAL, "Users database: %s", sqlite3_errmsg(db));
 			return;
 		}
@@ -3082,42 +3081,87 @@ Function that checks if the client is a Passworded Admin.
 ================
 */
 
-int Boe_checkPassAdmin(char *ip, char *name2, char *pass)
+int Boe_checkPassAdmin(char *name2, char *pass)
 {
-	char			octet[4];
 	char			name[MAX_NETNAME]; // name2 but without unsupported characters.
 	sqlite3			*db;
 	sqlite3_stmt	*stmt;
-	int				level2;
-	int				passlvl;
+	int				level2, id;
 
-	if(strstr(pass, g_badminPass.string)){
-		passlvl = 2;
-	}else if(strstr(pass, g_adminPass.string)){
-		passlvl = 3;
-	}else if(strstr(pass, g_sadminPass.string)){
-		passlvl = 4;
-	}
-	
-	Q_strncpyz(octet, ip, 4); // Boe!Man 2/12/13: Copy part of IP to the octet.
 	G_ClientCleanName(name2, name, sizeof(name), qtrue); // Boe!Man 2/12/13: Get the cleanName first.
 	Boe_convertNonSQLChars(name);
+	Boe_convertNonSQLChars(pass);
 	
 	db = usersDb;
 	
-	sqlite3_prepare(db, va("SELECT level from passadmins WHERE octet='%s' AND name='%s'", octet, name), -1, &stmt, 0);
+	sqlite3_prepare(db, va("SELECT level from passadmins WHERE name='%s' AND pass='%s'", name, pass), -1, &stmt, 0);
 	if(sqlite3_step(stmt) == SQLITE_DONE){ // He wasn't found on the admin table.
-		sqlite3_finalize(stmt);
-		return 0;
-	}else{ // He's on it.
+		level2 = 0;
+	}else{
 		level2 = sqlite3_column_int(stmt, 0);
-		sqlite3_finalize(stmt);
-		if(level2 == passlvl){ // He also entered the correct password, return his level.
-			return level2;
-		}else{
-			return 0;
-		}
 	}
+
+	sqlite3_finalize(stmt);
+	return level2;
+}
+
+/*
+================
+Boe_checkPassAdmin2
+8/25/14 - 7:49 PM
+Function that checks if the client was already added once as Passworded Admin.
+================
+*/
+
+qboolean Boe_checkPassAdmin2(char *name2)
+{
+	char			name[MAX_NETNAME]; // name2 but without unsupported characters.
+	sqlite3			*db;
+	sqlite3_stmt	*stmt;
+
+	G_ClientCleanName(name2, name, sizeof(name), qtrue); // Boe!Man 2/12/13: Get the cleanName first.
+	Boe_convertNonSQLChars(name);
+
+	db = usersDb;
+
+	sqlite3_prepare(db, va("SELECT ROWID from passadmins WHERE name='%s'", name), -1, &stmt, 0);
+	if (sqlite3_step(stmt) == SQLITE_DONE){ // He wasn't found on the admin table.
+		sqlite3_finalize(stmt);
+		return qfalse;
+	}
+
+	sqlite3_finalize(stmt);
+	return qtrue;
+}
+
+/*
+================
+Boe_addPasswordToDatabase
+8/25/14 - 7:10 PM
+Function that adds a (new) password to the database.
+================
+*/
+
+void Boe_addPasswordToDatabase(char *ip, char *name2, char *pass)
+{
+	char			name[MAX_NETNAME]; // name2 but without unsupported characters.
+	sqlite3			*db;
+	sqlite3_stmt	*stmt;
+	int				id;
+
+	G_ClientCleanName(name2, name, sizeof(name), qtrue); // Boe!Man 2/12/13: Get the cleanName first.
+	Boe_convertNonSQLChars(name);
+	Boe_convertNonSQLChars(pass);
+
+	db = usersDb;
+
+	sqlite3_prepare(db, va("UPDATE passadmins set 'pass'='%s' WHERE name='%s'", pass, name), -1, &stmt, 0);
+	if (sqlite3_step(stmt) == SQLITE_DONE){ // He wasn't found on the admin table.
+		// This should never happen.
+		G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
+	}
+
+	sqlite3_finalize(stmt);
 }
 
 /*

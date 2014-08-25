@@ -69,13 +69,6 @@ vmCvar_t	g_shortCommandStyle;
 vmCvar_t	g_boxAttempts;
 vmCvar_t	g_cageAttempts;
 vmCvar_t	g_RpgStyle;
-vmCvar_t	g_badminPass;
-vmCvar_t	g_adminPass;
-vmCvar_t	g_sadminPass;
-vmCvar_t	g_badminPassword;
-vmCvar_t	g_adminPassword;
-vmCvar_t	g_sadminPassword;
-//vmCvar_t	g_adminPassFile;
 vmCvar_t	g_log;
 vmCvar_t	g_logSync;
 vmCvar_t	g_logHits;
@@ -268,6 +261,7 @@ vmCvar_t	hideSeek_Weapons;
 // Boe!Man 3/8/11
 vmCvar_t	g_enableAdminLog;
 vmCvar_t	g_adminlog;
+vmCvar_t	g_loginlog;
 
 // Boe!Man 3/16/11
 vmCvar_t	server_rconprefix;
@@ -609,19 +603,13 @@ static cvarTable_t gameCvarTable[] =
 	// Boe!Man 3/8/11: CVAR for the Admin logging.
 	{ &g_enableAdminLog, "g_enableAdminLog", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 	{ &g_adminlog, "g_adminlog", "logs/admin.log", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
+	{ &g_loginlog, "g_loginlog", "logs/login.log", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
+
 
 	{ &g_rpmEnt, "g_rpmEnt", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 
 	{ &g_passwordAdmins, "g_passwordAdmins", "0", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse  },
-	{ &g_badminPass, "g_badminPass", "none", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
-	{ &g_adminPass, "g_adminPass", "none", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
-	{ &g_sadminPass, "g_sadminPass", "none", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
-	// Boe!Man 9/1/12: Synonyms for the 'pass' CVARs.
-	{ &g_badminPassword, "g_badminPassword", "none", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
-	{ &g_adminPassword, "g_adminPassword", "none", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
-	{ &g_sadminPassword, "g_sadminPassword", "none", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	
-	//{ &g_adminPassFile, "g_adminPassFile", "users/passfile.txt", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_shortCommandStyle, "g_shortCommandStyle", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 	{ &g_boxAttempts, "g_boxAttempts", "3",	CVAR_ARCHIVE,	0.0,	0.0,  0, qtrue  }, 
 	{ &g_cageAttempts, "g_cageAttempts", "3",	CVAR_ARCHIVE,	0.0,	0.0,  0, qtrue  },
@@ -895,32 +883,7 @@ void G_UpdateCvars( void )
 							trap_SendServerCommand(-1, va("print \"^3[Rcon Action] ^7Spectator team locked during match.\n\""));
 						}
 					}
-				}
-				
-				// Boe!Man 9/1/12: Handle password CVAR synonyms here..
-				if (strstr(cv->cvarName, "adminPass")){
-					if(strstr(cv->cvarName, "badmin")){ // B-Admin synonym here..
-						if(strstr(cv->cvarName, "Password")){
-							trap_Cvar_Set("g_badminPass", cv->vmCvar->string);
-						}else{
-							trap_Cvar_Set("g_badminPassword", cv->vmCvar->string);
-						}
-					}else if(strstr(cv->cvarName, "g_admin")){ // Admin synonym here..
-						if(strstr(cv->cvarName, "Password")){
-							trap_Cvar_Set("g_adminPass", cv->vmCvar->string);
-						}else{
-							trap_Cvar_Set("g_adminPassword", cv->vmCvar->string);
-						}
-					}else if(strstr(cv->cvarName, "sadmin")){ // S-Admin synonym here..
-						if(strstr(cv->cvarName, "Password")){
-							trap_Cvar_Set("g_sadminPass", cv->vmCvar->string);
-						}else{
-							trap_Cvar_Set("g_sadminPassword", cv->vmCvar->string);
-						}
-					}
-				}
-				// End Boe!Man - CVAR synonyms.
-					
+				}	
 
 				cv->modificationCount = cv->vmCvar->modificationCount;
 
@@ -1480,18 +1443,6 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 		writeDebug(MODDBG_CM, "End CM check");
 	}
 	#endif
-	
-	// Boe!Man 9/1/12: Check CVAR synonyms at start up to keep them in sync.
-	if(!strstr(g_badminPassword.string, g_badminPass.string)){
-		trap_Cvar_Set("g_badminPassword", g_badminPass.string);
-	}
-	if(!strstr(g_adminPassword.string, g_adminPass.string)){
-		trap_Cvar_Set("g_adminPassword", g_adminPass.string);
-	}
-	if(!strstr(g_sadminPassword.string, g_sadminPass.string)){
-		trap_Cvar_Set("g_sadminPassword", g_sadminPass.string);
-	}
-	// End Boe!Man - CVAR synonyms.
 }
 
 /*
@@ -2205,7 +2156,36 @@ void LogExit( const char *string )
 //	}
 //}
 
+/*
+=================
+G_LogLogin
 
+Print to the login file with a time stamp.
+=================
+*/
+void QDECL G_LogLogin(const char *fmt, ...) {
+	fileHandle_t	loginFile;
+	va_list		argptr;
+	char		string[1024];
+	qtime_t			q;
+
+	trap_RealTime(&q);
+
+	Com_sprintf(string, sizeof(string), "%02i/%02i/%i %02i:%02i - ", 1 + q.tm_mon, q.tm_mday, q.tm_year + 1900, q.tm_hour, q.tm_min);
+
+	va_start(argptr, fmt);
+	vsprintf(string + 19, fmt, argptr);
+	va_end(argptr);
+
+	// Boe!Man 11/22/10: Open and write to the crashinfo file.
+	trap_FS_FOpenFile(g_loginlog.string, &loginFile, FS_APPEND_TEXT);
+	if (!loginFile){
+		return;
+	}
+
+	trap_FS_Write(string, strlen(string), loginFile);
+	trap_FS_FCloseFile(loginFile);
+}
 
 /*
 =================

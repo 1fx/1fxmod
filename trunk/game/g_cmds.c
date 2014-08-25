@@ -3547,39 +3547,63 @@ void Boe_adm_f ( gentity_t *ent )
 	adm = ent->client->sess.admin;
 	if(!Q_stricmp(arg1, "login")){ // Boe!Man 4/3/11: Very small optimize.
 		if(g_passwordAdmins.integer && !adm){ // only check if its enabled -- Boe!Man 6/28/11: And check if they're admin-less still.
-			if(!Q_stricmp(arg2, "none")){ // no password set so deny access.
-				trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Access denied: Default password can't be used!\n\""));
+			if (!strlen(arg2)){
+				trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7You need to enter your password with this command!\n\""));
 				return;
-			}else if(strstr(arg2, g_adminPass.string) || strstr(arg2, g_sadminPass.string) || strstr(arg2, g_badminPass.string)){ // good password, now check if he's in admin list
-				levelx = Boe_checkPassAdmin(ent->client->pers.ip, ent->client->pers.cleanName, arg2);
-				if(levelx){
-					ent->client->sess.admin = levelx;
-					if(levelx == 2){
-						trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s has been granted B-Admin.\n\"", ent->client->pers.cleanName));
-					}else if(levelx == 3){
-						trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s has been granted Admin.\n\"", ent->client->pers.cleanName));
-					}else if(levelx == 4){
-						trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s has been granted S-Admin.\n\"", ent->client->pers.cleanName));
-					}
-					// Boe!Man 5/27/11: Is the Admin level allowed to spec the opposite team?
-					if (g_adminSpec.integer <= ent->client->sess.admin && g_adminSpec.integer != 0 && cm_enabled.integer < 2){
-						ent->client->sess.adminspec = qtrue;
-					}
-				}else{
-					trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Access denied: The password you entered is for another Admin level!\n\""));
+			}
+			
+			levelx = Boe_checkPassAdmin(ent->client->pers.cleanName, arg2);
+			if(levelx){
+				ent->client->sess.admin = levelx;
+				if(levelx == 2){
+					trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s has been granted B-Admin.\n\"", ent->client->pers.cleanName));
+					G_LogLogin(va("Player '%s' has been granted B-Admin. IP: %s.", ent->client->pers.cleanName, ent->client->pers.ip));
+				}else if(levelx == 3){
+					trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s has been granted Admin.\n\"", ent->client->pers.cleanName));
+					G_LogLogin(va("Player '%s' has been granted Admin. IP: %s.", ent->client->pers.cleanName, ent->client->pers.ip));
+				}else if(levelx == 4){
+					trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s has been granted S-Admin.\n\"", ent->client->pers.cleanName));
+					G_LogLogin(va("Player '%s' has been granted S-Admin. IP: %s.", ent->client->pers.cleanName, ent->client->pers.ip));
 				}
-				return;
-			}else{ // wrong password
+				// Boe!Man 5/27/11: Is the Admin level allowed to spec the opposite team?
+				if (g_adminSpec.integer <= ent->client->sess.admin && g_adminSpec.integer != 0 && cm_enabled.integer < 2){
+					ent->client->sess.adminspec = qtrue;
+				}
+			}else{
 				trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Access denied: Invalid password!\n\""));
-				return;
 			}
 		}else if(!g_passwordAdmins.integer){ // Boe!Man 3/31/11: Else display an alternate message, instead of the "You don't have Admin powers!" message (confusing).
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Access denied: No password logins allowed by the server!\n\""));
-			return;
 		}else if(adm){
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Access denied: You already have Admin powers!\n\""));
-			return;
 		}
+
+		return;
+	}
+	else if (!Q_stricmp(arg1, "pass")){
+		if (ent->client->sess.setAdminPassword || Boe_checkPassAdmin2(ent->client->pers.cleanName)){
+			if (!strlen(arg2)){
+				trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7You need to enter your password with this command!\n\""));
+				return;
+			}
+			if (!ent->client->sess.setAdminPassword && !ent->client->sess.admin){
+				trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7Login prior to changing your password!\n\""));
+				return;
+			}
+
+			Boe_addPasswordToDatabase(ent->client->pers.ip, ent->client->pers.cleanName, arg2);
+			ent->client->sess.setAdminPassword = qfalse;
+
+			trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7You updated your password to: %s.\n\"", arg2));
+			if (!ent->client->sess.admin){
+				trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7Login with /adm login %s.\n\"", arg2));
+			}
+		}
+		else{
+			trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7Access denied: You are not on the password list!\n\""));
+		}
+
+		return;
 	}
 
 	if(!adm){

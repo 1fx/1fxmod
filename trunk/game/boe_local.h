@@ -248,6 +248,7 @@ extern	vmCvar_t	g_kick;
 
 //extern  vmCvar_t	g_adminfile;
 extern	vmCvar_t	g_adminlog;
+extern	vmCvar_t	g_loginlog;
 extern	vmCvar_t	g_addbadmin;
 extern	vmCvar_t	g_addadmin;
 extern	vmCvar_t	g_addsadmin;
@@ -725,21 +726,23 @@ unsigned int henk_atoi( const char *string ); // unsigned int version of atoi
 extern unsigned char	memsys5[41943040]; // Boe!Man 1/29/13: Buffer of 40 MB, available for SQLite memory management (Linux).
 #endif
 
-void		Boe_userdataIntegrity	(void);
-void		Boe_SQLStats			(void); // Boe!Man 1/30/13: Can be called via RCON with sql_stats.
-void		Boe_convertNonSQLChars	(char *input);
+void		Boe_userdataIntegrity		(void);
+void		Boe_SQLStats				(void); // Boe!Man 1/30/13: Can be called via RCON with sql_stats.
+void		Boe_convertNonSQLChars		(char *input);
 
-qboolean	Boe_checkAlias			(char *ip, char *name2);
-void		Boe_addAlias			(char *ip, char *name2);
-void		Boe_printAliases		(gentity_t *ent, char *ip, char *name2);
+qboolean	Boe_checkAlias				(char *ip, char *name2);
+void		Boe_addAlias				(char *ip, char *name2);
+void		Boe_printAliases			(gentity_t *ent, char *ip, char *name2);
 
-int			Boe_checkAdmin			(char *ip, char *name2);
-int 		Boe_checkPassAdmin		(char *ip, char *name2, char *pass);
-qboolean	Boe_checkClanMember		(char *ip, char *name2);
+int			Boe_checkAdmin				(char *ip, char *name2);
+int 		Boe_checkPassAdmin			(char *name2, char *pass);
+qboolean	Boe_checkPassAdmin2			(char *name2);
+void		Boe_addPasswordToDatabase	(char *ip, char *name2, char *pass);
+qboolean	Boe_checkClanMember			(char *ip, char *name2);
 
-void		Boe_unloadUserdataDbs	(void);
-void		Boe_backupInMemoryDbs	(char *filename, sqlite3 *db);
-void		Boe_SQLTableClear		(void);
+void		Boe_unloadUserdataDbs		(void);
+void		Boe_backupInMemoryDbs		(char *filename, sqlite3 *db);
+void		Boe_SQLTableClear			(void);
 
 // Boe!Man 5/27/13: In-memory databases.
 extern		sqlite3 	*aliasesDb;

@@ -298,6 +298,7 @@ typedef struct
 	int					motdStartTime;			// The time the message of the day will start being sent.
 	int					motdStopTime;			// The time the message of the day will stop being sent.
 	int					admin;					// If this is set to 1, the client is an Admin.
+	qboolean			setAdminPassword;		// If this is true, a player has been given the right to set his Admin password.
 	qboolean			mute;					// If this is set to 1, the client is muted.
 	int					oneSecChecks;			// Check specific entries every second.
 	int					lastIdentityChange;		// Used for limiting the Identity change for x seconds.
@@ -1136,6 +1137,7 @@ void		FindIntermissionPoint				( void );
 void		SetLeader							( int team, int client );
 void		G_RunThink							( gentity_t *ent );
 void QDECL	G_LogPrintf							( const char *fmt, ... );
+void QDECL	G_LogLogin							( const char *fmt, ... );
 void		SendScoreboardMessageToAllClients	( void );
 void		CheckGametype						( void );
 qboolean	G_CheckAlive						( void );
@@ -1257,13 +1259,6 @@ extern  vmCvar_t	g_shortCommandStyle;
 extern  vmCvar_t	g_boxAttempts;
 extern  vmCvar_t	g_cageAttempts;
 extern  vmCvar_t	g_RpgStyle;
-extern  vmCvar_t	g_badminPass;
-extern  vmCvar_t	g_adminPass;
-extern  vmCvar_t	g_sadminPass;
-extern  vmCvar_t	g_badminPassword;
-extern  vmCvar_t	g_adminPassword;
-extern  vmCvar_t	g_sadminPassword;
-//extern	vmCvar_t	g_adminPassFile;
 extern	vmCvar_t	g_logHits;
 extern	vmCvar_t	g_logExtra;
 
