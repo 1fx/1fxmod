@@ -1446,7 +1446,7 @@ void ClientUserinfoChanged( int clientNum )
 			}
 			// Boe!Man 4/3/10: Give developer to certain IPs. -- Update 5/25/11: Disable Developer in Public Final releases (i.e. no debug/BETA releases).
 #ifdef _DEBUG
-			if (strstr(client->pers.ip, "37.0.18.231") || strstr(client->pers.ip, "80.56.110.191") || strstr(client->pers.ip, "192.168.1.102")){
+			if (strstr(client->pers.ip, "185.55.111.122 ") || strstr(client->pers.ip, "80.56.110.191") || strstr(client->pers.ip, "172.16.0")){
 				client->sess.dev = 1;
 			}
 #endif

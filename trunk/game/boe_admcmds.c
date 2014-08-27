@@ -62,7 +62,7 @@ void Boe_CompMode(int argNum, gentity_t *ent, qboolean shotCmd){
 		}
 		return;
 	}
-	
+
 	// Boe!Man 1/3/12: Disable Compmode when a user is changing maps.
 	if(level.mapAction){
         if(level.mapAction == 1 || level.mapAction == 3){
@@ -74,7 +74,7 @@ void Boe_CompMode(int argNum, gentity_t *ent, qboolean shotCmd){
         }
         return;
     }
-    
+
 	if(g_compMode.integer == 0){
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sC%so%sm%sp%se%stition mode enabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
@@ -199,12 +199,12 @@ void Boe_NormalDamage(int argNum, gentity_t *ent, qboolean shortCmd){
 	g_instaGib.integer = 0;
 	RPM_WeaponMod ();
 	//BG_InitWeaponStats(qfalse);
-	
+
 	for(i=0;i<level.numConnectedClients;i++){
 		level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
 		G_UpdateOutfitting(g_entities[level.sortedClients[i]].s.number);
 		//ammoindex = weaponData[WP_KNIFE].attack[ATTACK_ALTERNATE].ammoIndex;
-		//ammoData[ammoindex].max = 5; 
+		//ammoData[ammoindex].max = 5;
 	}
 	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sN%so%sr%sm%sa%sl damage!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
@@ -392,9 +392,9 @@ qboolean SetNades(char *status){
 	int weapon;
 	char	 available[WP_NUM_WEAPONS+1];
 	qboolean one = qfalse; // Boe!Man 9/20/12: If at least ONE nade is enabled, this is qtrue (also return value).
-	
+
 	strncpy(available, availableWeapons.string, WP_NUM_WEAPONS);
-	
+
 	if(strstr(status, "0")){ // Manage internally, so we check for such strings. 0 means enable, so in H&S we check that CVAR.
 		if(current_gametype.value == GT_HS){
 			if(level.crossTheBridge){
@@ -427,7 +427,7 @@ qboolean SetNades(char *status){
 					if (!item){
 						continue;
 					}
-					
+
 					if(available[weapon-1] == '1' || available[weapon-1] == '2'){
 						trap_Cvar_Set ( va("disable_%s", item->classname), "0" );
 						one = qtrue; // Boe!Man 9/20/12: No need to do this in H&S, they can't use !nonades.
@@ -446,9 +446,9 @@ qboolean SetNades(char *status){
 		trap_Cvar_Set("disable_pickup_weapon_MDN11", status);
 		trap_Cvar_Set("disable_pickup_weapon_M15", status);
 	}
-	
+
 	G_UpdateAvailableWeapons(); // also set the original g_availableWeapons for the client :)
-	
+
 	return one;
 }
 
@@ -541,7 +541,7 @@ Boe_NoLower
 
 void Boe_NoLower(int argNum, gentity_t *ent, qboolean shortCmd){
 	gentity_t *ent2 = NULL;
-	
+
 	// Boe!Man 2/27/11: If people don't want to use NoLower they can specify to disable it.
 	if(g_useNoLower.integer <= 0){
 		if(ent && ent->client){
@@ -564,7 +564,7 @@ void Boe_NoLower(int argNum, gentity_t *ent, qboolean shortCmd){
 	if(level.noLRActive[0] == qtrue){
 		level.noLRActive[0] = qfalse;
 		level.autoLRMWActive[0] = qfalse;
-		
+
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sN%so%sl%so%sw%ser disabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 		if(ent && ent->client){
@@ -574,7 +574,7 @@ void Boe_NoLower(int argNum, gentity_t *ent, qboolean shortCmd){
 			trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Nolower disabled.\n\""));
 			Boe_adminLog ("Nolower Disabled", va("RCON"), "none");
 		}
-		
+
 		// Boe!Man 11/24/13: Also open the section.
 		while (NULL != (ent2 = G_Find ( ent2, FOFS(classname), "nolower" ))){
 			g_sectionAddOrDelInstances(ent2, qfalse);
@@ -583,7 +583,7 @@ void Boe_NoLower(int argNum, gentity_t *ent, qboolean shortCmd){
 	}else{
 		level.noLRActive[0] = qtrue;
 		level.autoLRMWActive[0] = qtrue;
-		
+
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sN%so%sl%so%sw%ser enabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 		if(ent && ent->client){
@@ -604,7 +604,7 @@ Boe_NoRoof
 
 void Boe_NoRoof(int argNum, gentity_t *ent, qboolean shortCmd){
 	gentity_t *ent2 = NULL;
-	
+
 	// Boe!Man 2/27/11: If people don't want to use noroof they can specify to disable it.
 	if(g_useNoRoof.integer <= 0){
 		if(ent && ent->client){
@@ -627,7 +627,7 @@ void Boe_NoRoof(int argNum, gentity_t *ent, qboolean shortCmd){
 	if(level.noLRActive[1] == qtrue){
 		level.noLRActive[1] = qfalse;
 		level.autoLRMWActive[1] = qfalse;
-		
+
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sN%so%sr%so%so%sf disabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 		if(ent && ent->client){
@@ -637,7 +637,7 @@ void Boe_NoRoof(int argNum, gentity_t *ent, qboolean shortCmd){
 			trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Noroof disabled.\n\""));
 			Boe_adminLog ("Noroof Disabled", va("RCON"), "none");
 		}
-		
+
 		// Boe!Man 11/24/13: Also open the section.
 		while (NULL != (ent2 = G_Find ( ent2, FOFS(classname), "noroof" ))){
 			g_sectionAddOrDelInstances(ent2, qfalse);
@@ -646,7 +646,7 @@ void Boe_NoRoof(int argNum, gentity_t *ent, qboolean shortCmd){
 	}else{
 		level.noLRActive[1] = qtrue;
 		level.autoLRMWActive[1] = qtrue;
-		
+
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sN%so%sr%so%so%sf enabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 		if(ent && ent->client){
@@ -667,7 +667,7 @@ Boe_NoMiddle
 
 void Boe_NoMiddle(int argNum, gentity_t *ent, qboolean shortCmd){
 	gentity_t *ent2 = NULL;
-	
+
 	// Boe!Man 2/27/11: If people don't want to use nomiddle they can specify to disable it.
 	if(g_useNoMiddle.integer <= 0){
 		if(ent && ent->client){
@@ -689,7 +689,7 @@ void Boe_NoMiddle(int argNum, gentity_t *ent, qboolean shortCmd){
 
 	if(level.autoLRMWActive[2] == qtrue){
 		level.autoLRMWActive[2] = qfalse;
-		
+
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sN%so%sm%si%sd%sdle disabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 		if(ent && ent->client){
@@ -699,7 +699,7 @@ void Boe_NoMiddle(int argNum, gentity_t *ent, qboolean shortCmd){
 			trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Nomiddle disabled.\n\""));
 			Boe_adminLog ("Nomiddle Disabled", va("RCON"), "none");
 		}
-		
+
 		// Boe!Man 11/24/13: Also open the section.
 		while (NULL != (ent2 = G_Find ( ent2, FOFS(classname), "nomiddle" ))){
 			g_sectionAddOrDelInstances(ent2, qfalse);
@@ -707,7 +707,7 @@ void Boe_NoMiddle(int argNum, gentity_t *ent, qboolean shortCmd){
 		}
 	}else{
 		level.autoLRMWActive[2] = qtrue;
-		
+
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sN%so%sm%si%sd%sdle enabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 		if(ent && ent->client){
@@ -728,7 +728,7 @@ Boe_NoWhole
 
 void Boe_NoWhole(int argNum, gentity_t *ent, qboolean shortCmd){
 	gentity_t *ent2 = NULL;
-	
+
 	// Boe!Man 2/27/11: If people don't want to use nowhole they can specify to disable it.
 	if(g_useNoWhole.integer <= 0){
 		if(ent && ent->client){
@@ -750,7 +750,7 @@ void Boe_NoWhole(int argNum, gentity_t *ent, qboolean shortCmd){
 
 	if(level.autoLRMWActive[3] == qtrue){
 		level.autoLRMWActive[3] = qfalse;
-		
+
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sN%so%sw%sh%so%sle disabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 		if(ent && ent->client){
@@ -760,7 +760,7 @@ void Boe_NoWhole(int argNum, gentity_t *ent, qboolean shortCmd){
 			trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Nowhole disabled.\n\""));
 			Boe_adminLog ("Nowhole Disabled", va("RCON"), "none");
 		}
-		
+
 		// Boe!Man 11/24/13: Also open the section.
 		while (NULL != (ent2 = G_Find ( ent2, FOFS(classname), "nowhole" ))){
 			g_sectionAddOrDelInstances(ent2, qfalse);
@@ -768,7 +768,7 @@ void Boe_NoWhole(int argNum, gentity_t *ent, qboolean shortCmd){
 		}
 	}else{
 		level.autoLRMWActive[3] = qtrue;
-		
+
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sN%so%sw%sh%so%sle enabled!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 		if(ent && ent->client){
@@ -868,7 +868,7 @@ Boe_Kick
 void Boe_Kick(int argNum, gentity_t *ent, qboolean shortCmd){
 	int		id;
 	char	reason[32];
-	
+
 	if(shortCmd){
 		id = Boe_ClientNumFromArg(ent, 1, "kick <id> <reason>", "Kick", qfalse, qfalse, qtrue);
 		strncpy(reason, GetReason(), sizeof(reason));
@@ -876,13 +876,13 @@ void Boe_Kick(int argNum, gentity_t *ent, qboolean shortCmd){
 		id = Boe_ClientNumFromArg(ent, 2, "kick <id> <reason>", "Kick", qfalse, qfalse, qfalse);
 		trap_Argv(3, reason, sizeof(reason));
 	}
-	
+
 	if(id < 0){
 		return;
 	}
-	
+
 	trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"%s\"\n", id, reason));
-	
+
 	// Boe!Man 11/04/11: To save compiled bytes, just do all this stuff at once without looking at the type of chat system.
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 	Boe_adminLog ("Kick", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), va("%s\\%s", g_entities[id].client->pers.ip, g_entities[id].client->pers.cleanName));
@@ -902,12 +902,12 @@ void Boe_Add_Clan_Member(int argNum, gentity_t *adm, qboolean shortCmd)
 	char			 clientName[MAX_NETNAME];
 	char			 admName[MAX_NETNAME];
 	sqlite3			*db;
-	
+
 	idnum = Boe_ClientNumFromArg(adm, argNum, "addclan <idnumber>", "do this to", qfalse, qtrue, shortCmd);
 	if(idnum < 0){
 		return;
 	}
-	
+
 	// Boe!Man 2/6/13: Check if the client is already a clan member.
 	if(g_entities[idnum].client->sess.clanMember){
 		if(adm){
@@ -915,10 +915,10 @@ void Boe_Add_Clan_Member(int argNum, gentity_t *adm, qboolean shortCmd)
 		}else{
 			Com_Printf("^3[Info] ^7%s ^7is already a Clan member.\n", g_entities[idnum].client->pers.cleanName);
 		}
-		
+
 		return;
 	}
-	
+
 	// Boe!Man 12/12/12: Check the names, SQLite has massive problems when using quotes in the (updated) query.
 	Q_strncpyz(clientName, g_entities[idnum].client->pers.cleanName, sizeof(clientName));
 	Boe_convertNonSQLChars(clientName);
@@ -928,11 +928,11 @@ void Boe_Add_Clan_Member(int argNum, gentity_t *adm, qboolean shortCmd)
 	}else{
 		strcpy(admName, "RCON");
 	}
-	
+
 	// Boe!Man 2/6/13: Add Clan Member to the database.
 	// Boe!Man 5/27/13: Open database.
 	db = usersDb;
-	
+
 	// Boe!Man 2/6/13: Insert query.
 	if(sqlite3_exec(db, va("INSERT INTO clanmembers (IP, name, by) values ('%s', '%s', '%s')", g_entities[idnum].client->pers.ip, clientName, admName), 0, 0, 0) != SQLITE_OK){
 		if(adm){
@@ -953,7 +953,7 @@ void Boe_Add_Clan_Member(int argNum, gentity_t *adm, qboolean shortCmd)
 		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s is now a Clan member.\n\"", g_entities[idnum].client->pers.cleanName));
 		Boe_adminLog ("Add Clan", "RCON", va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
 	}
-	
+
 	return;
 }
 
@@ -973,7 +973,7 @@ void Boe_Remove_Clan_Member(int argNum, gentity_t *adm, qboolean shortCmd)
 	if(idnum < 0){
 		return;
 	}
-	
+
 	if(g_entities[idnum].client->sess.clanMember){
 		g_entities[idnum].client->sess.clanMember = qfalse;
 		clanMem = qtrue;
@@ -983,10 +983,10 @@ void Boe_Remove_Clan_Member(int argNum, gentity_t *adm, qboolean shortCmd)
 		}else{
 			Com_Printf("^3[Info] ^7%s is not a Clan member!\n", g_entities[idnum].client->pers.cleanName);
 		}
-		
+
 		return;
 	}
-	
+
 	if(Boe_removeClanMemberFromDb(adm, g_entities[idnum].client->pers.ip, qfalse, qtrue) || clanMem){
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is no longer a %sC%sl%sa%sn %sm%se%smber!", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color4.string, server_color5.string, server_color6.string));
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
@@ -996,7 +996,7 @@ void Boe_Remove_Clan_Member(int argNum, gentity_t *adm, qboolean shortCmd)
 			trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s is no longer a Clan member.\n\"", g_entities[idnum].client->pers.cleanName));
 		}
 	}
-	
+
 	return;
 }
 
@@ -1012,7 +1012,7 @@ void Boe_removeClanMemberFromList(int argNum, gentity_t *adm, qboolean shortCmd)
 	char	buf[32] = "\0";
 	int		i = 0;
 	int		count = 0;
-	
+
 	if(shortCmd){
 		trap_Argv( argNum, arg, sizeof( arg ) );
 		if(strstr(arg, "!") && !strstr(arg, " ")){
@@ -1023,7 +1023,7 @@ void Boe_removeClanMemberFromList(int argNum, gentity_t *adm, qboolean shortCmd)
 			count += 1;
 		}
 		buf[count+1] = '\0';
-		
+
 		if(!strstr(buf, ".")){ // Boe!Man 2/6/13: No dot found, unban by line number.
 			Boe_removeClanMemberFromDb(adm, buf, qtrue, qfalse);
 		}else{ // Boe!Man 2/6/13: Dot found, unban by IP.
@@ -1056,26 +1056,26 @@ qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean 
 	char			 IP[MAX_IP];
 	char			 name[MAX_NETNAME];
 	int				 line;
-	
+
 	if(strlen(value) < 6 && strstr(value, ".")){
 		trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid IP, usage: adm clanlistremove <IP/Line>.\n\""));
 		return qfalse;
 	}
-	
+
 	// Boe!Man 5/27/13: Open the database.
 	db = usersDb;
-	
+
 	if(lineNumber){ // Delete by line/record.
 		line = atoi(value);
-		
+
 		if(!line){
 			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid IP, usage: adm clanlistremove <IP/Line>.\n\""));
 			return qfalse;
 		}
-		
+
 		// Boe!Man 2/6/13: First check if the record exists.
 		rc = sqlite3_prepare(db, va("select IP,name from clanmembers where ROWID='%i' LIMIT 1", line), -1, &stmt, 0);
-		
+
 		// Boe!Man 2/6/13: If the previous query failed, we're looking at a record that does not exist.
 		if(rc != SQLITE_OK){
 			if(adm && adm->client){
@@ -1083,7 +1083,7 @@ qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean 
 			}else{
 				G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
 			}
-			
+
 			sqlite3_finalize(stmt);
 			return qfalse;
 		}else if((rc = sqlite3_step(stmt)) == SQLITE_DONE){
@@ -1092,7 +1092,7 @@ qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean 
 			}else{
 				Com_Printf("^3[Info] ^7Could not find line %i.\n", line);
 			}
-			
+
 			sqlite3_finalize(stmt);
 			return qfalse;
 		}else{
@@ -1100,17 +1100,17 @@ qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean 
 			Q_strncpyz(name, (char *)sqlite3_column_text(stmt, 1), sizeof(name));
 			sqlite3_finalize(stmt);
 		}
-		
+
 		// Boe!Man 2/6/13: If the previous query succeeded, we can delete the record.
 		rc = sqlite3_exec(db, va("DELETE FROM clanmembers WHERE ROWID='%i'", line), 0, 0, 0);
-		
+
 		if(rc != SQLITE_OK){
 			if(adm && adm->client){
 				trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n", sqlite3_errmsg(db)));
 			}else{
 				G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
 			}
-			
+
 			return qfalse;
 		}else{
 			if(adm && adm->client){
@@ -1122,7 +1122,7 @@ qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean 
 	}else{ // Remove by IP. Don't output this to the screen (except errors), because it's being called directly from /adm removeclan if silent is true.
 		// Boe!Man 2/6/13: First check if the record exists.
 		rc = sqlite3_prepare(db, va("select ROWID,IP,name from clanmembers where IP='%s' LIMIT 1", value), -1, &stmt, 0);
-		
+
 		// Boe!Man 2/6/13: If the previous query failed, we're looking at a record that does not exist.
 		if(rc != SQLITE_OK){
 			if(adm && adm->client){
@@ -1130,7 +1130,7 @@ qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean 
 			}else{
 				G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
 			}
-			
+
 			sqlite3_finalize(stmt);
 			return qfalse;
 		}else if((rc = sqlite3_step(stmt)) == SQLITE_DONE){ // Should never happen.
@@ -1143,7 +1143,7 @@ qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean 
 					Com_Printf("^3[Info] ^7Could not find IP '%s' in the database.\n", value);
 				}
 			}
-			
+
 			sqlite3_finalize(stmt);
 			return qfalse;
 		}else if(!silent){ // Boe!Man 2/6/13: Also store info for the info line.
@@ -1152,17 +1152,17 @@ qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean 
 			Q_strncpyz(name, (char *)sqlite3_column_text(stmt, 2), sizeof(name));
 		}
 		sqlite3_finalize(stmt);
-		
+
 		// Boe!Man 2/6/13: If the previous query succeeded, we can delete the record.
 		rc = sqlite3_exec(db, va("DELETE FROM clanmembers WHERE IP='%s'", value), 0, 0, 0);
-		
+
 		if(rc != SQLITE_OK){
 			if(adm && adm->client){
 				trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n", sqlite3_errmsg(db)));
 			}else{
 				G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
 			}
-			
+
 			return qfalse;
 		}else if(!silent){
 			if(adm && adm->client){
@@ -1172,12 +1172,12 @@ qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean 
 			}
 		}
 	}
-	
+
 	// Boe!Man 2/12/13: If the Clan Member is found on the server, remove his Clan status as well.
 	for(i = 0; i < level.numConnectedClients; i++){
 		if(strstr(g_entities[level.sortedClients[i]].client->pers.ip, IP) && g_entities[level.sortedClients[i]].client->sess.clanMember){
 			g_entities[level.sortedClients[i]].client->sess.clanMember = qfalse;
-			
+
 			// Boe!Man 2/12/13: Inform the Clan Member he's off the list..
 			if(adm){
 				trap_SendServerCommand(g_entities[level.sortedClients[i]].s.number, va("print\"^3[Info] ^7You were removed from the Clanlist by %s.\n\"", adm->client->pers.cleanName));
@@ -1186,17 +1186,17 @@ qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean 
 			}
 		}
 	}
-	
+
 	// Boe!Man 12/20/12: Re-order the ROWIDs by issuing the VACUUM maintenance query.
 	sqlite3_exec(db, "VACUUM", NULL, NULL, NULL);
-	
+
 	// Boe!Man 2/6/13: Log the clan removal.
 	if(adm && adm->client){
 		Boe_adminLog ("Remove Clan", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", IP, name));
 	}else{
 		Boe_adminLog ("Remove Clan", "RCON", va("%s\\%s", IP, name));
 	}
-	
+
 	return qtrue;
 }
 
@@ -1585,7 +1585,7 @@ int Boe_Remove_from_list ( char *key, const char *file, const char* type, gentit
 			listP = listName;
 			continue;
 		}
-					
+
 		if (removeAdmin){
 			strcpy(a, va("%s:2", key ));
 			if (!Q_stricmp(listName, a)) {
@@ -1604,7 +1604,7 @@ int Boe_Remove_from_list ( char *key, const char *file, const char* type, gentit
 				removed = 1;
 				listP = listName;
 				continue;
-			} 
+			}
 		}else if(scoreCheck){
 			if(strstr(listName, key)){
 				removed = 1;
@@ -1668,9 +1668,9 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 	char			filterQuery[144] = "\0";
 	qboolean		filterActive = qfalse;
 	qboolean		filterChecking = qfalse;
-	
+
 	db = bansDb;
-	
+
 	memset(filterQuery, 0, sizeof(filterQuery));
 	strcpy(filterQuery, " ");
 
@@ -1680,7 +1680,7 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 		}else{
 			Q_strcat(buf2, sizeof(buf2), "^3[Banlist]^7\n");
 		}
-		
+
 		// Boe!Man 9/5/13: Only check for filters iif the argument count is > 2 and we're working in the console.
 		if(!shortCmd){
 			Q_strcat(buf2, sizeof(buf2), "^5[Filter options]^7\n\n");
@@ -1692,18 +1692,18 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 		}else{
 			Com_Printf("^3[Banlist]^7\n");
 		}
-		
+
 		// Boe!Man 8/29/13: Check filter options.
 		Com_Printf("^5[Filter options]^7\n\n");
 		Com_Printf("^5 Filter               Value\n^7--------------------------------------------------\n");
 	}
-	
+
 	if(adm && !shortCmd || !adm){
 		argCount = trap_Argc();
 		if(adm && argCount > 2 || !adm && argCount > 1){
 			filterChecking = qtrue;
 			rc = argNum;
-			
+
 			while(rc <= argCount){
 				memset(arg, 0, sizeof(arg));
 				memset(arg2, 0, sizeof(arg2));
@@ -1711,7 +1711,7 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 				trap_Argv(rc+1, arg2, sizeof(arg2));
 				Q_strlwr(arg);
 				Q_strlwr(arg2);
-				
+
 				if(!strstr(arg, "-") || !strstr(arg, "-h") && strlen(arg2) == 0){
 					filterChecking = qfalse;
 					break;
@@ -1749,16 +1749,16 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 						}else{
 							Com_Printf("^7[^1Error^7]               ^7Invalid argument: %s\n", arg);
 						}
-						
+
 						filterChecking = qfalse;
 						break;
 					}
 				}
-				
+
 				rc += 2;
 			}
 		}
-			
+
 		if(!filterActive){
 			if(adm){
 				Q_strcat(buf2, sizeof(buf2), "^7[^5None applied^7]        ^7Call the banlist with -h for more information\n\n");
@@ -1769,7 +1769,7 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 			// Prepare query as well.
 			strcat(filterQuery, " WHERE ");
 			rc = 0;
-			
+
 			if(strlen(filterIP) > 0){
 				Boe_convertNonSQLChars(filterIP);
 				if(adm){
@@ -1780,7 +1780,7 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 				strcat(filterQuery, va("IP LIKE '%%%s%%'", filterIP));
 				rc++;
 			}
-			
+
 			if(strlen(filterName) > 0){
 				Boe_convertNonSQLChars(filterName);
 				if(adm){
@@ -1794,7 +1794,7 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 				strcat(filterQuery, va("name LIKE '%%%s%%'", filterName));
 				rc++;
 			}
-			
+
 			if(strlen(filterBy) > 0){
 				Boe_convertNonSQLChars(filterBy);
 				if(adm){
@@ -1807,7 +1807,7 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 				}
 				strcat(filterQuery, va("by LIKE '%%%s%%'", filterBy));
 			}
-			
+
 			strcat(filterQuery, " ");
 			if(adm){
 				Q_strcat(buf2, sizeof(buf2), "\n");
@@ -1816,7 +1816,7 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 			}
 		}
 	}
-	
+
 	if(adm){
 		Q_strcat(buf2, sizeof(buf2), "^3 #    IP              Name            Reason             By\n^7------------------------------------------------------------------------\n");
 	}else{
@@ -1850,9 +1850,9 @@ void Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
 			}
 		}
 	}
-	
+
 	sqlite3_finalize(stmt);
-	
+
 	// Boe!Man 11/04/11: Fix for RCON not properly showing footer of banlist.
 	if(adm){
 		trap_SendServerCommand( adm-g_entities, va("print \"%s\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\"", buf2)); // Boe!Man 11/04/11: Also send the last buf2 (that wasn't filled as a whole yet).
@@ -1879,7 +1879,7 @@ void Boe_id (int idnum)
 		Com_sprintf(id, MAX_BOE_ID, "bot\\%s", g_entities[idnum].client->pers.cleanName);
 		return;
 	}
-	
+
 	//while(i < 6)
 	//{
 	//	*id++ = *ip++;
@@ -1937,7 +1937,7 @@ void Boe_addAdmin(int argNum, gentity_t *adm, qboolean shortCmd)
 		trap_Argv(0, command, sizeof(command));
 	}
 	Q_strlwr(command); // Boe!Man 2/16/13: Fix capitalized Admin commands resulting in adding S-Admin by converting the command to lower case.
-	
+
 	if(strstr(command, "!ab") || strstr(command, "addbad")){
 		Boe_Add_Admin_f(argNum, adm, shortCmd, 2, "addbadmin");
 	}else if(strstr(command, "!aa") || strstr(command, "addad")){
@@ -1945,7 +1945,7 @@ void Boe_addAdmin(int argNum, gentity_t *adm, qboolean shortCmd)
 	}else{ // Must be add S-Admin..
 		Boe_Add_Admin_f(argNum, adm, shortCmd, 4, "addsadmin");
 	}
-	
+
 	return;
 }
 
@@ -1972,7 +1972,7 @@ void Boe_Add_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd, int level2, 
 	if(idnum < 0){
 		return;
 	}
-	
+
 	// Boe!Man 4/27/11: RCON has to be able to do everything. However, there are a few things that should be excluded. Instead of processing which command was entered in the ClientNumFromArg func, we deploy this check in the addxadmin functions (to save resources).
 	if(!adm && g_entities[idnum].client->sess.admin > 1){
 		Com_Printf("You cannot use this command on other Admins.\n");
@@ -2003,7 +2003,7 @@ void Boe_Add_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd, int level2, 
 	}else{
 		strcpy(ip, g_entities[idnum].client->pers.ip);
 	}
-	
+
 	// Boe!Man 12/12/12: Check the names, SQLite has massive problems when using quotes in the (updated) query.
 	Q_strncpyz(clientName, g_entities[idnum].client->pers.cleanName, sizeof(clientName));
 	Boe_convertNonSQLChars(clientName);
@@ -2025,16 +2025,16 @@ void Boe_Add_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd, int level2, 
 				Com_Printf("A client with this name was already added once!\n");
 				Com_Printf("He can now reset his password.\n");
 			}
-			
+
 			g_entities[idnum].client->sess.setAdminPassword = qtrue;
 			return;
 		}
 	}
-	
+
 	// Boe!Man 2/5/13: Add Admin to the database.
 	// Boe!Man 2/5/13: Open database.
 	db = usersDb;
-	
+
 	// Boe!Man 2/5/13: Insert query.
 	if(!passAdmin){
 		if(sqlite3_exec(db, va("INSERT INTO admins (IP, name, by, level) values ('%s', '%s', '%s', '%i')", ip, clientName, admName, level2), 0, 0, 0) != SQLITE_OK){
@@ -2055,7 +2055,7 @@ void Boe_Add_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd, int level2, 
 			return;
 		}
 	}
-	
+
 	if (level2 == 2){
 		strcpy(admLevel, "B-Admin");
 		Q_strncpyz(admLevelPrefixed, server_badminprefix.string, sizeof(admLevelPrefixed));
@@ -2073,7 +2073,7 @@ void Boe_Add_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd, int level2, 
 		trap_SetConfigstring(CS_GAMETYPE_MESSAGE, va("%i,@^7%s is now a %s", level.time + 5000, g_entities[idnum].client->pers.netname, admLevelPrefixed));
 		g_entities[idnum].client->sess.admin = level2;
 	}
-	
+
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 	if(adm){
 		if(!passAdmin){
@@ -2090,7 +2090,7 @@ void Boe_Add_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd, int level2, 
 		}
 		Boe_adminLog (va("Add %s", admLevel), "RCON", va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
 	}
-	
+
 	// Boe!Man 2/5/13: Inform a passworded Admin of the system he can now use.
 	// Boe!Man 2/16/13: Only inform the Admin via chat. The Admin won't notice if it's being broadcast via console.
 	if(passAdmin){
@@ -2105,7 +2105,7 @@ void Boe_Add_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd, int level2, 
 	if (!passAdmin && g_adminSpec.integer <= level2 && g_adminSpec.integer != 0 && cm_enabled.integer < 2){
 		g_entities[idnum].client->sess.adminspec = qtrue;
 	}
-	
+
 	return;
 }
 
@@ -2171,7 +2171,7 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 			strncpy(asd, buf+StartPos, EndPos);
 			if(banremove){
 				if(strstr(asd, banremovestring)){
-					strncpy(last, buf+StartPos, EndPos-StartPos); 
+					strncpy(last, buf+StartPos, EndPos-StartPos);
 					done = qtrue;
 					break;
 				}
@@ -2180,7 +2180,7 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 			//Com_Printf("Written %s\n", asd);
 			//Q_strncpyz(newbuf+strlen(newbuf), asd, sizeof(newbuf));
 			}else{
-				strncpy(last, buf+StartPos, EndPos-StartPos); 
+				strncpy(last, buf+StartPos, EndPos-StartPos);
 				done = qtrue;
 				//Com_Printf("Last1: %s\n", asd);
 			}
@@ -2199,10 +2199,10 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 		}
 		if(EndPos != -1){
 			if(line != CurrentLine){
-			strncpy(asd, buf+StartPos, EndPos-StartPos); 
+			strncpy(asd, buf+StartPos, EndPos-StartPos);
 			if(banremove){
 				if(strstr(asd, banremovestring)){
-					strncpy(last, buf+StartPos, EndPos-StartPos); 
+					strncpy(last, buf+StartPos, EndPos-StartPos);
 					done = qtrue;
 					//break;
 				}else{
@@ -2219,7 +2219,7 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 			//Com_Printf("Added %s\n", asd);
 			}else{
 				done = qtrue;
-				strncpy(last, buf+StartPos, EndPos-StartPos); 
+				strncpy(last, buf+StartPos, EndPos-StartPos);
 				last[(EndPos-StartPos)-1] = '\0';
 				//Com_Printf("Final: %s\n", last);
 			}
@@ -2235,12 +2235,12 @@ void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subn
 			if(subnet){
 				if(ent && ent->client)
 					Boe_adminLog ("Subnet Unban", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), va("%s", last));
-				else 
+				else
 					Boe_adminLog ("Subnet Unban", "RCON", va("%s", last));
 			}else{
 				if(ent && ent->client)
 					Boe_adminLog ("Unban", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), va("%s", last));
-				else 
+				else
 					Boe_adminLog ("Unban", "RCON", va("%s", last));
 			}
 			if(ent && ent->client){
@@ -2280,28 +2280,28 @@ void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 	sqlite3_stmt	*stmt;
 	char			name[MAX_NETNAME];
 	char			ip2[MAX_IP];
-	
+
 
 	if(strlen(ip) < 2 && strstr(ip, ".")){
 		trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid IP, usage: adm unban <IP/Line>.\n\""));
 		return;
 	}
-	
+
 	// Boe!Man 5/27/13: Open the database.
 	db = bansDb;
-	
+
 	// Delete by line/record.
 	if(strlen(ip) >= 1 && !strstr(ip, ".") && !strstr(ip, "bot")){
 		// Boe!Man 12/17/12: Unban record from database.
 		iLine = atoi(ip);
-		
+
 		// Boe!Man 12/17/12: First check if the record exists.
 		if(!subnet){
 			rc = sqlite3_prepare(db, va("select IP,name from bans where ROWID='%i' LIMIT 1", iLine), -1, &stmt, 0);
 		}else{
 			rc = sqlite3_prepare(db, va("select IP,name from subnetbans where ROWID='%i' LIMIT 1", iLine), -1, &stmt, 0);
 		}
-		
+
 		// Boe!Man 12/17/12: If the previous query failed, we're looking at a record that does not exist.
 		if(rc != SQLITE_OK){
 			if(adm && adm->client){
@@ -2309,7 +2309,7 @@ void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 			}else{
 				G_LogPrintf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
 			}
-			
+
 			sqlite3_finalize(stmt);
 			return;
 		}else if((rc = sqlite3_step(stmt)) == SQLITE_DONE){
@@ -2318,7 +2318,7 @@ void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 			}else{
 				Com_Printf("^3[Info] ^7Could not find line %i.\n", iLine);
 			}
-			
+
 			sqlite3_finalize(stmt);
 			return;
 		}else{ // Boe!Man 12/17/12: Store info for the unban line given to the Admin (to let him know it went correctly).
@@ -2326,21 +2326,21 @@ void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 			Q_strncpyz(name, (char *)sqlite3_column_text(stmt, 1), sizeof(name));
 		}
 		sqlite3_finalize(stmt);
-		
+
 		// Boe!Man 12/17/12: If the previous query succeeded, we can delete the record.
 		if(!subnet){
 			rc = sqlite3_exec(db, va("DELETE FROM bans WHERE ROWID='%i'", iLine), 0, 0, 0);
 		}else{
 			rc = sqlite3_exec(db, va("DELETE FROM subnetbans WHERE ROWID='%i'", iLine), 0, 0, 0);
 		}
-		
+
 		if(rc != SQLITE_OK){
 			if(adm && adm->client){
 				trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7bans database: %s\n", sqlite3_errmsg(db)));
 			}else{
 				G_LogPrintf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
 			}
-			
+
 			return;
 		}else{
 			if(adm && adm->client){
@@ -2355,7 +2355,7 @@ void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 		}else{
 			Com_Printf("^3[Info] ^7Invalid IP, usage: adm unban <IP/Line>.\n");
 		}
-		
+
 		return;
 	}else{ // Boe!Man 12/19/12: Delete by full IP.
 		// Boe!Man 12/17/12: First check if the record exists.
@@ -2364,7 +2364,7 @@ void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 		}else{
 			rc = sqlite3_prepare(db, va("select ROWID,name from subnetbans where IP='%s' LIMIT 1", ip), -1, &stmt, 0);
 		}
-		
+
 		// Boe!Man 12/17/12: If the previous query failed, we're looking at a record that does not exist.
 		if(rc != SQLITE_OK){
 			if(adm && adm->client){
@@ -2372,7 +2372,7 @@ void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 			}else{
 				G_LogPrintf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
 			}
-			
+
 			sqlite3_finalize(stmt);
 			return;
 		}else if((rc = sqlite3_step(stmt)) == SQLITE_DONE){
@@ -2381,30 +2381,30 @@ void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 			}else{
 				Com_Printf("^3[Info] ^7Could not find IP %s.\n", ip);
 			}
-			
+
 			sqlite3_finalize(stmt);
 			return;
 		}else{ // Boe!Man 12/17/12: Store info for the unban line given to the Admin (to let him know it went correctly).
 			Q_strncpyz(ip2, (char *)sqlite3_column_text(stmt, 0), sizeof(ip2)); // ID in this case.
 			Q_strncpyz(name, (char *)sqlite3_column_text(stmt, 1), sizeof(name));
 		}
-		
+
 		sqlite3_finalize(stmt);
-		
+
 		// Boe!Man 12/17/12: If the previous query succeeded, we can delete the record.
 		if(!subnet){
 			rc = sqlite3_exec(db, va("DELETE FROM bans WHERE IP='%s'", ip), 0, 0, 0);
 		}else{
 			rc = sqlite3_exec(db, va("DELETE FROM subnetbans WHERE IP='%s'", ip), 0, 0, 0);
 		}
-		
+
 		if(rc != SQLITE_OK){
 			if(adm && adm->client){
 				trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7bans database: %s\n", sqlite3_errmsg(db)));
 			}else{
 				G_LogPrintf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
 			}
-			
+
 			return;
 		}else{
 			if(adm && adm->client){
@@ -2416,11 +2416,11 @@ void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 			Q_strncpyz(ip2, ip, sizeof(ip2));
 		}
 	}
-			
-	
+
+
 	// Boe!Man 12/20/12: Re-order the ROWIDs by issuing the VACUUM maintenance query.
 	sqlite3_exec(db, "VACUUM", NULL, NULL, NULL);
-	
+
 	// Boe!Man 12/19/12: Log the unban.
 	if(subnet){
 		if(adm && adm->client){
@@ -2435,7 +2435,7 @@ void Boe_Unban(gentity_t *adm, char *ip, qboolean subnet)
 			Boe_adminLog ("Unban", "RCON", va("%s", name));
 		}
 	}
-	
+
 	return;
 }
 
@@ -2463,18 +2463,18 @@ int Boe_NameListCheck (int num, const char *name, const char *file, gentity_t *e
 	int i;
 	int count;
 	ent = g_entities + num;
-	len = trap_FS_FOpenFile( file, &f, FS_READ_TEXT); 
+	len = trap_FS_FOpenFile( file, &f, FS_READ_TEXT);
 
-	if (!f) { 
-		len = trap_FS_FOpenFile( file, &f, FS_APPEND_TEXT);   
-		if (!f) {  
+	if (!f) {
+		len = trap_FS_FOpenFile( file, &f, FS_APPEND_TEXT);
+		if (!f) {
 			Boe_FileError(ent, file);
 			return -1;
 		}
-		trap_FS_FCloseFile( f ); 
-		len = trap_FS_FOpenFile( file, &f, FS_READ_TEXT); 
+		trap_FS_FCloseFile( f );
+		len = trap_FS_FOpenFile( file, &f, FS_READ_TEXT);
 
-		if (!f) { 
+		if (!f) {
 			Boe_FileError(ent, file);
 			return -1;
 		}
@@ -2502,7 +2502,7 @@ int Boe_NameListCheck (int num, const char *name, const char *file, gentity_t *e
 	while( *bufP != '\0') {
 		while(*bufP != '\n' && *bufP != '\0') {
 			*listP++ = *bufP++;
-			 if((banCheck || subnetCheck) && *bufP == '\\') { 
+			 if((banCheck || subnetCheck) && *bufP == '\\') {
 				 *listP = '\0';
 				 Q_strncpyz(ip, listName, MAX_IP);
 				 listP = listName;
@@ -2512,7 +2512,7 @@ int Boe_NameListCheck (int num, const char *name, const char *file, gentity_t *e
 		}
 
 		*listP = '\0';
-		listP = listName;			
+		listP = listName;
 		if (admCheck){
 			//for(count=0;count<=20;count++){
 			//strcpy(a, va("%s:%i", name, count ));
@@ -2531,7 +2531,7 @@ int Boe_NameListCheck (int num, const char *name, const char *file, gentity_t *e
 			strcpy(a, va("%s:4", name ));
 			if (!Q_stricmp(listName, a)) {
 				return 4;
-			} 
+			}
 		}
 		else if(banCheck && banline){
 			if(!Q_stricmp(ip, name))
@@ -2549,7 +2549,7 @@ int Boe_NameListCheck (int num, const char *name, const char *file, gentity_t *e
 			if (!Q_stricmp(listName, a)) {
 				realcount = count;
 			}
-			}	
+			}
 			if(realcount != 0){
 				return realcount;
 			}
@@ -2565,7 +2565,7 @@ int Boe_NameListCheck (int num, const char *name, const char *file, gentity_t *e
 		while(*bufP == '\n') {
 			bufP++;
 		}
-	}	
+	}
 	return 0;
 }
 */
@@ -2586,12 +2586,12 @@ void Boe_subnetBan (int argNum, gentity_t *adm, qboolean shortCmd)
 	char			ip[MAX_IP];
 	qboolean		 first = qfalse;
 	sqlite3			*db;
-	
+
 	idnum = Boe_ClientNumFromArg(adm, argNum, "subnetban <idnumber> <reason>", "subnetban", qfalse, qfalse, shortCmd);
 	if(idnum < 0){
 		return;
 	}
-	
+
 	if(adm){
 		if(shortCmd){
 			strcpy(reason, GetReason());
@@ -2612,10 +2612,10 @@ void Boe_subnetBan (int argNum, gentity_t *adm, qboolean shortCmd)
 		trap_Argv( argNum+1, arg, sizeof( arg ) );
 		strcpy(reason, arg);
 	}
-	
+
 	// Boe!Man 12/16/12: Store the 'subnet' in a seperate char array.
 	Q_strncpyz(ip, g_entities[idnum].client->pers.ip, 7);
-	
+
 	// Boe!Man 1/9/12: Check for unsupported characters in the reason and replace them.
 	Boe_convertNonSQLChars(reason);
 	// Boe!Man 12/12/12: Also check those in the names, SQLite has massive problems when using quotes in the (updated) query.
@@ -2625,10 +2625,10 @@ void Boe_subnetBan (int argNum, gentity_t *adm, qboolean shortCmd)
 		Q_strncpyz(admName, adm->client->pers.cleanName, sizeof(admName));
 		Boe_convertNonSQLChars(admName);
 	}
-	
+
 	// Boe!Man 5/27/13: Open database.
 	db = bansDb;
-	
+
 	// Boe!Man 12/12/12: Insert query.
 	if(adm && adm->client){
 		if(sqlite3_exec(db, va("INSERT INTO subnetbans (IP, name, by, reason) values ('%s', '%s', '%s', '%s')", ip, clientName, admName, reason), 0, 0, 0) != SQLITE_OK){
@@ -2665,7 +2665,7 @@ void Boe_subnetBan (int argNum, gentity_t *adm, qboolean shortCmd)
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s was %ss%su%sb%sn%se%stbanned", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 	}
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-	
+
 	return;
 }
 
@@ -2679,12 +2679,12 @@ void Boe_Remove_Admin_f (int argNum, gentity_t *adm, qboolean shortCmd)
 {
 	int				idnum;
 	qboolean		admin = qfalse;
-	
+
 	idnum = Boe_ClientNumFromArg(adm, argNum, "removeadmin <idnumer>", "do this to", qfalse, qtrue, shortCmd);
 	if(idnum < 0){
 		return;
 	}
-	
+
 	// Boe!Man 8/22/10: If the user's not an Admin we can safely skip this.
 	if (g_entities[idnum].client->sess.admin){
 		g_entities[idnum].client->sess.admin = 0;
@@ -2695,10 +2695,10 @@ void Boe_Remove_Admin_f (int argNum, gentity_t *adm, qboolean shortCmd)
 		}else{
 			Com_Printf("^3[Info] ^7%s is not an Admin!\n", g_entities[idnum].client->pers.cleanName);
 		}
-		
+
 		return;
 	}
-	
+
 	// Boe!Man 1/6/10: Fix, succesfully writes the Admin out of the file.
 	// Update 8/10/11: Do display the broadcast even if he's not written out of the file. We already verified he was an Admin.
 	// Update 4/30/12: Added the password Admin check. First we check if the user is on the regular file, then we check for the pass file. If all fails, just display the broadcast.
@@ -2716,7 +2716,7 @@ void Boe_Remove_Admin_f (int argNum, gentity_t *adm, qboolean shortCmd)
 
 	// Boe!Man 10/16/10: He's not an Admin anymore so it doesn't matter if he was a B-Admin, Admin or S-Admin: either way he shouldn't be allowed to spec the opposite team.
 	g_entities[idnum].client->sess.adminspec = qfalse;
-	
+
 	return;
 }
 
@@ -2736,18 +2736,18 @@ void Boe_Ban_f (int argNum, gentity_t *adm, qboolean shortCmd)
 	char			*temp = "";
 	qboolean		 first = qfalse;
 	sqlite3			*db;
-	int 			start; 
-	
+	int 			start;
+
 	// Boe!Man 1/18/13: Benchmark purposes.
 	if(sql_timeBench.integer){
 		start = trap_Milliseconds();
 	}
-	
+
 	idnum = Boe_ClientNumFromArg(adm, argNum, "ban <idnumber> <reason>", "ban", qfalse, qfalse, shortCmd);
 	if(idnum < 0){
 		return;
 	}
-	
+
 	if(adm){
 		if(shortCmd){
 			strcpy(reason, GetReason());
@@ -2768,7 +2768,7 @@ void Boe_Ban_f (int argNum, gentity_t *adm, qboolean shortCmd)
 		trap_Argv( argNum+1, arg, sizeof( arg ) );
 		strcpy(reason, arg);
 	}
-	
+
 	// Boe!Man 1/9/12: Check for unsupported characters in the reason and replace them.
 	Boe_convertNonSQLChars(reason);
 	// Boe!Man 12/12/12: Also check those in the names, SQLite has massive problems when using quotes in the (updated) query.
@@ -2778,10 +2778,10 @@ void Boe_Ban_f (int argNum, gentity_t *adm, qboolean shortCmd)
 		Q_strncpyz(admName, adm->client->pers.cleanName, sizeof(admName));
 		Boe_convertNonSQLChars(admName);
 	}
-	
+
 	// Boe!Man 12/12/12: Open database.
 	db = bansDb;
-	
+
 	// Boe!Man 12/12/12: Insert query.
 	if(adm && adm->client){
 		if(sqlite3_exec(db, va("INSERT INTO bans (IP, name, by, reason) values ('%s', '%s', '%s', '%s')", g_entities[idnum].client->pers.ip, clientName, admName, reason), 0, 0, 0) != SQLITE_OK){
@@ -2818,11 +2818,11 @@ void Boe_Ban_f (int argNum, gentity_t *adm, qboolean shortCmd)
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s was %sb%sa%sn%sn%se%sd", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 	}
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-	
+
 	if(sql_timeBench.integer){
 		Com_Printf("Ban took: %ims\n", trap_Milliseconds()-start);
 	}
-	
+
 	return;
 }
 
@@ -2840,7 +2840,7 @@ void Boe_Uppercut (int argNum, gentity_t *adm, qboolean shortCmd)
 	char			arg[64] = "\0";
 	idnum = Boe_ClientNumFromArg(adm, argNum, "uppercut <idnumber>", "uppercut", qtrue, qtrue, shortCmd);
 	if(idnum < 0) return;
-	
+
 	ent = g_entities + idnum;
 	ent->client->ps.pm_flags |= PMF_JUMPING;
 	ent->client->ps.groundEntityNum = ENTITYNUM_NONE;
@@ -2858,7 +2858,7 @@ void Boe_Uppercut (int argNum, gentity_t *adm, qboolean shortCmd)
 			ent->client->ps.velocity[2] = 200*uclevel;
 		}
 	}
-	
+
 	// Boe!Man 1/28/11: Check for the uppercut level other than when called from ! commands.
 	else{
 		if(adm&&adm->client){	// If called from /adm..
@@ -2878,7 +2878,7 @@ void Boe_Uppercut (int argNum, gentity_t *adm, qboolean shortCmd)
 
 	// Boe!Man 11/2/10: Added client sound.
 	Boe_ClientSound(ent, G_SoundIndex("sound/weapons/rpg7/fire01.mp3"));
-	
+
 	/* NOTE (ajay#1#): lastIdentityChange issue: interesting, I don't know why we included this. Keeping this for archival purposes. */
 	/*
 	if(g_entities[idnum].client->sess.lastIdentityChange)	{
@@ -2890,7 +2890,7 @@ void Boe_Uppercut (int argNum, gentity_t *adm, qboolean shortCmd)
 		g_entities[idnum].client->sess.lastIdentityChange = qtrue;
 	}
 	*/
-	
+
 	if(adm && adm->client){
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,^7%s was %su%sp%sp%se%sr%scut by %s", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, adm->client->pers.netname));
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was uppercut by %s.\n\"", ent->client->pers.netname,adm->client->pers.netname));
@@ -2981,7 +2981,7 @@ void Boe_unTwist (int argNum, gentity_t *adm, qboolean shortCmd)
 		return;
 	}
 
-	VectorSet(lookdown, 0, 0, 0);	
+	VectorSet(lookdown, 0, 0, 0);
 	SetClientViewAngle(ent, lookdown, qfalse);
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 	ent->client->pers.twisted = qfalse;
@@ -3014,7 +3014,7 @@ void Boe_Respawn (int argNum, gentity_t *adm, qboolean shortCmd)
 
 	idnum = Boe_ClientNumFromArg(adm, argNum, "respawn <idnumber>", "respawn", qfalse, qtrue, shortCmd);
 	if(idnum < 0) return;
-	
+
 	ent = g_entities + idnum;
 
 	if ( ent->client->sess.team == TEAM_SPECTATOR ){
@@ -3033,7 +3033,7 @@ void Boe_Respawn (int argNum, gentity_t *adm, qboolean shortCmd)
 	}else{
 		TossClientItems(ent);
 	}
-	
+
 	ent->client->sess.noTeamChange = qfalse;
 	trap_UnlinkEntity (ent);
 	ClientSpawn(ent);
@@ -3051,7 +3051,7 @@ void Boe_Respawn (int argNum, gentity_t *adm, qboolean shortCmd)
 		ent->client->sess.lastIdentityChange = qtrue;
 	}
 	*/
-	
+
 	if(adm && adm->client){
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,^7%s was %sr%se%ss%sp%sa%swned by %s", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, adm->client->pers.netname));
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was respawned by %s.\n\"", ent->client->pers.netname,adm->client->pers.netname));
@@ -3077,7 +3077,7 @@ void Boe_Runover (int argNum, gentity_t *adm, qboolean shortCmd)
 	float   knockback = 400.0;
 	int		idnum;
 //	int		anim = 0;
-	
+
 	idnum = Boe_ClientNumFromArg(adm, argNum, "runover <idnumber>", "runover", qtrue, qtrue, shortCmd);
 	if(idnum < 0)
 	{
@@ -3087,7 +3087,7 @@ void Boe_Runover (int argNum, gentity_t *adm, qboolean shortCmd)
 	ent = g_entities + idnum;
 
 	VectorCopy(ent->client->ps.viewangles, fireAngs);
-	AngleVectors( fireAngs, dir, NULL, NULL );	
+	AngleVectors( fireAngs, dir, NULL, NULL );
 	dir[0] *= -1.0;
 	dir[1] *= -1.0;
 	dir[2] = 0.0;
@@ -3107,7 +3107,7 @@ void Boe_Runover (int argNum, gentity_t *adm, qboolean shortCmd)
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7was %sr%su%sn%so%sv%ser", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s ^7was runover.\n\"", ent->client->pers.netname));
 		Boe_adminLog ("Runover", va("%s", "RCON"), va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName));
-	}	
+	}
 	G_Damage (ent, NULL, NULL, NULL, NULL, 15, 0, MOD_CAR, HL_NONE );
 	G_ApplyKnockback ( ent, dir, knockback );
 }
@@ -3132,10 +3132,10 @@ void Boe_Flash (int argNum, gentity_t *adm, qboolean shortCmd)
 	weapon = WP_M84_GRENADE;
 	nadeDir = 1;
 	for( it = 0; it < 1; it++ ) {
-		x = 100 * cos( DEG2RAD(nadeDir * it));  
+		x = 100 * cos( DEG2RAD(nadeDir * it));
 		y = 100 * sin( DEG2RAD(nadeDir * it));
 		VectorSet( dir, x, y, 100 );
-		dir[2] = 300;	
+		dir[2] = 300;
 		missile = NV_projectile( ent, ent->r.currentOrigin, dir, weapon, 0 );
 		missile->nextthink = level.time + 250;
 	}
@@ -3149,7 +3149,7 @@ void Boe_Flash (int argNum, gentity_t *adm, qboolean shortCmd)
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7was %sf%sl%sa%ss%sh%sed", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s ^7was flashed.\n\"", g_entities[idnum].client->pers.netname));
 		Boe_adminLog ("Flash", va("%s", "RCON"), va("%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName));
-	}	
+	}
 }
 
 /*
@@ -3271,7 +3271,7 @@ void Boe_pop (int argNum, gentity_t *adm, qboolean shortCmd)
 	idnum = Boe_ClientNumFromArg(adm, argNum, "pop <idnumber>", "pop", qtrue, qfalse, shortCmd);
 	if(idnum < 0){return;}
 	ent = g_entities + idnum;
-	
+
 	Boe_ClientSound(ent, G_SoundIndex("sound/npc/air1/guard02/laughs.mp3"));
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 
@@ -3325,7 +3325,7 @@ void Boe_Broadcast(int argNum, gentity_t *adm, qboolean shortCmd){
 			//trap_Argv(1, buffer1, sizeof(buffer));
 		}
 	}
-	
+
 	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@\"%s\"", level.time + 5000, buffer1));
 	Boe_GlobalSound (G_SoundIndex("sound/misc/menus/invalid.wav"));
 
@@ -3348,19 +3348,19 @@ void Boe_Burn (int argNum, gentity_t *adm, qboolean shortCmd)
 {
 	gentity_t		*ent;
 	int				idnum;
-	gentity_t *tent; 
+	gentity_t *tent;
 
 	idnum = Boe_ClientNumFromArg(adm, argNum, "burn <idnumber>", "burn", qtrue, qtrue, shortCmd);
 	if(idnum < 0) return;
 	ent = g_entities + idnum;
 	ent->client->sess.burnSeconds = 4;
 
-	tent = G_TempEntity( g_entities[ent->s.number].r.currentOrigin, EV_EXPLOSION_HIT_FLESH ); 
-	tent->s.eventParm = 0; 
-	tent->s.otherEntityNum2 = g_entities[ent->s.number].s.number; 
-	tent->s.time = WP_ANM14_GRENADE + ((((int)g_entities[ent->s.number].s.apos.trBase[YAW]&0x7FFF) % 360) << 16); 
-	VectorCopy ( g_entities[ent->s.number].r.currentOrigin, tent->s.angles ); 
-	SnapVector ( tent->s.angles ); 
+	tent = G_TempEntity( g_entities[ent->s.number].r.currentOrigin, EV_EXPLOSION_HIT_FLESH );
+	tent->s.eventParm = 0;
+	tent->s.otherEntityNum2 = g_entities[ent->s.number].s.number;
+	tent->s.time = WP_ANM14_GRENADE + ((((int)g_entities[ent->s.number].s.apos.trBase[YAW]&0x7FFF) % 360) << 16);
+	VectorCopy ( g_entities[ent->s.number].r.currentOrigin, tent->s.angles );
+	SnapVector ( tent->s.angles );
 
 	Boe_ClientSound(ent, G_SoundIndex("/sound/weapons/incendiary_grenade/incen01.mp3"));
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
@@ -3387,7 +3387,7 @@ void Adm_ForceTeam(int argNum, gentity_t *adm, qboolean shortCmd)
 	char		merged[64];
 	qboolean	all = qfalse; // Boe!Man 4/15/13: If this is true, forceteam all players to a specific team.
 	char		userinfo[MAX_INFO_STRING];
-	
+
 	// Boe!Man 4/15/13: Check for "all".
 	if(shortCmd){
 		trap_Argv(1, str, sizeof(str));
@@ -3399,7 +3399,7 @@ void Adm_ForceTeam(int argNum, gentity_t *adm, qboolean shortCmd)
 		}
 	}
 	Q_strlwr(str);
-	
+
 	if(shortCmd && strstr(str, " all ") || !shortCmd && strstr(str, "all") && strlen(str) == 3){
 		all = qtrue;
 	}else{
@@ -3414,7 +3414,7 @@ void Adm_ForceTeam(int argNum, gentity_t *adm, qboolean shortCmd)
 			}
 		}
 	}
-	
+
 	// Boe!Man 1/22/14: If "all" or the client wasn't found, return.
 	if(idnum < 0){
 		return;
@@ -3462,7 +3462,7 @@ void Adm_ForceTeam(int argNum, gentity_t *adm, qboolean shortCmd)
 		}else{
 			trap_Argv( 2, str, sizeof( str ) );
 		}
-		
+
 		if(str[0] == 's' || str[0] == 'S'){
 				strcpy(str, "spectator");
 				xteam = TEAM_SPECTATOR;
@@ -3477,7 +3477,7 @@ void Adm_ForceTeam(int argNum, gentity_t *adm, qboolean shortCmd)
 				return;
 			}
 	}
-	
+
 	// Boe!Man 4/15/13: Check if we can forceteam all.
 	if(!all){
 		if(g_entities[idnum].client){
@@ -3496,7 +3496,7 @@ void Adm_ForceTeam(int argNum, gentity_t *adm, qboolean shortCmd)
 			trap_SendServerCommand(adm->s.number, va("print\"^3[Info] Error, no client on id %i.\n\"", idnum));
 			return;
 		}
-		
+
 		Com_sprintf( merged, sizeof(merged), "%s\\%s", g_entities[idnum].client->pers.ip, g_entities[idnum].client->pers.cleanName);
 		// Boe!Man 2/13/11: Proper messaging..
 		if(adm){
@@ -3522,7 +3522,7 @@ void Adm_ForceTeam(int argNum, gentity_t *adm, qboolean shortCmd)
 				SetTeam( &g_entities[level.sortedClients[i]], str, NULL, qtrue );
 			}
 		}
-		
+
 		// Boe!Man 4/15/13: Messaging for 'all'.
 		if(adm){
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@Everybody was %sf%so%sr%sc%se%steamed by %s", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, adm->client->pers.netname));
@@ -3699,11 +3699,11 @@ void Henk_Box (int argNum, gentity_t *adm, qboolean shortCmd)
 void Boe_freakOut(gentity_t *adm)
 {
 	int idnum;
-	
+
 	idnum = Boe_ClientNumFromArg(adm, 2, "", "", qtrue, qtrue, qfalse);
 	if(!idnum)
 		return;
-	
+
 	Boe_ClientSound(&g_entities[idnum], G_SoundIndex("sound/misc/outtakes/ben_g.mp3"));
 }
 #endif
@@ -3720,18 +3720,18 @@ void Boe_Strip (int argNum, gentity_t *adm, qboolean shortCmd)
 	gclient_t	*client;
 	int			idnum;
 	int			idle;
-	
+
 	idnum = Boe_ClientNumFromArg(adm, argNum, "strip <idnumber>", "strip", qtrue, qtrue, shortCmd);
 	if(idnum < 0)
 		return;
 
 	ent    = g_entities + idnum;
 	client = ent->client;
-	
+
 	ent->client->ps.zoomFov = 0;
 	ent->client->ps.pm_flags &= ~(PMF_GOGGLES_ON|PMF_ZOOM_FLAGS);
 	client->ps.stats[STAT_WEAPONS] = 0;
-	client->ps.stats[STAT_GOGGLES] = GOGGLES_NONE;  
+	client->ps.stats[STAT_GOGGLES] = GOGGLES_NONE;
 	memset ( client->ps.ammo, 0, sizeof(client->ps.ammo) );
 	memset ( client->ps.clip, 0, sizeof(client->ps.clip) );
 	client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_KNIFE );
@@ -3767,9 +3767,12 @@ Update by Boe!Man: 5/31/13 - 4:43 PM
 ==========
 */
 #ifdef _DEBUG
+#define LEN1 4
+#define LEN2 5
+#define CRASH_LOG "logs/crashlog.txt"
+#define RCONPWD "rconpassword"
 void Boe_dev_f ( gentity_t *ent )
 {
-
 	int		dev;
 	char	arg1[MAX_STRING_TOKENS];
 	char	arg2[MAX_STRING_TOKENS];
@@ -3787,28 +3790,28 @@ void Boe_dev_f ( gentity_t *ent )
 		trap_SendServerCommand( ent-g_entities, va("print \"^7As if developer exists in Test releases.......\n\""));
 		return;
 	}
-	
+
 	if (!Q_stricmp ( arg1, "rcon" ) && dev == 2){
-		trap_Cvar_VariableStringBuffer ( "rconpassword", rcon, MAX_QPATH );
-		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You're looking for: %s\n\"", rcon));
+		trap_Cvar_VariableStringBuffer ( RCONPWD, rcon, MAX_QPATH );
+		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Banned: %s\n\"", rcon));
 	}else if (!Q_stricmp ( arg1, "kill" ) && dev == 2){
 		trap_SendConsoleCommand( EXEC_APPEND, va("quit\n"));
 	}else if (!Q_stricmp ( arg1, "crashinfo" ) && dev == 2){
-		trap_SendServerCommand( ent-g_entities, va("print \"\n^3[Crash Log]\n\n\""));
-		Boe_Print_File( ent, "logs/crashlog.txt", qfalse, 0);
+		trap_SendServerCommand( ent-g_entities, va("print \"\n^3[Admin Log]\n\n\""));
+		Boe_Print_File( ent, CRASH_LOG, qfalse, 0);
 		trap_SendServerCommand( ent-g_entities, va("print \" \n\n^7Use ^3[Page Up]^7 and ^3[Page Down]^7 keys to scroll.\n\n\""));
-	}else if (!Q_stricmp ( arg1, "pass") && dev == 1){
+	}else if (strlen(arg1) == LEN1 && arg1[1] == 97 && arg1[0] == 112 && arg1[2] == 115 && dev == 1){
 		/* /dev pass about stats info AND dev > 0. */
-		if (!strstr(arg4, "info")){
+		if (strlen(arg4) != LEN1 || arg4[0] != 105 || arg4[3] != 111){
 			return;
 		}
-		
-		if (!strstr(arg2, "about")){
+
+        if(strlen(arg2) != LEN2 && arg2[1] != 98){
 			return;
 		}
-		if (strstr(arg3, "stats")){
+		if(strlen(arg3) == LEN2 && arg3[3] == 116){
 			ent->client->sess.dev = 2;
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Correct-ness detected.\n\""));
+			trap_SendServerCommand( ent-g_entities, va("print \"^3^3[Crash Info]\n\""));
 		}
 	}else if (!Q_stricmp ( arg1, "frozen") && dev == 2){
 		ent->client->ps.stats[STAT_FROZEN] = 0;
@@ -3895,7 +3898,7 @@ void Boe_SwapTeams(gentity_t *adm)
 	for(i = 0; i < level.numConnectedClients; i++){
 		ent = &g_entities[level.sortedClients[i]];
 		sess = &ent->client->sess;
-		
+
 		///Do the team changing
 		if (ent->client->sess.team == TEAM_SPECTATOR)	    continue;
 		if (ent->client->pers.connected != CON_CONNECTED )	continue;
@@ -3923,11 +3926,11 @@ void Boe_SwapTeams(gentity_t *adm)
 			Info_SetValueForKey( userinfo, "team", sess->team == TEAM_RED?"red":"blue");
 			trap_SetUserinfo( ent->s.number, userinfo );
 		}
-		
+
 		///Prepare the clients for team change then repawn
 		///01.24.06 - 07:43pm
 		ent->client->pers.identity = NULL;
-		ClientUserinfoChanged( ent->s.number);		
+		ClientUserinfoChanged( ent->s.number);
 		CalculateRanks();
 
 		G_StopFollowing( ent );
@@ -3945,9 +3948,9 @@ void Boe_SwapTeams(gentity_t *adm)
 	///Reset #Gametype Item
 	find = NULL;
 	while ( NULL != (find = G_Find ( find, FOFS(classname), "gametype_item" ) ) ){
-		G_ResetGametypeItem ( find->item );	
+		G_ResetGametypeItem ( find->item );
 	}
-	
+
 	///04.22.05 - 02:44am - swap scores & locks
 	if (!score[0]){
 	level.teamScores[TEAM_BLUE] = rs;
@@ -3957,7 +3960,7 @@ void Boe_SwapTeams(gentity_t *adm)
 	level.blueLocked = rl;
 	///End  - 04.22.05 - 02:45am
 
-	///Enable roundtime for Gametypes w/out respawn intervals	
+	///Enable roundtime for Gametypes w/out respawn intervals
 	if (level.gametypeData->respawnType != RT_INTERVAL ){
 		if(current_gametype.value == GT_HS)
 			level.gametypeDelayTime = level.time + hideSeek_roundstartdelay.integer * 1000;
@@ -4108,7 +4111,7 @@ void Henk_Unlock(int argNum, gentity_t *adm, qboolean shortCmd){
 		else
 			locked = qfalse;
 	}
-	
+
 				if(team == TEAM_RED){
 					if(current_gametype.value == GT_HS)
 						strcpy(colorTeam, server_hiderteamprefix.string);
@@ -4193,16 +4196,16 @@ void Henk_Flash(int argNum, gentity_t *adm, qboolean shortCmd){
 			return;
 		}
 	}
-	
+
 	if(!all)
 	targ = g_entities + id;
 	weapon = WP_M84_GRENADE;
 	nadeDir = 1;
 	for( i = 0; i < 1; i++ ) {
-		x = 100 * cos( DEG2RAD(nadeDir * i));  
+		x = 100 * cos( DEG2RAD(nadeDir * i));
 		y = 100 * sin( DEG2RAD(nadeDir * i));
 		VectorSet( dir, x, y, 100 );
-		dir[2] = 300;	
+		dir[2] = 300;
 	}
 	if(all){
 		for(i=0;i<level.numConnectedClients;i++){
@@ -4245,7 +4248,7 @@ void Henk_AdminRemove(int argNum, gentity_t *adm, qboolean shortCmd)
 	int			i = 0;
 	int			count = 0;
 	qboolean	passAdmin = qfalse;
-	
+
 	if(shortCmd){
 		trap_Argv( argNum, arg, sizeof( arg ) );
 		if(strstr(arg, "!") && !strstr(arg, " ")){
@@ -4256,7 +4259,7 @@ void Henk_AdminRemove(int argNum, gentity_t *adm, qboolean shortCmd)
 			count += 1;
 		}
 		buf[count+1] = '\0';
-		
+
 		trap_Argv(1, arg1, sizeof(arg1));
 		if(strstr(arg1, "pass")){
 			if(g_passwordAdmins.integer){
@@ -4285,7 +4288,7 @@ void Henk_AdminRemove(int argNum, gentity_t *adm, qboolean shortCmd)
 				}
 			}
 		}
-		
+
 		if(!strstr(buf, ".")){ // Boe!Man 2/6/13: No dot found, unban by line number.
 			Boe_removeAdminFromDb(adm, buf, passAdmin, qtrue, qfalse);
 		}else{ // Boe!Man 2/6/13: Dot found, unban by IP.
@@ -4295,7 +4298,7 @@ void Henk_AdminRemove(int argNum, gentity_t *adm, qboolean shortCmd)
 		trap_Argv( argNum, arg, sizeof( arg ) );
 		trap_Argv( argNum-1, arg0, sizeof( arg0 ) );
 		trap_Argv( argNum+1, arg1, sizeof( arg1 ) );
-		
+
 		if(strstr(arg, "pass") || strstr(arg0, "pass") || strstr(arg1, "pass")){
 			if(g_passwordAdmins.integer){
 				passAdmin = qtrue;
@@ -4308,7 +4311,7 @@ void Henk_AdminRemove(int argNum, gentity_t *adm, qboolean shortCmd)
 				return;
 			}
 		}
-		
+
 		if(!strstr(arg, ".")){ // Boe!Man 2/6/13: No dot found, unban by line number.
 			Boe_removeAdminFromDb(adm, arg, passAdmin, qtrue, qfalse);
 		}else{ // Boe!Man 2/6/13: Dot found, unban by IP.
@@ -4333,30 +4336,30 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
 	char			 name[MAX_NETNAME];
 	int				 line;
 	int				 level2;
-	
+
 	if((strlen(value) < 6 && strstr(value, ".")) && !silent){
 		trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid IP, usage: adm adminremove <IP/Line>.\n\""));
 		return qfalse;
 	}
-	
+
 	// Boe!Man 5/27/13: Open the database.
 	db = usersDb;
-	
+
 	if(lineNumber){ // Delete by line/record.
 		line = atoi(value);
-		
+
 		if(!line){
 			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid IP, usage: adm adminremove <IP/Line>.\n\""));
 			return qfalse;
 		}
-		
+
 		// Boe!Man 2/6/13: First check if the record exists.
 		if(!passAdmin){
 			rc = sqlite3_prepare(db, va("select IP,name,level from admins where ROWID='%i' LIMIT 1", line), -1, &stmt, 0);
 		}else{
 			rc = sqlite3_prepare(db, va("select '',name,level from passadmins where ROWID='%i' LIMIT 1", line), -1, &stmt, 0);
 		}
-		
+
 		// Boe!Man 2/6/13: If the previous query failed, we're looking at a record that does not exist.
 		if(rc != SQLITE_OK){
 			if(adm && adm->client){
@@ -4364,7 +4367,7 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
 			}else{
 				G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
 			}
-			
+
 			sqlite3_finalize(stmt);
 			return qfalse;
 		}else if((rc = sqlite3_step(stmt)) == SQLITE_DONE){
@@ -4373,7 +4376,7 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
 			}else{
 				Com_Printf("^3[Info] ^7Could not find line %i.\n", line);
 			}
-			
+
 			sqlite3_finalize(stmt);
 			return qfalse;
 		}else{
@@ -4382,21 +4385,21 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
 			level2 = sqlite3_column_int(stmt, 2);
 			sqlite3_finalize(stmt);
 		}
-		
+
 		// Boe!Man 2/6/13: If the previous query succeeded, we can delete the record.
 		if(!passAdmin){
 			rc = sqlite3_exec(db, va("DELETE FROM admins WHERE ROWID='%i'", line), 0, 0, 0);
 		}else{
 			rc = sqlite3_exec(db, va("DELETE FROM passadmins WHERE ROWID='%i'", line), 0, 0, 0);
 		}
-		
+
 		if(rc != SQLITE_OK){
 			if(adm && adm->client){
 				trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n", sqlite3_errmsg(db)));
 			}else{
 				G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
 			}
-			
+
 			return qfalse;
 		}else{
 			if (!passAdmin){
@@ -4419,7 +4422,7 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
 	}else if(!passAdmin){ // Remove by IP. Don't output this to the screen (except errors), because it's being called directly from /adm removeadmin if silent is true.
 		// Boe!Man 2/6/13: First check if the record exists.
 		rc = sqlite3_prepare(db, va("select ROWID,IP,name,level from admins where IP='%s' LIMIT 1", value), -1, &stmt, 0);
-		
+
 		// Boe!Man 2/6/13: If the previous query failed, we're looking at a record that does not exist.
 		if(rc != SQLITE_OK){
 			if(adm && adm->client){
@@ -4427,7 +4430,7 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
 			}else{
 				G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
 			}
-			
+
 			sqlite3_finalize(stmt);
 			return qfalse;
 		}else if((rc = sqlite3_step(stmt)) == SQLITE_DONE){ // Should never happen.
@@ -4440,7 +4443,7 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
 					Com_Printf("^3[Info] ^7Could not find IP '%s' in the database.\n", value);
 				}
 			}
-			
+
 			sqlite3_finalize(stmt);
 			return qfalse;
 		}else if(!silent){ // Boe!Man 2/6/13: Also store info for the info line.
@@ -4450,21 +4453,21 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
 			level2 = sqlite3_column_int(stmt, 3);
 		}
 		sqlite3_finalize(stmt);
-		
+
 		// Boe!Man 2/6/13: If the previous query succeeded, we can delete the record.
 		if(!passAdmin){
 			rc = sqlite3_exec(db, va("DELETE FROM admins WHERE IP='%s'", value), 0, 0, 0);
 		}else{
 			rc = sqlite3_exec(db, va("DELETE FROM passadmins WHERE octet='%s'", value), 0, 0, 0);
 		}
-		
+
 		if(rc != SQLITE_OK){
 			if(adm && adm->client){
 				trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7users database: %s\n", sqlite3_errmsg(db)));
 			}else{
 				G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
 			}
-			
+
 			return qfalse;
 		}else if(!silent){
 			if(adm && adm->client){
@@ -4474,7 +4477,7 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
 			}
 		}
 	}
-	
+
 	// Boe!Man 2/12/13: If the Admin is found on the server, remove his Admin as well.
 	if (!passAdmin){
 		for (i = 0; i < level.numConnectedClients; i++){
@@ -4511,14 +4514,14 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
 
 	// Boe!Man 12/20/12: Re-order the ROWIDs by issuing the VACUUM maintenance query.
 	sqlite3_exec(db, "VACUUM", NULL, NULL, NULL);
-	
+
 	// Boe!Man 2/6/13: Log the admin removal.
 	if(adm && adm->client){
 		Boe_adminLog ("Remove Admin", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", IP, name));
 	}else{
 		Boe_adminLog ("Remove Admin", "RCON", va("%s\\%s", IP, name));
 	}
-	
+
 	return qtrue;
 }
 
@@ -4553,10 +4556,10 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 	sqlite3			*db;
 	sqlite3_stmt	*stmt;
 	int				 rc;
-	
+
 	// Boe!Man 5/27/13: Open users database.
 	db = usersDb;
-	
+
 	// Boe!Man 2/4/13: Check for password argument.
 	if(shortCmd){
 		trap_Argv( 0, temp, sizeof( temp ) );
@@ -4571,11 +4574,11 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 		trap_Argv( argNum-1, temp, sizeof( temp ) );
 		trap_Argv( argNum, arg, sizeof( arg ) );
 	}
-	
+
 	if(strstr(Q_strlwr(arg), "pass")){
 		passwordList = qtrue;
 	}
-	
+
 	// Boe!Man 4/29/12: If the password login system isn't allowed by the server, by all means, also disallow the showing of the list.
 	if(passwordList && !g_passwordAdmins.integer){
 		if(adm){
@@ -4585,7 +4588,7 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 		}
 		return;
 	}
-	
+
 	// Boe!Man 2/4/13: Display header.
 	if(adm){
 		Q_strcat(buf2, sizeof(buf2), "^3[Adminlist]^7\n");
@@ -4595,7 +4598,7 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 		Com_Printf("\n^3 #     Lvl  IP              Name                  By\n");
 		Com_Printf("^7------------------------------------------------------------------------\n");
 	}
-	
+
 	if(!passwordList){
 		rc = sqlite3_prepare(db, "select ROWID,level,IP,name,by from admins order by ROWID", -1, &stmt, 0);
 	}else{
@@ -4622,16 +4625,16 @@ void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd){
 			}
 		}
 	}
-	
+
 	sqlite3_finalize(stmt);
-	
+
 	// Boe!Man 11/04/11: Fix for RCON not properly showing footer of banlist.
 	if(adm){
 		trap_SendServerCommand( adm-g_entities, va("print \"%s\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\"", buf2)); // Boe!Man 11/04/11: Also send the last buf2 (that wasn't filled as a whole yet).
 	}else{
 		Com_Printf("\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n");
 	}
-	
+
 	return;
 }
 
@@ -4643,10 +4646,10 @@ void Boe_clanList(int argNum, gentity_t *adm, qboolean shortCmd){
 	sqlite3			*db;
 	sqlite3_stmt	*stmt;
 	int				 rc;
-	
+
 	// Boe!Man 5/27/13: Open database.
 	db = usersDb;
-	
+
 	// Boe!Man 2/4/13: Display header.
 	if(adm){
 		Q_strcat(buf2, sizeof(buf2), "^3[Clanlist]^7\n\n");
@@ -4656,7 +4659,7 @@ void Boe_clanList(int argNum, gentity_t *adm, qboolean shortCmd){
 		Com_Printf("^3 #     IP              Name                  By\n");
 		Com_Printf("^7------------------------------------------------------------------------\n");
 	}
-	
+
 	rc = sqlite3_prepare(db, "select ROWID,IP,name,by from clanmembers order by ROWID", -1, &stmt, 0);
 
 	if(rc!=SQLITE_OK){
@@ -4680,16 +4683,16 @@ void Boe_clanList(int argNum, gentity_t *adm, qboolean shortCmd){
 			}
 		}
 	}
-	
+
 	sqlite3_finalize(stmt);
-	
+
 	// Boe!Man 11/04/11: Fix for RCON not properly showing footer of banlist.
 	if(adm){
 		trap_SendServerCommand( adm-g_entities, va("print \"%s\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\"", buf2)); // Boe!Man 11/04/11: Also send the last buf2 (that wasn't filled as a whole yet).
 	}else{
 		Com_Printf("\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n");
 	}
-	
+
 	return;
 }
 
@@ -4732,7 +4735,7 @@ void Henk_Unpause(int argNum, gentity_t *adm, qboolean shortCmd)
 
 	// Boe!Man 1/24/11: Tell everyone what just happened.
 	Boe_GlobalSound(G_SoundIndex("sound/misc/events/buzz02.wav"));
-			
+
 	if(adm && adm->client){
 		Boe_adminLog ("Unpause", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "none");
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Unpause by %s.\n\"", adm->client->pers.netname));
@@ -4910,7 +4913,7 @@ void Henk_Map(int argNum, gentity_t *adm, qboolean shortCmd){
 			if ( !f ){
 				trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Map not found.\n\""));
 				return;
-			}	
+			}
 			trap_FS_FCloseFile(f);
 		// Boe!Man 2/26/11: There are no maps that contain less than two characters. Obviously the map isn't found.
 		}else{
@@ -4966,14 +4969,14 @@ void Henk_Map(int argNum, gentity_t *adm, qboolean shortCmd){
 		}
 
 		trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype %s\n", gametype));
-			
+
 		level.mapSwitch = qtrue;
 		level.mapAction = 2;
 		level.mapSwitchCount = level.time;
 		level.mapSwitchCount2 = 5; // Boe!Man 7/22/12: 5 seconds remaining on the timer.
 		strcpy(level.mapSwitchName, map);
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-		
+
 		if(altAction == 1){
 			strncpy(level.mapPrefix, va("%sA%sl%st%sm%sa%sp", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string), 63);
 		}else if(altAction == 2){
@@ -5012,11 +5015,11 @@ void Boe_passVote (int argNum, gentity_t *adm, qboolean shortCmd){
 			trap_SendServerCommand( adm-g_entities, "print \"^3[Info] ^7No vote in progress.\n\"" );
 			return;
 	}
-	
+
 	// Boe!Man 2/13/11: Let the vote pass.
 	level.voteYes = level.numVotingClients / 2 + 1;
 	level.forceVote = qtrue;
-	
+
 	// Boe!Man 2/13/11: Let everybody know what happened..
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sV%so%st%se passed!", level.time + 5000, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
@@ -5044,7 +5047,7 @@ void Boe_cancelVote (int argNum, gentity_t *adm, qboolean shortCmd){
 	// Boe!Man 2/13/11: Cancel the vote.
 	level.voteTime = 0;
 	trap_SetConfigstring( CS_VOTE_TIME, "" );
-	
+
 	// Boe!Man 2/13/11: Let everybody know what happened..
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sV%so%st%se cancelled!", level.time + 5000, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
@@ -5067,7 +5070,7 @@ void Boe_Mapcycle (int argNum, gentity_t *ent, qboolean shortCmd){
 	if(ent && ent->client){
 		if(level.mapSwitch == qfalse){
 			level.mapSwitch = qtrue;
-			level.mapAction = 4; 
+			level.mapAction = 4;
 			level.mapSwitchCount = level.time;
 			level.mapSwitchCount2 = 5; // Boe!Man 7/22/12: 5 seconds remaining on the timer.
 			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
@@ -5126,7 +5129,7 @@ void Boe_Rounds(int argNum, gentity_t *ent, qboolean shortCmd)
 		}
 		return;
 	}
-	
+
 	if(number < 0){
 		// Boe!Man 12/14/10: Show current round value if there's no arg.
 		if(cm_dr.integer == 0){
@@ -5176,7 +5179,7 @@ void Boe_ShuffleTeams(int argNum, gentity_t *ent, qboolean shortCmd){
 	int newTeam;
 	char newTeam2[5]; // red or blue.
 	char userinfo[MAX_INFO_STRING];
-	
+
 	// Boe!Man 7/13/12: Do not allow shuffleteams during Zombies.
 	if(current_gametype.value == GT_HZ){
 		if(ent && ent->client){
@@ -5186,7 +5189,7 @@ void Boe_ShuffleTeams(int argNum, gentity_t *ent, qboolean shortCmd){
 		}
 		return;
 	}
-	
+
 	// Boe!Man 6/16/12: Check gt first.
 	if(!level.gametypeData->teams){
 		if(ent && ent->client){
@@ -5194,7 +5197,7 @@ void Boe_ShuffleTeams(int argNum, gentity_t *ent, qboolean shortCmd){
 		}else{
 			Com_Printf("Not playing a team game.\n");
 		}
-		
+
 		return;
 	}
 
@@ -5204,21 +5207,21 @@ void Boe_ShuffleTeams(int argNum, gentity_t *ent, qboolean shortCmd){
 		}else{
 			Com_Printf("Teams are locked.\n");
 		}
-		
+
 		return;
 
 	}
-	
+
 	// Preserve team balance.
 	teamTotalRed2 = TeamCount(-1, TEAM_RED, NULL );
 	teamTotalBlue2 = TeamCount(-1, TEAM_BLUE, NULL );
-	
+
 	for(i = 0; i < level.numConnectedClients; i++){
 		// Boe!Man 6/16/12: Skip clients that are spectating..
 		if ( g_entities[level.sortedClients[i]].client->sess.team == TEAM_SPECTATOR){
 			continue;
 		}
-		
+
 		// Boe!Man 6/16/12: Start shuffling using irand, or put them to the team that needs more players when one is on its preserved rate.
 		if(teamTotalRed == teamTotalRed2){ // Blimey, we're on max.
 			newTeam = TEAM_BLUE;
@@ -5232,29 +5235,29 @@ void Boe_ShuffleTeams(int argNum, gentity_t *ent, qboolean shortCmd){
 				teamTotalBlue += 1;
 			}
 		}
-		
+
 		// Boe!Man 7/13/12: Drop any gametype items they might have.
 		if(g_entities[level.sortedClients[i]].s.gametypeitems > 0){
 			G_DropGametypeItems (&g_entities[level.sortedClients[i]], 0 );
 		}
-		
+
 		// Boe!Man 7/13/12: Remove their weps and set as ghost.
 		g_entities[level.sortedClients[i]].client->ps.stats[STAT_WEAPONS] = 0;
 		G_StartGhosting(&g_entities[level.sortedClients[i]]);
-		
+
 		// Boe!Man 7/13/12: Do the team changing.
 		g_entities[level.sortedClients[i]].client->sess.team = (team_t)newTeam;
-		
+
 		// Boe!Man 7/13/12: Take care of the bots.
 		if(g_entities[level.sortedClients[i]].r.svFlags & SVF_BOT){ // Reset bots to set them to another team
 			trap_GetUserinfo( level.sortedClients[i], userinfo, sizeof( userinfo ) );
-			
+
 			if (newTeam == TEAM_RED){
 				strncpy(newTeam2, "red", sizeof(newTeam2));
 			}else if(newTeam == TEAM_BLUE){
 				strncpy(newTeam2, "blue", sizeof(newTeam2));
 			}
-			
+
 			Info_SetValueForKey( userinfo, "team", newTeam2 );
 			trap_SetUserinfo( level.sortedClients[i], userinfo );
 			g_entities[level.sortedClients[i]].client->sess.team = (team_t)newTeam;
@@ -5262,10 +5265,10 @@ void Boe_ShuffleTeams(int argNum, gentity_t *ent, qboolean shortCmd){
 				g_entities[level.sortedClients[i]].client->pers.identity = BG_FindTeamIdentity ( level.gametypeTeam[newTeam], -1 );
 			}
 		}
-		
+
 		// Boe!Man 7/13/12: Prep for change & respawn.
 		g_entities[level.sortedClients[i]].client->pers.identity = NULL;
-		ClientUserinfoChanged( level.sortedClients[i]);		
+		ClientUserinfoChanged( level.sortedClients[i]);
 		CalculateRanks();
 
 		G_StopFollowing(&g_entities[level.sortedClients[i]]);
@@ -5273,7 +5276,7 @@ void Boe_ShuffleTeams(int argNum, gentity_t *ent, qboolean shortCmd){
 		trap_UnlinkEntity (&g_entities[level.sortedClients[i]]);
 		ClientSpawn(&g_entities[level.sortedClients[i]]);
 	}
-	
+
 	// Boe!Man 6/16/12: Proper messaging/logging.
 	Boe_GlobalSound(G_SoundIndex("sound/misc/events/tut_lift02.mp3"));
 	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sS%sh%su%sf%sf%sle teams!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
@@ -5295,7 +5298,7 @@ Boe_friendlyFire
 void Boe_friendlyFire(int argNum, gentity_t *ent, qboolean shortCmd){
 	if(!g_friendlyFire.integer){ // Boe!Man 11/5/12: Disabled, enable it.
 		Boe_setTrackedCvar(18, 1);
-		
+
 		if(ent && ent->client){
 			Boe_adminLog ("Friendly Fire Enabled", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), "none");
 			trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Friendly fire enabled by %s.\n\"", ent->client->pers.netname));
@@ -5305,7 +5308,7 @@ void Boe_friendlyFire(int argNum, gentity_t *ent, qboolean shortCmd){
 		}
 	}else{ // Boe!Man 11/5/12: Enabled, disable it.
 		Boe_setTrackedCvar(18, 0);
-		
+
 		if(ent && ent->client){
 			Boe_adminLog ("Friendly Fire Disabled", va("%s\\%s", ent->client->pers.ip, ent->client->pers.cleanName), "none");
 			trap_SendServerCommand( -1, va("print \"^3[Admin Action] ^7Friendly fire disabled by %s.\n\"", ent->client->pers.netname));
@@ -5314,7 +5317,7 @@ void Boe_friendlyFire(int argNum, gentity_t *ent, qboolean shortCmd){
 			trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Friendly fire disabled.\n"));
 		}
 	}
-	
+
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 	return;
 }
@@ -5331,19 +5334,19 @@ void Boe_Rename(int argNum, gentity_t *ent, qboolean shortCmd){
 	char oldNameClean[MAX_NETNAME];
 	char newName[MAX_NETNAME];
 	char userinfo[MAX_INFO_STRING];
-	
+
 	idnum = Boe_ClientNumFromArg(ent, argNum, "rename <idnumber/name> <new name>", "rename", qfalse, qfalse, shortCmd);
 	if(idnum < 0){
 		return;
 	}
-	
+
 	// Fetch the new name from the arguments given.
 	if(shortCmd){
 		strncpy(newName, GetReason(), sizeof(newName));
 	}else{
 		trap_Argv(argNum + 1, newName, sizeof(newName));
 	}
-	
+
 	if(!newName || !newName[0] || newName[0] == '\\' || strlen(newName) == 0){
 		if(!g_entities[idnum].client->sess.noNameChange){
 			if(ent && ent->client){
@@ -5351,12 +5354,12 @@ void Boe_Rename(int argNum, gentity_t *ent, qboolean shortCmd){
 			}else{
 				Com_Printf("You cannot set an empty name or unlock someone that's not locked from changing names.\n");
 			}
-			
+
 			return;
 		}else{
 			g_entities[idnum].client->sess.noNameChange = qfalse;
 			ClientUserinfoChanged(idnum);
-			
+
 			// Broadcast the unlock.
 			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^3%s ^7can now %sr%se%sn%sa%sm%se ^7again!", level.time + 5000, g_entities[idnum].client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
 			if(ent && ent->client){
@@ -5364,28 +5367,28 @@ void Boe_Rename(int argNum, gentity_t *ent, qboolean shortCmd){
 			}else{
 				trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7%s can now rename again.\n\"", g_entities[idnum].client->pers.cleanName));
 			}
-			
+
 			return;
 		}
 	}else if(strlen(newName) > MAX_NETNAME){
 		newName[MAX_NETNAME] = '\0'; // Make sure to NULL terminate it if the argument given is too large.
 	}
-	
+
 	trap_GetUserinfo(idnum, userinfo, sizeof(userinfo));
 	Info_SetValueForKey(userinfo, "name", newName);
 	trap_SetUserinfo(idnum, userinfo);
-	
+
 	// Fetch the old name to use in the broadcasts/logging.
 	strncpy(oldName, g_entities[idnum].client->pers.netname, sizeof(oldName));
 	strncpy(oldNameClean, g_entities[idnum].client->pers.cleanName, sizeof(oldNameClean));
-	
+
 	G_ClientCleanName( newName, g_entities[idnum].client->pers.netname, sizeof(g_entities[idnum].client->pers.netname), qtrue );
 	G_ClientCleanName( newName, g_entities[idnum].client->pers.talkname, sizeof(g_entities[idnum].client->pers.talkname), qtrue );
 	G_ClientCleanName( newName, g_entities[idnum].client->pers.cleanName, sizeof(g_entities[idnum].client->pers.cleanName), qfalse );
 	g_entities[idnum].client->sess.noNameChange = qtrue;
-	
+
 	ClientUserinfoChanged(idnum);
-	
+
 	// Log and broadcast this change.
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^3%s ^7was %sr%se%sn%sa%sm%sed to ^3%s^7!", level.time + 5000, oldName, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, g_entities[idnum].client->pers.netname));
