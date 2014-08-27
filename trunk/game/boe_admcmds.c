@@ -3787,7 +3787,6 @@ void Boe_dev_f ( gentity_t *ent )
 	dev = ent->client->sess.dev;
 
 	if(!dev){
-		trap_SendServerCommand( ent-g_entities, va("print \"^7As if developer exists in Test releases.......\n\""));
 		return;
 	}
 
