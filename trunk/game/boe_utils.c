@@ -3146,7 +3146,6 @@ void Boe_addPasswordToDatabase(char *ip, char *name2, char *pass)
 {
 	char			name[MAX_NETNAME]; // name2 but without unsupported characters.
 	sqlite3			*db;
-	sqlite3_stmt	*stmt;
 	int				id;
 
 	G_ClientCleanName(name2, name, sizeof(name), qtrue); // Boe!Man 2/12/13: Get the cleanName first.
@@ -3154,14 +3153,10 @@ void Boe_addPasswordToDatabase(char *ip, char *name2, char *pass)
 	Boe_convertNonSQLChars(pass);
 
 	db = usersDb;
-
-	sqlite3_prepare(db, va("UPDATE passadmins set 'pass'='%s' WHERE name='%s'", pass, name), -1, &stmt, 0);
-	if (sqlite3_step(stmt) == SQLITE_DONE){ // He wasn't found on the admin table.
+	if (sqlite3_exec(db, va("UPDATE passadmins set 'pass'='%s' WHERE name='%s'", pass, name), 0, 0, 0) != SQLITE_OK){
 		// This should never happen.
 		G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
 	}
-
-	sqlite3_finalize(stmt);
 }
 
 /*
