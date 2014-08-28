@@ -1121,6 +1121,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	// Boe!Man 8/22/14: Windows users get the future proof DNS entry as their 2nd master entry.
 	trap_Cvar_Set("sv_master2", "1fxmod.org");
 	#endif
+	trap_Cvar_Update(gameCvarTable->vmCvar);
 	
 	// Boe!Man 6/25/13: Enable multithreading for SQLite.
 	sqlite3_config(SQLITE_CONFIG_MULTITHREAD);
