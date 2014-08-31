@@ -1057,6 +1057,14 @@ typedef enum {
 } debugMode_t;
 #endif
 
+// BoeMan 8/30/14: Broadcast priorities, from low to high.
+typedef enum {
+	BROADCAST_GAME,		// Regular game messages.
+	BROADCAST_CMD,		// Admin commands such as uppercut, broadcast, etc.
+	BROADCAST_AWARDS,	// Awards (H&S and regular).
+	BROADCAST_MOTD		// Message of the day when entering the server.
+} broadcastPrio_t;
+
 //=============================================
 
 int Q_isprint( int c );

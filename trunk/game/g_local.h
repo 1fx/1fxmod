@@ -293,6 +293,9 @@ typedef struct
 	qboolean			noTeamChange;			// cant change teams when this is true (rt_none only)
 	qboolean			noNameChange;			// Can't change name when this is true.
 	
+	int					lastMessage;			// level.time of the last message sent to this client.
+	int					lastMessagePriority;	// broadcastPrio_t of last message sent.
+	
 	// Boe!Man 3/30/10
 	qboolean			firstTime;				// If this is set to 1, it's the first time the client's connecting.
 	int					motdStartTime;			// The time the message of the day will start being sent.
@@ -902,6 +905,9 @@ void		G_UndoAdjustedClientBBoxs(void);
 void		G_SetClientPreLeaningBBox(gentity_t *ent);
 void		G_SetClientLeaningBBox(gentity_t *ent);
 
+void		G_Broadcast(char *broadcast, int broadcastLevel, gentity_t *to);
+void		G_postExecuteAdminCommand(int funcNum, int idNum, gentity_t *adm);
+
 //
 // g_items.c
 //
@@ -1127,8 +1133,109 @@ void		MoveClientToIntermission		( gentity_t *client );
 void		DeathmatchScoreboardMessage		( gentity_t *client );
 
 //
-// g_cmds.c
+// g_admcmds.c
 //
+
+extern	vmCvar_t	g_uppercut;
+extern	vmCvar_t	g_pop;
+extern	vmCvar_t	g_kick;
+extern	vmCvar_t	g_addbadmin;
+extern	vmCvar_t	g_addadmin;
+extern	vmCvar_t	g_addsadmin;
+extern	vmCvar_t	g_twist;
+extern	vmCvar_t	g_plant;
+extern	vmCvar_t	g_runover;
+extern	vmCvar_t	g_respawn;
+extern	vmCvar_t	g_mapswitch;
+extern	vmCvar_t	g_burn;
+extern	vmCvar_t	g_mute;
+extern	vmCvar_t	g_strip;
+extern	vmCvar_t	g_removeadmin;
+extern	vmCvar_t	g_forceteam;
+extern	vmCvar_t	g_nosection;
+extern	vmCvar_t	g_shuffleteams;
+extern	vmCvar_t	g_nades;
+extern	vmCvar_t	g_sl;
+extern	vmCvar_t	g_tl;
+extern	vmCvar_t	g_ri;
+extern	vmCvar_t	g_damage;
+extern	vmCvar_t	g_gr;
+extern	vmCvar_t	g_clan;
+extern	vmCvar_t	g_cm;
+extern	vmCvar_t	g_ban;
+extern	vmCvar_t	g_subnetban;
+extern	vmCvar_t	g_clanvsall;
+extern	vmCvar_t	g_swapteams;
+extern	vmCvar_t	g_lock;
+extern	vmCvar_t	g_flash;
+extern	vmCvar_t	g_pause;
+extern	vmCvar_t	g_forcevote;
+extern  vmCvar_t	g_adminremove;
+extern	vmCvar_t	g_ff;
+extern	vmCvar_t	g_rename;
+
+int				adm_Uppercut						(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_Pop								(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_Kick							(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_addAdmin						(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_Twist							(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_Plant							(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_Runover							(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_Respawn							(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_mapRestart						(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_Burn							(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_Mute							(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_Strip							(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_removeAdmin						(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_forceTeam						(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_noLower							(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_noRoof							(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_noMiddle						(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_noWhole							(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_shuffleTeams					(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_noNades							(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_scoreLimit						(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_timeLimit						(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_respawnInterval					(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_realDamage						(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_normalDamage					(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_gametypeRestart					(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_addClanMember					(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_removeClanMember				(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_removeClanMemberFromList		(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_compMode						(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_banList							(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_subnetbanList					(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_Ban								(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_subnetBan						(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_Broadcast						(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_evenTeams						(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_clanVsAll						(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_swapTeams						(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_lockTeam						(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_Flash							(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_Gametype						(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_Pause							(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_Unban							(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_subnetUnban						(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_passVote						(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_cancelVote						(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_mapCycle						(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_adminList						(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_clanList						(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_adminRemove						(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_friendlyFire					(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_Rename							(int argNum, gentity_t *adm, qboolean shortCmd);
+
+static void		adm_addAdmin_f						(int argNum, gentity_t *adm, qboolean shortCmd, int level2, char *commandName);
+static void		adm_unTwist							(int idNum, gentity_t *adm);
+static void		adm_unPlant							(int idNum, gentity_t *adm);
+static void		adm_toggleSection					(gentity_t *adm, char *sectionName, int sectionID);
+static void		adm_toggleCVAR						(gentity_t *adm, int argNum, char *cvarName, vmCvar_t *cvar1, int cvar1ID, qboolean availableInCM, char *cvarNameCM, vmCvar_t *cvar2);
+static void		adm_Damage							(gentity_t *adm, char *damageName, int value);
+static void		adm_showBanList						(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet);
+static void		adm_unPause							(gentity_t *adm);
+static void		adm_unbanFromDatabase				(gentity_t *adm, char *ip, qboolean subnet);
 
 //
 // g_main.c
@@ -1584,20 +1691,19 @@ void RPM_UpdateTMI(void);
 // Henk 08/04/10 -> Add RPM_Obituary()
 void	RPM_Obituary( gentity_t *target, gentity_t *attacker, int mod, attackType_t attack, int hitLocation);
 
-void	RPM_UpdateLoadScreenMessage (void);
-void	RPM_ReadyCheck (gentity_t *ent);
-void	RPM_Tcmd ( gentity_t *ent );
-void	RPM_ReadyTeam(gentity_t *ent, qboolean referee, char *team);
-void	RPM_TeamInfo (gentity_t *ent, char *team);
-void	RPM_lockTeam(gentity_t *ent, qboolean referee, char *team);
-void	RPM_ref_cmd( gentity_t *ent);
-void	RPM_Invite_Spec(gentity_t *ent, char *arg2);
-void	RPM_Team_Reset(gentity_t *ent, qboolean referee, char *team);
-void	RPM_Timeout(gentity_t *ent, qboolean referee);
-void	RPM_Timein (gentity_t *ent);
-void	RPM_ReadyAll (void);
-void	RPM_Pause (gentity_t *adm);
-void	RPM_Unpause (gentity_t *adm);
+void		RPM_UpdateLoadScreenMessage (void);
+void		RPM_ReadyCheck (gentity_t *ent);
+void		RPM_Tcmd ( gentity_t *ent );
+void		RPM_ReadyTeam(gentity_t *ent, qboolean referee, char *team);
+void		RPM_TeamInfo (gentity_t *ent, char *team);
+qboolean	RPM_lockTeam(gentity_t *ent, qboolean referee, char *team);
+void		RPM_ref_cmd( gentity_t *ent);
+void		RPM_Invite_Spec(gentity_t *ent, char *arg2);
+void		RPM_Team_Reset(gentity_t *ent, qboolean referee, char *team);
+void		RPM_Timeout(gentity_t *ent, qboolean referee);
+void		RPM_Timein (gentity_t *ent);
+void		RPM_ReadyAll (void);
+void		RPM_Unpause (gentity_t *adm);
 int StartAfterCommand(char *param);
 #ifdef _DEBUG
 // Boe!Man: Debug CVAR.

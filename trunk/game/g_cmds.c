@@ -12,154 +12,88 @@ int	abuseLevel = 5; // Boe!Man 2/16/13: Defines the abuse level (admin eq.). Def
 // Henk 04/05/10 -> New command system(Yus this is very pro)
 typedef struct 
 {
-	char	*shortCmd; // short admin command, ex: !uc, !p(with space) -> HENK FIX ME: Need more entries here for uppercase.
-	char	*adminCmd; // full adm command for /adm and rcon
-	int		*adminLevel; // pointer to cvar value because we can't store a non constant value, so we store a pointer :).
-	void	(*Function)(int argNum, gentity_t *adm, qboolean shortCmd); // store pointer to the given function so we can call it later
+	char	*shortCmd; // Short admin command, example: !uc, !p(with space)
+	char	*adminCmd; // Full Admin command for /adm and rcon, and with !.
+	int		*adminLevel; // The level that the Admin needs to be in order to execute this command.
+	int		(*Function)(int argNum, gentity_t *adm, qboolean shortCmd); // Store pointer to the given function so we can call it later.
+	char	*suffix; // Suffix for post processing broadcast, or NULL when function doesn't use it/has no suffix.
 } admCmd_t;
 
 static admCmd_t AdminCommands[] = 
 {
-	// Boe!Man 1/22/11: Adding full synonyms.
-	{"!uppercut","uppercut", &g_uppercut.integer, &Boe_Uppercut},
-	{"!pop","pop", &g_pop.integer, &Boe_pop},
-	{"!kick","kick", &g_kick.integer, &Boe_Kick},
-	{"!addbadmin","addbadmin", &g_addbadmin.integer, &Boe_addAdmin},
-	{"!addadmin","addadmin", &g_addadmin.integer, &Boe_addAdmin},
-	{"!addsadmin","addsadmin", &g_addsadmin.integer, &Boe_addAdmin},
-	{"!twist","twist", &g_twist.integer, &Boe_Twist},
-	{"!untwist","untwist", &g_twist.integer, &Boe_unTwist},
-	{"!plant","plant", &g_plant.integer, &Boe_Plant},
-	{"!unplant","unplant", &g_plant.integer, &Boe_unPlant},
-	{"!runover","runover", &g_runover.integer, &Boe_Runover},
-	{"!respawn","respawn", &g_respawn.integer, &Boe_Respawn},
-	{"!maprestart","maprestart", &g_mapswitch.integer, &Boe_MapRestart},
-	{"!burn","burn", &g_burn.integer, &Boe_Burn},
-	{"!mute","mute", &g_mute.integer, &Boe_XMute},
-	{"!unmute","unmute", &g_mute.integer, &Boe_UnMute},
-	{"!strip","strip", &g_strip.integer, &Boe_Strip},
-	{"!removeadmin","removeadmin", &g_removeadmin.integer, &Boe_Remove_Admin_f},
-	{"!forceteam","forceteam", &g_forceteam.integer, &Adm_ForceTeam},
-	{"!nolower","nolower", &g_nosection.integer, &Boe_NoLower},
-	{"!noroof","noroof", &g_nosection.integer, &Boe_NoRoof},
-	{"!nomiddle","nomiddle", &g_nosection.integer, &Boe_NoMiddle},
-	{"!nowhole","nowhole", &g_nosection.integer, &Boe_NoWhole},
-	{"!shuffleteams","shuffleteams", &g_shuffleteams.integer, &Boe_ShuffleTeams},
-	{"!shuffle","shuffle", &g_shuffleteams.integer, &Boe_ShuffleTeams},
-	{"!nonades","nonades", &g_nades.integer, &Boe_NoNades},
-	{"!scorelimit","scorelimit", &g_sl.integer, &Boe_ScoreLimit},
-	{"!timelimit","timelimit", &g_tl.integer, &Boe_TimeLimit},
-	{"!respawninterval","respawninterval", &g_ri.integer, &Boe_RespawnInterval},
-	{"!realdamage","realdamage", &g_damage.integer, &Boe_RealDamage},
-	{"!normaldamage","normaldamage", &g_damage.integer, &Boe_NormalDamage},
-	{"!gametyperestart","gametyperestart", &g_gr.integer, &Boe_GametypeRestart},
-	{"!addclan","addclan", &g_clan.integer, &Boe_Add_Clan_Member},
-	{"!removeclan","removeclan", &g_clan.integer, &Boe_Remove_Clan_Member},
-	{"!removeclanlist","removeclanlist", &g_clan.integer, &Boe_removeClanMemberFromList},
-	{"!clanlistremove","clanlistremove", &g_clan.integer, &Boe_removeClanMemberFromList},
-	{"!compmode","compmode", &g_cm.integer, &Boe_CompMode},
-	{"!competitionmode","compmode", &g_cm.integer, &Boe_CompMode},
-	{"!banlist","banlist", &g_ban.integer, &Henk_BanList},
-	{"!ban","ban", &g_ban.integer, &Boe_Ban_f},
-	{"!broadcast","broadcast", &g_broadcast.integer, &Boe_Broadcast},
-	{"!subnetbanlist","subnetbanlist", &g_subnetban.integer, &Henk_SubnetBanList},
-	{"!eventeams","eventeams", &g_eventeams.integer, &Henk_EvenTeams},
-	{"!clanvsall","clanvsall", &g_clanvsall.integer, &Henk_CVA},
-	{"!swapteams","swapteams", &g_swapteams.integer, &Henk_SwapTeams},
-	{"!lock","lock", &g_lock.integer, &Henk_Lock},
-	{"!unlock","unlock", &g_lock.integer, &Henk_Unlock},
-	{"!flash","flash", &g_flash.integer, &Henk_Flash},
-	{"!gametype","gametype", &g_mapswitch.integer, &Henk_Gametype},
-	{"!unpause","unpause", &g_pause.integer, &Henk_Unpause},
-	{"!pause","pause", &g_pause.integer, &Henk_Pause},
-	{"!unban","unban", &g_ban.integer, &Henk_Unban},
-	{"!subnetunban","subnetunban", &g_subnetban.integer, &Henk_SubnetUnban},
-	{"!subnetban","subnetban", &g_subnetban.integer, &Boe_subnetBan},
-	{"!pass","passvote", &g_forcevote.integer, &Boe_passVote},
-	{"!cancel","cancelvote", &g_forcevote.integer, &Boe_cancelVote},
-	{"!mapcycle","mapcycle", &g_mapswitch.integer, &Boe_Mapcycle},
-	{"!adminlist","adminlist", &g_adminlist.integer, &Henk_Admlist},
-	{"!clanlist","clanlist", &g_clan.integer, &Boe_clanList},
-	{"!adminremove","adminremove", &g_adminremove.integer, &Henk_AdminRemove},
-	{"!friendlyfire","friendlyfire", &g_ff.integer, &Boe_friendlyFire},
-	{"!rename","rename", &g_rename.integer, &Boe_Rename},
-	// Boe!Man 1/22/11: End full synonyms.
-
-	{"!adr","adminremove", &g_adminremove.integer, &Henk_AdminRemove},
-	{"!uc","uppercut", &g_uppercut.integer, &Boe_Uppercut},
-	{"!ab","addbadmin", &g_addbadmin.integer, &Boe_addAdmin},
-	{"!aa","addadmin", &g_addadmin.integer, &Boe_addAdmin},
-	{"!as","addsadmin", &g_addsadmin.integer, &Boe_addAdmin},
-	{"!tw","twist", &g_twist.integer, &Boe_Twist},
-	{"!utw","untwist", &g_twist.integer, &Boe_unTwist},
-	{"!pl","plant", &g_plant.integer, &Boe_Plant},
-	{"!upl","unplant", &g_plant.integer, &Boe_unPlant},
-	{"!rounds","rounds", &g_cm.integer, &Boe_Rounds},
-	{"!ro","runover", &g_runover.integer, &Boe_Runover},
-	{"!rs","respawn", &g_respawn.integer, &Boe_Respawn}, // this is how we add synonyms
-	{"!mr","maprestart", &g_mapswitch.integer, &Boe_MapRestart},
-	{"!mr","map_restart", &g_mapswitch.integer, &Boe_MapRestart},
+	{"!adr","adminremove", &g_adminremove.integer, &adm_adminRemove, NULL},
+	{"!uc","uppercut", &g_uppercut.integer, &adm_Uppercut, NULL},
+	{"!ab","addbadmin", &g_addbadmin.integer, &adm_addAdmin, NULL},
+	{"!aa","addadmin", &g_addadmin.integer, &adm_addAdmin, NULL},
+	{"!as","addsadmin", &g_addsadmin.integer, &adm_addAdmin, NULL},
+	{"!tw","twist", &g_twist.integer, &adm_Twist, "ed"},
+	{"!pl","plant", &g_plant.integer, &adm_Plant, "ed"},
+	{"!ro","runover", &g_runover.integer, &adm_Runover, NULL},
+	{"!r", "respawn", &g_respawn.integer, &adm_Respawn, "ed"},
+	{"!rs","respawn", &g_respawn.integer, &adm_Respawn, "ed"},
+	{"!mr","maprestart", &g_mapswitch.integer, &adm_mapRestart, NULL},
+	{"!mr","map_restart", &g_mapswitch.integer, &adm_mapRestart, NULL},
+	{"!st","strip", &g_strip.integer, &adm_Strip, "ped"},
+	{"!ra","removeadmin", &g_removeadmin.integer, &adm_removeAdmin, NULL},
+	{"!ft","forceteam", &g_forceteam.integer, &adm_forceTeam, NULL},
+	{"!nl","nolower", &g_nosection.integer, &adm_noLower, NULL},
+	{"!nr","noroof", &g_nosection.integer, &adm_noRoof, NULL},
+	{"!nm","nomiddle", &g_nosection.integer, &adm_noMiddle, NULL},
+	{"!nw","nowhole", &g_nosection.integer, &adm_noWhole, NULL},
+	{"!sh","shuffleteams", &g_shuffleteams.integer, &adm_shuffleTeams, NULL},
+	{"!nn","nonades", &g_nades.integer, &adm_noNades, NULL},
+	{"!sl","scorelimit", &g_sl.integer, &adm_scoreLimit, NULL},
+	{"!tl","timelimit", &g_tl.integer, &adm_timeLimit, NULL},
+	{"!ri","respawninterval", &g_ri.integer, &adm_respawnInterval, NULL},
+	{"!rd","realdamage", &g_damage.integer, &adm_realDamage, NULL},
+	{"!nd","normaldamage", &g_damage.integer, &adm_normalDamage, NULL},
+	{"!gr","gametyperestart", &g_gr.integer, &adm_gametypeRestart, NULL},
+	{"!acl","addclan", &g_clan.integer, &adm_addClanMember, NULL},
+	{"!rcl","removeclanlist", &g_clan.integer, &adm_removeClanMemberFromList, NULL},
+	{"!clr","clanlistremove", &g_clan.integer, &adm_removeClanMemberFromList, NULL},
+	{"!cm","compmode", &g_cm.integer, &adm_compMode, NULL},
+	{"!bl","banlist", &g_ban.integer, &adm_banList, NULL},
+	{"!ba","ban", &g_ban.integer, &adm_Ban, "ned"},
+	{"!br","broadcast", &g_broadcast.integer, &adm_Broadcast, NULL},
+	{"!sbl","subnetbanlist", &g_subnetban.integer, &adm_subnetbanList, NULL},
+	{"!et","eventeams", &g_eventeams.integer, &adm_evenTeams, NULL},
+	{"!cva","clanvsall", &g_clanvsall.integer, &adm_clanVsAll, NULL},
+	{"!sw","swapteams", &g_swapteams.integer, &adm_swapTeams},
+	{"!l","lock", &g_lock.integer, &adm_lockTeam, NULL},
+	{"!fl","flash", &g_flash.integer, &adm_Flash, "ed"},
+	{"!g","gametype", &g_mapswitch.integer, &adm_Gametype, NULL},
+	{"!gt","gametype", &g_mapswitch.integer, &adm_Gametype, NULL},
+	{"!pv","passvote", &g_forcevote.integer, &adm_passVote, NULL},
+	{"!cv","cancelvote", &g_forcevote.integer, &adm_cancelVote, NULL},
+	{"!pa","pause", &g_pause.integer, &adm_Pause, NULL},
+	{"!ub", "unban", &g_ban.integer, &adm_Unban, NULL},
+	{"!uba","unban", &g_ban.integer, &adm_Unban, NULL},
+	{"!sbu","subnetunban", &g_subnetban.integer, &adm_subnetUnban, NULL},
+	{"!su","subnetunban", &g_subnetban.integer, &adm_subnetUnban, NULL},
+	{"!sb","subnetban", &g_subnetban.integer, &adm_subnetBan, "ned"},
+	{"!mc","mapcycle", &g_mapswitch.integer, &adm_mapCycle, NULL},
+	{"!adl","adminlist", &g_adminlist.integer, &adm_adminList, NULL},
+	{"!al","adminlist", &g_adminlist.integer, &adm_adminList, NULL},
+	{"!cl","clanlist", &g_clan.integer, &adm_clanList, NULL},
+	{"!b","burn", &g_burn.integer, &adm_Burn, "ed"},
+	{"!u","uppercut", &g_uppercut.integer, &adm_Uppercut, NULL},
+	{"!p","pop", &g_pop.integer, &adm_Pop, "ped"},
+	{"!k","kick", &g_kick.integer, &adm_Kick, NULL},
+	{"!m","mute", &g_mute.integer, &adm_Mute, NULL},
+	{"!s","strip", &g_strip.integer, &adm_Strip, "ped"},
+	{"!ff","friendlyfire", &g_ff.integer, &adm_friendlyFire, NULL},
+	{"!rn","rename", &g_rename.integer, &adm_Rename, NULL}
+	
+	// BOE TODO:
+	/*
+	{"!rc","removeclan", &g_clan.integer, &Boe_Remove_Clan_Member},
 	{"!map","map", &g_mapswitch.integer, &Henk_Map},
 	{"!altmap","altmap", &g_mapswitch.integer, &Henk_Map},
 	{"!devmap","devmap", &g_mapswitch.integer, &Henk_Map},
-	{"!um","unmute", &g_mute.integer, &Boe_UnMute},
-	{"!st","strip", &g_strip.integer, &Boe_Strip},
-	{"!ra","removeadmin", &g_removeadmin.integer, &Boe_Remove_Admin_f},
-	{"!ft","forceteam", &g_forceteam.integer, &Adm_ForceTeam},
-	{"!nl","nolower", &g_nosection.integer, &Boe_NoLower},
-	{"!nr","noroof", &g_nosection.integer, &Boe_NoRoof},
-	{"!nm","nomiddle", &g_nosection.integer, &Boe_NoMiddle},
-	{"!nw","nowhole", &g_nosection.integer, &Boe_NoWhole},
-	{"!sh","shuffleteams", &g_shuffleteams.integer, &Boe_ShuffleTeams},
-	{"!nn","nonades", &g_nades.integer, &Boe_NoNades},
-	{"!sl","scorelimit", &g_sl.integer, &Boe_ScoreLimit},
-	{"!tl","timelimit", &g_tl.integer, &Boe_TimeLimit},
-	{"!ri","respawninterval", &g_ri.integer, &Boe_RespawnInterval},
-	{"!rd","realdamage", &g_damage.integer, &Boe_RealDamage},
-	{"!nd","normaldamage", &g_damage.integer, &Boe_NormalDamage},
-	{"!gr","gametyperestart", &g_gr.integer, &Boe_GametypeRestart},
-	{"!acl","addclan", &g_clan.integer, &Boe_Add_Clan_Member},
-	{"!rc","removeclan", &g_clan.integer, &Boe_Remove_Clan_Member},
-	{"!rcl","removeclanlist", &g_clan.integer, &Boe_removeClanMemberFromList},
-	{"!clr","clanlistremove", &g_clan.integer, &Boe_removeClanMemberFromList},
 	{"!3rd","3rd", &g_3rd.integer, &Boe_Third},
 	{"!third","third", &g_3rd.integer, &Boe_Third},
-	{"!cm","compmode", &g_cm.integer, &Boe_CompMode},
-	{"!bl","banlist", &g_ban.integer, &Henk_BanList},
-	{"!ba","ban", &g_ban.integer, &Boe_Ban_f},
-	{"!br","broadcast", &g_broadcast.integer, &Boe_Broadcast},
-	{"!sbl","subnetbanlist", &g_subnetban.integer, &Henk_SubnetBanList},
-	{"!et","eventeams", &g_eventeams.integer, &Henk_EvenTeams},
-	{"!cva","clanvsall", &g_clanvsall.integer, &Henk_CVA},
-	{"!sw","swapteams", &g_swapteams.integer, &Henk_SwapTeams},
-	{"!l","lock", &g_lock.integer, &Henk_Lock},
-	{"!ul","unlock", &g_lock.integer, &Henk_Unlock},
-	{"!fl","flash", &g_flash.integer, &Henk_Flash},
-	{"!g","gametype", &g_mapswitch.integer, &Henk_Gametype},
-	{"!gt","gametype", &g_mapswitch.integer, &Henk_Gametype},
-	{"!pv","passvote", &g_forcevote.integer, &Boe_passVote},
-	{"!cv","cancelvote", &g_forcevote.integer, &Boe_cancelVote},
-	{"!upa","unpause", &g_pause.integer, &Henk_Unpause},
-	{"!up","unpause", &g_pause.integer, &Henk_Unpause},
-	{"!pa","pause", &g_pause.integer, &Henk_Pause},
-	{"!uba","unban", &g_ban.integer, &Henk_Unban},
-	{"!sbu","subnetunban", &g_subnetban.integer, &Henk_SubnetUnban},
-	{"!ub","unban", &g_ban.integer, &Henk_Unban},
-	{"!su","subnetunban", &g_subnetban.integer, &Henk_SubnetUnban},
-	{"!sb","subnetban", &g_subnetban.integer, &Boe_subnetBan},
-	{"!mc","mapcycle", &g_mapswitch.integer, &Boe_Mapcycle},
-	{"!adl","adminlist", &g_adminlist.integer, &Henk_Admlist},
-	{"!al","adminlist", &g_adminlist.integer, &Henk_Admlist},
-	{"!cl","clanlist", &g_clan.integer, &Boe_clanList},
-	{"!r","respawn", &g_respawn.integer, &Boe_Respawn},
-	{"!b","burn", &g_burn.integer, &Boe_Burn},
-	{"!u","uppercut", &g_uppercut.integer, &Boe_Uppercut},
-	{"!p","pop", &g_pop.integer, &Boe_pop},
-	{"!k","kick", &g_kick.integer, &Boe_Kick},
-	{"!m","mute", &g_mute.integer, &Boe_XMute},
-	{"!s","strip", &g_strip.integer, &Boe_Strip},
-	{"!ff","friendlyfire", &g_ff.integer, &Boe_friendlyFire},
-	{"!rn","rename", &g_rename.integer, &Boe_Rename}
+	{"!rounds","rounds", &g_cm.integer, &Boe_Rounds},
+	*/
 };
 
 static int AdminCommandsSize = sizeof( AdminCommands ) / sizeof( AdminCommands[0] );
@@ -190,7 +124,7 @@ void EvenTeams (gentity_t *adm, qboolean aet)
 		if(level.cagefight){
 			if(adm && adm->client){
 				trap_SendServerCommand( adm - g_entities, va("print \"^3[Info] ^7You cannot even the teams during cagefight.\n\"") );
-			}else{ // Boe!Man 7/11/13: This can only happen by non-AET (since we're playing in the cage).
+			}else{ // This can only happen by non-AET (since we're playing in the cage).
 				Com_Printf("You cannot even the teams during cagefight.\n");
 			}
 		}else{
@@ -260,8 +194,6 @@ void EvenTeams (gentity_t *adm, qboolean aet)
 				continue;
 			if(sess->team != highTeam)
 				continue;
-			//if(sess->admin)
-			//	continue;
 			if(ent->s.gametypeitems)
 				continue;
 
@@ -305,14 +237,14 @@ void EvenTeams (gentity_t *adm, qboolean aet)
 	// Boe!Man 3/31/10: We tell 'em what happened.
 	Boe_GlobalSound (G_SoundIndex("sound/misc/events/tut_lift02.mp3"));
 	
-	if(adm && adm->client) {
-		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sE%sv%se%sn%si%sng teams!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+	if(adm && adm->client){
+		G_Broadcast("\\Evening teams!", BROADCAST_CMD, NULL);
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Eventeams by %s.\n\"", adm->client->pers.netname));
 		Boe_adminLog ("Eventeams", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "none");
 	}else if (aet == qfalse){
-		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sE%sv%se%sn%si%sng teams!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+		G_Broadcast("\\Evening teams!", BROADCAST_CMD, NULL);
 		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Eventeams.\n\""));
-		Boe_adminLog ("Eventeams", va("RCON"), "none");
+		Boe_adminLog ("Eventeams", "RCON", "none");
 	}else{
 		trap_SendServerCommand(-1, va("print\"^3[Auto Action] ^7Eventeams.\n\""));
 	}
@@ -2564,14 +2496,16 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	Q_strlwr(test);
 	if(acmd != qtrue){
 		for(i=0;i<AdminCommandsSize;i++){
-			if(strstr(test, Q_strlwr(AdminCommands[i].shortCmd)) && IsValidCommand(AdminCommands[i].shortCmd, test)){
+			// FIXME BOE: The !%s, not so efficient??
+			if((strstr(test, AdminCommands[i].shortCmd) || strstr(test, va("!%s", AdminCommands[i].adminCmd))) && IsValidCommand(AdminCommands[i].shortCmd, test)){
 				command = qtrue;
 				if(ent->client->sess.admin >= *AdminCommands[i].adminLevel){
-					AdminCommands[i].Function(1, ent, qtrue);
+					// Execute the Admin command and handle the post processing (logging, broadcast, etc.) for some commands.
+					G_postExecuteAdminCommand(i, AdminCommands[i].Function(1, ent, qtrue), ent);
 					break;
 				}else{
 					if(ent->client->sess.referee == 1 && strstr(test, "!l")){ // exception for referee lock
-						Henk_Lock(1, ent, qtrue);
+						adm_lockTeam(1, ent, qtrue);
 					}
 					trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
 				}
@@ -3893,7 +3827,8 @@ void Boe_adm_f ( gentity_t *ent )
 		//Com_Printf("Checking %s with %s\n", arg1, AdminCommands[i].adminCmd);
 		if(!Q_stricmp(arg1, AdminCommands[i].adminCmd)){
 			if(ent->client->sess.admin >= *AdminCommands[i].adminLevel){
-				AdminCommands[i].Function(2, ent, qfalse);
+				// Execute the Admin command and handle the post processing (logging, broadcast, etc.) for some commands.
+				G_postExecuteAdminCommand(i, AdminCommands[i].Function(2, ent, qfalse), ent);
 				return;
 			}else{
 			// Boe!Man 12/30/09: Putting two Info messages together.
@@ -3977,8 +3912,8 @@ qboolean ConsoleCommand( void )
 	for(i=0;i<AdminCommandsSize;i++){ // Henk 15/09/10 -> Fixed loop going outside array(causing crashes)
 		//Com_Printf("Checking %s with %s\n", arg1, AdminCommands[i].adminCmd);
 		if(!Q_stricmp(cmd, AdminCommands[i].adminCmd)){
-				AdminCommands[i].Function(1, NULL, qfalse);
-				return qtrue;
+			G_postExecuteAdminCommand(i, AdminCommands[i].Function(1, NULL, qfalse), NULL);
+			return qtrue;
 		}
 	}
 
@@ -4069,6 +4004,14 @@ qboolean ConsoleCommand( void )
 		return qtrue;
 	}
 
+	if (Q_stricmp(cmd, "testt") == 0)
+	{
+		G_Broadcast("No colour.", BROADCAST_GAME, NULL);
+		G_Broadcast("One color per message \\duh.", BROADCAST_MOTD, NULL);
+		G_Broadcast("Big \\wooping word.", BROADCAST_GAME, NULL);
+		return qtrue;
+	}
+
 	if (g_dedicated.integer) 
 	{
 		if (Q_stricmp (cmd, "say") == 0) 
@@ -4083,4 +4026,134 @@ qboolean ConsoleCommand( void )
 	}
 
 	return qfalse;
+}
+
+/*
+==================
+G_Broadcast
+==================
+*/
+void G_Broadcast(char *broadcast, int broadcastLevel, gentity_t *to)
+{
+	int i, newWordLength;
+	char *tempBroadcast;
+	char newBroadcast[MAX_STRING_CHARS] = "\0";
+	int newWordPosition = 0;
+
+	// First we check the broadcast. Should colours be applied to it?
+	// A backslash can never be applied to any command in-game, like broadcast. Use that to determine what word should be highlighted.
+	tempBroadcast = strstr(broadcast, "\\");
+	if (tempBroadcast != NULL){
+		// A word is found that should be highlighted.
+		// First determine the start position of the word in the broadcast.
+		newWordPosition = (int)(tempBroadcast - broadcast);
+
+		// Now determine the length of the string.
+		tempBroadcast = strstr(tempBroadcast, " ");
+		if (tempBroadcast == NULL){
+			// Word is as long as the remaining string.
+			newWordLength = strlen(broadcast) - newWordPosition - 1;
+		}else{
+			// Word ends at position of the tempBroadcast.
+			newWordLength = (int)(tempBroadcast - broadcast) - newWordPosition - 1;
+		}
+
+		#ifdef _DEBUG
+		Com_Printf("Word starts at pos %i and is %i long.\n", newWordPosition, newWordLength);
+		#endif
+
+		// Now we apply the colors to the broadcast if there are colors to apply it to.
+		if (newWordLength > 0){
+			// Check how many colors there are available to use.
+			int availableColors = strlen(server_colors.string);
+			strncat(newBroadcast, broadcast, newWordPosition);
+
+			if (!availableColors){
+				// Copy the string to it, excluding backslash.
+				strncat(newBroadcast, broadcast + newWordPosition + 1, strlen(broadcast) - newWordPosition);
+			}else{
+				// Apply colors.
+				int color;
+
+				// Check how many colors we can copy.
+				if (newWordLength >= availableColors){
+					color = 0;
+				}else{
+					color = availableColors - newWordLength;
+				}
+
+				// Copy each individal char to the new buffer, plus the color associated to it.
+				for (i = 0; i < newWordLength; i++){
+					if (color < availableColors){
+						strcat(newBroadcast, va("^%c%c", server_colors.string[color], broadcast[newWordPosition + i + 1]));
+						color++;
+					}else{
+						strncat(newBroadcast, broadcast + newWordPosition + i + 1, 1);
+					}
+				}
+
+				// Is there a remaining string?
+				if (tempBroadcast != NULL){
+					strncat(newBroadcast, broadcast + newWordPosition + newWordLength + 1, strlen(broadcast) - newWordLength - newWordPosition - 1);
+				}
+			}
+
+			#ifdef _DEBUG
+			Com_Printf("New string: %s\n", newBroadcast);
+			#endif
+		}
+	}else{
+		strncpy(newBroadcast, broadcast, sizeof(newBroadcast));
+	}
+
+	// If to is NULL, we're dealing with a global message (equals old way of broadcasting to -1).
+	if (to == NULL){
+		for (i = 0; i < level.numConnectedClients; i++){
+			gentity_t* other = &g_entities[level.sortedClients[i]];
+
+			// Skip any client that isn't connected.
+			if (other->client->pers.connected != CON_CONNECTED){
+				continue;
+			}
+			// Skip any client that received a more important message in the last 5 seconds.
+			if (other->client->sess.lastMessagePriority > broadcastLevel && level.time < (other->client->sess.lastMessage + 5000)){
+				#ifdef _DEBUG
+				Com_Printf("Skipping client num %i due to having received a more important msg.", other->s.number);
+				#endif
+
+				continue;
+			}
+
+			trap_SendServerCommand(other-g_entities, va("cp \"@%s\n\"", newBroadcast));
+			other->client->sess.lastMessagePriority = broadcastLevel;
+			other->client->sess.lastMessage = level.time;
+		}
+	}else if (to->client->sess.lastMessagePriority <= broadcastLevel){
+		trap_SendServerCommand(to-g_entities, va("cp \"@%s\n\"", newBroadcast));
+		to->client->sess.lastMessagePriority = broadcastLevel;
+		to->client->sess.lastMessage = level.time;
+	}
+}
+
+void G_postExecuteAdminCommand(int funcNum, int idNum, gentity_t *adm)
+{
+	if (idNum < 0){
+		return;
+	}
+
+	// Broadcast the change and log it.
+	if (adm != NULL){
+		// Admin action.
+		G_Broadcast(va("%s was \\%s by %s", g_entities[idNum].client->pers.netname, AdminCommands[funcNum].adminCmd, adm->client->pers.netname), BROADCAST_CMD, NULL);
+		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was %s by %s.\n\"", g_entities[idNum].client->pers.cleanName, AdminCommands[funcNum].adminCmd, adm->client->pers.cleanName));
+		Boe_adminLog(AdminCommands[funcNum].adminCmd, va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", g_entities[idNum].client->pers.ip, g_entities[idNum].client->pers.cleanName));
+	}else{
+		// RCON action.
+		G_Broadcast(va("%s was \\%s", g_entities[idNum].client->pers.netname, AdminCommands[funcNum].adminCmd), BROADCAST_CMD, NULL);
+		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s was %s.\n\"", g_entities[idNum].client->pers.cleanName, AdminCommands[funcNum].adminCmd));
+		Boe_adminLog(AdminCommands[funcNum].adminCmd, va("%s", "RCON"), va("%s\\%s", g_entities[idNum].client->pers.ip, g_entities[idNum].client->pers.cleanName));
+	}
+
+	// Let users know something happened with a sound as well.
+	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 }

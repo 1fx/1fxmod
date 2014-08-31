@@ -243,86 +243,40 @@ on a Linux platform.
 void	Boe_adm_f ( gentity_t *ent );
 int		Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const char* type, qboolean aliveOnly, qboolean otheradmins, qboolean shortCmd);
 
-extern	vmCvar_t	g_kick;
+
 //extern	admCmd_t AdminCommands[124];
 
 //extern  vmCvar_t	g_adminfile;
 extern	vmCvar_t	g_adminlog;
 extern	vmCvar_t	g_loginlog;
-extern	vmCvar_t	g_addbadmin;
-extern	vmCvar_t	g_addadmin;
-extern	vmCvar_t	g_addsadmin;
+
 
 void	Boe_FileError (gentity_t * ent, const char *file);
 void	Boe_id (int);
-//int		Boe_AddToList(const char *string, const char* file, const char* type, gentity_t* ent);
-//int		Boe_Remove_from_list( char *key, const char *file, const char* type, gentity_t *ent, qboolean unban, qboolean removeAdmin, qboolean scoreCheck);
-void	Boe_Unban(gentity_t *adm, char *ip, qboolean subnet);
-void	Henk_AdminRemove(int argNum, gentity_t *adm, qboolean shortCmd);
 qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passAdmin, qboolean lineNumber, qboolean silent);
 
-void	Boe_subnetBan(int argNum, gentity_t *adm, qboolean shortCmd);
-void	Boe_Remove_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd);
-
-extern	vmCvar_t	g_ban;
-extern	vmCvar_t	g_subnetban;
 extern	vmCvar_t	g_subnetbanlist;
-extern	vmCvar_t	g_removeadmin;
 extern	vmCvar_t	g_broadcast;
 
-extern	vmCvar_t	server_color1;
+extern	vmCvar_t	server_colors;
+extern	vmCvar_t	server_color1; // TEMP REMOVE ME LATER.
 extern	vmCvar_t	server_color2;
 extern	vmCvar_t	server_color3;
 extern	vmCvar_t	server_color4;
 extern	vmCvar_t	server_color5;
 extern	vmCvar_t	server_color6;
 
-void	Boe_addAdmin (int argNum, gentity_t *adm, qboolean shortCmd);
-void	Boe_Add_Admin_f(int argNum, gentity_t *adm, qboolean shortCmd, int level, char *commandName);
-void	Boe_BanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet);
-void	Boe_Ban_f (int argNum, gentity_t *adm, qboolean shortCmd);				// Prototype warnings.
-void	Boe_Uppercut (int argNum, gentity_t *adm, qboolean shortCmd);
-extern	vmCvar_t	g_uppercut;
-extern  vmCvar_t	g_adminremove;
-
-void	Boe_Twist (int argNum, gentity_t *adm, qboolean shortCmd);
-void	Boe_unTwist (int argNum, gentity_t *adm, qboolean shortCmd);
-extern	vmCvar_t	g_twist;
-void	Boe_Respawn (int argNum, gentity_t *adm, qboolean shortCmd);
-extern	vmCvar_t	g_respawn;
-extern	vmCvar_t	g_runover;
-void	Boe_Runover (int argNum, gentity_t *adm, qboolean shortCmd);
-
 void	G_ApplyKnockback( gentity_t *targ, vec3_t newDir, float knockback );	// Prototype warnings.
-
-extern	vmCvar_t	g_mapswitch;
-
-void	Boe_Flash(int argNum, gentity_t *ent, qboolean shortCmd);
-extern	vmCvar_t	g_flash;
-
-void	Boe_unPlant (int argNum, gentity_t *adm, qboolean shortCmd);
-void	Boe_Plant (int argNum, gentity_t *adm, qboolean shortCmd);
-extern	vmCvar_t	g_plant;
-
-void	Boe_pop (int argNum, gentity_t *adm, qboolean shortCmd);
-void	Boe_Burn (int argNum, gentity_t *adm, qboolean shortCmd);
-void	Boe_Broadcast(int argNum, gentity_t *adm, qboolean shortCmd);
-void	Boe_Mute (int argNum, gentity_t *adm, qboolean mute, qboolean shortCmd);
-void	Boe_Strip (int argNum, gentity_t *adm, qboolean shortCmd);
 #ifdef _awesomeToAbuse
 //void	Henk_Box(int argNum, gentity_t *adm, qboolean shortCmd);
 void	Boe_freakOut(gentity_t *adm);
 #endif
-void	Adm_ForceTeam(int argNum, gentity_t *adm, qboolean shortCmd);
-extern	vmCvar_t	g_pop;
-extern	vmCvar_t	g_burn;
-extern	vmCvar_t	g_mute;
-extern	vmCvar_t	g_strip;
+
 extern	vmCvar_t	g_eventeams;
 
 //extern	vmCvar_t	g_333;
 
-extern	vmCvar_t	g_forceteam;
+
 
 void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 );
 gentity_t *NV_projectile (gentity_t *ent, vec3_t start, vec3_t dir, int weapon, int damage);
@@ -334,25 +288,10 @@ extern	vmCvar_t	server_redteamprefix;
 extern	vmCvar_t	server_blueteamprefix;
 
 // Boe!Man 4/15/10
-extern	vmCvar_t	g_nosection;
-extern	vmCvar_t	g_nades;
-extern	vmCvar_t	g_sl;
-extern	vmCvar_t	g_tl;
-extern	vmCvar_t	g_ri;
 extern	vmCvar_t	g_respawninterval;
-extern	vmCvar_t	g_damage;
-extern	vmCvar_t	g_gr;
-extern	vmCvar_t	g_clanvsall;
-extern	vmCvar_t	g_swapteams;
-extern	vmCvar_t	g_lock;
-extern	vmCvar_t	g_clan;
-
-// Boe!Man 12/7/10
-void Boe_SubnetBanlist (int argNum, gentity_t *adm, qboolean shortCmd);
 
 // Boe!Man 1/26/11
 extern	vmCvar_t	g_3rd;
-extern	vmCvar_t	g_cm;
 
 // Boe!Man 3/1/11
 extern	vmCvar_t	g_useNoLower;
@@ -382,17 +321,6 @@ void Boe_Rounds(int argNum, gentity_t *ent, qboolean shortCmd);
 // Boe!Man 5/28/11
 extern	vmCvar_t	g_customWeaponFile;
 
-// Boe!Man 6/16/12
-void Boe_ShuffleTeams(int argNum, gentity_t *ent, qboolean shortCmd);
-extern	vmCvar_t	g_shuffleteams;
-
-// Boe!Man 11/5/12
-extern	vmCvar_t	g_ff;
-extern	vmCvar_t	g_rename;
-
-void Boe_friendlyFire(int argNum, gentity_t *ent, qboolean shortCmd);
-void Boe_Rename(int argNum, gentity_t *ent, qboolean shortCmd);
-
 //==============================================
 // boe_utils.c
 //==============================================
@@ -419,13 +347,6 @@ void	Boe_GlobalSound (int soundIndex);
 void	Boe_Display_Sounds( gentity_t *ent );
 void	Boe_Display_Sounds2( gentity_t *ent );
 void	Boe_Display_ExtraSounds (gentity_t *ent);
-
-extern	vmCvar_t	server_color1;
-extern	vmCvar_t	server_color2;
-extern	vmCvar_t	server_color3;
-extern	vmCvar_t	server_color4;
-extern	vmCvar_t	server_color5;
-extern	vmCvar_t	server_color6;
 
 extern  int			Preloaded;
 
@@ -455,8 +376,6 @@ void	logCrash(void);
 // Henk 28/01/10 -> Add eventeams
 void	EvenTeams (gentity_t *adm, qboolean aet);
 
-void	Boe_SwapTeams(gentity_t *adm);
-
 extern	vmCvar_t	server_badminprefix;
 extern	vmCvar_t	server_adminprefix;
 extern	vmCvar_t	server_sadminprefix;
@@ -479,11 +398,8 @@ void G_DropGametypeItems ( gentity_t* self, int delayPickup );
 int trap_RealTime( qtime_t *qtime );
 qboolean BG_InitWeaponStats(qboolean init);
 void Boe_About( gentity_t *ent );
-void Boe_Add_Clan_Member(int argNum, gentity_t *adm, qboolean shortCmd);
 void Boe_Remove_Clan_Member(int argNum, gentity_t *adm, qboolean shortCmd);
-void Boe_removeClanMemberFromList(int argNum, gentity_t *adm, qboolean shortCmd);
 qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean lineNumber, qboolean silent);
-void RPM_Clan_Vs_All(gentity_t *adm);
 
 #ifdef _DEBUG
 void Boe_dev_f ( gentity_t *ent );
@@ -493,23 +409,7 @@ char *GetReason(void);
 
 // Boe!Man 5/9/10
 char	*Boe_BarStat(int stat);
-void	Boe_Kick(int argNum, gentity_t *ent, qboolean ShortCmd);
-void	Boe_XMute(int argNum, gentity_t *ent, qboolean ShortCmd);
-void	Boe_UnMute(int argNum, gentity_t *ent, qboolean ShortCmd);
-void	Boe_MapRestart(int argNum, gentity_t *ent, qboolean ShortCmd);
-void	Boe_NoLower(int argNum, gentity_t *ent, qboolean ShortCmd);
-void	Boe_NoRoof(int argNum, gentity_t *ent, qboolean shortCmd);
-void	Boe_NoMiddle(int argNum, gentity_t *ent, qboolean shortCmd);
-void	Boe_NoWhole(int argNum, gentity_t *ent, qboolean shortCmd);
-void	Boe_NoNades(int argNum, gentity_t *ent, qboolean ShortCmd);
-void	Boe_TimeLimit(int argNum, gentity_t *ent, qboolean ShortCmd);
-void	Boe_ScoreLimit(int argNum, gentity_t *ent, qboolean ShortCmd);
-void	Boe_RespawnInterval(int argNum, gentity_t *ent, qboolean ShortCmd);
-void	Boe_RealDamage(int argNum, gentity_t *ent, qboolean ShortCmd);
-void	Boe_NormalDamage(int argNum, gentity_t *ent, qboolean ShortCmd);
-void	Boe_GametypeRestart(int argNum, gentity_t *ent, qboolean ShortCmd);
 void	Boe_Third(int argNum, gentity_t *ent, qboolean ShortCmd);
-void	Boe_CompMode(int argNum, gentity_t *ent, qboolean ShortCmd);
 qboolean henk_isdigit(char c);
 qboolean henk_ischar(char c);
 void RPM_Awards(void);
@@ -561,9 +461,6 @@ extern vmCvar_t	cm_oldtl;
 extern vmCvar_t	cm_sr;
 extern vmCvar_t	cm_sb;
 
-// Boe!Man 6/17/11: A CVAR for pause.
-extern	vmCvar_t	g_pause;
-
 // Boe!Man 11/18/10
 void Boe_calcMatchScores (void);
 
@@ -602,22 +499,9 @@ gentity_t*	findLastEnteredPlayer	(int highTeam, qboolean scoresAllowed);
 void Use_BinaryMover( gentity_t *ent, gentity_t *other, gentity_t *activator );
 gentity_t* G_RealSpawnGametypeItem1 ( gitem_t* item, vec3_t origin, vec3_t angles, qboolean dropped );
 void G_RespawnClients ( qboolean force, team_t team, qboolean fullRestart );
-void Henk_EvenTeams(int argNum, gentity_t *adm, qboolean shortCmd);
-void Henk_CVA(int argNum, gentity_t *adm, qboolean shortCmd);
-void Henk_SwapTeams(int argNum, gentity_t *adm, qboolean shortCmd);
-void Henk_Lock(int argNum, gentity_t *adm, qboolean shortCmd);
-void Henk_Unlock(int argNum, gentity_t *adm, qboolean shortCmd);
 void Henk_Map(int argNum, gentity_t *adm, qboolean shortCmd);
-void Henk_Flash(int argNum, gentity_t *adm, qboolean shortCmd);
-void Henk_Gametype(int argNum, gentity_t *adm, qboolean shortCmd);
-void Henk_Unpause(int argNum, gentity_t *adm, qboolean shortCmd);
-void Henk_Pause(int argNum, gentity_t *adm, qboolean shortCmd);
 void G_UpdateAvailableWeapons(void);
 //void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subnet, qboolean ban, qboolean banremove, char *banremovestring);
-void Henk_Unban(int argNum, gentity_t *adm, qboolean shortCmd);
-void Henk_SubnetUnban(int argNum, gentity_t *adm, qboolean shortCmd);
-void Henk_SubnetBanList(int argNum, gentity_t *adm, qboolean shortCmd);
-void Henk_BanList(int argNum, gentity_t *adm, qboolean shortCmd);
 void Svcmd_EntityList_f(void);
 //void Svcmd_CancelVote_f(void);
 void Svcmd_AddIP_f(void);
@@ -636,21 +520,11 @@ extern vmCvar_t g_enableCustomCommands;
 char	*ConcatArgs1( int start );
 void CheckEnts(gentity_t *ent);
 
-// Boe!Man 2/13/11: Passvote and cancelvote.
-extern vmCvar_t	g_forcevote;
-void Boe_passVote (int argNum, gentity_t *adm, qboolean shortCmd);
-void Boe_cancelVote (int argNum, gentity_t *adm, qboolean shortCmd);
-
-// Boe!Man 2/25/11: Mapcycle.
-void Boe_Mapcycle (int argNum, gentity_t *ent, qboolean shortCmd);
-
 char *ChooseTeam(void);
 void DoTeleport(gentity_t *ent, vec3_t origin);
 int TiedPlayers(void);
 void InitCagefight(void);
 void Henk_CloseSound ( vec3_t origin, int soundIndex);
-void Henk_Admlist(int argNum, gentity_t *adm, qboolean shortCmd);
-void Boe_clanList(int argNum, gentity_t *adm, qboolean shortCmd);
 //qboolean CheckPasswordList(gentity_t *ent, char *pass);
 void PrintCustom(int numb);
 

@@ -57,63 +57,6 @@ void RPM_ReadyAll (void)
 	}
 }
 
-/*
-=============
-RPM_Pause
-=============
-*/
-void RPM_Pause (gentity_t *adm)
-{
-	int			i;
-	gentity_t	*ent;
-//	gentity_t	*tent;
-
-	if ( level.intermissiontime || level.pause || level.intermissionQueued)
-	{
-		return;
-	}
-
-	level.pause = 6;
-	
-	// Boe!Man 4/22/12: When in CTF, flags should be freezed as well. Let the gt know this by sending this command.
-	if(current_gametype.value == GT_CTF){
-		trap_GT_SendEvent ( GTEV_PAUSE, level.time, 1, 0, 0, 0, 0);
-	}
-
-	//trap_SetConfigstring( CS_LEVEL_START_TIME, va("%i", level.startTime ) );
-	//trap_SetConfigstring ( CS_GAMETYPE_TIMER, va("%i", level.gametypeRoundTime) );
-
-	for (i=0 ; i< level.maxclients ; i++)
-	{
-		ent = g_entities + i;
-		if (!ent->inuse)
-		{
-			continue;
-		}
-		if(G_IsClientDead(ent->client)){
-			ent->client->sess.pausespawn = qtrue;
-			ent->client->ps.oldTimer = ent->client->ps.respawnTimer-level.time;
-		}
-		ent->client->ps.pm_type = PM_INTERMISSION;
-	}
-	// send the current scoring to all clients
-	SendScoreboardMessageToAllClients();
-
-	// Boe!Man 1/24/11: Tell everyone what just happened.
-	Boe_GlobalSound(G_SoundIndex("sound/misc/events/buzz02.wav"));
-	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sP%sa%su%ss%se%sd!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-	if(adm && adm->client){
-		Boe_adminLog ("Pause", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "none");
-		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Pause by %s.\n\"", adm->client->pers.netname));
-	}else{
-		Boe_adminLog ("Pause", va("RCON"), "none");
-		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Pause.\n\""));
-	}
-/*	tent = G_TempEntity( vec3_origin, EV_GLOBAL_SOUND );
-	tent->s.eventParm = G_SoundIndex("sound/misc/events/buzz02.wav");
-	tent->r.svFlags = SVF_BROADCAST;
-*/
-}
 
 /*
 ============
@@ -132,12 +75,7 @@ void RPM_Unpause (gentity_t *adm)
 			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7The game is not currently paused.\n\"") );
 		else
 			Com_Printf("The game is not currently paused.\n");
-			
-		#ifdef _DEBUG
-		if(g_debug.integer){
-			writeDebug(MODDBG_ADMCMDS, "End unpause not paused");
-		}
-		#endif
+		
 		return;
 	}
 
@@ -149,45 +87,16 @@ void RPM_Unpause (gentity_t *adm)
 		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sR%se%ss%su%sm%sing in: %d sec", level.time + 2000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, level.pause ) );
 
 		Boe_GlobalSound(G_SoundIndex("sound/misc/events/buzz02.wav"));
-/*		tent = G_TempEntity( vec3_origin, EV_GLOBAL_SOUND );
-		tent->s.eventParm = G_SoundIndex("sound/misc/events/buzz02.wav");
-		tent->r.svFlags = SVF_BROADCAST;
-*/
 
 		if(!level.pause)
 		{
-			#ifdef _DEBUG
-			if(g_debug.integer){
-				writeDebug(MODDBG_ADMCMDS, "unpausing....");
-			}
-			#endif
 			level.unpausetime = 0;
-			#ifdef _DEBUG
-			if(g_debug.integer){
-				writeDebug(MODDBG_ADMCMDS, "unpause set to 0");
-			}
-			#endif
 			
 			// Boe!Man 4/22/12: When in CTF, flags should be unfreezed as well. Let the gt know this by sending this command.
 			if(current_gametype.value == GT_CTF){
-				#ifdef _DEBUG
-				if(g_debug.integer){
-					writeDebug(MODDBG_ADMCMDS, "unpause sent event");
-				}
-				#endif
 				trap_GT_SendEvent ( GTEV_PAUSE, level.time, 0, 0, 0, 0, 0);
-				#ifdef _DEBUG
-				if(g_debug.integer){
-					writeDebug(MODDBG_ADMCMDS, "unpause event done");
-				}
-				#endif
 			}
 
-			#ifdef _DEBUG
-			if(g_debug.integer){
-				writeDebug(MODDBG_ADMCMDS, "unpause reset clients scoreboard");
-			}
-			#endif
 			///RxCxW - 08.30.06 - 03:06pm #reset clients (scoreboard) display time
 			trap_SetConfigstring( CS_LEVEL_START_TIME, va("%i", level.startTime ) );
 			trap_SetConfigstring ( CS_GAMETYPE_TIMER, va("%i", level.gametypeRoundTime) );
@@ -199,12 +108,6 @@ void RPM_Unpause (gentity_t *adm)
 				level.gametypeRespawnTime[TEAM_BLUE] = level.time + g_respawnInterval.integer * 1000;
 				level.gametypeRespawnTime[TEAM_FREE] = level.time + g_respawnInterval.integer * 1000;
 			}
-
-			#ifdef _DEBUG
-			if(g_debug.integer){
-				writeDebug(MODDBG_ADMCMDS, "unpause resetting clients");
-			}
-			#endif
 			
 			for (i=0 ; i< level.maxclients ; i++)
 			{
@@ -220,142 +123,12 @@ void RPM_Unpause (gentity_t *adm)
 				
 				if(ent->client->sess.pausespawn == qtrue){
 					ent->client->ps.RealSpawnTimer = level.time+ent->client->ps.oldTimer;
-					#ifdef _DEBUG
-					Com_Printf("Waiting %i\n", ent->client->ps.oldTimer);
-					#endif
 				}
 				ent->client->ps.pm_type = PM_NORMAL;
 			}
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sG%so %sG%so!", level.time + 2000, server_color2.string, server_color3.string, server_color4.string, server_color5.string) );
+			G_Broadcast("\\Go!", BROADCAST_CMD, NULL);
 		}
 	}
-	
-	#ifdef _DEBUG
-	if(g_debug.integer){
-		writeDebug(MODDBG_ADMCMDS, "unpause DONE");
-	}
-	#endif
-}
-
-void RPM_Clan_Vs_All(gentity_t *adm)
-{
-	int		counts[TEAM_NUM_TEAMS] = {0};
-	int		i, clanTeam, othersTeam;
-	char	team[6];	
-
-	clientSession_t	*sess;
-	gentity_t	*ent;
-
-	if(!level.gametypeData->teams){
-		if(adm && adm->client){
-			trap_SendServerCommand( adm - g_entities, va("print \"^3[Info] ^7Not playing a team game.\n\""));
-		}
-		else {
-			Com_Printf("Not playing a team game.\n");
-		}
-		return;
-	}
-	if(adm && adm->client)	trap_Argv( 2, team, sizeof( team ) );
-	else trap_Argv( 1, team, sizeof( team ) );
-	
-	/// which team has the most clan members on it?
-	for (i = 0; i < level.numConnectedClients; i++) {
-		sess = &g_entities[level.sortedClients[i]].client->sess;
-		if(!sess->clanMember) continue;
-		if(sess->team != TEAM_RED && sess->team != TEAM_BLUE) continue;
-		counts[sess->team]++;
-	}
-
-	if (team[0] == 'r' || team[0] == 'R'){
-		clanTeam = TEAM_RED;
-		othersTeam = TEAM_BLUE;
-	}
-	else if (team[0] == 'b' || team[0] == 'B'){
-		clanTeam = TEAM_BLUE;
-		othersTeam = TEAM_RED;
-	}
-	else {
-		if(counts[TEAM_RED] >= counts[TEAM_BLUE]){
-			clanTeam = TEAM_RED;
-			othersTeam = TEAM_BLUE;
-		}
-		else {
-			clanTeam = TEAM_BLUE;
-			othersTeam = TEAM_RED;
-		}
-	}
-
-	for(i = 0; i < level.numConnectedClients; i++){
-		ent = &g_entities[level.sortedClients[i]];
-		sess = &ent->client->sess;
-
-		if(sess->team != TEAM_RED && sess->team != TEAM_BLUE) continue;
-
-		if(sess->clanMember){
-			if(sess->team != clanTeam){
-				ent->client->ps.stats[STAT_WEAPONS] = 0;
-				TossClientItems( ent );
-				G_StartGhosting( ent );
-				sess->team = (team_t)clanTeam;
-
-			}
-			else {
-				continue;
-			}
-		}
-
-		else {
-			if(sess->team != othersTeam) {
-				
-				ent->client->ps.stats[STAT_WEAPONS] = 0;
-				TossClientItems( ent );
-				G_StartGhosting( ent );
-
-				sess->team = (team_t)othersTeam;
-
-			}
-			else continue;
-		}
-		
-		if (ent->r.svFlags & SVF_BOT){
-			char	userinfo[MAX_INFO_STRING];
-			trap_GetUserinfo( ent->s.number, userinfo, sizeof( userinfo ) );
-			Info_SetValueForKey( userinfo, "team", sess->team == TEAM_RED?"red":"blue");
-			trap_SetUserinfo( ent->s.number, userinfo );
-		}	
-
-		ent->client->pers.identity = NULL;
-		ClientUserinfoChanged( ent->s.number);		
-		CalculateRanks();
-
-		G_StopFollowing( ent );
-		G_StopGhosting( ent );
-		trap_UnlinkEntity ( ent );
-		ClientSpawn( ent);
-
-	}
-	if (clanTeam == TEAM_BLUE){	
-		level.blueLocked = 1;
-		level.redLocked = 0;
-		}
-	else {
-		level.redLocked = 1;
-		level.blueLocked = 0;
-	}
-
-	/// tell everyone what just happened
-	trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sC%sl%sa%sn vs all!", level.time + 5000, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-	Boe_GlobalSound(G_SoundIndex("sound/misc/events/tut_lift02.mp3"));
-			
-	if(adm && adm->client) {
-		Boe_adminLog ("Clan Vs All", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "none");
-		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Clan vs all by %s.\n\"", adm->client->pers.netname));
-	} else	{
-		Boe_adminLog ("Clan Vs All", va("RCON"), "none");
-		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Clan vs all.\n\""));
-	}
-	///End  - 02.26.05 - 02:59am
-	///CalculateRanks();
 }
 
 void RPM_UpdateLoadScreenMessage (void)

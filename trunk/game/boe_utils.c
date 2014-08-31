@@ -161,7 +161,7 @@ void Boe_Motd (gentity_t *ent)
 	char	*gs = gmotd;
 	char	name[36];
 //#ifdef Q3_VM
-	char	*header1 = va("@%s ^7%s ^7- %s\n", INF_VERSION_STRING_COLORED, INF_VERSION_STRING, INF_VERSION_DATE );
+	char	*header1 = va("%s ^7%s ^7- %s\n", INF_VERSION_STRING_COLORED, INF_VERSION_STRING, INF_VERSION_DATE );
 /*#else
 	char	*header1 = va("@%s ^7%s ^7- %d/%d/%02d\n", INF_VERSION_STRING_COLORED, INF_VERSION_STRING, MONTH+1, DAY, YEAR );
 #endif*/
@@ -209,7 +209,7 @@ void Boe_Motd (gentity_t *ent)
 	}
 
 	*s = '\0';
-	trap_SendServerCommand(ent-g_entities, va("cp \"%s\"", motd));
+	G_Broadcast(motd, BROADCAST_MOTD, ent);
 }
 
 /*

@@ -128,6 +128,7 @@ vmCvar_t	g_subnetban;					// Admin CVAR.
 vmCvar_t	g_ban;							// Admin CVAR.
 vmCvar_t	g_broadcast;
 vmCvar_t	g_removeadmin;					// Admin CVAR.
+vmCvar_t	server_colors;
 vmCvar_t	server_color1;					// Server color 1-6.
 vmCvar_t	server_color2;					// Used for displaying colors.
 vmCvar_t	server_color3;					// In either commands or prefixes.
@@ -483,6 +484,7 @@ static cvarTable_t gameCvarTable[] =
 //	{ &g_clanfile,			"g_clanfile",			"users/clanmembers.txt",	CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  },
 //	{ &g_banfile,			"g_banfile",			"users/bans.txt",		CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  },
 
+	{ &server_colors, "server_colors", "GgKk+7", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 	{ &server_color1, "server_color1", "^G", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_color2, "server_color2", "^g", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_color3, "server_color3", "^K", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
@@ -3494,7 +3496,7 @@ void G_RunFrame( int levelTime )
 		else if(cm_enabled.integer == 3 && level.compMsgCount < level.time){ // Boe!Man 3/19/11: Fixing possible shortcome. High pingers might not always receive them properly this way..
 			// Boe!Man 1/24/11: Swap the teams.
 			if (cm_aswap.integer > 0 && level.swappedteams == qfalse){
-				Boe_SwapTeams(NULL);
+				adm_swapTeams(-1, NULL, qfalse);
 				for(i=0;i<level.numConnectedClients;i++){ // Henk swap the invites aswell
 					if(level.clients[level.sortedClients[i]].sess.invitedByRed == qtrue){
 						level.clients[level.sortedClients[i]].sess.invitedByRed = qfalse;
