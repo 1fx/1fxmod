@@ -35,7 +35,7 @@ static admCmd_t AdminCommands[] =
 	{"!mr","map_restart", &g_mapswitch.integer, &adm_mapRestart, NULL},
 	{"!st","strip", &g_strip.integer, &adm_Strip, "ped"},
 	{"!ra","removeadmin", &g_removeadmin.integer, &adm_removeAdmin, NULL},
-	{"!ft","forceteam", &g_forceteam.integer, &adm_forceTeam, NULL},
+	{"!ft","forceteam", &g_forceteam.integer, &adm_forceTeam, "ed"},
 	{"!nl","nolower", &g_nosection.integer, &adm_noLower, NULL},
 	{"!nr","noroof", &g_nosection.integer, &adm_noRoof, NULL},
 	{"!nm","nomiddle", &g_nosection.integer, &adm_noMiddle, NULL},
@@ -4123,7 +4123,7 @@ void G_Broadcast(char *broadcast, int broadcastLevel, gentity_t *to)
 
 				continue;
 			}
-
+			
 			trap_SendServerCommand(other-g_entities, va("cp \"@%s\n\"", newBroadcast));
 			other->client->sess.lastMessagePriority = broadcastLevel;
 			other->client->sess.lastMessage = level.time;
@@ -4144,13 +4144,13 @@ void G_postExecuteAdminCommand(int funcNum, int idNum, gentity_t *adm)
 	// Broadcast the change and log it.
 	if (adm != NULL){
 		// Admin action.
-		G_Broadcast(va("%s was \\%s by %s", g_entities[idNum].client->pers.netname, AdminCommands[funcNum].adminCmd, adm->client->pers.netname), BROADCAST_CMD, NULL);
-		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was %s by %s.\n\"", g_entities[idNum].client->pers.cleanName, AdminCommands[funcNum].adminCmd, adm->client->pers.cleanName));
+		G_Broadcast(va("%s\n^*was \\%s%s\n^*by %s", g_entities[idNum].client->pers.netname, AdminCommands[funcNum].adminCmd, (AdminCommands[funcNum].suffix != NULL) ? AdminCommands[funcNum].suffix : "", adm->client->pers.netname), BROADCAST_CMD, NULL);
+		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was %s%s by %s.\n\"", g_entities[idNum].client->pers.cleanName, AdminCommands[funcNum].adminCmd, (AdminCommands[funcNum].suffix != NULL) ? AdminCommands[funcNum].suffix : "", adm->client->pers.cleanName));
 		Boe_adminLog(AdminCommands[funcNum].adminCmd, va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", g_entities[idNum].client->pers.ip, g_entities[idNum].client->pers.cleanName));
 	}else{
 		// RCON action.
-		G_Broadcast(va("%s was \\%s", g_entities[idNum].client->pers.netname, AdminCommands[funcNum].adminCmd), BROADCAST_CMD, NULL);
-		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s was %s.\n\"", g_entities[idNum].client->pers.cleanName, AdminCommands[funcNum].adminCmd));
+		G_Broadcast(va("%s\n^*was \\%s%s", g_entities[idNum].client->pers.netname, AdminCommands[funcNum].adminCmd, (AdminCommands[funcNum].suffix != NULL) ? AdminCommands[funcNum].suffix : ""), BROADCAST_CMD, NULL);
+		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s was %s%s.\n\"", g_entities[idNum].client->pers.cleanName, AdminCommands[funcNum].adminCmd, (AdminCommands[funcNum].suffix != NULL) ? AdminCommands[funcNum].suffix : ""));
 		Boe_adminLog(AdminCommands[funcNum].adminCmd, va("%s", "RCON"), va("%s\\%s", g_entities[idNum].client->pers.ip, g_entities[idNum].client->pers.cleanName));
 	}
 

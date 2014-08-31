@@ -382,7 +382,6 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 					num = -1;
 				    //numb[strlen(numb)-1] = '\0';
 				    numb[strlen(numb)] = '\0';
-				    /* END ajay */
 					for(x=0;x<level.numConnectedClients;x++){
 						//trap_SendServerCommand(-1, va("print\"^3[Debug] ^7%s comparing with %s.\n\"", g_entities[level.sortedClients[x]].client->pers.cleanName,numb));
 						Q_strncpyz(cleanName, g_entities[level.sortedClients[x]].client->pers.cleanName, sizeof(cleanName));
@@ -395,10 +394,12 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 							//break;
 						}
 					}
-					string[strlen(string)-2] = '\0';
-					if(numberofclients > 1){
-						trap_SendServerCommand(ent->s.number, va("print\"^3[Info] ^7Multiple names found with ^3%s^7: %s\n\"", numb, string));
-						return -1;
+					if(strlen(string) > 1){
+						string[strlen(string) - 2] = '\0';
+						if (numberofclients > 1){
+							trap_SendServerCommand(ent->s.number, va("print\"^3[Info] ^7Multiple names found with ^3%s^7: %s\n\"", numb, string));
+							return -1;
+						}
 					}
 				}
 				break;

@@ -400,7 +400,7 @@ int adm_Plant(int argNum, gentity_t *adm, qboolean shortCmd)
 
 	// Boe!Man 1/13/11: If the client is already planted, unplant him.
 	if (ent->client->pers.planted == qtrue){
-		adm_unPlant(argNum, adm);
+		adm_unPlant(idNum, adm);
 		return -1;
 	}
 
@@ -792,6 +792,7 @@ int adm_removeAdmin(int argNum, gentity_t *adm, qboolean shortCmd)
 	}
 
 	// He's not an Admin anymore so it doesn't matter if he was a B-Admin, Admin or S-Admin: in any way he shouldn't be allowed to spec the opposite team.
+	g_entities[idNum].client->sess.admin = 0;
 	g_entities[idNum].client->sess.adminspec = qfalse;
 
 	return -1;
