@@ -269,7 +269,7 @@ static void adm_addAdmin_f(int argNum, gentity_t *adm, qboolean shortCmd, int le
 
 	// *DON'T* let the Admin system handle the post processing on this command, because it simply works in a different fashion.
 	if (!passAdmin){
-		G_Broadcast(va("%s is now a %s", g_entities[idNum].client->pers.netname, admLevelPrefixed), BROADCAST_CMD, NULL);
+		G_Broadcast(va("%s\nis now a %s", g_entities[idNum].client->pers.netname, admLevelPrefixed), BROADCAST_CMD, NULL);
 		g_entities[idNum].client->sess.admin = level2;
 	}
 	
@@ -372,10 +372,10 @@ static void adm_unTwist(int idNum, gentity_t *adm)
 	// Broadcast the change.
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 	if (adm && adm->client){
-		G_Broadcast(va("%s was \\untwisted by %s", ent->client->pers.netname, adm->client->pers.netname), BROADCAST_CMD, NULL);
+		G_Broadcast(va("%s\nwas \\untwisted\nby %s", ent->client->pers.netname, adm->client->pers.netname), BROADCAST_CMD, NULL);
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was untwisted by %s.\n\"", ent->client->pers.cleanName, adm->client->pers.cleanName));
 	}else{
-		G_Broadcast(va("%s was \\untwisted", ent->client->pers.netname), BROADCAST_CMD, NULL);
+		G_Broadcast(va("%s\nwas \\untwisted", ent->client->pers.netname), BROADCAST_CMD, NULL);
 		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s was untwisted.\n\"", ent->client->pers.cleanName));
 	}
 }
@@ -441,10 +441,10 @@ static void adm_unPlant(int idNum, gentity_t *adm)
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 
 	if (adm && adm->client){
-		G_Broadcast(va("%s was \\unplanted by %s", ent->client->pers.netname, adm->client->pers.netname), BROADCAST_CMD, NULL);
+		G_Broadcast(va("%s\nwas \\unplanted\nby %s", ent->client->pers.netname, adm->client->pers.netname), BROADCAST_CMD, NULL);
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was unplanted by %s.\n\"", ent->client->pers.cleanName, adm->client->pers.cleanName));
 	}else{
-		G_Broadcast(va("%s was \\unplanted", ent->client->pers.netname), BROADCAST_CMD, NULL);
+		G_Broadcast(va("%s\nwas \\unplanted", ent->client->pers.netname), BROADCAST_CMD, NULL);
 		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s was unplanted.\n\"", ent->client->pers.cleanName));
 	}
 }
@@ -701,11 +701,11 @@ int adm_Mute(int argNum, gentity_t *adm, qboolean shortCmd)
 	// Handle custom broadcasts for mute.
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 	if (adm && adm->client){
-		G_Broadcast(va("%s was \\%s by %s", g_entities[idNum].client->pers.netname, (unMute) ? "unmuted" : "muted", adm->client->pers.netname), BROADCAST_CMD, NULL);
+		G_Broadcast(va("%s\nwas \\%s\nby %s", g_entities[idNum].client->pers.netname, (unMute) ? "unmuted" : "muted", adm->client->pers.netname), BROADCAST_CMD, NULL);
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s ^7was %s by %s%s\n\"", g_entities[idNum].client->pers.netname, (unMute) ? "unmuted" : "muted", adm->client->pers.netname, (unMute) ? "." : va("for %i minutes.", time)));
 		Boe_adminLog("muted", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", g_entities[idNum].client->pers.ip, g_entities[idNum].client->pers.cleanName));
 	}else{
-		G_Broadcast(va("%s was \\%s", g_entities[idNum].client->pers.netname, (unMute) ? "unmuted" : "muted"), BROADCAST_CMD, NULL);
+		G_Broadcast(va("%s\nwas \\%s", g_entities[idNum].client->pers.netname, (unMute) ? "unmuted" : "muted"), BROADCAST_CMD, NULL);
 		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s ^7was %s%s\n\"", g_entities[idNum].client->pers.netname, (unMute) ? "unmuted" : "muted", time, (unMute) ? "." : va("for %i minutes.", time)));
 		Boe_adminLog("muted", "RCON", va("%s\\%s", g_entities[idNum].client->pers.ip, g_entities[idNum].client->pers.cleanName));
 	}
@@ -783,7 +783,7 @@ int adm_removeAdmin(int argNum, gentity_t *adm, qboolean shortCmd)
 	Boe_removeAdminFromDb(adm, g_entities[idNum].client->pers.ip, qfalse, qfalse, qtrue);
 
 	// Handle custom broadcast.
-	G_Broadcast(va("%s is no longer an \\Admin", g_entities[idNum].client->pers.netname), BROADCAST_CMD, NULL);
+	G_Broadcast(va("%s\nis no longer an \\Admin", g_entities[idNum].client->pers.netname), BROADCAST_CMD, NULL);
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 	if (adm && adm->client){
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s ^7was removed as Admin by %s.\n\"", g_entities[idNum].client->pers.cleanName, adm->client->pers.cleanName));
@@ -926,7 +926,7 @@ int adm_forceTeam(int argNum, gentity_t *adm, qboolean shortCmd)
 		// Custom broadcast for all.
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 		if (adm){
-			G_Broadcast(va("Everybody was \\forceteamed by %s", adm->client->pers.netname), BROADCAST_CMD, NULL);
+			G_Broadcast(va("Everybody was \\forceteamed\nby %s", adm->client->pers.netname), BROADCAST_CMD, NULL);
 			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Everybody was forceteamed by %s.\n\"", adm->client->pers.cleanName));
 			Boe_adminLog("forceteam", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "All");
 		}else{
@@ -1453,7 +1453,7 @@ static void adm_Damage(gentity_t *adm, char *damageName, int value)
 		Boe_adminLog(damageName, va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "none");
 	}
 	else{
-		trap_SendServerCommand(-1, "print \"^3[Rcon Action] ^7Real damage.\n\"");
+		trap_SendServerCommand(-1, va("print \"^3[Rcon Action] ^7%s.\n\"", damageName));
 		Boe_adminLog(damageName, "RCON", "none");
 	}
 }
@@ -1543,7 +1543,7 @@ int adm_addClanMember(int argNum, gentity_t *adm, qboolean shortCmd)
 
 	g_entities[idNum].client->sess.clanMember = qtrue;
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-	G_Broadcast(va("%s is now a \\Clan member!", g_entities[idNum].client->pers.netname), BROADCAST_CMD, NULL);
+	G_Broadcast(va("%s\nis now a \\Clan member!", g_entities[idNum].client->pers.netname), BROADCAST_CMD, NULL);
 
 	if (adm && adm->client){
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was made clan member by %s.\n\"", g_entities[idNum].client->pers.cleanName, adm->client->pers.cleanName));
@@ -1587,7 +1587,7 @@ int adm_removeClanMember(int argNum, gentity_t *adm, qboolean shortCmd)
 	
 	// Broadcast the change and log it.
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-	G_Broadcast(va("%s is no longer a \\Clan member!", g_entities[idNum].client->pers.netname), BROADCAST_CMD, NULL);
+	G_Broadcast(va("%s\nis no longer a \\Clan member!", g_entities[idNum].client->pers.netname), BROADCAST_CMD, NULL);
 
 	if (adm && adm->client){
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was removed as clan member by %s.\n\"", g_entities[idNum].client->pers.cleanName, adm->client->pers.cleanName));
@@ -2532,12 +2532,29 @@ Locks or unlocks specified team.
 
 int adm_lockTeam(int argNum, gentity_t *adm, qboolean shortCmd)
 {
-	char	arg[16] = "\0"; // increase buffer so we can process more commands
+	char		arg[16] = "\0"; // increase buffer so we can process more commands
+	qboolean	done = qfalse;
 
 	trap_Argv(argNum, arg, sizeof(arg));
 	
-	if (!RPM_lockTeam(adm, qfalse, arg)){
-		trap_SendServerCommand(adm - g_entities, va("print \"^3[Info] ^7Unknown team entered.\n\""));
+	if (shortCmd){
+		if (strstr(arg, "r")){
+			done = RPM_lockTeam(adm, qfalse, "r");
+		}else if (strstr(arg, "b")){
+			done = RPM_lockTeam(adm, qfalse, "b");
+		}else if (strstr(arg, "s")){
+			done = RPM_lockTeam(adm, qfalse, "s");
+		}else if (strstr(arg, "a")){
+			done = RPM_lockTeam(adm, qfalse, "a");
+		}
+
+		if (!done){
+			trap_SendServerCommand(adm - g_entities, va("print \"^3[Info] ^7Unknown team entered.\n\""));
+		}
+	}else{
+		if (!RPM_lockTeam(adm, qfalse, arg)){
+			trap_SendServerCommand(adm - g_entities, va("print \"^3[Info] ^7Unknown team entered.\n\""));
+		}
 	}
 
 	return -1;
@@ -2590,7 +2607,7 @@ int adm_Flash(int argNum, gentity_t *adm, qboolean shortCmd)
 
 		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 		if (adm && adm->client){
-			G_Broadcast(va("Everyone has been \\flashed by %s", adm->client->pers.netname), BROADCAST_CMD, NULL);
+			G_Broadcast(va("Everyone\nhas been \\flashed by %s", adm->client->pers.netname), BROADCAST_CMD, NULL);
 			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Everyone has been flashed by %s.\n\"", adm->client->pers.cleanName));
 			Boe_adminLog("flash", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "all clients");
 		}
@@ -3499,7 +3516,7 @@ int adm_Rename(int argNum, gentity_t *adm, qboolean shortCmd)
 			ClientUserinfoChanged(idNum);
 
 			// Broadcast the unlock.
-			G_Broadcast(va("%s can now \\rename again!", g_entities[idNum].client->pers.netname), BROADCAST_CMD, NULL);
+			G_Broadcast(va("%s\ncan now \\rename again!", g_entities[idNum].client->pers.netname), BROADCAST_CMD, NULL);
 			if (adm && adm->client){
 				trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7%s can now rename again.\n\"", g_entities[idNum].client->pers.cleanName));
 			}else{
@@ -3529,7 +3546,7 @@ int adm_Rename(int argNum, gentity_t *adm, qboolean shortCmd)
 
 	// Log and broadcast this change.
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-	G_Broadcast(va("%s was \\renamed to %s!", oldName, g_entities[idNum].client->pers.netname), BROADCAST_CMD, NULL);
+	G_Broadcast(va("%s\nwas \\renamed to %s!", oldName, g_entities[idNum].client->pers.netname), BROADCAST_CMD, NULL);
 
 	if (adm && adm->client){
 		Boe_adminLog("renamed", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s\\%s", g_entities[idNum].client->pers.ip, oldNameClean, g_entities[idNum].client->pers.cleanName));

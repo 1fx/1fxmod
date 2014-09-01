@@ -290,9 +290,9 @@ qboolean RPM_lockTeam(gentity_t *ent, qboolean referee, char *team)
 			if(ent && ent->client){
 				// Boe!Man 2/15/11: We need H&S messages as well.
 				if(current_gametype.value == GT_HS){
-					G_Broadcast(va("%s has \\unlocked the %s", ent->client->pers.netname, server_hiderteamprefix.string), BROADCAST_CMD, NULL);
+					G_Broadcast(va("%s\nhas \\unlocked the %s", ent->client->pers.netname, server_hiderteamprefix.string), BROADCAST_CMD, NULL);
 				}else{
-					G_Broadcast(va("%s has \\unlocked the %s ^7team", ent->client->pers.netname, server_redteamprefix.string), BROADCAST_CMD, NULL);
+					G_Broadcast(va("%s\nhas \\unlocked the %s ^7team", ent->client->pers.netname, server_redteamprefix.string), BROADCAST_CMD, NULL);
 				}
 
 				if (ent->client->sess.admin > 1){
@@ -306,10 +306,10 @@ qboolean RPM_lockTeam(gentity_t *ent, qboolean referee, char *team)
 				}
 			}else{
 				if(current_gametype.value == GT_HS){
-					G_Broadcast(va("%s ^7have been \\unlocked", server_hiderteamprefix.string), BROADCAST_CMD, NULL);
+					G_Broadcast(va("%s\n^7have been \\unlocked", server_hiderteamprefix.string), BROADCAST_CMD, NULL);
 					trap_SendServerCommand( -1, "print \"^3[Rcon Action] ^7Hiders have been unlocked.\n\"");
 				}else{
-					G_Broadcast(va("%s ^7team has been \\unlocked", server_redteamprefix.string), BROADCAST_CMD, NULL);
+					G_Broadcast(va("%s ^7team\nhas been \\unlocked", server_redteamprefix.string), BROADCAST_CMD, NULL);
 					trap_SendServerCommand( -1, "print \"^3[Rcon Action] ^7Red team has been unlocked.\n\"");
 				}
 			}
@@ -319,9 +319,9 @@ qboolean RPM_lockTeam(gentity_t *ent, qboolean referee, char *team)
 			if(ent && ent->client){
 				// Boe!Man 2/15/11: We need H&S messages as well.
 				if(current_gametype.value == GT_HS){
-					G_Broadcast(va("%s has \\locked the %s", ent->client->pers.netname, server_hiderteamprefix.string), BROADCAST_CMD, NULL);
+					G_Broadcast(va("%s\nhas \\locked the %s", ent->client->pers.netname, server_hiderteamprefix.string), BROADCAST_CMD, NULL);
 				}else{
-					G_Broadcast(va("%s has \\locked the %s ^7team", ent->client->pers.netname, server_redteamprefix.string), BROADCAST_CMD, NULL);
+					G_Broadcast(va("%s\nhas \\locked the %s ^7team", ent->client->pers.netname, server_redteamprefix.string), BROADCAST_CMD, NULL);
 				}
 
 				if (ent->client->sess.admin > 1){
@@ -335,10 +335,10 @@ qboolean RPM_lockTeam(gentity_t *ent, qboolean referee, char *team)
 				}
 			}else{
 				if(current_gametype.value == GT_HS){
-					G_Broadcast(va("%s ^7have been \\locked", server_hiderteamprefix.string), BROADCAST_CMD, NULL);
+					G_Broadcast(va("%s\n^7have been \\locked", server_hiderteamprefix.string), BROADCAST_CMD, NULL);
 					trap_SendServerCommand(-1, "print \"^3[Rcon Action] ^7Hiders have been locked.\n\"");
 				}else{
-					G_Broadcast(va("%s ^7team has been \\locked", server_redteamprefix.string), BROADCAST_CMD, NULL);
+					G_Broadcast(va("%s ^7team\nhas been \\locked", server_redteamprefix.string), BROADCAST_CMD, NULL);
 					trap_SendServerCommand(-1, "print \"^3[Rcon Action] ^7Red team has been locked.\n\"");
 				}
 			}
@@ -349,9 +349,9 @@ qboolean RPM_lockTeam(gentity_t *ent, qboolean referee, char *team)
 			if(ent && ent->client){
 				// Boe!Man 2/15/11: We need H&S messages as well.
 				if(current_gametype.value == GT_HS){
-					G_Broadcast(va("%s has \\unlocked the %s", ent->client->pers.netname, server_seekerteamprefix.string), BROADCAST_CMD, NULL);
+					G_Broadcast(va("%s\nhas \\unlocked the %s", ent->client->pers.netname, server_seekerteamprefix.string), BROADCAST_CMD, NULL);
 				}else{
-					G_Broadcast(va("%s has \\unlocked the %s ^7team", ent->client->pers.netname, server_blueteamprefix.string), BROADCAST_CMD, NULL);
+					G_Broadcast(va("%s\nhas \\unlocked the %s ^7team", ent->client->pers.netname, server_blueteamprefix.string), BROADCAST_CMD, NULL);
 				}
 
 				if (ent->client->sess.admin > 1){
@@ -365,10 +365,10 @@ qboolean RPM_lockTeam(gentity_t *ent, qboolean referee, char *team)
 				}
 			}else{
 				if(current_gametype.value == GT_HS){
-					G_Broadcast(va("%s ^7have been \\unlocked", server_seekerteamprefix.string), BROADCAST_CMD, NULL);
+					G_Broadcast(va("%s\n^7have been \\unlocked", server_seekerteamprefix.string), BROADCAST_CMD, NULL);
 					trap_SendServerCommand(-1, "print \"^3[Rcon Action] ^7Seekers have been unlocked.\n\"");
 				}else{
-					G_Broadcast(va("%s ^7team has been \\unlocked", server_blueteamprefix.string), BROADCAST_CMD, NULL);
+					G_Broadcast(va("%s ^7team\nhas been \\unlocked", server_blueteamprefix.string), BROADCAST_CMD, NULL);
 					trap_SendServerCommand(-1, "print \"^3[Rcon Action] ^7Blue team has been unlocked.\n\"");
 				}
 			}
@@ -377,9 +377,9 @@ qboolean RPM_lockTeam(gentity_t *ent, qboolean referee, char *team)
 			if(ent && ent->client){
 				// Boe!Man 2/15/11: We need H&S messages as well.
 				if(current_gametype.value == GT_HS){
-					G_Broadcast(va("%s has \\locked the %s", ent->client->pers.netname, server_seekerteamprefix.string), BROADCAST_CMD, NULL);
+					G_Broadcast(va("%s\nhas \\locked the %s", ent->client->pers.netname, server_seekerteamprefix.string), BROADCAST_CMD, NULL);
 				}else{
-					G_Broadcast(va("%s has \\locked the %s ^7team", ent->client->pers.netname, server_blueteamprefix.string), BROADCAST_CMD, NULL);
+					G_Broadcast(va("%s\nhas \\locked the %s ^7team", ent->client->pers.netname, server_blueteamprefix.string), BROADCAST_CMD, NULL);
 				}
 
 				if (ent->client->sess.admin > 1){
@@ -393,10 +393,10 @@ qboolean RPM_lockTeam(gentity_t *ent, qboolean referee, char *team)
 				}
 			}else{
 				if(current_gametype.value == GT_HS){
-					G_Broadcast(va("%s ^7have been \\locked", server_seekerteamprefix.string), BROADCAST_CMD, NULL);
+					G_Broadcast(va("%s\n^7have been \\locked", server_seekerteamprefix.string), BROADCAST_CMD, NULL);
 					trap_SendServerCommand(-1, "print \"^3[Rcon Action] ^7Seekers have been locked.\n\"");
 				}else{
-					G_Broadcast(va("%s ^7team has been \\locked", server_blueteamprefix.string), BROADCAST_CMD, NULL);
+					G_Broadcast(va("%s ^7team\nhas been \\locked", server_blueteamprefix.string), BROADCAST_CMD, NULL);
 					trap_SendServerCommand(-1, "print \"^3[Rcon Action] ^7Blue team has been locked.\n\"");
 				}
 			}
@@ -405,7 +405,7 @@ qboolean RPM_lockTeam(gentity_t *ent, qboolean referee, char *team)
 		if(level.specsLocked){
 			level.specsLocked = 0;
 			if(ent && ent->client){
-				G_Broadcast(va("%s has \\unlocked the spectators", ent->client->pers.netname), BROADCAST_CMD, NULL);
+				G_Broadcast(va("%s\nhas \\unlocked the spectators", ent->client->pers.netname), BROADCAST_CMD, NULL);
 
 				if (ent->client->sess.admin > 1){
 					trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7%s has unlocked the spectators.\n\"", ent->client->pers.cleanName));
@@ -419,7 +419,7 @@ qboolean RPM_lockTeam(gentity_t *ent, qboolean referee, char *team)
 		}else{
 			level.specsLocked = 1;
 			if(ent && ent->client){
-				G_Broadcast(va("%s has \\locked the spectators", ent->client->pers.netname), BROADCAST_CMD, NULL);
+				G_Broadcast(va("%s\nhas \\locked the spectators", ent->client->pers.netname), BROADCAST_CMD, NULL);
 
 				if (ent->client->sess.admin > 1){
 					trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7%s has locked the specators.\n\"", ent->client->pers.cleanName));
@@ -439,7 +439,7 @@ qboolean RPM_lockTeam(gentity_t *ent, qboolean referee, char *team)
 			level.redLocked = 0;
 			level.blueLocked = 0;
 			if(ent && ent->client){
-				G_Broadcast(va("%s has \\unlocked all teams", ent->client->pers.netname), BROADCAST_CMD, NULL);
+				G_Broadcast(va("%s\nhas \\unlocked all teams", ent->client->pers.netname), BROADCAST_CMD, NULL);
 					
 				if (ent->client->sess.admin > 1){
 					trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7%s has unlocked all the teams.\n\"", ent->client->pers.cleanName));
@@ -457,7 +457,7 @@ qboolean RPM_lockTeam(gentity_t *ent, qboolean referee, char *team)
 			level.redLocked = 1;
 
 			if(ent && ent->client){
-				G_Broadcast(va("%s has \\locked all teams", ent->client->pers.netname), BROADCAST_CMD, NULL);
+				G_Broadcast(va("%s\nhas \\locked all teams", ent->client->pers.netname), BROADCAST_CMD, NULL);
 
 				if (ent->client->sess.admin > 1){
 					trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7%s has locked all the teams.\n\"", ent->client->pers.cleanName));
