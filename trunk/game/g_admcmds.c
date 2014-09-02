@@ -1568,11 +1568,11 @@ int adm_removeClanMember(int argNum, gentity_t *adm, qboolean shortCmd)
 {
 	int			idNum;
 
-	idNum = Boe_ClientNumFromArg(adm, argNum, "removeclan <idnumber>", "remove", qfalse, qtrue, shortCmd);
+	idNum = Boe_ClientNumFromArg(adm, argNum, "removeclan <id/name>", "remove", qfalse, qtrue, shortCmd);
 	if (idNum < 0) return idNum;
 
 	if(!g_entities[idNum].client->sess.clanMember){
-		if (adm){
+		if (adm && adm->client){
 			trap_SendServerCommand(adm - g_entities, va("print\"^3[Info] ^7%s is not a Clan member!\n\"", g_entities[idNum].client->pers.cleanName));
 		}else{
 			Com_Printf("^3[Info] ^7%s is not a Clan member!\n", g_entities[idNum].client->pers.cleanName);
@@ -2012,7 +2012,7 @@ int adm_Ban(int argNum, gentity_t *adm, qboolean shortCmd)
 		start = trap_Milliseconds();
 	}
 
-	idNum = Boe_ClientNumFromArg(adm, argNum, "ban <idnumber> <reason>", "ban", qfalse, qfalse, shortCmd);
+	idNum = Boe_ClientNumFromArg(adm, argNum, "ban <id/name> <reason>", "ban", qfalse, qfalse, shortCmd);
 	if (idNum < 0) return idNum;
 
 	if (adm && adm->client){
@@ -2101,7 +2101,7 @@ int adm_subnetBan(int argNum, gentity_t *adm, qboolean shortCmd)
 	qboolean	first = qfalse;
 	sqlite3		*db;
 
-	idNum = Boe_ClientNumFromArg(adm, argNum, "subnetban <idnumber> <reason>", "subnetban", qfalse, qfalse, shortCmd);
+	idNum = Boe_ClientNumFromArg(adm, argNum, "subnetban <id/name> <reason>", "subnetban", qfalse, qfalse, shortCmd);
 	if (idNum < 0) return idNum;
 
 	if(adm && adm->client){
@@ -2191,8 +2191,8 @@ int adm_Broadcast(int argNum, gentity_t *adm, qboolean shortCmd)
 		buffer2 = ConcatArgs1(2);
 		if (strlen(buffer2) < 1){
 			// If someone's trying to broadcast nothing, buffer start will be 0. Don't allow admins to broadcast the actual "!br" command.
-			if (StartAfterCommand(va("%s", buffer)) != 0){
-				for (i = StartAfterCommand(va("%s", buffer)); i <= strlen(buffer); i++){
+			if (StartAfterCommand(buffer) != 0){
+				for (i = StartAfterCommand(buffer); i <= strlen(buffer); i++){
 					buffer1[z] = buffer[i];
 					z += 1;
 				}
@@ -2584,7 +2584,7 @@ int adm_Flash(int argNum, gentity_t *adm, qboolean shortCmd)
 	if (shortCmd && strstr(arg, " all") || !shortCmd && strstr(arg, "all") && strlen(arg) == 3){
 		all = qtrue;
 	}else{
-		idNum = Boe_ClientNumFromArg(adm, argNum, "flash <id>", "flash", qtrue, qtrue, shortCmd);
+		idNum = Boe_ClientNumFromArg(adm, argNum, "flash <id/name>", "flash", qtrue, qtrue, shortCmd);
 		if (idNum < 0) return idNum;
 
 		targ = g_entities + idNum;
@@ -3480,7 +3480,7 @@ int adm_friendlyFire(int argNum, gentity_t *adm, qboolean shortCmd)
 ==================
 adm_Rename
 
-Renames a players' name.
+Renames a player.
 ==================
 */
 
@@ -3555,6 +3555,259 @@ int adm_Rename(int argNum, gentity_t *adm, qboolean shortCmd)
 	else{
 		Boe_adminLog("renamed", "RCON", va("%s\\%s\\%s", g_entities[idNum].client->pers.ip, oldNameClean, g_entities[idNum].client->pers.cleanName));
 		trap_SendServerCommand(-1, va("print \"^3[Rcon Action] ^7%s was renamed to %s.\n", oldNameClean, g_entities[idNum].client->pers.cleanName));
+	}
+
+	return -1;
+}
+
+/*
+==================
+adm_Map
+
+Switches the server to the specified map.
+==================
+*/
+
+int adm_Map(int argNum, gentity_t *adm, qboolean shortCmd)
+{
+	char			map[64]			= "";
+	int				i;
+	fileHandle_t	f;
+	char			arg[32]			= "\0";		// increase buffer so we can process more commands
+	char			arg0[32]		= "\0";		// increase buffer so we can process more commands
+	char			gametype[8];				// The gametype we store so we can broadcast if neccesary.
+	char			*gt;						// Gametype parameter.
+	int				altAction		= 0;		// Alternative actions such as altmaps or devmaps.
+
+	trap_Argv( argNum, arg, sizeof( arg ) );
+	trap_Argv( argNum-1, arg0, sizeof( arg0 ) );
+
+	// Pre-check if the map switch is already in progress. No need to waste resources.
+	if(level.mapSwitch == qfalse){
+		// Check if the client wishes to load an alternative ent.
+		if(shortCmd){
+			Q_strlwr(arg);
+			if(strstr(arg, "!altmap")){
+				trap_Cvar_Set( "g_alternateMap", "1");
+				trap_Cvar_Update ( &g_alternateMap );
+				altAction = 1; // alt
+			}else if(strstr(arg, "!devmap")){ //  Add support for dev maps.
+				altAction = 2; // dev
+			}
+		}else{
+			Q_strlwr(arg0);
+			if(strstr(arg0, "altmap")){
+				trap_Cvar_Set( "g_alternateMap", "1");
+				trap_Cvar_Update ( &g_alternateMap );
+				altAction = 1;
+			}else if(strstr(arg0, "devmap")){
+				altAction = 2;
+			}
+		}
+		// We get the gametype parameter. Also added support for uppercase arguments.
+		if(strlen(arg) >= 3){
+			if(shortCmd){
+				gt = Q_strlwr(GetReason());
+				for(i=0;i<=strlen(arg);i++){
+					if(arg[i] == ' '){
+						if(strlen(gt) > 1){
+							strncpy(map, arg+i+1, strlen(arg) -i - 1 - strlen(gt) - 1);
+						}else{
+							strncpy(map, arg+i+1, strlen(arg) -i - 1);
+						}
+						break;
+					}
+				}
+				if(strlen(map) <= 1){
+					trap_Argv( 2, arg, sizeof( arg ) ); // Short cmd from console.
+					strcpy(map, arg);
+				}
+			}else{
+				strcpy(map, arg);
+				// Check for the gametype.
+				trap_Argv(3, arg, sizeof(arg));
+				gt = Q_strlwr(arg); // So the gametype check will not fall over captials.
+			}
+			trap_FS_FOpenFile( va("maps\\%s.bsp", map), &f, FS_READ );
+			if ( !f ){
+				trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Map not found.\n\""));
+				return;
+			}
+			trap_FS_FCloseFile(f);
+		// There are no maps that contain less than two characters. Obviously the map isn't found.
+		}else{
+			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Map not found.\n\""));
+			return;
+		}
+
+		// The map is found, did they append a gametype among with it?
+		if(strlen(gt) >= 2){ // The shortest available GT is "dm", so we check the size (is it longer than 2?) and save resouces if not.
+			if(strstr(gt, "ctf")){
+				strcpy(gametype, "ctf");
+			}else if(strstr(gt, "inf")){
+				strcpy(gametype, "inf");
+				// Boe!Man 10/4/12: Fix latch CVAR crap. It's either h&s or h&z, so ensure the latched value is GONE so we can properly reset it.
+				if(current_gametype.value == GT_HS || current_gametype.value == GT_HZ){
+					trap_Cvar_Set("g_gametype", "h&s");
+					trap_Cvar_Update(&g_gametype);
+					trap_Cvar_Set("g_gametype", "h&z");
+					trap_Cvar_Update(&g_gametype);
+					trap_Cvar_Set("g_gametype", "inf");
+					trap_Cvar_Update(&g_gametype);
+				}
+			}else if(strstr(gt, "tdm")){
+				strcpy(gametype, "tdm");
+			}else if(strstr(gt, "dm")){
+				strcpy(gametype, "dm");
+			}else if(strstr(gt, "elim")){
+				strcpy(gametype, "elim");
+			}else if(strstr(gt, "h&s")){
+				strcpy(gametype, "h&s");
+			}else if(strstr(gt, "h&z")){
+				strcpy(gametype, "h&z");
+			}else{
+				if(current_gametype.value == GT_HS){
+					strcpy(gametype, "h&s");
+				}else if(current_gametype.value == GT_HZ){
+					strcpy(gametype, "h&z");
+				}else{
+					strcpy(gametype, g_gametype.string);
+				}
+			}
+		}else{
+			if(current_gametype.value == GT_HS){
+				strcpy(gametype, "h&s");
+			}else if(current_gametype.value == GT_HZ){
+				strcpy(gametype, "h&z");
+			}else{
+				strcpy(gametype, g_gametype.string);
+			}
+		}
+
+		if(!Henk_DoesMapSupportGametype(gametype, map)){
+			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7This map does not support the gametype %s, please add it in the ARENA file.\n\"", gametype));
+			return;
+		}
+
+		trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype %s\n", gametype));
+
+		level.mapSwitch = qtrue;
+		level.mapAction = 2;
+		level.mapSwitchCount = level.time;
+		level.mapSwitchCount2 = 5; // 5 seconds remaining on the timer.
+		strcpy(level.mapSwitchName, map);
+
+		// Broadcast and logging.
+		Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+		if(altAction == 1){
+			strncpy(level.mapPrefix, G_ColorizeMessage("\\Altmap"), sizeof(level.mapPrefix));
+		}else if(altAction == 2){
+			strncpy(level.mapPrefix, G_ColorizeMessage("\\Devmap"), sizeof(level.mapPrefix));
+		}else{
+			strncpy(level.mapPrefix, G_ColorizeMessage("\\Map"), sizeof(level.mapPrefix));
+		}
+
+		if(strlen(gametype) > 0){ // Boe!Man 2/26/11: If there's actually a gametype found..
+			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Map switch to %s [%s] by %s.\n\"", map, gametype, adm->client->pers.netname));
+			Boe_adminLog ("map switch", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", map, gametype));
+		}else{
+			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Map switch to %s by %s.\n\"", map, adm->client->pers.netname));
+			Boe_adminLog ("map switch", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), map);
+		}
+	}else{
+		if(level.mapAction == 1 || level.mapAction == 3){
+			trap_SendServerCommand(adm-g_entities, "print\"^3[Info] ^7A map restart is already in progress.\n\"");
+		}else if(level.mapAction == 2 || level.mapAction == 4){
+			trap_SendServerCommand(adm-g_entities, "print\"^3[Info] ^7A map switch is already in progress.\n\"");
+		}
+	}
+
+	return -1;
+}
+
+/*
+==================
+adm_Third
+
+Enables or disables thirdperson view.
+==================
+*/
+
+int adm_Third(int argNum, gentity_t *adm, qboolean shortCmd)
+{
+	qboolean enable = g_allowthirdperson.integer == 0;
+
+	// Enable or disable it via CVAR.
+	trap_Cvar_Set("g_allowthirdperson", (enable) ? "1" : "0");
+
+	// Broadcast the change.
+	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+	G_Broadcast(va("\\Thirdperson %s!", (enable) ? "enabled" : "disabled"), BROADCAST_CMD, NULL);
+	if (adm && adm->client){
+		trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7Thirdperson %s by %s.\n\"", (enable) ? "enabled" : "disabled", adm->client->pers.netname));
+		Boe_adminLog(va("3rd %s", (enable) ? "enabled" : "disabled"), va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "none");
+	}else{
+		trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Thirdperson enabled.\n\""));
+		Boe_adminLog(va("3rd %s", (enable) ? "enabled" : "disabled"), "RCON", "none");
+	}
+	
+	return -1;
+}
+
+/*
+==================
+adm_Rounds
+
+Sets or views number of rounds.
+==================
+*/
+
+int adm_Rounds(int argNum, gentity_t *adm, qboolean shortCmd)
+{
+	int number;
+	number = GetArgument(argNum);
+
+	if(cm_enabled.integer != 1){ // We need to insure Competition Mode is at it's starting stage. Do NOT allow changes to this before or during the scrim.
+		if (adm && adm->client){
+			trap_SendServerCommand(adm-g_entities, "print\"^3[Info] ^7You can only change this setting during Competition Warmup.\n\"");
+		}else{
+			Com_Printf("^3[Info] ^7You can only change this setting during Competition Warmup.\n");
+		}
+
+		return -1;
+	}
+
+	if(number <= 0){
+		// Show current round value if there's no arg.
+		trap_SendServerCommand(adm - g_entities, va("print \"^3[Info] ^7Number of rounds for this match: %s.\n\"", (cm_dr.integer == 0) ? "1" : "2"));
+		
+		return -1;
+	}else if(number == 1){ // If they want a single round..
+		trap_Cvar_Set("cm_dr", "0");
+
+		G_Broadcast("\\One Round!", BROADCAST_CMD, NULL);
+		if(adm && adm->client){
+			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Switched to one round by %s.\n\"", adm->client->pers.cleanName));
+		}else{
+			trap_SendServerCommand(-1, "print\"^3[Rcon Action] ^7Switched to one round.\n\"");
+		}
+	}else if(number > 1){ // Or two.
+		if(number > 2){
+			if(adm && adm->client){
+				trap_SendServerCommand(adm-g_entities, "print\"^3[Info] ^7Maximum of two is allowed, switching to two.\n\"");
+			}else{
+				Com_Printf("^3[Info] ^7Maximum of two is allowed, switching to two.\n");
+			}
+		}
+		trap_Cvar_Set("cm_dr", "1");
+
+		G_Broadcast("\\Two Rounds!", BROADCAST_CMD, NULL);
+
+		if(adm && adm->client){
+			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Switched to two rounds by %s.\n\"", adm->client->pers.cleanName));
+		}else{
+			trap_SendServerCommand(-1, "print\"^3[Rcon Action] ^7Switched to two rounds.\n\"");
+		}
 	}
 
 	return -1;

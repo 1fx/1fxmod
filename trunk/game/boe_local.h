@@ -290,9 +290,6 @@ extern	vmCvar_t	server_blueteamprefix;
 // Boe!Man 4/15/10
 extern	vmCvar_t	g_respawninterval;
 
-// Boe!Man 1/26/11
-extern	vmCvar_t	g_3rd;
-
 // Boe!Man 3/1/11
 extern	vmCvar_t	g_useNoLower;
 extern	vmCvar_t	g_useNoRoof;
@@ -311,9 +308,6 @@ extern  vmCvar_t	hideSeek_Weapons;
 extern	vmCvar_t	g_enableAdminLog;
 
 extern	vmCvar_t	g_adminlist;
-
-// Boe!Man 3/18/11
-void Boe_Rounds(int argNum, gentity_t *ent, qboolean shortCmd);
 
 // Boe!Man 4/20/11
 //extern	vmCvar_t	g_crossTheBridge;
@@ -398,7 +392,6 @@ void G_DropGametypeItems ( gentity_t* self, int delayPickup );
 int trap_RealTime( qtime_t *qtime );
 qboolean BG_InitWeaponStats(qboolean init);
 void Boe_About( gentity_t *ent );
-void Boe_Remove_Clan_Member(int argNum, gentity_t *adm, qboolean shortCmd);
 qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean lineNumber, qboolean silent);
 
 #ifdef _DEBUG
@@ -409,7 +402,6 @@ char *GetReason(void);
 
 // Boe!Man 5/9/10
 char	*Boe_BarStat(int stat);
-void	Boe_Third(int argNum, gentity_t *ent, qboolean ShortCmd);
 qboolean henk_isdigit(char c);
 qboolean henk_ischar(char c);
 void RPM_Awards(void);
@@ -499,7 +491,6 @@ gentity_t*	findLastEnteredPlayer	(int highTeam, qboolean scoresAllowed);
 void Use_BinaryMover( gentity_t *ent, gentity_t *other, gentity_t *activator );
 gentity_t* G_RealSpawnGametypeItem1 ( gitem_t* item, vec3_t origin, vec3_t angles, qboolean dropped );
 void G_RespawnClients ( qboolean force, team_t team, qboolean fullRestart );
-void Henk_Map(int argNum, gentity_t *adm, qboolean shortCmd);
 void G_UpdateAvailableWeapons(void);
 //void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subnet, qboolean ban, qboolean banremove, char *banremovestring);
 void Svcmd_EntityList_f(void);

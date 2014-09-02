@@ -906,6 +906,7 @@ void		G_SetClientPreLeaningBBox(gentity_t *ent);
 void		G_SetClientLeaningBBox(gentity_t *ent);
 
 void		G_Broadcast(char *broadcast, int broadcastLevel, gentity_t *to);
+char		*G_ColorizeMessage(char *broadcast);
 void		G_postExecuteAdminCommand(int funcNum, int idNum, gentity_t *adm);
 
 //
@@ -1173,6 +1174,7 @@ extern	vmCvar_t	g_forcevote;
 extern  vmCvar_t	g_adminremove;
 extern	vmCvar_t	g_ff;
 extern	vmCvar_t	g_rename;
+extern	vmCvar_t	g_3rd;
 
 int				adm_Uppercut						(int argNum, gentity_t *adm, qboolean shortCmd);
 int				adm_Pop								(int argNum, gentity_t *adm, qboolean shortCmd);
@@ -1226,6 +1228,9 @@ int				adm_clanList						(int argNum, gentity_t *adm, qboolean shortCmd);
 int				adm_adminRemove						(int argNum, gentity_t *adm, qboolean shortCmd);
 int				adm_friendlyFire					(int argNum, gentity_t *adm, qboolean shortCmd);
 int				adm_Rename							(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_Map								(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_Third							(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_Rounds							(int argNum, gentity_t *adm, qboolean shortCmd);
 
 static void		adm_addAdmin_f						(int argNum, gentity_t *adm, qboolean shortCmd, int level2, char *commandName);
 static void		adm_unTwist							(int idNum, gentity_t *adm);

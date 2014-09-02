@@ -82,18 +82,14 @@ static admCmd_t AdminCommands[] =
 	{"!m","mute", &g_mute.integer, &adm_Mute, NULL},
 	{"!s","strip", &g_strip.integer, &adm_Strip, "ped"},
 	{"!ff","friendlyfire", &g_ff.integer, &adm_friendlyFire, NULL},
-	{"!rn","rename", &g_rename.integer, &adm_Rename, NULL}
-	
-	// BOE TODO:
-	/*
-	{"!rc","removeclan", &g_clan.integer, &Boe_Remove_Clan_Member},
-	{"!map","map", &g_mapswitch.integer, &Henk_Map},
-	{"!altmap","altmap", &g_mapswitch.integer, &Henk_Map},
-	{"!devmap","devmap", &g_mapswitch.integer, &Henk_Map},
-	{"!3rd","3rd", &g_3rd.integer, &Boe_Third},
-	{"!third","third", &g_3rd.integer, &Boe_Third},
-	{"!rounds","rounds", &g_cm.integer, &Boe_Rounds},
-	*/
+	{"!rn","rename", &g_rename.integer, &adm_Rename, NULL},
+	{"!rc", "removeclan", &g_clan.integer, &adm_removeClanMember, NULL},
+	{"!map", "map", &g_mapswitch.integer, &adm_Map, NULL},
+	{"!altmap","altmap", &g_mapswitch.integer, &adm_Map, NULL},
+	{"!devmap","devmap", &g_mapswitch.integer, &adm_Map, NULL},
+	{"!3rd","3rd", &g_3rd.integer, &adm_Third, NULL},
+	{"!third","third", &g_3rd.integer, &adm_Third, NULL},
+	{"!rounds","rounds", &g_cm.integer, &adm_Rounds, NULL},
 };
 
 static int AdminCommandsSize = sizeof( AdminCommands ) / sizeof( AdminCommands[0] );
@@ -4031,17 +4027,65 @@ qboolean ConsoleCommand( void )
 /*
 ==================
 G_Broadcast
+
+Broadcasts a message to clients that are supposed to receive it.
 ==================
 */
+
 void G_Broadcast(char *broadcast, int broadcastLevel, gentity_t *to)
+{
+	int i;
+	char *newBroadcast;
+
+	newBroadcast = G_ColorizeMessage(broadcast);
+
+	// If to is NULL, we're dealing with a global message (equals old way of broadcasting to -1).
+	if (to == NULL){
+		for (i = 0; i < level.numConnectedClients; i++){
+			gentity_t* other = &g_entities[level.sortedClients[i]];
+
+			// Skip any client that isn't connected.
+			if (other->client->pers.connected != CON_CONNECTED){
+				continue;
+			}
+			// Skip any client that received a more important message in the last 5 seconds.
+			if (other->client->sess.lastMessagePriority > broadcastLevel && level.time < (other->client->sess.lastMessage + 5000)){
+				#ifdef _DEBUG
+				Com_Printf("Skipping client num %i due to having received a more important msg.", other->s.number);
+				#endif
+
+				continue;
+			}
+			
+			trap_SendServerCommand(other-g_entities, va("cp \"@%s\n\"", newBroadcast));
+			other->client->sess.lastMessagePriority = broadcastLevel;
+			other->client->sess.lastMessage = level.time;
+		}
+	}else if (to->client->sess.lastMessagePriority <= broadcastLevel){
+		trap_SendServerCommand(to-g_entities, va("cp \"@%s\n\"", newBroadcast));
+		to->client->sess.lastMessagePriority = broadcastLevel;
+		to->client->sess.lastMessage = level.time;
+	}
+}
+
+/*
+==================
+G_ColorizeMessage
+
+Adds server colors into a broadcast message (if required).
+==================
+*/
+
+char *G_ColorizeMessage(char *broadcast)
 {
 	int i, newWordLength;
 	char *tempBroadcast;
-	char newBroadcast[MAX_STRING_CHARS] = "\0";
+	static char newBroadcast[MAX_STRING_CHARS];
 	int newWordPosition = 0;
 
 	// First we check the broadcast. Should colours be applied to it?
 	// A backslash can never be applied to any command in-game, like broadcast. Use that to determine what word should be highlighted.
+	memset(newBroadcast, 0, sizeof(newBroadcast));
 	tempBroadcast = strstr(broadcast, "\\");
 	if (tempBroadcast != NULL){
 		// A word is found that should be highlighted.
@@ -4057,10 +4101,6 @@ void G_Broadcast(char *broadcast, int broadcastLevel, gentity_t *to)
 			// Word ends at position of the tempBroadcast.
 			newWordLength = (int)(tempBroadcast - broadcast) - newWordPosition - 1;
 		}
-
-		#ifdef _DEBUG
-		Com_Printf("Word starts at pos %i and is %i long.\n", newWordPosition, newWordLength);
-		#endif
 
 		// Now we apply the colors to the broadcast if there are colors to apply it to.
 		if (newWordLength > 0 && newWordLength < 64){
@@ -4099,42 +4139,12 @@ void G_Broadcast(char *broadcast, int broadcastLevel, gentity_t *to)
 					strncat(newBroadcast, broadcast + newWordPosition + newWordLength + 1, strlen(broadcast) - newWordLength - newWordPosition - 1);
 				}
 			}
-
-			#ifdef _DEBUG
-			Com_Printf("New string: %s\n", newBroadcast);
-			#endif
 		}
 	}else{
 		strncpy(newBroadcast, broadcast, sizeof(newBroadcast));
 	}
 
-	// If to is NULL, we're dealing with a global message (equals old way of broadcasting to -1).
-	if (to == NULL){
-		for (i = 0; i < level.numConnectedClients; i++){
-			gentity_t* other = &g_entities[level.sortedClients[i]];
-
-			// Skip any client that isn't connected.
-			if (other->client->pers.connected != CON_CONNECTED){
-				continue;
-			}
-			// Skip any client that received a more important message in the last 5 seconds.
-			if (other->client->sess.lastMessagePriority > broadcastLevel && level.time < (other->client->sess.lastMessage + 5000)){
-				#ifdef _DEBUG
-				Com_Printf("Skipping client num %i due to having received a more important msg.", other->s.number);
-				#endif
-
-				continue;
-			}
-			
-			trap_SendServerCommand(other-g_entities, va("cp \"@%s\n\"", newBroadcast));
-			other->client->sess.lastMessagePriority = broadcastLevel;
-			other->client->sess.lastMessage = level.time;
-		}
-	}else if (to->client->sess.lastMessagePriority <= broadcastLevel){
-		trap_SendServerCommand(to-g_entities, va("cp \"@%s\n\"", newBroadcast));
-		to->client->sess.lastMessagePriority = broadcastLevel;
-		to->client->sess.lastMessage = level.time;
-	}
+	return newBroadcast;
 }
 
 void G_postExecuteAdminCommand(int funcNum, int idNum, gentity_t *adm)
@@ -4146,12 +4156,12 @@ void G_postExecuteAdminCommand(int funcNum, int idNum, gentity_t *adm)
 	// Broadcast the change and log it.
 	if (adm != NULL){
 		// Admin action.
-		G_Broadcast(va("%s\n^*was \\%s%s\n^*by %s", g_entities[idNum].client->pers.netname, AdminCommands[funcNum].adminCmd, (AdminCommands[funcNum].suffix != NULL) ? AdminCommands[funcNum].suffix : "", adm->client->pers.netname), BROADCAST_CMD, NULL);
+		G_Broadcast(va("%s\n^7was \\%s%s\n^7by %s", g_entities[idNum].client->pers.netname, AdminCommands[funcNum].adminCmd, (AdminCommands[funcNum].suffix != NULL) ? AdminCommands[funcNum].suffix : "", adm->client->pers.netname), BROADCAST_CMD, NULL);
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was %s%s by %s.\n\"", g_entities[idNum].client->pers.cleanName, AdminCommands[funcNum].adminCmd, (AdminCommands[funcNum].suffix != NULL) ? AdminCommands[funcNum].suffix : "", adm->client->pers.cleanName));
 		Boe_adminLog(AdminCommands[funcNum].adminCmd, va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", g_entities[idNum].client->pers.ip, g_entities[idNum].client->pers.cleanName));
 	}else{
 		// RCON action.
-		G_Broadcast(va("%s\n^*was \\%s%s", g_entities[idNum].client->pers.netname, AdminCommands[funcNum].adminCmd, (AdminCommands[funcNum].suffix != NULL) ? AdminCommands[funcNum].suffix : ""), BROADCAST_CMD, NULL);
+		G_Broadcast(va("%s\n^7was \\%s%s", g_entities[idNum].client->pers.netname, AdminCommands[funcNum].adminCmd, (AdminCommands[funcNum].suffix != NULL) ? AdminCommands[funcNum].suffix : ""), BROADCAST_CMD, NULL);
 		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s was %s%s.\n\"", g_entities[idNum].client->pers.cleanName, AdminCommands[funcNum].adminCmd, (AdminCommands[funcNum].suffix != NULL) ? AdminCommands[funcNum].suffix : ""));
 		Boe_adminLog(AdminCommands[funcNum].adminCmd, va("%s", "RCON"), va("%s\\%s", g_entities[idNum].client->pers.ip, g_entities[idNum].client->pers.cleanName));
 	}
