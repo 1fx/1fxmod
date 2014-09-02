@@ -1045,7 +1045,7 @@ static void adm_toggleSection(gentity_t *adm, char *sectionName, int sectionID)
 		return;
 	}
 	// Boe!Man 1/8/12: If people want to use nolower but if there's no such entity found, inform the user.
-	if (!level.noLRMWEntFound[0]){
+	if (!level.noLRMWEntFound[sectionID]){
 		if (adm && adm->client){
 			trap_SendServerCommand(adm - g_entities, va("print\"^3[Info] ^7No entity found to toggle %s.\n\"", sectionNameWithoutCap));
 		}else{
@@ -1061,7 +1061,7 @@ static void adm_toggleSection(gentity_t *adm, char *sectionName, int sectionID)
 
 	// Custom broadcasts.
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-	G_Broadcast(va("\\%s %s", sectionName, (enabled) ? "enabled" : "disabled"), BROADCAST_CMD, NULL);
+	G_Broadcast(va("\\%s %s!", sectionName, (enabled) ? "enabled" : "disabled"), BROADCAST_CMD, NULL);
 
 	if (adm && adm->client){
 		trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7%s %s by %s.\n\"", sectionName, (enabled) ? "enabled" : "disabled", adm->client->pers.netname));

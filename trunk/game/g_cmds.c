@@ -4063,7 +4063,7 @@ void G_Broadcast(char *broadcast, int broadcastLevel, gentity_t *to)
 		#endif
 
 		// Now we apply the colors to the broadcast if there are colors to apply it to.
-		if (newWordLength > 0){
+		if (newWordLength > 0 && newWordLength < 64){
 			// Check how many colors there are available to use.
 			int availableColors = strlen(server_colors.string);
 			strncat(newBroadcast, broadcast, newWordPosition);
@@ -4073,6 +4073,7 @@ void G_Broadcast(char *broadcast, int broadcastLevel, gentity_t *to)
 				strncat(newBroadcast, broadcast + newWordPosition + 1, strlen(broadcast) - newWordPosition);
 			}else{
 				// Apply colors.
+				char wordToCopy[64];
 				int color;
 
 				// Check how many colors we can copy.
@@ -4083,12 +4084,13 @@ void G_Broadcast(char *broadcast, int broadcastLevel, gentity_t *to)
 				}
 
 				// Copy each individal char to the new buffer, plus the color associated to it.
+				strncpy(wordToCopy, broadcast + newWordPosition + 1, newWordLength);
 				for (i = 0; i < newWordLength; i++){
 					if (color < availableColors){
-						strcat(newBroadcast, va("^%c%c", server_colors.string[color], broadcast[newWordPosition + i + 1]));
+						strcat(newBroadcast, va("^%c%c", server_colors.string[color], wordToCopy[i]));
 						color++;
 					}else{
-						strncat(newBroadcast, broadcast + newWordPosition + i + 1, 1);
+						strcat(newBroadcast, va("%c", wordToCopy[i]));
 					}
 				}
 
