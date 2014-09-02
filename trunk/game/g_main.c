@@ -2827,7 +2827,7 @@ void Henk_CheckZombie(void){
 				if(ent->client->sess.team != TEAM_SPECTATOR){ // extra check
 				level.zombie = ent->s.number;
 				level.zombietime = level.time+5000;
-				trap_SendServerCommand( ent->s.number, va("cp \"You will turn into a zombie in 5 seconds!\n\""));
+				G_Broadcast("You will turn into a \\zombie\nin ^15 ^7seconds!", BROADCAST_GAME, ent);
 				}else{
 					#ifdef _DEBUG
 					Com_Printf("Weird case\n");
@@ -2842,7 +2842,7 @@ void Henk_CheckZombie(void){
 			if(level.zombie != -1){
 				if(g_entities[level.zombie].client->sess.team != TEAM_SPECTATOR && !G_IsClientDead(g_entities[level.zombie].client)){
 					trap_SendServerCommand(-1, va("print \"^3[H&Z] ^7%s suddenly turned into a zombie!\n\"", g_entities[level.zombie].client->pers.netname) );
-					trap_SendServerCommand( -1, va("cp \"%s ^7has turned into a zombie!\n\"", g_entities[level.zombie].client->pers.netname));
+					G_Broadcast(va("%s\nturned into a \\Zombie!", g_entities[level.zombie].client->pers.netname), BROADCAST_GAME, NULL);
 					// turn into zombie
 					CloneBody(&g_entities[level.zombie], g_entities[level.zombie].s.number);
 					g_entities[level.zombie].client->sess.firstzombie = qtrue;
@@ -3482,10 +3482,10 @@ void G_RunFrame( int levelTime )
 				dr = "One";
 
 			if(dr == "Two"){ // Boe!Man 3/18/11: Display the Auto Swap setting when Dual Rounds are enabled.
-				G_Broadcast(va("cp \"@%sMatch settings\n\n^7[^3Gametype^7] %s%s %s\n^7[^3Scorelimit^7]  %s%i\n^7[^3Timelimit^7]  %s%i\n^7[^3Specs locked^7] %s%s\n^7[^3Disable events^7] %s%s\n^7[^3# of Rounds^7] %s%s\n^7[^3Auto swap^7] %s%s\n\n%sRestart map to start the first round!\"", 
+				G_Broadcast(va("%sMatch settings\n\n^7[^3Gametype^7] %s%s %s\n^7[^3Scorelimit^7]  %s%i\n^7[^3Timelimit^7]  %s%i\n^7[^3Specs locked^7] %s%s\n^7[^3Disable events^7] %s%s\n^7[^3# of Rounds^7] %s%s\n^7[^3Auto swap^7] %s%s\n\n%sRestart map to start the first round!", 
 					color, color, level.mapname, g_gametype.string, color, cm_sl.integer, color, cm_tl.integer, color, sl, color, ds, color, dr, color, as, color), BROADCAST_GAME, NULL);
 			}else{ // Boe!Man 3/18/11: Hide it when it's disabled.
-				G_Broadcast(va("cp \"@%sMatch settings\n\n^7[^3Gametype^7] %s%s %s\n^7[^3Scorelimit^7]  %s%i\n^7[^3Timelimit^7]  %s%i\n^7[^3Specs locked^7] %s%s\n^7[^3Disable events^7] %s%s\n^7[^3# of Rounds^7] %s%s\n\n%sRestart map to start the first round!\"", 
+				G_Broadcast(va("%sMatch settings\n\n^7[^3Gametype^7] %s%s %s\n^7[^3Scorelimit^7]  %s%i\n^7[^3Timelimit^7]  %s%i\n^7[^3Specs locked^7] %s%s\n^7[^3Disable events^7] %s%s\n^7[^3# of Rounds^7] %s%s\n\n%sRestart map to start the first round!", 
 					color, color, level.mapname, g_gametype.string, color, cm_sl.integer, color, cm_tl.integer, color, sl, color, ds, color, dr, color), BROADCAST_GAME, NULL);
 			}
 			level.compMsgCount = level.time + 3000;
@@ -3514,15 +3514,15 @@ void G_RunFrame( int levelTime )
 				level.swappedteams = qtrue;
 			}
 			if (cm_sr.integer > cm_sb.integer){
-				G_Broadcast(va("cp \"@%sFirst round ended!\n\n^7[^3Red team^7] %sleads with %i - %i\n\n%sRestart map to start the second round!",
+				G_Broadcast(va("%sFirst round ended!\n\n^7[^3Red team^7] %sleads with %i - %i\n\n%sRestart map to start the second round!",
 					color, color, cm_sr.integer, cm_sb.integer, color), BROADCAST_GAME, NULL);
 			}
 			else if (cm_sb.integer > cm_sr.integer){
-				G_Broadcast(va("cp \"@%sFirst round ended!\n\n^7[^3Blue team^7] %sleads with %i - %i\n\n%sRestart map to start the second round!",
+				G_Broadcast(va("%sFirst round ended!\n\n^7[^3Blue team^7] %sleads with %i - %i\n\n%sRestart map to start the second round!",
 					color, color, cm_sb.integer, cm_sr.integer, color), BROADCAST_GAME, NULL);
 			}
 			else{ // Boe!Man 3/19/11: It could be a round draw with the timelimit.
-				G_Broadcast(va("cp \"@%sFirst round ended!\n\n^7[^3Round draw^7] %swith %i - %i\n\n%sRestart map to start the second round!",
+				G_Broadcast(va("%sFirst round ended!\n\n^7[^3Round draw^7] %swith %i - %i\n\n%sRestart map to start the second round!",
 					color, color, cm_sb.integer, cm_sr.integer, color), BROADCAST_GAME, NULL);
 			}
 

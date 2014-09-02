@@ -1101,8 +1101,8 @@ int G_Damage (
 					if(level.messagedisplay){ // Boe!Man 7/15/11: No need to check for 30 seconds. If people alter hideSeek_RoundStartDelay this will be buggy.. Just check for the message (are seekers released yet?).
 						client->sess.slowtime = level.time+4000; // after 4 seconds slowdown stops
 						attacker->client->sess.speedtime = level.time+4000; // after 4 seconds speedup stops
-						trap_SendServerCommand(attacker->s.number, va("cp \"@^7You have stunned %s\n\"", client->pers.netname)); // notify the hider
-						trap_SendServerCommand(targ->s.number, va("cp \"@^7You got stunned by %s\n\"", attacker->client->pers.netname)); // notify the seeker
+						G_Broadcast(va("You have stunned %s!", client->pers.netname), BROADCAST_GAME, attacker);
+						G_Broadcast(va("You got stunned by %s!", attacker->client->pers.netname), BROADCAST_GAME, targ);
 						client->sess.stunned += 1; // Seeker got stunned, so stunned + 1 for the final scoreboard.
 						attacker->client->sess.stunAttacks += 1;
 						if(attacker->client->ps.ammo[ammoindex] < 5)
@@ -1112,16 +1112,16 @@ int G_Damage (
 					client->sess.slowtime = level.time+4000; // after 4 seconds slowdown stops
 					attacker->client->sess.speedtime = level.time+4000; // after 4 seconds speedup stops
 
-					trap_SendServerCommand(attacker->s.number, va("cp \"@^7You have stunned %s\n\"", client->pers.netname)); // notify the hider
-					trap_SendServerCommand(targ->s.number, va("cp \"@^7You got stunned by %s\n\"", attacker->client->pers.netname)); // notify the seeker
+					G_Broadcast(va("You have stunned %s!", client->pers.netname), BROADCAST_GAME, attacker);
+					G_Broadcast(va("You got stunned by %s!", attacker->client->pers.netname), BROADCAST_GAME, targ);
 					client->sess.stunned += 1;
 					attacker->client->sess.stunAttacks += 1;
 				}else if(mod == MOD_M4_ASSAULT_RIFLE && level.messagedisplay){ // Henk 22/01/10 -> Add M4 bullet stun
 					client->sess.slowtime = level.time+4000; // after 4 seconds slowdown stops
 					attacker->client->sess.speedtime = level.time+4000; // after 4 seconds speedup stops
 
-					trap_SendServerCommand(attacker->s.number, va("cp \"@^7You have stunned %s\n\"", client->pers.netname)); // notify the hider
-					trap_SendServerCommand(targ->s.number, va("cp \"@^7You got stunned by %s\n\"", attacker->client->pers.netname)); // notify the seeker
+					G_Broadcast(va("You have stunned %s!", client->pers.netname), BROADCAST_GAME, attacker);
+					G_Broadcast(va("You got stunned by %s!", attacker->client->pers.netname), BROADCAST_GAME, targ);
 					client->sess.stunned += 1;
 					attacker->client->sess.stunAttacks += 1;
 				}

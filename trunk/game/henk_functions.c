@@ -797,14 +797,14 @@ void CheckEnts(gentity_t *ent){
 					if(	ent->count <= (TeamCount( -1, TEAM_RED, NULL )) && ent->count <= (TeamCount( -1, TEAM_BLUE, NULL ))){
 						if (ent->r.linked)	{
 							trap_UnlinkEntity( ent );
-							if(ent->message != NULL)
-								trap_SendServerCommand(-1, va("cp \"%s\n\"", ent->message));
+							if (ent->message != NULL)
+								G_Broadcast(ent->message, BROADCAST_GAME, NULL);
 						}
 					}
 					else if(!ent->r.linked)	{
 						trap_LinkEntity( ent );
 						if(ent->message2 != NULL)
-							trap_SendServerCommand(-1, va("cp \"%s\n\"", ent->message2));
+							G_Broadcast(ent->message2, BROADCAST_GAME, NULL);
 					}
 				}
 				///Non-Team Games
@@ -812,13 +812,13 @@ void CheckEnts(gentity_t *ent){
 					if (ent->r.linked){
 						trap_UnlinkEntity( ent );
 						if(ent->message != NULL)
-							trap_SendServerCommand(-1, va("cp \"%s\n\"", ent->message));
+							G_Broadcast(ent->message, BROADCAST_GAME, NULL);
 					}
 				}
 				else if(!ent->r.linked)	{
 					trap_LinkEntity( ent );
 					if(ent->message2 != NULL)
-						trap_SendServerCommand(-1, va("cp \"%s\n\"", ent->message2));
+						G_Broadcast(ent->message2, BROADCAST_GAME, NULL);
 				}
 			}
 			return;

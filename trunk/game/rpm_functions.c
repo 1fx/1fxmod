@@ -20,7 +20,7 @@ void RPM_ReadyCheck (gentity_t *ent)
 
 	if(g_doWarmup.integer == 2 && !ent->client->pers.ready)
 	{
-		trap_SendServerCommand( ent-g_entities, va("cp \"@You are not ready for the match\nPlease type ^1/ready ^7in console\n\""));
+		G_Broadcast("You are not ready for the match\nPlease type ^ 1 / ready ^ 7in console", BROADCAST_GAME, ent);
 		ent->client->pers.readyMessageTime = level.time;
 	}
 }
@@ -306,7 +306,7 @@ void RPM_Obituary ( gentity_t *target, gentity_t *attacker, int mod, attackType_
 			//if not we'll send them the sound etc..
 			else// if(g_allowDeathMessages.integer)
 			{
-				trap_SendServerCommand( attacker->s.number, va("cp \"Headshot\n\""));//g_headShotMessage.string));
+				G_Broadcast("Headshot!", BROADCAST_GAME, attacker);
 				Boe_ClientSound(attacker, G_SoundIndex("sound/npc/col8/blakely/niceshot.mp3"));
 			}
 			
@@ -443,16 +443,18 @@ void RPM_Obituary ( gentity_t *target, gentity_t *attacker, int mod, attackType_
 			//if not a team game display the kill and the rank
 			if ( !level.gametypeData->teams ) 
 			{
-				trap_SendServerCommand( attacker->s.number, va("cp \"%sYou killed %s%s\n%s place with %i\n\"", // %s after \n
-				message2,
-				targetColor,
-				targetName, 
-				G_PlaceString( attacker->client->ps.persistant[PERS_RANK] + 1 ),
-				attacker->client->ps.persistant[PERS_SCORE] ));
+
+				G_Broadcast(va("%sYou killed %s%s\n%s place with %i\n\"", // %s after \n
+					message2,
+					targetColor,
+					targetName, 
+					G_PlaceString( attacker->client->ps.persistant[PERS_RANK] + 1 ),
+					attacker->client->ps.persistant[PERS_SCORE]
+				), BROADCAST_GAME, attacker);
 			} 
 			else //if team just display the kill
 			{
-				trap_SendServerCommand( attacker->s.number, va("cp \"%sYou killed %s%s\n\"", message2, targetColor, targetName ));
+				G_Broadcast(va("%sYou killed %s%s\n\"", message2, targetColor, targetName), BROADCAST_GAME, attacker);
 			}
 		}
 	}
@@ -1049,7 +1051,7 @@ void RPM_Awards(void)
 
 		if(ent->client->sess.rpmClient < 0.5)
 		{
-			trap_SendServerCommand( i, va("cp \"^1Best Overall: ^7%s - %i\n^1Headshots: ^7%s - %i\n^1Killer: ^7%s - %i\n^1Accurate: ^7%s - %.2f percent\n^1Best Ratio: ^7%s - %.2f\n^1Nades: ^7%s - %i detonated\n^1Knifer: ^7%s - %i shanked",
+			G_Broadcast(va("^1Best Overall: ^7%s - %i\n^1Headshots: ^7%s - %i\n^1Killer: ^7%s - %i\n^1Accurate: ^7%s - %.2f percent\n^1Best Ratio: ^7%s - %.2f\n^1Nades: ^7%s - %i detonated\n^1Knifer: ^7%s - %i shanked",
 				bestScores[0].name,
 				overallScore,
 				bestScores[1].name,
@@ -1063,7 +1065,7 @@ void RPM_Awards(void)
 				bestScores[5].name,
 				explosiveKills,
 				bestScores[6].name,
-				knifeKills ));
+				knifeKills ), BROADCAST_AWARDS, ent);
 			continue;
 		}
 		if(!level.awardTime)

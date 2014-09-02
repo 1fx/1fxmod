@@ -2085,7 +2085,7 @@ void Boe_serverMsg (void)
 		return;
 
 	level.serverMsg = level.time + (server_msgDelay.integer * 1000);
-	trap_SendServerCommand(-1, va("chat -1 \"%s: %s\n\"", G_ColorizeMessage("Message"), message));
+	trap_SendServerCommand(-1, va("chat -1 \"%s: %s\n\"", G_ColorizeMessage("\\Message"), message));
 }
 
 /*

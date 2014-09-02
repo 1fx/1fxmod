@@ -3989,7 +3989,7 @@ void G_Broadcast(char *broadcast, int broadcastLevel, gentity_t *to)
 				continue;
 			}
 			// Skip any client that received a more important message in the last 5 seconds.
-			if (other->client->sess.lastMessagePriority > broadcastLevel && level.time < (other->client->sess.lastMessage + 5000)){
+			if (other->client->sess.lastMessagePriority > broadcastLevel && level.time < (other->client->sess.lastMessage + 4000)){
 				#ifdef _DEBUG
 				Com_Printf("Skipping client num %i due to having received a more important msg.", other->s.number);
 				#endif

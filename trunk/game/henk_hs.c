@@ -16,7 +16,7 @@ void ShowScores(void)
 	
 	// Boe!Man 9/2/12: Advanced H&S statistics.
 	if(hideSeek_ExtendedRoundStats.integer && level.time > level.awardTime + 8000 && level.awardTime){
-		trap_SendServerCommand( -1, va("cp \"@^3%s\n\n^3Statistics for this map:\n\n"
+		G_Broadcast(va("^3%s\n\n^3Statistics for this map:\n\n"
 				"^_Rounds survived: ^3%i ^_by ^3%s\n"
 				"^_MM1 hits taken: ^3%i ^_by ^3%s\n"
 				"^_RPG boosts: ^3%i ^_by ^3%s\n"
@@ -28,18 +28,19 @@ void ShowScores(void)
 				"^yPoints: ^3%i ^yby ^3%s\n"
 				"^yTaken MM1: ^3%i ^yby ^3%s\n"
 				"^yStunned: ^3%i ^yby ^3%s\n"
-				"^yTrapped in cage: ^3%i ^yby ^3%s\n\"",
+				"^yTrapped in cage: ^3%i ^yby ^3%s",
 				g_motd.string,
 				level.advancedHsScores[0].score, level.advancedHsScores[0].name, level.advancedHsScores[1].score, level.advancedHsScores[1].name, level.advancedHsScores[2].score, level.advancedHsScores[2].name, level.advancedHsScores[3].score, level.advancedHsScores[3].name,
 				level.advancedHsScores[4].score, level.advancedHsScores[4].name, level.advancedHsScores[5].score, level.advancedHsScores[5].name, level.advancedHsScores[6].score, level.advancedHsScores[6].name, level.advancedHsScores[7].score, level.advancedHsScores[7].name,
 				level.advancedHsScores[8].score, level.advancedHsScores[8].name, level.advancedHsScores[9].score, level.advancedHsScores[9].name, level.advancedHsScores[10].score, level.advancedHsScores[10].name, level.advancedHsScores[11].score, level.advancedHsScores[11].name
-		));
+		), BROADCAST_AWARDS, NULL);
 	}else{
-		trap_SendServerCommand( -1, va("cp \"@^3%s\n\n%s^_ THE 3 BEST HIDERS IN THIS MAP ARE:\n\n^31st ^7%s with ^3%i ^7wins.\n^+2nd ^7%s with ^+%i ^7wins.\n^@3rd ^7%s with ^@%i ^7wins.\n\n"
+		G_Broadcast(va("^3%s\n\n%s^_ THE 3 BEST HIDERS IN THIS MAP ARE:\n\n^31st ^7%s with ^3%i ^7wins.\n^+2nd ^7%s with ^+%i ^7wins.\n^@3rd ^7%s with ^@%i ^7wins.\n\n"
 				"^y THE 3 BEST SEEKERS IN THIS MAP ARE:\n\n^31st ^7%s with ^3%i ^7kills.\n^+2nd ^7%s with ^+%i ^7kills.\n^@3rd ^7%s with ^@%i ^7kills.\n\"",
 				g_motd.string, winner,
 				level.top3Hiders[0].name, level.top3Hiders[0].score, level.top3Hiders[1].name, level.top3Hiders[1].score, level.top3Hiders[2].name, level.top3Hiders[2].score,
-				level.top3Seekers[0].name, level.top3Seekers[0].score, level.top3Seekers[1].name, level.top3Seekers[1].score, level.top3Seekers[2].name, level.top3Seekers[2].score));
+				level.top3Seekers[0].name, level.top3Seekers[0].score, level.top3Seekers[1].name, level.top3Seekers[1].score, level.top3Seekers[2].name, level.top3Seekers[2].score
+		), BROADCAST_AWARDS, NULL);
 	}
 }
 

@@ -837,7 +837,7 @@ void nolower(gentity_t *ent){
 	
 	strncpy(message, G_ColorizeMessage("Lower"), sizeof(message));
 	ent->message = message;
-	ent->message2 = "Lower";
+	ent->message2 = "\\Lower";
 	g_blockSection(ent, NOLOWER);
 }
 
@@ -846,7 +846,7 @@ void noroof(gentity_t *ent){
 	
 	strncpy(message, G_ColorizeMessage("Roof"), sizeof(message));
 	ent->message = message;
-	ent->message2 = "Roof";
+	ent->message2 = "\\Roof";
 	g_blockSection(ent, NOROOF);
 }
 
@@ -855,7 +855,7 @@ void nomiddle(gentity_t *ent){
 	
 	strncpy(message, G_ColorizeMessage("Middle"), sizeof(message));
 	ent->message = message;
-	ent->message2 = "Middle";
+	ent->message2 = "\\Middle";
 	g_blockSection(ent, NOMIDDLE);
 }
 
@@ -864,7 +864,7 @@ void nowhole(gentity_t *ent){
 	
 	strncpy(message, G_ColorizeMessage("Whole"), sizeof(message));
 	ent->message = message;
-	ent->message2 = "Whole";
+	ent->message2 = "\\Whole";
 	g_blockSection(ent, NOWHOLE);
 }
 

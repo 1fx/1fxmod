@@ -717,7 +717,7 @@ qboolean ClientInactivityTimer( gclient_t *client ) {
 		}
 		if ( level.time > client->inactivityTime - 10000 && !client->inactivityWarning ) {
 			client->inactivityWarning = qtrue;
-			trap_SendServerCommand( client - level.clients, "cp \"Ten seconds until inactivity drop!\n\"" );
+			G_Broadcast("^1Ten seconds\n^7until \\inactivity drop!", BROADCAST_CMD, &g_entities[client - level.clients]);
 		}
 	}
 	return qtrue;
@@ -1152,11 +1152,11 @@ void ClientThink_real( gentity_t *ent )
 	{
 		if ( ucmd->buttons & BUTTON_ANY )
 		{
-			char *info = G_ColorizeMessage("Info:");
+			char *info = G_ColorizeMessage("\\Info:");
 			client->sess.motdStartTime = level.time;
-			client->sess.motdStopTime = level.time + 7000;
-			trap_SendServerCommand( ent - g_entities, va("chat -1 \"%s ^7This server is running %s ^7%s\n\"", info, INF_VERSION_STRING_COLORED, INF_VERSION_STRING));
-			trap_SendServerCommand( ent - g_entities, va("chat -1 \"%s ^7Please report any bugs on 1fx.uk.to\n\"", info));
+			client->sess.motdStopTime = level.time + 4000;
+			trap_SendServerCommand( ent - g_entities, va("chat -1 \"%s This server is running %s ^7%s\n\"", info, INF_VERSION_STRING_COLORED, INF_VERSION_STRING));
+			trap_SendServerCommand( ent - g_entities, va("chat -1 \"%s Please report any bugs on 1fx.uk.to\n\"", info));
 			Boe_Motd(ent);
 		}
 	}
@@ -1165,14 +1165,8 @@ void ClientThink_real( gentity_t *ent )
 	//Ryan july 1 2003
 	if(client->sess.motdStartTime)
 	{	
-		if (level.time >= client->sess.motdStartTime + 3000 
-		&& level.time <= client->sess.motdStopTime)
-		{
-			client->sess.motdStartTime += 3000;
-			Boe_Motd(ent);
-		}
 		// Boe!Man 3/16/11: Better to reset the values and actually put firstTime to qfalse so it doesn't mess up when we want to broadcast a teamchange.
-		else if(level.time >= client->sess.motdStopTime)
+		if(level.time >= client->sess.motdStopTime)
 		{
 			client->sess.motdStartTime = 0;
 			client->sess.motdStopTime = 0;
@@ -1280,10 +1274,10 @@ void ClientThink_real( gentity_t *ent )
 		if(level.time > client->sess.spamTime && client->sess.spamTime != -1){
 			client->sess.spamTime = -1; // Boe!Man 10/5/10: Just display these at map restart/client begin.
 			if(level.crossTheBridge){
-				char *info = G_ColorizeMessage("Info:");
+				char *info = G_ColorizeMessage("\\Info:");
 				
-				trap_SendServerCommand( ent-g_entities, va("chat -1 \"%s ^7You're playing a mini-game instead of regular gameplay.\n\"", info));
-				trap_SendServerCommand( ent-g_entities, va("chat -1 \"%s ^7Don't know how this works? Type '/howto' to get a short tutorial.\n\"", info));
+				trap_SendServerCommand( ent-g_entities, va("chat -1 \"%s You're playing a mini-game instead of regular gameplay.\n\"", info));
+				trap_SendServerCommand( ent-g_entities, va("chat -1 \"%s Don't know how this works? Type '/howto' to get a short tutorial.\n\"", info));
 			}
 		}
 		
