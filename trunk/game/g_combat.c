@@ -281,11 +281,7 @@ void player_die(
 	//Ryan March 30 2004 5:28pm
 	if(attacker && attacker != self && attacker->client && self->client->pers.statinfo.killsinarow >= 3 && current_gametype.value != GT_HS)
 	{
-		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s's %sk%si%sl%sl%si%sng spree was ended by ^3%s",
-				level.time + 5000,
-				self->client->pers.netname,
-				server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, 
-				attacker->client->pers.netname));
+		G_Broadcast(va("%s\nhiss \\killing spree\nwas ended by %s", self->client->pers.netname, attacker->client->pers.netname), BROADCAST_GAME, NULL);
 	}
 
 	// Add to the number of deaths for this player
@@ -464,17 +460,7 @@ void player_die(
 
 	if(attacker->client){
 		if(attacker->client->pers.statinfo.killsinarow >= 3 && current_gametype.value != GT_HS){
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i, ^3%s ^7is %so%sn %sf%si%sr%se ^7with %s%i ^7kills in a row.",
-					level.time + 5000,
-					attacker->client->pers.netname,
-					server_color1.string,
-					server_color2.string,
-					server_color3.string,
-					server_color4.string,
-					server_color5.string,
-					server_color6.string,
-					server_color4.string,
-					attacker->client->pers.statinfo.killsinarow));
+			G_Broadcast(va("%s\nis on \\fire\nwith %i kills in a row!", attacker->client->pers.netname, attacker->client->pers.statinfo.killsinarow), BROADCAST_GAME, NULL);
 		}
 	}
 	if(g_clientDeathMessages.integer == 0) // Henk 10/30/12: If death messages being handled by the client don't print them here.
@@ -1154,7 +1140,7 @@ int G_Damage (
 					level.MM1ent = -1;
 					level.MM1Time = 0;
 					trap_SendServerCommand(-1, va("print\"^3[H&S] ^7First Blood: %s ^7has taken the MM1\n\"", attacker->client->pers.netname));
-					trap_SendServerCommand(attacker->s.number, va("cp \"^7You now have the %sM%sM%s1^7!\n\"", server_color1.string, server_color2.string, server_color3.string));
+					G_Broadcast("You now have the \\MM1!", BROADCAST_GAME, attacker);
 					attacker->client->sess.takenMM1 += 1;
 					}
 					level.MM1given = qtrue; // only once each round :)
@@ -1183,9 +1169,9 @@ int G_Damage (
 						client->ps.weapon = WP_KNIFE;
 						client->ps.weaponstate = WEAPON_READY;
 						Com_sprintf(level.RPGloc, sizeof(level.RPGloc), "%s", attacker->client->pers.netname);
-						trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s ^7has stolen the RPG from %s.\n\"", attacker->client->pers.netname, client->pers.netname));
-						trap_SendServerCommand(attacker->s.number, va("cp \"^7You have stolen the %sR%sP%sG^7!\n\"", server_color1.string, server_color2.string, server_color3.string));
-						trap_SendServerCommand(targ->s.number, va("cp \"%s ^7stole your %sR%sP%sG^7!\n\"", attacker->client->pers.netname, server_color1.string, server_color2.string, server_color3.string));
+						trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s took the RPG from %s.\n\"", attacker->client->pers.netname, client->pers.netname));
+						G_Broadcast("You stole the \\RPG!", BROADCAST_GAME, attacker);
+						G_Broadcast(va("%s stole your \\RPG!", attacker->client->pers.netname), BROADCAST_GAME, targ);
 						attacker->client->sess.weaponsStolen += 1;
 					}
 				}else if(client->ps.weapon == WP_M4_ASSAULT_RIFLE && client->ps.weaponstate == WEAPON_READY && mod == WP_KNIFE){
@@ -1215,9 +1201,9 @@ int G_Damage (
 						client->ps.weapon = WP_KNIFE;
 						client->ps.weaponstate = WEAPON_READY;
 						Com_sprintf(level.M4loc, sizeof(level.M4loc), "%s", attacker->client->pers.netname);
-						trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s ^7has taken the M4 from %s.\n\"", attacker->client->pers.netname, client->pers.netname));
-						trap_SendServerCommand(attacker->s.number, va("cp \"^7You have stolen the %sM%s4^7!\n\"", server_color1.string, server_color2.string));
-						trap_SendServerCommand(targ->s.number, va("cp \"%s ^7stole your %sM%s4^7!\n\"", attacker->client->pers.netname, server_color1.string, server_color2.string));
+						trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s took the M4 from %s.\n\"", attacker->client->pers.netname, client->pers.netname));
+						G_Broadcast("You stole the \\M4!", BROADCAST_GAME, attacker);
+						G_Broadcast(va("%s stole your \\M4!", attacker->client->pers.netname), BROADCAST_GAME, targ);
 						attacker->client->sess.weaponsStolen += 1;
 					}
 				}

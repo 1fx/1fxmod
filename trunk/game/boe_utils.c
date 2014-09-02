@@ -2085,7 +2085,7 @@ void Boe_serverMsg (void)
 		return;
 
 	level.serverMsg = level.time + (server_msgDelay.integer * 1000);
-	trap_SendServerCommand( -1, va("chat -1 \"%sM%se%ss%ss%sa%sge: %s\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, message ) );
+	trap_SendServerCommand(-1, va("chat -1 \"%s: %s\n\"", G_ColorizeMessage("Message"), message));
 }
 
 /*
@@ -2099,16 +2099,16 @@ void Boe_calcMatchScores (void)
 {
 	if(cm_enabled.integer == 2){ // Boe!Man 3/19/11: Can only be timelimit as the scorelimit won't use this function after one round. Calculate all.
 		if (level.teamScores[TEAM_RED] > level.teamScores[TEAM_BLUE]){ // Red team won.
+			G_Broadcast(va("%s ^7team wins the match with %i - %i!", server_redteamprefix.string, level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE]), BROADCAST_AWARDS, NULL);
 			trap_SendServerCommand(-1, va("print\"^3[Info] ^7Red team wins the match with %i - %i.\n\"", level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE]));
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7team wins the match with %i - %i!", level.time + 10000, server_redteamprefix.string, level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE]));
 			LogExit("Red team wins the match.");
 		}else if(level.teamScores[TEAM_BLUE] > level.teamScores[TEAM_RED]){
+			G_Broadcast(va("%s ^7team wins the match with %i - %i!", server_blueteamprefix.string, level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]), BROADCAST_AWARDS, NULL);
 			trap_SendServerCommand(-1, va("print\"^3[Info] ^7Blue team wins the match with %i - %i.\n\"", level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]));
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7team wins the match with %i - %i!", level.time + 10000, server_blueteamprefix.string, level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]));
 			LogExit("Blue team wins the match.");
 		}else if(level.teamScores[TEAM_BLUE] == level.teamScores[TEAM_RED]){
+			G_Broadcast(va("Match draw with %i - %i!", level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]), BROADCAST_AWARDS, NULL);
 			trap_SendServerCommand(-1, va("print\"^3[Info] ^7Match draw with %i - %i.\n\"", level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]));
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sM%sa%st%sc%sh draw with %i - %i!", level.time + 10000, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]));
 			LogExit("Match draw.");
 		}
 		return;
@@ -2116,17 +2116,16 @@ void Boe_calcMatchScores (void)
 
 	// Boe!Man 3/19/11: Else it's the scorelimit or timelimit that kicks in after two rounds.
 	if (cm_sr.integer + level.teamScores[TEAM_RED] > cm_sb.integer + level.teamScores[TEAM_BLUE]){
-		if (cm_aswap.integer == 1)
-		trap_SendServerCommand(-1, va("print\"^3[Info] ^7Red team wins the match with %i - %i.\n\"", level.teamScores[TEAM_RED]+cm_sr.integer, level.teamScores[TEAM_BLUE]+cm_sb.integer ));
-		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7team wins the match with %i - %i!", level.time + 10000, server_redteamprefix.string, level.teamScores[TEAM_RED]+cm_sr.integer, level.teamScores[TEAM_BLUE]+cm_sb.integer));
+		G_Broadcast(va("%s ^7team wins the match with %i - %i!", server_redteamprefix.string, level.teamScores[TEAM_RED] + cm_sr.integer, level.teamScores[TEAM_BLUE] + cm_sb.integer), BROADCAST_AWARDS, NULL);
+		trap_SendServerCommand(-1, va("print\"^3[Info] ^7Red team wins the match with %i - %i.\n\"", level.teamScores[TEAM_RED] + cm_sr.integer, level.teamScores[TEAM_BLUE] + cm_sb.integer));
 		LogExit("Red team wins the match.");
 	}else if(cm_sb.integer + level.teamScores[TEAM_BLUE] > cm_sr.integer + level.teamScores[TEAM_RED]){
-		trap_SendServerCommand(-1, va("print\"^3[Info] ^7Blue team wins the match with %i - %i.\n\"", level.teamScores[TEAM_BLUE]+cm_sb.integer, level.teamScores[TEAM_RED]+cm_sr.integer ));
-		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7team wins the match with %i - %i!", level.time + 10000, server_blueteamprefix.string, level.teamScores[TEAM_BLUE]+cm_sb.integer, level.teamScores[TEAM_RED]+cm_sr.integer));
+		G_Broadcast(va("%s ^7team wins the match with %i - %i!", server_blueteamprefix.string, level.teamScores[TEAM_BLUE] + cm_sb.integer, level.teamScores[TEAM_RED] + cm_sr.integer), BROADCAST_AWARDS, NULL);
+		trap_SendServerCommand(-1, va("print\"^3[Info] ^7Blue team wins the match with %i - %i.\n\"", level.teamScores[TEAM_BLUE] + cm_sb.integer, level.teamScores[TEAM_RED] + cm_sr.integer));
 		LogExit("Blue team wins the match.");
 	}else if (cm_sb.integer + level.teamScores[TEAM_BLUE] == cm_sr.integer + level.teamScores[TEAM_RED]){
-		trap_SendServerCommand(-1, va("print\"^3[Info] ^7Match draw with %i - %i.\n\"", level.teamScores[TEAM_BLUE]+cm_sb.integer, level.teamScores[TEAM_RED]+cm_sr.integer ));
-		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sM%sa%st%sc%sh draw with %i - %i!", level.time + 10000, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, level.teamScores[TEAM_BLUE]+cm_sb.integer, level.teamScores[TEAM_RED]+cm_sr.integer));
+		G_Broadcast(va("Match draw with %i - %i!", level.teamScores[TEAM_BLUE] + cm_sb.integer, level.teamScores[TEAM_RED] + cm_sr.integer), BROADCAST_AWARDS, NULL);
+		trap_SendServerCommand(-1, va("print\"^3[Info] ^7Match draw with %i - %i.\n\"", level.teamScores[TEAM_BLUE] + cm_sb.integer, level.teamScores[TEAM_RED] + cm_sr.integer));
 		LogExit("Match draw.");
 	}
 }
@@ -2143,7 +2142,7 @@ void Boe_compTimeLimitCheck (void)
 	if (cm_enabled.integer == 2){
 		if(cm_dr.integer == 1){ // Boe!Man 3/18/11: If dual rounds are enabled, make use of them and display the temporary stuff.
 			if ( level.teamScores[TEAM_RED] > level.teamScores[TEAM_BLUE] ){
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7team wins the 1st round with %i - %i!", level.time + 10000, server_redteamprefix.string, level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE]));
+				G_Broadcast(va("%s ^7team wins the 1st round with %i - %i!", server_redteamprefix.string, level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE]), BROADCAST_AWARDS, NULL);
 				trap_SendServerCommand(-1, va("print\"^3[Info] ^7Red team wins the 1st round with %i - %i.\n\"", level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE] ));
 				// Boe!Man 11/18/10: Set the scores right (for logging purposes).
 				if (cm_aswap.integer == 0){
@@ -2156,7 +2155,7 @@ void Boe_compTimeLimitCheck (void)
 				}
 				LogExit("Red team wins the 1st round.");
 			}else if ( level.teamScores[TEAM_BLUE] > level.teamScores[TEAM_RED] ){
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7team wins the 1st round with %i - %i!", level.time + 10000, server_blueteamprefix.string, level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]));
+				G_Broadcast(va("%s ^7team wins the 1st round with %i - %i!", server_blueteamprefix.string, level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]), BROADCAST_AWARDS, NULL);
 				trap_SendServerCommand(-1, va("print\"^3[Info] ^7Blue team wins the 1st round with %i - %i.\n\"", level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED] ));
 				// Boe!Man 11/18/10: Set the scores right (for logging purposes).
 				if (cm_aswap.integer == 0){
@@ -2169,7 +2168,7 @@ void Boe_compTimeLimitCheck (void)
 				}
 				LogExit("Blue team wins the 1st round.");
 			}else{ // Boe!Man 3/19/11: Tie is perfectly capable when a timelimit is set.
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sR%so%su%sn%sd ^7draw with %i - %i!", level.time + 10000, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]));
+				G_Broadcast(va("\\Round draw with %i - %i!", level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]), BROADCAST_AWARDS, NULL);
 				trap_SendServerCommand(-1, va("print\"^3[Info] ^7Round draw with %i - %i.\n\"", level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE] ));
 				// Boe!Man 11/18/10: Set the scores right (for logging purposes).
 				trap_Cvar_Set("cm_sr", va("%i", level.teamScores[TEAM_RED]));
@@ -2230,7 +2229,7 @@ void Boe_mapEvents (void){
 		else{
 			if(level.time >= level.mapSwitchCount){
 				if(level.mapSwitchCount2){
-					trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp %sr%se%sstart in %i!", level.time + 1500, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, level.mapSwitchCount2));
+					G_Broadcast(va("\\Map restart in %i!", level.mapSwitchCount2), BROADCAST_CMD, NULL);
 					level.mapSwitchCount2--;
 					level.mapSwitchCount = level.time + 1000;
 				}else{
@@ -2247,11 +2246,11 @@ void Boe_mapEvents (void){
 	}else if(level.mapAction == 2){
 		if(level.time >= level.mapSwitchCount){
 			if(level.mapSwitchCount2){
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s ^7%s ^7in %i!", level.time + 1500, level.mapPrefix, level.mapSwitchName, level.mapSwitchCount2));
+				G_Broadcast(va("%s ^7%s ^7in %i!", level.mapPrefix, level.mapSwitchName, level.mapSwitchCount2), BROADCAST_CMD, NULL);
 				level.mapSwitchCount2--;
 				level.mapSwitchCount = level.time + 1000;
 			}else{
-				if(strstr(level.mapPrefix, va("%sD", server_color1.string))){
+				if(strstr(level.mapPrefix, "D^")){
 					trap_SendConsoleCommand( EXEC_APPEND, va("devmap %s\n", level.mapSwitchName));	
 				}else{
 					trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", level.mapSwitchName));
@@ -2280,7 +2279,7 @@ void Boe_mapEvents (void){
 	else if(level.mapAction == 4){
 		if(level.time >= level.mapSwitchCount){
 			if(level.mapSwitchCount2){
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%sM%sa%sp%sc%sy%scle in %i!", level.time + 1500, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, level.mapSwitchCount2));
+				G_Broadcast(va("\\Mapcycle in %i!", level.mapSwitchCount2), BROADCAST_CMD, NULL);
 				level.mapSwitchCount2--;
 				level.mapSwitchCount = level.time + 1000;
 			}else{
@@ -2372,10 +2371,10 @@ void Boe_checkRoof ( gentity_t *ent )
 			if(ent->r.currentOrigin[2] >= level.noLR[1][2]){ // Well he is now. Check for the timeout.
 				if(!level.noLR[1][1]){ // 0 or less.. Meaning, instant pop. No need for further checks.
 					G_Damage(ent, NULL, NULL, NULL, NULL, 10000, 0, MOD_TRIGGER_HURT, 0);
-					trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s ^7was killed for not leaving the roof.\n\"", ent->client->pers.netname));
+					trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s ^7was killed for not leaving the roof.\n\"", ent->client->pers.cleanName));
 				}else{
 					ent->client->sess.isOnRoof = qtrue; // The server owner specified a timer. So, first, the player initialised this process by being on roof.
-					trap_SendServerCommand( ent-g_entities, va("cp \"@%sL%se%sa%sv%se the roof within %s%.0f ^7seconds!\n\"", server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, server_color1.string, level.noLR[1][1]));
+					G_Broadcast(va("\\Leave the roof within ^1%.0f ^7seconds!", level.noLR[1][1]), BROADCAST_GAME, ent);
 					ent->client->sess.isOnRoofTime = 1;
 				}
 			}
@@ -2383,7 +2382,7 @@ void Boe_checkRoof ( gentity_t *ent )
 			if(ent->r.currentOrigin[2] < level.noLR[1][2]){ // He left the roof.
 				ent->client->sess.isOnRoof = qfalse;
 				ent->client->sess.isOnRoofTime = 0;
-				trap_SendServerCommand( ent-g_entities, va("cp \"@%sY%so%su %sa%sr%se no longer on the roof!\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+				G_Broadcast("\\You're no longer on the roof!", BROADCAST_GAME, ent);
 			}else{ // He's still on the roof.
 				if(level.noLR[1][1] == ent->client->sess.isOnRoofTime){ // Well, he waited it out. Pop him.
 					G_Damage(ent, NULL, NULL, NULL, NULL, 10000, 0, MOD_TRIGGER_HURT, 0);
@@ -2391,7 +2390,7 @@ void Boe_checkRoof ( gentity_t *ent )
 					ent->client->sess.isOnRoof = qfalse;
 					ent->client->sess.isOnRoofTime = 0;
 				}else{ // Give him another warning.
-					trap_SendServerCommand( ent-g_entities, va("cp \"@%sL%se%sa%sv%se the roof within %s%.0f ^7seconds!\n\"", server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, server_color1.string, level.noLR[1][1] - ent->client->sess.isOnRoofTime));
+					G_Broadcast(va("\\Leave the roof within ^1%.0f ^7seconds!", level.noLR[1][1] - ent->client->sess.isOnRoofTime), BROADCAST_GAME, ent);
 					ent->client->sess.isOnRoofTime += 1;
 				}
 			}

@@ -598,29 +598,30 @@ void G_ResetGametype ( qboolean fullRestart, qboolean cagefight )
 					// Boe!Man 11/19/10: Messages for round one.
 					if (cm_enabled.integer <= 3){
 						if (level.teamScores[TEAM_RED] == level.teamScores[TEAM_BLUE]){
-							trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sS%sc%so%sr%se tied with %i - %i!", level.time + (g_roundstartdelay.integer * 1000), server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE]));
+							G_Broadcast(va("Score \\tied with %i - %i!", level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE]), BROADCAST_GAME, NULL);
+						}else if (level.teamScores[TEAM_RED] > level.teamScores[TEAM_BLUE]){
+							G_Broadcast(va("%s team leads with %i - %i!", server_redteamprefix.string, level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE]), BROADCAST_GAME, NULL);
+						}else if (level.teamScores[TEAM_BLUE] > level.teamScores[TEAM_RED]){
+							G_Broadcast(va("%s team leads with %i - %i!", server_blueteamprefix.string, level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]), BROADCAST_GAME, NULL);
 						}
-						else if (level.teamScores[TEAM_RED] > level.teamScores[TEAM_BLUE]){
-							trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7team leads with %i - %i!", level.time + (g_roundstartdelay.integer * 1000), server_redteamprefix.string, level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE]));}
-						else if (level.teamScores[TEAM_BLUE] > level.teamScores[TEAM_RED]){
-							trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7team leads with %i - %i!", level.time + (g_roundstartdelay.integer * 1000), server_blueteamprefix.string, level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]));}
 					}
 					// Boe!Man 11/19/10: Messages for round two.
 					else if(cm_enabled.integer > 3){
 						if (level.teamScores[TEAM_RED]+cm_sr.integer == level.teamScores[TEAM_BLUE]+cm_sb.integer){
-							trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sS%sc%so%sr%se tied with %i - %i!", level.time + (g_roundstartdelay.integer * 1000), server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, level.teamScores[TEAM_RED]+cm_sr.integer, level.teamScores[TEAM_BLUE]+cm_sb.integer));
+							G_Broadcast(va("Score \\tied with %i - %i!", level.teamScores[TEAM_RED] + cm_sr.integer, level.teamScores[TEAM_BLUE] + cm_sb.integer), BROADCAST_GAME, NULL);
+						}else if (level.teamScores[TEAM_RED]+cm_sr.integer > level.teamScores[TEAM_BLUE]+cm_sb.integer){
+							G_Broadcast(va("%s team leads with %i - %i!", server_redteamprefix.string, level.teamScores[TEAM_RED] + cm_sr.integer, level.teamScores[TEAM_BLUE] + cm_sb.integer), BROADCAST_GAME, NULL);
+						}else if (level.teamScores[TEAM_BLUE]+cm_sb.integer > level.teamScores[TEAM_RED]+cm_sr.integer){
+							G_Broadcast(va("%s team leads with %i - %i!", server_blueteamprefix.string, level.teamScores[TEAM_BLUE] + cm_sb.integer, level.teamScores[TEAM_RED] + cm_sr.integer), BROADCAST_GAME, NULL);
 						}
-						else if (level.teamScores[TEAM_RED]+cm_sr.integer > level.teamScores[TEAM_BLUE]+cm_sb.integer){
-							trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7team leads with %i - %i!", level.time + (g_roundstartdelay.integer * 1000), server_redteamprefix.string, level.teamScores[TEAM_RED]+cm_sr.integer, level.teamScores[TEAM_BLUE]+cm_sb.integer));}
-						else if (level.teamScores[TEAM_BLUE]+cm_sb.integer > level.teamScores[TEAM_RED]+cm_sr.integer){
-							trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7team leads with %i - %i!", level.time + (g_roundstartdelay.integer * 1000), server_blueteamprefix.string, level.teamScores[TEAM_BLUE]+cm_sb.integer, level.teamScores[TEAM_RED]+cm_sr.integer));}
 					}
 				}
 				// Boe!Man 11/19/10: Not in compMode. Just switch to the regular Get Ready msg.
 				else{
 					// Get Ready
-					if(current_gametype.value != GT_HS && current_gametype.value != GT_HZ)
-					trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sG%se%st %sr%se%sa%sdy!", level.time + (g_roundstartdelay.integer * 1000), server_color1.string, server_color2.string, server_color3.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+					if (current_gametype.value != GT_HS && current_gametype.value != GT_HZ){
+						G_Broadcast("\\Get ready!", BROADCAST_GAME, NULL);
+					}
 				}
 			}
 
@@ -1062,13 +1063,13 @@ void CheckGametype ( void )
 				gentity_t* ent = &g_entities[level.sortedClients[i]];
 				if ( ent->client->sess.team == TEAM_RED && alive[TEAM_RED] == 1 &&
 					!G_IsClientDead ( ent->client ) && !level.redMsgCount){
-						trap_SendServerCommand ( ent->s.number, va("cp\"@You are the %sl%sa%ss%st %sp%sl%sayer alive!", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color4.string, server_color5.string, server_color6.string));
-						trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s is the last alive player in the red team.\n\"", ent->client->pers.netname));
-						Boe_ClientSound(ent, G_SoundIndex("sound/misc/events/tut_door01.mp3"));
-						level.redMsgCount++;
-						if(current_gametype.value == GT_HZ){
-							trap_SendServerCommand(-1, va("print\"^3[Debug] ^7%s should get the M67 at the next round...\n\"", ent->client->pers.netname));
-						}
+					G_Broadcast("You are the \\last player alive!", BROADCAST_GAME, ent);
+					trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s is the last player alive in the red team.\n\"", ent->client->pers.cleanName));
+					Boe_ClientSound(ent, G_SoundIndex("sound/misc/events/tut_door01.mp3"));
+					level.redMsgCount++;
+					if(current_gametype.value == GT_HZ){
+						trap_SendServerCommand(-1, va("print\"^3[Debug] ^7%s should get the M67 at the next round...\n\"", ent->client->pers.netname));
+					}
 				}
 			}
 		}
@@ -1078,10 +1079,10 @@ void CheckGametype ( void )
 				gentity_t* ent = &g_entities[level.sortedClients[i]];
 				if ( ent->client->sess.team == TEAM_BLUE && alive[TEAM_BLUE] == 1 &&
 					!G_IsClientDead ( ent->client ) && !level.blueMsgCount){
-						trap_SendServerCommand ( ent->s.number, va("cp\"@You are the %sl%sa%ss%st %sp%sl%sayer alive!", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color4.string, server_color5.string, server_color6.string));
-						trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s is the last alive player in the blue team.\n\"", ent->client->pers.netname));
-						Boe_ClientSound(ent, G_SoundIndex("sound/misc/events/tut_door01.mp3"));
-						level.blueMsgCount++;
+					G_Broadcast("You are the \\last player alive!", BROADCAST_GAME, ent);
+					trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s is the last alive player in the blue team.\n\"", ent->client->pers.netname));
+					Boe_ClientSound(ent, G_SoundIndex("sound/misc/events/tut_door01.mp3"));
+					level.blueMsgCount++;
 				}
 			}
 		}
@@ -1154,7 +1155,7 @@ void CheckGametype ( void )
 			}
 			trap_SendServerCommand(-1, va("print \"^3[H&S] ^7Fight ended.\n\""));
 			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,^7%sF%si%sg%sh%st %sended", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+			G_Broadcast("\\Fight ended!", BROADCAST_GAME, NULL);
 			#ifdef _DEBUG
 			Com_Printf("Updating scores..\n");
 			#endif
@@ -1178,7 +1179,7 @@ void CheckGametype ( void )
 				}
 				trap_SendServerCommand(-1, va("print \"^3[H&S] ^7Fight ended.\n\""));
 				Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,^7%sF%si%sg%sh%st %sended", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+				G_Broadcast("\\Fight ended!", BROADCAST_GAME, NULL);
 
 				#ifdef _DEBUG
 				Com_Printf("Updating scores..\n");
@@ -1231,164 +1232,3 @@ void CheckGametype ( void )
 	}
 	}
 }
-
-/*
-=================
-G_GametypeCommand
-
-Handles a command coming from the current gametype VM
-=================
-
-int G_GametypeCommand ( int cmd, int arg0, int arg1, int arg2, int arg3, int arg4 )
-{
-	switch ( cmd )
-	{
-		case GTCMD_RESTART:
-			if ( arg0 <= 0 )
-			{
-				G_ResetGametype ( qfalse, qfalse );
-			}
-			else
-			{
-				level.gametypeResetTime = level.time + arg0 * 1000;
-			}
-			break;
-
-		case GTCMD_TEXTMESSAGE:
-			if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime)
-			{
-				if(strstr((const char*)arg1, "[INF]")){
-					trap_SendServerCommand( -1, va("print \"%s\n\"", (const char*)arg1));
-				}else if(strstr((const char*)arg1, "[CTF]")){
-					trap_SendServerCommand( -1, va("print \"%s\n\"", (const char*)arg1));
-				}else if(strstr((const char*)arg1, "[ELIM]")){
-					trap_SendServerCommand( -1, va("print \"%s\n\"", (const char*)arg1));
-				}else if(strstr((const char*)arg1, "[DM]")){
-					trap_SendServerCommand( -1, va("print \"%s\n\"", (const char*)arg1));
-				}else if(strstr((const char*)arg1, "[TDM]")){
-					trap_SendServerCommand( -1, va("print \"%s\n\"", (const char*)arg1));
-				}else if(strstr((const char*)arg1, "[H&S]")){
-					trap_SendServerCommand( -1, va("print \"%s\n\"", (const char*)arg1));
-				}else if(strstr((const char*)arg1, "[H&Z]")){
-					trap_SendServerCommand( -1, va("print \"%s\n\"", (const char*)arg1));
-				}else{
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,%s", level.time + 5000, (const char*)arg1 ) );
-				}
-			}
-			
-			break;		
-
-		case GTCMD_RADIOMESSAGE:
-				G_Voice ( &g_entities[arg0], NULL, SAY_TEAM, (const char*) arg1, qfalse );
-			break;
-
-		case GTCMD_REGISTERGLOBALSOUND:
-			return G_SoundIndex ( (char*) arg0 );
-
-		case GTCMD_STARTGLOBALSOUND:
-		//Ryan
-		//Dont play any sounds for the gametype stuff if we are ending the round
-		if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime)
-		{
-				gentity_t* tent;
-				tent = G_TempEntity( vec3_origin, EV_GLOBAL_SOUND );
-				tent->s.eventParm = arg0;
-				tent->r.svFlags = SVF_BROADCAST;	
-		}
-		// Boe!Man 8/7/12: This has been horribly wrong, fix for round ending in H&S messing up if timelimit was already hit (and possibly other gt's).
-		break;
-		//Ryan
-
-		case GTCMD_REGISTEREFFECT:
-			return G_EffectIndex ( (char*) arg0 );
-
-		case GTCMD_PLAYEFFECT:
-			G_PlayEffect ( arg0, (float*) arg1, (float*) arg2 );
-			break;
-
-		case GTCMD_ADDCLIENTSCORE:
-			G_AddScore ( &g_entities[arg0], arg1 );
-			break;
-
-		case GTCMD_ADDTEAMSCORE:
-			G_AddTeamScore ( (team_t) arg0, arg1 );
-			break;
-
-		case GTCMD_RESETITEM:
-		{
-			gitem_t* item;
-
-			item = BG_FindGametypeItemByID ( arg0 );
-			if ( item )
-			{
-				G_ResetGametypeItem ( item );
-				return qtrue;
-			}
-			break;
-		}
-
-		case GTCMD_GETCLIENTNAME:
-			Com_sprintf ( (char*) arg1, arg2, "%s", g_entities[arg0].client->pers.netname );
-			break;
-
-		case GTCMD_DOESCLIENTHAVEITEM:
-		{
-			gitem_t*	item;
-			gentity_t*	ent;
-
-			ent  = &g_entities[arg0];
-			item = BG_FindGametypeItemByID ( arg1 );
-
-			if ( item )
-			{
-				if ( ent->client->ps.stats[STAT_GAMETYPE_ITEMS] & (1<<item->giTag) )
-				{
-					return 1;
-				}
-			}
-
-			return 0;
-		}
-
-		case GTCMD_REGISTERITEM:
-		{
-			gitem_t* item;
-
-			item = BG_FindItem ( (const char*) arg1 );
-			if ( item )
-			{
-				item->quantity = arg0;
-				return qtrue;
-			}
-
-			return qfalse;
-		}
-
-		case GTCMD_REGISTERTRIGGER:
-		{
-			gentity_t* find;
-
-			find = NULL;
-			while ( NULL != (find = G_Find ( find, FOFS(classname), "gametype_trigger" ) ) )
-			{
-				if ( Q_stricmp ( find->targetname, (const char*) arg1 ) )
-				{
-					continue;
-				}
-
-				// Assign the id to it.
-				find->health = arg0;
-				find->touch  = gametype_trigger_touch;
-				trap_LinkEntity (find);
-			}
-
-			return 0;
-		}
-
-		default:
-			break;
-	}
-
-	return -1;
-}
-*/

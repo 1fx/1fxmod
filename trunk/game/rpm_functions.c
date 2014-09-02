@@ -84,7 +84,7 @@ void RPM_Unpause (gentity_t *adm)
 		level.unpausetime = level.time;
 		level.pause--;
 
-		trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%sR%se%ss%su%sm%sing in: %d sec", level.time + 2000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, level.pause ) );
+		G_Broadcast(va("\\Resuming in: %d sec", level.pause), BROADCAST_GAME, NULL);
 
 		Boe_GlobalSound(G_SoundIndex("sound/misc/events/buzz02.wav"));
 
@@ -295,18 +295,7 @@ void RPM_Obituary ( gentity_t *target, gentity_t *attacker, int mod, attackType_
 		if ( killer == targ )
 		{
 			Boe_ClientSound(target, G_SoundIndex("sound/self_frag.mp3"));
-		}
-		//Or if they killed a teammate
-		/*else if(level.gametypeData->teams && OnSameTeam ( target, attacker ))
-		{
-			Boe_ClientSound(attacker, G_SoundIndex("sound/self_frag.mp3"));
-			if(g_showTkMessage.integer)
-			{
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,%s ^1killed ^7a ^3teamate!", level.time + 3000, killerName ) );
-			}
-		}*/
-		else if(headShot)
-		{
+		}else if(headShot){
 			//if they use rpm client-side the client will 
 			//handle the sound etc...
 			if(attacker->client->sess.rpmClient)
@@ -327,7 +316,7 @@ void RPM_Obituary ( gentity_t *target, gentity_t *attacker, int mod, attackType_
 				//heashot message with the "you killed" message
 				if ( level.gametypeData->showKills )
 				{	
-					message2 = va("%sH%se%sa%sd%ss%shot!\n", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string);//g_headShotMessage.string );
+					message2 = G_ColorizeMessage("Headshot!");
 				}
 
 				//We'll tack this on to the end of the kill broadcast to all

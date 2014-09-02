@@ -531,15 +531,15 @@ void RPM_Invite_Spec(gentity_t *ent, char *arg2)
 	{
 		if(g_entities[id].client->sess.invitedByRed)
 		{
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^3%s ^7was un-invited to spectate your team.\n\"", g_entities[id].client->pers.cleanName));
-			trap_SendServerCommand( g_entities[id].s.number, va("cp \"^3You ^7were %su%sn^7-%si%sn%sv%si%sted to spectate\nthe %s ^7team\n\"", server_color1.string, server_color2.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, server_redteamprefix.string));
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^3%s ^7was un-invited to spectate the Red team.\n\"", g_entities[id].client->pers.cleanName));
+			G_Broadcast(va("You were \\un-invited \nto spectate the %s ^7team!", server_redteamprefix.string), BROADCAST_CMD, &g_entities[id]);
 			g_entities[id].client->sess.invitedByRed = qfalse;
 			return;
 		}
 		else
 		{
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^3%s ^7was invited to spectate your team.\n\"", g_entities[id].client->pers.cleanName));
-			trap_SendServerCommand( g_entities[id].s.number, va("cp \"^3You ^7were %si%sn%sv%si%st%sed to spectate\nthe %s ^7team\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, server_redteamprefix.string));
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^3%s ^7was invited to spectate the Red team.\n\"", g_entities[id].client->pers.cleanName));
+			G_Broadcast(va("You were \\invited \nto spectate the %s ^7team!", server_redteamprefix.string), BROADCAST_CMD, &g_entities[id]);
 			g_entities[id].client->sess.invitedByRed = qtrue;
 			g_entities[id].client->ps.pm_type = PM_SPECTATOR;
 			g_entities[id].client->sess.spectatorClient = ent->s.number;
@@ -551,15 +551,15 @@ void RPM_Invite_Spec(gentity_t *ent, char *arg2)
 	{	
 		if(g_entities[id].client->sess.invitedByBlue)
 		{
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^3%s ^7was un-invited to spectate your team.\n\"", g_entities[id].client->pers.cleanName));
-			trap_SendServerCommand( g_entities[id].s.number, va("cp \"^3You ^7were %su%sn^7-%si%sn%sv%si%sted to spectate\nthe %s ^7team\n\"", server_color1.string, server_color2.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, server_blueteamprefix.string));
+			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^3%s ^7was un-invited to spectate the Blue team.\n\"", g_entities[id].client->pers.cleanName));
+			G_Broadcast(va("You were \\un-invited \nto spectate the %s ^7team!", server_blueteamprefix.string), BROADCAST_CMD, &g_entities[id]);
 			g_entities[id].client->sess.invitedByBlue = qfalse;
 			return;
 		}
 		else
 		{
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^3%s ^7was invited to spectate your team.\n\"", g_entities[id].client->pers.cleanName ));
-			trap_SendServerCommand( g_entities[id].s.number, va("cp \"^3You ^7were %si%sn%sv%si%st%sed to spectate\nthe %s ^7team\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, server_blueteamprefix.string));
+			G_Broadcast(va("You were \\invited \nto spectate the %s ^7team!", server_blueteamprefix.string), BROADCAST_CMD, &g_entities[id]);
 			g_entities[id].client->sess.invitedByBlue = qtrue;
 			g_entities[id].client->ps.pm_type = PM_SPECTATOR;
 			g_entities[id].client->sess.spectatorClient = ent->s.number;

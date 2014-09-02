@@ -296,11 +296,12 @@ static void adm_addAdmin_f(int argNum, gentity_t *adm, qboolean shortCmd, int le
 	// Boe!Man 2/5/13: Inform a passworded Admin of the system he can now use.
 	// Boe!Man 2/16/13: Only inform the Admin via chat. The Admin won't notice if it's being broadcast via console.
 	if (passAdmin){
+		char *info = G_ColorizeMessage("Info:");
 		g_entities[idNum].client->sess.setAdminPassword = qtrue;
 
-		trap_SendServerCommand(g_entities[idNum].s.number, va("chat -1 \"%sI%sn%sf%so%s: ^7You need to login every time you enter the server.\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string));
-		trap_SendServerCommand(g_entities[idNum].s.number, va("chat -1 \"%sI%sn%sf%so%s: ^7In order to do this, you need to set your own password.\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string));
-		trap_SendServerCommand(g_entities[idNum].s.number, va("chat -1 \"%sI%sn%sf%so%s: ^7Do this by executing the following command: /adm pass 'yourpassword'.\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string));
+		trap_SendServerCommand(g_entities[idNum].s.number, va("chat -1 \"%s ^7You need to login every time you enter the server.\n\"", info));
+		trap_SendServerCommand(g_entities[idNum].s.number, va("chat -1 \"%s ^7In order to do this, you need to set your own password.\n\"", info));
+		trap_SendServerCommand(g_entities[idNum].s.number, va("chat -1 \"%s ^7Do this by executing the following command: /adm pass 'yourpassword'.\n\"", info));
 	}
 
 	// Boe!Man 10/16/10: Is the Admin level allowed to spec the opposite team?
@@ -1200,7 +1201,7 @@ int adm_shuffleTeams(int argNum, gentity_t *adm, qboolean shortCmd){
 	// Custom messaging/logging.
 	Boe_GlobalSound(G_SoundIndex("sound/misc/events/tut_lift02.mp3"));
 	G_Broadcast("\\Shuffle teams!", BROADCAST_CMD, NULL);
-	trap_SetConfigstring(CS_GAMETYPE_MESSAGE, va("%i,@%sS%sh%su%sf%sf%sle teams!", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+
 	if (adm && adm->client){
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Shuffle teams by %s.\n\"", adm->client->pers.netname));
 		Boe_adminLog("shuffleteams", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "none");
@@ -2610,9 +2611,8 @@ int adm_Flash(int argNum, gentity_t *adm, qboolean shortCmd)
 			G_Broadcast(va("Everyone\nhas been \\flashed by %s", adm->client->pers.netname), BROADCAST_CMD, NULL);
 			trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Everyone has been flashed by %s.\n\"", adm->client->pers.cleanName));
 			Boe_adminLog("flash", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "all clients");
-		}
-		else{
-			trap_SetConfigstring(CS_GAMETYPE_MESSAGE, va("%i,@^7Everyone has been %sf%sl%sa%ss%sh%sed", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+		}else{
+			G_Broadcast("Everyone\nhas been \\flashed", BROADCAST_CMD, NULL);
 			trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Everyone has been flashed.\n\""));
 			Boe_adminLog("flash", "RCON", "all clients");
 		}

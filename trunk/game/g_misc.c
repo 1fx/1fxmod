@@ -715,7 +715,7 @@ void g_sectionAutoCheck(gentity_t *ent){
 				if(((ent->team2 == TEAM_FREE) ? (TeamCount(-1, TEAM_RED, NULL ) + TeamCount(-1, TEAM_BLUE, NULL )) : (TeamCount(-1, (team_t)ent->team2, NULL ))) >= ent->min_players){
 					// Open the section.
 					ent->sectionState = OPENING;
-					trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s will be opened in %0.f seconds!\n\"", level.time + 5000, ent->message, ent->wait));
+					G_Broadcast(va("%s ^7will be opened in %0.f seconds!", ent->message, ent->wait), BROADCAST_GAME, NULL);
 					trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s will be opened in %0.f seconds.\n\"", ent->message2, ent->wait));
 				}
 				break;
@@ -723,7 +723,7 @@ void g_sectionAutoCheck(gentity_t *ent){
 				if(((ent->team2 == TEAM_FREE) ? (TeamCount(-1, TEAM_RED, NULL ) + TeamCount(-1, TEAM_BLUE, NULL )) : (TeamCount(-1, (team_t)ent->team2, NULL ))) < ent->min_players){
 					// Close the section.
 					ent->sectionState = CLOSING;
-					trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s will be closed in %0.f seconds!\n\"", level.time + 5000, ent->message, ent->wait));
+					G_Broadcast(va("%s ^7will be closed in %0.f seconds!", ent->message, ent->wait), BROADCAST_GAME, NULL);
 					trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s will be closed in %0.f seconds.\n\"", ent->message2, ent->wait));
 				}
 				break;
@@ -734,7 +734,7 @@ void g_sectionAutoCheck(gentity_t *ent){
 				if(ent->section < NOMIDDLE)
 					level.noLROpened[ent->section] = qfalse;
 					
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s closed!\n\"", level.time + 5000, ent->message));
+				G_Broadcast(va("%s ^7closed!", ent->message), BROADCAST_GAME, NULL);
 				trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s is now closed.\n\"", ent->message2));
 				break;
 			case OPENING:
@@ -744,7 +744,7 @@ void g_sectionAutoCheck(gentity_t *ent){
 				if(ent->section < NOMIDDLE)
 					level.noLROpened[ent->section] = qtrue;
 					
-				trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s opened!\n\"", level.time + 5000, ent->message));
+				G_Broadcast(va("%s ^7opened!", ent->message), BROADCAST_GAME, NULL);
 				trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s is now opened.\n\"", ent->message2));
 				break;
 			default:
@@ -835,7 +835,7 @@ void g_checkSectionState(){
 void nolower(gentity_t *ent){
 	static char message[24];
 	
-	strncpy(message, va("%sL%so%sw%se%sr", server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string), sizeof(message));
+	strncpy(message, G_ColorizeMessage("Lower"), sizeof(message));
 	ent->message = message;
 	ent->message2 = "Lower";
 	g_blockSection(ent, NOLOWER);
@@ -844,7 +844,7 @@ void nolower(gentity_t *ent){
 void noroof(gentity_t *ent){
 	static char message[24];
 	
-	strncpy(message, va("%sR%so%so%sf", server_color3.string, server_color4.string, server_color5.string, server_color6.string), sizeof(message));
+	strncpy(message, G_ColorizeMessage("Roof"), sizeof(message));
 	ent->message = message;
 	ent->message2 = "Roof";
 	g_blockSection(ent, NOROOF);
@@ -853,7 +853,7 @@ void noroof(gentity_t *ent){
 void nomiddle(gentity_t *ent){
 	static char message[24];
 	
-	strncpy(message, va("%sM%si%sd%sd%sl%se", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string), sizeof(message));
+	strncpy(message, G_ColorizeMessage("Middle"), sizeof(message));
 	ent->message = message;
 	ent->message2 = "Middle";
 	g_blockSection(ent, NOMIDDLE);
@@ -862,7 +862,7 @@ void nomiddle(gentity_t *ent){
 void nowhole(gentity_t *ent){
 	static char message[24];
 	
-	strncpy(message, va("%sW%sh%so%sl%se", server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string), sizeof(message));
+	strncpy(message, G_ColorizeMessage("Whole"), sizeof(message));
 	ent->message = message;
 	ent->message2 = "Whole";
 	g_blockSection(ent, NOWHOLE);

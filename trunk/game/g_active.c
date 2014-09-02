@@ -1152,10 +1152,11 @@ void ClientThink_real( gentity_t *ent )
 	{
 		if ( ucmd->buttons & BUTTON_ANY )
 		{
+			char *info = G_ColorizeMessage("Info:");
 			client->sess.motdStartTime = level.time;
 			client->sess.motdStopTime = level.time + 7000;
-			trap_SendServerCommand( ent - g_entities, va("chat -1 \"%sI%sn%sf%so%s: ^7This server is running %s ^7%s\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, INF_VERSION_STRING_COLORED, INF_VERSION_STRING));
-			trap_SendServerCommand( ent - g_entities, va("chat -1 \"%sI%sn%sf%so%s: ^7Please report any bugs on 1fx.uk.to\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string));
+			trap_SendServerCommand( ent - g_entities, va("chat -1 \"%s ^7This server is running %s ^7%s\n\"", info, INF_VERSION_STRING_COLORED, INF_VERSION_STRING));
+			trap_SendServerCommand( ent - g_entities, va("chat -1 \"%s ^7Please report any bugs on 1fx.uk.to\n\"", info));
 			Boe_Motd(ent);
 		}
 	}
@@ -1279,10 +1280,10 @@ void ClientThink_real( gentity_t *ent )
 		if(level.time > client->sess.spamTime && client->sess.spamTime != -1){
 			client->sess.spamTime = -1; // Boe!Man 10/5/10: Just display these at map restart/client begin.
 			if(level.crossTheBridge){
-				trap_SendServerCommand( ent-g_entities, va("chat -1 \"%sI%sn%sf%so%s: You're playing a mini-game instead of regular gameplay.\n\"", server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-				trap_SendServerCommand( ent-g_entities, va("chat -1 \"%sI%sn%sf%so%s: Don't know how this works? Type '/howto' to get a short tutorial.\n\"", server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-				//trap_SendServerCommand( ent-g_entities, va("chat -1 \"%sI%sn%sf%so%s: Brilliant ideas for another mini-game? Let us know!\n\"", server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
-				//trap_SendServerCommand( ent-g_entities, va("chat -1 \"%sI%sn%sf%so%s: Development forums at 1fx.uk.to!\n\"", server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+				char *info = G_ColorizeMessage("Info:");
+				
+				trap_SendServerCommand( ent-g_entities, va("chat -1 \"%s ^7You're playing a mini-game instead of regular gameplay.\n\"", info));
+				trap_SendServerCommand( ent-g_entities, va("chat -1 \"%s ^7Don't know how this works? Type '/howto' to get a short tutorial.\n\"", info));
 			}
 		}
 		

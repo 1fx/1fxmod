@@ -259,12 +259,6 @@ extern	vmCvar_t	g_subnetbanlist;
 extern	vmCvar_t	g_broadcast;
 
 extern	vmCvar_t	server_colors;
-extern	vmCvar_t	server_color1; // TEMP REMOVE ME LATER.
-extern	vmCvar_t	server_color2;
-extern	vmCvar_t	server_color3;
-extern	vmCvar_t	server_color4;
-extern	vmCvar_t	server_color5;
-extern	vmCvar_t	server_color6;
 
 void	G_ApplyKnockback( gentity_t *targ, vec3_t newDir, float knockback );	// Prototype warnings.
 #ifdef _awesomeToAbuse

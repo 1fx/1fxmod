@@ -279,7 +279,7 @@ void Henk_Tip(void){
 	trap_FS_FCloseFile(f);
 	
 	if(count > 0){
-		trap_SendServerCommand( -1, va("chat -1 \"%sR%sa%sn%sd%so%sm Tip: %s\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, Tips[irand(0, count-1)].tip ) );		
+		trap_SendServerCommand( -1, va("chat -1 \"%s Tip: %s\n\"", G_ColorizeMessage("Random"), Tips[irand(0, count-1)].tip ) );		
 		level.tipMsg = level.time+(server_msgInterval.integer*60000);
 	}else{
 		trap_Cvar_Set("server_enableTips", "0");

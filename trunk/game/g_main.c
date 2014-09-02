@@ -128,13 +128,7 @@ vmCvar_t	g_subnetban;					// Admin CVAR.
 vmCvar_t	g_ban;							// Admin CVAR.
 vmCvar_t	g_broadcast;
 vmCvar_t	g_removeadmin;					// Admin CVAR.
-vmCvar_t	server_colors;
-vmCvar_t	server_color1;					// Server color 1-6.
-vmCvar_t	server_color2;					// Used for displaying colors.
-vmCvar_t	server_color3;					// In either commands or prefixes.
-vmCvar_t	server_color4;
-vmCvar_t	server_color5;
-vmCvar_t	server_color6;
+vmCvar_t	server_colors;					// Broadcast color fades.
 vmCvar_t	g_uppercut;						// Admin CVAR.
 vmCvar_t    g_adminremove;
 vmCvar_t	g_runover;						// Admin CVAR.
@@ -485,12 +479,6 @@ static cvarTable_t gameCvarTable[] =
 //	{ &g_banfile,			"g_banfile",			"users/bans.txt",		CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  },
 
 	{ &server_colors, "server_colors", "GgKk+7", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
-	{ &server_color1, "server_color1", "^G", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
-	{ &server_color2, "server_color2", "^g", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
-	{ &server_color3, "server_color3", "^K", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
-	{ &server_color4, "server_color4", "^k", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
-	{ &server_color5, "server_color5", "^+", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
-	{ &server_color6, "server_color6", "^7", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 
 	{ &server_badminprefix, "server_badminprefix", "^GB-^gA^Kdm^7in", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_adminprefix, "server_adminprefix", "^GA^gd^Km^7in", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
@@ -2371,7 +2359,7 @@ void CheckExitRules( void )
 				if (g_compMode.integer > 0 && cm_enabled.integer == 2){
 					//LogExit(va("%s ^7team wins 1st round with %i - %i", server_redteamprefix, level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE] ));
 					if(cm_dr.integer == 1){ // Boe!Man 3/18/11: If dual rounds are enabled, make use of them and display the temporary stuff.
-						trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7team wins the 1st round with %i - %i!", level.time + 10000, server_redteamprefix.string, level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE]));
+						G_Broadcast(va("%s ^7team wins the 1st round with %i - %i!", server_redteamprefix.string, level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE]), BROADCAST_AWARDS, NULL);
 						// Boe!Man 11/18/10: Set the scores right (for logging purposes).
 						if (cm_aswap.integer == 0){
 							trap_Cvar_Set("cm_sr", va("%i", level.teamScores[TEAM_RED]));
@@ -2386,7 +2374,7 @@ void CheckExitRules( void )
 						LogExit("Red team wins the 1st round.");
 					}else{ // Boe!Man 3/18/11: Red team won the match.
 						trap_SendServerCommand(-1, va("print\"^3[Info] ^7Red team wins the match with %i - %i.\n\"", level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE]));
-						trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7team wins the match with %i - %i!", level.time + 10000, server_redteamprefix.string, level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE]));
+						G_Broadcast(va("%s ^7team wins the match with %i - %i!", server_redteamprefix.string, level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE]), BROADCAST_AWARDS, NULL);
 						trap_Cvar_Set("cm_enabled", "5"); // Boe!Man 11/18/10: 5 - Scrim Ended.
 						LogExit("Red team wins the match.");
 					}
@@ -2431,7 +2419,7 @@ void CheckExitRules( void )
 				tent->s.otherEntityNum = TEAM_BLUE;
 				if (g_compMode.integer > 0 && cm_enabled.integer == 2){
 					if(cm_dr.integer == 1){ // Boe!Man 3/18/11: If dual rounds are enabled, make use of them and display the temporary stuff.
-						trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7team wins the 1st round with %i - %i!", level.time + 10000, server_blueteamprefix.string, level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]));
+						G_Broadcast(va("%s ^7team wins the 1st round with %i - %i!", server_blueteamprefix.string, level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]), BROADCAST_AWARDS, NULL);
 						// Boe!Man 11/18/10: Set the scores right (for logging purposes).
 						if (cm_aswap.integer == 0){
 							trap_Cvar_Set("cm_sr", va("%i", level.teamScores[TEAM_RED]));
@@ -2446,7 +2434,7 @@ void CheckExitRules( void )
 						LogExit("Blue team wins the 1st round.");
 					}else{ // Boe!Man 3/18/11: Blue team won the match.
 						trap_SendServerCommand(-1, va("print\"^3[Info] ^7Blue team wins the match with %i - %i.\n\"", level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]));
-						trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s ^7team wins the match with %i - %i!", level.time + 10000, server_blueteamprefix.string, level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]));
+						G_Broadcast(va("%s ^7team wins the match with %i - %i!", server_blueteamprefix.string, level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]), BROADCAST_AWARDS, NULL);
 						trap_Cvar_Set("cm_enabled", "5"); // Boe!Man 11/18/10: 5 - Scrim Ended.
 						LogExit("Blue team wins the match.");
 					}
@@ -2871,7 +2859,7 @@ void Henk_CheckZombie(void){
 
 	if(level.time >= level.gametypeStartTime+8000 && level.messagedisplay == qfalse && level.gametypeStartTime >= 5000){
 		trap_SendServerCommand(-1, va("print \"^3[H&Z] ^7Shotguns distributed.\n\"") );
-		trap_SendServerCommand( -1, va("cp \"^7%sS%sh%so%st%sg%suns distributed!\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+		G_Broadcast("\\Shotguns distributed!", BROADCAST_GAME, NULL);
 		Boe_GlobalSound( G_SoundIndex("sound/misc/menus/click.wav")); 
 
 		for(i=0;i<level.numConnectedClients;i++){
@@ -2961,7 +2949,7 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 		//Com_Printf("Log1 RPG: %s\nM4: %s\n", g_entities[level.lastalive[0]].client->pers.cleanName, g_entities[level.lastalive[1]].client->pers.cleanName);
 		//G_LogPrintf("RPG: %s\nM4: %s\n", g_entities[level.lastalive[0]].client->pers.cleanName, g_entities[level.lastalive[1]].client->pers.cleanName);
 		trap_SendServerCommand (-1, va("print\"^3[H&S] ^7%s is the last hider alive.\n\"", g_entities[level.lastalive[0]].client->pers.cleanName ));
-		trap_SendServerCommand( level.lastalive[0], va("cp \"^7You are the last %sh%si%sd%se%sr ^7alive!\n\"", server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+		G_Broadcast("You are the last \\hider alive!", BROADCAST_GAME, &g_entities[level.lastalive[0]]);
 		level.lastaliveCheck[1] = qtrue;
 	}
 }
@@ -2975,7 +2963,7 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 	}
 
 	if(level.time >= level.gametypeDelayTime && level.messagedisplay == qfalse && level.gametypeStartTime >= 5000 && !level.crossTheBridge && level.cagefight != qtrue && level.time < level.gametypeRoundTime){
-		trap_SendServerCommand( -1, va("cp \"^7%sS%se%se%sk%se%srs released!\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+		G_Broadcast("\\Seekers released!", BROADCAST_GAME, NULL);
 		Boe_GlobalSound(level.clicksound); // Henkie 22/01/10 -> G_SoundIndex("sound/misc/menus/click.wav") index this when loading map(saves alot performance)
 		// give nades to all players
 		SetupOutfitting();
@@ -3042,7 +3030,7 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 			level.RPGTime = 0;
 			trap_SendServerCommand(-1, va("print\"^3[H&S] ^7RPG given to round winner %s.\n\"", g_entities[rpgwinner].client->pers.netname));
 			g_entities[rpgwinner].client->sess.takenRPG += 1;
-			trap_SendServerCommand(g_entities[rpgwinner].s.number, va("cp \"^7You now have the %sR%sP%sG^7!\n\"", server_color1.string, server_color2.string, server_color3.string));
+			G_Broadcast("You now have the \\RPG!", BROADCAST_GAME, &g_entities[rpgwinner]);
 			// End
 		}else if(rpgwinner >= 100 && m4winner < 100){
 				spawnPoint = G_SelectRandomSpawnPoint ( TEAM_BLUE );
@@ -3082,7 +3070,7 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 					level.lastalive[0] = -1;
 					trap_SendServerCommand(-1, va("print\"^3[H&S] ^7RPG given at random to %s.\n\"", g_entities[level.sortedClients[random]].client->pers.cleanName));
 					g_entities[level.sortedClients[random]].client->sess.takenRPG += 1;
-					trap_SendServerCommand(g_entities[level.sortedClients[random]].s.number, va("cp \"^7You now have the %sR%sP%sG^7!\n\"", server_color1.string, server_color2.string, server_color3.string));
+					G_Broadcast("You now have the \\RPG!", BROADCAST_GAME, &g_entities[level.sortedClients[random]]);
 					break;
 				}
 			}
@@ -3107,7 +3095,7 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 			level.M4ent = -1;
 			trap_SendServerCommand(-1, va("print\"^3[H&S] ^7M4 given to round winner %s.\n\"", g_entities[m4winner].client->pers.netname));
 			g_entities[m4winner].client->sess.takenM4 += 1;
-			trap_SendServerCommand(g_entities[m4winner].s.number, va("cp \"^7You now have the %sM%s4^7!\n\"", server_color1.string, server_color2.string));
+			G_Broadcast("You now have the \\M4!", BROADCAST_GAME, &g_entities[m4winner]);
 			// End
 		}else if(m4winner != 100){ // Henk 26/01/10 -> Drop M4 at red spawn.
 			// Henk 24/02/10 -> Add randomize give away
@@ -3140,7 +3128,7 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 				level.M4ent = -1;
 				trap_SendServerCommand(-1, va("print\"^3[H&S] ^7M4 given at random to %s.\n\"", g_entities[level.sortedClients[random]].client->pers.cleanName));
 				g_entities[level.sortedClients[random]].client->sess.takenM4 += 1;
-				trap_SendServerCommand(g_entities[level.sortedClients[random]].s.number, va("cp \"^7You now have the %sM%s4^7!\n\"", server_color1.string, server_color2.string));
+				G_Broadcast("You now have the \\M4!", BROADCAST_GAME, &g_entities[level.sortedClients[random]]);
 				break;
 			}
 		}else{
@@ -3189,11 +3177,11 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 				
 				// Boe!Man 2/26/14: Broadcast all the weapons the random nade carrier got, he might have RPG/M4 as well.
 				if(g_entities[level.sortedClients[random]].client->ps.stats[STAT_WEAPONS] & (1 << WP_RPG7_LAUNCHER)){
-					trap_SendServerCommand(g_entities[level.sortedClients[random]].s.number, va("cp \"^7You have the %sR%sP%sG ^7& %s?^7 %sg%srenade^7!\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+					G_Broadcast("You now have the \\RPG & ? grenade!", BROADCAST_GAME, &g_entities[level.sortedClients[random]]);
 				}else if(g_entities[level.sortedClients[random]].client->ps.stats[STAT_WEAPONS] & (1 << WP_M4_ASSAULT_RIFLE)){
-					trap_SendServerCommand(g_entities[level.sortedClients[random]].s.number, va("cp \"^7You have the %sM%s4 ^7& %s?^7 %sg%sr%senade^7!\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+					G_Broadcast("You now have the \\M4 & ? grenade!", BROADCAST_GAME, &g_entities[level.sortedClients[random]]);
 				}else{
-					trap_SendServerCommand(g_entities[level.sortedClients[random]].s.number, va("cp \"^7You now have the %s?^7 %sg%sr%se%sn%sade^7!\n\"", server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+					G_Broadcast("You now have the ? \\grenade!", BROADCAST_GAME, &g_entities[level.sortedClients[random]]);
 				}
 			}else{
 				// Boe!Man 2/20/14: Do set the location message if it's not given out this round.
@@ -3466,6 +3454,15 @@ void G_RunFrame( int levelTime )
 			char *as;
 			char *ds;
 			char *dr;
+			char color[4];
+			
+			if (server_colors.string != NULL && strlen(server_colors.string) >= 3){
+				strncpy(color, va("^%c", server_colors.string[3]), sizeof(color));
+			}
+			else{
+				// Always have some sort of backup in case no colors are set (highly unlikely though).
+				strncpy(color, "^1", sizeof(color));
+			}
 
 			if (strstr(cm_slock.string, "1"))
 				sl = "Yes";
@@ -3483,17 +3480,25 @@ void G_RunFrame( int levelTime )
 				dr = "Two";
 			else
 				dr = "One";
-			
+
 			if(dr == "Two"){ // Boe!Man 3/18/11: Display the Auto Swap setting when Dual Rounds are enabled.
-				trap_SendServerCommand(-1, va("cp \"@%sMatch settings\n\n^7[^3Gametype^7]  %s%s %s\n^7[^3Scorelimit^7]  %s%i\n^7[^3Timelimit^7]  %s%i\n^7[^3Specs locked^7] %s%s\n^7[^3Disable events^7] %s%s\n^7[^3# of Rounds^7] %s%s\n^7[^3Auto swap^7] %s%s\n\n%sRestart map to start the first round!\"", 
-					server_color3.string, server_color3.string, level.mapname, g_gametype.string, server_color3.string, cm_sl.integer, server_color3.string, cm_tl.integer, server_color3.string, sl, server_color3.string, ds, server_color3.string, dr, server_color3.string, as, server_color3.string));
+				G_Broadcast(va("cp \"@%sMatch settings\n\n^7[^3Gametype^7] %s%s %s\n^7[^3Scorelimit^7]  %s%i\n^7[^3Timelimit^7]  %s%i\n^7[^3Specs locked^7] %s%s\n^7[^3Disable events^7] %s%s\n^7[^3# of Rounds^7] %s%s\n^7[^3Auto swap^7] %s%s\n\n%sRestart map to start the first round!\"", 
+					color, color, level.mapname, g_gametype.string, color, cm_sl.integer, color, cm_tl.integer, color, sl, color, ds, color, dr, color, as, color), BROADCAST_GAME, NULL);
 			}else{ // Boe!Man 3/18/11: Hide it when it's disabled.
-				trap_SendServerCommand(-1, va("cp \"@%sMatch settings\n\n^7[^3Gametype^7]  %s%s %s\n^7[^3Scorelimit^7]  %s%i\n^7[^3Timelimit^7]  %s%i\n^7[^3Specs locked^7] %s%s\n^7[^3Disable events^7] %s%s\n^7[^3# of Rounds^7] %s%s\n\n%sRestart map to start the first round!\"", 
-					server_color3.string, server_color3.string, level.mapname, g_gametype.string, server_color3.string, cm_sl.integer, server_color3.string, cm_tl.integer, server_color3.string, sl, server_color3.string, ds, server_color3.string, dr, server_color3.string));
+				G_Broadcast(va("cp \"@%sMatch settings\n\n^7[^3Gametype^7] %s%s %s\n^7[^3Scorelimit^7]  %s%i\n^7[^3Timelimit^7]  %s%i\n^7[^3Specs locked^7] %s%s\n^7[^3Disable events^7] %s%s\n^7[^3# of Rounds^7] %s%s\n\n%sRestart map to start the first round!\"", 
+					color, color, level.mapname, g_gametype.string, color, cm_sl.integer, color, cm_tl.integer, color, sl, color, ds, color, dr, color), BROADCAST_GAME, NULL);
 			}
 			level.compMsgCount = level.time + 3000;
+		}else if(cm_enabled.integer == 3 && level.compMsgCount < level.time){ // Boe!Man 3/19/11: Fixing possible shortcome. High pingers might not always receive them properly this way..
+			char color[4];
+
+			if (server_colors.string != NULL && strlen(server_colors.string) >= 3){
+				strncpy(color, va("^%c", server_colors.string[3]), sizeof(color));
+			}else{
+				// Always have some sort of backup in case no colors are set (highly unlikely though).
+				strncpy(color, "^1", sizeof(color));
 			}
-		else if(cm_enabled.integer == 3 && level.compMsgCount < level.time){ // Boe!Man 3/19/11: Fixing possible shortcome. High pingers might not always receive them properly this way..
+
 			// Boe!Man 1/24/11: Swap the teams.
 			if (cm_aswap.integer > 0 && level.swappedteams == qfalse){
 				adm_swapTeams(-1, NULL, qfalse);
@@ -3509,17 +3514,18 @@ void G_RunFrame( int levelTime )
 				level.swappedteams = qtrue;
 			}
 			if (cm_sr.integer > cm_sb.integer){
-				trap_SendServerCommand(-1, va("cp \"@%sFirst round ended!\n\n^7[^3Red team^7] %sleads with %i - %i\n\n%sRestart map to start the second round!",
-					server_color3.string, server_color3.string, cm_sr.integer, cm_sb.integer, server_color3.string));
+				G_Broadcast(va("cp \"@%sFirst round ended!\n\n^7[^3Red team^7] %sleads with %i - %i\n\n%sRestart map to start the second round!",
+					color, color, cm_sr.integer, cm_sb.integer, color), BROADCAST_GAME, NULL);
 			}
 			else if (cm_sb.integer > cm_sr.integer){
-				trap_SendServerCommand(-1, va("cp \"@%sFirst round ended!\n\n^7[^3Blue team^7] %sleads with %i - %i\n\n%sRestart map to start the second round!",
-					server_color3.string, server_color3.string, cm_sb.integer, cm_sr.integer, server_color3.string));
+				G_Broadcast(va("cp \"@%sFirst round ended!\n\n^7[^3Blue team^7] %sleads with %i - %i\n\n%sRestart map to start the second round!",
+					color, color, cm_sb.integer, cm_sr.integer, color), BROADCAST_GAME, NULL);
 			}
 			else{ // Boe!Man 3/19/11: It could be a round draw with the timelimit.
-				trap_SendServerCommand(-1, va("cp \"@%sFirst round ended!\n\n^7[^3Round draw^7] %swith %i - %i\n\n%sRestart map to start the second round!",
-					server_color3.string, server_color3.string, cm_sb.integer, cm_sr.integer, server_color3.string));
+				G_Broadcast(va("cp \"@%sFirst round ended!\n\n^7[^3Round draw^7] %swith %i - %i\n\n%sRestart map to start the second round!",
+					color, color, cm_sb.integer, cm_sr.integer, color), BROADCAST_GAME, NULL);
 			}
+
 			level.compMsgCount = level.time + 3000;
 		}
 	}

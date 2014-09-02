@@ -955,7 +955,7 @@ void BroadcastTeamChange( gclient_t *client, int oldTeam )
 				break;
 
 			case TEAM_FREE:
-				strcpy(message, va("%s" S_COLOR_WHITE "\njoined the %sb%sa%st%st%sl%se\n\"", client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+				strcpy(message, G_ColorizeMessage(va("%s" S_COLOR_WHITE "\njoined the \\battle\n\"", client->pers.netname)));
 				trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s ^7joined the battle.\n\"", client->pers.cleanName));
 				break;
 		}
@@ -985,12 +985,12 @@ void BroadcastTeamChange( gclient_t *client, int oldTeam )
 
 			// Boe!Man 3/16/11: Broadcast the teamchange.
 			if(noAdmin == qfalse){
-				trap_SendServerCommand( -1, va("cp \"@%s\n%s %s\n\"", clan, admin, message));
+				G_Broadcast(va("%s\n%s %s", clan, admin, message), BROADCAST_GAME, NULL);
 			}else{
-				trap_SendServerCommand( -1, va("cp \"@%s\n%s\n\"", clan, message));
+				G_Broadcast(va("%s\n%s", clan, message), BROADCAST_GAME, NULL);
 			}
 		}else{ // Boe!Man 3/18/11: Else we just display the message itself.
-			trap_SendServerCommand( -1, va("cp \"@%s\n\"", message));
+			G_Broadcast(message, BROADCAST_GAME, NULL);
 		}
 	}
 	return;
@@ -1206,24 +1206,20 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 		if ((team == TEAM_RED) && level.redLocked){
 			// Boe!Man 2/15/11: H&S messages are different as they use another team prefix.
 			if(current_gametype.value == GT_HS){
-				trap_SendServerCommand(clientNum, va("cp \"@%s ^7are %sl%so%sc%sk%se%sd!\n\"", server_hiderteamprefix.string, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string ));
+				G_Broadcast(va("%s ^7are \\locked!", server_hiderteamprefix.string), BROADCAST_GAME, ent);
 				trap_SendServerCommand(clientNum, va("print \"^3[Info] ^7Hiders are locked.\n\"") );
 			}else{
-				// Boe!Man 12/14/10
-				trap_SendServerCommand(clientNum, va("cp \"@%s ^7team is %sl%so%sc%sk%se%sd!\n\"", server_redteamprefix.string, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string ));
+				G_Broadcast(va("%s ^7team is \\locked!", server_redteamprefix.string), BROADCAST_GAME, ent);
 				trap_SendServerCommand(clientNum, va("print \"^3[Info] ^7Red team is locked.\n\"") );
 			}
 			return;
-		}
-		///else if ((team == TEAM_BLUE) && level.blueLocked)
-		else if ((team == TEAM_BLUE) && level.blueLocked){
+		}else if ((team == TEAM_BLUE) && level.blueLocked){
 			// Boe!Man 2/15/11: H&S messages are different as they use another team prefix.
 			if(current_gametype.value == GT_HS){
-				trap_SendServerCommand(clientNum, va("cp \"@%s ^7are %sl%so%sc%sk%se%sd!\n\"", server_seekerteamprefix.string, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string ));
+				G_Broadcast(va("%s ^7are \\locked!", server_seekerteamprefix.string), BROADCAST_GAME, ent);
 				trap_SendServerCommand(clientNum, va("print \"^3[Info] ^7Seekers are locked.\n\"") );
 			}else{
-				// Boe!Man 12/14/10
-				trap_SendServerCommand(clientNum, va("cp \"@%s ^7team is %sl%so%sc%sk%se%sd!\n\"", server_blueteamprefix.string, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string ));
+				G_Broadcast(va("%s ^7team is \\locked!", server_blueteamprefix.string), BROADCAST_GAME, ent);
 				trap_SendServerCommand(clientNum, va("print \"^3[Info] ^7Blue team is locked.\n\"") );
 			}
 			return;
@@ -2527,7 +2523,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 							trap_GPG_FindPairValue(group, "Broadcast", "Custom action applied", broadcast);
 							trap_GPG_FindPairValue(group, "Message", "Custom action has been applied.", message);
 							trap_SendServerCommand( -1, va("print \"^3[Custom Admin Action] ^7%s.\n\"", message));
-							trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s", level.time + 5000, broadcast));
+							G_Broadcast(broadcast, BROADCAST_CMD, NULL);
 							memset(level.action, 0, sizeof(level.action));
 							Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 							strcpy(level.action, action);
@@ -2544,63 +2540,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		}
 
 	}
-		//
-
 	}
-	// End
-
-	/*	
-	// Boe!Man 5/2/10: The Referee tokens. I think we're actually the first with this... (:
-	// Boe!Man 6/3/11: Not needed, no one uses them.
-	if(strstr(p, "!i ")){
-		if(ent->client->sess.admin > 1){
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Use /adm suspend or !su to become a Referee!\n\""));
-		}else if(ent->client->sess.referee == 1){
-			if (!level.gametypeData->teams){
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Not playing a team game!\n\""));
-			return;}
-			if (strstr(p, "b")){
-			strcpy(team, "b");
-			RPM_TeamInfo(ent, va("%s", team));}
-			else if(strstr(p, "r")){
-			strcpy(team, "b");
-			RPM_TeamInfo(ent, va("%s", team));}
-			else{
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Unknown team specified!\n\""));
-			return;}
-		}
-		G_Say( ent, NULL, mode, p);
-		return;
-	}
-	else if(strstr(p, "!rt")){
-		if(ent->client->sess.admin > 1){
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Use /adm suspend or !su to become a Referee!\n\""));
-		}else if(ent->client->sess.referee == 1){
-			if(level.warmupTime == 0 || g_doWarmup.integer != 2){
-			trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7Server is currently not in Ready-up mode.\n\""));
-			return;}
-			if (!level.gametypeData->teams){
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Not playing a team game!\n\""));
-			return;}
-			if(strlen(p) == 3){
-			//RPM_ReadyAll();
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@Teams %sr%se%sa%sd%si%sed by %s", level.time + 5000, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string, ent->client->pers.netname));
-			trap_SendServerCommand( -1, va("print \"^3[Referee Action] ^7Teams readied by %s.\n\"", ent->client->pers.netname));
-			Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-			}
-		}
-		//else
-		//{
-			//RPM_ReadyTeam(ent, qtrue, arg2);
-		//}
-		G_Say( ent, NULL, mode, p);
-		return;
-	//}else if(strstr(p, "!test")){
-	//	AdminCommands[1].Function(1, ent, qtrue);
-	//	trap_SendServerCommand( -1, va("print \"^3[Debug] ^7%s level is %i.\n\"", AdminCommands[1].adminCmd, *AdminCommands[1].adminLevel));
-
-	}
-	*/
 	}
 
 	// Boe!Man 12/20/09
@@ -3858,7 +3798,7 @@ void Boe_adm_f ( gentity_t *ent )
 					trap_GPG_FindPairValue(group, "Broadcast", "Custom action applied", broadcast);
 					trap_GPG_FindPairValue(group, "Message", "Custom action has been applied.", message);
 					trap_SendServerCommand( -1, va("print \"^3[Custom Admin action] ^7%s.\n\"", message));
-					trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@%s", level.time + 5000, broadcast));
+					G_Broadcast(broadcast, BROADCAST_CMD, NULL);
 					memset(level.action, 0, sizeof(level.action));
 					strcpy(level.action, action);
 					Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
@@ -4138,6 +4078,9 @@ char *G_ColorizeMessage(char *broadcast)
 				if (tempBroadcast != NULL){
 					strncat(newBroadcast, broadcast + newWordPosition + newWordLength + 1, strlen(broadcast) - newWordLength - newWordPosition - 1);
 				}
+
+				// Copy a trailing ^7 so all text won't be messed up if the colors aren't set to fade out correctly.
+				strcat(newBroadcast, "^7");
 			}
 		}
 	}else{
@@ -4156,12 +4099,12 @@ void G_postExecuteAdminCommand(int funcNum, int idNum, gentity_t *adm)
 	// Broadcast the change and log it.
 	if (adm != NULL){
 		// Admin action.
-		G_Broadcast(va("%s\n^7was \\%s%s\n^7by %s", g_entities[idNum].client->pers.netname, AdminCommands[funcNum].adminCmd, (AdminCommands[funcNum].suffix != NULL) ? AdminCommands[funcNum].suffix : "", adm->client->pers.netname), BROADCAST_CMD, NULL);
+		G_Broadcast(va("%s\nwas \\%s%s\nby %s", g_entities[idNum].client->pers.netname, AdminCommands[funcNum].adminCmd, (AdminCommands[funcNum].suffix != NULL) ? AdminCommands[funcNum].suffix : "", adm->client->pers.netname), BROADCAST_CMD, NULL);
 		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was %s%s by %s.\n\"", g_entities[idNum].client->pers.cleanName, AdminCommands[funcNum].adminCmd, (AdminCommands[funcNum].suffix != NULL) ? AdminCommands[funcNum].suffix : "", adm->client->pers.cleanName));
 		Boe_adminLog(AdminCommands[funcNum].adminCmd, va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", g_entities[idNum].client->pers.ip, g_entities[idNum].client->pers.cleanName));
 	}else{
 		// RCON action.
-		G_Broadcast(va("%s\n^7was \\%s%s", g_entities[idNum].client->pers.netname, AdminCommands[funcNum].adminCmd, (AdminCommands[funcNum].suffix != NULL) ? AdminCommands[funcNum].suffix : ""), BROADCAST_CMD, NULL);
+		G_Broadcast(va("%s\nwas \\%s%s", g_entities[idNum].client->pers.netname, AdminCommands[funcNum].adminCmd, (AdminCommands[funcNum].suffix != NULL) ? AdminCommands[funcNum].suffix : ""), BROADCAST_CMD, NULL);
 		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s was %s%s.\n\"", g_entities[idNum].client->pers.cleanName, AdminCommands[funcNum].adminCmd, (AdminCommands[funcNum].suffix != NULL) ? AdminCommands[funcNum].suffix : ""));
 		Boe_adminLog(AdminCommands[funcNum].adminCmd, va("%s", "RCON"), va("%s\\%s", g_entities[idNum].client->pers.ip, g_entities[idNum].client->pers.cleanName));
 	}

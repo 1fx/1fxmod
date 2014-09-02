@@ -89,8 +89,7 @@ void RPM_ref_cmd( gentity_t *ent)
 		if(!Q_stricmp ( g_refpassword.string, arg2 ))
 		{
 			ent->client->sess.referee = 1;
-			//trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,^3%s is now a ^3Referee", level.time + 5000, ent->client->pers.netname ) );
-			trap_SetConfigstring ( CS_GAMETYPE_MESSAGE, va("%i,@^7%s is now a %sR%se%sf%se%sr%see", level.time + 5000, ent->client->pers.netname, server_color1.string, server_color2.string, server_color3.string, server_color4.string, server_color5.string, server_color6.string));
+			G_Broadcast(va("%s\nis now a \\Referee", ent->client->pers.netname), BROADCAST_CMD, NULL);
 			trap_SendServerCommand(-1, va("print\"^3[Referee Action] ^7%s ^7is now a Referee.\n\"", ent->client->pers.netname));
 			return;
 		}
