@@ -1110,18 +1110,13 @@ void ClientThink_real( gentity_t *ent )
 	//Ryan
 
 	// Check for frozen players.
-	if(client->sess.freeze){
-		if(client->sess.freeze && ucmd->buttons & BUTTON_RELOAD){
-			client->sess.freeze = qfalse;
-			ent->client->ps.pm_type = PM_NORMAL;
-		}else{
-			ent->client->ps.pm_type = PM_FREEZE;
-			pm.ps = &client->ps;
-			ucmd->buttons = -1;
-			pm.cmd = *ucmd;
-			Pmove(&pm);
-			return;
-		}
+	if (client->sess.freeze && !(ent->client->pers.cmd.buttons & BUTTON_RELOAD)){
+		ent->client->ps.pm_type = PM_FREEZE;
+		pm.ps = &client->ps;
+		ucmd->buttons = 0;
+		pm.cmd = *ucmd;
+		Pmove(&pm);
+		return;
 	}
 
 	//
@@ -1314,13 +1309,11 @@ void ClientThink_real( gentity_t *ent )
 				G_FreeEntity(&g_entities[client->sess.transformedEntity2]);
 				client->sess.transformedEntity2 = 0;
 			}
-			
-			// Unplant the player.
-			ent->client->ps.origin[2] += 65;
-			VectorCopy( ent->client->ps.origin, ent->s.origin );
 		
-			// Reset his invisibility state.
+			// Reset his invisibility state, and make it so he can move again.
 			client->sess.invisibleGoggles = qfalse;
+			client->sess.freeze = qfalse;
+			client->ps.pm_type = PM_NORMAL;
 			
 			// And reset the nade state.
 			strncpy(level.RandomNadeLoc, "Disappeared", sizeof(level.RandomNadeLoc));

@@ -1767,12 +1767,12 @@ qboolean G_RadiusDamage (
 	// Boe!Man 4/24/14: No matter where they throw that grenade, always check the origin around the hider only.
 	if(current_gametype.value == GT_HS && (mod == WP_M67_GRENADE || mod == altAttack(WP_M67_GRENADE)) && attacker){
 		origin = attacker->r.currentOrigin;
-	}
-	
-	for ( i = 0 ; i < 3 ; i++ )
-	{
-		mins[i] = origin[i] - radius;
-		maxs[i] = origin[i] + radius;
+	}else{
+		for ( i = 0 ; i < 3 ; i++ )
+		{
+			mins[i] = origin[i] - radius;
+			maxs[i] = origin[i] + radius;
+		}
 	}
 	
 	if(current_gametype.value == GT_HS){
@@ -1801,6 +1801,11 @@ qboolean G_RadiusDamage (
 			maxs1[0] = origin[0] + 23;
 			maxs1[1] = origin[1] + 58;
 			maxs1[2] = origin[2] - 9;
+		}else if (mod == MOD_M67_GRENADE || mod == altAttack(MOD_M67_GRENADE)){
+			for (i = 0; i < 3; i++){
+				mins[i] = origin[i] - DEFAULT_PLAYER_Z_MAX * 2;
+				maxs[i] = origin[i] + DEFAULT_PLAYER_Z_MAX * 2;
+			}
 		}
 	}
 	maxs1[2] += 50;
@@ -1885,7 +1890,7 @@ qboolean G_RadiusDamage (
 			// Transform grenade for the hider.
 			if(mod == MOD_M67_GRENADE || mod == altAttack(MOD_M67_GRENADE)){
 				// Check if a player was caught in the radius.
-				if(ent != attacker){
+				if(ent != attacker && ent->client){
 					if(ent && ent->client){
 						NadeOutOfBoundaries = qtrue;
 						break;
@@ -2146,19 +2151,25 @@ qboolean G_RadiusDamage (
 				G_TransformPlayerToObject(attacker);
 			}else{
 				// Give them their nade back if they don't have it.
-				ammoindex=weaponData[WP_M67_GRENADE].attack[ATTACK_ALTERNATE].ammoIndex;
+				ammoindex = weaponData[WP_M67_GRENADE].attack[ATTACK_ALTERNATE].ammoIndex;
 				
 				// This can happen multiple times, so have some sort of check here.
 				if(!attacker->client->ps.ammo[ammoindex]){
-					attacker->client->ps.ammo[ammoindex]+=1;
 					if(attacker->client->ps.pm_flags & PMF_JUMPING){
 						trap_SendServerCommand(attacker - g_entities, va("print \"^3[Info] ^7You're not allowed to jump while using this grenade.\n\""));
+
+						if (!(attacker->client->ps.stats[STAT_WEAPONS] & (1 << WP_M67_GRENADE))){
+							attacker->client->ps.stats[STAT_WEAPONS] |= (1 << WP_M67_GRENADE);
+						}else{
+							attacker->client->ps.ammo[ammoindex] += 1;
+						}
 					}else{
 						trap_SendServerCommand(attacker - g_entities, va("print \"^3[Info] ^7The grenade must detonate near just you in order to transform.\n\""));
-					}
-					
-					if (!(attacker->client->ps.stats[STAT_WEAPONS] & (1<<WP_M67_GRENADE))){
-						attacker->client->ps.stats[STAT_WEAPONS] |= (1 << WP_M67_GRENADE);
+						
+						attacker->client->ps.ammo[ammoindex] += 1;
+						if (!(attacker->client->ps.stats[STAT_WEAPONS] & (1 << WP_M67_GRENADE))){
+							attacker->client->ps.stats[STAT_WEAPONS] |= (1 << WP_M67_GRENADE);
+						}
 					}
 				}
 			}

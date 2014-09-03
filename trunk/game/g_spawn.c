@@ -1494,6 +1494,7 @@ void TransformPlayerBack(gentity_t *self, gentity_t *other, trace_t *trace)
 	
 	// First we make sure he can walk again.
 	g_entities[self->hideseek].client->sess.freeze = qfalse;
+	g_entities[self->hideseek].client->ps.pm_type = PM_NORMAL;
 	g_entities[self->hideseek].client->sess.invisibleGoggles = qfalse; // And that others can see him again as well.
 	
 	// Good, now we can free the entities spawned.

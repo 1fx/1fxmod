@@ -524,6 +524,7 @@ void G_ResetGametype ( qboolean fullRestart, qboolean cagefight )
 			if(other->client->sess.transformedEntity){
 				G_FreeEntity(&g_entities[other->client->sess.transformedEntity]);
 				other->client->sess.transformedEntity = 0;
+				other->client->sess.freeze = qfalse;
 			}
 			if(other->client->sess.transformedEntity2){
 				G_FreeEntity(&g_entities[other->client->sess.transformedEntity2]);
