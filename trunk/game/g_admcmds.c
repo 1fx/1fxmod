@@ -968,7 +968,7 @@ Disables or enables nolower if an entity of such kind is specified on the curren
 
 int adm_noLower(int argNum, gentity_t *adm, qboolean shortCmd)
 {
-	adm_toggleSection(adm, "Nolower", 0);
+	adm_toggleSection(adm, "Nolower", 0, g_useNoLower.integer);
 
 	return -1;
 }
@@ -983,7 +983,7 @@ Disables or enables nolower if an entity of such kind is specified on the curren
 
 int adm_noRoof(int argNum, gentity_t *adm, qboolean shortCmd)
 {
-	adm_toggleSection(adm, "Noroof", 1);
+	adm_toggleSection(adm, "Noroof", 1, g_useNoRoof.integer);
 
 	return -1;
 }
@@ -998,7 +998,7 @@ Disables or enables nomiddle if an entity of such kind is specified on the curre
 
 int adm_noMiddle(int argNum, gentity_t *adm, qboolean shortCmd)
 {
-	adm_toggleSection(adm, "Nomiddle", 2);
+	adm_toggleSection(adm, "Nomiddle", 2, g_useNoMiddle.integer);
 
 	return -1;
 }
@@ -1013,7 +1013,7 @@ Disables or enables nowhole if an entity of such kind is specified on the curren
 
 int adm_noWhole(int argNum, gentity_t *adm, qboolean shortCmd)
 {
-	adm_toggleSection(adm, "Nowhole", 3);
+	adm_toggleSection(adm, "Nowhole", 3, g_useNoWhole.integer);
 
 	return -1;
 }
@@ -1026,7 +1026,7 @@ Disables or enables a section if an entity of such kind is specified on the curr
 ================
 */
 
-static void adm_toggleSection(gentity_t *adm, char *sectionName, int sectionID)
+static void adm_toggleSection(gentity_t *adm, char *sectionName, int sectionID, int useSection)
 {
 	char		sectionNameWithoutCap[16];
 	qboolean	enabled;
@@ -1035,8 +1035,8 @@ static void adm_toggleSection(gentity_t *adm, char *sectionName, int sectionID)
 	strncpy(sectionNameWithoutCap, sectionName, sizeof(sectionNameWithoutCap));
 	Q_strlwr(sectionNameWithoutCap);
 
-	// Boe!Man 2/27/11: If people don't want to use NoLower they can specify to disable it.
-	if (g_useNoLower.integer <= 0){
+	// Boe!Man 2/27/11: If people don't want to use this section they can specify to disable it.
+	if (useSection <= 0){
 		if (adm && adm->client){
 			trap_SendServerCommand(adm - g_entities, va("print\"^3[Info] ^7%s has been disabled on this server.\n\"", sectionName));
 		}else{
@@ -1056,7 +1056,7 @@ static void adm_toggleSection(gentity_t *adm, char *sectionName, int sectionID)
 		return;
 	}
 
-	enabled = level.noLRActive[sectionID];
+	enabled = !level.noLRActive[sectionID];
 	level.noLRActive[sectionID] = enabled;
 	level.autoLRMWActive[sectionID] = enabled;
 
