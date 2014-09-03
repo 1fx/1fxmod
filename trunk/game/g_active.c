@@ -1112,6 +1112,7 @@ void ClientThink_real( gentity_t *ent )
 	// Check for frozen players.
 	if (client->sess.freeze && !(ent->client->pers.cmd.buttons & BUTTON_RELOAD)){
 		ent->client->ps.pm_type = PM_FREEZE;
+		memset(&pm, 0, sizeof(pm));
 		pm.ps = &client->ps;
 		ucmd->buttons = 0;
 		pm.cmd = *ucmd;

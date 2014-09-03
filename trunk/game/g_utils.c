@@ -179,7 +179,7 @@ void G_TeamCommand( team_t team, char *cmd )
 		{
 			if ( level.clients[i].sess.team == team ) 
 			{
-				G_Broadcast(cmd, BROADCAST_GAME, &level.clients[i]);
+				G_Broadcast(cmd, BROADCAST_GAME, &g_entities[i]);
 			}
 		}
 	}
