@@ -933,7 +933,7 @@ void SP_seekers(gentity_t* ent)
 	
 	// We loop through the command, and check if we can find something useful.
 	// The even teams command blindly checks whatever the user put here, it's up to the server owner to declare valid values.
-	for(i = 1; i <= sizeof(level.customETHiderAmount); i++){
+	for(i = 1; i <= 16; i++){
 		G_SpawnInt(va("%i", i), "-1", &tempInt);
 		
 		if(tempInt){
