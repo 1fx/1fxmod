@@ -703,11 +703,11 @@ int adm_Mute(int argNum, gentity_t *adm, qboolean shortCmd)
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 	if (adm && adm->client){
 		G_Broadcast(va("%s\nwas \\%s\nby %s", g_entities[idNum].client->pers.netname, (unMute) ? "unmuted" : "muted", adm->client->pers.netname), BROADCAST_CMD, NULL);
-		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s ^7was %s by %s%s\n\"", g_entities[idNum].client->pers.netname, (unMute) ? "unmuted" : "muted", adm->client->pers.netname, (unMute) ? "." : va("for %i minutes.", time)));
+		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s ^7was %s by %s%s\n\"", g_entities[idNum].client->pers.netname, (unMute) ? "unmuted" : "muted", adm->client->pers.netname, (unMute) ? "." : va(" for %i minutes.", time)));
 		Boe_adminLog("muted", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", g_entities[idNum].client->pers.ip, g_entities[idNum].client->pers.cleanName));
 	}else{
 		G_Broadcast(va("%s\nwas \\%s", g_entities[idNum].client->pers.netname, (unMute) ? "unmuted" : "muted"), BROADCAST_CMD, NULL);
-		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s ^7was %s%s\n\"", g_entities[idNum].client->pers.netname, (unMute) ? "unmuted" : "muted", time, (unMute) ? "." : va("for %i minutes.", time)));
+		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s ^7was %s%s\n\"", g_entities[idNum].client->pers.netname, (unMute) ? "unmuted" : "muted", (unMute) ? "." : va(" for %i minutes.", time)));
 		Boe_adminLog("muted", "RCON", va("%s\\%s", g_entities[idNum].client->pers.ip, g_entities[idNum].client->pers.cleanName));
 	}
 	
