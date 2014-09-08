@@ -1184,28 +1184,51 @@ char *ChooseTeam(){
 	
 	counts[TEAM_BLUE] = TeamCount1(TEAM_BLUE);
 	counts[TEAM_RED] = TeamCount1(TEAM_RED);
-	if(counts[TEAM_RED] >= 4 && counts[TEAM_RED] <= 8){
-		seekers = 2;
-	}else if(counts[TEAM_RED] >= 9 && counts[TEAM_RED] <= 13){
-		seekers = 3;
-	}else if(counts[TEAM_RED] >= 14 && counts[TEAM_RED] <= 18){
-		seekers = 4;
-	}else if(counts[TEAM_RED] >= 19){
-		seekers = 5;
+
+	if (level.customETHiderAmount[0]){
+		int	i;
+
+		// The user put custom values here. Check them.
+		for (i = 0; i < sizeof(level.customETHiderAmount) - 1; i++){
+			if (level.customETHiderAmount[i + 1] == -1){
+				// It seems the maximum of hiders specified is reached. Use that amount of seekers.
+				seekers = i + 1;
+				maxhiders = level.customETHiderAmount[i] + 1;
+				break;
+			}
+
+			if (counts[TEAM_RED] >= level.customETHiderAmount[i] && counts[TEAM_RED] <= level.customETHiderAmount[i + 1]){
+				seekers = i + 1;
+				maxhiders = level.customETHiderAmount[i + 1];
+				break;
+			}
+		}
 	}else{
-		seekers = 1;
+		if(counts[TEAM_RED] >= 4 && counts[TEAM_RED] <= 8){
+			seekers = 2;
+		}else if(counts[TEAM_RED] >= 9 && counts[TEAM_RED] <= 13){
+			seekers = 3;
+		}else if(counts[TEAM_RED] >= 14 && counts[TEAM_RED] <= 18){
+			seekers = 4;
+		}else if(counts[TEAM_RED] >= 19){
+			seekers = 5;
+		}else{
+			seekers = 1;
+		}
+
+		if(counts[TEAM_BLUE] == 2){
+			maxhiders = 8;
+		}else if(counts[TEAM_BLUE] == 3){
+			maxhiders = 13;
+		}else if(counts[TEAM_BLUE] == 4){
+			maxhiders = 18;
+		}else if(counts[TEAM_BLUE] == 5){
+			maxhiders = 24;
+		}else{
+			maxhiders = 6; // Henkie 24/02/10 -> Was 4
+		}
 	}
-	if(counts[TEAM_BLUE] == 2){
-		maxhiders = 8;
-	}else if(counts[TEAM_BLUE] == 3){
-		maxhiders = 13;
-	}else if(counts[TEAM_BLUE] == 4){
-		maxhiders = 18;
-	}else if(counts[TEAM_BLUE] == 5){
-		maxhiders = 24;
-	}else{
-		maxhiders = 6; // Henkie 24/02/10 -> Was 4
-	}
+
 	if ( counts[TEAM_BLUE] >= seekers)	{
 		return "r";
 	}else if(counts[TEAM_RED] >= maxhiders){

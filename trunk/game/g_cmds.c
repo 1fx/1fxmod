@@ -1098,32 +1098,53 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 			if(current_gametype.value == GT_HS){
 				counts[TEAM_BLUE] = TeamCount1(TEAM_BLUE);
 				counts[TEAM_RED] = TeamCount1(TEAM_RED);
+
 				// Henk 19/01/10 -> Team balance hiders/seekers
 				// Boe!Man 8/12/11: Modified the code (lowered) so there's ALWAYS room for one extra seeker (else it will result in both teams being locked in specific team layouts).
-				if(counts[TEAM_RED] >= 4 && counts[TEAM_RED] <= 7){
-					seekers = 2;
-				}else if(counts[TEAM_RED] >= 8 && counts[TEAM_RED] <= 12){
-					seekers = 3;
-				}else if(counts[TEAM_RED] >= 13 && counts[TEAM_RED] <= 17){
-					seekers = 4;
-				}else if(counts[TEAM_RED] >= 18){
-					seekers = 5;
-				}
-				else{
-					seekers = 1;
+				if (level.customETHiderAmount[0]){
+					int	i;
+
+					// The user put custom values here. Check them.
+					for (i = 0; i < sizeof(level.customETHiderAmount) - 1; i++){
+						if (level.customETHiderAmount[i + 1] == -1){
+							// It seems the maximum of hiders specified is reached. Use that amount of seekers.
+							seekers = i + 1;
+							maxhiders = g_maxclients.integer - seekers;
+							break;
+						}
+
+						if (counts[TEAM_RED] >= level.customETHiderAmount[i] && counts[TEAM_RED] <= level.customETHiderAmount[i + 1]){
+							seekers = i + 1;
+							maxhiders = level.customETHiderAmount[i + 1] + 1;
+							break;
+						}
+					}
+				}else{
+					if(counts[TEAM_RED] >= 4 && counts[TEAM_RED] <= 7){
+						seekers = 2;
+					}else if(counts[TEAM_RED] >= 8 && counts[TEAM_RED] <= 12){
+						seekers = 3;
+					}else if(counts[TEAM_RED] >= 13 && counts[TEAM_RED] <= 17){
+						seekers = 4;
+					}else if(counts[TEAM_RED] >= 18){
+						seekers = 5;
+					}else{
+						seekers = 1;
+					}
+
+					if(counts[TEAM_BLUE] == 2){
+						maxhiders = 8;
+					}else if(counts[TEAM_BLUE] == 3){
+						maxhiders = 13;
+					}else if(counts[TEAM_BLUE] == 4){
+						maxhiders = 18;
+					}else if(counts[TEAM_BLUE] == 5){
+						maxhiders = 24;
+					}else{
+						maxhiders = 6; // Henkie 24/02/10 -> Was 4
+					}
 				}
 
-				if(counts[TEAM_BLUE] == 2){
-					maxhiders = 8;
-				}else if(counts[TEAM_BLUE] == 3){
-					maxhiders = 13;
-				}else if(counts[TEAM_BLUE] == 4){
-					maxhiders = 18;
-				}else if(counts[TEAM_BLUE] == 5){
-					maxhiders = 24;
-				}else{
-					maxhiders = 6; // Henkie 24/02/10 -> Was 4
-				}
 				if ( team == TEAM_BLUE && counts[TEAM_BLUE] >= seekers)	{
 					trap_SendServerCommand ( client - &level.clients[0], "print\"^3[H&S] ^7Seekers have too many players.\n\"" );
 					
