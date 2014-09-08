@@ -78,7 +78,7 @@ static admCmd_t AdminCommands[] =
 	{"!b","burn", &g_burn.integer, &adm_Burn, "ed"},
 	{"!u","uppercut", &g_uppercut.integer, &adm_Uppercut, NULL},
 	{"!p","pop", &g_pop.integer, &adm_Pop, "ped"},
-	{"!k","kick", &g_kick.integer, &adm_Kick, NULL},
+	{"!k","kick", &g_kick.integer, &adm_Kick, "ed"},
 	{"!m","mute", &g_mute.integer, &adm_Mute, NULL},
 	{"!s","strip", &g_strip.integer, &adm_Strip, "ped"},
 	{"!ff","friendlyfire", &g_ff.integer, &adm_friendlyFire, NULL},
