@@ -76,17 +76,17 @@ __asm__(".globl Patch_dosDetour0 \n\t"
 #elif _MSC_VER
 __declspec(naked) void Patch_dosDetour0()
 {
-	__asm{
-		call	Patch_dosDetour;
-		cmp		eax, 0;
-		je		exitFunc;
+	if (Patch_dosDetour() != 0){
 		// Call SVC_Status if we're below our allowed limit.
-		mov		eax, 0x4760C0;
-		call	eax;
-		
-	exitFunc:
+		__asm{
+			mov		eax, 0x4760C0;
+			call	eax;
+		}
+	}
+
+	__asm{
 		push	0x4768A0;
-		retn	;
+		retn
 	}
 }
 #endif // __GNUC__
