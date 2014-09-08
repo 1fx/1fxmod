@@ -844,8 +844,8 @@ char *Q_strlwr( char *s1 ) {
 		}
 		s++;
 	}
-#elif _WIN32 // Henk -> Fix for dll compile (MSVC).
-	s1 = strlwr(s1);
+#elif _MSC_VER // Henk -> Fix for dll compile (MSVC).
+	s1 = _strlwr(s1);
 #endif
     return s1;
 }

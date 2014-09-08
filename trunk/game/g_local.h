@@ -1255,6 +1255,13 @@ void		CheckGametype						( void );
 qboolean	G_CheckAlive						( void );
 
 //
+// patch_main.c
+//
+extern	vmCvar_t	g_dosPatch;
+
+void		Patch_Main							( void );
+
+//
 // g_client.c
 //
 char*		ClientConnect						( int clientNum, qboolean firstTime, qboolean isBot );

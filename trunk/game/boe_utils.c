@@ -225,7 +225,7 @@ void QDECL Boe_adminLog( const char *command, const char *by, const char *to, ..
 	char		string[1024] = "";
 	int			len, i;
 	va_list		argptr;
-	va_list		argptr2;
+	va_list		argptr2 = "";
 	qtime_t		q;
 	fileHandle_t	f;
 	char		temp[1024] = "";
@@ -2574,7 +2574,11 @@ void Boe_userdataIntegrity(void)
 	if(!level.altPath){
 		if(stat("./users", &st) == -1){
 			#ifdef _WIN32
-			mkdir("./users");
+				#ifdef __GNUC__
+				mkdir("./users");
+				#elif _MSC_VER
+				_mkdir(".\\users");
+				#endif
 			#elif __linux__
 			mkdir("./users", 0755);
 			#endif
@@ -2584,7 +2588,11 @@ void Boe_userdataIntegrity(void)
 	}else{
 		if(stat(va("%s/users/", level.altString), &st) == -1){
 			#ifdef _WIN32
+			#ifdef __GNUC__
 			mkdir(va("%s/users", level.altString));
+			#elif _MSC_VER
+			_mkdir(va("%s\\users", level.altString));
+			#endif
 			#elif __linux__
 			mkdir(va("%s/users", level.altString), 0755);
 			#endif
@@ -3085,7 +3093,7 @@ int Boe_checkPassAdmin(char *name2, char *pass)
 	char			name[MAX_NETNAME]; // name2 but without unsupported characters.
 	sqlite3			*db;
 	sqlite3_stmt	*stmt;
-	int				level2, id;
+	int				level2;
 
 	G_ClientCleanName(name2, name, sizeof(name), qtrue); // Boe!Man 2/12/13: Get the cleanName first.
 	Boe_convertNonSQLChars(name);
@@ -3145,7 +3153,6 @@ void Boe_addPasswordToDatabase(char *ip, char *name2, char *pass)
 {
 	char			name[MAX_NETNAME]; // name2 but without unsupported characters.
 	sqlite3			*db;
-	int				id;
 
 	G_ClientCleanName(name2, name, sizeof(name), qtrue); // Boe!Man 2/12/13: Get the cleanName first.
 	Boe_convertNonSQLChars(name);
@@ -3272,7 +3279,7 @@ Clears a userdata table.
 void Boe_SQLTableClear(void)
 {
 	char	arg[MAX_STRING_TOKENS];
-	sqlite3	*db;
+	sqlite3 *db;
 	int		rc;
 	
 	// Fetch the argument so we can determine what list the user wishes to clear.
@@ -3281,45 +3288,45 @@ void Boe_SQLTableClear(void)
 	
 	if(strstr(arg, "subnetbanlist")){
 		if(sqlite3_exec(bansDb, "DELETE FROM subnetbans", 0, 0, 0) != SQLITE_OK){
-			G_LogPrintf("^1Error: ^7Bans database: %s\n", sqlite3_errmsg(db));
+			G_LogPrintf("^1Error: ^7Bans database: %s\n", sqlite3_errmsg(bansDb));
 		}else{
 			sqlite3_exec(bansDb, "VACUUM", NULL, NULL, NULL);
 			Com_Printf("Successfully cleared all subnetbans from the database!\n");
 		}
 	}else if(strstr(arg, "banlist")){
 		if(sqlite3_exec(bansDb, "DELETE FROM bans", 0, 0, 0) != SQLITE_OK){
-			G_LogPrintf("^1Error: ^7Bans database: %s\n", sqlite3_errmsg(db));
+			G_LogPrintf("^1Error: ^7Bans database: %s\n", sqlite3_errmsg(bansDb));
 		}else{
 			sqlite3_exec(bansDb, "VACUUM", NULL, NULL, NULL);
 			Com_Printf("Successfully cleared all bans from the database!\n");
 		}
 	}else if(strstr(arg, "adminlist")){
 		if(sqlite3_exec(usersDb, "DELETE FROM admins", 0, 0, 0) != SQLITE_OK){
-			G_LogPrintf("^1Error: ^7Users database: %s\n", sqlite3_errmsg(db));
+			G_LogPrintf("^1Error: ^7Users database: %s\n", sqlite3_errmsg(usersDb));
 		}else{
 			sqlite3_exec(usersDb, "VACUUM", NULL, NULL, NULL);
 			Com_Printf("Successfully cleared all admins from the database!\n");
 		}
 	}else if(strstr(arg, "passlist")){
 		if(sqlite3_exec(usersDb, "DELETE FROM passadmins", 0, 0, 0) != SQLITE_OK){
-			G_LogPrintf("^1Error: ^7Users database: %s\n", sqlite3_errmsg(db));
+			G_LogPrintf("^1Error: ^7Users database: %s\n", sqlite3_errmsg(usersDb));
 		}else{
 			sqlite3_exec(usersDb, "VACUUM", NULL, NULL, NULL);
 			Com_Printf("Successfully cleared all passadmins from the database!\n");
 		}
 	}else if(strstr(arg, "clanlist")){
 		if(sqlite3_exec(usersDb, "DELETE FROM clanmembers", 0, 0, 0) != SQLITE_OK){
-			G_LogPrintf("^1Error: ^7Users database: %s\n", sqlite3_errmsg(db));
+			G_LogPrintf("^1Error: ^7Users database: %s\n", sqlite3_errmsg(usersDb));
 		}else{
 			sqlite3_exec(usersDb, "VACUUM", NULL, NULL, NULL);
 			Com_Printf("Successfully cleared all clanmembers from the database!\n");
 		}
 	}else if(strstr(arg, "aliases")){
 		if(sqlite3_exec(aliasesDb, "DELETE FROM aliases_index", 0, 0, 0) != SQLITE_OK){
-			G_LogPrintf("^1Error: ^7Aliases database: %s\n", sqlite3_errmsg(db));
+			G_LogPrintf("^1Error: ^7Aliases database: %s\n", sqlite3_errmsg(aliasesDb));
 		}else{
 			if(sqlite3_exec(aliasesDb, "DELETE FROM aliases_names", 0, 0, 0) != SQLITE_OK){
-				G_LogPrintf("^1Error: ^7Aliases database: %s\n", sqlite3_errmsg(db));
+				G_LogPrintf("^1Error: ^7Aliases database: %s\n", sqlite3_errmsg(aliasesDb));
 			}else{
 				sqlite3_exec(aliasesDb, "VACUUM", NULL, NULL, NULL);
 				Com_Printf("Successfully cleared all aliases from the database!\n");

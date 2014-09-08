@@ -2164,7 +2164,6 @@ void G_Say ( gentity_t *ent, gentity_t *target, int mode, const char *chatText )
 	gentity_t	*other;
 	char		text[MAX_SAY_TEXT];
 	char		name[128]; // Henk 15/12/2010 -> Increased from 64 -> 128; Will fix the name dissapearing.
-	int i;
 
 	// Logging stuff
 	switch ( mode )
@@ -3658,8 +3657,9 @@ void Boe_adm_f ( gentity_t *ent )
 			trap_SendServerCommand( ent-g_entities, va("print \"%s\"", bigbuf));
 		}else{
 			point = bigbuf; // pointer to bigbuf.
+			oldcolour = -1;
 			levelx = Boe_firstDigitOfInt(strlen(bigbuf));
-			
+
 			for(i=0;i<=levelx;i++){
 				if(i != levelx){
 					if(point[999] == '^'){ // Boe!Man 7/17/12: Don't allow to copy in the middle of the color..

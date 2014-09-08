@@ -231,7 +231,6 @@ void player_die(
 	vec3_t		hitDir
 	)
 {
-	gentity_t		*ent;
 	int				anim;
 	int				contents;
 	int				killer;

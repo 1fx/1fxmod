@@ -628,7 +628,7 @@ void EvenTeams_HS (gentity_t *adm, qboolean aet)
 	int		counts[TEAM_NUM_TEAMS];
 	int		diff = 0;
 	int		highTeam, i;
-	gentity_t *lastConnected, *ent;
+	gentity_t *lastConnected;
 	int	seekers, maxhiders, totalplayers;
 
 	if(level.intermissiontime)

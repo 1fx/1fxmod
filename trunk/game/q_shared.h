@@ -75,6 +75,9 @@
 
 #else
 #define _CRT_SECURE_NO_WARNINGS
+#ifdef _MSC_VER
+#include <direct.h>
+#endif // _MSC_VER
 //#include <Windows.h>
 #include <assert.h>
 #include <math.h>

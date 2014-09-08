@@ -577,6 +577,7 @@ void Boe_Howto ( gentity_t *ent );
 
 unsigned int henk_atoi( const char *string ); // unsigned int version of atoi
 
+int GetArgument(int argNum);
 
 // =================================
 // SQLite3 related defintions.

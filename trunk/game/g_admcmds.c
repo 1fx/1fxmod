@@ -3129,6 +3129,8 @@ int adm_cancelVote(int argNum, gentity_t *adm, qboolean shortCmd)
 		trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Vote cancelled.\n\""));
 		Boe_adminLog ("cancelvote", "RCON", "none");
 	}
+
+	return -1;
 }
 
 /*
@@ -3631,13 +3633,13 @@ int adm_Map(int argNum, gentity_t *adm, qboolean shortCmd)
 			trap_FS_FOpenFile( va("maps\\%s.bsp", map), &f, FS_READ );
 			if ( !f ){
 				trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Map not found.\n\""));
-				return;
+				return -1;
 			}
 			trap_FS_FCloseFile(f);
 		// There are no maps that contain less than two characters. Obviously the map isn't found.
 		}else{
 			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Map not found.\n\""));
-			return;
+			return -1;
 		}
 
 		// The map is found, did they append a gametype among with it?
@@ -3686,7 +3688,7 @@ int adm_Map(int argNum, gentity_t *adm, qboolean shortCmd)
 
 		if(!Henk_DoesMapSupportGametype(gametype, map)){
 			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7This map does not support the gametype %s, please add it in the ARENA file.\n\"", gametype));
-			return;
+			return -1;
 		}
 
 		trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype %s\n", gametype));
