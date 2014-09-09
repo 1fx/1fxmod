@@ -261,6 +261,8 @@ qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean 
 			}else{
 				trap_SendServerCommand(g_entities[level.sortedClients[i]].s.number, va("print\"^3[Info] ^7You were removed from the Clanlist by RCON.\n\""));
 			}
+
+			break;
 		}
 	}
 

@@ -879,17 +879,13 @@ int adm_forceTeam(int argNum, gentity_t *adm, qboolean shortCmd)
 				strcpy(str, "blue");
 				xTeam = TEAM_BLUE;
 			}else{
-				trap_SendServerCommand(adm->s.number, va("print\"^3[Info] ^7Wrong team: %s.\n\"", str));
+				trap_SendServerCommand(adm->s.number, va("print\"^3[Info] ^7Wrong team specified.\n\""));
 				return -1;
 			}
 		}
 	}else{
 		// Boe!Man 1/13/11: Fix for Forceteam not working with RCON system.
-		if (adm && adm->client){
-			trap_Argv(3, str, sizeof(str));
-		}else{
-			trap_Argv(2, str, sizeof(str));
-		}
+		trap_Argv(argNum + 1, str, sizeof(str));
 
 		if (str[0] == 's' || str[0] == 'S'){
 			strcpy(str, "spectator");
@@ -901,7 +897,11 @@ int adm_forceTeam(int argNum, gentity_t *adm, qboolean shortCmd)
 			strcpy(str, "blue");
 			xTeam = TEAM_BLUE;
 		}else{
-			trap_SendServerCommand(adm->s.number, va("print\"^3[Info] ^7Wrong team: %s.\n\"", str));
+			if (adm && adm->client){
+				trap_SendServerCommand(adm->s.number, va("print\"^3[Info] ^7Wrong team: %s.\n\"", str));
+			}else{
+				Com_Printf("Wrong team specified: %s\n", str);
+			}
 			return -1;
 		}
 	}
