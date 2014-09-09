@@ -1361,6 +1361,22 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 			ghost = qtrue;
 		}
 
+		if (current_gametype.value != GT_HS && current_gametype.value != GT_HZ){
+			int i;
+			int teamCount[2];
+			int aliveCount[2];
+			
+			teamCount[0] = TeamCount(-1, TEAM_RED, &aliveCount[0]);
+			teamCount[1] = TeamCount(-1, TEAM_BLUE, &aliveCount[1]);
+
+			for (i = 0; i < 2; i++){
+				if (teamCount[i] != aliveCount[i]){
+					ghost = qtrue;
+					break;
+				}
+			}
+		}
+
 		// Spectator to a team doesnt count
 		if ( oldTeam != TEAM_SPECTATOR )
 		{

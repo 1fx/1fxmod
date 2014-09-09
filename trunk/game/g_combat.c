@@ -280,7 +280,7 @@ void player_die(
 	//Ryan March 30 2004 5:28pm
 	if(attacker && attacker != self && attacker->client && self->client->pers.statinfo.killsinarow >= 3 && current_gametype.value != GT_HS)
 	{
-		G_Broadcast(va("%s\nhiss \\killing spree\nwas ended by %s", self->client->pers.netname, attacker->client->pers.netname), BROADCAST_GAME, NULL);
+		G_Broadcast(va("%s\nhis \\killing spree\nwas ended by %s", self->client->pers.netname, attacker->client->pers.netname), BROADCAST_GAME, NULL);
 	}
 
 	// Add to the number of deaths for this player
