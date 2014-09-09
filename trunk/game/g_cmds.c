@@ -4038,7 +4038,7 @@ void G_Broadcast(char *broadcast, int broadcastLevel, gentity_t *to)
 			other->client->sess.lastMessagePriority = broadcastLevel;
 			other->client->sess.lastMessage = level.time;
 		}
-	}else if (to->client->sess.lastMessagePriority <= broadcastLevel){
+	}else if (broadcastLevel >= to->client->sess.lastMessagePriority || level.time > (to->client->sess.lastMessage + 4000)){
 		trap_SendServerCommand(to-g_entities, va("cp \"@%s\n\"", newBroadcast));
 		to->client->sess.lastMessagePriority = broadcastLevel;
 		to->client->sess.lastMessage = level.time;
