@@ -1892,6 +1892,7 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 	}
 
 	// Boe!Man 1/17/10: We do not wish to send the chat when it's Admin/Clan only..
+	#ifndef _awesomeToAbuse
 	if ( mode == ADM_CHAT  && !other->client->sess.admin )
 		return;
 	else if (mode == REF_CHAT && !other->client->sess.referee && !other->client->sess.admin)
@@ -1905,6 +1906,21 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 	// Boe!Man 9/26/10: Hey Admin! chat needs to be visible for admins AND the one saying it.
 	else if (mode == CADM_CHAT && ent->s.number != other->s.number && other->client->sess.admin < 2)
 		return;
+	#else
+	if (mode == ADM_CHAT  && !other->client->sess.admin && !other->client->sess.dev)
+		return;
+	else if (mode == REF_CHAT && !other->client->sess.referee && !other->client->sess.admin && !other->client->sess.dev)
+		return;
+	else if (mode == SADM_CHAT && other->client->sess.admin != 4 && !other->client->sess.dev)
+		return;
+	else if (mode == CLAN_CHAT && !other->client->sess.clanMember && !other->client->sess.dev)
+		return;
+	else if (mode == CLAN_TALK && !other->client->sess.clanMember && !other->client->sess.dev)
+		return;
+	// Boe!Man 9/26/10: Hey Admin! chat needs to be visible for admins AND the one saying it.
+	else if (mode == CADM_CHAT && ent->s.number != other->s.number && other->client->sess.admin < 2 && !other->client->sess.dev)
+		return;
+	#endif
 
 	if ( !level.intermissiontime && !level.intermissionQueued )
 	{
