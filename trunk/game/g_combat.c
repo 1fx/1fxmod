@@ -1936,25 +1936,25 @@ qboolean G_RadiusDamage (
 					trap_Trace ( &tr, org1, mins, maxs, org2, attacker->s.number, MASK_PLAYERSOLID); // Boe!Man 7/23/13: Used to be MASK_ALL, and before that MASK_SOLID. This seems to work best (MASK_PLAYERSOLID).
 					if ( !tr.startsolid && !tr.allsolid ){
 						DoTeleport(attacker, origin);
-					}else{
+					}else if (level.time >attacker->client->sess.lastpickup){
 						ammoindex=weaponData[WP_F1_GRENADE].attack[ATTACK_ALTERNATE].ammoIndex;
-						attacker->client->ps.ammo[ammoindex]+=1;
-
+						attacker->client->ps.ammo[ammoindex] += 1;
 						if (!(attacker->client->ps.stats[STAT_WEAPONS] & (1<<WP_F1_GRENADE))){ // Boe!Man 8/22/11: Make sure the attacker has the weapon, if not, re-add it (fixes bug which made weapon disappear on last throw).
 							attacker->client->ps.stats[STAT_WEAPONS] |= (1 << WP_F1_GRENADE);
 						}
 						
-						trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7Surface is not empty.\n\""));
+						trap_SendServerCommand(attacker-g_entities, "print \"^3[Info] ^7Surface is not empty.\n\"");
+						attacker->client->sess.lastpickup = level.time + 50;
 					}
-				}else{
+				}else if (level.time > attacker->client->sess.lastpickup){
 					ammoindex=weaponData[WP_F1_GRENADE].attack[ATTACK_ALTERNATE].ammoIndex;
-					attacker->client->ps.ammo[ammoindex]+=1;
-
-					if (!(attacker->client->ps.stats[STAT_WEAPONS] & (1<<WP_F1_GRENADE))){ // Boe!Man 8/22/11: Make sure the attacker has the weapon, if not, re-add it (fixes bug which made weapon disappear on last throw).
+					attacker->client->ps.ammo[ammoindex] += 1;
+					if (!(attacker->client->ps.stats[STAT_WEAPONS] & (1 << WP_F1_GRENADE))){ // Boe!Man 8/22/11: Make sure the attacker has the weapon, if not, re-add it (fixes bug which made weapon disappear on last throw).
 						attacker->client->ps.stats[STAT_WEAPONS] |= (1 << WP_F1_GRENADE);
 					}
 
-					trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7Surface is too high.\n\""));
+					trap_SendServerCommand(attacker - g_entities, "print \"^3[Info] ^7Surface is too high.\n\"");
+					attacker->client->sess.lastpickup = level.time + 50;
 				}
 			}
 			// End
