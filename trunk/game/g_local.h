@@ -100,6 +100,7 @@ struct gentity_s
 	int			soundLoop;
 	gentity_t	*parent;
 	gentity_t	*nextTrain;
+	gentity_t	*loopCorner;
 	vec3_t		pos1, pos2;
 
 	char		*message;

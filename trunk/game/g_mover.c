@@ -1384,9 +1384,10 @@ TRAIN
 */
 
 
-#define TRAIN_START_ON		1
-#define TRAIN_TOGGLE		2
-#define TRAIN_BLOCK_STOPS	4
+#define TRAIN_START_ON			1
+#define TRAIN_TOGGLE			2
+#define TRAIN_BLOCK_STOPS		4
+#define PATH_CORNER_INNER_LOOP	8
 
 /*
 ===============
@@ -1421,7 +1422,11 @@ void Reached_Train( gentity_t *ent ) {
 	G_UseTargets( next, NULL );
 
 	// set the new trajectory
-	ent->nextTrain = next->nextTrain;
+	if (ent->nextTrain == ent){
+		ent->nextTrain = ent->loopCorner;
+	}else{
+		ent->nextTrain = next->nextTrain;
+	}
 	VectorCopy( next->s.origin, ent->pos1 );
 	VectorCopy( next->nextTrain->s.origin, ent->pos2 );
 
@@ -1466,6 +1471,7 @@ Link all the corners together
 */
 void Think_SetupTrainTargets( gentity_t *ent ) {
 	gentity_t		*path, *next, *start;
+	qboolean		secondTime = qfalse;
 
 	ent->nextTrain = G_Find( NULL, FOFS(targetname), ent->target );
 	if ( !ent->nextTrain ) 
@@ -1498,7 +1504,20 @@ void Think_SetupTrainTargets( gentity_t *ent ) {
 					vtos(path->s.origin) );
 				return;
 			}
+
+			if (next->spawnflags & PATH_CORNER_INNER_LOOP){
+				if (!ent->loopCorner){
+					ent->loopCorner = next;
+				}else if(!secondTime){
+					secondTime = qtrue;
+				}
+			}
 		} while ( strcmp( next->classname, "path_corner" ) );
+
+		if (secondTime){
+			path->nextTrain = ent;
+			break;
+		}
 
 		path->nextTrain = next;
 	}
