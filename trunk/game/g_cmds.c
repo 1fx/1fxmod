@@ -2536,7 +2536,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	}
 	// Henk loop through my admin command array
 	// Boe!Man 1/8/11: Only go through this cycle if the client indeed has admin powers. If not, save on resources.
-	if(ent->client->sess.admin > 0 && strlen(test) > 1 && test[0] == '!'){
+	if(ent->client->sess.admin > 0 && strstr(test, "!")){
 	Q_strlwr(test);
 	if(acmd != qtrue){
 		for(i=0;i<AdminCommandsSize;i++){
