@@ -2536,12 +2536,11 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	}
 	// Henk loop through my admin command array
 	// Boe!Man 1/8/11: Only go through this cycle if the client indeed has admin powers. If not, save on resources.
-	if(ent->client->sess.admin > 0){
+	if(ent->client->sess.admin > 0 && strlen(test) > 1 && test[0] == '!'){
 	Q_strlwr(test);
 	if(acmd != qtrue){
 		for(i=0;i<AdminCommandsSize;i++){
-			// FIXME BOE: The !%s, not so efficient??
-			if((strstr(test, AdminCommands[i].shortCmd) || strstr(test, va("!%s", AdminCommands[i].adminCmd))) && IsValidCommand(AdminCommands[i].shortCmd, test)){
+			if ((strstr(test, AdminCommands[i].shortCmd) && IsValidCommand(AdminCommands[i].shortCmd, test)) || (strstr(test, AdminCommands[i].adminCmd) && IsValidCommand(AdminCommands[i].adminCmd, test))){
 				command = qtrue;
 				if(ent->client->sess.admin >= *AdminCommands[i].adminLevel){
 					// Execute the Admin command and handle the post processing (logging, broadcast, etc.) for some commands.
