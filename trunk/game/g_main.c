@@ -1109,7 +1109,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	trap_Cvar_Set("sv_master2", "178.62.14.201");
 	#elif _WIN32
 	// Boe!Man 8/22/14: Windows users get the future proof DNS entry as their 2nd master entry.
-	trap_Cvar_Set("sv_master2", "1fxmod.org");
+	trap_Cvar_Set("sv_master2", "master.1fxmod.org");
 	#endif
 	trap_Cvar_Update(gameCvarTable->vmCvar);
 	
