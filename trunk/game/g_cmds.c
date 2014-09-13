@@ -2545,13 +2545,14 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 				if(ent->client->sess.admin >= *AdminCommands[i].adminLevel){
 					// Execute the Admin command and handle the post processing (logging, broadcast, etc.) for some commands.
 					G_postExecuteAdminCommand(i, AdminCommands[i].Function(1, ent, qtrue), ent);
-					break;
 				}else{
 					if(ent->client->sess.referee == 1 && strstr(test, "!l")){ // exception for referee lock
 						adm_lockTeam(1, ent, qtrue);
 					}
 					trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
 				}
+
+				break;
 			}
 		}
 		// check custom commands
