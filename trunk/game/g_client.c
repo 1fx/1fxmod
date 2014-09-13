@@ -2126,6 +2126,17 @@ void ClientSpawn(gentity_t *ent)
 			client->ps.weaponstate = WEAPON_READY;
 			// Boe!Man 8/20/13: Also disable the goggles when respawning.
 			client->sess.invisibleGoggles = qfalse;
+
+			// Reset the transformed entity if there is one.
+			if (client->sess.transformedEntity){
+				G_FreeEntity(&g_entities[client->sess.transformedEntity]);
+				client->sess.transformedEntity = 0;
+				client->sess.freeze = qfalse;
+			}
+			if (client->sess.transformedEntity2){
+				G_FreeEntity(&g_entities[client->sess.transformedEntity2]);
+				client->sess.transformedEntity2 = 0;
+			}
 		// End
 		}else{
 		G_UpdateOutfitting ( ent->s.number );

@@ -1301,10 +1301,12 @@ void ClientThink_real( gentity_t *ent )
 		}
 		
 		// Check for clients being transformed, wanting to get out.
-		if(client->sess.transformedEntity && client->pers.cmd.buttons & BUTTON_RELOAD){
+		if(client->sess.freeze && client->pers.cmd.buttons & BUTTON_RELOAD){
 			// Remove the models.
-			G_FreeEntity(&g_entities[client->sess.transformedEntity]);
-			client->sess.transformedEntity = 0;
+			if(client->sess.transformedEntity){
+				G_FreeEntity(&g_entities[client->sess.transformedEntity]);
+				client->sess.transformedEntity = 0;
+			}
 			
 			if(client->sess.transformedEntity2){
 				G_FreeEntity(&g_entities[client->sess.transformedEntity2]);

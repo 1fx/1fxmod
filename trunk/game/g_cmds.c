@@ -1427,15 +1427,19 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 		ent->client->sess.timeOfDeath = 0; // Boe!Man 8/29/11: Also reset this when switching team (so seekers that won won't get RPG for example).
 		
 		// Also check the random grenade.
-		if(hideSeek_Extra.string[RANDOMGRENADE] == '1' && ent->client->sess.transformedEntity){
-			G_FreeEntity(&g_entities[ent->client->sess.transformedEntity]);
-			ent->client->sess.transformedEntity = 0;
+		if(ent->client->sess.freeze){
+			if(ent->client->sess.transformedEntity){
+				G_FreeEntity(&g_entities[ent->client->sess.transformedEntity]);
+				ent->client->sess.transformedEntity = 0;
+			}
 			
 			if(ent->client->sess.transformedEntity2){
 				G_FreeEntity(&g_entities[ent->client->sess.transformedEntity2]);
 				ent->client->sess.transformedEntity2 = 0;
 			}
 			
+			ent->client->sess.freeze = qfalse;
+			ent->client->sess.invisibleGoggles = qfalse;
 			strncpy(level.RandomNadeLoc, "Disappeared", sizeof(level.RandomNadeLoc));
 		}
 	}
