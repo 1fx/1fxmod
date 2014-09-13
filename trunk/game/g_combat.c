@@ -2143,8 +2143,8 @@ qboolean G_RadiusDamage (
 		}else if(mod == WP_MM1_GRENADE_LAUNCHER){
 			missile = NV_projectile( attacker, origin, dir, WP_ANM14_GRENADE, 0 );
 			missile->nextthink = level.time + 250;
-		}else if(mod == MOD_M67_GRENADE || mod == altAttack(MOD_M67_GRENADE)){
-			if (!(attacker->client->ps.pm_flags & PMF_JUMPING) && !NadeOutOfBoundaries && !attacker->client->sess.freeze){
+		}else if ((mod == MOD_M67_GRENADE || mod == altAttack(MOD_M67_GRENADE)) && level.time > attacker->client->sess.lastpickup){
+			if (!(attacker->client->ps.pm_flags & PMF_JUMPING) && !NadeOutOfBoundaries){
 				trap_SendServerCommand(-1, va("print \"^3[H&S] ^7%s transformed into something...\n\"", attacker->client->pers.cleanName));
 				trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7Hit your Reload button to get out (usually 'R').\n\""));
 				G_TransformPlayerToObject(attacker);
@@ -2152,26 +2152,25 @@ qboolean G_RadiusDamage (
 				// Give them their nade back if they don't have it.
 				ammoindex = weaponData[WP_M67_GRENADE].attack[ATTACK_ALTERNATE].ammoIndex;
 				
-				// This can happen multiple times, so have some sort of check here.
-				if(!attacker->client->ps.ammo[ammoindex]){
-					if(attacker->client->ps.pm_flags & PMF_JUMPING){
-						trap_SendServerCommand(attacker - g_entities, va("print \"^3[Info] ^7You're not allowed to jump while using this grenade.\n\""));
+				if(attacker->client->ps.pm_flags & PMF_JUMPING){
+					trap_SendServerCommand(attacker - g_entities, va("print \"^3[Info] ^7You're not allowed to jump while using this grenade.\n\""));
 
-						if (!(attacker->client->ps.stats[STAT_WEAPONS] & (1 << WP_M67_GRENADE))){
-							attacker->client->ps.stats[STAT_WEAPONS] |= (1 << WP_M67_GRENADE);
-						}else{
-							attacker->client->ps.ammo[ammoindex] += 1;
-						}
-					}else{
-						trap_SendServerCommand(attacker - g_entities, va("print \"^3[Info] ^7The grenade must detonate near just you in order to transform.\n\""));
-						
-						attacker->client->ps.ammo[ammoindex] += 1;
-						if (!(attacker->client->ps.stats[STAT_WEAPONS] & (1 << WP_M67_GRENADE))){
-							attacker->client->ps.stats[STAT_WEAPONS] |= (1 << WP_M67_GRENADE);
-						}
+					if (!(attacker->client->ps.stats[STAT_WEAPONS] & (1 << WP_M67_GRENADE))){
+						attacker->client->ps.stats[STAT_WEAPONS] |= (1 << WP_M67_GRENADE);
 					}
+					attacker->client->ps.ammo[ammoindex] += 1;
+				}else{
+					trap_SendServerCommand(attacker - g_entities, va("print \"^3[Info] ^7Another object caught in radius.\n\""));
+					
+					if (!(attacker->client->ps.stats[STAT_WEAPONS] & (1 << WP_M67_GRENADE))){
+						attacker->client->ps.stats[STAT_WEAPONS] |= (1 << WP_M67_GRENADE);
+					}
+					attacker->client->ps.ammo[ammoindex] += 1;
 				}
+				
 			}
+
+			attacker->client->sess.lastpickup = level.time + 50;
 		}
 	}
 
