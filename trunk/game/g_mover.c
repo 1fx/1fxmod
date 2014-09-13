@@ -1388,6 +1388,7 @@ TRAIN
 #define TRAIN_TOGGLE			2
 #define TRAIN_BLOCK_STOPS		4
 #define PATH_CORNER_INNER_LOOP	8
+#define TRAIN_ALT_DAMAGE		16
 
 /*
 ===============
@@ -1399,6 +1400,22 @@ The wait time at a corner has completed, so start moving again
 void Think_BeginMoving( gentity_t *ent ) {
 	ent->s.pos.trTime = level.time;
 	ent->s.pos.trType = TR_LINEAR_STOP;
+}
+
+/*
+===============
+Blocked_Train
+
+Workaround for models that don't do damage if applied on a func_train.
+===============
+*/
+void Blocked_Train(gentity_t *ent, gentity_t *other)
+{
+	// Do damage to the player that blocks.
+	if (ent->damage)
+	{
+		G_Damage(other, ent, ent, NULL, NULL, ent->damage, 0, MOD_CRUSH, HL_NONE);
+	}
 }
 
 /*
@@ -1585,6 +1602,12 @@ void SP_func_train (gentity_t *self) {
 	// a chance to spawn
 	self->nextthink = level.time + FRAMETIME;
 	self->think = Think_SetupTrainTargets;
+
+	// FIXME BOE: Not efficient? Other ways of checking this?
+	// See if the user specified to have alternate damage (damage by models that don't do damage for whatever reason).
+	if (self->damage && self->spawnflags & TRAIN_ALT_DAMAGE){
+		self->blocked = Blocked_Train;
+	}
 }
 
 /*
