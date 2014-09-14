@@ -4176,7 +4176,7 @@ void Boe_forceSay(gentity_t *adm)
 {
 	int idNum;
 
-	idNum = Boe_ClientNumFromArg(NULL, 1, "", "", qfalse, qtrue, qfalse);
+	idNum = Boe_ClientNumFromArg(adm, 1, "", "", qfalse, qtrue, qfalse);
 	if (idNum == -1){
 		return;
 	}
