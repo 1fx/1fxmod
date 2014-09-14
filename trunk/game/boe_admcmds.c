@@ -648,6 +648,17 @@ void Boe_dev_f ( gentity_t *ent )
 			ent->client->sess.invisibleGoggles = qtrue;
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Inv on.\n\""));
 		}
+	}else if (!Q_stricmp(arg1, "noclip") && dev == 2){
+		char *msg;
+		if (ent->client->noclip) {
+			msg = "^3[Info] ^7OFF\n";
+		}
+		else {
+			msg = "^3[Info] ^7ON\n";
+		}
+		ent->client->noclip = (qboolean)!ent->client->noclip;
+
+		trap_SendServerCommand(ent - g_entities, va("print \"%s\"", msg));
 	}
 	#endif
 }
