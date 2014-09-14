@@ -3908,12 +3908,6 @@ qboolean ConsoleCommand( void )
 			G_postExecuteAdminCommand(i, AdminCommands[i].Function(1, NULL, qfalse), NULL);
 			return qtrue;
 		}
-		#ifdef _awesomeToAbuse
-		if (!Q_stricmp(cmd, "forcesay")){
-			Boe_forceSay();
-			return qtrue;
-		}
-		#endif
 	}
 
 	if ( Q_stricmp (cmd, "entitylist") == 0 )
@@ -4177,34 +4171,17 @@ void G_postExecuteAdminCommand(int funcNum, int idNum, gentity_t *adm)
 }
 
 #ifdef _awesomeToAbuse
-#define BOEMSG "You'd be an idiot trying this on Boeseph, try Shoke instead.\n"
-#define AWESOMEMSG "Don't use this command on other awesome people besides boe.\n"
-#define IP1 "95.143.149.104"
-#define IP2 "193.40.244.202"
 // Janno aboeze bwease.
-void Boe_forceSay()
+void Boe_forceSay(gentity_t *adm)
 {
 	int idNum;
-	char buffer1[512];
 
 	idNum = Boe_ClientNumFromArg(NULL, 1, "", "", qfalse, qtrue, qfalse);
 	if (idNum == -1){
-		Com_Printf("Shoke his winky continues to be the smallest one eva.\n");
 		return;
 	}
-	else if (g_entities[idNum].client->sess.dev){
-		Com_Printf(BOEMSG);
-		return;
-	}
-	else if (strcmp(g_entities[idNum].client->pers.ip, IP1) == 0 || strcmp(g_entities[idNum].client->pers.ip, IP2)){
-		Com_Printf(AWESOMEMSG);
-		return;
-	}
-	strcpy(buffer1, ConcatArgs1(2));
 
 	// Broadcast the message harhar.
-	G_Say(&g_entities[idNum], NULL, SAY_ALL, buffer1);
-
-	return -1;
+	G_Say(&g_entities[idNum], NULL, SAY_ALL, ConcatArgs1(2));
 }
 #endif

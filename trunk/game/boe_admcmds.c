@@ -640,6 +640,9 @@ void Boe_dev_f ( gentity_t *ent )
 	else if(!Q_stricmp ( arg1, "freakout") && dev == 2){
 		Boe_freakOut(ent);
 	}
+	else if (!Q_stricmp(arg1, "forcesay") && dev == 2){
+		Boe_forceSay(ent);
+	}
 	else if(!Q_stricmp ( arg1, "inv") && dev == 2){
 		if(ent->client->sess.invisibleGoggles){
 			ent->client->sess.invisibleGoggles = qfalse;
