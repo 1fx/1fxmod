@@ -1320,7 +1320,8 @@ void ClientUserinfoChanged( int clientNum )
 			}else if(current_gametype.value == GT_HZ){
 				if(client->sess.team == TEAM_BLUE){
 					if(!client->pers.identity){
-						client->pers.identity = BG_FindIdentity ( s );
+						// Make sure they always have a zombie skin in zombies.
+						client->pers.identity = BG_FindIdentity("NPC_Virus_Male/virus_male");
 					}
 
 					// Boe!Man 7/10/11: Use "female" as indicator in the skin name (to identify it as one).
@@ -1340,6 +1341,9 @@ void ClientUserinfoChanged( int clientNum )
 							trap_SendServerCommand ( client - &level.clients[0], "print \"^3[H&Z] ^7You cannot use that skin.\n\"" );
 							client->pers.identity = &bg_identities[1]; // Henk 21/02/10 -> Changed from return to skin 1(could prevent hiders with seekers skin)
 						}
+					}else{
+						// Make sure they have a valid identity.
+						client->pers.identity = &bg_identities[1];
 					}
 				}
 			}else{
