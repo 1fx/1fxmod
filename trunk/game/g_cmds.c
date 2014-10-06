@@ -127,6 +127,9 @@ void EvenTeams (gentity_t *adm, qboolean aet)
 			EvenTeams_HS(adm, aet);
 		}
 		return;
+	}else if (current_gametype.value == GT_HZ){
+		EvenTeams_HZ(adm, aet);
+		return;
 	}
 
 	if(level.intermissiontime)
@@ -1085,10 +1088,7 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 		}
 
 		if(!forced && current_gametype.value == GT_HZ){
-			if(TeamCount1(TEAM_BLUE) < 3 && team == TEAM_BLUE){
-			trap_SendServerCommand ( client - &level.clients[0], "print\"^3[H&Z] ^7Zombie team is locked.\n\"" );
-			return;
-			}
+			
 		}
 
 		if ( g_teamForceBalance.integer && forced == qfalse /*|| current_gametype.value == GT_HS && forced == qfalse */) // Boe!Man 8/25/11: Don't force balance in H&S, the CVAR is defaulted to 1. In some cases users don't want it. 
@@ -1154,6 +1154,16 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 					trap_SendServerCommand ( client - &level.clients[0], "print\"^3[H&S] ^7Hiders have too many players.\n\"" );
 					
 					// ignore the request
+					return;
+				}
+			}else if (current_gametype.value == GT_HZ){
+				if (TeamCount1(TEAM_BLUE) < 3 && team == TEAM_BLUE){
+					trap_SendServerCommand(client - &level.clients[0], "print\"^3[H&Z] ^7Zombie team is locked.\n\"");
+					return;
+				}
+
+				if (TeamCount1(TEAM_BLUE) < 3 && ent->client && ent->client->sess.team == TEAM_BLUE && team == TEAM_RED){
+					trap_SendServerCommand(client - &level.clients[0], "print\"^3[H&Z] ^7Human team is locked.\n\"");
 					return;
 				}
 			}else{

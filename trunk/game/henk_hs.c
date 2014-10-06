@@ -773,6 +773,103 @@ void EvenTeams_HS (gentity_t *adm, qboolean aet)
 	}
 }
 
+void EvenTeams_HZ(gentity_t *adm, qboolean aet){
+	int		counts[TEAM_NUM_TEAMS];
+	int		diff = 0;
+	int		highTeam, i;
+	gentity_t *lastConnected;
+
+	if (level.intermissiontime)
+		return;
+
+	// Boe!Man 1/19/11: If teams are locked don't proceed with evening the teams.
+	if (level.blueLocked || level.redLocked){
+		if (adm && adm->client){
+			trap_SendServerCommand(adm - g_entities, va("print \"^3[Info] ^7Teams are locked.\n\""));
+		}
+		else if (aet == qfalse){
+			Com_Printf("Teams are locked.\n");
+		}
+		return;
+	}
+
+	counts[TEAM_BLUE] = TeamCount1(TEAM_BLUE);
+	counts[TEAM_RED] = TeamCount1(TEAM_RED);
+	if (counts[TEAM_BLUE] < 1){ // too few zombies
+		highTeam = TEAM_RED;
+		diff = (1 - counts[TEAM_BLUE]); // move diff to human team
+	}else if (counts[TEAM_BLUE] > 1){ // too many seekers
+		highTeam = TEAM_BLUE;
+		diff = (counts[TEAM_BLUE] - 1); // move diff to human team
+	}else if(diff <= 0){
+		if (adm && adm->client){
+			trap_SendServerCommand(adm - g_entities, va("print \"^3[Info] ^7Teams are as even as possible.\n\""));
+		}else{
+			Com_Printf("Teams are as even as possible.\n");
+		}
+
+		return;
+	}
+
+	for (i = 0; i < diff; i++){
+		lastConnected = findLastEnteredPlayer(highTeam, qfalse);
+
+		// Boe!Man 7/13/12: Fix crash issue with auto eventeams too soon before entering the map.
+		if (lastConnected == NULL){
+			lastConnected = findLastEnteredPlayer(highTeam, qtrue); // Try to search for it again but also try to even the teams regardless of players with scores.
+
+			if (lastConnected == NULL){
+				if (adm && adm->client){
+					trap_SendServerCommand(adm - g_entities, va("print \"^3[Info] ^7You cannot even the teams this fast.\n\""));
+				}
+				else if (!aet){
+					Com_Printf("You cannot even the teams this fast.\n");
+				}
+				return;
+			}
+		}
+
+		if (!G_IsClientDead(lastConnected->client)){
+			TossClientItems(lastConnected); // Henk 19/01/11 -> Fixed items not dropping with !et
+		}
+
+		lastConnected->client->ps.stats[STAT_WEAPONS] = 0;
+		G_StartGhosting(lastConnected);
+
+		if (highTeam == TEAM_RED)
+			lastConnected->client->sess.team = TEAM_BLUE;
+		else
+			lastConnected->client->sess.team = TEAM_RED;
+
+		if (lastConnected->r.svFlags & SVF_BOT)	{
+			char userinfo[MAX_INFO_STRING];
+			trap_GetUserinfo(lastConnected->s.number, userinfo, sizeof(userinfo));
+			Info_SetValueForKey(userinfo, "team", lastConnected->client->sess.team == TEAM_RED ? "red" : "blue");
+			trap_SetUserinfo(lastConnected->s.number, userinfo);
+		}
+
+		lastConnected->client->pers.identity = NULL;
+		ClientUserinfoChanged(lastConnected->s.number);
+		CalculateRanks();
+
+		G_StopFollowing(lastConnected);
+		G_StopGhosting(lastConnected);
+		trap_UnlinkEntity(lastConnected);
+		ClientSpawn(lastConnected);
+	}
+
+	Boe_GlobalSound(G_SoundIndex("sound/misc/events/tut_lift02.mp3"));
+
+	if (adm && adm->client) {
+		trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Eventeams by %s.\n\"", adm->client->pers.netname));
+	}else{
+		if (aet == qfalse)
+			trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Eventeams.\n\""));
+		else
+			trap_SendServerCommand(-1, va("print\"^3[Auto Action] ^7Eventeams.\n\""));
+	}
+}
+
 gentity_t* findLastEnteredPlayer(int highTeam, qboolean scoresAllowed)
 {
 	gentity_t *ent;
