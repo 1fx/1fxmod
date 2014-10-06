@@ -62,6 +62,7 @@ dos2unix bg_weapons.c
 dos2unix boe_admcmds.c
 dos2unix boe_utils.c
 dos2unix g_active.c
+dos2unix g_admcmds.c
 dos2unix g_antilag.c
 dos2unix g_bot.c
 dos2unix g_client.c
@@ -138,6 +139,7 @@ gcc $buildoptions bg_gametype.c -o bg_gametype.o 2>> compile_log
 gcc $buildoptions boe_admcmds.c -o boe_admcmds.o 2>> compile_log
 gcc $buildoptions boe_utils.c -o boe_utils.o 2>> compile_log
 gcc $buildoptions g_active.c -o g_active.o 2>> compile_log
+gcc $buildoptions g_admcmds.c -o g_admcmds.o 2>> compile_log
 gcc $buildoptions g_antilag.c -o g_antilag.o 2>> compile_log
 gcc $buildoptions g_bot.c -o g_bot.o 2>> compile_log
 gcc $buildoptions g_client.c -o g_client.o 2>> compile_log
@@ -158,6 +160,7 @@ gcc $buildoptions g_weapon.c -o g_weapon.o 2>> compile_log
 gcc $buildoptions henkENT.c -o henkENT.o 2>> compile_log
 gcc $buildoptions henk_functions.c -o henk_functions.o 2>> compile_log
 gcc $buildoptions henk_hs.c -o henk_hs.o 2>> compile_log
+gcc $buildoptions patch_main.c -o patch_main.o 2>> compile_log
 gcc $buildoptions rpm_functions.c -o rpm_functions.o 2>> compile_log
 gcc $buildoptions rpm_refcmds.c -o rpm_refcmds.o 2>> compile_log
 gcc $buildoptions rpm_tcmds.c -o rpm_tcmds.o 2>> compile_log
@@ -167,7 +170,7 @@ gcc -s -fstack-check -DSQLITE_OMIT_LOAD_EXTENSION -DSQLITE_ENABLE_MEMSYS5 -fPIC 
 echo "Now linking the shared object.."
 # There are several compile lines of interest.
 # The first one is the one we use everywhere, it's default as of revision 950. This compiles the Mod dynamically with static dependencies.
-ld -s -shared ai_main.o ai_util.o ai_wpnav.o bg_gametype.o bg_lib.o bg_misc.o bg_player.o bg_pmove.o bg_slidemove.o bg_weapons.o boe_admcmds.o boe_utils.o g_active.o g_antilag.o g_bot.o g_client.o g_cmds.o g_combat.o g_gametype.o g_items.o g_main.o g_misc.o g_missile.o g_mover.o g_session.o g_spawn.o g_svcmds.o g_syscalls.o g_target.o g_team.o g_trigger.o g_utils.o g_weapon.o henkENT.o henk_functions.o henk_hs.o q_math.o q_shared.o rpm_functions.o rpm_refcmds.o rpm_tcmds.o 1fx_gt.o ./sqlite/sqlite3.o -Bstatic /usr/lib/libpthread.a /usr/lib/libm.a /usr/lib/libc.a /usr/lib/gcc-lib/i386-linux/2.95.4/libgcc.a /usr/lib/libdl.a -o sof2mp_gamei386.so 2>> compile_log
+ld -s -shared ai_main.o ai_util.o ai_wpnav.o bg_gametype.o bg_lib.o bg_misc.o bg_player.o bg_pmove.o bg_slidemove.o bg_weapons.o boe_admcmds.o boe_utils.o g_active.o g_admcmds.o g_antilag.o g_bot.o g_client.o g_cmds.o g_combat.o g_gametype.o g_items.o g_main.o g_misc.o g_missile.o g_mover.o g_session.o g_spawn.o g_svcmds.o g_syscalls.o g_target.o g_team.o g_trigger.o g_utils.o g_weapon.o henkENT.o henk_functions.o henk_hs.o q_math.o q_shared.o patch_main.o rpm_functions.o rpm_refcmds.o rpm_tcmds.o 1fx_gt.o ./sqlite/sqlite3.o -Bstatic /usr/lib/libpthread.a /usr/lib/libm.a /usr/lib/libc.a /usr/lib/gcc-lib/i386-linux/2.95.4/libgcc.a /usr/lib/libdl.a -o sof2mp_gamei386.so 2>> compile_log
 # This line compiles the shared object with only dynamic objects and dependencies.
 #gcc -shared -Wl -s ai_main.o ai_util.o ai_wpnav.o bg_gametype.o bg_lib.o bg_misc.o bg_player.o bg_pmove.o bg_slidemove.o bg_weapons.o boe_admcmds.o boe_utils.o g_active.o g_antilag.o g_bot.o g_client.o g_cmds.o g_combat.o g_gametype.o g_items.o g_main.o g_misc.o g_missile.o g_mover.o g_session.o g_spawn.o g_svcmds.o g_syscalls.o g_target.o g_team.o g_trigger.o g_utils.o g_weapon.o henkENT.o henk_functions.o henk_hs.o q_math.o q_shared.o rpm_functions.o rpm_refcmds.o rpm_tcmds.o 1fx_gt.o ./sqlite/sqlite3.o -o sof2mp_gamei386.so -lm -ldl -lpthread
 # This is an old line we only used in the past, uses ld as linker.
