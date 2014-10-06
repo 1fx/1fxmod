@@ -863,6 +863,8 @@ typedef struct
 	qboolean	countryInitialized; // Boe!Man 6/25/13: True if the country database is fully initialized.
 	
 	int			customETHiderAmount[16];
+
+	int			lastSpeedCheck;			// Check speed for zombies only every other frame.
 	
 	#ifdef _DEBUG
 	char		dateString[32];

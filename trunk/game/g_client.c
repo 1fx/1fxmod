@@ -1485,6 +1485,26 @@ void ClientUserinfoChanged( int clientNum )
 				G_UpdateOutfitting ( clientNum );
 	}
 
+	// Boe!Man 10/6/14: Check if someone on the blue team should have a speed boost.
+	if (current_gametype.value == GT_HZ && level.time != level.lastSpeedCheck){
+		int	i;
+		int teamCount = TeamCount1(TEAM_BLUE);
+
+		level.lastSpeedCheck = level.time;
+
+		for (i = 0; i < level.numConnectedClients; i++)
+		{
+			ent = &g_entities[level.sortedClients[i]];
+
+			// A team change occured. Check if a player needs the zombie speed boost.
+			if (teamCount == 1 && ent->client->sess.team == TEAM_BLUE){
+				ent->client->sess.firstzombie = qtrue;
+			}else{
+				ent->client->sess.firstzombie = qfalse;
+			}
+		}
+	}
+
 	// send over a subset of the userinfo keys so other clients can
 	// print scoreboards, display models, and play custom sounds
 	if ( ent->r.svFlags & SVF_BOT ) 

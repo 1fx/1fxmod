@@ -503,7 +503,6 @@ void G_ResetGametype ( qboolean fullRestart, qboolean cagefight )
 			}
 			other->client->sess.zombie = qfalse;
 			other->client->sess.zombiebody = -1;
-			other->client->sess.firstzombie = qfalse;
 			SetTeam(other, "red", NULL, qtrue);
 		}
 	}else if(current_gametype.value == GT_HS){

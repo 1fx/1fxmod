@@ -2837,7 +2837,6 @@ void Henk_CheckZombie(void){
 					G_Broadcast(va("%s\nturned into a \\Zombie!", g_entities[level.zombie].client->pers.netname), BROADCAST_GAME, NULL);
 					// turn into zombie
 					CloneBody(&g_entities[level.zombie], g_entities[level.zombie].s.number);
-					g_entities[level.zombie].client->sess.firstzombie = qtrue;
 					level.messagedisplay2 = qtrue;
 					level.zombie = -1;
 				}else{
