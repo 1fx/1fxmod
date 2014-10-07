@@ -795,6 +795,7 @@ typedef struct
 	qboolean	messagedisplay2;
 	int			zombie;
 	int			zombietime;
+	int			nextZombie;		// Entity ID of the next zombie.
 
 	// Henk 26/01/10 -> Current RPG/M4/MM1 holders
 	char		RPGloc[64];
@@ -884,6 +885,7 @@ int		G_SpawnGEntityFromSpawnVars( qboolean inSubBSP ); // Henkie 16/02/11 -> Mak
 void		G_SpawnEntitiesFromString( qboolean inSubBSP );
 char		*G_NewString( const char *string );
 void		AddSpawnField(char *field, char *value);
+void		G_TransformPlayerToObject(gentity_t *ent);
 
 //
 // g_cmds.c

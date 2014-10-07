@@ -1367,6 +1367,10 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 
 	// Boe!Man 11/24/13: Check the state.
 	g_checkSectionState();
+
+	if (current_gametype.value == GT_HZ){
+		level.nextZombie = -1;
+	}
 	
 	// Boe!Man 7/29/12: Check for g_preferSubnets and g_passwordAdmins not both being set to 1 (incompatible).
 	if(g_passwordAdmins.integer && g_preferSubnets.integer){
@@ -2813,12 +2817,20 @@ void Henk_CheckZombie(void){
 			level.messagedisplay2 = qfalse;
 		}
 		if(level.zombie == -1 && TeamCount1(TEAM_BLUE) == 0 && level.time >= level.zombietime+10000){
-			random = irand(0, level.numConnectedClients);
-			ent = &g_entities[level.sortedClients[random]];
+			if (level.nextZombie != -1){
+				ent = &g_entities[level.nextZombie];
+				level.nextZombie = -1;
+			}
+
+			if (!ent || !ent->client){
+				random = irand(0, level.numConnectedClients);
+				ent = &g_entities[level.sortedClients[random]];
+			}
 			if(ent->client->sess.team == TEAM_RED && ent->client->pers.connected == CON_CONNECTED && !G_IsClientDead(ent->client)){
 				if(ent->client->sess.team != TEAM_SPECTATOR){ // extra check
 				level.zombie = ent->s.number;
 				level.zombietime = level.time+5000;
+				G_Broadcast(va("%s\nwill turn into a \\zombie\nin ^15 ^7seconds!", ent->client->pers.netname), BROADCAST_GAME, NULL);
 				G_Broadcast("You will turn into a \\zombie\nin ^15 ^7seconds!", BROADCAST_GAME, ent);
 				}else{
 					#ifdef _DEBUG

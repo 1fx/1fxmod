@@ -774,10 +774,8 @@ void EvenTeams_HS (gentity_t *adm, qboolean aet)
 }
 
 void EvenTeams_HZ(gentity_t *adm, qboolean aet){
-	int		counts[TEAM_NUM_TEAMS];
-	int		diff = 0;
-	int		highTeam, i;
-	gentity_t *lastConnected;
+	int i;
+	gentity_t *ent, *lastConnected;
 
 	if (level.intermissiontime)
 		return;
@@ -793,69 +791,61 @@ void EvenTeams_HZ(gentity_t *adm, qboolean aet){
 		return;
 	}
 
-	counts[TEAM_BLUE] = TeamCount1(TEAM_BLUE);
-	counts[TEAM_RED] = TeamCount1(TEAM_RED);
-	if (counts[TEAM_BLUE] < 1){ // too few zombies
-		highTeam = TEAM_RED;
-		diff = (1 - counts[TEAM_BLUE]); // move diff to human team
-	}else if (counts[TEAM_BLUE] > 1){ // too many seekers
-		highTeam = TEAM_BLUE;
-		diff = (counts[TEAM_BLUE] - 1); // move diff to human team
-	}else if(diff <= 0){
+	if (TeamCount1(TEAM_BLUE) == 1){
 		if (adm && adm->client){
 			trap_SendServerCommand(adm - g_entities, va("print \"^3[Info] ^7Teams are as even as possible.\n\""));
-		}else{
+		}
+		else{
 			Com_Printf("Teams are as even as possible.\n");
 		}
 
 		return;
 	}
 
-	for (i = 0; i < diff; i++){
-		lastConnected = findLastEnteredPlayer(highTeam, qfalse);
+	if (level.nextZombie != -1){
+		lastConnected = &g_entities[level.nextZombie];
+		level.nextZombie = -1;
 
-		// Boe!Man 7/13/12: Fix crash issue with auto eventeams too soon before entering the map.
-		if (lastConnected == NULL){
-			lastConnected = findLastEnteredPlayer(highTeam, qtrue); // Try to search for it again but also try to even the teams regardless of players with scores.
+		if (!lastConnected || !lastConnected->client || lastConnected->client->sess.team == TEAM_SPECTATOR){
+			lastConnected = NULL;
+		}
+	}
+	
+	for (i = 0; i < level.numConnectedClients; i++){
+		ent = &g_entities[level.sortedClients[i]];
 
-			if (lastConnected == NULL){
-				if (adm && adm->client){
-					trap_SendServerCommand(adm - g_entities, va("print \"^3[Info] ^7You cannot even the teams this fast.\n\""));
-				}
-				else if (!aet){
-					Com_Printf("You cannot even the teams this fast.\n");
-				}
-				return;
-			}
+		if (ent->client->sess.team == TEAM_SPECTATOR){
+			continue;
 		}
 
-		if (!G_IsClientDead(lastConnected->client)){
-			TossClientItems(lastConnected); // Henk 19/01/11 -> Fixed items not dropping with !et
+		if (!G_IsClientDead(ent->client)){
+			TossClientItems(ent); // Henk 19/01/11 -> Fixed items not dropping with !et
 		}
 
-		lastConnected->client->ps.stats[STAT_WEAPONS] = 0;
-		G_StartGhosting(lastConnected);
+		ent->client->ps.stats[STAT_WEAPONS] = 0;
+		G_StartGhosting(ent);
 
-		if (highTeam == TEAM_RED)
-			lastConnected->client->sess.team = TEAM_BLUE;
-		else
-			lastConnected->client->sess.team = TEAM_RED;
+		if (ent == lastConnected){
+			ent->client->sess.team = TEAM_BLUE;
+		}else{
+			ent->client->sess.team = TEAM_RED;
+		}
 
-		if (lastConnected->r.svFlags & SVF_BOT)	{
+		if (ent->r.svFlags & SVF_BOT)	{
 			char userinfo[MAX_INFO_STRING];
-			trap_GetUserinfo(lastConnected->s.number, userinfo, sizeof(userinfo));
-			Info_SetValueForKey(userinfo, "team", lastConnected->client->sess.team == TEAM_RED ? "red" : "blue");
-			trap_SetUserinfo(lastConnected->s.number, userinfo);
+			trap_GetUserinfo(ent->s.number, userinfo, sizeof(userinfo));
+			Info_SetValueForKey(userinfo, "team", ent->client->sess.team == TEAM_RED ? "red" : "blue");
+			trap_SetUserinfo(ent->s.number, userinfo);
 		}
 
-		lastConnected->client->pers.identity = NULL;
-		ClientUserinfoChanged(lastConnected->s.number);
+		ent->client->pers.identity = NULL;
+		ClientUserinfoChanged(ent->s.number);
 		CalculateRanks();
 
-		G_StopFollowing(lastConnected);
-		G_StopGhosting(lastConnected);
-		trap_UnlinkEntity(lastConnected);
-		ClientSpawn(lastConnected);
+		G_StopFollowing(ent);
+		G_StopGhosting(ent);
+		trap_UnlinkEntity(ent);
+		ClientSpawn(ent);
 	}
 
 	Boe_GlobalSound(G_SoundIndex("sound/misc/events/tut_lift02.mp3"));

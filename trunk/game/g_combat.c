@@ -366,18 +366,18 @@ void player_die(
 			VectorClear ( missile->s.pos.trDelta );
 		}
 	}
-	if(attacker && self){
-		if(attacker->client && self->client){
-			if(current_gametype.value == GT_HZ && self->client->sess.team == TEAM_BLUE && attacker->client->sess.team == TEAM_RED){
+
+	if(self && self->client && current_gametype.value == GT_HZ){
+		if (attacker && attacker->client){
+			if (self->client->sess.team == TEAM_BLUE && attacker->client->sess.team == TEAM_RED){
 				DropRandom(self, TeamCount1(TEAM_BLUE));
 			}
 		}
-	}
-	if(self && self->client && current_gametype.value == GT_HZ){
+
 		if(self->client->sess.team == TEAM_RED && mod != MOD_TEAMCHANGE){
-				SetTeam(self, "blue", NULL, qtrue);
-				respawn(self);
-			}
+			SetTeam(self, "blue", NULL, qtrue);
+			respawn(self);
+		}
 	}
 
 	G_LogPrintf("Kill: %i %i %i: %s killed %s by %s\n",
@@ -1286,6 +1286,11 @@ if(current_gametype.value == GT_HZ && attacker && targ && mod == MOD_KNIFE){
 			CloneBody(attacker, targ->s.number);
 			damage = 0;
 			trap_SendServerCommand(-1, va("print \"^3[H&Z] ^7%s was zombified by %s.\n\"", targ->client->pers.netname, attacker->client->pers.netname) );
+
+			// Also check for a human kill, is it the first of the round?
+			if (level.nextZombie == -1 && targ->client->sess.team == TEAM_RED && attacker->client->sess.team == TEAM_BLUE){
+				level.nextZombie = targ->s.number;
+			}
 		}else if(attacker->client->sess.team == TEAM_RED && targ->client->sess.team == TEAM_BLUE){
 			targ->client->sess.killtime = level.time + 10000; // Boe!Man 7/15/11: Don't allow the zombie to kill himself in the next 10 secs.
 			damage = 12;
