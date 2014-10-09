@@ -1092,6 +1092,7 @@ gentity_t* G_FireWeapon( gentity_t *ent, attackType_t attack )
 	else
 	{
 		G_FireBullet ( ent, ent->s.weapon, attack );
+
 		if(ent->s.weapon == WP_M4_ASSAULT_RIFLE && current_gametype.value == GT_HS){
 			index = weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_ALTERNATE].ammoIndex;
 			index1 = weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_NORMAL].ammoIndex;
@@ -1105,22 +1106,19 @@ gentity_t* G_FireWeapon( gentity_t *ent, attackType_t attack )
 				trap_SendServerCommand(-1, va("print\"^3[H&S] ^7M4 has disappeared\n\""));
 			}
 		}
-	}
 
-	if (current_gametype.value == GT_HZ && ent->client->sess.team == TEAM_RED){
-		// On zombies, make sure all weapons go except the shotgun (if they're empty).
-		if (ent->client->ps.weapon != WP_KNIFE && ent->client->ps.weapon != WP_M590_SHOTGUN){
-			index = weaponData[ent->client->ps.weapon].attack[ATTACK_ALTERNATE].ammoIndex;
-			index1 = weaponData[ent->client->ps.weapon].attack[ATTACK_NORMAL].ammoIndex;
+		if (current_gametype.value == GT_HZ && ent->client->sess.team == TEAM_RED){
+			// On zombies, make sure all weapons go except the shotgun (if they're empty).
+			if (ent->client->ps.weapon != WP_KNIFE && ent->client->ps.weapon != WP_M590_SHOTGUN && attack != ATTACK_ALTERNATE){
+				if (ent->client->ps.clip[ATTACK_NORMAL][ent->client->ps.weapon] == 0 && ent->client->ps.clip[ATTACK_ALTERNATE][ent->client->ps.weapon] == 0){
+					ent->client->ps.clip[ATTACK_NORMAL][ent->client->ps.weapon] = 0;
+					ent->client->ps.clip[ATTACK_ALTERNATE][ent->client->ps.weapon] = 0;
+					ent->client->ps.stats[STAT_WEAPONS] &= ~(1 << ent->client->ps.weapon);
 
-			if (ent->client->ps.ammo[index] == 1 && ent->client->ps.ammo[index1] == 0){
-				ent->client->ps.clip[ATTACK_NORMAL][ent->client->ps.weapon] = 0;
-				ent->client->ps.clip[ATTACK_ALTERNATE][ent->client->ps.weapon] = 0;
-				ent->client->ps.stats[STAT_WEAPONS] &= ~(1 << ent->client->ps.weapon);
-
-				// Switch back to knife.
-				ent->client->ps.weapon = WP_KNIFE;
-				ent->client->ps.weaponstate = WEAPON_READY;
+					// Switch back to knife.
+					ent->client->ps.weapon = WP_KNIFE;
+					ent->client->ps.weaponstate = WEAPON_READY;
+				}
 			}
 		}
 	}
