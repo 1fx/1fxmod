@@ -15,11 +15,11 @@ sqlite3				*countryDb;
 static pid_t		pid; // Boe!Man 6/26/13: The PID of the Thread Manager (LinuxThreads).
 #endif
 
-int process_ddl_row(void * pData, int nColumns, 
+int process_ddl_row(void * pData, int nColumns,
         char **values, char **columns)
 {
 		sqlite3		*db;
-		
+
         if (nColumns != 1)
                 return 1; // Error
 
@@ -29,21 +29,21 @@ int process_ddl_row(void * pData, int nColumns,
         return 0;
 }
 
-int process_dml_row(void *pData, int nColumns, 
+int process_dml_row(void *pData, int nColumns,
         char **values, char **columns)
 {
 		sqlite3		*db;
 		char *stmt;
-		
+
         if (nColumns != 1)
                 return 1; // Error
-        
+
         db = (sqlite3*)pData;
 
         stmt = sqlite3_mprintf("insert into main.%q "
                 "select * from country.%q", values[0], values[0]);
         sqlite3_exec(db, stmt, NULL, NULL, NULL);
-        sqlite3_free(stmt);     
+        sqlite3_free(stmt);
 
         return 0;
 }
@@ -53,12 +53,12 @@ void *Thread_countryInit(){
 	sqlite3 	*db;
 	char 		fsGame[MAX_QPATH];
 	qboolean	alt;
-	
+
 	// Boe!Man 6/26/13: The PID of the thread manager needs to be stored, so we can forcefully terminate it later on.
 	#ifdef __linux__
 	pid = getppid();
 	#endif
-	
+
 	// Boe!Man 12/6/12
 	// The file can be on two locations. The DLL should always be in the fs_game folder, however, this could be misconfigured.
 	// The Mod takes care of this problem and should load the file correctly, even if misplaced.
@@ -75,41 +75,41 @@ void *Thread_countryInit(){
 	}else{
 		alt = qfalse;
 	}
-	
+
 	sqlite3_exec(db, "BEGIN", NULL, NULL, NULL);
 	sqlite3_exec(db, "SELECT sql FROM sqlite_master WHERE sql NOT NULL", &process_ddl_row, countryDb, NULL);
 	sqlite3_exec(db, "COMMIT", NULL, NULL, NULL);
 	sqlite3_close(db);
-	
+
 	// Boe!Man 1/29/13: Do attach the proper database, based on where the library is located.
 	if(!alt){
 		sqlite3_exec(countryDb, "ATTACH DATABASE './core/country.db' as country", NULL, NULL, NULL);
 	}else{
 		sqlite3_exec(countryDb, va("ATTACH DATABASE './%s/core/country.db' as country", fsGame), NULL, NULL, NULL);
 	}
-	
+
 	// Copy the data from the backup to the in memory
 	sqlite3_exec(countryDb, "BEGIN", NULL, NULL, NULL);
 	sqlite3_exec(countryDb, "SELECT name FROM country.sqlite_master WHERE type='table'", &process_dml_row, countryDb, NULL);
 	sqlite3_exec(countryDb, "COMMIT", NULL, NULL, NULL);
-	
+
 	// Boe!Man 6/25/13: Parse the clients their country now.
 	for (i = 0; i < level.numConnectedClients; i++){
 		gentity_t* ent = &g_entities[level.sortedClients[i]];
 
 		if (ent->client->pers.connected != CON_CONNECTED)
 			continue;
-			
+
 		if (ent->r.svFlags & SVF_BOT)
 			continue;
-		
+
 		HENK_COUNTRY(ent);
 	}
 
-	
+
 	// Boe!Man 6/25/13: The game can use the country system now..
 	level.countryInitialized = qtrue;
-	
+
 	pthread_exit(NULL);
 	return NULL;
 }
@@ -119,9 +119,9 @@ void *Thread_countryInit(){
 void LoadCountries(){
 	// Boe!Man 6/25/13: Initialize the in-memory database from the main thread.
 	countryDb = NULL;
-	
+
 	sqlite3_open_v2(":memory:", &countryDb, SQLITE_OPEN_READWRITE, NULL);
-	
+
 	// Boe!Man 6/25/13: Try to init the thread.
 	if(pthread_create(&countryInit, NULL, &Thread_countryInit, NULL) != 0){
 		#ifdef _DEBUG
@@ -141,9 +141,9 @@ void UnloadCountries(){
 
 	sqlite3_exec(countryDb, "DETACH DATABASE country", NULL, NULL, NULL);
 	sqlite3_close(countryDb);
-	
+
 	Com_Printf("Unloaded country database.\n");
-	
+
 	// Boe!Man 6/26/13: Thanks to LinuxThreads, also kill the Thread Manager. This "fixes" a crash on "new" (> Linux 2.4) systems.
 	#ifdef __linux__
 	kill(pid, SIGTERM);
@@ -223,8 +223,8 @@ void Henk_Tip(void){
 	int linecount = 0;
 	#endif
 
-	len = trap_FS_FOpenFile( g_tipsFile.string, &f, FS_READ_TEXT); 
-	if (!f) { 
+	len = trap_FS_FOpenFile( g_tipsFile.string, &f, FS_READ_TEXT);
+	if (!f) {
 		Com_Printf("Error opening tips file: %s\n", g_tipsFile.string);
 		// Boe!Man 9/18/13: Fixed tips re-checking every x msec even though the file couldn't be opened due to errors.
 		trap_Cvar_Set("server_enableTips", "0");
@@ -248,11 +248,11 @@ void Henk_Tip(void){
 				count++;
 			}
 			start = i+1;
-			
+
 			#ifdef WIN32
 			linecount++;
 			#endif
-			
+
 			// Boe!Man 9/18/13: If there are already 64 tips loaded, break the process.
 			if(count == 64)
 				break;
@@ -264,22 +264,22 @@ void Henk_Tip(void){
 	if(len >= 2 && buf[len-1] == 0){
 		CRLF = qtrue;
 	}
-	
+
 	if(CRLF ? (len > start+linecount && count != 64 && start != len) : (len > start && count != 64 && start != len)){
 	#elif __linux__
 	if(len > start && count != 64){
 	#endif
 		if(!count){
-			Q_strncpyz(Tips[count].tip, buf, sizeof(buf));	
+			Q_strncpyz(Tips[count].tip, buf, sizeof(buf));
 		}else{
 			Q_strncpyz(Tips[count].tip, buf+start, len);
 		}
 		count++;
 	}
 	trap_FS_FCloseFile(f);
-	
+
 	if(count > 0){
-		trap_SendServerCommand( -1, va("chat -1 \"%s Tip: %s\n\"", G_ColorizeMessage("Random"), Tips[irand(0, count-1)].tip ) );		
+		trap_SendServerCommand( -1, va("chat -1 \"%s Tip: %s\n\"", G_ColorizeMessage("Random"), Tips[irand(0, count-1)].tip ) );
 		level.tipMsg = level.time+(server_msgInterval.integer*60000);
 	}else{
 		trap_Cvar_Set("server_enableTips", "0");
@@ -329,7 +329,7 @@ void Henk_Ignore(gentity_t *ent){
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You haven't entered a valid player ID/player name.\n\""));
 			return;
 		}
-		
+
 		if ( g_entities[idnum].client->pers.connected == CON_DISCONNECTED )
 		{
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7The player is not connected.\n\""));
@@ -438,7 +438,7 @@ void InitCagefight(void){
 	for(i=0;i<=31;i++){ // Boe!Man 6/30/12: 32, regardless of the amount of players. The recommended max for any gametype is 32, above, unsupported. So just spread them more equally instead of adding even more spawns.
 		VectorCopy(level.hideseek_cage, spawns[i]);
 	}
-	
+
 	if(!level.hideseek_cageSize){ // 0 = regular.
 		spawns[0][0] -= 105;
 		spawns[0][1] -= 105;
@@ -501,7 +501,7 @@ void InitCagefight(void){
 		spawns[2][1] += 231;
 		spawns[3][0] += 231;
 		spawns[3][1] -= 231;
-		
+
 		// The center between the two cages, still on the 'outer' line.
 		//spawns[4][0] -= 0;
 		spawns[4][1] -= 231;
@@ -511,7 +511,7 @@ void InitCagefight(void){
 		//spawns[6][1] -= 0;
 		spawns[7][0] += 231;
 		//spawns[7][1] += 0;
-		
+
 		// The quarter between the cage, again, on the outer line.
 		spawns[8][0] -= 115.5;
 		spawns[8][1] -= 231;
@@ -521,7 +521,7 @@ void InitCagefight(void){
 		spawns[10][1] -= 115.5;
 		spawns[11][0] += 231;
 		spawns[11][1] += 115.5;
-		
+
 		// The same, except the opposite quarter.
 		spawns[12][0] += 115.5;
 		spawns[12][1] -= 231;
@@ -531,7 +531,7 @@ void InitCagefight(void){
 		spawns[14][1] += 115.5;
 		spawns[15][0] += 231;
 		spawns[15][1] -= 115.5;
-		
+
 		// Now we begin spawning them in the 'inner cage', the original spawnpoints that we maintain.
 		spawns[16][0] -= 105;
 		spawns[16][1] -= 105;
@@ -541,7 +541,7 @@ void InitCagefight(void){
 		spawns[18][1] += 105;
 		spawns[19][0] += 105;
 		spawns[19][1] -= 105;
-		
+
 		// Center of the inner cage.
 		//spawns[20][0] -= 0;
 		spawns[20][1] -= 105;
@@ -551,11 +551,11 @@ void InitCagefight(void){
 		//spawns[22][1] += 0;
 		spawns[23][0] += 105;
 		//spawns[23][1] -= 0;
-		
+
 		// Spawn one fella in the absolute center.
 		//spawns[24][0] -= 0;
 		//spawns[24][1] -= 0;
-		
+
 		// Have the extra ability to spawn four more, do this between the absolutes of the inner cage and the outer cage ( (231 - 105) / 2 + 105)
 		spawns[25][0] -= 168;
 		spawns[25][1] -= 168;
@@ -652,28 +652,33 @@ void DropRandom( gentity_t *ent, int zombies){
 	}else{ // >= 15
 		DropGroup = 5;
 	}
-	
-	random = irand(0, 99);
+
+	random = irand(0, 100);
 	start = 0;
 
-	for (i = 0; i < sizeof(weaponDropOdds[0]) / sizeof(int); i++){
-		if(weaponDropOdds[DropGroup][i] != 0){
-			Odds[i][0] = start;
-			Odds[i][1] = (Odds[i][0]+weaponDropOdds[DropGroup][i])-1;
-			if(random >= Odds[i][0] && (random <= Odds[i][1] || Odds[i][1] == 0)){ // we have found our group.
-				group = i;
-				break;
-			}
-			start = Odds[i][0]+weaponDropOdds[DropGroup][i];
+	for (i = 0; i < 6; i++){
+		Odds[i][0] = start;
+		Odds[i][1] = (Odds[i][0]+weaponDropOdds[DropGroup][i])-1;
+		if((random >= Odds[i][0] && random <= Odds[i][1])
+            || (i == 0 && random <= Odds[i][1])
+            || (random >= Odds[i][0] && Odds[i][1] == 0)
+            || (i == 5)){
+                group = i;
+                break;
 		}
+		start = Odds[i][0]+weaponDropOdds[DropGroup][i];
 	}
 	#ifdef _DEBUG
-	Com_Printf("Group: %i\n", group);
+	G_LogPrintf("Group: %i\n", group);
+	if(group < 0 || group >= 6){
+        G_Broadcast("CRAAAAASH DETECTED", BROADCAST_MOTD, NULL);
+        return;
+	}
 	#endif
-	if(weaponGroups[group][2] == 0) 
+	if(weaponGroups[group][2] == 0)
 		random = irand(0,1); // randomize between 2 weapons
 	else
-		random = irand(0, 2); // randomize between 3 weapons 
+		random = irand(0, 2); // randomize between 3 weapons
 
 	//Com_Printf("Random: %i\n", random);
 
@@ -726,7 +731,7 @@ void CloneBody( gentity_t *ent, int number )
 	body->s.otherEntityNum  = ent->s.clientNum;
 	g_entities[number].client->sess.zombie = qtrue;
 	g_entities[number].client->sess.zombiebody = body->s.number;
-	
+
 	//if ( body->s.groundEntityNum == ENTITYNUM_NONE )
 	VectorCopy(ent->client->ps.velocity, velo);
 	AngleVectors( ent->client->ps.viewangles, velo, NULL, NULL );
@@ -740,7 +745,7 @@ void CloneBody( gentity_t *ent, int number )
 
 	parm  = (DirToByte( direction )&0xFF);
 	parm += (hitLocation<<8);
-	
+
 	G_AddEvent(body, EV_BODY_QUEUE_COPY, parm);
 
 	body->r.svFlags = ent->r.svFlags | SVF_BROADCAST;
@@ -750,7 +755,7 @@ void CloneBody( gentity_t *ent, int number )
 	VectorCopy (ent->r.absmax, body->r.absmax);
 
 	body->s.torsoAnim = 45;
-	
+
 	body->clipmask = CONTENTS_SOLID | CONTENTS_PLAYERCLIP;
 	body->r.contents = 0; // CONTENTS_CORPSE;
 	body->r.ownerNum = ent->s.number;
@@ -839,11 +844,11 @@ void CheckEnts(gentity_t *ent){
 qboolean IsClientMuted(gentity_t *ent, qboolean message){
 	int i, remain, remainS;
 	int counter = 0;
-	
+
 	// Boe!Man 7/18/13: Most of the time no-one is muted, so this really saves resources.
 	if(!level.muteClientCount)
 		return qfalse;
-	
+
 	for(i = 0; i < MAX_CLIENTS; i++){
 		if(level.mutedClients[i].used == qtrue){
 			counter++;
@@ -863,7 +868,7 @@ qboolean IsClientMuted(gentity_t *ent, qboolean message){
 					ent->client->sess.mute = qfalse;
 				}
 			}
-			
+
 			if(level.muteClientCount == counter)
 				break;
 		}
@@ -930,7 +935,7 @@ qboolean RemoveMutedClient(gentity_t *ent){
 				unmuted = qtrue;
 				level.muteClientCount--;
 			}
-			
+
 			if(level.muteClientCount == counter)
 				break;
 		}
@@ -944,7 +949,7 @@ char *GetReason(void) {
 	char		*reason = "";
 	int 		 i, z;
 	qboolean 	 Do = qfalse;
-	
+
 	trap_Argv( 1, arg, sizeof( arg ) );
 	for(i=0;i<256;i++){
 		if(arg[i] == ' '){
@@ -1030,7 +1035,7 @@ void InitSpawn(int choice) // load bsp models before players loads a map(SOF2 cl
 	}
 
 	AddSpawnField("classname", "misc_bsp"); // blocker
-	
+
 	if(choice == 1){
 	AddSpawnField("bspmodel",	"instances/Generic/fence01");
 	}else if(choice == 2){
@@ -1038,20 +1043,20 @@ void InitSpawn(int choice) // load bsp models before players loads a map(SOF2 cl
 	}else if(choice == 3){
 	AddSpawnField("bspmodel",	"instances/Kamchatka/wall01");
 	}else if(choice == 4){
-		AddSpawnField("bspmodel",	"instances/Colombia/tree01");	
+		AddSpawnField("bspmodel",	"instances/Colombia/tree01");
 	}else if(choice == 5){
 		AddSpawnField("bspmodel",	"instances/Colombia/tree02");
 	}else if(choice == 6){
 		AddSpawnField("bspmodel",	"instances/Colombia/tree06");
 	}
-	
+
 	AddSpawnField("origin",		"-4841 -4396 5000");
 	AddSpawnField("angles",		"0 90 0");
 	AddSpawnField("model",		"trigger_hurt"); //blocked_trigger
 	AddSpawnField("count",		 "1");
 
 	G_SpawnGEntityFromSpawnVars(qfalse);
-}	
+}
 
 /*void AddToPasswordList(gentity_t *ent, int lvl){
 	int len;
@@ -1166,7 +1171,7 @@ qboolean henk_ischar(char c){
 
 char *ChooseTeam(){
 	int counts[3], seekers = 0, maxhiders = 0;
-	
+
 	counts[TEAM_BLUE] = TeamCount1(TEAM_BLUE);
 	counts[TEAM_RED] = TeamCount1(TEAM_RED);
 
@@ -1228,13 +1233,13 @@ void PrintCustom(int numb){
 	char desc[256];
 	char level[8];
 	char name[32];
-	
+
 	GP2 = trap_GP_ParseFile(g_customCommandsFile.string, qtrue, qfalse);
 	if(!GP2){
 		Com_Printf("Error while loading %s\n", g_customCommandsFile.string);
 		return;
 	}
-	
+
 	group = trap_GPG_GetSubGroups(GP2);
 	while(group)
 	{
@@ -1271,16 +1276,16 @@ void HENK_COUNTRY(gentity_t *ent){
 	int		i, z, countx[4], loops = 0;
 	int 	start = 0;
 	int 	rc;
-	
+
 	char				octet[4][4], octetx[4][4];
 	int					RealOctet[4];
 	unsigned int		IPnum;
 	sqlite3_stmt		*stmt;
 	int					tableNum = -1;
 
-	
+
 	IP = va("%s", ent->client->pers.ip);
-	
+
 	// Set countx to zero, when you do not set the variable you get weird ass results.
 	countx[0] = 0;
 	countx[1] = 0;
@@ -1334,11 +1339,11 @@ void HENK_COUNTRY(gentity_t *ent){
 	RealOctet[3] = atoi(octetx[3]);
 
 	IPnum = (RealOctet[0] * 16777216) + (RealOctet[1] * 65536) + (RealOctet[2] * 256) + (RealOctet[3]);
-	
+
 	if(sql_timeBench.integer){
 		start = trap_Milliseconds();
 	}
-	
+
 	rc = sqlite3_prepare(countryDb, va("SELECT table_index from country_index WHERE %u BETWEEN begin_ip AND end_ip", IPnum), -1, &stmt, 0);
 	if(rc != SQLITE_OK){
 		Com_Printf("^1Error: ^7Country database: %s\n", sqlite3_errmsg(countryDb));
@@ -1349,12 +1354,12 @@ void HENK_COUNTRY(gentity_t *ent){
 		break;
 	}
 	sqlite3_finalize(stmt);
-	
+
 	// Boe!Man 6/28/13: Check if the table number has been found.
 	if(tableNum == -1)
 		return;
-	
-	
+
+
 	rc = sqlite3_prepare(countryDb, va("SELECT country,ext from db%i WHERE %u BETWEEN begin_ip AND end_ip", tableNum, IPnum), -1, &stmt, 0);
 	if(rc != SQLITE_OK){
 		Com_Printf("^1Error: ^7Country database: %s\n", sqlite3_errmsg(countryDb));
@@ -1368,7 +1373,7 @@ void HENK_COUNTRY(gentity_t *ent){
 		}
 	}
 	sqlite3_finalize(stmt);
-	
+
 	if(sql_timeBench.integer){
 		Com_Printf(va("IP2Country took %d ms\n", trap_Milliseconds()-start));
 	}
