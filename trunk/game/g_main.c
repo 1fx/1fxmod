@@ -174,7 +174,7 @@ vmCvar_t	g_instaGib;
 vmCvar_t	g_weaponModFlags;
 vmCvar_t	g_allowthirdperson;
 vmCvar_t	g_weaponswitch;
-vmCvar_t	g_compMode;	
+vmCvar_t	g_compMode;
 //vmCvar_t	g_clanfile;
 vmCvar_t	g_enableTeamCmds;
 vmCvar_t	g_refpassword;
@@ -309,7 +309,7 @@ vmCvar_t	g_inviewDb;
 vmCvar_t	g_debug;
 #endif
 
-static cvarTable_t gameCvarTable[] = 
+static cvarTable_t gameCvarTable[] =
 {
 	// don't override the cheat state set by the system
 	{ &g_cheats, "sv_cheats", "", 0, 0.0, 0.0, 0, qfalse },
@@ -328,7 +328,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_fps, "sv_fps", "", CVAR_ROM, 0.0, 0.0, 0, qfalse },
 
 	// latched vars
-	{ &g_gametype, "g_gametype", "dm", CVAR_SERVERINFO | CVAR_LATCH, 0.0, 0.0, 0, qfalse  }, 
+	{ &g_gametype, "g_gametype", "dm", CVAR_SERVERINFO | CVAR_LATCH, 0.0, 0.0, 0, qfalse  },
 
 	{ &g_maxclients, "sv_maxclients", "8", CVAR_SERVERINFO | CVAR_CHEAT | CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_maxGameClients, "g_maxGameClients", "0", CVAR_SERVERINFO | CVAR_LATCH | CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
@@ -386,7 +386,7 @@ static cvarTable_t gameCvarTable[] =
 
 	{ &g_respawnInterval, "g_respawnInterval", "15", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 	{ &g_respawnInvulnerability, "g_respawnInvulnerability", "5", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
-	
+
 	{ &g_ctfClassic, "g_ctfClassic", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue },
 
 	{ &RMG, "RMG", "0", 0, 0.0, 0.0, },
@@ -514,7 +514,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_refpassword, "g_refpassword", "none", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 	{ &g_checkCountry, "g_checkCountry", "1", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse  },
 	{ &g_autoEvenTeams, "g_autoEvenTeams", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
-	
+
 	// Boe!Man 11/24/13: No section CVARs.
 	{ &g_useNoLower,	"g_useNoLower", "1", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse  },
 	{ &g_useNoRoof,		"g_useNoRoof",	"1", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse  },
@@ -560,26 +560,26 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_aliasCount, "g_aliasCount", "10", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 
 	// Henk 19/01/10 -> Set default value of weapons and disable the cvar(Only in H&S though)
-	{ NULL,					"disable_weapon_knife",					"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 
-	{ NULL,					"disable_pickup_weapon_US_SOCOM",		"1", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 
-	{ NULL,					"disable_pickup_weapon_M19",			"1", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 
-	{ NULL,					"disable_pickup_weapon_microuzi",		"1", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 
-	{ NULL,					"disable_pickup_weapon_M3A1",			"1", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 
-	{ NULL,					"disable_pickup_weapon_USAS_12",		"1", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 
-	{ NULL,					"disable_pickup_weapon_M590",			"1", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 
-	{ NULL,					"disable_pickup_weapon_MSG90A1",		"1", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 
-	{ NULL,					"disable_pickup_weapon_M4",				"1", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 
-	{ NULL,					"disable_pickup_weapon_AK_74",			"1", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 
-	{ NULL,					"disable_pickup_weapon_M60",			"1", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 
-	{ NULL,					"disable_pickup_weapon_RPG_7",			"1", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 
-	{ NULL,					"disable_pickup_weapon_MM_1",			"1", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 
-	{ NULL,					"disable_pickup_weapon_M84",			"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 
-	{ NULL,					"disable_pickup_weapon_SMOHG92",		"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 
-	{ NULL,					"disable_pickup_weapon_AN_M14",			"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 
-	{ NULL,					"disable_pickup_weapon_M67",			"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 
-	{ NULL,					"disable_pickup_weapon_F1",				"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 
-	{ NULL,					"disable_pickup_weapon_L2A2",			"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 
-	{ NULL,					"disable_pickup_weapon_MDN11",			"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse }, 
+	{ NULL,					"disable_weapon_knife",					"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
+	{ NULL,					"disable_pickup_weapon_US_SOCOM",		"1", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
+	{ NULL,					"disable_pickup_weapon_M19",			"1", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
+	{ NULL,					"disable_pickup_weapon_microuzi",		"1", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
+	{ NULL,					"disable_pickup_weapon_M3A1",			"1", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
+	{ NULL,					"disable_pickup_weapon_USAS_12",		"1", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
+	{ NULL,					"disable_pickup_weapon_M590",			"1", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
+	{ NULL,					"disable_pickup_weapon_MSG90A1",		"1", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
+	{ NULL,					"disable_pickup_weapon_M4",				"1", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
+	{ NULL,					"disable_pickup_weapon_AK_74",			"1", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
+	{ NULL,					"disable_pickup_weapon_M60",			"1", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
+	{ NULL,					"disable_pickup_weapon_RPG_7",			"1", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
+	{ NULL,					"disable_pickup_weapon_MM_1",			"1", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
+	{ NULL,					"disable_pickup_weapon_M84",			"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
+	{ NULL,					"disable_pickup_weapon_SMOHG92",		"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
+	{ NULL,					"disable_pickup_weapon_AN_M14",			"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
+	{ NULL,					"disable_pickup_weapon_M67",			"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
+	{ NULL,					"disable_pickup_weapon_F1",				"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
+	{ NULL,					"disable_pickup_weapon_L2A2",			"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
+	{ NULL,					"disable_pickup_weapon_MDN11",			"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
 
 	{ &g_alternateMap, "g_alternateMap", "0", CVAR_ROM|CVAR_INTERNAL|CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_enableCustomCommands, "g_enableCustomCommands", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
@@ -599,9 +599,9 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_rpmEnt, "g_rpmEnt", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 
 	{ &g_passwordAdmins, "g_passwordAdmins", "0", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse  },
-	
+
 	{ &g_shortCommandStyle, "g_shortCommandStyle", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
-	{ &g_boxAttempts, "g_boxAttempts", "3",	CVAR_ARCHIVE,	0.0,	0.0,  0, qtrue  }, 
+	{ &g_boxAttempts, "g_boxAttempts", "3",	CVAR_ARCHIVE,	0.0,	0.0,  0, qtrue  },
 	{ &g_cageAttempts, "g_cageAttempts", "3",	CVAR_ARCHIVE,	0.0,	0.0,  0, qtrue  },
 	{ &g_RpgStyle, "g_RpgStyle", "0",	CVAR_ARCHIVE,	0.0,	0.0,  0, qtrue  },
 //	{ &g_crossTheBridge, "g_crossTheBridge", "0",	CVAR_ARCHIVE,	0.0,	0.0,  0, qfalse  },
@@ -616,16 +616,16 @@ static cvarTable_t gameCvarTable[] =
 	// Boe!Man 8/25/11
 	{ &g_logSpecialChat,			"g_logSpecialChat",		 "1",		CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 	{ &g_specialChatSound,			"g_specialChatSound",	 "1",		CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
-	
+
 	// Boe!Man 5/20/12
 	{ &g_publicIPs,					"g_publicIPs",		 	"1",		CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue },
-	
+
 	// Boe!Man 7/29/12
 	{ &g_preferSubnets,				"g_preferSubnets",		 	"0",		CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
-	
+
 	// Boe!Man 10/19/13
 	{ &g_dosPatch,					"g_DoSPatch",			 	"1",		CVAR_ROM, 0.0, 0.0, 0, qfalse },
-	
+
 	// Boe!Man 1/2/13: --- SQLite3 Related CVARs ---
 	{ &sql_aliasFlushCount,			"sql_aliasFlushCount",		"7500",				CVAR_ARCHIVE,				0.0f,   0.0f, 0,  qfalse },
 	{ &sql_automaticBackup,			"sql_automaticBackup",		"1",				CVAR_ARCHIVE,				0.0f,   0.0f, 0,  qfalse },
@@ -664,7 +664,7 @@ This must be the very first function compiled into the .q3vm file
 */
 int vmMain( int command, int arg0, int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int arg7, int arg8, int arg9, int arg10, int arg11  )
 {
-	switch ( command ) 
+	switch ( command )
 	{
 		case GAME_GHOUL_INIT:
 			G_InitGhoul ( );
@@ -873,17 +873,17 @@ void G_UpdateCvars( void )
 							trap_SendServerCommand(-1, va("print \"^3[Rcon Action] ^7Spectator team locked during match.\n\""));
 						}
 					}
-				}	
+				}
 
 				cv->modificationCount = cv->vmCvar->modificationCount;
 
-				if ( cv->trackChange ) 
+				if ( cv->trackChange )
 				{
 					//trap_SendServerCommand( -1, va("print \"Server: %s changed to %s\n\"", cv->cvarName, cv->vmCvar->string ) );
 					trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7%s changed to %s.\n\"", cv->cvarName, cv->vmCvar->string ) );
 				}
 
-				if (cv->teamShader) 
+				if (cv->teamShader)
 				{
 					remapped = qtrue;
 				}
@@ -923,8 +923,8 @@ void G_UpdateDisableCvars ( void )
 		{
 			continue;
 		}
-		
-	
+
+
 		if(available[weapon-1] == '1' || available[weapon-1] == '2'){
 			trap_Cvar_Set ( va("disable_%s", item->classname), "0" );
 		}else{
@@ -1023,7 +1023,7 @@ void G_SetGametype ( const char* gametype )
 	 ///End  - 08.31.06 - 10:14pm
 	{
 		int i = 0;
-		
+
 		// Boe!Man 7/22/13: On H&S/H&Z, don't reset a map if the gametype isn't found so that we can ensure that all the game mechanics work.
 		if(current_gametype.value == GT_HS || current_gametype.value == GT_HZ){
 			Com_Printf("WARNING: Map does not support inf (or it is not added in the arena file)\n");
@@ -1089,7 +1089,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	Com_Printf ("------- Game Initialization -------\n");
 	Com_Printf ("Mod: %s %s\n", INF_STRING, INF_VERSION_STRING);
 	Com_Printf ("Date: %s\n", INF_VERSION_DATE);
-	
+
 	// Boe!Man 3/14/14: Check if we can actually start the server.
 	if(G_CheckAlive()){
 		Com_Error(ERR_FATAL, "Another instance is running!");
@@ -1100,7 +1100,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	memset(memsys5, 0, sizeof(memsys5));
 	sqlite3_config(SQLITE_CONFIG_HEAP, memsys5, 41943040, 64);
 	sqlite3_soft_heap_limit(40894464);
-	
+
 	// Boe!Man 7/3/13: Force master to direct IP instead of hostname on Linux.
 	trap_Cvar_Set("sv_master1", "63.146.124.45");
 
@@ -1112,7 +1112,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	trap_Cvar_Set("sv_master2", "master.1fxmod.org");
 	#endif
 	trap_Cvar_Update(gameCvarTable->vmCvar);
-	
+
 	// Boe!Man 6/25/13: Enable multithreading for SQLite.
 	sqlite3_config(SQLITE_CONFIG_MULTITHREAD);
 
@@ -1124,7 +1124,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	level.startTime = levelTime;
 	level.cagefightloaded = qfalse;
 	G_RegisterCvars();
-	
+
 	#ifdef _DEBUG
 	// Boe!Man 10/8/13: Init time for the debug database and write to it.
 	if(g_debug.integer){
@@ -1133,7 +1133,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 		writeDebug(0, g_debug.string);
 	}
 	#endif
-	
+
 	//Henk 12/10/12 -> Copy disk database to memory database.
 	// Boe!Man 6/25/13: Only load if g_checkCountry is enabled, do this *after* the CVARs are initialized.
 	if(g_checkCountry.integer){
@@ -1190,7 +1190,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	G_SetGametype(g_gametype.string);
 	// Give the game a uniqe id
 	trap_SetConfigstring ( CS_GAME_ID, va("%d", randomSeed ) );
-	
+
 	// Apply memory runtime modifications.
 	Patch_Main();
 
@@ -1277,7 +1277,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	G_SpawnEntitiesFromString(qfalse);
 
 	InitSpawn(3);
-	
+
 	if(current_gametype.value == GT_HS){
 		// Boe!Man 2/5/14: Specific BSPs get loaded for H&S as well.
 		InitSpawn(1);
@@ -1286,7 +1286,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 		InitSpawn(5);
 		InitSpawn(6);
 	}
-	
+
 	// Now parse the gametype information that we need.  This needs to be
 	// done after the entity spawn so that the items and triggers can be
 	// linked up properly
@@ -1349,12 +1349,12 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	}
 
 	trap_SetConfigstring( CS_VOTE_TIME, "" );
-	
+
 	// setup settings for h&s
 	if(current_gametype.value == GT_HS || current_gametype.value == GT_HZ){
 		SetNades("0"); // Enable them, but check them individually in that func cause' it's H&S.
 	}
-	
+
 	// Boe!Man 3/30/10
 	Boe_ParseChatSounds();
 
@@ -1371,7 +1371,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	if (current_gametype.value == GT_HZ){
 		level.nextZombie = -1;
 	}
-	
+
 	// Boe!Man 7/29/12: Check for g_preferSubnets and g_passwordAdmins not both being set to 1 (incompatible).
 	if(g_passwordAdmins.integer && g_preferSubnets.integer){
 		trap_Cvar_Set("g_passwordAdmins", "0");
@@ -1384,7 +1384,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 		writeDebug(MODDBG_CM, "Start CM check");
 	}
 	#endif
-	
+
 	// Boe!Man 11/16/10: Scrim settings.
 	if (g_compMode.integer > 0){
 		level.compMsgCount = level.time + 6000;
@@ -1406,7 +1406,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 			trap_Cvar_Set("scorelimit", cm_sl.string); // Set the scorelimit the same as the previously mentioned scrim setting.
 			trap_Cvar_Set("timelimit", cm_tl.string); // And the timelimit as well..
 		}
-		else if (cm_enabled.integer == 2 || cm_enabled.integer == 4 || cm_enabled.integer == 5){ // Boe!Man 11/19/10: This is bad, meaning they warped out of the scrim during a match. 
+		else if (cm_enabled.integer == 2 || cm_enabled.integer == 4 || cm_enabled.integer == 5){ // Boe!Man 11/19/10: This is bad, meaning they warped out of the scrim during a match.
 																								 // Or, in the case of '5', the scrim already ended.
 			trap_Cvar_Set("g_compMode", "0");
 			trap_Cvar_Set("cm_enabled", "0");
@@ -1424,7 +1424,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 			level.compMsgCount = 0;
 		}
 	}
-	
+
 	#ifdef _DEBUG
 	if(g_debug.integer){
 		writeDebug(MODDBG_CM, "End CM check");
@@ -1449,7 +1449,7 @@ void G_ShutdownGame( int restart )
 		G_LogPrintf("------------------------------------------------------------\n" );
 		trap_FS_FCloseFile( level.logFile );
 	}
-	
+
 	// Boe!Man 1/27/13: Reset the internal g_alternateMap CVAR if an alt map is loaded and the map is restarted.
 	if(restart){
 		if(level.altEnt){
@@ -1462,27 +1462,27 @@ void G_ShutdownGame( int restart )
 	if(g_checkCountry.integer){
 		UnloadCountries();
 	}
-	
+
 	// Boe!Man 5/27/13: Also detach and close userdata databases.
 	Boe_unloadUserdataDbs();
 
 	// write all the client session data so we can get it back
 	G_WriteSessionData();
-	
+
 	#ifdef __linux__
 	sqlite3_shutdown();
 	memset(memsys5, 0, sizeof(memsys5));
 	#elif WIN32
 	UnlockFile(lockFile, 0, 0, 0xffffff, 0xffffff);
 	CloseHandle(lockFile);
-	
+
 	trap_Cvar_VariableStringBuffer("fs_game", fsGame, sizeof(fsGame));
-	DeleteFile(TEXT(va("%s\\srv.lck", fsGame)));	
+	DeleteFile(TEXT(va("%s\\srv.lck", fsGame)));
 	#endif
-	
+
 	// Boe!Man 1/2/14: Check if the engine threw a Com_Error in another function (also logs it upon succesfull detection).
 	logCrash();
-	
+
 	#ifdef _DEBUG
 	if(g_debug.integer){
 		writeDebug(0, "Shutdown");
@@ -1500,7 +1500,7 @@ void G_ShutdownGame( int restart )
 
 #ifndef GAME_HARD_LINKED
 
-void QDECL Com_Error ( int level, const char *fmt, ... ) 
+void QDECL Com_Error ( int level, const char *fmt, ... )
 {
 	va_list		argptr;
 	char		text[1024];
@@ -2032,14 +2032,14 @@ void QDECL G_LogPrintf( const char *fmt, ... ) {
 	trap_FS_Write( string, strlen( string ), level.logFile );
 }
 
-/* 
+/*
 ================
 LogExit
 
 Append information about this game to the log file
 ================
 */
-void LogExit( const char *string ) 
+void LogExit( const char *string )
 {
 	int				i;
 	int				numSorted;
@@ -2055,28 +2055,28 @@ void LogExit( const char *string )
 
 	// don't send more than 32 scores (FIXME?)
 	numSorted = level.numConnectedClients;
-	if ( numSorted > 32 ) 
+	if ( numSorted > 32 )
 	{
 		numSorted = 32;
 	}
 
-	if ( level.gametypeData->teams ) 
+	if ( level.gametypeData->teams )
 	{
 		G_LogPrintf( "red:%i  blue:%i\n", level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE] );
 	}
 
-	for (i=0 ; i < numSorted ; i++) 
+	for (i=0 ; i < numSorted ; i++)
 	{
 		int	ping;
 
 		cl = &level.clients[level.sortedClients[i]];
 
-		if ( cl->sess.team == TEAM_SPECTATOR ) 
+		if ( cl->sess.team == TEAM_SPECTATOR )
 		{
 			continue;
 		}
 
-		if ( cl->pers.connected == CON_CONNECTING ) 
+		if ( cl->pers.connected == CON_CONNECTING )
 		{
 			continue;
 		}
@@ -2095,7 +2095,7 @@ void LogExit( const char *string )
 //Append information about this game to the log file
 //================
 //*/
-//void LogExit( const char *string ) 
+//void LogExit( const char *string )
 //{
 //	int				i;
 //	int				numSorted;
@@ -2111,28 +2111,28 @@ void LogExit( const char *string )
 //
 //	// don't send more than 32 scores (FIXME?)
 //	numSorted = level.numConnectedClients;
-//	if ( numSorted > 32 ) 
+//	if ( numSorted > 32 )
 //	{
 //		numSorted = 32;
 //	}
 //
-//	if ( level.gametypeData->teams ) 
+//	if ( level.gametypeData->teams )
 //	{
 //		G_LogPrintf( "red:%i  blue:%i\n", level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE] );
 //	}
 //
-//	for (i=0 ; i < numSorted ; i++) 
+//	for (i=0 ; i < numSorted ; i++)
 //	{
 //		int	ping;
 //
 //		cl = &level.clients[level.sortedClients[i]];
 //
-//		if ( cl->sess.team == TEAM_SPECTATOR ) 
+//		if ( cl->sess.team == TEAM_SPECTATOR )
 //		{
 //			continue;
 //		}
 //
-//		if ( cl->pers.connected == CON_CONNECTING ) 
+//		if ( cl->pers.connected == CON_CONNECTING )
 //		{
 //			continue;
 //		}
@@ -2288,16 +2288,16 @@ void CheckExitRules( void )
 
 	// check for sudden death
 	/* Henk 07/03/11 -> This will destroy our timelimit hit message and action.
-	if ( ScoreIsTied() ) // HENK FIX ME -> Add allow tie variable? 
+	if ( ScoreIsTied() ) // HENK FIX ME -> Add allow tie variable?
 	{
 		// always wait for sudden death
 		return;
 	}*/
 
 	// Check to see if the timelimit was hit
-	if ( g_timelimit.integer && !level.warmupTime && level.timelimithit != qtrue && level.cagefight != qtrue ) 
+	if ( g_timelimit.integer && !level.warmupTime && level.timelimithit != qtrue && level.cagefight != qtrue )
 	{
-		if ( level.time - level.startTime >= (g_timelimit.integer + level.timeExtension)*60000 ) 
+		if ( level.time - level.startTime >= (g_timelimit.integer + level.timeExtension)*60000 )
 		{
 			if(strstr(g_gametype.string, "inf") || strstr(g_gametype.string, "elim")){
 			trap_SendServerCommand( -1, va("print \"^3[Info] ^7Timelimit hit, waiting for round to finish.\n\"") );
@@ -2333,11 +2333,11 @@ void CheckExitRules( void )
 	}
 
 	// Check to see if the score was hit
-	if ( g_scorelimit.integer ) 
+	if ( g_scorelimit.integer )
 	{
 		if ( level.gametypeData->teams )
 		{
-			if ( level.teamScores[TEAM_RED] >= g_scorelimit.integer ) 
+			if ( level.teamScores[TEAM_RED] >= g_scorelimit.integer )
 			{
 				gentity_t* tent;
 				tent = G_TempEntity( vec3_origin, EV_GAME_OVER );
@@ -2350,7 +2350,7 @@ void CheckExitRules( void )
 				}else{
 					tent->s.eventParm = GAME_OVER_SCORELIMIT;
 				}
-				tent->r.svFlags = SVF_BROADCAST;	
+				tent->r.svFlags = SVF_BROADCAST;
 				tent->s.otherEntityNum = TEAM_RED;
 				if (g_compMode.integer > 0 && cm_enabled.integer == 2){
 					//LogExit(va("%s ^7team wins 1st round with %i - %i", server_redteamprefix, level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE] ));
@@ -2398,7 +2398,7 @@ void CheckExitRules( void )
 				return;
 			}
 
-			if ( level.teamScores[TEAM_BLUE] >= g_scorelimit.integer ) 
+			if ( level.teamScores[TEAM_BLUE] >= g_scorelimit.integer )
 			{
 				gentity_t* tent;
 				tent = G_TempEntity( vec3_origin, EV_GAME_OVER );
@@ -2411,7 +2411,7 @@ void CheckExitRules( void )
 				}else{
 					tent->s.eventParm = GAME_OVER_SCORELIMIT;
 				}
-				tent->r.svFlags = SVF_BROADCAST;	
+				tent->r.svFlags = SVF_BROADCAST;
 				tent->s.otherEntityNum = TEAM_BLUE;
 				if (g_compMode.integer > 0 && cm_enabled.integer == 2){
 					if(cm_dr.integer == 1){ // Boe!Man 3/18/11: If dual rounds are enabled, make use of them and display the temporary stuff.
@@ -2612,9 +2612,9 @@ void CheckWarmup ( void )
 CheckVote
 ==================
 */
-void CheckVote( void ) 
+void CheckVote( void )
 {
-	if ( level.voteExecuteTime && level.voteExecuteTime < level.time ) 
+	if ( level.voteExecuteTime && level.voteExecuteTime < level.time )
 	{
 		level.voteExecuteTime = 0;
 		// Boe!Man 9/10/11: Fix for calling a vote for a map defaulting to INF under H&S/H&Z.
@@ -2625,7 +2625,7 @@ void CheckVote( void )
 				trap_Cvar_Set( "g_gametype", "h&z");
 			}
 		}
-		
+
 		trap_SendConsoleCommand( EXEC_APPEND, va("%s\n", level.voteString ) );
 	}
 
@@ -2654,8 +2654,8 @@ void CheckVote( void )
 				level.forceVote = qfalse;
 			}
 			level.voteExecuteTime = level.time + 3000;
-		} 
-		else if ( level.voteNo >= level.numVotingClients/2 ) 
+		}
+		else if ( level.voteNo >= level.numVotingClients/2 )
 		{
 			// same behavior as a timeout
 			trap_SendServerCommand( -1, "print \"Vote failed.\n\"" );
@@ -2789,7 +2789,7 @@ void SetupOutfitting(void)
 				g_entities[level.sortedClients[i]].client->ps.ammo[start_ammo_type] = weaponData[WP_L2A2_GRENADE].attack[ATTACK_NORMAL].clipSize;
 				g_entities[level.sortedClients[i]].client->ps.clip[ATTACK_NORMAL][WP_L2A2_GRENADE] = weaponData[WP_L2A2_GRENADE].attack[ATTACK_NORMAL].clipSize;
 				g_entities[level.sortedClients[i]].client->ps.firemode[WP_L2A2_GRENADE] = BG_FindFireMode ( WP_L2A2_GRENADE, ATTACK_NORMAL, WP_FIREMODE_AUTO );
-			
+
 				// alt-fire ammo
 				start_ammo_type = weaponData[WP_L2A2_GRENADE].attack[ATTACK_ALTERNATE].ammoIndex;
 				if (AMMO_NONE != start_ammo_type)
@@ -2803,7 +2803,8 @@ void SetupOutfitting(void)
 
 void Henk_CheckZombie(void){
 	int i, random;
-	gentity_t *ent;
+	gentity_t *ent = NULL;
+
 	if(TeamCount1(TEAM_BLUE) >= 3 && level.messagedisplay1 == qfalse){
 		trap_SendServerCommand(-1, va("print \"^3[H&Z] ^7Zombie team has been unlocked.\n\"") );
 		level.messagedisplay1 = qtrue;
@@ -2811,11 +2812,12 @@ void Henk_CheckZombie(void){
 		level.messagedisplay1 = qfalse;
 	}
 
-	if(level.time >= level.gametypeStartTime+5000 && TeamCount1(TEAM_RED) >= 2){
+	if(level.numConnectedClients > 0 && level.time >= level.gametypeStartTime+5000 && TeamCount1(TEAM_RED) >= 2){
 		if(TeamCount1(TEAM_BLUE) == 0 && TeamCount1(TEAM_RED) >= 1 && level.messagedisplay2 == qtrue){
 			level.zombie = -1;
 			level.messagedisplay2 = qfalse;
 		}
+
 		if(level.zombie == -1 && TeamCount1(TEAM_BLUE) == 0 && level.time >= level.zombietime+10000){
 			if (level.nextZombie != -1){
 				ent = &g_entities[level.nextZombie];
@@ -2826,7 +2828,8 @@ void Henk_CheckZombie(void){
 				random = irand(0, level.numConnectedClients);
 				ent = &g_entities[level.sortedClients[random]];
 			}
-			if(ent->client->sess.team == TEAM_RED && ent->client->pers.connected == CON_CONNECTED && !G_IsClientDead(ent->client)){
+
+			if(ent && ent->client && ent->client->sess.team == TEAM_RED && !G_IsClientDead(ent->client)){
 				if(ent->client->sess.team != TEAM_SPECTATOR){ // extra check
 				level.zombie = ent->s.number;
 				level.zombietime = level.time+5000;
@@ -2863,7 +2866,7 @@ void Henk_CheckZombie(void){
 	if(level.time >= level.gametypeStartTime+8000 && level.messagedisplay == qfalse && level.gametypeStartTime >= 5000){
 		trap_SendServerCommand(-1, va("print \"^3[H&Z] ^7Shotguns distributed.\n\"") );
 		G_Broadcast("\\Shotguns distributed!", BROADCAST_GAME, NULL);
-		Boe_GlobalSound( G_SoundIndex("sound/misc/menus/click.wav")); 
+		Boe_GlobalSound( G_SoundIndex("sound/misc/menus/click.wav"));
 
 		for(i=0;i<level.numConnectedClients;i++){
 			ent = &g_entities[level.sortedClients[i]];
@@ -3005,7 +3008,7 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 				spawnPoint = G_SelectRandomSpawnPoint ( TEAM_BLUE );
 				// Boe!Man 5/7/12: Fixing crash issue. The briefcase MUST have a location to spawn.
 				if(spawnPoint){
-					G_RealSpawnGametypeItem1 ( BG_FindGametypeItem (0), spawnPoint->origin, spawnPoint->angles, qtrue );			
+					G_RealSpawnGametypeItem1 ( BG_FindGametypeItem (0), spawnPoint->origin, spawnPoint->angles, qtrue );
 					trap_SendServerCommand(-1, va("print\"^3[H&S] ^7Not enough seekers: Briefcase was spawned in the blue base.\n\""));
 				}else{
 					trap_SendServerCommand(-1, va("print\"^3[H&S] ^7The briefcase could not be spawned.\n\""));
@@ -3152,17 +3155,17 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 			}
 		}
 		}
-		
+
 		if(hideSeek_Extra.string[RANDOMGRENADE] == '1'){
 			// The random name, aka transform nade, has only one go at spawning. If this fails, the nade is NOT given out at all.
 			random = irand(0, level.numConnectedClients);
-			
+
 			if(g_entities[level.sortedClients[random]].inuse && g_entities[level.sortedClients[random]].client->sess.team == TEAM_RED && !G_IsClientDead(g_entities[level.sortedClients[random]].client)){
 				int start_ammo_type;
-			
+
 				// The hider can get the nade now.
 				trap_SendServerCommand(-1, va("print\"^3[H&S] ^7? grenade given at random to %s.\n\"", g_entities[level.sortedClients[random]].client->pers.cleanName));
-				
+
 				g_entities[level.sortedClients[random]].client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_M67_GRENADE );
 				start_ammo_type = weaponData[WP_M67_GRENADE].attack[ATTACK_NORMAL].ammoIndex;
 				g_entities[level.sortedClients[random]].client->ps.ammo[start_ammo_type] = weaponData[WP_M67_GRENADE].attack[ATTACK_NORMAL].clipSize;
@@ -3175,9 +3178,9 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 				{
 					g_entities[level.sortedClients[random]].client->ps.ammo[start_ammo_type] = ammoData[start_ammo_type].max;
 				}
-				
+
 				Com_sprintf(level.RandomNadeLoc, sizeof(level.RandomNadeLoc), "%s", g_entities[level.sortedClients[random]].client->pers.netname);
-				
+
 				// Boe!Man 2/26/14: Broadcast all the weapons the random nade carrier got, he might have RPG/M4 as well.
 				if(g_entities[level.sortedClients[random]].client->ps.stats[STAT_WEAPONS] & (1 << WP_RPG7_LAUNCHER)){
 					G_Broadcast("You now have the \\RPG & ? grenade!", BROADCAST_GAME, &g_entities[level.sortedClients[random]]);
@@ -3252,7 +3255,7 @@ void G_RunFrame( int levelTime )
 		{
 			continue;
 		}
-		
+
 		// clear events that are too old
 		if ( level.time - ent->eventTime > EVENT_VALID_MSEC )
 		{
@@ -3382,7 +3385,7 @@ void G_RunFrame( int levelTime )
 						ent->client->ps.pm_type = PM_NORMAL;
 						ent->client->sess.ghost = qfalse;
 					}
-		
+
 				ent->client->sess.noTeamChange = qfalse;
 
 				trap_UnlinkEntity (ent);
@@ -3401,7 +3404,7 @@ void G_RunFrame( int levelTime )
 						ent->client->ps.pm_type = PM_NORMAL;
 						ent->client->sess.ghost = qfalse;
 					}
-		
+
 				ent->client->sess.noTeamChange = qfalse;
 
 				trap_UnlinkEntity (ent);
@@ -3415,7 +3418,7 @@ void G_RunFrame( int levelTime )
 			ClientEndFrame( ent );
 		}
 	}
-	
+
 	if ( server_enableServerMsgs.integer && level.time > level.serverMsg && (level.time - level.startTime >= 20000))
 		Boe_serverMsg();
 	if(server_enableTips.integer && level.time > level.tipMsg && (level.time - level.startTime >= 20000))
@@ -3433,13 +3436,13 @@ void G_RunFrame( int levelTime )
 		trap_Cvar_VariableStringBuffer ( "mapname", level.mapname, MAX_QPATH );
 		trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", level.mapname));
 	}
-	
+
 	// Boe!Man 5/27/13: The automatic in-memory to disk backup. Note this only happens when playing a game which doesn't have a round limit.
 	if(level.sqlBackupTime && level.time >= level.sqlBackupTime){
 		Boe_backupInMemoryDbs("users.db", usersDb);
 		Boe_backupInMemoryDbs("aliases.db", aliasesDb);
 		Boe_backupInMemoryDbs("bans.db", bansDb);
-		
+
 		// Do this again in the next 5 minutes.
 		level.sqlBackupTime = level.time + 50000;
 	}
@@ -3458,7 +3461,7 @@ void G_RunFrame( int levelTime )
 			char *ds;
 			char *dr;
 			char color[4];
-			
+
 			if (server_colors.string != NULL && strlen(server_colors.string) >= 3){
 				strncpy(color, va("^%c", server_colors.string[3]), sizeof(color));
 			}
@@ -3485,10 +3488,10 @@ void G_RunFrame( int levelTime )
 				dr = "One";
 
 			if(dr == "Two"){ // Boe!Man 3/18/11: Display the Auto Swap setting when Dual Rounds are enabled.
-				G_Broadcast(va("%sMatch settings\n\n^7[^3Gametype^7] %s%s %s\n^7[^3Scorelimit^7]  %s%i\n^7[^3Timelimit^7]  %s%i\n^7[^3Specs locked^7] %s%s\n^7[^3Disable events^7] %s%s\n^7[^3# of Rounds^7] %s%s\n^7[^3Auto swap^7] %s%s\n\n%sRestart map to start the first round!", 
+				G_Broadcast(va("%sMatch settings\n\n^7[^3Gametype^7] %s%s %s\n^7[^3Scorelimit^7]  %s%i\n^7[^3Timelimit^7]  %s%i\n^7[^3Specs locked^7] %s%s\n^7[^3Disable events^7] %s%s\n^7[^3# of Rounds^7] %s%s\n^7[^3Auto swap^7] %s%s\n\n%sRestart map to start the first round!",
 					color, color, level.mapname, g_gametype.string, color, cm_sl.integer, color, cm_tl.integer, color, sl, color, ds, color, dr, color, as, color), BROADCAST_GAME, NULL);
 			}else{ // Boe!Man 3/18/11: Hide it when it's disabled.
-				G_Broadcast(va("%sMatch settings\n\n^7[^3Gametype^7] %s%s %s\n^7[^3Scorelimit^7]  %s%i\n^7[^3Timelimit^7]  %s%i\n^7[^3Specs locked^7] %s%s\n^7[^3Disable events^7] %s%s\n^7[^3# of Rounds^7] %s%s\n\n%sRestart map to start the first round!", 
+				G_Broadcast(va("%sMatch settings\n\n^7[^3Gametype^7] %s%s %s\n^7[^3Scorelimit^7]  %s%i\n^7[^3Timelimit^7]  %s%i\n^7[^3Specs locked^7] %s%s\n^7[^3Disable events^7] %s%s\n^7[^3# of Rounds^7] %s%s\n\n%sRestart map to start the first round!",
 					color, color, level.mapname, g_gametype.string, color, cm_sl.integer, color, cm_tl.integer, color, sl, color, ds, color, dr, color), BROADCAST_GAME, NULL);
 			}
 			level.compMsgCount = level.time + 3000;
@@ -3549,7 +3552,7 @@ void G_RunFrame( int levelTime )
 
 	// for tracking changes
 	CheckCvars();
-	
+
 	// Henk 21/01/10 -> Hide&Seek actions
 	if(current_gametype.value == GT_HS)
 		Henk_CheckHS();
@@ -3634,20 +3637,20 @@ qboolean G_CheckAlive(void)
 	BOOL success;
 
 	trap_Cvar_VariableStringBuffer("fs_game", fsGame, sizeof(fsGame));
-	
+
 	// Boe!Man 3/20/14: Open the lock file.
 	lockFile = CreateFile(TEXT(va("%s\\srv.lck", fsGame)), GENERIC_WRITE, 0, NULL, CREATE_NEW, 0, NULL);
-	
+
 	if (lockFile == INVALID_HANDLE_VALUE){
     	return qtrue;
 	}
-	
+
 	// Lock the whole file.
 	success = LockFile(lockFile, 0, 0, 0xffffffff, 0xffffffff);
 	if(!success){
 		return qtrue;
 	}
 	#endif
-	
+
 	return qfalse;
 }
