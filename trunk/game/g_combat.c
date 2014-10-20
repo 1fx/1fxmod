@@ -1275,8 +1275,8 @@ int G_Damage (
 		}
 	}
 } // End H&S stuff
-if(current_gametype.value == GT_HZ && attacker && targ && mod == MOD_KNIFE){
-	if(attacker->client && targ->client){
+if (current_gametype.value == GT_HZ && attacker && targ && attacker->client && targ->client){
+	if (mod == MOD_KNIFE){
 		if(attacker->client->sess.team == TEAM_BLUE && targ->client->sess.team == TEAM_RED){
 			// targ has to die
 			//player_die (targ, targ, attacker, 100000, MOD_TEAMCHANGE, HL_NONE, vec3_origin );
@@ -1291,10 +1291,10 @@ if(current_gametype.value == GT_HZ && attacker && targ && mod == MOD_KNIFE){
 			if (level.nextZombie == -1 && targ->client->sess.team == TEAM_RED && attacker->client->sess.team == TEAM_BLUE){
 				level.nextZombie = targ->s.number;
 			}
-		}else if(attacker->client->sess.team == TEAM_RED && targ->client->sess.team == TEAM_BLUE){
-			targ->client->sess.killtime = level.time + 10000; // Boe!Man 7/15/11: Don't allow the zombie to kill himself in the next 10 secs.
-			damage = 12;
 		}
+	}else if(attacker->client->sess.team == TEAM_RED && targ->client->sess.team == TEAM_BLUE){
+		targ->client->sess.killtime = level.time + 10000; // Boe!Man 7/15/11: Don't allow the zombie to kill himself in the next 10 secs.
+		damage = 12;
 	}
 }
 

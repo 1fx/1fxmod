@@ -851,7 +851,7 @@ void Cmd_Kill_f( gentity_t *ent )
 
 	if (current_gametype.value == GT_HZ){
 		if(ent->client->sess.killtime > level.time){ // Boe!Man 7/15/11: He's not allowed to kill himself. Inform him and return.
-			if(ent->client->sess.killtime - level.time > 1000){ // Boe!man 7/15/11: The counter should never show 0.. Just kill if it's actually under 1.
+			if((ent->client->sess.killtime - level.time) > 1000){ // Boe!man 7/15/11: The counter should never show 0.. Just kill if it's actually under 1.
 				trap_SendServerCommand ( ent->client - &level.clients[0], va("print\"^3[H&Z] ^7You cannot kill yourself for another %i second(s).\n\"", (ent->client->sess.killtime - level.time) / 1000 ));
 				return;
 			}
