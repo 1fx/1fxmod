@@ -1276,25 +1276,26 @@ int G_Damage (
 	}
 } // End H&S stuff
 if (current_gametype.value == GT_HZ && attacker && targ && attacker->client && targ->client){
-	if (mod == MOD_KNIFE){
-		if(attacker->client->sess.team == TEAM_BLUE && targ->client->sess.team == TEAM_RED){
-			// targ has to die
-			//player_die (targ, targ, attacker, 100000, MOD_TEAMCHANGE, HL_NONE, vec3_origin );
-			G_Damage (targ, NULL, NULL, NULL, NULL, 10000, 0, MOD_TEAMCHANGE, HL_HEAD);
-			CloneBody(attacker, targ->s.number);
-			damage = 0;
-			trap_SendServerCommand(-1, va("print \"^3[H&Z] ^7%s was zombified by %s.\n\"", targ->client->pers.netname, attacker->client->pers.netname) );
-			attacker->client->sess.score++;
-			attacker->client->sess.killsAsZombie++;
+	if (mod == MOD_KNIFE && attacker->client->sess.team == TEAM_BLUE && targ->client->sess.team == TEAM_RED){
+		// targ has to die
+		//player_die (targ, targ, attacker, 100000, MOD_TEAMCHANGE, HL_NONE, vec3_origin );
+		G_Damage (targ, NULL, NULL, NULL, NULL, 10000, 0, MOD_TEAMCHANGE, HL_HEAD);
+		CloneBody(attacker, targ->s.number);
+		damage = 0;
+		trap_SendServerCommand(-1, va("print \"^3[H&Z] ^7%s was zombified by %s.\n\"", targ->client->pers.netname, attacker->client->pers.netname) );
+		attacker->client->sess.score++;
+		attacker->client->sess.killsAsZombie++;
 
-			// Also check for a human kill, is it the first of the round?
-			if (level.nextZombie == -1 && targ->client->sess.team == TEAM_RED && attacker->client->sess.team == TEAM_BLUE){
-				level.nextZombie = targ->s.number;
-			}
+		// Also check for a human kill, is it the first of the round?
+		if (level.nextZombie == -1 && targ->client->sess.team == TEAM_RED && attacker->client->sess.team == TEAM_BLUE){
+			level.nextZombie = targ->s.number;
 		}
 	}else if(attacker->client->sess.team == TEAM_RED && targ->client->sess.team == TEAM_BLUE){
+		if (mod == MOD_KNIFE){
+			damage = 12;
+		}
+
 		targ->client->sess.killtime = level.time + 10000; // Boe!Man 7/15/11: Don't allow the zombie to kill himself in the next 10 secs.
-		damage = 12;
 	}
 }
 

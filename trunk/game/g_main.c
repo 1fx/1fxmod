@@ -2847,7 +2847,7 @@ void Henk_CheckZombie(void){
 	if(level.time >= level.zombietime && level.messagedisplay2 == qfalse){
 		if(TeamCount1(TEAM_RED) >= 2 && TeamCount1(TEAM_BLUE) == 0){
 			if(level.zombie != -1){
-				if(g_entities[level.zombie].client->sess.team != TEAM_SPECTATOR && !G_IsClientDead(g_entities[level.zombie].client)){
+				if (g_entities[level.zombie].client && g_entities[level.zombie].client->pers.connected == CON_CONNECTED && g_entities[level.zombie].client->sess.team != TEAM_SPECTATOR && !G_IsClientDead(g_entities[level.zombie].client)){
 					trap_SendServerCommand(-1, va("print \"^3[H&Z] ^7%s suddenly turned into a zombie!\n\"", g_entities[level.zombie].client->pers.netname) );
 					G_Broadcast(va("%s\nturned into a \\Zombie!", g_entities[level.zombie].client->pers.netname), BROADCAST_GAME, NULL);
 					// turn into zombie
