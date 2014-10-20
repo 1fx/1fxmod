@@ -286,6 +286,7 @@ typedef struct
 	int					spectatorClient;		// for chasecam and follow mode
 	int					score;					// total score
 	int					kills;					// number of kills
+	int					killsAsZombie;			// number of kills as zombie in H&Z. 'kills' is the kills as human.
 	int					deaths;					// number of deaths
 	int					deathTime;				// level.time of when the player last died to avoid the client switching teams to respawn.
 	qboolean			ghost;					// Whether or not the player is a ghost (sticks past team change)

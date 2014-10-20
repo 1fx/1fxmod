@@ -748,6 +748,7 @@ void EvenTeams_HS (gentity_t *adm, qboolean aet)
 		// Boe!Man 9/20/12: Also fix the scores (reset when switching teams using !et).
 		lastConnected->client->sess.score = 0;
 		lastConnected->client->sess.kills = 0;
+		lastConnected->client->sess.killsAsZombie = 0;
 		lastConnected->client->sess.deaths = 0;
 		lastConnected->client->sess.timeOfDeath = 0; // Boe!Man 8/29/11: Also reset this when switching team (so seekers that won won't get RPG for example).
 		

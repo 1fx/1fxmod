@@ -422,35 +422,33 @@ void player_die(
 			if(current_gametype.value == GT_HS && level.cagefight == qtrue){
 				// don't add score
 			}else{
-			if(current_gametype.value == GT_HS && self->client){
-				// Boe!Man 1/7/12: Also add the points to the kills with the special weapons.
-				if(self->client->ps.stats[STAT_WEAPONS] & ( 1 << WP_M4_ASSAULT_RIFLE )){
-					G_AddScore( attacker, 2 );
-					attacker->client->sess.kills++;
-				}else if(self->client->ps.stats[STAT_WEAPONS] & ( 1 << WP_RPG7_LAUNCHER )){
-					G_AddScore( attacker, 3 );
-					attacker->client->sess.kills += 2;
+				if(current_gametype.value == GT_HS && self->client){
+					// Boe!Man 1/7/12: Also add the points to the kills with the special weapons.
+					if(self->client->ps.stats[STAT_WEAPONS] & ( 1 << WP_M4_ASSAULT_RIFLE )){
+						G_AddScore( attacker, 2 );
+						attacker->client->sess.kills++;
+					}else if(self->client->ps.stats[STAT_WEAPONS] & ( 1 << WP_RPG7_LAUNCHER )){
+						G_AddScore( attacker, 3 );
+						attacker->client->sess.kills += 2;
+					}else{
+						G_AddScore( attacker, 1 );
+					}
 				}else{
 					G_AddScore( attacker, 1 );
 				}
-			}else
-			G_AddScore( attacker, 1 );
 
-			if(attacker->client->sess.team == TEAM_BLUE && self->client->sess.team == TEAM_RED && current_gametype.value == GT_HZ){
-				attacker->client->sess.deaths++;
-			}else
-			attacker->client->sess.kills++;
-			attacker->client->pers.statinfo.killsinarow++;
-			// Boe!Man 6/2/10: Add it to our own stats list.
-			attacker->client->pers.statinfo.kills++;
-			if(attacker->client->sess.team == TEAM_BLUE && current_gametype.value == GT_HS){
-				attacker->client->sess.roundkills += 1;
-				if(attacker->client->sess.roundkills >= level.SeekKills){
-					level.SeekKills += 1;
-					level.lastseek = attacker->s.number;
+				attacker->client->sess.kills++;
+				attacker->client->pers.statinfo.killsinarow++;
+				// Boe!Man 6/2/10: Add it to our own stats list.
+				attacker->client->pers.statinfo.kills++;
+				if(attacker->client->sess.team == TEAM_BLUE && current_gametype.value == GT_HS){
+					attacker->client->sess.roundkills += 1;
+					if(attacker->client->sess.roundkills >= level.SeekKills){
+						level.SeekKills += 1;
+						level.lastseek = attacker->s.number;
+					}
 				}
-			}
-			attacker->client->lastKillTime = level.time;
+				attacker->client->lastKillTime = level.time;
 			}
 		}
 	}
@@ -1287,7 +1285,7 @@ if(current_gametype.value == GT_HZ && attacker && targ && mod == MOD_KNIFE){
 			damage = 0;
 			trap_SendServerCommand(-1, va("print \"^3[H&Z] ^7%s was zombified by %s.\n\"", targ->client->pers.netname, attacker->client->pers.netname) );
 			attacker->client->sess.score++;
-			attacker->client->sess.kills++;
+			attacker->client->sess.killsAsZombie++;
 
 			// Also check for a human kill, is it the first of the round?
 			if (level.nextZombie == -1 && targ->client->sess.team == TEAM_RED && attacker->client->sess.team == TEAM_BLUE){

@@ -184,6 +184,7 @@ void RPM_Refresh(gentity_t *ent)
 	ent->client->sess.score = 0;
 	ent->client->sess.deaths = 0;
 	ent->client->sess.kills = 0;
+	ent->client->sess.killsAsZombie = 0;
 	ent->client->sess.teamkillDamage      = 0;
 	ent->client->sess.teamkillForgiveTime = 0;
 	ent->client->pers.statinfo.lastclient_hurt = -1;

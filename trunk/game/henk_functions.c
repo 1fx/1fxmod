@@ -671,7 +671,7 @@ void DropRandom( gentity_t *ent, int zombies){
 	#ifdef _DEBUG
 	G_LogPrintf("Group: %i\n", group);
 	if(group < 0 || group >= 6){
-        G_Broadcast("CRAAAAASH DETECTED", BROADCAST_MOTD, NULL);
+        G_Broadcast("CRAAAAASH DETECTED\nBwease report this to boe on forum", BROADCAST_MOTD, NULL);
         return;
 	}
 	#endif

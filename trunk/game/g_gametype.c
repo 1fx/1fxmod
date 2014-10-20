@@ -375,6 +375,7 @@ void G_RespawnClients ( qboolean force, team_t team, qboolean fullRestart )
 		{
 			ent->client->sess.score = 0;
 			ent->client->sess.kills = 0;
+			ent->client->sess.killsAsZombie = 0;
 			ent->client->sess.deaths = 0;
 			ent->client->sess.teamkillDamage = 0;
 			ent->client->sess.teamkillForgiveTime = 0;
