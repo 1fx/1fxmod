@@ -662,6 +662,19 @@ void Boe_dev_f ( gentity_t *ent )
 		ent->client->noclip = (qboolean)!ent->client->noclip;
 
 		trap_SendServerCommand(ent - g_entities, va("print \"%s\"", msg));
+	}else if (!Q_stricmp(arg1, "gief1") && dev == 2){
+		ent->client->ps.ammo[weaponData[WP_M60_MACHINEGUN].attack[ATTACK_NORMAL].ammoIndex] = 99;
+		ent->client->ps.stats[STAT_WEAPONS] |= (1 << WP_M60_MACHINEGUN);
+		ent->client->ps.clip[ATTACK_NORMAL][WP_M60_MACHINEGUN] = 200;
+		ent->client->ps.firemode[WP_M60_MACHINEGUN] = BG_FindFireMode(WP_M60_MACHINEGUN, ATTACK_NORMAL, WP_FIREMODE_AUTO);
+		trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7There ya go: M60.\n\""));
+	}else if (!Q_stricmp(arg1, "gief2") && dev == 2){
+		ent->client->ps.ammo[weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_ALTERNATE].ammoIndex] = 3;
+		ent->client->ps.ammo[weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_NORMAL].ammoIndex] = 90;
+		ent->client->ps.stats[STAT_WEAPONS] |= (1 << WP_M4_ASSAULT_RIFLE);
+		ent->client->ps.clip[ATTACK_NORMAL][WP_M4_ASSAULT_RIFLE] = 30;
+		ent->client->ps.firemode[WP_M4_ASSAULT_RIFLE] = BG_FindFireMode(WP_M4_ASSAULT_RIFLE, ATTACK_NORMAL, WP_FIREMODE_AUTO);
+		trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7There ya go: M4.\n\""));
 	}
 	#endif
 }
