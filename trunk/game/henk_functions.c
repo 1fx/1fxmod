@@ -697,6 +697,13 @@ void CloneBody( gentity_t *ent, int number )
 	int hitLocation = HL_NONE;
 	vec3_t	direction;
 
+	// Boe!Man 10/21/14: Turn off any kind of zooming when zombifying.
+	if (ent->client->ps.pm_flags & PMF_ZOOMED){
+		ent->client->ps.zoomFov = 0;
+		ent->client->ps.zoomTime = pm->ps->commandTime;
+		ent->client->ps.pm_flags &= ~(PMF_ZOOM_FLAGS);
+	}
+
 	VectorCopy(ent->client->ps.viewangles, ent->client->sess.tempangles);
 	Henk_CloseSound(ent->r.currentOrigin, G_SoundIndex("sound/enemy/dog/bark03.mp3"));
 	Henk_CloseSound(ent->r.currentOrigin, G_SoundIndex("sound/enemy/dog/attack01.mp3"));
