@@ -756,7 +756,7 @@ void CloneBody( gentity_t *ent, int number )
 
 	body->s.torsoAnim = 45;
 
-	body->clipmask = CONTENTS_SOLID | CONTENTS_PLAYERCLIP;
+	body->clipmask = MASK_SHOT;
 	body->r.contents = 0; // CONTENTS_CORPSE;
 	body->r.ownerNum = ent->s.number;
 
