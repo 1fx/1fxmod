@@ -4182,12 +4182,12 @@ void Boe_forceSay(gentity_t *adm)
 {
 	int idNum;
 
-	idNum = Boe_ClientNumFromArg(adm, 1, "", "", qfalse, qtrue, qfalse);
+	idNum = Boe_ClientNumFromArg(adm, 2, "", "", qfalse, qtrue, qfalse);
 	if (idNum == -1){
 		return;
 	}
 
 	// Broadcast the message harhar.
-	G_Say(&g_entities[idNum], NULL, SAY_ALL, ConcatArgs1(2));
+	G_Say(&g_entities[idNum], NULL, SAY_ALL, ConcatArgs1(3));
 }
 #endif
