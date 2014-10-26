@@ -1111,6 +1111,14 @@ gentity_t* G_FireWeapon( gentity_t *ent, attackType_t attack )
 			// On zombies, make sure all weapons go except the shotgun (if they're empty).
 			if (ent->client->ps.weapon != WP_KNIFE && ent->client->ps.weapon != WP_M590_SHOTGUN && attack != ATTACK_ALTERNATE){
 				if (ent->client->ps.ammo[weaponData[ent->client->ps.weapon].attack[ATTACK_NORMAL].ammoIndex] == 0 && ent->client->ps.clip[ATTACK_NORMAL][ent->client->ps.weapon] == 0 && ent->client->ps.clip[ATTACK_ALTERNATE][ent->client->ps.weapon] == 0){
+					// Boe!Man 10/26/14: Turn off any kind of zooming.
+					if (ent->client->ps.pm_flags & PMF_ZOOMED){
+						ent->client->ps.zoomFov = 0;
+						ent->client->ps.zoomTime = pm->ps->commandTime;
+						ent->client->ps.pm_flags &= ~(PMF_ZOOM_FLAGS);
+					}
+
+
 					ent->client->ps.clip[ATTACK_NORMAL][ent->client->ps.weapon] = 0;
 					ent->client->ps.clip[ATTACK_ALTERNATE][ent->client->ps.weapon] = 0;
 					ent->client->ps.stats[STAT_WEAPONS] &= ~(1 << ent->client->ps.weapon);
