@@ -314,8 +314,15 @@ static cvarTable_t gameCvarTable[] =
 	// don't override the cheat state set by the system
 	{ &g_cheats, "sv_cheats", "", 0, 0.0, 0.0, 0, qfalse },
 	{ NULL, "^3Mod Name", INF_STRING, CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse  },
+	#ifdef _DEBUG
+	#ifndef _NIGHTLY
+	{ NULL, "^3Mod Channel", "Pre-release", CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse },
+	#else
+	{ NULL, "^3Mod Channel", "Nightly (master)", CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse },
+	#endif // _NIGHTLY
+	#endif //_DEBUG
 	{ NULL, "^3Mod Version", INF_VERSION_STRING, CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse  },
-	{ NULL, "^3Mod URL", "1fx.uk.to", CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse  },
+	{ NULL, "^3Mod URL", "www.1fxmod.org", CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse  },
 	{ &current_gametype, "current_gametype", "3", CVAR_SERVERINFO | CVAR_ROM | CVAR_LATCH | CVAR_INTERNAL | CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ NULL, "modname", "RPM 2 k 3 v1.71 ^_- ^31fx.uk.to", CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse  },
 
