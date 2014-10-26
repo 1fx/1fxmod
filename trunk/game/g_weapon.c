@@ -1123,8 +1123,8 @@ gentity_t* G_FireWeapon( gentity_t *ent, attackType_t attack )
 					ent->client->ps.clip[ATTACK_ALTERNATE][ent->client->ps.weapon] = 0;
 					ent->client->ps.stats[STAT_WEAPONS] &= ~(1 << ent->client->ps.weapon);
 
-					// Switch back to knife.
-					ent->client->ps.weapon = WP_KNIFE;
+					// Switch back to M590.
+					ent->client->ps.weapon = WP_M590_SHOTGUN;
 					ent->client->ps.weaponstate = WEAPON_READY;
 				}
 			}
