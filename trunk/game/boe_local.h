@@ -18,17 +18,25 @@
 #endif
 */
 // Boe!Man 1/6/13: One string to rule them all.
-#ifdef _RELEASE	// Boe!Man 6/30/13: Major and minor version throughout a development cycle.
+#ifndef _DEBUG	// Boe!Man 10/26/14: Regular release (no _DEBUG defined).
 #define INF_VERSION_STRING "0.74"
-#elif _NIGHTLY	// Boe!Man 6/30/13: Debug release w/ symbols and other debugging stuff. Should never be released to the public.
-#define INF_VERSION_STRING "0.75t"
-#endif
-
+#define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod"
+#define STABLE_VERSION "Developed by ^GBoe!Man ^7& ^6Henkie\nwww.1fxmod.org\n\n"
+#else
+#define MAJOR_VERSION_STRING "0.75"
+#ifdef _NIGHTLY // Direct build from the master. Only used when debugging/developing.
+#define INF_VERSION_STRING "0.75"
+#define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod ^5[master]"
+#else
+#define INF_VERSION_STRING "0.75.1" // Don't forget to increment this number when test releasing.
+#define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod ^5[pre-release]"
+#endif // _NIGHTLY
+#define TEST_VERSION "Developed by ^GBoe!Man ^7& ^6Henkie\n^1Test version of " MAJOR_VERSION_STRING "\n\n"
+#endif // _DEBUG
 //#endif
 
 // Boe!Man 7/12/11: Mod name.
 #define INF_STRING "1fx. Mod"
-#define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod"
 
 // Boe!Man 7/12/11: Mod date.
 // Boe!Man 7/29/12: Month first causes confusion. Just hold on to the ISO standard for now (__DATE__).
@@ -55,10 +63,6 @@
 #endif
 */
 #define INF_VERSION_DATE __DATE__
-
-// Boe!Man 7/12/11: Motd header parts.
-#define TEST_VERSION "Developed by ^GBoe!Man ^7& ^6Henkie\n^1Test Release of 1fx. Mod\n\n"
-#define STABLE_VERSION "Developed by ^GBoe!Man ^7& ^6Henkie\n1fx.uk.to ^3| ^7i3D.net\n\n"
 
 // 1fx. Mod
 // Developed by: Boe!Man & Henkie

@@ -1929,6 +1929,18 @@ void Boe_About( gentity_t *ent )
 	trap_SendServerCommand( ent-g_entities, va("print \"\n^3Server settings\n\""));
 	trap_SendServerCommand( ent-g_entities, va("print \"--------------------------------------\n\""));
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Mod used^7]            %s %s\n", INF_STRING, INF_VERSION_STRING));
+	
+	// Mod channel.
+	#ifdef _DEBUG
+	#ifndef _NIGHTLY
+	trap_SendServerCommand(ent - g_entities, "print \"[^3Mod channel^7]         Pre-release\n");
+	#else
+	trap_SendServerCommand(ent - g_entities, "print \"[^3Mod channel^7]         Nightly (master)\n");
+	#endif // _NIGHTLY
+	#else
+	trap_SendServerCommand(ent - g_entities, "print \"[^3Mod channel^7]         Release\n");
+	#endif
+
 	#ifdef WIN32
 	trap_SendServerCommand( ent-g_entities, "print \"[^3Host platform^7]       Windows (*.dll)\n");
 	#elif __linux__
@@ -1957,26 +1969,6 @@ void Boe_About( gentity_t *ent )
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Speed^7]               %i\n", g_speed.integer));
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Gravity^7]             %i\n", g_gravity.integer));
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Total clients^7]       %i\n", level.numConnectedClients));
-
-	/*
-	trap_SendServerCommand( ent-g_entities, va("print \"^3\nAbout this server\n"));
-	trap_SendServerCommand( ent-g_entities, va("print \"-------------------------------------------------------\n"));
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Owner^7]       %s\n", Owner));
-	if (strstr(Clan, "0"))
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Active clan^7] No\n"));
-	else
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Active clan^7] Yes\n"));
-	if (strstr(ClanURL, "0"))
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Clan URL^7]    None\n\n"));
-	else
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Clan URL^7]    %s\n\n", ClanURL));
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Hosted by^7]   v1servers.com\n"));
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Mod used^7]    1fx. Mod\n"));
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Mod URL^7]     1fx.uk.to\n"));
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Mod version^7] %s\n", INF_VERSION_STRING));
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Mod date^7]    %s\n", INF_VERSION_DATE));
-	trap_SendServerCommand( ent-g_entities, va("print \"\n^1Massive thanks to Stoppbiel ^7for his continuous bug reports.\n"));
-	*/
 	trap_SendServerCommand( ent-g_entities, va("print \"\n^3Owner settings\n\""));
 	trap_SendServerCommand( ent-g_entities, va("print \"--------------------------------------\n\""));
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Owner^7]               %s\n", Owner.string));
