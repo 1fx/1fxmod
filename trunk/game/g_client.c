@@ -1897,7 +1897,12 @@ void ClientBegin( int clientNum, qboolean setTime )
 
 	if(client->sess.team == TEAM_SPECTATOR && setTime && client->pers.connected == CON_CONNECTED && (current_gametype.value == GT_HS || current_gametype.value == GT_HZ)){
 		if(current_gametype.value == GT_HZ){
-			SetTeam(ent, "red", NULL, qfalse);
+			// Boe!Man 10/26/14: Force clients after shotguns are distributed to blue instead of red.
+			if(level.messagedisplay){
+				SetTeam(ent, "blue", NULL, qfalse);
+			}else{
+				SetTeam(ent, "red", NULL, qfalse);
+			}
 		}else if(!(ent->r.svFlags & SVF_BOT)){
 			SetTeam(ent, ChooseTeam(), NULL, qfalse); 
 		}
