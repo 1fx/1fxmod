@@ -481,6 +481,7 @@ void G_ResetGametype ( qboolean fullRestart, qboolean cagefight )
 {
 	gentity_t*	tent;
 	int i;
+	
 	// Reset the glass in the level
 	G_ResetGlass ( );
 
@@ -489,7 +490,7 @@ void G_ResetGametype ( qboolean fullRestart, qboolean cagefight )
 
 	ResetCages();
 
-	if(current_gametype.value == GT_HZ){
+	if(current_gametype.value == GT_HZ && !g_autoEvenTeams.integer){
 		for ( i = 0; i < level.numConnectedClients; i ++ )
 		{
 			gentity_t* other = &g_entities[level.sortedClients[i]];

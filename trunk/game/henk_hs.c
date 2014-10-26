@@ -819,7 +819,7 @@ void EvenTeams_HZ(gentity_t *adm, qboolean aet){
 			continue;
 		}
 
-		if (!G_IsClientDead(ent->client)){
+		if (!aet && !G_IsClientDead(ent->client)){
 			TossClientItems(ent); // Henk 19/01/11 -> Fixed items not dropping with !et
 		}
 
