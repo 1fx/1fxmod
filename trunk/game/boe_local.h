@@ -29,7 +29,7 @@
 #define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod ^5[master]"
 #else
 #define INF_VERSION_STRING "0.75.1" // Don't forget to increment this number when test releasing.
-#define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod ^5[pre-release]"
+#define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod ^5[pre-rel]"
 #endif // _NIGHTLY
 #define TEST_VERSION "Developed by ^GBoe!Man ^7& ^6Henkie\n^1Test version of " MAJOR_VERSION_STRING "\n\n"
 #endif // _DEBUG
