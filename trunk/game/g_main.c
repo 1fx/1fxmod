@@ -1096,9 +1096,9 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	Com_Printf ("------- Game Initialization -------\n");
 	#ifdef _DEBUG
 	Com_Printf("! PRE-RELEASE !\n");
+	#endif // _DEBUG
 	Com_Printf ("Mod: %s %s\n", INF_STRING, INF_VERSION_STRING);
 	Com_Printf ("Date: %s\n", INF_VERSION_DATE);
-	#endif // _DEBUG
 
 	// Boe!Man 3/14/14: Check if we can actually start the server.
 	if(G_CheckAlive()){
