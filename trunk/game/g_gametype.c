@@ -1090,13 +1090,16 @@ void CheckGametype ( void )
 			}
 		}
 
+		/*
+		// Boe!Man 10/26/14: Not really sure why this is here.
 		if(current_gametype.value == GT_HZ && alive[TEAM_RED] == 0 && TeamCount1(TEAM_RED)+TeamCount1(TEAM_BLUE) >= 2){
 			trap_GT_SendEvent ( GTEV_TEAM_ELIMINATED, level.time, TEAM_RED, 0, 0, 0, 0 );
 		}
+		*/
 
 		// If everyone is dead on a team then reset the gametype, but only if 
 		// there was someone on that team to begin with.
-		if ( !alive[TEAM_RED] && dead[TEAM_RED] && current_gametype.value != GT_HZ )
+		if (!alive[TEAM_RED] && dead[TEAM_RED])
 		{	
 			if(level.timelimithit == qtrue && level.cagefight != qtrue && (strstr(g_gametype.string, "inf") || strstr(g_gametype.string, "elim"))){
 				gentity_t*	tent;
@@ -1138,7 +1141,7 @@ void CheckGametype ( void )
 			}
 			trap_GT_SendEvent ( GTEV_TEAM_ELIMINATED, level.time, TEAM_RED, 0, 0, 0, 0 );
 		}
-		else if ( !alive[TEAM_BLUE] && dead[TEAM_BLUE] )
+		else if (!alive[TEAM_BLUE] && dead[TEAM_BLUE])
 		{		
 			if(level.timelimithit == qtrue && (strstr(g_gametype.string, "inf") || strstr(g_gametype.string, "elim"))){
 				gentity_t*	tent;
@@ -1148,8 +1151,11 @@ void CheckGametype ( void )
 				level.timelimithit = qfalse;
 				LogExit( "Blue team has been eliminated" );
 			}
+
 			trap_GT_SendEvent ( GTEV_TEAM_ELIMINATED, level.time, TEAM_BLUE, 0, 0, 0, 0 );
-		}if(level.cagefight == qtrue && level.teamAliveCount[TEAM_RED] == 1){
+		}
+		
+		if(level.cagefight == qtrue && level.teamAliveCount[TEAM_RED] == 1){
 			for ( i = 0; i < level.numConnectedClients; i ++ ){
 				if(!G_IsClientDead(g_entities[level.sortedClients[i]].client) && g_entities[level.sortedClients[i]].client->sess.team == TEAM_RED){
 					G_AddScore(&g_entities[level.sortedClients[i]], 100);
@@ -1170,7 +1176,7 @@ void CheckGametype ( void )
 			return;
 		}
 		// See if the time has expired
-		if ( level.time > level.gametypeRoundTime )
+		if (level.time > level.gametypeRoundTime)
 		{
 			if(level.cagefight == qtrue && current_gametype.value == GT_HS){
 				for ( i = 0; i < level.numConnectedClients; i ++ ){
