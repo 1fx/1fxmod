@@ -1489,6 +1489,7 @@ void ClientUserinfoChanged( int clientNum )
 	if (current_gametype.value == GT_HZ && level.time != level.lastSpeedCheck){
 		int	i;
 		int teamCount = TeamCount1(TEAM_BLUE);
+		int teamCountRed = TeamCount1(TEAM_RED);
 
 		level.lastSpeedCheck = level.time;
 
@@ -1499,8 +1500,16 @@ void ClientUserinfoChanged( int clientNum )
 			// A team change occured. Check if a player needs the zombie speed boost.
 			if (teamCount == 1 && ent->client->sess.team == TEAM_BLUE){
 				ent->client->sess.firstzombie = qtrue;
+				if (teamCountRed >= 10){
+					ent->client->ps.stats[STAT_ARMOR] = 100;
+				}else if(teamCountRed > 0){
+					ent->client->ps.stats[STAT_ARMOR] = 10 * teamCountRed;
+				}else{
+					ent->client->ps.stats[STAT_ARMOR] = 0;
+				}
 			}else{
 				ent->client->sess.firstzombie = qfalse;
+				ent->client->ps.stats[STAT_ARMOR] = 0;
 			}
 		}
 	}
