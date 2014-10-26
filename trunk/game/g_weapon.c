@@ -1109,8 +1109,14 @@ gentity_t* G_FireWeapon( gentity_t *ent, attackType_t attack )
 
 		if (current_gametype.value == GT_HZ && ent->client->sess.team == TEAM_RED){
 			// On zombies, make sure all weapons go except the shotgun (if they're empty).
-			if (ent->client->ps.weapon != WP_KNIFE && ent->client->ps.weapon != WP_M590_SHOTGUN && attack != ATTACK_ALTERNATE){
-				if (ent->client->ps.ammo[weaponData[ent->client->ps.weapon].attack[ATTACK_NORMAL].ammoIndex] == 0 && ent->client->ps.clip[ATTACK_NORMAL][ent->client->ps.weapon] == 0 && ent->client->ps.clip[ATTACK_ALTERNATE][ent->client->ps.weapon] == 0){
+			if (ent->client->ps.weapon != WP_KNIFE && ent->client->ps.weapon != WP_M590_SHOTGUN){
+				if (ent->client->ps.ammo[weaponData[ent->client->ps.weapon].attack[ATTACK_NORMAL].ammoIndex] == 0
+					&& ent->client->ps.clip[ATTACK_NORMAL][ent->client->ps.weapon] == 0
+					&& ent->client->ps.clip[ATTACK_ALTERNATE][ent->client->ps.weapon] == 0)
+				{
+					int i;
+					qboolean switched = qfalse;
+
 					// Boe!Man 10/26/14: Turn off any kind of zooming.
 					if (ent->client->ps.pm_flags & PMF_ZOOMED){
 						ent->client->ps.zoomFov = 0;
@@ -1118,13 +1124,26 @@ gentity_t* G_FireWeapon( gentity_t *ent, attackType_t attack )
 						ent->client->ps.pm_flags &= ~(PMF_ZOOM_FLAGS);
 					}
 
-
 					ent->client->ps.clip[ATTACK_NORMAL][ent->client->ps.weapon] = 0;
 					ent->client->ps.clip[ATTACK_ALTERNATE][ent->client->ps.weapon] = 0;
 					ent->client->ps.stats[STAT_WEAPONS] &= ~(1 << ent->client->ps.weapon);
 
-					// Switch back to M590.
-					ent->client->ps.weapon = WP_M590_SHOTGUN;
+					// Boe!Man 10/26/14: Check if there is another weapon that still has ammo. Switch to the most powerful weapon.
+					for (i = WP_NUM_WEAPONS-1; i > WP_KNIFE; i--){
+						if (ent->client->ps.ammo[weaponData[i].attack[ATTACK_NORMAL].ammoIndex] != 0
+							|| ent->client->ps.clip[ATTACK_NORMAL][i] != 0
+							|| ent->client->ps.clip[ATTACK_ALTERNATE][i] != 0)
+						{
+							ent->client->ps.weapon = i;
+							switched = qtrue;
+							break;
+						}
+					}
+
+					if (!switched){
+						ent->client->ps.weapon = WP_KNIFE;
+					}
+
 					ent->client->ps.weaponstate = WEAPON_READY;
 				}
 			}
