@@ -1130,9 +1130,9 @@ gentity_t* G_FireWeapon( gentity_t *ent, attackType_t attack )
 
 					// Boe!Man 10/26/14: Check if there is another weapon that still has ammo. Switch to the most powerful weapon.
 					for (i = WP_NUM_WEAPONS-1; i > WP_KNIFE; i--){
-						if (ent->client->ps.ammo[weaponData[i].attack[ATTACK_NORMAL].ammoIndex] != 0
-							|| ent->client->ps.clip[ATTACK_NORMAL][i] != 0
-							|| ent->client->ps.clip[ATTACK_ALTERNATE][i] != 0)
+						if ((ent->client->ps.ammo[weaponData[i].attack[ATTACK_NORMAL].ammoIndex] > 1
+							|| ent->client->ps.clip[ATTACK_NORMAL][i] > 1)
+							&& (ent->client->ps.stats[STAT_WEAPONS] & (1 << i)))
 						{
 							ent->client->ps.weapon = i;
 							switched = qtrue;

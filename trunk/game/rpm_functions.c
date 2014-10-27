@@ -167,6 +167,13 @@ void RPM_Refresh(gentity_t *ent)
 	if(level.time <= level.gametypeStartTime+5000){
 		trap_SendServerCommand (ent->s.number, "print\"^3[Info] ^7You shouldn't refresh at the start of a new round.\n\"" );
 		return;
+	}else if (current_gametype.value == GT_HZ){
+		if (ent->client->sess.killtime > level.time){ // Boe!Man 7/15/11: He's not allowed to kill himself. Inform him and return.
+			if ((ent->client->sess.killtime - level.time) > 1000){ // Boe!man 7/15/11: The counter should never show 0.. Just kill if it's actually under 1.
+				trap_SendServerCommand(ent->client - &level.clients[0], va("print\"^3[H&Z] ^7You cannot refresh yourself for another %i second(s).\n\"", (ent->client->sess.killtime - level.time) / 1000));
+				return;
+			}
+		}
 	}
 	#ifdef _DEBUG
 	Com_Printf("%i - %i\n", level.time, level.gametypeStartTime);
