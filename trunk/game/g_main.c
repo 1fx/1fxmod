@@ -2197,7 +2197,6 @@ wait 10 seconds before going on.
 void CheckIntermissionExit( void )
 {
 //Ryan
-
 	if ( !level.exitTime )
 	{
 		level.exitTime = level.time;
@@ -2216,6 +2215,29 @@ void CheckIntermissionExit( void )
 			RPM_Awards();
 		level.awardTime = level.time;
 		level.lastAwardSent = level.time;
+
+		// Boe!Man 10/27/14: Make sure that in H&Z players are all forceteamed to spec.
+		if (current_gametype.value == GT_HZ){
+			int i;
+			gentity_t *ent;
+
+			#ifdef _DEBUG
+			Com_Printf("Start forceteam to spec.\n");
+			#endif
+			for(i = 0; i < level.maxclients; i++){
+				ent = g_entities + i;
+				if (ent->client->pers.connected != CON_CONNECTED)
+					continue;
+
+				if (ent->client->sess.team == TEAM_SPECTATOR)
+					continue;
+
+				SetTeam(ent, "spectator", NULL, qtrue);
+			}
+			#ifdef _DEBUG
+			Com_Printf("End forceteam to spec.\n");
+			#endif
+		}
 		return;
 	}
 
