@@ -2840,12 +2840,14 @@ void Henk_CheckZombie(void){
 	teamCountBlue = TeamCount1(TEAM_BLUE);
 	teamCountRed = TeamCount1(TEAM_RED);
 
-	if (teamCountBlue >= 3 && level.messagedisplay1 == qfalse){
-		trap_SendServerCommand(-1, va("print \"^3[H&Z] ^7Zombie team has been unlocked, humans are locked instead.\n\""));
-		level.messagedisplay1 = qtrue;
-	}else if(teamCountBlue < 3 && level.messagedisplay1 == qtrue){
-		trap_SendServerCommand(-1, va("print \"^3[H&Z] ^7Human team has been unlocked, zombies are locked instead.\n\""));
-		level.messagedisplay1 = qfalse;
+	if (g_teamForceBalance.integer> 0){
+		if(teamCountBlue >= 3 && level.messagedisplay1 == qfalse){
+			trap_SendServerCommand(-1, va("print \"^3[H&Z] ^7Zombie team has been unlocked, humans are locked instead.\n\""));
+			level.messagedisplay1 = qtrue;
+		}else if(teamCountBlue < 3 && level.messagedisplay1 == qtrue){
+			trap_SendServerCommand(-1, va("print \"^3[H&Z] ^7Human team has been unlocked, zombies are locked instead.\n\""));
+			level.messagedisplay1 = qfalse;
+		}
 	}
 
 	if(level.numConnectedClients > 0 && level.time >= level.gametypeStartTime+5000 && teamCountRed >= 2){
