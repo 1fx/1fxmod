@@ -1158,7 +1158,7 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 					return;
 				}
 
-				if (TeamCount1(TEAM_BLUE) < 3 && ent->client && ent->client->sess.team == TEAM_BLUE && team == TEAM_RED){
+				if (TeamCount1(TEAM_BLUE) >= 3 && team == TEAM_RED){
 					trap_SendServerCommand(client - &level.clients[0], "print\"^3[H&Z] ^7Human team is locked.\n\"");
 					return;
 				}

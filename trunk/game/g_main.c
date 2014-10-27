@@ -2834,23 +2834,27 @@ void SetupOutfitting(void)
 }
 
 void Henk_CheckZombie(void){
-	int i, random;
+	int i, random, teamCountBlue, teamCountRed;
 	gentity_t *ent = NULL;
 
-	if(TeamCount1(TEAM_BLUE) >= 3 && level.messagedisplay1 == qfalse){
-		trap_SendServerCommand(-1, va("print \"^3[H&Z] ^7Zombie team has been unlocked.\n\"") );
+	teamCountBlue = TeamCount1(TEAM_BLUE);
+	teamCountRed = TeamCount1(TEAM_RED);
+
+	if (teamCountBlue >= 3 && level.messagedisplay1 == qfalse){
+		trap_SendServerCommand(-1, va("print \"^3[H&Z] ^7Zombie team has been unlocked, humans are locked instead.\n\""));
 		level.messagedisplay1 = qtrue;
-	}else if(TeamCount1(TEAM_BLUE) < 3 && level.messagedisplay1 == qtrue){
+	}else if(teamCountBlue < 3 && level.messagedisplay1 == qtrue){
+		trap_SendServerCommand(-1, va("print \"^3[H&Z] ^7Human team has been unlocked, zombies are locked instead.\n\""));
 		level.messagedisplay1 = qfalse;
 	}
 
-	if(level.numConnectedClients > 0 && level.time >= level.gametypeStartTime+5000 && TeamCount1(TEAM_RED) >= 2){
-		if(TeamCount1(TEAM_BLUE) == 0 && TeamCount1(TEAM_RED) >= 1 && level.messagedisplay2 == qtrue){
+	if(level.numConnectedClients > 0 && level.time >= level.gametypeStartTime+5000 && teamCountRed >= 2){
+		if (teamCountBlue == 0 && teamCountRed >= 1 && level.messagedisplay2 == qtrue){
 			level.zombie = -1;
 			level.messagedisplay2 = qfalse;
 		}
 
-		if(level.zombie == -1 && TeamCount1(TEAM_BLUE) == 0 && level.time >= level.zombietime+10000){
+		if(level.zombie == -1 && teamCountBlue == 0 && level.time >= level.zombietime+10000){
 			if (level.nextZombie != -1){
 				ent = &g_entities[level.nextZombie];
 				level.nextZombie = -1;
@@ -2877,7 +2881,7 @@ void Henk_CheckZombie(void){
 	}
 
 	if(level.time >= level.zombietime && level.messagedisplay2 == qfalse){
-		if(TeamCount1(TEAM_RED) >= 2 && TeamCount1(TEAM_BLUE) == 0){
+		if (teamCountRed >= 2 && teamCountBlue == 0){
 			if(level.zombie != -1){
 				if (g_entities[level.zombie].client && g_entities[level.zombie].client->pers.connected == CON_CONNECTED && g_entities[level.zombie].client->sess.team != TEAM_SPECTATOR && !G_IsClientDead(g_entities[level.zombie].client)){
 					trap_SendServerCommand(-1, va("print \"^3[H&Z] ^7%s suddenly turned into a zombie!\n\"", g_entities[level.zombie].client->pers.netname) );
@@ -2890,7 +2894,7 @@ void Henk_CheckZombie(void){
 					level.zombie = -1;
 				}
 			}
-		}else if(TeamCount1(TEAM_RED) < 2 && TeamCount1(TEAM_BLUE ) == 0 && level.zombie != -1){
+		}else if(teamCountRed < 2 && teamCountBlue == 0 && level.zombie != -1){
 			level.zombie = -1;
 		}
 	}

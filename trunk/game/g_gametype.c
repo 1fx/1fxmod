@@ -507,6 +507,10 @@ void G_ResetGametype ( qboolean fullRestart, qboolean cagefight )
 			other->client->sess.zombiebody = -1;
 			SetTeam(other, "red", NULL, qtrue);
 		}
+
+		if (g_teamForceBalance.integer){
+			trap_SendServerCommand(-1, va("print \"^3[H&Z] ^7Zombie team has been locked.\n\""));
+		}
 	}else if(current_gametype.value == GT_HS){
 		for ( i = 0; i < level.numConnectedClients; i ++ )
 		{
