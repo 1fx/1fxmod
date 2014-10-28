@@ -3429,26 +3429,37 @@ void G_RunFrame( int levelTime )
 				trap_UnlinkEntity (ent);
 				ClientSpawn ( ent );
 				}
-			}else if(current_gametype.value == GT_HZ && G_IsClientDead(ent->client)){
-				if(ent->client->sess.team == TEAM_BLUE || TeamCount1(TEAM_BLUE) == 0 && ent->client->sess.team == TEAM_RED){
-				if(ent->client->sess.zombie == qfalse){
-					if ( ent->client->sess.ghost )
-					{
-						// Clean up any following monkey business
-						G_StopFollowing ( ent );
+			}else if(current_gametype.value == GT_HZ){
+				if (G_IsClientDead(ent->client)){
+					if (ent->client->sess.team == TEAM_BLUE || TeamCount1(TEAM_BLUE) == 0 && ent->client->sess.team == TEAM_RED){
+						if (ent->client->sess.zombie == qfalse){
+							if (ent->client->sess.ghost)
+							{
+								// Clean up any following monkey business
+								G_StopFollowing(ent);
 
-						// Disable being a ghost
-						ent->client->ps.pm_flags &= ~PMF_GHOST;
-						ent->client->ps.pm_type = PM_NORMAL;
-						ent->client->sess.ghost = qfalse;
+								// Disable being a ghost
+								ent->client->ps.pm_flags &= ~PMF_GHOST;
+								ent->client->ps.pm_type = PM_NORMAL;
+								ent->client->sess.ghost = qfalse;
+							}
+
+							ent->client->sess.noTeamChange = qfalse;
+
+							trap_UnlinkEntity(ent);
+							ClientSpawn(ent);
+						}
 					}
+				}else if (ent->client->sess.regentime && ent->client->sess.team == TEAM_BLUE && level.time >= ent->client->sess.regentime){
+					// Boe!Man 10/28/14: Auto health renegeration.
+					ent->client->ps.stats[STAT_HEALTH] = ent->health++;
 
-				ent->client->sess.noTeamChange = qfalse;
-
-				trap_UnlinkEntity (ent);
-				ClientSpawn ( ent );
+					if (ent->client->ps.stats[STAT_HEALTH] >= MAX_HEALTH){
+						ent->client->sess.regentime = 0;
+					}else{
+						ent->client->sess.regentime = level.time + 50;
+					}
 				}
-			}
 			}
 		}
 		if ( ent->inuse )

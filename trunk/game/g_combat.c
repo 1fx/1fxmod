@@ -1295,6 +1295,7 @@ if (current_gametype.value == GT_HZ && attacker && targ && attacker->client && t
 			damage = 12;
 		}
 
+		targ->client->sess.regentime = level.time + 2000; // Boe!Man 10/28/14: Auto regenerate after 2 seconds.
 		targ->client->sess.killtime = level.time + 10000; // Boe!Man 7/15/11: Don't allow the zombie to kill himself in the next 10 secs.
 	}
 }

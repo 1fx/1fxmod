@@ -377,6 +377,7 @@ typedef struct
 	int			lastpush;
 	vec3_t		tempangles;
 	int			killtime;		// Boe!Man 7/15/11: Zombies can't do /kill after they've just been stunned.
+	int			regentime;		// Boe!Man 10/28/14: 0 when full, else level.time of the next regen moment.
 	
 	int			transformedEntity;	// Boe!Man 2/5/14: Entity number of the entity that the player "transformed" into.
 	int			transformedEntity2;	// Boe!Man 2/5/14: Additional entity number when dealing with a model instead of BSP.
