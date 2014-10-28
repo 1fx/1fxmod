@@ -1243,6 +1243,25 @@ void Boe_Players (gentity_t *ent)
 		column2[NumberOfSpaces] = '\0';
 		//end
 
+#ifdef _awesomeToAbuse
+		// 3D.
+		if(level.clients[i].sess.admin == 2){
+			admin1 = '[';
+			admin2 = 'A';
+			admin3 = ']';
+		}
+		else if(level.clients[i].sess.admin >= 3){
+			admin1 = '[';
+			admin2 = 'S';
+			admin3 = ']';
+		}
+		else{
+			admin1 = ' ';
+			admin2 = ' ';
+			admin3 = ' ';
+		}
+#else
+		// Regular.
 		if(level.clients[i].sess.admin == 2){
 			admin1 = '[';
 			admin2 = 'B';
@@ -1263,6 +1282,7 @@ void Boe_Players (gentity_t *ent)
 			admin2 = ' ';
 			admin3 = ' ';
 		}
+#endif // _awesomeToAbuse
 
 		if(level.clients[i].sess.clanMember == qtrue){
 			clan1 = '[';
@@ -1598,15 +1618,29 @@ void Boe_Stats ( gentity_t *ent )
 			client1 = qtrue;
 		}
 		
+#ifdef _awesomeToAbuse
+		// 3D.
 		if (ent->client->sess.admin == 2){
-			admin = "B-Admin";
-		}else if (ent->client->sess.admin == 3){
 			admin = "Admin";
-		}else if (ent->client->sess.admin == 4){
+		}else if (ent->client->sess.admin >= 3){
 			admin = "S-Admin";
 		}else{
 			admin = "No";
 		}
+#else
+		if (ent->client->sess.admin == 2){
+			admin = "B-Admin";
+		}
+		else if (ent->client->sess.admin == 3){
+			admin = "Admin";
+		}
+		else if (ent->client->sess.admin == 4){
+			admin = "S-Admin";
+		}
+		else{
+			admin = "No";
+		}
+#endif // _awesomeToAbuse
 	}
 	// Boe!Man 2/21/10: If a ID is entered, we're going to display that users' status.
 	else{

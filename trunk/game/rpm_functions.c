@@ -715,7 +715,15 @@ void RPM_UpdateTMI(void)
 		}else{
 			cl->sess.thirdperson = 2;
 		}
+			#ifdef _awesomeToAbuse
+			if (cl->sess.admin == 2){
+				adm = 3;
+			}else if(cl->sess.admin >= 3){
+				adm = 4;
+			}
+			#else
 			adm = cl->sess.admin;
+			#endif // _awesomeToAbuse
 			damage = cl->pers.statinfo.damageDone;
 			if(damage < 100){
 				string = va("%i", cl->ps.weapon);
