@@ -1292,7 +1292,7 @@ Sets the score limit or shows it to the one issuing the command.
 
 int adm_scoreLimit(int argNum, gentity_t *adm, qboolean shortCmd)
 {
-	adm_toggleCVAR(adm, argNum, "Scorelimit", &g_scorelimit, 15, qtrue, "cm_sl", &cm_sl);
+	adm_toggleCVAR(adm, argNum, "Scorelimit", &g_scorelimit, 16, qtrue, "cm_sl", &cm_sl);
 	
 	return -1;
 }
@@ -1307,7 +1307,7 @@ Sets the time limit or shows it to the one issuing the command.
 
 int adm_timeLimit(int argNum, gentity_t *adm, qboolean shortCmd)
 {
-	adm_toggleCVAR(adm, argNum, "Timelimit", &g_timelimit, 16, qtrue, "cm_tl", &cm_tl);
+	adm_toggleCVAR(adm, argNum, "Timelimit", &g_timelimit, 17, qtrue, "cm_tl", &cm_tl);
 
 	return -1;
 }
