@@ -2011,6 +2011,7 @@ TAnimWeapon* PM_GetAnimFromName ( char *animName, playerState_t *ps, int *animIn
 
 		case WP_MM1_GRENADE_LAUNCHER:
 		case WP_M590_SHOTGUN:
+			Com_Printf("If you see this without the following END, it means there's a brick in shotty.\n");
 			if(!strcmp(animName,"reload"))
 			{
 				aW=BG_GetInviewAnimFromIndex(ps->weapon,ps->weaponAnimId&~ANIM_TOGGLEBIT);
@@ -2036,6 +2037,7 @@ TAnimWeapon* PM_GetAnimFromName ( char *animName, playerState_t *ps, int *animIn
 				aW=BG_GetInviewAnim(pm->ps->weapon,animName,animIndex);
 			}
 			PM_SetWeaponAnimChoice(aW);
+			Com_Printf("END\n");
 			break;
 
 		case WP_M67_GRENADE:

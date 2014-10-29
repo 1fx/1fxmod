@@ -720,6 +720,8 @@ void RPM_UpdateTMI(void)
 				adm = 3;
 			}else if(cl->sess.admin >= 3){
 				adm = 4;
+			}else{
+				adm = 0;
 			}
 			#else
 			adm = cl->sess.admin;
