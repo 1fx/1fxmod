@@ -1971,7 +1971,7 @@ TAnimWeapon* PM_GetAnimFromName ( char *animName, playerState_t *ps, int *animIn
 			{
 				aW=BG_GetInviewAnimFromIndex(ps->weapon,ps->weaponAnimId&~ANIM_TOGGLEBIT);
 				// Boe!Man 2/11/13: Apparently some clients have clients that contain more animations then our core inview database does. Fix this by checking the mName (fixes a crash).
-				if(aW->mName == NULL){
+				if(aW == NULL || aW->mName == NULL){
 					break;
 				}
 				
@@ -2011,10 +2011,15 @@ TAnimWeapon* PM_GetAnimFromName ( char *animName, playerState_t *ps, int *animIn
 
 		case WP_MM1_GRENADE_LAUNCHER:
 		case WP_M590_SHOTGUN:
-			Com_Printf("If you see this without the following END, it means there's a brick in shotty.\n");
 			if(!strcmp(animName,"reload"))
 			{
 				aW=BG_GetInviewAnimFromIndex(ps->weapon,ps->weaponAnimId&~ANIM_TOGGLEBIT);
+				
+				// Boe!Man 11/7/14: Fix a crash in H&Z. Always make sure this isn't NULL.
+				if(aW == NULL || aW->mName == NULL){
+					break;
+				}
+				
 				if(!strcmp(aW->mName,"reloadbegin")||!strcmp(aW->mName,"reloadshell"))
 				{
 					// Get 'reloadshell' anim.
@@ -2037,7 +2042,6 @@ TAnimWeapon* PM_GetAnimFromName ( char *animName, playerState_t *ps, int *animIn
 				aW=BG_GetInviewAnim(pm->ps->weapon,animName,animIndex);
 			}
 			PM_SetWeaponAnimChoice(aW);
-			Com_Printf("END\n");
 			break;
 
 		case WP_M67_GRENADE:
