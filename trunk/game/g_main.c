@@ -3430,11 +3430,12 @@ void G_RunFrame( int levelTime )
 				ClientSpawn ( ent );
 				}
 			}else if(current_gametype.value == GT_HZ){
+				int	teamCountBlue = TeamCount1(TEAM_BLUE);
+
 				if (G_IsClientDead(ent->client)){
-					if (ent->client->sess.team == TEAM_BLUE || TeamCount1(TEAM_BLUE) == 0 && ent->client->sess.team == TEAM_RED){
+					if (ent->client->sess.team == TEAM_BLUE || (teamCountBlue == 0 && ent->client->sess.team == TEAM_RED)){
 						if (ent->client->sess.zombie == qfalse){
-							if (ent->client->sess.ghost)
-							{
+							if (ent->client->sess.ghost){
 								// Clean up any following monkey business
 								G_StopFollowing(ent);
 
@@ -3457,7 +3458,8 @@ void G_RunFrame( int levelTime )
 					if (ent->client->ps.stats[STAT_HEALTH] >= MAX_HEALTH){
 						ent->client->sess.regentime = 0;
 					}else{
-						ent->client->sess.regentime = level.time + 50;
+						// Based on the current clients.
+						ent->client->sess.regentime = level.time + 50 + (150 / (TeamCount1(TEAM_RED) + teamCountBlue) * teamCountBlue);
 					}
 				}
 			}
