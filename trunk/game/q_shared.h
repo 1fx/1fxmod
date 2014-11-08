@@ -1064,6 +1064,7 @@ typedef enum {
 typedef enum {
 	BROADCAST_GAME,		// Regular game messages.
 	BROADCAST_CMD,		// Admin commands such as uppercut, broadcast, etc.
+	BROADCAST_GAME2,	// More important gametype messages that should override Admin commands.
 	BROADCAST_AWARDS,	// Awards (H&S and regular).
 	BROADCAST_MOTD		// Message of the day when entering the server.
 } broadcastPrio_t;

@@ -2871,8 +2871,8 @@ void Henk_CheckZombie(void){
 				if(ent->client->sess.team != TEAM_SPECTATOR){ // extra check
 				level.zombie = ent->s.number;
 				level.zombietime = level.time+5000;
-				G_Broadcast(va("%s\nwill turn into a \\zombie\nin ^15 ^7seconds!", ent->client->pers.netname), BROADCAST_GAME, NULL);
-				G_Broadcast("You will turn into a \\zombie\nin ^15 ^7seconds!", BROADCAST_GAME, ent);
+				G_Broadcast(va("%s\nwill turn into a \\zombie\nin ^15 ^7seconds!", ent->client->pers.netname), BROADCAST_GAME2, NULL);
+				G_Broadcast("You will turn into a \\zombie\nin ^15 ^7seconds!", BROADCAST_GAME2, ent);
 				}else{
 					#ifdef _DEBUG
 					Com_Printf("Weird case\n");
@@ -2887,7 +2887,7 @@ void Henk_CheckZombie(void){
 			if(level.zombie != -1){
 				if (g_entities[level.zombie].client && g_entities[level.zombie].client->pers.connected == CON_CONNECTED && g_entities[level.zombie].client->sess.team != TEAM_SPECTATOR && !G_IsClientDead(g_entities[level.zombie].client)){
 					trap_SendServerCommand(-1, va("print \"^3[H&Z] ^7%s suddenly turned into a zombie!\n\"", g_entities[level.zombie].client->pers.netname) );
-					G_Broadcast(va("%s\nturned into a \\Zombie!", g_entities[level.zombie].client->pers.netname), BROADCAST_GAME, NULL);
+					G_Broadcast(va("%s\nturned into a \\Zombie!", g_entities[level.zombie].client->pers.netname), BROADCAST_GAME2, NULL);
 					// turn into zombie
 					CloneBody(&g_entities[level.zombie], g_entities[level.zombie].s.number);
 					level.messagedisplay2 = qtrue;
