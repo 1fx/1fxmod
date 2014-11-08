@@ -622,13 +622,12 @@ static int weaponDropOdds[6][6] =
 
 static int weaponGroups[6][3] =
 {//      weapon1                  weapon2               weapon3 (optional)
-	{ WP_M1911A1_PISTOL, WP_USSOCOM_PISTOL, 0, },   //group 1
-	{ WP_MICRO_UZI_SUBMACHINEGUN, WP_M3A1_SUBMACHINEGUN, 0, },   //group 2
-	{ WP_M4_ASSAULT_RIFLE, WP_AK74_ASSAULT_RIFLE, WP_MSG90A1, },   //group 3 TEMPORARY.
-	//{   WP_L2A2_GRENADE,         WP_L2A2_GRENADE,      0,         },   //group 3
-	{ WP_M4_ASSAULT_RIFLE, WP_AK74_ASSAULT_RIFLE, WP_MSG90A1, },   //group 4
-	{ WP_USAS_12_SHOTGUN, WP_M60_MACHINEGUN, 0, },   //group 5
-	{ WP_MM1_GRENADE_LAUNCHER, WP_RPG7_LAUNCHER, 0, },   //group 6
+	{ WP_M1911A1_PISTOL,			WP_USSOCOM_PISTOL,		0			, },   //group 1
+	{ WP_MICRO_UZI_SUBMACHINEGUN,	WP_M3A1_SUBMACHINEGUN,	0			, },   //group 2
+	{ WP_SMOHG92_GRENADE,			0,						0			, },   //group 3
+	{ WP_M4_ASSAULT_RIFLE,			WP_AK74_ASSAULT_RIFLE,	WP_MSG90A1	, },   //group 4
+	{ WP_USAS_12_SHOTGUN,			WP_M60_MACHINEGUN,		0			, },   //group 5
+	{ WP_MM1_GRENADE_LAUNCHER,		WP_RPG7_LAUNCHER,		0			, },   //group 6
 };
 
 void DropRandom( gentity_t *ent, int zombies){
@@ -636,8 +635,6 @@ void DropRandom( gentity_t *ent, int zombies){
 	gitem_t *item;
 	int group, random, i, DropGroup, start;
 	int Odds[8][1];
-
-	//trap_SendServerCommand(-1, va("print \"^3[Debug] ^7Spawning random weapon with %i zombies.\n\"", zombies) );
 
 	if(zombies >= 1 && zombies <= 2){
 		DropGroup = 0;
