@@ -1094,13 +1094,10 @@ void CheckGametype ( void )
 				}
 			}
 		}
-
-		/*
-		// Boe!Man 10/26/14: Not really sure why this is here.
-		if(current_gametype.value == GT_HZ && alive[TEAM_RED] == 0 && TeamCount1(TEAM_RED)+TeamCount1(TEAM_BLUE) >= 2){
+		
+		if(current_gametype.value == GT_HZ && alive[TEAM_RED] == 0 && TeamCount1(TEAM_BLUE) > 1){
 			trap_GT_SendEvent ( GTEV_TEAM_ELIMINATED, level.time, TEAM_RED, 0, 0, 0, 0 );
 		}
-		*/
 
 		// If everyone is dead on a team then reset the gametype, but only if 
 		// there was someone on that team to begin with.
