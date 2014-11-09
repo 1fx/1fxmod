@@ -2935,7 +2935,8 @@ void Henk_CheckZombie(void){
 				ent->client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_M590_SHOTGUN );
 				ent->client->ps.clip[ATTACK_NORMAL][WP_M590_SHOTGUN]=9;
 				ent->client->ps.firemode[WP_M590_SHOTGUN] = BG_FindFireMode ( WP_M590_SHOTGUN, ATTACK_NORMAL, WP_FIREMODE_AUTO );
-				//ent->client->ps.weapon = WP_KNIFE;
+				
+				ent->client->ps.weapon = WP_M590_SHOTGUN;
 				ent->client->ps.weaponstate = WEAPON_READY;
 			}
 		}
