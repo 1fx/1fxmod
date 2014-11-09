@@ -624,7 +624,7 @@ static int weaponGroups[6][3] =
 {//      weapon1                  weapon2               weapon3 (optional)
 	{ WP_M1911A1_PISTOL,			WP_USSOCOM_PISTOL,		0			, },   //group 1
 	{ WP_MICRO_UZI_SUBMACHINEGUN,	WP_M3A1_SUBMACHINEGUN,	0			, },   //group 2
-	{ WP_SMOHG92_GRENADE,			0,						0			, },   //group 3
+	{ WP_SMOHG92_GRENADE,			WP_SMOHG92_GRENADE,		0			, },   //group 3
 	{ WP_M4_ASSAULT_RIFLE,			WP_AK74_ASSAULT_RIFLE,	WP_MSG90A1	, },   //group 4
 	{ WP_USAS_12_SHOTGUN,			WP_M60_MACHINEGUN,		0			, },   //group 5
 	{ WP_MM1_GRENADE_LAUNCHER,		WP_RPG7_LAUNCHER,		0			, },   //group 6
