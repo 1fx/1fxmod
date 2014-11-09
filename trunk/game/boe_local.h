@@ -268,6 +268,8 @@ void	G_ApplyKnockback( gentity_t *targ, vec3_t newDir, float knockback );	// Pro
 //void	Henk_Box(int argNum, gentity_t *adm, qboolean shortCmd);
 void	Boe_freakOut(gentity_t *adm);
 void	Boe_forceSay(gentity_t *adm);
+
+extern vmCvar_t boe_fragWars;
 #endif
 
 extern	vmCvar_t	g_eventeams;

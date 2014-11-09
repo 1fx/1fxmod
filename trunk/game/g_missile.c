@@ -390,7 +390,11 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace )
 	d = 0;
 
 	// check for bounce
+#ifndef _awesomeToAbuse
 	if(current_gametype.value != GT_HS && current_gametype.value != GT_HZ){ // Henk 19/01/10 -> Grenades explode on impact
+#else
+	if (current_gametype.value != GT_HS && current_gametype.value != GT_HZ && !boe_fragWars.integer){ // Henk 19/01/10 -> Grenades explode on impact
+#endif
 		if ( ( ent->s.eFlags & ( EF_BOUNCE | EF_BOUNCE_HALF | EF_BOUNCE_SCALE ) ) ) 
 		{
 			G_BounceMissile( ent, trace );

@@ -1325,6 +1325,16 @@ if (current_gametype.value == GT_HZ && attacker && targ && attacker->client && t
 		damage = 1;
 	}
 
+#ifdef _awesomeToAbuse
+	// No reg. damage in telefrag wars.
+	if (current_gametype.value == GT_ELIM && boe_fragWars.integer && attacker && attacker->client && targ && targ->client &&
+		((mod == MOD_F1_GRENADE) ||
+		(attacker == targ) ||
+		(mod == MOD_TELEFRAG && attacker->client->sess.team == targ->client->sess.team))){
+		damage = 0;
+	}
+#endif
+
 	take = damage;
 	save = 0;
 
@@ -1968,6 +1978,43 @@ qboolean G_RadiusDamage (
 			}
 			// End
 		}
+#ifdef _awesomeToAbuse
+		else if (current_gametype.value == GT_ELIM && boe_fragWars.integer){
+			if ((mod == MOD_F1_GRENADE || mod == altAttack(MOD_F1_GRENADE)) && strstr(ent->classname, "f1")){ // Boe!Man 8/2/12: Fix for Altattack of tele nade not doing anything.
+				if (origin[2] <= ent->origin_from[2]){
+					vec3_t	mins = { -12, -12, -31 };
+					vec3_t	maxs = { 12, 12, 32 };
+					vec3_t			org1, org2;
+					trace_t			tr;
+					VectorCopy(origin, org1);
+					VectorCopy(origin, org2);
+					org1[2] += 50;
+					trap_Trace(&tr, org1, mins, maxs, org2, attacker->s.number, MASK_PLAYERSOLID); // Boe!Man 7/23/13: Used to be MASK_ALL, and before that MASK_SOLID. This seems to work best (MASK_PLAYERSOLID).
+					if (!tr.startsolid && !tr.allsolid){
+						DoTeleport(attacker, origin);
+					}else if (level.time >attacker->client->sess.lastpickup){
+						ammoindex = weaponData[WP_F1_GRENADE].attack[ATTACK_ALTERNATE].ammoIndex;
+						attacker->client->ps.ammo[ammoindex] += 1;
+						if (!(attacker->client->ps.stats[STAT_WEAPONS] & (1 << WP_F1_GRENADE))){ // Boe!Man 8/22/11: Make sure the attacker has the weapon, if not, re-add it (fixes bug which made weapon disappear on last throw).
+							attacker->client->ps.stats[STAT_WEAPONS] |= (1 << WP_F1_GRENADE);
+						}
+
+						trap_SendServerCommand(attacker - g_entities, "print \"^3[Info] ^7Surface is not empty.\n\"");
+						attacker->client->sess.lastpickup = level.time + 50;
+					}
+				}else if (level.time > attacker->client->sess.lastpickup){
+					ammoindex = weaponData[WP_F1_GRENADE].attack[ATTACK_ALTERNATE].ammoIndex;
+					attacker->client->ps.ammo[ammoindex] += 1;
+					if (!(attacker->client->ps.stats[STAT_WEAPONS] & (1 << WP_F1_GRENADE))){ // Boe!Man 8/22/11: Make sure the attacker has the weapon, if not, re-add it (fixes bug which made weapon disappear on last throw).
+						attacker->client->ps.stats[STAT_WEAPONS] |= (1 << WP_F1_GRENADE);
+					}
+
+					trap_SendServerCommand(attacker - g_entities, "print \"^3[Info] ^7Surface is too high.\n\"");
+					attacker->client->sess.lastpickup = level.time + 50;
+				}
+			}
+		}
+#endif // _awesomeToAbuse
 
 		if (ent == ignore)
 		{

@@ -1468,21 +1468,14 @@ void ClientUserinfoChanged( int clientNum )
 	{
 		// Parse out the new outfitting
 		BG_DecompressOutfitting ( Info_ValueForKey ( userinfo, "outfitting" ), &client->pers.outfitting );
-			if(current_gametype.value == GT_HS || current_gametype.value == GT_HZ){
-				// Henk 28/01/10 -> Fixed outfitting given when players enters round(causing double nades).
-				//G_UpdateOutfitting ( index );
-				if ( !client->noOutfittingChange ){
-					/*client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_KNIFE );
-					client->ps.ammo[weaponData[WP_KNIFE].attack[ATTACK_NORMAL].ammoIndex]=0;
-					client->ps.clip[ATTACK_NORMAL][WP_KNIFE]=weaponData[WP_KNIFE].attack[ATTACK_NORMAL].clipSize;
-					client->ps.firemode[WP_KNIFE] = BG_FindFireMode ( WP_KNIFE, ATTACK_NORMAL, WP_FIREMODE_AUTO );
-					client->ps.weapon = WP_KNIFE;
-					client->ps.weaponstate = WEAPON_READY;
-					client->ps.stats[STAT_ARMOR] = MAX_HEALTH;
-					Com_Printf("Given a knife..\n");*/
-				}
-			}else
-				G_UpdateOutfitting ( clientNum );
+
+#ifndef _awesomeToAbuse
+		if(current_gametype.value != GT_HS && current_gametype.value != GT_HZ){
+#else
+		if (current_gametype.value != GT_HS && current_gametype.value != GT_HZ && !boe_fragWars.integer){
+#endif
+			G_UpdateOutfitting ( clientNum );
+		}
 	}
 
 	// Boe!Man 10/6/14: Check if someone on the blue team should have a speed boost.
@@ -2176,6 +2169,25 @@ void ClientSpawn(gentity_t *ent)
 				client->sess.transformedEntity2 = 0;
 			}
 		// End
+#ifdef _awesomeToAbuse
+		}else if (current_gametype.value == GT_ELIM && boe_fragWars.integer){
+			// Knife.
+			client->ps.stats[STAT_WEAPONS] |= (1 << WP_KNIFE);
+			ammoIndex = weaponData[WP_KNIFE].attack[ATTACK_NORMAL].ammoIndex;
+			client->ps.ammo[ammoIndex] += weaponData[WP_KNIFE].attack[ATTACK_NORMAL].extraClips * weaponData[WP_KNIFE].attack[ATTACK_NORMAL].clipSize;
+			client->ps.clip[ATTACK_NORMAL][WP_KNIFE] = weaponData[WP_KNIFE].attack[ATTACK_NORMAL].clipSize;
+			client->ps.firemode[WP_KNIFE] = BG_FindFireMode(WP_KNIFE, ATTACK_NORMAL, WP_FIREMODE_AUTO);
+
+			// And F1 nades.
+			client->ps.stats[STAT_WEAPONS] |= (1 << WP_F1_GRENADE);
+			ammoIndex = weaponData[WP_F1_GRENADE].attack[ATTACK_NORMAL].ammoIndex;
+			client->ps.ammo[ammoIndex] += weaponData[WP_F1_GRENADE].attack[ATTACK_NORMAL].extraClips * weaponData[WP_F1_GRENADE].attack[ATTACK_NORMAL].clipSize;
+			client->ps.clip[ATTACK_NORMAL][WP_F1_GRENADE] = weaponData[WP_F1_GRENADE].attack[ATTACK_NORMAL].clipSize;
+			client->ps.firemode[WP_F1_GRENADE] = BG_FindFireMode(WP_F1_GRENADE, ATTACK_NORMAL, WP_FIREMODE_AUTO);
+
+			client->ps.weapon = WP_F1_GRENADE;
+			client->ps.weaponstate = WEAPON_READY;
+#endif // _awesomeToAbuse
 		}else{
 		G_UpdateOutfitting ( ent->s.number );
 		}

@@ -309,6 +309,10 @@ vmCvar_t	g_inviewDb;
 vmCvar_t	g_debug;
 #endif
 
+#ifdef _awesomeToAbuse
+vmCvar_t	boe_fragWars;
+#endif
+
 static cvarTable_t gameCvarTable[] =
 {
 	// don't override the cheat state set by the system
@@ -648,6 +652,10 @@ static cvarTable_t gameCvarTable[] =
 #ifdef _DEBUG
 	// Boe!Man: Debug CVAR.
 	{ &g_debug, "1fx_debug", "0", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0,  qfalse },
+#endif
+
+#ifdef _awesomeToAbuse
+	{ &boe_fragWars, "3d_fragWars", "0", CVAR_ARCHIVE | CVAR_LATCH, 0.0, 0.0, 0, qfalse },
 #endif
 };
 
