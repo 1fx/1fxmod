@@ -1110,7 +1110,18 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 
 	// Boe!Man 3/14/14: Check if we can actually start the server.
 	if(G_CheckAlive()){
+		// Try to delete the file and re-running the check.
+		#ifdef _WIN32
+		char fsGame[MAX_QPATH];
+		trap_Cvar_VariableStringBuffer("fs_game", fsGame, sizeof(fsGame));
+		DeleteFile(TEXT(va("%s\\srv.lck", fsGame)));
+
+		if (G_CheckAlive()){
+			Com_Error(ERR_FATAL, "Another instance is running!");
+		}
+		#elif __linux__
 		Com_Error(ERR_FATAL, "Another instance is running!");
+		#endif
 	}
 
 	#ifdef __linux__
