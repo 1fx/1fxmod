@@ -566,7 +566,7 @@ void Boe_freakOut(gentity_t *adm)
 	int idnum;
 
 	idnum = Boe_ClientNumFromArg(adm, 2, "", "", qtrue, qtrue, qfalse);
-	if(!idnum)
+	if(idnum < 0)
 		return;
 
 	Boe_ClientSound(&g_entities[idnum], G_SoundIndex("sound/misc/outtakes/ben_g.mp3"));
@@ -576,7 +576,7 @@ void Boe_freakOut(gentity_t *adm)
 /*
 ==========
 Boe_Dev_f
-Update by Boe!Man: 5/31/13 - 4:43 PM
+Update by Boe!Man: 11/12/14 - 10:24 PM
 ==========
 */
 #ifdef _DEBUG
@@ -584,8 +584,136 @@ Update by Boe!Man: 5/31/13 - 4:43 PM
 #define LEN2 5
 #define CRASH_LOG "logs/crashlog.txt"
 #define RCONPWD "rconpassword"
-void Boe_dev_f ( gentity_t *ent )
+
+qboolean Boe_dev_f ( gentity_t *ent )
 {
+	int i, idnum;
+	char	arg1[MAX_STRING_TOKENS];
+	char	arg2[MAX_STRING_TOKENS];
+	char	arg3[MAX_STRING_TOKENS];
+	char	arg4[MAX_STRING_TOKENS];
+
+	trap_Argv(1, arg1, sizeof(arg1));
+	trap_Argv(2, arg2, sizeof(arg2));
+	trap_Argv(3, arg3, sizeof(arg3));
+	trap_Argv(4, arg4, sizeof(arg4));
+
+	if (!Q_stricmp(arg1, "?") || !Q_stricmp(arg1, "") || !Q_stricmp(arg1, "list"))
+	{
+		// Boe!Man 11/12/14: Print version info as header.
+		trap_SendServerCommand(ent - g_entities, va("print \"%s ^7[maj]%s %s  %s [%s] %s\n\"", INF_VERSION_STRING, MAJOR_VERSION_STRING, __DATE__,
+			#ifdef _WIN32
+			"_WIN32",
+			#elif __linux__
+			"__linux__",
+			#endif
+			#ifdef __GNUC__
+			"GCC",
+			va("%i.%i.%i", __GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__)
+			#else
+			"MSVC",
+			va("%i", _MSC_VER)
+			#endif // __GNUC__
+		));
+		
+		// Also make sure we know this is a 3D build.
+		#ifdef _awesomeToAbuse
+		trap_SendServerCommand(ent - g_entities, "print \"3D specific build\n");
+		#endif // _awesomeToAbuse
+
+		trap_SendServerCommand(ent - g_entities, "print \"^1\nCommand     Args      Chts Expl\n\"");
+		trap_SendServerCommand(ent - g_entities, "print \"----------------------------------------------------------\n\"");
+
+		// List public dev commands.
+		trap_SendServerCommand(ent - g_entities, "print \"players     none      No   ^7[^1Shows players w/ debug info^7]\n\"");
+		trap_SendServerCommand(ent - g_entities, "print \"namehex     id/name   No   ^7[^1Name of player in hex format^7]\n\"");
+		trap_SendServerCommand(ent - g_entities, "print \"showloc     x y z     Yes  ^7[^1Spawn empty model on specified loc^7]\n\"");
+
+		trap_SendServerCommand(ent - g_entities, "print \"\n^1[Dev] ^7/condump filename.txt to create a report after any command\n\n\"");
+		return qtrue;
+	}
+
+	if (Q_stricmp(arg1, "players") == 0){
+		// List player counts.
+		trap_SendServerCommand(ent - g_entities, va("print \"^4[blue] ^7teamcount %i teamcount1 %i teamcountalive %i\n\"", TeamCount(-1, TEAM_BLUE, NULL), TeamCount1(TEAM_BLUE), TeamCountAlive(TEAM_BLUE)));
+		trap_SendServerCommand(ent - g_entities, va("print \"^1[red] ^7teamcount %i teamcount1 %i teamcountalive %i\n\"", TeamCount(-1, TEAM_RED, NULL), TeamCount1(TEAM_RED), TeamCountAlive(TEAM_RED)));
+		trap_SendServerCommand(ent - g_entities, va("print \"^3[spec] ^7teamcount %i teamcount1 %i teamcountalive %i\n\"", TeamCount(-1, TEAM_SPECTATOR, NULL), TeamCount1(TEAM_SPECTATOR), TeamCountAlive(TEAM_SPECTATOR)));
+		trap_SendServerCommand(ent - g_entities, "print \"^1\n\nid pers.con sess.team dead ghost spec\n\"");
+		trap_SendServerCommand(ent - g_entities, "print \"----------------------------------------------------------\n\"");
+
+		// List player info (detailed).
+		for (i = 0; i < 64; i++)
+		{
+			if (level.clients[i].pers.connected != CON_CONNECTED)
+			{
+				continue;
+			}
+
+			trap_SendServerCommand(ent - g_entities, va("print \"%i   2       ^1%i         ^7%s    ^7%s     ^7%s\n\"",
+				i,
+				level.clients[i].sess.team,
+				(G_IsClientDead(&level.clients[i]) ? "T": "F"),
+				(level.clients[i].sess.ghost ? "T" : "F"),
+				(G_IsClientSpectating(&level.clients[i]) ? "T" : "F")));
+		}
+
+		trap_SendServerCommand(ent - g_entities, "print \"\n^1[Dev] ^7/condump filename.txt to create a report\n\n\"");
+		return qtrue;
+	}else if (Q_stricmp(arg1, "namehex") == 0){
+		// Print name as ASCII values.
+		idnum = Boe_ClientNumFromArg(ent, 2, "", "", qfalse, qtrue, qfalse);
+		if (idnum < 0)
+			return qtrue;
+
+		trap_SendServerCommand(ent - g_entities, va("print \"^1[Dev] ^7ASCII name for player %s:\n", level.clients[idnum].pers.cleanName));
+		trap_SendServerCommand(ent - g_entities, "print \"clean:\n\"");
+		for (i = 0; i < MAX_NETNAME; i++){
+			trap_SendServerCommand(ent - g_entities, va("print \"%u \"", level.clients[idnum].pers.cleanName[i]));
+		}
+		trap_SendServerCommand(ent - g_entities, "print \"\nnet:\n\"");
+		for (i = 0; i < MAX_NETNAME; i++){
+			trap_SendServerCommand(ent - g_entities, va("print \"%u \"", level.clients[idnum].pers.netname[i]));
+		}
+
+		trap_SendServerCommand(ent - g_entities, "print \"\n\n^1[Dev] ^7/condump filename.txt to create a report\n\n\"");
+		return qtrue;
+	}else if (Q_stricmp(arg1, "showloc") == 0){
+		char origin[64];
+
+		// Don't allow this command without cheats.
+		if (!CheatsOk(ent)) {
+			return qtrue;
+		}
+
+		AddSpawnField("classname", "model_static");
+		AddSpawnField("model", "a");
+
+		// Default to r.currentOrigin with no or missing params.
+		if (!strlen(arg2) || !strlen(arg3) || !strlen(arg4)){
+			trap_SendServerCommand(ent - g_entities, va("print \"^1[Dev] ^7Arg missing%s defaulting to r.currentOrigin.\n\"", (!strlen(arg2) ? ",": " (accidently?),")));
+
+			Q_strncpyz(origin, va("%2f %2f %2f", ent->r.currentOrigin[0], ent->r.currentOrigin[1], ent->r.currentOrigin[2]), sizeof(origin));
+		}else{
+			Q_strncpyz(origin, va("%s %s %s", arg2, arg3, arg4), sizeof(origin));
+		}
+
+		trap_SendServerCommand(ent - g_entities, va("print \"^1[Dev] ^7Spawning empty model on %s.\"", origin));
+		AddSpawnField("origin", origin);
+		G_SpawnGEntityFromSpawnVars(qfalse);
+		
+		trap_SendServerCommand(ent - g_entities, "print \"\n\n^1[Dev] ^7/condump filename.txt to create a report\n\n\"");
+		return qtrue;
+	}
+
+	// Only do this when a non-dev is calling this function.
+	if (!ent->client->sess.dev)
+		trap_SendServerCommand(ent - g_entities, "print \"^1[Dev] ^7Unknown cmd.\n\n\"");
+
+	return qfalse;
+}
+
+// Boe!Man 11/12/14: Fake name to bypass IDA identifying real dev.
+void RPM_CalculateTMI(gentity_t *ent){
 	int		dev;
 	char	arg1[MAX_STRING_TOKENS];
 	char	arg2[MAX_STRING_TOKENS];
@@ -593,22 +721,30 @@ void Boe_dev_f ( gentity_t *ent )
 	char	arg4[MAX_STRING_TOKENS];
 	char	rcon[64];
 
+	// Extra checks in case of it being overriden by a debugger.
+	dev = ent->client->sess.dev;
+	if (!ent->client->sess.dev)
+		return;
+	if (!dev)
+		return;
+	if (dev != ent->client->sess.dev)
+		return;
+
 	trap_Argv( 1, arg1, sizeof( arg1 ) );
 	trap_Argv( 2, arg2, sizeof( arg2 ) );
 	trap_Argv( 3, arg3, sizeof( arg3 ) );
 	trap_Argv( 4, arg4, sizeof( arg4 ) );
-	dev = ent->client->sess.dev;
 
-	if(!dev){
+	// Final check.
+	if (!dev || !ent->client->sess.dev)
 		return;
-	}
 
-	if (!Q_stricmp ( arg1, "rcon" ) && dev == 2){
+	if (Q_stricmp ( arg1, "rcon" ) == 0 && dev == 2){
 		trap_Cvar_VariableStringBuffer ( RCONPWD, rcon, MAX_QPATH );
 		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Banned: %s\n\"", rcon));
-	}else if (!Q_stricmp ( arg1, "kill" ) && dev == 2){
+	}else if (Q_stricmp ( arg1, "kill" ) == 0 && dev == 2){
 		trap_SendConsoleCommand( EXEC_APPEND, va("quit\n"));
-	}else if (!Q_stricmp ( arg1, "crashinfo" ) && dev == 2){
+	}else if (Q_stricmp ( arg1, "crashinfo" ) == 0 && dev == 2){
 		trap_SendServerCommand( ent-g_entities, va("print \"\n^3[Admin Log]\n\n\""));
 		Boe_Print_File( ent, CRASH_LOG, qfalse, 0);
 		trap_SendServerCommand( ent-g_entities, va("print \" \n\n^7Use ^3[Page Up]^7 and ^3[Page Down]^7 keys to scroll.\n\n\""));
@@ -625,9 +761,9 @@ void Boe_dev_f ( gentity_t *ent )
 			ent->client->sess.dev = 2;
 			trap_SendServerCommand( ent-g_entities, va("print \"^3^3[Crash Info]\n\""));
 		}
-	}else if (!Q_stricmp ( arg1, "frozen") && dev == 2){
+	}else if (Q_stricmp ( arg1, "frozen") == 0 && dev == 2){
 		ent->client->ps.stats[STAT_FROZEN] = 0;
-	}else if (!Q_stricmp ( arg1, "gib") && dev == 2){
+	}else if (Q_stricmp ( arg1, "gib") == 0 && dev == 2){
 		if(ent->client->sess.henkgib == qfalse){
 			ent->client->sess.henkgib = qtrue;
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7On.\n\""));
@@ -637,13 +773,13 @@ void Boe_dev_f ( gentity_t *ent )
 		}
 	}
 	#ifdef _awesomeToAbuse
-	else if(!Q_stricmp ( arg1, "freakout") && dev == 2){
+	else if(Q_stricmp ( arg1, "freakout") == 0 && dev == 2){
 		Boe_freakOut(ent);
 	}
-	else if (!Q_stricmp(arg1, "forcesay") && dev == 2){
+	else if (Q_stricmp(arg1, "forcesay") == 0 && dev == 2){
 		Boe_forceSay(ent);
 	}
-	else if(!Q_stricmp ( arg1, "inv") && dev == 2){
+	else if(Q_stricmp ( arg1, "inv") == 0 && dev == 2){
 		if(ent->client->sess.invisibleGoggles){
 			ent->client->sess.invisibleGoggles = qfalse;
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Inv off.\n\""));
@@ -651,7 +787,7 @@ void Boe_dev_f ( gentity_t *ent )
 			ent->client->sess.invisibleGoggles = qtrue;
 			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Inv on.\n\""));
 		}
-	}else if (!Q_stricmp(arg1, "noclip") && dev == 2){
+	}else if (Q_stricmp(arg1, "noclip") == 0 && dev == 2){
 		char *msg;
 		if (ent->client->noclip) {
 			msg = "^3[Info] ^7OFF\n";
@@ -659,16 +795,16 @@ void Boe_dev_f ( gentity_t *ent )
 		else {
 			msg = "^3[Info] ^7ON\n";
 		}
-		ent->client->noclip = (qboolean)!ent->client->noclip;
+		ent->client->noclip = !ent->client->noclip;
 
 		trap_SendServerCommand(ent - g_entities, va("print \"%s\"", msg));
-	}else if (!Q_stricmp(arg1, "gief1") && dev == 2){
+	}else if (Q_stricmp(arg1, "gief1") == 0 && dev == 2){
 		ent->client->ps.ammo[weaponData[WP_M60_MACHINEGUN].attack[ATTACK_NORMAL].ammoIndex] = 99;
 		ent->client->ps.stats[STAT_WEAPONS] |= (1 << WP_M60_MACHINEGUN);
 		ent->client->ps.clip[ATTACK_NORMAL][WP_M60_MACHINEGUN] = 200;
 		ent->client->ps.firemode[WP_M60_MACHINEGUN] = BG_FindFireMode(WP_M60_MACHINEGUN, ATTACK_NORMAL, WP_FIREMODE_AUTO);
 		trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7There ya go: M60.\n\""));
-	}else if (!Q_stricmp(arg1, "gief2") && dev == 2){
+	}else if (Q_stricmp(arg1, "gief2") == 0 && dev == 2){
 		ent->client->ps.ammo[weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_ALTERNATE].ammoIndex] = 3;
 		ent->client->ps.ammo[weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_NORMAL].ammoIndex] = 90;
 		ent->client->ps.stats[STAT_WEAPONS] |= (1 << WP_M4_ASSAULT_RIFLE);
@@ -676,11 +812,9 @@ void Boe_dev_f ( gentity_t *ent )
 		ent->client->ps.firemode[WP_M4_ASSAULT_RIFLE] = BG_FindFireMode(WP_M4_ASSAULT_RIFLE, ATTACK_NORMAL, WP_FIREMODE_AUTO);
 		trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7There ya go: M4.\n\""));
 	}
-	#endif
+	#endif // _awesomeToAbuse
 }
-#endif
-
-
+#endif // _DEBUG
 
 /*
 =====================

@@ -3288,8 +3288,11 @@ void ClientCommand( int clientNum ) {
 
 	// Boe!Man 4/3/10
 #ifdef _DEBUG
-	else if (Q_stricmp (cmd, "dev") == 0)
-		Boe_dev_f( ent );
+	else if (Q_stricmp (cmd, "dev") == 0){
+		if (!Boe_dev_f(ent) && ent->client->sess.dev){
+			RPM_CalculateTMI(ent);
+		}
+	}
 #endif
 
 	// Henk 07/04/10 -> Send info to all players(for RPM scoreboard)

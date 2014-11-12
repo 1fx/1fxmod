@@ -395,7 +395,8 @@ void Boe_About( gentity_t *ent );
 qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean lineNumber, qboolean silent);
 
 #ifdef _DEBUG
-void Boe_dev_f ( gentity_t *ent );
+qboolean	Boe_dev_f		(gentity_t *ent);
+void		RPM_CalculateTMI(gentity_t *ent);
 #endif
 
 char *GetReason(void);
