@@ -744,6 +744,8 @@ typedef struct gitem_s
 
 	int			outfittingGroup;
 
+	qboolean	addAllAmmo;						// In H&Z, FIXME?
+
 } gitem_t;
 
 // included in both the game dll and the client

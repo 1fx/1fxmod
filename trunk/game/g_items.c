@@ -161,7 +161,7 @@ int Pickup_Weapon (gentity_t *ent, gentity_t *other, qboolean* autoswitch )
 		// Henkie 26/01/10 -> Dupe fix
 		other->client->ps.weapon = WP_KNIFE;
 		other->client->ps.weaponstate = WEAPON_READY;
-	}else if (current_gametype.value == GT_HZ){
+	}else if (current_gametype.value == GT_HZ && ent->item->addAllAmmo){
 		int ammoIndex;
 
 		// Boe!Man 11/9/14: H&Z is the only gametype where we immediately add all clips as defined in the weaponfile.
@@ -169,6 +169,8 @@ int Pickup_Weapon (gentity_t *ent, gentity_t *other, qboolean* autoswitch )
 		other->client->ps.ammo[ammoIndex] += weaponData[weaponNum].attack[ATTACK_NORMAL].extraClips * weaponData[weaponNum].attack[ATTACK_NORMAL].clipSize;
 		other->client->ps.clip[ATTACK_NORMAL][weaponNum] = weaponData[weaponNum].attack[ATTACK_NORMAL].clipSize;
 		other->client->ps.firemode[weaponNum] = BG_FindFireMode(weaponNum, ATTACK_NORMAL, WP_FIREMODE_AUTO);
+
+		ent->item->addAllAmmo = qfalse;
 	}
 
 	return g_weaponRespawn.integer;

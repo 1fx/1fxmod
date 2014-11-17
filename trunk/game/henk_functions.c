@@ -680,6 +680,7 @@ void DropRandom( gentity_t *ent, int zombies){
 	//Com_Printf("Random: %i\n", random);
 
 	item = BG_FindWeaponItem ((weapon_t)weaponGroups[group][random]);
+	item->addAllAmmo = qtrue;
 	dropped = G_DropItem2(ent->r.currentOrigin, vec3_origin, item);
 }
 
