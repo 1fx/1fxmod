@@ -3473,7 +3473,8 @@ void G_RunFrame( int levelTime )
 					}
 				}else if (ent->client->sess.regentime && ent->client->sess.team == TEAM_BLUE && level.time >= ent->client->sess.regentime){
 					// Boe!Man 10/28/14: Auto health renegeration.
-					ent->client->ps.stats[STAT_HEALTH] = ent->health++;
+					ent->client->ps.stats[STAT_HEALTH]++;
+					ent->health++;
 
 					if (ent->client->ps.stats[STAT_HEALTH] >= MAX_HEALTH){
 						ent->client->sess.regentime = 0;
