@@ -761,8 +761,8 @@ typedef struct
 	int			pause; // when 1 all players in intermission type state
 	int			unpausetime;			// time for the restart countdown sequence
 
-	int			redMsgCount;
-	int			blueMsgCount;
+	qboolean	redMsgSent;
+	qboolean	blueMsgSent;
 	int			awardTime;
 	int			lastAwardSent;
 
@@ -798,6 +798,7 @@ typedef struct
 	int			zombie;
 	int			zombietime;
 	int			nextZombie;		// Entity ID of the next zombie.
+	int			lastHuman;		// Entity ID of the last human (that should get M67).
 
 	// Henk 26/01/10 -> Current RPG/M4/MM1 holders
 	char		RPGloc[64];

@@ -332,7 +332,7 @@ gentity_t* G_CreateDamageArea ( vec3_t origin, gentity_t* attacker, float damage
 	gentity_t	*damageArea;
 
 	damageArea = G_Spawn();
-	if(current_gametype.value == GT_HZ && mod == MOD_M67_GRENADE){
+	if(current_gametype.value == GT_HZ && (mod == MOD_M67_GRENADE || mod == (MOD_M67_GRENADE + 256))){
 		damageArea->nextthink = level.time + 500;
 		damageArea->think = Henk_PushArea;
 	}else{
@@ -519,7 +519,7 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace )
 	} 
 	else 
 	{
-		if(current_gametype.value == GT_HZ && ent->methodOfDeath == MOD_M67_GRENADE){
+		if(current_gametype.value == GT_HZ && (ent->methodOfDeath == MOD_M67_GRENADE || ent->methodOfDeath == altAttack(MOD_M67_GRENADE))){
 
 		}else if(current_gametype.value == GT_HS && ent->methodOfDeath == MOD_F1_GRENADE){
 			vec3_t			org1, org2;

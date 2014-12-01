@@ -722,6 +722,9 @@ void G_ResetGametype ( qboolean fullRestart, qboolean cagefight )
 			trap_SetConfigstring( CS_WARMUP, va("%i", level.warmupTime) );
 			trap_SetConfigstring( CS_LEVEL_START_TIME, va("%i", level.startTime ) );	
 		}
+	}else{
+		level.blueMsgSent = qfalse;
+		level.redMsgSent = qfalse;
 	}
 	
 	// Reset the clients local effects
@@ -1066,31 +1069,30 @@ void CheckGametype ( void )
 			}
 		}
 
-		if(alive[TEAM_RED] == 1 && level.redMsgCount == 0 && players[TEAM_RED] >= 2 && current_gametype.value != GT_HS){
+		if (alive[TEAM_RED] == 1 && !level.redMsgSent && players[TEAM_RED] >= 2 && current_gametype.value != GT_HS){
 			for ( i = 0; i < level.numConnectedClients; i ++ ){
 				gentity_t* ent = &g_entities[level.sortedClients[i]];
-				if ( ent->client->sess.team == TEAM_RED && alive[TEAM_RED] == 1 &&
-					!G_IsClientDead ( ent->client ) && !level.redMsgCount){
+				if ( ent->client->sess.team == TEAM_RED && !G_IsClientDead ( ent->client )){
 					G_Broadcast("You are the \\last player alive!", BROADCAST_GAME, ent);
 					trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s is the last player alive in the red team.\n\"", ent->client->pers.cleanName));
 					Boe_ClientSound(ent, G_SoundIndex("sound/misc/events/tut_door01.mp3"));
-					level.redMsgCount++;
+					level.redMsgSent = qtrue;
 					if(current_gametype.value == GT_HZ){
-						trap_SendServerCommand(-1, va("print\"^3[Debug] ^7%s should get the M67 at the next round...\n\"", ent->client->pers.netname));
+						trap_SendServerCommand(ent-g_entities, va("print \"^3[H&Z] ^7You will receive the forcefield the next round.\n\""));
+						level.lastHuman = ent->s.number;
 					}
 				}
 			}
 		}
 
-		if(alive[TEAM_BLUE] == 1 && level.blueMsgCount == 0 && players[TEAM_BLUE] >= 2 && current_gametype.value != GT_HS && current_gametype.value != GT_HZ){
+		if(alive[TEAM_BLUE] == 1 && !level.blueMsgSent && players[TEAM_BLUE] >= 2 && current_gametype.value != GT_HS && current_gametype.value != GT_HZ){
 			for ( i = 0; i < level.numConnectedClients; i ++ ){
 				gentity_t* ent = &g_entities[level.sortedClients[i]];
-				if ( ent->client->sess.team == TEAM_BLUE && alive[TEAM_BLUE] == 1 &&
-					!G_IsClientDead ( ent->client ) && !level.blueMsgCount){
+				if ( ent->client->sess.team == TEAM_BLUE && !G_IsClientDead ( ent->client )){
 					G_Broadcast("You are the \\last player alive!", BROADCAST_GAME, ent);
 					trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s is the last alive player in the blue team.\n\"", ent->client->pers.netname));
 					Boe_ClientSound(ent, G_SoundIndex("sound/misc/events/tut_door01.mp3"));
-					level.blueMsgCount++;
+					level.blueMsgSent = qtrue;
 				}
 			}
 		}

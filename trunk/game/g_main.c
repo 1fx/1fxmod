@@ -1399,6 +1399,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 
 	if (current_gametype.value == GT_HZ){
 		level.nextZombie = -1;
+		level.lastHuman = -1;
 	}
 
 	// Boe!Man 7/29/12: Check for g_preferSubnets and g_passwordAdmins not both being set to 1 (incompatible).
@@ -2921,7 +2922,7 @@ void Henk_CheckZombie(void){
 	}
 
 	if(level.time >= level.gametypeStartTime+8000 && level.messagedisplay == qfalse && level.gametypeStartTime >= 5000){
-		trap_SendServerCommand(-1, va("print \"^3[H&Z] ^7Shotguns distributed.\n\"") );
+		trap_SendServerCommand(-1, va("print \"^3[H&Z] ^7Shotguns distributed.\n\""));
 		G_Broadcast("\\Shotguns distributed!", BROADCAST_GAME, NULL);
 		Boe_GlobalSound( G_SoundIndex("sound/misc/menus/click.wav"));
 
@@ -2938,9 +2939,19 @@ void Henk_CheckZombie(void){
 				
 				ent->client->ps.weapon = WP_M590_SHOTGUN;
 				ent->client->ps.weaponstate = WEAPON_READY;
+
+				if (level.lastHuman == ent->s.number){
+					ent->client->ps.ammo[weaponData[WP_M67_GRENADE].attack[ATTACK_NORMAL].ammoIndex] = 1;
+					ent->client->ps.stats[STAT_WEAPONS] |= (1 << WP_M67_GRENADE);
+					ent->client->ps.clip[ATTACK_NORMAL][WP_M67_GRENADE] = 0;
+					ent->client->ps.firemode[WP_M67_GRENADE] = BG_FindFireMode(WP_M67_GRENADE, ATTACK_NORMAL, WP_FIREMODE_AUTO);
+
+					trap_SendServerCommand(ent-g_entities, va("print \"^3[H&Z] ^7You now have the forcefield grenade.\n\""));
+				}
 			}
 		}
 		level.messagedisplay = qtrue;
+		level.lastHuman = -1;
 	}
 
 }
