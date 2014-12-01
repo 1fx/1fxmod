@@ -613,7 +613,7 @@ void InitCagefight(void){
 static int weaponDropOdds[6][6] =
 {
 	{ 80, 20, 0, 0, 0, 0 },			// 1-2 zombies
-	{ 30, 40, 15, 0, 0, 0 },		// 3-4 zombies
+	{ 35, 50, 15, 0, 0, 0 },		// 3-4 zombies
 	{ 5, 5, 50, 20, 20, 0 },		// 5-6 zombies
 	{ 5, 5, 25, 35, 20, 10 },		// 7-9 zombies
 	{ 5, 5, 15, 20, 40, 15 },		// 10-14 zombies
@@ -658,15 +658,15 @@ void DropRandom( gentity_t *ent, int zombies){
 		Odds[i][1] = (Odds[i][0]+weaponDropOdds[DropGroup][i])-1;
 		if((random >= Odds[i][0] && random <= Odds[i][1])
             || (i == 0 && random <= Odds[i][1])
-            || (random >= Odds[i][0] && Odds[i][1] == 0)
-            || (i == 5)){
+			|| (i == 5)
+			|| (random >= Odds[i][1] && weaponDropOdds[DropGroup][i+1] == 0)){
                 group = i;
                 break;
 		}
 		start = Odds[i][0]+weaponDropOdds[DropGroup][i];
 	}
 	#ifdef _DEBUG
-	G_LogPrintf("Group: %i\n", group);
+	G_LogPrintf("Group: %i - random: %i - dropGroup: %i\n", group, random, DropGroup);
 	if(group < 0 || group >= 6){
         G_Broadcast("CRAAAAASH DETECTED\nBwease report this to boe on forum", BROADCAST_MOTD, NULL);
         return;
