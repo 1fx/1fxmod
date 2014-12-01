@@ -283,12 +283,9 @@ void Henk_PushArea( gentity_t *ent )
 			if(level.time >= tent->client->sess.lastpush && tent->client->sess.team == TEAM_BLUE){
 				VectorCopy(tent->client->ps.viewangles, fireAngs);
 				AngleVectors( fireAngs, dir, NULL, NULL );	
-				dir[0] *= -1.0;
-				dir[1] *= -1.0;
+				dir[0] *= -dir[0];
+				dir[1] *= -dir[1];
 				dir[2] = 0.0;
-				#ifdef _DEBUG
-				Com_Printf("test\n");
-				#endif
 				VectorNormalize ( dir );
 				G_ApplyKnockback ( tent, dir, knockback );
 				originstr = va("%.0f %.0f %.0f", tent->r.currentOrigin[0], tent->r.currentOrigin[1], tent->r.currentOrigin[2]+45);
