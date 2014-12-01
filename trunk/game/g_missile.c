@@ -336,7 +336,7 @@ gentity_t* G_CreateDamageArea ( vec3_t origin, gentity_t* attacker, float damage
 
 	damageArea = G_Spawn();
 	if(current_gametype.value == GT_HZ && mod == MOD_M67_GRENADE){
-		damageArea->nextthink = level.time + 350;
+		damageArea->nextthink = level.time + 500;
 		damageArea->think = Henk_PushArea;
 	}else{
 		damageArea->nextthink = level.time + 350;
