@@ -907,20 +907,22 @@ void G_DropGametypeItems ( gentity_t* self, int delayPickup )
 		}
 
 		drop = G_DropItem( self, item, angle );
-		drop->count = 1;
-		angle += 45;
+		if (drop != NULL){
+			drop->count = 1;
+			angle += 45;
 
-		if ( delayPickup )
-		{
-			drop->nextthink = level.time + delayPickup;	
-			drop->s.eFlags |= EF_NOPICKUP;
-			drop->think = G_EnableGametypeItemPickup;
+			if (delayPickup)
+			{
+				drop->nextthink = level.time + delayPickup;
+				drop->s.eFlags |= EF_NOPICKUP;
+				drop->think = G_EnableGametypeItemPickup;
+			}
 		}
 		
 		// TAke it away from the client just in case
 		self->client->ps.stats[STAT_GAMETYPE_ITEMS] &= ~(1<<i);
 
-		if ( self->enemy && self->enemy->client && !OnSameTeam ( self->enemy, self ) )
+		if ( !g_caserun.integer && self->enemy && self->enemy->client && !OnSameTeam ( self->enemy, self ) )
 		{	//05.07.05 - 07:15pm
 			//trap_GT_SendEvent ( GTEV_ITEM_DEFEND, level.time, level.gametypeItems[item->giTag].id, self->enemy->s.clientNum, self->enemy->client->sess.team, 0, 0  );
 			trap_GT_SendEvent ( GTEV_ITEM_DEFEND, level.time, item->quantity, self->enemy->s.clientNum, self->enemy->client->sess.team, 0, 0  );

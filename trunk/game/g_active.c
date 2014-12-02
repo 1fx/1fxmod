@@ -1341,7 +1341,7 @@ void ClientThink_real( gentity_t *ent )
 	}
 
 	if (client->caserunHoldTime && level.time >= client->caserunHoldTime){
-		client->sess.score++;
+		G_AddTeamScore((team_t)client->sess.team, 1);
 		client->caserunHoldTime = level.time + 5000;
 	}
 	

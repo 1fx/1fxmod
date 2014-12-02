@@ -590,12 +590,14 @@ gentity_t *G_DropItem( gentity_t *ent, gitem_t *item, float angle )
 	VectorScale( velocity, 150, velocity );
 	velocity[2] += 200 + crandom() * 50;
 	
-	dropped = LaunchItem( item, ent->r.currentOrigin, velocity );
+	if (item->giType != IT_GAMETYPE || !(current_gametype.value == GT_INF && g_caserun.integer)){
+		dropped = LaunchItem(item, ent->r.currentOrigin, velocity);
+	}
 
 	if ( item->giType == IT_GAMETYPE )
 	{
 		// Boe!Man 8/19/11: Add drop location message for all major gametypes (using a simplified system). Do note that this should remain disabled during the scrim itself (public/match warmup are allowed).
-		if(g_dropLocationMessage.integer >= 1 && cm_enabled.integer <= 1){
+		if (g_dropLocationMessage.integer >= 1 && cm_enabled.integer <= 1 && !(current_gametype.value == GT_INF && g_caserun.integer)){
 			test = Team_GetLocation(dropped);
 			if(test){
 				strncpy(location, va(" at %s", test->message), sizeof(location));
@@ -615,7 +617,21 @@ gentity_t *G_DropItem( gentity_t *ent, gitem_t *item, float angle )
 				}
 			}else if(current_gametype.value == GT_INF){
 				if(item->quantity == 100){ // Briefcase.
-					trap_SendServerCommand( -1, va("print \"^3[INF] %s ^7has dropped the briefcase%s.\n\"", ent->client->pers.netname, location));
+					if (!g_caserun.integer){
+						trap_SendServerCommand(-1, va("print \"^3[INF] %s ^7has dropped the briefcase%s.\n\"", ent->client->pers.netname, location));
+					}else{
+						// Boe!Man 12/2/14: Let the gametype handle the respawn.
+						if (trap_GT_SendEvent(GTEV_ITEM_STUCK, level.time, item->quantity, 0, 0, 0, 0)){
+							// just reset the gametype item
+						}
+						else if (!trap_GT_SendEvent(GTEV_ITEM_STUCK, level.time, item->quantity, 0, 0, 0, 0))
+						{
+							G_ResetGametypeItem(item);
+						}
+
+						ent->client->caserunHoldTime = 0;
+						return NULL;
+					}
 				}
 			}
 			trap_GT_SendEvent ( GTEV_ITEM_DROPPED, level.time, item->quantity, ent->s.number, 0, 0, 0 );
@@ -741,6 +757,9 @@ gentity_t* G_DropWeapon ( gentity_t* ent, weapon_t weapon, int pickupDelay )
 
 	// spawn the item
 	dropped = G_DropItem( ent, item, 0 );
+	if (dropped == NULL){
+		return NULL;
+	}
 
 	// Pack all the ammo into the count field
 	dropped->s.angles[YAW] = rand()%360;

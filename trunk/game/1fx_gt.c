@@ -347,6 +347,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 
 		case GTEV_ITEM_STUCK:
 			if(current_gametype.value == GT_INF){
+				int i;
 				gitem_t* item;
 				
 				if (!g_caserun.integer){
@@ -355,6 +356,18 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 				}else{
 					G_Broadcast("\\Briefcase respawned!", BROADCAST_GAME, NULL);
 					trap_SendServerCommand(-1, "print \"^3[CR] ^7The briefcase has respawned.\n\"");
+
+					// Boe!Man 12/2/14: FIXME: Bodies disappear here.
+					for (i = 0; i < level.num_entities; i++)
+					{
+						gentity_t* ent;
+
+						ent = &g_entities[i];
+
+						if (ent->s.eType == ET_BODY){
+							trap_UnlinkEntity(ent);
+						}
+					}
 				}
 				
 				// Boe!Man 11/29/12: Reset item.
@@ -568,12 +581,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 
 		case GTEV_ITEM_DROPPED:
 			if(current_gametype.value == GT_INF){
-				if (!g_caserun.integer){
-					G_Broadcast(va("%s\n\\dropped the briefcase!", g_entities[arg1].client->pers.netname), BROADCAST_GAME, NULL);
-				}else{
-					g_entities[arg1].client->caserunHoldTime = 0;
-					GT_Event(GTEV_ITEM_STUCK, time, arg0, arg1, arg2, arg3, arg4);
-				}
+				G_Broadcast(va("%s\n\\dropped the briefcase!", g_entities[arg1].client->pers.netname), BROADCAST_GAME, NULL);
 			}else if(current_gametype.value == GT_CTF){
 				switch (arg0)
 				{
