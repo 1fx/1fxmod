@@ -1339,6 +1339,11 @@ void ClientThink_real( gentity_t *ent )
 		client->ps.gravity = g_gravity.value;
 		client->ps.speed = g_speed.value;
 	}
+
+	if (client->caserunHoldTime && level.time >= client->caserunHoldTime){
+		client->sess.score++;
+		client->caserunHoldTime = level.time + 5000;
+	}
 	
 	// Boe!Man 4/16/13: The accelerator can be used in all gametypes, though they are probably used only in H&S/H&Z...
 	if(client->sess.acceleratorCooldown){

@@ -349,15 +349,19 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 			if(current_gametype.value == GT_INF){
 				gitem_t* item;
 				
-				G_Broadcast("The briefcase has \\returned!", BROADCAST_GAME, NULL);
-				trap_SendServerCommand( -1, "print \"^3[INF] ^7The briefcase has returned.\n\"");
+				if (!g_caserun.integer){
+					G_Broadcast("The briefcase has \\returned!", BROADCAST_GAME, NULL);
+					trap_SendServerCommand( -1, "print \"^3[INF] ^7The briefcase has returned.\n\"");
+				}else{
+					G_Broadcast("\\Briefcase respawned!", BROADCAST_GAME, NULL);
+					trap_SendServerCommand(-1, "print \"^3[CR] ^7The briefcase has respawned.\n\"");
+				}
 				
 				// Boe!Man 11/29/12: Reset item.
 				item = BG_FindGametypeItemByID ( ITEM_BRIEFCASE );
 				if (item){
 					G_ResetGametypeItem ( item );
 				}
-				
 				
 				// Boe!Man 11/29/12: Global sound.
 				if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime){
@@ -564,8 +568,12 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 
 		case GTEV_ITEM_DROPPED:
 			if(current_gametype.value == GT_INF){
-				G_Broadcast(va("%s\n\\dropped the briefcase!", g_entities[arg1].client->pers.netname), BROADCAST_GAME, NULL);
-				break;
+				if (!g_caserun.integer){
+					G_Broadcast(va("%s\n\\dropped the briefcase!", g_entities[arg1].client->pers.netname), BROADCAST_GAME, NULL);
+				}else{
+					g_entities[arg1].client->caserunHoldTime = 0;
+					GT_Event(GTEV_ITEM_STUCK, time, arg0, arg1, arg2, arg3, arg4);
+				}
 			}else if(current_gametype.value == GT_CTF){
 				switch (arg0)
 				{
@@ -573,13 +581,15 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 						G_Broadcast(va("%s\n\\dropped the %s ^7flag!", g_entities[arg1].client->pers.netname, server_blueteamprefix.string), BROADCAST_GAME, NULL);
 						gametype.blueFlagDropTime = time;
 						break;
-						
 					case ITEM_REDFLAG:
 						G_Broadcast(va("%s\n\\dropped the %s ^7flag!", g_entities[arg1].client->pers.netname, server_redteamprefix.string), BROADCAST_GAME, NULL);
 						gametype.redFlagDropTime = time;
 						break;
+					default:
+						break;
 				}
 			}
+
 			break;
 
 		case GTEV_ITEM_TOUCHED:
@@ -587,16 +597,20 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 				switch ( arg0 )
 				{
 					case ITEM_BRIEFCASE:
-						if ( arg2 == TEAM_BLUE )
+						if ( arg2 == TEAM_BLUE || g_caserun.integer )
 						{
 							G_Broadcast(va("%s\nhas \\taken the briefcase!", g_entities[arg1].client->pers.netname), BROADCAST_GAME, NULL);
 							trap_SendServerCommand(-1, va("print\"^3[INF] %s ^7has taken the briefcase.\n\"", g_entities[arg1].client->pers.netname));
 							// Boe!Man 11/29/12: Global sound.
 							if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime){
-							gentity_t* tent;
-							tent = G_TempEntity( vec3_origin, EV_GLOBAL_SOUND );
-							tent->s.eventParm = gametype.caseTakenSound;
-							tent->r.svFlags = SVF_BROADCAST;
+								gentity_t* tent;
+								tent = G_TempEntity( vec3_origin, EV_GLOBAL_SOUND );
+								tent->s.eventParm = gametype.caseTakenSound;
+								tent->r.svFlags = SVF_BROADCAST;
+							}
+
+							if (g_caserun.integer){
+								g_entities[arg1].client->caserunHoldTime = level.time + 5000;
 							}
 							
 							// Boe!Man 11/29/12: Radio message.
@@ -707,6 +721,11 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 					{
 						gitem_t*	item;
 						gentity_t*	ent;
+
+						// Boe!Man 12/2/14: No capture on caserun.
+						if (g_caserun.integer){
+							return 1;
+						}
 
 						ent  = &g_entities[arg1];
 						item = BG_FindGametypeItemByID ( ITEM_BRIEFCASE );

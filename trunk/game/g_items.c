@@ -618,7 +618,7 @@ gentity_t *G_DropItem( gentity_t *ent, gitem_t *item, float angle )
 					trap_SendServerCommand( -1, va("print \"^3[INF] %s ^7has dropped the briefcase%s.\n\"", ent->client->pers.netname, location));
 				}
 			}
-		trap_GT_SendEvent ( GTEV_ITEM_DROPPED, level.time, item->quantity, ent->s.number, 0, 0, 0 );
+			trap_GT_SendEvent ( GTEV_ITEM_DROPPED, level.time, item->quantity, ent->s.number, 0, 0, 0 );
 		}
 	}
 	

@@ -417,7 +417,6 @@ typedef struct
 	
 	// Boe!Man 4/16/13: Used for accelerator, this is basically level.time + 5000 (the cooldown).
 	int			acceleratorCooldown;
-	
 } clientSession_t;
 
 // Boe!Man 3/30/10
@@ -580,6 +579,8 @@ struct gclient_s
 	// Boe!Man 6/13/11: Sun respawn time.
 	int				sunRespawnTimer;
 
+	// Boe!Man 12/2/14: Used in caserun.
+	int				caserunHoldTime;
 };
 
 
@@ -1459,6 +1460,7 @@ extern	vmCvar_t	server_seekerteamprefix;
 extern  vmCvar_t	hideSeek_Extra;
 extern  vmCvar_t	server_humanteamprefix;
 extern  vmCvar_t	server_zombieteamprefix;
+extern	vmCvar_t	g_caserun;
 
 void	trap_Printf( const char *fmt );
 void	trap_Error( const char *fmt );

@@ -299,6 +299,9 @@ vmCvar_t	g_rename;
 
 vmCvar_t	g_dosPatch;
 
+// Boe!Mn 12/2/14: Caserun.
+vmCvar_t	g_caserun;
+
 // Boe!Man 1/2/13: --- SQLite3 Related CVARs ---
 vmCvar_t	sql_aliasFlushCount;
 vmCvar_t	sql_timeBench;
@@ -636,6 +639,9 @@ static cvarTable_t gameCvarTable[] =
 
 	// Boe!Man 10/19/13
 	{ &g_dosPatch,					"g_DoSPatch",			 	"1",		CVAR_ROM, 0.0, 0.0, 0, qfalse },
+
+	// Boe!Man 12/2/14: Caserun.
+	{ &g_caserun,					"g_caserun",				"0",		CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
 
 	// Boe!Man 1/2/13: --- SQLite3 Related CVARs ---
 	{ &sql_aliasFlushCount,			"sql_aliasFlushCount",		"7500",				CVAR_ARCHIVE,				0.0f,   0.0f, 0,  qfalse },
@@ -1382,6 +1388,11 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	// setup settings for h&s
 	if(current_gametype.value == GT_HS || current_gametype.value == GT_HZ){
 		SetNades("0"); // Enable them, but check them individually in that func cause' it's H&S.
+	}
+
+	// Setup settings for caserun if enabled.
+	if (current_gametype.value == GT_INF && g_caserun.integer){
+		level.gametypeData->respawnType = RT_INTERVAL;
 	}
 
 	// Boe!Man 3/30/10
