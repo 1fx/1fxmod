@@ -331,7 +331,7 @@ static cvarTable_t gameCvarTable[] =
 	{ NULL, "^3Mod Version", INF_VERSION_STRING, CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse  },
 	{ NULL, "^3Mod URL", "www.1fxmod.org", CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse  },
 	{ &current_gametype, "current_gametype", "3", CVAR_SERVERINFO | CVAR_ROM | CVAR_LATCH | CVAR_INTERNAL | CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
-	{ NULL, "modname", "RPM 2 k 3 v1.71 ^_- ^31fx.uk.to", CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse  },
+	{ NULL, "modname", "RPM 2 k 3 v1.71 ^_- ^31fxmod.org", CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse  },
 
 	// noset vars
 	{ NULL, "gamename", GAMEVERSION , CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse  },
@@ -540,7 +540,7 @@ static cvarTable_t gameCvarTable[] =
 	{ &server_msgInterval, "server_msgInterval", "5", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_msgDelay, "server_msgDelay", "2", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_message1, "server_message1", "Welcome to 1fx. Mod.", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
-	{ &server_message2, "server_message2", "Development forums can be found on 1fx.uk.to.", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
+	{ &server_message2, "server_message2", "Development forums can be found on 1fxmod.org.", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_message3, "server_message3", "Have fun!", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_message4, "server_message4", "", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &server_message5, "server_message5", "", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },

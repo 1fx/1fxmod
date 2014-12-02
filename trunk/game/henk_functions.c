@@ -155,7 +155,7 @@ void UnloadCountries(){
 
 void trap_LinkEntity( gentity_t *ent ) {
 	if(ent == NULL){
-		G_LogPrintf("!=!=!=!=!=!=!=!=WARNING=!=!=!=!=!=!=!=!=!=! Trying to free a NULL ent, report at 1fx.uk.to(Debug -> link)");
+		G_LogPrintf("!=!=!=!=!=!=!=!=WARNING=!=!=!=!=!=!=!=!=!=! Trying to free a NULL ent, report at 1fxmod.org(Debug -> link)");
 		return;
 	}
 	trap_LinkEntity1(ent);
@@ -163,7 +163,7 @@ void trap_LinkEntity( gentity_t *ent ) {
 
 void trap_UnlinkEntity( gentity_t *ent ) {
 	if(ent == NULL){
-		G_LogPrintf("!=!=!=!=!=!=!=!=WARNING=!=!=!=!=!=!=!=!=!=! Trying to free a NULL ent, report at 1fx.uk.to(Debug -> unlink)");
+		G_LogPrintf("!=!=!=!=!=!=!=!=WARNING=!=!=!=!=!=!=!=!=!=! Trying to free a NULL ent, report at 1fxmod.org(Debug -> unlink)");
 		return;
 	}
 	trap_UnlinkEntity1(ent);
