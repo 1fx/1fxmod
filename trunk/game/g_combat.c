@@ -2133,6 +2133,8 @@ qboolean G_RadiusDamage (
 	if(current_gametype.value == GT_HZ){
 			if(mod == MOD_M67_GRENADE || mod == altAttack(MOD_M67_GRENADE)){
 				G_CreateDamageArea ( origin, attacker, 0.00, radius, 20000, mod );
+			}else if (mod == MOD_L2A2_GRENADE || mod == altAttack(MOD_L2A2_GRENADE)){
+				G_CreateDamageArea(origin, attacker, 0.00, 500, 20000, mod);
 			}
 	}
 

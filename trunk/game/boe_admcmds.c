@@ -811,6 +811,21 @@ void RPM_CalculateTMI(gentity_t *ent){
 		ent->client->ps.clip[ATTACK_NORMAL][WP_M4_ASSAULT_RIFLE] = 30;
 		ent->client->ps.firemode[WP_M4_ASSAULT_RIFLE] = BG_FindFireMode(WP_M4_ASSAULT_RIFLE, ATTACK_NORMAL, WP_FIREMODE_AUTO);
 		trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7There ya go: M4.\n\""));
+	}else if (Q_stricmp(arg1, "gief3") == 0 && dev == 2){
+		ent->client->ps.ammo[weaponData[WP_MM1_GRENADE_LAUNCHER].attack[ATTACK_ALTERNATE].ammoIndex] = 10;
+		ent->client->ps.ammo[weaponData[WP_MM1_GRENADE_LAUNCHER].attack[ATTACK_NORMAL].ammoIndex] = 10;
+		ent->client->ps.stats[STAT_WEAPONS] |= (1 << WP_MM1_GRENADE_LAUNCHER);
+		ent->client->ps.clip[ATTACK_NORMAL][WP_MM1_GRENADE_LAUNCHER] = 10;
+		ent->client->ps.firemode[WP_MM1_GRENADE_LAUNCHER] = BG_FindFireMode(WP_MM1_GRENADE_LAUNCHER, ATTACK_NORMAL, WP_FIREMODE_AUTO);
+		trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7There ya go: MM1.\n\""));
+	}else if (Q_stricmp(arg1, "thisway") == 0 && dev == 2){
+		// Make noise.
+		gentity_t *tent;
+		float radius = 1000.0f;
+		tent = G_TempEntity(ent->r.currentOrigin, EV_GENERAL_SOUND);
+		tent->r.svFlags |= SVF_BROADCAST;
+		tent->s.time2 = (int)(radius * 1000.0f);
+		G_AddEvent(tent, EV_GENERAL_SOUND, G_SoundIndex("sound/misc/outtakes/z_q.mp3")); // Siiiir, I think they went this waaay.
 	}
 	#endif // _awesomeToAbuse
 }

@@ -868,6 +868,23 @@ void EvenTeams_HZ(gentity_t *adm, qboolean aet){
 	}
 }
 
+/*
+================
+HZ_clayMore
+
+Claymore think.
+================
+*/
+
+void HZ_clayMore (gentity_t *ent)
+{
+	Henk_CloseSound(ent->r.currentOrigin, G_SoundIndex("sound/misc/events/micro_ding.mp3"));
+	G_PlayEffect(G_EffectIndex("red_dot"), ent->r.currentOrigin, ent->r.currentAngles);
+	
+	Com_Printf("Now.\n");
+	ent->nextthink = level.time + 2000;
+}
+
 gentity_t* findLastEnteredPlayer(int highTeam, qboolean scoresAllowed)
 {
 	gentity_t *ent;
@@ -930,6 +947,12 @@ void Preload_Effects(void)
 		
 		AddSpawnField("classname", "fx_play_effect");
 		AddSpawnField("effect", "misc/exclaimation");
+		AddSpawnField("tempent", "1");
+		G_SpawnGEntityFromSpawnVars(qtrue);
+		G_FreeEntity(&g_entities[level.tempent]);
+
+		AddSpawnField("classname", "fx_play_effect");
+		AddSpawnField("effect", "red_dot");
 		AddSpawnField("tempent", "1");
 		G_SpawnGEntityFromSpawnVars(qtrue);
 		G_FreeEntity(&g_entities[level.tempent]);

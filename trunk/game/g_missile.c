@@ -116,7 +116,7 @@ void G_ExplodeMissile( gentity_t *ent ) {
 			G_AddEvent( ent, EV_MISSILE_MISS, (DirToByte( dir ) << MATERIAL_BITS) | MATERIAL_NONE);
 		}
 	}else{
-		if(current_gametype.value == GT_HZ && ent->methodOfDeath == MOD_M67_GRENADE){
+		if(current_gametype.value == GT_HZ && (ent->methodOfDeath == MOD_M67_GRENADE || ent->methodOfDeath == MOD_L2A2_GRENADE)){
 
 		}else
 	G_AddEvent( ent, EV_MISSILE_MISS, (DirToByte( dir ) << MATERIAL_BITS) | MATERIAL_NONE);
@@ -332,9 +332,12 @@ gentity_t* G_CreateDamageArea ( vec3_t origin, gentity_t* attacker, float damage
 	gentity_t	*damageArea;
 
 	damageArea = G_Spawn();
-	if(current_gametype.value == GT_HZ && (mod == MOD_M67_GRENADE || mod == (MOD_M67_GRENADE + 256))){
+	if(current_gametype.value == GT_HZ && (mod == MOD_M67_GRENADE || mod == altAttack(MOD_M67_GRENADE))){
 		damageArea->nextthink = level.time + 500;
 		damageArea->think = Henk_PushArea;
+	}else if(current_gametype.value == GT_HZ && (mod == MOD_L2A2_GRENADE || mod == altAttack(MOD_L2A2_GRENADE))){
+		damageArea->nextthink = level.time + 500;
+		damageArea->think = HZ_clayMore;
 	}else{
 		damageArea->nextthink = level.time + 350;
 		damageArea->think = G_CauseAreaDamage;
@@ -485,7 +488,7 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace )
 
 	if ( d && other->client) 
 	{
-		if(current_gametype.value == GT_HZ && ent->methodOfDeath == MOD_M67_GRENADE){
+		if(current_gametype.value == GT_HZ && (ent->methodOfDeath == MOD_M67_GRENADE || ent->methodOfDeath == MOD_L2A2_GRENADE)){
 
 		}else if(current_gametype.value == GT_HS && ent->methodOfDeath == MOD_F1_GRENADE){
 			vec3_t			org1, org2;
@@ -519,7 +522,7 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace )
 	} 
 	else 
 	{
-		if(current_gametype.value == GT_HZ && (ent->methodOfDeath == MOD_M67_GRENADE || ent->methodOfDeath == altAttack(MOD_M67_GRENADE))){
+		if(current_gametype.value == GT_HZ && (ent->methodOfDeath == MOD_M67_GRENADE || ent->methodOfDeath == MOD_L2A2_GRENADE || ent->methodOfDeath == altAttack(MOD_M67_GRENADE) || ent->methodOfDeath == altAttack(MOD_L2A2_GRENADE))){
 
 		}else if(current_gametype.value == GT_HS && ent->methodOfDeath == MOD_F1_GRENADE){
 			vec3_t			org1, org2;
