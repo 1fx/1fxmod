@@ -878,11 +878,60 @@ Claymore think.
 
 void HZ_clayMore (gentity_t *ent)
 {
-	Henk_CloseSound(ent->r.currentOrigin, G_SoundIndex("sound/misc/events/micro_ding.mp3"));
-	G_PlayEffect(G_EffectIndex("red_dot"), ent->r.currentOrigin, ent->r.currentAngles);
+	trace_t *tr;
+	vec3_t mins, maxs;
+	int numListedEntities;
+	int				entityList[MAX_GENTITIES];
+	int i, closestClient = 500, temp;
+	int clientsClose[MAX_CLIENTS], count = 0;
+	gentity_t *tent;
 	
-	Com_Printf("Now.\n");
-	ent->nextthink = level.time + 2000;
+	VectorCopy(ent->r.currentOrigin, mins);
+	VectorCopy(ent->r.currentOrigin, maxs);
+	
+	mins[2] -= 500;
+	maxs[2] += 500;
+	mins[0] -= 500;
+	mins[1] -= 500;
+	maxs[0] += 500;
+	maxs[1] += 500;
+
+	numListedEntities = trap_EntitiesInBox(mins, maxs, entityList, MAX_GENTITIES);
+	//G_Broadcast(va("%i trapped.", numListedEntities), BROADCAST_MOTD, NULL);
+	for (i = 0; i < numListedEntities; i++) // Loop through all entities caught in the radius
+	{
+		tent = &g_entities[entityList[i]];
+		if (tent && tent->client && tent->client->sess.team == TEAM_BLUE){
+			temp = (int)(DistanceSquared(ent->r.currentOrigin, tent->r.currentOrigin) / 100);
+
+			if (temp < closestClient){
+				closestClient = temp;
+			}
+			clientsClose[count++] = tent->s.number;
+		}
+	}
+
+	if (closestClient < 100){
+		ent->s.eFlags |= EF_EXPLODE;
+		ent->s.weapon = WP_L2A2_GRENADE;
+		Com_Printf("Now.\n");
+		G_ExplodeMissile(ent);
+	}else{
+		if (level.time >= ent->speed || (closestClient + closestClient / 2 < ent->up)){
+			VectorCopy(ent->r.currentOrigin, mins);
+			mins[2] += 5;
+
+			G_PlayEffect(G_EffectIndex("red_dot"), mins, ent->r.currentAngles);
+			ent->speed = level.time + closestClient;
+			ent->up = closestClient;
+
+			for (i = 0; i < count; i++){
+				Boe_ClientSound(&g_entities[clientsClose[i]], G_SoundIndex("sound/misc/events/micro_ding.mp3"));
+			}
+		}
+		
+		ent->nextthink = level.time + (closestClient < 200) ? closestClient : 200;
+	}
 }
 
 gentity_t* findLastEnteredPlayer(int highTeam, qboolean scoresAllowed)

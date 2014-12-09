@@ -336,8 +336,7 @@ gentity_t* G_CreateDamageArea ( vec3_t origin, gentity_t* attacker, float damage
 		damageArea->nextthink = level.time + 500;
 		damageArea->think = Henk_PushArea;
 	}else if(current_gametype.value == GT_HZ && (mod == MOD_L2A2_GRENADE || mod == altAttack(MOD_L2A2_GRENADE))){
-		damageArea->nextthink = level.time + 500;
-		damageArea->think = HZ_clayMore;
+		Com_Printf("Here.\n\n\n");
 	}else{
 		damageArea->nextthink = level.time + 350;
 		damageArea->think = G_CauseAreaDamage;
@@ -489,7 +488,7 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace )
 	if ( d && other->client) 
 	{
 		if(current_gametype.value == GT_HZ && (ent->methodOfDeath == MOD_M67_GRENADE || ent->methodOfDeath == MOD_L2A2_GRENADE)){
-
+			
 		}else if(current_gametype.value == GT_HS && ent->methodOfDeath == MOD_F1_GRENADE){
 			vec3_t			org1, org2;
 			trace_t			tr;
@@ -522,8 +521,12 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace )
 	} 
 	else 
 	{
-		if(current_gametype.value == GT_HZ && (ent->methodOfDeath == MOD_M67_GRENADE || ent->methodOfDeath == MOD_L2A2_GRENADE || ent->methodOfDeath == altAttack(MOD_M67_GRENADE) || ent->methodOfDeath == altAttack(MOD_L2A2_GRENADE))){
+		weapon_t forceCreate = WP_NONE;
 
+		if (current_gametype.value == GT_HZ && (ent->methodOfDeath == MOD_M67_GRENADE || ent->methodOfDeath == altAttack(MOD_M67_GRENADE))){
+
+		}else if(current_gametype.value == GT_HZ && (ent->methodOfDeath == MOD_L2A2_GRENADE || ent->methodOfDeath == altAttack(MOD_L2A2_GRENADE))){
+			forceCreate = WP_L2A2_GRENADE;
 		}else if(current_gametype.value == GT_HS && ent->methodOfDeath == MOD_F1_GRENADE){
 			vec3_t			org1, org2;
 			trace_t			tr;
@@ -546,7 +549,7 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace )
 		}
 
 		// If missile should stick into impact point (e.g. a thrown knife).
-		if(!Q_stricmp(ent->classname,"Knife") && current_gametype.value != GT_HS) // Henk 28/01/10 -> No weapon pickup creating for throw knifes..
+		if((!Q_stricmp(ent->classname,"Knife") && current_gametype.value != GT_HS) || (current_gametype.value == GT_HZ && forceCreate == WP_L2A2_GRENADE)) // Henk 28/01/10 -> No weapon pickup creating for throw knifes..
 		{
 			// Create a pickup where we impacted.
 			vec3_t		pickupPos;
@@ -554,27 +557,33 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace )
 
 			VectorMA(trace->endpos,1,trace->plane.normal,pickupPos);
 
-			pickupEnt=CreateWeaponPickup(pickupPos,WP_KNIFE);
+			pickupEnt = CreateWeaponPickup(pickupPos, (current_gametype.value == GT_HZ && forceCreate == WP_L2A2_GRENADE) ? WP_L2A2_GRENADE : WP_KNIFE);
 			if(pickupEnt)
 			{
-				vec3_t knifeDir,knifeAngles;
+				vec3_t weapDir, weapAngles;
 
-				BG_EvaluateTrajectoryDelta( &ent->s.pos, level.time, knifeDir );
+				BG_EvaluateTrajectoryDelta(&ent->s.pos, level.time, weapDir);
 
 				//FIXME: needs work to set model angles!
-				VectorNormalize ( knifeDir );
-				vectoangles(knifeDir,knifeAngles);
-				knifeAngles[YAW] += 90;
-				knifeAngles[ROLL] = knifeAngles[PITCH];
-				knifeAngles[PITCH] = 0;
+				VectorNormalize(weapDir);
+				vectoangles(weapDir, weapAngles);
+				weapAngles[YAW] += 90;
+				weapAngles[ROLL] = weapAngles[PITCH];
+				weapAngles[PITCH] = 0;
 
-				pickupEnt->s.angles[0]=knifeAngles[0];
-				pickupEnt->s.angles[1]=knifeAngles[1];
-				pickupEnt->s.angles[2]=knifeAngles[2];
+				pickupEnt->s.angles[0] = weapAngles[0];
+				pickupEnt->s.angles[1] = weapAngles[1];
+				pickupEnt->s.angles[2] = weapAngles[2];
 
-				pickupEnt->think = G_FreeEntity;
-				pickupEnt->nextthink = level.time + 30000;  // Stick around for 30 seconds
-
+				if (!Q_stricmp(ent->classname, "Knife") && current_gametype.value != GT_HS){
+					pickupEnt->think = G_FreeEntity;
+					pickupEnt->nextthink = level.time + 30000;  // Stick around for 30 seconds
+				}else{
+					// Boe!Man 12/9/14: Make sure it doesn't get picked up.
+					pickupEnt->touch = NULL;
+					pickupEnt->think = HZ_clayMore;
+					pickupEnt->nextthink = level.time + 500;
+				}
 				pickupEnt->count = 1;
 	
 				pickupEnt->s.eFlags |= EF_ANGLE_OVERRIDE;
@@ -584,7 +593,12 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace )
 				pickupEnt->s.apos.trTime=level.time;
 				pickupEnt->clipmask = ent->clipmask;
 				pickupEnt->s.groundEntityNum = trace->entityNum;
-				trap_LinkEntity(pickupEnt);			
+				trap_LinkEntity(pickupEnt);
+
+				if (current_gametype.value == GT_HZ && forceCreate == WP_L2A2_GRENADE){
+					G_FreeEntity(ent);
+					return;
+				}
 			}
 		}
 	}
