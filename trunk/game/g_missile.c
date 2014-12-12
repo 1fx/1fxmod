@@ -115,11 +115,8 @@ void G_ExplodeMissile( gentity_t *ent ) {
 		if(ent->r.currentOrigin[2] > ent->parent->r.currentOrigin[2]){
 			G_AddEvent( ent, EV_MISSILE_MISS, (DirToByte( dir ) << MATERIAL_BITS) | MATERIAL_NONE);
 		}
-	}else{
-		if(current_gametype.value == GT_HZ && (ent->methodOfDeath == MOD_M67_GRENADE || ent->methodOfDeath == MOD_L2A2_GRENADE)){
-
-		}else
-	G_AddEvent( ent, EV_MISSILE_MISS, (DirToByte( dir ) << MATERIAL_BITS) | MATERIAL_NONE);
+	}else if(!(current_gametype.value == GT_HZ && (ent->methodOfDeath == MOD_M67_GRENADE || ent->methodOfDeath == MOD_L2A2_GRENADE))){
+			G_AddEvent( ent, EV_MISSILE_MISS, (DirToByte( dir ) << MATERIAL_BITS) | MATERIAL_NONE);
 	}
 
 	ent->freeAfterEvent = qtrue;
@@ -487,8 +484,8 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace )
 
 	if ( d && other->client) 
 	{
-		if(current_gametype.value == GT_HZ && (ent->methodOfDeath == MOD_M67_GRENADE || ent->methodOfDeath == MOD_L2A2_GRENADE)){
-			
+		if(current_gametype.value == GT_HZ && ent->methodOfDeath == MOD_M67_GRENADE){
+
 		}else if(current_gametype.value == GT_HS && ent->methodOfDeath == MOD_F1_GRENADE){
 			vec3_t			org1, org2;
 			trace_t			tr;
@@ -525,7 +522,7 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace )
 
 		if (current_gametype.value == GT_HZ && (ent->methodOfDeath == MOD_M67_GRENADE || ent->methodOfDeath == altAttack(MOD_M67_GRENADE))){
 
-		}else if(current_gametype.value == GT_HZ && (ent->methodOfDeath == MOD_L2A2_GRENADE || ent->methodOfDeath == altAttack(MOD_L2A2_GRENADE))){
+		}else if(current_gametype.value == GT_HZ && (ent->methodOfDeath == MOD_L2A2_GRENADE || ent->methodOfDeath == altAttack(MOD_L2A2_GRENADE)) && ent->think != HZ_clayMore){
 			forceCreate = WP_L2A2_GRENADE;
 		}else if(current_gametype.value == GT_HS && ent->methodOfDeath == MOD_F1_GRENADE){
 			vec3_t			org1, org2;
@@ -583,6 +580,12 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace )
 					pickupEnt->touch = NULL;
 					pickupEnt->think = HZ_clayMore;
 					pickupEnt->nextthink = level.time + 500;
+
+					// Copy over some essentials, so we can mimic a proper blast + damage area later.
+					pickupEnt->parent = ent->parent;
+					pickupEnt->splashDamage = ent->splashDamage;
+					pickupEnt->splashRadius = ent->splashRadius;
+					pickupEnt->splashMethodOfDeath = ent->splashMethodOfDeath;
 				}
 				pickupEnt->count = 1;
 	

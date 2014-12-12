@@ -897,7 +897,6 @@ void HZ_clayMore (gentity_t *ent)
 	maxs[1] += 500;
 
 	numListedEntities = trap_EntitiesInBox(mins, maxs, entityList, MAX_GENTITIES);
-	//G_Broadcast(va("%i trapped.", numListedEntities), BROADCAST_MOTD, NULL);
 	for (i = 0; i < numListedEntities; i++) // Loop through all entities caught in the radius
 	{
 		tent = &g_entities[entityList[i]];
@@ -912,10 +911,16 @@ void HZ_clayMore (gentity_t *ent)
 	}
 
 	if (closestClient < 100){
+		vec3_t dir = { 0, 0, 1 };
 		ent->s.eFlags |= EF_EXPLODE;
 		ent->s.weapon = WP_L2A2_GRENADE;
-		Com_Printf("Now.\n");
-		G_ExplodeMissile(ent);
+
+		// Do the damage.
+		G_RadiusDamage(ent->r.currentOrigin, ent->parent, ent->splashDamage, ent->splashRadius, ent->parent, 1, ent->splashMethodOfDeath);
+		G_AddEvent(ent, EV_MISSILE_MISS, (DirToByte(dir) << MATERIAL_BITS) | MATERIAL_NONE);
+		
+		ent->think = G_FreeEntity;
+		ent->nextthink = level.time + 250;
 	}else{
 		if (level.time >= ent->speed || (closestClient + closestClient / 2 < ent->up)){
 			VectorCopy(ent->r.currentOrigin, mins);
