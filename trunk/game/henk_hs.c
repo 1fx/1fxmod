@@ -876,60 +876,56 @@ Claymore think.
 ================
 */
 
-void HZ_clayMore (gentity_t *ent)
+void HZ_Claymore(gentity_t *ent)
 {
-	trace_t *tr;
-	vec3_t mins, maxs;
-	int numListedEntities;
+	vec3_t			mins, maxs;
+	gentity_t		*tent;
 	int				entityList[MAX_GENTITIES];
-	int i, closestClient = 500, temp;
-	int clientsClose[MAX_CLIENTS], count = 0;
-	gentity_t *tent;
+	int				clientsClose[MAX_CLIENTS];
+	int				numListedEntities, i, distance;;
+	int				closestClient = 500, count = 0;	
 	
+	// Set the boundary of the claymore.
+	// Zombies within this boundary can hear the beep of this specific claymore.
 	VectorCopy(ent->r.currentOrigin, mins);
 	VectorCopy(ent->r.currentOrigin, maxs);
-	
-	mins[2] -= 500;
-	maxs[2] += 500;
-	mins[0] -= 500;
-	mins[1] -= 500;
-	maxs[0] += 500;
-	maxs[1] += 500;
+	for (i = 0; i < 3; i++){
+		mins[i] -= 500;
+		maxs[i] += 500;
+	}
 
 	numListedEntities = trap_EntitiesInBox(mins, maxs, entityList, MAX_GENTITIES);
-	for (i = 0; i < numListedEntities; i++) // Loop through all entities caught in the radius
-	{
+	// Loop through all entities caught in the radius.
+	for (i = 0; i < numListedEntities; i++){
 		tent = &g_entities[entityList[i]];
-		if (tent && tent->client && tent->client->sess.team == TEAM_BLUE){
-			temp = (int)(DistanceSquared(ent->r.currentOrigin, tent->r.currentOrigin) / 100);
 
-			if (temp < closestClient){
-				closestClient = temp;
+		// Make sure the client coming near is a zombie.
+		if (tent && tent->client && tent->client->sess.team == TEAM_BLUE){
+			distance = (int)(DistanceSquared(ent->r.currentOrigin, tent->r.currentOrigin) / 100);
+
+			// Keep track of the closest client.
+			if (distance < closestClient){
+				closestClient = distance;
 			}
 			clientsClose[count++] = tent->s.number;
 		}
 	}
 
 	if (closestClient < 100){
-		vec3_t dir = { 0, 0, 1 };
-		ent->s.eFlags |= EF_EXPLODE;
-		ent->s.weapon = WP_L2A2_GRENADE;
-
-		// Do the damage.
-		G_RadiusDamage(ent->r.currentOrigin, ent->parent, ent->splashDamage, ent->splashRadius, ent->parent, 1, ent->splashMethodOfDeath);
-		G_AddEvent(ent, EV_MISSILE_MISS, (DirToByte(dir) << MATERIAL_BITS) | MATERIAL_NONE);
-		
-		ent->think = G_FreeEntity;
-		ent->nextthink = level.time + 250;
+		// Explode when a zombie gets too near.
+		HZ_claymoreExplode(ent);
 	}else{
+		// Check if we need to let zombies hear the grenade, and let all players see the flashing red dot.
 		if (level.time >= ent->speed || (closestClient + closestClient / 2 < ent->up)){
 			VectorCopy(ent->r.currentOrigin, mins);
 			mins[2] += 5;
 
+			// Play the effect.
 			G_PlayEffect(G_EffectIndex("red_dot"), mins, ent->r.currentAngles);
-			ent->speed = level.time + closestClient;
-			ent->up = closestClient;
+			ent->speed = level.time + closestClient; // When the next effect/sound check is.
+			ent->up = closestClient; // We register the previous closest distance this way.
 
+			// Broadcast the sound to players.
 			for (i = 0; i < count; i++){
 				Boe_ClientSound(&g_entities[clientsClose[i]], G_SoundIndex("sound/misc/events/micro_ding.mp3"));
 			}
@@ -937,6 +933,48 @@ void HZ_clayMore (gentity_t *ent)
 		
 		ent->nextthink = level.time + (closestClient < 200) ? closestClient : 200;
 	}
+}
+
+/*
+================
+HZ_ClaymoreShoot
+
+Function that gets called when the grenade takes damage.
+================
+*/
+
+void HZ_ClaymoreShoot(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, int mod, int hitLocation, vec3_t hitDir)
+{
+	// When someone shoots the grenade, or it's caught in a grende radius, it's safe to blow up.
+	HZ_claymoreExplode(self);
+}
+
+/*
+================
+HZ_ClaymoreShoot
+
+Explode routine.
+================
+*/
+
+void HZ_claymoreExplode(gentity_t *ent)
+{
+	vec3_t		dir = { 0, 0, 1 };
+
+	// Toggle the take damage flag, there's no need to inflict further damage on the pickup.
+	ent->takedamage = qfalse;
+
+	// Toggle the flags, and make sure the claymore represents the proper grenade.
+	ent->s.eFlags |= EF_EXPLODE;
+	ent->s.weapon = WP_L2A2_GRENADE;
+
+	// Do the damage.
+	G_RadiusDamage(ent->r.currentOrigin, ent->parent, ent->splashDamage, ent->splashRadius, ent->parent, 1, ent->splashMethodOfDeath);
+	G_AddEvent(ent, EV_MISSILE_MISS, (DirToByte(dir) << MATERIAL_BITS) | MATERIAL_NONE);
+
+	// And free it after 250msec (and thus after the blast).
+	ent->think = G_FreeEntity;
+	ent->nextthink = level.time + 250;
 }
 
 gentity_t* findLastEnteredPlayer(int highTeam, qboolean scoresAllowed)

@@ -332,9 +332,7 @@ gentity_t* G_CreateDamageArea ( vec3_t origin, gentity_t* attacker, float damage
 	if(current_gametype.value == GT_HZ && (mod == MOD_M67_GRENADE || mod == altAttack(MOD_M67_GRENADE))){
 		damageArea->nextthink = level.time + 500;
 		damageArea->think = Henk_PushArea;
-	}else if(current_gametype.value == GT_HZ && (mod == MOD_L2A2_GRENADE || mod == altAttack(MOD_L2A2_GRENADE))){
-		Com_Printf("Here.\n\n\n");
-	}else{
+	}else if (!(current_gametype.value == GT_HZ && (mod == MOD_L2A2_GRENADE || mod == altAttack(MOD_L2A2_GRENADE)))){
 		damageArea->nextthink = level.time + 350;
 		damageArea->think = G_CauseAreaDamage;
 	}
@@ -522,7 +520,7 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace )
 
 		if (current_gametype.value == GT_HZ && (ent->methodOfDeath == MOD_M67_GRENADE || ent->methodOfDeath == altAttack(MOD_M67_GRENADE))){
 
-		}else if(current_gametype.value == GT_HZ && (ent->methodOfDeath == MOD_L2A2_GRENADE || ent->methodOfDeath == altAttack(MOD_L2A2_GRENADE)) && ent->think != HZ_clayMore){
+		}else if(current_gametype.value == GT_HZ && (ent->methodOfDeath == MOD_L2A2_GRENADE || ent->methodOfDeath == altAttack(MOD_L2A2_GRENADE)) && ent->think != HZ_Claymore){
 			forceCreate = WP_L2A2_GRENADE;
 		}else if(current_gametype.value == GT_HS && ent->methodOfDeath == MOD_F1_GRENADE){
 			vec3_t			org1, org2;
@@ -576,10 +574,19 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace )
 					pickupEnt->think = G_FreeEntity;
 					pickupEnt->nextthink = level.time + 30000;  // Stick around for 30 seconds
 				}else{
-					// Boe!Man 12/9/14: Make sure it doesn't get picked up.
+					// Boe!Man 12/13/14: Claymore specifics.
+					// Make sure it doesn't get picked up.
 					pickupEnt->touch = NULL;
-					pickupEnt->think = HZ_clayMore;
+
+					// Its main think function.
+					pickupEnt->think = HZ_Claymore;
 					pickupEnt->nextthink = level.time + 500;
+
+					// We need to make sure the server knows this entity can take damage.
+					// With this, we can shoot at the entity.
+					pickupEnt->takedamage = qtrue;
+					pickupEnt->r.contents = -1;
+					pickupEnt->die = HZ_ClaymoreShoot;
 
 					// Copy over some essentials, so we can mimic a proper blast + damage area later.
 					pickupEnt->parent = ent->parent;

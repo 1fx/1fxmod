@@ -488,7 +488,9 @@ char	*vtocs( const vec3_t v );
 // Henk 14/01/11 -> Add EvenTeams_HS and all other shit
 void		EvenTeams_HS			(gentity_t *adm, qboolean aet);
 void		EvenTeams_HZ			(gentity_t *adm, qboolean aet);
-void		HZ_clayMore				(gentity_t *ent);
+void		HZ_Claymore				(gentity_t *ent);
+void		HZ_ClaymoreShoot		(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, int mod, int hitLocation, vec3_t hitDir);
+void		HZ_claymoreExplode		(gentity_t *ent);
 gentity_t*	findLastEnteredPlayer	(int highTeam, qboolean scoresAllowed);
 
 void Use_BinaryMover( gentity_t *ent, gentity_t *other, gentity_t *activator );
