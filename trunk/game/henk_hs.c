@@ -890,8 +890,8 @@ void HZ_Claymore(gentity_t *ent)
 	VectorCopy(ent->r.currentOrigin, mins);
 	VectorCopy(ent->r.currentOrigin, maxs);
 	for (i = 0; i < 3; i++){
-		mins[i] -= 500;
-		maxs[i] += 500;
+		mins[i] -= 300;
+		maxs[i] += 300;
 	}
 
 	numListedEntities = trap_EntitiesInBox(mins, maxs, entityList, MAX_GENTITIES);
