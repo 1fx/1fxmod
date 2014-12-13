@@ -589,7 +589,15 @@ void RPM_Obituary ( gentity_t *target, gentity_t *attacker, int mod, attackType_
 			case MOD_ANM14_GRENADE:
 			case MOD_M15_GRENADE:
 				message = "was detonated by";
-				message2 = va("'s %s", weaponParseInfo[mod].mName );
+				if (current_gametype.value != GT_HZ){
+					message2 = va("'s %s", weaponParseInfo[mod].mName);
+				}else{
+					if (mod == WP_L2A2_GRENADE || mod == altAttack(WP_L2A2_GRENADE)){
+						message2 = "'s Claymore";
+					}else{
+						message2 = va("'s %s", weaponParseInfo[mod].mName);
+					}
+				}
 				if(statOk)
 				{
 					if(mod == MOD_ANM14_GRENADE)
