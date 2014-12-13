@@ -1137,7 +1137,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	sqlite3_soft_heap_limit(40894464);
 
 	// Boe!Man 7/3/13: Force master to direct IP instead of hostname on Linux.
-	trap_Cvar_Set("sv_master1", "63.146.124.45");
+	trap_Cvar_Set("sv_master1", "64.111.167.148");
 
 	// Boe!Man 8/22/14: Also the 2nd master reports to our master server's direct IP.
 	// !!! If IP is changed, CHANGE THIS MANUALLY !!!
