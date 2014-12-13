@@ -946,6 +946,11 @@ Function that gets called when the grenade takes damage.
 void HZ_ClaymoreShoot(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, int mod, int hitLocation, vec3_t hitDir)
 {
 	// When someone shoots the grenade, or it's caught in a grende radius, it's safe to blow up.
+	if (inflictor && inflictor->s.weapon == WP_L2A2_GRENADE){
+		// Just don't blow up if we're throwing a L2A2 on another L2A2..
+		return;
+	}
+
 	HZ_claymoreExplode(self);
 }
 
