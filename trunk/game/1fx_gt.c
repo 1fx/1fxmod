@@ -535,7 +535,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 
 		case GTEV_TIME_EXPIRED:
 			if(current_gametype.value == GT_INF){
-				G_Broadcast(va("%s ^7team \\defended the briefcase!", server_redteamprefix.string), BROADCAST_GAME, NULL);
+				G_Broadcast(va("%s ^7team\n\\defended the briefcase!", server_redteamprefix.string), BROADCAST_GAME, NULL);
 				trap_SendServerCommand( -1, va("print\"^3[INF] ^7Red team defended the briefcase.\n\""));
 				G_AddTeamScore ((team_t) TEAM_RED, 1);
 				
