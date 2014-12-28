@@ -890,6 +890,7 @@ void		G_SpawnEntitiesFromString( qboolean inSubBSP );
 char		*G_NewString( const char *string );
 void		AddSpawnField(char *field, char *value);
 void		G_TransformPlayerToObject(gentity_t *ent);
+void		TransformPlayerBack(gentity_t *self, gentity_t *other, trace_t *trace);
 
 //
 // g_cmds.c

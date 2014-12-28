@@ -657,6 +657,10 @@ void G_KillBox (gentity_t *ent, qboolean teleport) {
 		hit = &g_entities[touch[i]];
 		if ( !hit->client )
 		{
+			// Boe!Man 12/28/14: Check if we hit the bbox of a client hiding, and if so, scare him back to his original form.
+			if (current_gametype.value == GT_HS && teleport && hit->hideseek >= 256){
+				TransformPlayerBack(hit, ent, NULL);
+			}
 			continue;
 		}
 

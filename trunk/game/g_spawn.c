@@ -1482,9 +1482,11 @@ static transformObject_t TransformObjects[] =
 
 void TransformPlayerBack(gentity_t *self, gentity_t *other, trace_t *trace)
 {
-	if(other->client && other->client->sess.team != TEAM_BLUE){
+	if ((other->client && other->client->sess.team != TEAM_BLUE) || self->hideseek < 256){
 		return;
 	}
+
+	self->hideseek -= 256;
 	
 	if(!g_entities[self->hideseek].client || g_entities[self->hideseek].client->pers.connected != CON_CONNECTED || G_IsClientSpectating(g_entities[self->hideseek].client)){
 		trap_SendServerCommand(other-g_entities, "print \"^3[H&S] ^7Woops, nothing here!\n\"");
@@ -1557,10 +1559,10 @@ void G_TransformPlayerToObject(gentity_t *ent)
 		
 		// Make sure the seeker can pop the hider out.
 		g_entities[ent->client->sess.transformedEntity2].touch = TransformPlayerBack;
-		g_entities[ent->client->sess.transformedEntity2].hideseek = ent->s.number;
+		g_entities[ent->client->sess.transformedEntity2].hideseek = ent->s.number + 256;
 	}else{
 		// Apply the use action on the bsp.
 		g_entities[ent->client->sess.transformedEntity].touch = TransformPlayerBack;
-		g_entities[ent->client->sess.transformedEntity].hideseek = ent->s.number;
+		g_entities[ent->client->sess.transformedEntity].hideseek = ent->s.number + 256;
 	}
 }
