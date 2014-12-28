@@ -1101,7 +1101,7 @@ void CheckGametype ( void )
 
 		// If everyone is dead on a team then reset the gametype, but only if 
 		// there was someone on that team to begin with.
-		if (!alive[TEAM_RED] && dead[TEAM_RED])
+		if (!alive[TEAM_RED] && dead[TEAM_RED] || current_gametype.value == GT_HZ && !alive[TEAM_RED])
 		{	
 			if(level.timelimithit == qtrue && level.cagefight != qtrue && (strstr(g_gametype.string, "inf") || strstr(g_gametype.string, "elim"))){
 				gentity_t*	tent;
