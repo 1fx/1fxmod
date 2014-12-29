@@ -882,7 +882,7 @@ void HZ_Claymore(gentity_t *ent)
 	gentity_t		*tent;
 	int				entityList[MAX_GENTITIES];
 	int				clientsClose[MAX_CLIENTS];
-	int				numListedEntities, i, distance;;
+	int				numListedEntities, i, distance;
 	int				closestClient = 500, count = 0;	
 	
 	// Set the boundary of the claymore.
