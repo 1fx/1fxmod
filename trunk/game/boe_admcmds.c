@@ -609,7 +609,11 @@ qboolean Boe_dev_f ( gentity_t *ent )
 			#endif
 			#ifdef __GNUC__
 			"GCC",
+			#ifdef _WIN32
 			va("%i.%i.%i", __GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__)
+			#else
+			va("%i.%i", __GNUC__, __GNUC_MINOR__)
+			#endif // _WIN32
 			#else
 			"MSVC",
 			va("%i", _MSC_VER)
