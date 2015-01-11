@@ -1,6 +1,6 @@
 // Copyright (C) 2014 - Boe!Man, Henkie.
 //
-// patch_dos.c - Q3 getstatus DoS patch (WIN32 only).
+// patch_dos.c - Q3 getstatus DoS patch.
 
 //==================================================================
 
@@ -8,7 +8,7 @@
 
 // Local variable definitions.
 static int				numRequests			= 0;		// Requests made. Reset every second.
-static unsigned long	requestTimer;					// To keep track how many requests have been made in a period of time.
+static int				requestTimer		= 0;		// To keep track how many requests have been made in a period of time.
 static qboolean			validRequest		= qtrue;	// If we exceeded our requestsPerSecond value, this will be set qfalse.
 static int				requestsPerSecond	= 20;		// Number of allowed requests per second.
 

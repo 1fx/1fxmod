@@ -1,6 +1,6 @@
 // Copyright (C) 2014 - Boe!Man, Henkie.
 //
-// patch_autodl.c - "dirtrav" auto download exploit memory patch (WIN32 only).
+// patch_autodl.c - "dirtrav" auto download exploit memory patch.
 
 //==================================================================
 
@@ -42,7 +42,8 @@ The Linux detour skips this step (call directly to autoDownloadDetour).
 ==================
 */
 
-#if (defined(__GNUC__) && defined(_WIN32))
+#ifdef _WIN32
+#ifdef __GNUC__
 __asm__(".globl Patch_autoDownloadDetour0 \n\t"
 	"_Patch_autoDownloadDetour0: \n"
 	"call _Patch_autoDownloadDetour \n"
@@ -60,6 +61,7 @@ __declspec(naked) void Patch_autoDownloadDetour0()
 	}
 }
 #endif // __GNUC__
+#endif // _WIN32
 
 /*
 ==================
