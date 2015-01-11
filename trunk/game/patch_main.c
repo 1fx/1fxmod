@@ -92,12 +92,12 @@ void Patch_detourAddress(char *genericName, long func, long offset)
 {
 	char patch[9];
 	#ifdef _WIN32
-	unsigned char buf[5] = { 0x00, 0x00, 0x00, 0x00, 0x00 };
+	unsigned char buf[5];
 	#elif __linux__
 	pthread_t thread;
 	struct patchArgs args;
 
-	unsigned char buf[4] = { 0x00, 0x00, 0x00, 0x00 };
+	unsigned char buf[4];
 	#endif // _WIN32
 	int i;
 	int currentByte = 0;
@@ -121,14 +121,11 @@ void Patch_detourAddress(char *genericName, long func, long offset)
 	}
 
 #ifdef _WIN32
-	if (currentByte != 5){ // Must be 5 bytes long.
+	if(WriteProcessMemory(GetCurrentProcess(), (void *)(offset - 5), buf, 5, NULL) == 0){ // Write the jump.
 		Com_Printf("fail!\n");
-		return;
+	}else{
+		Com_Printf("done!\n");
 	}
-
-	WriteProcessMemory(GetCurrentProcess(), (void *)(offset - 5), buf, currentByte, NULL); // Write the jump.
-
-	Com_Printf("done!\n");
 #elif __linux__
 	// Fill args with essential stuff, like PID and addresses.
 	args.pid = getpid();
