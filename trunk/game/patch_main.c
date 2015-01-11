@@ -92,7 +92,7 @@ void Patch_detourAddress(char *genericName, long func, long offset)
 {
 	char patch[9];
 	#ifdef _WIN32
-	unsigned char buf[5] = { 0x00, 0x00, 0x00, 0x00 };
+	unsigned char buf[5] = { 0x00, 0x00, 0x00, 0x00, 0x00 };
 	#elif __linux__
 	pthread_t thread;
 	struct patchArgs args;
