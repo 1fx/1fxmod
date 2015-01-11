@@ -4,7 +4,6 @@
 
 //==================================================================
 
-#ifdef _WIN32
 #include "patch_local.h"
 
 // Local variable definitions.
@@ -14,7 +13,11 @@ static qboolean			validRequest		= qtrue;	// If we exceeded our requestsPerSecond
 static int				requestsPerSecond	= 20;		// Number of allowed requests per second.
 
 // Local function definitions.
+#ifdef _WIN32
 void	Patch_dosDetour0	(void);
+#elif __linux__
+void	Patch_dosDetour0	(netadr_t from);
+#endif // _WIN32
 int		Patch_dosDetour		(void);
 
 /*
@@ -59,6 +62,7 @@ The detour for both GCC and VC++.
 */
 
 #ifdef __GNUC__
+#ifdef _WIN32
 __asm__(".globl Patch_dosDetour0 \n\t"
 	"_Patch_dosDetour0: \n"
 	"call _Patch_dosDetour \n"
@@ -73,6 +77,24 @@ __asm__(".globl Patch_dosDetour0 \n\t"
 	"push $0x004768A0 \n\t"
 	"ret\n"
 	);
+#elif __linux__
+void Patch_dosDetour0(netadr_t from){
+	if(Patch_dosDetour() != 0){
+		// Call SVC_Status if we're below our allowed limit, after restoring the stack.
+		__asm__(
+			"add $0xfffffff4,%esp \n\t"
+			"add $0xffffffec,%esp \n\t"
+			"mov %esp,%edi \n\t"
+			"lea 0x8(%ebp),%esi \n\t"
+			"cld \n"
+			"mov $0x5, %ecx \n\t"
+			"repz movsl %ds:(%esi),%es:(%edi) \n\t"
+			"movl $0x080546a8, %eax \n\t"
+			"call *%eax \n"
+			);
+	}
+}
+#endif // _WIN32
 #elif _MSC_VER
 __declspec(naked) void Patch_dosDetour0()
 {
@@ -101,7 +123,9 @@ Writes the jump to the detour.
 
 void Patch_dosProtection()
 {
-	Patch_detourAddress("DoS protection", (unsigned long)&Patch_dosDetour0, 0x4768A0);
+	#ifdef _WIN32
+	Patch_detourAddress("DoS protection", (long)&Patch_dosDetour0, 0x4768A0);
+	#elif __linux__
+	Patch_detourAddress("DoS protection", (long)&Patch_dosDetour0, 0x8055099);
+	#endif // _WIN32
 }
-
-#endif // _WIN32

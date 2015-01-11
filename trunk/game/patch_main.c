@@ -14,7 +14,7 @@ Aligns DWORD value from ulong to C string.
 ==================
 */
 
-char *AlignDWORD(unsigned long input)
+char *AlignDWORD(long input)
 {
 	static char output[9];
 	char tempStr[9];
@@ -37,23 +37,78 @@ char *AlignDWORD(unsigned long input)
 
 /*
 ==================
+Patch_linuxPatchAddress
+
+Logic to patch an address in another thread using ptrace (Linux).
+==================
+*/
+
+#ifdef __linux__
+void *Patch_linuxPatchAddress(void *arguments)
+{
+	char *address;
+	union u{
+		long val;
+		char chars[4];
+	}data;
+	struct patchArgs *args = arguments;
+
+	if (ptrace(PTRACE_ATTACH, args->pid, NULL, NULL) == -1)
+	{
+		perror("fail!\nAttach failed");
+		return;
+	}
+
+	if (waitpid(args->pid, NULL, WUNTRACED) != args->pid){
+		perror("fail!\nCouldn't wait for PID");
+		return;
+	}
+
+	address = args->buf;
+	memcpy(data.chars, address, 4);
+	if(ptrace(PTRACE_POKEDATA, args->pid, args->address, data.val) == -1){
+		perror("fail!\nWriting modified data failed");
+		return;
+	}
+
+	if (ptrace(PTRACE_DETACH, args->pid, NULL, NULL) == -1){
+		perror("fail!\nDetach failed");
+		return;
+	}
+
+	printf("done!\n");
+}
+#endif // __linux__
+
+/*
+==================
 Patch_detourAddress
 
 Main logic of detouring to an address.
 ==================
 */
 
-#ifdef _WIN32
-void Patch_detourAddress(char *genericName, unsigned long func, unsigned long offset)
+void Patch_detourAddress(char *genericName, long func, long offset)
 {
-	char patch[24];
-	unsigned char buf[12] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	char patch[9];
+	#ifdef _WIN32
+	unsigned char buf[5] = { 0x00, 0x00, 0x00, 0x00 };
+	#elif __linux__
+	pthread_t thread;
+	struct patchArgs args;
+
+	unsigned char buf[4] = { 0x00, 0x00, 0x00, 0x00 };
+	#endif // _WIN32
 	int i;
 	int currentByte = 0;
-	unsigned long addr = offset;
+	long addr = offset;
 
 	Com_Printf("Applying %s... ", genericName);
-	sprintf(patch, va("E9%s", AlignDWORD((int)func - addr)));
+	#ifdef _WIN32
+	sprintf(patch, va("E9%s", AlignDWORD(func - addr)));
+	#elif __linux__
+	strncpy(patch, AlignDWORD(func - addr), sizeof(patch));
+	#endif // _WIN32
 
 	// Convert it to bytes.
 	for(i = 0; i < strlen(patch); i += 2){
@@ -65,14 +120,31 @@ void Patch_detourAddress(char *genericName, unsigned long func, unsigned long of
 		currentByte++;
 	}
 
+#ifdef _WIN32
 	if (currentByte != 5){ // Must be 5 bytes long.
 		Com_Printf("fail!\n");
-	}else{
-		WriteProcessMemory(GetCurrentProcess(), (void *)(offset - 5), buf, currentByte, NULL); // Write the jump.
-		Com_Printf("done!\n");
+		return;
 	}
-}
+
+	WriteProcessMemory(GetCurrentProcess(), (void *)(offset - 5), buf, currentByte, NULL); // Write the jump.
+
+	Com_Printf("done!\n");
+#elif __linux__
+	// Fill args with essential stuff, like PID and addresses.
+	args.pid = getpid();
+	args.buf = (char *)&buf;
+	args.address = offset - 4;
+
+	// Create the thread that patches the address with the modified data.
+	if (pthread_create(&thread, NULL, &Patch_linuxPatchAddress, (void *)&args) != 0){
+		perror("fail!\nCreate thread failed");
+		return;
+	}
+
+	// Wait for the thread to finish.
+	pthread_join(thread, NULL);
 #endif // _WIN32
+}
 
 /*
 ==================
@@ -84,11 +156,11 @@ Main function called from SOF2, in order to apply all memory patches.
 
 void Patch_Main()
 {
-	#ifdef _WIN32
 	if(g_dosPatch.integer){
 		Patch_dosProtection();
 	}
 
+	#ifdef _WIN32 // Temporary, no Linux patch (yet).
 	Patch_autoDownloadExploit();
-	#endif
+	#endif // _WIN32
 }
