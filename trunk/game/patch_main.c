@@ -156,8 +156,6 @@ void Patch_Main()
 	if(g_dosPatch.integer){
 		Patch_dosProtection();
 	}
-
-	#ifdef _WIN32 // Temporary, no Linux patch (yet).
+	
 	Patch_autoDownloadExploit();
-	#endif // _WIN32
 }

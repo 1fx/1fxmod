@@ -4,12 +4,13 @@
 
 //==================================================================
 
-#ifdef _WIN32
 #include "patch_local.h"
 
 // Local function definitions.
-void Patch_autoDownloadDetour0(void);
-void Patch_autoDownloadDetour(char *message, int *clientNum, char *mapString);
+#ifdef _WIN32
+void Patch_autoDownloadDetour0	(void);
+#endif // _WIN32
+void Patch_autoDownloadDetour	(char *message, int *clientNum, char *mapString);
 
 /*
 ==================
@@ -36,11 +37,12 @@ void Patch_autoDownloadDetour(char *message, int *clientNum, char *mapString)
 ==================
 Patch_autoDownloadDetour0
 
-The detour for both GCC and VC++.
+The detour for both GCC and VC++ on Windows.
+The Linux detour skips this step (call directly to autoDownloadDetour).
 ==================
 */
 
-#ifdef __GNUC__
+#if (defined(__GNUC__) && defined(_WIN32))
 __asm__(".globl Patch_autoDownloadDetour0 \n\t"
 	"_Patch_autoDownloadDetour0: \n"
 	"call _Patch_autoDownloadDetour \n"
@@ -69,7 +71,9 @@ Writes the jump to the detour.
 
 void Patch_autoDownloadExploit()
 {
-	Patch_detourAddress("Auto D/L exploit protection", (unsigned long)&Patch_autoDownloadDetour0, 0x46EF20);
+	#ifdef _WIN32
+	Patch_detourAddress("Auto D/L exploit protection", (long)&Patch_autoDownloadDetour0, 0x46EF20);
+	#elif __linux__
+	Patch_detourAddress("Auto D/L exploit protection", (long)&Patch_autoDownloadDetour, 0x804b185);
+	#endif // _WIN32
 }
-
-#endif // _WIN32
