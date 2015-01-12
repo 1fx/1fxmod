@@ -20,7 +20,7 @@
 // Boe!Man 1/6/13: One string to rule them all.
 #ifndef _DEBUG	// Boe!Man 10/26/14: Regular release (no _DEBUG defined).
 #define INF_VERSION_STRING "0.75"
-#define STABLE_VERSION "Developed by ^GBoe!Man ^7& ^6Henkie\nwww.1fxmod.org\n\n"
+#define STABLE_VERSION "Developed by ^GBoe!Man ^7& ^6Henkie\n^71fxmod^1.^7org\n\n"
 #else
 #define MAJOR_VERSION_STRING "0.76"
 #ifdef _NIGHTLY // Direct build from the master. Only used when debugging/developing.

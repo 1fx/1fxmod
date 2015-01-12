@@ -1068,9 +1068,12 @@ void		G_GrenadeThink		( gentity_t* ent );
 //
 // g_mover.c
 //
-void		G_RunMover			( gentity_t *ent );
-void		Touch_DoorTrigger	( gentity_t *ent, gentity_t *other, trace_t *trace );
-void		G_ResetGlass		( void );
+void		G_RunMover				( gentity_t *ent );
+void		Touch_DoorTrigger		( gentity_t *ent, gentity_t *other, trace_t *trace );
+void		G_ResetGlass			( void );
+void		G_CreateRotationMatrix	(vec3_t angles, vec3_t matrix[3]);
+void		G_TransposeMatrix		(vec3_t matrix[3], vec3_t transpose[3]);
+void		G_RotatePoint			(vec3_t point, vec3_t matrix[3]);
 
 
 //
