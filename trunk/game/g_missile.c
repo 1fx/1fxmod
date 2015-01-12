@@ -256,9 +256,11 @@ void G_CauseAreaDamage( gentity_t *ent )
 
 void Henk_PushArea( gentity_t *ent ) 
 {
-	vec3_t	dir;
+	vec3_t	dir, dir2;
 	vec3_t  fireAngs;
-	float   knockback = 200.0;
+	vec3_t		matrix[3], transpose[3];
+	vec3_t		org, org2, move2;
+	float   knockback = 200;
 	gentity_t *tent;
 	char *originstr;
 	int i, e;
@@ -278,14 +280,33 @@ void Henk_PushArea( gentity_t *ent )
 		tent = &g_entities[entityList[ e ]];
 		if(tent && tent->client){
 			if(level.time >= tent->client->sess.lastpush && tent->client->sess.team == TEAM_BLUE){
-				VectorCopy(tent->client->ps.viewangles, fireAngs);
-				AngleVectors( fireAngs, dir, NULL, NULL );	
-				for (i = 0; i < 3; i++){
-					dir[i] *= -1;
+				// FIXME: This isn't really very efficient.
+				// The only way to properly solve this is a matrix (just checking viewangles isn't enough).
+				// We diff the two positions and rotate that point.
+				VectorCopy(tent->r.currentAngles, fireAngs);
+				G_CreateRotationMatrix(fireAngs, transpose);
+				G_TransposeMatrix(transpose, matrix);
+				G_RotatePoint(fireAngs, matrix);
+				VectorSubtract(tent->r.currentOrigin, ent->r.currentOrigin, org);
+				VectorCopy(org, org2);
+				G_RotatePoint(org2, matrix);
+				VectorSubtract(org2, org, move2);
+				AngleVectors( move2, dir, dir2, NULL );	
+
+				VectorNormalize(dir);
+				VectorNormalize(dir2);
+				// Check which way to push him based on where the player is.
+				if (ent->r.currentOrigin[0] > tent->r.currentOrigin[0]){
+					dir[0] = dir2[0] - dir[0];
+				}
+				if (ent->r.currentOrigin[1] > tent->r.currentOrigin[1]){
+					dir[1] = dir2[1] - dir[1];
 				}
 
-				VectorNormalize ( dir );
+				// Knock the player back.
 				G_ApplyKnockback ( tent, dir, knockback );
+
+				// Also show the effect.
 				originstr = va("%.0f %.0f %.0f", tent->r.currentOrigin[0], tent->r.currentOrigin[1], tent->r.currentOrigin[2]+45);
 				G_PlayEffect ( G_EffectIndex("levels/kam_train_sparks"),tent->r.currentOrigin, vec3_origin);
 				//AddSpawnField("classname", "1fx_play_effect");
