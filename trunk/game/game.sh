@@ -20,17 +20,22 @@
 echo "Enter the type of build:"
 echo "1: Public release build (e.g. 0.70)"
 echo "2: Test/Beta release build (e.g. 0.70t)"
+echo "3: 3D/1fx. Pre-release build (e.g. 0.76t.1-pre)"
 echo -n "Enter your choice and press [ENTER]: "
 read choice
 
 if [ "$choice" == "1" ]; then
-	buildoptions="-s -O2 -fstack-check -DNDEBUG -DMISSIONPACK -DQAGAME -D_SOF2 -D_RELEASE -fPIC -c"
+	buildoptions="-s -O2 -fstack-check -DNDEBUG -DMISSIONPACK -DQAGAME -D_SOF2 -fPIC -c"
 	clear
 	echo -e "Building a \e[00;36mPublic release build\e[00m" 
 elif [ "$choice" == "2" ]; then
-	buildoptions="-s -O2 -fstack-check -D_DEBUG -DDEBUG -DBUILDING_REF_GL -DDebugSoF2 -DMISSIONPACK -DQAGAME -D_SOF2 -D_RELEASE -fPIC -c"
+	buildoptions="-s -O2 -fstack-check -D_DEBUG -DDEBUG -DBUILDING_REF_GL -DDebugSoF2 -DMISSIONPACK -DQAGAME -D_SOF2 -fPIC -c"
 	clear
 	echo -e "Building a \e[00;36mTest/Beta release build\e[00m" 
+elif [ "$choice" == "3" ]; then
+	buildoptions="-s -O2 -fstack-check -D_DEBUG -DDEBUG -DBUILDING_REF_GL -DDebugSoF2 -DMISSIONPACK -DQAGAME -D_SOF2 -D_awesomeToAbuse -fPIC -c"
+	clear
+	echo -e "Building a \e[00;36m3D/1fx. Pre-release build\e[00m" 
 else
 	clear
 	echo "Invalid choice specified, exitting.."
