@@ -1973,49 +1973,45 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 
 	strcpy(admin, ""); // Boe!Man 1/18/10: Clean the Admin data.
 	
-	if (mode != SAY_TELL){
-		// Boe!Man 1/7/10: Team prefixes.
-		if (ghost)
-		{
-			strcpy(type, "^7[^Cg^7] ");
-		}
-		else if (spec)
-		{
-			strcpy(type, "^7[^Cs^7] ");
-		}
-		// Boe!Man 4/5/10: We delete the team prefixes.
-		// Boe!Man 2/8/11: And we re-add them for Hide&Seek lol.
-
-		else if (ent->client->sess.team == TEAM_RED && current_gametype.value == GT_HS)
-		{
-			strcpy(type, "^7[^1h^7] ");
-		}
-		else if (ent->client->sess.team == TEAM_BLUE && current_gametype.value == GT_HS)
-		{
-			strcpy(type, "^7[^ys^7] ");
-		}
-		else if (ent->client->sess.team == TEAM_RED && current_gametype.value == GT_HZ)
-		{
-			strcpy(type, "^7[^1h^7] ");
-		}
-		else if (ent->client->sess.team == TEAM_BLUE && current_gametype.value == GT_HZ)
-		{
-			strcpy(type, "^7[^yz^7] ");
-		}
-
-		// Boe!Man 4/6/10: And replace the type with something, well nothing.
-		else{
-			strcpy(type, "");
-		}
-	}else{
+	// Boe!Man 1/7/10: Team prefixes.
+	if ( ghost )
+	{
+		strcpy(type, "^7[^Cg^7] ");
+	}
+	else if ( spec )
+	{
+		strcpy(type, "^7[^Cs^7] ");
+	}
+	// Boe!Man 4/5/10: We delete the team prefixes.
+	// Boe!Man 2/8/11: And we re-add them for Hide&Seek lol.
+	
+	else if ( ent->client->sess.team == TEAM_RED && current_gametype.value == GT_HS )
+	{
+		strcpy(type, "^7[^1h^7] ");
+	}
+	else if ( ent->client->sess.team == TEAM_BLUE && current_gametype.value == GT_HS )
+	{
+		strcpy(type, "^7[^ys^7] ");
+	}
+	else if ( ent->client->sess.team == TEAM_RED && current_gametype.value == GT_HZ )
+	{
+		strcpy(type, "^7[^1h^7] ");
+	}
+	else if ( ent->client->sess.team == TEAM_BLUE && current_gametype.value == GT_HZ )
+	{
+		strcpy(type, "^7[^yz^7] ");
+	}
+	
+	// Boe!Man 4/6/10: And replace the type with something, well nothing.
+	else{
 		strcpy(type, "");
 	}
 
 	// Boe!Man 1/17/10: Admin Talk/Chat.
 	if(mode >= ADM_TALK && mode <= CADM_CHAT){ // Henk 03/05/10 -> Optimized so cpu can calculate faster
-		strcpy(star, server_starprefix.string);
-		strcpy(admin, "");
-	}else if(mode != SAY_TELL){
+	strcpy(star, server_starprefix.string);
+	strcpy(admin, "");
+	}else{
 		strcpy(star, "");
 		// Boe!Man 1/6/10: Admin prefixes. - Update 1/18/10: New CVARs for prefixes if the hoster wishes to change the values.
 		if(ent->client->sess.admin == 2){
@@ -2032,9 +2028,6 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 		if(strlen(admin) > 0){
 			Q_strcat(admin, sizeof(admin), " ");
 		}
-	}else{
-		strcpy(star, "");
-		strcpy(admin, "");
 	}
 	
 	// Boe!Man 1/17/10: Different kinds of Talking 'Modes'.
@@ -2172,6 +2165,7 @@ void G_GetChatPrefix ( gentity_t* ent, gentity_t* target, int mode, char* name, 
 	{
 		default:
 		case SAY_ALL:
+
 			Com_sprintf (name, nameSize, "%s%s%s: ", namecolor, ent->client->pers.netname, S_COLOR_WHITE );
 
 			break;
@@ -2197,12 +2191,25 @@ void G_GetChatPrefix ( gentity_t* ent, gentity_t* target, int mode, char* name, 
 			break;
 
 		case SAY_TELL:
-		case SAY_TELL_SELF:
-			Com_sprintf ( name, nameSize, "^7[%sPM ^7%s %s^7]%s: ", 
-							namecolor,
-							(mode == SAY_TELL) ? "from" : "to",
-							ent->client->pers.cleanName,
-							S_COLOR_WHITE );
+
+			if ( locationOk && target && level.gametypeData->teams   && 
+				 target->client->sess.team == ent->client->sess.team  &&
+				 Team_GetLocationMsg(ent, location, sizeof(location))    )
+			{
+				Com_sprintf ( name, nameSize, "%s[%s%s] %s(%s): ", 
+							  namecolor,
+							  ent->client->pers.netname, 
+							  namecolor,
+							  S_COLOR_WHITE, location );
+			}
+			else
+			{
+				Com_sprintf ( name, nameSize, "%s[%s%s]%s: ", 
+							  namecolor,
+							  ent->client->pers.netname, 
+							  namecolor,
+							  S_COLOR_WHITE );
+			}
 			break;
 	}
 
@@ -2263,12 +2270,11 @@ void G_Say ( gentity_t *ent, gentity_t *target, int mode, const char *chatText )
 		}
 	}
 	
+	//G_LogPrintf("Getting prefix..\n");
 	// Generate the chat prefix
 	G_GetChatPrefix ( ent, target, mode, name, sizeof(name) );
-	if (mode == SAY_TELL_SELF){
-		mode = SAY_TELL;
-	}
 
+	//G_LogPrintf("Copying..\n");
 	// Save off the chat text
 	Q_strncpyz( text, chatText, sizeof(text) );
 
@@ -2279,10 +2285,11 @@ void G_Say ( gentity_t *ent, gentity_t *target, int mode, const char *chatText )
 
 	if ( target && target->inuse) 
 	{
+		//G_LogPrintf("Too target?..\n");
 		G_SayTo( ent, target, mode, name, text );
 		return;
 	}
-	
+	//G_LogPrintf("Printing..\n");
 	// echo the text to the console
 	if ( g_dedicated.integer ) 
 	{
@@ -2295,6 +2302,7 @@ void G_Say ( gentity_t *ent, gentity_t *target, int mode, const char *chatText )
 		other = &g_entities[level.sortedClients[j]];
 		G_SayTo( ent, other, mode, name, text );
 	}
+	//G_LogPrintf("Done..\n");
 }
 
 void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
@@ -2640,7 +2648,7 @@ static void Cmd_Tell_f( gentity_t *ent ) {
 	// don't tell to the player self if it was already directed to this player
 	// also don't send the chat back to a bot
 	if ( ent != target && !(ent->r.svFlags & SVF_BOT)) {
-		G_Say( target, ent, SAY_TELL_SELF, p );
+		G_Say( ent, ent, SAY_TELL, p );
 	}
 }
 

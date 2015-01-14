@@ -1752,7 +1752,6 @@ typedef enum {
 #define CLAN_TALK	8
 #define CLAN_CHAT   9
 #define CADM_CHAT   10
-#define SAY_TELL_SELF 11
 
 #define CDKEY_LEN 16
 #define CDCHKSUM_LEN 2
