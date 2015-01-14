@@ -632,6 +632,7 @@ qboolean Boe_dev_f ( gentity_t *ent )
 		trap_SendServerCommand(ent - g_entities, "print \"players     none      No   ^7[^1Shows players w/ debug info^7]\n\"");
 		trap_SendServerCommand(ent - g_entities, "print \"namehex     id/name   No   ^7[^1Name of player in hex format^7]\n\"");
 		trap_SendServerCommand(ent - g_entities, "print \"showloc     x y z     Yes  ^7[^1Spawn empty model on specified loc^7]\n\"");
+		trap_SendServerCommand(ent - g_entities, "print \"bsp         x y z     Yes  ^7[^1Spawn box on specified loc^7]\n\"");
 
 		trap_SendServerCommand(ent - g_entities, "print \"\n^1[Dev] ^7/condump filename.txt to create a report after any command\n\n\"");
 		return qtrue;
@@ -694,7 +695,7 @@ qboolean Boe_dev_f ( gentity_t *ent )
 
 		// Default to r.currentOrigin with no or missing params.
 		if (!strlen(arg2) || !strlen(arg3) || !strlen(arg4)){
-			trap_SendServerCommand(ent - g_entities, va("print \"^1[Dev] ^7Arg missing%s defaulting to r.currentOrigin.\n\"", (!strlen(arg2) ? ",": " (accidently?),")));
+			trap_SendServerCommand(ent - g_entities, va("print \"^1[Dev] ^7Arg(s) missing%s defaulting to r.currentOrigin.\n\"", (!strlen(arg2) ? ",": " (accidently?),")));
 
 			Q_strncpyz(origin, va("%2f %2f %2f", ent->r.currentOrigin[0], ent->r.currentOrigin[1], ent->r.currentOrigin[2]), sizeof(origin));
 		}else{
@@ -705,7 +706,36 @@ qboolean Boe_dev_f ( gentity_t *ent )
 		AddSpawnField("origin", origin);
 		G_SpawnGEntityFromSpawnVars(qfalse);
 		
-		trap_SendServerCommand(ent - g_entities, "print \"\n\n^1[Dev] ^7/condump filename.txt to create a report\n\n\"");
+		return qtrue;
+	}else if (Q_stricmp(arg1, "bsp") == 0){
+		// Don't allow this command without cheats.
+		if (!CheatsOk(ent)) {
+			return qtrue;
+		}
+
+		if (!ent->client->noclip){
+			trap_SendServerCommand(ent - g_entities, "print \"^1[Dev] ^7Turned on noclip for ya.\n\"");
+			ent->client->noclip = qtrue;
+		}
+
+		AddSpawnField("classname", "misc_bsp");
+		AddSpawnField("bspmodel", "instances/Colombia/npc_jump1");
+
+		// Default to r.currentOrigin with no or missing params.
+		if (!strlen(arg2) || !strlen(arg3) || !strlen(arg4)){
+			trap_SendServerCommand(ent - g_entities, va("print \"^1[Dev] ^7Arg(s) missing%s defaulting to r.currentOrigin.\n\"", (!strlen(arg2) ? "," : " (accidently?),")));
+
+			AddSpawnField("origin", va("%2f %2f %2f", ent->r.currentOrigin[0], ent->r.currentOrigin[1], ent->r.currentOrigin[2]));
+		}else{
+			AddSpawnField("origin", va("%s %s %s", arg2, arg3, arg4));
+		}
+
+		trap_SendServerCommand(ent - g_entities, va("print \"^1[Dev] ^7Spawning your BSP model.\""));
+		AddSpawnField("angles", "0 90 0");
+		AddSpawnField("model", "trigger_hurt"); //blocked_trigger
+		AddSpawnField("count", "1");
+		G_SpawnGEntityFromSpawnVars(qtrue);
+
 		return qtrue;
 	}
 
