@@ -1101,8 +1101,8 @@ void CheckGametype ( void )
 
 		// If everyone is dead on a team then reset the gametype, but only if 
 		// there was someone on that team to begin with.
-		if (!alive[TEAM_RED] && dead[TEAM_RED] || current_gametype.value == GT_HZ && !alive[TEAM_RED])
-		{	
+		if ((!alive[TEAM_RED] && dead[TEAM_RED] && (current_gametype.value == GT_HS && level.messagedisplay || current_gametype.value != GT_HS))
+			|| (current_gametype.value == GT_HZ && !alive[TEAM_RED])){
 			if(level.timelimithit == qtrue && level.cagefight != qtrue && (strstr(g_gametype.string, "inf") || strstr(g_gametype.string, "elim"))){
 				gentity_t*	tent;
 				int			tiedplayers;
@@ -1141,7 +1141,8 @@ void CheckGametype ( void )
 					}
 				}
 			}
-			trap_GT_SendEvent ( GTEV_TEAM_ELIMINATED, level.time, TEAM_RED, 0, 0, 0, 0 );
+
+			trap_GT_SendEvent(GTEV_TEAM_ELIMINATED, level.time, TEAM_RED, 0, 0, 0, 0);
 		}
 		else if (!alive[TEAM_BLUE] && dead[TEAM_BLUE])
 		{		

@@ -258,8 +258,8 @@ void Henk_PushArea( gentity_t *ent )
 {
 	vec3_t	dir, dir2;
 	vec3_t  fireAngs;
-	vec3_t		matrix[3], transpose[3];
-	vec3_t		org, org2, move2;
+	vec3_t	matrix[3], transpose[3];
+	vec3_t	org, org2, move2;
 	float   knockback = 200;
 	gentity_t *tent;
 	char *originstr;
