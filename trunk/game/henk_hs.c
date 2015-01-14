@@ -624,8 +624,7 @@ void StripHiders(void)
 		ent->client->ps.weaponstate = WEAPON_READY;
 		ent->client->ps.weaponTime = 0;
 		ent->client->ps.weaponAnimTime = 0;
-		ent->client->sess.score += 1;
-		ent->client->sess.kills += 1;
+		G_AddScore(ent, 1);
 	}
 }
 
