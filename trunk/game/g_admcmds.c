@@ -1292,11 +1292,11 @@ Sets the score limit or shows it to the one issuing the command.
 
 int adm_scoreLimit(int argNum, gentity_t *adm, qboolean shortCmd)
 {
-	#ifndef _DEBUG
+	#ifdef NDEBUG
 	adm_toggleCVAR(adm, argNum, "Scorelimit", &g_scorelimit, 15, qtrue, "cm_sl", &cm_sl);
 	#else
 	adm_toggleCVAR(adm, argNum, "Scorelimit", &g_scorelimit, 16, qtrue, "cm_sl", &cm_sl);
-	#endif // _DEBUG
+	#endif // NDEBUG
 
 	return -1;
 }
@@ -1311,11 +1311,11 @@ Sets the time limit or shows it to the one issuing the command.
 
 int adm_timeLimit(int argNum, gentity_t *adm, qboolean shortCmd)
 {
-	#ifndef _DEBUG
+	#ifdef NDEBUG
 	adm_toggleCVAR(adm, argNum, "Timelimit", &g_timelimit, 16, qtrue, "cm_tl", &cm_tl);
 	#else
 	adm_toggleCVAR(adm, argNum, "Timelimit", &g_timelimit, 17, qtrue, "cm_tl", &cm_tl);
-	#endif // _DEBUG
+	#endif // NDEBUG
 
 	return -1;
 }
@@ -1330,7 +1330,11 @@ Sets the respawninterval or shows it to the one issuing the command.
 
 int adm_respawnInterval(int argNum, gentity_t *adm, qboolean shortCmd)
 {
-	adm_toggleCVAR(adm, argNum, "g_respawninterval", &g_respawnInterval, -1, qfalse, NULL, NULL);
+	#ifdef NDEBUG
+	adm_toggleCVAR(adm, argNum, "Respawn interval", &g_respawnInterval, 17, qfalse, NULL, NULL);
+	#else
+	adm_toggleCVAR(adm, argNum, "Respawn interval", &g_respawnInterval, 18, qfalse, NULL, NULL);
+	#endif // NDEBUG
 
 	return -1;
 }
@@ -3470,11 +3474,15 @@ int adm_friendlyFire(int argNum, gentity_t *adm, qboolean shortCmd)
 	qboolean enable = !g_friendlyFire.integer;
 	
 	// Toggle state.
-	Boe_setTrackedCvar(18, enable);
-	
+	#ifdef NDEBUG
+	Boe_setTrackedCvar(20, enable);
+	#else
+	Boe_setTrackedCvar(21, enable);
+	#endif // NDEBUG
+
 	// Broadcast change.
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-	G_Broadcast(va("\\Friendlyfire %s", (enable) ? "enabled" : "disabled"), BROADCAST_CMD, NULL);
+	G_Broadcast(va("\\Friendlyfire %s", (enable) ? "enabled!" : "disabled!"), BROADCAST_CMD, NULL);
 	if (adm && adm->client){
 		Boe_adminLog(va("friendlyfire %s", (enable) ? "enabled" : "disabled"), va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "none");
 		trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7Friendly fire %s by %s.\n\"", (enable) ? "enabled" : "disabled", adm->client->pers.netname));
