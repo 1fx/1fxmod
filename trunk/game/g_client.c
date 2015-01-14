@@ -707,6 +707,11 @@ int TeamCount1(team_t team)
 
 	for ( i = 0 ; i < level.maxclients ; i++ ) 
 	{
+		if (level.clients[i].pers.connected == CON_DISCONNECTED)
+		{
+			continue;
+		}
+
 		if ( level.clients[i].sess.team == team ) 
 		{
 
