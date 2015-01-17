@@ -2987,7 +2987,7 @@ void Cmd_CallVote_f( gentity_t *ent )
 			return;
 		}
 
-		if ( g_entities[n].client->pers.connected == CON_DISCONNECTED )
+		if ( !g_entities[n].client || g_entities[n].client->pers.connected == CON_DISCONNECTED )
 		{
 			trap_SendServerCommand( ent-g_entities, va("print \"there is no client with the client number %d.\n\"", n ) );
 			return;
