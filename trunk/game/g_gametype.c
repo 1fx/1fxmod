@@ -1146,7 +1146,7 @@ void CheckGametype ( void )
 
 			trap_GT_SendEvent(GTEV_TEAM_ELIMINATED, level.time, TEAM_RED, 0, 0, 0, 0);
 		}
-		else if (!alive[TEAM_BLUE] && dead[TEAM_BLUE])
+		else if (!alive[TEAM_BLUE] && dead[TEAM_BLUE] && current_gametype.value != GT_HS)
 		{		
 			if(level.timelimithit == qtrue && (strstr(g_gametype.string, "inf") || strstr(g_gametype.string, "elim"))){
 				gentity_t*	tent;
