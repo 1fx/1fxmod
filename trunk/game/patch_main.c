@@ -77,6 +77,9 @@ void *Patch_linuxPatchAddress(void *arguments)
 	}
 
 	printf("done!\n");
+
+	pthread_exit(NULL);
+	return NULL;
 }
 #endif // __linux__
 

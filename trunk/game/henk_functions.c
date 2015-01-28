@@ -2,10 +2,7 @@
 #include "boe_local.h"
 #ifdef __linux__
 // Boe!Man 6/26/13: LinuxThreads implementation. I know, headers are always bad in seperate files, but we want to avoid declaring syscall twice..
-#include <sys/types.h>
 #include <unistd.h>
-#include <signal.h>
-#include <sys/wait.h>
 #endif
 
 // Country memory database
@@ -143,14 +140,6 @@ void UnloadCountries(){
 	sqlite3_close(countryDb);
 
 	Com_Printf("Unloaded country database.\n");
-
-	// Boe!Man 6/26/13: Thanks to LinuxThreads, also kill the Thread Manager. This "fixes" a crash on "new" (> Linux 2.4) systems.
-	#ifdef __linux__
-	kill(pid, SIGTERM);
-	usleep(5000);
-	kill(pid, SIGKILL);
-	pid = -1;
-	#endif
 }
 
 void trap_LinkEntity( gentity_t *ent ) {

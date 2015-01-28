@@ -243,9 +243,9 @@ static inline float LittleFloat (const float l) { return FloatSwap(&l); }
 // the mac compiler can't handle >32k of locals, so we
 // just waste space and make big arrays static...
 #ifdef __linux__
-
 #include <fcntl.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 #include <sys/stat.h>
 
 // bk001205 - from Makefile

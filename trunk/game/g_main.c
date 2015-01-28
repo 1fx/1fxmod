@@ -1104,7 +1104,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	int			i;
 	#ifdef _DEBUG
 	qtime_t		q;
-	#endif
+	#endif // _DEBUG
 
 	// Boe!Man 3/30/10
 	Com_Printf ("------- Game Initialization -------\n");
@@ -1513,13 +1513,18 @@ void G_ShutdownGame( int restart )
 	#ifdef __linux__
 	sqlite3_shutdown();
 	memset(memsys5, 0, sizeof(memsys5));
+	Com_Printf("SQLite3 shutdown.\n");
+
+	// Boe!Man 1/28/15: Thanks to LinuxThreads, also kill the Thread Manager. This "fixes" a crash on "new" (> Linux 2.4) systems.
+	pthread_kill_other_threads_np();
+	Com_Printf("Thread Manager shutdown.\n");
 	#elif WIN32
 	UnlockFile(lockFile, 0, 0, 0xffffff, 0xffffff);
 	CloseHandle(lockFile);
 
 	trap_Cvar_VariableStringBuffer("fs_game", fsGame, sizeof(fsGame));
 	DeleteFile(TEXT(va("%s\\srv.lck", fsGame)));
-	#endif
+	#endif // __linux__
 
 	// Boe!Man 1/2/14: Check if the engine threw a Com_Error in another function (also logs it upon succesfull detection).
 	logCrash();

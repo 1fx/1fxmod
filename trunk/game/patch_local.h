@@ -12,8 +12,6 @@
 #include <windows.h>
 #elif __linux__
 #include <sys/ptrace.h>
-#include <sys/types.h>
-#include <sys/wait.h>
 #include <unistd.h>
 #include <linux/user.h>
 
