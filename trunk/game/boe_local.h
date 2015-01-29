@@ -19,7 +19,7 @@
 */
 // Boe!Man 1/6/13: One string to rule them all.
 #ifndef _DEBUG	// Boe!Man 10/26/14: Regular release (no _DEBUG defined).
-#define INF_VERSION_STRING "0.75"
+#define INF_VERSION_STRING "0.76"
 #define STABLE_VERSION "Developed by ^GBoe!Man ^7& ^6Henkie\n^71fxmod^1.^7org\n\n"
 #else
 #define MAJOR_VERSION_STRING "0.76"
@@ -181,6 +181,7 @@
 // 0.73			Release										5/16/14		// Sent out to public on 5/16/14
 // 0.74			Release										9/14/14		// Sent out to public on 9/14/14
 // 0.75			Release										12/29/14	// Sent out to public on 12/29/14
+// 0.76			Release										1/29/15		// Sent out to public on 1/29/15
 
 
 //===================================================================
