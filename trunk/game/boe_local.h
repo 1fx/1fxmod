@@ -22,11 +22,11 @@
 #define INF_VERSION_STRING "0.76"
 #define STABLE_VERSION "Developed by ^GBoe!Man ^7& ^6Henkie\n^71fxmod^1.^7org\n\n"
 #else
-#define MAJOR_VERSION_STRING "0.76"
+#define MAJOR_VERSION_STRING "0.77"
 #ifdef _NIGHTLY // Direct build from the master. Only used when debugging/developing.
-#define INF_VERSION_STRING "0.76t-^5master"
+#define INF_VERSION_STRING "0.77t-^5master"
 #else
-#define INF_VERSION_STRING "0.76t.7-^5pre" // Don't forget to increment this number when test releasing.
+#define INF_VERSION_STRING "0.77t.0-^5pre" // Don't forget to increment this number when test releasing.
 #endif // _NIGHTLY
 #define TEST_VERSION "Developed by ^GBoe!Man ^7& ^6Henkie\n^1Test version of " MAJOR_VERSION_STRING "\n\n"
 #endif // _DEBUG
