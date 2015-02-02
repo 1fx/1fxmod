@@ -1803,6 +1803,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 	memset(ent->client->sess.IgnoredClients, -1, sizeof(ent->client->sess.IgnoredClients));
 	ent->client->sess.IgnoredClientCount = 0;
 	ent->client->sess.deathTime = 0;
+	ent->client->sess.lastPmClient = -1;
 
 	return NULL;
 }

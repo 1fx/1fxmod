@@ -417,6 +417,10 @@ typedef struct
 	
 	// Boe!Man 4/16/13: Used for accelerator, this is basically level.time + 5000 (the cooldown).
 	int			acceleratorCooldown;
+
+	// Boe!Man 2/2/15: 
+	int			lastPmClient;					// Last person the client talked to.
+	int			lastPmClientChange;				// level.time of when the last client change took place.
 } clientSession_t;
 
 // Boe!Man 3/30/10

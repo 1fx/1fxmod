@@ -2536,6 +2536,129 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			acmd = qtrue;
 			strcpy(p, newp);
 	}
+	else if (strstr(p, "!pm")){
+		int client;
+		gentity_t *target;
+		
+		// Boe!Man 1/29/15: Check for proper client.
+		client = Boe_ClientNumFromArg(ent, 1, "!pm <id/name> <message>", "", qfalse, qtrue, qtrue);
+		if (client < 0){
+			return;
+		}
+		
+		// Check target.
+		target = &g_entities[client];
+		if (target->client->pers.connected != CON_CONNECTED){
+			trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7The specified player isn't fully connected yet.\n\""));
+		}
+
+
+		// Copy the message contents.
+		if (trap_Argc() >= 4){
+			// Calling from console.
+			p = ConcatArgs(3);
+		}else if(trap_Argc() == 2){
+			// Calling from chat.
+			for (i = 0; i < 2; i++){
+				p = strstr(p, " ");
+
+				if (p == NULL || strlen(p) < 2){
+					trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7You should specify a message to send.\n\""));
+					return;
+				}
+				p++;
+			}
+		}else{
+			trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7You should specify a message to send.\n\""));
+			return;
+		}
+
+		Boe_Tokens(ent, p, SAY_TELL, qtrue);
+		Boe_Tokens(ent, p, SAY_TELL, qfalse);
+
+		G_Say(ent, target, SAY_TELL, p);
+		// don't tell to the player self if it was already directed to this player
+		// also don't send the chat back to a bot
+		if (ent != target && !(ent->r.svFlags & SVF_BOT)) {
+			G_Say(target, ent, SAY_TELL_SELF, p);
+		}
+
+		// Save the client ID of who we sent this to. This allows easy replying with !re.
+		if (client != ent->client->sess.lastPmClient){
+			ent->client->sess.lastPmClient = client;
+		}
+		if (ent->s.number != target->client->sess.lastPmClient){
+			target->client->sess.lastPmClient = ent->s.number;
+			target->client->sess.lastPmClientChange = level.time;
+		}
+
+		return;
+	}
+	else if (strstr(p, "!re")){
+		int client = ent->client->sess.lastPmClient;
+		gentity_t *target = &g_entities[client];
+
+		if (client == -1 || !target || !target->client || target->client->pers.connected != CON_CONNECTED){
+			trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7You don't have anyone to reply to (or the client went offline).\n\""));
+			trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7Please send your message with '!pm <id/name> <message>' instead.\n\""));
+
+			// Reset client.
+			ent->client->sess.lastPmClient = -1;
+			return;
+		}else if ((ent->client->sess.lastPmClientChange + 2000) > level.time){
+			trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7You just got PMed by someone else - as security measure we're not sending your message.\n\""));
+
+			ent->client->sess.lastPmClient = -1;
+			return;
+		}
+
+		// Copy the message contents.
+		if (trap_Argc() >= 3){
+			// Calling from console.
+			p = ConcatArgs(2);
+		}else if (trap_Argc() == 2){
+			if (p == NULL || strlen(p) < 2){
+				trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7You should specify a message to send.\n\""));
+				return;
+			}
+		}else{
+			trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7You should specify a message to send.\n\""));
+			return;
+		}
+
+		for (i = 0; i <= strlen(p); i++){
+			if (p[i] == '!' && (p[i + 1] == 'r' || p[i + 1] == 'R') && (p[i + 2] == 'e' || p[i + 2] == 'E')){
+				ignore = i;
+			}
+			if (ignore == -1){
+				newp[a] = p[i];
+				a += 1;
+			}
+			else if (i == ignore || i == ignore + 1 || i == ignore + 2){
+				if (a != 0)
+					i += 1; // Fix for spaces
+			}
+			else{
+				if (a == 0 && p[i] == ' ') // Fix for spaces
+					continue;
+				newp[a] = p[i];
+				a += 1;
+			}
+		}
+
+		Boe_Tokens(ent, newp, SAY_TELL, qtrue);
+		Boe_Tokens(ent, newp, SAY_TELL, qfalse);
+
+		G_Say(ent, target, SAY_TELL, newp);
+		// don't tell to the player self if it was already directed to this player
+		// also don't send the chat back to a bot
+		if (ent != target && !(ent->r.svFlags & SVF_BOT)) {
+			G_Say(target, ent, SAY_TELL_SELF, newp);
+		}
+
+		return;
+	}
+
 	// Henk loop through my admin command array
 	// Boe!Man 1/8/11: Only go through this cycle if the client indeed has admin powers. If not, save on resources.
 	if(ent->client->sess.admin > 0 && strstr(test, "!")){
