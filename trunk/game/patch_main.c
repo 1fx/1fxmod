@@ -161,4 +161,5 @@ void Patch_Main()
 	}
 	
 	Patch_autoDownloadExploit();
+	Patch_rconLog();
 }

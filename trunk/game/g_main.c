@@ -255,7 +255,9 @@ vmCvar_t	hideSeek_Weapons;
 
 // Boe!Man 3/8/11
 vmCvar_t	g_enableAdminLog;
+vmCvar_t	g_enableRconLog;
 vmCvar_t	g_adminlog;
+vmCvar_t	g_rconlog;
 vmCvar_t	g_loginlog;
 
 // Boe!Man 3/16/11
@@ -606,7 +608,9 @@ static cvarTable_t gameCvarTable[] =
 
 	// Boe!Man 3/8/11: CVAR for the Admin logging.
 	{ &g_enableAdminLog, "g_enableAdminLog", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
+	{ &g_enableRconLog, "g_enableRconLog", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue },
 	{ &g_adminlog, "g_adminlog", "logs/admin.log", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
+	{ &g_rconlog, "g_rconlog", "logs/rcon.log", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 	{ &g_loginlog, "g_loginlog", "logs/login.log", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 
 
@@ -2217,7 +2221,39 @@ void QDECL G_LogLogin(const char *fmt, ...) {
 	}
 
 	trap_FS_Write(string, strlen(string), loginFile);
+	trap_FS_Write("\n", 1, loginFile);
 	trap_FS_FCloseFile(loginFile);
+}
+
+/*
+=================
+G_LogRcon
+
+Print to the rcon action file with a time stamp.
+=================
+*/
+void QDECL G_LogRcon(const char *fmt, ...) {
+	fileHandle_t	rconFile;
+	va_list			argptr;
+	char			string[1024];
+	qtime_t			q;
+
+	trap_RealTime(&q);
+	Com_sprintf(string, sizeof(string), "%02i/%02i/%i %02i:%02i ", 1 + q.tm_mon, q.tm_mday, q.tm_year + 1900, q.tm_hour, q.tm_min);
+
+	va_start(argptr, fmt);
+	vsprintf(string + 17, fmt, argptr);
+	va_end(argptr);
+
+	// Boe!Man 11/22/10: Open and write to the crashinfo file.
+	trap_FS_FOpenFile(g_rconlog.string, &rconFile, FS_APPEND_TEXT);
+	if (!rconFile){
+		return;
+	}
+
+	trap_FS_Write(string, strlen(string), rconFile);
+	trap_FS_Write("\n", 1, rconFile);
+	trap_FS_FCloseFile(rconFile);
 }
 
 /*

@@ -1263,11 +1263,17 @@ static void		adm_unbanFromDatabase				(gentity_t *adm, char *ip, qboolean subnet
 //
 // g_main.c
 //
+// Boe!Man 3/8/11
+extern	vmCvar_t	g_enableAdminLog;
+extern	vmCvar_t	g_enableRconLog;
+extern	vmCvar_t	g_adminlist;
+
 void		FindIntermissionPoint				( void );
 void		SetLeader							( int team, int client );
 void		G_RunThink							( gentity_t *ent );
 void QDECL	G_LogPrintf							( const char *fmt, ... );
 void QDECL	G_LogLogin							( const char *fmt, ... );
+void QDECL	G_LogRcon							( const char *fmt, ... );
 void		SendScoreboardMessageToAllClients	( void );
 void		CheckGametype						( void );
 qboolean	G_CheckAlive						( void );

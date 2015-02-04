@@ -47,5 +47,6 @@ char	*AlignDWORD					(long input);
 void	Patch_detourAddress			(char *genericName, long func, long offset);
 void	Patch_autoDownloadExploit	(void);
 void	Patch_dosProtection			(void);
+void	Patch_rconLog				(void);
 
 #endif // _PATCH_LOCAL

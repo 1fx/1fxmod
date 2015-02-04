@@ -253,6 +253,7 @@ int		Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const 
 
 //extern  vmCvar_t	g_adminfile;
 extern	vmCvar_t	g_adminlog;
+extern	vmCvar_t	g_rconlog;
 extern	vmCvar_t	g_loginlog;
 
 
@@ -305,11 +306,6 @@ extern	vmCvar_t	g_tipsFile;
 //extern	vmCvar_t	g_banfile;
 extern  vmCvar_t	hideSeek_Nades;
 extern  vmCvar_t	hideSeek_Weapons;
-
-// Boe!Man 3/8/11
-extern	vmCvar_t	g_enableAdminLog;
-
-extern	vmCvar_t	g_adminlist;
 
 // Boe!Man 4/20/11
 //extern	vmCvar_t	g_crossTheBridge;
