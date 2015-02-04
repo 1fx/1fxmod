@@ -35,7 +35,7 @@ void Patch_rconLogging(const char *message, char *ip, char *command)
 		p = strstr(ip, ":");
 		strncpy(ip2, ip, (int)(p - ip));
 
-		G_LogRcon("%-20sby %s", command, ip);
+		G_LogRcon("%-40sby %s", command, ip);
 	}
 
 	Com_Printf(message, ip, command);
