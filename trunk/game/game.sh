@@ -2,7 +2,7 @@
 
 # *** Compiling 1fx. Mod Linux build (sof2mp_gamei386.so) ***
 #
-# You can compile the Mod on an ancient Debian Woody R0 platform.
+# You can compile the Mod on an ancient Debian Woody R0-R6 platform (preferably R6).
 # The Mod depends on the following utilites:
 #
 # - gcc 2.95.4 (can be installed from CD1 of the Debian Woody install media).
@@ -11,36 +11,48 @@
 # The files that need to be compiled, need to be in the dos2unix section, the compile section and the linker section.
 # Header files should go only in the dos2unix section.
 #
-# PLEASE NOTE: this build is a *release* build. All debug symbols, flags etc. are omitted, even in the so called test releases.
+# PLEASE NOTE: most builds are a *release* build. All debug symbols, flags etc. are omitted, even in the so called test releases.
+# *ONLY* if you build a nightly build, debug symbols won't be omitted.
 #
 # For further information regarding this, please check the 1fx. Mod source code.
 # There's a whole section regarding *.so considerations.
-# --- Boe!Man 1/26/13 - 11:01 AM
+# --- Boe!Man  1/26/13 - 11:01 AM
+# Last update: 2/21/15 - 10:11 AM
+
+# The compile options relevant for all builds are noted here.
+buildoptions="-O2 -fstack-check -DMISSIONPACK -DQAGAME -D_SOF2 -fPIC"
+stripsymbols=true
 
 echo "Enter the type of build:"
 echo "1: Public release build (e.g. 0.70)"
 echo "2: Test/Beta release build (e.g. 0.70t)"
 echo "3: 3D/1fx. Pre-release build (e.g. 0.76t.1-pre)"
+echo "4: Nightly build (w/ debug symbols, e.g. 0.76t-master)"
 echo -n "Enter your choice and press [ENTER]: "
 read choice
 
 if [ "$choice" == "1" ]; then
-	buildoptions="-s -O2 -fstack-check -DNDEBUG -DMISSIONPACK -DQAGAME -D_SOF2 -fPIC -c"
+	buildoptions="$buildoptions -s -DNDEBUG"
 	clear
 	echo -e "Building a \e[00;36mPublic release build\e[00m" 
 elif [ "$choice" == "2" ]; then
-	buildoptions="-s -O2 -fstack-check -D_DEBUG -DDEBUG -DBUILDING_REF_GL -DDebugSoF2 -DMISSIONPACK -DQAGAME -D_SOF2 -fPIC -c"
+	buildoptions="$buildoptions -s -D_DEBUG -DDEBUG -DBUILDING_REF_GL -DDebugSoF2"
 	clear
 	echo -e "Building a \e[00;36mTest/Beta release build\e[00m" 
 elif [ "$choice" == "3" ]; then
-	buildoptions="-s -O2 -fstack-check -D_DEBUG -DDEBUG -DBUILDING_REF_GL -DDebugSoF2 -DMISSIONPACK -DQAGAME -D_SOF2 -D_awesomeToAbuse -fPIC -c"
+	buildoptions="$buildoptions -s -D_DEBUG -DDEBUG -DBUILDING_REF_GL -DDebugSoF2 -D_awesomeToAbuse"
 	clear
-	echo -e "Building a \e[00;36m3D/1fx. Pre-release build\e[00m" 
+	echo -e "Building a \e[00;36m3D/1fx. Pre-release build\e[00m"
+elif [ "$choice" == "4" ]; then
+	buildoptions="$buildoptions -g -D_DEBUG -DDEBUG -DBUILDING_REF_GL -DDebugSoF2 -D_NIGHTLY"
+	stripsymbols=false
+	clear
+	echo -e "Building a \e[00;36mNightly build\e[00m"
 else
-	clear
 	echo "Invalid choice specified, exitting.."
 	exit 1
 fi
+buildoptions="$buildoptions -c"
 
 # Clean up compile_log file and Mod (we're recompiling so..).
 rm -f compile_log
@@ -178,16 +190,80 @@ gcc $buildoptions rpm_functions.c -o rpm_functions.o 2>> compile_log
 gcc $buildoptions rpm_refcmds.c -o rpm_refcmds.o 2>> compile_log
 gcc $buildoptions rpm_tcmds.c -o rpm_tcmds.o 2>> compile_log
 gcc $buildoptions 1fx_gt.c -o 1fx_gt.o 2>> compile_log
-# SQLite
-gcc -s -fstack-check -DNDEBUG -DSQLITE_OMIT_LOAD_EXTENSION -DSQLITE_ENABLE_MEMSYS5 -fPIC -c ./sqlite/sqlite3.c -o ./sqlite/sqlite3.o 2>> compile_log
-echo "Now linking the shared object.."
-# There are several compile lines of interest.
-# The first one is the one we use everywhere, it's default as of revision 950. This compiles the Mod dynamically with static dependencies.
-ld -s -shared ai_main.o ai_util.o ai_wpnav.o bg_gametype.o bg_lib.o bg_misc.o bg_player.o bg_pmove.o bg_slidemove.o bg_weapons.o boe_admcmds.o boe_utils.o g_active.o g_admcmds.o g_antilag.o g_bot.o g_client.o g_cmds.o g_combat.o g_gametype.o g_items.o g_main.o g_misc.o g_missile.o g_mover.o g_session.o g_spawn.o g_svcmds.o g_syscalls.o g_target.o g_team.o g_trigger.o g_utils.o g_weapon.o henkENT.o henk_functions.o henk_hs.o q_math.o q_shared.o patch_autodl.o patch_dos.o patch_main.o patch_rcon.o rpm_functions.o rpm_refcmds.o rpm_tcmds.o 1fx_gt.o ./sqlite/sqlite3.o -Bstatic /usr/lib/libpthread.a /usr/lib/libm.a /usr/lib/libc.a /usr/lib/gcc-lib/i386-linux/2.95.4/libgcc.a /usr/lib/libdl.a -o sof2mp_gamei386.so 2>> compile_log
-# This line compiles the shared object with only dynamic objects and dependencies.
-#gcc -shared -Wl -s ai_main.o ai_util.o ai_wpnav.o bg_gametype.o bg_lib.o bg_misc.o bg_player.o bg_pmove.o bg_slidemove.o bg_weapons.o boe_admcmds.o boe_utils.o g_active.o g_antilag.o g_bot.o g_client.o g_cmds.o g_combat.o g_gametype.o g_items.o g_main.o g_misc.o g_missile.o g_mover.o g_session.o g_spawn.o g_svcmds.o g_syscalls.o g_target.o g_team.o g_trigger.o g_utils.o g_weapon.o henkENT.o henk_functions.o henk_hs.o q_math.o q_shared.o rpm_functions.o rpm_refcmds.o rpm_tcmds.o 1fx_gt.o ./sqlite/sqlite3.o -o sof2mp_gamei386.so -lm -ldl -lpthread
-# This is an old line we only used in the past, uses ld as linker.
-#ld -s -shared ai_main.o ai_util.o ai_wpnav.o bg_gametype.o bg_lib.o bg_misc.o bg_player.o bg_pmove.o bg_slidemove.o bg_weapons.o boe_admcmds.o boe_utils.o g_active.o g_antilag.o g_bot.o g_client.o g_cmds.o g_combat.o g_gametype.o g_items.o g_main.o g_misc.o g_missile.o g_mover.o g_session.o g_spawn.o g_svcmds.o g_syscalls.o g_target.o g_team.o g_trigger.o g_utils.o g_weapon.o henkENT.o henk_functions.o henk_hs.o q_math.o q_shared.o rpm_functions.o rpm_refcmds.o rpm_tcmds.o 1fx_gt.o ./sqlite/sqlite3.o -o sof2mp_gamei386.so
+
+# All files that are about to be linked.
+linkfiles="\
+ai_main.o \
+ai_util.o \
+ai_wpnav.o \
+bg_gametype.o \
+bg_lib.o \
+bg_misc.o \
+bg_player.o \
+bg_pmove.o \
+bg_slidemove.o \
+bg_weapons.o \
+boe_admcmds.o \
+boe_utils.o \
+g_active.o \
+g_admcmds.o \
+g_antilag.o \
+g_bot.o \
+g_client.o \
+g_cmds.o \
+g_combat.o \
+g_gametype.o \
+g_items.o \
+g_main.o \
+g_misc.o \
+g_missile.o \
+g_mover.o \
+g_session.o \
+g_spawn.o \
+g_svcmds.o \
+g_syscalls.o \
+g_target.o \
+g_team.o \
+g_trigger.o \
+g_utils.o \
+g_weapon.o \
+henkENT.o \
+henk_functions.o \
+henk_hs.o \
+q_math.o \
+q_shared.o \
+patch_autodl.o \
+patch_dos.o \
+patch_main.o \
+patch_rcon.o \
+rpm_functions.o \
+rpm_refcmds.o \
+rpm_tcmds.o \
+1fx_gt.o \
+./sqlite/sqlite3.o"
+
+# Libraries to link against.
+libs="\
+/usr/lib/libpthread.a \
+/usr/lib/libm.a \
+/usr/lib/libc.a \
+/usr/lib/gcc-lib/i386-linux/2.95.4/libgcc.a \
+/usr/lib/libdl.a"
+
+# Link the Mod based on the build type (with or without symbols).
+if [ "$stripsymbols" = true ] ; then
+	# SQLite
+	gcc -s -fstack-check -DNDEBUG -DSQLITE_OMIT_LOAD_EXTENSION -DSQLITE_ENABLE_MEMSYS5 -fPIC -c ./sqlite/sqlite3.c -o ./sqlite/sqlite3.o 2>> compile_log
+	echo "Now linking the shared object.."
+	# Link the Mod. This links the Mod dynamically with static dependencies.
+	ld -s -shared $linkfiles -Bstatic $libs -o sof2mp_gamei386.so 2>> compile_log
+else
+	# SQLite
+	gcc -fstack-check -DNDEBUG -DSQLITE_OMIT_LOAD_EXTENSION -DSQLITE_ENABLE_MEMSYS5 -fPIC -c ./sqlite/sqlite3.c -o ./sqlite/sqlite3.o 2>> compile_log
+	echo "Now linking the shared object.."
+	# Link the Mod. This links the Mod dynamically with static dependencies.
+	ld -shared $linkfiles -Bstatic $libs -o sof2mp_gamei386.so 2>> compile_log
+fi
 
 # Now check if the output file was indeed created..
 if [ -f ./sof2mp_gamei386.so ]; then

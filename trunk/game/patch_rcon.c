@@ -10,7 +10,7 @@
 #ifdef _WIN32
 void Patch_rconLogging0(void);
 #endif // _WIN32
-void Patch_rconLogging(char *message, char *ip, char *command);
+void Patch_rconLogging(const char *message, char *ip, char *command);
 
 /*
 ==================
