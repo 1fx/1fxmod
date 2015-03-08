@@ -1152,7 +1152,7 @@ static void G_ResolveMasterIPs()
 	struct dns			*dns;
 	fd_set				set;
 	int					i;
-	struct timeval		tv = { 1, 0 }; // Timeout of 1 second per host.
+	struct timeval		tv = { 2, 0 }; // Timeout of 1 second per host, wait 2 seconds in-code because this is not the same as the real time out.
 
 	// Initialize the resolver.
 	if ((dns = dns_init()) == NULL) {

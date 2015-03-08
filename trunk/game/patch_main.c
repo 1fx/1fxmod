@@ -53,33 +53,31 @@ void *Patch_linuxPatchAddress(void *arguments)
 	}data;
 	struct patchArgs *args = arguments;
 
+	usleep(10000); // Boe!Man 3/8/15: Sleep for 10msec, this fixes a very strange problem of LinuxThreads sending a SIGSTOP while attaching.
 	if (ptrace(PTRACE_ATTACH, args->pid, NULL, NULL) == -1)
 	{
 		perror("fail!\nAttach failed");
-		return;
+		return NULL;
 	}
 
 	if (waitpid(args->pid, NULL, WUNTRACED) != args->pid){
 		perror("fail!\nCouldn't wait for PID");
-		return;
+		return NULL;
 	}
 
 	address = args->buf;
 	memcpy(data.chars, address, 4);
 	if(ptrace(PTRACE_POKEDATA, args->pid, args->address, data.val) == -1){
 		perror("fail!\nWriting modified data failed");
-		return;
+		return NULL;
 	}
 
 	if (ptrace(PTRACE_DETACH, args->pid, NULL, NULL) == -1){
 		perror("fail!\nDetach failed");
-		return;
+		return NULL;
 	}
 
 	printf("done!\n");
-
-	pthread_exit(NULL);
-	return NULL;
 }
 #endif // __linux__
 
@@ -162,7 +160,7 @@ void Patch_Main()
 	if(g_dosPatch.integer){
 		Patch_dosProtection();
 	}
-	
+
 	Patch_autoDownloadExploit();
 	Patch_rconLog();
 }

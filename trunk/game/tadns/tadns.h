@@ -53,7 +53,7 @@ struct dns_cb_data {
 
 typedef void (*dns_callback_t)(struct dns_cb_data *);
 
-#define	DNS_QUERY_TIMEOUT	30	/* Query timeout, seconds	*/
+#define	DNS_QUERY_TIMEOUT	1	/* Query timeout, seconds	*/
 
 /*
  * The API
