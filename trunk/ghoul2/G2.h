@@ -1,4 +1,6 @@
+#ifdef _MSC_VER
 #pragma once
+#endif // _MSC_VER
 #if !defined(G2_H_INC)
 #define G2_H_INC
 

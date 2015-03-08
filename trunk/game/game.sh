@@ -275,6 +275,11 @@ fi
 # Now check if the output file was indeed created..
 if [ -f ./sof2mp_gamei386.so ]; then
 	echo -e "Compiling the Mod was \e[00;32msuccessfull\e[00m!"
+	if [ $(stat -c %s compile_log 2>/dev/null || echo 0) -gt 0 ]; then
+	    echo -e "Some \e[00;33mwarnings\e[00m did occur."
+	else
+	    echo "No warnings occured."
+	fi
 else
 	echo -e "Compiling the Mod \e[00;31mfailed\e[00m!"
 	echo "Please check the compile_log file for more information.."

@@ -8,9 +8,6 @@
 // Country memory database
 pthread_t			countryInit; // Boe!Man 6/25/13: The reference to the thread.
 sqlite3				*countryDb;
-#ifdef __linux__
-static pid_t		pid; // Boe!Man 6/26/13: The PID of the Thread Manager (LinuxThreads).
-#endif
 
 int process_ddl_row(void * pData, int nColumns,
         char **values, char **columns)
@@ -50,11 +47,6 @@ void *Thread_countryInit(){
 	sqlite3 	*db;
 	char 		fsGame[MAX_QPATH];
 	qboolean	alt;
-
-	// Boe!Man 6/26/13: The PID of the thread manager needs to be stored, so we can forcefully terminate it later on.
-	#ifdef __linux__
-	pid = getppid();
-	#endif
 
 	// Boe!Man 12/6/12
 	// The file can be on two locations. The DLL should always be in the fs_game folder, however, this could be misconfigured.
