@@ -5,6 +5,9 @@
 #include "boe_local.h"
 
 #ifdef __linux__
+#include "./tadns/tadns.h"
+#include <netdb.h>
+
 unsigned char	memsys5[41943040]; // Boe!Man 1/29/13: Buffer of 40 MB, available for SQLite memory management (Linux).
 #elif WIN32
 #include <windows.h>
@@ -1098,6 +1101,81 @@ void G_SetGametype ( const char* gametype )
 	}
 }
 
+#ifdef __linux__
+static const char *masterIPs[2] = {"master.sof2.ravensoft.com", "master.1fxmod.org"};
+static const int numMasterServers = 2;
+
+static void G_ResolveCallback(struct dns_cb_data *cbd)
+{
+	int		i;
+	char	master[12];
+	char	ip[MAX_IP];
+
+	switch (cbd->error) {
+	case DNS_OK:
+		switch (cbd->query_type) {
+		// All master servers have a valid A record, so this is what we're looking for.
+		case DNS_A_RECORD:
+			for(i = 0; i < numMasterServers; i++){
+				if(!strcmp(masterIPs[i], cbd->name)){
+					// Note the sv_master CVAR num.
+					Com_sprintf(master, sizeof(master), "sv_master%d", i+1);
+					// Make a copy of the IP in a local buffer.
+					Com_sprintf(ip, sizeof(ip), "%u.%u.%u.%u",
+						cbd->addr[0], cbd->addr[1],
+						cbd->addr[2], cbd->addr[3]);
+					
+					trap_Cvar_Set(master, ip);
+					Com_Printf("Set %s to: %s (resolved from: %s)\n", master, ip, cbd->name);
+				}
+			}
+			break;
+		default:
+			Com_Printf("Unexpected query type %u for host %s.\n", cbd->query_type, cbd->name);
+			break;
+		}
+		break;
+	case DNS_TIMEOUT:
+		Com_Printf("Query timeout for host %s.\n", cbd->name);
+		break;
+	case DNS_DOES_NOT_EXIST:
+		Com_Printf("No such address for host %s.\n", cbd->name);
+		break;
+	case DNS_ERROR:
+		Com_Printf("System error occured while looking up host.\n");
+		break;
+	}
+}
+
+static void G_ResolveMasterIPs()
+{
+	struct dns			*dns;
+	fd_set				set;
+	int					i;
+	struct timeval		tv = { 1, 0 }; // Timeout of 1 second per host.
+
+	// Initialize the resolver.
+	if ((dns = dns_init()) == NULL) {
+		Com_Printf("ERROR: Couldn't initialize the DNS resolver.\n");
+		Com_Printf("Not making changes to sv_master CVARs due to error.\n");
+		return;
+	}
+
+	for(i = 0; i < numMasterServers; i++){
+		dns_queue(dns, &masterIPs[i], masterIPs[i], DNS_A_RECORD, G_ResolveCallback);
+
+		// Select on resolver socket.
+		FD_ZERO(&set);
+		FD_SET(dns_get_fd(dns), &set);
+
+		// Wait for the DNS resolver to finish.
+		if (select(dns_get_fd(dns) + 1, &set, NULL, NULL, &tv) == 1)
+			dns_poll(dns);
+	}
+
+	dns_fini(dns);
+}
+#endif // __linux__
 /*
 ============
 G_InitGame
@@ -1139,17 +1217,22 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	memset(memsys5, 0, sizeof(memsys5));
 	sqlite3_config(SQLITE_CONFIG_HEAP, memsys5, 41943040, 64);
 	sqlite3_soft_heap_limit(40894464);
+	
+	// Boe!Man 3/5/15: Force master to direct IP instead of hostname on Linux.
+	// Resolve the IP of the master servers using TADNS.
+	Com_Printf("------------------------------------------\n");
+	Com_Printf("Attempting to resolve master hostnames to IPs...\n");
+	i = trap_Milliseconds();
 
-	// Boe!Man 7/3/13: Force master to direct IP instead of hostname on Linux.
-	trap_Cvar_Set("sv_master1", "64.111.167.148");
+	// Do the actual lookups.
+	G_ResolveMasterIPs();
 
-	// Boe!Man 8/22/14: Also the 2nd master reports to our master server's direct IP.
-	// !!! If IP is changed, CHANGE THIS MANUALLY !!!
-	trap_Cvar_Set("sv_master2", "178.62.14.201");
+	Com_Printf("Lookups took %d milliseconds.\n", trap_Milliseconds() - i);
+	Com_Printf("------------------------------------------\n");
 	#elif _WIN32
 	// Boe!Man 8/22/14: Windows users get the future proof DNS entry as their 2nd master entry.
 	trap_Cvar_Set("sv_master2", "master.1fxmod.org");
-	#endif
+	#endif // __linux__
 	trap_Cvar_Update(gameCvarTable->vmCvar);
 
 	// Boe!Man 6/25/13: Enable multithreading for SQLite.

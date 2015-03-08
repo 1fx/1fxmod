@@ -64,6 +64,10 @@ echo "Converting CRLF to LF.."
 dos2unix ./sqlite/sqlite3.c
 dos2unix ./sqlite/sqlite3.h
 dos2unix ./sqlite/sqlite3ext.h
+# TADNS files.
+dos2unix ./tadns/tadns.c
+dos2unix ./tadns/tadns.h
+dos2unix ./tadns/llist.h
 # Main files.
 dos2unix 1fx_gt.c
 dos2unix ai_main.c
@@ -240,7 +244,8 @@ rpm_functions.o \
 rpm_refcmds.o \
 rpm_tcmds.o \
 1fx_gt.o \
-./sqlite/sqlite3.o"
+./sqlite/sqlite3.o \
+./tadns/tadns.o"
 
 # Libraries to link against.
 libs="\
@@ -254,12 +259,14 @@ libs="\
 if [ "$stripsymbols" = true ] ; then
 	# SQLite
 	gcc -s -fstack-check -DNDEBUG -DSQLITE_OMIT_LOAD_EXTENSION -DSQLITE_ENABLE_MEMSYS5 -fPIC -c ./sqlite/sqlite3.c -o ./sqlite/sqlite3.o 2>> compile_log
+	gcc -s -fstack-check -fPIC -c ./tadns/tadns.c -o ./tadns/tadns.o 2>> compile_log
 	echo "Now linking the shared object.."
 	# Link the Mod. This links the Mod dynamically with static dependencies.
 	ld -s -shared $linkfiles -Bstatic $libs -o sof2mp_gamei386.so 2>> compile_log
 else
 	# SQLite
 	gcc -fstack-check -DNDEBUG -DSQLITE_OMIT_LOAD_EXTENSION -DSQLITE_ENABLE_MEMSYS5 -fPIC -c ./sqlite/sqlite3.c -o ./sqlite/sqlite3.o 2>> compile_log
+	gcc -fstack-check -fPIC -c ./tadns/tadns.c -o ./tadns/tadns.o 2>> compile_log
 	echo "Now linking the shared object.."
 	# Link the Mod. This links the Mod dynamically with static dependencies.
 	ld -shared $linkfiles -Bstatic $libs -o sof2mp_gamei386.so 2>> compile_log
@@ -276,6 +283,7 @@ fi
 # Clean up some files..
 rm -f *.o
 rm -f ./sqlite/sqlite3.o
+rm -f ./tadns/tadns.o
 
 # Done!
 exit 0

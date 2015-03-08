@@ -156,6 +156,9 @@ Main function called from SOF2, in order to apply all memory patches.
 
 void Patch_Main()
 {
+	Com_Printf("------------------------------------------\n");
+	Com_Printf("Applying memory runtime modifications...\n");
+
 	if(g_dosPatch.integer){
 		Patch_dosProtection();
 	}
