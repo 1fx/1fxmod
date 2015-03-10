@@ -30,26 +30,25 @@ The actual code of where we check if the request exceeded the number of allowed 
 
 int Patch_dosDetour()
 {
+	if (level.time >= requestTimer){
+		requestTimer = level.time + 1000;
+
+		#ifdef _DEBUG
+		if (numRequests >= requestsPerSecond){
+			Com_Printf("DoS protection: Too many getstatus requests per second: %i (%i allowed)\n", numRequests, requestsPerSecond);
+		}
+		#endif // _DEBUG
+
+		numRequests = 0;
+	}
+	
 	if (numRequests >= requestsPerSecond){
 		validRequest = qfalse;
 	}else{
 		validRequest = qtrue;
 	}
 
-	if (level.time >= requestTimer){
-		requestTimer = level.time + 1000;
-
-#ifdef _DEBUG
-		if (numRequests >= requestsPerSecond){
-			Com_Printf("DoS protection: Too many getstatus requests per second: %i (%i allowed)\n", numRequests, requestsPerSecond);
-		}
-#endif
-
-		numRequests = 0;
-	}
-
 	numRequests++;
-
 	return (int)validRequest;
 }
 

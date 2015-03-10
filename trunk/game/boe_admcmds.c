@@ -467,16 +467,10 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 		}
 	}
 	// Boe!Man 1/18/10: Using Admin commands on other Admins fix.
-	if(otheradmins == qfalse){
-		if(g_entities[num].client->sess.admin && otheradmins == qfalse){
-			if(ent && ent->client){
+	if (!otheradmins && g_entities[num].client->sess.admin){
+		if(ent && ent->client){
 			trap_SendServerCommand(ent->s.number, va("print\"^3[Info] ^7You cannot use this command on other Admins.\n\""));
 			return -1;
-			}
-			else{
-				//Com_Printf("You cannot use this command on other Admins.\n"); // Henk -> Rcon has to be able to pop everyone.
-				//return -1;
-			}
 		}
 	}
 

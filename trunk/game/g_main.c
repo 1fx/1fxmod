@@ -1230,8 +1230,15 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	Com_Printf("Lookups took %d milliseconds.\n", trap_Milliseconds() - i);
 	Com_Printf("------------------------------------------\n");
 	#elif _WIN32
-	// Boe!Man 8/22/14: Windows users get the future proof DNS entry as their 2nd master entry.
+	Com_Printf("------------------------------------------\n");
+
+	// Boe!Man 8/22/14: Windows users get the future proof DNS entry as their 1st and 2nd master entry.
+	trap_Cvar_Set("sv_master1", "master.sof2.ravensoft.com");
 	trap_Cvar_Set("sv_master2", "master.1fxmod.org");
+	Com_Printf("Set sv_master1 to: master.sof2.ravensoft.com\n");
+	Com_Printf("Set sv_master2 to: master.1fxmod.org\n");
+
+	Com_Printf("------------------------------------------\n");
 	#endif // __linux__
 	trap_Cvar_Update(gameCvarTable->vmCvar);
 
@@ -1316,6 +1323,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	// Apply memory runtime modifications.
 	Patch_Main();
 
+	G_LogPrintf("------------------------------------------------------------\n");
 	if ( g_log.string[0] )
 	{
 		if ( g_logSync.integer )
@@ -1336,8 +1344,6 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 			char	serverinfo[MAX_INFO_STRING];
 
 			trap_GetServerinfo( serverinfo, sizeof( serverinfo ) );
-
-			G_LogPrintf("------------------------------------------------------------\n" );
 			G_LogPrintf("InitGame: %s\n", serverinfo );
 		}
 	}

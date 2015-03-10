@@ -154,6 +154,8 @@ Main function called from SOF2, in order to apply all memory patches.
 
 void Patch_Main()
 {
+	int i = trap_Milliseconds();
+
 	Com_Printf("------------------------------------------\n");
 	Com_Printf("Applying memory runtime modifications...\n");
 
@@ -163,4 +165,6 @@ void Patch_Main()
 
 	Patch_autoDownloadExploit();
 	Patch_rconLog();
+
+	Com_Printf("Patching took %d milliseconds.\n", trap_Milliseconds() - i);
 }
