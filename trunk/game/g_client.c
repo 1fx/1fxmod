@@ -1474,11 +1474,11 @@ void ClientUserinfoChanged( int clientNum )
 		// Parse out the new outfitting
 		BG_DecompressOutfitting ( Info_ValueForKey ( userinfo, "outfitting" ), &client->pers.outfitting );
 
-#ifndef _awesomeToAbuse
+#ifndef _3DServer
 		if(current_gametype.value != GT_HS && current_gametype.value != GT_HZ){
 #else
 		if (current_gametype.value != GT_HS && current_gametype.value != GT_HZ && !boe_fragWars.integer){
-#endif
+#endif // not _3DServer
 			G_UpdateOutfitting ( clientNum );
 		}
 	}
@@ -2175,7 +2175,7 @@ void ClientSpawn(gentity_t *ent)
 				client->sess.transformedEntity2 = 0;
 			}
 		// End
-#ifdef _awesomeToAbuse
+#ifdef _3DServer
 		}else if (current_gametype.value == GT_ELIM && boe_fragWars.integer){
 			// Knife.
 			client->ps.stats[STAT_WEAPONS] |= (1 << WP_KNIFE);
@@ -2193,7 +2193,7 @@ void ClientSpawn(gentity_t *ent)
 
 			client->ps.weapon = WP_F1_GRENADE;
 			client->ps.weaponstate = WEAPON_READY;
-#endif // _awesomeToAbuse
+#endif // _3DServer
 		}else{
 		G_UpdateOutfitting ( ent->s.number );
 		}

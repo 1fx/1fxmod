@@ -26,7 +26,7 @@ stripsymbols=true
 echo "Enter the type of build:"
 echo "1: Public release build (e.g. 0.70)"
 echo "2: Test/Beta release build (e.g. 0.70t)"
-echo "3: 3D/1fx. Pre-release build (e.g. 0.76t.1-pre)"
+echo "3: 3D/Regular Pre-release build (e.g. 0.76t.1-pre)"
 echo "4: Nightly build (w/ debug symbols, e.g. 0.76t-master)"
 echo -n "Enter your choice and press [ENTER]: "
 read choice
@@ -42,7 +42,20 @@ elif [ "$choice" == "2" ]; then
 elif [ "$choice" == "3" ]; then
 	buildoptions="$buildoptions -s -D_DEBUG -DDEBUG -DBUILDING_REF_GL -DDebugSoF2 -D_awesomeToAbuse"
 	clear
-	echo -e "Building a \e[00;36m3D/1fx. Pre-release build\e[00m"
+	echo "What kind of pre-release should I build?"
+	echo "1: Regular Pre-release build"
+	echo "2: 3D-specific Pre-release build"
+	echo -n "Enter your choice and press [ENTER]: "
+	read choice
+	if [ "$choice" == "1" ]; then
+		echo -e "Building a regular \e[00;36m Pre-release build\e[00m"
+	elif [ "$choice" == "2" ]; then
+		buildoptions="$buildoptions -D_3DServer"
+		echo -e "Building a 3D-specific \e[00;36m Pre-release build\e[00m"
+	else
+		echo "Invalid choice specified, exitting.."
+		exit 1
+	fi
 elif [ "$choice" == "4" ]; then
 	buildoptions="$buildoptions -g -D_DEBUG -DDEBUG -DBUILDING_REF_GL -DDebugSoF2 -D_NIGHTLY"
 	stripsymbols=false

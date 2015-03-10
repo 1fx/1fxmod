@@ -317,9 +317,9 @@ vmCvar_t	g_inviewDb;
 vmCvar_t	g_debug;
 #endif
 
-#ifdef _awesomeToAbuse
+#ifdef _3DServer
 vmCvar_t	boe_fragWars;
-#endif
+#endif // _3DServer
 
 static cvarTable_t gameCvarTable[] =
 {
@@ -667,9 +667,9 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_debug, "1fx_debug", "0", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0,  qfalse },
 #endif
 
-#ifdef _awesomeToAbuse
+#ifdef _3DServer
 	{ &boe_fragWars, "3d_fragWars", "0", CVAR_ARCHIVE | CVAR_LATCH, 0.0, 0.0, 0, qfalse },
-#endif
+#endif // _3DServer
 };
 
 // bk001129 - made static to avoid aliasing

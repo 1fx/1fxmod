@@ -477,9 +477,9 @@ void DoTeleport(gentity_t *ent, vec3_t origin){
 	origin[2] += 50;
 	TeleportPlayer(ent, origin, ent->client->ps.viewangles, qtrue);
 
-#ifdef _awesomeToAbuse
+#ifdef _3DServer
 	if (!(current_gametype.value == GT_ELIM && boe_fragWars.integer)){
-#endif
+#endif // _3DServer
 	origin1 = va("%.0f %.0f %.0f", origin[0], origin[1], origin[2]);
 	//G_PlayEffect ( G_EffectIndex("effects/explosions/col9_boat_explosion"),origin, angles);
 	AddSpawnField("classname", "1fx_play_effect");
@@ -489,9 +489,9 @@ void DoTeleport(gentity_t *ent, vec3_t origin){
 	AddSpawnField("count", "1");
 
 	G_SpawnGEntityFromSpawnVars(qtrue);
-#ifdef _awesomeToAbuse
+#ifdef _3DServer
 	}
-#endif
+#endif // _3DServer
 }
 
 // Henk 31/03/11 -> New M4 give away code

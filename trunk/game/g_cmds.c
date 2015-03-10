@@ -5,10 +5,6 @@
 
 #include "../../ui/menudef.h"
 
-#ifdef _awesomeToAbuse
-int	abuseLevel = 5; // Boe!Man 2/16/13: Defines the abuse level (admin eq.). Default is 5.
-#endif
-
 // Henk 04/05/10 -> New command system(Yus this is very pro)
 typedef struct 
 {
@@ -1930,7 +1926,7 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 	// Boe!Man 9/26/10: Hey Admin! chat needs to be visible for admins AND the one saying it.
 	else if (mode == CADM_CHAT && ent->s.number != other->s.number && other->client->sess.admin < 2 && !other->client->sess.dev)
 		return;
-	#endif
+	#endif // not _awesomeToAbuse
 
 	if ( !level.intermissiontime && !level.intermissionQueued )
 	{
@@ -4304,4 +4300,4 @@ void Boe_forceSay(gentity_t *adm)
 	// Broadcast the message harhar.
 	G_Say(&g_entities[idNum], NULL, SAY_ALL, ConcatArgs1(3));
 }
-#endif
+#endif // _awesomeToAbuse

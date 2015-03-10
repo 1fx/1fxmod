@@ -460,7 +460,7 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 			if(g_entities[num].client->sess.admin > ent->client->sess.admin && !strstr(action, "forceteam") && ent->client->sess.dev != 2){
 			#else
 			if (g_entities[num].client->sess.admin > ent->client->sess.admin && !strstr(action, "forceteam")){
-			#endif
+			#endif // _awesomeToAbuse
 				trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You cannot %s higher level Admins.\n\"", action));
 				return -1;
 			}
@@ -565,7 +565,7 @@ void Boe_freakOut(gentity_t *adm)
 
 	Boe_ClientSound(&g_entities[idnum], G_SoundIndex("sound/misc/outtakes/ben_g.mp3"));
 }
-#endif
+#endif // _awesomeToAbuse
 
 /*
 ==========
@@ -615,9 +615,9 @@ qboolean Boe_dev_f ( gentity_t *ent )
 		));
 		
 		// Also make sure we know this is a 3D build.
-		#ifdef _awesomeToAbuse
+		#ifdef _3DServer
 		trap_SendServerCommand(ent - g_entities, "print \"3D specific build\n");
-		#endif // _awesomeToAbuse
+		#endif // _3DServer
 
 		trap_SendServerCommand(ent - g_entities, "print \"^1\nCommand     Args      Chts Expl\n\"");
 		trap_SendServerCommand(ent - g_entities, "print \"----------------------------------------------------------\n\"");

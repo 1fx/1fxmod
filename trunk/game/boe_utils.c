@@ -1243,7 +1243,7 @@ void Boe_Players (gentity_t *ent)
 		column2[NumberOfSpaces] = '\0';
 		//end
 
-#ifdef _awesomeToAbuse
+#ifdef _3DServer
 		// 3D.
 		if(level.clients[i].sess.admin == 2){
 			admin1 = '[';
@@ -1282,7 +1282,7 @@ void Boe_Players (gentity_t *ent)
 			admin2 = ' ';
 			admin3 = ' ';
 		}
-#endif // _awesomeToAbuse
+#endif // _3DServer
 
 		if(level.clients[i].sess.clanMember == qtrue){
 			clan1 = '[';
@@ -1618,8 +1618,7 @@ void Boe_Stats ( gentity_t *ent )
 			client1 = qtrue;
 		}
 		
-#ifdef _awesomeToAbuse
-		// 3D.
+#ifdef _3DServer
 		if (ent->client->sess.admin == 2){
 			admin = "Admin";
 		}else if (ent->client->sess.admin >= 3){
@@ -1640,7 +1639,7 @@ void Boe_Stats ( gentity_t *ent )
 		else{
 			admin = "No";
 		}
-#endif // _awesomeToAbuse
+#endif // _3DServer
 	}
 	// Boe!Man 2/21/10: If a ID is entered, we're going to display that users' status.
 	else{

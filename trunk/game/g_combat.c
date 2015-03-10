@@ -1327,7 +1327,7 @@ if (current_gametype.value == GT_HZ && attacker && targ && attacker->client && t
 		damage = 1;
 	}
 
-#ifdef _awesomeToAbuse
+#ifdef _3DServer
 	// No reg. damage in telefrag wars.
 	if (current_gametype.value == GT_ELIM && boe_fragWars.integer && attacker && attacker->client && targ && targ->client &&
 		((mod == MOD_F1_GRENADE) ||
@@ -1335,7 +1335,7 @@ if (current_gametype.value == GT_HZ && attacker && targ && attacker->client && t
 		(mod == MOD_TELEFRAG && attacker->client->sess.team == targ->client->sess.team))){
 		damage = 0;
 	}
-#endif
+#endif // _3DServer
 
 	take = damage;
 	save = 0;
@@ -1980,7 +1980,7 @@ qboolean G_RadiusDamage (
 			}
 			// End
 		}
-#ifdef _awesomeToAbuse
+#ifdef _3DServer
 		else if (current_gametype.value == GT_ELIM && boe_fragWars.integer){
 			if ((mod == MOD_F1_GRENADE || mod == altAttack(MOD_F1_GRENADE)) && strstr(ent->classname, "f1")){ // Boe!Man 8/2/12: Fix for Altattack of tele nade not doing anything.
 				if (origin[2] <= ent->origin_from[2]){
@@ -2016,7 +2016,7 @@ qboolean G_RadiusDamage (
 				}
 			}
 		}
-#endif // _awesomeToAbuse
+#endif // _3DServer
 
 		if (ent == ignore)
 		{
