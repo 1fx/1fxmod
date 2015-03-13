@@ -473,6 +473,7 @@ qboolean RPM_lockTeam(gentity_t *ent, qboolean referee, char *team)
 		return qfalse;
 	}
 
+	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 	return qtrue;
 }
 

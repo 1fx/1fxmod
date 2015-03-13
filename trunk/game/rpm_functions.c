@@ -126,7 +126,8 @@ void RPM_Unpause (gentity_t *adm)
 				}
 				ent->client->ps.pm_type = PM_NORMAL;
 			}
-			G_Broadcast("\\Go!", BROADCAST_CMD, NULL);
+			G_Broadcast("Go!", BROADCAST_CMD, NULL);
+			trap_SetConfigstring(CS_GAMETYPE_MESSAGE, va("%i,@Go!", level.time + 1000));
 		}
 	}
 }
