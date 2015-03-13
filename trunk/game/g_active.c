@@ -559,6 +559,9 @@ void SpectatorThink( gentity_t *ent, usercmd_t *ucmd )
 
 		client->ps.speed = 400;	// faster than normal
 
+		// Boe!Man 3/13/15: Fix for odd scores in spectator mode (in server info).
+		client->ps.persistant[PERS_SCORE] = client->sess.score;
+
 		// set up for pmove
 		memset (&pm, 0, sizeof(pm));
 		pm.ps = &client->ps;
@@ -1719,12 +1722,11 @@ void SpectatorClientEndFrame( gentity_t *ent )
 		
 			if ( cl->pers.connected == CON_CONNECTED && !G_IsClientSpectating ( cl ) ) 
 			{
-				int count;
-				int ping;
-				int respawnTimer;
+				int count, ping, score, respawnTimer;
 
 				count = ent->client->ps.persistant[PERS_SPAWN_COUNT];
 				ping  = ent->client->ps.ping;
+				score = ent->client->ps.persistant[PERS_SCORE]; // Boe!Man 3/13/15: Fix for odd scores in spectator mode (in server info).
 				flags = (cl->ps.eFlags & ~(EF_VOTED)) | (ent->client->ps.eFlags & (EF_VOTED));
 				respawnTimer = ent->client->ps.respawnTimer;
 
@@ -1736,6 +1738,7 @@ void SpectatorClientEndFrame( gentity_t *ent )
 				}
 				ent->client->ps.eFlags = flags;
 				ent->client->ps.persistant[PERS_SPAWN_COUNT] = count;
+				ent->client->ps.persistant[PERS_SCORE] = score; // Boe!Man 3/13/15: Fix for odd scores in spectator mode (in server info).
 				ent->client->ps.ping = ping;
 				ent->client->ps.respawnTimer = respawnTimer;
 
