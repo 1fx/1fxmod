@@ -4117,14 +4117,6 @@ qboolean ConsoleCommand( void )
 		return qtrue;
 	}
 
-	if (Q_stricmp(cmd, "testt") == 0)
-	{
-		G_Broadcast("No colour.", BROADCAST_GAME, NULL);
-		G_Broadcast("One color per message \\duh.", BROADCAST_MOTD, NULL);
-		G_Broadcast("Big \\wooping word.", BROADCAST_GAME, NULL);
-		return qtrue;
-	}
-
 	if (g_dedicated.integer) 
 	{
 		if (Q_stricmp (cmd, "say") == 0) 
@@ -4158,21 +4150,26 @@ void G_Broadcast(char *broadcast, int broadcastLevel, gentity_t *to)
 
 	// If to is NULL, we're dealing with a global message (equals old way of broadcasting to -1).
 	if (to == NULL){
-		for (i = 0; i < level.numConnectedClients; i++){
-			gentity_t* other = &g_entities[level.sortedClients[i]];
+		if (!level.pause){
+			for (i = 0; i < level.numConnectedClients; i++){
+				gentity_t* other = &g_entities[level.sortedClients[i]];
 
-			// Skip any client that isn't connected.
-			if (other->client->pers.connected != CON_CONNECTED){
-				continue;
-			}
-			// Skip any client that received a more important message in the last 5 seconds.
-			if (other->client->sess.lastMessagePriority > broadcastLevel && level.time < (other->client->sess.lastMessage + 4000)){
-				continue;
-			}
+				// Skip any client that isn't connected.
+				if (other->client->pers.connected != CON_CONNECTED){
+					continue;
+				}
+				// Skip any client that received a more important message in the last 5 seconds.
+				if (other->client->sess.lastMessagePriority > broadcastLevel && level.time < (other->client->sess.lastMessage + 4000)){
+					continue;
+				}
 			
-			trap_SendServerCommand(other-g_entities, va("cp \"@%s\n\"", newBroadcast));
-			other->client->sess.lastMessagePriority = broadcastLevel;
-			other->client->sess.lastMessage = level.time;
+				trap_SendServerCommand(other-g_entities, va("cp \"@%s\n\"", newBroadcast));
+				other->client->sess.lastMessagePriority = broadcastLevel;
+				other->client->sess.lastMessage = level.time;
+			}
+		}else{
+			// Boe!Man 3/13/15: In order to print messages during pause we need to call a different function.
+			trap_SetConfigstring(CS_GAMETYPE_MESSAGE, va("%i,@%s", level.time + 5000, newBroadcast));
 		}
 	}else if (broadcastLevel >= to->client->sess.lastMessagePriority || level.time > (to->client->sess.lastMessage + 4000)){
 		trap_SendServerCommand(to-g_entities, va("cp \"@%s\n\"", newBroadcast));
@@ -4258,6 +4255,15 @@ char *G_ColorizeMessage(char *broadcast)
 		}
 	}else{
 		strncpy(newBroadcast, broadcast, sizeof(newBroadcast));
+	}
+
+	// Boe!Man 3/13/15: Replace newlines with spaces when the game is paused.
+	if (level.pause){
+		for (i = 0; i < strlen(newBroadcast); i++){
+			if (newBroadcast[i] == '\n'){
+				newBroadcast[i] = ' ';
+			}
+		}
 	}
 
 	return newBroadcast;
