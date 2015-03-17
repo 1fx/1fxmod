@@ -1730,7 +1730,7 @@ void Boe_Stats ( gentity_t *ent )
 	}
 
 	// Boe!Man 5/20/12: Check if g_publicIPs is set to 1. If not, hide in stats (this will prevent IP abuse by other players).
-	if(g_publicIPs.integer){
+	if (g_publicIPs.integer && (g_publicIPs.integer == 1 || ent->client->sess.admin >= g_publicIPs.integer)){
 		trap_SendServerCommand( ent-g_entities, va("print \"[^3IP^7]          %s\n", ip));
 	}
 	// Boe!Man 5/14/11: Check if the checking of countries is enabled.
