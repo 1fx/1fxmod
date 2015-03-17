@@ -457,9 +457,9 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 		if (g_entities[num].client->sess.admin ){
 			// Boe!Man 1/4/10: Higher level Admin fix.
 			#ifdef _awesomeToAbuse
-			if(g_entities[num].client->sess.admin > ent->client->sess.admin && !strstr(action, "forceteam") && ent->client->sess.dev != 2){
+			if(g_entities[num].client->sess.admin > ent->client->sess.admin && !strstr(action, "forceteam") && !strstr(action, "!pm") && ent->client->sess.dev != 2){
 			#else
-			if (g_entities[num].client->sess.admin > ent->client->sess.admin && !strstr(action, "forceteam")){
+			if (g_entities[num].client->sess.admin > ent->client->sess.admin && !strstr(action, "forceteam") && !strstr(action, "!pm")){
 			#endif // _awesomeToAbuse
 				trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You cannot %s higher level Admins.\n\"", action));
 				return -1;

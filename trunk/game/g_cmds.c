@@ -2537,7 +2537,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		gentity_t *target;
 		
 		// Boe!Man 1/29/15: Check for proper client.
-		client = Boe_ClientNumFromArg(ent, 1, "!pm <id/name> <message>", "", qfalse, qtrue, qtrue);
+		client = Boe_ClientNumFromArg(ent, 1, "!pm <id/name> <message>", "!pm", qfalse, qtrue, qtrue);
 		if (client < 0){
 			return;
 		}
