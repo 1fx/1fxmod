@@ -3173,7 +3173,7 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 	trap_Cvar_VariableStringBuffer ( "mapname", level.mapname, MAX_QPATH );
 
 	//g_autoEvenTeams.integer == 1
-	if(level.time >= level.gametypeDelayTime-1000 && level.aetdone == qfalse && level.gametypeStartTime >= 5000 && g_autoEvenTeams.integer == 1 && level.cagefight != qtrue){
+	if(level.time >= level.gametypeDelayTime-50 && level.aetdone == qfalse && level.gametypeStartTime >= 5000 && g_autoEvenTeams.integer == 1 && level.cagefight != qtrue){
 		EvenTeams_HS(NULL, qtrue);
 		level.aetdone = qtrue;
 	}
