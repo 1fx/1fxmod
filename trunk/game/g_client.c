@@ -1434,11 +1434,20 @@ void ClientUserinfoChanged( int clientNum )
 	
 		// Boe!Man 12/30/09: Checking for Admin. --- Update 2/12/13
 		if(!client->sess.fileChecked && !(ent->r.svFlags & SVF_BOT)){
+			char ip[MAX_IP];
+
+			// Boe!Man 3/17/15: Use a part of the IP when the user wants to use subnets rather than full IPs.
+			if (g_preferSubnets.integer){
+				Q_strncpyz(ip, client->pers.ip, 7);
+			}else{
+				strncpy(ip, client->pers.ip, sizeof(ip));
+			}
+
 			if(!client->sess.admin){
-				client->sess.admin = Boe_checkAdmin(client->pers.ip, client->pers.cleanName);
+				client->sess.admin = Boe_checkAdmin(ip, client->pers.cleanName);
 			}
 			if(!client->sess.clanMember){
-				client->sess.clanMember = Boe_checkClanMember(client->pers.ip, client->pers.cleanName);
+				client->sess.clanMember = Boe_checkClanMember(ip, client->pers.cleanName);
 			}
 			if(g_aliasCheck.integer > 0){
 				if(sql_timeBench.integer){
@@ -1764,13 +1773,23 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 
 	// Boe!Man 12/30/09: Checking for Admin.
 	if(!ent->client->sess.fileChecked && !(ent->r.svFlags & SVF_BOT)){
-		if(!client->sess.admin){
-			client->sess.admin = Boe_checkAdmin(client->pers.ip, client->pers.cleanName);
+		char ip[MAX_IP];
+
+		// Boe!Man 3/17/15: Use a part of the IP when the user wants to use subnets rather than full IPs.
+		if (g_preferSubnets.integer){
+			Q_strncpyz(ip, client->pers.ip, 7);
+		}else{
+			strncpy(ip, client->pers.ip, sizeof(ip));
 		}
-		if(!client->sess.clanMember){
-			client->sess.clanMember = Boe_checkClanMember(client->pers.ip, client->pers.cleanName);
+
+		if (!client->sess.admin){
+			client->sess.admin = Boe_checkAdmin(ip, client->pers.cleanName);
+		}
+		if (!client->sess.clanMember){
+			client->sess.clanMember = Boe_checkClanMember(ip, client->pers.cleanName);
 		}
 	}
+
 	// Boe!Man 10/25/10: Checking for Clonecheck.
 	if(g_aliasCheck.integer > 1 && !(ent->r.svFlags & SVF_BOT)){
 		if(sql_timeBench.integer){

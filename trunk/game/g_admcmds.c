@@ -200,7 +200,11 @@ static void adm_addAdmin_f(int argNum, gentity_t *adm, qboolean shortCmd, int le
 			return;
 		}
 	}else{
-		strcpy(ip, g_entities[idNum].client->pers.ip);
+		if (!g_preferSubnets.integer){
+			Q_strncpyz(ip, g_entities[idNum].client->pers.ip, sizeof(ip));
+		}else{
+			Q_strncpyz(ip, g_entities[idNum].client->pers.ip, 7);
+		}
 	}
 
 	// Boe!Man 12/12/12: Check the names, SQLite has massive problems when using quotes in the (updated) query.
@@ -1511,6 +1515,7 @@ int adm_addClanMember(int argNum, gentity_t *adm, qboolean shortCmd)
 	int         idNum;
 	char		clientName[MAX_NETNAME];
 	char		admName[MAX_NETNAME];
+	char		ip[MAX_IP];
 	sqlite3		*db;
 
 	idNum = Boe_ClientNumFromArg(adm, argNum, "addclan <id/name>", "do this to", qfalse, qtrue, shortCmd);
@@ -1538,12 +1543,19 @@ int adm_addClanMember(int argNum, gentity_t *adm, qboolean shortCmd)
 		strcpy(admName, "RCON");
 	}
 
+	// Boe!Man 3/17/15: Check if the server owner has subnets rather than full IPs enabled.
+	if (g_preferSubnets.integer){
+		Q_strncpyz(ip, g_entities[idNum].client->pers.ip, 7);
+	}else{
+		Q_strncpyz(ip, g_entities[idNum].client->pers.ip, sizeof(ip));
+	}
+
 	// Boe!Man 2/6/13: Add Clan Member to the database.
 	// Boe!Man 5/27/13: Open database.
 	db = usersDb;
 
 	// Boe!Man 2/6/13: Insert query.
-	if (sqlite3_exec(db, va("INSERT INTO clanmembers (IP, name, by) values ('%s', '%s', '%s')", g_entities[idNum].client->pers.ip, clientName, admName), 0, 0, 0) != SQLITE_OK){
+	if (sqlite3_exec(db, va("INSERT INTO clanmembers (IP, name, by) values ('%s', '%s', '%s')", ip, clientName, admName), 0, 0, 0) != SQLITE_OK){
 		if (adm){
 			trap_SendServerCommand(adm-g_entities, va("print \"^1[Error] ^7users database: %s\n\"", sqlite3_errmsg(db)));
 		}
