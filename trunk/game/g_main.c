@@ -396,7 +396,7 @@ static cvarTable_t gameCvarTable[] =
 
 	{ &g_allowVote, "g_allowVote", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 	{ &g_voteDuration, "g_voteDuration", "60", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
-	{ &g_failedVoteDelay, "g_failedVoteDelay", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
+	{ &g_failedVoteDelay, "g_failedVoteDelay", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 	{ &g_callvote, "g_callvote", "4", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 	{ &g_listEntity, "g_listEntity", "0", 0, 0.0, 0.0, 0, qfalse },
 

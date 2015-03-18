@@ -2997,9 +2997,11 @@ void Cmd_CallVote_f( gentity_t *ent )
 		return;
 	}
 	
-	if( ent->client->sess.admin < g_callvote.integer){
-		trap_SendServerCommand( ent-g_entities, "print \"Your admin level is too low to be able to call a vote.\n\"");
-		return;
+	if (g_callvote.integer > 1){
+		if( ent->client->sess.admin < g_callvote.integer){
+			trap_SendServerCommand( ent-g_entities, "print \"Your admin level is too low to be able to call a vote.\n\"");
+			return;
+		}
 	}
 		
 	// Save the voting client id
