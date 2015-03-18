@@ -608,7 +608,8 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 						if ( arg2 == TEAM_BLUE || g_caserun.integer )
 						{
 							G_Broadcast(va("%s\nhas \\taken the briefcase!", g_entities[arg1].client->pers.netname), BROADCAST_GAME, NULL);
-							trap_SendServerCommand(-1, va("print\"^3[INF] %s ^7has taken the briefcase.\n\"", g_entities[arg1].client->pers.netname));
+							trap_SendServerCommand(-1, va("print\"^3[%s] %s ^7has taken the briefcase.\n\"", (g_caserun.integer) ? "CR" : "INF", g_entities[arg1].client->pers.netname));
+
 							// Boe!Man 11/29/12: Global sound.
 							if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime){
 								gentity_t* tent;

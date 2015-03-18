@@ -325,7 +325,7 @@ void RPM_Obituary ( gentity_t *target, gentity_t *attacker, int mod, attackType_
 				//heashot message with the "you killed" message
 				if ( level.gametypeData->showKills )
 				{	
-					message2 = G_ColorizeMessage("Headshot!");
+					message2 = G_ColorizeMessage("Headshot!\n");
 				}
 
 				//We'll tack this on to the end of the kill broadcast to all
