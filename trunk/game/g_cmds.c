@@ -2967,7 +2967,7 @@ void Cmd_CallVote_f( gentity_t *ent )
 		return;
 	}
 
-	if ( level.numConnectedClients > 1 && level.numVotingClients == 1 ) 
+	if ( level.numConnectedClients >= 1 && level.numVotingClients == 1 ) 
 	{
 		trap_SendServerCommand( ent-g_entities, "print \"You need at least 2 clients to call a vote.\n\"" );
 		return;
@@ -3146,16 +3146,15 @@ void Cmd_CallVote_f( gentity_t *ent )
 
 	trap_SendServerCommand( -1, va("print \"%s called a vote.\n\"", ent->client->pers.netname ) );
 
-	// start the voting, the caller autoamtically votes yes
+	// start the voting.
 	level.voteTime = level.time;
-	level.voteYes = 1;
+	level.voteYes = 0;
 	level.voteNo = 0;
 
 	for ( i = 0 ; i < level.maxclients ; i++ ) 
 	{
 		level.clients[i].ps.eFlags &= ~EF_VOTED;
 	}
-	ent->client->ps.eFlags |= EF_VOTED;
 
 	trap_SetConfigstring( CS_VOTE_TIME, va("%i,%i", level.voteTime, g_voteDuration.integer*1000 ) );
 	trap_SetConfigstring( CS_VOTE_STRING, level.voteDisplayString );	
