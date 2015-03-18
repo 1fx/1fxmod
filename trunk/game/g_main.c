@@ -1415,6 +1415,13 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 		InitSpawn(6);
 	}
 
+	#ifdef _DEBUG
+	// Boe!Man 3/19/15: For /dev bsp.
+	if (current_gametype.value != GT_HS){
+		InitSpawn(2);
+	}
+	#endif // _DEBUG
+
 	// Now parse the gametype information that we need.  This needs to be
 	// done after the entity spawn so that the items and triggers can be
 	// linked up properly
