@@ -48,9 +48,11 @@ elif [ "$choice" == "3" ]; then
 	echo -n "Enter your choice and press [ENTER]: "
 	read choice
 	if [ "$choice" == "1" ]; then
+		clear
 		echo -e "Building a regular \e[00;36m Pre-release build\e[00m"
 	elif [ "$choice" == "2" ]; then
 		buildoptions="$buildoptions -D_3DServer"
+		clear
 		echo -e "Building a 3D-specific \e[00;36m Pre-release build\e[00m"
 	else
 		echo "Invalid choice specified, exitting.."
