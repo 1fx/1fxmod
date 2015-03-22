@@ -62,6 +62,13 @@ int Pickup_Weapon (gentity_t *ent, gentity_t *other, qboolean* autoswitch )
 	int			weaponNum = ent->item->giTag;
 	qboolean	hasAltAmmo;
 
+	#ifdef _3DServer
+	// Monkeys can't pickup weapons.
+	if (other->client->sess.deadMonkey){	
+		return;
+	}
+	#endif // _3DServer
+
 	if(current_gametype.value == GT_HS){
 		// Henk 26/01/10 -> Notification if people pickup special weapons
 		if(other){
