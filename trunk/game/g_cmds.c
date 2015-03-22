@@ -4340,8 +4340,15 @@ void Boe_forceSay(gentity_t *adm)
 #ifdef _3DServer
 void Boe_switchGhost(gentity_t *ent)
 {
+	
+	if (current_gametype.value != GT_HS){
+		trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7This command only works in Hide&Seek!\n\""));
+		return;
+	}
+
 	// System must be enabled.
-	if (!boe_deadMonkey.integer || current_gametype.value != GT_HS){
+	if (!boe_deadMonkey.integer){
+		trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7This feature is disabled on the server!\n\""));
 		return;
 	}
 
