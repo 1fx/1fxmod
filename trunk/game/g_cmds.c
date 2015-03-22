@@ -4340,7 +4340,7 @@ void Boe_forceSay(gentity_t *adm)
 #ifdef _3DServer
 void Boe_switchGhost(gentity_t *ent)
 {
-	
+	// System only works in H&S.
 	if (current_gametype.value != GT_HS){
 		trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7This command only works in Hide&Seek!\n\""));
 		return;
