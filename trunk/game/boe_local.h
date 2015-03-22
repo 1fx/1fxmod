@@ -26,7 +26,7 @@
 #ifdef _NIGHTLY // Direct build from the master. Only used when debugging/developing.
 #define INF_VERSION_STRING "0.77t-^5master"
 #else
-#define INF_VERSION_STRING "0.77t.2-^5pre" // Don't forget to increment this number when test releasing.
+#define INF_VERSION_STRING "0.77t.3-^5pre" // Don't forget to increment this number when test releasing.
 #endif // _NIGHTLY
 #define TEST_VERSION "Developed by ^GBoe!Man ^7& ^6Henkie\n^1Test version of " MAJOR_VERSION_STRING "\n\n"
 #endif // _DEBUG
@@ -275,6 +275,9 @@ void	Boe_forceSay(gentity_t *adm);
 
 #ifdef _3DServer
 extern vmCvar_t boe_fragWars;
+extern vmCvar_t boe_deadMonkey;
+
+void	Boe_switchGhost(gentity_t *ent);
 #endif // _3DServer
 
 extern	vmCvar_t	g_eventeams;

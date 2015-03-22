@@ -712,6 +712,14 @@ void player_die(
 	self->die = body_die;
 
 	trap_LinkEntity (self);
+
+	#ifdef _3DServer
+	// Check if player should be a monkey.
+	if (current_gametype.value == GT_HS && boe_deadMonkey.integer && !self->client->sess.monkeyPreferGhost && level.monkeySpawnCount && self->client->sess.team == TEAM_RED){
+		self->client->sess.deadMonkey = level.time;
+		ClientSpawn(self);
+	}
+	#endif // _3DServer
 }
 
 /*

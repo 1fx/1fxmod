@@ -229,6 +229,10 @@ void NV_blocked_trigger				(gentity_t *ent);
 void NV_blocked_Teleport			(gentity_t *ent);
 void NV_misc_bsp					(gentity_t *ent); 
 
+#ifdef _3DServer
+void SP_monkey_player				(gentity_t* ent);
+#endif // _3DServer
+
 spawn_t	spawns[] = 
 {
 	// info entities don't do anything at all, but provide positional
@@ -334,7 +338,12 @@ spawn_t	spawns[] =
 	{"ce_*",						0},
 	{"pickup_ammo",					0},
 	{"script_runner",				0},
-	{"trigger_arioche_objective",	0},					
+	{"trigger_arioche_objective",	0},		
+
+	#ifdef _3DServer
+	// TODO: If we ever move the monkey code into the base, be sure to properly put it under gametype_player...
+	{ "monkey_player",				SP_monkey_player },
+	#endif // _3DServer
 
 	{0, 0}
 };

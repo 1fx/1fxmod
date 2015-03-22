@@ -291,7 +291,7 @@ void QDECL Boe_adminLog( const char *command, const char *by, const char *to, ..
 //
 // Boe!Man 12/20/09
 void ExitLevel( void );
-gspawn_t* G_SelectRandomSafeSpawnPoint ( team_t team, float safeDistance );
+gspawn_t* G_SelectRandomSafeSpawnPoint ( team_t team, float safeDistance, gclient_t *client );
 
 chatSounds_t chatSounds[MAX_BOE_CHATS];
 

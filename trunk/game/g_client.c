@@ -22,7 +22,7 @@ adds a spawnpoint to the spawnpoint array using the given entity for
 origin and angles as well as the team for filtering teams.
 ================
 */
-void G_AddClientSpawn ( gentity_t* ent, team_t team )
+void G_AddClientSpawn ( gentity_t* ent, team_t team, qboolean monkey )
 {
 	static vec3_t	mins = {-15,-15,-45};
 	static vec3_t	maxs = {15,15,46};
@@ -30,6 +30,8 @@ void G_AddClientSpawn ( gentity_t* ent, team_t team )
 	vec3_t			newAngles;
 	char			*newAngle;
 	trace_t			tr;
+	int				*spawnCount;
+	gspawn_t		*spawns;
 
 	// Drop it to the ground, and if it starts solid just throw it out
 	VectorCopy ( ent->s.origin, end );
@@ -57,28 +59,45 @@ void G_AddClientSpawn ( gentity_t* ent, team_t team )
 
 	if ( tr.startsolid )
 	{
-		Com_Printf ( S_COLOR_YELLOW "WARNING: gametype_player starting in solid at %.2f,%.2f,%.2f\n", ent->s.origin[0], ent->s.origin[1], ent->s.origin[2] );
+		#ifdef _3DServer
+		Com_Printf(S_COLOR_YELLOW "WARNING: %s starting in solid at %.2f,%.2f,%.2f\n", (monkey) ? "monkey_player" : "gametype_player", ent->s.origin[0], ent->s.origin[1], ent->s.origin[2]);
+		#else
+		Com_Printf(S_COLOR_YELLOW "WARNING: gametype_player starting in solid at %.2f,%.2f,%.2f\n", ent->s.origin[0], ent->s.origin[1], ent->s.origin[2]);
+		#endif // _3DServer
 	}
 
-	level.spawns[level.spawnCount].team = team;
+	#ifdef _3DServer
+	if (monkey){
+		spawns = &level.monkeySpawns[level.monkeySpawnCount];
+		spawnCount = &level.monkeySpawnCount;
+	}else{
+		spawns = &level.spawns[level.spawnCount];
+		spawnCount = &level.spawnCount;
+	}
+	#else
+	spawns = &level.spawns;
+	spawnCount = &level.spawnCount;
+	#endif // _3DServer
+
+	spawns->team = team;
 
 	// Release the entity and store the spawn in its own array
-	VectorCopy ( ent->s.origin, level.spawns[level.spawnCount].origin );
+	VectorCopy ( ent->s.origin, spawns->origin );
 	
 	// Boe!Man 7/22/13: We use this code for determining the angle, using a float isn't fool-proof here (as with NV_misc_bsp).
 	if(G_SpawnVector("angles", "0 0 0", newAngles)){
-		level.spawns[level.spawnCount].angles[0] = newAngles[0];
-		level.spawns[level.spawnCount].angles[1] = newAngles[1];
-		level.spawns[level.spawnCount].angles[2] = newAngles[2];
+		spawns->angles[0] = newAngles[0];
+		spawns->angles[1] = newAngles[1];
+		spawns->angles[2] = newAngles[2];
 	}else if(G_SpawnString("angle", "0", &newAngle)){
-		VectorClear ( level.spawns[level.spawnCount].angles );
-		sscanf(newAngle, "%f", &level.spawns[level.spawnCount].angles[1]);
+		VectorClear(spawns->angles);
+		sscanf(newAngle, "%f", &spawns->angles[1]);
 	}else{
-		VectorClear ( level.spawns[level.spawnCount].angles );
+		VectorClear ( spawns->angles );
 	}
 
 	// Increase the spawn count
-	level.spawnCount++;
+	(*spawnCount)++;
 }
 
 /*QUAKED info_player_deathmatch (1 0 1) (-16 -16 -46) (16 16 48) initial
@@ -95,7 +114,7 @@ void SP_info_player_deathmatch( gentity_t *ent )
 		return;
 	}
 
-	G_AddClientSpawn ( ent, TEAM_FREE );
+	G_AddClientSpawn ( ent, TEAM_FREE, qfalse );
 
 	G_FreeEntity ( ent );
 }
@@ -153,10 +172,10 @@ G_SelectRandomSpawnPoint
 go to a random point that doesn't telefrag
 ================
 */
-gspawn_t* G_SelectRandomSpawnPoint ( team_t team )
+gspawn_t* G_SelectRandomSpawnPoint ( team_t team, gclient_t *client )
 {
 	int			i;
-	int			count;
+	int			count, sCount;
 	int			tfcount;
 	gspawn_t	*spawns[MAX_SPAWNS];
 	gspawn_t	*tfspawns[MAX_SPAWNS];
@@ -164,9 +183,28 @@ gspawn_t* G_SelectRandomSpawnPoint ( team_t team )
 	count = 0;
 	tfcount = 0;
 
-	for ( i = 0; i < level.spawnCount; i ++ )
+#ifdef _3DServer
+	if (client && client->sess.deadMonkey){
+		sCount = level.monkeySpawnCount;
+	}else{
+		sCount = level.spawnCount;
+	}
+#else
+	sCount = level.spawnCount;
+#endif // _3DServer
+
+	for ( i = 0; i < sCount; i ++ )
 	{
+		#ifdef _3DServer
+		gspawn_t* spawn;
+		if (client && client->sess.deadMonkey){
+			spawn = &level.monkeySpawns[i];
+		}else{
+			spawn = &level.spawns[i];
+		}
+		#else
 		gspawn_t* spawn = &level.spawns[i];
+		#endif // _3DServer
 
 		if ( team != -1 && team != spawn->team )
 		{
@@ -209,21 +247,41 @@ Select a random spawn point that is safe for the client to spawn at.  A safe spa
 is one that is at least a certain distance from another client.
 ============
 */
-gspawn_t* G_SelectRandomSafeSpawnPoint ( team_t team, float safeDistance )
+gspawn_t* G_SelectRandomSafeSpawnPoint ( team_t team, float safeDistance, gclient_t *client )
 {
 	gspawn_t*	spawns[MAX_SPAWNS];
 	float		safeDistanceSquared;
-	int			count;
+	int			count, sCount;
 	int			i;
 
 	// Square the distance for faster comparisons
 	safeDistanceSquared = safeDistance * safeDistance;
 
+	#ifdef _3DServer
+	if (client && client->sess.deadMonkey){
+		sCount = level.monkeySpawnCount;
+	}else{
+		sCount = level.spawnCount;
+	}
+	#else
+	sCount = level.spawnCount;
+	#endif // _3DServer
+
 	// Build a list of spawns
-	for ( i = 0, count = 0; i < level.spawnCount; i ++ )
+	for ( i = 0, count = 0; i < sCount; i ++ )
 	{
-		gspawn_t* spawn = &level.spawns[i];
 		int		  j;
+
+		#ifdef _3DServer
+		gspawn_t* spawn;
+		if (client && client->sess.deadMonkey){
+			spawn = &level.monkeySpawns[i];
+		}else{
+			spawn = &level.spawns[i];
+		}
+		#else
+		gspawn_t* spawn = &level.spawns[i];
+		#endif // _3DServer
 
 		// Ensure the team matches
 		if ( team != -1 && team != spawn->team )
@@ -284,11 +342,11 @@ gspawn_t* G_SelectRandomSafeSpawnPoint ( team_t team, float safeDistance )
 		// Gotta stop somewhere
 		if ( safeDistance / 2 < 250 )
 		{
-			return G_SelectRandomSpawnPoint ( team );
+			return G_SelectRandomSpawnPoint ( team, client );
 		}
 		else
 		{
-			return G_SelectRandomSafeSpawnPoint ( team, safeDistance / 2 );
+			return G_SelectRandomSafeSpawnPoint ( team, safeDistance / 2, client );
 		}
 	}
 
@@ -628,6 +686,12 @@ qboolean G_IsClientDead ( gclient_t* client )
 	{
 		return qtrue;
 	}
+
+	#ifdef _3DServer
+	if (client->sess.team == TEAM_RED && client->sess.deadMonkey){
+		return qtrue;
+	}
+	#endif // _3DServer
 
 	return qfalse;
 }
@@ -1941,11 +2005,8 @@ gspawn_t* G_SelectClientSpawnPoint ( gentity_t* ent,  qboolean plantsk )
 {
 	gclient_t*	client = ent->client;
 	gspawn_t*	spawnPoint;
-	//Ryan
 	int			team;
-	//Ryan
-
-	//Ryan
+	
 	if( plantsk)
 	{
 		if(ent->client->sess.team == TEAM_RED)
@@ -1961,9 +2022,8 @@ gspawn_t* G_SelectClientSpawnPoint ( gentity_t* ent,  qboolean plantsk )
 	{
 		team = ent->client->sess.team;
 	}
-	//Ryan
 
-		// find a spawn point
+	// find a spawn point
 	// do it before setting health back up, so farthest
 	// ranging doesn't count this client
 	if ( client->sess.team == TEAM_SPECTATOR )
@@ -1980,14 +2040,14 @@ gspawn_t* G_SelectClientSpawnPoint ( gentity_t* ent,  qboolean plantsk )
 			{
 				//Ryan
 				//spawnPoint = G_SelectRandomSpawnPoint ( ent->client->sess.team );
-				spawnPoint = G_SelectRandomSpawnPoint ( (team_t)team );
+				spawnPoint = G_SelectRandomSpawnPoint ( (team_t)team, ent->client );
 				//Ryan
 			}
 			else
 			{
 				//Ryan
 				//spawnPoint = G_SelectRandomSafeSpawnPoint ( ent->client->sess.team, 1500 );
-				spawnPoint = G_SelectRandomSafeSpawnPoint ( (team_t)team, 1500 );
+				spawnPoint = G_SelectRandomSafeSpawnPoint ( (team_t)team, 1500, ent->client );
 				//Ryan
 			}
 
@@ -1996,37 +2056,37 @@ gspawn_t* G_SelectClientSpawnPoint ( gentity_t* ent,  qboolean plantsk )
 				// don't spawn near other players if possible
 				//Ryan
 				//spawnPoint = G_SelectRandomSpawnPoint ( ent->client->sess.team );
-				spawnPoint = G_SelectRandomSpawnPoint ( (team_t)team );
+				spawnPoint = G_SelectRandomSpawnPoint ( (team_t)team, ent->client );
 				//Ryan
 			}
 
 			// Spawn at any deathmatch spawn, telefrag if needed
 			if ( !spawnPoint )
 			{
-				spawnPoint = G_SelectRandomSpawnPoint ( TEAM_FREE );
+				spawnPoint = G_SelectRandomSpawnPoint ( TEAM_FREE, ent->client );
 			}
 		}
 		else
 		{
 			// Try deathmatch spawns first
-			spawnPoint = G_SelectRandomSafeSpawnPoint ( TEAM_FREE, 1500 );
+			spawnPoint = G_SelectRandomSafeSpawnPoint ( TEAM_FREE, 1500, ent->client );
 
 			// If none found use any spawn
 			if ( !spawnPoint )
 			{
-				spawnPoint = G_SelectRandomSafeSpawnPoint ( (team_t)-1, 1500 );
+				spawnPoint = G_SelectRandomSafeSpawnPoint ( (team_t)-1, 1500, ent->client );
 			}
 
 			// Spawn at any deathmatch spawn, telefrag if needed
 			if ( !spawnPoint )
 			{
-				spawnPoint = G_SelectRandomSpawnPoint ( TEAM_FREE );
+				spawnPoint = G_SelectRandomSpawnPoint ( TEAM_FREE, ent->client );
 			}
 
 			// Spawn at any gametype spawn, telefrag if needed
 			if ( !spawnPoint )
 			{
-				spawnPoint = G_SelectRandomSpawnPoint ( (team_t)-1 );
+				spawnPoint = G_SelectRandomSpawnPoint ( (team_t)-1, ent->client );
 			}
 		}
 	}
@@ -2066,6 +2126,12 @@ void ClientSpawn(gentity_t *ent)
 
 	index  = ent - g_entities;
 	client = ent->client;
+
+	#ifdef _3DServer
+	if (level.time != ent->client->sess.deadMonkey){
+		ent->client->sess.deadMonkey = 0;
+	}
+	#endif // _3DServer
 
 	// Where do we spawn?
 	//Ryan
@@ -2150,10 +2216,37 @@ void ClientSpawn(gentity_t *ent)
 	//give default weapons
 	client->ps.stats[STAT_WEAPONS] = ( 1 << WP_NONE );
 
-   	client->noOutfittingChange = qfalse;
+	#ifdef _3DServer
+	if (ent->client->sess.deadMonkey){
+		char *info;
+
+		// Toggle godmode on monkeys.
+		ent->flags |= FL_GODMODE;
+
+		// No outfitting changes.
+		ent->client->noOutfittingChange = qtrue;
+
+		// Show players the possibility to switch to ghost.
+		info = G_ColorizeMessage("\\Info:");
+		trap_SendServerCommand(ent - g_entities, va("chat -1 \"%s You've been respawned as a ghost in a temporary instance.\n\"", info));
+		trap_SendServerCommand(ent - g_entities, va("chat -1 \"%s You can wait around here until the new round starts.\n\"", info));
+		trap_SendServerCommand(ent - g_entities, va("chat -1 \"%s If you don't want this, you can switch back using the ^3/ghost^7 command.\n\"", info));
+
+		ent->client->ps.weapon = WP_NONE;
+	}
+	else{
+		ent->client->noOutfittingChange = qfalse;
+	}
+	#else
+	client->noOutfittingChange = qfalse;
+	#endif // _3DServer
 
 	// Give the client their weapons depending on whether or not pickups are enabled
+	#ifdef _3DServer
+	if (level.pickupsDisabled && !ent->client->sess.deadMonkey)
+	#else 
 	if ( level.pickupsDisabled )
+	#endif // _3DServer
 	{
 		// GRIM 15/04/2003 11:32PM
 #ifdef _SOF2_BOTS
@@ -2214,13 +2307,17 @@ void ClientSpawn(gentity_t *ent)
 			client->ps.weaponstate = WEAPON_READY;
 #endif // _3DServer
 		}else{
-		G_UpdateOutfitting ( ent->s.number );
+			G_UpdateOutfitting ( ent->s.number );
 		}
 		// Prevent the client from picking up a whole bunch of stuff
 		//if(current_gametype.value != GT_HZ)
 		client->ps.pm_flags |= PMF_LIMITED_INVENTORY;
 	}
+	#ifdef _3DServer
+	else if (!ent->client->sess.deadMonkey)
+	#else
 	else
+	#endif // _3DServer
 	{
 		// Knife.
 		client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_KNIFE );
@@ -2424,7 +2521,13 @@ void ClientSpawn(gentity_t *ent)
 			level.gametypeJoinTime = level.time;
 		}
 	}
-	if(current_gametype.value == GT_HS || current_gametype.value == GT_HZ){
+	
+	#ifdef _3DServer
+	if((current_gametype.value == GT_HS && !ent->client->sess.deadMonkey) || current_gametype.value == GT_HZ)
+	#else
+	if (current_gametype.value == GT_HS || current_gametype.value == GT_HZ)
+	#endif // _3DServer
+	{
 		// Henk 19/01/10 -> Start with knife
 		ent->client->ps.ammo[weaponData[WP_KNIFE].attack[ATTACK_ALTERNATE].ammoIndex]=0;
 		ent->client->ps.weapon = WP_KNIFE;

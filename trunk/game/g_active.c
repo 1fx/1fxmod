@@ -295,7 +295,12 @@ void G_TouchTriggers( gentity_t *ent )
 	}
 
 	// dead clients don't activate triggers!
+	#ifdef _3DServer
+	// Unless they're monkey!
+	if ( G_IsClientDead ( ent->client ) && !ent->client->sess.deadMonkey ) 
+	#else
 	if ( G_IsClientDead ( ent->client ) ) 
+	#endif // _3DServer
 	{
 		return;
 	}

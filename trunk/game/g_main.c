@@ -319,6 +319,7 @@ vmCvar_t	g_debug;
 
 #ifdef _3DServer
 vmCvar_t	boe_fragWars;
+vmCvar_t	boe_deadMonkey;
 #endif // _3DServer
 
 static cvarTable_t gameCvarTable[] =
@@ -669,6 +670,7 @@ static cvarTable_t gameCvarTable[] =
 
 #ifdef _3DServer
 	{ &boe_fragWars, "3d_fragWars", "0", CVAR_ARCHIVE | CVAR_LATCH, 0.0, 0.0, 0, qfalse },
+	{ &boe_deadMonkey, "3d_deadMonkey", "0", CVAR_ARCHIVE | CVAR_LATCH, 0.0, 0.0, 0, qfalse },
 #endif // _3DServer
 };
 
@@ -1968,7 +1970,7 @@ void FindIntermissionPoint( void )
 	ent = G_Find (NULL, FOFS(classname), "info_player_intermission");
 	if ( !ent )
 	{
-		gspawn_t* spawn = G_SelectRandomSpawnPoint ( (team_t)-1 );
+		gspawn_t* spawn = G_SelectRandomSpawnPoint ( (team_t)-1, NULL );
 		if ( spawn )
 		{
 			VectorCopy (spawn->origin, level.intermission_origin);
@@ -3222,7 +3224,7 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 			}
 		}else{
 			if(hideSeek_Extra.string[BRIEFCASE] == '1'){
-				spawnPoint = G_SelectRandomSpawnPoint ( TEAM_BLUE );
+				spawnPoint = G_SelectRandomSpawnPoint ( TEAM_BLUE, NULL );
 				// Boe!Man 5/7/12: Fixing crash issue. The briefcase MUST have a location to spawn.
 				if(spawnPoint){
 					G_RealSpawnGametypeItem1 ( BG_FindGametypeItem (0), spawnPoint->origin, spawnPoint->angles, qtrue );
@@ -3256,7 +3258,7 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 			G_Broadcast("You now have the \\RPG!", BROADCAST_GAME, &g_entities[rpgwinner]);
 			// End
 		}else if(rpgwinner >= 100 && m4winner < 100){
-				spawnPoint = G_SelectRandomSpawnPoint ( TEAM_BLUE );
+				spawnPoint = G_SelectRandomSpawnPoint ( TEAM_BLUE, NULL );
 				// Boe!Man 5/7/12: Fixing crash issue. The RPG MUST have a location to spawn.
 				if(spawnPoint){
 					dropped = G_DropItem2(spawnPoint->origin, spawnPoint->angles, BG_FindWeaponItem ( WP_RPG7_LAUNCHER ));
@@ -3355,7 +3357,7 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
 				break;
 			}
 		}else{
-			spawnPoint = G_SelectRandomSpawnPoint ( TEAM_BLUE );
+			spawnPoint = G_SelectRandomSpawnPoint ( TEAM_BLUE, NULL );
 			// Boe!Man 5/7/12: Fixing crash issue. The M4 MUST have a location to spawn.
 			if(spawnPoint){
 				dropped = G_DropItem2(spawnPoint->origin, spawnPoint->angles, BG_FindWeaponItem ( WP_M4_ASSAULT_RIFLE ));

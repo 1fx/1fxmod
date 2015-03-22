@@ -421,6 +421,12 @@ typedef struct
 	// Boe!Man 2/2/15: 
 	int			lastPmClient;					// Last person the client talked to.
 	int			lastPmClientChange;				// level.time of when the last client change took place.
+
+	#ifdef _3DServer
+	// Boe!Man 3/19/15: deadMonkey.
+	int			deadMonkey;
+	qboolean	monkeyPreferGhost;
+	#endif // _3DServer
 } clientSession_t;
 
 // Boe!Man 3/30/10
@@ -735,6 +741,12 @@ typedef struct
 
 	gspawn_t		spawns[MAX_SPAWNS];
 	int				spawnCount;
+
+	#ifdef _3DServer
+	// Boe!Man 3/20/15: The dead monkey spawns.
+	gspawn_t		monkeySpawns[MAX_SPAWNS];
+	int				monkeySpawnCount;
+	#endif // _3DServer
 
 	qboolean		pickupsDisabled;
 
@@ -1130,7 +1142,7 @@ qboolean	G_SpotWouldTelefrag				( gspawn_t* spawn );
 void		G_UpdateClientAnimations		( gentity_t* ent );
 void		G_SetRespawnTimer				( gentity_t* ent );
 gentity_t*	G_FindNearbyClient				( vec3_t origin, team_t team, float radius, gentity_t* ignore );
-void		G_AddClientSpawn				( gentity_t* ent, team_t team );
+void		G_AddClientSpawn				( gentity_t* ent, team_t team, qboolean monkey );
 
 //
 // g_svcmds.c
@@ -1296,7 +1308,7 @@ void		ClientDisconnect					( int clientNum );
 void		ClientBegin							( int clientNum, qboolean setTime );
 //Ryan
 void		ClientCommand						( int clientNum );
-gspawn_t*	G_SelectRandomSpawnPoint			( team_t team );
+gspawn_t*	G_SelectRandomSpawnPoint			( team_t team, gclient_t *client );
 int			G_GametypeCommand					( int cmd, int arg0, int arg1, int arg2, int arg3, int arg4 );
 
 //

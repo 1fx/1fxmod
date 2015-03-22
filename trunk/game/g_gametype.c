@@ -63,7 +63,7 @@ void SP_gametype_player ( gentity_t *ent )
 		}
 	}
 
-	G_AddClientSpawn ( ent, team );
+	G_AddClientSpawn ( ent, team, qfalse );
 
 	G_FreeEntity ( ent );
 }
@@ -74,6 +74,24 @@ void SP_mission_player ( gentity_t* ent )
 
 	SP_gametype_player ( ent );
 }
+
+#ifdef _3DServer
+/*QUAKED monkey_player (0 1 0) (-16 -16 -46) (16 16 48)
+Potential spawning position for dead monkey players in the Hide&Seek gametype.
+*/
+void SP_monkey_player(gentity_t *ent)
+{
+	// Cant take any more spawns!!
+	if (level.monkeySpawnCount >= MAX_SPAWNS)
+	{
+		G_FreeEntity(ent);
+		return;
+	}
+
+	G_AddClientSpawn(ent, (team_t)TEAM_RED, qtrue);
+	G_FreeEntity(ent);
+}
+#endif // _3DServer
 
 void gametype_trigger_use ( gentity_t *self, gentity_t *other, gentity_t *activator ) 
 {

@@ -476,7 +476,11 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
 
 	if(aliveOnly)
 	{
+		#ifdef _3DServer
+		if ( G_IsClientDead ( g_entities[num].client ) && !g_entities[num].client->sess.deadMonkey)
+		#else
 		if ( G_IsClientDead ( g_entities[num].client ) )
+		#endif // _3DServer
 		{
 			if(ent && ent->client)
 			{

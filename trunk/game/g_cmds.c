@@ -279,6 +279,7 @@ void DeathmatchScoreboardMessage( gentity_t *ent )
 	for (i=0 ; i < numSorted ; i++)
 	{
 		int	ping;
+		qboolean ghost;
 
 		cl = &level.clients[level.sortedClients[i]];
 
@@ -290,6 +291,13 @@ void DeathmatchScoreboardMessage( gentity_t *ent )
 		{
 			ping = cl->ps.ping < 999 ? cl->ps.ping : 999;
 		}
+
+		ghost = cl->sess.ghost;
+		#ifdef _3DServer
+		if (!ghost && cl->sess.deadMonkey){
+			ghost = qtrue;
+		}
+		#endif // _3DServer
 	
 		//Ryan may 12 2004
 		//Add some info for client-side users
@@ -304,7 +312,7 @@ void DeathmatchScoreboardMessage( gentity_t *ent )
 				(current_gametype.value != GT_HZ) ? cl->sess.deaths : cl->sess.killsAsZombie,
 				ping,
 				(level.time - cl->pers.enterTime)/60000,
-				(cl->sess.ghost || cl->ps.pm_type == PM_DEAD) ? qtrue : qfalse,
+				(ghost || cl->ps.pm_type == PM_DEAD) ? qtrue : qfalse,
 				g_entities[level.sortedClients[i]].s.gametypeitems,
 				g_teamkillDamageMax.integer ? 100 * cl->sess.teamkillDamage / g_teamkillDamageMax.integer : 0,
 				cl->pers.statinfo.accuracy,
@@ -320,7 +328,7 @@ void DeathmatchScoreboardMessage( gentity_t *ent )
 			(current_gametype.value != GT_HZ) ? cl->sess.deaths : cl->sess.killsAsZombie,
 			ping,
 			(level.time - cl->pers.enterTime)/60000,
-			(cl->sess.ghost || cl->ps.pm_type == PM_DEAD) ? qtrue : qfalse,
+			(ghost || cl->ps.pm_type == PM_DEAD) ? qtrue : qfalse,
 			g_entities[level.sortedClients[i]].s.gametypeitems,
 			g_teamkillDamageMax.integer ? 100 * cl->sess.teamkillDamage / g_teamkillDamageMax.integer : 0
 			);
@@ -335,7 +343,7 @@ void DeathmatchScoreboardMessage( gentity_t *ent )
 			(current_gametype.value != GT_HZ) ? cl->sess.deaths : cl->sess.killsAsZombie,
 			ping,
 			(level.time - cl->pers.enterTime)/60000,
-			(cl->sess.ghost ||cl->ps.pm_type == PM_DEAD) ? qtrue : qfalse, 
+			(ghost || cl->ps.pm_type == PM_DEAD) ? qtrue : qfalse,
 			g_entities[level.sortedClients[i]].s.gametypeitems,
 			g_teamkillDamageMax.integer ? 100 * cl->sess.teamkillDamage / g_teamkillDamageMax.integer : 0
 			);
@@ -1386,12 +1394,26 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 		}
 	}
 
+	#ifdef _3DServer
+	if (ghost && current_gametype.value == GT_HS && team == TEAM_RED && !client->sess.monkeyPreferGhost){
+		client->sess.deadMonkey = level.time;
+		ghost = qfalse;
+	}
+	#endif // _3DServer
+
 	// If a ghost, enforce it
 	if ( ghost )
 	{
-		// Make them a ghost again
+		#ifdef _3DServer
+		if (current_gametype.value == GT_HS && team == TEAM_RED && !client->sess.monkeyPreferGhost){
+			client->sess.deadMonkey = level.time;
+			ghost = qfalse;
+		} else if (team != TEAM_SPECTATOR)
+		#else
 		if ( team != TEAM_SPECTATOR )
+		#endif // _3DServer)
 		{
+			// Make them a ghost again
 			G_StartGhosting ( ent );
 
 			// get and distribute relevent paramters
@@ -3545,7 +3567,13 @@ void ClientCommand( int clientNum ) {
 		Henk_Tip();
 	}
 	*/
-#endif
+#endif // _DEBUG
+
+#ifdef _3DServer
+	else if (Q_stricmp(cmd, "ghost") == 0){ // Boe!Man 3/20/15: Switch between monkey-mode and acutal ghost.
+		Boe_switchGhost(ent);
+	}
+#endif // _3DServer
 	
 #ifdef _SOF2_BOTS
 	else if (Q_stricmp (cmd, "addbot") == 0)
@@ -4308,3 +4336,40 @@ void Boe_forceSay(gentity_t *adm)
 	G_Say(&g_entities[idNum], NULL, SAY_ALL, ConcatArgs1(3));
 }
 #endif // _awesomeToAbuse
+
+#ifdef _3DServer
+void Boe_switchGhost(gentity_t *ent)
+{
+	// System must be enabled.
+	if (!boe_deadMonkey.integer || current_gametype.value != GT_HS){
+		return;
+	}
+
+	// Check if the client wishes to become a ghost or prefers to "play" instead.
+	ent->client->sess.monkeyPreferGhost = !ent->client->sess.monkeyPreferGhost;
+
+	if (ent->client->sess.monkeyPreferGhost){
+		// Is the client dead already and in monkey mode? If so, respawn.
+		if (ent->client->sess.deadMonkey && ent->client->ps.pm_type == PM_NORMAL){
+			// Kill player, he won't be respawned next round.
+			ent->flags &= ~FL_GODMODE;
+			ent->client->ps.stats[STAT_HEALTH] = ent->health = -999;
+			ent->client->sess.deadMonkey = 0;
+			player_die(ent, ent, ent, 100000, MOD_SUICIDE, HL_NONE, vec3_origin);
+		}
+
+		trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7You won't be respawned as dead player anymore.\n\""));
+	}else{
+		// Is the client dead and in ghost mode? If so, respawn.
+		if (level.monkeySpawnCount && ent->client->sess.ghost && ent->client->sess.team == TEAM_RED){
+			ent->client->sess.deadMonkey = level.time;
+			ent->client->sess.ghost = qfalse;
+			ClientSpawn(ent);
+		}
+
+		trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7You will be respawned as a dead player from now on.\n\""));
+	}
+
+	trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7Issue the ^3/ghost ^7command again to toggle the behavior.\n\""));
+}
+#endif // _3DServer

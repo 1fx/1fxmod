@@ -81,6 +81,9 @@ int adm_Pop(int argNum, gentity_t *adm, qboolean shortCmd)
 	ent = g_entities + idNum;
 
 	Boe_ClientSound(ent, G_SoundIndex("sound/npc/air1/guard02/laughs.mp3"));
+
+	// Allow to pop players in godmode.
+	ent->flags &= ~FL_GODMODE;
 	
 	// Do the actual damage.
 	G_Damage(ent, NULL, NULL, NULL, NULL, 10000, 0, MOD_POP, HL_HEAD | HL_FOOT_RT | HL_FOOT_LT | HL_LEG_UPPER_RT | HL_LEG_UPPER_LT | HL_HAND_RT | HL_HAND_LT | HL_WAIST | HL_CHEST | HL_NECK);
