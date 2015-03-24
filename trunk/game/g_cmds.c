@@ -1394,18 +1394,11 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 		}
 	}
 
-	#ifdef _3DServer
-	if (ghost && current_gametype.value == GT_HS && team == TEAM_RED && !client->sess.monkeyPreferGhost){
-		client->sess.deadMonkey = level.time;
-		ghost = qfalse;
-	}
-	#endif // _3DServer
-
 	// If a ghost, enforce it
 	if ( ghost )
 	{
 		#ifdef _3DServer
-		if (current_gametype.value == GT_HS && team == TEAM_RED && !client->sess.monkeyPreferGhost){
+		if (boe_deadMonkey.integer && level.monkeySpawnCount && current_gametype.value == GT_HS && team == TEAM_RED && !client->sess.monkeyPreferGhost){
 			client->sess.deadMonkey = level.time;
 			ghost = qfalse;
 		} else if (team != TEAM_SPECTATOR)
@@ -4349,6 +4342,11 @@ void Boe_switchGhost(gentity_t *ent)
 	// System must be enabled.
 	if (!boe_deadMonkey.integer){
 		trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7This feature is disabled on the server!\n\""));
+		return;
+	}
+
+	if (!level.monkeySpawnCount){
+		trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7No monkey spawns available on the server so the feature is disabled!\n\""));
 		return;
 	}
 
