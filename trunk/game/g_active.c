@@ -1789,6 +1789,13 @@ void ClientEndFrame( gentity_t *ent )
 		return;
 	}
 
+	#ifdef _3DServer
+	// Trick the client we're following someone so the buggy weapon menu will never come up.
+	if (ent->client->sess.deadMonkey){
+		ent->client->ps.pm_flags |= PMF_FOLLOW;
+	}
+	#endif // _3DServer
+
 	pers = &ent->client->pers;
 
 	// save network bandwidth

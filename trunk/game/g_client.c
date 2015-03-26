@@ -2224,7 +2224,7 @@ void ClientSpawn(gentity_t *ent)
 		ent->flags |= FL_GODMODE;
 
 		// No outfitting changes.
-		ent->client->noOutfittingChange = qtrue;
+		client->noOutfittingChange = qtrue;
 
 		// Show players the possibility to switch to ghost.
 		info = G_ColorizeMessage("\\Info:");
@@ -2232,7 +2232,10 @@ void ClientSpawn(gentity_t *ent)
 		trap_SendServerCommand(ent - g_entities, va("chat -1 \"%s You can wait around here until the new round starts.\n\"", info));
 		trap_SendServerCommand(ent - g_entities, va("chat -1 \"%s If you don't want this, you can switch back using the ^3/ghost^7 command.\n\"", info));
 
-		ent->client->ps.weapon = WP_NONE;
+
+		// Give monkeys 1 HP.
+		client->ps.stats[STAT_HEALTH] = ent->health = 1;
+		client->ps.weapon = WP_NONE;
 	}
 	else{
 		ent->client->noOutfittingChange = qfalse;
@@ -2343,8 +2346,14 @@ void ClientSpawn(gentity_t *ent)
 		// Everyone gets full armor in deathmatch
 		client->ps.stats[STAT_ARMOR] = MAX_HEALTH;
 	}
-
+	
+	#ifdef _3DServer
+	if (!ent->client->sess.deadMonkey){
+		client->ps.stats[STAT_HEALTH] = ent->health = MAX_HEALTH;
+	}
+	#else
 	client->ps.stats[STAT_HEALTH] = ent->health = MAX_HEALTH;
+	#endif // _3DServer
 
 	G_SetOrigin( ent, spawn_origin );
 	VectorCopy( spawn_origin, client->ps.origin );
