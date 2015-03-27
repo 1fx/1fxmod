@@ -4366,7 +4366,7 @@ void Boe_switchGhost(gentity_t *ent)
 		trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7You won't be respawned as dead player anymore.\n\""));
 	}else{
 		// Is the client dead and in ghost mode? If so, respawn.
-		if (level.monkeySpawnCount && ent->client->sess.ghost && ent->client->sess.team == TEAM_RED){
+		if (level.monkeySpawnCount && (ent->client->sess.ghost || ent->client->ps.stats[STAT_HEALTH] < 1) && ent->client->sess.team == TEAM_RED){
 			ent->client->sess.deadMonkey = level.time;
 			ent->client->sess.ghost = qfalse;
 			ClientSpawn(ent);
