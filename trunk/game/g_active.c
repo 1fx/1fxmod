@@ -1790,9 +1790,10 @@ void ClientEndFrame( gentity_t *ent )
 	}
 
 	#ifdef _3DServer
-	// Trick the client we're following someone so the buggy weapon menu will never come up.
+	// Trick the client we're holding a nade so the buggy weapon menu will never come up.
 	if (ent->client->sess.deadMonkey){
-		ent->client->ps.pm_flags |= PMF_FOLLOW;
+		ent->client->ps.weaponstate = WEAPON_CHARGING;
+		ent->client->ps.weaponTime = 150;
 	}
 	#endif // _3DServer
 
