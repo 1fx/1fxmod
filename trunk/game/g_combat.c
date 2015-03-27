@@ -1135,7 +1135,11 @@ int G_Damage (
 					attacker->client->sess.stunAttacks += 1;
 				}
 			}
+		#ifdef _3DServer
+		}else if(client->sess.team == TEAM_RED && !client->sess.deadMonkey && attacker->client->sess.team == TEAM_BLUE){ // if target is a hider
+		#else
 		}else if(client->sess.team == TEAM_RED && attacker->client->sess.team == TEAM_BLUE){ // if target is a hider
+		#endif // _3DServer
 			if(mod != 1){
 				damage = 0;
 			}else if(mod == 1){
@@ -1247,8 +1251,13 @@ int G_Damage (
 				#ifdef _DEBUG
 				Com_Printf("No target..\n");
 				#endif
+			#ifdef _3DServer
+			}else if(targ->client->sess.team == TEAM_RED && !targ->client->sess.deadMonkey && attacker->client->sess.team == TEAM_BLUE){
+			#else
 			}else if(targ->client->sess.team == TEAM_RED && attacker->client->sess.team == TEAM_BLUE){
+			#endif // _3DServer
 				targ->client->sess.slowtime = level.time+1500;
+
 			}else if(targ->client->sess.team == TEAM_BLUE && attacker->client->sess.team == TEAM_RED){
 				targ->client->sess.slowtime = level.time+1500;
 			}
