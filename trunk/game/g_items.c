@@ -62,13 +62,6 @@ int Pickup_Weapon (gentity_t *ent, gentity_t *other, qboolean* autoswitch )
 	int			weaponNum = ent->item->giTag;
 	qboolean	hasAltAmmo;
 
-	#ifdef _3DServer
-	// Monkeys can't pickup weapons.
-	if (other->client->sess.deadMonkey){	
-		return;
-	}
-	#endif // _3DServer
-
 	if(current_gametype.value == GT_HS){
 		// Henk 26/01/10 -> Notification if people pickup special weapons
 		if(other){
@@ -363,6 +356,13 @@ void Touch_Item (gentity_t *ent, gentity_t *other, trace_t *trace)
 	// dead people can't pickup
 	if (other->health < 1)
 		return;	
+
+	#ifdef _3DServer
+	// Monkeys can't pickup weapons or items.
+	if (other->client->sess.deadMonkey){
+		return;
+	}
+	#endif // _3DServer
 
 	// See if teh item can be picked up
 	if( ent->s.eFlags & EF_NOPICKUP )
