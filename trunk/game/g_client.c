@@ -75,7 +75,7 @@ void G_AddClientSpawn ( gentity_t* ent, team_t team, qboolean monkey )
 		spawnCount = &level.spawnCount;
 	}
 	#else
-	spawns = &level.spawns;
+	spawns = &level.spawns[level.spawnCount];
 	spawnCount = &level.spawnCount;
 	#endif // _3DServer
 
