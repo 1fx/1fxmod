@@ -1398,7 +1398,7 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 	if ( ghost )
 	{
 		#ifdef _3DServer
-		if (boe_deadMonkey.integer && level.monkeySpawnCount && current_gametype.value == GT_HS && team == TEAM_RED && !client->sess.monkeyPreferGhost){
+		if (boe_deadMonkey.integer && level.monkeySpawnCount && current_gametype.value == GT_HS && team == TEAM_RED && !client->sess.monkeyPreferGhost && !level.cagefight){
 			client->sess.deadMonkey = level.time;
 			ghost = qfalse;
 		} else if (team != TEAM_SPECTATOR)

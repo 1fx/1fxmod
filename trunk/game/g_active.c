@@ -1325,7 +1325,10 @@ void ClientThink_real( gentity_t *ent )
 			client->sess.invisibleGoggles = qfalse;
 			client->sess.freeze = qfalse;
 			client->ps.pm_type = PM_NORMAL;
-			
+
+			// Reset inactivity timer.
+			client->inactivityTime = level.time + g_inactivity.integer * 1000;
+
 			// And reset the nade state.
 			strncpy(level.RandomNadeLoc, "Disappeared", sizeof(level.RandomNadeLoc));
 		}
