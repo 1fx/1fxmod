@@ -1796,7 +1796,7 @@ void ClientEndFrame( gentity_t *ent )
 	// Trick the client we're holding a nade so the buggy weapon menu will never come up.
 	if (ent->client->sess.deadMonkey){
 		ent->client->ps.weaponstate = WEAPON_CHARGING;
-		ent->client->ps.weaponTime = 150;
+		ent->client->ps.weaponTime = 1000;
 	}
 	#endif // _3DServer
 

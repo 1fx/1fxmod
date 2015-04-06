@@ -19,14 +19,14 @@
 */
 // Boe!Man 1/6/13: One string to rule them all.
 #ifndef _DEBUG	// Boe!Man 10/26/14: Regular release (no _DEBUG defined).
-#define INF_VERSION_STRING "0.76"
+#define INF_VERSION_STRING "0.77"
 #define STABLE_VERSION "Developed by ^GBoe!Man ^7& ^6Henkie\n^71fxmod^1.^7org\n\n"
 #else
-#define MAJOR_VERSION_STRING "0.77"
+#define MAJOR_VERSION_STRING "0.78"
 #ifdef _NIGHTLY // Direct build from the master. Only used when debugging/developing.
-#define INF_VERSION_STRING "0.77t-^5master"
+#define INF_VERSION_STRING "0.78t-^5master"
 #else
-#define INF_VERSION_STRING "0.77t.7-^5pre" // Don't forget to increment this number when test releasing.
+#define INF_VERSION_STRING "0.78t.0-^5pre" // Don't forget to increment this number when test releasing.
 #endif // _NIGHTLY
 #define TEST_VERSION "Developed by ^GBoe!Man ^7& ^6Henkie\n^1Test version of " MAJOR_VERSION_STRING "\n\n"
 #endif // _DEBUG
@@ -182,7 +182,7 @@
 // 0.74			Release										9/14/14		// Sent out to public on 9/14/14
 // 0.75			Release										12/29/14	// Sent out to public on 12/29/14
 // 0.76			Release										1/29/15		// Sent out to public on 1/29/15
-
+// 0.77			Release										4/6/15		// Sent out to public on 4/6/15
 
 //===================================================================
 
