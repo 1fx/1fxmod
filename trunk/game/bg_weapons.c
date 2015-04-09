@@ -815,18 +815,31 @@ static TBoltonWeapon *BG_ParseBolton(weapon_t weapon, sqlite3 * db)
 	}else while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
 		if(rc == SQLITE_ROW){
 			if(sqlite3_column_text(stmt, 10))
-			strcpy(bolton->mName, (char *)sqlite3_column_text(stmt, 10));
+				strcpy(bolton->mName, (char *)sqlite3_column_text(stmt, 10));
 			if(sqlite3_column_text(stmt, 11))
-			strcpy(bolton->mModel, (char *)sqlite3_column_text(stmt, 11));
+				strcpy(bolton->mModel, (char *)sqlite3_column_text(stmt, 11));
 			if(sqlite3_column_text(stmt, 13))
-			strcpy(bolton->mParent, (char *)sqlite3_column_text(stmt, 13));
+				strcpy(bolton->mParent, (char *)sqlite3_column_text(stmt, 13));
 			if(sqlite3_column_text(stmt, 14))
-			strcpy(bolton->mBoltToBone, (char *)sqlite3_column_text(stmt, 14));
+				strcpy(bolton->mBoltToBone, (char *)sqlite3_column_text(stmt, 14));
 			if(sqlite3_column_text(stmt, 12))
-			BG_OpenWeaponFrames((char *)sqlite3_column_text(stmt, 12));
+				BG_OpenWeaponFrames((char *)sqlite3_column_text(stmt, 12));
+
+			// Boe!Man 4/8/15: Addition of bolt joints.
+			if (sqlite3_column_text(stmt, 20))
+				strcpy(bolton->mJointBone, (char *)sqlite3_column_text(stmt, 20));
+			if (sqlite3_column_text(stmt, 21))
+				strcpy(bolton->mJointParentBone, (char *)sqlite3_column_text(stmt, 21));
+			if (sqlite3_column_text(stmt, 22))
+				strcpy(bolton->mJointForward, (char *)sqlite3_column_text(stmt, 22));
+			if (sqlite3_column_text(stmt, 23))
+				strcpy(bolton->mJointRight, (char *)sqlite3_column_text(stmt, 23));
+			if (sqlite3_column_text(stmt, 24))
+				strcpy(bolton->mJointUp, (char *)sqlite3_column_text(stmt, 24));
 		}
 	}
 	sqlite3_finalize(stmt);
+
 	return bolton;
 }
 
@@ -886,13 +899,13 @@ static qboolean BG_ParseWeaponGroup(TWeaponModel *weapon, weapon_t weaponID, sql
 				// Boe!Man 1/19/13: We *do* need to finalize this statement, else SQLite will have allocated memory for this but it will *never* be freed.
 				sqlite3_finalize(stmt1);
 				
-				BG_BuildSideSurfaceList("optionalpart", "surface", option->mSurfaces, db, sqlite3_column_int(stmt, 16));
+				BG_BuildSideSurfaceList("optionalpart", "surface", option->mSurfaces, db, sqlite3_column_int(stmt, 17));
 				option->mNext=weapon->mOptionalList;
 				weapon->mOptionalList=option;
 			}else if(sqlite3_column_int(stmt, 18)){
-				BG_BuildSideSurfaceList("leftside", "surface", weapon->mLeftSideSurfaces, db, sqlite3_column_int(stmt, 16));
+				BG_BuildSideSurfaceList("leftside", "surface", weapon->mLeftSideSurfaces, db, sqlite3_column_int(stmt, 18));
 			}else if(sqlite3_column_int(stmt, 19)){
-				BG_BuildSideSurfaceList("front", "surface", weapon->mFrontSurfaces, db, sqlite3_column_int(stmt, 16));
+				BG_BuildSideSurfaceList("front", "surface", weapon->mFrontSurfaces, db, sqlite3_column_int(stmt, 19));
 			}
 		}
 	}
@@ -1001,7 +1014,7 @@ qboolean BG_ParseInviewFile(void)
 		rc = sqlite3_open_v2(va("./%s/%s", fsGame, g_inviewDb.string), &db, SQLITE_OPEN_READONLY, NULL);
 		if(rc){
 			G_LogPrintf("^1Error: ^7Inview database: %s\n", sqlite3_errmsg(db));
-			Com_Error(ERR_FATAL, "^1Failed to load inview database: %s\n", sqlite3_errmsg(db));
+			Com_Error(ERR_FATAL, "^1Failed to load inview database: %s", sqlite3_errmsg(db));
 		}else{
 			level.altPath = qtrue;
 			Q_strncpyz(level.altString, va("./%s", fsGame), sizeof(level.altString));
