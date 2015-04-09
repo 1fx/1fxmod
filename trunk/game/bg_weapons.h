@@ -5,6 +5,9 @@
 #ifndef __BG_WEAPONS_H__
 #define __BG_WEAPONS_H__
 
+#ifndef _GOLD
+// MOD and weapon info for v1.00
+
 // means of death
 typedef enum 
 {
@@ -99,8 +102,6 @@ typedef enum
 	WP_NUM_WEAPONS
 } weapon_t;
 
-#define WP_DELAYED_CHANGE_BIT	(1<<5)
-				
 typedef enum 
 {							
 	AMMO_KNIFE,
@@ -125,6 +126,143 @@ typedef enum
 	AMMO_NONE,
 
 } ammo_t;
+#else
+// MOD and weapon info for v1.03
+
+// means of death
+typedef enum
+{
+	MOD_UNKNOWN,
+
+	// Knife
+	MOD_KNIFE,
+
+	// Pistols
+	MOD_M1911A1_PISTOL,
+	MOD_USSOCOM_PISTOL,
+	MOD_SILVER_TALON,
+
+	// Secondarys
+	MOD_M590_SHOTGUN,
+	MOD_MICRO_UZI_SUBMACHINEGUN,
+	MOD_M3A1_SUBMACHINEGUN,
+	MOD_MP5,
+
+	// Primaries
+	MOD_USAS_12_SHOTGUN,
+	MOD_M4_ASSAULT_RIFLE,
+	MOD_AK74_ASSAULT_RIFLE,
+	MOD_SIG551,
+
+	MOD_MSG90A1_SNIPER_RIFLE,
+	MOD_M60_MACHINEGUN,
+	MOD_MM1_GRENADE_LAUNCHER,
+	MOD_RPG7_LAUNCHER,
+
+	// Grenades
+	MOD_M84_GRENADE,
+	MOD_SMOHG92_GRENADE,
+	MOD_ANM14_GRENADE,
+	MOD_M15_GRENADE,
+
+	// Those MODs are the same as v1.00.
+	MOD_WATER,
+	MOD_CRUSH,
+	MOD_TELEFRAG,
+	MOD_FALLING,
+	MOD_SUICIDE,
+	MOD_TEAMCHANGE,
+	MOD_TARGET_LASER,
+	MOD_TRIGGER_HURT,
+	//Ryan april 6 2003
+	MOD_CAR,
+	MOD_POP,
+	MOD_REFRESH,
+	//Ryan
+	//RxCxW - #MOD
+	MOD_DUGUP,
+	MOD_BURN,
+
+	//END
+
+	// FIXME: Those are here to retain code compatibility.
+	MOD_M67_GRENADE,
+	MOD_F1_GRENADE,
+	MOD_L2A2_GRENADE,
+	MOD_MDN11_GRENADE
+} meansOfDeath_t;
+
+typedef enum
+{
+	WP_NONE,
+
+	// Knife
+	WP_KNIFE,
+
+	// Pistols
+	WP_M1911A1_PISTOL,
+	WP_USSOCOM_PISTOL,
+	WP_SILVER_TALON,
+
+	// Secondarys
+	WP_M590_SHOTGUN,
+	WP_MICRO_UZI_SUBMACHINEGUN,
+	WP_M3A1_SUBMACHINEGUN,
+	WP_MP5,
+
+	// Primaries
+	WP_USAS_12_SHOTGUN,
+	WP_M4_ASSAULT_RIFLE,
+	WP_AK74_ASSAULT_RIFLE,
+	WP_SIG551,
+
+	WP_MSG90A1,
+	WP_M60_MACHINEGUN,
+	WP_MM1_GRENADE_LAUNCHER,
+	WP_RPG7_LAUNCHER,
+
+	// Grenades
+	WP_M84_GRENADE,
+	WP_SMOHG92_GRENADE,
+	WP_ANM14_GRENADE,
+	WP_M15_GRENADE,
+
+	WP_NUM_WEAPONS,
+
+	// FIXME: Those are here to retain *some* code compatibility with v1.00. They obviously don't work.
+	WP_M67_GRENADE,
+	WP_F1_GRENADE,
+	WP_L2A2_GRENADE,
+	WP_MDN11_GRENADE
+} weapon_t;
+
+typedef enum
+{
+	AMMO_KNIFE,
+	AMMO_045,
+	AMMO_556,
+	AMMO_9,
+	AMMO_12,
+	AMMO_762,
+	AMMO_40,
+	AMMO_RPG7,
+	AMMO_M15,
+	AMMO_M84,
+	AMMO_SMOHG92,
+	AMMO_ANM14,
+
+	AMMO_762_BELT,
+
+	AMMO_MP5_9,
+
+	AMMO_MAX,
+
+	AMMO_NONE,
+
+} ammo_t;
+#endif // not _GOLD
+
+#define WP_DELAYED_CHANGE_BIT	(1<<5)
 
 #define WP_FIREMODE_NONE		0
 #define WP_FIREMODE_AUTO		1
@@ -154,6 +292,18 @@ typedef enum
 
 } ECategory;
 
+#ifdef _GOLD
+#define MAX_ZOOMNAME	8
+#define ZOOMLEVEL_MAX	3
+
+typedef struct zoomData_s
+{
+	int		fov;
+	char	name[MAX_ZOOMNAME];
+
+} zoomData_t;
+#endif // _GOLD
+
 typedef struct attackData_s
 {
 	char			name[MAX_QPATH];
@@ -174,6 +324,9 @@ typedef struct attackData_s
 	int			fireFromClip;					// 0 = fire from approp. ammo pool, 1 = fire from clip
 	int			damage;							// how much damage is done per hit
 	float		inaccuracy;						// how inaccurate is weapon
+	#ifdef _GOLD
+	float		zoomInaccuracy;					// how inaccurate is the weapon when zoomed
+	#endif // _GOLD
 	float		maxInaccuracy;					// maximum lvl of inaccuracy
 	int			pellets;						// how many individual 'bullets' are shot with one trigger pull?
 	int			weaponFlags;					// which fire modes are available, projectiles timed or impact, .etc
@@ -228,6 +381,9 @@ typedef struct weaponData_s
 
 	attackData_t	attack[ATTACK_MAX];
 
+	#ifdef _GOLD
+	zoomData_t		zoom[ZOOMLEVEL_MAX];
+	#endif // _GOLD
 
 } weaponData_t;
 

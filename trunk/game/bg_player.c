@@ -34,6 +34,7 @@ int						bg_outfittingCount     = 0;
 
 char					bg_availableOutfitting[WP_NUM_WEAPONS] = {-1};
 
+#ifndef _GOLD
 int bg_outfittingGroups[OUTFITTING_GROUP_MAX][MAX_OUTFITTING_GROUPITEM] = 
 {
 	{ MODELINDEX_WEAPON_AK74,		MODELINDEX_WEAPON_M4,		MODELINDEX_WEAPON_USAS12, MODELINDEX_WEAPON_MSG90A1,	MODELINDEX_WEAPON_M60,		MODELINDEX_WEAPON_RPG7,	 MODELINDEX_WEAPON_MM1, -1, -1, -1 },
@@ -42,6 +43,16 @@ int bg_outfittingGroups[OUTFITTING_GROUP_MAX][MAX_OUTFITTING_GROUPITEM] =
 	{ MODELINDEX_WEAPON_SMOHG92,	MODELINDEX_WEAPON_M84,		MODELINDEX_WEAPON_M15,		MODELINDEX_WEAPON_ANM14,	-1, -1, -1, -1, -1, -1 },
 	{ MODELINDEX_ARMOR,				MODELINDEX_NIGHTVISION,		MODELINDEX_THERMAL,			-1,							-1, -1, -1, -1, -1, -1 },
 };
+#else
+int bg_outfittingGroups[OUTFITTING_GROUP_MAX][MAX_OUTFITTING_GROUPITEM] = 
+{
+	{ MODELINDEX_WEAPON_AK74,		MODELINDEX_WEAPON_M4,		MODELINDEX_WEAPON_SIG551,	MODELINDEX_WEAPON_USAS12, MODELINDEX_WEAPON_MSG90A1,	MODELINDEX_WEAPON_M60,	MODELINDEX_WEAPON_MP5,	MODELINDEX_WEAPON_RPG7,	 MODELINDEX_WEAPON_MM1, -1, -1, -1 },
+	{ MODELINDEX_WEAPON_M590,		MODELINDEX_WEAPON_MICROUZI,	MODELINDEX_WEAPON_M3A1,		-1, -1, -1, -1, -1, -1, -1, -1, -1 },
+	{ MODELINDEX_WEAPON_M19,		MODELINDEX_WEAPON_SOCOM,	MODELINDEX_WEAPON_SILVERTALON,	-1,							-1, -1, -1, -1, -1, -1, -1, -1 },
+	{ MODELINDEX_WEAPON_SMOHG92,	MODELINDEX_WEAPON_M84,		MODELINDEX_WEAPON_M15,		MODELINDEX_WEAPON_ANM14,	-1, -1, -1, -1, -1, -1, -1, -1 },
+	{ MODELINDEX_ARMOR,				MODELINDEX_NIGHTVISION,		MODELINDEX_THERMAL,			-1,							-1, -1, -1, -1, -1, -1, -1, -1 },
+};
+#endif // not _GOLD
 
 /*
 ===================
@@ -143,7 +154,15 @@ void PM_TorsoAnimation( playerState_t* ps )
 	{
 		case WEAPON_SPAWNING:
 		case WEAPON_READY:
+			#ifdef _GOLD
+			if (ps->stats[STAT_USEWEAPONDROP])
+			{
+				PM_ContinueTorsoAnim(ps, TORSO_USE);
+			}
+			else if ((ps->pm_flags & PMF_ZOOMED) && weaponData[ps->weapon].animIdleZoomed)
+			#else
 			if ( (ps->pm_flags & PMF_ZOOMED) && weaponData[ps->weapon].animIdleZoomed )
+			#endif // _GOLD
 			{
 				PM_ContinueTorsoAnim ( ps, weaponData[ps->weapon].animIdleZoomed );
 			}
@@ -1405,7 +1424,7 @@ void BG_PlayerAngles (
 	AnglesSubtract( headAngles, lowerTorsoAngles, headAngles );
 	AnglesSubtract( lowerTorsoAngles, legsAngles, lowerTorsoAngles );
 
-	if ( legs )
+	if ( legs && ghoul2 )
 	{
 		AnglesToAxis( legsAngles, legs );
 
@@ -1892,4 +1911,21 @@ int BG_ParseOutfittingTemplates ( qboolean force )
 	return bg_outfittingCount;
 }
 
+/*
+========================
+BG_ApplyLeanOffset
 
+Applies the given lean offset to the origin
+========================
+*/
+void BG_ApplyLeanOffset(playerState_t* ps, vec3_t origin)
+{
+	float	leanOffset;
+	vec3_t	up;
+	vec3_t	right;
+
+	leanOffset = (float)(ps->leanTime - LEAN_TIME) / LEAN_TIME * LEAN_OFFSET;
+	AngleVectors(ps->viewangles, NULL, right, up);
+	VectorMA(origin, leanOffset, right, origin);
+	VectorMA(origin, Q_fabs(leanOffset) * -0.20f, up, origin);
+}

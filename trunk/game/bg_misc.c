@@ -36,6 +36,8 @@ An item fires all of its targets when it is picked up.  If the toucher can't car
 "count" override quantity or duration on most items.
 */
 
+#ifndef _GOLD
+// Itemlist of v1.00.
 gitem_t	bg_itemlist[] = 
 {
 	{
@@ -882,6 +884,834 @@ White Phosphorus Grenade
 	// end of list marker
 	{NULL}
 };
+#else
+// Itemlist of v1.03.
+gitem_t	bg_itemlist[] =
+{
+	{
+		NULL,				// classname	
+		NULL,				// pickup_sound
+		{ NULL,			// world_model[0]
+		NULL,			// world_model[1]
+		0, 0 },			// world_model[2],[3]
+		/* icon */		NULL,		// icon
+		NULL,
+		NULL,
+		/* pickup */	NULL,		// pickup_name
+		0,					// quantity
+		0,					// giType (IT_*)
+		0,					// giTag
+		/* precache */ "",			// precaches
+		/* sounds */ ""				// sounds
+	},	// leave index 0 alone
+
+	//
+	// Pickups
+	//
+
+	/*QUAKED pickup_armor_big (0 .6 .6) (-15 -15 -15) (15 15 15)
+	*/
+	{
+		"pickup_armor_big",
+		"sound/player/pickup/armour.wav",
+		{ "models/pick_ups/armor_large.md3",
+		0, 0, 0 },
+		/* icon */		"gfx/menus/hud/weapon_icons/armor_large_icon",
+		"",
+		"some",
+		/* pickup */	"Heavy Armor",
+		75,
+		IT_ARMOR,
+		0,
+		/* precache */ "",
+		/* sounds */ "",
+
+	},
+
+	/*QUAKED pickup_armor_medium (0 .6 .6) (-15 -15 -15) (15 15 15)
+	*/
+	{
+		"pickup_armor_medium",
+		"sound/player/pickup/armour.wav",
+		{ "models/pick_ups/armor_medium.md3",
+		0, 0, 0 },
+		/* icon */		"gfx/menus/hud/weapon_icons/armor_medium_icon",
+		"",
+		"some",
+		/* pickup */	"Medium Armor",
+		50,
+		IT_ARMOR,
+		0,
+		/* precache */ "",
+		/* sounds */ "",
+
+	},
+
+	/*QUAKED pickup_armor_small (0 .6 .6) (-15 -15 -15) (15 15 15)
+	*/
+	{
+		"pickup_armor_small",
+		"sound/player/pickup/armour.wav",
+		{ "models/pick_ups/armor_small.md3",
+		0, 0, 0 },
+		/* icon */		"gfx/menus/hud/weapon_icons/armor_small_icon",
+		"",
+		"some",
+		/* pickup */	"Small Armor",
+		25,
+		IT_ARMOR,
+		0,
+		/* precache */ "",
+		/* sounds */ "",
+
+	},
+
+	/*QUAKED pickup_health_big (0 .6 .6) (-15 -15 -15) (15 15 15)
+	*/
+	{
+		"pickup_health_big",
+		"sound/player/pickup/health.wav",
+		{ "models/pick_ups/health_lrg.md3",
+		0, 0, 0 },
+		/* icon */		"gfx/menus/hud/weapon_icons/health_large_icon",
+		"",
+		"a",
+		/* pickup */	"Large Health",
+		100,
+		IT_HEALTH,
+		0,
+		/* precache */ "",
+		/* sounds */ ""
+	},
+
+	/*QUAKED pickup_health_small (0 .6 .6) (-15 -15 -15) (15 15 15)
+	*/
+	{
+		"pickup_health_small",
+		"sound/player/pickup/health.wav",
+		{ "models/pick_ups/health_smll.md3",
+		0, 0, 0 },
+		/* icon */		"gfx/menus/hud/weapon_icons/health_small_icon",
+		"",
+		"a",
+		/* pickup */	"Small Health",
+		25,
+		IT_HEALTH,
+		0,
+		/* precache */ "",
+		/* sounds */ ""
+	},
+
+	//
+	// ITEMS
+	//
+
+
+	//
+	// WEAPONS 
+	//
+
+	/*Q U A K E D weapon_knife (.3 .3 1) (-15 -15 -15) (15 15 15) suspended
+	Don't place this
+	*/
+	{
+		"weapon_knife",
+		"sound/weapons/knife/ready.wav",
+		{ "models/weapons/knife/world/knifeworld.glm",
+		0, 0, 0 },
+		/* icon */		"gfx/menus/hud/weapon_icons/knife_icon",
+		"*gfx/menus/weapon_renders/knife",
+		"a",
+		/* pickup */	"Knife",
+		-1,
+		IT_WEAPON,
+		WP_KNIFE,
+		/* precache */ "",
+		/* sounds */ "",
+
+		OUTFITTING_GROUP_KNIFE
+	},
+
+	/*QUAKED pickup_weapon_US_SOCOM (0 .6 .6) (-15 -15 -15) (15 15 15)
+	Pistol, uses 45 rounds
+	*/
+	{
+		"pickup_weapon_US_SOCOM",
+		"sound/player/pickup/weapon.wav",
+		{ "models/weapons/ussocom/world/ussocomworld.glm",
+		0, 0, 0 },
+		/* icon */		"gfx/menus/hud/weapon_icons/ussocom_icon",
+		"*gfx/menus/weapon_renders/ussocom_mp",
+		"a",
+		/* pickup */	"US SOCOM",
+		10,
+		IT_WEAPON,
+		WP_USSOCOM_PISTOL,
+		/* precache */ "",
+		/* sounds */ "",
+
+		OUTFITTING_GROUP_PISTOL,
+	},
+
+	/*QUAKED pickup_weapon_M19 (0 .6 .6) (-15 -15 -15) (15 15 15)
+	Pistol, uses 45 rounds
+	*/
+	{
+		"pickup_weapon_M19",
+		"sound/player/pickup/weapon.wav",
+		{ "models/weapons/m1911a1/world/m1911a1world.glm",
+		0, 0, 0 },
+		/* icon */		"gfx/menus/hud/weapon_icons/m1911a1_icon",
+		"*gfx/menus/weapon_renders/m1911a1",
+		"a",
+		/* pickup */	"M1911A1",
+		12,
+		IT_WEAPON,
+		WP_M1911A1_PISTOL,
+		/* precache */ "",
+		/* sounds */ "",
+
+		OUTFITTING_GROUP_PISTOL,
+	},
+
+	/*QUAKED pickup_weapon_silvertalon (0 .6 .6) (-15 -15 -15) (15 15 15)
+	Pistol, uses 45 rounds
+	*/
+	{
+		"pickup_weapon_silvertalon",
+		"sound/player/pickup/weapon.wav",
+		{ "models/weapons/silver_talon/world/silver_talonworld.glm",
+		0, 0, 0 },
+		/* icon */		"gfx/menus/hud/weapon_icons/silver_talonicon",
+		"*gfx/menus/weapon_renders/silver_talon",
+		"a",
+		/* pickup */	"Silver Talon",
+		7,
+		IT_WEAPON,
+		WP_SILVER_TALON,
+		/* precache */ "",
+		/* sounds */ "",
+
+		OUTFITTING_GROUP_PISTOL,
+	},
+
+	/*QUAKED pickup_weapon_microuzi (0 .6 .6) (-15 -15 -15) (15 15 15)
+	Sub-Machinegun, uses 9mm rounds
+	*/
+	{
+		"pickup_weapon_microuzi",
+		"sound/player/pickup/weapon.wav",
+		{ "models/weapons/microuzi/world/microuziworld.glm",
+		0, 0, 0 },
+		/* icon */		"gfx/menus/hud/weapon_icons/microuzi_icon",
+		"*gfx/menus/weapon_renders/microuzi",
+		"a",
+		/* pickup */	"MicroUzi",
+		30,
+		IT_WEAPON,
+		WP_MICRO_UZI_SUBMACHINEGUN,
+		/* precache */ "",
+		/* sounds */ "",
+
+		OUTFITTING_GROUP_SECONDARY,
+	},
+
+	/*QUAKED pickup_weapon_M3A1 (0 .6 .6) (-15 -15 -15) (15 15 15)
+	Sub-Machinegun, uses 45 rounds
+	*/
+	{
+		"pickup_weapon_M3A1",
+		"sound/player/pickup/weapon.wav",
+		{ "models/weapons/m3a1/world/m3a1world.glm",
+		0, 0, 0 },
+		/* icon */		"gfx/menus/hud/weapon_icons/m3a1_icon",
+		"gfx/menus/weapon_renders/m3a1",
+		"a",
+		/* pickup */	"M3A1 Sub-machinegun",
+		30,
+		IT_WEAPON,
+		WP_M3A1_SUBMACHINEGUN,
+		/* precache */ "",
+		/* sounds */ "",
+
+		OUTFITTING_GROUP_SECONDARY,
+	},
+
+	/*QUAKED pickup_weapon_MP5 (0 .6 .6) (-15 -15 -15) (15 15 15)
+	Sub-Machinegun, uses 9mm rounds
+	*/
+	{
+		"pickup_weapon_MP5",
+		"sound/player/pickup/weapon.wav",
+		{ "models/weapons/mp5/world/mp5world.glm",
+		0, 0, 0 },
+		/* icon */		"gfx/menus/hud/weapon_icons/mp5_icon",
+		"gfx/menus/weapon_renders/mp5",
+		"a",
+		/* pickup */	"MP5 Sub-machinegun",
+		30,
+		IT_WEAPON,
+		WP_MP5,
+		/* precache */ "",
+		/* sounds */ "",
+
+		OUTFITTING_GROUP_PRIMARY,
+	},
+
+	/*QUAKED pickup_weapon_USAS_12 (0 .6 .6) (-15 -15 -15) (15 15 15)
+	Shotgun, uses 12-gauge rounds
+	ammo ---------- amount of ammo (defaults to 10)
+	*/
+	{
+		"pickup_weapon_USAS_12",
+		"sound/player/pickup/weapon.wav",
+		{ "models/weapons/usas12/world/usas12world.glm",
+		0, 0, 0 },
+		/* icon */		"gfx/menus/hud/weapon_icons/usas12_icon",
+		"gfx/menus/weapon_renders/usas12",
+		"a",
+		/* pickup */	"USAS12 SHOTGUN",
+		30,
+		IT_WEAPON,
+		WP_USAS_12_SHOTGUN,
+		/* precache */ "",
+		/* sounds */ "",
+
+		OUTFITTING_GROUP_PRIMARY,
+	},
+
+	/*QUAKED pickup_weapon_M590 (0 .6 .6) (-15 -15 -15) (15 15 15)
+	Shotgun, uses 12-gauge rounds
+	*/
+	{
+		"pickup_weapon_M590",
+		"sound/player/pickup/weapon.wav",
+		{ "models/weapons/m590/world/m590world.glm",
+		0, 0, 0 },
+		/* icon */		"gfx/menus/hud/weapon_icons/m590_icon",
+		"gfx/menus/weapon_renders/m590",
+		"a",
+		/* pickup */	"M590",
+		30,
+		IT_WEAPON,
+		WP_M590_SHOTGUN,
+		/* precache */ "",
+		/* sounds */ "",
+
+		OUTFITTING_GROUP_SECONDARY,
+	},
+
+	/*QUAKED pickup_weapon_MSG90A1 (0 .6 .6) (-15 -15 -15) (15 15 15)
+	Sniper Rifle, uses 7.62 rounds
+	*/
+	{
+		"pickup_weapon_MSG90A1",
+		"sound/player/pickup/weapon.wav",
+		{ "models/weapons/msg90a1/world/msg90a1world.glm",
+		0, 0, 0 },
+		/* icon */		"gfx/menus/hud/weapon_icons/msg90a1_icon",
+		"gfx/menus/weapon_renders/msg90a1",
+		"a",
+		/* pickup */	"MSG90A1 Sniper",
+		30,
+		IT_WEAPON,
+		WP_MSG90A1,
+		/* precache */ "",
+		/* sounds */ "",
+
+		OUTFITTING_GROUP_PRIMARY,
+	},
+
+	/*QUAKED pickup_weapon_M4 (0 .6 .6) (-15 -15 -15) (15 15 15)
+	Assault Rifle, uses 5.56 rounds and 40mm grenades
+	*/
+	{
+		"pickup_weapon_M4",
+		"sound/player/pickup/weapon.wav",
+		{ "models/weapons/m4/world/m4world.glm",
+		0, 0, 0 },
+		/* icon */		"gfx/menus/hud/weapon_icons/m4_icon",
+		"gfx/menus/weapon_renders/m4_m203",
+		"a",
+		/* pickup */	"M4 Assault",
+		30,
+		IT_WEAPON,
+		WP_M4_ASSAULT_RIFLE,
+		/* precache */ "",
+		/* sounds */ "",
+
+		OUTFITTING_GROUP_PRIMARY,
+	},
+
+	/*QUAKED pickup_weapon_AK_74 (0 .6 .6) (-15 -15 -15) (15 15 15)
+	Assault Rifle, uses 5.56 rounds
+	*/
+	{
+		"pickup_weapon_AK_74",
+		"sound/player/pickup/weapon.wav",
+		{ "models/weapons/ak74/world/ak74world.glm",
+		0, 0, 0 },
+		/* icon */		"gfx/menus/hud/weapon_icons/ak74_icon",
+		"gfx/menus/weapon_renders/ak74",
+		"an",
+		/* pickup */	"AK74 Assault",
+		30,
+		IT_WEAPON,
+		WP_AK74_ASSAULT_RIFLE,
+		/* precache */ "",
+		/* sounds */ "",
+
+		OUTFITTING_GROUP_PRIMARY,
+	},
+
+	/*QUAKED pickup_weapon_SIG551 (0 .6 .6) (-15 -15 -15) (15 15 15)
+	Assault Rifle, uses 5.56 rounds
+	*/
+	{
+		"pickup_weapon_SIG551",
+		"sound/player/pickup/weapon.wav",
+		{ "models/weapons/sig551/world/sig551world.glm",
+		0, 0, 0 },
+		/* icon */		"gfx/menus/hud/weapon_icons/sig551_icon",
+		"gfx/menus/weapon_renders/sig551",
+		"an",
+		/* pickup */	"SIG551 Assault",
+		30,
+		IT_WEAPON,
+		WP_SIG551,
+		/* precache */ "",
+		/* sounds */ "",
+
+		OUTFITTING_GROUP_PRIMARY,
+	},
+
+	/*QUAKED pickup_weapon_M60 (0 .6 .6) (-15 -15 -15) (15 15 15)
+	Machinegun, uses 7.62 rounds
+	*/
+	{
+		"pickup_weapon_M60",
+		"sound/player/pickup/weapon.wav",
+		{ "models/weapons/m60/world/m60world.glm",
+		0, 0, 0 },
+		/* icon */		"gfx/menus/hud/weapon_icons/m60_icon",
+		"gfx/menus/weapon_renders/m60",
+		"a",
+		/* pickup */	"M60 Machinegun",
+		30,
+		IT_WEAPON,
+		WP_M60_MACHINEGUN,
+		/* precache */ "",
+		/* sounds */ "",
+
+		OUTFITTING_GROUP_PRIMARY,
+	},
+
+	/*QUAKED pickup_weapon_RPG_7 (0 .6 .6) (-15 -15 -15) (15 15 15)
+	RPG, uses 40mm rounds
+	*/
+	{
+		"pickup_weapon_RPG_7",
+		"sound/player/pickup/weapon.wav",
+		{ "models/weapons/rpg7/world/rpg7world.glm",
+		0, 0, 0 },
+		/* icon */		"gfx/menus/hud/weapon_icons/rpg7_icon",
+		"gfx/menus/weapon_renders/rpg7",
+		"a",
+		/* pickup */	"RPG-7",
+		10,
+		IT_WEAPON,
+		WP_RPG7_LAUNCHER,
+		/* precache */ "",
+		/* sounds */ "",
+
+		OUTFITTING_GROUP_PRIMARY,
+	},
+
+	/*QUAKED pickup_weapon_MM_1 (0 .6 .6) (-15 -15 -15) (15 15 15)
+	Grenade Launcher, uses 40mm rounds
+	*/
+	{
+		"pickup_weapon_MM_1",
+		"sound/player/pickup/weapon.wav",
+		{ "models/weapons/mm1/world/mm1world.glm",
+		0, 0, 0 },
+		/* icon */		"gfx/menus/hud/weapon_icons/mm1_icon",
+		"gfx/menus/weapon_renders/mm1",
+		"a",
+		/* pickup */	"MM1 Grenade Launcher",
+		10,
+		IT_WEAPON,
+		WP_MM1_GRENADE_LAUNCHER,
+		/* precache */ "",
+		/* sounds */ "",
+
+		OUTFITTING_GROUP_PRIMARY,
+	},
+
+	/*QUAKED pickup_weapon_M84 (0 .6 .6) (-15 -15 -15) (15 15 15)
+	Grenade
+	*/
+	{
+		"pickup_weapon_M84",
+		"sound/player/pickup/weapon.wav",
+		{ "models/weapons/m84/world/m84world.glm",
+		0, 0, 0 },
+		/* icon */		"gfx/menus/hud/weapon_icons/m84_icon",
+		"*gfx/menus/weapon_renders/m84",
+		"a",
+		/* pickup */	"M84 Flash",
+		5,
+		IT_WEAPON,
+		WP_M84_GRENADE,
+		/* precache */ "",
+		/* sounds */ "",
+
+		OUTFITTING_GROUP_GRENADE,
+	},
+
+	/*QUAKED pickup_weapon_SMOHG92 (0 .6 .6) (-15 -15 -15) (15 15 15)
+	Grenade
+	*/
+	{
+		"pickup_weapon_SMOHG92",
+		"sound/player/pickup/weapon.wav",
+		{ "models/weapons/smohg92/world/smohg92world.glm",
+		0, 0, 0 },
+		/* icon */		"gfx/menus/hud/weapon_icons/smohg92_icon",
+		"*gfx/menus/weapon_renders/smohg92",
+		"a",
+		/* pickup */	"SMOHG92 Frag",
+		5,
+		IT_WEAPON,
+		WP_SMOHG92_GRENADE,
+		/* precache */ "",
+		/* sounds */ "",
+
+		OUTFITTING_GROUP_GRENADE,
+	},
+
+	/*QUAKED pickup_weapon_AN_M14 (0 .6 .6) (-15 -15 -15) (15 15 15)
+	Incendiary Grenade
+	*/
+	{
+		"pickup_weapon_AN_M14",
+		"sound/player/pickup/weapon.wav",
+		{ "models/weapons/anm14/world/anm14world.glm",
+		0, 0, 0 },
+		/* icon */		"gfx/menus/hud/weapon_icons/anm14_icon",
+		"*gfx/menus/weapon_renders/anm14",
+		"an",
+		/* pickup */	"ANM14 Incendiary",
+		5,
+		IT_WEAPON,
+		WP_ANM14_GRENADE,
+		/* precache */ "",
+		/* sounds */ "",
+
+		OUTFITTING_GROUP_GRENADE,
+	},
+
+	/*QUAKED pickup_weapon_M15 (0 .6 .6) (-15 -15 -15) (15 15 15)
+	White Phosphorus Grenade
+	*/
+	{
+		"pickup_weapon_M15",
+		"sound/player/pickup/weapon.wav",
+		{ "models/weapons/m15/world/m15world.glm",
+		0, 0, 0 },
+		/* icon */		"gfx/menus/hud/weapon_icons/m15_icon",
+		"*gfx/menus/weapon_renders/m15",
+		"a",
+		/* pickup */	"M15 Smoke",
+		5,
+		IT_WEAPON,
+		WP_M15_GRENADE,
+		/* precache */ "",
+		/* sounds */ "",
+
+		OUTFITTING_GROUP_GRENADE,
+	},
+
+	//
+	// AMMO ITEMS
+	//
+
+	/*QUAKED pickup_ammo_45 (0 .6 .6) (-15 -15 -15) (15 15 15)
+	*/
+	{
+		"pickup_ammo_45",
+		"sound/player/pickup/ammo.wav",
+		{ "models/pick_ups/ammo_45_smll.md3",
+		0, 0, 0 },
+		/* icon */		"gfx/menus/hud/weapon_icons/ammo_45_icon",
+		"",
+		"some",
+		/* pickup */	"0.45 ACP Ammo",
+		30,
+		IT_AMMO,
+		AMMO_045,
+		/* precache */ "",
+		/* sounds */ "",
+	},
+
+	/*QUAKED pickup_ammo_9mm (0 .6 .6) (-15 -15 -15) (15 15 15)
+	*/
+	{
+		"pickup_ammo_9mm",
+		"sound/player/pickup/ammo.wav",
+		{ "models/pick_ups/ammo_9mm_smll.md3",
+		0, 0, 0 },
+		/* icon */		"gfx/menus/hud/weapon_icons/ammo_9mm_icon",
+		"",
+		"some",
+		/* pickup */	"9mm Ammo",
+		30,
+		IT_AMMO,
+		AMMO_9,
+		/* precache */ "",
+		/* sounds */ "",
+	},
+
+	/*QUAKED pickup_ammo_12gauge (0 .6 .6) (-15 -15 -15) (15 15 15)
+	*/
+	{
+		"pickup_ammo_12gauge",
+		"sound/player/pickup/ammo.wav",
+		{ "models/pick_ups/ammo_shotgun_smll.md3",
+		0, 0, 0 },
+		/* icon */		"gfx/menus/hud/weapon_icons/ammo_shotgun_icon",
+		"",
+		"some",
+		/* pickup */	"Shotgun Ammo",
+		10,
+		IT_AMMO,
+		AMMO_12,
+		/* precache */ "",
+		/* sounds */ "",
+	},
+
+	/*QUAKED pickup_ammo_762 (0 .6 .6) (-15 -15 -15) (15 15 15)
+	*/
+	{
+		"pickup_ammo_762",
+		"sound/player/pickup/ammo.wav",
+		{ "models/pick_ups/ammo_762_smll.md3",
+		0, 0, 0 },
+		/* icon */		"gfx/menus/hud/weapon_icons/ammo_762_icon",
+		"",
+		"some",
+		/* pickup */	"7.62mm Ammo",
+		30,
+		IT_AMMO,
+		AMMO_762,
+		/* precache */ "",
+		/* sounds */ "",
+	},
+
+	/*QUAKED pickup_ammo_556 (0 .6 .6) (-15 -15 -15) (15 15 15)
+	*/
+	{
+		"pickup_ammo_556",
+		"sound/player/pickup/ammo.wav",
+		{ "models/pick_ups/ammo_556_smll.md3",
+		0, 0, 0 },
+		/* icon */		"gfx/menus/hud/weapon_icons/ammo_556_icon",
+		"",
+		"some",
+		/* pickup */	"5.56mm Ammo",
+		30,
+		IT_AMMO,
+		AMMO_556,
+		/* precache */ "",
+		/* sounds */ "",
+	},
+
+	/*QUAKED pickup_ammo_40mm (0 .6 .6) (-15 -15 -15) (15 15 15)
+	*/
+	{
+		"pickup_ammo_40mm",
+		"sound/player/pickup/ammo.wav",
+		{ "models/pick_ups/ammo_40_smll.md3",
+		0, 0, 0 },
+		/* icon */		"gfx/menus/hud/weapon_icons/ammo_40mm_icon",
+		"",
+		"some",
+		/* pickup */	"40mm Grenade Ammo",
+		5,
+		IT_AMMO,
+		AMMO_40,
+		/* precache */ "",
+		/* sounds */ "",
+	},
+
+
+	/*QUAKED pickup_ammo_rpg7 (0 .6 .6) (-15 -15 -15) (15 15 15)
+	*/
+	{
+		"pickup_ammo_rpg7",
+		"sound/player/pickup/ammo.wav",
+		{ "models/pick_ups/ammo_rpg7_smll.md3",
+		0, 0, 0 },
+		/* icon */		"gfx/menus/hud/weapon_icons/ammo_rpg_icon",
+		"",
+		"some",
+		/* pickup */	"RPG7 Ammo",
+		5,
+		IT_AMMO,
+		AMMO_RPG7,
+		/* precache */ "",
+		/* sounds */ "",
+	},
+
+
+	/*QUAKED pickup_backpack (0 .6 .6) (-15 -15 -15) (15 15 15)
+	*/
+	{	// just a temp place holder
+		"pickup_backpack",
+		"sound/player/pickup/health.wav",
+		{ "models/pick_ups/mp_universal_pickup.md3",
+		0, 0, 0 },
+		/* icon */		"gfx/menus/hud/weapon_icons/mp_universal_pickup",
+		"",
+		"a ",
+		/* pickup */	"Backpack",
+		0,
+		IT_BACKPACK,
+		0,
+		/* precache */ "",
+		/* sounds */ "",
+	},
+
+	{
+		"gametype_item_1",
+		NULL,
+		{ 0 },
+		"",
+		"",
+		"the",
+		"",
+		0,
+		IT_GAMETYPE,
+		0,
+		"",
+		""
+	},
+
+	{
+		"gametype_item_2",
+		NULL,
+		{ 0 },
+		"",
+		"",
+		"the",
+		"",
+		0,
+		IT_GAMETYPE,
+		1,
+		"",
+		""
+	},
+
+	{
+		"gametype_item_3",
+		NULL,
+		{ 0 },
+		"",
+		"",
+		"the",
+		"",
+		0,
+		IT_GAMETYPE,
+		2,
+		"",
+		""
+	},
+
+	{
+		"gametype_item_4",
+		NULL,
+		{ 0 },
+		"",
+		"",
+		"the",
+		"",
+		0,
+		IT_GAMETYPE,
+		3,
+		"",
+		""
+	},
+
+	{
+		"gametype_item_5",
+		NULL,
+		{ 0 },
+		"",
+		"",
+		"the",
+		"",
+		0,
+		IT_GAMETYPE,
+		4,
+		"",
+		""
+	},
+
+	{
+		"armor",
+		"sound/player/pickup/ammo.wav",
+		{ 0 },
+		"gfx/menus/hud/weapon_icons/armor_icon",
+		"*gfx/menus/weapon_renders/armor",
+		"some",
+		"Armor",
+		5,
+		IT_PASSIVE,
+		0,
+		"",
+		"",
+
+		OUTFITTING_GROUP_ACCESSORY
+	},
+
+	{
+		"venhance_night_vision",
+		"sound/player/pickup/ammo.wav",
+		{ 0 },
+		"gfx/menus/hud/weapon_icons/nightvision_icon",
+		"*gfx/menus/weapon_renders/nightvision",
+		"some",
+		"NV. Goggles",
+		5,
+		IT_PASSIVE,
+		0,
+		"",
+		"",
+
+		OUTFITTING_GROUP_ACCESSORY
+	},
+
+	{
+		"venhance_thermal",
+		"sound/player/pickup/ammo.wav",
+		{ 0 },
+		"gfx/menus/hud/weapon_icons/thermal_icon",
+		"*gfx/menus/weapon_renders/thermal",
+		"some",
+		"Thermal Goggles",
+		5,
+		IT_PASSIVE,
+		0,
+		"",
+		"",
+
+		OUTFITTING_GROUP_ACCESSORY
+	},
+
+	// end of list marker
+	{ NULL }
+};
+#endif // not _GOLD
 
 int		bg_numItems = sizeof(bg_itemlist) / sizeof(bg_itemlist[0]) - 1;
 

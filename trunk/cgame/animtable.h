@@ -112,6 +112,10 @@ stringID_table_t bg_animTable [MAX_ANIMATIONS+1] =
 	ENUM2STRING(TORSO_RELOAD_MM1_SHELL),
 	ENUM2STRING(TORSO_RELOAD_MM1_END),
 
+	#ifdef _GOLD
+	ENUM2STRING(TORSO_USE),
+	#endif // _GOLD
+
 	//must be terminated
 	NULL,-1
 };

@@ -1330,6 +1330,7 @@ gentity_t *GetObjectThatTargets(gentity_t *ent)
 	return NULL;
 }
 
+#ifndef _GOLD
 float botGlobalNavWeaponWeights[WP_NUM_WEAPONS] =
 {
 	0,//WP_NONE,
@@ -1360,6 +1361,37 @@ float botGlobalNavWeaponWeights[WP_NUM_WEAPONS] =
 	6,//WP_ANM14_GRENADE,
 	6//WP_M15_GRENADE,
 };
+#else
+float botGlobalNavWeaponWeights[WP_NUM_WEAPONS] =
+{
+	0,//WP_NONE,
+
+	0,//WP_KNIFE,
+	0,//WP_M1911A1_PISTOL,
+	1,//WP_USSOCOM_PISTOL,
+	6,//WP_USAS_12_SHOTGUN,
+	7,//WP_M590_SHOTGUN,
+
+	8,//WP_MICRO_UZI_SUBMACHINEGUN,
+	8,//WP_M3A1_SUBMACHINEGUN,
+	9,//WP_M4_ASSAULT_RIFLE,
+	9,//WP_AK74_ASSAULT_RIFLE,
+
+	8,//WP_MSG90A1,
+	9,//WP_M60_MACHINEGUN,
+	7,//WP_MM1_GRENADE_LAUNCHER,
+	7,//WP_RPG7_LAUNCHER,
+
+	6,//WP_M84_GRENADE,
+	6,//WP_SMOHG92_GRENADE,
+
+	6,//WP_ANM14_GRENADE,
+	6,//WP_M15_GRENADE,
+
+	6,//WP_MP5
+	6,//WP_SIG551
+};
+#endif // not _GOLD
 
 int GetNearestVisibleWPToItem(vec3_t org, int ignore)
 {

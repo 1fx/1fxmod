@@ -349,6 +349,7 @@ void Touch_Item (gentity_t *ent, gentity_t *other, trace_t *trace)
 	int			respawn;
 	qboolean	predict;
 	qboolean	autoswitch;
+	int			eventID;
 
 	if (!other->client)
 		return;
@@ -447,14 +448,22 @@ void Touch_Item (gentity_t *ent, gentity_t *other, trace_t *trace)
 		return;
 	}
 
+	eventID = EV_ITEM_PICKUP;
+	#ifdef _GOLD
+	if (other->client && (other->client->ps.pm_flags & PMF_DUCKED))
+	{
+		eventID = EV_ITEM_PICKUP_QUIET;
+	}
+	#endif // _GOLD
+
 	// play the normal pickup sound
 	if (predict) 
 	{
-		G_AddPredictableEvent( other, EV_ITEM_PICKUP, ent->s.modelindex | (autoswitch?ITEM_AUTOSWITCHBIT:0) );
+		G_AddPredictableEvent(other, eventID, ent->s.modelindex | (autoswitch ? ITEM_AUTOSWITCHBIT : 0));
 	} 
 	else 
 	{
-		G_AddEvent( other, EV_ITEM_PICKUP, ent->s.modelindex | (autoswitch?ITEM_AUTOSWITCHBIT:0) );
+		G_AddEvent(other, eventID, ent->s.modelindex | (autoswitch ? ITEM_AUTOSWITCHBIT : 0));
 	}
 
 	// fire item targets

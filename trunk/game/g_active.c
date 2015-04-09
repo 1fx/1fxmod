@@ -316,6 +316,10 @@ void G_TouchTriggers( gentity_t *ent )
 
 	// Reset the players can use flag
 	ent->client->ps.pm_flags &= ~(PMF_CAN_USE);
+	#ifdef _GOLD
+	ent->client->useEntity = 0;
+	#endif // _GOLD
+	ent->client->ps.loopSound = 0;
 	ent->s.modelindex  = 0;
 
 	for ( i=0 ; i<num ; i++ ) 
@@ -340,6 +344,47 @@ void G_TouchTriggers( gentity_t *ent )
 		{
 			continue;
 		}
+
+		#ifdef _GOLD
+		// Look for usable gametype triggers and you cant use when zoomed
+		if ( !(ent->client->ps.pm_flags & PMF_ZOOMED ) )
+		{
+			switch ( hit->s.eType )
+			{
+				case ET_GAMETYPE_TRIGGER:
+					if ( hit->use && trap_GT_SendEvent ( GTEV_TRIGGER_CANBEUSED, level.time, hit->health, ent->s.number, ent->client->sess.team, 0, 0 ) )
+					{
+						ent->client->ps.pm_flags |= PMF_CAN_USE;
+						ent->client->ps.stats[STAT_USEICON] = hit->delay;
+						ent->client->ps.stats[STAT_USETIME_MAX] = hit->soundPos1;
+
+						if ( ent->client->ps.stats[STAT_USETIME] )
+						{
+							ent->client->ps.loopSound = hit->soundLoop;
+						}
+						ent->client->useEntity = hit;
+						continue;
+					}
+					break;
+				
+				case ET_ITEM:
+					if ( hit->item->giType == IT_GAMETYPE && trap_GT_SendEvent ( GTEV_ITEM_CANBEUSED, level.time, hit->item->quantity, ent->s.number, ent->client->sess.team, 0, 0 ) )
+					{
+						ent->client->ps.pm_flags |= PMF_CAN_USE;
+						ent->client->ps.stats[STAT_USEICON] = level.gametypeItems[hit->item->giTag].useIcon;
+						ent->client->ps.stats[STAT_USETIME_MAX] = level.gametypeItems[hit->item->giTag].useTime;
+
+						if ( ent->client->ps.stats[STAT_USETIME] )
+						{
+							ent->client->ps.loopSound = level.gametypeItems[hit->item->giTag].useSound;
+						}
+						ent->client->useEntity = hit;
+						continue;
+					}
+					break;
+			}
+		}
+		#endif // _GOLD
 
 		if ( !hit->touch && !ent->touch ) 
 		{
@@ -803,6 +848,7 @@ G_Use
 use key pressed
 ====================
 */
+#ifndef _GOLD
 void G_Use ( gentity_t* ent )
 {
 	int				i;
@@ -848,6 +894,35 @@ void G_Use ( gentity_t* ent )
 		}
 	}
 }
+#else
+void G_Use(gentity_t* ent)
+{
+	if (!ent->client->useEntity)
+	{
+		return;
+	}
+
+	if (ent->client->useEntity->s.eType == ET_ITEM)
+	{
+		// Make sure one last time that it can still be used
+		if (!trap_GT_SendEvent(GTEV_ITEM_CANBEUSED, level.time, ent->client->useEntity->item->quantity, ent->s.number, ent->client->sess.team, 0, 0))
+		{
+			return;
+		}
+
+		gametype_item_use(ent->client->useEntity, ent);
+		return;
+	}
+
+	// Make double sure it can still be used
+	if (!trap_GT_SendEvent(GTEV_TRIGGER_CANBEUSED, level.time, ent->client->useEntity->health, ent->s.number, ent->client->sess.team, 0, 0))
+	{
+		return;
+	}
+
+	ent->client->useEntity->use(ent->client->useEntity, ent, ent);
+}
+#endif // _GOLD
 
 /*
 ================
@@ -1482,6 +1557,17 @@ void ClientThink_real( gentity_t *ent )
 
 	// Update the client animation info
 	G_UpdateClientAnimations ( ent );
+
+	#ifdef _GOLD
+	if (ent->client->ps.pm_flags & PMF_LEANING)
+	{
+		ent->r.svFlags |= SVF_LINKHACK;
+	}
+	else
+	{
+		ent->r.svFlags &= ~SVF_LINKHACK;
+	}
+	#endif // _GOLD
 
 	// link entity now, after any personal teleporters have been used
 	trap_LinkEntity (ent);

@@ -596,10 +596,16 @@ static cvarTable_t gameCvarTable[] =
 	{ NULL,					"disable_pickup_weapon_M84",			"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
 	{ NULL,					"disable_pickup_weapon_SMOHG92",		"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
 	{ NULL,					"disable_pickup_weapon_AN_M14",			"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
+	{ NULL,					"disable_pickup_weapon_M15",			"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
+	#ifndef _GOLD
 	{ NULL,					"disable_pickup_weapon_M67",			"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
 	{ NULL,					"disable_pickup_weapon_F1",				"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
 	{ NULL,					"disable_pickup_weapon_L2A2",			"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
 	{ NULL,					"disable_pickup_weapon_MDN11",			"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
+	#else
+	{ NULL,					"disable_pickup_weapon_MP5",			"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
+	{ NULL,					"disable_pickup_weapon_SIG551",			"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
+	#endif // not _GOLD
 
 	{ &g_alternateMap, "g_alternateMap", "0", CVAR_ROM|CVAR_INTERNAL|CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_enableCustomCommands, "g_enableCustomCommands", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },

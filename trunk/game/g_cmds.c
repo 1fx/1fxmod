@@ -1404,7 +1404,7 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 		} else if (team != TEAM_SPECTATOR)
 		#else
 		if ( team != TEAM_SPECTATOR )
-		#endif // _3DServer)
+		#endif // _3DServer
 		{
 			// Make them a ghost again
 			G_StartGhosting ( ent );

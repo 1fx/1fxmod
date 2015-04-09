@@ -579,6 +579,9 @@ struct gclient_s
 	vec3_t			ghoulHeadAngles;
 
 	gentity_t		*siameseTwin;
+	#ifdef _GOLD
+	gentity_t		*useEntity;
+	#endif // _GOLD
 
 	// Boe!Man 10/16/10: We don't want the adminspec boolean to be cleared every spawn (moved to session struct).
 	//qboolean		adminspec;
@@ -1368,6 +1371,7 @@ qboolean	G_ExecuteGametypeScript				( gentity_t* activator, const char* name );
 void		G_ResetGametype						( qboolean fullRestart, qboolean cagefight );
 qboolean	G_CanGametypeTriggerBeUsed			( gentity_t* self, gentity_t* activator );
 void		G_ResetGametypeItem					( gitem_t* item );
+void		gametype_item_use					( gentity_t* self, gentity_t* other );
 //RxCxW - 02.03.05 - 11:32am #DropGTItems
 void		G_DropGametypeItems					( gentity_t* self, int delayPickup );
 void		G_FreeEnitityChildren				( gentity_t* ent );		

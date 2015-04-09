@@ -184,7 +184,11 @@ static void PM_Friction( void )
 			drop += control*pm_ladderfriction*pml.frametime;
 		}
 	}
+	#ifndef _GOLD
 	else if ( pm->waterlevel ) 
+	#else
+	else if ( pm->waterlevel > 1 ) 
+	#endif // not _GOLD
 	{
 		drop += speed*pm_waterfriction*pm->waterlevel*pml.frametime;
 	}
@@ -997,6 +1001,98 @@ static void PM_NoclipMove( void ) {
 
 //============================================================================
 
+#ifdef _GOLD
+/*
+==============
+PM_Use
+
+Generates a use event
+==============
+*/
+#define USE_DELAY 2000
+
+void PM_Use( void ) 
+{
+	int useTime = 0;
+
+	// don't allow attack until all buttons are up
+	if ( pm->ps->pm_flags & PMF_RESPAWNED ) 
+	{
+		return;
+	}
+
+	// ignore if not a normal player
+	if ( pm->ps->pm_type != PM_NORMAL ) 
+	{
+		return;
+	}
+
+	// check for dead player
+	if ( pm->ps->stats[STAT_HEALTH] <= 0 ) 
+	{
+		pm->ps->weapon = WP_NONE;
+		return;
+	}
+
+	// Cant use so dont bother letting them try
+
+	if ( !(pm->ps->pm_flags & PMF_CAN_USE ) || !(pm->cmd.buttons & BUTTON_USE ) )
+	{
+		if ( pm->ps->stats[STAT_USEWEAPONDROP] )
+		{
+			pm->ps->stats[STAT_USEWEAPONDROP] -= pml.msec;
+			if ( pm->ps->stats[STAT_USEWEAPONDROP] < 0 )
+			{
+				pm->ps->stats[STAT_USEWEAPONDROP] = 0;
+			}
+		}
+
+		if ( pm->ps->pm_debounce & PMD_USE )
+		{
+			pm->ps->pm_debounce &= ~PMD_USE;
+			pm->ps->stats[STAT_USETIME] = 0;
+		}
+		return;
+	}
+
+	pm->ps->pm_debounce |= PMD_USE;
+
+	useTime = pm->ps->stats[STAT_USETIME_MAX];
+	if ( useTime )
+	{
+		int elapsedTime = pm->ps->stats[STAT_USETIME];
+
+		if ( elapsedTime < useTime )
+		{
+			elapsedTime += pml.msec;
+		}
+		
+		pm->ps->stats[STAT_USEWEAPONDROP] += pml.msec;
+		if ( pm->ps->stats[STAT_USEWEAPONDROP] > 300 )
+		{
+			pm->ps->stats[STAT_USEWEAPONDROP] = 300;
+		}
+
+		if ( elapsedTime >= useTime )
+		{
+			pm->ps->stats[STAT_USETIME] = 0;
+			PM_AddEvent ( EV_USE );
+		}
+		else
+		{
+			pm->ps->stats[STAT_USETIME] = elapsedTime;
+		}
+
+		return;
+	}	
+
+	if ( !(pm->ps->pm_debounce & PMD_USE) )
+	{
+		PM_AddEvent ( EV_USE );
+	}
+}
+#endif // _GOLD
+
 /*
 ================
 PM_FootstepForSurface
@@ -1110,7 +1206,11 @@ static void PM_CrashLand( int impactMaterial, vec3_t impactNormal )
  		pm->ps->velocity[0] *= 0.25f;
 		pm->ps->velocity[1] *= 0.25f;
 
+		#ifndef _GOLD
 		pm->ps->pm_time = 500;
+		#else
+		pm->ps->pm_time = 750;
+		#endif // not _GOLD
 	}
 
 	// create a local entity event to play the sound
@@ -2260,12 +2360,18 @@ static void PM_BeginWeaponChange(int weapon)
 	}
 
 	// turn off any kind of zooming when weapon switching.
+	#ifndef _GOLD
 	if( pm->ps->pm_flags & PMF_ZOOMED )
 	{
 		pm->ps->zoomFov	  = 0;
 		pm->ps->zoomTime  = pm->ps->commandTime;
 		pm->ps->pm_flags &= ~(PMF_ZOOM_FLAGS);
 	}
+	#else
+	pm->ps->zoomFov = 0;
+	pm->ps->zoomTime = 0;
+	pm->ps->pm_flags &= ~(PMF_ZOOM_FLAGS);
+	#endif // not _GOLD
 
 	// Clear the weapon time
 	pm->ps->weaponTime			 = 0;
@@ -2275,7 +2381,11 @@ static void PM_BeginWeaponChange(int weapon)
 	PM_AddEvent(EV_CHANGE_WEAPON);
 	pm->ps->weaponstate = WEAPON_DROPPING;
 
+	#ifndef _GOLD
 	if( pm->ps->weapon >= WP_M67_GRENADE && pm->ps->weapon <= WP_M15_GRENADE && pm->ps->clip[ATTACK_NORMAL][pm->ps->weapon] <= 0 )
+	#else
+	if( pm->ps->weapon >= WP_M84_GRENADE && pm->ps->weapon <= WP_M15_GRENADE && pm->ps->clip[ATTACK_NORMAL][pm->ps->weapon] <= 0 )
+	#endif // not _GOLD
 	{
 		// We don't want to play the 'putaway' anim for the grenades if we are out of grenades!
 		return;
@@ -2321,13 +2431,17 @@ static void PM_FinishWeaponChange( void )
 	}
 
 	// We don't want to play the 'takeout' anim for the grenades if we are about to reload anyway
+	#ifndef _GOLD
 	if( pm->ps->weapon >= WP_M67_GRENADE && pm->ps->weapon <= WP_M15_GRENADE && pm->ps->clip[ATTACK_NORMAL][pm->ps->weapon] <=0 )
+	#else
+	if (pm->ps->weapon >= WP_M84_GRENADE && pm->ps->weapon <= WP_M15_GRENADE && pm->ps->clip[ATTACK_NORMAL][pm->ps->weapon] <=0 )
+	#endif // not _GOLD
 	{
 		return;
 	}
 
 	PM_HandleWeaponAction(WACT_READY);
-
+	
 	pm->ps->weaponTime = minimum(150,pm->ps->weaponTime);
 
 	PM_StartTorsoAnim( pm->ps, weaponData[pm->ps->weapon].animRaise, pm->ps->weaponAnimTime ); // Henk 12/04/10 -> Faster weapon switch
@@ -2417,6 +2531,9 @@ PM_EndRefillClip
 void PM_EndRefillClip(void)
 {
 	pm->ps->weaponstate=WEAPON_READY;
+	#ifdef _GOLD
+	pm->ps->weaponFireBurstCount = 0;
+	#endif // _GOLD
 }
 
 /*
@@ -2445,6 +2562,26 @@ int PM_GetAttackButtons(void)
 		pm->ps->pm_debounce &= ~PMD_FIREMODE;
 	}
 
+	#ifdef _GOLD
+	// As soon as the button is released you are ok to press attack again
+	if (pm->ps->pm_debounce & PMD_ATTACK)
+	{
+		if (!(buttons & BUTTON_ATTACK))
+		{
+			pm->ps->pm_debounce &= ~(PMD_ATTACK);
+		}
+		else if (pm->ps->firemode[pm->ps->weapon] != WP_FIREMODE_AUTO)
+		{
+			buttons &= ~BUTTON_ATTACK;
+		}
+	}
+
+	if (pm->ps->stats[STAT_FROZEN])
+	{
+		buttons &= ~BUTTON_ATTACK;
+	}
+	#endif // _GOLD
+
 	if(current_gametype.value == GT_HS){
 		// As soon as the button is released you are ok to press attack again
 		if ( pm->ps->pm_debounce & PMD_ATTACK ) 
@@ -2465,6 +2602,7 @@ int PM_GetAttackButtons(void)
 		}
 	}
 
+	#ifndef _GOLD
 	// Handle firebutton in varous firemodes.
 	switch( pm->ps->firemode[pm->ps->weapon] )
 	{
@@ -2523,6 +2661,39 @@ int PM_GetAttackButtons(void)
 
 			break;
 	}
+	#else
+	// Handle firebutton in varous firemodes.
+	switch( pm->ps->firemode[pm->ps->weapon] )
+	{
+		case WP_FIREMODE_AUTO:
+			break;
+
+		case WP_FIREMODE_BURST:
+
+			// Debounce attack button and disable other buttons during burst fire.
+			if(buttons&BUTTON_ATTACK)
+			{
+				if(!pm->ps->weaponFireBurstCount)
+				{
+					pm->ps->weaponFireBurstCount=3;
+				}
+			}
+
+			if(pm->ps->weaponFireBurstCount)
+			{
+				buttons|=BUTTON_ATTACK;
+				buttons&=~BUTTON_ALT_ATTACK;
+				buttons&=~BUTTON_RELOAD;
+				buttons&=~BUTTON_ZOOMIN;
+				buttons&=~BUTTON_ZOOMOUT;
+				buttons&=~BUTTON_FIREMODE;
+			}
+			break;
+
+		case WP_FIREMODE_SINGLE:
+			break;
+	}
+	#endif // not _GOLD
 
 	// Handle single fire alt fire attacks or the sniper zoom
 	if ( pm->ps->weapon == WP_MSG90A1 || (weaponData[pm->ps->weapon].attack[ATTACK_ALTERNATE].weaponFlags & (1<<WP_FIREMODE_SINGLE)) )
@@ -2561,12 +2732,23 @@ static void PM_Weapon_AddInaccuracy( attackType_t attack )
 	assert ( attack >= ATTACK_NORMAL && attack < ATTACK_MAX );
 
 	// Zoomed sniper weapons don't add innacuracy if ont hte ground
+	#ifndef _GOLD
 	if( (pm->ps->pm_flags & PMF_ZOOMED) && pml.groundPlane )
 	{
 		return;
 	}
 
 	pm->ps->inaccuracy += weaponData[pm->ps->weapon].attack[attack].inaccuracy;
+	#else
+	if ((pm->ps->pm_flags & PMF_ZOOMED) && pml.groundPlane)
+	{
+		pm->ps->inaccuracy += weaponData[pm->ps->weapon].attack[attack].zoomInaccuracy;
+	}
+	else
+	{
+		pm->ps->inaccuracy += weaponData[pm->ps->weapon].attack[attack].inaccuracy;
+	}
+	#endif // _GOLD
 
 	pm->ps->inaccuracyTime = RECOVER_TIME;
 
@@ -2792,6 +2974,14 @@ static void PM_Weapon( void )
 	// Get modifed attack buttons.
 	attackButtons = PM_GetAttackButtons();
 
+	#ifdef _GOLD
+	// Gun goes away when using something
+	if ( pm->ps->stats[STAT_USEWEAPONDROP] )
+	{
+		return;
+	}
+	#endif // _GOLD
+
 	// don't allow attack until all buttons are up
 	if ( pm->ps->pm_flags & PMF_RESPAWNED ) 
 	{
@@ -2907,10 +3097,12 @@ static void PM_Weapon( void )
 	if( pm->ps->weaponstate == WEAPON_ZOOMIN )
 	{
 		// The zoomfov may still be remembered from a reload while zooming
+		#ifndef _GOLD
 		if ( !pm->ps->zoomFov )
 		{
 			pm->ps->zoomFov = 20;
 		}
+		#endif // not _GOLD
 
 		pm->ps->pm_flags |= PMF_ZOOMED;
 		pm->ps->pm_flags |= PMF_ZOOM_LOCKED;
@@ -2989,6 +3181,7 @@ static void PM_Weapon( void )
 					pm->ps->weaponstate=WEAPON_READY;
 					return;
 				}
+				break;
 			default:
 				break;
 		}
@@ -3044,7 +3237,7 @@ static void PM_Weapon( void )
 
 			default:
 				PM_EndRefillClip();
-				break;
+				return;
 		}
 	}
 	else if(pm->ps->pm_flags & PMF_ZOOM_DEFER_RELOAD )
@@ -3079,7 +3272,11 @@ static void PM_Weapon( void )
 	}
 	
 	// Handle zooming in/out for sniper rifle.
+	#ifndef _GOLD
 	if(pm->ps->weapon==WP_MSG90A1)
+	#else
+	if (weaponData[pm->ps->weapon].zoom[0].fov)
+	#endif // _GOLD
 	{
 		if( (attackButtons&BUTTON_ALT_ATTACK) || (pm->ps->pm_flags & PMF_ZOOM_REZOOM) )
 		{
@@ -3097,12 +3294,20 @@ static void PM_Weapon( void )
 		{
 			if(pm->cmd.buttons&BUTTON_ZOOMIN)
 			{
+				#ifndef _GOLD
 				pm->ps->zoomFov = pm->ps->zoomFov >> 1;
 				if ( pm->ps->zoomFov < 5)
 				{
 					pm->ps->zoomFov = 5;
 				}
 				pm->ps->weaponTime=175;
+				#else
+				if (pm->ps->zoomFov + 1 < ZOOMLEVEL_MAX && weaponData[pm->ps->weapon].zoom[pm->ps->zoomFov + 1].fov)
+				{
+					pm->ps->zoomFov++;
+					pm->ps->weaponTime = 175;
+				}
+				#endif // _GOLD
 				return;
 			}
 			else if(pm->cmd.buttons&BUTTON_ZOOMOUT)
@@ -3225,6 +3430,10 @@ static void PM_Weapon( void )
 
 		return;
 	}
+
+	#ifdef _GOLD
+	pm->ps->pm_debounce |= PMD_ATTACK;
+	#endif // _GOLD
 
 	// Decrease the ammo
 	(*ammoSource) -= attackData->fireAmount;
@@ -3375,10 +3584,9 @@ static void PM_CheckLean( void )
 
 		// check for collision
 		VectorCopy( pm->ps->origin, start );
-		start[2] += pm->ps->viewheight;
 		AngleVectors( pm->ps->viewangles, NULL, right, NULL );
-		VectorSet( mins, -6, -6, -8 ); 
-		VectorSet( maxs, 6, 6, 8 ); 
+		VectorSet( mins, -6, -6, -20 ); 
+		VectorSet( maxs, 6, 6, 20 ); 
 		
 		// since we're moving the camera over
 		// check that move
@@ -3608,7 +3816,15 @@ void PmoveSingle (pmove_t *pmove) {
 	}
 	
 	// Cant run when zoomed
+	#ifndef _GOLD
 	if ( (pm->ps->pm_flags&PMF_ZOOMED) || pm->ps->weaponstate == WEAPON_ZOOMIN || (pm->cmd.buttons & (BUTTON_LEAN_LEFT|BUTTON_LEAN_RIGHT)) )
+	#else
+	// Cant run when zoomed, leaning, or using something that takes time
+	if ( (pm->ps->pm_flags&PMF_ZOOMED) || 
+		 (pm->ps->weaponstate == WEAPON_ZOOMIN) || 
+		 (pm->cmd.buttons & (BUTTON_LEAN_LEFT|BUTTON_LEAN_RIGHT)) || 
+		 (pm->ps->stats[STAT_USEWEAPONDROP]) )
+	#endif // not _GOLD
 	{
 		if ( pm->cmd.forwardmove > 64 )
 		{
@@ -3815,6 +4031,11 @@ void PmoveSingle (pmove_t *pmove) {
 	// weapons
 	PM_Weapon();
 
+	#ifdef _GOLD
+	// Use
+	PM_Use ( );
+	#endif // _GOLD
+
 	// torso animation
 	PM_TorsoAnimation( pm->ps );
 
@@ -3845,13 +4066,8 @@ void PM_UpdatePVSOrigin ( pmove_t *pmove )
 	// Set a pm flag for leaning and calculate the view origin for the lean
 	if ( pm->ps->leanTime - LEAN_TIME != 0 )
 	{
-		vec3_t	right;
-		float	leanOffset;
-
-		leanOffset = (float)(pm->ps->leanTime - LEAN_TIME) / LEAN_TIME * LEAN_OFFSET;
-
-		AngleVectors( pm->ps->viewangles, NULL, right, NULL );
-		VectorMA( pm->ps->origin, leanOffset, right, pm->ps->pvsOrigin );
+		VectorCopy(pm->ps->origin, pm->ps->pvsOrigin);
+		BG_ApplyLeanOffset(pm->ps, pm->ps->pvsOrigin);
 	}
 	else
 	{

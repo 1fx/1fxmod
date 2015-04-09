@@ -25,6 +25,11 @@
 #define SVF_GLASS_BRUSH			0x08000000	// Ent is a glass brush
 
 #define SVF_DOUBLED_BBOX		0x00001000	// Bounding box has been doubled
+#ifdef _GOLD
+#define SVF_LINKHACK			0x10000000	// Hack to link an entity into extra clusters
+#define SVF_DETAIL				0x20000000	// Entity is a detail entity and can be dropped from the snapshot
+#define SVF_SKIP				0x80000000	// Dont include this entity in the current snapshot (internal use only)
+#endif // _GOLD
 
 //===============================================================
 
@@ -62,6 +67,10 @@ typedef struct {
 	// are represented by the first array index and the latter 32 clients are represented
 	// by the second array index.
 	int			broadcastClients[2];
+
+	#ifdef _GOLD
+	int			detailTime;
+	#endif // _GOLD
 
 } entityShared_t;
 

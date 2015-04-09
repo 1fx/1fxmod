@@ -7,7 +7,8 @@
 #include "bg_local.h"
 #include "g_local.h"
 
-// names as they appear in the SOF2.wpn and inview files
+#ifndef _GOLD
+// names as they appear in the SOF2.wpn and inview files for v1.00
 char *bg_weaponNames[WP_NUM_WEAPONS] = 
 {
 	"No Weapon",					// WP_NONE,
@@ -34,8 +35,6 @@ char *bg_weaponNames[WP_NUM_WEAPONS] =
 	"M15"							// WP_M15_GRENADE,
 };
 
-weaponData_t weaponData[WP_NUM_WEAPONS];
-
 char *ammoNames[AMMO_MAX] =
 {							
 	"Knife",		//	AMMO_KNIFE,
@@ -55,8 +54,53 @@ char *ammoNames[AMMO_MAX] =
 	"SMOHG92",		//	AMMO_SMOHG92,
 	"ANM14" 		//	AMMO_ANM14,
 };
+#else
+// names as they appear in the SOF2.wpn and inview files for v1.03
+char *bg_weaponNames[WP_NUM_WEAPONS] = 
+{
+	"No Weapon",					// WP_NONE,
+	"Knife",						// WP_KNIFE,
+	"M1911A1",						// WP_M1911A1_PISTOL,
+	"US SOCOM",						// WP_US_SOCOM_PISTOL,
+	"Silver Talon",					// WP_SILVER_TALON,
+	"M590",							// WP_M590_SHOTGUN,
+	"Micro Uzi",					// WP_MICRO_UZI_SUBMACHINEGUN,
+	"M3A1",							// WP_M3A1_SUBMACHINEGUN,
+	"MP5",							// WP_MP5
+	"USAS-12",						// WP_USAS_12_SHOTGUN,
+	"M4",							// WP_M4_ASSAULT_RIFLE,
+	"AK74",							// WP_AK74_ASSAULT_RIFLE,
+	"Sig 551",						// WP_SIG551
+	"MSG90A1",						// WP_MSG90A1_SNIPER_RIFLE,
+	"M60",							// WP_M60_MACHINEGUN,
+	"MM1",							// WP_MM1_GRENADE_LAUNCHER,
+	"RPG7",							// WP_RPG7_LAUNCHER,
+	"M84",							// WP_M84_GRENADE,
+	"SMOHG92",						// WP_SMOHG92_GRENADE,
+	"ANM14", 						// WP_ANM14_GRENADE,
+	"M15",							// WP_M15_GRENADE,
+};
 
+char *ammoNames[AMMO_MAX] =
+{
+	"Knife",		//	AMMO_KNIFE,
+	"0.45 ACP",		//	AMMO_045,
+	"5.56mm", 		//	AMMO_556,
+	"9mm",			//	AMMO_9  ,
+	"12 gauge",		//	AMMO_12 ,
+	"7.62mm",		//	AMMO_762,
+	"40mm grenade",	//	AMMO_40,
+	"RPG7",			//  AMMO_RPG7
+	"M15",			//	AMMO_M15,
+	"M84",			//	AMMO_M84,
+	"SMOHG92",		//	AMMO_SMOHG92,
+	"ANM14", 		//	AMMO_ANM14,
+	"7.62mm belt",	//  AMMO_762_BELT,
+	"9mm|mp5",		//  AMMO_9_MP5
+};
+#endif // not _GOLD
 ammoData_t ammoData[AMMO_MAX];
+weaponData_t weaponData[WP_NUM_WEAPONS];
 
 static qboolean BG_ParseAmmoStats(ammo_t ammoNum, void *group)
 {
@@ -145,6 +189,40 @@ static qboolean BG_ParseAttackStats ( int weaponNum, attackData_t* attack, void 
 		return qtrue;
 	}
 
+	#ifdef _GOLD
+	// Zoom information
+	trap_GPG_FindPairValue(attacksub, "action", "", tmpStr);
+	if (!Q_stricmp(tmpStr, "toggleZoom"))
+	{
+		weaponData_t *weapon;
+		void		 *value;
+		int			 zoomlvl;
+
+		weapon = &weaponData[weaponNum];
+
+		sub = trap_GPG_FindSubGroup(attacksub, "zoomFactors");
+		if (!sub)
+		{
+			return qfalse;
+		}
+
+		value = trap_GPG_GetPairs(sub);
+		zoomlvl = 0;
+		while (value)
+		{
+			trap_GPV_GetName(value, weapon->zoom[zoomlvl].name);
+			trap_GPV_GetTopValue(value, tmpStr);
+
+			weapon->zoom[zoomlvl].fov = atoi(tmpStr);
+
+			value = trap_GPV_GetNext(value);
+			zoomlvl++;
+		}
+
+		return qtrue;
+	}
+	#endif // _GOLD
+
 	// Assign a melee attribute if there is one
 	trap_GPG_FindPairValue(attacksub, "mp_melee||melee", "none", tmpStr );
 	if ( Q_stricmp ( tmpStr, "none" ) )
@@ -197,6 +275,10 @@ static qboolean BG_ParseAttackStats ( int weaponNum, attackData_t* attack, void 
 	attack->fireFromClip = atoi(tmpStr);
 	trap_GPG_FindPairValue(attacksub, "mp_inaccuracy||inaccuracy", "0", tmpStr);
 	attack->inaccuracy = (int)(atof(tmpStr)*1000.0f);
+	#ifdef _GOLD
+	trap_GPG_FindPairValue(attacksub, "mp_zoominaccuracy", "0", tmpStr);
+	attack->zoomInaccuracy = (int)(atof(tmpStr)*1000.0f);
+	#endif // _GOLD
 	trap_GPG_FindPairValue(attacksub, "mp_maxInaccuracy||maxInaccuracy", "0", tmpStr);
 	attack->maxInaccuracy = (int)(atof(tmpStr)*1000.0f);
 	trap_GPG_FindPairValue(attacksub, "mp_gore||gore", "YES", tmpStr);

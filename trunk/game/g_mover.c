@@ -1670,7 +1670,9 @@ void SP_func_wall ( gentity_t* ent )
 	VectorCopy( ent->s.pos.trBase, ent->r.currentOrigin );
 	VectorCopy( ent->s.apos.trBase, ent->r.currentAngles );
 
-	//ent->s.eType = ET_WALL;
+	#ifdef _GOLD
+	ent->s.eType = ET_WALL;
+	#endif // _GOLD
 
 	ent->use = G_WallUse;
 

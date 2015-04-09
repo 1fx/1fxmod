@@ -1399,6 +1399,9 @@ typedef enum {
 #define MAX_SUB_BSP				32
 #define MAX_ICONS				32
 #define	MAX_CHARSKINS			64		// character skins
+#ifdef _GOLD
+#define	MAX_HUDICONS			16		// icons on hud
+#endif // _GOLD
 
 #define	MAX_CONFIGSTRINGS	1400
 

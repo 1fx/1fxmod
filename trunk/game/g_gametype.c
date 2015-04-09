@@ -75,6 +75,21 @@ void SP_mission_player ( gentity_t* ent )
 	SP_gametype_player ( ent );
 }
 
+#ifdef _GOLD
+void gametype_item_use ( gentity_t* self, gentity_t* other )
+{
+	if ( level.gametypeResetTime )
+	{
+		return;
+	}
+
+	if ( trap_GT_SendEvent ( GTEV_ITEM_USED, level.time, self->item->quantity, other->s.number, other->client->sess.team, 0, 0 ) )
+	{
+		G_UseTargets ( self, other );
+	}
+}
+#endif // _GOLD
+
 #ifdef _3DServer
 /*QUAKED monkey_player (0 1 0) (-16 -16 -46) (16 16 48)
 Potential spawning position for dead monkey players in the Hide&Seek gametype.
@@ -138,6 +153,10 @@ void SP_gametype_trigger ( gentity_t* ent )
 	*/
 
 	InitTrigger (ent);
+
+	#ifdef _GOLD
+	ent->s.eType = ET_GAMETYPE_TRIGGER;
+	#endif // _GOLD
 }
 static gentity_t* G_RealSpawnGametypeItem ( gentity_t* ent, qboolean dropped )
 {
@@ -448,6 +467,20 @@ void G_ResetEntities ( void )
 		{
 			G_FreeEntity ( ent );
 		}
+		#ifdef _GOLD
+		// func_wall's can be toggled off/on
+		else if ( ent->s.eType == ET_WALL )
+		{
+			if ( ent->spawnflags & 1 )
+			{
+				trap_UnlinkEntity ( ent );
+			}
+			else
+			{
+				trap_LinkEntity ( ent );
+			}
+		}
+		#endif // _GOLD
 		// If the dropped flag is set then free it
 		else if ( ent->flags & FL_DROPPED_ITEM )
 		{

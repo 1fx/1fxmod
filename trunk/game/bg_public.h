@@ -36,8 +36,8 @@
 //#define	GAME_VERSION		"sof2mp-0.21"	sent on 4/22/2002
 //#define	GAME_VERSION		"sof2mp-1.00.22"	sent on 4/26/2002
 //#define	GAME_VERSION		"sof2mp-1.00.23"	sent on 4/27/2002
-#ifdef GERMAN_BUILD
-	#define	GAME_VERSION		"sof2mp-1.00g"
+#ifdef _GOLD
+	#define	GAME_VERSION		"sof2mp-1.03"
 #else
 	#define	GAME_VERSION		"sof2mp-1.00"
 #endif
@@ -65,7 +65,11 @@
 #define DEAD_PLAYER_Z_MAX		-30
 
 #define DUCK_ACCURACY_MODIFIER	0.75f
+#ifndef _GOLD
 #define JUMP_ACCURACY_MODIFIER	1.5f
+#else
+#define JUMP_ACCURACY_MODIFIER	2.0f
+#endif // not _GOLD
 
 #define	MINS_Z				-46
 
@@ -135,7 +139,13 @@ enum
 	CS_ICONS				= CS_LIGHT_STYLES + (MAX_LIGHT_STYLES*3),
 	CS_TEAM_INFO			= CS_ICONS + MAX_ICONS,
 	CS_AMBIENT_SOUNDSETS	= CS_TEAM_INFO + TEAM_NUM_TEAMS,
+	#ifndef _GOLD
 	CS_MAX					= CS_AMBIENT_SOUNDSETS + MAX_AMBIENT_SOUNDSETS
+	#else
+	CS_HUDICONS = CS_AMBIENT_SOUNDSETS + MAX_AMBIENT_SOUNDSETS,
+
+	CS_MAX = CS_HUDICONS + MAX_HUDICONS,
+	#endif // not _GOLD
 };
 	
 /*
@@ -317,6 +327,10 @@ typedef enum
 	TORSO_RELOAD_MM1_SHELL,
 	TORSO_RELOAD_MM1_END,
 
+	#ifdef _GOLD
+	TORSO_USE,
+	#endif // _GOLD
+
 	MAX_ANIMATIONS
 
 } animNumber_t;
@@ -344,6 +358,9 @@ typedef struct ladder_s
 // changes so a restart of the same anim can be detected
 #define	ANIM_TOGGLEBIT				2048		// Note that there are 12 bits (max 4095) for animations.
 #define ITEM_AUTOSWITCHBIT			(1<<31)	
+#ifdef _GOLD
+#define ITEM_QUIETPICKUP			(1<<30)
+#endif // _GOLD
 
 typedef enum 
 {
@@ -502,7 +519,12 @@ typedef enum
 	STAT_GAMETYPE_ITEMS,			// Which gametype items they have	
 	STAT_SEED,						// seed used to keep weapon firing in sync
 	STAT_OUTFIT_GRENADE,			// indicates which greande is chosen in the outfitting
-
+	#ifdef _GOLD
+	STAT_USEICON,					// icon to display when able to use a trigger or item
+	STAT_USETIME,					// elased time for using 
+	STAT_USETIME_MAX,				// total time required to use
+	STAT_USEWEAPONDROP,				// value to drop weapon out of view when using
+	#endif // _GOLD
 } statIndex_t;
 
 
@@ -615,6 +637,9 @@ typedef enum
 	EV_WATER_CLEAR,
 
 	EV_ITEM_PICKUP,			// normal item pickups are predictable
+	#ifdef _GOLD
+	EV_ITEM_PICKUP_QUIET,	// quiet pickup
+	#endif // _GOLD
 
 	EV_NOAMMO,
 	EV_CHANGE_WEAPON,
@@ -801,6 +826,12 @@ typedef enum
 	ET_TERRAIN,
 
 	ET_DEBUG_CYLINDER,
+
+	#ifdef _GOLD
+	ET_GAMETYPE_TRIGGER,
+
+	ET_WALL,
+	#endif // _GOLD
 
 	ET_EVENTS				// any of the EV_* events can be added freestanding
 							// by setting eType to ET_EVENTS + eventNum
@@ -1037,7 +1068,11 @@ typedef struct SSkinTemplate
 #define MAX_MODEL_SOUNDS			8
 #define MAX_IDENTITIES				256
 #define MAX_OUTFITTINGS				64
+#ifndef _GOLD
 #define MAX_OUTFITTING_GROUPITEM	10
+#else
+#define MAX_OUTFITTING_GROUPITEM	12
+#endif // not _GOLD
 
 typedef struct SModelSounds
 {
@@ -1083,7 +1118,7 @@ extern TIdentity			bg_identities[];
 extern int					bg_identityCount;
 extern goutfitting_t		bg_outfittings[];
 extern int					bg_outfittingCount;
-extern int					bg_outfittingGroups[][10];
+extern int					bg_outfittingGroups[][MAX_OUTFITTING_GROUPITEM];
 extern char					*bg_weaponNames[WP_NUM_WEAPONS];
 extern stringID_table_t		bg_animTable [MAX_ANIMATIONS+1];
 
@@ -1100,6 +1135,7 @@ void				BG_DecompressOutfitting				( const char* compressed, goutfitting_t* outf
 void				BG_CompressOutfitting				( goutfitting_t* outfitting, char* compressed, int size );
 int					BG_ParseOutfittingTemplates			( qboolean force );
 int					BG_FindOutfitting					( goutfitting_t* outfitting);
+void				BG_ApplyLeanOffset					( playerState_t* ps, vec3_t origin );
 														
 /*******************************************************************************
  *

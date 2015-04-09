@@ -440,12 +440,7 @@ void G_FireBullet ( gentity_t* ent, int weapon, int attack )
 	VectorCopy(ent->client->ps.viewangles, fireAngs);
 	if ( ent->client->ps.pm_flags & PMF_LEANING )
 	{
-		vec3_t  right;
-		float	leanOffset;
-
-		leanOffset = (float)(ent->client->ps.leanTime - LEAN_TIME) / LEAN_TIME * LEAN_OFFSET;
-		AngleVectors( fireAngs, NULL, right, NULL );
-		VectorMA( muzzlePoint, leanOffset, right, muzzlePoint );
+		BG_ApplyLeanOffset(&ent->client->ps, muzzlePoint);
 	}
 
 	AngleVectors( fireAngs, fwd, NULL, NULL );
@@ -831,6 +826,11 @@ void G_FireBullet ( gentity_t* ent, int weapon, int attack )
 				tent->s.eventParm <<= MATERIAL_BITS;
 				tent->s.eventParm |= (tr.surfaceFlags & MATERIAL_MASK);
 				tent->s.time = weapon + ((attack&0xFF)<<8);
+
+				#ifdef _GOLD
+				tent->r.detailTime = level.time + rand() % 1000;
+				tent->r.svFlags |= SVF_DETAIL;
+				#endif // _GOLD
 			}
 
 			tent->s.otherEntityNum = ent->s.number;
@@ -923,12 +923,7 @@ gentity_t* G_FireProjectile ( gentity_t *ent, weapon_t weapon, attackType_t atta
 
 	if ( ent->client->ps.pm_flags & PMF_LEANING )
 	{
-		float leanOffset;
-
-		leanOffset = (float)(ent->client->ps.leanTime - LEAN_TIME) / LEAN_TIME * LEAN_OFFSET;
-		fireAngs[ROLL] += leanOffset / 4;
-		AngleVectors( fireAngs, NULL, right, NULL );
-		VectorMA( muzzlePoint, leanOffset /* * 0.75f */, right, muzzlePoint );
+		BG_ApplyLeanOffset(&ent->client->ps, muzzlePoint);
 	}
 
 	AngleVectors( fireAngs, fwd, right, up );

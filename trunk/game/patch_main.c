@@ -156,6 +156,10 @@ void Patch_Main()
 {
 	int i = trap_Milliseconds();
 
+	#ifdef _GOLD
+	return;
+	#endif _GOLD
+
 	Com_Printf("------------------------------------------\n");
 	Com_Printf("Applying memory runtime modifications...\n");
 
