@@ -419,7 +419,11 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_roundstartdelay,	"g_roundstartdelay", "3",		CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 	{ &hideSeek_roundstartdelay,	"hideSeek_roundstartdelay", "30",		CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 
+	#ifndef _GOLD
 	{ &g_availableWeapons,	"g_availableWeapons", "2222222222211", CVAR_ARCHIVE|CVAR_SERVERINFO|CVAR_LATCH|CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
+	#else
+	{ &g_availableWeapons,	"g_available", "2222222222211", CVAR_ARCHIVE|CVAR_SERVERINFO|CVAR_LATCH|CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
+	#endif // not _GOLD
 	{ &hideSeek_availableWeapons,	"hideSeek_availableWeapons", "200000000000022222222", CVAR_INTERNAL|CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
 	{ &availableWeapons,	"availableWeapons", "2222222222211", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
 	// Henk 01/04/10
@@ -1008,7 +1012,11 @@ void G_UpdateAvailableWeapons ( void )
 	}
 
 	// 1.03 CHANGE - Rename availableWeapons Cvar which might confuse old map cycles
+	#ifndef _GOLD
 	trap_Cvar_Set ( "g_availableWeapons", available );
+	#else
+	trap_Cvar_Set ( "g_available", available );
+	#endif // not _GOLD
     trap_Cvar_Update ( &g_availableWeapons );
 }
 
