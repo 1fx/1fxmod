@@ -177,7 +177,7 @@ qboolean BG_InitAmmoStats(void)
 	return qtrue;
 }
 
-static qboolean BG_ParseAttackStats ( int weaponNum, attackData_t* attack, void *attacksub)
+static qboolean BG_ParseAttackStats ( int weaponNum, attackData_t* attack, void *attacksub )
 {
 	void*	sub;
 	char	tmpStr[256];
@@ -228,20 +228,25 @@ static qboolean BG_ParseAttackStats ( int weaponNum, attackData_t* attack, void 
 	if ( Q_stricmp ( tmpStr, "none" ) )
 	{
 		Q_strlwr ( tmpStr );
-#ifdef _TRUEMALLOC
-		trap_TrueMalloc((void **)&attack->melee, sizeof(tmpStr));
-		if(attack->melee){
-			strcpy((char *)attack->melee, tmpStr);
-		}
-#else
 		attack->melee = trap_VM_LocalStringAlloc ( tmpStr );
-#endif
 	}
 
 	trap_GPG_FindPairValue(attacksub, "name", "NONE", attack->name);
 	trap_GPG_FindPairValue(attacksub, "hudIcon", "NONE", attack->icon);
-
+	#ifdef _GOLD
+	if (level.pickupsDisabled)
+	{
+		trap_GPG_FindPairValue(attacksub, "mp_ammoType_outfitting", "", tmpStr);
+		if (!tmpStr[0])
+		{
+			trap_GPG_FindPairValue(attacksub, "mp_ammoType||ammoType", "none", tmpStr);
+		}
+	}
+	else
+	#endif // _GOLD
 	trap_GPG_FindPairValue(attacksub, "mp_ammoType||ammoType", "none", tmpStr);
+
+
 	attack->ammoIndex = AMMO_NONE;
 	for (i = 0; i < AMMO_MAX; i++)
 	{

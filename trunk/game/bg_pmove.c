@@ -3307,17 +3307,25 @@ static void PM_Weapon( void )
 					pm->ps->zoomFov++;
 					pm->ps->weaponTime = 175;
 				}
-				#endif // _GOLD
+				#endif // not _GOLD
 				return;
 			}
 			else if(pm->cmd.buttons&BUTTON_ZOOMOUT)
 			{
+				#ifndef _GOLD
 				pm->ps->zoomFov = pm->ps->zoomFov << 1;
 				if(pm->ps->zoomFov > 20 )
 				{
 					pm->ps->zoomFov = 20;
 				}
 				pm->ps->weaponTime=175;
+				#else
+				if (pm->ps->zoomFov > 0)
+				{
+					pm->ps->zoomFov--;
+					pm->ps->weaponTime = 175;
+				}
+				#endif // not _GOLD
 				return;
 			}
 		}

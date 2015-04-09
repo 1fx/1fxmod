@@ -1066,6 +1066,13 @@ void G_UpdateOutfitting ( int clientNum )
 		}
 	}
 
+	#ifdef _GOLD
+	// Disable zooming
+	client->ps.zoomFov = 0;
+	client->ps.zoomTime = 0;
+	client->ps.pm_flags &= ~(PMF_ZOOM_FLAGS);
+	#endif // _GOLD
+
 	if(current_gametype.value != GT_HS){ // Henk 15/01/11 -> don't select new weapons when we get them
 	client->ps.weapon = equipWeapon;
 	client->ps.weaponstate = WEAPON_READY; //WEAPON_SPAWNING;
