@@ -310,11 +310,7 @@ typedef struct bot_state_s
 } bot_state_t;
 
 void *B_TempAlloc(int size);
-#ifdef _TRUEMALLOC
-void B_TempFree(char *ptr);
-#else
 void B_TempFree(int size);
-#endif
 
 void *B_Alloc(int size);
 void B_Free(void *ptr);

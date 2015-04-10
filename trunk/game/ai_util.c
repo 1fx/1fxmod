@@ -20,27 +20,13 @@ char gBotChatBuffer[MAX_CLIENTS][MAX_CHAT_BUFFER_SIZE];
 
 void *B_TempAlloc(int size)
 {
-#ifdef _TRUEMALLOC
-	char *ptr;
-	
-	trap_TrueMalloc((void **)&ptr, size);
-	return ptr;
-#else
 	return trap_VM_LocalTempAlloc(size);
-#endif
 }
 
-#ifdef _TRUEMALLOC
-void B_TempFree(char *ptr)
-{
-	trap_TrueFree((void **)&ptr);
-}
-#else
 void B_TempFree(int size)
 {
 	trap_VM_LocalTempFree(size);
 }
-#endif
 
 void *B_Alloc(int size)
 {
@@ -93,14 +79,7 @@ void *B_Alloc(int size)
 
 	return ptr;
 #else
-#ifdef _TRUEMALLOC
-	char *ptr;
-	trap_TrueMalloc((void **)&ptr, size);
-	return ptr;
-#else
 	return trap_VM_LocalAlloc(size);
-#endif
-
 #endif
 }
 
@@ -385,11 +364,7 @@ int BotDoChat(bot_state_t *bs, char *section, int always)
 
 	if (!rVal) //the bot has no group defined for the specified chat event
 	{
-#ifdef _TRUEMALLOC
-		B_TempFree(chatgroup);
-#else
 		B_TempFree(MAX_CHAT_BUFFER_SIZE); //chatgroup
-#endif
 		return 0;
 	}
 
@@ -422,11 +397,7 @@ int BotDoChat(bot_state_t *bs, char *section, int always)
 
 	if (!lines)
 	{
-#ifdef _TRUEMALLOC
-		B_TempFree(chatgroup);
-#else
 		B_TempFree(MAX_CHAT_BUFFER_SIZE); //chatgroup
-#endif
 		return 0;
 	}
 
@@ -481,11 +452,7 @@ int BotDoChat(bot_state_t *bs, char *section, int always)
 
 	if (strlen(chatgroup) > MAX_CHAT_LINE_SIZE)
 	{
-#ifdef _TRUEMALLOC
-		B_TempFree(chatgroup);
-#else
 		B_TempFree(MAX_CHAT_BUFFER_SIZE); //chatgroup
-#endif
 		return 0;
 	}
 
@@ -541,12 +508,7 @@ int BotDoChat(bot_state_t *bs, char *section, int always)
 	bs->chatTime_stored = (strlen(bs->currentChat)*45)+Q_irand(1300, 1500);
 	bs->chatTime = level.time + bs->chatTime_stored;
 
-#ifdef _TRUEMALLOC
-	B_TempFree(chatgroup);
-#else
 	B_TempFree(MAX_CHAT_BUFFER_SIZE); //chatgroup
-#endif
-
 	return 1;
 }
 
@@ -690,13 +652,8 @@ void BotUtilizePersonality(bot_state_t *bs)
 
 	len = rlen;
 
-#ifdef _TRUEMALLOC
-	trap_TrueMalloc((void **)&readbuf, 1024);
-	trap_TrueMalloc((void **)&group, 65536);
-#else
 	readbuf = (char *)trap_VM_LocalTempAlloc(1024);
 	group = (char *)trap_VM_LocalTempAlloc(65536);
-#endif
 
 	if (!GetValueGroup(personalityBuffer, "GeneralBotInfo", group))
 	{
@@ -837,12 +794,7 @@ void BotUtilizePersonality(bot_state_t *bs)
 		ParseEmotionalAttachments(bs, group);
 	}
 
-#ifdef _TRUEMALLOC
-	trap_TrueFree((void **)&group);
-	trap_TrueFree((void **)&readbuf);
-#else
 	trap_VM_LocalTempFree(65536);
 	trap_VM_LocalTempFree(1024);
-#endif
 	trap_FS_FCloseFile(f);
 }
