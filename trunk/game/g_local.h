@@ -1262,8 +1262,11 @@ int				adm_adminRemove						(int argNum, gentity_t *adm, qboolean shortCmd);
 int				adm_friendlyFire					(int argNum, gentity_t *adm, qboolean shortCmd);
 int				adm_Rename							(int argNum, gentity_t *adm, qboolean shortCmd);
 int				adm_Map								(int argNum, gentity_t *adm, qboolean shortCmd);
-int				adm_Third							(int argNum, gentity_t *adm, qboolean shortCmd);
 int				adm_Rounds							(int argNum, gentity_t *adm, qboolean shortCmd);
+
+#ifndef _GOLD
+int				adm_Third(int argNum, gentity_t *adm, qboolean shortCmd);
+#endif // not _GOLD
 
 static void		adm_addAdmin_f						(int argNum, gentity_t *adm, qboolean shortCmd, int level2, char *commandName);
 static void		adm_unTwist							(int idNum, gentity_t *adm);
@@ -1468,14 +1471,11 @@ extern	vmCvar_t	availableWeapons;
 extern  vmCvar_t	g_disableNades; // Henk 01/04/10
 extern  vmCvar_t	g_instaGib; // Henk 08/04/10
 extern  vmCvar_t	g_weaponModFlags; // Henk 08/04/10
-extern  vmCvar_t	g_allowthirdperson;
 extern  vmCvar_t	g_weaponswitch;
 extern	vmCvar_t	g_compMode;
-//extern  vmCvar_t	g_clanfile;
 extern  vmCvar_t	g_enableTeamCmds;
 extern  vmCvar_t	g_refpassword;
 extern  vmCvar_t	g_checkCountry;
-//extern  vmCvar_t	g_disablelower;
 extern	vmCvar_t	g_forceFollow;
 extern	vmCvar_t	g_followEnemy;
 extern  vmCvar_t	g_mapcycle;
@@ -1492,6 +1492,10 @@ extern  vmCvar_t	hideSeek_Extra;
 extern  vmCvar_t	server_humanteamprefix;
 extern  vmCvar_t	server_zombieteamprefix;
 extern	vmCvar_t	g_caserun;
+
+#ifndef _GOLD
+extern  vmCvar_t	g_allowthirdperson;
+#endif // not _GOLD
 
 void	trap_Printf( const char *fmt );
 void	trap_Error( const char *fmt );

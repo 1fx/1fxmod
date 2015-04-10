@@ -83,9 +83,11 @@ static admCmd_t AdminCommands[] =
 	{"!map", "map", &g_mapswitch.integer, &adm_Map, NULL},
 	{"!altmap","altmap", &g_mapswitch.integer, &adm_Map, NULL},
 	{"!devmap","devmap", &g_mapswitch.integer, &adm_Map, NULL},
-	{"!3rd","3rd", &g_3rd.integer, &adm_Third, NULL},
-	{"!third","third", &g_3rd.integer, &adm_Third, NULL},
 	{"!rounds","rounds", &g_cm.integer, &adm_Rounds, NULL},
+	#ifndef _GOLD
+	{ "!3rd", "3rd", &g_3rd.integer, &adm_Third, NULL },
+	{ "!third", "third", &g_3rd.integer, &adm_Third, NULL },
+	#endif // not _GOLD
 };
 
 static int AdminCommandsSize = sizeof( AdminCommands ) / sizeof( AdminCommands[0] );
@@ -2731,9 +2733,12 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	}
 	}
 
-	// Boe!Man 12/20/09
-	Boe_Tokens(ent, p, mode, qtrue);
-	Boe_Tokens(ent, p, mode, qfalse);
+	if (!(strstr(p, "!3rd") && ent->client->sess.admin)){
+		// Boe!Man 12/20/09
+		Boe_Tokens(ent, p, mode, qtrue);
+		Boe_Tokens(ent, p, mode, qfalse);
+	}
+	
 	// End
 	G_Say( ent, NULL, mode, p );
 }

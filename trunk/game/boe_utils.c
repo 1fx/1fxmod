@@ -1996,11 +1996,13 @@ void Boe_About( gentity_t *ent )
 	if(strstr(g_gametype.string, "ctf")){
 		trap_SendServerCommand( ent-g_entities, va("print \"[^3Respawn interval^7]    %i\n", g_respawnInterval.integer));
 	}
+	#ifndef _GOLD
 	if (g_allowthirdperson.integer > 0){
 		trap_SendServerCommand( ent-g_entities, va("print \"[^3Third person^7]        Yes\n"));
 	}else{
 		trap_SendServerCommand( ent-g_entities, va("print \"[^3Third person^7]        No\n"));
 	}
+	#endif // not _GOLD
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Speed^7]               %i\n", g_speed.integer));
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Gravity^7]             %i\n", g_gravity.integer));
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Total clients^7]       %i\n", level.numConnectedClients));

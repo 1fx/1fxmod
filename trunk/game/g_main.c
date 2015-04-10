@@ -175,7 +175,6 @@ vmCvar_t	server_zombieteamprefix;
 vmCvar_t	g_disableNades;
 vmCvar_t	g_instaGib;
 vmCvar_t	g_weaponModFlags;
-vmCvar_t	g_allowthirdperson;
 vmCvar_t	g_weaponswitch;
 vmCvar_t	g_compMode;
 //vmCvar_t	g_clanfile;
@@ -321,6 +320,11 @@ vmCvar_t	g_debug;
 vmCvar_t	boe_fragWars;
 vmCvar_t	boe_deadMonkey;
 #endif // _3DServer
+
+#ifndef _GOLD
+// v1.00 only CVARs.
+vmCvar_t	g_allowthirdperson;
+#endif // not _GOLD
 
 static cvarTable_t gameCvarTable[] =
 {
@@ -532,7 +536,6 @@ static cvarTable_t gameCvarTable[] =
 	{ &server_zombieteamprefix, "server_zombieteamprefix", "^yZ^lo^lm^+b^7ies", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
 	{ &g_instaGib, "g_instaGib", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 	{ &g_weaponModFlags, "g_weaponModFlags", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
-	{ &g_allowthirdperson, "g_allowThirdPerson", "1", CVAR_ARCHIVE|CVAR_SERVERINFO, 0.0, 0.0, 0,  qfalse },
 	{ &g_compMode, "g_compMode", "0", CVAR_ROM|CVAR_INTERNAL, 0.0, 0.0, 0, qfalse  },
 	{ &g_enableTeamCmds, "g_enableTeamCmds", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
 	{ &g_refpassword, "g_refpassword", "none", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
@@ -682,6 +685,10 @@ static cvarTable_t gameCvarTable[] =
 	{ &boe_fragWars, "3d_fragWars", "0", CVAR_ARCHIVE | CVAR_LATCH, 0.0, 0.0, 0, qfalse },
 	{ &boe_deadMonkey, "3d_deadMonkey", "0", CVAR_ARCHIVE | CVAR_LATCH, 0.0, 0.0, 0, qfalse },
 #endif // _3DServer
+
+	#ifndef _GOLD
+	{ &g_allowthirdperson, "g_allowThirdPerson", "1", CVAR_ARCHIVE | CVAR_SERVERINFO, 0.0, 0.0, 0, qfalse },
+	#endif // not _GOLD
 };
 
 // bk001129 - made static to avoid aliasing
