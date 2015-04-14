@@ -81,10 +81,21 @@ Writes the jump to the detour.
 
 void Patch_rconLog()
 {
-#ifdef _WIN32
+	#ifdef _WIN32
+	#ifdef _GOLD
+	Patch_detourAddress("RCON log patch", (long)&Patch_rconLogging0, 0x047908A);
+	#else
 	Patch_detourAddress("RCON log patch", (long)&Patch_rconLogging0, 0x047666A);
-#elif __linux__
+	#endif // _GOLD
+	#endif // _WIN32
+	
+	#ifdef __linux__
+	#ifdef _GOLD
+	Patch_detourAddress("RCON log patch (1/2)", (long)&Patch_rconLogging, 0x0805876b);
+	Patch_detourAddress("RCON log patch (2/2)", (long)&Patch_rconLogging, 0x08058719);
+	#else
 	Patch_detourAddress("RCON log patch (1/2)", (long)&Patch_rconLogging, 0x08054def);
 	Patch_detourAddress("RCON log patch (2/2)", (long)&Patch_rconLogging, 0x08054d9d);
-#endif // _WIN32
+	#endif // _GOLD
+	#endif // __linux__
 }

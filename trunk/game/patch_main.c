@@ -156,10 +156,6 @@ void Patch_Main()
 {
 	int i = trap_Milliseconds();
 
-	#ifdef _GOLD
-	return;
-	#endif _GOLD
-
 	Com_Printf("------------------------------------------\n");
 	Com_Printf("Applying memory runtime modifications...\n");
 
@@ -167,7 +163,10 @@ void Patch_Main()
 		Patch_dosProtection();
 	}
 
+	#ifndef _GOLD
+	// Only patch the auto download exploit on v1.00, not on v1.03.
 	Patch_autoDownloadExploit();
+	#endif // not _GOLD
 	Patch_rconLog();
 
 	Com_Printf("Patching took %d milliseconds.\n", trap_Milliseconds() - i);

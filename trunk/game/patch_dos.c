@@ -123,8 +123,18 @@ Writes the jump to the detour.
 void Patch_dosProtection()
 {
 	#ifdef _WIN32
+	#ifdef _GOLD
+	Patch_detourAddress("DoS protection", (long)&Patch_dosDetour0, 0x4793CC);
+	#else
 	Patch_detourAddress("DoS protection", (long)&Patch_dosDetour0, 0x4768A0);
-	#elif __linux__
-	Patch_detourAddress("DoS protection", (long)&Patch_dosDetour0, 0x8055099);
+	#endif // _GOLD
 	#endif // _WIN32
+	
+	#ifdef __linux__
+	#ifdef _GOLD
+	Patch_detourAddress("DoS protection", (long)&Patch_dosDetour0, 0x8058b5c);
+	#else
+	Patch_detourAddress("DoS protection", (long)&Patch_dosDetour0, 0x8055099);
+	#endif // _GOLD
+	#endif // __linux__
 }

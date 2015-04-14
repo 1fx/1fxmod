@@ -4,6 +4,7 @@
 
 //==================================================================
 
+#ifndef _GOLD
 #include "patch_local.h"
 
 // Local function definitions.
@@ -79,3 +80,5 @@ void Patch_autoDownloadExploit()
 	Patch_detourAddress("Auto D/L exploit protection", (long)&Patch_autoDownloadDetour, 0x804b185);
 	#endif // _WIN32
 }
+
+#endif // not _GOLD
