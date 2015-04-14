@@ -52,23 +52,39 @@ The Linux detour skips this step (call directly to rconLogging).
 
 #ifdef _WIN32
 #ifdef __GNUC__
+// Determine proper address.
+#ifdef _GOLD
+#define ADDRESS "$0x0047908A"
+#else
+#define ADDRESS "$0x0047666A"
+#endif // _GOLD
+
 __asm__(".globl Patch_rconLogging0 \n\t"
 	"_Patch_rconLogging0: \n"
 	"call _Patch_rconLogging \n"
 
-	"push $0x0047666A \n\t"
+	"push " ADDRESS " \n\t"
 	"ret\n"
 	);
 #elif _MSC_VER
+// Determine proper address.
+#ifdef _GOLD
+#define ADDRESS 0x047908A
+#else
+#define ADDRESS 0x047666A
+#endif // _GOLD
+
 __declspec(naked) void Patch_rconLogging0()
 {
 	__asm {
 		call	Patch_rconLogging;
-		push	0x047666A;
+		push	ADDRESS;
 		retn
 	}
 }
 #endif // __GNUC__
+
+#undef ADDRESS
 #endif // _WIN32
 
 /*

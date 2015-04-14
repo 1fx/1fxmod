@@ -61,6 +61,15 @@ The detour for both GCC and VC++.
 */
 
 #ifdef __GNUC__
+// Determine proper address.
+#ifdef _GOLD
+#define ADDRESS  "$0x00478A70"
+#define ADDRESS2 "$0x004793CC"
+#else
+#define ADDRESS  "$0x004760C0"
+#define ADDRESS2 "$0x004768A0"
+#endif // _GOLD
+
 #ifdef _WIN32
 __asm__(".globl Patch_dosDetour0 \n\t"
 	"_Patch_dosDetour0: \n"
@@ -69,14 +78,21 @@ __asm__(".globl Patch_dosDetour0 \n\t"
 	"cmp $0, %eax \n\t"
 	"je exitFunc \n\t"
 	// Call SVC_Status if we're below our allowed limit.
-	"movl $0x004760C0, %eax \n\t"
+	"movl " ADDRESS ", %eax \n\t"
 	"call *%eax \n"
 
 	"exitFunc: \n\t"
-	"push $0x004768A0 \n\t"
+	"push " ADDRESS2 " \n\t"
 	"ret\n"
 	);
 #elif __linux__
+// Determine proper address.
+#ifdef _GOLD
+#define ADDRESS "$0x08057f84"
+#else
+#define ADDRESS "$0x080546a8"
+#endif // _GOLD
+
 void Patch_dosDetour0(netadr_t from){
 	if(Patch_dosDetour() != 0){
 		// Call SVC_Status if we're below our allowed limit, after restoring the stack.
@@ -88,29 +104,41 @@ void Patch_dosDetour0(netadr_t from){
 			"cld \n"
 			"mov $0x5, %ecx \n\t"
 			"repz movsl %ds:(%esi),%es:(%edi) \n\t"
-			"movl $0x080546a8, %eax \n\t"
+			"movl " ADDRESS ", %eax \n\t"
 			"call *%eax \n"
 			);
 	}
 }
 #endif // _WIN32
 #elif _MSC_VER
+// Determine proper address.
+#ifdef _GOLD
+#define ADDRESS	 0x478A70
+#define ADDRESS2 0x4793CC
+#else
+#define ADDRESS  0x4760C0
+#define ADDRESS2 0x4768A0
+#endif // _GOLD
+
 __declspec(naked) void Patch_dosDetour0()
 {
 	if (Patch_dosDetour() != 0){
 		// Call SVC_Status if we're below our allowed limit.
 		__asm{
-			mov		eax, 0x4760C0;
+			mov		eax, ADDRESS;
 			call	eax;
 		}
 	}
 
 	__asm{
-		push	0x4768A0;
+		push	ADDRESS2;
 		retn
 	}
 }
 #endif // __GNUC__
+
+#undef ADDRESS
+#undef ADDRESS2
 
 /*
 ==================
