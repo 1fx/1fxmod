@@ -61,6 +61,7 @@ The detour for both GCC and VC++.
 */
 
 #ifdef __GNUC__
+#ifdef _WIN32
 // Determine proper address.
 #ifdef _GOLD
 #define ADDRESS  "$0x00478A70"
@@ -70,7 +71,6 @@ The detour for both GCC and VC++.
 #define ADDRESS2 "$0x004768A0"
 #endif // _GOLD
 
-#ifdef _WIN32
 __asm__(".globl Patch_dosDetour0 \n\t"
 	"_Patch_dosDetour0: \n"
 	"call _Patch_dosDetour \n"

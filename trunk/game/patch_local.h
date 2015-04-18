@@ -13,7 +13,10 @@
 #elif __linux__
 #include <sys/ptrace.h>
 #include <unistd.h>
+
+#if (defined(__GNUC__) && __GNUC__ < 3)
 #include <linux/user.h>
+#endif // GNUC < 3
 
 // Boe!Man 1/11/15: Required information for memory patching in another thread.
 struct patchArgs {

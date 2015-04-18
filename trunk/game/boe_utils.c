@@ -3040,13 +3040,17 @@ void Boe_SQLStats(void)
 	// Boe!Man 1/30/13: Hard-coded statistics, i.e. things that never change.
 	#ifdef WIN32
 	Com_Printf("[^3Host platform^7]       Windows\n");
-	Com_Printf("[^3Memory allocator^7]    Native\n");
-	Com_Printf("[^3Heap limit^7]          None defined\n");
 	#elif __linux__
 	Com_Printf("[^3Host platform^7]       Linux\n");
+	#endif // _WIN32
+
+	#if defined(__linux__) && (defined(__GNUC__) && __GNUC__ < 3)
 	Com_Printf("[^3Memory allocator^7]    memsys5\n");
 	Com_Printf("[^3Heap limit^7]          41943040B (40M)\n");
-	#endif
+	#else
+	Com_Printf("[^3Memory allocator^7]    Native\n");
+	Com_Printf("[^3Heap limit^7]          None defined\n");
+	#endif // __linux__ && GNUC < 3
 	Com_Printf("[^3Mem in use^7]          %iB (%.2fM)\n", mem, memInM);
 	
 	Com_Printf("\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n");

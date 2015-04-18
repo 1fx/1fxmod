@@ -607,7 +607,7 @@ qboolean Boe_dev_f ( gentity_t *ent )
 			#endif
 			#ifdef __GNUC__
 			"GCC",
-			#ifdef _WIN32
+			#ifdef __GNUC_PATCHLEVEL__
 			va("%i.%i.%i", __GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__)
 			#else
 			va("%i.%i", __GNUC__, __GNUC_MINOR__)

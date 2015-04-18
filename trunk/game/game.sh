@@ -2,7 +2,7 @@
 
 # *** Compiling 1fx. Mod Linux build (sof2mp_gamei386.so) ***
 #
-# You can compile the Mod on an ancient Debian Woody R0-R6 platform (preferably R6).
+# You can compile the Mod for SoF2 v1.00 on an ancient Debian Woody R0-R6 platform (preferably R6).
 # The Mod depends on the following utilites:
 #
 # - gcc 2.95.4 (can be installed from CD1 of the Debian Woody install media).
@@ -14,15 +14,29 @@
 # PLEASE NOTE: most builds are a *release* build. All debug symbols, flags etc. are omitted, even in the so called test releases.
 # *ONLY* if you build a nightly build, debug symbols won't be omitted.
 #
+# You can also choose to build the v1.03 build from this script, if doing so, you can run it on any modern Linux system and
+# if a compiler is properly present, will automatically build for v1.03.
+#
 # For further information regarding this, please check the 1fx. Mod source code.
 # There's a whole section regarding *.so considerations.
 # --- Boe!Man  1/26/13 - 11:01 AM
-# Last update: 2/21/15 - 10:11 AM
+# Last update: 4/18/15 - 9:58 AM
 
 # The compile options relevant for all builds are noted here.
 buildoptions="-O2 -fstack-check -DMISSIONPACK -DQAGAME -D_SOF2 -fPIC"
 stripsymbols=true
+gold=true
 
+# Check what version to build. If the host system contains GCC 2.95, we assume we want to build for v1.00.
+if [[ `gcc -v 2>&1 | tail -1 | awk '{print $3}'` == *"2.95"* ]]; then
+	gold=false
+	echo "Building for SoF2 v1.00 (Full)"
+else
+	buildoptions="$buildoptions -D_GOLD"
+	echo "Building for SoF2 v1.03 (Gold)"
+fi
+
+# Get the type of build to build.
 echo "Enter the type of build:"
 echo "1: Public release build (e.g. 0.70)"
 echo "2: Test/Beta release build (e.g. 0.70t)"
@@ -262,29 +276,53 @@ rpm_tcmds.o \
 ./sqlite/sqlite3.o \
 ./tadns/tadns.o"
 
-# Libraries to link against.
-libs="\
-/usr/lib/libpthread.a \
-/usr/lib/libm.a \
-/usr/lib/libc.a \
-/usr/lib/gcc-lib/i386-linux/2.95.4/libgcc.a \
-/usr/lib/libdl.a"
+if [ "$gold" == false ]; then
+	# Static libraries to link against (SoF2 v1.00).
+	libs="\
+	/usr/lib/libpthread.a \
+	/usr/lib/libm.a \
+	/usr/lib/libc.a \
+	/usr/lib/gcc-lib/i386-linux/2.95.4/libgcc.a \
+	/usr/lib/libdl.a"
+fi
 
 # Link the Mod based on the build type (with or without symbols).
 if [ "$stripsymbols" = true ] ; then
 	# SQLite
-	gcc -s -fstack-check -DNDEBUG -DSQLITE_OMIT_LOAD_EXTENSION -DSQLITE_ENABLE_MEMSYS5 -fPIC -c ./sqlite/sqlite3.c -o ./sqlite/sqlite3.o 2>> compile_log
+	if [ "$gold" == false ]; then
+		gcc -s -fstack-check -DNDEBUG -DSQLITE_OMIT_LOAD_EXTENSION -DSQLITE_ENABLE_MEMSYS5 -fPIC -c ./sqlite/sqlite3.c -o ./sqlite/sqlite3.o 2>> compile_log
+	else
+		gcc -s -fstack-check -DNDEBUG -DSQLITE_OMIT_LOAD_EXTENSION -fPIC -c ./sqlite/sqlite3.c -o ./sqlite/sqlite3.o 2>> compile_log
+	fi
+
 	gcc -s -fstack-check -fPIC -c ./tadns/tadns.c -o ./tadns/tadns.o 2>> compile_log
 	echo "Now linking the shared object.."
-	# Link the Mod. This links the Mod dynamically with static dependencies.
-	ld -s -shared $linkfiles -Bstatic $libs -o sof2mp_gamei386.so 2>> compile_log
+	# Link the Mod.
+	if [ "$gold" == false ]; then
+		# This links the Mod dynamically with static dependencies.
+		ld -s -shared $linkfiles -Bstatic $libs -o sof2mp_gamei386.so 2>> compile_log
+	else
+		# Regular dynamic linking.
+		ld -s -shared $linkfiles -lpthread -lm -lc -ldl -o sof2mp_gamei386.so 2>> compile_log
+	fi
 else
 	# SQLite
-	gcc -fstack-check -DNDEBUG -DSQLITE_OMIT_LOAD_EXTENSION -DSQLITE_ENABLE_MEMSYS5 -fPIC -c ./sqlite/sqlite3.c -o ./sqlite/sqlite3.o 2>> compile_log
+	if [ "$gold" == false ]; then
+		gcc -fstack-check -DNDEBUG -DSQLITE_OMIT_LOAD_EXTENSION -DSQLITE_ENABLE_MEMSYS5 -fPIC -c ./sqlite/sqlite3.c -o ./sqlite/sqlite3.o 2>> compile_log
+	else
+		gcc -fstack-check -DNDEBUG -DSQLITE_OMIT_LOAD_EXTENSION -fPIC -c ./sqlite/sqlite3.c -o ./sqlite/sqlite3.o 2>> compile_log
+	fi
+
 	gcc -fstack-check -fPIC -c ./tadns/tadns.c -o ./tadns/tadns.o 2>> compile_log
 	echo "Now linking the shared object.."
-	# Link the Mod. This links the Mod dynamically with static dependencies.
-	ld -shared $linkfiles -Bstatic $libs -o sof2mp_gamei386.so 2>> compile_log
+	# Link the Mod.
+	if [ "$gold" == false ]; then
+		# This links the Mod dynamically with static dependencies.
+		ld -shared $linkfiles -Bstatic $libs -o sof2mp_gamei386.so 2>> compile_log
+	else
+		# Regular dynamic linking.
+		ld -shared $linkfiles -lpthread -lm -lc -ldl -o sof2mp_gamei386.so 2>> compile_log
+	fi
 fi
 
 # Now check if the output file was indeed created..

@@ -8,7 +8,9 @@
 #include "./tadns/tadns.h"
 #include <netdb.h>
 
+#if (defined(__GNUC__) && __GNUC__ < 3)
 unsigned char	memsys5[41943040]; // Boe!Man 1/29/13: Buffer of 40 MB, available for SQLite memory management (Linux).
+#endif // GNUC < 3
 #elif WIN32
 #include <windows.h>
 HANDLE lockFile;
@@ -1236,10 +1238,12 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	}
 
 	#ifdef __linux__
+	#if (defined(__GNUC__) && __GNUC__ < 3)
 	// Boe!Man 1/29/13: Initialize the in-game memory-management buffer on Linux (SQLite3 memsys5).
 	memset(memsys5, 0, sizeof(memsys5));
 	sqlite3_config(SQLITE_CONFIG_HEAP, memsys5, 41943040, 64);
 	sqlite3_soft_heap_limit(40894464);
+	#endif // GNUC < 3
 	
 	// Boe!Man 3/5/15: Force master to direct IP instead of hostname on Linux.
 	// Resolve the IP of the master servers using TADNS.
@@ -1633,7 +1637,7 @@ void G_ShutdownGame( int restart )
 	// write all the client session data so we can get it back
 	G_WriteSessionData();
 
-	#ifdef __linux__
+	#if defined(__linux__) && (defined(__GNUC__) && __GNUC__ < 3)
 	sqlite3_shutdown();
 	memset(memsys5, 0, sizeof(memsys5));
 	Com_Printf("SQLite3 shutdown.\n");
@@ -1647,7 +1651,7 @@ void G_ShutdownGame( int restart )
 
 	trap_Cvar_VariableStringBuffer("fs_game", fsGame, sizeof(fsGame));
 	DeleteFile(TEXT(va("%s\\srv.lck", fsGame)));
-	#endif // __linux__
+	#endif // __linux__ && GNUC < 3
 
 	// Boe!Man 1/2/14: Check if the engine threw a Com_Error in another function (also logs it upon succesfull detection).
 	logCrash();
