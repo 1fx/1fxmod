@@ -53,9 +53,22 @@ void *Patch_linuxPatchAddress(void *arguments)
 	}data;
 	struct patchArgs *args = arguments;
 
+	#if (defined(__GNUC__) && __GNUC__ < 3)
 	usleep(10000); // Boe!Man 3/8/15: Sleep for 10msec, this fixes a very strange problem of LinuxThreads sending a SIGSTOP while attaching.
-	if (ptrace(PTRACE_ATTACH, args->pid, NULL, NULL) == -1)
-	{
+	#else
+	pid_t pID = fork();
+
+	if(pID < 0){
+		perror("fail!\nForking process failed");
+	}else if(pID != 0){
+		// Wait for the child.
+		wait(NULL);
+
+		return NULL;
+	}
+	#endif // GNUC < 3
+
+	if (ptrace(PTRACE_ATTACH, args->pid, NULL, NULL) == -1){
 		perror("fail!\nAttach failed");
 		return NULL;
 	}
@@ -78,6 +91,9 @@ void *Patch_linuxPatchAddress(void *arguments)
 	}
 
 	printf("done!\n");
+	#if (defined (__GNUC__) && __GNUC__ > 2)
+	_Exit(EXIT_SUCCESS);
+	#endif // GNUC > 2
 }
 #endif // __linux__
 
@@ -128,6 +144,11 @@ void Patch_detourAddress(char *genericName, long func, long offset)
 		Com_Printf("done!\n");
 	}
 #elif __linux__
+	#if (defined(__GNUC__) && __GNUC__ > 2)
+	// We don't need to get the thread return status on modern Linux systems, so ignore the signal so they don't turn defunct.
+	signal(SIGCHLD, SIG_IGN);
+	#endif // GNUC > 2
+
 	// Fill args with essential stuff, like PID and addresses.
 	args.pid = getpid();
 	args.buf = (char *)&buf;
