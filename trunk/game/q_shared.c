@@ -1223,8 +1223,10 @@ Changes or adds a key/value pair
 void Info_SetValueForKey( char *s, const char *key, const char *value ) {
 	char	newi[MAX_INFO_STRING];
 
-	if ( strlen( s ) >= MAX_INFO_STRING ) {
-		Com_Error( ERR_DROP, "Info_SetValueForKey: oversize infostring" );
+	// Boe!Man 4/20/15: If we get an overflow, return so the game doesn't error out.
+	if (strlen(s) >= MAX_INFO_STRING || strlen(key) >= BIG_INFO_KEY || strlen(value) >= BIG_INFO_STRING){
+		Com_Printf("Info_SetValueForKey: oversize infostring\n");
+		return;
 	}
 
 	if (strchr (key, '\\') || strchr (value, '\\'))
@@ -1250,17 +1252,11 @@ void Info_SetValueForKey( char *s, const char *key, const char *value ) {
 		return;
 
 	Com_sprintf (newi, sizeof(newi), "\\%s\\%s", key, value);
-
-	/*if (strlen(newi) + strlen(s) > MAX_INFO_STRING)
-	{
-		Com_Printf ("Q3InfoBoom crash attempt: Info string length exceeded\n");
-		return;
-	}*/ // Boe!Man 9/13/11: Quoted because q3infoboom isn't fixable in the VM part of the game in any way.
 	
 	// Boe!Man 9/13/11: Log vital information when this overflow does happen.
 	if (strlen(newi) + strlen(s) >= MAX_INFO_STRING)
 	{
-		Com_Printf ("Infostring length exceeded: '%s' + '%s'. Please report to a dev.\n", newi, s);
+		G_LogPrintf ("Infostring length exceeded: '%s' + '%s'. Please report to a dev.\n", newi, s);
 	}
 
 	strcat (newi, s);
