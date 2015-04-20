@@ -24,25 +24,6 @@ struct patchArgs {
 	char	*buf;				// Bytedata of the modified call (4 bytes).
 	long	address;			// Address to patch.
 };
-
-typedef enum {
-	NA_BOT,
-	NA_BAD,
-	NA_LOOPBACK,
-	NA_BROADCAST,
-	NA_IP,
-	NA_IPX,
-	NA_BROADCAST_IPX
-} netadrtype_t;
-
-typedef struct {
-	netadrtype_t	type;
-
-	unsigned char	ip[4];
-	unsigned char	ipx[10];
-
-	unsigned short	port;
-} netadr_t;
 #endif // _WIN32
 
 // Function definitions.

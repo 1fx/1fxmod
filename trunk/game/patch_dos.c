@@ -6,19 +6,33 @@
 
 #include "patch_local.h"
 
+typedef enum {
+	GETSTATUS,
+	GETINFO,
+	GETCHALLENGE,
+	CONNECT,
+	IPAUTH,
+
+	MAX_REQUEST
+} request_t;
+
 // Local variable definitions.
-static int				numRequests			= 0;		// Requests made. Reset every second.
-static int				requestTimer		= 0;		// To keep track how many requests have been made in a period of time.
-static qboolean			validRequest		= qtrue;	// If we exceeded our requestsPerSecond value, this will be set qfalse.
-static int				requestsPerSecond	= 20;		// Number of allowed requests per second.
+#ifdef _DEBUG
+static const char		nameReq[MAX_REQUEST][16]	= { "getstatus", "getinfo", "getchallenge", "connect", "ipAuthorize" };
+#endif // _DEBUG
+
+static int				numRequests[MAX_REQUEST]	= { 0 };	// Requests made. Reset every second.
+static int				requestTimer				= 0;		// To keep track how many requests have been made in a period of time.
+static const int		requestsPerSecond			= 20;		// Number of allowed requests per second.
 
 // Local function definitions.
 #ifdef _WIN32
-void	Patch_dosDetour0	(void);
+void		Patch_dosDetour0	(void);
+qboolean	Patch_dosDetour		(const char *message, char *from, char *request);
 #elif __linux__
-void	Patch_dosDetour0	(netadr_t from);
+void		Patch_dosDetour		(const char *message, char *from, char *request);
 #endif // _WIN32
-int		Patch_dosDetour		(void);
+
 
 /*
 ==================
@@ -28,28 +42,72 @@ The actual code of where we check if the request exceeded the number of allowed 
 ==================
 */
 
-int Patch_dosDetour()
+#ifdef _WIN32
+qboolean Patch_dosDetour(const char *message, char *from, char *request)
+#elif __linux__
+void Patch_dosDetour(const char *message, char *from, char *request)
+#endif // _WIN32
 {
+	int req = -1;
+	#ifdef _DEBUG
+	int i;
+	#endif // _DEBUG
+
+	if (strcmp(request, "getstatus") == 0)
+		req = GETSTATUS;
+	else if (strcmp(request, "getinfo") == 0)
+		req = GETINFO;
+	else if (strcmp(request, "getchallenge") == 0)
+		req = GETCHALLENGE;
+	else if (strcmp(request, "connect") == 0)
+		req = CONNECT;
+	else if (strcmp(request, "ipAuthorize") == 0)
+		req = IPAUTH;
+
 	if (level.time >= requestTimer){
 		requestTimer = level.time + 1000;
 
 		#ifdef _DEBUG
-		if (numRequests >= requestsPerSecond){
-			Com_Printf("DoS protection: Too many getstatus requests per second: %i (%i allowed)\n", numRequests, requestsPerSecond);
+		for (i = 0; i < MAX_REQUEST; i++){
+			if (numRequests[i] >= requestsPerSecond)
+				Com_Printf("DoS protection: Too many %s requests per second: %d (%d allowed)\n", nameReq[i], numRequests[i], requestsPerSecond);
 		}
 		#endif // _DEBUG
 
-		numRequests = 0;
-	}
-	
-	if (numRequests >= requestsPerSecond){
-		validRequest = qfalse;
-	}else{
-		validRequest = qtrue;
+		memset(numRequests, 0, sizeof(numRequests));
 	}
 
-	numRequests++;
-	return (int)validRequest;
+	if (req != -1){
+		numRequests[req]++;
+
+		if (numRequests[req] >= requestsPerSecond){
+			#ifdef __linux__
+			#ifdef _GOLD
+			__asm__("add $0x2c, %esp \n\t"
+					"pop %ebx \n\t"
+					"pop %esi \n\t"
+					"pop %edi \n\t"
+					"pop %ebp \n\t"
+					"push $0x08058d26 \n\t"
+					"ret \n");
+			#else
+			__asm__("lea 0xffffffd8(%ebp), %esp \n\t"
+				"pop %ebx \n\t"
+				"pop %esi \n\t"
+				"pop %edi \n\t"
+				"leave \n"
+				"push $0x08055263 \n\t"
+				"ret \n");
+			#endif // _GOLD
+			#elif _WIN32
+			return qfalse;
+			#endif // __linux__
+		}
+	}
+
+	#ifdef _WIN32
+	return qtrue;
+	#endif // _WIN32
 }
 
 /*
@@ -60,15 +118,15 @@ The detour for both GCC and VC++.
 ==================
 */
 
-#ifdef __GNUC__
 #ifdef _WIN32
+#ifdef __GNUC__
 // Determine proper address.
 #ifdef _GOLD
-#define ADDRESS  "$0x00478A70"
-#define ADDRESS2 "$0x004793CC"
+#define ADDRESS  "$0x004793A5"
+#define ADDRESS2 "$0x00479528"
 #else
-#define ADDRESS  "$0x004760C0"
-#define ADDRESS2 "$0x004768A0"
+#define ADDRESS  "$0x00476879"
+#define ADDRESS2 "$0x004769F5"
 #endif // _GOLD
 
 __asm__(".globl Patch_dosDetour0 \n\t"
@@ -76,61 +134,34 @@ __asm__(".globl Patch_dosDetour0 \n\t"
 	"call _Patch_dosDetour \n"
 
 	"cmp $0, %eax \n\t"
-	"je exitFunc \n\t"
-	// Call SVC_Status if we're below our allowed limit.
-	"movl " ADDRESS ", %eax \n\t"
-	"call *%eax \n"
+	"je notAllowed \n\t"
+	"push " ADDRESS " \n\t"
+	"ret \n"
 
-	"exitFunc: \n\t"
+	"notAllowed: \n\t"
 	"push " ADDRESS2 " \n\t"
-	"ret\n"
+	"ret \n"
 	);
-#elif __linux__
-// Determine proper address.
-#ifdef _GOLD
-#define ADDRESS "$0x08057f84"
-#else
-#define ADDRESS "$0x080546a8"
-#endif // _GOLD
-
-void Patch_dosDetour0(netadr_t from){
-	if(Patch_dosDetour() != 0){
-		// Call SVC_Status if we're below our allowed limit, after restoring the stack.
-		__asm__(
-			"add $0xfffffff4,%esp \n\t"
-			"add $0xffffffec,%esp \n\t"
-			"mov %esp,%edi \n\t"
-			"lea 0x8(%ebp),%esi \n\t"
-			"cld \n"
-			"mov $0x5, %ecx \n\t"
-			"repz movsl %ds:(%esi),%es:(%edi) \n\t"
-			"movl " ADDRESS ", %eax \n\t"
-			"call *%eax \n"
-			);
-	}
-}
-#endif // _WIN32
 #elif _MSC_VER
 // Determine proper address.
 #ifdef _GOLD
-#define ADDRESS	 0x478A70
-#define ADDRESS2 0x4793CC
+#define ADDRESS	 0x4793A5
+#define ADDRESS2 0x479528
 #else
-#define ADDRESS  0x4760C0
-#define ADDRESS2 0x4768A0
+#define ADDRESS  0x476879
+#define ADDRESS2 0x4769F5
 #endif // _GOLD
 
 __declspec(naked) void Patch_dosDetour0()
 {
-	if (Patch_dosDetour() != 0){
-		// Call SVC_Status if we're below our allowed limit.
-		__asm{
-			mov		eax, ADDRESS;
-			call	eax;
-		}
-	}
-
 	__asm{
+		call	Patch_dosDetour;
+		cmp		eax, 0;
+		je		notAllowed;
+		push	ADDRESS;
+		retn
+
+	notAllowed:
 		push	ADDRESS2;
 		retn
 	}
@@ -139,6 +170,7 @@ __declspec(naked) void Patch_dosDetour0()
 
 #undef ADDRESS
 #undef ADDRESS2
+#endif // _WIN32
 
 /*
 ==================
@@ -152,17 +184,17 @@ void Patch_dosProtection()
 {
 	#ifdef _WIN32
 	#ifdef _GOLD
-	Patch_detourAddress("DoS protection", (long)&Patch_dosDetour0, 0x4793CC);
+	Patch_detourAddress("DoS protection", (long)&Patch_dosDetour0, 0x4793A5);
 	#else
-	Patch_detourAddress("DoS protection", (long)&Patch_dosDetour0, 0x4768A0);
+	Patch_detourAddress("DoS protection", (long)&Patch_dosDetour0, 0x476879);
 	#endif // _GOLD
 	#endif // _WIN32
 	
 	#ifdef __linux__
 	#ifdef _GOLD
-	Patch_detourAddress("DoS protection", (long)&Patch_dosDetour0, 0x8058b5c);
+	Patch_detourAddress("DoS protection", (long)&Patch_dosDetour, 0x08058b1f);
 	#else
-	Patch_detourAddress("DoS protection", (long)&Patch_dosDetour0, 0x8055099);
+	Patch_detourAddress("DoS protection", (long)&Patch_dosDetour, 0x0805505c);
 	#endif // _GOLD
 	#endif // __linux__
 }
