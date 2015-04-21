@@ -74,10 +74,10 @@ void Patch_dosDetour(const char *message, char *from, char *request)
 		if (numRequests[req] >= requestsPerSecond){
 			#ifdef __linux__
 			#ifdef _GOLD
-			__asm__("add $0x2c, %esp \n\t"
-					"pop %ebx \n\t"
-					"pop %esi \n\t"
-					"pop %edi \n\t"
+			__asm__("mov -0xc(%ebp),%ebx \n\t"
+					"mov -0x8(%ebp),%esi \n\t"
+					"mov -0x4(%ebp),%edi \n\t"
+					"mov %ebp,%esp \n\t"
 					"pop %ebp \n\t"
 					"push $0x08058d26 \n\t"
 					"ret \n");
