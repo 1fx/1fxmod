@@ -9,16 +9,13 @@
 typedef enum {
 	GETSTATUS,
 	GETINFO,
-	GETCHALLENGE,
-	CONNECT,
-	IPAUTH,
 
 	MAX_REQUEST
 } request_t;
 
 // Local variable definitions.
 #ifdef _DEBUG
-static const char		nameReq[MAX_REQUEST][16]	= { "getstatus", "getinfo", "getchallenge", "connect", "ipAuthorize" };
+static const char		nameReq[MAX_REQUEST][10]	= { "getstatus", "getinfo" };
 #endif // _DEBUG
 
 static int				numRequests[MAX_REQUEST]	= { 0 };	// Requests made. Reset every second.
@@ -57,12 +54,6 @@ void Patch_dosDetour(const char *message, char *from, char *request)
 		req = GETSTATUS;
 	else if (strcmp(request, "getinfo") == 0)
 		req = GETINFO;
-	else if (strcmp(request, "getchallenge") == 0)
-		req = GETCHALLENGE;
-	else if (strcmp(request, "connect") == 0)
-		req = CONNECT;
-	else if (strcmp(request, "ipAuthorize") == 0)
-		req = IPAUTH;
 
 	if (level.time >= requestTimer){
 		requestTimer = level.time + 1000;
