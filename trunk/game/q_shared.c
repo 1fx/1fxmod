@@ -1279,10 +1279,6 @@ void Info_SetValueForKey_Big( char *s, const char *key, const char *value ) {
 		return;
 	}
 
-	if ( strlen( s ) >= BIG_INFO_STRING ) {
-		Com_Error( ERR_DROP, "Info_SetValueForKey: oversize infostring" );
-	}
-
 	if (strchr (key, '\\') || strchr (value, '\\'))
 	{
 		Com_Printf ("Can't use keys or values with a \\\n");
