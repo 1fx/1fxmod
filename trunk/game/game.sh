@@ -63,11 +63,11 @@ elif [ "$choice" == "3" ]; then
 	read choice
 	if [ "$choice" == "1" ]; then
 		clear
-		echo -e "Building a regular \e[00;36m Pre-release build\e[00m"
+		echo -e "Building a regular \e[00;36mPre-release build\e[00m"
 	elif [ "$choice" == "2" ]; then
 		buildoptions="$buildoptions -D_3DServer"
 		clear
-		echo -e "Building a 3D-specific \e[00;36m Pre-release build\e[00m"
+		echo -e "Building a 3D-specific \e[00;36mPre-release build\e[00m"
 	else
 		echo "Invalid choice specified, exitting.."
 		exit 1
@@ -138,6 +138,7 @@ dos2unix henk_functions.c
 dos2unix henk_hs.c
 dos2unix patch_autodl.c
 dos2unix patch_dos.c
+dos2unix patch_fsgame.c
 dos2unix patch_main.c
 dos2unix patch_rcon.c
 dos2unix q_math.c
@@ -217,6 +218,7 @@ gcc $buildoptions henk_functions.c -o henk_functions.o 2>> compile_log
 gcc $buildoptions henk_hs.c -o henk_hs.o 2>> compile_log
 gcc $buildoptions patch_autodl.c -o patch_autodl.o 2>> compile_log
 gcc $buildoptions patch_dos.c -o patch_dos.o 2>> compile_log
+gcc $buildoptions patch_fsgame.c -o patch_fsgame.o 2>> compile_log
 gcc $buildoptions patch_main.c -o patch_main.o 2>> compile_log
 gcc $buildoptions patch_rcon.c -o patch_rcon.o 2>> compile_log
 gcc $buildoptions rpm_functions.c -o rpm_functions.o 2>> compile_log
@@ -267,6 +269,7 @@ q_math.o \
 q_shared.o \
 patch_autodl.o \
 patch_dos.o \
+patch_fsgame.o \
 patch_main.o \
 patch_rcon.o \
 rpm_functions.o \

@@ -1212,6 +1212,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	#ifdef _DEBUG
 	qtime_t		q;
 	#endif // _DEBUG
+	char		fs_game[MAX_CVAR_VALUE_STRING];
 
 	// Boe!Man 3/30/10
 	Com_Printf ("------- Game Initialization -------\n");
@@ -1235,6 +1236,15 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 		#elif __linux__
 		Com_Error(ERR_FATAL, "Another instance is running!");
 		#endif
+	}
+
+	// Boe!Man 4/28/15: Check fs_game string.
+	trap_Cvar_VariableStringBuffer("fs_game", fs_game, sizeof(fs_game));
+	if(strcmp(fs_game, "1fx") != 0){
+		Com_Printf("---------------------------\n");
+		Com_Printf("ERROR: fs_game doesn't match the exact value of \"1fx\" (with or without quotes).\n" \
+			"Please update your fs_game value to match the exact value.\n");
+		Com_Error(ERR_FATAL, "Invalid fs_game value detected (must be set to \"1fx\")!");
 	}
 
 	#ifdef __linux__

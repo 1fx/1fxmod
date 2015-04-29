@@ -137,13 +137,13 @@ void Patch_detourAddress(char *genericName, long func, long offset)
 		currentByte++;
 	}
 
-#ifdef _WIN32
+	#ifdef _WIN32
 	if(WriteProcessMemory(GetCurrentProcess(), (void *)(offset - 5), buf, 5, NULL) == 0){ // Write the jump.
 		Com_Printf("fail!\n");
 	}else{
 		Com_Printf("done!\n");
 	}
-#elif __linux__
+	#elif __linux__
 	#if (defined(__GNUC__) && __GNUC__ > 2)
 	// We don't need to get the thread return status on modern Linux systems, so ignore the signal so they don't turn defunct.
 	signal(SIGCHLD, SIG_IGN);
@@ -162,7 +162,7 @@ void Patch_detourAddress(char *genericName, long func, long offset)
 
 	// Wait for the thread to finish.
 	pthread_join(thread, NULL);
-#endif // _WIN32
+	#endif // _WIN32
 }
 
 /*
@@ -189,6 +189,7 @@ void Patch_Main()
 	Patch_autoDownloadExploit();
 	#endif // not _GOLD
 	Patch_rconLog();
+	Patch_fsgameWorkaround();
 
 	Com_Printf("Patching took %d milliseconds.\n", trap_Milliseconds() - i);
 }
