@@ -642,6 +642,8 @@ typedef struct
 	int			previousTime;			// so movers can back up when blocked
 	int			frameStartTime;
 
+	int			clientMod;				// What Mod is currently loaded.
+
 	int			startTime;				// level.time the map was started
 	int			globalVoiceTime;		// last global voice
 
@@ -1405,6 +1407,7 @@ extern	vmCvar_t	g_maxclients;			// allow this many total, including spectators
 extern	vmCvar_t	g_maxGameClients;		// allow this many active
 extern	vmCvar_t	g_restarted;
 extern  vmCvar_t    current_gametype;
+extern  vmCvar_t    g_clientMod;
 extern  vmCvar_t	g_rpmEnt;
 extern  vmCvar_t	g_passwordAdmins;
 extern  vmCvar_t	g_shortCommandStyle;

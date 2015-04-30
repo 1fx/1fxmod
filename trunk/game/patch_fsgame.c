@@ -23,12 +23,16 @@ The actual code of where we change the fs_game CVAR to the appropriate value.
 
 void Patch_fsgame(char *s, const char *key, const char *value)
 {
-	if (strcmp(key, "fs_game") == 0){
+	if (strcmp(key, "fs_game") == 0 && level.clientMod != CL_NONE){
 		#ifdef _GOLD
-		Info_SetValueForKey_Big(s, key, "rocmod");
+		if (level.clientMod == CL_ROCMOD){
+			Info_SetValueForKey_Big(s, key, "rocmod");
+		}
 		#else
-		Info_SetValueForKey_Big(s, key, "RPM");
-		#endif // FIXME
+		if (level.clientMod == CL_RPM){
+			Info_SetValueForKey_Big(s, key, "RPM");
+		}
+		#endif // _GOLD
 	}else{
 		Info_SetValueForKey_Big(s, key, value);
 	}

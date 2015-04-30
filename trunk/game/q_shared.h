@@ -1069,6 +1069,17 @@ typedef enum {
 	BROADCAST_MOTD		// Message of the day when entering the server.
 } broadcastPrio_t;
 
+// Boe!Man 4/30/15: What client Mod is enabled by the server Admin.
+typedef enum {
+	CL_NONE,
+
+	#ifdef _GOLD
+	CL_ROCMOD,
+	#else
+	CL_RPM,
+	#endif // _GOLD
+} clientMod_t;
+
 //=============================================
 
 int Q_isprint( int c );

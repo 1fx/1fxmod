@@ -68,6 +68,7 @@ vmCvar_t	g_warmup;
 vmCvar_t	g_doWarmup;
 vmCvar_t	g_restarted;
 vmCvar_t    current_gametype;
+vmCvar_t	g_clientMod;
 vmCvar_t	g_rpmEnt;
 vmCvar_t	g_passwordAdmins;
 vmCvar_t	g_shortCommandStyle;
@@ -342,8 +343,7 @@ static cvarTable_t gameCvarTable[] =
 	#endif //_DEBUG
 	{ NULL, "^3Mod Version", INF_VERSION_STRING, CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse  },
 	{ NULL, "^3Mod URL", "1fxmod.org", CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse  },
-	{ &current_gametype, "current_gametype", "3", CVAR_SERVERINFO | CVAR_ROM | CVAR_LATCH | CVAR_INTERNAL | CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
-	{ NULL, "modname", "RPM 2 k 3 v2.00 ^_- ^31fxmod.org", CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse  },
+	{ &g_clientMod, "g_clientMod", "none", CVAR_LATCH | CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 
 	// noset vars
 	{ NULL, "gamename", GAMEVERSION , CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse  },
@@ -696,6 +696,7 @@ static cvarTable_t gameCvarTable[] =
 // bk001129 - made static to avoid aliasing
 static int gameCvarTableSize = sizeof( gameCvarTable ) / sizeof( gameCvarTable[0] );
 
+void G_initClientMod			( void );
 void G_InitGame					( int levelTime, int randomSeed, int restart );
 void G_RunFrame					( int levelTime );
 void G_ShutdownGame				( int restart );
@@ -1031,6 +1032,50 @@ void G_UpdateAvailableWeapons ( void )
 
 /*
 ===============
+G_initClientMod
+
+Initializes the client Mod 
+specified by the server owner.
+===============
+*/
+void G_initClientMod()
+{
+	#ifdef _GOLD
+	if (strcmp(g_clientMod.string, "rocmod") == 0){
+		level.clientMod = CL_ROCMOD;
+
+		// Always register current_gametype even if the client mod doesn't require it.
+		trap_Cvar_Register(&current_gametype, "current_gametype", "3", CVAR_ROM | CVAR_INTERNAL, 0.0, 0.0);
+
+		// Register ROCmod specific CVARs.
+		trap_Cvar_Register(NULL, "sv_modVersion", "| ^71fx^1.    2.1c" , CVAR_SYSTEMINFO | CVAR_ROM, 0.0, 0.0);
+	}
+	#else
+	if(strcmp(g_clientMod.string, "RPM") == 0){
+		level.clientMod = CL_RPM;
+
+		// Register RPM 2k3 specific CVARs.
+		trap_Cvar_Register(&current_gametype, "current_gametype", "3", CVAR_SERVERINFO | CVAR_ROM | CVAR_INTERNAL, 0.0, 0.0);
+		trap_Cvar_Register(NULL, "modname", "RPM 2 k 3 v2.00 ^_- ^31fxmod.org", CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0);
+	}
+	#endif // _GOLD
+
+	if (level.clientMod != CL_NONE){
+		Com_Printf("Using %s client-side modifications.\n", g_clientMod.string);
+	}else{
+		if(strcmp(g_clientMod.string, "none") == 0){
+			Com_Printf("Not using any client-side modifications (defaulting to \"1fx\" folder)\n");
+		}else{
+			Com_Printf("WARNING: Unknown client-side modification specified: %s\n", g_clientMod.string);
+		}
+
+		// Always register current_gametype even if the client mod doesn't require it.
+		trap_Cvar_Register(&current_gametype, "current_gametype", "3", CVAR_ROM | CVAR_INTERNAL, 0.0, 0.0);
+	}
+}
+
+/*
+===============
 G_SetGametype
 
 Sets the current gametype to the given value, if the map doesnt support it then it will
@@ -1221,6 +1266,11 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	#endif // _DEBUG
 	Com_Printf ("Mod: %s %s\n", INF_STRING, INF_VERSION_STRING);
 	Com_Printf ("Date: %s\n", INF_VERSION_DATE);
+	#ifdef _GOLD
+	Com_Printf("Port: SoF2 - v1.03\n");
+	#else
+	Com_Printf("Port: SoF2 - v1.00\n");
+	#endif // _GOLD
 
 	// Boe!Man 3/14/14: Check if we can actually start the server.
 	if(G_CheckAlive()){
@@ -1290,6 +1340,9 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	level.startTime = levelTime;
 	level.cagefightloaded = qfalse;
 	G_RegisterCvars();
+
+	// Boe!Man 4/30/15: Initialize client-side modifications.
+	G_initClientMod();
 
 	#ifdef _DEBUG
 	// Boe!Man 10/8/13: Init time for the debug database and write to it.
