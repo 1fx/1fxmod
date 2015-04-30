@@ -5,6 +5,17 @@
 #include "g_local.h"
 #include "boe_local.h"
 
+// Local function definitions.
+static void	adm_addAdmin_f			(int argNum, gentity_t *adm, qboolean shortCmd, int level2, char *commandName);
+static void	adm_unTwist				(int idNum, gentity_t *adm);
+static void	adm_unPlant				(int idNum, gentity_t *adm);
+static void	adm_toggleSection		(gentity_t *adm, char *sectionName, int sectionID, int useSection);
+static void	adm_toggleCVAR			(gentity_t *adm, int argNum, char *cvarName, vmCvar_t *cvar1, qboolean availableInCM, char *cvarNameCM, vmCvar_t *cvar2);
+static void	adm_Damage				(gentity_t *adm, char *damageName, int value);
+static void	adm_showBanList			(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet);
+static void	adm_unPause				(gentity_t *adm);
+static void	adm_unbanFromDatabase	(gentity_t *adm, char *ip, qboolean subnet);
+
 /*
 ================
 adm_Uppercut
@@ -1299,11 +1310,7 @@ Sets the score limit or shows it to the one issuing the command.
 
 int adm_scoreLimit(int argNum, gentity_t *adm, qboolean shortCmd)
 {
-	#ifdef NDEBUG
-	adm_toggleCVAR(adm, argNum, "Scorelimit", &g_scorelimit, 15, qtrue, "cm_sl", &cm_sl);
-	#else
-	adm_toggleCVAR(adm, argNum, "Scorelimit", &g_scorelimit, 16, qtrue, "cm_sl", &cm_sl);
-	#endif // NDEBUG
+	adm_toggleCVAR(adm, argNum, "Scorelimit", &g_scorelimit, qtrue, "cm_sl", &cm_sl);
 
 	return -1;
 }
@@ -1318,11 +1325,7 @@ Sets the time limit or shows it to the one issuing the command.
 
 int adm_timeLimit(int argNum, gentity_t *adm, qboolean shortCmd)
 {
-	#ifdef NDEBUG
-	adm_toggleCVAR(adm, argNum, "Timelimit", &g_timelimit, 16, qtrue, "cm_tl", &cm_tl);
-	#else
-	adm_toggleCVAR(adm, argNum, "Timelimit", &g_timelimit, 17, qtrue, "cm_tl", &cm_tl);
-	#endif // NDEBUG
+	adm_toggleCVAR(adm, argNum, "Timelimit", &g_timelimit, qtrue, "cm_tl", &cm_tl);
 
 	return -1;
 }
@@ -1337,11 +1340,7 @@ Sets the respawninterval or shows it to the one issuing the command.
 
 int adm_respawnInterval(int argNum, gentity_t *adm, qboolean shortCmd)
 {
-	#ifdef NDEBUG
-	adm_toggleCVAR(adm, argNum, "Respawn interval", &g_respawnInterval, 17, qfalse, NULL, NULL);
-	#else
-	adm_toggleCVAR(adm, argNum, "Respawn interval", &g_respawnInterval, 18, qfalse, NULL, NULL);
-	#endif // NDEBUG
+	adm_toggleCVAR(adm, argNum, "Respawn interval", &g_respawnInterval, qfalse, NULL, NULL);
 
 	return -1;
 }
@@ -1354,7 +1353,7 @@ Complicated way of toggling or showing a CVAR for both scrim CVARs or real ones 
 ================
 */
 
-static void adm_toggleCVAR(gentity_t *adm, int argNum, char *cvarName, vmCvar_t *cvar1, int cvar1ID, qboolean availableInCM, char *cvarNameCM, vmCvar_t *cvar2)
+static void adm_toggleCVAR(gentity_t *adm, int argNum, char *cvarName, vmCvar_t *cvar1, qboolean availableInCM, char *cvarNameCM, vmCvar_t *cvar2)
 {
 	char	cvarNameWithoutCap[32];
 	int		cvarValue;
@@ -1384,11 +1383,11 @@ static void adm_toggleCVAR(gentity_t *adm, int argNum, char *cvarName, vmCvar_t 
 		}else if (cm_enabled.integer > 1 && cm_enabled.integer < 5){
 			trap_Cvar_Set(cvarNameCM, va("%i", cvarValue));
 			trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7Match %s changed to %i by %s.\n\"", cvarNameWithoutCap, cvarValue, adm->client->pers.cleanName));
-			Boe_setTrackedCvar(cvar1ID, cvarValue); // Avoid the [Rcon Action] message for the real CVAR.
+			Boe_setTrackedCvar(cvar1, cvarValue); // Avoid the [Rcon Action] message for the real CVAR.
 		}
 	}else{
-		if (cvar1ID != -1){
-			Boe_setTrackedCvar(cvar1ID, cvarValue); // Avoid the [Rcon Action] message for the real CVAR.
+		if (cvar1 != NULL){
+			Boe_setTrackedCvar(cvar1, cvarValue); // Avoid the [Rcon Action] message for the real CVAR.
 		}
 		else{
 			trap_Cvar_Set(cvarNameWithoutCap, va("%i", cvarValue));
@@ -3489,11 +3488,7 @@ int adm_friendlyFire(int argNum, gentity_t *adm, qboolean shortCmd)
 	qboolean enable = !g_friendlyFire.integer;
 	
 	// Toggle state.
-	#ifdef NDEBUG
-	Boe_setTrackedCvar(20, enable);
-	#else
-	Boe_setTrackedCvar(21, enable);
-	#endif // NDEBUG
+	Boe_setTrackedCvar(&g_friendlyFire, enable);
 
 	// Broadcast change.
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));

@@ -1256,7 +1256,8 @@ void Info_SetValueForKey( char *s, const char *key, const char *value ) {
 	// Boe!Man 9/13/11: Log vital information when this overflow does happen.
 	if (strlen(newi) + strlen(s) >= MAX_INFO_STRING)
 	{
-		G_LogPrintf ("Infostring length exceeded: '%s' + '%s'. Please report to a dev.\n", newi, s);
+		Com_Printf("Infostring length exceeded: '%s' + '%s'. Please report to a dev.\n", newi, s);
+		return;
 	}
 
 	strcat (newi, s);

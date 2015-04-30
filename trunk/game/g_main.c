@@ -3861,17 +3861,27 @@ Purpose: Set a Tracked CVAR without track message (useful for Admin commands and
 ================
 */
 
-void Boe_setTrackedCvar(int num, int value)
+void Boe_setTrackedCvar(vmCvar_t *cvar, int value)
 {
 	cvarTable_t	*cv;
 	cv = gameCvarTable;
+	int i, num;
+
+	for (i = 0; i < gameCvarTableSize; i++){
+		if (cv[i].vmCvar == cvar){
+			num = i;
+			break;
+		}
+	}
+
+	if (num == -1){
+		return;
+	}
 
 	cv[num].trackChange = qfalse;
 	trap_Cvar_Set(cv[num].cvarName, va("%i", value));
 	G_UpdateCvars(); // Boe!Man 6/30/11: Update it manually this time.
 	cv[num].trackChange = qtrue;
-
-	return;
 }
 
 /*

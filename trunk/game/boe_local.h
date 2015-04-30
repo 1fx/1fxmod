@@ -549,7 +549,7 @@ void CloneBody( gentity_t *ent , int number);
 void DropRandom( gentity_t *ent, int zombies);
 
 // Boe!Man 6/30/11: CVAR function.
-void Boe_setTrackedCvar(int num, int value);
+void Boe_setTrackedCvar(vmCvar_t *cvar, int value);
 
 // Boe!Man 8/18/11: CVAR for Drop messages in H&S/INF/CTF.
 extern	vmCvar_t	g_dropLocationMessage;

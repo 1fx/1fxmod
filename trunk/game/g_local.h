@@ -1268,16 +1268,6 @@ int				adm_Rounds							(int argNum, gentity_t *adm, qboolean shortCmd);
 int				adm_Third(int argNum, gentity_t *adm, qboolean shortCmd);
 #endif // not _GOLD
 
-static void		adm_addAdmin_f						(int argNum, gentity_t *adm, qboolean shortCmd, int level2, char *commandName);
-static void		adm_unTwist							(int idNum, gentity_t *adm);
-static void		adm_unPlant							(int idNum, gentity_t *adm);
-static void		adm_toggleSection					(gentity_t *adm, char *sectionName, int sectionID, int useSection);
-static void		adm_toggleCVAR						(gentity_t *adm, int argNum, char *cvarName, vmCvar_t *cvar1, int cvar1ID, qboolean availableInCM, char *cvarNameCM, vmCvar_t *cvar2);
-static void		adm_Damage							(gentity_t *adm, char *damageName, int value);
-static void		adm_showBanList						(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet);
-static void		adm_unPause							(gentity_t *adm);
-static void		adm_unbanFromDatabase				(gentity_t *adm, char *ip, qboolean subnet);
-
 //
 // g_main.c
 //
