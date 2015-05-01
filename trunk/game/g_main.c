@@ -3917,8 +3917,8 @@ Purpose: Set a Tracked CVAR without track message (useful for Admin commands and
 void Boe_setTrackedCvar(vmCvar_t *cvar, int value)
 {
 	cvarTable_t	*cv;
-	cv = gameCvarTable;
 	int i, num;
+	cv = gameCvarTable;
 
 	for (i = 0; i < gameCvarTableSize; i++){
 		if (cv[i].vmCvar == cvar){
