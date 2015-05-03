@@ -7,9 +7,6 @@
 #include "patch_local.h"
 
 // Local function definitions.
-#ifdef _WIN32
-void Patch_rconLogging0(void);
-#endif // _WIN32
 void Patch_rconLogging(const char *message, char *ip, char *command);
 
 /*
@@ -45,52 +42,6 @@ void Patch_rconLogging(const char *message, char *ip, char *command)
 ==================
 Patch_rconLog
 
-The detour for both GCC and VC++ on Windows.
-The Linux detour skips this step (call directly to rconLogging).
-==================
-*/
-
-#ifdef _WIN32
-#ifdef __GNUC__
-// Determine proper address.
-#ifdef _GOLD
-#define ADDRESS "$0x0047908A"
-#else
-#define ADDRESS "$0x0047666A"
-#endif // _GOLD
-
-__asm__(".globl Patch_rconLogging0 \n\t"
-	"_Patch_rconLogging0: \n"
-	"call _Patch_rconLogging \n"
-
-	"push " ADDRESS " \n\t"
-	"ret\n"
-	);
-#elif _MSC_VER
-// Determine proper address.
-#ifdef _GOLD
-#define ADDRESS 0x047908A
-#else
-#define ADDRESS 0x047666A
-#endif // _GOLD
-
-__declspec(naked) void Patch_rconLogging0()
-{
-	__asm {
-		call	Patch_rconLogging;
-		push	ADDRESS;
-		retn
-	}
-}
-#endif // __GNUC__
-
-#undef ADDRESS
-#endif // _WIN32
-
-/*
-==================
-Patch_rconLog
-
 Writes the jump to the detour.
 ==================
 */
@@ -99,19 +50,19 @@ void Patch_rconLog()
 {
 	#ifdef _WIN32
 	#ifdef _GOLD
-	Patch_detourAddress("RCON log patch", (long)&Patch_rconLogging0, 0x047908A);
+	Patch_detourAddress("RCON log patch", (long)&Patch_rconLogging, 0x0047908A, qfalse);
 	#else
-	Patch_detourAddress("RCON log patch", (long)&Patch_rconLogging0, 0x047666A);
+	Patch_detourAddress("RCON log patch", (long)&Patch_rconLogging, 0x0047666A, qfalse);
 	#endif // _GOLD
 	#endif // _WIN32
 	
 	#ifdef __linux__
 	#ifdef _GOLD
-	Patch_detourAddress("RCON log patch (1/2)", (long)&Patch_rconLogging, 0x0805876b);
-	Patch_detourAddress("RCON log patch (2/2)", (long)&Patch_rconLogging, 0x08058719);
+	Patch_detourAddress("RCON log patch (1/2)", (long)&Patch_rconLogging, 0x0805876b, qfalse);
+	Patch_detourAddress("RCON log patch (2/2)", (long)&Patch_rconLogging, 0x08058719, qfalse);
 	#else
-	Patch_detourAddress("RCON log patch (1/2)", (long)&Patch_rconLogging, 0x08054def);
-	Patch_detourAddress("RCON log patch (2/2)", (long)&Patch_rconLogging, 0x08054d9d);
+	Patch_detourAddress("RCON log patch (1/2)", (long)&Patch_rconLogging, 0x08054def, qfalse);
+	Patch_detourAddress("RCON log patch (2/2)", (long)&Patch_rconLogging, 0x08054d9d, qfalse);
 	#endif // _GOLD
 	#endif // __linux__
 }

@@ -28,10 +28,11 @@ struct patchArgs {
 
 // Function definitions.
 char	*AlignDWORD					(long input);
-void	Patch_detourAddress			(char *genericName, long func, long offset);
+void	Patch_detourAddress			(char *genericName, long func, long offset, qboolean jmp);
 void	Patch_autoDownloadExploit	(void);
 void	Patch_dosProtection			(void);
 void	Patch_rconLog				(void);
 void	Patch_fsgameWorkaround		(void);
+void	Patch_q3infofix				(void);
 
 #endif // _PATCH_LOCAL

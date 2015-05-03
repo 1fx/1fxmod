@@ -136,11 +136,11 @@ __asm__(".globl Patch_dosDetour0 \n\t"
 #elif _MSC_VER
 // Determine proper address.
 #ifdef _GOLD
-#define ADDRESS	 0x4793A5
-#define ADDRESS2 0x479528
+#define ADDRESS	 0x004793A5
+#define ADDRESS2 0x00479528
 #else
-#define ADDRESS  0x476879
-#define ADDRESS2 0x4769F5
+#define ADDRESS  0x00476879
+#define ADDRESS2 0x004769F5
 #endif // _GOLD
 
 __declspec(naked) void Patch_dosDetour0()
@@ -175,17 +175,17 @@ void Patch_dosProtection()
 {
 	#ifdef _WIN32
 	#ifdef _GOLD
-	Patch_detourAddress("DoS protection", (long)&Patch_dosDetour0, 0x4793A5);
+	Patch_detourAddress("DoS protection", (long)&Patch_dosDetour0, 0x004793A5, qtrue);
 	#else
-	Patch_detourAddress("DoS protection", (long)&Patch_dosDetour0, 0x476879);
+	Patch_detourAddress("DoS protection", (long)&Patch_dosDetour0, 0x00476879, qtrue);
 	#endif // _GOLD
 	#endif // _WIN32
 	
 	#ifdef __linux__
 	#ifdef _GOLD
-	Patch_detourAddress("DoS protection", (long)&Patch_dosDetour, 0x08058b1f);
+	Patch_detourAddress("DoS protection", (long)&Patch_dosDetour, 0x08058b1f, qfalse);
 	#else
-	Patch_detourAddress("DoS protection", (long)&Patch_dosDetour, 0x0805505c);
+	Patch_detourAddress("DoS protection", (long)&Patch_dosDetour, 0x0805505c, qfalse);
 	#endif // _GOLD
 	#endif // __linux__
 }

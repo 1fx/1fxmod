@@ -140,6 +140,7 @@ dos2unix patch_autodl.c
 dos2unix patch_dos.c
 dos2unix patch_fsgame.c
 dos2unix patch_main.c
+dos2unix patch_q3infofix.c
 dos2unix patch_rcon.c
 dos2unix q_math.c
 dos2unix q_shared.c
@@ -220,6 +221,7 @@ gcc $buildoptions patch_autodl.c -o patch_autodl.o 2>> compile_log
 gcc $buildoptions patch_dos.c -o patch_dos.o 2>> compile_log
 gcc $buildoptions patch_fsgame.c -o patch_fsgame.o 2>> compile_log
 gcc $buildoptions patch_main.c -o patch_main.o 2>> compile_log
+gcc $buildoptions patch_q3infofix.c -o patch_q3infofix.o 2>> compile_log
 gcc $buildoptions patch_rcon.c -o patch_rcon.o 2>> compile_log
 gcc $buildoptions rpm_functions.c -o rpm_functions.o 2>> compile_log
 gcc $buildoptions rpm_refcmds.c -o rpm_refcmds.o 2>> compile_log
@@ -271,6 +273,7 @@ patch_autodl.o \
 patch_dos.o \
 patch_fsgame.o \
 patch_main.o \
+patch_q3infofix.o \
 patch_rcon.o \
 rpm_functions.o \
 rpm_refcmds.o \

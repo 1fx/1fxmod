@@ -105,7 +105,7 @@ Main logic of detouring to an address.
 ==================
 */
 
-void Patch_detourAddress(char *genericName, long func, long offset)
+void Patch_detourAddress(char *genericName, long func, long offset, qboolean jmp)
 {
 	char patch[9];
 	#ifdef _WIN32
@@ -122,7 +122,10 @@ void Patch_detourAddress(char *genericName, long func, long offset)
 
 	Com_Printf("Applying %s... ", genericName);
 	#ifdef _WIN32
-	sprintf(patch, va("E9%s", AlignDWORD(func - addr)));
+	if (jmp)
+		sprintf(patch, va("E9%s", AlignDWORD(func - addr))); // JMP instead of CALL.
+	else
+		sprintf(patch, va("E8%s", AlignDWORD(func - addr))); // Regular CALL.
 	#elif __linux__
 	strncpy(patch, AlignDWORD(func - addr), sizeof(patch));
 	#endif // _WIN32
@@ -179,6 +182,9 @@ void Patch_Main()
 
 	Com_Printf("------------------------------------------\n");
 	Com_Printf("Applying memory runtime modifications...\n");
+
+	// Get rid of common exploits like q3infoboom.
+	Patch_q3infofix();
 
 	if(g_dosPatch.integer){
 		Patch_dosProtection();
