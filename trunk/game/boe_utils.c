@@ -2049,10 +2049,11 @@ void Boe_About( gentity_t *ent )
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Speed^7]               %i\n", g_speed.integer));
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Gravity^7]             %i\n", g_gravity.integer));
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Total clients^7]       %i\n", level.numConnectedClients));
-	trap_SendServerCommand( ent-g_entities, va("print \"\n^3Owner settings\n\""));
-	trap_SendServerCommand( ent-g_entities, va("print \"--------------------------------------\n\""));
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Owner^7]               %s\n", Owner.string));
 	
+	trap_SendServerCommand( ent-g_entities, "print \"\n^3Owner settings\n\"");
+	trap_SendServerCommand( ent-g_entities, "print \"--------------------------------------\n\"");
+
+	trap_SendServerCommand( ent-g_entities, va("print \"[^3Owner^7]               %s\n", Owner.string));
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Active clan^7]         %s\n", (strstr(Clan.string, "0") || strlen(Clan.string) == 0) ? "No" : "Yes"));
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Clan URL^7]            %s\n", (strstr(ClanURL.string, "0") || strlen(ClanURL.string) == 0) ? "None" : ClanURL.string));
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Hosted by^7]           %s\n", HostedBy.string));
