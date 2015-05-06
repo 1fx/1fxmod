@@ -1215,9 +1215,11 @@ void G_Obituary(gentity_t *target, gentity_t *attacker, int mod, attackType_t at
 	char			killerName[64];
 	const char		*targetColor;
 	const char		*killerColor;
-	char			*message;
+	char			message[256];
+	char			broadcast[1024];
 	char			*message2;
 	char			*message3;
+	char			*bodypartstr;
 	qboolean		headShot = qfalse;
 	qboolean		statOk = qfalse;
 	statinfo_t		*atrstat = &attacker->client->pers.statinfo;
@@ -1367,48 +1369,51 @@ void G_Obituary(gentity_t *target, gentity_t *attacker, int mod, attackType_t at
 	{
 		gender = GENDER_FEMALE;
 	}
+
+	memset(message, 0, sizeof(message));
+
 	switch (mod)
 	{
-	case MOD_SUICIDE:
-		message = "suicides";
-		break;
-	case MOD_FALLING:
-		if (gender == GENDER_FEMALE)
-			message = "fell to her death";
-		else
-			message = "fell to his death";
-		break;
-	case MOD_CRUSH:
-		message = "was squished";
-		break;
-	case MOD_WATER:
-		message = "sank like a rock";
-		break;
-	case MOD_TARGET_LASER:
-		message = "saw the light";
-		break;
-	case MOD_TRIGGER_HURT:
-		message = "was in the wrong place";
-		break;
-	case MOD_TEAMCHANGE:
-		return;
-	case MOD_CAR:
-		message = "was killed in a terrible car accident";
-		break;
-	case MOD_POP:
-		return;
-		//RxCxW - 1.13.2005	- Dugup (Unplant) #MOD
-	case MOD_DUGUP:
-		message = "Looks like someone Dug too deep!";
-		break;
-	case MOD_BURN:
-		message = "was BURNT to a Crisp!";
-		break;
-		//End
-	default:
-		message = NULL;
-		break;
+		case MOD_SUICIDE:
+			strncpy(message, "suicides", sizeof(message));
+			break;
+		case MOD_FALLING:
+			if (gender == GENDER_FEMALE)
+				strncpy(message, "fell to her death", sizeof(message));
+			else
+				strncpy(message, "fell to his death", sizeof(message));
+			break;
+		case MOD_CRUSH:
+			strncpy(message, "was squished", sizeof(message));
+			break;
+		case MOD_WATER:
+			strncpy(message, "sank like a rock", sizeof(message));
+			break;
+		case MOD_TARGET_LASER:
+			strncpy(message, "saw the light", sizeof(message));
+			break;
+		case MOD_TRIGGER_HURT:
+			strncpy(message, "was in the wrong place", sizeof(message));
+			break;
+		case MOD_TEAMCHANGE:
+			return;
+		case MOD_CAR:
+			strncpy(message, "was killed in a terrible car accident", sizeof(message));
+			break;
+		case MOD_POP:
+			return;
+			//RxCxW - 1.13.2005	- Dugup (Unplant) #MOD
+		case MOD_DUGUP:
+			strncpy(message, "Looks like someone Dug too deep!", sizeof(message));
+			break;
+		case MOD_BURN:
+			strncpy(message, "was BURNT to a Crisp!", sizeof(message));
+			break;
+			//End
+		default:
+			break;
 	}
+
 	// Attacker killed themselves.  Ridicule them for it.
 	if (killer == targ)
 	{
@@ -1425,28 +1430,28 @@ void G_Obituary(gentity_t *target, gentity_t *attacker, int mod, attackType_t at
 		case MOD_ANM14_GRENADE:
 		case MOD_M15_GRENADE:
 			if (gender == GENDER_FEMALE)
-				message = "blew herself up";
+				strncpy(message, "blew herself up", sizeof(message));
 			else if (gender == GENDER_NEUTER)
-				message = "blew itself up";
+				strncpy(message, "blew itself up", sizeof(message));
 			else
-				message = "blew himself up";
+				strncpy(message, "blew himself up", sizeof(message));
 			break;
 
 		case MOD_REFRESH:
-			message = "Refreshed";
+			strncpy(message, "Refreshed", sizeof(message));
 			break;
 
 		default:
 			if (gender == GENDER_FEMALE)
-				message = "killed herself";
+				strncpy(message, "killed herself", sizeof(message));
 			else if (gender == GENDER_NEUTER)
-				message = "killed itself";
+				strncpy(message, "killed itself", sizeof(message));
 			else
-				message = "killed himself";
+				strncpy(message, "killed himself", sizeof(message));
 			break;
 		}
 	}
-	if (message)
+	if (strlen(message) > 0)
 	{
 		trap_SendServerCommand(-1, va("print \"%s%s %s.\n\"", targetColor, targetName, message));
 		return;
@@ -1492,10 +1497,55 @@ void G_Obituary(gentity_t *target, gentity_t *attacker, int mod, attackType_t at
 		}
 		///End  - 01.08.06 - 09:31pm
 
+		// Get the shot location.
+		switch (hitLocation)
+		{
+		case HL_FOOT_RT:
+		case HL_FOOT_LT:
+			bodypartstr = "in the foot ";
+			break;
+		case HL_LEG_UPPER_RT:
+		case HL_LEG_UPPER_LT:
+		case HL_LEG_LOWER_RT:
+		case HL_LEG_LOWER_LT:
+			bodypartstr = "in the leg ";
+			break;
+		case HL_HAND_RT:
+		case HL_HAND_LT:
+			bodypartstr = "in the hand ";
+			break;
+		case HL_ARM_RT:
+		case HL_ARM_LT:
+			bodypartstr = "in the arm ";
+			break;
+		case HL_HEAD:
+			bodypartstr = "in the head ";
+			break;
+		case HL_WAIST:
+			bodypartstr = "in the waist ";
+			break;
+		case HL_BACK_RT:
+		case HL_BACK_LT:
+		case HL_BACK:
+			bodypartstr = "in the back ";
+			break;
+		case HL_CHEST_RT:
+		case HL_CHEST_LT:
+		case HL_CHEST:
+			bodypartstr = "in the chest ";
+			break;
+		case HL_NECK:
+			bodypartstr = "in the neck ";
+			break;
+		default:
+			bodypartstr = "";
+			break;
+		}
+
 		switch (mod)
 		{
 		case MOD_KNIFE:
-			message = "was sliced by";
+			strncpy(message, va("was sliced %sby", bodypartstr), sizeof(message));
 			if (statOk)
 			{
 				atrstat->knifeKills++;
@@ -1506,26 +1556,29 @@ void G_Obituary(gentity_t *target, gentity_t *attacker, int mod, attackType_t at
 		case MOD_M590_SHOTGUN:
 			if (attack == ATTACK_ALTERNATE)
 			{
-				message = "was bludgeoned by";
+				strncpy(message, va("was bludgeoned %sby", bodypartstr), sizeof(message));
 				message2 = va("'s %s", weaponParseInfo[mod].mName);
 			}
 			else
 			{
-				message = "was pumped full of lead by";
+				strncpy(message, va("was pumped full of lead %sby", bodypartstr), sizeof(message));
 				message2 = va("'s %s", weaponParseInfo[mod].mName);
 			}
 			break;
 
 		case MOD_M1911A1_PISTOL:
 		case MOD_USSOCOM_PISTOL:
+		#ifdef _GOLD
+		case MOD_SILVER_TALON:
+		#endif // _GOLD
 			if (attack == ATTACK_ALTERNATE)
 			{
-				message = "was pistol whipped by";
+				strncpy(message, va("was pistol whipped %sby", bodypartstr), sizeof(message));
 				message2 = va("'s %s", weaponParseInfo[mod].mName);
 			}
 			else
 			{
-				message = "was shot by";
+				strncpy(message, ("was shot %sby", bodypartstr), sizeof(message));
 				message2 = va("'s %s", weaponParseInfo[mod].mName);
 			}
 			break;
@@ -1533,12 +1586,12 @@ void G_Obituary(gentity_t *target, gentity_t *attacker, int mod, attackType_t at
 		case MOD_AK74_ASSAULT_RIFLE:
 			if (attack == ATTACK_ALTERNATE)
 			{
-				message = "was stabbed by";
+				strncpy(message, va("was stabbed %sby", bodypartstr), sizeof(message));
 				message2 = va("'s %s", weaponParseInfo[mod].mName);
 			}
 			else
 			{
-				message = "was shot by";
+				strncpy(message, va("was shot %sby", bodypartstr), sizeof(message));
 				message2 = va("'s %s", weaponParseInfo[mod].mName);
 			}
 			break;
@@ -1546,7 +1599,7 @@ void G_Obituary(gentity_t *target, gentity_t *attacker, int mod, attackType_t at
 		case MOD_M4_ASSAULT_RIFLE:
 			if (attack == ATTACK_ALTERNATE)
 			{
-				message = "was detonated by";
+				strncpy(message, "was detonated by", sizeof(message));
 				message2 = "'s M203";
 
 				if (statOk)
@@ -1556,7 +1609,7 @@ void G_Obituary(gentity_t *target, gentity_t *attacker, int mod, attackType_t at
 			}
 			else
 			{
-				message = "was shot by";
+				strncpy(message, va("was shot %sby", bodypartstr), sizeof(message));
 				message2 = va("'s %s", weaponParseInfo[mod].mName);
 			}
 			break;
@@ -1564,12 +1617,16 @@ void G_Obituary(gentity_t *target, gentity_t *attacker, int mod, attackType_t at
 		case MOD_M60_MACHINEGUN:
 		case MOD_MICRO_UZI_SUBMACHINEGUN:
 		case MOD_M3A1_SUBMACHINEGUN:
-			message = "was shot by";
+		#ifdef _GOLD
+		case MOD_SIG551:
+		case MOD_MP5:
+		#endif // _GOLD
+			strncpy(message, va("was shot %sby", bodypartstr), sizeof(message));
 			message2 = va("'s %s", weaponParseInfo[mod].mName);
 			break;
 
 		case MOD_MSG90A1_SNIPER_RIFLE:
-			message = "was sniped by";
+			strncpy(message, va("was sniped %sby", bodypartstr), sizeof(message));
 			message2 = va("'s %s", weaponParseInfo[mod].mName);
 			break;
 
@@ -1583,7 +1640,7 @@ void G_Obituary(gentity_t *target, gentity_t *attacker, int mod, attackType_t at
 		case MOD_SMOHG92_GRENADE:
 		case MOD_ANM14_GRENADE:
 		case MOD_M15_GRENADE:
-			message = "was detonated by";
+			strncpy(message, "was detonated by", sizeof(message));
 			if (current_gametype.value != GT_HZ) {
 				message2 = va("'s %s", weaponParseInfo[mod].mName);
 			}
@@ -1609,16 +1666,17 @@ void G_Obituary(gentity_t *target, gentity_t *attacker, int mod, attackType_t at
 			break;
 
 		case MOD_TELEFRAG:
-			message = "was telefragged by";
+			strncpy(message, "was telefragged by", sizeof(message));
 			break;
 
 		default:
-			message = "was killed by";
+			strncpy(message, "was killed by", sizeof(message));
 			break;
 		}
 
-		if (message) {
-			trap_SendServerCommand(-1, va("print \"%s%s %s %s%s%s %s\n\"", targetColor, targetName, message, killerColor, killerName, message2, message3));
+		if (strlen(message) > 0){
+			Com_sprintf(broadcast, sizeof(broadcast), "print \"%s%s %s %s%s%s %s\n\"\0", targetColor, targetName, message, killerColor, killerName, message2, message3);
+			trap_SendServerCommand(-1, broadcast);
 			return;
 		}
 	}

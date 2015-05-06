@@ -2681,7 +2681,10 @@ void ClientDisconnect( int clientNum )
 	ent->client->sess.referee = 0;
 	ent->client->sess.clanMember = qfalse;
 	ent->client->sess.noNameChange = qfalse;
+
+	#ifdef _GOLD
 	ent->client->sess.clientChecks = 0;
+	#endif // _GOLD
 	// Boe!Man 4/4/10: We reset the Developer as well.
 #ifdef _DEBUG
 	ent->client->sess.dev = 0;

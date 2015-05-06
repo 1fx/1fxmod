@@ -326,6 +326,7 @@ typedef struct
 	float				proClient;
 	#else
 	qboolean			rocModClient;
+	int					rocExtraFeatures;
 	int					clientChecks;
 	int					clientCheckTime;
 	#endif // not _GOLD
@@ -768,7 +769,11 @@ typedef struct
 	char			mapname[64];
 	
 	// Henk 06/04/10 -> Add TMI for RPM scoreboard compatiblity
+	#ifndef _GOLD
 	int				lastTMIupdate;
+	#else
+	int				lastETIupdate;
+	#endif // not _GOLD
 	
 	// Boe!Man 11/21/13: Nolower, Noroof, Nomiddle and Nowhole combined into one system.
 	vec3_t			noLR[2];			// Location for nolower/noroof.
@@ -1757,6 +1762,8 @@ void		RPM_Awards					(void);
 #else
 // rocmod_functions.c
 void		ROCmod_verifyClient			(gentity_t *ent, int clientNum);
+void		ROCmod_clientUpdate			(gentity_t *ent, int clientNum);
+void		ROCmod_sendExtraTeamInfo	(gentity_t *ent);
 #endif // not _GOLD
 
 // g_refcmds.c

@@ -241,6 +241,7 @@ void player_die(
 	attackType_t	attack;
 	int				meansOfDeath;
 	vec3_t			lookdown;
+	gentity_t *ent;
 
 	attack		 = (attackType_t)((mod >> 8) & 0xFF);
 	meansOfDeath = mod & 0xFF;
@@ -387,14 +388,14 @@ void player_die(
 		self->client->pers.netname, obit );
 
 	// broadcast the death event to everyone
-	/*if(g_clientDeathMessages.integer == 1){ // Henk 10/30/12: If death messages being handled by the server broadcast the event to every client.
-		ent = G_TempEntity( self->r.currentOrigin, EV_OBITUARY );
+	if (g_clientDeathMessages.integer) { // Henk 10/30/12: If death messages being handled by the server broadcast the event to every client.
+		ent = G_TempEntity(self->r.currentOrigin, EV_OBITUARY);
 		ent->s.eventParm = mod;
 		ent->s.otherEntityNum = self->s.number;
 		ent->s.otherEntityNum2 = killer;
 		ent->r.svFlags = SVF_BROADCAST;	// send to everyone
-	}*/
-	//Ryan
+		ent->s.time = hitLocation;
+	}
 
 	self->enemy = attacker;
 
@@ -464,8 +465,9 @@ void player_die(
 			G_Broadcast(va("%s\nis on \\fire\nwith %i kills in a row!", attacker->client->pers.netname, attacker->client->pers.statinfo.killsinarow), BROADCAST_GAME, NULL);
 		}
 	}
+
 	if(g_clientDeathMessages.integer == 0) // Henk 10/30/12: If death messages being handled by the client don't print them here.
-	G_Obituary (self, attacker, meansOfDeath, attack, hitLocation);// Ryan: This is where the server handles the obituary functions now (after the scores are done)
+		G_Obituary (self, attacker, meansOfDeath, attack, hitLocation);// Ryan: This is where the server handles the obituary functions now (after the scores are done)
 
 	//Ryan march 22 2004 9:20pm   calculate ratio's
 	if(attacker && attacker->client && attacker != self)

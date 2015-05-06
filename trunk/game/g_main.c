@@ -676,7 +676,6 @@ static cvarTable_t gameCvarTable[] =
 	{ &sql_timeBench,				"sql_timeBench",			"0",				CVAR_ARCHIVE,				0.0f,   0.0f, 0,  qfalse },
 	#endif
 
-	//{ &g_clientDeathMessages,		"g_clientDeathMessages",		 	"0",		CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
 	//http://1fx.uk.to/forums/index.php?/topic/1230-1fx-anticheat/page__view__findpost__p__13498
 #ifdef _DEBUG
 	// Boe!Man: Debug CVAR.
@@ -1049,6 +1048,9 @@ void G_initClientMod()
 
 		// Register ROCmod specific CVARs.
 		trap_Cvar_Register(NULL, "sv_modVersion", "| ^71fx^1.    2.1c" , CVAR_SYSTEMINFO | CVAR_ROM, 0.0, 0.0);
+
+		// Client death messages are handled by client.
+		g_clientDeathMessages.integer = 1;
 	}
 	#else
 	if(strcmp(g_clientMod.string, "RPM") == 0){
@@ -1057,6 +1059,9 @@ void G_initClientMod()
 		// Register RPM 2k3 specific CVARs.
 		trap_Cvar_Register(&current_gametype, "current_gametype", "3", CVAR_SERVERINFO | CVAR_ROM | CVAR_INTERNAL, 0.0, 0.0);
 		trap_Cvar_Register(NULL, "modname", "RPM 2 k 3 v2.00 ^_- ^31fxmod.org", CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0);
+
+		// Client death messages are handled by server.
+		g_clientDeathMessages.integer = 0;
 	}
 	#endif // _GOLD
 
@@ -1071,6 +1076,9 @@ void G_initClientMod()
 
 		// Always register current_gametype even if the client mod doesn't require it.
 		trap_Cvar_Register(&current_gametype, "current_gametype", "3", CVAR_ROM | CVAR_INTERNAL, 0.0, 0.0);
+
+		// Client death messages are handled by server.
+		g_clientDeathMessages.integer = 0;
 	}
 }
 
@@ -3560,6 +3568,12 @@ void G_RunFrame( int levelTime )
 	if(level.clientMod == CL_RPM){
 		// Henk 06/04/10 -> Update tmi every x sec
 		RPM_UpdateTMI();
+	}
+	#else
+	if (level.clientMod == CL_ROCMOD && level.time > level.lastETIupdate) {
+		ROCmod_sendExtraTeamInfo(NULL);
+		
+		level.lastETIupdate = level.time + 1000;
 	}
 	#endif // not _GOLD
 

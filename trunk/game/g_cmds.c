@@ -254,12 +254,9 @@ DeathmatchScoreboardMessage
 */
 void DeathmatchScoreboardMessage( gentity_t *ent )
 {
-	char		entry[1024];
-	//Ryan
-	//char		string[1400];
-	char		string[2048];
-	//Ryan
-	int			stringlength;
+	char		entry[1024], entry2[1024];
+	char		string[2048], string2[2048];
+	int			stringlength, stringlength2;
 	int			i, j;
 	gclient_t	*cl;
 	int			numSorted;
@@ -273,8 +270,10 @@ void DeathmatchScoreboardMessage( gentity_t *ent )
 	//Ryan
 
 	// send the latest information on all clients
-	string[0]    = 0;
-	stringlength = 0;
+	string[0]		= 0;
+	string2[0]		= 0;
+	stringlength	= 0;
+	stringlength2	= 0;
 
 	numSorted = level.numConnectedClients;
 
@@ -337,7 +336,7 @@ void DeathmatchScoreboardMessage( gentity_t *ent )
 				g_teamkillDamageMax.integer ? 100 * cl->sess.teamkillDamage / g_teamkillDamageMax.integer : 0
 				);
 			}
-			else
+			else{
 				Com_sprintf (entry, sizeof(entry),
 				" %i %i %i %i %i %i %i %i %i",
 				level.sortedClients[i],
@@ -369,18 +368,56 @@ void DeathmatchScoreboardMessage( gentity_t *ent )
 
 		j = strlen(entry);
 		if (stringlength + j > 1022 )
-		{
 			break;
-		}
 
 		strcpy (string + stringlength, entry);
 		stringlength += j;
+
+		#ifdef _GOLD
+		if (level.clientMod == CL_ROCMOD) {
+			int admin = 0;
+
+			if(cl->sess.admin == 4)
+				admin = 3;
+			else if (cl->sess.admin > 1)
+				admin = 2;
+			else if (cl->sess.referee)
+				admin = 1;
+
+			Com_sprintf(entry2, sizeof(entry2),
+				" %i %i %i %i %i %i %i %i %i %i",
+				admin,
+				cl->pers.statinfo.hitcount,
+				cl->pers.statinfo.shotcount,
+				cl->pers.statinfo.headShotKills,
+				0, // FIXME: flagcaps
+				0, // FIXME: bestkillspree
+				cl->pers.statinfo.knifeKills,
+				cl->pers.statinfo.explosiveKills,
+				cl->sess.clanMember,
+				0 // FIXME: flagdefends
+				);
+
+			j = strlen(entry2);
+			if (stringlength2 + j > 1022)
+				break;
+
+			strcpy(string2 + stringlength2, entry2);
+			stringlength2 += j;
+		}
+		#endif // _GOLD
 	}
 
 	trap_SendServerCommand( ent-g_entities, va("scores %i %i %i%s", i,
 							level.teamScores[TEAM_RED],
 							level.teamScores[TEAM_BLUE],
 							string ) );
+
+	#ifdef _GOLD
+	if (level.clientMod == CL_ROCMOD && ent->client->sess.rocModClient){
+		trap_SendServerCommand(ent - g_entities, va("scores4 %i 10 %i%s", g_timelimit.integer ? (g_timelimit.integer + level.timeExtension) : 0, i, string2));
+	}
+	#endif // _GOLD
 }
 
 
@@ -3450,6 +3487,8 @@ void ClientCommand( int clientNum ) {
 	#else
 	else if (Q_stricmp(cmd, "verified") == 0 && level.clientMod == CL_ROCMOD)
 		ROCmod_verifyClient(ent, clientNum);
+	else if (Q_stricmp(cmd, "uef") == 0 && level.clientMod == CL_ROCMOD)
+		ROCmod_clientUpdate(ent, clientNum);
 	#endif // not _GOLD
 	else if (Q_stricmp (cmd, "refresh") == 0)
 		G_Refresh( ent );

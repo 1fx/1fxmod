@@ -1080,6 +1080,12 @@ typedef enum {
 	#endif // _GOLD
 } clientMod_t;
 
+#ifdef _GOLD
+// Flags to determine which extra features the client is willing to accept in ROCmod.
+#define	ROC_TEAMINFO	0x00000001
+#define	ROC_SPECLIST	0x00000002
+#endif // _GOLD
+
 //=============================================
 
 int Q_isprint( int c );
