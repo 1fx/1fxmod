@@ -711,7 +711,7 @@ void G_FireBullet ( gentity_t* ent, int weapon, int attack )
 				hitcount++;
 				// Boe!Man 6/2/10: Used for the obiturary and the stats.
 				stat->weapon = weapon; 
-				//set the weapons attack used (for RPM_Obituary)
+				//set the weapons attack used (for G_Obituary)
 				stat->attack = attack; 
 
 				//Add to the number of hits for this client, If it was a teamate dont count it

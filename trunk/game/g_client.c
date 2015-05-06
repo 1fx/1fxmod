@@ -1215,46 +1215,50 @@ void ClientUserinfoChanged( int clientNum )
 		client->ps.pm_flags &= ~PMF_AUTORELOAD;
 	}
 
-	// Ryan Dec 21 2004
-	// detect older client mods so we don't detect the version as 2.0, might really mess up
-	// players using older versions.
-	// client versions previous to 0.6 have a cg_rpm cvar thats sent to the server
-	// if the client has that set their version to 0.5 so there won't be any trouble
-	s = Info_ValueForKey (userinfo, "cg_rpm");
-	if(*s)
-	{
-		if(strlen(s) >= 2 && strlen(s) <= 5)
-				strcpy(client->sess.strClient, s);
-			else
-				strcpy(client->sess.strClient, "N/A");
-		client->sess.rpmClient = 0.5;
-	}
-	// not using older client so lets test for new client
-	else
-	{
-		s = Info_ValueForKey (userinfo, "cg_rpmClient");
+	#ifndef _GOLD
+	if (level.clientMod == CL_RPM){
+		// Ryan Dec 21 2004
+		// detect older client mods so we don't detect the version as 2.0, might really mess up
+		// players using older versions.
+		// client versions previous to 0.6 have a cg_rpm cvar thats sent to the server
+		// if the client has that set their version to 0.5 so there won't be any trouble
+		s = Info_ValueForKey (userinfo, "cg_rpm");
 		if(*s)
 		{
-			// new client sends the version of the client mod eg. 0.6
-			client->sess.rpmClient = atof(s);
-			if(strlen(s) >= 2 && strlen(s) <= 5 )
-				strcpy(client->sess.strClient, s);
-			else
-				strcpy(client->sess.strClient, "N/A");
-		}else{ // if no rpm client
-			s = Info_ValueForKey (userinfo, "cg_proClient");
+			if(strlen(s) >= 2 && strlen(s) <= 5)
+					strcpy(client->sess.strClient, s);
+				else
+					strcpy(client->sess.strClient, "N/A");
+			client->sess.rpmClient = 0.5;
+		}
+		// not using older client so lets test for new client
+		else
+		{
+			s = Info_ValueForKey (userinfo, "cg_rpmClient");
 			if(*s)
 			{
 				// new client sends the version of the client mod eg. 0.6
-				client->sess.proClient = atof(s);
-			if(strlen(s) >= 2 && strlen(s) <= 5)
-				strcpy(client->sess.strClient, s);
-			else
-				strcpy(client->sess.strClient, "N/A");
-			}else
-				strcpy(client->sess.strClient, "N/A");
+				client->sess.rpmClient = atof(s);
+				if(strlen(s) >= 2 && strlen(s) <= 5 )
+					strcpy(client->sess.strClient, s);
+				else
+					strcpy(client->sess.strClient, "N/A");
+			}else{ // if no rpm client
+				s = Info_ValueForKey (userinfo, "cg_proClient");
+				if(*s)
+				{
+					// new client sends the version of the client mod eg. 0.6
+					client->sess.proClient = atof(s);
+				if(strlen(s) >= 2 && strlen(s) <= 5)
+					strcpy(client->sess.strClient, s);
+				else
+					strcpy(client->sess.strClient, "N/A");
+				}else
+					strcpy(client->sess.strClient, "N/A");
+			}
 		}
 	}
+	#endif // not _GOLD
 
 	// set name
 	Q_strncpyz ( oldname, client->pers.netname, sizeof( oldname ) );
@@ -2677,6 +2681,7 @@ void ClientDisconnect( int clientNum )
 	ent->client->sess.referee = 0;
 	ent->client->sess.clanMember = qfalse;
 	ent->client->sess.noNameChange = qfalse;
+	ent->client->sess.clientChecks = 0;
 	// Boe!Man 4/4/10: We reset the Developer as well.
 #ifdef _DEBUG
 	ent->client->sess.dev = 0;

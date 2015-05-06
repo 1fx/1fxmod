@@ -304,10 +304,28 @@ void DeathmatchScoreboardMessage( gentity_t *ent )
 		//Ryan may 12 2004
 		//Add some info for client-side users
 		//RxCxW - 1.20.2005 - NOT compatible with 0.5. #Version
-		if(ent->client->sess.rpmClient > 0.5)
-		{
-			Com_sprintf (entry, sizeof(entry),
-				" %i %i %i %i %i %i %i %i %i %.2f %i",
+		#ifndef _GOLD
+		if (level.clientMod == CL_RPM){
+			if(ent->client->sess.rpmClient > 0.5)
+			{
+				Com_sprintf (entry, sizeof(entry),
+					" %i %i %i %i %i %i %i %i %i %.2f %i",
+					level.sortedClients[i],
+					cl->sess.score,
+					cl->sess.kills,
+					(current_gametype.value != GT_HZ) ? cl->sess.deaths : cl->sess.killsAsZombie,
+					ping,
+					(level.time - cl->pers.enterTime)/60000,
+					(ghost || cl->ps.pm_type == PM_DEAD) ? qtrue : qfalse,
+					g_entities[level.sortedClients[i]].s.gametypeitems,
+					g_teamkillDamageMax.integer ? 100 * cl->sess.teamkillDamage / g_teamkillDamageMax.integer : 0,
+					cl->pers.statinfo.accuracy,
+					cl->pers.statinfo.headShotKills
+					//cl->pers.statinfo.damageDone
+					);
+			}else if(ent->client->sess.rpmClient == 1.1){
+				Com_sprintf (entry, sizeof(entry),
+				" %i %i %i %i %i %i %i %i %i",
 				level.sortedClients[i],
 				cl->sess.score,
 				cl->sess.kills,
@@ -316,40 +334,38 @@ void DeathmatchScoreboardMessage( gentity_t *ent )
 				(level.time - cl->pers.enterTime)/60000,
 				(ghost || cl->ps.pm_type == PM_DEAD) ? qtrue : qfalse,
 				g_entities[level.sortedClients[i]].s.gametypeitems,
-				g_teamkillDamageMax.integer ? 100 * cl->sess.teamkillDamage / g_teamkillDamageMax.integer : 0,
-				cl->pers.statinfo.accuracy,
-				cl->pers.statinfo.headShotKills
-				//cl->pers.statinfo.damageDone
+				g_teamkillDamageMax.integer ? 100 * cl->sess.teamkillDamage / g_teamkillDamageMax.integer : 0
 				);
-		}else if(ent->client->sess.rpmClient == 1.1){
-			Com_sprintf (entry, sizeof(entry),
+			}
+			else
+				Com_sprintf (entry, sizeof(entry),
+				" %i %i %i %i %i %i %i %i %i",
+				level.sortedClients[i],
+				cl->sess.score,
+				cl->sess.kills,
+				(current_gametype.value != GT_HZ) ? cl->sess.deaths : cl->sess.killsAsZombie,
+				ping,
+				(level.time - cl->pers.enterTime)/60000,
+				(ghost || cl->ps.pm_type == PM_DEAD) ? qtrue : qfalse,
+				g_entities[level.sortedClients[i]].s.gametypeitems,
+				g_teamkillDamageMax.integer ? 100 * cl->sess.teamkillDamage / g_teamkillDamageMax.integer : 0
+				);
+			}
+		}
+		#else
+		Com_sprintf(entry, sizeof(entry),
 			" %i %i %i %i %i %i %i %i %i",
 			level.sortedClients[i],
 			cl->sess.score,
 			cl->sess.kills,
-			(current_gametype.value != GT_HZ) ? cl->sess.deaths : cl->sess.killsAsZombie,
+			cl->sess.deaths,
 			ping,
-			(level.time - cl->pers.enterTime)/60000,
+			(level.time - cl->pers.enterTime) / 60000,
 			(ghost || cl->ps.pm_type == PM_DEAD) ? qtrue : qfalse,
 			g_entities[level.sortedClients[i]].s.gametypeitems,
 			g_teamkillDamageMax.integer ? 100 * cl->sess.teamkillDamage / g_teamkillDamageMax.integer : 0
 			);
-		}
-		else
-		{
-			Com_sprintf (entry, sizeof(entry),
-			" %i %i %i %i %i %i %i %i %i",
-			level.sortedClients[i],
-			cl->sess.score,
-			cl->sess.kills,
-			(current_gametype.value != GT_HZ) ? cl->sess.deaths : cl->sess.killsAsZombie,
-			ping,
-			(level.time - cl->pers.enterTime)/60000,
-			(ghost || cl->ps.pm_type == PM_DEAD) ? qtrue : qfalse,
-			g_entities[level.sortedClients[i]].s.gametypeitems,
-			g_teamkillDamageMax.integer ? 100 * cl->sess.teamkillDamage / g_teamkillDamageMax.integer : 0
-			);
-		}
+		#endif // not _GOLD
 
 		j = strlen(entry);
 		if (stringlength + j > 1022 )
@@ -3419,29 +3435,33 @@ void ClientCommand( int clientNum ) {
 		Boe_displayTokens ( ent );
 
 	// Boe!Man 4/3/10
-#ifdef _DEBUG
+	#ifdef _DEBUG
 	else if (Q_stricmp (cmd, "dev") == 0){
 		if (!Boe_dev_f(ent) && ent->client->sess.dev){
 			RPM_CalculateTMI(ent);
 		}
 	}
-#endif
+	#endif
 
 	// Henk 07/04/10 -> Send info to all players(for RPM scoreboard)
-	else if (Q_stricmp (cmd, "tmi") == 0){
+	#ifndef _GOLD
+	else if (Q_stricmp (cmd, "tmi") == 0 && level.clientMod == CL_RPM)
 		RPM_UpdateTMI();
-	}else if (Q_stricmp (cmd, "refresh") == 0)
-		RPM_Refresh( ent );
+	#else
+	else if (Q_stricmp(cmd, "verified") == 0 && level.clientMod == CL_ROCMOD)
+		ROCmod_verifyClient(ent, clientNum);
+	#endif // not _GOLD
+	else if (Q_stricmp (cmd, "refresh") == 0)
+		G_Refresh( ent );
 	else if (Q_stricmp (cmd, "ready") == 0)
-		RPM_ReadyUp( ent );
+		G_ReadyUp( ent );
 	else if (Q_stricmp (cmd, "tcmd") == 0)
-		RPM_Tcmd( ent );
+		G_Tcmd( ent );
 	else if (Q_stricmp (cmd, "ref") == 0)
-		RPM_ref_cmd( ent );
+		G_ref_cmd( ent );
 	// Boe!Man 10/5/10: New how-to command for CTB.
 	else if (Q_stricmp (cmd, "howto") == 0)
 		Boe_Howto( ent );
-	
 	
 #ifdef _DEBUG
 	/*else if (Q_stricmp (cmd, "henk_test") == 0){

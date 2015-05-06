@@ -406,13 +406,6 @@ char *GetReason(void);
 char	*Boe_BarStat(int stat);
 qboolean henk_isdigit(char c);
 qboolean henk_ischar(char c);
-void RPM_Awards(void);
-void G_AdjustClientBBox(gentity_t *other);
-void G_AdjustClientBBoxs(void);
-void G_UndoAdjustedClientBBox(gentity_t *other);
-void G_UndoAdjustedClientBBoxs(void);
-void G_SetClientPreLeaningBBox(gentity_t *ent);
-void G_SetClientLeaningBBox(gentity_t *ent);
 
 #define BBOX_LEAN_OFFSET	0.65f
 #define LB_MAXZ				-3
@@ -508,8 +501,6 @@ qboolean IsClientMuted(gentity_t *ent, qboolean message);
 qboolean AddMutedClient(gentity_t *ent, int time);
 qboolean RemoveMutedClient(gentity_t *ent);
 void RPM_WeaponMod (void);
-void RPM_Refresh(gentity_t *ent);
-void RPM_ReadyUp(gentity_t *ent);
 int FormatDamage(int damage);
 
 extern vmCvar_t g_enableCustomCommands;

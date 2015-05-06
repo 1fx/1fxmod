@@ -705,8 +705,8 @@ void SpectatorThink( gentity_t *ent, usercmd_t *ucmd )
 	{
 		G_StopFollowing( ent );
 	}
-
-	else if ( client->sess.rpmClient && (((client->buttons & BUTTON_ZOOMIN) && !( client->oldbuttons & BUTTON_ZOOMIN ))  || ((client->buttons & BUTTON_RELOAD) && !( client->oldbuttons & BUTTON_RELOAD )))) {
+	#ifndef _GOLD
+	else if ( level.clientMod == CL_RPM && client->sess.rpmClient && (((client->buttons & BUTTON_ZOOMIN) && !( client->oldbuttons & BUTTON_ZOOMIN ))  || ((client->buttons & BUTTON_RELOAD) && !( client->oldbuttons & BUTTON_RELOAD )))) {
 		// If not following then go to either third or first
 		if ( client->sess.spectatorState != SPECTATOR_FOLLOW ) {
 			client->sess.spectatorFirstPerson = qtrue;
@@ -721,6 +721,7 @@ void SpectatorThink( gentity_t *ent, usercmd_t *ucmd )
 			client->sess.spectatorFirstPerson = qtrue;
 		}
 	}
+	#endif // not _GOLD
 	//End
 }	
 
@@ -1137,22 +1138,6 @@ void ClientThink_real( gentity_t *ent )
 	} 
 	
 	msec = ucmd->serverTime - client->ps.commandTime;
-
-/*	if(msec < 4 && ent->client->sess.team != TEAM_SPECTATOR && g_popHighFps.integer == 1){
-		if(level.time >= level.debugtime){
-			if(!G_IsClientDead(ent->client)){
-				ent->client->sess.fpschecks += 1;
-				if(ent->client->sess.fpschecks >= 3){
-					trap_SendServerCommand (-1, va("print\"^3[Info] ^7%s has been popped due to a higher fps then allowed(125).\n\"", ent->client->pers.cleanName ));
-					G_Damage (ent, NULL, NULL, NULL, NULL, 10000, 0, MOD_POP, HL_HEAD|HL_FOOT_RT|HL_FOOT_LT|HL_LEG_UPPER_RT|HL_LEG_UPPER_LT|HL_HAND_RT|HL_HAND_LT|HL_WAIST|HL_CHEST|HL_NECK);
-					ent->client->sess.fpschecks = 0;
-				}
-			}
-			level.debugtime = level.time+1000;
-			return;
-		}
-	}
-	*/
 		
 	// following others may result in bad times, but we still want
 	// to check for follow toggles
@@ -1240,6 +1225,29 @@ void ClientThink_real( gentity_t *ent )
 		}
 	}
 	//Ryan
+
+	#ifdef _GOLD
+	// Boe!Man 5/6/15: Check for the client Mod.
+	if (level.clientMod == CL_ROCMOD && !client->sess.rocModClient && level.time > client->sess.clientCheckTime) {
+		if (client->sess.clientChecks > 5) {
+			char *info = G_ColorizeMessage("\\Info:");
+
+			trap_SendServerCommand(ent - g_entities, va("chat -1 \"%s This " INF_VERSION_STRING_COLORED " ^7server expects you to be running ^1ROCmod 2.1c^7. ^7\n\"", info));
+			trap_SendServerCommand(ent - g_entities, va("chat -1 \"%s You do not appear to be running that specific version of ^1ROCmod^7. ^7\n\"", info));
+			trap_SendServerCommand(ent - g_entities, va("chat -1 \"%s Please ^1download the mod^7, or ^1turn on auto-downloading^7, and re-join the game. ^7\n\"", info));
+
+			// It looks like the client doesn't have the proper client, just continue bothering him every 20 seconds.
+			client->sess.clientCheckTime = level.time + 20000;
+		}else{
+			// Get the client to verify as soon as possible.
+			client->sess.clientCheckTime = level.time + 1000;
+		}
+
+		trap_SendServerCommand(ent - g_entities, "verifymod");
+		client->sess.clientChecks++;
+		
+	}
+	#endif // _GOLD
 
 	//Ryan july 1 2003
 	if(client->sess.motdStartTime)
@@ -1635,7 +1643,7 @@ void ClientThink_real( gentity_t *ent )
 	{
 		if(!client->sess.firstTime && level.warmupTime < 0)
 		{
-			RPM_ReadyCheck(ent);
+			G_ReadyCheck(ent);
 		}
 	}
 	//Ryan

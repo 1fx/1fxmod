@@ -465,7 +465,7 @@ void player_die(
 		}
 	}
 	if(g_clientDeathMessages.integer == 0) // Henk 10/30/12: If death messages being handled by the client don't print them here.
-	RPM_Obituary (self, attacker, meansOfDeath, attack, hitLocation);// Ryan: This is where the server handles the obituary functions now (after the scores are done)
+	G_Obituary (self, attacker, meansOfDeath, attack, hitLocation);// Ryan: This is where the server handles the obituary functions now (after the scores are done)
 
 	//Ryan march 22 2004 9:20pm   calculate ratio's
 	if(attacker && attacker->client && attacker != self)

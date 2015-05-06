@@ -1178,7 +1178,12 @@ void SP_worldspawn( void )
 	trap_SetConfigstring( CS_MESSAGE, text );				// map specific message
 */
 
-	RPM_UpdateLoadScreenMessage();
+	#ifndef _GOLD
+	if (level.clientMod == CL_RPM){
+		RPM_UpdateLoadScreenMessage();
+	}
+	#endif // not _GOLD
+
 	trap_SetConfigstring( CS_MOTD, g_motd.string );		// message of the day
 
 	// Boe!Man 9/6/12: Fix gravity resetting every round.

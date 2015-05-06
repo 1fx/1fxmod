@@ -320,10 +320,17 @@ typedef struct
 	char				country[128]; // Netherlands,Unites States, United Kingdom etc..
 	char				countryext[4]; // NL,US,UK etc..
 
+	#ifndef _GOLD
 	// Henk 06/04/10 -> Rpm scoreboard compatibility
 	float				rpmClient;
-	char				strClient[36];
 	float				proClient;
+	#else
+	qboolean			rocModClient;
+	int					clientChecks;
+	int					clientCheckTime;
+	#endif // not _GOLD
+
+	char				strClient[36];
 	qboolean			spectatorFirstPerson;
 	int					totalSpectatorTime;
 	int					ghostStartTime;
@@ -1114,6 +1121,18 @@ void		TeleportPlayer					( gentity_t *player, vec3_t origin, vec3_t angles, qboo
 void		g_checkSectionState				( void );
 void		g_sectionAddOrDelInstances		( gentity_t *ent, qboolean add );
 
+void		G_AdjustClientBBox				( gentity_t *other );
+void		G_AdjustClientBBoxs				( void );
+void		G_UndoAdjustedClientBBox		( gentity_t *other );
+void		G_UndoAdjustedClientBBoxs		( void );
+void		G_SetClientPreLeaningBBox		( gentity_t *ent );
+void		G_SetClientLeaningBBox			( gentity_t *ent );
+
+void		G_Refresh						( gentity_t *ent );
+void		G_Obituary						( gentity_t *target, gentity_t *attacker, int mod, attackType_t attack, int hitLocation );
+void		G_unPause						( gentity_t *adm );
+void		G_ReadyUp						( gentity_t *ent );
+void		G_ReadyCheck					( gentity_t *ent );
 
 //
 // g_weapon.c
@@ -1730,25 +1749,25 @@ char *G_GetEntFileToken(void);
 
 void SP_func_door_rotating( gentity_t *ent );
 
-// Henk 07/04/10 -> Add RPM_UpdateTMI()
-void RPM_UpdateTMI(void);
+#ifndef _GOLD
+// rpm_functions.c
+void		RPM_UpdateTMI				(void);
+void		RPM_UpdateLoadScreenMessage	(void);
+void		RPM_Awards					(void);
+#else
+// rocmod_functions.c
+void		ROCmod_verifyClient			(gentity_t *ent, int clientNum);
+#endif // not _GOLD
 
-// Henk 08/04/10 -> Add RPM_Obituary()
-void	RPM_Obituary( gentity_t *target, gentity_t *attacker, int mod, attackType_t attack, int hitLocation);
+// g_refcmds.c
+void		G_ref_cmd		( gentity_t *ent );
 
-void		RPM_UpdateLoadScreenMessage (void);
-void		RPM_ReadyCheck (gentity_t *ent);
-void		RPM_Tcmd ( gentity_t *ent );
-void		RPM_ReadyTeam(gentity_t *ent, qboolean referee, char *team);
-void		RPM_TeamInfo (gentity_t *ent, char *team);
-qboolean	RPM_lockTeam(gentity_t *ent, qboolean referee, char *team);
-void		RPM_ref_cmd( gentity_t *ent);
-void		RPM_Invite_Spec(gentity_t *ent, char *arg2);
-void		RPM_Team_Reset(gentity_t *ent, qboolean referee, char *team);
-void		RPM_Timeout(gentity_t *ent, qboolean referee);
-void		RPM_Timein (gentity_t *ent);
-void		RPM_ReadyAll (void);
-void		RPM_Unpause (gentity_t *adm);
+// g_tcmds.c
+void		G_Tcmd			( gentity_t *ent );
+void		G_TeamInfo		( gentity_t *ent, char *team );
+qboolean	G_lockTeam		( gentity_t *ent, qboolean referee, char *team );
+void		G_Invite_Spec	( gentity_t *ent, char *arg2 );
+
 int StartAfterCommand(char *param);
 #ifdef _DEBUG
 // Boe!Man: Debug CVAR.

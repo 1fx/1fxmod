@@ -2566,20 +2566,20 @@ int adm_lockTeam(int argNum, gentity_t *adm, qboolean shortCmd)
 	
 	if (shortCmd){
 		if (strstr(arg, "r")){
-			done = RPM_lockTeam(adm, qfalse, "r");
+			done = G_lockTeam(adm, qfalse, "r");
 		}else if (strstr(arg, "b")){
-			done = RPM_lockTeam(adm, qfalse, "b");
+			done = G_lockTeam(adm, qfalse, "b");
 		}else if (strstr(arg, "s")){
-			done = RPM_lockTeam(adm, qfalse, "s");
+			done = G_lockTeam(adm, qfalse, "s");
 		}else if (strstr(arg, "a")){
-			done = RPM_lockTeam(adm, qfalse, "a");
+			done = G_lockTeam(adm, qfalse, "a");
 		}
 
 		if (!done){
 			trap_SendServerCommand(adm - g_entities, va("print \"^3[Info] ^7Unknown team entered.\n\""));
 		}
 	}else{
-		if (!RPM_lockTeam(adm, qfalse, arg)){
+		if (!G_lockTeam(adm, qfalse, arg)){
 			trap_SendServerCommand(adm - g_entities, va("print \"^3[Info] ^7Unknown team entered.\n\""));
 		}
 	}
@@ -2845,7 +2845,7 @@ static void adm_unPause(gentity_t *adm)
 		Boe_adminLog("unpause", "RCON", "none");
 	}
 
-	RPM_Unpause(adm);
+	G_unPause(adm);
 }
 
 /*
@@ -3842,3 +3842,4 @@ int adm_Rounds(int argNum, gentity_t *adm, qboolean shortCmd)
 
 	return -1;
 }
+

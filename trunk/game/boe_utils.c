@@ -1321,21 +1321,35 @@ void Boe_Players (gentity_t *ent)
 			mute3 = ' ';
 		}
 		prefix = '\0';
-		if(level.clients[i].sess.rpmClient >= 0.1){
-		client = qtrue;
-		client0 = '[';
-		client1 = level.clients[i].sess.rpmClient;
-		client2 = ']';
-		}else if(level.clients[i].sess.proClient >= 0.1){
-		client = qtrue;
-		client0 = '[';
-		prefix = 'P';
-		client1 = level.clients[i].sess.proClient;
-		client2 = ']';
+		#ifndef _GOLD
+		if (level.clientMod == CL_RPM){
+			if (level.clients[i].sess.rpmClient >= 0.1){
+				client = qtrue;
+				client0 = '[';
+				client1 = level.clients[i].sess.rpmClient;
+				client2 = ']';
+			}
+			else if (level.clients[i].sess.proClient >= 0.1){
+				client = qtrue;
+				client0 = '[';
+				prefix = 'P';
+				client1 = level.clients[i].sess.proClient;
+				client2 = ']';
+			}
+			else{
+				client = qfalse;
+			}
+		}else{
+			client = qfalse;
 		}
-		else{
-		client = qfalse;
+		#else
+		if (level.clients[i].sess.rocModClient){
+			client = qtrue;
+			client0 = '[';
+			client1 = level.clients[i].sess.rocModClient;
+			client2 = ']';
 		}
+		#endif // not _GOLD
 		// Boe!Man 8/25/10: Maybe not the best solution, but if we want to exclude the country, this is a very easy way to exclude it.
 		if (g_checkCountry.integer != 0){
 		trap_SendServerCommand( ent-g_entities, va("print \"[^3%d^7]%s[^%c%s^7]%s[^3%d^7]%s[^3%s^7] %c^3%c^7%c %c^3%c^7%c %c^3%c^7%c \"", // c = single character
@@ -1359,12 +1373,12 @@ void Boe_Players (gentity_t *ent)
 			if(client == qtrue){
 				strcpy(strClient, level.clients[i].sess.strClient);
 				if(strlen(strClient) >= 2){
-					if(prefix == 'P')
+					if(prefix)
 						trap_SendServerCommand( ent-g_entities, va("print \"%c^3%c%s^7%c\n\"", client0, prefix, strClient, client2));
 					else
 						trap_SendServerCommand( ent-g_entities, va("print \"%c^3%s^7%c\n\"", client0, strClient, client2));
 				}else{
-					if(prefix == 'P')
+					if(prefix)
 						trap_SendServerCommand( ent-g_entities, va("print \"%c^3%c%.1f^7%c\n\"", client0, prefix, client1, client2));
 					else
 						trap_SendServerCommand( ent-g_entities, va("print \"%c^3%.1f^7%c\n\"", client0, client1, client2));
@@ -1393,12 +1407,12 @@ void Boe_Players (gentity_t *ent)
 		if(client == qtrue){
 				strcpy(strClient, level.clients[i].sess.strClient);
 				if(strlen(strClient) >= 2){
-					if(prefix == 'P')
+					if(prefix)
 						trap_SendServerCommand( ent-g_entities, va("print \"%c^3%c%s^7%c\n\"", client0, prefix, strClient, client2));
 					else
 						trap_SendServerCommand( ent-g_entities, va("print \"%c^3%s^7%c\n\"", client0, strClient, client2));
 				}else{
-					if(prefix == 'P')
+					if(prefix)
 						trap_SendServerCommand( ent-g_entities, va("print \"%c^3%c%.1f^7%c\n\"", client0, prefix, client1, client2));
 					else
 						trap_SendServerCommand( ent-g_entities, va("print \"%c^3%.1f^7%c\n\"", client0, client1, client2));
@@ -1611,14 +1625,30 @@ void Boe_Stats ( gentity_t *ent )
 		}
 		
 		idnum = ent->s.number;
-		if (ent->client->sess.rpmClient >= 0.1){
-			client = ent->client->sess.rpmClient;
-		}else if (ent->client->sess.proClient >= 0.1){
-			client = ent->client->sess.proClient;
+		#ifndef _GOLD
+		if (level.clientMod == CL_RPM){
+			if (ent->client->sess.rpmClient >= 0.1){
+				client = ent->client->sess.rpmClient;
+			}else if (ent->client->sess.proClient >= 0.1){
+				client = ent->client->sess.proClient;
+			}else{
+				client0 = "N/A";
+				client1 = qtrue;
+			}
 		}else{
 			client0 = "N/A";
 			client1 = qtrue;
 		}
+		#else
+		if (level.clientMod == CL_ROCMOD && ent->client->sess.rocModClient) {
+			client = ent->client->sess.rocModClient;
+			client0 = "ROCmod 2.1c";
+			client1 = qtrue;
+		}else{
+			client0 = "N/A";
+			client1 = qtrue;
+		}
+		#endif // not _GOLD
 		
 #ifdef _3DServer
 		if (ent->client->sess.admin == 2){
@@ -1696,14 +1726,30 @@ void Boe_Stats ( gentity_t *ent )
 			country = g_entities[idnum].client->sess.country;
 		}
 		
-		if (g_entities[idnum].client->sess.rpmClient >= 0.1){
-			client = g_entities[idnum].client->sess.rpmClient;
-		}else if (g_entities[idnum].client->sess.proClient >= 0.1){
-			client = g_entities[idnum].client->sess.proClient;
+		#ifndef _GOLD
+		if (level.clientMod == CL_RPM){
+			if (g_entities[idnum].client->sess.rpmClient >= 0.1){
+				client = g_entities[idnum].client->sess.rpmClient;
+			}else if (g_entities[idnum].client->sess.proClient >= 0.1){
+				client = g_entities[idnum].client->sess.proClient;
+			}else{
+				client0 = "N/A";
+				client1 = qtrue;
+			}
 		}else{
 			client0 = "N/A";
 			client1 = qtrue;
 		}
+		#else
+		if (level.clientMod == CL_ROCMOD && g_entities[idnum].client->sess.rocModClient) {
+			client = g_entities[idnum].client->sess.rocModClient;
+			client0 = "ROCmod 2.1c";
+			client1 = qtrue;
+		}else{
+			client0 = "N/A";
+			client1 = qtrue;
+		}
+		#endif // not _GOLD
 
 		if (g_entities[idnum].client->sess.admin == 2){
 			admin = "B-Admin";
@@ -1749,11 +1795,12 @@ void Boe_Stats ( gentity_t *ent )
 			if(client >= 0.1){
 				trap_SendServerCommand( ent-g_entities, va("print \"[^3Client^7]      %.1f\n", client));
 			}else{
+				#ifndef _GOLD
 				if(g_entities[idnum].client->sess.proClient >= 0.1){
 					trap_SendServerCommand( ent-g_entities, va("print \"[^3Client^7]      P%.1f\n", g_entities[idnum].client->sess.proClient));
-				}else{
+				}else
+				#endif // not _GOLD
 					trap_SendServerCommand( ent-g_entities, va("print \"[^3Client^7]      N/A\n"));
-				}
 			}
 		}
 	}
@@ -2462,16 +2509,16 @@ Function that replaces arguments in the actual CustomCommand action.
 
 char *Boe_parseCustomCommandArgs(char *in)
 {
-	char	*buf;
-	char	out[512] = "\0";
-	char	buf2[5] = "\0";
-	char	arg2[1];
-	char	arg[MAX_STRING_TOKENS];
-	int		pos = 0; // Position of out.
+	static char	*buf;
+	char		out[512] = "\0";
+	char		buf2[5] = "\0";
+	char		arg2[1];
+	char		arg[MAX_STRING_TOKENS];
+	int			pos = 0; // Position of out.
 	
-#ifdef _DEBUG
+	#ifdef _DEBUG
 	Com_Printf("Boe_parseCustomCommandArgs: in: %s\n", in); // Debug.
-#endif
+	#endif
 	
 	buf = in;
 	while ( *buf ){
@@ -2508,9 +2555,9 @@ char *Boe_parseCustomCommandArgs(char *in)
 	
 	buf = out;
 	
-#ifdef _DEBUG
+	#ifdef _DEBUG
 	Com_Printf("Boe_parseCustomCommandArgs: out: %s\n", buf); // Debug.
-#endif
+	#endif
 
 	return buf;
 }

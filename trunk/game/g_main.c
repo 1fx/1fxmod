@@ -2467,10 +2467,12 @@ void CheckIntermissionExit( void )
 
 	if(!level.awardTime)
 	{
+		#ifndef _GOLD
 		if(current_gametype.value == GT_HS)
 			ShowScores();
 		else
 			RPM_Awards();
+		#endif // not _GOLD
 		level.awardTime = level.time;
 		level.lastAwardSent = level.time;
 
@@ -2501,10 +2503,12 @@ void CheckIntermissionExit( void )
 
 	if(level.awardTime && (level.time > level.lastAwardSent + 3000))
 	{
+		#ifndef _GOLD
 		if(current_gametype.value == GT_HS)
 			ShowScores();
 		else
 			RPM_Awards();
+		#endif // not _GOLD
 		level.lastAwardSent = level.time;
 	}
 
@@ -3543,7 +3547,7 @@ void G_RunFrame( int levelTime )
 
 		if(level.unpausetime)
 		{
-			RPM_Unpause(NULL);
+			G_unPause(NULL);
 		}
 	}
 	//Ryan
@@ -3551,8 +3555,13 @@ void G_RunFrame( int levelTime )
 	// get any cvar changes
 	G_UpdateCvars();
 
-	// Henk 06/04/10 -> Update tmi every x sec
-	RPM_UpdateTMI();
+	
+	#ifndef _GOLD
+	if(level.clientMod == CL_RPM){
+		// Henk 06/04/10 -> Update tmi every x sec
+		RPM_UpdateTMI();
+	}
+	#endif // not _GOLD
 
 	// go through all allocated objects
 	ent = &g_entities[0];
