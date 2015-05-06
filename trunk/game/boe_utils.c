@@ -2008,9 +2008,9 @@ Updated 11/20/10 - 11:17 PM
 void Boe_About( gentity_t *ent )
 {
 	// Boe!Man 3/30/10
-	trap_SendServerCommand( ent-g_entities, va("print \"\n^3Server settings\n\""));
-	trap_SendServerCommand( ent-g_entities, va("print \"--------------------------------------\n\""));
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Mod used^7]            %s %s\n", INF_STRING, INF_VERSION_STRING));
+	trap_SendServerCommand( ent-g_entities, "print \"\n^3Server settings\n\"");
+	trap_SendServerCommand( ent-g_entities, "print \"--------------------------------------\n\"");
+	trap_SendServerCommand( ent-g_entities, "print \"[^3Mod used^7]            " INF_STRING" " INF_VERSION_STRING "\n");
 	
 	// Mod channel.
 	#ifdef _DEBUG
@@ -2023,32 +2023,28 @@ void Boe_About( gentity_t *ent )
 	trap_SendServerCommand(ent - g_entities, "print \"[^3Mod channel^7]         Release\n");
 	#endif
 
+	#ifdef _GOLD
+	trap_SendServerCommand( ent-g_entities, "print \"[^3Mod port^7]            SoF2 v1.03 (Gold)\n");
+	#else
+	trap_SendServerCommand( ent-g_entities, "print \"[^3Mod port^7]            SoF2 v1.00\n");
+	#endif // _GOLD
+
 	#ifdef WIN32
 	trap_SendServerCommand( ent-g_entities, "print \"[^3Host platform^7]       Windows (*.dll)\n");
 	#elif __linux__
 	trap_SendServerCommand( ent-g_entities, "print \"[^3Host platform^7]       Linux (*.so)\n");
 	#endif
-	if (g_instaGib.integer > 0){
-		trap_SendServerCommand( ent-g_entities, va("print \"[^3Instagib^7]            Yes\n"));
-	}else{
-		trap_SendServerCommand( ent-g_entities, va("print \"[^3Instagib^7]            No\n"));
-	}
-	if (g_compMode.integer > 0 && cm_enabled.integer > 1){
-		trap_SendServerCommand( ent-g_entities, va("print \"[^3Competition Mode^7]    Yes\n"));
-	}else{
-		trap_SendServerCommand( ent-g_entities, va("print \"[^3Competition Mode^7]    No\n"));
-	}
+
+	trap_SendServerCommand( ent-g_entities, va("print \"[^3Instagib^7]            %s\n", (g_instaGib.integer > 0) ? "Yes" : "No"));
+	trap_SendServerCommand( ent-g_entities, va("print \"[^3Competition Mode^7]    %s\n", (g_compMode.integer > 0 && cm_enabled.integer > 1) ? "Yes" : "No"));
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Scorelimit^7]          %i\n", g_scorelimit.integer));
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Timelimit^7]           %i\n", g_timelimit.integer));
-	if(strstr(g_gametype.string, "ctf")){
+	if(current_gametype.value == GT_CTF){
 		trap_SendServerCommand( ent-g_entities, va("print \"[^3Respawn interval^7]    %i\n", g_respawnInterval.integer));
 	}
+
 	#ifndef _GOLD
-	if (g_allowthirdperson.integer > 0){
-		trap_SendServerCommand( ent-g_entities, va("print \"[^3Third person^7]        Yes\n"));
-	}else{
-		trap_SendServerCommand( ent-g_entities, va("print \"[^3Third person^7]        No\n"));
-	}
+	trap_SendServerCommand( ent-g_entities, va("print \"[^3Third person^7]        Yes\n", (g_allowthirdperson.integer > 0) ? "Yes" : "No"));
 	#endif // not _GOLD
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Speed^7]               %i\n", g_speed.integer));
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Gravity^7]             %i\n", g_gravity.integer));
@@ -2056,16 +2052,12 @@ void Boe_About( gentity_t *ent )
 	trap_SendServerCommand( ent-g_entities, va("print \"\n^3Owner settings\n\""));
 	trap_SendServerCommand( ent-g_entities, va("print \"--------------------------------------\n\""));
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Owner^7]               %s\n", Owner.string));
-	if (strstr(Clan.string, "0"))
-		trap_SendServerCommand( ent-g_entities, va("print \"[^3Active clan^7]         No\n"));
-	else
-		trap_SendServerCommand( ent-g_entities, va("print \"[^3Active clan^7]         Yes\n"));
-	if (strstr(ClanURL.string, "0"))
-		trap_SendServerCommand( ent-g_entities, va("print \"[^3Clan URL^7]            None\n"));
-	else
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Clan URL^7]            %s\n", ClanURL.string));
+	
+	trap_SendServerCommand( ent-g_entities, va("print \"[^3Active clan^7]         %s\n", (strstr(Clan.string, "0") || strlen(Clan.string) == 0) ? "No" : "Yes"));
+	trap_SendServerCommand( ent-g_entities, va("print \"[^3Clan URL^7]            %s\n", (strstr(ClanURL.string, "0") || strlen(ClanURL.string) == 0) ? "None" : ClanURL.string));
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Hosted by^7]           %s\n", HostedBy.string));
-	trap_SendServerCommand( ent-g_entities, va("print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\""));
+
+	trap_SendServerCommand( ent-g_entities, "print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\"");
 }
 
 /*
