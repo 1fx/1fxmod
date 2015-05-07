@@ -84,9 +84,14 @@ static admCmd_t AdminCommands[] =
 	{"!altmap","altmap", &g_mapswitch.integer, &adm_Map, NULL},
 	{"!devmap","devmap", &g_mapswitch.integer, &adm_Map, NULL},
 	{"!rounds","rounds", &g_cm.integer, &adm_Rounds, NULL},
+	{ "!swi","switch", &g_forceteam.integer, &adm_Switch, "ed" },
 	#ifndef _GOLD
 	{ "!3rd", "3rd", &g_3rd.integer, &adm_Third, NULL },
 	{ "!third", "third", &g_3rd.integer, &adm_Third, NULL },
+	#else
+	// Add synonyms for some ROCmod commands (that Gold people have grown to use).
+	{ "!la","launch", &g_uppercut.integer, &adm_Uppercut, "ed" },
+	{ "!e","explode", &g_pop.integer, &adm_Pop, "ded" },
 	#endif // not _GOLD
 };
 

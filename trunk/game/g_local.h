@@ -1288,6 +1288,7 @@ int				adm_friendlyFire					(int argNum, gentity_t *adm, qboolean shortCmd);
 int				adm_Rename							(int argNum, gentity_t *adm, qboolean shortCmd);
 int				adm_Map								(int argNum, gentity_t *adm, qboolean shortCmd);
 int				adm_Rounds							(int argNum, gentity_t *adm, qboolean shortCmd);
+int				adm_Switch							(int argNum, gentity_t *adm, qboolean shortCmd);
 
 #ifndef _GOLD
 int				adm_Third(int argNum, gentity_t *adm, qboolean shortCmd);

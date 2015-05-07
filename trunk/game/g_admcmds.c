@@ -10,7 +10,7 @@ static void	adm_addAdmin_f			(int argNum, gentity_t *adm, qboolean shortCmd, int
 static void	adm_unTwist				(int idNum, gentity_t *adm);
 static void	adm_unPlant				(int idNum, gentity_t *adm);
 static void	adm_toggleSection		(gentity_t *adm, char *sectionName, int sectionID, int useSection);
-static void	adm_toggleCVAR			(gentity_t *adm, int argNum, char *cvarName, vmCvar_t *cvar1, qboolean availableInCM, char *cvarNameCM, vmCvar_t *cvar2);
+static void	adm_toggleCVAR			(gentity_t *adm, int argNum, qboolean shortCmd, char *cvarName, vmCvar_t *cvar1, qboolean availableInCM, char *cvarNameCM, vmCvar_t *cvar2);
 static void	adm_Damage				(gentity_t *adm, char *damageName, int value);
 static void	adm_showBanList			(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet);
 static void	adm_unPause				(gentity_t *adm);
@@ -1310,7 +1310,7 @@ Sets the score limit or shows it to the one issuing the command.
 
 int adm_scoreLimit(int argNum, gentity_t *adm, qboolean shortCmd)
 {
-	adm_toggleCVAR(adm, argNum, "Scorelimit", &g_scorelimit, qtrue, "cm_sl", &cm_sl);
+	adm_toggleCVAR(adm, argNum, shortCmd, "Scorelimit", &g_scorelimit, qtrue, "cm_sl", &cm_sl);
 
 	return -1;
 }
@@ -1325,7 +1325,7 @@ Sets the time limit or shows it to the one issuing the command.
 
 int adm_timeLimit(int argNum, gentity_t *adm, qboolean shortCmd)
 {
-	adm_toggleCVAR(adm, argNum, "Timelimit", &g_timelimit, qtrue, "cm_tl", &cm_tl);
+	adm_toggleCVAR(adm, argNum, shortCmd, "Timelimit", &g_timelimit, qtrue, "cm_tl", &cm_tl);
 
 	return -1;
 }
@@ -1340,7 +1340,7 @@ Sets the respawninterval or shows it to the one issuing the command.
 
 int adm_respawnInterval(int argNum, gentity_t *adm, qboolean shortCmd)
 {
-	adm_toggleCVAR(adm, argNum, "Respawn interval", &g_respawnInterval, qfalse, NULL, NULL);
+	adm_toggleCVAR(adm, argNum, shortCmd, "Respawn interval", &g_respawnInterval, qfalse, NULL, NULL);
 
 	return -1;
 }
@@ -1353,16 +1353,31 @@ Complicated way of toggling or showing a CVAR for both scrim CVARs or real ones 
 ================
 */
 
-static void adm_toggleCVAR(gentity_t *adm, int argNum, char *cvarName, vmCvar_t *cvar1, qboolean availableInCM, char *cvarNameCM, vmCvar_t *cvar2)
+static void adm_toggleCVAR(gentity_t *adm, int argNum, qboolean shortCmd, char *cvarName, vmCvar_t *cvar1, qboolean availableInCM, char *cvarNameCM, vmCvar_t *cvar2)
 {
 	char	cvarNameWithoutCap[32];
+	char	arg[32];
 	int		cvarValue;
+	#ifdef _GOLD
+	int i;
+	#endif // _GOLD
 	
 	// Copy the name of the CVAR without capital.
 	strncpy(cvarNameWithoutCap, cvarName, sizeof(cvarNameWithoutCap));
 
-	// Grab the new cvar value.
-	cvarValue = GetArgument(argNum);
+	if (shortCmd) {
+		// Grab the new cvar value.
+		cvarValue = GetArgument(argNum);
+	}else{
+		arg[0] = 0;
+
+		trap_Argv(argNum, arg, sizeof(arg));
+		if (strlen(arg) > 0) {
+			cvarValue = atoi(arg);
+		}else{
+			cvarValue = -1;
+		}
+	}
 
 	// Check if the player supplied an argument. If not, show him the current values.
 	if (cvarValue < 0){
@@ -1400,6 +1415,15 @@ static void adm_toggleCVAR(gentity_t *adm, int argNum, char *cvarName, vmCvar_t 
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
 	G_Broadcast(va("\\%s %i!", cvarName, cvarValue), BROADCAST_CMD, NULL);
 	Boe_adminLog(va("%s %i", cvarName, cvarValue), va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "none");
+
+	#ifdef _GOLD
+	// Send scoreboard to all clients in ROCmod (so variables are properly instantly re-calculated).
+	for (i = 0; i < level.maxclients; i++) {
+		if (level.clients[i].pers.connected == CON_CONNECTED) {
+			DeathmatchScoreboardMessage(g_entities + i);
+		}
+	}
+	#endif // _GOLD
 }
 
 /*
@@ -3853,3 +3877,95 @@ int adm_Rounds(int argNum, gentity_t *adm, qboolean shortCmd)
 	return -1;
 }
 
+/*
+================
+adm_Switch
+
+Forces a player to the opposite team.
+================
+*/
+
+int adm_Switch(int argNum, gentity_t *adm, qboolean shortCmd)
+{
+	char		str[MAX_TOKEN_CHARS];
+	int			idNum, xTeam;
+	char		userinfo[MAX_INFO_STRING];
+
+	// Boe!Man 6/16/12: Check gametype first.
+	if (!level.gametypeData->teams) {
+		if (adm && adm->client) {
+			trap_SendServerCommand(adm - g_entities, "print \"^3[Info] ^7Not playing a team game.\n\"");
+		}else{
+			Com_Printf("Not playing a team game.\n");
+		}
+
+		return -1;
+	}
+
+	// Check argument.
+	if (shortCmd){
+		trap_Argv(1, str, sizeof(str));
+	}else{
+		if (adm && adm->client){
+			trap_Argv(2, str, sizeof(str));
+		}else{
+			trap_Argv(1, str, sizeof(str));
+		}
+	}
+	Q_strlwr(str);
+
+	// Find the player.
+	if (shortCmd == qtrue){
+		idNum = Boe_ClientNumFromArg(adm, 1, "switch <id/name>", "switch", qtrue, qtrue, shortCmd);
+	}else{
+		if (adm){
+			idNum = Boe_ClientNumFromArg(adm, 2, "switch <id/name>", "switch", qtrue, qtrue, shortCmd);
+		}else{
+			idNum = Boe_ClientNumFromArg(adm, 1, "switch <id/name>", "switch", qtrue, qtrue, shortCmd);
+		}
+	}
+
+	// Boe!Man 1/22/14: If the client wasn't found, return.
+	if (idNum < 0) return -1;
+
+	if (g_entities[idNum].client){
+		// Switch team.
+		if (g_entities[idNum].client->sess.team == TEAM_RED) {
+			strncpy(str, "b", sizeof(str));
+			xTeam = TEAM_BLUE;
+		}else if (g_entities[idNum].client->sess.team == TEAM_BLUE) {
+			strncpy(str, "r", sizeof(str));
+			xTeam = TEAM_RED;
+		}
+
+		if (g_entities[idNum].r.svFlags & SVF_BOT){ // Henk 25/01/11 -> Reset bots to set them to another team
+			trap_GetUserinfo(idNum, userinfo, sizeof(userinfo));
+			Info_SetValueForKey(userinfo, "team", str);
+			trap_SetUserinfo(idNum, userinfo);
+			g_entities[idNum].client->sess.team = (team_t)xTeam;
+			
+			if (current_gametype.value != GT_HS){
+				g_entities[idNum].client->pers.identity = BG_FindTeamIdentity(level.gametypeTeam[xTeam], -1);
+			}
+			ClientBegin(idNum, qfalse);
+		}else{
+			SetTeam(&g_entities[idNum], str, NULL, qtrue);
+		}
+
+		// Respawn player.
+		if (g_entities[idNum].client->sess.ghost) {
+			G_StopFollowing(&g_entities[idNum]);
+			g_entities[idNum].client->ps.pm_flags &= ~PMF_GHOST;
+			g_entities[idNum].client->ps.pm_type = PM_NORMAL;
+			g_entities[idNum].client->sess.ghost = qfalse;
+		}else{
+			TossClientItems(&g_entities[idNum]);
+		}
+
+		g_entities[idNum].client->sess.noTeamChange = qfalse;
+		trap_UnlinkEntity(&g_entities[idNum]);
+		ClientSpawn(&g_entities[idNum]);
+	}
+
+	return idNum;
+}
