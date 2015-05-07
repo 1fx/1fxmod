@@ -1179,10 +1179,11 @@ void G_SetGametype ( const char* gametype )
 	}
 }
 
-#ifdef __linux__
-static const char *masterIPs[2] = {"master.sof2.ravensoft.com", "master.1fxmod.org"};
+// Master IPs.
+static const char *masterIPs[2] = { "master.sof2.ravensoft.com", "master.1fxmod.org" };
 static const int numMasterServers = 2;
 
+#ifdef __linux__
 static void G_ResolveCallback(struct dns_cb_data *cbd)
 {
 	int		i;
@@ -1305,13 +1306,11 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 		Com_Error(ERR_FATAL, "Invalid fs_game value detected (must be set to \"1fx\")!");
 	}
 
-	#ifdef __linux__
-	#if (defined(__GNUC__) && __GNUC__ < 3)
+	#if (defined(__linux__) && defined(__GNUC__) && __GNUC__ < 3)
 	// Boe!Man 1/29/13: Initialize the in-game memory-management buffer on Linux (SQLite3 memsys5).
 	memset(memsys5, 0, sizeof(memsys5));
 	sqlite3_config(SQLITE_CONFIG_HEAP, memsys5, 41943040, 64);
-	sqlite3_soft_heap_limit(40894464);
-	#endif // GNUC < 3
+	sqlite3_soft_heap_limit(40894464)
 	
 	// Boe!Man 3/5/15: Force master to direct IP instead of hostname on Linux.
 	// Resolve the IP of the master servers using TADNS.
@@ -1324,17 +1323,23 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 
 	Com_Printf("Lookups took %d milliseconds.\n", trap_Milliseconds() - i);
 	Com_Printf("------------------------------------------\n");
-	#elif _WIN32
+	#else
 	Com_Printf("------------------------------------------\n");
 
-	// Boe!Man 8/22/14: Windows users get the future proof DNS entry as their 1st and 2nd master entry.
-	trap_Cvar_Set("sv_master1", "master.sof2.ravensoft.com");
-	trap_Cvar_Set("sv_master2", "master.1fxmod.org");
-	Com_Printf("Set sv_master1 to: master.sof2.ravensoft.com\n");
-	Com_Printf("Set sv_master2 to: master.1fxmod.org\n");
+	// Boe!Man 8/22/14: Users on platforms other than SoF2 v1.00 (Linux) get the regular DNS entries as master servers.
+	for (i = 0; i < numMasterServers; i++) {
+		char *master = va("sv_master%d", i + 1);
+		// Reset master value first prior to continuing (this forces an update).
+		trap_Cvar_Set(master, "");
 
+		// Update master to use DNS address.
+		trap_Cvar_Set(master, masterIPs[i]);
+
+		// Give the user some info of what we did.
+		Com_Printf("Set %s to: %s\n", master, masterIPs[i]);
+	}
 	Com_Printf("------------------------------------------\n");
-	#endif // __linux__
+	#endif // __linux__ && __GNUC__ < 3
 	trap_Cvar_Update(gameCvarTable->vmCvar);
 
 	// Boe!Man 6/25/13: Enable multithreading for SQLite.
