@@ -99,7 +99,7 @@ void ROCmod_sendExtraTeamInfo(gentity_t *ent)
 		entrylength = strlen(entry);
 		
 		// Get location.
-		loc = Team_GetLocation(&g_entities[level.sortedClients[i]], qfalse);
+		loc = Team_GetLocation(&g_entities[level.sortedClients[i]]);
 
 		// Add all extra information from the client.
 		Com_sprintf(entry + entrylength, sizeof(entry) - entrylength, "h%i a%i w%i l%i g%i", 

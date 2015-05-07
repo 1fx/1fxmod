@@ -1367,8 +1367,6 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 		LoadCountries();
 	}
 
-	//G_ProcessIPBans();
-
 	// Load the list of arenas
 	G_LoadArenas ( );
 
@@ -1381,6 +1379,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	if(!restart){
 		if(strstr(g_gametype.string, "inf")){
 			trap_Cvar_Set("current_gametype", "3");
+		#ifndef _GOLD
 		}else if(strstr(g_gametype.string, "h&s")){
 			trap_Cvar_Set("current_gametype", "1");
 			trap_Cvar_Set( "g_gametype", "inf" );
@@ -1393,6 +1392,13 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 			trap_Cvar_Update(&g_gametype);
 			// Boe!Man 10/4/12: Reset g_gametype to set the gt latched, so it will remain effective upon the next /rcon map switch..
 			trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype h&z\n"));
+		#else
+		}else if (strstr(g_gametype.string, "h&s") || strstr(g_gametype.string, "h&z")) {
+			Com_Printf("This gametype is unavailable in this port, reverting to INF.\n");
+			trap_Cvar_Set("current_gametype", "3");
+			trap_Cvar_Set("g_gametype", "inf");
+			trap_Cvar_Update(&g_gametype);
+		#endif // not _GOLD
 		}else if(strstr(g_gametype.string, "elim")){
 			trap_Cvar_Set("current_gametype", "7");
 		}else if(strstr(g_gametype.string, "tdm")){
@@ -1404,14 +1410,6 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 		}
 	trap_Cvar_Update(&current_gametype);
 	}
-
-	// Boe!Man 2/5/11: Force col9 to be a H&S map only.
-	// Boe!Man 4/20/11: Removed on request: http://1fx.uk.to/index.php?/tracker/issue-198-col9-not-working-with-ctf/ -- We now check if the g_crossTheBridge CVAR is enabled.
-	// Boe!Man 10/14/12: A CVAR for this looks SO messy, FIX by checking this in the worldspawn.
-	/*trap_Cvar_VariableStringBuffer ( "mapname", level.mapname, MAX_QPATH );
-	if(strstr(level.mapname, "col9") && current_gametype.value == GT_HS && g_crossTheBridge.integer > 0){
-		level.crossTheBridge = qtrue;
-	}*/
 
 	// Set the current gametype
 	G_SetGametype(g_gametype.string);

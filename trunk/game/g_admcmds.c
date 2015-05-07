@@ -2699,6 +2699,7 @@ int adm_Gametype(int argNum, gentity_t *adm, qboolean shortCmd)
 			trap_SendConsoleCommand(EXEC_APPEND, va("g_gametype elim\n"));
 			strcpy(gametype, "elim");
 			G_Broadcast("\\Gametype Elimination!", BROADCAST_CMD, NULL);
+		#ifndef _GOLD
 		}else if (strstr(arg, "h&s")){
 			trap_SendConsoleCommand(EXEC_APPEND, va("g_gametype h&s\n"));
 			strcpy(gametype, "h&s");
@@ -2707,8 +2708,10 @@ int adm_Gametype(int argNum, gentity_t *adm, qboolean shortCmd)
 			trap_SendConsoleCommand(EXEC_APPEND, va("g_gametype h&z\n"));
 			strcpy(gametype, "h&z");
 			G_Broadcast("\\Gametype Zombies!", BROADCAST_CMD, NULL);
+		#endif // not _GOLD
 		}else{
 			// Boe!Man 2/4/11: In case no argument is found we just display the current gametype.
+			#ifndef _GOLD
 			if (strstr(g_gametype.string, "inf")){
 				if (current_gametype.value == GT_HS){
 					if (adm && adm->client){
@@ -2730,12 +2733,15 @@ int adm_Gametype(int argNum, gentity_t *adm, qboolean shortCmd)
 					}
 				}
 			}else{
+			#endif // not_GOLD
 				if (adm && adm->client){
 					trap_SendServerCommand(adm-g_entities, va("print\"^3[Info] ^7Unknown gametype. Gametype is: %s.\n\"", g_gametype.string));
 				}else{
 					Com_Printf("Unknown gametype. Gametype is: %s.\n", g_gametype.string);
 				}
+			#ifndef _GOLD
 			}
+			#endif // not _GOLD
 			return -1;
 		}
 	}else{
@@ -3689,27 +3695,31 @@ int adm_Map(int argNum, gentity_t *adm, qboolean shortCmd)
 				strcpy(gametype, "dm");
 			}else if(strstr(gt, "elim")){
 				strcpy(gametype, "elim");
+			#ifndef _GOLD
 			}else if(strstr(gt, "h&s")){
 				strcpy(gametype, "h&s");
 			}else if(strstr(gt, "h&z")){
 				strcpy(gametype, "h&z");
+			#endif // not _GOLD
 			}else{
+				#ifndef _GOLD
 				if(current_gametype.value == GT_HS){
 					strcpy(gametype, "h&s");
 				}else if(current_gametype.value == GT_HZ){
 					strcpy(gametype, "h&z");
-				}else{
+				}else
+				#endif // not _GOLD
 					strcpy(gametype, g_gametype.string);
-				}
 			}
 		}else{
+			#ifndef _GOLD
 			if(current_gametype.value == GT_HS){
 				strcpy(gametype, "h&s");
 			}else if(current_gametype.value == GT_HZ){
 				strcpy(gametype, "h&z");
-			}else{
+			}else
+			#endif // not _GOLD
 				strcpy(gametype, g_gametype.string);
-			}
 		}
 
 		if(!Henk_DoesMapSupportGametype(gametype, map)){

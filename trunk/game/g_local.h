@@ -24,7 +24,6 @@ float powf(float x, float y);
 #define BODY_QUEUE_SIZE_MAX			MAX_CLIENTS
 #define BODY_QUEUE_SIZE				8
 
-#define INFINITE					1000000
 #define Q3_INFINITE					16777216
 
 #define	FRAMETIME					100					// msec
