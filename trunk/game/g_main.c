@@ -1310,7 +1310,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	// Boe!Man 1/29/13: Initialize the in-game memory-management buffer on Linux (SQLite3 memsys5).
 	memset(memsys5, 0, sizeof(memsys5));
 	sqlite3_config(SQLITE_CONFIG_HEAP, memsys5, 41943040, 64);
-	sqlite3_soft_heap_limit(40894464)
+	sqlite3_soft_heap_limit(40894464);
 	
 	// Boe!Man 3/5/15: Force master to direct IP instead of hostname on Linux.
 	// Resolve the IP of the master servers using TADNS.
