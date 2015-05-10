@@ -124,11 +124,13 @@ dos2unix g_main.c
 dos2unix g_misc.c
 dos2unix g_missile.c
 dos2unix g_mover.c
+dos2unix g_refcmds.c
 dos2unix g_session.c
 dos2unix g_spawn.c
 dos2unix g_svcmds.c
 dos2unix g_syscalls.c
 dos2unix g_target.c
+dos2unix g_tcmds.c
 dos2unix g_team.c
 dos2unix g_trigger.c
 dos2unix g_utils.c
@@ -144,9 +146,8 @@ dos2unix patch_q3infofix.c
 dos2unix patch_rcon.c
 dos2unix q_math.c
 dos2unix q_shared.c
+dos2unix rocmod_functions.c
 dos2unix rpm_functions.c
-dos2unix rpm_refcmds.c
-dos2unix rpm_tcmds.c
 # Header files go here.
 dos2unix 1fx_gt.h
 dos2unix ai_main.h
@@ -206,10 +207,12 @@ gcc $buildoptions g_items.c -o g_items.o 2>> compile_log
 gcc $buildoptions g_misc.c -o g_misc.o 2>> compile_log
 gcc $buildoptions g_missile.c -o g_missile.o 2>> compile_log
 gcc $buildoptions g_mover.c -o g_mover.o 2>> compile_log
+gcc $buildoptions g_refcmds.c -o g_refcmds.o 2>> compile_log
 gcc $buildoptions g_session.c -o g_session.o 2>> compile_log
 gcc $buildoptions g_spawn.c -o g_spawn.o 2>> compile_log
 gcc $buildoptions g_svcmds.c -o g_svcmds.o 2>> compile_log
 gcc $buildoptions g_target.c -o g_target.o 2>> compile_log
+gcc $buildoptions g_tcmds.c -o g_tcmds.o 2>> compile_log
 gcc $buildoptions g_team.c -o g_team.o 2>> compile_log
 gcc $buildoptions g_trigger.c -o g_trigger.o 2>> compile_log
 gcc $buildoptions g_utils.c -o g_utils.o 2>> compile_log
@@ -223,9 +226,8 @@ gcc $buildoptions patch_fsgame.c -o patch_fsgame.o 2>> compile_log
 gcc $buildoptions patch_main.c -o patch_main.o 2>> compile_log
 gcc $buildoptions patch_q3infofix.c -o patch_q3infofix.o 2>> compile_log
 gcc $buildoptions patch_rcon.c -o patch_rcon.o 2>> compile_log
+gcc $buildoptions rocmod_functions.c -o rocmod_functions.o 2>> compile_log
 gcc $buildoptions rpm_functions.c -o rpm_functions.o 2>> compile_log
-gcc $buildoptions rpm_refcmds.c -o rpm_refcmds.o 2>> compile_log
-gcc $buildoptions rpm_tcmds.c -o rpm_tcmds.o 2>> compile_log
 gcc $buildoptions 1fx_gt.c -o 1fx_gt.o 2>> compile_log
 
 # All files that are about to be linked.
@@ -255,11 +257,13 @@ g_main.o \
 g_misc.o \
 g_missile.o \
 g_mover.o \
+g_refcmds.o \
 g_session.o \
 g_spawn.o \
 g_svcmds.o \
 g_syscalls.o \
 g_target.o \
+g_tcmds.o \
 g_team.o \
 g_trigger.o \
 g_utils.o \
@@ -275,14 +279,15 @@ patch_fsgame.o \
 patch_main.o \
 patch_q3infofix.o \
 patch_rcon.o \
+rocmod_functions.o \
 rpm_functions.o \
-rpm_refcmds.o \
-rpm_tcmds.o \
 1fx_gt.o \
-./sqlite/sqlite3.o \
-./tadns/tadns.o"
+./sqlite/sqlite3.o"
 
 if [ "$gold" == false ]; then
+	# Don't forget TADNS for SoF2 - v1.00.
+	linkfiles="$linkfiles ./tadns/tadns.o"
+
 	# Static libraries to link against (SoF2 v1.00).
 	libs="\
 	/usr/lib/libpthread.a \
@@ -294,14 +299,14 @@ fi
 
 # Link the Mod based on the build type (with or without symbols).
 if [ "$stripsymbols" = true ] ; then
-	# SQLite
+	# SQLite (and TADNS for SoF2 - v1.00).
 	if [ "$gold" == false ]; then
+		gcc -s -fstack-check -fPIC -c ./tadns/tadns.c -o ./tadns/tadns.o 2>> compile_log
 		gcc -s -fstack-check -DNDEBUG -DSQLITE_OMIT_LOAD_EXTENSION -DSQLITE_ENABLE_MEMSYS5 -fPIC -c ./sqlite/sqlite3.c -o ./sqlite/sqlite3.o 2>> compile_log
 	else
 		gcc -s -fstack-check -DNDEBUG -DSQLITE_OMIT_LOAD_EXTENSION -fPIC -c ./sqlite/sqlite3.c -o ./sqlite/sqlite3.o 2>> compile_log
 	fi
-
-	gcc -s -fstack-check -fPIC -c ./tadns/tadns.c -o ./tadns/tadns.o 2>> compile_log
+	
 	echo "Now linking the shared object.."
 	# Link the Mod.
 	if [ "$gold" == false ]; then
@@ -312,14 +317,14 @@ if [ "$stripsymbols" = true ] ; then
 		ld -s -shared $linkfiles -lpthread -lm -lc -ldl -o sof2mp_gamei386.so 2>> compile_log
 	fi
 else
-	# SQLite
+	# SQLite (and TADNS for SoF2 - v1.00).
 	if [ "$gold" == false ]; then
+		gcc -fstack-check -fPIC -c ./tadns/tadns.c -o ./tadns/tadns.o 2>> compile_log
 		gcc -fstack-check -DNDEBUG -DSQLITE_OMIT_LOAD_EXTENSION -DSQLITE_ENABLE_MEMSYS5 -fPIC -c ./sqlite/sqlite3.c -o ./sqlite/sqlite3.o 2>> compile_log
 	else
 		gcc -fstack-check -DNDEBUG -DSQLITE_OMIT_LOAD_EXTENSION -fPIC -c ./sqlite/sqlite3.c -o ./sqlite/sqlite3.o 2>> compile_log
 	fi
 
-	gcc -fstack-check -fPIC -c ./tadns/tadns.c -o ./tadns/tadns.o 2>> compile_log
 	echo "Now linking the shared object.."
 	# Link the Mod.
 	if [ "$gold" == false ]; then

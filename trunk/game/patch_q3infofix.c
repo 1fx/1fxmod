@@ -49,9 +49,12 @@ void Patch_connectionlessPacketDetour(char *packet)
 
 	// Push the parameter back and call the original function.
 	#ifdef __GNUC__
-	__asm__("push 8(%ebp) \n\t"
-			"movl " ADDRESS ", %eax\n\t"
-			"call *%eax \n");
+	__asm__("push %0 \n\t"
+			"movl " ADDRESS ", %%eax \n\t"
+			"call *%%eax \n"
+			"popl %%eax \n\t"
+			:
+            : "a" (packet));
 	#elif _MSC_VER
 	__asm {
 		push	packet;
