@@ -60,7 +60,7 @@ qboolean SetNades(char *status){
 
 	strncpy(available, availableWeapons.string, WP_NUM_WEAPONS);
 
-	if(strstr(status, "0")){ // Manage internally, so we check for such strings. 0 means enable, so in H&S we check that CVAR.
+	if(strcmp(status, "0") == 0){ // Manage internally, so we check for such strings. 0 means enable, so in H&S we check that CVAR.
 		if(current_gametype.value == GT_HS){
 			if(level.crossTheBridge){
 				// Boe!Man 6/6/13: CTB has different settings (only smoke is enabled).
@@ -87,7 +87,12 @@ qboolean SetNades(char *status){
 					trap_Cvar_Set("disable_pickup_weapon_AN_M14", "0");
 			}
 		}else{ // If not H&S, check other gametypes. Since we might not want to enable all nades (it should respect availablenades CVAR), check for it.
-				for (weapon = WP_M67_GRENADE; weapon < WP_NUM_WEAPONS; weapon ++){
+				#ifndef _GOLD
+				for (weapon = WP_M67_GRENADE; weapon < WP_NUM_WEAPONS; weapon ++)
+				#else
+				for (weapon = WP_M84_GRENADE; weapon < WP_NUM_WEAPONS; weapon++) 
+				#endif // not _GOLD
+				{
 					gitem_t* item = BG_FindWeaponItem ( (weapon_t)weapon );
 					if (!item){
 						continue;
