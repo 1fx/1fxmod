@@ -1890,7 +1890,11 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 	if(IsClientMuted(ent, qfalse)){
 		ent->client->sess.mute = qtrue;
 	}
-
+	
+	#ifdef _GOLD
+	ent->client->sess.clientChecks = 0;
+	#endif // _GOLD
+	
 	// Boe!Man 10/25/10: Make sure their stats are set correctly.
 	ent->client->pers.statinfo.lasthurtby = -1;
 	ent->client->pers.statinfo.lastclient_hurt = -1;

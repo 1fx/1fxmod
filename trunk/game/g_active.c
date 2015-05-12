@@ -1229,7 +1229,7 @@ void ClientThink_real( gentity_t *ent )
 	#ifdef _GOLD
 	// Boe!Man 5/6/15: Check for the client Mod.
 	if (level.clientMod == CL_ROCMOD && !client->sess.rocModClient && level.time > client->sess.clientCheckTime) {
-		if (client->sess.clientChecks > 5) {
+		if (client->sess.clientChecks > 25) {
 			char *info = G_ColorizeMessage("\\Info:");
 
 			trap_SendServerCommand(ent - g_entities, va("chat -1 \"%s This " INF_VERSION_STRING_COLORED " ^7server expects you to be running ^1ROCmod 2.1c^7. ^7\n\"", info));
@@ -1240,7 +1240,7 @@ void ClientThink_real( gentity_t *ent )
 			client->sess.clientCheckTime = level.time + 20000;
 		}else{
 			// Get the client to verify as soon as possible.
-			client->sess.clientCheckTime = level.time + 1000;
+			client->sess.clientCheckTime = level.time + 5000;
 		}
 
 		trap_SendServerCommand(ent - g_entities, "verifymod");
