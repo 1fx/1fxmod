@@ -78,7 +78,7 @@ int Henk_GetScore (qboolean seekers)
 		if(seekers){
 			sqlite3_prepare(db, va("SELECT name,score FROM %s WHERE team='%i' ORDER BY score DESC LIMIT 3", mapname, TEAM_BLUE), -1, &stmt, 0);
 			while(sqlite3_step(stmt) == SQLITE_ROW && spotsTaken < 3){
-				strncpy(level.top3Seekers[spotsTaken].name, sqlite3_column_text(stmt, 0), sizeof(level.top3Seekers[spotsTaken].name));
+				strncpy(level.top3Seekers[spotsTaken].name, (const char *)sqlite3_column_text(stmt, 0), sizeof(level.top3Seekers[spotsTaken].name));
 				level.top3Seekers[spotsTaken].score = sqlite3_column_int(stmt, 1);
 				spotsTaken++;
 			}
@@ -94,7 +94,7 @@ int Henk_GetScore (qboolean seekers)
 			sqlite3_prepare(db, va("SELECT name,count(*) as b FROM %s WHERE team='%i' GROUP BY name ORDER BY b DESC LIMIT 3", mapname, TEAM_RED), -1, &stmt, 0);
 			
 			while(sqlite3_step(stmt) == SQLITE_ROW && spotsTaken < 3){
-				strncpy(level.top3Hiders[spotsTaken].name, sqlite3_column_text(stmt, 0), sizeof(level.top3Hiders[spotsTaken].name));
+				strncpy(level.top3Hiders[spotsTaken].name, (const char *)sqlite3_column_text(stmt, 0), sizeof(level.top3Hiders[spotsTaken].name));
 				level.top3Hiders[spotsTaken].score = sqlite3_column_int(stmt, 1);
 				spotsTaken++;
 			}

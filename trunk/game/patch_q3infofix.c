@@ -48,7 +48,7 @@ void Patch_connectionlessPacketDetour(char *packet)
 	}
 
 	// Push the parameter back and call the original function.
-	#ifdef __GNUC__
+	#if defined(__GNUC__) && !defined(MACOS_X) // FIXME: Mac OS X implementation later.
 	__asm__("push %0 \n\t"
 			"movl " ADDRESS ", %%eax \n\t"
 			"call *%%eax \n"

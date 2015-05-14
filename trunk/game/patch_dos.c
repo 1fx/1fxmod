@@ -41,7 +41,7 @@ The actual code of where we check if the request exceeded the number of allowed 
 
 #ifdef _WIN32
 qboolean Patch_dosDetour(const char *message, char *from, char *request)
-#elif __linux__
+#elif defined(__linux__) || defined(MACOS_X)
 void Patch_dosDetour(const char *message, char *from, char *request)
 #endif // _WIN32
 {

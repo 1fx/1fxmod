@@ -219,7 +219,7 @@ void Henk_Tip(void){
 		if(buf[i] == '\n'){
 			#ifdef WIN32
 			if(i-start > 0){
-			#elif __linux__
+			#elif defined(__linux__) || defined(MACOS_X)
 			if(buf[i-1] == '\r' && i-start > 1 || buf[i-1] != '\r' && i-start > 0){
 			#endif
 				Q_strncpyz(Tips[count].tip, buf+start, i-start+1);
@@ -244,7 +244,7 @@ void Henk_Tip(void){
 	}
 
 	if(CRLF ? (len > start+linecount && count != 64 && start != len) : (len > start && count != 64 && start != len)){
-	#elif __linux__
+	#elif defined(__linux__) || defined(MACOS_X)
 	if(len > start && count != 64){
 	#endif
 		if(!count){

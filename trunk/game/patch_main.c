@@ -107,10 +107,11 @@ Main logic of detouring to an address.
 
 void Patch_detourAddress(char *genericName, long func, long offset, qboolean jmp)
 {
+#ifndef MACOS_X // FIXME!
 	char patch[9];
 	#ifdef _WIN32
 	unsigned char buf[5];
-	#elif __linux__
+	#elif defined(__linux__) || defined(MACOS_X)
 	pthread_t thread;
 	struct patchArgs args;
 
@@ -166,6 +167,7 @@ void Patch_detourAddress(char *genericName, long func, long offset, qboolean jmp
 	// Wait for the thread to finish.
 	pthread_join(thread, NULL);
 	#endif // _WIN32
+#endif // TEMP not MACOS_X
 }
 
 /*

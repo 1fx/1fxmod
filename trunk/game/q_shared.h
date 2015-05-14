@@ -163,6 +163,11 @@ static ID_INLINE float BigFloat(const float l) { return FloatSwap(&l); }
 
 //======================= MAC OS X DEFINES =====================
 
+// Boe!Man 5/15/15: There isn't actually a MACOS_X macro on Mac (??).
+#if defined(_ARCH_PPC) && defined(__APPLE__)
+#define MACOS_X
+#endif // _ARCH_PPC && __APPLE__
+
 #if defined(MACOS_X)
 
 #define MAC_STATIC

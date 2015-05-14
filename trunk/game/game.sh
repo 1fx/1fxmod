@@ -1,12 +1,19 @@
 #!/bin/bash
 
-# *** Compiling 1fx. Mod Linux build (sof2mp_gamei386.so) ***
+# *** Compiling 1fx. Mod on *nix-based platforms ***
 #
-# You can compile the Mod for SoF2 v1.00 on an ancient Debian Woody R0-R6 platform (preferably R6).
-# The Mod depends on the following utilites:
+# This script allows you to compile 1fx. Mod for all platforms except Windows (not even MinGW).
+# The Gold port (v1.03) and the Retail port (v1.00) are both supported by this script and should be
+# properly detected during run-time.
 #
-# - gcc 2.95.4 (can be installed from CD1 of the Debian Woody install media).
-# - dos2unix (the old compiler requires all line endings to be LF instead of CRLF).
+# In order to compile the Mod for your platform you should meet one of the following criteria:
+# - SoF2 v1.00 (Linux) only works if gcc 2.95 is detected (such as the default Debian Woody install).
+# - SoF2 v1.03 (Linux) is used automatically on Linux platforms with a gcc version other than 2.95.
+# - SoF2 v1.03 (Mac OS X) is used automatically when a PowerPC-based kernel is loaded. This script breaks on PowerPC-based Linux installations.
+#
+# The script also depends on the following utilites:
+#
+# - dos2unix (some compilers require all line endings to be LF instead of CRLF). Mac OS X doesn't have this utility in the operating system by default.
 #
 # The files that need to be compiled, need to be in the dos2unix section, the compile section and the linker section.
 # Header files should go only in the dos2unix section.
@@ -14,18 +21,31 @@
 # PLEASE NOTE: most builds are a *release* build. All debug symbols, flags etc. are omitted, even in the so called test releases.
 # *ONLY* if you build a nightly build, debug symbols won't be omitted.
 #
-# You can also choose to build the v1.03 build from this script, if doing so, you can run it on any modern Linux system and
-# if a compiler is properly present, will automatically build for v1.03.
 #
-# For further information regarding this, please check the 1fx. Mod source code.
+# For further rather obsolete information regarding this, please check the 1fx. Mod source code.
 # There's a whole section regarding *.so considerations.
 # --- Boe!Man  1/26/13 - 11:01 AM
-# Last update: 4/18/15 - 9:58 AM
+# Last update: 5/14/15 - 11:45 PM
 
 # The compile options relevant for all builds are noted here.
-buildoptions="-O2 -fstack-check -DMISSIONPACK -DQAGAME -D_SOF2 -fPIC"
+buildoptions="-O2 -DMISSIONPACK -DQAGAME -D_SOF2 -fPIC"
+
+# Some global booleans we switch depending on user choice and host platform.
 stripsymbols=true
 gold=true
+macosx=false
+outfile="sof2mp_gamei386.so"
+
+# Properly detect Mac OS X operating system.
+if [[ `uname -p` == "powerpc" ]]; then
+	echo "Building a Mac OS X build."
+	macosx=true
+	outfile="sof2mp_game"
+else
+	echo "Building a Linux build."
+	# No stack checking on Mac OS X (the stack limit of Mac's gcc (1024) is a bit silly, esp. in SoF2).
+	buildoptions="$buildoptions -fstack-check"
+fi
 
 # Check what version to build. If the host system contains GCC 2.95, we assume we want to build for v1.00.
 if [[ `gcc -v 2>&1 | tail -1 | awk '{print $3}'` == *"2.95"* ]]; then
@@ -85,7 +105,7 @@ buildoptions="$buildoptions -c"
 
 # Clean up compile_log file and Mod (we're recompiling so..).
 rm -f compile_log
-rm -f sof2mp_gamei386.so
+rm -f $outfile
 
 # dos2unix section, convert CRLF line endings to LF.
 echo "Converting CRLF to LF.."
@@ -304,7 +324,11 @@ if [ "$stripsymbols" = true ] ; then
 		gcc -s -fstack-check -fPIC -c ./tadns/tadns.c -o ./tadns/tadns.o 2>> compile_log
 		gcc -s -fstack-check -DNDEBUG -DSQLITE_OMIT_LOAD_EXTENSION -DSQLITE_ENABLE_MEMSYS5 -fPIC -c ./sqlite/sqlite3.c -o ./sqlite/sqlite3.o 2>> compile_log
 	else
-		gcc -s -fstack-check -DNDEBUG -DSQLITE_OMIT_LOAD_EXTENSION -fPIC -c ./sqlite/sqlite3.c -o ./sqlite/sqlite3.o 2>> compile_log
+		if [ "$macosx" == false ]; then
+			gcc -s -fstack-check -DNDEBUG -DSQLITE_OMIT_LOAD_EXTENSION -fPIC -c ./sqlite/sqlite3.c -o ./sqlite/sqlite3.o 2>> compile_log
+		else
+			gcc -s -fstack-check -DNDEBUG -DSQLITE_OMIT_LOAD_EXTENSION -DSQLITE_WITHOUT_ZONEMALLOC -fPIC -c ./sqlite/sqlite3.c -o ./sqlite/sqlite3.o 2>> compile_log
+		fi
 	fi
 	
 	echo "Now linking the shared object.."
@@ -314,7 +338,11 @@ if [ "$stripsymbols" = true ] ; then
 		ld -s -shared $linkfiles -Bstatic $libs -o sof2mp_gamei386.so 2>> compile_log
 	else
 		# Regular dynamic linking.
-		ld -s -shared $linkfiles -lpthread -lm -lc -ldl -o sof2mp_gamei386.so 2>> compile_log
+		if [ "$macosx" == false ]; then
+			ld -s -shared $linkfiles -lpthread -lm -lc -ldl -o sof2mp_gamei386.so 2>> compile_log
+		else
+			cc -s $linkfiles -dynamic -bundle -o sof2mp_game -lpthread -lm -lc -ldl 2>> compile_log
+		fi
 	fi
 else
 	# SQLite (and TADNS for SoF2 - v1.00).
@@ -322,7 +350,11 @@ else
 		gcc -fstack-check -fPIC -c ./tadns/tadns.c -o ./tadns/tadns.o 2>> compile_log
 		gcc -fstack-check -DNDEBUG -DSQLITE_OMIT_LOAD_EXTENSION -DSQLITE_ENABLE_MEMSYS5 -fPIC -c ./sqlite/sqlite3.c -o ./sqlite/sqlite3.o 2>> compile_log
 	else
-		gcc -fstack-check -DNDEBUG -DSQLITE_OMIT_LOAD_EXTENSION -fPIC -c ./sqlite/sqlite3.c -o ./sqlite/sqlite3.o 2>> compile_log
+		if [ "$macosx" == false ]; then
+			gcc -fstack-check -DNDEBUG -DSQLITE_OMIT_LOAD_EXTENSION -fPIC -c ./sqlite/sqlite3.c -o ./sqlite/sqlite3.o 2>> compile_log
+		else
+			gcc -fstack-check -DNDEBUG -DSQLITE_OMIT_LOAD_EXTENSION -DSQLITE_WITHOUT_ZONEMALLOC -fPIC -c ./sqlite/sqlite3.c -o ./sqlite/sqlite3.o 2>> compile_log
+		fi
 	fi
 
 	echo "Now linking the shared object.."
@@ -332,17 +364,25 @@ else
 		ld -shared $linkfiles -Bstatic $libs -o sof2mp_gamei386.so 2>> compile_log
 	else
 		# Regular dynamic linking.
-		ld -shared $linkfiles -lpthread -lm -lc -ldl -o sof2mp_gamei386.so 2>> compile_log
+		if [ "$macosx" == false ]; then
+			ld -shared $linkfiles -lpthread -lm -lc -ldl -o sof2mp_gamei386.so 2>> compile_log
+		else
+			cc $linkfiles -dynamic -bundle -o sof2mp_game -lpthread -lm -lc -ldl 2>> compile_log
+		fi
 	fi
 fi
 
 # Now check if the output file was indeed created..
-if [ -f ./sof2mp_gamei386.so ]; then
+if [ -f ./$outfile ]; then
 	echo -e "Compiling the Mod was \e[00;32msuccessfull\e[00m!"
-	if [ $(stat -c %s compile_log 2>/dev/null || echo 0) -gt 0 ]; then
-	    echo -e "Some \e[00;33mwarnings\e[00m did occur."
+	if [ "$macosx" == false ]; then
+		if [ $(stat -c %s compile_log 2>/dev/null || echo 0) -gt 0 ]; then
+		    echo -e "Some \e[00;33mwarnings\e[00m did occur."
+		else
+		    echo "No warnings occured."
+		fi
 	else
-	    echo "No warnings occured."
+		echo "Please check compile_log for possible errors."
 	fi
 else
 	echo -e "Compiling the Mod \e[00;31mfailed\e[00m!"
