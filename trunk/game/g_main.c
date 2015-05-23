@@ -1048,6 +1048,9 @@ void G_initClientMod()
 
 		// Register ROCmod specific CVARs.
 		trap_Cvar_Register(NULL, "sv_modVersion", "| ^71fx^1.    2.1c" , CVAR_SYSTEMINFO | CVAR_ROM, 0.0, 0.0);
+		trap_Cvar_Register(NULL, "g_allowCustomTeams", "1", CVAR_SYSTEMINFO | CVAR_ROM, 0.0, 0.0);
+		trap_Cvar_Register(NULL, "g_customRedName", va("%s^7 Team", server_redteamprefix.string), CVAR_SYSTEMINFO | CVAR_ROM, 0.0, 0.0);
+		trap_Cvar_Register(NULL, "g_customBlueName", va("%s^7 Team", server_blueteamprefix.string), CVAR_SYSTEMINFO | CVAR_ROM, 0.0, 0.0);
 
 		// Client death messages are handled by client.
 		g_clientDeathMessages.integer = 1;

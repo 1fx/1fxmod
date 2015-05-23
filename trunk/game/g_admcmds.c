@@ -1288,7 +1288,7 @@ int adm_noNades(int argNum, gentity_t *adm, qboolean shortCmd){
 
 	// Custom broadcasts/logging.
 	Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-	G_Broadcast(va("Nades \\%s", (!state) ? "enabled" : "disabled"), BROADCAST_CMD, NULL);
+	G_Broadcast(va("Nades \\%s!", (!state) ? "enabled" : "disabled"), BROADCAST_CMD, NULL);
 	if (adm && adm->client){
 		trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7Nades %s by %s.\n\"", (!state) ? "enabled" : "disabled", adm->client->pers.netname));
 		Boe_adminLog(va("nades %s", (!state) ? "enabled" : "disabled"), va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "none");
