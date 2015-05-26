@@ -2159,6 +2159,13 @@ void BeginIntermission( void )
 
 	// send the current scoring to all clients
 	SendScoreboardMessageToAllClients();
+
+	#ifdef _GOLD
+	if (level.clientMod == CL_ROCMOD) {
+		// Send the Awards to the players.
+		ROCmod_sendBestPlayerStats();
+	}
+	#endif // _GOLD
 }
 
 
@@ -2515,16 +2522,17 @@ void CheckIntermissionExit( void )
 		return;
 	}
 
+	#ifndef _GOLD
 	if(level.awardTime && (level.time > level.lastAwardSent + 3000))
 	{
-		#ifndef _GOLD
 		if(current_gametype.value == GT_HS)
 			ShowScores();
 		else
 			RPM_Awards();
-		#endif // not _GOLD
+		
 		level.lastAwardSent = level.time;
 	}
+	#endif // not _GOLD
 
 	if(level.time < level.awardTime + 15000)
 	{

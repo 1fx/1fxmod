@@ -1166,7 +1166,11 @@ void ClientThink_real( gentity_t *ent )
 	}
 
 	//Ryan march 21 9:10am
+	#ifdef _GOLD
+	if((level.awardTime && level.clientMod != CL_ROCMOD) || (level.awardTime && level.clientMod == CL_ROCMOD && !client->sess.rocModClient))
+	#else
 	if(level.awardTime)
+	#endif // _GOLD
 	{
 		ent->client->ps.pm_type = PM_FREEZE;
 		memset(&pm, 0, sizeof(pm));

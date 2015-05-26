@@ -2698,6 +2698,12 @@ void ClientDisconnect( int clientNum )
 
 	CalculateRanks();
 
+#ifdef _GOLD
+	if (level.intermissiontime && !level.pause && level.clientMod == CL_ROCMOD) {
+		ROCmod_sendBestPlayerStats();
+	}
+#endif // _GOLD
+
 #ifdef _SOF2_BOTS
 	if ( ent->r.svFlags & SVF_BOT )
 	{

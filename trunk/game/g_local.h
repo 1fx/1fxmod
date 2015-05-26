@@ -1764,6 +1764,7 @@ void		RPM_Awards					(void);
 void		ROCmod_verifyClient			(gentity_t *ent, int clientNum);
 void		ROCmod_clientUpdate			(gentity_t *ent, int clientNum);
 void		ROCmod_sendExtraTeamInfo	(gentity_t *ent);
+void		ROCmod_sendBestPlayerStats	(void);
 #endif // not _GOLD
 
 // g_refcmds.c

@@ -395,12 +395,12 @@ void DeathmatchScoreboardMessage( gentity_t *ent )
 				cl->pers.statinfo.hitcount,
 				cl->pers.statinfo.shotcount,
 				cl->pers.statinfo.headShotKills,
-				0, // FIXME: flagcaps
-				0, // FIXME: bestkillspree
+				cl->pers.statinfo.itemCaptures,
+				cl->pers.statinfo.bestKillsInARow,
 				cl->pers.statinfo.knifeKills,
 				cl->pers.statinfo.explosiveKills,
 				cl->sess.clanMember,
-				0 // FIXME: flagdefends
+				cl->pers.statinfo.itemDefends
 				);
 
 			j = strlen(entry2);

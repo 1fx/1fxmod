@@ -286,8 +286,14 @@ void player_die(
 		G_Broadcast(va("%s\nhis \\killing spree\nwas ended by %s", self->client->pers.netname, attacker->client->pers.netname), BROADCAST_GAME, NULL);
 	}
 
-	// Add to the number of deaths for this player
+	// Reset kills in a row. If this is a personal best, save it.
+	if (self->client->pers.statinfo.killsinarow > self->client->pers.statinfo.bestKillsInARow)
+		self->client->pers.statinfo.bestKillsInARow = self->client->pers.statinfo.killsinarow;
+	
 	self->client->pers.statinfo.killsinarow = 0;
+
+
+	// Add to the number of deaths for this player
 	self->client->pers.statinfo.deaths++;
 	// Boe!Man 6/3/10: Fix for not showing deaths in scoreboard.
 	self->client->sess.deaths++;
@@ -1577,6 +1583,9 @@ if (current_gametype.value == GT_HZ && attacker && targ && attacker->client && t
 			
 			// Boe!Man 8/19/13: Also reset the kills in a row integer (since we did team damage and killed the person).
 			if(teamDamage){
+				if (attacker->client->pers.statinfo.killsinarow > attacker->client->pers.statinfo.bestKillsInARow)
+					attacker->client->pers.statinfo.bestKillsInARow = attacker->client->pers.statinfo.killsinarow;
+
 				attacker->client->pers.statinfo.killsinarow = 0;
 			}
 		}

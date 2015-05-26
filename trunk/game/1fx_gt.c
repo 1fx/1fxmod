@@ -321,6 +321,8 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 				{
 					G_AddScore ( &g_entities[arg1], 5);
 				}
+
+				g_entities[arg1].client->pers.statinfo.itemDefends++;
 			}
 			return 0;
 			
@@ -745,6 +747,8 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 							{
 								G_Broadcast(va("%s\nhas \\captured the briefcase!", g_entities[arg1].client->pers.netname), BROADCAST_GAME, NULL);
 								trap_SendServerCommand( -1, va("print\"^3[INF] %s ^7has captured the briefcase.\n\"", g_entities[arg1].client->pers.cleanName));
+								g_entities[arg1].client->pers.statinfo.itemCaptures++;
+
 								// Boe!Man 11/29/12: Global sound.
 								if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime){
 								gentity_t* tent;
@@ -782,6 +786,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 							{
 								G_Broadcast(va("%s\nhas \\captured the %s ^7flag!", g_entities[arg1].client->pers.netname, server_redteamprefix.string), BROADCAST_GAME, NULL);
 								trap_SendServerCommand( -1, va("print\"^3[CTF] %s ^7has captured the Red flag.\n\"", g_entities[arg1].client->pers.cleanName));
+								g_entities[arg1].client->pers.statinfo.itemCaptures++;
 								
 								// Boe!Man 11/29/12: Reset item.
 								G_ResetGametypeItem ( item );
@@ -816,6 +821,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 							{
 								G_Broadcast(va("%s\nhas \\captured the %s ^7flag!", g_entities[arg1].client->pers.netname, server_blueteamprefix.string), BROADCAST_GAME, NULL);
 								trap_SendServerCommand( -1, va("print\"^3[CTF] %s ^7has captured the Blue flag.\n\"", g_entities[arg1].client->pers.cleanName));
+								g_entities[arg1].client->pers.statinfo.itemCaptures++;
 								
 								// Boe!Man 11/29/12: Reset item.
 								G_ResetGametypeItem ( item );

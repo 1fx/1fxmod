@@ -557,4 +557,7 @@ typedef struct statinfo_s
 	int			overallScore;
 	int			explosiveKills;
 	int			knifeKills;
+	int			bestKillsInARow;
+	int			itemCaptures;
+	int			itemDefends;
 } statinfo_t;
