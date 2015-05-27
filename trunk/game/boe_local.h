@@ -26,7 +26,7 @@
 #ifdef _NIGHTLY // Direct build from the master. Only used when debugging/developing.
 #define INF_VERSION_STRING "0.78t-^5master"
 #else
-#define INF_VERSION_STRING "0.78t.1-^5pre" // Don't forget to increment this number when test releasing.
+#define INF_VERSION_STRING "0.78t.2-^5pre" // Don't forget to increment this number when test releasing.
 #endif // _NIGHTLY
 #define TEST_VERSION "Developed by ^GBoe!Man ^7& ^6Henkie\n^1Test version of " MAJOR_VERSION_STRING "\n\n"
 #endif // _DEBUG
