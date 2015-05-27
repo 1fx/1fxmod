@@ -472,8 +472,58 @@ void player_die(
 		}
 	}
 
-	if(g_clientDeathMessages.integer == 0) // Henk 10/30/12: If death messages being handled by the client don't print them here.
-		G_Obituary (self, attacker, meansOfDeath, attack, hitLocation);// Ryan: This is where the server handles the obituary functions now (after the scores are done)
+	if (g_clientDeathMessages.integer == 0) { // Henk 10/30/12: If death messages being handled by the client don't print them here.
+		G_Obituary(self, attacker, meansOfDeath, attack, hitLocation);// Ryan: This is where the server handles the obituary functions now (after the scores are done)
+	}else{
+		// Boe!Man 5/27/15: Do keep track of some stats.
+		int hitLoc2;
+		statinfo_t *info = &attacker->client->pers.statinfo;
+
+		
+
+		
+		if (self != attacker && self && attacker && attacker->client &&
+		(!level.gametypeData->teams || (level.gametypeData->teams && !OnSameTeam(self, attacker)))){ // Make sure the attacker and self pointers are valid and actual clients.
+			hitLoc2 = hitLocation & (~HL_DISMEMBERBIT);
+			if (hitLoc2 == HL_HEAD) {
+				//add to the total headshot count for this player
+				info->headShotKills++;
+				info->weapon_headshots[attacker->client->pers.statinfo.attack][attacker->client->pers.statinfo.weapon]++;
+			}
+
+			switch (meansOfDeath) {
+				case MOD_KNIFE:
+					info->knifeKills++;
+					break;
+				case MOD_M4_ASSAULT_RIFLE:
+					if (attack == ATTACK_ALTERNATE) {
+						info->explosiveKills++;
+					}
+					break;
+				case MOD_MM1_GRENADE_LAUNCHER:
+				case MOD_RPG7_LAUNCHER:
+				case MOD_M67_GRENADE:
+				case MOD_M84_GRENADE:
+				case MOD_F1_GRENADE:
+				case MOD_L2A2_GRENADE:
+				case MOD_MDN11_GRENADE:
+				case MOD_SMOHG92_GRENADE:
+				case MOD_ANM14_GRENADE:
+				case MOD_M15_GRENADE:
+					if (mod == MOD_ANM14_GRENADE)
+					{
+						info->hitcount++;
+						info->accuracy = (float)info->hitcount / (float)info->shotcount * 100;
+						info->weapon_hits[ATTACK_NORMAL][mod]++;
+					}
+
+					info->explosiveKills++;
+					break;
+				default:
+					break;
+			}
+		}
+	}
 
 	//Ryan march 22 2004 9:20pm   calculate ratio's
 	if(attacker && attacker->client && attacker != self)
