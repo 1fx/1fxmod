@@ -191,7 +191,10 @@ void ROCmod_sendBestPlayerStats(void)
 	gentity_t		*ent;
 	statinfo_t     *stat;
 
-	memset(bestScores, -1, sizeof(bestScores));
+	// Initialize the array properly.
+	for (i = 0; i < 11; i++) {
+		bestScores[i] = -1;
+	}
 
 	// Calculate the scores.
 	for (i = 0; i < level.maxclients; i++)
@@ -285,6 +288,7 @@ void ROCmod_sendBestPlayerStats(void)
 			continue;
 
 		if (ent->client->sess.rocModClient) {
+			DeathmatchScoreboardMessage(ent);
 			trap_SendServerCommand(ent - g_entities, va("playerstats %d %d %d %d %d %d %d %d %d %d %d", bestScores[0], bestScores[1], bestScores[2], bestScores[3], bestScores[4], bestScores[5], bestScores[6], bestScores[7], bestScores[8], bestScores[9], bestScores[10]));
 		}
 	}
