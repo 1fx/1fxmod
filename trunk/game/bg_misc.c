@@ -2016,12 +2016,22 @@ qboolean BG_CanItemBeGrabbed( int gametype, const entityState_t *ent, const play
 					return qtrue;
 				}
 			}else{
-				for ( i = 0; i < AMMO_M15; i ++ )
+				for ( i = 0; i < MAX_AMMO; i ++ )
 				{
 					int maxammo;
 
-					maxammo = BG_GetMaxAmmo ( ps, i );
+					#ifdef _GOLD
+					if (i > AMMO_RPG7 && i < AMMO_762_BELT){
+						continue;
+					}
+					#else
+					if (i > AMMO_RPG7){
+						break;
+					}
+					#endif // _GOLD
+					
 
+					maxammo = BG_GetMaxAmmo ( ps, i );
 					if ( !maxammo || ps->ammo[i] >= maxammo )
 					{
 						continue;
