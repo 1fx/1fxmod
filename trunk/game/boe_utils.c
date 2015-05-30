@@ -1180,260 +1180,122 @@ Boe_Players
 ============
 */
 
-void Boe_Players (gentity_t *ent)	
+void Boe_Players(gentity_t *ent)
 {
-	int i;
-	char admin1;
-	char admin2;
-	char admin3;
-	char clan1;
-	char clan2;
-	char clan3;
-	char color;
-	char column1[3];
-	char column2[100];
-	char column3[4];
-	char mute1;
-	char mute2;
-	char mute3;
-	char test = ' ';
-	int	length = 0, NumberOfSpaces = 0, z, ping;
-	char strClient[36];
-	// char clan = ""; // Boe!Man 2/2/10: This will be added later, when I actually implant the Clan functions.
-//	char *s;
-//	char userinfo[MAX_INFO_STRING];
-	qboolean client;
-	char client0;
-	float client1;
-	char client2;
-	char prefix;
-	trap_SendServerCommand( ent-g_entities, va("print \"\n\""));
-	// Boe!Man 8/25/10: Maybe not the best solution, but if we want to exclude the country, this is a very easy way to exclude it.
-	if (g_checkCountry.integer != 0){
-	trap_SendServerCommand( ent-g_entities, va("print \"^3Id#  Name                                  Ping  Coun Adm Cln Mut Ver\n\""));}
-	else{
-	trap_SendServerCommand( ent-g_entities, va("print \"^3Id#  Name                                  Ping  Adm Cln Mut Ver\n\""));}
-	trap_SendServerCommand( ent-g_entities, va("print \"^7------------------------------------------------------------------------\n\""));
-	for ( i = 0; i < 64; i ++ )
+	char *admin;
+	char *clan;
+	qboolean hasClient;
+	char client[12], id[9], ping[10], name[41];
+	char *mute;
+	int	i, color;
+
+	// Boe!Man 5/30/15: Only print the country column if countries are indeed enabled.
+	if (g_checkCountry.integer > 0) {
+		trap_SendServerCommand(ent - g_entities, va("print \"\n^3%-5s%-37s %-5s Coun Adm Cln Mut Ver\n\"", "Id#", "Name", "Ping"));
+	}else{
+		trap_SendServerCommand(ent - g_entities, va("print \"\n^3%-5s%-37s %-5s Adm Cln Mut Ver\n\"", "Id#", "Name", "Ping"));
+	}
+
+	trap_SendServerCommand( ent-g_entities, "print \"^7------------------------------------------------------------------------\n\"");
+	
+	// Loop through clients.
+	for ( i = 0; i < MAX_CLIENTS; i ++ )
 	{
 		if(level.clients[i].pers.connected != CON_CONNECTED)
 		{
 			continue;
 		}
-		memset(column1, 0, sizeof(column1));
-		memset(column2, 0, sizeof(column2));
-		memset(column3, 0, sizeof(column3));
 
-		if (i <= 9){
-			column1[0] = test;
-			column1[1] = test;
-			column1[2] = '\0';
-		}
-		else if (i >= 10){
-			column1[0] = test;
-			column1[1] = '\0';
-		}
-		
-		ping = level.clients[i].ps.ping;
-		if(ping <= 9){
-			column3[0] = test;
-			column3[1] = test;
-			column3[2] = test;
-			column3[3] = '\0';
-		}else if(ping >= 10 && ping < 100){
-			column3[0] = test;
-			column3[1] = test;
-			column3[2] = '\0';
-		}else if(ping >= 100){
-			column3[0] = test;
-			column3[1] = '\0';
-		}
-		//henk
-		length = strlen(level.clients[i].pers.cleanName); // number of characters in name
-		NumberOfSpaces = 36-length;
-		for(z=0;z<NumberOfSpaces;z++){
-			column2[z] = test;
-		}
-		column2[NumberOfSpaces] = '\0';
-		//end
+		// Take note of player specifics.
+		Q_strncpyz(id, va("[^3%d^7]", i), sizeof(id));
+		Q_strncpyz(ping, va("[^3%d^7]", level.clients[i].ps.ping < 999 ? level.clients[i].ps.ping : 999), sizeof(ping));
 
-#ifdef _3DServer
-		// 3D.
-		if(level.clients[i].sess.admin == 2){
-			admin1 = '[';
-			admin2 = 'A';
-			admin3 = ']';
+		if (i == ent->s.number) {
+			color = 5;
 		}
-		else if(level.clients[i].sess.admin >= 3){
-			admin1 = '[';
-			admin2 = 'S';
-			admin3 = ']';
-		}
-		else{
-			admin1 = ' ';
-			admin2 = ' ';
-			admin3 = ' ';
-		}
-#else
-		// Regular.
-		if(level.clients[i].sess.admin == 2){
-			admin1 = '[';
-			admin2 = 'B';
-			admin3 = ']';
-		}
-		else if(level.clients[i].sess.admin == 3){
-			admin1 = '[';
-			admin2 = 'A';
-			admin3 = ']';
-		}
-		else if(level.clients[i].sess.admin == 4){
-			admin1 = '[';
-			admin2 = 'S';
-			admin3 = ']';
-		}
-		else{
-			admin1 = ' ';
-			admin2 = ' ';
-			admin3 = ' ';
-		}
-#endif // _3DServer
-
-		if(level.clients[i].sess.clanMember == qtrue){
-			clan1 = '[';
-			clan2 = 'C';
-			clan3 = ']';
-		}else{
-			clan1 = ' ';
-			clan2 = ' ';
-			clan3 = ' ';
-		}
-		switch ( level.clients[i].sess.team )
-		{
+		else {
+			switch (level.clients[i].sess.team)
+			{
 			case TEAM_RED:
-				color = '1';
+				color = 1;
 				break;
 			case TEAM_BLUE:
-				color = '4';
+				color = 4;
 				break;
 			default:
-				color = '7';
+				color = 7;
 				break;
+			}
 		}
-		if(i == ent->s.number)	{
-			color = '5';
-		}
-		if(level.clients[i].sess.mute){
-			mute1 = '[';
-			mute2 = 'M';
-			mute3 = ']';
-		}
-		else{
-			mute1 = ' ';
-			mute2 = ' ';
-			mute3 = ' ';
-		}
-		prefix = '\0';
+		// We use the found color for the name.
+		Q_strncpyz(name, va("[^%d%s^7]", color, level.clients[i].pers.cleanName), sizeof(name));
+
+		#ifdef _3DServer
+		// 3D.
+		if (level.clients[i].sess.admin == 2)
+			admin = "[^3A^7]";
+		else if (level.clients[i].sess.admin >= 3)
+			admin = "[^3S^7]";
+		else
+			admin = "";
+		#else
+		// Regular.
+		if (level.clients[i].sess.admin == 2)
+			admin = "[B^7]";
+		else if(level.clients[i].sess.admin == 3)
+			admin = "[A^7]";
+		else if (level.clients[i].sess.admin == 4)
+			admin = "[S^7]";
+		else
+			admin = "";
+		#endif // _3DServer
+
+		if (level.clients[i].sess.clanMember == qtrue)
+			clan = "[^3C^7]";
+		else
+			clan = "";
+
+		if (level.clients[i].sess.mute)
+			mute = "[^3M^7]";
+		else
+			mute = "";
+
+		// We want to know if the client indeed has a valid client.
+		hasClient = qfalse;
+
 		#ifndef _GOLD
 		if (level.clientMod == CL_RPM){
 			if (level.clients[i].sess.rpmClient >= 0.1){
-				client = qtrue;
-				client0 = '[';
-				client1 = level.clients[i].sess.rpmClient;
-				client2 = ']';
+				hasClient = qtrue;
+				Q_strncpyz(client, va("[^3%2.f^7]", level.clients[i].sess.rpmClient), sizeof(client));
 			}
 			else if (level.clients[i].sess.proClient >= 0.1){
-				client = qtrue;
-				client0 = '[';
-				prefix = 'P';
-				client1 = level.clients[i].sess.proClient;
-				client2 = ']';
+				hasClient = qtrue;
+				Q_strncpyz(client, va("[^3P%2.f^7]", level.clients[i].sess.proClient), sizeof(client));
+				client = ;
 			}
-			else{
-				client = qfalse;
-			}
-		}else{
-			client = qfalse;
 		}
 		#else
 		if (level.clients[i].sess.rocModClient){
-			client = qtrue;
-			client0 = '[';
-			client1 = level.clients[i].sess.rocModClient;
-			client2 = ']';
+			hasClient = qtrue;
+			Q_strncpyz(client, "[^32.1c^7]", sizeof(client));
 		}
 		#endif // not _GOLD
-		// Boe!Man 8/25/10: Maybe not the best solution, but if we want to exclude the country, this is a very easy way to exclude it.
-		if (g_checkCountry.integer != 0){
-		trap_SendServerCommand( ent-g_entities, va("print \"[^3%d^7]%s[^%c%s^7]%s[^3%d^7]%s[^3%s^7] %c^3%c^7%c %c^3%c^7%c %c^3%c^7%c \"", // c = single character
-		i,
-		column1,
-		color,
-		level.clients[i].pers.cleanName,
-		column2,
-		ping,
-		column3,
-		level.clients[i].sess.countryext,
-		admin1,
-		admin2,
-		admin3,
-		clan1,
-		clan2,
-		clan3,
-		mute1,
-		mute2,
-		mute3));
-			if(client == qtrue){
-				strcpy(strClient, level.clients[i].sess.strClient);
-				if(strlen(strClient) >= 2){
-					if(prefix)
-						trap_SendServerCommand( ent-g_entities, va("print \"%c^3%c%s^7%c\n\"", client0, prefix, strClient, client2));
-					else
-						trap_SendServerCommand( ent-g_entities, va("print \"%c^3%s^7%c\n\"", client0, strClient, client2));
-				}else{
-					if(prefix)
-						trap_SendServerCommand( ent-g_entities, va("print \"%c^3%c%.1f^7%c\n\"", client0, prefix, client1, client2));
-					else
-						trap_SendServerCommand( ent-g_entities, va("print \"%c^3%.1f^7%c\n\"", client0, client1, client2));
-				}
-			}else if(client == qfalse){
-				trap_SendServerCommand( ent-g_entities, va("print \"\n\""));
-			}
-		}else{ // if g_checkCountry == 0
-		trap_SendServerCommand( ent-g_entities, va("print \"[^3%d^7]%s[^%c%s^7]%s[^3%d^7]%s%c^3%c^7%c %c^3%c^7%c %c^3%c^7%c \"", // c = single character
-		i,
-		column1,
-		color,
-		level.clients[i].pers.cleanName,
-		column2,
-		ping,
-		column3,
-		admin1,
-		admin2,
-		admin3,
-		clan1,
-		clan2,
-		clan3,
-		mute1,
-		mute2,
-		mute3));
-		if(client == qtrue){
-				strcpy(strClient, level.clients[i].sess.strClient);
-				if(strlen(strClient) >= 2){
-					if(prefix)
-						trap_SendServerCommand( ent-g_entities, va("print \"%c^3%c%s^7%c\n\"", client0, prefix, strClient, client2));
-					else
-						trap_SendServerCommand( ent-g_entities, va("print \"%c^3%s^7%c\n\"", client0, strClient, client2));
-				}else{
-					if(prefix)
-						trap_SendServerCommand( ent-g_entities, va("print \"%c^3%c%.1f^7%c\n\"", client0, prefix, client1, client2));
-					else
-						trap_SendServerCommand( ent-g_entities, va("print \"%c^3%.1f^7%c\n\"", client0, client1, client2));
-				}
-			}else if(client == qfalse){
-				trap_SendServerCommand( ent-g_entities, va("print \"\n\""));
-			}
+
+		if (!hasClient) {
+			Q_strncpyz(client, "[^3N/A^7]", sizeof(client));
 		}
+
+		// Print the line containing client specifics.
+		if (g_checkCountry.integer > 0) {
+			trap_SendServerCommand(ent - g_entities, va("print \"%-9s%-42s%-10s[^3%s^7] %-3s %-3s %-3s %s\n\"",
+				id, name, ping, level.clients[i].sess.countryext, admin, clan, mute, client));
+		}else{
+			trap_SendServerCommand(ent - g_entities, va("print \"%-9s%-42s%-10s %-3s %-3s %-3s %s\n\"",
+				id, name, ping, admin, clan, mute, client));
 		}
+	}
+
 	trap_SendServerCommand( ent-g_entities, va("print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\""));
 }
 
