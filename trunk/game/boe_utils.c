@@ -1792,53 +1792,55 @@ void Boe_About( gentity_t *ent )
 	// Boe!Man 3/30/10
 	trap_SendServerCommand( ent-g_entities, "print \"\n^3Server settings\n\"");
 	trap_SendServerCommand( ent-g_entities, "print \"--------------------------------------\n\"");
-	trap_SendServerCommand( ent-g_entities, "print \"[^3Mod used^7]            " INF_STRING" " INF_VERSION_STRING "\n");
+	trap_SendServerCommand( ent-g_entities, va("print \"%-25s " INF_STRING" " INF_VERSION_STRING "\n", "[^3Mod used^7]"));
 	
 	// Mod channel.
 	#ifdef _DEBUG
 	#ifndef _NIGHTLY
-	trap_SendServerCommand(ent - g_entities, "print \"[^3Mod channel^7]         Pre-release\n");
+	trap_SendServerCommand(ent - g_entities, va("print \"%-25s Pre-release\n", "[^3Mod channel^7]"));
 	#else
-	trap_SendServerCommand(ent - g_entities, "print \"[^3Mod channel^7]         Nightly (master)\n");
+	trap_SendServerCommand(ent - g_entities, va("print \"%-25s Nightly (master)\n", "[^3Mod channel^7]"));
 	#endif // _NIGHTLY
 	#else
-	trap_SendServerCommand(ent - g_entities, "print \"[^3Mod channel^7]         Release\n");
+	trap_SendServerCommand(ent - g_entities, va("print \"%-25s Release\n", "[^3Mod channel^7]"));
 	#endif
 
 	#ifdef _GOLD
-	trap_SendServerCommand( ent-g_entities, "print \"[^3Mod port^7]            SoF2 v1.03 (Gold)\n");
+	trap_SendServerCommand( ent-g_entities, va("print \"%-25s SoF2 v1.03 (Gold)\n", "[^3Mod port^7]"));
 	#else
-	trap_SendServerCommand( ent-g_entities, "print \"[^3Mod port^7]            SoF2 v1.00\n");
+	trap_SendServerCommand( ent-g_entities, va("print \"%-25s SoF2 v1.00\n", "[^3Mod port^7]"));
 	#endif // _GOLD
 
 	#ifdef WIN32
-	trap_SendServerCommand( ent-g_entities, "print \"[^3Host platform^7]       Windows (*.dll)\n");
+	trap_SendServerCommand( ent-g_entities, va("print \"%-25s Windows (*.dll)\n", "[^3Host platform^7]"));
 	#elif __linux__
-	trap_SendServerCommand( ent-g_entities, "print \"[^3Host platform^7]       Linux (*.so)\n");
+	trap_SendServerCommand( ent-g_entities, va("print \"%-25s Linux (*.so)\n", "[^3Host platform^7]"));
+	#elif MACOS_X
+	trap_SendServerCommand( ent-g_entities, va("print \"%-25s Mac OS X (*.bundle)\n", "[^3Host platform^7]"));
 	#endif
 
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Instagib^7]            %s\n", (g_instaGib.integer > 0) ? "Yes" : "No"));
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Competition Mode^7]    %s\n", (g_compMode.integer > 0 && cm_enabled.integer > 1) ? "Yes" : "No"));
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Scorelimit^7]          %i\n", g_scorelimit.integer));
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Timelimit^7]           %i\n", g_timelimit.integer));
+	trap_SendServerCommand( ent-g_entities, va("print \"%-25s %s\n", "[^3Instagib^7]", (g_instaGib.integer > 0) ? "Yes" : "No"));
+	trap_SendServerCommand( ent-g_entities, va("print \"%-25s %s\n", "[^3Competition Mode^7]", (g_compMode.integer > 0 && cm_enabled.integer > 1) ? "Yes" : "No"));
+	trap_SendServerCommand( ent-g_entities, va("print \"%-25s %i\n", "[^3Scorelimit^7]", g_scorelimit.integer));
+	trap_SendServerCommand( ent-g_entities, va("print \"%-25s %i\n", "[^3Timelimit^7]", g_timelimit.integer));
 	if(current_gametype.value == GT_CTF){
-		trap_SendServerCommand( ent-g_entities, va("print \"[^3Respawn interval^7]    %i\n", g_respawnInterval.integer));
+		trap_SendServerCommand( ent-g_entities, va("print \"%-25s %i\n", "[^3Respawn interval^7]", g_respawnInterval.integer));
 	}
 
 	#ifndef _GOLD
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Third person^7]        Yes\n", (g_allowthirdperson.integer > 0) ? "Yes" : "No"));
+	trap_SendServerCommand( ent-g_entities, va("print \"%-25s Yes\n", "[^3Third person^7]", (g_allowthirdperson.integer > 0) ? "Yes" : "No"));
 	#endif // not _GOLD
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Speed^7]               %i\n", g_speed.integer));
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Gravity^7]             %i\n", g_gravity.integer));
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Total clients^7]       %i\n", level.numConnectedClients));
+	trap_SendServerCommand( ent-g_entities, va("print \"%-25s %i\n", "[^3Speed^7]", g_speed.integer));
+	trap_SendServerCommand( ent-g_entities, va("print \"%-25s %i\n", "[^3Gravity^7]", g_gravity.integer));
+	trap_SendServerCommand( ent-g_entities, va("print \"%-25s %i\n", "[^3Total clients^7]", level.numConnectedClients));
 	
 	trap_SendServerCommand( ent-g_entities, "print \"\n^3Owner settings\n\"");
 	trap_SendServerCommand( ent-g_entities, "print \"--------------------------------------\n\"");
 
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Owner^7]               %s\n", Owner.string));
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Active clan^7]         %s\n", (strstr(Clan.string, "0") || strlen(Clan.string) == 0) ? "No" : "Yes"));
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Clan URL^7]            %s\n", (strstr(ClanURL.string, "0") || strlen(ClanURL.string) == 0) ? "None" : ClanURL.string));
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Hosted by^7]           %s\n", HostedBy.string));
+	trap_SendServerCommand( ent-g_entities, va("print \"%-25s %s\n", "[^3Owner^7]", Owner.string));
+	trap_SendServerCommand( ent-g_entities, va("print \"%-25s %s\n", "[^3Active clan^7]", (strstr(Clan.string, "0") || strlen(Clan.string) == 0) ? "No" : "Yes"));
+	trap_SendServerCommand( ent-g_entities, va("print \"%-25s %s\n", "[^3Clan URL^7]", (strstr(ClanURL.string, "0") || strlen(ClanURL.string) == 0) ? "None" : ClanURL.string));
+	trap_SendServerCommand( ent-g_entities, va("print \"%-25s %s\n", "[^3Hosted by^7]", HostedBy.string));
 
 	trap_SendServerCommand( ent-g_entities, "print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\"");
 }
