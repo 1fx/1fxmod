@@ -1710,7 +1710,7 @@ void Boe_Stats ( gentity_t *ent )
 				idnum = -1;
 			}
 		}else{
-		idnum = atoi (arg1);
+			idnum = atoi (arg1);
 		}
 		otherClient = qtrue;
 		// Boe!Man 2/21/10: The client number needs to be valid.
@@ -1778,46 +1778,46 @@ void Boe_Stats ( gentity_t *ent )
 	trap_SendServerCommand( ent-g_entities, va("print \"\n^3Player statistics for ^7%s\n\"", player));
 	trap_SendServerCommand( ent-g_entities, va("print \"-------------------------------------------------------\n"));
 	if(g_aliasCheck.integer > 0){ // Boe!Man 12/13/10: Only show when the Aliases are enabled.
-		trap_SendServerCommand( ent-g_entities, va("print \"[^3Aliases^7]     "));
+		trap_SendServerCommand( ent-g_entities, va("print \"%-18s", "[^3Aliases^7]"));
 		if (otherClient == qfalse){
 			Boe_printAliases(ent, ip, ent->client->pers.cleanName);
 		}else{
 			Boe_printAliases(ent, ip, g_entities[idnum].client->pers.cleanName);
 		}
-		trap_SendServerCommand( ent-g_entities, va("print \"\n[^3Admin^7]       %s\n", admin));
+		trap_SendServerCommand( ent-g_entities, va("print \"\n%-18s%s\n", "[^3Admin^7]", admin));
 	}else{
-		trap_SendServerCommand( ent-g_entities, va("print \"[^3Admin^7]       %s\n", admin));
+		trap_SendServerCommand( ent-g_entities, va("print \"%-18s%s\n", "[^3Admin^7]", admin));
 	}
 
 	// Boe!Man 5/20/12: Check if g_publicIPs is set to 1. If not, hide in stats (this will prevent IP abuse by other players).
 	if (g_publicIPs.integer && (g_publicIPs.integer == 1 || ent->client->sess.admin >= g_publicIPs.integer)){
-		trap_SendServerCommand( ent-g_entities, va("print \"[^3IP^7]          %s\n", ip));
+		trap_SendServerCommand( ent-g_entities, va("print \"%-18s%s\n", "[^3IP^7]", ip));
 	}
 	// Boe!Man 5/14/11: Check if the checking of countries is enabled.
 	if(g_checkCountry.integer && level.countryInitialized){
-		trap_SendServerCommand( ent-g_entities, va("print \"[^3Country^7]     %s\n", country));
+		trap_SendServerCommand( ent-g_entities, va("print \"%-18s%s\n", "[^3Country^7]", country));
 	}
 	
 	if(client1){
-		trap_SendServerCommand( ent-g_entities, va("print \"[^3Client^7]      %s\n", client0));
+		trap_SendServerCommand( ent-g_entities, va("print \"%-18s%s\n", "[^3Client^7]", client0));
 	}else{
 		if(strlen(g_entities[idnum].client->sess.strClient) >= 2){
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3Client^7]      %s\n", g_entities[idnum].client->sess.strClient));
+			trap_SendServerCommand( ent-g_entities, va("print \"%-18s%s\n", "[^3Client^7]", g_entities[idnum].client->sess.strClient));
 		}else{
 			if(client >= 0.1){
-				trap_SendServerCommand( ent-g_entities, va("print \"[^3Client^7]      %.1f\n", client));
+				trap_SendServerCommand( ent-g_entities, va("print \"%-18s%.1f\n", "[^3Client^7]", client));
 			}else{
 				#ifndef _GOLD
 				if(g_entities[idnum].client->sess.proClient >= 0.1){
-					trap_SendServerCommand( ent-g_entities, va("print \"[^3Client^7]      P%.1f\n", g_entities[idnum].client->sess.proClient));
+					trap_SendServerCommand( ent-g_entities, va("print \"%18-sP%.1f\n", "[^3Client^7]", g_entities[idnum].client->sess.proClient));
 				}else
 				#endif // not _GOLD
-					trap_SendServerCommand( ent-g_entities, va("print \"[^3Client^7]      N/A\n"));
+					trap_SendServerCommand( ent-g_entities, va("print \"%-18sN/A\n", "[^3Client^7]"));
 			}
 		}
 	}
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Rate^7]        %s\n", rate));
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Snaps^7]       %s\n", snaps));
+	trap_SendServerCommand( ent-g_entities, va("print \"%-18s%s\n", "[^3Rate^7]", rate));
+	trap_SendServerCommand( ent-g_entities, va("print \"%-18s%s\n", "[^3Snaps^7]", snaps));
 
 	if( g_entities[idnum].client->sess.mute){
 		for(i = 0; i < MAX_CLIENTS; i++){
@@ -1825,7 +1825,7 @@ void Boe_Stats ( gentity_t *ent )
 				if(strstr(level.mutedClients[i].ip,  g_entities[idnum].client->pers.ip)){
 					remain = ((level.mutedClients[i].startTime+((level.mutedClients[i].time*60)*1000)-level.time)/1000)/60;
 					remainS = ((level.mutedClients[i].startTime+((level.mutedClients[i].time*60)*1000)-level.time)/1000);
-					trap_SendServerCommand(  ent-g_entities, va("print \"[^3Mute^7]        %i:%02i minutes remaining\n\n", remain, remainS-(remain*60)));
+					trap_SendServerCommand(  ent-g_entities, va("print \"%-18s%i:%02i minutes remaining\n\n", "[^3Mute^7]", remain, remainS-(remain*60)));
 					break; // Boe!Man 2/15/13: Duplicate line fix and speed optimize.
 				}
 			}
@@ -1838,106 +1838,18 @@ void Boe_Stats ( gentity_t *ent )
 	
 	// Boe!Man 6/2/10: Tier 1 - Start.
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Total kills^7] [^3Total death^7] [^3Damage done^7] [^3Damage take^7]\n"));
-	if (stat->kills > 999)
-	trap_SendServerCommand( ent-g_entities, va("print \"   %d", stat->kills));
-	else if (stat->kills > 99)
-	trap_SendServerCommand( ent-g_entities, va("print \"    %d", stat->kills));
-	else if (stat->kills > 9)
-	trap_SendServerCommand( ent-g_entities, va("print \"     %d", stat->kills));
-	else
-	trap_SendServerCommand( ent-g_entities, va("print \"      %d", stat->kills));
-
-	if (stat->deaths > 999)
-	trap_SendServerCommand( ent-g_entities, va("print \"          %d", stat->deaths));
-	else if (stat->deaths > 99)
-	trap_SendServerCommand( ent-g_entities, va("print \"           %d", stat->deaths));
-	else if (stat->deaths > 9)
-	trap_SendServerCommand( ent-g_entities, va("print \"            %d", stat->deaths));
-	else
-	trap_SendServerCommand( ent-g_entities, va("print \"             %d", stat->deaths));
-
-	if (stat->damageDone > 999)
-	trap_SendServerCommand( ent-g_entities, va("print \"          %d", stat->damageDone));
-	else if (stat->damageDone > 99)
-	trap_SendServerCommand( ent-g_entities, va("print \"           %d", stat->damageDone));
-	else if (stat->damageDone > 9)
-	trap_SendServerCommand( ent-g_entities, va("print \"            %d", stat->damageDone));
-	else
-	trap_SendServerCommand( ent-g_entities, va("print \"             %d", stat->damageDone));
-	
-	if (stat->damageTaken > 999)
-	trap_SendServerCommand( ent-g_entities, va("print \"          %d\n\n", stat->damageTaken));
-	else if (stat->damageTaken > 99)
-	trap_SendServerCommand( ent-g_entities, va("print \"           %d\n\n", stat->damageTaken));
-	else if (stat->damageTaken > 9)
-	trap_SendServerCommand( ent-g_entities, va("print \"            %d\n\n", stat->damageTaken));
-	else
-	trap_SendServerCommand( ent-g_entities, va("print \"             %d\n\n", stat->damageTaken));
+	trap_SendServerCommand( ent-g_entities, va("print \"%7d%14d%14d%14d\n\n", stat->kills, stat->deaths, stat->damageDone, stat->damageTaken));
 	// Boe!Man 6/2/10: Tier 1 - End.
 
 	// Boe!Man 6/2/10: Tier 2 - Start.
 	trap_SendServerCommand( ent-g_entities, va("print \"[^3Hand^7] [^3Foot^7] [^3Arms^7] [^3Legs^7] [^3Head^7] [^3Neck^7] [^3Tors^7] [^3Wais^7]\n"));
-	if (stat->handhits > 99)
-	trap_SendServerCommand( ent-g_entities, va("print \" %d", stat->handhits));
-	else if (stat->handhits > 9)
-	trap_SendServerCommand( ent-g_entities, va("print \"  %d", stat->handhits));
-	else
-	trap_SendServerCommand( ent-g_entities, va("print \"   %d", stat->handhits));
-
-	if (stat->foothits > 99)
-	trap_SendServerCommand( ent-g_entities, va("print \"    %d", stat->foothits));
-	else if (stat->foothits > 9)
-	trap_SendServerCommand( ent-g_entities, va("print \"     %d", stat->foothits));
-	else
-	trap_SendServerCommand( ent-g_entities, va("print \"      %d", stat->foothits));
-
-	if (stat->armhits > 99)
-	trap_SendServerCommand( ent-g_entities, va("print \"    %d", stat->armhits));
-	else if (stat->armhits > 9)
-	trap_SendServerCommand( ent-g_entities, va("print \"     %d", stat->armhits));
-	else
-	trap_SendServerCommand( ent-g_entities, va("print \"      %d", stat->armhits));
-
-	if (stat->leghits > 99)
-	trap_SendServerCommand( ent-g_entities, va("print \"    %d", stat->leghits));
-	else if (stat->leghits > 9)
-	trap_SendServerCommand( ent-g_entities, va("print \"     %d", stat->leghits));
-	else
-	trap_SendServerCommand( ent-g_entities, va("print \"      %d", stat->leghits));
-
-	if (stat->headhits > 99)
-	trap_SendServerCommand( ent-g_entities, va("print \"    %d", stat->headhits));
-	else if (stat->headhits > 9)
-	trap_SendServerCommand( ent-g_entities, va("print \"     %d", stat->headhits));
-	else
-	trap_SendServerCommand( ent-g_entities, va("print \"      %d", stat->headhits));
-
-	if (stat->neckhits > 99)
-	trap_SendServerCommand( ent-g_entities, va("print \"    %d", stat->neckhits));
-	else if (stat->neckhits > 9)
-	trap_SendServerCommand( ent-g_entities, va("print \"     %d", stat->neckhits));
-	else
-	trap_SendServerCommand( ent-g_entities, va("print \"      %d", stat->neckhits));
-
-	if (stat->torsohits > 99)
-	trap_SendServerCommand( ent-g_entities, va("print \"    %d", stat->torsohits));
-	else if (stat->torsohits > 9)
-	trap_SendServerCommand( ent-g_entities, va("print \"     %d", stat->torsohits));
-	else
-	trap_SendServerCommand( ent-g_entities, va("print \"      %d", stat->torsohits));
-
-	if (stat->waisthits > 99) // Boe!Man 11/15/10: Solve missing space at the eof.
-	trap_SendServerCommand( ent-g_entities, va("print \"    %d\n", stat->waisthits));
-	else if (stat->waisthits > 9)
-	trap_SendServerCommand( ent-g_entities, va("print \"     %d\n", stat->waisthits));
-	else
-	trap_SendServerCommand( ent-g_entities, va("print \"      %d\n", stat->waisthits));
+	trap_SendServerCommand( ent-g_entities, va("print \"%4d%7d%7d%7d%7d%7d%7d%7d\n", stat->handhits, stat->foothits, stat->armhits, stat->leghits, stat->headhits, stat->neckhits, stat->torsohits, stat->waisthits));
 	// Boe!Man 6/2/10: Tier 2 - End.
 
 	// Boe!Man 6/2/10: Tier 3: Weapon Stats - Start.
 	if(stat->shotcount)
 		{
-		trap_SendServerCommand( ent-g_entities, va("print \"\n[^3Weapon^7]      [^3Shot^7] [^3Hits^7] [^3Head^7] [^3Accu^7]\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \"\n%-22s%-13s%-13s%-13s[^3Accu^7]\n\"", "[^3Weapon^7]", "[^3Shot^7]", "[^3Hits^7]", "[^3Head^7]"));
 		for(n = 0; n < WP_NUM_WEAPONS; n++)
 			{
 			if(stat->weapon_shots[ATTACK_NORMAL][n] <= 0 && stat->weapon_shots[ATTACK_ALTERNATE][n] <=0)
@@ -1949,11 +1861,12 @@ void Boe_Stats ( gentity_t *ent )
 					{
 						accuracy = (float)stat->weapon_hits[ATTACK_NORMAL][n] / (float)stat->weapon_shots[ATTACK_NORMAL][n] * 100;
 					}
-				trap_SendServerCommand( ent-g_entities, va("print \"^3%11s  ^7%5d  ^7%5d  ^7%5d  ^7%3.2f\n\"",
+				trap_SendServerCommand( ent-g_entities, va("print \"^3%14s^7%9d^7%9d^7%9d%7s%3.2f\n\"",
 				bg_weaponNames[n], 
 				stat->weapon_shots[ATTACK_NORMAL][n], 
 				stat->weapon_hits[ATTACK_NORMAL][n], 
 				stat->weapon_headshots[ATTACK_NORMAL][n],
+				"^7",
 				accuracy));
 				
 				if(stat->weapon_shots[ATTACK_ALTERNATE][n])
@@ -1988,7 +1901,7 @@ void Boe_Stats ( gentity_t *ent )
 						{
 							accuracy = (float)stat->weapon_hits[ATTACK_ALTERNATE][n] / (float)stat->weapon_shots[ATTACK_ALTERNATE][n] * 100;
 						}
-				trap_SendServerCommand( ent-g_entities, va("print \"^3%11s  ^7%5d  ^7%5d  ^7%5d  ^7%3.2f\n\"",
+				trap_SendServerCommand( ent-g_entities, va("print \"^3%13s^7%7d^7%7d^7%7d^7%3.2f\n\"",
 				altname, 
 				stat->weapon_shots[ATTACK_ALTERNATE][n], 
 				stat->weapon_hits[ATTACK_ALTERNATE][n], 
@@ -1998,12 +1911,7 @@ void Boe_Stats ( gentity_t *ent )
 			}
 		}
 	}
-					
-
-	// Henk's useless crap :P - boe
-	//trap_SendServerCommand( ent-g_entities, va("print \"\n"));
-	//trap_SendServerCommand( ent-g_entities, va("print \"[^3Total kills^7] [^3Total death^7] [^3Damage done^7] [^3Damage take^7]\n"));
-	//trap_SendServerCommand( ent-g_entities, va("print \"     0		0		0		0\n")); // random spaces -.-''
+	
 	trap_SendServerCommand( ent-g_entities, va("print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\""));
 }
 //==============================================================================================================================

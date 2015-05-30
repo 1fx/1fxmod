@@ -47,7 +47,7 @@ typedef struct gametypeLocals_s
 	int			pauseTime;		// Restore time.
 	
 	// Boe!Man 10/30/13: We use this to determine if the flag is taken.
-	qboolean	flagTaken[1];
+	qboolean	flagTaken[2];
 	
 	// ELIM
 	int		captureSound;
