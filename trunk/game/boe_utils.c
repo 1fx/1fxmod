@@ -526,7 +526,7 @@ void Boe_Tokens(gentity_t *ent, char *chatText, int mode, qboolean CheckSounds)
 								if ( G_IsClientDead ( ent->client ) )
 									ghost = qtrue;
 							}
-									
+
 							if(ghost){
 								for (n = 0; n < level.numConnectedClients; n++){
 									tent = &g_entities[level.sortedClients[n]];
@@ -534,7 +534,9 @@ void Boe_Tokens(gentity_t *ent, char *chatText, int mode, qboolean CheckSounds)
 										continue;
 									if (!G_IsClientDead ( tent->client ) && !G_IsClientSpectating( tent->client))
 										continue;
-									Boe_ClientSound(tent, chatSounds[175].sound);
+
+									if(level.nextSound)
+										Boe_ClientSound(tent, chatSounds[level.nextSound].sound);
 								}
 							}else if(ent->client->sess.team == TEAM_SPECTATOR && current_gametype.value != GT_DM){ 
 								for (n = 0; n < level.numConnectedClients; n++){
@@ -543,13 +545,19 @@ void Boe_Tokens(gentity_t *ent, char *chatText, int mode, qboolean CheckSounds)
 										continue;
 									if(tent->client->sess.team != TEAM_SPECTATOR && !G_IsClientDead(tent->client))
 										continue;
-									Boe_ClientSound(tent, chatSounds[175].sound);
+
+									if(level.nextSound)
+									Boe_ClientSound(tent, chatSounds[level.nextSound].sound);
 								}
-							}else{
-								Boe_GlobalSound(chatSounds[175].sound);
+							}else if(level.nextSound){
+								Boe_GlobalSound(chatSounds[level.nextSound].sound);
 							}
-							ent->client->sess.voiceFloodCount++;
-							playedSound = qtrue;
+
+							// Check if the sound played, and if so, increment the voice flood count.
+							if (level.nextSound) {
+								ent->client->sess.voiceFloodCount++;
+								playedSound = qtrue;
+							}
 						}
 					chatText++;
 					continue;
@@ -983,6 +991,10 @@ void Boe_ParseChatSounds (void)
 
 			if(*text && *sound)
 			{
+				// Check if the global NEXT sound is present.
+				if (strcmp(sound, "sound/next.mp3") == 0)
+					level.nextSound = number;
+
 				Q_strncpyz(chatSounds[number].text, text, MAX_SAY_TEXT - 1);
 				chatSounds[number].sound = G_SoundIndex(va("%s", sound));
 				numSounds++;

@@ -898,6 +898,8 @@ typedef struct
 	
 	int			sqlBackupTime;		// Boe!Man 5/27/13: The interval for backing up the in-memory databases to disk.
 	qboolean	countryInitialized; // Boe!Man 6/25/13: True if the country database is fully initialized.
+
+	int			nextSound;		// Boe!Man 5/30/15: Sound index for the next sound, if found.
 	
 	int			customETHiderAmount[16];
 
