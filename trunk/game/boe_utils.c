@@ -1813,11 +1813,11 @@ void Boe_About( gentity_t *ent )
 
 	#ifdef WIN32
 	trap_SendServerCommand( ent-g_entities, va("print \"%-25s Windows (*.dll)\n", "[^3Host platform^7]"));
-	#elif __linux__
+	#elif defined(__linux__)
 	trap_SendServerCommand( ent-g_entities, va("print \"%-25s Linux (*.so)\n", "[^3Host platform^7]"));
-	#elif MACOS_X
+	#elif defined(MACOS_X)
 	trap_SendServerCommand( ent-g_entities, va("print \"%-25s Mac OS X (*.bundle)\n", "[^3Host platform^7]"));
-	#endif
+	#endif // Host platform.
 
 	trap_SendServerCommand( ent-g_entities, va("print \"%-25s %s\n", "[^3Instagib^7]", (g_instaGib.integer > 0) ? "Yes" : "No"));
 	trap_SendServerCommand( ent-g_entities, va("print \"%-25s %s\n", "[^3Competition Mode^7]", (g_compMode.integer > 0 && cm_enabled.integer > 1) ? "Yes" : "No"));
