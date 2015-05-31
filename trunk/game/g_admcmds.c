@@ -6,6 +6,7 @@
 #include "boe_local.h"
 
 // Local function definitions.
+static char*adm_checkListFilters	(gentity_t *adm, int argNum, qboolean shortCmd, char *listName, char *byFieldName);
 static void	adm_addAdmin_f			(int argNum, gentity_t *adm, qboolean shortCmd, int level2, char *commandName);
 static void	adm_unTwist				(int idNum, gentity_t *adm);
 static void	adm_unPlant				(int idNum, gentity_t *adm);
@@ -1817,68 +1818,60 @@ int adm_subnetbanList(int argNum, gentity_t *adm, qboolean shortCmd)
 
 /*
 ================
-adm_showBanList
+adm_checkListFilters
 
-Show the banlist to the client/RCON.
+Checks if filters are supplied
+in lists in /adm or /rcon mode.
+
+Returns NULL if we should
+exit from the calling function
+too.
 ================
 */
 
-static void adm_showBanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
+static char *adm_checkListFilters(gentity_t *adm, int argNum, qboolean shortCmd, char *listName, char *byFieldName)
 {
-	// We use this in order to send as little packets as possible.
-	// Packet max size is 1024 minus some overhead, 1000 char.max should take care of this. (adm only, RCON remains unaffected).
-	char			 buf2[1000] = "\0";
-	// SQLite variables.
-	sqlite3			*db;
-	sqlite3_stmt	*stmt;
-	int				 rc;
-	// We use the following variables for filter options.
+	char			buf2[1000] = "\0";
+	char			listNameReal[32];
+	int				rc;
 	char			arg[32];
 	char			arg2[32];
 	int				argCount;
 	char			filterIP[32] = "\0";
 	char			filterName[32] = "\0";
 	char			filterBy[32] = "\0";
-	char			filterQuery[144] = "\0";
+	static char		filterQuery[144] = "\0";
 	qboolean		filterActive = qfalse;
-	qboolean		filterChecking = qfalse;
-
-	db = bansDb;
 
 	memset(filterQuery, 0, sizeof(filterQuery));
-	memset(buf2, 0, sizeof(buf2));
 	strcpy(filterQuery, " ");
 
-	if(adm && adm->client){
-		if(subnet){
-			Q_strcat(buf2, sizeof(buf2), "^3[Subnetbanlist]^7\n");
-		}else{
-			Q_strcat(buf2, sizeof(buf2), "^3[Banlist]^7\n");
-		}
+	// Convert the listname to the real, capitalized, list name.
+	Q_strncpyz(listNameReal, listName, sizeof(listNameReal));
+	
+	if (strlen(listNameReal) < 1)
+		return filterQuery;
 
+	listNameReal[0] -= 32; // Convert first letter to uppercase.
+	if (adm && adm->client)
+		Q_strcat(buf2, sizeof(buf2), va("^3[%s]^7\n", listNameReal));
+	else
+		Com_Printf("^3[%s]^7\n", listNameReal);
+
+	if (adm && !shortCmd || !adm) {
 		// Only check for filters if the argument count is > 2 and we're working in the console.
-		if(!shortCmd){
+		if (adm && adm->client){
 			Q_strcat(buf2, sizeof(buf2), "^5[Filter options]^7\n\n");
-			Q_strcat(buf2, sizeof(buf2), va("^5 %-20s Value\n" \
+			Q_strcat(buf2, sizeof(buf2), va("^5%-21s Value\n" \
 											"^7--------------------------------------------------\n", "Filter"));
-		}
-	}else{
-		if(subnet){
-			Com_Printf("^3[Subnetbanlist]^7\n");
 		}else{
-			Com_Printf("^3[Banlist]^7\n");
+			Com_Printf("^5[Filter options]^7\n\n");
+			Com_Printf("^5%-21s Value\n" \
+					   "^7--------------------------------------------------\n", "Filter");
 		}
 
-		// Check filter options.
-		Com_Printf("^5[Filter options]^7\n\n");
-		Com_Printf("^5 %-20s Value\n"\
-				   "^7--------------------------------------------------\n", "Filter");
-	}
-
-	if(adm && !shortCmd || !adm){
 		argCount = trap_Argc();
 		if(adm && argCount > 2 || !adm && argCount > 1){
-			filterChecking = qtrue;
 			rc = argNum;
 
 			while(rc <= argCount){
@@ -1890,32 +1883,31 @@ static void adm_showBanList(int argNum, gentity_t *adm, qboolean shortCmd, qbool
 				Q_strlwr(arg2);
 
 				if(!strstr(arg, "-") || !strstr(arg, "-h") && strlen(arg2) == 0){
-					filterChecking = qfalse;
 					break;
 				}else{ // Valid argument it seems, so far.
 					if(strstr(arg, "-h")){ // Client wants help with this, no problem.
 						if(adm && adm->client){
 							Q_strcat(buf2, sizeof(buf2), va(\
-														 "%-27s ^7There are several filter options for you to use:\n" \
-														 "%-27s ^7Filters on IP.\n" \
-									   					 "%-27s ^7Filters on name.\n" \
-									   					 "%-27s ^7Filters on banned by.\n\n" \
-									   					 "%-25s ^7/adm banlist -i 172.16 -n shoke -b boe\n",
-														"^7[^1Help^7]", "^7[^5-i^7]", "^7[^5-n^7]", "^7[^5-b^7]", "^7[^5Example usage]"));
+															"%-27s ^7There are several filter options for you to use:\n" \
+															"%-27s ^7Filters on IP.\n" \
+									   						"%-27s ^7Filters on name.\n" \
+									   						"%-27s ^7Filters on %s by.\n\n" \
+									   						"%-27s ^7/adm %s -i 172.16 -n boe -b RCON\n",
+														"^7[^1Help^7]", "^7[^5-i^7]", "^7[^5-n^7]", "^7[^5-b^7]", byFieldName, "^7[^5Example usage^7]", listName));
 							
 							trap_SendServerCommand( adm-g_entities, va("print \"%s\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\"", buf2));
 						}else{
 							Com_Printf("%-27s ^7There are several filter options for you to use:\n" \
-									   "%-27s ^7Filters on IP.\n" \
-									   "%-27s ^7Filters on name.\n" \
-									   "%-27s ^7Filters on banned by.\n\n" \
-									   "%-25s ^7/adm banlist -i 172.16 -n shoke -b boe\n",
-									   "^7[^1Help^7]", "^7[^5-i^7]", "^7[^5-n^7]", "^7[^5-b^7]", "^7[^5Example usage]");
+										"%-27s ^7Filters on IP.\n" \
+										"%-27s ^7Filters on name.\n" \
+										"%-27s ^7Filters on %s by.\n\n" \
+										"%-27s ^7/adm %s -i 172.16 -n boe -b RCON\n",
+										"^7[^1Help^7]", "^7[^5-i^7]", "^7[^5-n^7]", "^7[^5-b^7]", byFieldName, "^7[^5Example usage^7]", listName);
 							
 							Com_Printf("\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n");
 						}
 						
-						return;
+						return NULL;
 					}else if(strstr(arg, "-i")){ // Client wants to filter on an IP.
 						strcpy(filterIP, arg2);
 						filterActive = qtrue;
@@ -1932,7 +1924,6 @@ static void adm_showBanList(int argNum, gentity_t *adm, qboolean shortCmd, qbool
 							Com_Printf("%-27s ^7Invalid argument: %s\n", "^7[^1Error^7]", arg);
 						}
 
-						filterChecking = qfalse;
 						break;
 					}
 				}
@@ -1943,9 +1934,9 @@ static void adm_showBanList(int argNum, gentity_t *adm, qboolean shortCmd, qbool
 
 		if(!filterActive){
 			if(adm){
-				Q_strcat(buf2, sizeof(buf2), va("%-27s ^7Call the banlist with -h for more information\n\n", "^7[^5None applied^7]"));
+				Q_strcat(buf2, sizeof(buf2), va("%-27s ^7Call the %s with -h for more information\n\n", "^7[^5None applied^7]", listName));
 			}else{
-				Com_Printf("%-27s ^7Call the banlist with -h for more information\n\n", "^7[^5None applied^7]");
+				Com_Printf("%-27s ^7Call the %s with -h for more information\n\n", "^7[^5None applied^7]", listName);
 			}
 		}else{
 			// Prepare query as well.
@@ -1957,9 +1948,9 @@ static void adm_showBanList(int argNum, gentity_t *adm, qboolean shortCmd, qbool
 				if(adm){
 					Q_strcat(buf2, sizeof(buf2), va("%-27s ^7%s\n", "^7[^5IP^7]", filterIP));
 				}else{
-					Com_Printf("%-27s ^7%s\n", filterIP);
+					Com_Printf("%-27s ^7%s\n", "^7[^5IP^7]", filterIP);
 				}
-				strcat(filterQuery, va("IP LIKE '%%%s%%'", "^7[^5IP^7]", filterIP));
+				strcat(filterQuery, va("IP LIKE '%%%s%%'", filterIP));
 				rc++;
 			}
 
@@ -1998,6 +1989,45 @@ static void adm_showBanList(int argNum, gentity_t *adm, qboolean shortCmd, qbool
 			}
 		}
 	}
+
+	if(adm && adm->client){
+		trap_SendServerCommand( adm-g_entities, va("print \"%s\"", buf2));
+	}
+
+	return filterQuery;
+}
+
+/*
+================
+adm_showBanList
+
+Show the banlist to the client/RCON.
+================
+*/
+
+static void adm_showBanList(int argNum, gentity_t *adm, qboolean shortCmd, qboolean subnet)
+{
+	// We use this in order to send as little packets as possible.
+	// Packet max size is 1024 minus some overhead, 1000 char.max should take care of this. (adm only, RCON remains unaffected).
+	char			 buf2[1000] = "\0";
+	// SQLite variables.
+	sqlite3			*db;
+	sqlite3_stmt	*stmt;
+	int				 rc;
+	// We use the following variable for filter options.
+	char			*filterQuery;
+	
+	db = bansDb;
+	memset(buf2, 0, sizeof(buf2));
+
+	// Check if we can apply filters.
+	if(subnet)
+		filterQuery = adm_checkListFilters(adm, argNum, shortCmd, "subnetbanlist", "banned");
+	else
+		filterQuery = adm_checkListFilters(adm, argNum, shortCmd, "banlist", "banned");
+
+	if (!filterQuery) // The call returned NULL, meaning we should quit parsing the list.
+		return;
 
 	if(adm){
 		Q_strcat(buf2, sizeof(buf2), va("^3 %-4s %-15s %-15s %-18s By\n" \
@@ -3259,14 +3289,15 @@ int adm_adminList(int argNum, gentity_t *adm, qboolean shortCmd)
 {
 	// We use this in order to send as little packets as possible.
 	// Packet max size is 1024 minus some overhead, 1000 char. max should take care of this. (adm only, RCON remains unaffected).
-	char			 buf2[1000] = "\0";
 	char			 arg[32] = "\0";
-	char			 temp[64] = "\0";
+	char			 buf2[1000] = "\0";
 	qboolean		 passwordList = qfalse; // If this is true, the user wishes to see the passworded Admins.
 	// SQLite variables.
 	sqlite3			*db;
 	sqlite3_stmt	*stmt;
 	int				 rc;
+	// We use the following variable for filter options.
+	char			*filterQuery;
 
 	// Open users database.
 	db = usersDb;
@@ -3274,16 +3305,13 @@ int adm_adminList(int argNum, gentity_t *adm, qboolean shortCmd)
 
 	// Check for password argument.
 	if(shortCmd){
-		trap_Argv( 0, temp, sizeof( temp ) );
 		trap_Argv( 1, arg, sizeof( arg ) );
 		if(strstr(arg, "pass")){
 			passwordList = qtrue;
 		}else{
-			trap_Argv( 1, temp, sizeof( temp ));
 			trap_Argv( 2, arg, sizeof( arg ));
 		}
 	}else{
-		trap_Argv( argNum-1, temp, sizeof( temp ) );
 		trap_Argv( argNum, arg, sizeof( arg ) );
 	}
 
@@ -3302,20 +3330,23 @@ int adm_adminList(int argNum, gentity_t *adm, qboolean shortCmd)
 		return -1;
 	}
 
+	// Check if we can apply filters.
+	filterQuery = adm_checkListFilters(adm, argNum, shortCmd, "adminlist", "added");
+	if (!filterQuery) // The call returned NULL, meaning we should quit parsing the list.
+		return -1;
+
 	// Display header.
 	if(adm && adm->client){
-		Q_strcat(buf2, sizeof(buf2), "^3[Adminlist]^7\n");
-		Q_strcat(buf2, sizeof(buf2), va("\n^3 %-6s%-5s%-16s%-22sBy\n^7------------------------------------------------------------------------\n", "#", "Lvl", "IP", "Name"));
+		Q_strcat(buf2, sizeof(buf2), va("^3 %-6s%-5s%-16s%-22sBy\n^7------------------------------------------------------------------------\n", "#", "Lvl", "IP", "Name"));
 	}else{
-		Com_Printf("^3[Adminlist]^7\n");
-		Com_Printf("\n^3 %-6s%-5s%-16s%-22sBy\n", "#", "Lvl", "IP", "Name");
+		Com_Printf("^3 %-6s%-5s%-16s%-22sBy\n", "#", "Lvl", "IP", "Name");
 		Com_Printf("^7------------------------------------------------------------------------\n");
 	}
 
 	if(!passwordList){
-		rc = sqlite3_prepare(db, "select ROWID,level,IP,name,by from admins order by ROWID", -1, &stmt, 0);
+		rc = sqlite3_prepare(db, va("select ROWID,level,IP,name,by from admins%sorder by ROWID", filterQuery), -1, &stmt, 0);
 	}else{
-		rc = sqlite3_prepare(db, "select ROWID,level,'',name,by from passadmins order by ROWID", -1, &stmt, 0);
+		rc = sqlite3_prepare(db, va("select ROWID,level,'',name,by from passadmins%sorder by ROWID", filterQuery), -1, &stmt, 0);
 	}
 	if(rc!=SQLITE_OK){
 		if(adm && adm->client){
@@ -3369,21 +3400,26 @@ int adm_clanList(int argNum, gentity_t *adm, qboolean shortCmd)
 	sqlite3			*db;
 	sqlite3_stmt	*stmt;
 	int				 rc;
+	// We use the following variable for filter options.
+	char			*filterQuery;
 
 	// Open database.
 	db = usersDb;
 
+	// Check if we can apply filters.
+	filterQuery = adm_checkListFilters(adm, argNum, shortCmd, "clanlist", "added");
+	if (!filterQuery) // The call returned NULL, meaning we should quit parsing the list.
+		return -1;
+
 	// Display header.
 	if(adm && adm->client){
-		Q_strcat(buf2, sizeof(buf2), "^3[Clanlist]^7\n\n");
 		Q_strcat(buf2, sizeof(buf2), va("^3 %-6s%-16s%-22sBy\n^7------------------------------------------------------------------------\n", "#", "IP", "Name"));
 	}else{
-		Com_Printf("^3[Clanlist]^7\n\n");
 		Com_Printf("^3 %-6s%-16s%-22sBy\n", "#", "IP", "Name");
 		Com_Printf("^7------------------------------------------------------------------------\n");
 	}
 
-	rc = sqlite3_prepare(db, "select ROWID,IP,name,by from clanmembers order by ROWID", -1, &stmt, 0);
+	rc = sqlite3_prepare(db, va("select ROWID,IP,name,by from clanmembers%sorder by ROWID", filterQuery), -1, &stmt, 0);
 
 	if(rc != SQLITE_OK){
 		if(adm && adm->client){
