@@ -2157,34 +2157,34 @@ Boe_displayTokens
 void Boe_displayTokens ( gentity_t *ent )
 {
 	// Header.
-	trap_SendServerCommand( ent-g_entities, va("print \"\n^3Key      Explanation\n\""));
-	trap_SendServerCommand( ent-g_entities, va("print \"--------------------------------------\n\""));
+	trap_SendServerCommand( ent-g_entities, "print \"\n^3Key      Explanation\n\"");
+	trap_SendServerCommand( ent-g_entities, "print \"--------------------------------------\n\"");
 	// Tokens body.
-	trap_SendServerCommand( ent-g_entities, va("print \"^7#b       [^3Health in bar format^7]\n"));
-	trap_SendServerCommand( ent-g_entities, va("print \"^7#B       [^3Armor in bar format^7]\n"));
-	trap_SendServerCommand( ent-g_entities, va("print \"^7#h       [^3Health colored^7]\n"));
-	trap_SendServerCommand( ent-g_entities, va("print \"^7#H       [^3Health non-colored^7]\n"));
-	trap_SendServerCommand( ent-g_entities, va("print \"^7#a       [^3Armor colored^7]\n"));
-	trap_SendServerCommand( ent-g_entities, va("print \"^7#A       [^3Armor non-colored^7]\n"));
-	trap_SendServerCommand( ent-g_entities, va("print \"^7#d^1/^7#D    [^3Last player that hurt you^7]\n"));
-	trap_SendServerCommand( ent-g_entities, va("print \"^7#t^1/^7#T    [^3Last player that you hurt^7]\n"));
-	trap_SendServerCommand( ent-g_entities, va("print \"^7#n^1/^7#N    [^3Shows the server g_motd (usually next map)^7]\n"));
+	trap_SendServerCommand( ent-g_entities, va("print \"^7%-8s [^3Health in bar format^7]\n", "#b"));
+	trap_SendServerCommand( ent-g_entities, va("print \"^7%-8s [^3Armor in bar format^7]\n", "#B"));
+	trap_SendServerCommand( ent-g_entities, va("print \"^7%-8s [^3Health colored^7]\n", "#h"));
+	trap_SendServerCommand( ent-g_entities, va("print \"^7%-8s [^3Health non-colored^7]\n", "#H"));
+	trap_SendServerCommand( ent-g_entities, va("print \"^7%-8s [^3Armor colored^7]\n", "#a"));
+	trap_SendServerCommand( ent-g_entities, va("print \"^7%-8s [^3Armor non-colored^7]\n", "#A"));
+	trap_SendServerCommand( ent-g_entities, va("print \"^7%-12s [^3Last player that hurt you^7]\n", "#d^1/^7#D"));
+	trap_SendServerCommand( ent-g_entities, va("print \"^7%-12s [^3Last player that you hurt^7]\n", "#t^1/^7#T"));
+	trap_SendServerCommand( ent-g_entities, va("print \"^7%-12s [^3Shows the server g_motd (usually next map)^7]\n", "#n^1/^7#N"));
 	if(current_gametype.value != GT_DM){ // Don't show closest team-mate in DM (there is none).
-		trap_SendServerCommand( ent-g_entities, va("print \"^7#f^1/^7#F    [^3Shows your closest team-mate name^7]\n"));
+		trap_SendServerCommand( ent-g_entities, va("print \"^7%-12s [^3Shows your closest team-mate name^7]\n", "#f^1/^7#F"));
 	}
-	trap_SendServerCommand( ent-g_entities, va("print \"^7#e^1/^7#E    [^3Shows your closest enemy name^7]\n"));
-	trap_SendServerCommand( ent-g_entities, va("print \"^7#l^1/^7#L    [^3Shows your current location^7]\n"));
-	trap_SendServerCommand( ent-g_entities, va("print \"^7#z^1/^7#Z    [^3Shows the last connected player name^7]\n"));
+	trap_SendServerCommand( ent-g_entities, va("print \"^7%-12s [^3Shows your closest enemy name^7]\n", "#e^1/^7#E"));
+	trap_SendServerCommand( ent-g_entities, va("print \"^7%-12s [^3Shows your current location^7]\n", "#l^1/^7#L"));
+	trap_SendServerCommand( ent-g_entities, va("print \"^7%-12s [^3Shows the last connected player name^7]\n", "#z^1/^7#Z"));
 
 	// H&S tokens (only show them when it's actually H&S).
 	if(current_gametype.value == GT_HS){
-		trap_SendServerCommand( ent-g_entities, va("print \"\n^7#r^1/^7#R    [^3Shows players' name that holds RPG or its location^7]\n"));
-		trap_SendServerCommand( ent-g_entities, va("print \"^7#c^1/^7#C    [^3Shows players' name that holds M4 or its location^7]\n"));
-		trap_SendServerCommand( ent-g_entities, va("print \"^7#m^1/^7#M    [^3Shows players' name that holds MM1 or its location^7]\n"));
-		trap_SendServerCommand( ent-g_entities, va("print \"^7#?       [^3Shows players' name that holds '? grenade' or its location^7]\n"));
+		trap_SendServerCommand( ent-g_entities, va("print \"\n^7%-12s [^3Shows players' name that holds RPG or its location^7]\n", "#r^1/^7#R"));
+		trap_SendServerCommand( ent-g_entities, va("print \"^7%-12s [^3Shows players' name that holds M4 or its location^7]\n", "#c^1/^7#C"));
+		trap_SendServerCommand( ent-g_entities, va("print \"^7%-12s [^3Shows players' name that holds MM1 or its location^7]\n", "#m^1/^7#M"));
+		trap_SendServerCommand( ent-g_entities, va("print \"^7%-8s [^3Shows players' name that holds '? grenade' or its location^7]\n", "#?"));
 	}
 
-	trap_SendServerCommand( ent-g_entities, va("print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\""));
+	trap_SendServerCommand( ent-g_entities, "print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\"");
 
 	return;
 }
@@ -2349,22 +2349,23 @@ By boe, 10/5/10 7:27 PM
 void Boe_Howto ( gentity_t *ent )
 {
 	if (level.crossTheBridge){
-		trap_SendServerCommand( ent-g_entities, va("print \"\n^3You're playing: Cross The Bridge\n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \"-------------------------------------------------------\n\n"));	
-		trap_SendServerCommand( ent-g_entities, va("print \"[^3General^7]\n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \"This Mini-Game's purpose is for the hiders to cross the\n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \"bridge. The seekers will be spawned strategically around\n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \"the bridge. Seekers will get spawned in either a chopper\n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \"(with AK74) or a watchtower (with sniper). Hiders will\n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \"get 4 smokes: they must prevent the seekers killing them,\n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \"these smokes will help them block their vision and crossing\n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \"safely.\n\n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \"\n[^3Rewards^7]\n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \"Seekers will be awarded one point for each hider they kill.\n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \"Hiders will get one point for crossing safely and a bonus\n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \"point if they cross within 20 seconds.\n\n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \"Have fun playing!\n"));
-		trap_SendServerCommand( ent-g_entities, va("print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\""));
+		trap_SendServerCommand( ent-g_entities, "print \"\n^3You're playing: Cross The Bridge\n\"");
+		trap_SendServerCommand( ent-g_entities, "print \"-------------------------------------------------------\n\n");
+		trap_SendServerCommand( ent-g_entities, "print \"[^3General^7]\n\"");
+		trap_SendServerCommand( ent-g_entities, "print \"This Mini-Game's purpose is for the hiders to cross the\n\"");
+		trap_SendServerCommand( ent-g_entities, "print \"bridge. The seekers will be spawned strategically around\n\"");
+		trap_SendServerCommand( ent-g_entities, "print \"the bridge. Seekers will get spawned in either a chopper\n\"");
+		trap_SendServerCommand( ent-g_entities, "print \"(with AK74) or a watchtower (with sniper). Hiders will\n\"");
+		trap_SendServerCommand( ent-g_entities, "print \"get 4 smokes: they must prevent the seekers killing them,\n\"");
+		trap_SendServerCommand( ent-g_entities, "print \"these smokes will help them block their vision and crossing\n\"");
+		trap_SendServerCommand( ent-g_entities, "print \"safely.\n\n\"");
+		trap_SendServerCommand( ent-g_entities, "print \"\n[^3Rewards^7]\n\"");
+		trap_SendServerCommand( ent-g_entities, "print \"Seekers will be awarded one point for each hider they kill.\n\"");
+		trap_SendServerCommand( ent-g_entities, "print \"Hiders will get one point for crossing safely and a bonus\n\"");
+		trap_SendServerCommand( ent-g_entities, "print \"point if they cross within 20 seconds.\n\n\"");
+		trap_SendServerCommand( ent-g_entities, "print \"Have fun playing!\n");
+
+		trap_SendServerCommand( ent-g_entities, "print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\"");
 	}
 }
 
@@ -2863,19 +2864,21 @@ void Boe_SQLStats(void)
 	
 	// Boe!Man 1/30/13: Hard-coded statistics, i.e. things that never change.
 	#ifdef WIN32
-	Com_Printf("[^3Host platform^7]       Windows\n");
-	#elif __linux__
-	Com_Printf("[^3Host platform^7]       Linux\n");
+	Com_Printf("%-25s Windows\n", "[^3Host platform^7]");
+	#elif defined(__linux__)
+	Com_Printf("%-25s Linux\n", "[^3Host platform^7]");
+	#elif defined(MACOS_X)
+	Com_Printf("%-25s Mac OS X\n", "[^3Host platform^7]");
 	#endif // _WIN32
 
 	#if defined(__linux__) && (defined(__GNUC__) && __GNUC__ < 3)
-	Com_Printf("[^3Memory allocator^7]    memsys5\n");
-	Com_Printf("[^3Heap limit^7]          41943040B (40M)\n");
+	Com_Printf("%-25s memsys5\n", "[^3Memory allocator^7]");
+	Com_Printf("%-25s 41943040B (40M)\n", "[^3Heap limit^7]");
 	#else
-	Com_Printf("[^3Memory allocator^7]    Native\n");
-	Com_Printf("[^3Heap limit^7]          None defined\n");
+	Com_Printf("%-25s Native\n", "[^3Memory allocator^7]");
+	Com_Printf("%-25s None defined\n", "[^3Heap limit^7]");
 	#endif // __linux__ && GNUC < 3
-	Com_Printf("[^3Mem in use^7]          %iB (%.2fM)\n", mem, memInM);
+	Com_Printf("%-25s %iB (%.2fM)\n", "[^3Mem in use^7]", mem, memInM);
 	
 	Com_Printf("\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n");
 }

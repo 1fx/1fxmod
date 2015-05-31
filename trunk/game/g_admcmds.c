@@ -1846,6 +1846,7 @@ static void adm_showBanList(int argNum, gentity_t *adm, qboolean shortCmd, qbool
 	db = bansDb;
 
 	memset(filterQuery, 0, sizeof(filterQuery));
+	memset(buf2, 0, sizeof(buf2));
 	strcpy(filterQuery, " ");
 
 	if(adm && adm->client){
@@ -1858,7 +1859,8 @@ static void adm_showBanList(int argNum, gentity_t *adm, qboolean shortCmd, qbool
 		// Only check for filters if the argument count is > 2 and we're working in the console.
 		if(!shortCmd){
 			Q_strcat(buf2, sizeof(buf2), "^5[Filter options]^7\n\n");
-			Q_strcat(buf2, sizeof(buf2), "^5 Filter               Value\n^7--------------------------------------------------\n");
+			Q_strcat(buf2, sizeof(buf2), va("^5 %-20s Value\n" \
+											"^7--------------------------------------------------\n", "Filter"));
 		}
 	}else{
 		if(subnet){
@@ -1869,7 +1871,8 @@ static void adm_showBanList(int argNum, gentity_t *adm, qboolean shortCmd, qbool
 
 		// Check filter options.
 		Com_Printf("^5[Filter options]^7\n\n");
-		Com_Printf("^5 Filter               Value\n^7--------------------------------------------------\n");
+		Com_Printf("^5 %-20s Value\n"\
+				   "^7--------------------------------------------------\n", "Filter");
 	}
 
 	if(adm && !shortCmd || !adm){
@@ -1892,19 +1895,23 @@ static void adm_showBanList(int argNum, gentity_t *adm, qboolean shortCmd, qbool
 				}else{ // Valid argument it seems, so far.
 					if(strstr(arg, "-h")){ // Client wants help with this, no problem.
 						if(adm && adm->client){
-							Q_strcat(buf2, sizeof(buf2), "^7[^1Help^7]                ^7There are several filter options for you to use:\n" \
-														 "^7[^5-i^7]                  ^7Filters on IP.\n" \
-									   					 "^7[^5-n^7]                  ^7Filters on name.\n" \
-									   					 "^7[^5-b^7]                  ^7Filters on banned by.\n\n" \
-									   					 "^7[^5Example usage]       ^7/adm banlist -i 172.16 -n shoke -b boe\n");
+							Q_strcat(buf2, sizeof(buf2), va(\
+														 "%-27s ^7There are several filter options for you to use:\n" \
+														 "%-27s ^7Filters on IP.\n" \
+									   					 "%-27s ^7Filters on name.\n" \
+									   					 "%-27s ^7Filters on banned by.\n\n" \
+									   					 "%-25s ^7/adm banlist -i 172.16 -n shoke -b boe\n",
+														"^7[^1Help^7]", "^7[^5-i^7]", "^7[^5-n^7]", "^7[^5-b^7]", "^7[^5Example usage]"));
+							
 							trap_SendServerCommand( adm-g_entities, va("print \"%s\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\"", buf2));
-							memset(buf2, 0, sizeof(buf2));
 						}else{
-							Com_Printf("^7[^1Help^7]                ^7There are several filter options for you to use:\n" \
-									   "^7[^5-i^7]                  ^7Filters on IP.\n" \
-									   "^7[^5-n^7]                  ^7Filters on name.\n" \
-									   "^7[^5-b^7]                  ^7Filters on banned by.\n\n" \
-									   "^7[^5Example usage]       ^7/adm banlist -i 172.16 -n shoke -b boe\n");
+							Com_Printf("%-27s ^7There are several filter options for you to use:\n" \
+									   "%-27s ^7Filters on IP.\n" \
+									   "%-27s ^7Filters on name.\n" \
+									   "%-27s ^7Filters on banned by.\n\n" \
+									   "%-25s ^7/adm banlist -i 172.16 -n shoke -b boe\n",
+									   "^7[^1Help^7]", "^7[^5-i^7]", "^7[^5-n^7]", "^7[^5-b^7]", "^7[^5Example usage]");
+							
 							Com_Printf("\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n");
 						}
 						
@@ -1920,9 +1927,9 @@ static void adm_showBanList(int argNum, gentity_t *adm, qboolean shortCmd, qbool
 						filterActive = qtrue;
 					}else{ // Invalid argument, break.
 						if(adm){
-							Q_strcat(buf2, sizeof(buf2), va("^7[^1Error^7]               ^7Invalid argument: %s\n", arg));
+							Q_strcat(buf2, sizeof(buf2), va("%-27s ^7Invalid argument: %s\n", "^7[^1Error^7]", arg));
 						}else{
-							Com_Printf("^7[^1Error^7]               ^7Invalid argument: %s\n", arg);
+							Com_Printf("%-27s ^7Invalid argument: %s\n", "^7[^1Error^7]", arg);
 						}
 
 						filterChecking = qfalse;
@@ -1936,9 +1943,9 @@ static void adm_showBanList(int argNum, gentity_t *adm, qboolean shortCmd, qbool
 
 		if(!filterActive){
 			if(adm){
-				Q_strcat(buf2, sizeof(buf2), "^7[^5None applied^7]        ^7Call the banlist with -h for more information\n\n");
+				Q_strcat(buf2, sizeof(buf2), va("%-27s ^7Call the banlist with -h for more information\n\n", "^7[^5None applied^7]"));
 			}else{
-				Com_Printf("^7[^5None applied^7]        ^7Call the banlist with -h for more information\n\n");
+				Com_Printf("%-27s ^7Call the banlist with -h for more information\n\n", "^7[^5None applied^7]");
 			}
 		}else{
 			// Prepare query as well.
@@ -1948,20 +1955,20 @@ static void adm_showBanList(int argNum, gentity_t *adm, qboolean shortCmd, qbool
 			if(strlen(filterIP) > 0){
 				Boe_convertNonSQLChars(filterIP);
 				if(adm){
-					Q_strcat(buf2, sizeof(buf2), va("^7[^5IP^7]                  ^7%s\n", filterIP));
+					Q_strcat(buf2, sizeof(buf2), va("%-27s ^7%s\n", "^7[^5IP^7]", filterIP));
 				}else{
-					Com_Printf("^7[^5IP^7]                  ^7%s\n", filterIP);
+					Com_Printf("%-27s ^7%s\n", filterIP);
 				}
-				strcat(filterQuery, va("IP LIKE '%%%s%%'", filterIP));
+				strcat(filterQuery, va("IP LIKE '%%%s%%'", "^7[^5IP^7]", filterIP));
 				rc++;
 			}
 
 			if(strlen(filterName) > 0){
 				Boe_convertNonSQLChars(filterName);
 				if(adm){
-					Q_strcat(buf2, sizeof(buf2), va("^7[^5Name^7]                ^7%s\n", filterName));
+					Q_strcat(buf2, sizeof(buf2), va("%-27s ^7%s\n", "^7[^5IP^7]", filterName));
 				}else{
-					Com_Printf("^7[^5Name^7]                ^7%s\n", filterName);
+					Com_Printf("%-27s ^7%s\n", "^7[^5Name^7]", filterName);
 				}
 				if(rc){
 					strcat(filterQuery, " AND ");
@@ -1973,9 +1980,9 @@ static void adm_showBanList(int argNum, gentity_t *adm, qboolean shortCmd, qbool
 			if(strlen(filterBy) > 0){
 				Boe_convertNonSQLChars(filterBy);
 				if(adm){
-					Q_strcat(buf2, sizeof(buf2), va("^7[^5By^7]                  ^7%s\n", filterBy));
+					Q_strcat(buf2, sizeof(buf2), va("%-27s ^7%s\n", "^7[^5By^7]", filterBy));
 				}else{
-					Com_Printf("^7[^5By^7]                  ^7%s\n", filterBy);
+					Com_Printf("%-27s ^7%s\n", "^7[^5By^7]", filterBy);
 				}
 				if(rc){
 					strcat(filterQuery, " AND ");
@@ -1993,9 +2000,11 @@ static void adm_showBanList(int argNum, gentity_t *adm, qboolean shortCmd, qbool
 	}
 
 	if(adm){
-		Q_strcat(buf2, sizeof(buf2), "^3 #    IP              Name            Reason             By\n^7------------------------------------------------------------------------\n");
+		Q_strcat(buf2, sizeof(buf2), va("^3 %-4s %-15s %-15s %-18s By\n" \
+									 "^7------------------------------------------------------------------------\n",
+									 "#", "IP", "Name", "Reason"));
 	}else{
-		Com_Printf("^3 #    IP              Name            Reason             By\n");
+		Com_Printf("^3 %-4s %-15s %-15s %-18s By\n", "#", "IP", "Name", "Reason");
 		Com_Printf("^7------------------------------------------------------------------------\n");
 	}
 
@@ -2018,7 +2027,7 @@ static void adm_showBanList(int argNum, gentity_t *adm, qboolean shortCmd, qbool
 				// Boe!Man 11/04/11: Put packet through to clients if char size would exceed 1000 and reset buf2.
 				if((strlen(buf2)+strlen(va("[^3%-3.3i^7] %-15.15s %-15.15s %-18.18s %-15.15s\n", sqlite3_column_int(stmt, 0), sqlite3_column_text(stmt, 1), sqlite3_column_text(stmt, 2), sqlite3_column_text(stmt, 4), sqlite3_column_text(stmt, 3)))) > 1000){
 					trap_SendServerCommand( adm-g_entities, va("print \"%s\"", buf2));
-					memset(buf2, 0, sizeof(buf2)); // Boe!Man 11/04/11: Properly empty the buffer.
+					memset(buf2, 0, sizeof(buf2)); // Boe!Man 11/04/11: Empty the buffer.
 				}
 				Q_strcat(buf2, sizeof(buf2), va("[^3%-3.3i^7] %-15.15s %-15.15s %-18.18s %-15.15s\n", sqlite3_column_int(stmt, 0), sqlite3_column_text(stmt, 1), sqlite3_column_text(stmt, 2), sqlite3_column_text(stmt, 4), sqlite3_column_text(stmt, 3)));
 			}else{
@@ -3296,10 +3305,10 @@ int adm_adminList(int argNum, gentity_t *adm, qboolean shortCmd)
 	// Display header.
 	if(adm && adm->client){
 		Q_strcat(buf2, sizeof(buf2), "^3[Adminlist]^7\n");
-		Q_strcat(buf2, sizeof(buf2), "\n^3 #     Lvl  IP              Name                  By\n^7------------------------------------------------------------------------\n");
+		Q_strcat(buf2, sizeof(buf2), va("\n^3 %-6s%-5s%-16s%-22sBy\n^7------------------------------------------------------------------------\n", "#", "Lvl", "IP", "Name"));
 	}else{
 		Com_Printf("^3[Adminlist]^7\n");
-		Com_Printf("\n^3 #     Lvl  IP              Name                  By\n");
+		Com_Printf("\n^3 %-6s%-5s%-16s%-22sBy\n", "#", "Lvl", "IP", "Name");
 		Com_Printf("^7------------------------------------------------------------------------\n");
 	}
 
@@ -3324,9 +3333,9 @@ int adm_adminList(int argNum, gentity_t *adm, qboolean shortCmd)
 					trap_SendServerCommand( adm-g_entities, va("print \"%s\"", buf2));
 					memset(buf2, 0, sizeof(buf2)); // Boe!Man 11/04/11: Properly empty the buffer.
 				}
-				Q_strcat(buf2, sizeof(buf2), va("[^3%-3.3i^7]  [^3%i^7]  %-15.15s %-21.21s %-21.21s\n", sqlite3_column_int(stmt, 0), sqlite3_column_int(stmt, 1), sqlite3_column_text(stmt, 2), sqlite3_column_text(stmt, 3), sqlite3_column_text(stmt, 4)));
+				Q_strcat(buf2, sizeof(buf2), va("[^3%-3.3i^7%-3s[^3%i^7%-3s%-15.15s %-21.21s %-21.21s\n", sqlite3_column_int(stmt, 0), "]", sqlite3_column_int(stmt, 1), "]", sqlite3_column_text(stmt, 2), sqlite3_column_text(stmt, 3), sqlite3_column_text(stmt, 4)));
 			}else{
-				Com_Printf("[^3%-3.3i^7]  [^3%i^7]  %-15.15s %-21.21s %-21.21s\n", sqlite3_column_int(stmt, 0), sqlite3_column_int(stmt, 1), sqlite3_column_text(stmt, 2), sqlite3_column_text(stmt, 3), sqlite3_column_text(stmt, 4));
+				Com_Printf("[^3%-3.3i^7%-3s[^3%i^7%-3s%-15.15s %-21.21s %-21.21s\n", sqlite3_column_int(stmt, 0), "]", sqlite3_column_int(stmt, 1), "]", sqlite3_column_text(stmt, 2), sqlite3_column_text(stmt, 3), sqlite3_column_text(stmt, 4));
 			}
 		}
 	}
@@ -3367,10 +3376,10 @@ int adm_clanList(int argNum, gentity_t *adm, qboolean shortCmd)
 	// Display header.
 	if(adm && adm->client){
 		Q_strcat(buf2, sizeof(buf2), "^3[Clanlist]^7\n\n");
-		Q_strcat(buf2, sizeof(buf2), "^3 #     IP              Name                  By\n^7------------------------------------------------------------------------\n");
+		Q_strcat(buf2, sizeof(buf2), va("^3 %-6s%-16s%-22sBy\n^7------------------------------------------------------------------------\n", "#", "IP", "Name"));
 	}else{
-		Com_Printf("^3[Adminlist]^7\n\n");
-		Com_Printf("^3 #     IP              Name                  By\n");
+		Com_Printf("^3[Clanlist]^7\n\n");
+		Com_Printf("^3 %-6s%-16s%-22sBy\n", "#", "IP", "Name");
 		Com_Printf("^7------------------------------------------------------------------------\n");
 	}
 
@@ -3392,9 +3401,9 @@ int adm_clanList(int argNum, gentity_t *adm, qboolean shortCmd)
 					trap_SendServerCommand( adm-g_entities, va("print \"%s\"", buf2));
 					memset(buf2, 0, sizeof(buf2)); // Boe!Man 11/04/11: Properly empty the buffer.
 				}
-				Q_strcat(buf2, sizeof(buf2), va("[^3%-3.3i^7]  %-15.15s %-21.21s %-21.21s\n", sqlite3_column_int(stmt, 0), sqlite3_column_text(stmt, 1), sqlite3_column_text(stmt, 2), sqlite3_column_text(stmt, 3)));
+				Q_strcat(buf2, sizeof(buf2), va("[^3%-3.3i^7%-3s%-15.15s %-21.21s %-21.21s\n", sqlite3_column_int(stmt, 0),"]", sqlite3_column_text(stmt, 1), sqlite3_column_text(stmt, 2), sqlite3_column_text(stmt, 3)));
 			}else{
-				Com_Printf("[^3%-3.3i^7]  %-15.15s %-21.21s %-21.21s\n", sqlite3_column_int(stmt, 0), sqlite3_column_text(stmt, 1), sqlite3_column_text(stmt, 2), sqlite3_column_text(stmt, 3));
+				Com_Printf("[^3%-3.3i^7%-3s%-15.15s %-21.21s %-21.21s\n", sqlite3_column_int(stmt, 0), "]", sqlite3_column_text(stmt, 1), sqlite3_column_text(stmt, 2), sqlite3_column_text(stmt, 3));
 			}
 		}
 	}

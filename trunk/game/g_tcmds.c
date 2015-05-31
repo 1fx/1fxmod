@@ -118,42 +118,40 @@ void G_TeamInfo (gentity_t *ent, char *team)
 	else if (t == 2){
 		teamName = "Blue";
 	}else{
-		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You must be in a team to use team commands!\n\""));
+		trap_SendServerCommand( ent-g_entities, "print \"^3[Info] ^7You must be in a team to use team commands!\n\"");
 		return;
 	}
 
-	trap_SendServerCommand( ent-g_entities, va("print \"\n^3Server settings\n\""));
-	trap_SendServerCommand( ent-g_entities, va("print \"--------------------------------------\n\""));
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Mod used^7]            %s %s\n", INF_STRING, INF_VERSION_STRING));
+	trap_SendServerCommand( ent-g_entities, "print \"\n^3Server settings\n\"");
+	trap_SendServerCommand( ent-g_entities, "print \"--------------------------------------\n\"");
+	trap_SendServerCommand( ent-g_entities, va("print \"%-25s %s %s\n", "[^3Mod used^7]", INF_STRING, INF_VERSION_STRING));
 	if (g_compMode.integer > 0){
-		trap_SendServerCommand( ent-g_entities, va("print \"[^3Competition Mode^7]    Yes\n"));
+		trap_SendServerCommand( ent-g_entities, va("print \"%-25s Yes\n", "[^3Competition Mode^7]"));
 	}else{
-		trap_SendServerCommand( ent-g_entities, va("print \"[^3Competition Mode^7]    No\n"));
+		trap_SendServerCommand( ent-g_entities, va("print \"%-25s No\n", "[^3Competition Mode^7]"));
 	}
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Scorelimit^7]          %i\n", g_scorelimit.integer));
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Timelimit^7]           %i\n", g_timelimit.integer));
+	trap_SendServerCommand( ent-g_entities, va("print \"%-25s %i\n", "[^3Scorelimit^7]", g_scorelimit.integer));
+	trap_SendServerCommand( ent-g_entities, va("print \"%-25s %i\n", "[^3Timelimit^7]", g_timelimit.integer));
 	if(strstr(g_gametype.string, "ctf")){
-		trap_SendServerCommand( ent-g_entities, va("print \"[^3Respawn interval^7]    %i\n", g_respawnInterval.integer));
+		trap_SendServerCommand( ent-g_entities, va("print \"%-25s %i\n", "[^3Respawn interval^7]", g_respawnInterval.integer));
 	}
 	#ifndef _GOLD
 	if (g_allowthirdperson.integer > 0){
-		trap_SendServerCommand( ent-g_entities, va("print \"[^3Third person^7]        Yes\n"));
+		trap_SendServerCommand( ent-g_entities, va("print \"%-25s Yes\n", "[^3Third person^7]"));
 	}else{
-		trap_SendServerCommand( ent-g_entities, va("print \"[^3Third person^7]        No\n"));
+		trap_SendServerCommand( ent-g_entities, va("print \"%-25s No\n", "[^3Third person^7]"));
 	}
 	#endif // not _GOLD
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Speed^7]               %i\n", g_speed.integer));
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Gravity^7]             %i\n", g_gravity.integer));
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Total clients^7]       %i\n", level.numConnectedClients));
+	trap_SendServerCommand( ent-g_entities, va("print \"%-25s %i\n", "[^3Speed^7]", g_speed.integer));
+	trap_SendServerCommand( ent-g_entities, va("print \"%-25s %i\n", "[^3Gravity^7]", g_gravity.integer));
+	trap_SendServerCommand( ent-g_entities, va("print \"%-25s %i\n", "[^3Total clients^7]", level.numConnectedClients));
 	
 	trap_SendServerCommand( ent-g_entities, va("print \"\n^3%s team\n\"", teamName));
-	trap_SendServerCommand( ent-g_entities, va("print \"--------------------------------------\n\""));
-	if (t == 1 && level.redLocked){
-		trap_SendServerCommand( ent-g_entities, va("print \"[^3Locked^7]              Yes\n"));
-	}else if (t == 2 && level.blueLocked){
-		trap_SendServerCommand( ent-g_entities, va("print \"[^3Locked^7]              Yes\n"));
+	trap_SendServerCommand( ent-g_entities, "print \"--------------------------------------\n\"");
+	if ((t == TEAM_RED && level.redLocked) || (t == TEAM_BLUE && level.blueLocked)){
+		trap_SendServerCommand( ent-g_entities, va("print \"%-25s Yes\n", "[^3Locked^7]"));
 	}else{
-		trap_SendServerCommand( ent-g_entities, va("print \"[^3Locked^7]              No\n"));
+		trap_SendServerCommand( ent-g_entities, va("print \"%-25s No\n", "[^3Locked^7]"));
 	}
 	// Boe!Man 2/7/11: Display the amount of invited specs to the team.
 	for ( i = 0; i < level.maxclients; i ++ ){
@@ -167,21 +165,21 @@ void G_TeamInfo (gentity_t *ent, char *team)
 			continue;
 		invitedcount += 1;
 	}
-	trap_SendServerCommand( ent-g_entities, va("print \"[^3Invited^7]             %i\n", invitedcount));
+	trap_SendServerCommand( ent-g_entities, va("print \"%-25s %i\n", "[^3Invited^7]", invitedcount));
 	if (cm_enabled.integer == 2 || cm_enabled.integer == 3){
-		trap_SendServerCommand( ent-g_entities, va("print \"[^3Round^7]               1st\n"));
+		trap_SendServerCommand( ent-g_entities, va("print \"%-25s 1st\n", "[^3Round^7]"));
 	}else if (cm_enabled.integer == 4){
-		trap_SendServerCommand( ent-g_entities, va("print \"[^3Round^7]               2nd\n"));
+		trap_SendServerCommand( ent-g_entities, va("print \"%-25s 2nd\n", "[^3Round^7]"));
 	}else if (cm_enabled.integer == 5){
-		trap_SendServerCommand( ent-g_entities, va("print \"[^3Round^7]               Finished\n"));
+		trap_SendServerCommand( ent-g_entities, va("print \"%-25s Finished\n", "[^3Round^7]"));
 	}else{
-		trap_SendServerCommand( ent-g_entities, va("print \"[^3Round^7]               N/A\n"));
+		trap_SendServerCommand( ent-g_entities, va("print \"%-25s N/A\n", "[^3Round^7]"));
 	}
 
 	// Boe!Man 2/7/11: Show the invited people.
 	if (invitedcount > 0){
-		trap_SendServerCommand( ent-g_entities, va("print \"\n^3Id#  Invited spectators\n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \"--------------------------------------\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \"\n^3%-4s Invited spectators\n\"", "Id#"));
+		trap_SendServerCommand( ent-g_entities, "print \"--------------------------------------\n\"");
 		for ( i = 0; i < level.maxclients; i ++ ){
 			if(g_entities[i].client->pers.connected == CON_DISCONNECTED )
 				continue;
@@ -191,46 +189,43 @@ void G_TeamInfo (gentity_t *ent, char *team)
 				continue;
 			if(t == TEAM_BLUE && !g_entities[i].client->sess.invitedByBlue)
 				continue;
-			if(i < 10){
-				trap_SendServerCommand( ent-g_entities, va("print \"^7[^3%i^7]  %s\n\"", i, g_entities[i].client->pers.cleanName));
-			}else{
-				trap_SendServerCommand( ent-g_entities, va("print \"^7[^3%i^7] %s\n\"", i, g_entities[i].client->pers.cleanName));
-			}
+
+			trap_SendServerCommand( ent-g_entities, va("print \"^7[^3%i^7] %2s\n\"", i, g_entities[i].client->pers.cleanName));
 		}
 	}
 
 	// Boe!Man 11/18/10: Print scores as well when the scrim's started.
 	if (cm_enabled.integer > 1){
-		trap_SendServerCommand( ent-g_entities, va("print \"\n^3Scores\n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \"-------------------------------\n\""));
+		trap_SendServerCommand( ent-g_entities, "print \"\n^3Scores\n\"");
+		trap_SendServerCommand( ent-g_entities, "print \"-------------------------------\n\"");
 		if (cm_enabled.integer == 2 || cm_enabled.integer == 21){
 			if (t == 1){
-				trap_SendServerCommand( ent-g_entities, va("print \"[^31st Round^7]           %i - %i\n", level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE]));
+				trap_SendServerCommand( ent-g_entities, va("print \"%-25s %i - %i\n", "[^31st Round^7]", level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE]));
 			}else if (t == 2){
-				trap_SendServerCommand( ent-g_entities, va("print \"[^31st Round^7]           %i - %i\n", level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]));
+				trap_SendServerCommand( ent-g_entities, va("print \"%-25s %i - %i\n", "[^31st Round^7]", level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]));
 			}
 		}
 		// Boe!Man 3/19/11: Print the scores written to the CVARs when displaying the 1st round result screen.
 		else if(cm_enabled.integer == 3){
 			if (t == 1){
-				trap_SendServerCommand( ent-g_entities, va("print \"[^31st Round^7]           %i - %i\n", cm_sr.integer, cm_sb.integer));
+				trap_SendServerCommand( ent-g_entities, va("print \"%-25s %i - %i\n", "[^31st Round^7]", cm_sr.integer, cm_sb.integer));
 			}else if (t == 2){
-				trap_SendServerCommand( ent-g_entities, va("print \"[^31st Round^7]           %i - %i\n", cm_sb.integer, cm_sr.integer));
+				trap_SendServerCommand( ent-g_entities, va("print \"%-25s %i - %i\n", "[^31st Round^7]", cm_sb.integer, cm_sr.integer));
 			}
 		}
 		else if (cm_enabled.integer == 4 || cm_enabled.integer == 5){
 			if (t == 1){
-				trap_SendServerCommand( ent-g_entities, va("print \"[^31st Round^7]           %i - %i\n", cm_sr.integer, cm_sb.integer));
-				trap_SendServerCommand( ent-g_entities, va("print \"[^32nd Round^7]           %i - %i\n", level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE]));
-				trap_SendServerCommand( ent-g_entities, va("print \"[^3Total^7]               %i - %i\n", level.teamScores[TEAM_RED]+cm_sr.integer, level.teamScores[TEAM_BLUE]+cm_sb.integer));
+				trap_SendServerCommand( ent-g_entities, va("print \"%-25s %i - %i\n", "[^31st Round^7]", cm_sr.integer, cm_sb.integer));
+				trap_SendServerCommand( ent-g_entities, va("print \"%-25s %i - %i\n", "[^32nd Round^7]", level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE]));
+				trap_SendServerCommand( ent-g_entities, va("print \"%-25s %i - %i\n", "[^3Total^7]", level.teamScores[TEAM_RED]+cm_sr.integer, level.teamScores[TEAM_BLUE]+cm_sb.integer));
 			}else if (t == 2){
-				trap_SendServerCommand( ent-g_entities, va("print \"[^31st Round^7]           %i - %i\n", cm_sb.integer, cm_sr.integer));
-				trap_SendServerCommand( ent-g_entities, va("print \"[^32nd Round^7]           %i - %i\n", level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]));
-				trap_SendServerCommand( ent-g_entities, va("print \"[^3Total^7]               %i - %i\n", level.teamScores[TEAM_BLUE]+cm_sb.integer, level.teamScores[TEAM_RED]+cm_sr.integer));
+				trap_SendServerCommand( ent-g_entities, va("print \"%-25s %i - %i\n", "[^31st Round^7]", cm_sb.integer, cm_sr.integer));
+				trap_SendServerCommand( ent-g_entities, va("print \"%-25s %i - %i\n", "[^32nd Round^7]", level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]));
+				trap_SendServerCommand( ent-g_entities, va("print \"%-25s %i - %i\n", "[^3Total^7]", level.teamScores[TEAM_BLUE]+cm_sb.integer, level.teamScores[TEAM_RED]+cm_sr.integer));
 			}
 		}
 	}
-	trap_SendServerCommand( ent-g_entities, va("print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\""));
+	trap_SendServerCommand( ent-g_entities, "print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\"");
 }
 
 /*
