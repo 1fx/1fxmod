@@ -1241,11 +1241,11 @@ void Boe_Players(gentity_t *ent)
 		#else
 		// Regular.
 		if (level.clients[i].sess.admin == 2)
-			admin = "[B^7]";
+			admin = "[^3B^7]";
 		else if(level.clients[i].sess.admin == 3)
-			admin = "[A^7]";
+			admin = "[^3A^7]";
 		else if (level.clients[i].sess.admin == 4)
-			admin = "[S^7]";
+			admin = "[^3S^7]";
 		else
 			admin = "";
 		#endif // _3DServer
@@ -1291,7 +1291,7 @@ void Boe_Players(gentity_t *ent)
 			trap_SendServerCommand(ent - g_entities, va("print \"%-9s%-42s%-10s[^3%s^7] %-3s %-3s %-3s %s\n\"",
 				id, name, ping, level.clients[i].sess.countryext, admin, clan, mute, client));
 		}else{
-			trap_SendServerCommand(ent - g_entities, va("print \"%-9s%-42s%-10s %-3s %-3s %-3s %s\n\"",
+			trap_SendServerCommand(ent - g_entities, va("print \"%-9s%-42s%-10s%-3s %-3s %-3s %s\n\"",
 				id, name, ping, admin, clan, mute, client));
 		}
 	}
