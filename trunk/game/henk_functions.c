@@ -1231,7 +1231,7 @@ void PrintCustom(int numb){
 		trap_GPG_FindPairValue(group, "Command", "none", name);
 		trap_GPG_FindPairValue(group, "Description", "No description defined", desc);
 		trap_GPG_FindPairValue(group, "AdminLevel", "5", level);
-		trap_SendServerCommand( numb, va("print \"[^3%-1.1s^7]       %-28.28s^7[^3%.35s^7]\n\"", level, name, desc));
+		trap_SendServerCommand( numb, va("print \"[^3%-1.1s^7%-7s %-28.28s^7[^3%.35s^7]\n\"", level, "]", name, desc));
 		group = trap_GPG_GetNext(group);
 	}
 	trap_GP_Delete(&GP2);

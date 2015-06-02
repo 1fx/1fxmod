@@ -12,87 +12,95 @@ typedef struct
 	char	*adminCmd; // Full Admin command for /adm and rcon, and with !.
 	int		*adminLevel; // The level that the Admin needs to be in order to execute this command.
 	int		(*Function)(int argNum, gentity_t *adm, qboolean shortCmd); // Store pointer to the given function so we can call it later.
+	char	*desc; // Description of the command in /adm.
+	char	*params; // Description of the command in /adm.
 	char	*suffix; // Suffix for post processing broadcast, or NULL when function doesn't use it/has no suffix.
 } admCmd_t;
 
 static admCmd_t AdminCommands[] = 
 {
-	{"!adr","adminremove", &g_adminremove.integer, &adm_adminRemove, NULL},
-	{"!uc","uppercut", &g_uppercut.integer, &adm_Uppercut, NULL},
-	{"!ab","addbadmin", &g_addbadmin.integer, &adm_addAdmin, NULL},
-	{"!aa","addadmin", &g_addadmin.integer, &adm_addAdmin, NULL},
-	{"!as","addsadmin", &g_addsadmin.integer, &adm_addAdmin, NULL},
-	{"!tw","twist", &g_twist.integer, &adm_Twist, "ed"},
-	{"!pl","plant", &g_plant.integer, &adm_Plant, "ed"},
-	{"!ro","runover", &g_runover.integer, &adm_Runover, NULL},
-	{"!r", "respawn", &g_respawn.integer, &adm_Respawn, "ed"},
-	{"!rs","respawn", &g_respawn.integer, &adm_Respawn, "ed"},
-	{"!mr","maprestart", &g_mapswitch.integer, &adm_mapRestart, NULL},
-	{"!mr","map_restart", &g_mapswitch.integer, &adm_mapRestart, NULL},
-	{"!st","strip", &g_strip.integer, &adm_Strip, "ped"},
-	{"!ra","removeadmin", &g_removeadmin.integer, &adm_removeAdmin, NULL},
-	{"!ft","forceteam", &g_forceteam.integer, &adm_forceTeam, "ed"},
-	{"!nl","nolower", &g_nosection.integer, &adm_noLower, NULL},
-	{"!nr","noroof", &g_nosection.integer, &adm_noRoof, NULL},
-	{"!nm","nomiddle", &g_nosection.integer, &adm_noMiddle, NULL},
-	{"!nw","nowhole", &g_nosection.integer, &adm_noWhole, NULL},
-	{"!sh","shuffleteams", &g_shuffleteams.integer, &adm_shuffleTeams, NULL},
-	{"!nn","nonades", &g_nades.integer, &adm_noNades, NULL},
-	{"!sl","scorelimit", &g_sl.integer, &adm_scoreLimit, NULL},
-	{"!tl","timelimit", &g_tl.integer, &adm_timeLimit, NULL},
-	{"!ri","respawninterval", &g_ri.integer, &adm_respawnInterval, NULL},
-	{"!rd","realdamage", &g_damage.integer, &adm_realDamage, NULL},
-	{"!nd","normaldamage", &g_damage.integer, &adm_normalDamage, NULL},
-	{"!gr","gametyperestart", &g_gr.integer, &adm_gametypeRestart, NULL},
-	{"!acl","addclan", &g_clan.integer, &adm_addClanMember, NULL},
-	{"!rcl","removeclanlist", &g_clan.integer, &adm_removeClanMemberFromList, NULL},
-	{"!clr","clanlistremove", &g_clan.integer, &adm_removeClanMemberFromList, NULL},
-	{"!cm","compmode", &g_cm.integer, &adm_compMode, NULL},
-	{"!bl","banlist", &g_ban.integer, &adm_banList, NULL},
-	{"!ba","ban", &g_ban.integer, &adm_Ban, "ned"},
-	{"!br","broadcast", &g_broadcast.integer, &adm_Broadcast, NULL},
-	{"!sbl","subnetbanlist", &g_subnetban.integer, &adm_subnetbanList, NULL},
-	{"!et","eventeams", &g_eventeams.integer, &adm_evenTeams, NULL},
-	{"!cva","clanvsall", &g_clanvsall.integer, &adm_clanVsAll, NULL},
-	{"!sw","swapteams", &g_swapteams.integer, &adm_swapTeams},
-	{"!l","lock", &g_lock.integer, &adm_lockTeam, NULL},
-	{"!fl","flash", &g_flash.integer, &adm_Flash, "ed"},
-	{"!g","gametype", &g_mapswitch.integer, &adm_Gametype, NULL},
-	{"!gt","gametype", &g_mapswitch.integer, &adm_Gametype, NULL},
-	{"!pv","passvote", &g_forcevote.integer, &adm_passVote, NULL},
-	{"!cv","cancelvote", &g_forcevote.integer, &adm_cancelVote, NULL},
-	{"!pa","pause", &g_pause.integer, &adm_Pause, NULL},
-	{"!ub", "unban", &g_ban.integer, &adm_Unban, NULL},
-	{"!uba","unban", &g_ban.integer, &adm_Unban, NULL},
-	{"!sbu","subnetunban", &g_subnetban.integer, &adm_subnetUnban, NULL},
-	{"!su","subnetunban", &g_subnetban.integer, &adm_subnetUnban, NULL},
-	{"!sb","subnetban", &g_subnetban.integer, &adm_subnetBan, "ned"},
-	{"!mc","mapcycle", &g_mapswitch.integer, &adm_mapCycle, NULL},
-	{"!adl","adminlist", &g_adminlist.integer, &adm_adminList, NULL},
-	{"!al","adminlist", &g_adminlist.integer, &adm_adminList, NULL},
-	{"!cl","clanlist", &g_clan.integer, &adm_clanList, NULL},
-	{"!b","burn", &g_burn.integer, &adm_Burn, "ed"},
-	{"!u","uppercut", &g_uppercut.integer, &adm_Uppercut, NULL},
-	{"!p","pop", &g_pop.integer, &adm_Pop, "ped"},
-	{"!k","kick", &g_kick.integer, &adm_Kick, "ed"},
-	{"!m","mute", &g_mute.integer, &adm_Mute, NULL},
-	{"!s","strip", &g_strip.integer, &adm_Strip, "ped"},
-	{"!ff","friendlyfire", &g_ff.integer, &adm_friendlyFire, NULL},
-	{"!rn","rename", &g_rename.integer, &adm_Rename, NULL},
-	{"!rc", "removeclan", &g_clan.integer, &adm_removeClanMember, NULL},
-	{"!map", "map", &g_mapswitch.integer, &adm_Map, NULL},
-	{"!altmap","altmap", &g_mapswitch.integer, &adm_Map, NULL},
-	{"!devmap","devmap", &g_mapswitch.integer, &adm_Map, NULL},
-	{"!rounds","rounds", &g_cm.integer, &adm_Rounds, NULL},
-	{ "!swi","switch", &g_forceteam.integer, &adm_Switch, "ed" },
+	{"!adr",	"adminremove",		&g_adminremove.integer,		&adm_adminRemove,				"Remove an Admin from the list",	"<line #>",			NULL},
+	{"!adl",	"adminlist",		&g_adminlist.integer,		&adm_adminList,					"Show the Adminlist",				"",					NULL},
+	{"!al",		"adminlist",		&g_adminlist.integer,		&adm_adminList,					"Show the Adminlist",				"",					NULL},
+	{"!ab",		"addbadmin",		&g_addbadmin.integer,		&adm_addAdmin,					"Basic Admin",						"<i/n>",			NULL},
+	{"!aa",		"addadmin",			&g_addadmin.integer,		&adm_addAdmin,					"Admin",							"<i/n>",			NULL},
+	{"!as",		"addsadmin",		&g_addsadmin.integer,		&adm_addAdmin,					"Server Admin",						"<i/n>",			NULL},
+	{"!sl",		"scorelimit",		&g_sl.integer,				&adm_scoreLimit,				"Change the scorelimit",			"<time>",			NULL},
+	{"!tl",		"timelimit",		&g_tl.integer,				&adm_timeLimit,					"Change the timelimit",				"<time>",			NULL},
+	{"!sw",		"swapteams",		&g_swapteams.integer,		&adm_swapTeams,					"Swap the players from team",		"",					NULL},
+	{"!rounds",	"rounds",			&g_cm.integer,				&adm_Rounds,					"Set the number of rounds",			"<rounds>",			NULL},
+	// Boe!Man 6/2/15: Don't move or modify anything above this comment, the /adm list expects them in that specific order.
+	{"!tw",		"twist",			&g_twist.integer,			&adm_Twist,						"Twist or untwist a player",		"<i/n>",			"ed"},
+	{"!pl",		"plant",			&g_plant.integer,			&adm_Plant,						"Plant or unplant a player",		"<i/n>",			"ed"},
+	{"!ro",		"runover",			&g_runover.integer,			&adm_Runover,					"Push a player backwards",			"<i/n>",			NULL},
+	{"!r",		"respawn",			&g_respawn.integer,			&adm_Respawn,					"Respawn a player",					"<i/n>",			"ed"},
+	{"!rs",		"respawn",			&g_respawn.integer,			&adm_Respawn,					"Respawn a player",					"<i/n>",			"ed" },
+	{"!mr",		"maprestart",		&g_mapswitch.integer,		&adm_mapRestart,				"Restart the current map",			"",					NULL},
+	{"!mr",		"map_restart",		&g_mapswitch.integer,		&adm_mapRestart,				"Restart the current map",			"",					NULL },
+	{"!st",		"strip",			&g_strip.integer,			&adm_Strip,						"Remove weapons from a player",		"<i/n>",			"ped"},
+	{"!ra",		"removeadmin",		&g_removeadmin.integer,		&adm_removeAdmin,				"Remove an Admin",					"<i/n>",			NULL},
+	{"!ft",		"forceteam",		&g_forceteam.integer,		&adm_forceTeam,					"Force a player to join a team",	"<i/n> <team>",		"ed"},
+	{"!nl",		"nolower",			&g_nosection.integer,		&adm_noLower,					"Enable/Disable Nolower",			"",					NULL},
+	{"!nr",		"noroof",			&g_nosection.integer,		&adm_noRoof,					"Enable/Disable Noroof",			"",					NULL},
+	{"!nm",		"nomiddle",			&g_nosection.integer,		&adm_noMiddle,					"Enable/Disable Nomiddle",			"",					NULL},
+	{"!nw",		"nowhole",			&g_nosection.integer,		&adm_noWhole,					"Enable/Disable Nowhole",			"",					NULL},
+	{"!sh",		"shuffleteams",		&g_shuffleteams.integer,	&adm_shuffleTeams,				"Mix the teams at random",			"",					NULL},
+	{"!nn",		"nonades",			&g_nades.integer,			&adm_noNades,					"Enable or disable nades",			"",					NULL},
+	{"!ri",		"respawninterval",	&g_ri.integer,				&adm_respawnInterval,			"Change the respawn interval",		"<time>",			NULL},
+	{"!rd",		"realdamage",		&g_damage.integer,			&adm_realDamage,				"Toggle Real damage",				"",					NULL},
+	{"!nd",		"normaldamage",		&g_damage.integer,			&adm_normalDamage,				"Toggle Normal damage",				"",					NULL},
+	{"!gr",		"gametyperestart",	&g_gr.integer,				&adm_gametypeRestart,			"Restart the current gametype",		"",					NULL},
+	{"!acl",	"addclan",			&g_clan.integer,			&adm_addClanMember,				"Add a clan member",				"<i/n>",			NULL},
+	{"!rc",		"removeclan",		&g_clan.integer,			&adm_removeClanMember,			"Remove a clan member",				"<i/n>",			NULL},
+	{"!rcl",	"removeclanlist",	&g_clan.integer,			&adm_removeClanMemberFromList,	"Remove a member from the list",	"<i/line #>",		NULL},
+	{"!clr",	"clanlistremove",	&g_clan.integer,			&adm_removeClanMemberFromList,	"Remove a member from the list",	"<i/line #>",		NULL},
+	{"!cl",		"clanlist",			&g_clan.integer,			&adm_clanList,					"Show the clanlist",				"",					NULL},
+	{"!cm",		"compmode",			&g_cm.integer,				&adm_compMode,					"Toggles Competition Mode",			"",					NULL},
+	{"!bl",		"banlist",			&g_ban.integer,				&adm_banList,					"Shows the current banlist",		"",					NULL},
+	{"!ba",		"ban",				&g_ban.integer,				&adm_Ban,						"Ban a player",						"<i/n> <reason>",	"ned"},
+	{"!ub",		"unban",			&g_ban.integer,				&adm_Unban,						"Unban a banned IP (player)",		"<ip/line #>",		NULL},
+	{"!uba",	"unban",			&g_ban.integer,				&adm_Unban,						"Unban a banned IP (player)",		"<ip/line #>",		NULL},
+	{"!br",		"broadcast",		&g_broadcast.integer,		&adm_Broadcast,					"Broadcast a message",				"<message>",		NULL},
+	{"!sbl",	"subnetbanlist",	&g_subnetban.integer,		&adm_subnetbanList,				"Shows the current subnetbanlist",	"",					NULL},
+	{"!sb",		"subnetban",		&g_subnetban.integer,		&adm_subnetBan,					"Ban a players' subnet",			"<i/n> <reason>",	"ned"},
+	{"!sbu",	"subnetunban",		&g_subnetban.integer,		&adm_subnetUnban,				"Unban a banned subnet",			"<ip/line #>",		NULL},
+	{"!su",		"subnetunban",		&g_subnetban.integer,		&adm_subnetUnban,				"Unban a banned subnet",			"<ip/line #>",		NULL},
+	{"!et",		"eventeams",		&g_eventeams.integer,		&adm_evenTeams,					"Make the teams even",				"",					NULL},
+	{"!cva",	"clanvsall",		&g_clanvsall.integer,		&adm_clanVsAll,					"Clan versus other players-mode",	"",					NULL},
+	{"!l",		"lock",				&g_lock.integer,			&adm_lockTeam,					"Lock/unlock a team",				"<team>",			NULL},
+	{"!fl",		"flash",			&g_flash.integer,			&adm_Flash,						"Flash a player",					"<i/n>",			"ed"},
+	{"!g",		"gametype",			&g_mapswitch.integer,		&adm_Gametype,					"Switch to the given gametype",		"<gametype>",		NULL},
+	{"!gt",		"gametype",			&g_mapswitch.integer,		&adm_Gametype,					"Switch to the given gametype",		"<gametype>",		NULL},
+	{"!map",	"map",				&g_mapswitch.integer,		&adm_Map,						"Switch to the specified map",		"<map name>",		NULL},
+	{"!altmap",	"altmap",			&g_mapswitch.integer,		&adm_Map,						"Switch to the specified altmap",	"<map name>",		NULL},
+	{"!devmap",	"devmap",			&g_mapswitch.integer,		&adm_Map,						"Switch to the specified devmap",	"<map name>",		NULL},
+	{"!mc",		"mapcycle",			&g_mapswitch.integer,		&adm_mapCycle,					"Switch to the next-defined map",	"",					NULL},
+	{"!pv",		"passvote",			&g_forcevote.integer,		&adm_passVote,					"Pass the running vote",			"",					NULL},
+	{"!cv",		"cancelvote",		&g_forcevote.integer,		&adm_cancelVote,				"Cancel the running vote",			"",					NULL},
+	{"!pa",		"pause",			&g_pause.integer,			&adm_Pause,						"Pause/resume the game",			"",					NULL},
+	{"!b",		"burn",				&g_burn.integer,			&adm_Burn,						"Burn a player",					"",					"ed"},
+	{"!k",		"kick",				&g_kick.integer,			&adm_Kick,						"Kick a player",					"<i/n>",			"ed"},
+	{"!m",		"mute",				&g_mute.integer,			&adm_Mute,						"Mute/unmute a player",				"<i/n> <time>",		NULL},
+	{"!s",		"strip",			&g_strip.integer,			&adm_Strip,						"Remove weapons from a player",		"<i/n>",			"ped"},
+	{"!ff",		"friendlyfire",		&g_ff.integer,				&adm_friendlyFire,				"Enables/disables friendly fire",	"",					NULL},
+	{"!rn",		"rename",			&g_rename.integer,			&adm_Rename,					"Renames a players' name",			"<i/n> <name>",		NULL},
+	{"!swi",	"switch",			&g_forceteam.integer,		&adm_Switch,					"Switch one to the opposite team",	"<i/n>",			"ed"},
 	#ifndef _GOLD
-	{ "!3rd", "3rd", &g_3rd.integer, &adm_Third, NULL },
-	{ "!third", "third", &g_3rd.integer, &adm_Third, NULL },
-	#else
-	// Add synonyms for some ROCmod commands (that Gold people have grown to use).
-	{ "!la","launch", &g_uppercut.integer, &adm_Uppercut, "ed" },
-	{ "!e","explode", &g_pop.integer, &adm_Pop, "ded" },
+	{"!3rd",	"3rd",				&g_3rd.integer,				&adm_Third,						"Toggles Thirdperson on or off",	"",					NULL},
+	{"!third",	"third",			&g_3rd.integer,				&adm_Third,						"Toggles Thirdperson on or off",	"",					NULL},
 	#endif // not _GOLD
+	// Boe!Man 6/2/15: Admin synonyms for Gold.
+	// Pop/explode.
+	{"!p",		"pop",				&g_pop.integer,				&adm_Pop,						"Pop/explodes a player",			"<i/n>",			"ped"},
+	#ifdef _GOLD
+	{"!e",		"explode",			&g_pop.integer,				&adm_Pop,						"Pop/explodes a player",			"<i/n>",			"ped"},
+	#endif // _GOLD
+	// Uppercut/launch.
+	{"!u",		"uppercut",			&g_uppercut.integer,		&adm_Uppercut,					"Launch a player upwards",			"<i/n>",			NULL},
+	{"!uc",		"uppercut",			&g_uppercut.integer,		&adm_Uppercut,					"Launch a player upwards",			"<i/n>",			NULL},
+	#ifdef _GOLD
+	{"!la",		"launch",			&g_uppercut.integer,		&adm_Uppercut,					"Launch a player upwards",			"<i/n>",			NULL},
+	#endif // _GOLD
 };
 
 static int AdminCommandsSize = sizeof( AdminCommands ) / sizeof( AdminCommands[0] );
@@ -3668,12 +3676,7 @@ void Boe_adm_f ( gentity_t *ent )
 	char broadcast[512];
 	
 	// Boe!Man 7/9/12: strcat everything to a 'big buffer', and afterwards send big packets to the client (to keep the packet size as small as possible).
-	// As of rev 804 (using default admin level values) big buffer sizes:
-	// /adm as S-Admin: 3912
-	// /adm list: 4207
-	// /adm as S-Admin w/ cm enabled: 4014
-	// /adm list w/ cm enabled: 4309
-	char bigbuf[4500] = "\0";
+	char bigbuf[16384] = "\0";
 	char sendbuf[1024] = "\0";
 	char *point;
 
@@ -3750,7 +3753,10 @@ void Boe_adm_f ( gentity_t *ent )
 	if (!Q_stricmp ( arg1, "?" )||!Q_stricmp ( arg1, "" )||!Q_stricmp(arg1, "list"))
 	{
 	if (adm > 1){
-		trap_SendServerCommand( ent-g_entities, va("print \" \n^3Lvl   Commands         Arguments      Explanation\n\""));
+		int startAt;
+		admCmd_t *cmd;
+
+		trap_SendServerCommand( ent-g_entities, va("print \" \n^3%-5s %-20s %-14s Explanation\n\"", "Lvl", "Commands", "Arguments"));
 		trap_SendServerCommand( ent-g_entities, va("print \" ----------------------------------------------------------\n\""));
 		// Boe!Man 6/17/11: If they want to print the whole list of admin commands, be sure to do so.
 		if(!Q_stricmp(arg1, "list")){
@@ -3759,168 +3765,78 @@ void Boe_adm_f ( gentity_t *ent )
 			to = adm;
 		}
 
+		// Determine where to start listing.
+		if (to != 5 && !cm_enabled.integer)
+			startAt = 10;
+		else
+			startAt = 7;
+
 		// Boe!Man 9/21/10: We loop the print process and make sure they get in proper order.
-		for(levelx=2;levelx<=to;levelx++){
-		if (g_kick.integer == levelx){
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   k   kick         <i/n> <reason> ^7[^3Kick a player^7]\n", g_kick.integer));
+		for (levelx = 2; levelx <= to; levelx++){
+			// Special "pass" commands.
+
+			// Admin remove.
+			cmd = &AdminCommands[0];
+			if (*cmd->adminLevel == levelx) {
+				Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7%-3s %-7s %-12s %-14s ^7[^3%s^7]\n", levelx, "]", cmd->shortCmd, cmd->adminCmd, cmd->params, cmd->desc));
+
+				if(g_passwordAdmins.integer)
+					Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7%-3s %-7s %-12s %-14s ^7[^3Remove a pwd. Admin from list^7]\n", levelx, "]", cmd->shortCmd, cmd->adminCmd, "<line #>'pass'"));
 			}
-		if (g_addbadmin.integer == levelx){
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   ab  addbadmin    <i/n>          ^7[^3Add a Basic Admin^7]\n", g_addbadmin.integer));
+			// Admin list.
+			cmd = &AdminCommands[1];
+			if (*cmd->adminLevel == levelx) {
+				admCmd_t *cmd2 = &AdminCommands[2];
+
+				Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7%-3s %-7s %-12s %-14s ^7[^3%s^7]\n", levelx, "]", cmd->shortCmd, cmd->adminCmd, cmd->params, cmd->desc));
+				Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7%-3s %-7s %-12s %-14s ^7[^3%s^7]\n", levelx, "]", cmd2->shortCmd, cmd2->adminCmd, cmd2->params, cmd2->desc));
+
+				if(g_passwordAdmins.integer){
+					Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7%-3s %-7s %-12s %-14s ^7[^3Show the passworded Adminlist^7]\n", levelx, "]", cmd->shortCmd, cmd->adminCmd, "'pass'"));
+					Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7%-3s %-7s %-12s %-14s ^7[^3Show the passworded Adminlist^7]\n", levelx, "]", cmd2->shortCmd, cmd2->adminCmd, "'pass'"));
+				}
 			}
-		if (g_addadmin.integer == levelx){
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   aa  addadmin     <i/n>          ^7[^3Add an Admin^7]\n", g_addadmin.integer));
-			}
-		// Boe!Man 1/4/10: Fix with using Tab in the Admin list.
-		if (g_addsadmin.integer == levelx){
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   as  addsadmin    <i/n>          ^7[^3Add a Server Admin^7]\n", g_addsadmin.integer));
-			}
-		if (g_ban.integer == levelx){
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   ba  ban          <i/n> <reason> ^7[^3Ban a player^7]\n", g_ban.integer));
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   uba unban        <ip/line #>    ^7[^3Unban a banned IP^7]\n", g_ban.integer));
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   bl  banlist                     ^7[^3Shows the current banlist^7]\n", g_ban.integer));
-			}
-		if (g_subnetban.integer == levelx){
-			// Boe!Man 1/6/10: Reason added to the Subnetban command.
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   sb  subnetban    <i/n> <reason> ^7[^3Ban a players' subnet^7]\n", g_subnetban.integer));
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   sbu subnetunban  <ip/line #>    ^7[^3Unban a banned subnet^7]\n", g_subnetban.integer));
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   sbl subnetbanlist               ^7[^3Shows the current subnetbanlist^7]\n", g_subnetban.integer));
-			}
-		if (g_uppercut.integer == levelx){
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   uc  uppercut     <i/n>          ^7[^3Launch a player upwards^7]\n", g_uppercut.integer));
-			}
-		if (g_twist.integer == levelx){
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   tw  twist        <i/n>          ^7[^3Twist a player^7]\n", g_twist.integer));
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   utw untwist      <i/n>          ^7[^3Untwist a twisted player^7]\n", g_twist.integer));
-			}
-		if (g_runover.integer == levelx){
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   ro  runover      <i/n>          ^7[^3Boost a player backwards^7]\n", g_runover.integer));
-			}
-		if (g_mapswitch.integer == levelx){
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   mr  maprestart                  ^7[^3Restart the current map^7]\n", g_mapswitch.integer));
-			}
-		if (g_flash.integer == levelx){
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   fl  flash        <i/n>          ^7[^3Flash a player^7]\n", g_flash.integer));
-			}
-		if (g_pop.integer == levelx){
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   p   pop          <i/n>          ^7[^3Pop a player^7]\n", g_pop.integer));
-			}
-		if (g_strip.integer == levelx){
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   s   strip        <i/n>          ^7[^3Remove weapons from a player^7]\n", g_strip.integer));
-			}
-		if (g_mute.integer == levelx){
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   m   mute         <i/n> <time>   ^7[^3Mute a player^7]\n", g_mute.integer));
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   um  unmute       <i/n>          ^7[^3Unmute a player^7]\n", g_mute.integer));
-			}
-		if (g_plant.integer == levelx){
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   pl  plant        <i/n>          ^7[^3Plant a player in the ground^7]\n", g_plant.integer));
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   upl unplant      <i/n>          ^7[^3Unplant a planted player^7]\n", g_plant.integer));
-			}
-		if (g_burn.integer == levelx){
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   b   burn         <i/n>          ^7[^3Burn a player^7]\n", g_burn.integer));
-			}
-		if (g_eventeams.integer == levelx){
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   et  eventeams                   ^7[^3Make the teams even^7]\n", g_eventeams.integer));
-			}
-		if (g_sl.integer == levelx && cm_enabled.integer != 1){
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   sl  scorelimit   <time>         ^7[^3Change the scorelimit^7]\n", g_sl.integer));
-			}
-		if (g_tl.integer == levelx && cm_enabled.integer != 1){
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   tl  timelimit    <time>         ^7[^3Change the timelimit^7]\n", g_tl.integer));
-			}
-		if (g_nosection.integer == levelx){
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   nl  nolower                     ^7[^3Enable/Disable Nolower^7]\n", g_nosection.integer));
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   nr  noroof                      ^7[^3Enable/Disable Noroof^7]\n", g_nosection.integer));
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   nm  nomiddle                    ^7[^3Enable/Disable Nomiddle^7]\n", g_nosection.integer));
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   nw  nowhole                     ^7[^3Enable/Disable Nowhole^7]\n", g_nosection.integer));
-			}
-		if (g_damage.integer == levelx){
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   nd  normaldamage                ^7[^3Toggle Normal damage^7]\n", g_damage.integer));
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   rd  realdamage                  ^7[^3Toggle Real damage^7]\n", g_damage.integer));
-			}
-		if (g_ri.integer == levelx){
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   ri  ri           <time>         ^7[^3Change the respawn interval^7]\n", g_ri.integer));
-			}
-		if (g_gr.integer == levelx){
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   gr  gametyperestart             ^7[^3Restart the current gametype^7]\n", g_gr.integer));
-			}
-		if (g_clanvsall.integer == levelx){
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   cva clanvsall                   ^7[^3Clan versus other players^7]\n", g_clanvsall.integer));
-			}
-		if (g_swapteams.integer == levelx && cm_enabled.integer != 1){
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   sw  swapteams                   ^7[^3Swap the players from both teams^7]\n", g_swapteams.integer));
-			}
-		if (g_shuffleteams.integer == levelx){
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   sh  shuffleteams                ^7[^3Mix the teams at random^7]\n", g_shuffleteams.integer));
-			}
-		if (g_lock.integer == levelx){
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   l   lock         <team>         ^7[^3Lock a team^7]\n", g_lock.integer));
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   ul  unlock       <team>         ^7[^3Unlock a team^7]\n", g_lock.integer));
-			}
-		if (g_clan.integer == levelx){
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   acl addclan      <i/n>          ^7[^3Add a clan member^7]\n", g_clan.integer));
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   rc  removeclan   <i/n>          ^7[^3Remove a clan member^7]\n", g_clan.integer));
-			}
-		if (g_broadcast.integer == levelx){
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   br  broadcast    <message>      ^7[^3Broadcast a message^7]\n", g_broadcast.integer));
-			}
-		if (g_forceteam.integer == levelx){
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   ft  forceteam    <i/n> <team>   ^7[^3Force a player to join a team^7]\n", g_forceteam.integer));
-			}
-		if (g_nades.integer == levelx){
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   nn  nonades                     ^7[^3Enable or disable nades^7]\n", g_nades.integer));
-			}
-		if (g_respawn.integer == levelx){
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   rs  respawn                     ^7[^3Respawn a player^7]\n", g_respawn.integer));
-			}
-		if (g_removeadmin.integer == levelx){
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   ra  removeadmin  <i/n>          ^7[^3Remove an Admin^7]\n", g_removeadmin.integer));
-			}
-		if (g_cm.integer == levelx){
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   cm  compmode                    ^7[^3Toggles Competition Mode^7]\n", g_cm.integer));
-			}
-		if (g_mapswitch.integer == levelx){
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   g   gametype     <gametype>     ^7[^3Switch to the specified gametype^7]\n", g_mapswitch.integer));
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   map              <map name>     ^7[^3Switch to the specified map^7]\n", g_mapswitch.integer));
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   altmap           <map name>     ^7[^3Switch to the specified altmap^7]\n", g_mapswitch.integer));
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   devmap           <map name>     ^7[^3Switch to the specified devmap^7]\n", g_mapswitch.integer));
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   mapcycle                        ^7[^3Switch to the next map in the cycle^7]\n", g_mapswitch.integer));
-			}
-		if (g_pause.integer == levelx){
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   pa  pause                       ^7[^3Pause the game^7]\n", g_pause.integer));
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   upa unpause                     ^7[^3Resume the game^7]\n", g_pause.integer));
-			}
-		if (g_forcevote.integer == levelx){
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   pv  passvote                    ^7[^3Pass the running vote^7]\n", g_forcevote.integer));
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   cv  cancelvote                  ^7[^3Cancel the running vote^7]\n", g_forcevote.integer));
-			}
-		if (g_adminlist.integer == levelx){
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   al  adminlist                   ^7[^3Show the Adminlist^7]\n", g_adminlist.integer));
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   al  adminlist    'pass'         ^7[^3Show the passworded Adminlist^7]\n", g_adminlist.integer));
-			}
-		if (g_adminremove.integer == levelx){
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   adr adminremove  <line #>       ^7[^3Remove an Admin from the list^7]\n", g_adminremove.integer));
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   adr adminremove  <line #>'pass' ^7[^3Remove a passworded Admin from list^7]\n", g_adminremove.integer));
-			}
-		if (g_3rd.integer == levelx){
-			Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   3rd third                       ^7[^3Toggles Thirdperson on or off^7]\n", g_3rd.integer));
+			// Add B, reg ("A"), and S-Admin.
+			for (i = 3; i < 6; i++){
+				cmd = &AdminCommands[i];
+				if (*cmd->adminLevel == levelx) {
+					Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7%-3s %-7s %-12s %-14s ^7[^3Add %s %s^7]\n", levelx, "]", cmd->shortCmd, cmd->adminCmd, cmd->params, (i != 4) ? "a" : "an", cmd->desc));
+					if (g_passwordAdmins.integer)
+						Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7%-3s %-7s %-12s %-14s ^7[^3Add a passworded %s^7]\n", levelx, "]", cmd->shortCmd, cmd->adminCmd, "<i/n> 'pass'", cmd->desc));
+				}
 			}
 
-		// Boe!Man 6/17/11: Display competition mode Admin commands when it's enabled in the starting stage.
-		if(cm_enabled.integer == 1){
-			if(to != 5 && g_cm.integer == levelx || to == 5 && levelx == 5){
-				Q_strcat(bigbuf, sizeof(bigbuf), va("\n^7[^3Competition Mode Commands^7]\n"));
-				Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   rounds           'one/two'      ^7[^3Set number of rounds^7]\n", g_cm.integer));
-				Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   sw  swapteams                   ^7[^3Toggle auto swap^7]\n", g_cm.integer));
-				Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   sl  scorelimit   <time>         ^7[^3Change the match scorelimit^7]\n", g_cm.integer));
-				Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7]   tl  timelimit    <time>         ^7[^3Change the match timelimit^7]\n", g_cm.integer));
+			// Swapteams, score- and timelimit (which are also competition commands).
+			if (!cm_enabled.integer) {
+				for (i = 6; i < 9; i++) {
+					cmd = &AdminCommands[i];
+					if (*cmd->adminLevel == levelx) {
+						Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7%-3s %-7s %-12s %-14s ^7[^3%s^7]\n", levelx, "]", cmd->shortCmd, cmd->adminCmd, cmd->params, cmd->desc));
+					}
+				}
 			}
-		}
-		
-		// Boe!Man 9/21/10: End of Loop.
-		}
+
+			// All generic commands.
+			for (i = startAt; i < AdminCommandsSize; i++) {
+				cmd = &AdminCommands[i];
+				if (*cmd->adminLevel == levelx) {
+					Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7%-3s %-7s %-12.12s %-14s ^7[^3%.32s^7]\n", levelx, "]", cmd->shortCmd, cmd->adminCmd, cmd->params, cmd->desc));
+				}
+			}
+
+			// Boe!Man 6/17/11: Display competition mode Admin commands when it's enabled in the starting stage.
+			if(cm_enabled.integer == 1){
+				if(to != 5 && g_cm.integer == levelx || to == 5 && levelx == 5){
+					Q_strcat(bigbuf, sizeof(bigbuf), va("\n^7[^3Competition Mode Commands^7]\n"));
+					Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7%-3s %-7s %-12.12s %-14s ^7[^3%.32s^7]\n", levelx, "]", "!rounds", "rounds", "'1' or '2'", "Set number of rounds"));
+					Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7%-3s %-7s %-12.12s %-14s ^7[^3%.32s^7]\n", levelx, "]", "!sw", "swapteams", "", "Toggle auto swap"));
+					Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7%-3s %-7s %-12.12s %-14s ^7[^3%.32s^7]\n", levelx, "]", "!sl", "scorelimit", "<time>", "Change the match scorelimit"));
+					Q_strcat(bigbuf, sizeof(bigbuf), va("[^3%i^7%-3s %-7s %-12.12s %-14s ^7[^3%.32s^7]\n", levelx, "]", "!tl", "timelimit", "<time>", "Change the match timelimit"));
+				}
+			}
+		} // Boe!Man 9/21/10: End of Loop.
 		
 		// Boe!Man 7/9/12: Now process that loop. We put everything in a big buffer, split in packets of 1000 bytes ea (max is 1024, header should still be sent along with the packet).
-		//Com_Printf("The /adm buffer size is: %i\n", strlen(bigbuf));
 		if(strlen(bigbuf) <= 1000){ // Buffer is still small (could be used for limited B-Admins or so), just send the packet as a whole.
 			trap_SendServerCommand( ent-g_entities, va("print \"%s\"", bigbuf));
 		}else{
@@ -3977,9 +3893,9 @@ void Boe_adm_f ( gentity_t *ent )
 
 		// Boe!Man 6/17/11: Add a note for RCON if they display the whole list.
 		if(to == 5){
-			trap_SendServerCommand( ent-g_entities, va("print \"  [^32^7] B-Admin        ^7[^33^7] Admin        ^7[^34^7] S-Admin        ^7[^35^7] RCON\n\""));
+			trap_SendServerCommand( ent-g_entities, va("print \"%3s^32^7] %-17s^7[^33^7] %-15s^7[^34^7] %-15s^7[^35^7] RCON\n\"", "[", "B-Admin", "Admin", "S-Admin"));
 		}else{
-			trap_SendServerCommand( ent-g_entities, va("print \"    [^32^7] B-Admin          ^7[^33^7] Admin          ^7[^34^7] S-Admin\n\""));
+			trap_SendServerCommand( ent-g_entities, va("print \"%5s^32^7] %-17s^7[^33^7] %-15s^7[^34^7] S-Admin\n\"", "[", "B-Admin", "Admin"));
 		}
 		trap_SendServerCommand( ent-g_entities, va("print \"\n^7Use ^3[Page Up]^7 and ^3[Page Down]^7 keys to scroll.\n\""));
 	}
