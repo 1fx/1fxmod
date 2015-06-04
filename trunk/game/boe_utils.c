@@ -2292,10 +2292,15 @@ char *Boe_parseCustomCommandArgs(char *in, qboolean shortCmd)
 	char		arg2[1];
 	char		arg[MAX_STRING_TOKENS];
 	int			pos = 0; // Position of out.
+	int			argc;
 	
 	#ifdef _DEBUG
 	Com_Printf("Boe_parseCustomCommandArgs: in: %s\n", in); // Debug.
 	#endif
+
+	if (shortCmd) {
+		argc = G_GetChatArgumentCount(in);
+	}
 	
 	buf = in;
 	while ( *buf ){
@@ -2306,10 +2311,14 @@ char *Boe_parseCustomCommandArgs(char *in, qboolean shortCmd)
 					memset(arg, 0, sizeof(arg)); // Reset memory here.
 					arg2[0] = buf2[4]; // Copy the argument string to the new buffer, including a terminator.
 					arg2[1] = '\0';
-					if (!shortCmd){
+					if (!shortCmd || shortCmd && !argc){
 						trap_Argv(henk_atoi(arg2) + 1, arg, sizeof(arg)); // Fetch arg.
 					}else{
-						Q_strncpyz(arg, G_GetChatArgument(henk_atoi(arg2)), sizeof(arg));
+						if (argc && argc >= henk_atoi(arg2)) {
+							Q_strncpyz(arg, G_GetChatArgument(henk_atoi(arg2)), sizeof(arg));
+						}else{
+							arg[0] = '\0';
+						}
 					}
 
 					#ifdef _DEBUG
