@@ -2346,12 +2346,65 @@ char *Boe_parseCustomCommandArgs(char *in, qboolean shortCmd)
 
 /*
 ============
+G_GetChatArgumentCount
+
+Get argument count
+from chat buffer.
+============
+*/
+
+int G_GetChatArgumentCount()
+{
+	char text[MAX_SAY_TEXT];
+	char *text2;
+	int argc = 0;
+
+	// Fetch the argument containing the full buffer.
+	trap_Argv(1, text, sizeof(text));
+	text2 = text;
+
+	// Loop through text, find first character.
+	while (text2 != NULL && *text2 == ' ') {
+		*text2++;
+	}
+
+	if (!text2 || strlen(text2) == 0) {
+		// No real argument present.
+		return 0;
+	}
+
+	while (text2 != NULL && strlen(text2) != 0) {
+		text2 = strstr(text2, " ");
+
+		// No more arguments found, return.
+		if (text2 == NULL)
+			break;
+
+		// Get rid of extra spaces.
+		while (text2 != NULL && *text2 == ' ') {
+			*text2++;
+		}
+
+		if (text2 == NULL || strlen(text2) == 0) {
+			// No real argument present.
+			break;
+		}
+
+		argc++;
+	}
+
+	return argc;
+}
+
+/*
+============
 G_GetChatArgument
 
 Get argument from chat
 buffer.
 ============
 */
+
 char *G_GetChatArgument(int argNum) 
 {
 	static char newArg[MAX_SAY_TEXT];
@@ -2366,8 +2419,8 @@ char *G_GetChatArgument(int argNum)
 	trap_Argv(1, text, sizeof(text));
 	text2 = text;
 
-	// Check if buffer is empty.
-	if (strlen(text) == 0) {
+	// Argument must be present.
+	if (G_GetChatArgumentCount() < argNum) {
 		return "";
 	}
 
@@ -2376,26 +2429,12 @@ char *G_GetChatArgument(int argNum)
 		*text2++;
 	}
 
-	if(!text2 || strlen(text2) == 0){
-		// No real argument present.
-		return "";
-	}
-
 	while (argc < argNum) {
 		text2 = strstr(text2, " ");
-
-		// No more arguments found, return.
-		if (text2 == NULL)
-			return "";
 		
 		// Get rid of extra spaces.
 		while (text2 && *text2 == ' ') {
 			*text2++;
-		}
-
-		if (text2 == NULL || strlen(text2) == 0) {
-			// No real argument present.
-			return "";
 		}
 
 		argc++;

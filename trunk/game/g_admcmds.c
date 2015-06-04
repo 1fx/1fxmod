@@ -1842,6 +1842,7 @@ static char *adm_checkListFilters(gentity_t *adm, int argNum, qboolean shortCmd,
 	char			filterBy[32] = "\0";
 	static char		filterQuery[144] = "\0";
 	qboolean		filterActive = qfalse;
+	qboolean		chatFromConsole = qfalse;
 
 	memset(filterQuery, 0, sizeof(filterQuery));
 	strcpy(filterQuery, " ");
@@ -1858,135 +1859,154 @@ static char *adm_checkListFilters(gentity_t *adm, int argNum, qboolean shortCmd,
 	else
 		Com_Printf("^3[%s]^7\n", listNameReal);
 
-	if (adm && !shortCmd || !adm) {
-		// Only check for filters if the argument count is > 2 and we're working in the console.
-		if (adm && adm->client){
-			Q_strcat(buf2, sizeof(buf2), "^5[Filter options]^7\n\n");
-			Q_strcat(buf2, sizeof(buf2), va("^5%-21s Value\n" \
-											"^7--------------------------------------------------\n", "Filter"));
-		}else{
-			Com_Printf("^5[Filter options]^7\n\n");
-			Com_Printf("^5%-21s Value\n" \
-					   "^7--------------------------------------------------\n", "Filter");
-		}
+	// Only check for filters if the argument count is > 2 and we're working in the console.
+	if (adm && adm->client){
+		Q_strcat(buf2, sizeof(buf2), "^5[Filter options]^7\n\n");
+		Q_strcat(buf2, sizeof(buf2), va("^5%-21s Value\n" \
+										"^7--------------------------------------------------\n", "Filter"));
+	}else{
+		Com_Printf("^5[Filter options]^7\n\n");
+		Com_Printf("^5%-21s Value\n" \
+					"^7--------------------------------------------------\n", "Filter");
+	}
+	
+	// Get amount of arguments.
+	if (shortCmd){
+		argCount = G_GetChatArgumentCount();
 
+		if (!argCount) {
+			argCount = trap_Argc();
+			chatFromConsole = qtrue;
+		}
+	}else{
 		argCount = trap_Argc();
-		if(adm && argCount > 2 || !adm && argCount > 1){
+	}
+
+	if(adm && !shortCmd && argCount > 2 || adm && shortCmd && argCount > 0 || !adm && argCount > 1){
+		if (chatFromConsole)
+			rc = argNum + 1;
+		else
 			rc = argNum;
 
-			while(rc <= argCount){
-				memset(arg, 0, sizeof(arg));
-				memset(arg2, 0, sizeof(arg2));
+		while(rc <= argCount){
+			memset(arg, 0, sizeof(arg));
+			memset(arg2, 0, sizeof(arg2));
+
+			if (!shortCmd || shortCmd && chatFromConsole) {
 				trap_Argv(rc, arg, sizeof(arg));
-				trap_Argv(rc+1, arg2, sizeof(arg2));
-				Q_strlwr(arg);
-				Q_strlwr(arg2);
-
-				if(!strstr(arg, "-") || !strstr(arg, "-h") && strlen(arg2) == 0){
-					break;
-				}else{ // Valid argument it seems, so far.
-					if(strstr(arg, "-h")){ // Client wants help with this, no problem.
-						if(adm && adm->client){
-							Q_strcat(buf2, sizeof(buf2), va(\
-															"%-27s ^7There are several filter options for you to use:\n" \
-															"%-27s ^7Filters on IP.\n" \
-									   						"%-27s ^7Filters on name.\n" \
-									   						"%-27s ^7Filters on %s by.\n\n" \
-									   						"%-27s ^7/adm %s -i 172.16 -n boe -b RCON\n",
-														"^7[^1Help^7]", "^7[^5-i^7]", "^7[^5-n^7]", "^7[^5-b^7]", byFieldName, "^7[^5Example usage^7]", listName));
-							
-							trap_SendServerCommand( adm-g_entities, va("print \"%s\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\"", buf2));
-						}else{
-							Com_Printf("%-27s ^7There are several filter options for you to use:\n" \
-										"%-27s ^7Filters on IP.\n" \
-										"%-27s ^7Filters on name.\n" \
-										"%-27s ^7Filters on %s by.\n\n" \
-										"%-27s ^7/adm %s -i 172.16 -n boe -b RCON\n",
-										"^7[^1Help^7]", "^7[^5-i^7]", "^7[^5-n^7]", "^7[^5-b^7]", byFieldName, "^7[^5Example usage^7]", listName);
-							
-							Com_Printf("\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n");
-						}
-						
-						return NULL;
-					}else if(strstr(arg, "-i")){ // Client wants to filter on an IP.
-						strcpy(filterIP, arg2);
-						filterActive = qtrue;
-					}else if(strstr(arg, "-n")){ // Client wants to filter on a name.
-						strcpy(filterName, arg2);
-						filterActive = qtrue;
-					}else if(strstr(arg, "-b")){ // Client wants to filter on by.
-						strcpy(filterBy, arg2);
-						filterActive = qtrue;
-					}else{ // Invalid argument, break.
-						if(adm){
-							Q_strcat(buf2, sizeof(buf2), va("%-27s ^7Invalid argument: %s\n", "^7[^1Error^7]", arg));
-						}else{
-							Com_Printf("%-27s ^7Invalid argument: %s\n", "^7[^1Error^7]", arg);
-						}
-
-						break;
-					}
-				}
-
-				rc += 2;
+				trap_Argv(rc + 1, arg2, sizeof(arg2));
+			}else{
+				Q_strncpyz(arg, G_GetChatArgument(rc), sizeof(arg));
+				Q_strncpyz(arg2, G_GetChatArgument(rc + 1), sizeof(arg2));
 			}
+
+			Q_strlwr(arg);
+			Q_strlwr(arg2);
+
+			if(!strstr(arg, "-") || !strstr(arg, "-h") && strlen(arg2) == 0){
+				break;
+			}else{ // Valid argument it seems, so far.
+				if(strstr(arg, "-h")){ // Client wants help with this, no problem.
+					if(adm && adm->client){
+						Q_strcat(buf2, sizeof(buf2), va(\
+														"%-27s ^7There are several filter options for you to use:\n" \
+														"%-27s ^7Filters on IP.\n" \
+									   					"%-27s ^7Filters on name.\n" \
+									   					"%-27s ^7Filters on %s by.\n\n" \
+									   					"%-27s ^7/adm %s -i 172.16 -n boe -b RCON\n",
+													"^7[^1Help^7]", "^7[^5-i^7]", "^7[^5-n^7]", "^7[^5-b^7]", byFieldName, "^7[^5Example usage^7]", listName));
+							
+						trap_SendServerCommand( adm-g_entities, va("print \"%s\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\"", buf2));
+					}else{
+						Com_Printf("%-27s ^7There are several filter options for you to use:\n" \
+									"%-27s ^7Filters on IP.\n" \
+									"%-27s ^7Filters on name.\n" \
+									"%-27s ^7Filters on %s by.\n\n" \
+									"%-27s ^7/adm %s -i 172.16 -n boe -b RCON\n",
+									"^7[^1Help^7]", "^7[^5-i^7]", "^7[^5-n^7]", "^7[^5-b^7]", byFieldName, "^7[^5Example usage^7]", listName);
+							
+						Com_Printf("\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n");
+					}
+						
+					return NULL;
+				}else if(strstr(arg, "-i")){ // Client wants to filter on an IP.
+					strcpy(filterIP, arg2);
+					filterActive = qtrue;
+				}else if(strstr(arg, "-n")){ // Client wants to filter on a name.
+					strcpy(filterName, arg2);
+					filterActive = qtrue;
+				}else if(strstr(arg, "-b")){ // Client wants to filter on by.
+					strcpy(filterBy, arg2);
+					filterActive = qtrue;
+				}else{ // Invalid argument, break.
+					if(adm){
+						Q_strcat(buf2, sizeof(buf2), va("%-27s ^7Invalid argument: %s\n", "^7[^1Error^7]", arg));
+					}else{
+						Com_Printf("%-27s ^7Invalid argument: %s\n", "^7[^1Error^7]", arg);
+					}
+
+					break;
+				}
+			}
+
+			rc += 2;
+		}
+	}
+
+	if(!filterActive){
+		if(adm){
+			Q_strcat(buf2, sizeof(buf2), va("%-27s ^7Call the %s with -h for more information\n\n", "^7[^5None applied^7]", listName));
+		}else{
+			Com_Printf("%-27s ^7Call the %s with -h for more information\n\n", "^7[^5None applied^7]", listName);
+		}
+	}else{
+		// Prepare query as well.
+		strcat(filterQuery, " WHERE ");
+		rc = 0;
+
+		if(strlen(filterIP) > 0){
+			Boe_convertNonSQLChars(filterIP);
+			if(adm){
+				Q_strcat(buf2, sizeof(buf2), va("%-27s ^7%s\n", "^7[^5IP^7]", filterIP));
+			}else{
+				Com_Printf("%-27s ^7%s\n", "^7[^5IP^7]", filterIP);
+			}
+			strcat(filterQuery, va("IP LIKE '%%%s%%'", filterIP));
+			rc++;
 		}
 
-		if(!filterActive){
+		if(strlen(filterName) > 0){
+			Boe_convertNonSQLChars(filterName);
 			if(adm){
-				Q_strcat(buf2, sizeof(buf2), va("%-27s ^7Call the %s with -h for more information\n\n", "^7[^5None applied^7]", listName));
+				Q_strcat(buf2, sizeof(buf2), va("%-27s ^7%s\n", "^7[^5Name^7]", filterName));
 			}else{
-				Com_Printf("%-27s ^7Call the %s with -h for more information\n\n", "^7[^5None applied^7]", listName);
+				Com_Printf("%-27s ^7%s\n", "^7[^5Name^7]", filterName);
 			}
+			if(rc){
+				strcat(filterQuery, " AND ");
+			}
+			strcat(filterQuery, va("name LIKE '%%%s%%'", filterName));
+			rc++;
+		}
+
+		if(strlen(filterBy) > 0){
+			Boe_convertNonSQLChars(filterBy);
+			if(adm){
+				Q_strcat(buf2, sizeof(buf2), va("%-27s ^7%s\n", "^7[^5By^7]", filterBy));
+			}else{
+				Com_Printf("%-27s ^7%s\n", "^7[^5By^7]", filterBy);
+			}
+			if(rc){
+				strcat(filterQuery, " AND ");
+			}
+			strcat(filterQuery, va("by LIKE '%%%s%%'", filterBy));
+		}
+
+		strcat(filterQuery, " ");
+		if(adm){
+			Q_strcat(buf2, sizeof(buf2), "\n");
 		}else{
-			// Prepare query as well.
-			strcat(filterQuery, " WHERE ");
-			rc = 0;
-
-			if(strlen(filterIP) > 0){
-				Boe_convertNonSQLChars(filterIP);
-				if(adm){
-					Q_strcat(buf2, sizeof(buf2), va("%-27s ^7%s\n", "^7[^5IP^7]", filterIP));
-				}else{
-					Com_Printf("%-27s ^7%s\n", "^7[^5IP^7]", filterIP);
-				}
-				strcat(filterQuery, va("IP LIKE '%%%s%%'", filterIP));
-				rc++;
-			}
-
-			if(strlen(filterName) > 0){
-				Boe_convertNonSQLChars(filterName);
-				if(adm){
-					Q_strcat(buf2, sizeof(buf2), va("%-27s ^7%s\n", "^7[^5IP^7]", filterName));
-				}else{
-					Com_Printf("%-27s ^7%s\n", "^7[^5Name^7]", filterName);
-				}
-				if(rc){
-					strcat(filterQuery, " AND ");
-				}
-				strcat(filterQuery, va("name LIKE '%%%s%%'", filterName));
-				rc++;
-			}
-
-			if(strlen(filterBy) > 0){
-				Boe_convertNonSQLChars(filterBy);
-				if(adm){
-					Q_strcat(buf2, sizeof(buf2), va("%-27s ^7%s\n", "^7[^5By^7]", filterBy));
-				}else{
-					Com_Printf("%-27s ^7%s\n", "^7[^5By^7]", filterBy);
-				}
-				if(rc){
-					strcat(filterQuery, " AND ");
-				}
-				strcat(filterQuery, va("by LIKE '%%%s%%'", filterBy));
-			}
-
-			strcat(filterQuery, " ");
-			if(adm){
-				Q_strcat(buf2, sizeof(buf2), "\n");
-			}else{
-				Com_Printf("\n");
-			}
+			Com_Printf("\n");
 		}
 	}
 
