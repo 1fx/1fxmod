@@ -560,7 +560,8 @@ void	Boe_checkRoof(gentity_t *ent);
 int Boe_firstDigitOfInt(int i);
 
 // Boe!Man 7/27/12: Function that replaces arguments in the actual CustomCommand action.
-char *Boe_parseCustomCommandArgs(char *in);
+char *Boe_parseCustomCommandArgs(char *in, qboolean shortCmd);
+char *G_GetChatArgument(int argNum);
 
 // Boe!Man 7/29/12: CVAR that handles admins/clan members on subnet rather than Full IP -> This effectively disables the admin login system.
 extern	vmCvar_t	g_preferSubnets;

@@ -2284,7 +2284,7 @@ Function that replaces arguments in the actual CustomCommand action.
 ================
 */
 
-char *Boe_parseCustomCommandArgs(char *in)
+char *Boe_parseCustomCommandArgs(char *in, qboolean shortCmd)
 {
 	static char	*buf;
 	char		out[512] = "\0";
@@ -2306,7 +2306,12 @@ char *Boe_parseCustomCommandArgs(char *in)
 					memset(arg, 0, sizeof(arg)); // Reset memory here.
 					arg2[0] = buf2[4]; // Copy the argument string to the new buffer, including a terminator.
 					arg2[1] = '\0';
-					trap_Argv(henk_atoi(arg2)+1, arg, sizeof(arg)); // Fetch arg.
+					if (!shortCmd){
+						trap_Argv(henk_atoi(arg2) + 1, arg, sizeof(arg)); // Fetch arg.
+					}else{
+						Q_strncpyz(arg, G_GetChatArgument(henk_atoi(arg2)), sizeof(arg));
+					}
+
 					#ifdef _DEBUG
 					Com_Printf("Argument %i: %s\n", henk_atoi(arg2), arg);
 					#endif
@@ -2337,6 +2342,75 @@ char *Boe_parseCustomCommandArgs(char *in)
 	#endif
 
 	return buf;
+}
+
+/*
+============
+G_GetChatArgument
+
+Get argument from chat
+buffer.
+============
+*/
+char *G_GetChatArgument(int argNum) 
+{
+	static char newArg[MAX_SAY_TEXT];
+	char text[MAX_SAY_TEXT];
+	char *text2, *end;
+	int argc = 0;
+
+	// Reset buffer.
+	memset(newArg, 0, sizeof(newArg));
+
+	// Fetch the argument containing the full buffer.
+	trap_Argv(1, text, sizeof(text));
+	text2 = text;
+
+	// Check if buffer is empty.
+	if (strlen(text) == 0) {
+		return "";
+	}
+
+	// Loop through text, find first character.
+	while (text2 != NULL && *text2 == ' '){
+		*text2++;
+	}
+
+	if(!text2 || strlen(text2) == 0){
+		// No real argument present.
+		return "";
+	}
+
+	while (argc < argNum) {
+		text2 = strstr(text2, " ");
+
+		// No more arguments found, return.
+		if (text2 == NULL)
+			return "";
+		
+		// Get rid of extra spaces.
+		while (text2 && *text2 == ' ') {
+			*text2++;
+		}
+
+		if (text2 == NULL || strlen(text2) == 0) {
+			// No real argument present.
+			return "";
+		}
+
+		argc++;
+	}
+
+	// Check if there are more arguments after this one, or if it's the last one.
+	end = strstr(text2, " ");
+	if (end == NULL) {
+		Q_strncpyz(newArg, text2, sizeof(newArg));
+	}else{
+		text2[end - text2] = '\0';
+		Q_strncpyz(newArg, text2, sizeof(newArg));
+	}
+
+	return newArg;
 }
 
 /*
