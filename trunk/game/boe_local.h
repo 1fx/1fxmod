@@ -560,7 +560,7 @@ void	Boe_checkRoof(gentity_t *ent);
 int Boe_firstDigitOfInt(int i);
 
 // Boe!Man 7/27/12: Function that replaces arguments in the actual CustomCommand action.
-char *Boe_parseCustomCommandArgs(char *in, qboolean shortCmd);
+char *Boe_parseCustomCommandArgs(gentity_t *ent, char *in, qboolean shortCmd);
 char *G_GetChatArgument(int argNum);
 int G_GetChatArgumentCount(void);
 

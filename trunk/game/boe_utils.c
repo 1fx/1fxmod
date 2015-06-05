@@ -2284,7 +2284,7 @@ Function that replaces arguments in the actual CustomCommand action.
 ================
 */
 
-char *Boe_parseCustomCommandArgs(char *in, qboolean shortCmd)
+char *Boe_parseCustomCommandArgs(gentity_t *ent, char *in, qboolean shortCmd)
 {
 	static char	*buf;
 	char		out[512] = "\0";
@@ -2299,7 +2299,7 @@ char *Boe_parseCustomCommandArgs(char *in, qboolean shortCmd)
 	#endif
 
 	if (shortCmd) {
-		argc = G_GetChatArgumentCount(in);
+		argc = G_GetChatArgumentCount();
 	}
 	
 	buf = in;
@@ -2324,6 +2324,10 @@ char *Boe_parseCustomCommandArgs(char *in, qboolean shortCmd)
 					#ifdef _DEBUG
 					Com_Printf("Argument %i: %s\n", henk_atoi(arg2), arg);
 					#endif
+					if (strlen(arg) == 0) {
+						trap_SendServerCommand(ent - g_entities, "print \"^3[Info] ^7Error: You need to append additional arguments to this command!\n\"");
+						return NULL;
+					}
 					Q_strcat(out, sizeof(out), arg); // Append the argument.
 					
 					// Set the new positions correctly (so we won't get any left overs or overwriting).

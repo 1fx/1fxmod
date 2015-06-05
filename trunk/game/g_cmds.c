@@ -2384,7 +2384,8 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	int			a = 0;
 	// Boe!Man 5/3/10: Fix.
 	qboolean	acmd = qfalse;
-	char		test[512];
+	char		fullTextBuffer[MAX_SAY_TEXT];
+	char		cmd[MAX_SAY_TEXT];
 	int			ignore = -1;
 	qboolean	command = qfalse;
 
@@ -2413,9 +2414,20 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	else
 		p = ConcatArgs( 1 );
 
-	strcpy(test, p); // Henk 08/09/10 -> Copy p to static buffer to prevent unwanted changes by other functions
+	strncpy(fullTextBuffer, p, sizeof(fullTextBuffer)); // Henk 08/09/10 -> Copy p to buffer to prevent unwanted changes by other functions
+
+	// Boe!Man 6/5/15: Get the first argument.
+	if (trap_Argc() > 2) {
+		trap_Argv(1, cmd, sizeof(cmd));
+	}else{
+		strncpy(cmd, G_GetChatArgument(0), sizeof(cmd));
+	}
+
+	Q_strlwr(cmd);
+	Q_strlwr(fullTextBuffer);
+
 	// Boe!Man 1/24/10: Different kinds of Talk during Gameplay. -- Update 3/21/11: No need to be admin in order to use this..
-	if ((strstr(p, "!at")) || (strstr(p, "!AT")) || (strstr(p, "!aT")) || (strstr(p, "!At"))) {
+	if (strstr(fullTextBuffer, "!at")){
 		if (ent->client->sess.admin){
 			p = ConcatArgs(1);
 			for(i=0;i<=strlen(p);i++){
@@ -2462,8 +2474,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			strcpy(p, newp);
 		}
 	}
-	else if ((strstr(p, "!ac")) || (strstr(p, "!AC")) || (strstr(p, "!aC")) || (strstr(p, "!Ac"))) {
-		if (/*ent->client->sess.admin && */!strstr(Q_strlwr(test), "!acl")){ // Boe!Man 3/23/11: Check if they didn't mean to add a clan member..
+	else if (strstr(fullTextBuffer, "!ac")){
 			p = ConcatArgs(1);
 			for(i=0;i<=strlen(p);i++){
 				if(p[i] == '!' && (p[i+1] == 'a' || p[i+1] == 'A') && (p[i+2] == 'c' || p[i+2] == 'C')){
@@ -2492,13 +2503,8 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 
 			acmd = qtrue;
 			strcpy(p, newp);
-		}else if(!strstr(Q_strlwr(test), "!acl")){
-			p = ConcatArgs(1);
-			G_Say( ent, NULL, mode, p );
-			return;
-		}
 	}
-	else if ((strstr(p, "!sc")) || (strstr(p, "!SC")) || (strstr(p, "!sC")) || (strstr(p, "!Sc"))) {
+	else if (strstr(fullTextBuffer, "!sc")){
 		if (ent->client->sess.admin == 4){
 			p = ConcatArgs(1);
 			for(i=0;i<=strlen(p);i++){
@@ -2528,7 +2534,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		}
 	}
 	// Boe!Man 4/17/10: Clan chat.
-	else if ((strstr(p, "!cc")) || (strstr(p, "!CC")) || (strstr(p, "!Cc")) || (strstr(p, "!cC"))) {
+	else if (strstr(fullTextBuffer, "!cc")){
 		if (ent->client->sess.clanMember){
 			p = ConcatArgs(1);
 			for(i=0;i<=strlen(p);i++){
@@ -2557,7 +2563,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			return;
 		}
 	}
-	else if ((strstr(p, "!ct")) || (strstr(p, "!CT")) || (strstr(p, "!Ct")) || (strstr(p, "!cT"))) {
+	else if (strstr(fullTextBuffer, "!ct")){
 		if (ent->client->sess.clanMember){
 			p = ConcatArgs(1);
 			for(i=0;i<=strlen(p);i++){
@@ -2586,7 +2592,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			return;
 		}
 	}
-	else if ((strstr(p, "!ca")) || (strstr(p, "!Ca")) || (strstr(p, "!cA")) || (strstr(p, "!CA"))) {
+	else if (strstr(fullTextBuffer, "!ca")){
 			p = ConcatArgs(1);
 			for(i=0;i<=strlen(p);i++){
 				if(p[i] == '!' && (p[i+1] == 'c' || p[i+1] == 'C') && (p[i+2] == 'a' || p[i+2] == 'A')){
@@ -2615,7 +2621,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			acmd = qtrue;
 			strcpy(p, newp);
 	}
-	else if (strstr(p, "!pm")){
+	else if (strcmp(cmd, "!pm") == 0){
 		int client;
 		gentity_t *target;
 		
@@ -2673,7 +2679,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 
 		return;
 	}
-	else if (strstr(p, "!re")){
+	else if (strcmp(cmd, "!re") == 0){
 		int client = ent->client->sess.lastPmClient;
 		gentity_t *target = &g_entities[client];
 
@@ -2740,73 +2746,79 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 
 	// Henk loop through my admin command array
 	// Boe!Man 1/8/11: Only go through this cycle if the client indeed has admin powers. If not, save on resources.
-	if(ent->client->sess.admin > 0 && strstr(test, "!")){
-	Q_strlwr(test);
-	if(acmd != qtrue){
-		for(i=0;i<AdminCommandsSize;i++){
-			if ((strstr(test, AdminCommands[i].shortCmd) && IsValidCommand(AdminCommands[i].shortCmd, test)) || (strstr(test, AdminCommands[i].adminCmd) && IsValidCommand(AdminCommands[i].adminCmd, test))){
-				command = qtrue;
-				if(ent->client->sess.admin >= *AdminCommands[i].adminLevel){
-					// Execute the Admin command and handle the post processing (logging, broadcast, etc.) for some commands.
-					G_postExecuteAdminCommand(i, AdminCommands[i].Function(1, ent, qtrue), ent);
-				}else{
-					if(ent->client->sess.referee == 1 && strstr(test, "!l")){ // exception for referee lock
-						adm_lockTeam(1, ent, qtrue);
-					}
-					trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
-				}
-
-				break;
-			}
-		}
-		// check custom commands
-	if(g_enableCustomCommands.integer == 1){
-		if(level.custom == qtrue){
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7There's already a custom command being executed.\n\""));
-			return;
-		}
-		GP2 = trap_GP_ParseFile(g_customCommandsFile.string, qtrue, qfalse);
-		if(GP2){
-			group = trap_GPG_GetSubGroups(GP2);
-			while(group){
-				trap_GPG_FindPairValue(group, "ShortCommand", "none", name);
-				if(!strstr(name, "none")){
-					if(strstr(test, Q_strlwr(name))){
-						command = qtrue;
-						trap_GPG_FindPairValue(group, "AdminLevel", "5", txtlevel);
-						if(ent->client->sess.admin >= atoi(txtlevel)){
-							trap_GPG_FindPairValue(group, "Action", "say \"No custom action defined\"", action);
-							if (strstr(action, "%arg")) { // Boe!Man 7/27/12: Doesn't matter what argument, as long as there's an argument to be replaced, do it.
-								char *action2;
-
-								action2 = Boe_parseCustomCommandArgs(action, qtrue);
-								memset(action, 0, sizeof(action));
-								strncpy(action, action2, strlen(action2));
-							}
-							trap_GPG_FindPairValue(group, "Broadcast", "Custom action applied", broadcast);
-							trap_GPG_FindPairValue(group, "Message", "Custom action has been applied.", message);
-							trap_SendServerCommand( -1, va("print \"^3[Custom Admin Action] ^7%s.\n\"", message));
-							G_Broadcast(broadcast, BROADCAST_CMD, NULL);
-							memset(level.action, 0, sizeof(level.action));
-							Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-							strcpy(level.action, action);
-							level.customtime = level.time+2000;
-							level.custom = qtrue;
-						}else{
-							trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your admin level is too low to use this command.\n\""));
+	if(ent->client->sess.admin > 0){
+		if(acmd != qtrue){
+			for(i = 0;i < AdminCommandsSize; i++){
+				if (strcmp(cmd, AdminCommands[i].shortCmd) == 0 && IsValidCommand(AdminCommands[i].shortCmd, cmd) || strcmp(cmd, AdminCommands[i].adminCmd) == 0 && IsValidCommand(AdminCommands[i].adminCmd, cmd)){
+					command = qtrue;
+					if(ent->client->sess.admin >= *AdminCommands[i].adminLevel){
+						// Execute the Admin command and handle the post processing (logging, broadcast, etc.) for some commands.
+						G_postExecuteAdminCommand(i, AdminCommands[i].Function(1, ent, qtrue), ent);
+					}else{
+						if(ent->client->sess.referee && strcmp(cmd, "!l") == 0){ // exception for referee lock
+							adm_lockTeam(1, ent, qtrue);
 						}
+						trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
 					}
+
+					break;
 				}
-				group = trap_GPG_GetNext ( group );
 			}
-			trap_GP_Delete(&GP2);
+			// check custom commands
+			if(g_enableCustomCommands.integer){
+				GP2 = trap_GP_ParseFile(g_customCommandsFile.string, qtrue, qfalse);
+				if(GP2){
+					group = trap_GPG_GetSubGroups(GP2);
+					while(group){
+						trap_GPG_FindPairValue(group, "ShortCommand", "none", name);
+						Q_strlwr(name);
+						if(!strstr(name, "none")){
+							if(strcmp(cmd, name) == 0){
+								if (level.custom == qtrue) {
+									trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7There's already a custom command being executed.\n\""));
+									return;
+								}else{
+									command = qtrue;
+									trap_GPG_FindPairValue(group, "AdminLevel", "5", txtlevel);
+									if(ent->client->sess.admin >= atoi(txtlevel)){
+										trap_GPG_FindPairValue(group, "Action", "say \"No custom action defined\"", action);
+										if (strstr(action, "%arg")) { // Boe!Man 7/27/12: Doesn't matter what argument, as long as there's an argument to be replaced, do it.
+											char *action2;
+
+											action2 = Boe_parseCustomCommandArgs(ent, action, qtrue);
+											if (action2 != NULL) {
+												memset(action, 0, sizeof(action));
+												strncpy(action, action2, strlen(action2));
+											}else{
+												command = qfalse;
+											}
+										}
+										if (command){
+											trap_GPG_FindPairValue(group, "Broadcast", "Custom action applied", broadcast);
+											trap_GPG_FindPairValue(group, "Message", "Custom action has been applied.", message);
+											trap_SendServerCommand(-1, va("print \"^3[Custom Admin Action] ^7%s.\n\"", message));
+											G_Broadcast(broadcast, BROADCAST_CMD, NULL);
+											memset(level.action, 0, sizeof(level.action));
+											Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+											strcpy(level.action, action);
+											level.customtime = level.time + 2000;
+											level.custom = qtrue;
+										}
+									}else{
+										trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your admin level is too low to use this command.\n\""));
+									}
+								}
+							}
+						}
+						group = trap_GPG_GetNext ( group );
+					}
+					trap_GP_Delete(&GP2);
+				}
+			}
 		}
-
-	}
-	}
 	}
 
-	if (!(strstr(p, "!3rd") && ent->client->sess.admin)){
+	if (!(strcmp(cmd, "!3rd") == 0 && ent->client->sess.admin)){
 		// Boe!Man 12/20/09
 		Boe_Tokens(ent, p, mode, qtrue);
 		Boe_Tokens(ent, p, mode, qfalse);
@@ -3888,8 +3900,7 @@ void Boe_adm_f ( gentity_t *ent )
 				memset(sendbuf, 0, sizeof(sendbuf));
 			}
 		}
-					
-					
+		
 		memset(bigbuf, 0, sizeof(bigbuf)); // Boe!Man 7/9/12: Clear memory (reset buffer).
 
 		if(g_enableCustomCommands.integer == 1){
@@ -3965,10 +3976,8 @@ void Boe_adm_f ( gentity_t *ent )
 		}
 	}
 	if(g_enableCustomCommands.integer == 1){
-		if(level.custom == qtrue){
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7There's already a custom command being executed.\n\""));
-			return;
-		}
+		qboolean execute = qtrue;
+
 		GP2 = trap_GP_ParseFile(g_customCommandsFile.string, qtrue, qfalse);
 		if(!GP2){
 			Com_Printf("Error while loading %s\n", g_customCommandsFile.string);
@@ -3978,27 +3987,40 @@ void Boe_adm_f ( gentity_t *ent )
 		while(group){
 			trap_GPG_FindPairValue(group, "Command", "none", name);
 			if(!Q_stricmp(arg1, name)){
+				if (level.custom == qtrue) {
+					trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7There's already a custom command being executed.\n\""));
+					return;
+				}
+
 				trap_GPG_FindPairValue(group, "AdminLevel", "5", txtlevel);
 				if(ent->client->sess.admin >= atoi(txtlevel)){
 					trap_GPG_FindPairValue(group, "Action", "say \"No custom action defined\"", action);
 					if(strstr(action, "%arg")){ // Boe!Man 7/27/12: Doesn't matter what argument, as long as there's an argument to be replaced, do it.
-						action2 = Boe_parseCustomCommandArgs(action, qfalse);
-						memset(action, 0, sizeof(action));
-						strncpy(action, action2, strlen(action2));
+						action2 = Boe_parseCustomCommandArgs(ent, action, qfalse);
+						if (action2 != NULL) {
+							memset(action, 0, sizeof(action));
+							strncpy(action, action2, strlen(action2));
+						}else{
+							execute = qfalse;
+						}
 					}
-					trap_GPG_FindPairValue(group, "Broadcast", "Custom action applied", broadcast);
-					trap_GPG_FindPairValue(group, "Message", "Custom action has been applied.", message);
-					trap_SendServerCommand( -1, va("print \"^3[Custom Admin action] ^7%s.\n\"", message));
-					G_Broadcast(broadcast, BROADCAST_CMD, NULL);
-					memset(level.action, 0, sizeof(level.action));
-					strcpy(level.action, action);
-					Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-					level.customtime = level.time+2000;
-					level.custom = qtrue;
+
+					if (execute) {
+						trap_GPG_FindPairValue(group, "Broadcast", "Custom action applied", broadcast);
+						trap_GPG_FindPairValue(group, "Message", "Custom action has been applied.", message);
+						trap_SendServerCommand(-1, va("print \"^3[Custom Admin action] ^7%s.\n\"", message));
+						G_Broadcast(broadcast, BROADCAST_CMD, NULL);
+						memset(level.action, 0, sizeof(level.action));
+						strcpy(level.action, action);
+						Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+						level.customtime = level.time + 2000;
+						level.custom = qtrue;
+					}
+
 					return;
 				}else{
-				trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your admin level is too low to use this command.\n\""));
-				return;
+					trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your admin level is too low to use this command.\n\""));
+					return;
 				}
 			}
 			group = trap_GPG_GetNext ( group );
