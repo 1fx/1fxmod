@@ -1329,14 +1329,11 @@ void ClientThink_real( gentity_t *ent )
 	if(current_gametype.value == GT_HS){
 		// Boe!Man 7/21/12: Fix for MM1 gravity not maintaining balance with actual g_gravity CVAR (MM1 should always provide a gravity boost, no matter the actual g_gravity CVAR value).
 		if(client->ps.weapon == WP_MM1_GRENADE_LAUNCHER){
-			if(client->ps.gravity > 350){
-				client->ps.gravity = g_gravity.value-300;
-			}else{
-				client->ps.gravity = g_gravity.value;
-			}
+			client->ps.gravity = g_gravity.value / 1.6;
 		}else{
 			client->ps.gravity = g_gravity.value;
 		}
+
 		if(client->ps.weapon == WP_RPG7_LAUNCHER && level.time > client->sess.slowtime){
 			client->ps.speed = g_speed.value+70;
 			if(level.time >= client->sess.SpeedAnimation){

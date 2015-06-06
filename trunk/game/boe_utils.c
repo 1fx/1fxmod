@@ -1272,7 +1272,6 @@ void Boe_Players(gentity_t *ent)
 			else if (level.clients[i].sess.proClient >= 0.1){
 				hasClient = qtrue;
 				Q_strncpyz(client, va("[^3P%2.f^7]", level.clients[i].sess.proClient), sizeof(client));
-				client = ;
 			}
 		}
 		#else
