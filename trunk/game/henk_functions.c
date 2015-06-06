@@ -347,32 +347,6 @@ void Henk_Ignore(gentity_t *ent){
 		trap_SendServerCommand( ent->s.number, va("print \"^3[Info] ^7You have ignored %s.\n\"", g_entities[idnum].client->pers.netname));
 }
 
-qboolean IsValidCommand(char *cmd, char *string){
-	int i, z;
-	qboolean space = qfalse;
-	for(i=0;i<=strlen(string);i++){
-		if(string[i] == ' ')
-			space = qtrue;
-		if(string[i] == '!'){
-			for(z=1;z<=strlen(cmd)-1;z++){
-				if(string[i+z] != cmd[z]){
-					break; // invalid command
-				}else if(space){ // Henkie 25/09/2012 -> Fix issue with putting the short command in the middle of a sentence
-					return qfalse;
-				}else if(z == strlen(cmd)-1){
-					if(henk_isdigit(string[(i+z)+1]))
-						return qtrue;
-					else if(!string[(i+z)+1])
-						return qtrue;
-					else if(string[(i+z)+1] != ' ')
-						return qfalse;
-				}
-			}
-		}
-	}
-	return qtrue;
-}
-
 int TiedPlayers(void){
 	gentity_t *ent;
 	int i, highscore = 0, count = 0;

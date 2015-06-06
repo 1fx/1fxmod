@@ -2749,7 +2749,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	if(ent->client->sess.admin > 0){
 		if(acmd != qtrue){
 			for(i = 0;i < AdminCommandsSize; i++){
-				if (strcmp(cmd, AdminCommands[i].shortCmd) == 0 && IsValidCommand(AdminCommands[i].shortCmd, cmd) || strcmp(cmd, AdminCommands[i].adminCmd) == 0 && IsValidCommand(AdminCommands[i].adminCmd, cmd)){
+				if (strcmp(cmd, AdminCommands[i].shortCmd) == 0 || strcmp(cmd, va("!%s", AdminCommands[i].adminCmd)) == 0){
 					command = qtrue;
 					if(ent->client->sess.admin >= *AdminCommands[i].adminLevel){
 						// Execute the Admin command and handle the post processing (logging, broadcast, etc.) for some commands.
