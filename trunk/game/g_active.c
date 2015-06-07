@@ -705,8 +705,10 @@ void SpectatorThink( gentity_t *ent, usercmd_t *ucmd )
 	{
 		G_StopFollowing( ent );
 	}
-	#ifndef _GOLD
-	else if ( level.clientMod == CL_RPM && client->sess.rpmClient && (((client->buttons & BUTTON_ZOOMIN) && !( client->oldbuttons & BUTTON_ZOOMIN ))  || ((client->buttons & BUTTON_RELOAD) && !( client->oldbuttons & BUTTON_RELOAD )))) {
+	else if (((client->buttons & BUTTON_ZOOMIN) && !( client->oldbuttons & BUTTON_ZOOMIN ))  
+			|| ((client->buttons & BUTTON_RELOAD) && !( client->oldbuttons & BUTTON_RELOAD ))
+			|| ((client->buttons & BUTTON_USE) && !( client->oldbuttons & BUTTON_USE)))
+	{
 		// If not following then go to either third or first
 		if ( client->sess.spectatorState != SPECTATOR_FOLLOW ) {
 			client->sess.spectatorFirstPerson = qtrue;
@@ -721,7 +723,6 @@ void SpectatorThink( gentity_t *ent, usercmd_t *ucmd )
 			client->sess.spectatorFirstPerson = qtrue;
 		}
 	}
-	#endif // not _GOLD
 	//End
 }	
 
