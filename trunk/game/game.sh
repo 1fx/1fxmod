@@ -213,6 +213,14 @@ fi
 printf "Now linking the target file.. "
 # Link the Mod.
 if [ "$gold" == false ]; then
+	# Static libraries to link against (SoF2 v1.00).
+	libs="\
+	/usr/lib/libpthread.a \
+	/usr/lib/libm.a \
+	/usr/lib/libc.a \
+	/usr/lib/gcc-lib/i386-linux/2.95.4/libgcc.a \
+	/usr/lib/libdl.a"
+
 	# This links the Mod dynamically with static dependencies.
 	ld $strip -shared $linkfiles -Bstatic $libs -o $outfile 2>> compile_log
 else
@@ -232,16 +240,25 @@ printf "=====================================================\n"
 # Now check if the output file was indeed created..
 if [ -f ./$outfile ]; then
 	echo -e "Compiling the Mod was \e[00;32msuccessfull\e[00m!"
-	if [ "$macosx" == true ]; then
-		param="-f%z"
+	
+	if [ "$gold" == false ]; then
+		if [ $(stat -c %s compile_log 2>/dev/null || echo 0) -gt 0 ]; then
+		    echo -e "Some \e[00;33mwarnings\e[00m did occur."
+		else
+		    echo "No warnings occured."
+		fi
 	else
-		param="-c 0"
-	fi
+		if [ "$macosx" == true ]; then
+			param="-f%z"
+		else
+			param="-c 0"
+		fi
 
-	if [ $(stat $param compile_log 2>/dev/null) -gt 0 ]; then
-	    echo -e "Some \e[00;33mwarnings\e[00m did occur."
-	else
-	    echo "No warnings occured."
+		if [ $(stat $param compile_log 2>/dev/null) -gt 0 ]; then
+		    echo -e "Some \e[00;33mwarnings\e[00m did occur."
+		else
+		    echo "No warnings occured."
+		fi
 	fi
 else
 	echo -e "Compiling the Mod \e[00;31mfailed\e[00m!"
