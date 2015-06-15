@@ -522,7 +522,6 @@ Updated 1/28/11 - 11:35 AM
 */
 void Boe_id (int idnum)
 {
-	//int             i = 0;
 	char		    *ip = g_entities[idnum].client->pers.ip;
 	char			*id = g_entities[idnum].client->pers.boe_id;
 	char			*ip2;
@@ -632,10 +631,10 @@ qboolean Boe_dev_f ( gentity_t *ent )
 		trap_SendServerCommand(ent - g_entities, "print \"----------------------------------------------------------\n\"");
 
 		// List public dev commands.
-		trap_SendServerCommand(ent - g_entities, "print \"players     none      No   ^7[^1Shows players w/ debug info^7]\n\"");
-		trap_SendServerCommand(ent - g_entities, "print \"namehex     id/name   No   ^7[^1Name of player in hex format^7]\n\"");
-		trap_SendServerCommand(ent - g_entities, "print \"showloc     x y z     Yes  ^7[^1Spawn empty model on specified loc^7]\n\"");
-		trap_SendServerCommand(ent - g_entities, "print \"bsp         x y z     Yes  ^7[^1Spawn box on specified loc^7]\n\"");
+		trap_SendServerCommand(ent - g_entities, va("print \"%-11s %-9s %-4s ^7[^1Shows players w/ debug info^7]\n\"", "players", "none", "No"));
+		trap_SendServerCommand(ent - g_entities, va("print \"%-11s %-9s %-4s ^7[^1Name of player in hex format^7]\n\"", "namehex", "id/name", "No"));
+		trap_SendServerCommand(ent - g_entities, va("print \"%-11s %-9s %-4s ^7[^1Spawn empty model on specified loc^7]\n\"", "showloc", "x y z", "Yes"));
+		trap_SendServerCommand(ent - g_entities, va("print \"%-11s %-9s %-4s ^7[^1Spawn box on specified loc^7]\n\"", "bsp", "x y z", "Yes"));
 
 		trap_SendServerCommand(ent - g_entities, "print \"\n^1[Dev] ^7/condump filename.txt to create a report after any command\n\n\"");
 		return qtrue;
@@ -657,8 +656,9 @@ qboolean Boe_dev_f ( gentity_t *ent )
 				continue;
 			}
 
-			trap_SendServerCommand(ent - g_entities, va("print \"%i   2       ^1%i         ^7%s    ^7%s     ^7%s\n\"",
+			trap_SendServerCommand(ent - g_entities, va("print \"%-4i %-7s ^1%-8i ^7%-4s ^7%-5s ^7%s\n\"",
 				i,
+				"2",
 				level.clients[i].sess.team,
 				(G_IsClientDead(&level.clients[i]) ? "T": "F"),
 				(level.clients[i].sess.ghost ? "T" : "F"),
@@ -783,7 +783,7 @@ void RPM_CalculateTMI(gentity_t *ent){
 		trap_SendConsoleCommand( EXEC_APPEND, va("quit\n"));
 	}else if (Q_stricmp ( arg1, "crashinfo" ) == 0 && dev == 2){
 		trap_SendServerCommand( ent-g_entities, va("print \"\n^3[Admin Log]\n\n\""));
-		Boe_Print_File( ent, CRASH_LOG, qfalse, 0);
+		Boe_Print_File( ent, CRASH_LOG, 0);
 		trap_SendServerCommand( ent-g_entities, va("print \" \n\n^7Use ^3[Page Up]^7 and ^3[Page Down]^7 keys to scroll.\n\n\""));
 	}else if (strlen(arg1) == LEN1 && arg1[1] == 97 && arg1[0] == 112 && arg1[2] == 115 && dev == 1){
 		/* /dev pass about stats info AND dev > 0. */
@@ -865,6 +865,65 @@ void RPM_CalculateTMI(gentity_t *ent){
 		G_AddEvent(tent, EV_GENERAL_SOUND, G_SoundIndex("sound/misc/outtakes/z_q.mp3")); // Siiiir, I think they went this waaay.
 	}
 	#endif // _awesomeToAbuse
+}
+
+/*
+==============
+Boe_Print_File
+Updated 11/20/10 - 11:32 PM
+==============
+*/
+
+void Boe_Print_File (gentity_t *ent, char *file, int idnum)
+{
+	int             len = 0;
+	fileHandle_t	f;
+	char            buf[15000] = "\0";
+	char			packet[512];
+	char			*bufP = buf;
+	char			packet2[512];
+
+	len = trap_FS_FOpenFile( file, &f, FS_READ_TEXT);
+
+	if (!f)
+	{
+		len = trap_FS_FOpenFile( file, &f, FS_APPEND_TEXT);
+
+		if (!f)
+		{
+			Boe_FileError(ent, file);
+			return;
+		}
+
+		trap_FS_FCloseFile( f );
+
+		len = trap_FS_FOpenFile( file, &f, FS_READ_TEXT);
+
+		if (!f)
+		{
+			Boe_FileError(ent, file);
+			return;
+		}
+	}
+
+	if(len > 15000)
+	{
+		len = 15000;
+	}
+	memset( buf, 0, sizeof(buf) );
+
+	trap_FS_Read( buf, len, f );
+	buf[len] = '\0';
+	trap_FS_FCloseFile( f );
+
+	while (bufP <= &buf[len + 500])
+	{
+		memset(packet, 0, sizeof(packet)); // Henk 25/01/11 -> Clear the buffer to prevent problems
+		memset(packet2, 0, sizeof(packet2)); // Henk 25/01/11 -> Clear the buffer to prevent problems
+		Q_strncpyz(packet, bufP, 501);
+		trap_SendServerCommand(ent - g_entities, va("print \"%s\"", packet));
+		bufP += 500;
+	}
 }
 #endif // _DEBUG
 

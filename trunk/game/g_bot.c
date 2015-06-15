@@ -1017,7 +1017,7 @@ void Svcmd_BotList_f( void ) {
 	char model[MAX_TOKEN_CHARS];
 	char personality[MAX_TOKEN_CHARS];
 
-	trap_Printf("^1name             model            personality              funname\n");
+	trap_Printf(va("^1%-16s %-16s %-20s %-20s\n", "name", "model", "personality", "funname"));
 	for (i = 0; i < g_numBots; i++) {
 		strcpy(name, Info_ValueForKey( g_botInfos[i], "name" ));
 		if ( !*name ) {

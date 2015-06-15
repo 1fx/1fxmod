@@ -37,13 +37,13 @@ void G_Tcmd ( gentity_t *ent )
 
 	if ( !level.gametypeData->teams )
 	{
-		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Not playing a team game!\n\""));
+		trap_SendServerCommand( ent-g_entities, "print \"^3[Info] ^7Not playing a team game!\n\"");
 		return;
 	}
 	
 	if(!g_enableTeamCmds.integer)
 	{
-		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Team Commands are disabled on this server!\n\""));
+		trap_SendServerCommand( ent-g_entities, "print \"^3[Info] ^7Team Commands are disabled on this server!\n\"");
 		return;
 	}
 
@@ -52,25 +52,25 @@ void G_Tcmd ( gentity_t *ent )
 	if (!g_compMode.integer && g_enableTeamCmds.integer != 2 && !cm_enabled.integer)
 	///End  - 09.18.06 - 04:58pm
 	{
-		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Competition Mode must be enabled to use team commands!\n\""));
+		trap_SendServerCommand( ent-g_entities, "print \"^3[Info] ^7Competition Mode must be enabled to use team commands!\n\"");
 		return;
 	}
 	
 	if(ent->client->sess.team == TEAM_SPECTATOR){
-		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Access Denied: You are currently not in a valid team!\n\""));
+		trap_SendServerCommand( ent-g_entities, "print \"^3[Info] ^7Access Denied: You are currently not in a valid team!\n\"");
 		return;
 	}
 
 	// Boe!Man 11/16/10: Updated /tcmd help screen.
 	if (!Q_stricmp ( arg1, "?" )||!Q_stricmp ( arg1, "" )){
-		trap_SendServerCommand( ent-g_entities, va("print \"\n^3Commands         Arguments     Explanation\n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \"----------------------------------------------------------\n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \"info             <team>        ^7[^3Shows your team's info^7]\n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \"invite           <id>          ^7[^3Invites a spectator^7]\n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \"uninvite         <id>          ^7[^3Un-invites a spectator^7]\n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \"lock                           ^7[^3Locks your team^7]\n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \"unlock                         ^7[^3Unlocks your team^7]\n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \"\n^7Use ^3[Page Up]^7 and ^3[Page Down]^7 keys to scroll.\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \"\n^3%-16s %-13s Explanation\n\"", "Commands", "Arguments"));
+		trap_SendServerCommand( ent-g_entities, "print \"----------------------------------------------------------\n\"");
+		trap_SendServerCommand( ent-g_entities, va("print \"%-16s %-13s ^7[^3Shows your team's info^7]\n\"", "info", "<team>"));
+		trap_SendServerCommand( ent-g_entities, va("print \"%-16s %-13s ^7[^3Invites a spectator^7]\n\"", "invite", "<id>"));
+		trap_SendServerCommand( ent-g_entities, va("print \"%-16s %-13s ^7[^3Un-invites a spectator^7]\n\"", "uninvite", "<id>"));
+		trap_SendServerCommand( ent-g_entities, va("print \"%-30s ^7[^3Locks your team^7]\n\"", "lock"));
+		trap_SendServerCommand( ent-g_entities, va("print \"%-30s ^7[^3Unlocks your team^7]\n\"", "unlock"));
+		trap_SendServerCommand( ent-g_entities, "print \"\n^7Use ^3[Page Up]^7 and ^3[Page Down]^7 keys to scroll.\n\"");
 		return;
 	}
 
@@ -94,7 +94,7 @@ void G_Tcmd ( gentity_t *ent )
 	else 
 	{
 		trap_SendServerCommand( ent-g_entities, va("print \"Unknown Command  %s.\n\"", arg1));
-		trap_SendServerCommand( ent-g_entities, va("print \"Usage: tcmd <command> <variable>\n\""));
+		trap_SendServerCommand( ent-g_entities, "print \"Usage: tcmd <command> <variable>\n\"");
 	}
 }
 
@@ -473,7 +473,7 @@ void G_Invite_Spec(gentity_t *ent, char *arg2)
 	}
 	if( g_entities[id].client->sess.team != TEAM_SPECTATOR)
 	{
-		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7That player is not currently spectating.\n\""));
+		trap_SendServerCommand( ent-g_entities, "print \"^3[Info] ^7That player is not currently spectating.\n\"");
 		return;
 	}
 	

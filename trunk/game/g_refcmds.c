@@ -26,40 +26,31 @@ G_ref_cmd
 */
 void G_ref_cmd( gentity_t *ent)
 {
-//	int		i;
 	char	arg1[MAX_STRING_TOKENS];
 	char	arg2[MAX_STRING_TOKENS];
-//	char	arg3[MAX_STRING_TOKENS];
-//	gentity_t *tent;
 
 	trap_Argv( 1, arg1, sizeof( arg1 ) );
 	trap_Argv( 2, arg2, sizeof( arg2 ) );
-//	if (!Q_stricmp ( arg1, "?" ))
+
 	if (!Q_stricmp ( arg1, "?" )||!Q_stricmp ( arg1, "" ))
 	{
-		trap_SendServerCommand( ent-g_entities, va("print \" \n ^3Lvl   Commands         Arguments     Explanation\n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \" ----------------------------------------------------------\n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \" [^3R^7]       password                   ^7[^3Enter the Referee password^7]\n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \" [^3R^7]   i   info         <team>        ^7[^3Info of the specified team^7]\n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \" [^3R^7]   rt  ready                      ^7[^3Ready up the teams^7]\n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \" [^3R^7]   l   lock         <team>        ^7[^3Lock a team^7]\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \" \n ^3%-5s %-16s %-13s Explanation\n\"", "Lvl", "Commands", "Arguments"));
+		trap_SendServerCommand( ent-g_entities, "print \" ----------------------------------------------------------\n\"");
+		trap_SendServerCommand( ent-g_entities, va("print \" [^3R^7%-7s %-26s ^7[^3Enter the Referee password^7]\n\"", "]", "password"));
+		trap_SendServerCommand( ent-g_entities, va("print \" [^3R^7%-3s %-3s %-12s %-13s ^7[^3Info of the specified team^7]\n\"", "]", "i", "info", "<team>"));
+		trap_SendServerCommand( ent-g_entities, va("print \" [^3R^7%-3s %-3s %-26s ^7[^3Ready up the teams^7]\n\"", "]", "rt", "ready"));
+		trap_SendServerCommand( ent-g_entities, va("print \" [^3R^7%-3s %-3s %-12s %-13s ^7[^3Lock a team^7]\n\"", "]", "l", "lock", "<team>"));
 		// Boe: Hieronder mot nog.. Updated soonish.
-		trap_SendServerCommand( ent-g_entities, va("print \" [^3R^7]   re  reset        <team>        ^7[^3Reset a team their settings^7]\n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \" [^3R^7]   k   kick         <id> <reason> ^7[^3Kick a player^7]\n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \" [^3R^7]   rch chat         <message>     ^7[^3Sends a message to Referees^7]\n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \" [^3R^7]   rt  reftalk      <message>     ^7[^3Sends a message to all players^7]\n\""));
-		trap_SendServerCommand( ent-g_entities, va("print \" [^3R^7]   pa  pause                      ^7[^3Pauses/resumes the game^7]\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \" [^3R^7%-3s %-3s %-12s %-13s ^7[^3Reset a team their settings^7]\n\"", "]", "re", "reset", "<team>"));
+		trap_SendServerCommand( ent-g_entities, va("print \" [^3R^7%-3s %-3s %-12s %-13s ^7[^3Kick a player^7]\n\"", "]", "k", "kick", "<id> <reason>"));
+		trap_SendServerCommand( ent-g_entities, va("print \" [^3R^7%-3s %-3s %-12s %-13s ^7[^3Sends a message to Referees^7]\n\"", "]", "rch", "chat", "<message>"));
+		trap_SendServerCommand( ent-g_entities, va("print \" [^3R^7%-3s %-3s %-12s %-13s ^7[^3Sends a message to all players^7]\n\"", "]", "rt", "reftalk", "<message>"));
+		trap_SendServerCommand( ent-g_entities, va("print \" [^3R^7%-3s %-3s %-26s ^7[^3Pauses/resumes the game^7]\n\"", "]", "pa", "pause"));
 		return;
 	}
 	
-	/*if(!g_enableRefs.integer)
-	{
-		trap_SendServerCommand( ent-g_entities, va("print \"Referee's are disabled on this server\n\""));
-		return;
-	}*/
-	
-	if (/*g_enableRefs.integer == 1 && */!g_compMode.integer) {
-		trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Server must be in Competetion Mode to become a Referee.\n\""));
+	if (!g_compMode.integer) {
+		trap_SendServerCommand( ent-g_entities, "print \"^3[Info] ^7Server must be in Competetion Mode to become a Referee.\n\"");
 		return;
 	}
 
@@ -68,20 +59,19 @@ void G_ref_cmd( gentity_t *ent)
 	{
 		if(ent->client->sess.referee)
 		{
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You are already a Referee.\n\""));
+			trap_SendServerCommand( ent-g_entities, "print \"^3[Info] ^7You are already a Referee.\n\"");
 			return;
 		}
 
 		if(ent->client->sess.admin)
 		{	
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You are already an Admin.\n\""));
-			//trap_SendServerCommand( ent-g_entities, va("print \"Type ^1\\adm suspend ^7to become a referee.\n\""));
+			trap_SendServerCommand( ent-g_entities, "print \"^3[Info] ^7You are already an Admin.\n\"");
 			return;
 		}
 
 		if(!Q_stricmp ( g_refpassword.string, "none" )||!Q_stricmp ( g_refpassword.string, "\0" ))
 		{
-			trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7This server does not have a Referee password.\n\""));
+			trap_SendServerCommand( ent-g_entities, "print \"^3[Info] ^7This server does not have a Referee password.\n\"");
 			return;
 		}
 		if(!Q_stricmp ( g_refpassword.string, arg2 ))
@@ -93,7 +83,7 @@ void G_ref_cmd( gentity_t *ent)
 		}
 		else
 		{
-			trap_SendServerCommand( ent-g_entities, va("print \"[^3Info] ^7Incorrect Referee password entered.\n\""));
+			trap_SendServerCommand( ent-g_entities, "print \"[^3Info] ^7Incorrect Referee password entered.\n\"");
 			return;
 		}
 	}
