@@ -773,7 +773,9 @@ void player_die(
 
 	#ifdef _3DServer
 	// Check if player should be a monkey.
-	if (current_gametype.value == GT_HS && boe_deadMonkey.integer && level.monkeySpawnCount && !self->client->sess.monkeyPreferGhost && self->client->sess.team == TEAM_RED){
+	if (current_gametype.value == GT_HS && boe_deadMonkey.integer && level.monkeySpawnCount && !level.cagefight
+		&& !self->client->sess.monkeyPreferGhost && self->client->sess.team == TEAM_RED)
+	{
 		self->client->sess.deadMonkey = level.time;
 		ClientSpawn(self);
 	}

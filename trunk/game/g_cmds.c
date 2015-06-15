@@ -1466,7 +1466,7 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 	if ( ghost )
 	{
 		#ifdef _3DServer
-		if (boe_deadMonkey.integer && level.monkeySpawnCount && current_gametype.value == GT_HS && team == TEAM_RED && !client->sess.monkeyPreferGhost && !level.cagefight){
+		if (current_gametype.value == GT_HS && boe_deadMonkey.integer && level.monkeySpawnCount && !level.cagefight && !client->sess.monkeyPreferGhost && team == TEAM_RED){
 			client->sess.deadMonkey = level.time;
 			ghost = qfalse;
 		} else if (team != TEAM_SPECTATOR)
@@ -4439,7 +4439,7 @@ void Boe_switchGhost(gentity_t *ent)
 		trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7You won't be respawned as dead player anymore.\n\""));
 	}else{
 		// Is the client dead and in ghost mode? If so, respawn.
-		if (level.monkeySpawnCount && (ent->client->sess.ghost || ent->client->ps.stats[STAT_HEALTH] < 1) && ent->client->sess.team == TEAM_RED){
+		if ((ent->client->sess.ghost || ent->client->ps.stats[STAT_HEALTH] < 1) && !level.cagefight && ent->client->sess.team == TEAM_RED){
 			ent->client->sess.deadMonkey = level.time;
 			ent->client->sess.ghost = qfalse;
 			ClientSpawn(ent);
