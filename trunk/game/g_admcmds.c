@@ -830,24 +830,25 @@ int adm_forceTeam(int argNum, gentity_t *adm, qboolean shortCmd)
 {
 	char		str[MAX_TOKEN_CHARS];
 	int			idNum;
-	int			i, xTeam;
+	int			i, xTeam, argc;
 	char		team;
 	qboolean	all = qfalse; // Boe!Man 4/15/13: If this is true, forceteam all players to a specific team.
 	char		userinfo[MAX_INFO_STRING];
 
-	// Boe!Man 4/15/13: Check for "all".
-	if (shortCmd){
-		trap_Argv(1, str, sizeof(str));
-	}else{
-		if (adm && adm->client){
-			trap_Argv(2, str, sizeof(str));
-		}else{
-			trap_Argv(1, str, sizeof(str));
-		}
+	if (shortCmd) {
+		argc = G_GetChatArgumentCount();
 	}
+
+	if (!shortCmd || shortCmd && !argc){
+		trap_Argv((!shortCmd) ? argNum : argNum + 1, str, sizeof(str));
+	}else{
+		Q_strncpyz(str, G_GetChatArgument(1), sizeof(str));
+	}
+	
 	Q_strlwr(str);
 
-	if (shortCmd && strstr(str, " all ") || !shortCmd && strstr(str, "all") && strlen(str) == 3){
+	// Check for "all".
+	if (shortCmd && strcmp(str, "all") == 0 || !shortCmd && strcmp(str, "all") == 0){
 		all = qtrue;
 	}else{
 		// Find the player.
@@ -866,41 +867,27 @@ int adm_forceTeam(int argNum, gentity_t *adm, qboolean shortCmd)
 	if (idNum < 0) return -1;
 
 	// Set the team.
-	if (shortCmd == qtrue){
-		qboolean	pass = qfalse;
-		for (i = 0; i<strlen(str); i++){
-			if (pass == qtrue && str[i] == ' '){
-				team = str[i + 1];
-				break;
-			}
-			if (str[i] == ' '){
-				pass = qtrue;
-			}
+	if (shortCmd){
+		memset(str, 0, sizeof(str));
+
+		if (argc){
+			Q_strncpyz(str, G_GetChatArgument(2), sizeof(str));
+		}else{
+			trap_Argv(argNum + 2, str, sizeof(str));
 		}
-		if (team == 's' || team == 'S'){
+
+		if (str[0] == 's' || str[0] == 'S'){
 			strcpy(str, "spectator");
 			xTeam = TEAM_SPECTATOR;
-		}else if (team == 'r' || team == 'R'){
+		}else if (str[0] == 'r' || str[0] == 'R'){
 			strcpy(str, "red");
 			xTeam = TEAM_RED;
-		}else if (team == 'b' || team == 'B'){
+		}else if (str[0] == 'b' || str[0] == 'B'){
 			strcpy(str, "blue");
 			xTeam = TEAM_BLUE;
 		}else{
-			trap_Argv(3, str, sizeof(str));
-			if (str[0] == 's' || str[0] == 'S'){
-				strcpy(str, "spectator");
-				xTeam = TEAM_SPECTATOR;
-			}else if (str[0] == 'r' || str[0] == 'R'){
-				strcpy(str, "red");
-				xTeam = TEAM_RED;
-			}else if (str[0] == 'b' || str[0] == 'B'){
-				strcpy(str, "blue");
-				xTeam = TEAM_BLUE;
-			}else{
-				trap_SendServerCommand(adm->s.number, va("print\"^3[Info] ^7Wrong team specified.\n\""));
-				return -1;
-			}
+			trap_SendServerCommand(adm->s.number, va("print\"^3[Info] ^7Wrong team specified.\n\""));
+			return -1;
 		}
 	}else{
 		// Boe!Man 1/13/11: Fix for Forceteam not working with RCON system.
@@ -2687,11 +2674,16 @@ int adm_Flash(int argNum, gentity_t *adm, qboolean shortCmd)
 	vec3_t		dir;
 	float		x, y;
 
-	trap_Argv(argNum, arg, sizeof(arg));
+	if (!shortCmd || shortCmd && !G_GetChatArgumentCount()){
+		trap_Argv((!shortCmd) ? argNum : argNum + 1, arg, sizeof(arg));
+	}else{
+		Q_strncpyz(arg, G_GetChatArgument(1), sizeof(arg));
+	}
+	
 	Q_strlwr(arg);
 
 	// Check for "all".
-	if (shortCmd && strstr(arg, " all") || !shortCmd && strstr(arg, "all") && strlen(arg) == 3){
+	if (shortCmd && strcmp(arg, "all") == 0 || !shortCmd && strcmp(arg, "all") == 0){
 		all = qtrue;
 	}else{
 		idNum = Boe_ClientNumFromArg(adm, argNum, "flash <id/name>", "flash", qtrue, qtrue, shortCmd);
@@ -2699,7 +2691,7 @@ int adm_Flash(int argNum, gentity_t *adm, qboolean shortCmd)
 
 		targ = g_entities + idNum;
 	}
-		
+	
 	weapon = WP_M84_GRENADE;
 	nadeDir = 1;
 	for (i = 0; i < 1; i++) {

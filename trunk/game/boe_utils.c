@@ -2310,6 +2310,9 @@ char *G_GetChatArgument(int argNum)
 		Q_strncpyz(newArg, text2, sizeof(newArg));
 	}
 
+	// Remove colors from arg.
+	RemoveColorEscapeSequences(newArg);
+
 	return newArg;
 }
 

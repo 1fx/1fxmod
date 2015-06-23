@@ -2746,74 +2746,73 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 
 	// Henk loop through my admin command array
 	// Boe!Man 1/8/11: Only go through this cycle if the client indeed has admin powers. If not, save on resources.
-	if(ent->client->sess.admin > 0){
-		if(acmd != qtrue){
-			for(i = 0;i < AdminCommandsSize; i++){
-				if (strcmp(cmd, AdminCommands[i].shortCmd) == 0 || strcmp(cmd, va("!%s", AdminCommands[i].adminCmd)) == 0){
-					command = qtrue;
-					if(ent->client->sess.admin >= *AdminCommands[i].adminLevel){
-						// Execute the Admin command and handle the post processing (logging, broadcast, etc.) for some commands.
-						G_postExecuteAdminCommand(i, AdminCommands[i].Function(1, ent, qtrue), ent);
-					}else{
-						if(ent->client->sess.referee && strcmp(cmd, "!l") == 0){ // exception for referee lock
-							adm_lockTeam(1, ent, qtrue);
-						}
-						trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
+	if(ent->client->sess.admin > 0 && !acmd){
+		for(i = 0;i < AdminCommandsSize; i++){
+			if (strcmp(cmd, AdminCommands[i].shortCmd) == 0 || strcmp(cmd, va("!%s", AdminCommands[i].adminCmd)) == 0){
+				command = qtrue;
+				if(ent->client->sess.admin >= *AdminCommands[i].adminLevel){
+					// Execute the Admin command and handle the post processing (logging, broadcast, etc.) for some commands.
+					G_postExecuteAdminCommand(i, AdminCommands[i].Function(1, ent, qtrue), ent);
+				}else{
+					if(ent->client->sess.referee && strcmp(cmd, "!l") == 0){ // exception for referee lock
+						adm_lockTeam(1, ent, qtrue);
 					}
-
-					break;
+					trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
 				}
-			}
-			// check custom commands
-			if(g_enableCustomCommands.integer){
-				GP2 = trap_GP_ParseFile(g_customCommandsFile.string, qtrue, qfalse);
-				if(GP2){
-					group = trap_GPG_GetSubGroups(GP2);
-					while(group){
-						trap_GPG_FindPairValue(group, "ShortCommand", "none", name);
-						Q_strlwr(name);
-						if(!strstr(name, "none")){
-							if(strcmp(cmd, name) == 0){
-								if (level.custom == qtrue) {
-									trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7There's already a custom command being executed.\n\""));
-									return;
-								}else{
-									command = qtrue;
-									trap_GPG_FindPairValue(group, "AdminLevel", "5", txtlevel);
-									if(ent->client->sess.admin >= atoi(txtlevel)){
-										trap_GPG_FindPairValue(group, "Action", "say \"No custom action defined\"", action);
-										if (strstr(action, "%arg")) { // Boe!Man 7/27/12: Doesn't matter what argument, as long as there's an argument to be replaced, do it.
-											char *action2;
 
-											action2 = Boe_parseCustomCommandArgs(ent, action, qtrue);
-											if (action2 != NULL) {
-												memset(action, 0, sizeof(action));
-												strncpy(action, action2, strlen(action2));
-											}else{
-												command = qfalse;
-											}
+				break;
+			}
+		}
+
+		// check custom commands
+		if(!command && g_enableCustomCommands.integer){
+			GP2 = trap_GP_ParseFile(g_customCommandsFile.string, qtrue, qfalse);
+			if(GP2){
+				group = trap_GPG_GetSubGroups(GP2);
+				while(group){
+					trap_GPG_FindPairValue(group, "ShortCommand", "none", name);
+					Q_strlwr(name);
+					if(!strstr(name, "none")){
+						if(strcmp(cmd, name) == 0){
+							if (level.custom == qtrue) {
+								trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7There's already a custom command being executed.\n\""));
+								return;
+							}else{
+								command = qtrue;
+								trap_GPG_FindPairValue(group, "AdminLevel", "5", txtlevel);
+								if(ent->client->sess.admin >= atoi(txtlevel)){
+									trap_GPG_FindPairValue(group, "Action", "say \"No custom action defined\"", action);
+									if (strstr(action, "%arg")) { // Boe!Man 7/27/12: Doesn't matter what argument, as long as there's an argument to be replaced, do it.
+										char *action2;
+
+										action2 = Boe_parseCustomCommandArgs(ent, action, qtrue);
+										if (action2 != NULL) {
+											memset(action, 0, sizeof(action));
+											strncpy(action, action2, strlen(action2));
+										}else{
+											command = qfalse;
 										}
-										if (command){
-											trap_GPG_FindPairValue(group, "Broadcast", "Custom action applied", broadcast);
-											trap_GPG_FindPairValue(group, "Message", "Custom action has been applied.", message);
-											trap_SendServerCommand(-1, va("print \"^3[Custom Admin Action] ^7%s.\n\"", message));
-											G_Broadcast(broadcast, BROADCAST_CMD, NULL);
-											memset(level.action, 0, sizeof(level.action));
-											Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-											strcpy(level.action, action);
-											level.customtime = level.time + 2000;
-											level.custom = qtrue;
-										}
-									}else{
-										trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your admin level is too low to use this command.\n\""));
 									}
+									if (command){
+										trap_GPG_FindPairValue(group, "Broadcast", "Custom action applied", broadcast);
+										trap_GPG_FindPairValue(group, "Message", "Custom action has been applied.", message);
+										trap_SendServerCommand(-1, va("print \"^3[Custom Admin Action] ^7%s.\n\"", message));
+										G_Broadcast(broadcast, BROADCAST_CMD, NULL);
+										memset(level.action, 0, sizeof(level.action));
+										Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+										strcpy(level.action, action);
+										level.customtime = level.time + 2000;
+										level.custom = qtrue;
+									}
+								}else{
+									trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your admin level is too low to use this command.\n\""));
 								}
 							}
 						}
-						group = trap_GPG_GetNext ( group );
 					}
-					trap_GP_Delete(&GP2);
+					group = trap_GPG_GetNext ( group );
 				}
+				trap_GP_Delete(&GP2);
 			}
 		}
 	}

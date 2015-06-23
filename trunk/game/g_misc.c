@@ -1817,3 +1817,25 @@ void G_ReadyUp(gentity_t *ent)
 	ent->client->pers.ready = 1;
 	trap_SendServerCommand(ent - g_entities, va("cp \"@ \n\"")); //send a blank message to clear the readyup message
 }
+
+/*
+==============
+RemoveColorEscapeSequences
+==============
+*/
+
+void RemoveColorEscapeSequences(char *text) {
+	int i, l;
+
+	l = 0;
+	for (i = 0; text[i]; i++) {
+		if (Q_IsColorString(&text[i])) {
+			i++;
+			continue;
+		}
+		if (text[i] > 0x7E)
+			continue;
+		text[l++] = text[i];
+	}
+	text[l] = '\0';
+}
