@@ -2387,7 +2387,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	char		fullTextBuffer[MAX_SAY_TEXT];
 	char		cmd[MAX_SAY_TEXT];
 	int			ignore = -1;
-	qboolean	command = qfalse;
+	qboolean	command;
 
 	void	*GP2, *group;
 	char txtlevel[2];
@@ -2429,71 +2429,102 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	// Boe!Man 1/24/10: Different kinds of Talk during Gameplay. -- Update 3/21/11: No need to be admin in order to use this..
 	if (strstr(fullTextBuffer, "!at")){
 		if (ent->client->sess.admin){
+			command = qtrue;
 			p = ConcatArgs(1);
-			for(i=0;i<=strlen(p);i++){
-				if(p[i] == '!' && (p[i+1] == 'a' || p[i+1] == 'A') && (p[i+2] == 't' || p[i+2] == 'T')){
+			
+			for (i = 0; i <= strlen(p); i++) {
+				if (p[i] == '!' && (p[i + 1] == 'a' || p[i + 1] == 'A') && (p[i + 2] == 't' || p[i + 2] == 'T')) {
+					if (strlen(p) > i + 3 && p[i + 3] != ' ') {
+						command = qfalse;
+						break;
+					}
 					ignore = i;
 				}
-				if(ignore == -1){
-				newp[a] = p[i];
-				a += 1;
-				}else if(i == ignore || i == ignore+1 || i == ignore+2){
-				if(a != 0)
-					i+=1; // Fix for spaces
+
+				if (ignore == -1){
+					newp[a] = p[i];
+					a += 1;
+				}else if (i == ignore || i == ignore + 1 || i == ignore + 2){
+					if (a != 0)
+						i += 1; // Fix for spaces
 				}else{
-				if(a == 0 && p[i] == ' ') // Fix for spaces
-					continue;
-				newp[a] = p[i];
-				a += 1;
+					if (a == 0 && p[i] == ' ') // Fix for spaces
+						continue;
+
+					newp[a] = p[i];
+					a += 1;
 				}
 			}
-			mode = ADM_TALK;
-			acmd = qtrue;
-			strcpy(p, newp);
+			
+			if (command) {
+				mode = ADM_TALK;
+				acmd = qtrue;
+				strcpy(p, newp);
+			}
 		}else{
+			command = qtrue;
 			p = ConcatArgs(1);
-			for(i=0;i<=strlen(p);i++){
-				if(p[i] == '!' && (p[i+1] == 'a' || p[i+1] == 'A') && (p[i+2] == 't' || p[i+2] == 'T')){
+
+			for (i = 0; i <= strlen(p); i++) {
+				if (p[i] == '!' && (p[i + 1] == 'a' || p[i + 1] == 'A') && (p[i + 2] == 't' || p[i + 2] == 'T')) {
+					if (strlen(p) > i + 3 && p[i + 3] != ' ') {
+						command = qfalse;
+						break;
+					}
 					ignore = i;
 				}
-				if(ignore == -1){
-				newp[a] = p[i];
-				a += 1;
-				}else if(i == ignore || i == ignore+1 || i == ignore+2){
-				if(a != 0)
-					i+=1; // Fix for spaces
+
+				if (ignore == -1){
+					newp[a] = p[i];
+					a += 1;
+				}else if (i == ignore || i == ignore + 1 || i == ignore + 2){
+					if (a != 0)
+						i += 1; // Fix for spaces
 				}else{
-				if(a == 0 && p[i] == ' ') // Fix for spaces
-					continue;
-				newp[a] = p[i];
-				a += 1;
+					if (a == 0 && p[i] == ' ') // Fix for spaces
+						continue;
+
+					newp[a] = p[i];
+					a += 1;
 				}
 			}
-			mode = CADM_CHAT;
-			acmd = qtrue;
-			strcpy(p, newp);
+			
+			if(command){
+				mode = CADM_CHAT;
+				acmd = qtrue;
+				strcpy(p, newp);
+			}
 		}
 	}
 	else if (strstr(fullTextBuffer, "!ac")){
-			p = ConcatArgs(1);
-			for(i=0;i<=strlen(p);i++){
-				if(p[i] == '!' && (p[i+1] == 'a' || p[i+1] == 'A') && (p[i+2] == 'c' || p[i+2] == 'C')){
-					ignore = i;
+		command = qtrue;
+		p = ConcatArgs(1);
+
+		for (i = 0; i <= strlen(p); i++) {
+			if (p[i] == '!' && (p[i + 1] == 'a' || p[i + 1] == 'A') && (p[i + 2] == 'c' || p[i + 2] == 'C')) {
+				if (strlen(p) > i + 3 && p[i + 3] != ' ') {
+					command = qfalse;
+					break;
 				}
-				if(ignore == -1){
-				newp[a] = p[i];
-				a += 1;
-				}else if(i == ignore || i == ignore+1 || i == ignore+2){
-				if(a != 0)
-					i+=1; // Fix for spaces
-				}else{
-				if(a == 0 && p[i] == ' ') // Fix for spaces
-					continue;
-				newp[a] = p[i];
-				a += 1;
-				}
+				ignore = i;
 			}
 
+			if (ignore == -1){
+				newp[a] = p[i];
+				a += 1;
+			}else if (i == ignore || i == ignore + 1 || i == ignore + 2){
+				if (a != 0)
+					i += 1; // Fix for spaces
+			}else{
+				if (a == 0 && p[i] == ' ') // Fix for spaces
+					continue;
+
+				newp[a] = p[i];
+				a += 1;
+			}
+		}
+
+		if(command){
 			// Boe!Man 8/25/11: If a non-admin is using Admin Chat, force it to Hey Admin instead.
 			if(ent->client->sess.admin){
 				mode = ADM_CHAT;
@@ -2503,115 +2534,140 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 
 			acmd = qtrue;
 			strcpy(p, newp);
+		}
 	}
-	else if (strstr(fullTextBuffer, "!sc")){
-		if (ent->client->sess.admin == 4){
-			p = ConcatArgs(1);
-			for(i=0;i<=strlen(p);i++){
-				if(p[i] == '!' && (p[i+1] == 's' || p[i+1] == 'S') && (p[i+2] == 'c' || p[i+2] == 'C')){
-					ignore = i;
+	else if (strstr(fullTextBuffer, "!sc") && ent->client->sess.admin == 4){
+		command = qtrue;
+		p = ConcatArgs(1);
+
+		for (i = 0; i <= strlen(p); i++) {
+			if (p[i] == '!' && (p[i + 1] == 's' || p[i + 1] == 'S') && (p[i + 2] == 'c' || p[i + 2] == 'C')) {
+				if (strlen(p) > i + 3 && p[i + 3] != ' ') {
+					command = qfalse;
+					break;
 				}
-				if(ignore == -1){
-				newp[a] = p[i];
-				a += 1;
-				}else if(i == ignore || i == ignore+1 || i == ignore+2){
-				if(a != 0)
-					i+=1; // Fix for spaces
-				}else{
-				if(a == 0 && p[i] == ' ') // Fix for spaces
-					continue;
-				newp[a] = p[i];
-				a += 1;
-				}
+				ignore = i;
 			}
+				
+			if (ignore == -1){
+				newp[a] = p[i];
+				a += 1;
+			}else if (i == ignore || i == ignore + 1 || i == ignore + 2){
+				if (a != 0)
+					i += 1; // Fix for spaces
+			}else{
+				if (a == 0 && p[i] == ' ') // Fix for spaces
+					continue;
+
+				newp[a] = p[i];
+				a += 1;
+			}
+		}
+
+		if(command){
 			mode = SADM_CHAT;
 			acmd = qtrue;
 			strcpy(p, newp);
-		}else{
-			p = ConcatArgs(1);
-			G_Say( ent, NULL, mode, p );
-			return;
 		}
 	}
 	// Boe!Man 4/17/10: Clan chat.
-	else if (strstr(fullTextBuffer, "!cc")){
-		if (ent->client->sess.clanMember){
-			p = ConcatArgs(1);
-			for(i=0;i<=strlen(p);i++){
-				if(p[i] == '!' && (p[i+1] == 'c' || p[i+1] == 'C') && (p[i+2] == 'c' || p[i+2] == 'C')){
-					ignore = i;
+	else if (strstr(fullTextBuffer, "!cc") && ent->client->sess.clanMember){
+		command = qtrue;
+		p = ConcatArgs(1);
+
+		for (i = 0; i <= strlen(p); i++) {
+			if (p[i] == '!' && (p[i + 1] == 'c' || p[i + 1] == 'C') && (p[i + 2] == 'c' || p[i + 2] == 'C')) {
+				if (strlen(p) > i + 3 && p[i + 3] != ' ') {
+					command = qfalse;
+					break;
 				}
-				if(ignore == -1){
-				newp[a] = p[i];
-				a += 1;
-				}else if(i == ignore || i == ignore+1 || i == ignore+2){
-				if(a != 0)
-					i+=1; // Fix for spaces
-				}else{
-				if(a == 0 && p[i] == ' ') // Fix for spaces
-					continue;
-				newp[a] = p[i];
-				a += 1;
-				}
+				ignore = i;
 			}
+				
+			if (ignore == -1){
+				newp[a] = p[i];
+				a += 1;
+			}else if (i == ignore || i == ignore + 1 || i == ignore + 2){
+				if (a != 0)
+					i += 1; // Fix for spaces
+			}else{
+				if (a == 0 && p[i] == ' ') // Fix for spaces
+					continue;
+
+				newp[a] = p[i];
+				a += 1;
+			}
+		}
+
+		if (command) {
 			mode = CLAN_CHAT;
 			acmd = qtrue;
 			strcpy(p, newp);
-		}else{
-			p = ConcatArgs(1);
-			G_Say( ent, NULL, mode, p );
-			return;
 		}
 	}
-	else if (strstr(fullTextBuffer, "!ct")){
-		if (ent->client->sess.clanMember){
-			p = ConcatArgs(1);
-			for(i=0;i<=strlen(p);i++){
-				if(p[i] == '!' && (p[i+1] == 'c' || p[i+1] == 'C') && (p[i+2] == 't' || p[i+2] == 'T')){
-					ignore = i;
+	else if (strstr(fullTextBuffer, "!ct") && ent->client->sess.clanMember){
+		command = qtrue;
+		p = ConcatArgs(1);
+
+		for (i = 0; i <= strlen(p); i++){
+			if (p[i] == '!' && (p[i + 1] == 'c' || p[i + 1] == 'C') && (p[i + 2] == 't' || p[i + 2] == 'T')) {
+				if (strlen(p) > i + 3 && p[i + 3] != ' ') {
+					command = qfalse;
+					break;
 				}
-				if(ignore == -1){
-				newp[a] = p[i];
-				a += 1;
-				}else if(i == ignore || i == ignore+1 || i == ignore+2){
-				if(a != 0)
-					i+=1; // Fix for spaces
-				}else{
-				if(a == 0 && p[i] == ' ') // Fix for spaces
-					continue;
-				newp[a] = p[i];
-				a += 1;
-				}
+
+				ignore = i;
 			}
+				
+			if (ignore == -1){
+				newp[a] = p[i];
+				a += 1;
+			}else if (i == ignore || i == ignore + 1 || i == ignore + 2){
+				if (a != 0)
+					i += 1; // Fix for spaces
+			}else{
+				if (a == 0 && p[i] == ' ') // Fix for spaces
+					continue;
+
+				newp[a] = p[i];
+				a += 1;
+			}
+		}
+
+		if (command) {
 			mode = CLAN_TALK;
 			acmd = qtrue;
 			strcpy(p, newp);
-		}else{
-			p = ConcatArgs(1);
-			G_Say( ent, NULL, mode, p );
-			return;
 		}
 	}
 	else if (strstr(fullTextBuffer, "!ca")){
-			p = ConcatArgs(1);
-			for(i=0;i<=strlen(p);i++){
-				if(p[i] == '!' && (p[i+1] == 'c' || p[i+1] == 'C') && (p[i+2] == 'a' || p[i+2] == 'A')){
-					ignore = i;
+		p = ConcatArgs(1);
+		for (i = 0; i <= strlen(p); i++){
+			if (p[i] == '!' && (p[i + 1] == 'c' || p[i + 1] == 'C') && (p[i + 2] == 'a' || p[i + 2] == 'A')) {
+				if (strlen(p) > i + 3 && p[i + 3] != ' ') {
+					command = qfalse;
+					break;
 				}
-				if(ignore == -1){
-				newp[a] = p[i];
-				a += 1;
-				}else if(i == ignore || i == ignore+1 || i == ignore+2){
-				if(a != 0)
-					i+=1; // Fix for spaces
-				}else{
-				if(a == 0 && p[i] == ' ') // Fix for spaces
-					continue;
-				newp[a] = p[i];
-				a += 1;
-				}
+
+				ignore = i;
 			}
 
+			if (ignore == -1){
+				newp[a] = p[i];
+				a += 1;
+			}else if (i == ignore || i == ignore + 1 || i == ignore + 2){
+				if (a != 0)
+					i += 1; // Fix for spaces
+			}else{
+				if (a == 0 && p[i] == ' ') // Fix for spaces
+					continue;
+
+				newp[a] = p[i];
+				a += 1;
+			}
+		}
+
+		if(command){
 			// Boe!Man 8/25/11: If an admin is using Hey Admin, force it to Admin Chat instead.
 			if(ent->client->sess.admin){
 				mode = ADM_CHAT;
@@ -2620,6 +2676,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			}
 			acmd = qtrue;
 			strcpy(p, newp);
+		}
 	}
 	else if (strcmp(cmd, "!pm") == 0){
 		int client;
@@ -2744,9 +2801,11 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 		return;
 	}
 
-	// Henk loop through my admin command array
 	// Boe!Man 1/8/11: Only go through this cycle if the client indeed has admin powers. If not, save on resources.
 	if(ent->client->sess.admin > 0 && !acmd){
+		command = qfalse;
+
+		// Henk loop through my admin command array
 		for(i = 0;i < AdminCommandsSize; i++){
 			if (strcmp(cmd, AdminCommands[i].shortCmd) == 0 || strcmp(cmd, va("!%s", AdminCommands[i].adminCmd)) == 0){
 				command = qtrue;
