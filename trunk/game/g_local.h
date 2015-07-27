@@ -324,6 +324,9 @@ typedef struct
 	float				rpmClient;
 	float				proClient;
 	#else
+	// Boe!Man 7/6/15: Core UI checking.
+	qboolean			checkCoreUI;
+
 	qboolean			rocModClient;
 	int					rocExtraFeatures;
 	int					clientChecks;
@@ -1516,6 +1519,11 @@ extern	vmCvar_t	g_caserun;
 
 #ifndef _GOLD
 extern  vmCvar_t	g_allowthirdperson;
+#else
+extern	vmCvar_t	g_enforce1fxAdditions;
+
+extern	vmCvar_t	g_httpRefPaks;
+extern	vmCvar_t	g_httpBaseURL;
 #endif // not _GOLD
 
 void	trap_Printf( const char *fmt );

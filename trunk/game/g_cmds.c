@@ -2548,7 +2548,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 				}
 				ignore = i;
 			}
-				
+			
 			if (ignore == -1){
 				newp[a] = p[i];
 				a += 1;
@@ -2583,7 +2583,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 				}
 				ignore = i;
 			}
-				
+			
 			if (ignore == -1){
 				newp[a] = p[i];
 				a += 1;
@@ -2618,7 +2618,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 
 				ignore = i;
 			}
-				
+			
 			if (ignore == -1){
 				newp[a] = p[i];
 				a += 1;

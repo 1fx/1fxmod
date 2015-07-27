@@ -831,7 +831,6 @@ int adm_forceTeam(int argNum, gentity_t *adm, qboolean shortCmd)
 	char		str[MAX_TOKEN_CHARS];
 	int			idNum;
 	int			i, xTeam, argc;
-	char		team;
 	qboolean	all = qfalse; // Boe!Man 4/15/13: If this is true, forceteam all players to a specific team.
 	char		userinfo[MAX_INFO_STRING];
 
@@ -2774,19 +2773,34 @@ int adm_Gametype(int argNum, gentity_t *adm, qboolean shortCmd)
 			trap_SendConsoleCommand(EXEC_APPEND, va("g_gametype elim\n"));
 			strcpy(gametype, "elim");
 			G_Broadcast("\\Gametype Elimination!", BROADCAST_CMD, NULL);
-		#ifndef _GOLD
+		#ifdef _GOLD
+		}else if (g_enforce1fxAdditions.integer && strstr(arg, "h&s")){
+		#else
 		}else if (strstr(arg, "h&s")){
+		#endif // _GOLD
 			trap_SendConsoleCommand(EXEC_APPEND, va("g_gametype h&s\n"));
 			strcpy(gametype, "h&s");
 			G_Broadcast("\\Gametype Hide&Seek!", BROADCAST_CMD, NULL);
+		#ifdef _GOLD
+		}else if (g_enforce1fxAdditions.integer && (strstr(arg, "h&z") || strstr(arg, "zombies"))){
+		#else
 		}else if (strstr(arg, "h&z") || strstr(arg, "zombies")){
+		#endif // _GOLD
 			trap_SendConsoleCommand(EXEC_APPEND, va("g_gametype h&z\n"));
 			strcpy(gametype, "h&z");
 			G_Broadcast("\\Gametype Zombies!", BROADCAST_CMD, NULL);
-		#endif // not _GOLD
+		#ifdef _GOLD
+		}else if (!g_enforce1fxAdditions.integer && (strstr(arg, "h&s") || strstr(arg, "h&z") || strstr(arg, "zombies"))){
+			if (adm && adm->client){
+				trap_SendServerCommand(adm-g_entities, "print\"^3[Info] ^7This gametype is unavailable when you're not enforcing 1fx. Client Additions.\n\"");
+				trap_SendServerCommand(adm-g_entities, "print\"^3[Info] ^7Please have someone with RCON access put g_enforce1fxAdditions to 1 and restart the map.\n\"");
+			}else{
+				Com_Printf("This gametype is unavailable when you're not enforcing 1fx. Client Additions.\n");
+				Com_Printf("Put g_enforce1fxAdditions to 1 and restart the map to enable the additional gametypes.\n");
+			}
+		#endif // GOLD
 		}else{
 			// Boe!Man 2/4/11: In case no argument is found we just display the current gametype.
-			#ifndef _GOLD
 			if (strstr(g_gametype.string, "inf")){
 				if (current_gametype.value == GT_HS){
 					if (adm && adm->client){
@@ -2808,15 +2822,12 @@ int adm_Gametype(int argNum, gentity_t *adm, qboolean shortCmd)
 					}
 				}
 			}else{
-			#endif // not_GOLD
 				if (adm && adm->client){
 					trap_SendServerCommand(adm-g_entities, va("print\"^3[Info] ^7Unknown gametype. Gametype is: %s.\n\"", g_gametype.string));
 				}else{
 					Com_Printf("Unknown gametype. Gametype is: %s.\n", g_gametype.string);
 				}
-			#ifndef _GOLD
 			}
-			#endif // not _GOLD
 			return -1;
 		}
 	}else{
@@ -3776,37 +3787,41 @@ int adm_Map(int argNum, gentity_t *adm, qboolean shortCmd)
 				strcpy(gametype, "dm");
 			}else if(strstr(gt, "elim")){
 				strcpy(gametype, "elim");
-			#ifndef _GOLD
 			}else if(strstr(gt, "h&s")){
 				strcpy(gametype, "h&s");
 			}else if(strstr(gt, "h&z")){
 				strcpy(gametype, "h&z");
-			#endif // not _GOLD
 			}else{
-				#ifndef _GOLD
 				if(current_gametype.value == GT_HS){
 					strcpy(gametype, "h&s");
 				}else if(current_gametype.value == GT_HZ){
 					strcpy(gametype, "h&z");
-				}else
-				#endif // not _GOLD
+				}else{
 					strcpy(gametype, g_gametype.string);
+				}
 			}
 		}else{
-			#ifndef _GOLD
 			if(current_gametype.value == GT_HS){
 				strcpy(gametype, "h&s");
 			}else if(current_gametype.value == GT_HZ){
 				strcpy(gametype, "h&z");
-			}else
-			#endif // not _GOLD
+			}else{
 				strcpy(gametype, g_gametype.string);
+			}
 		}
 
 		if(!Henk_DoesMapSupportGametype(gametype, map)){
 			trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7This map does not support the gametype %s, please add it in the ARENA file.\n\"", gametype));
 			return -1;
 		}
+		#ifdef _GOLD
+		if(!g_enforce1fxAdditions.integer && (strcmp(gametype, "h&s") == 0 || strcmp(gametype, "h&z") == 0)){
+			trap_SendServerCommand(adm-g_entities, "print\"^3[Info] ^7This gametype is unavailable when you're not enforcing 1fx. Client Additions.\n\"");
+			trap_SendServerCommand(adm-g_entities, "print\"^3[Info] ^7Please have someone with RCON access put g_enforce1fxAdditions to 1 and restart the map.\n\"");
+			
+			return -1;
+		}
+		#endif // _GOLD
 
 		trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype %s\n", gametype));
 

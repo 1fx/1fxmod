@@ -1103,7 +1103,7 @@ If "g_synchronousClients 1" is set, this will be called exactly
 once for each server frame, which makes for smooth demo recording.
 ==============
 */
-void ClientThink_real( gentity_t *ent ) 
+void ClientThink_real(gentity_t *ent)
 {
 	gclient_t	*client;
 	pmove_t		pm;
@@ -1112,17 +1112,33 @@ void ClientThink_real( gentity_t *ent )
 	usercmd_t	*ucmd;
 
 	///RxCxW - 2.04.05 - 05:04am
-	gspawn_t	*G_SelectClientSpawnPoint ( gentity_t* ent,  qboolean plantsk );
+	gspawn_t	*G_SelectClientSpawnPoint(gentity_t* ent, qboolean plantsk);
 
 	vec3_t	dir, fireAngs;
-	
+
 	client = ent->client;
 
 	// don't think if the client is not yet connected (and thus not yet spawned in)
-	if (client->pers.connected != CON_CONNECTED) 
+	if (client->pers.connected != CON_CONNECTED)
 	{
 		return;
 	}
+
+	#ifdef _GOLD
+	// Boe!Man 7/6/15: Check if the client is using Core UI features.
+	if (client->sess.checkCoreUI){
+		char *s, userinfo[MAX_INFO_STRING];
+
+		trap_GetUserinfo(ent->s.number, userinfo, sizeof(userinfo));
+		s = Info_ValueForKey(userinfo, "1fx_coreCGame");
+		if (strcmp(s, "1") != 0) {
+			// FIXME CHECK BASEURL AND REFPAKS BEING PRESENT AND SHIT AND HTTP DOWNLOADING BEING ON.
+			trap_SendConsoleCommand(EXEC_INSERT, va("clientkick \"%d\" \"This server ^1requires ^7you to use the 1fx. Client Additions. You can get those by turning on ^1auto-downloading ^7and ^1reconnecting.\"\n", ent->s.number));
+		}
+
+		client->sess.checkCoreUI = qfalse;
+	}
+	#endif // _GOLD
 
 	// mark the time, so the connection sprite can be removed
 	ucmd = &ent->client->pers.cmd;

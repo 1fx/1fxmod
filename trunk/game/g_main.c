@@ -327,6 +327,11 @@ vmCvar_t	boe_deadMonkey;
 #ifndef _GOLD
 // v1.00 only CVARs.
 vmCvar_t	g_allowthirdperson;
+#else
+vmCvar_t	g_enforce1fxAdditions;
+
+vmCvar_t	g_httpRefPaks;
+vmCvar_t	g_httpBaseURL;
 #endif // not _GOLD
 
 static cvarTable_t gameCvarTable[] =
@@ -334,13 +339,13 @@ static cvarTable_t gameCvarTable[] =
 	// don't override the cheat state set by the system
 	{ &g_cheats, "sv_cheats", "", 0, 0.0, 0.0, 0, qfalse },
 	{ NULL, "^3Mod Name", INF_STRING, CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse  },
-	#ifdef _DEBUG
-	#ifndef _NIGHTLY
+#ifdef _DEBUG
+#ifndef _NIGHTLY
 	{ NULL, "^3Mod Channel", "Pre-release", CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse },
-	#else
+#else
 	{ NULL, "^3Mod Channel", "Nightly (master)", CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse },
-	#endif // _NIGHTLY
-	#endif //_DEBUG
+#endif // _NIGHTLY
+#endif //_DEBUG
 	{ NULL, "^3Mod Version", INF_VERSION_STRING, CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse  },
 	{ NULL, "^3Mod URL", "1fxmod.org", CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse  },
 	{ &g_clientMod, "g_clientMod", "none", CVAR_LATCH | CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
@@ -425,11 +430,11 @@ static cvarTable_t gameCvarTable[] =
 	{ &g_roundstartdelay,	"g_roundstartdelay", "3",		CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 	{ &hideSeek_roundstartdelay,	"hideSeek_roundstartdelay", "30",		CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 
-	#ifndef _GOLD
+#ifndef _GOLD
 	{ &g_availableWeapons,	"g_availableWeapons", "2222222222211", CVAR_ARCHIVE|CVAR_SERVERINFO|CVAR_LATCH|CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
-	#else
+#else
 	{ &g_availableWeapons,	"g_available", "2222222222211", CVAR_ARCHIVE|CVAR_SERVERINFO|CVAR_LATCH|CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
-	#endif // not _GOLD
+#endif // not _GOLD
 	{ &hideSeek_availableWeapons,	"hideSeek_availableWeapons", "200000000000022222222", CVAR_INTERNAL|CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
 	{ &availableWeapons,	"availableWeapons", "2222222222211", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
 	// Henk 01/04/10
@@ -606,15 +611,15 @@ static cvarTable_t gameCvarTable[] =
 	{ NULL,					"disable_pickup_weapon_SMOHG92",		"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
 	{ NULL,					"disable_pickup_weapon_AN_M14",			"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
 	{ NULL,					"disable_pickup_weapon_M15",			"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
-	#ifndef _GOLD
+#ifndef _GOLD
 	{ NULL,					"disable_pickup_weapon_M67",			"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
 	{ NULL,					"disable_pickup_weapon_F1",				"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
 	{ NULL,					"disable_pickup_weapon_L2A2",			"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
 	{ NULL,					"disable_pickup_weapon_MDN11",			"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
-	#else
+#else
 	{ NULL,					"disable_pickup_weapon_MP5",			"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
 	{ NULL,					"disable_pickup_weapon_SIG551",			"0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
-	#endif // not _GOLD
+#endif // not _GOLD
 
 	{ &g_alternateMap, "g_alternateMap", "0", CVAR_ROM|CVAR_INTERNAL|CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 	{ &g_enableCustomCommands, "g_enableCustomCommands", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
@@ -687,9 +692,15 @@ static cvarTable_t gameCvarTable[] =
 	{ &boe_deadMonkey, "3d_deadMonkey", "0", CVAR_ARCHIVE | CVAR_LATCH, 0.0, 0.0, 0, qfalse },
 #endif // _3DServer
 
-	#ifndef _GOLD
+#ifndef _GOLD
 	{ &g_allowthirdperson, "g_allowThirdPerson", "1", CVAR_ARCHIVE | CVAR_SERVERINFO, 0.0, 0.0, 0, qfalse },
-	#endif // not _GOLD
+#else
+	// Boe!Man 7/7/15: HTTP downloading.
+	{ &g_enforce1fxAdditions, "g_enforce1fxAdditions", "1", CVAR_ARCHIVE | CVAR_LATCH, 0.0, 0.0, 0, qfalse },
+	
+	{ &g_httpRefPaks, "g_httpRefPaks", "", CVAR_ARCHIVE | CVAR_SYSTEMINFO, 0.0, 0.0, 0, qfalse },
+	{ &g_httpBaseURL, "g_httpBaseURL", "", CVAR_ARCHIVE | CVAR_SYSTEMINFO, 0.0, 0.0, 0, qfalse },
+#endif // not _GOLD
 };
 
 // bk001129 - made static to avoid aliasing
@@ -1387,26 +1398,34 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	if(!restart){
 		if(strstr(g_gametype.string, "inf")){
 			trap_Cvar_Set("current_gametype", "3");
-		#ifndef _GOLD
+		#ifdef _GOLD
+		}else if(g_enforce1fxAdditions.integer && strstr(g_gametype.string, "h&s")){
+		#else
 		}else if(strstr(g_gametype.string, "h&s")){
+		#endif // _GOLD
 			trap_Cvar_Set("current_gametype", "1");
 			trap_Cvar_Set( "g_gametype", "inf" );
 			trap_Cvar_Update(&g_gametype);
 			// Boe!Man 10/4/12: Reset g_gametype to set the gt latched, so it will remain effective upon the next /rcon map switch..
 			trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype h&s\n"));
+		#ifdef _GOLD
+		}else if(g_enforce1fxAdditions.integer && strstr(g_gametype.string, "h&z")){
+		#else
 		}else if(strstr(g_gametype.string, "h&z")){
+		#endif // _GOLD
 			trap_Cvar_Set("current_gametype", "8");
 			trap_Cvar_Set( "g_gametype", "inf" );
 			trap_Cvar_Update(&g_gametype);
 			// Boe!Man 10/4/12: Reset g_gametype to set the gt latched, so it will remain effective upon the next /rcon map switch..
 			trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype h&z\n"));
-		#else
-		}else if (strstr(g_gametype.string, "h&s") || strstr(g_gametype.string, "h&z")) {
-			Com_Printf("This gametype is unavailable in this port, reverting to INF.\n");
+		#ifdef _GOLD
+		}else if (!g_enforce1fxAdditions.integer && (strstr(g_gametype.string, "h&s") || strstr(g_gametype.string, "h&z"))) {
+			Com_Printf("This gametype is unavailable when you're not enforcing 1fx. Client Additions.\n");
+			Com_Printf("Please set g_enforce1fxAdditions to 1 and restart the map, reverting to INF now.\n");
 			trap_Cvar_Set("current_gametype", "3");
 			trap_Cvar_Set("g_gametype", "inf");
 			trap_Cvar_Update(&g_gametype);
-		#endif // not _GOLD
+		#endif // _GOLD
 		}else if(strstr(g_gametype.string, "elim")){
 			trap_Cvar_Set("current_gametype", "7");
 		}else if(strstr(g_gametype.string, "tdm")){
