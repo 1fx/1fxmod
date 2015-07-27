@@ -54,7 +54,7 @@ void *Patch_linuxPatchAddress(void *arguments)
 	struct patchArgs *args = arguments;
 
 	#if (defined(__GNUC__) && __GNUC__ < 3)
-	usleep(10000); // Boe!Man 3/8/15: Sleep for 10msec, this fixes a very strange problem of LinuxThreads sending a SIGSTOP while attaching.
+	usleep(15000); // Boe!Man 3/8/15: Sleep for 15msec, this fixes a very strange problem of LinuxThreads sending a SIGSTOP while attaching.
 	#else
 	pid_t pID = fork();
 
