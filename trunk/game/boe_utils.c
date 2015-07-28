@@ -1621,11 +1621,12 @@ void Boe_Stats ( gentity_t *ent )
 						{
 							accuracy = (float)stat->weapon_hits[ATTACK_ALTERNATE * level.wpNumWeapons + n] / (float)stat->weapon_shots[ATTACK_ALTERNATE * level.wpNumWeapons + n] * 100;
 						}
-				trap_SendServerCommand( ent-g_entities, va("print \"^3%13s^7%7d^7%7d^7%7d^7%3.2f\n\"",
+				trap_SendServerCommand( ent-g_entities, va("print \"^3%14s^7%9d^7%9d^7%9d%7s%3.2f\n\"",
 				altname, 
 				stat->weapon_shots[ATTACK_ALTERNATE * level.wpNumWeapons + n],
 				stat->weapon_hits[ATTACK_ALTERNATE * level.wpNumWeapons + n],
 				stat->weapon_headshots[ATTACK_ALTERNATE * level.wpNumWeapons + n],
+				"^7",
 				accuracy));
 				}
 			}
