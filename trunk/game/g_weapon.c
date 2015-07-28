@@ -467,7 +467,7 @@ void G_FireBullet ( gentity_t* ent, int weapon, int attack )
 
 		//Ryan april 7 2003
 		//add to the number of shots this client has made
-		stat->weapon_shots[attack][weapon]++; 
+		stat->weapon_shots[attack * level.wpNumWeapons + weapon]++; 
 		stat->shotcount++;
 		//Ryan
 
@@ -718,7 +718,7 @@ void G_FireBullet ( gentity_t* ent, int weapon, int attack )
 				if (!level.gametypeData->teams || !OnSameTeam(ent,traceEnt))
 				{
 					//add the total for the weapon
-					stat->weapon_hits[attack][weapon]++;
+					stat->weapon_hits[attack * level.wpNumWeapons + weapon]++;
 					//add to the hit total
 					stat->hitcount++;
 					
@@ -938,11 +938,11 @@ gentity_t* G_FireProjectile ( gentity_t *ent, weapon_t weapon, attackType_t atta
 		// Boe!Man 6/2/10: The Weapon stats get updated/added here.
 		if(weapon == WP_M4_ASSAULT_RIFLE)
 		{
-			stat->weapon_shots[ATTACK_ALTERNATE][weapon]++;
+			stat->weapon_shots[ATTACK_ALTERNATE * level.wpNumWeapons + weapon]++;
 		}
 		else
 		{
-			stat->weapon_shots[ATTACK_NORMAL][weapon]++;
+			stat->weapon_shots[ATTACK_NORMAL * level.wpNumWeapons + weapon]++;
 		}
 		// Boe!Man End.
 		stat->accuracy = (float)stat->hitcount / (float)stat->shotcount * 100;
@@ -1124,7 +1124,7 @@ gentity_t* G_FireWeapon( gentity_t *ent, attackType_t attack )
 					ent->client->ps.stats[STAT_WEAPONS] &= ~(1 << ent->client->ps.weapon);
 
 					// Boe!Man 10/26/14: Check if there is another weapon that still has ammo. Switch to the most powerful weapon.
-					for (i = WP_NUM_WEAPONS-1; i > WP_KNIFE; i--){
+					for (i = level.wpNumWeapons-1; i > WP_KNIFE; i--){
 						if ((ent->client->ps.ammo[weaponData[i].attack[ATTACK_NORMAL].ammoIndex] > 1
 							|| ent->client->ps.clip[ATTACK_NORMAL][i] > 1)
 							&& (ent->client->ps.stats[STAT_WEAPONS] & (1 << i)))

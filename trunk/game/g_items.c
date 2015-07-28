@@ -708,7 +708,7 @@ qboolean G_IsAmmoBeingShared ( gentity_t* ent, int ammoIndex, weapon_t exclude )
 
 	// Need to figure out if this guy has any other guns that use the ammo for the gun
 	// being dropped.
-	for ( weapon = WP_KNIFE + 1; weapon < WP_NUM_WEAPONS; weapon ++ )
+	for ( weapon = WP_KNIFE + 1; weapon < level.wpNumWeapons; weapon ++ )
 	{
 		// Does the player have this weapon?
 		if ( !(ent->client->ps.stats[STAT_WEAPONS] & (1<<weapon) ) )
@@ -754,7 +754,7 @@ gentity_t* G_DropWeapon ( gentity_t* ent, weapon_t weapon, int pickupDelay )
 	char		location[64];
 	qboolean	noloc = qfalse;
 
-	if ( weapon <= WP_KNIFE || weapon >= WP_NUM_WEAPONS )
+	if ( weapon <= WP_KNIFE || weapon >= level.wpNumWeapons)
 	{
 		return NULL;
 	}
@@ -1239,7 +1239,7 @@ gentity_t *CreateWeaponPickup(vec3_t pos,weapon_t weapon)
 	gentity_t	*dropped;
 	gitem_t		*item;
 
-	if ( weapon < WP_KNIFE || weapon >= WP_NUM_WEAPONS )
+	if ( weapon < WP_KNIFE || weapon >= level.wpNumWeapons)
 	{
 		return 0;
 	}

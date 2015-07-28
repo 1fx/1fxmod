@@ -1326,68 +1326,87 @@ gentity_t *GetObjectThatTargets(gentity_t *ent)
 	return NULL;
 }
 
-#ifndef _GOLD
-float botGlobalNavWeaponWeights[WP_NUM_WEAPONS] =
+float *botGlobalNavWeaponWeights = NULL;
+
+static void InitializeGlobalNavWeaponWeights()
 {
-	0,//WP_NONE,
+	botGlobalNavWeaponWeights = malloc(sizeof(float) * level.wpNumWeapons);
 
-	0,//WP_KNIFE,
-	0,//WP_M1911A1_PISTOL,
-	1,//WP_USSOCOM_PISTOL,
-	6,//WP_USAS_12_SHOTGUN,
-	7,//WP_M590_SHOTGUN,
+	if (botGlobalNavWeaponWeights == NULL) {
+		return;
+	}
 
-	8,//WP_MICRO_UZI_SUBMACHINEGUN,
-	8,//WP_M3A1_SUBMACHINEGUN,
-	9,//WP_M4_ASSAULT_RIFLE,
-	9,//WP_AK74_ASSAULT_RIFLE,
+	#ifndef _GOLD
+	botGlobalNavWeaponWeights[0] = 0;	//WP_NONE
 
-	8,//WP_MSG90A1,
-	9,//WP_M60_MACHINEGUN,
-	7,//WP_MM1_GRENADE_LAUNCHER,
-	7,//WP_RPG7_LAUNCHER,
-	7,//WP_M67_GRENADE,
+	botGlobalNavWeaponWeights[1] = 0;	//WP_KNIFE
+	botGlobalNavWeaponWeights[2] = 0;	//WP_M1911A1_PISTOL
+	botGlobalNavWeaponWeights[3] = 1;	//WP_USSOCOM_PISTOL
+	botGlobalNavWeaponWeights[4] = 7;	//WP_M590_SHOTGUN
 
-	6,//WP_M84_GRENADE,
-	6,//WP_F1_GRENADE,
-	6,//WP_L2A2_GRENADE,
-	6,//WP_MDN11_GRENADE,
-	6,//WP_SMOHG92_GRENADE,
+	botGlobalNavWeaponWeights[5] = 8;	//WP_MICRO_UZI_SUBMACHINEGUN
+	botGlobalNavWeaponWeights[6] = 8;	//WP_M3A1_SUBMACHINEGUN
+	botGlobalNavWeaponWeights[7] = 6;	//WP_USAS_12_SHOTGUN
+	botGlobalNavWeaponWeights[8] = 9;	//WP_M4_ASSAULT_RIFLE
+	botGlobalNavWeaponWeights[9] = 9;	//WP_AK74_ASSAULT_RIFLE
 
-	6,//WP_ANM14_GRENADE,
-	6//WP_M15_GRENADE,
-};
-#else
-float botGlobalNavWeaponWeights[WP_NUM_WEAPONS] =
+	botGlobalNavWeaponWeights[10] = 8;	//WP_MSG90A1
+	botGlobalNavWeaponWeights[11] = 9;	//WP_M60_MACHINEGUN
+	botGlobalNavWeaponWeights[12] = 7;	//WP_MM1_GRENADE_LAUNCHER
+	botGlobalNavWeaponWeights[13] = 7;	//WP_RPG7_LAUNCHER
+	botGlobalNavWeaponWeights[14] = 7;	//WP_M67_GRENADE
+
+	botGlobalNavWeaponWeights[15] = 6;	//WP_M84_GRENADE
+	botGlobalNavWeaponWeights[16] = 6;	//WP_F1_GRENADE
+	botGlobalNavWeaponWeights[17] = 6;	//WP_L2A2_GRENADE
+	botGlobalNavWeaponWeights[18] = 6;	//WP_MDN11_GRENADE
+	botGlobalNavWeaponWeights[19] = 6;	//WP_SMOHG92_GRENADE
+
+	botGlobalNavWeaponWeights[20] = 6;	//WP_ANM14_GRENADE
+	botGlobalNavWeaponWeights[21] = 6;	//WP_M15_GRENADE
+	#else
+	botGlobalNavWeaponWeights[0] = 0;	//WP_NONE
+
+	botGlobalNavWeaponWeights[1] = 0;	//WP_KNIFE
+	botGlobalNavWeaponWeights[2] = 0;	//WP_M1911A1_PISTOL
+	botGlobalNavWeaponWeights[3] = 1;	//WP_USSOCOM_PISTOL
+	botGlobalNavWeaponWeights[4] = 3;	//WP_SILVER_TALON
+	botGlobalNavWeaponWeights[5] = 7;	//WP_M590_SHOTGUN
+
+	botGlobalNavWeaponWeights[6] = 8;	//WP_MICRO_UZI_SUBMACHINEGUN
+	botGlobalNavWeaponWeights[7] = 8;	//WP_M3A1_SUBMACHINEGUN
+	botGlobalNavWeaponWeights[8] = 6;	//WP_MP5
+	botGlobalNavWeaponWeights[9] = 6;	//WP_USAS_12_SHOTGUN
+	botGlobalNavWeaponWeights[10] = 9;	//WP_M4_ASSAULT_RIFLE
+	botGlobalNavWeaponWeights[11] = 9;	//WP_AK74_ASSAULT_RIFLE
+
+	botGlobalNavWeaponWeights[12] = 6;	//WP_SIG551
+	botGlobalNavWeaponWeights[13] = 8;	//WP_MSG90A1
+	botGlobalNavWeaponWeights[14] = 9;	//WP_M60_MACHINEGUN
+	botGlobalNavWeaponWeights[15] = 7;	//WP_MM1_GRENADE_LAUNCHER
+	botGlobalNavWeaponWeights[16] = 7;	//WP_RPG7_LAUNCHER
+
+	botGlobalNavWeaponWeights[17] = 6;	//WP_M84_GRENADE
+	botGlobalNavWeaponWeights[18] = 6;	//WP_SMOHG92_GRENADE
+
+	botGlobalNavWeaponWeights[19] = 6;	//WP_ANM14_GRENADE
+	botGlobalNavWeaponWeights[20] = 6;	//WP_M15_GRENADE
+
+	if (g_enforce1fxAdditions.integer) {
+		botGlobalNavWeaponWeights[21] = 7;	//WP_M67_GRENADE
+		botGlobalNavWeaponWeights[22] = 6;	//WP_F1_GRENADE
+		botGlobalNavWeaponWeights[23] = 6;	//WP_L2A2_GRENADE
+		botGlobalNavWeaponWeights[24] = 6;	//WP_MDN11_GRENADE
+	}
+	#endif // not _GOLD
+}
+
+static void FreeGlobalNavWeaponWeights()
 {
-	0,//WP_NONE,
-
-	0,//WP_KNIFE,
-	0,//WP_M1911A1_PISTOL,
-	1,//WP_USSOCOM_PISTOL,
-	6,//WP_USAS_12_SHOTGUN,
-	7,//WP_M590_SHOTGUN,
-
-	8,//WP_MICRO_UZI_SUBMACHINEGUN,
-	8,//WP_M3A1_SUBMACHINEGUN,
-	9,//WP_M4_ASSAULT_RIFLE,
-	9,//WP_AK74_ASSAULT_RIFLE,
-
-	8,//WP_MSG90A1,
-	9,//WP_M60_MACHINEGUN,
-	7,//WP_MM1_GRENADE_LAUNCHER,
-	7,//WP_RPG7_LAUNCHER,
-
-	6,//WP_M84_GRENADE,
-	6,//WP_SMOHG92_GRENADE,
-
-	6,//WP_ANM14_GRENADE,
-	6,//WP_M15_GRENADE,
-
-	6,//WP_MP5
-	6,//WP_SIG551
-};
-#endif // not _GOLD
+	if (botGlobalNavWeaponWeights != NULL) {
+		free(botGlobalNavWeaponWeights);
+	}
+}
 
 int GetNearestVisibleWPToItem(vec3_t org, int ignore)
 {
@@ -1459,6 +1478,9 @@ void CalculateWeightGoals(void)
 
 	i = 0;
 
+	// Boe!Man 7/27/15: Prepare dymamic nav weapon weights.
+	InitializeGlobalNavWeaponWeights();
+
 	while (i < MAX_GENTITIES)
 	{
 		ent = &g_entities[i];
@@ -1511,6 +1533,9 @@ void CalculateWeightGoals(void)
 
 		i++;
 	}
+
+	// Boe!Man 7/27/15: And free the allocated memory.
+	FreeGlobalNavWeaponWeights();
 }
 
 void CalculateJumpRoutes(void)

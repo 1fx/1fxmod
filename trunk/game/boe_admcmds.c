@@ -55,10 +55,10 @@ Instead of forcing everything to on/off, check available weapons as well.
 */
 qboolean SetNades(char *status){
 	int weapon;
-	char	 available[WP_NUM_WEAPONS+1];
+	char *available = malloc(sizeof(char) * (level.wpNumWeapons + 1));
 	qboolean one = qfalse; // Boe!Man 9/20/12: If at least ONE nade is enabled, this is qtrue (also return value).
 
-	strncpy(available, availableWeapons.string, WP_NUM_WEAPONS);
+	strncpy(available, availableWeapons.string, level.wpNumWeapons);
 
 	if(strcmp(status, "0") == 0){ // Manage internally, so we check for such strings. 0 means enable, so in H&S we check that CVAR.
 		if(current_gametype.value == GT_HS){
@@ -88,9 +88,9 @@ qboolean SetNades(char *status){
 			}
 		}else{ // If not H&S, check other gametypes. Since we might not want to enable all nades (it should respect availablenades CVAR), check for it.
 				#ifndef _GOLD
-				for (weapon = WP_M67_GRENADE; weapon < WP_NUM_WEAPONS; weapon ++)
+				for (weapon = WP_M67_GRENADE; weapon < level.wpNumWeapons; weapon ++)
 				#else
-				for (weapon = WP_M84_GRENADE; weapon < WP_NUM_WEAPONS; weapon++) 
+				for (weapon = WP_M84_GRENADE; weapon < level.wpNumWeapons; weapon++)
 				#endif // not _GOLD
 				{
 					gitem_t* item = BG_FindWeaponItem ( (weapon_t)weapon );
@@ -118,6 +118,11 @@ qboolean SetNades(char *status){
 	}
 
 	G_UpdateAvailableWeapons(); // also set the original g_availableWeapons for the client :)
+	
+	// Free allocated memory.
+	if(available != NULL){
+		free(available);
+	}
 
 	return one;
 }

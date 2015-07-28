@@ -778,7 +778,7 @@ void BotUtilizePersonality(bot_state_t *bs)
 
 	if (GetValueGroup(personalityBuffer, "BotWeaponWeights", group))
 	{
-		for (i=0; i < WP_NUM_WEAPONS; i++)
+		for (i=0; i < level.wpNumWeapons; i++)
 		{
 			if (GetPairedValue(group, bg_weaponNames[i], readbuf))
 			{

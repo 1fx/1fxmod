@@ -1251,7 +1251,7 @@ void G_Obituary(gentity_t *target, gentity_t *attacker, int mod, attackType_t at
 		headShot = qtrue;
 		//add to the total headshot count for this player
 		atrstat->headShotKills++;
-		atrstat->weapon_headshots[attackt][weapon]++;
+		atrstat->weapon_headshots[attackt * level.wpNumWeapons + weapon]++;
 	}
 
 	targ = target->s.number;
@@ -1658,7 +1658,7 @@ void G_Obituary(gentity_t *target, gentity_t *attacker, int mod, attackType_t at
 				{
 					atrstat->hitcount++;
 					atrstat->accuracy = (float)atrstat->hitcount / (float)atrstat->shotcount * 100;
-					atrstat->weapon_hits[ATTACK_NORMAL][mod]++;
+					atrstat->weapon_hits[ATTACK_NORMAL * level.wpNumWeapons + mod]++;
 				}
 
 				atrstat->explosiveKills++;

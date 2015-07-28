@@ -968,15 +968,17 @@ Reversed -.-''
 */
 void G_UpdateDisableCvars ( void )
 {
-	int weapon;
-	char	 available[WP_NUM_WEAPONS+1];
+	int		weapon;
+	char	*available;
+
+	available = malloc(sizeof(char) * (level.wpNumWeapons + 1));
 
 	if(current_gametype.value == GT_HS)
 		strcpy(available, hideSeek_availableWeapons.string);
 	else
 		strcpy(available, availableWeapons.string);
 
-	for ( weapon = WP_KNIFE; weapon < WP_NUM_WEAPONS; weapon++)
+	for ( weapon = WP_KNIFE; weapon < level.wpNumWeapons; weapon++)
 	{
 		gitem_t* item = BG_FindWeaponItem ( (weapon_t)weapon );
 		if ( !item )
@@ -984,12 +986,16 @@ void G_UpdateDisableCvars ( void )
 			continue;
 		}
 
-
 		if(available[weapon-1] == '1' || available[weapon-1] == '2'){
 			trap_Cvar_Set ( va("disable_%s", item->classname), "0" );
 		}else{
 			trap_Cvar_Set ( va("disable_%s", item->classname), "1" );
 		}
+	}
+	
+	// Free memory.
+	if(available != NULL){
+		free(available);
 	}
 }
 
@@ -1002,12 +1008,14 @@ Updates the g_availableWeapons cvar using the disable cvars.
 */
 void G_UpdateAvailableWeapons ( void )
 {
-	int weapon;
-	char	 available[WP_NUM_WEAPONS+1];
+	int		weapon;
+	char	*available;
+
+	available = malloc(sizeof(char) * (level.wpNumWeapons + 1));
 
 	memset ( available, 0, sizeof(available) );
 
-	for ( weapon = WP_KNIFE; weapon < WP_NUM_WEAPONS; weapon ++ )
+	for ( weapon = WP_KNIFE; weapon < level.wpNumWeapons; weapon ++ )
 	{
 		gitem_t* item = BG_FindWeaponItem ( (weapon_t)weapon );
 		if ( !item )
@@ -1038,6 +1046,11 @@ void G_UpdateAvailableWeapons ( void )
 	trap_Cvar_Set ( "g_available", available );
 	#endif // not _GOLD
     trap_Cvar_Update ( &g_availableWeapons );
+
+	// Free memory allocated.
+	if(available != NULL){
+		free(available);
+	}
 }
 
 /*
@@ -1320,6 +1333,9 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 		Com_Error(ERR_FATAL, "Invalid fs_game value detected (must be set to \"1fx\")!");
 	}
 
+	// Boe!Man 7/28/15: Enable proper multithreading for SQLite.
+	sqlite3_config(SQLITE_CONFIG_SERIALIZED);
+
 	#if (defined(__linux__) && defined(__GNUC__) && __GNUC__ < 3)
 	// Boe!Man 1/29/13: Initialize the in-game memory-management buffer on Linux (SQLite3 memsys5).
 	memset(memsys5, 0, sizeof(memsys5));
@@ -1355,9 +1371,6 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	Com_Printf("------------------------------------------\n");
 	#endif // __linux__ && __GNUC__ < 3
 	trap_Cvar_Update(gameCvarTable->vmCvar);
-
-	// Boe!Man 6/25/13: Enable multithreading for SQLite.
-	sqlite3_config(SQLITE_CONFIG_MULTITHREAD);
 
 	srand( randomSeed );
 
@@ -1509,6 +1522,23 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 
 	// reserve some spots for dead player bodies
 	G_InitBodyQueue();
+
+	// Boe!Man 7/27/15: Initialize weapon and ammo globals.
+	#ifndef _GOLD
+	level.wpNumWeapons = 22;
+	level.ammoMax = 16;
+	#else
+	if (g_enforce1fxAdditions.integer) {
+		level.wpNumWeapons = 25;
+		level.ammoMax = 19;
+	}else{
+		level.wpNumWeapons = 21;
+		level.ammoMax = 14;
+	}
+	#endif // not _GOLD
+
+	BG_InitializeAvailableOutfitting();
+	BG_InitializeWeaponsAndAmmo();
 
 	BG_ParseInviewFile();
 
@@ -1764,6 +1794,13 @@ void G_ShutdownGame( int restart )
 		BotAIShutdown( restart );
 	}
 #endif
+
+	// Boe!Man 7/27/15: Free statinfo memory of all clients.
+	G_FreeStatsMemory(NULL);
+
+	// Boe!Man 7/27/15: Free weapon data and ammo memory.
+	BG_FreeWeaponsAndAmmo();
+	BG_FreeAvailableOutfitting();
 }
 
 

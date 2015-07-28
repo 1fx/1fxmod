@@ -529,9 +529,9 @@ typedef struct chatSounds_s
 
 typedef struct statinfo_s
 {
-	int weapon_shots[2][WP_NUM_WEAPONS];
-	int weapon_hits[2][WP_NUM_WEAPONS];
-	int weapon_headshots[2][WP_NUM_WEAPONS];
+	int			*weapon_shots;
+	int			*weapon_hits;
+	int			*weapon_headshots;
 	int			weapon;
 	int			attack;
 	int         shotcount;

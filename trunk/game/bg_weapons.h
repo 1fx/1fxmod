@@ -97,9 +97,7 @@ typedef enum
 	WP_MDN11_GRENADE,
 	WP_SMOHG92_GRENADE,
 	WP_ANM14_GRENADE,
-	WP_M15_GRENADE,
-
-	WP_NUM_WEAPONS
+	WP_M15_GRENADE
 } weapon_t;
 
 typedef enum 
@@ -120,8 +118,6 @@ typedef enum
 	AMMO_MDN11,
 	AMMO_SMOHG92,
 	AMMO_ANM14,
-
-	AMMO_MAX,
 
 	AMMO_NONE,
 
@@ -160,7 +156,11 @@ typedef enum
 	MOD_RPG7_LAUNCHER,
 
 	// Grenades
+	MOD_M67_GRENADE,             
 	MOD_M84_GRENADE,
+	MOD_F1_GRENADE,
+	MOD_L2A2_GRENADE,
+	MOD_MDN11_GRENADE,
 	MOD_SMOHG92_GRENADE,
 	MOD_ANM14_GRENADE,
 	MOD_M15_GRENADE,
@@ -184,12 +184,6 @@ typedef enum
 	MOD_BURN,
 
 	//END
-
-	// FIXME: Those are here to retain code compatibility.
-	MOD_M67_GRENADE,
-	MOD_F1_GRENADE,
-	MOD_L2A2_GRENADE,
-	MOD_MDN11_GRENADE
 } meansOfDeath_t;
 
 typedef enum
@@ -227,9 +221,7 @@ typedef enum
 	WP_ANM14_GRENADE,
 	WP_M15_GRENADE,
 
-	WP_NUM_WEAPONS,
-
-	// FIXME: Those are here to retain *some* code compatibility with v1.00. They obviously don't work.
+	// Boe!Man 7/27/15: Extra grenades for 1fx. Client Additions.
 	WP_M67_GRENADE,
 	WP_F1_GRENADE,
 	WP_L2A2_GRENADE,
@@ -255,7 +247,11 @@ typedef enum
 
 	AMMO_MP5_9,
 
-	AMMO_MAX,
+	// Boe!Man 7/27/15: Extra grenade ammo types for 1fx. Client Additions.
+	AMMO_M67,
+	AMMO_F1,
+	AMMO_L2A2,
+	AMMO_MDN11,
 
 	AMMO_NONE,
 
@@ -399,16 +395,15 @@ typedef struct  ammoData_s
 
 } ammoData_t;
 
-extern char *weaponNames[WP_NUM_WEAPONS];
-extern weaponData_t weaponData[WP_NUM_WEAPONS];
-extern char *ammoNames[AMMO_MAX];
-extern ammoData_t ammoData[AMMO_MAX];
+extern char *weaponNames;
+extern weaponData_t *weaponData;
+extern char **ammoNames;
+extern ammoData_t *ammoData;
 
 // Specific weapon information
 
 #define WP_FIRST_RANGED_WEAPON		WP_M1911A1_PISTOL	// this is the first weapon for next and prev weapon switching
 #define WP_FIRST_MELEE_WEAPON		WP_KNIFE
-#define MAX_PLAYER_WEAPONS			(WP_NUM_WEAPONS-1)	// this is the max you can switch to and get with the give all.
 
 #define	MAX_WEAPON_SOUNDS		12
 #define	MAX_WEAPON_SOUND_SLOTS	3
@@ -526,7 +521,7 @@ typedef struct SWeaponInfo
 	struct SWeaponModel			mWeaponModel;
 } TWeaponParseInfo;
 
-extern TWeaponParseInfo	weaponParseInfo[WP_NUM_WEAPONS];
+extern TWeaponParseInfo	*weaponParseInfo;
 extern char				weaponLeftHand[MAX_QPATH];
 extern char				weaponRightHand[MAX_QPATH];
 

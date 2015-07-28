@@ -469,11 +469,11 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace )
 
 					if(ent->s.weapon == WP_M4_ASSAULT_RIFLE)
 					{
-						stat->weapon_hits[ATTACK_ALTERNATE][WP_M4_ASSAULT_RIFLE]++;
+						stat->weapon_hits[ATTACK_ALTERNATE * level.wpNumWeapons + WP_M4_ASSAULT_RIFLE]++;
 					}
 					else
 					{
-						stat->weapon_hits[ATTACK_NORMAL][ent->s.weapon]++;
+						stat->weapon_hits[ATTACK_NORMAL * level.wpNumWeapons + ent->s.weapon]++;
 					}
 				}
 				//Ryan

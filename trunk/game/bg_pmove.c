@@ -2329,7 +2329,7 @@ PM_BeginWeaponChange
 */
 static void PM_BeginWeaponChange(int weapon)
 {
-	if ( weapon <= WP_NONE || weapon >= WP_NUM_WEAPONS )
+	if ( weapon <= WP_NONE || weapon >= level.wpNumWeapons )
 	{
 		return;
 	}
@@ -2407,7 +2407,7 @@ static void PM_FinishWeaponChange( void )
 
 	weapon = pm->cmd.weapon & ~WP_DELAYED_CHANGE_BIT;
 
-	if( weapon < WP_NONE || weapon >= WP_NUM_WEAPONS )
+	if( weapon < WP_NONE || weapon >= level.wpNumWeapons)
 	{
 		weapon = WP_KNIFE;
 	}

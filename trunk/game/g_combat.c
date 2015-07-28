@@ -75,7 +75,7 @@ void TossClientItems( gentity_t *self )
 
 	// If we have a valid weapon to drop and it has ammo then drop it
 	if(current_gametype.value == GT_HS){
-		if ( weapon > WP_KNIFE && weapon < WP_NUM_WEAPONS && weapon != WP_RPG7_LAUNCHER && weapon != WP_M4_ASSAULT_RIFLE ){
+		if ( weapon > WP_KNIFE && weapon < level.wpNumWeapons && weapon != WP_RPG7_LAUNCHER && weapon != WP_M4_ASSAULT_RIFLE ){
 			G_DropWeapon ( self, (weapon_t)weapon, 0 );
 		}
 		else if ( self->client->ps.stats[STAT_WEAPONS] & ( 1 << WP_RPG7_LAUNCHER ) ){
@@ -84,7 +84,7 @@ void TossClientItems( gentity_t *self )
 			G_DropWeapon ( self, WP_M4_ASSAULT_RIFLE, 0 );
 		}
 	}else{
-		if ( weapon > WP_KNIFE && weapon < WP_NUM_WEAPONS &&
+		if ( weapon > WP_KNIFE && weapon < level.wpNumWeapons &&
 			 (self->client->ps.ammo[ weaponData[weapon].attack[ATTACK_NORMAL].ammoIndex ] + self->client->ps.clip[weapon]) )
 		{
 			G_DropWeapon ( self, (weapon_t)weapon, 0 );
@@ -488,7 +488,7 @@ void player_die(
 			if (hitLoc2 == HL_HEAD) {
 				//add to the total headshot count for this player
 				info->headShotKills++;
-				info->weapon_headshots[attacker->client->pers.statinfo.attack][attacker->client->pers.statinfo.weapon]++;
+				info->weapon_headshots[attacker->client->pers.statinfo.attack * level.wpNumWeapons + attacker->client->pers.statinfo.weapon]++;
 			}
 
 			switch (meansOfDeath) {
@@ -514,7 +514,7 @@ void player_die(
 					{
 						info->hitcount++;
 						info->accuracy = (float)info->hitcount / (float)info->shotcount * 100;
-						info->weapon_hits[ATTACK_NORMAL][mod]++;
+						info->weapon_hits[ATTACK_NORMAL * level.wpNumWeapons + mod]++;
 					}
 
 					info->explosiveKills++;
@@ -2170,11 +2170,11 @@ qboolean G_RadiusDamage (
 
 					if(mod - 256 == MOD_M4_ASSAULT_RIFLE)
 					{
-						stat->weapon_hits[ATTACK_ALTERNATE][WP_M4_ASSAULT_RIFLE]++;
+						stat->weapon_hits[ATTACK_ALTERNATE * level.wpNumWeapons + WP_M4_ASSAULT_RIFLE]++;
 					}
 					else
 					{
-						stat->weapon_hits[ATTACK_NORMAL][mod]++;
+						stat->weapon_hits[ATTACK_NORMAL * level.wpNumWeapons + mod]++;
 					}
 				}
 				//Ryan

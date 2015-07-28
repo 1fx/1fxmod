@@ -1857,7 +1857,7 @@ qboolean BG_CanItemBeGrabbed( int gametype, const entityState_t *ent, const play
 						return qtrue;
 				}
 
-				for ( weapon = WP_KNIFE + 1; weapon < WP_NUM_WEAPONS; weapon ++ )
+				for ( weapon = WP_KNIFE + 1; weapon < level.wpNumWeapons; weapon ++ )
 				{
 					gitem_t* witem;
 

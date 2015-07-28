@@ -32,7 +32,7 @@ TIdentity				bg_identities[MAX_IDENTITIES];
 goutfitting_t			bg_outfittings[MAX_OUTFITTINGS];
 int						bg_outfittingCount     = 0;
 
-char					bg_availableOutfitting[WP_NUM_WEAPONS] = {-1};
+char					*bg_availableOutfitting = NULL;
 
 #ifndef _GOLD
 int bg_outfittingGroups[OUTFITTING_GROUP_MAX][MAX_OUTFITTING_GROUPITEM] = 
@@ -1413,6 +1413,37 @@ qboolean BG_ParseAnimationFile ( const char *filename, animation_t* animations )
 
 /*
 ========================
+BG_InitializeAvailableOutfitting
+
+Allocates availability table.
+========================
+*/
+
+void BG_InitializeAvailableOutfitting()
+{
+	bg_availableOutfitting = malloc(sizeof(char) * level.wpNumWeapons);
+	if (bg_availableOutfitting == NULL) {
+		Com_Error(ERR_FATAL, "Couldn't allocate available outfitting table memory!");
+	}
+}
+
+/*
+========================
+BG_FreeAvailableOutfitting
+
+Frees availability table.
+========================
+*/
+
+void BG_FreeAvailableOutfitting()
+{
+	if (bg_availableOutfitting != NULL) {
+		free(bg_availableOutfitting);
+	}
+}
+
+/*
+========================
 BG_SetAvailableOutfitting
 
 Set the current availability table
@@ -1423,9 +1454,9 @@ void BG_SetAvailableOutfitting ( const char* available )
 	int		len;
 
 	len = strlen ( available );
-	if ( len > WP_NUM_WEAPONS )
+	if ( len > level.wpNumWeapons )
 	{
-		len = WP_NUM_WEAPONS;
+		len = level.wpNumWeapons;
 	}
 
 	// IF the availability has changed force a reload of the outfitting groups
@@ -1671,7 +1702,7 @@ qboolean BG_ParseOutfittingTemplate ( const char* fileName, goutfitting_t* outfi
 			trap_GPV_GetName ( list, temp );
 
 			// Lookup the weapon number
-			for( i = WP_NONE + 1, item=NULL; i < WP_NUM_WEAPONS; i++ )
+			for( i = WP_NONE + 1, item=NULL; i < level.wpNumWeapons; i++ )
 			{
 				if ( Q_stricmp(bg_weaponNames[i], temp ) == 0)
 				{					

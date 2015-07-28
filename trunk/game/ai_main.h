@@ -295,7 +295,7 @@ typedef struct bot_state_s
 
 	int					deathActivitiesDone;
 
-	float				botWeaponWeights[WP_NUM_WEAPONS];
+	float				*botWeaponWeights;
 
 	int					ctfState;
 

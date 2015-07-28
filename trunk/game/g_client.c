@@ -1896,6 +1896,13 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 	#endif // _GOLD
 	
 	// Boe!Man 10/25/10: Make sure their stats are set correctly.
+	ent->client->pers.statinfo.weapon_shots = malloc(sizeof(int) * ATTACK_MAX * level.wpNumWeapons);
+	ent->client->pers.statinfo.weapon_hits = malloc(sizeof(int) * ATTACK_MAX * level.wpNumWeapons);
+	ent->client->pers.statinfo.weapon_headshots = malloc(sizeof(int) * ATTACK_MAX * level.wpNumWeapons);
+	memset(ent->client->pers.statinfo.weapon_shots, 0, sizeof(int) * ATTACK_MAX * level.wpNumWeapons);
+	memset(ent->client->pers.statinfo.weapon_hits, 0, sizeof(int) * ATTACK_MAX * level.wpNumWeapons);
+	memset(ent->client->pers.statinfo.weapon_headshots, 0, sizeof(int) * ATTACK_MAX * level.wpNumWeapons);
+
 	ent->client->pers.statinfo.lasthurtby = -1;
 	ent->client->pers.statinfo.lastclient_hurt = -1;
 	memset(ent->client->sess.IgnoredClients, -1, sizeof(ent->client->sess.IgnoredClients));
@@ -2687,6 +2694,9 @@ void ClientDisconnect( int clientNum )
 	ent->client->ps.persistant[PERS_TEAM] = TEAM_FREE;
 	ent->client->sess.team = TEAM_FREE;
 
+	// Boe!Man 7/27/15: Free allocated stats memory.
+	G_FreeStatsMemory(ent);
+
 	// Boe!Man 12/27/09: Resetting the Admin 'status' for the disconnected client here, so a future client with the same ID doesn't get his Admin status..
 	ent->client->sess.admin = 0;
 	ent->client->sess.referee = 0;
@@ -2831,4 +2841,52 @@ gentity_t* G_FindNearbyClient ( vec3_t origin, team_t team, float radius, gentit
 	}
 
 	return NULL;
+}
+
+/*
+===========
+G_FreeStatsMemory
+
+Frees stats memory either of a client or all.
+============
+*/
+void G_FreeStatsMemory(gentity_t *ent)
+{
+	int i;
+
+	if (ent == NULL){
+		gclient_t *tent;
+
+		for (i = 0; i < level.maxclients; i++)
+		{
+			tent = &level.clients[i];
+
+			if (tent == NULL)
+				continue;
+			if (tent->pers.connected != CON_CONNECTED)
+				continue;
+
+			if (tent->pers.statinfo.weapon_shots != NULL)
+				free(tent->pers.statinfo.weapon_shots);
+			if (tent->pers.statinfo.weapon_hits != NULL)
+				free(tent->pers.statinfo.weapon_hits);
+			if (tent->pers.statinfo.weapon_headshots != NULL)
+				free(tent->pers.statinfo.weapon_headshots);
+
+			tent->pers.statinfo.weapon_shots = NULL;
+			tent->pers.statinfo.weapon_hits = NULL;
+			tent->pers.statinfo.weapon_headshots = NULL;
+		}
+	}else{
+		if (ent->client->pers.statinfo.weapon_shots != NULL)
+			free(ent->client->pers.statinfo.weapon_shots);
+		if (ent->client->pers.statinfo.weapon_hits != NULL)
+			free(ent->client->pers.statinfo.weapon_hits);
+		if (ent->client->pers.statinfo.weapon_headshots != NULL)
+			free(ent->client->pers.statinfo.weapon_headshots);
+
+		ent->client->pers.statinfo.weapon_shots = NULL;
+		ent->client->pers.statinfo.weapon_hits = NULL;
+		ent->client->pers.statinfo.weapon_headshots = NULL;
+	}
 }

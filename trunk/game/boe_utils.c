@@ -22,9 +22,11 @@ void RPM_WeaponMod (void)
 	void			*GP2, *group, *attackType;
 	char			name[64], tmpStr[64];
 	int				i, n, clipSize, numExtraClips, damage, splashRadius;
-	int				ammoMaxs[AMMO_MAX] = {0};
+	int				*ammoMaxs;
 	attackData_t	*attack;
 	char			WpnFile[64];
+
+	ammoMaxs = malloc(sizeof(int) * level.ammoMax);
 
 	// Henk 06/04/10 -> Different wpn files(H&S, Real Damage, Normal Damage)
 	if(current_gametype.value == GT_HS){
@@ -61,6 +63,9 @@ void RPM_WeaponMod (void)
 	{
 		//Com_Printf("^1Error in file: \"%s\" or file not found\n", WpnFile);
 		G_LogPrintf("Error in file: \"%s\" or file not found\n", WpnFile);
+		if(ammoMaxs != NULL){
+			free(ammoMaxs);
+		}
 		return;
 	}
 
@@ -72,7 +77,7 @@ void RPM_WeaponMod (void)
 	{
 		trap_GPG_FindPairValue(group, "name", "", name);
 
-		for(i = 0; i < WP_NUM_WEAPONS; i++)
+		for(i = 0; i < level.wpNumWeapons; i++)
 		{
 			if (Q_stricmp(bg_weaponNames[i], name) == 0)
 			{
@@ -144,6 +149,11 @@ void RPM_WeaponMod (void)
 	}
 
 	trap_GP_Delete(&GP2);
+
+	// Free allocated memory.
+	if (ammoMaxs != NULL) {
+		free(ammoMaxs);
+	}
 }
 
 /*
@@ -1560,26 +1570,26 @@ void Boe_Stats ( gentity_t *ent )
 	if(stat->shotcount)
 		{
 		trap_SendServerCommand( ent-g_entities, va("print \"\n%-22s%-13s%-13s%-13s[^3Accu^7]\n\"", "[^3Weapon^7]", "[^3Shot^7]", "[^3Hits^7]", "[^3Head^7]"));
-		for(n = 0; n < WP_NUM_WEAPONS; n++)
+		for(n = 0; n < level.wpNumWeapons; n++)
 			{
-			if(stat->weapon_shots[ATTACK_NORMAL][n] <= 0 && stat->weapon_shots[ATTACK_ALTERNATE][n] <=0)
+			if(stat->weapon_shots[ATTACK_NORMAL * level.wpNumWeapons + n] <= 0 && stat->weapon_shots[ATTACK_ALTERNATE * level.wpNumWeapons + n] <=0)
 				{
 					continue;
 				}
 				accuracy = 0;
-				if(stat->weapon_shots[ATTACK_NORMAL][n])
+				if(stat->weapon_shots[ATTACK_NORMAL * level.wpNumWeapons + n])
 					{
-						accuracy = (float)stat->weapon_hits[ATTACK_NORMAL][n] / (float)stat->weapon_shots[ATTACK_NORMAL][n] * 100;
+						accuracy = (float)stat->weapon_hits[ATTACK_NORMAL * level.wpNumWeapons + n] / (float)stat->weapon_shots[ATTACK_NORMAL * level.wpNumWeapons + n] * 100;
 					}
 				trap_SendServerCommand( ent-g_entities, va("print \"^3%14s^7%9d^7%9d^7%9d%7s%3.2f\n\"",
 				bg_weaponNames[n], 
-				stat->weapon_shots[ATTACK_NORMAL][n], 
-				stat->weapon_hits[ATTACK_NORMAL][n], 
-				stat->weapon_headshots[ATTACK_NORMAL][n],
+				stat->weapon_shots[ATTACK_NORMAL * level.wpNumWeapons + n],
+				stat->weapon_hits[ATTACK_NORMAL * level.wpNumWeapons + n],
+				stat->weapon_headshots[ATTACK_NORMAL * level.wpNumWeapons + n],
 				"^7",
 				accuracy));
 				
-				if(stat->weapon_shots[ATTACK_ALTERNATE][n])
+				if(stat->weapon_shots[ATTACK_ALTERNATE * level.wpNumWeapons + n])
 				{
 					switch(n)
 					{
@@ -1607,15 +1617,15 @@ void Boe_Stats ( gentity_t *ent )
 					if(Q_stricmp (altname, "none") != 0)
 						{
 						accuracy = 0;
-						if(stat->weapon_hits[ATTACK_ALTERNATE][n])
+						if(stat->weapon_hits[ATTACK_ALTERNATE * level.wpNumWeapons + n])
 						{
-							accuracy = (float)stat->weapon_hits[ATTACK_ALTERNATE][n] / (float)stat->weapon_shots[ATTACK_ALTERNATE][n] * 100;
+							accuracy = (float)stat->weapon_hits[ATTACK_ALTERNATE * level.wpNumWeapons + n] / (float)stat->weapon_shots[ATTACK_ALTERNATE * level.wpNumWeapons + n] * 100;
 						}
 				trap_SendServerCommand( ent-g_entities, va("print \"^3%13s^7%7d^7%7d^7%7d^7%3.2f\n\"",
 				altname, 
-				stat->weapon_shots[ATTACK_ALTERNATE][n], 
-				stat->weapon_hits[ATTACK_ALTERNATE][n], 
-				stat->weapon_headshots[ATTACK_ALTERNATE][n],
+				stat->weapon_shots[ATTACK_ALTERNATE * level.wpNumWeapons + n],
+				stat->weapon_hits[ATTACK_ALTERNATE * level.wpNumWeapons + n],
+				stat->weapon_headshots[ATTACK_ALTERNATE * level.wpNumWeapons + n],
 				accuracy));
 				}
 			}

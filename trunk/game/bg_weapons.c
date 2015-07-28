@@ -7,100 +7,143 @@
 #include "bg_local.h"
 #include "g_local.h"
 
-#ifndef _GOLD
-// names as they appear in the SOF2.wpn and inview files for v1.00
-char *bg_weaponNames[WP_NUM_WEAPONS] = 
-{
-	"No Weapon",					// WP_NONE,
-	"Knife",						// WP_KNIFE,
-	"M1911A1",						// WP_M1911A1_PISTOL,
-	"US SOCOM",						// WP_US_SOCOM_PISTOL,
-	"M590",							// WP_M590_SHOTGUN,
-	"Micro Uzi",					// WP_MICRO_UZI_SUBMACHINEGUN,
-	"M3A1",							// WP_M3A1_SUBMACHINEGUN,
-	"USAS-12",						// WP_USAS_12_SHOTGUN,
-	"M4",							// WP_M4_ASSAULT_RIFLE,
-	"AK74",							// WP_AK74_ASSAULT_RIFLE,
-	"MSG90A1",						// WP_MSG90A1_SNIPER_RIFLE,
-	"M60",							// WP_M60_MACHINEGUN,
-	"MM1",							// WP_MM1_GRENADE_LAUNCHER,
-	"RPG7",							// WP_RPG7_LAUNCHER,
-	"M67",							// WP_M67_GRENADE,
-	"M84",							// WP_M84_GRENADE,
-	"F1",							// WP_F1_GRENADE,
-	"L2A2",							// WP_L2A2_GRENADE,
-	"MDN11",						// WP_MDN11_GRENADE,
-	"SMOHG92",						// WP_SMOHG92_GRENADE,
-	"ANM14", 						// WP_ANM14_GRENADE,
-	"M15"							// WP_M15_GRENADE,
-};
+char **bg_weaponNames = NULL;
+char **ammoNames = NULL;
 
-char *ammoNames[AMMO_MAX] =
-{							
-	"Knife",		//	AMMO_KNIFE,
-	"0.45 ACP",		//	AMMO_045,
-	"5.56mm", 		//	AMMO_556,
-	"9mm",			//	AMMO_9  ,
-	"12 gauge",		//	AMMO_12 ,
-	"7.62mm",		//	AMMO_762,
-	"40mm grenade",	//	AMMO_40,
-	"RPG7",			//  AMMO_RPG7
-	"M15",			//	AMMO_M15,
-	"M67",			//	AMMO_M67,
-	"M84",			//	AMMO_M84,
-	"F1",			//	AMMO_F1,
-	"L2A2",			//	AMMO_L2A2,
-	"MDN11",		//	AMMO_MDN11,
-	"SMOHG92",		//	AMMO_SMOHG92,
-	"ANM14" 		//	AMMO_ANM14,
-};
-#else
-// names as they appear in the SOF2.wpn and inview files for v1.03
-char *bg_weaponNames[WP_NUM_WEAPONS] = 
-{
-	"No Weapon",					// WP_NONE,
-	"Knife",						// WP_KNIFE,
-	"M1911A1",						// WP_M1911A1_PISTOL,
-	"US SOCOM",						// WP_US_SOCOM_PISTOL,
-	"Silver Talon",					// WP_SILVER_TALON,
-	"M590",							// WP_M590_SHOTGUN,
-	"Micro Uzi",					// WP_MICRO_UZI_SUBMACHINEGUN,
-	"M3A1",							// WP_M3A1_SUBMACHINEGUN,
-	"MP5",							// WP_MP5
-	"USAS-12",						// WP_USAS_12_SHOTGUN,
-	"M4",							// WP_M4_ASSAULT_RIFLE,
-	"AK74",							// WP_AK74_ASSAULT_RIFLE,
-	"Sig 551",						// WP_SIG551
-	"MSG90A1",						// WP_MSG90A1_SNIPER_RIFLE,
-	"M60",							// WP_M60_MACHINEGUN,
-	"MM1",							// WP_MM1_GRENADE_LAUNCHER,
-	"RPG7",							// WP_RPG7_LAUNCHER,
-	"M84",							// WP_M84_GRENADE,
-	"SMOHG92",						// WP_SMOHG92_GRENADE,
-	"ANM14", 						// WP_ANM14_GRENADE,
-	"M15",							// WP_M15_GRENADE,
-};
+weaponData_t *weaponData = NULL;
+ammoData_t *ammoData = NULL;
 
-char *ammoNames[AMMO_MAX] =
+void BG_InitializeWeaponsAndAmmo()
 {
-	"Knife",		//	AMMO_KNIFE,
-	"0.45 ACP",		//	AMMO_045,
-	"5.56mm", 		//	AMMO_556,
-	"9mm",			//	AMMO_9  ,
-	"12 gauge",		//	AMMO_12 ,
-	"7.62mm",		//	AMMO_762,
-	"40mm grenade",	//	AMMO_40,
-	"RPG7",			//  AMMO_RPG7
-	"M15",			//	AMMO_M15,
-	"M84",			//	AMMO_M84,
-	"SMOHG92",		//	AMMO_SMOHG92,
-	"ANM14", 		//	AMMO_ANM14,
-	"7.62mm belt",	//  AMMO_762_BELT,
-	"9mm|mp5",		//  AMMO_9_MP5
-};
-#endif // not _GOLD
-ammoData_t ammoData[AMMO_MAX];
-weaponData_t weaponData[WP_NUM_WEAPONS];
+	bg_weaponNames = malloc(sizeof(char *) * level.wpNumWeapons);
+	if (bg_weaponNames == NULL)
+		Com_Error(ERR_FATAL, "Failed to allocate memory for weapon names!");
+	
+	ammoNames = malloc(sizeof(char *) * level.ammoMax);
+	if(ammoNames == NULL)
+		Com_Error(ERR_FATAL, "Failed to allocate memory for ammo names!");
+
+	weaponData = malloc(sizeof(weaponData_t) * level.wpNumWeapons);
+	if(weaponData == NULL)
+		Com_Error(ERR_FATAL, "Failed to allocate memory for weapon data!");
+
+	ammoData = malloc(sizeof(ammoData_t) * level.ammoMax);
+	if(ammoData == NULL)
+		Com_Error(ERR_FATAL, "Failed to allocate memory for ammo data!");
+
+	weaponParseInfo = malloc(sizeof(TWeaponParseInfo) * level.wpNumWeapons);
+	if(weaponParseInfo == NULL)
+		Com_Error(ERR_FATAL, "Failed to allocate memory for weapon parse info!");
+
+	#ifndef _GOLD
+	bg_weaponNames[0] = "No Weapon";	// WP_NONE
+	bg_weaponNames[1] = "Knife";		// WP_KNIFE
+	bg_weaponNames[2] = "M1911A1";		// WP_M1911A1_PISTOL
+	bg_weaponNames[3] = "US SOCOM";		// WP_US_SOCOM_PISTOL
+	bg_weaponNames[4] = "M590";			// WP_M590_SHOTGUN
+	bg_weaponNames[5] = "Micro Uzi";	// WP_MICRO_UZI_SUBMACHINEGUN
+	bg_weaponNames[6] = "M3A1";			// WP_M3A1_SUBMACHINEGUN
+	bg_weaponNames[7] = "USAS-12";		// WP_USAS_12_SHOTGUN
+	bg_weaponNames[8] = "M4";			// WP_M4_ASSAULT_RIFLE
+	bg_weaponNames[9] = "AK74";			// WP_AK74_ASSAULT_RIFLE
+	bg_weaponNames[10] = "MSG90A1";		// WP_MSG90A1_SNIPER_RIFLE
+	bg_weaponNames[11] = "M60";			// WP_M60_MACHINEGUN
+	bg_weaponNames[12] = "MM1";			// WP_MM1_GRENADE_LAUNCHER
+	bg_weaponNames[13] = "RPG7";		// WP_RPG7_LAUNCHER
+	bg_weaponNames[14] = "M67";			// WP_M67_GRENADE
+	bg_weaponNames[15] = "M84";			// WP_M84_GRENADE
+	bg_weaponNames[16] = "F1";			// WP_F1_GRENADE
+	bg_weaponNames[17] = "L2A2";		// WP_L2A2_GRENADE
+	bg_weaponNames[18] = "MDN11";		// WP_MDN11_GRENADE
+	bg_weaponNames[19] = "SMOHG92";		// WP_SMOHG92_GRENADE
+	bg_weaponNames[20] = "ANM14"; 		// WP_ANM14_GRENADE
+	bg_weaponNames[21] = "M15";			// WP_M15_GRENADE
+
+	ammoNames[0] = "Knife";			//	AMMO_KNIFE
+	ammoNames[1] = "0.45 ACP";		//	AMMO_045
+	ammoNames[2] = "5.56mm"; 		//	AMMO_556
+	ammoNames[3] = "9mm";			//	AMMO_9 
+	ammoNames[4] = "12 gauge";		//	AMMO_12 
+	ammoNames[5] = "7.62mm";		//	AMMO_762
+	ammoNames[6] = "40mm grenade";	//	AMMO_40
+	ammoNames[7] = "RPG7";			//  AMMO_RPG7
+	ammoNames[8] = "M15";			//	AMMO_M15
+	ammoNames[9] = "M67";			//	AMMO_M67
+	ammoNames[10] = "M84";			//	AMMO_M84
+	ammoNames[11] = "F1";			//	AMMO_F1
+	ammoNames[12] = "L2A2";			//	AMMO_L2A2
+	ammoNames[13] = "MDN11";		//	AMMO_MDN11
+	ammoNames[14] = "SMOHG92";		//	AMMO_SMOHG92
+	ammoNames[15] = "ANM14";		//	AMMO_ANM14
+	#else
+	bg_weaponNames[0] = "No Weapon";	// WP_NONE
+	bg_weaponNames[1] = "Knife";		// WP_KNIFE
+	bg_weaponNames[2] = "M1911A1";		// WP_M1911A1_PISTOL
+	bg_weaponNames[3] = "US SOCOM";		// WP_US_SOCOM_PISTOL
+	bg_weaponNames[4] = "Silver Talon";	// WP_SILVER_TALON
+	bg_weaponNames[5] = "M590"; 		// WP_M590_SHOTGUN
+	bg_weaponNames[6] = "Micro Uzi";	// WP_MICRO_UZI_SUBMACHINEGUN
+	bg_weaponNames[7] = "M3A1";			// WP_M3A1_SUBMACHINEGUN
+	bg_weaponNames[8] = "MP5";			// WP_MP5
+	bg_weaponNames[9] = "USAS-12";		// WP_USAS_12_SHOTGUN
+	bg_weaponNames[10] = "M4";			// WP_M4_ASSAULT_RIFLE
+	bg_weaponNames[11] = "AK74";		// WP_AK74_ASSAULT_RIFLE
+	bg_weaponNames[12] = "Sig 551";		// WP_SIG551
+	bg_weaponNames[13] = "MSG90A1";		// WP_MSG90A1_SNIPER_RIFLE
+	bg_weaponNames[14] = "M60";			// WP_M60_MACHINEGUN
+	bg_weaponNames[15] = "MM1";			// WP_MM1_GRENADE_LAUNCHER
+	bg_weaponNames[16] = "RPG7";		// WP_RPG7_LAUNCHER
+	bg_weaponNames[17] = "M84";			// WP_M84_GRENADE
+	bg_weaponNames[18] = "SMOHG92";		// WP_SMOHG92_GRENADE
+	bg_weaponNames[19] = "ANM14"; 		// WP_ANM14_GRENADE
+	bg_weaponNames[20] = "M15";			// WP_M15_GRENADE
+
+	ammoNames[0] = "Knife";			//	AMMO_KNIFE
+	ammoNames[1] = "0.45 ACP";		//	AMMO_045
+	ammoNames[2] = "5.56mm"; 		//	AMMO_556
+	ammoNames[3] = "9mm";			//	AMMO_9  
+	ammoNames[4] = "12 gauge";		//	AMMO_12 
+	ammoNames[5] = "7.62mm";		//	AMMO_762
+	ammoNames[6] = "40mm grenade";	//	AMMO_40
+	ammoNames[7] = "RPG7";			//  AMMO_RPG7
+	ammoNames[8] = "M15";			//	AMMO_M15
+	ammoNames[9] = "M84";			//	AMMO_M84
+	ammoNames[10] = "SMOHG92";		//	AMMO_SMOHG92
+	ammoNames[11] = "ANM14"; 		//	AMMO_ANM14
+	ammoNames[12] = "7.62mm belt";	//  AMMO_762_BELT
+	ammoNames[13] = "9mm|mp5";		//  AMMO_9_MP5
+	
+	// Boe!Man 7/27/15: Check for 1fx. Client Additions, and if so, add the remaining weapons.
+	if (g_enforce1fxAdditions.integer) {
+		bg_weaponNames[21] = "M67";			// WP_M67_GRENADE
+		bg_weaponNames[22] = "F1";			// WP_F1_GRENADE
+		bg_weaponNames[23] = "L2A2";		// WP_L2A2_GRENADE
+		bg_weaponNames[24] = "MDN11";		// WP_MDN11_GRENADE
+
+		ammoNames[14] = "M67";			//	AMMO_M67
+		ammoNames[15] = "M84";			//	AMMO_M84
+		ammoNames[16] = "F1";			//	AMMO_F1
+		ammoNames[17] = "L2A2";			//	AMMO_L2A2
+		ammoNames[18] = "MDN11";		//	AMMO_MDN11
+	}
+	#endif // not _GOLD
+}
+
+void BG_FreeWeaponsAndAmmo()
+{
+	if(bg_weaponNames != NULL)
+		free(bg_weaponNames);
+	if(ammoNames != NULL)
+		free(ammoNames);
+
+	if(weaponData != NULL)
+		free(weaponData);
+	if (ammoData != NULL)
+		free(ammoData);
+
+	if (weaponParseInfo != NULL)
+		free(weaponParseInfo);
+}
 
 static qboolean BG_ParseAmmoStats(ammo_t ammoNum, void *group)
 {
@@ -145,7 +188,7 @@ qboolean BG_InitAmmoStats(void)
 		if (Q_stricmp(name, "ammo") == 0)
 		{
 			trap_GPG_FindPairValue(topSubs, "name", "", name);
-			for(i=0;i<AMMO_MAX;i++)
+			for(i=0;i<level.ammoMax;i++)
 			{
 				if (Q_stricmp(ammoNames[i], name) == 0)
 				{
@@ -155,7 +198,7 @@ qboolean BG_InitAmmoStats(void)
 			}
 
 #ifdef _DEBUG
-			if (i == AMMO_MAX)
+			if (i == level.ammoMax)
 			{
 				Com_Printf("BG_InitAmmoStats: Unknown ammo: %s\n", name);
 			}
@@ -240,7 +283,7 @@ static qboolean BG_ParseAttackStats ( int weaponNum, attackData_t* attack, void 
 
 
 	attack->ammoIndex = AMMO_NONE;
-	for (i = 0; i < AMMO_MAX; i++)
+	for (i = 0; i < level.ammoMax; i++)
 	{
 		if (0 == Q_stricmp(tmpStr, ammoNames[i]))
 		{
@@ -250,7 +293,7 @@ static qboolean BG_ParseAttackStats ( int weaponNum, attackData_t* attack, void 
 	}
 
 #ifdef _DEBUG
-	if (AMMO_MAX == i)
+	if (level.ammoMax == i)
 	{
 		Com_Printf("BG_ParseWeaponStats: Unknown ammo: %s\n", tmpStr);
 	}
@@ -479,7 +522,7 @@ qboolean BG_InitWeaponStats(qboolean init)
 			{
 				trap_GPG_FindPairValue(topSubs, "name", "", name);
 
-				for(i=0;i<WP_NUM_WEAPONS;i++)
+				for(i=0;i<level.wpNumWeapons;i++)
 				{
 					if (Q_stricmp(bg_weaponNames[i], name) == 0)
 					{
@@ -489,7 +532,7 @@ qboolean BG_InitWeaponStats(qboolean init)
 				}
 
 			#ifdef _DEBUG
-				if (i == WP_NUM_WEAPONS)
+				if (i == level.wpNumWeapons)
 				{
 					Com_Printf("BG_InitWeaponStats: Unknown weapon: %s\n", name);
 				}
@@ -497,7 +540,7 @@ qboolean BG_InitWeaponStats(qboolean init)
 			}else if(init == qfalse){
 				trap_GPG_FindPairValue(topSubs, "name", "", name);
 
-				for(i=0;i<WP_NUM_WEAPONS;i++)
+				for(i=0;i<level.wpNumWeapons;i++)
 				{
 					if (Q_stricmp(bg_weaponNames[i], name) == 0)
 					{
@@ -516,7 +559,7 @@ qboolean BG_InitWeaponStats(qboolean init)
 
 ////////////////////////////////////////////////////////////////////////////////////
 
-TWeaponParseInfo	weaponParseInfo[WP_NUM_WEAPONS];
+TWeaponParseInfo	*weaponParseInfo;
 char				weaponLeftHand[MAX_QPATH];
 char				weaponRightHand[MAX_QPATH];
 
@@ -1057,7 +1100,7 @@ qboolean BG_ParseInviewFile(void)
 	}
 	
 	// Boe!Man 1/27/13: Fixed the code going out of bounds somewhere, because the availableWeapons CVAR was too large.
-	Q_strncpyz(availableWeapons.string, availableWeapons.string, WP_NUM_WEAPONS);
+	Q_strncpyz(availableWeapons.string, availableWeapons.string, level.wpNumWeapons);
 	trap_Cvar_Update(&availableWeapons);
 	
 	// Boe!Man & Henkie 1/8/13: Fix for crashing Linux server, apparently the engine does not properly flush those structs and integers.
@@ -1076,13 +1119,13 @@ qboolean BG_ParseInviewFile(void)
 	if(	BG_OpenWeaponFrames("skeletons/weapons/rhand/rhand.frames"))
 		numInitialFiles++;
 
-	for(i=1;i<WP_NUM_WEAPONS;i++)
+	for(i=1;i<level.wpNumWeapons;i++)
 	{
 		BG_ParseWeapon((weapon_t)i, db);
 	}
 
 #ifdef _DEBUG
-	if (i == WP_NUM_WEAPONS)
+	if (i == level.wpNumWeapons)
 	{
 		Com_Printf("BG_InitWeapons: Done\n");
 	}
@@ -1297,7 +1340,7 @@ int BG_GetMaxAmmo ( const playerState_t* ps, int ammoIndex )
 		return 0;
 	}
 
-	for ( ammo = 0, weapon = WP_KNIFE; weapon < WP_NUM_WEAPONS; weapon ++ )
+	for ( ammo = 0, weapon = WP_KNIFE; weapon < level.wpNumWeapons; weapon ++ )
 	{
 		if ( !(ps->stats[STAT_WEAPONS] & (1<<weapon)) )
 		{

@@ -741,14 +741,14 @@ void Cmd_Give_f (gentity_t *ent)
 
 	if (give_all || Q_stricmp(name, "weapons") == 0)
 	{
-		ent->client->ps.stats[STAT_WEAPONS] = (1 << WP_NUM_WEAPONS) - 1 - ( 1 << WP_NONE );
+		ent->client->ps.stats[STAT_WEAPONS] = (1 << level.wpNumWeapons) - 1 - ( 1 << WP_NONE );
 		if (!give_all)
 			continue;
 	}
 
 	if (give_all || Q_stricmp(name, "ammo") == 0)
 	{
-		for ( i = WP_NONE + 1 ; i < WP_NUM_WEAPONS ; i++ ) 
+		for ( i = WP_NONE + 1 ; i < level.wpNumWeapons; i++ )
 		{
 			int a;
 	
