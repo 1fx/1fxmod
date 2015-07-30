@@ -703,42 +703,38 @@ int BotAISetupClient(int client, struct bot_settings_s *settings, qboolean resta
 	bs->client = client; //need to know the client number before doing personality stuff
 
 	//initialize weapon weight defaults..
-	bs->botWeaponWeights = malloc(sizeof(float) * level.wpNumWeapons);
-	memset(bs->botWeaponWeights, 0, sizeof(float) * level.wpNumWeapons);
-	if (bs->botWeaponWeights != NULL) {
-		bs->botWeaponWeights[WP_NONE] = 0;
-		bs->botWeaponWeights[WP_KNIFE] = 1;
-		bs->botWeaponWeights[WP_M1911A1_PISTOL] = 3;
-		bs->botWeaponWeights[WP_USSOCOM_PISTOL] = 2;
-		bs->botWeaponWeights[WP_M4_ASSAULT_RIFLE] = 10;
-		bs->botWeaponWeights[WP_AK74_ASSAULT_RIFLE] = 9;
-		bs->botWeaponWeights[WP_M60_MACHINEGUN] = 11;
-		bs->botWeaponWeights[WP_MICRO_UZI_SUBMACHINEGUN] = 8;
-		bs->botWeaponWeights[WP_M3A1_SUBMACHINEGUN] = 7;
-		bs->botWeaponWeights[WP_MSG90A1] = 11;
-		bs->botWeaponWeights[WP_USAS_12_SHOTGUN] = 12;
-		bs->botWeaponWeights[WP_M590_SHOTGUN] = 13;
-		bs->botWeaponWeights[WP_MM1_GRENADE_LAUNCHER] = 8;
-		bs->botWeaponWeights[WP_RPG7_LAUNCHER] = 16;
-		bs->botWeaponWeights[WP_M84_GRENADE] = 6;
-		bs->botWeaponWeights[WP_SMOHG92_GRENADE] = 2;
-		bs->botWeaponWeights[WP_ANM14_GRENADE] = 2;
-		bs->botWeaponWeights[WP_M15_GRENADE] = 2;
-		#ifdef _GOLD
-		bs->botWeaponWeights[WP_SILVER_TALON] = 4;
-		bs->botWeaponWeights[WP_MP5] = 7;
-		bs->botWeaponWeights[WP_SIG551] = 7;
+	bs->botWeaponWeights[WP_NONE] = 0;
+	bs->botWeaponWeights[WP_KNIFE] = 1;
+	bs->botWeaponWeights[WP_M1911A1_PISTOL] = 3;
+	bs->botWeaponWeights[WP_USSOCOM_PISTOL] = 2;
+	bs->botWeaponWeights[WP_M4_ASSAULT_RIFLE] = 10;
+	bs->botWeaponWeights[WP_AK74_ASSAULT_RIFLE] = 9;
+	bs->botWeaponWeights[WP_M60_MACHINEGUN] = 11;
+	bs->botWeaponWeights[WP_MICRO_UZI_SUBMACHINEGUN] = 8;
+	bs->botWeaponWeights[WP_M3A1_SUBMACHINEGUN] = 7;
+	bs->botWeaponWeights[WP_MSG90A1] = 11;
+	bs->botWeaponWeights[WP_USAS_12_SHOTGUN] = 12;
+	bs->botWeaponWeights[WP_M590_SHOTGUN] = 13;
+	bs->botWeaponWeights[WP_MM1_GRENADE_LAUNCHER] = 8;
+	bs->botWeaponWeights[WP_RPG7_LAUNCHER] = 16;
+	bs->botWeaponWeights[WP_M84_GRENADE] = 6;
+	bs->botWeaponWeights[WP_SMOHG92_GRENADE] = 2;
+	bs->botWeaponWeights[WP_ANM14_GRENADE] = 2;
+	bs->botWeaponWeights[WP_M15_GRENADE] = 2;
+	#ifdef _GOLD
+	bs->botWeaponWeights[WP_SILVER_TALON] = 4;
+	bs->botWeaponWeights[WP_MP5] = 7;
+	bs->botWeaponWeights[WP_SIG551] = 7;
 
-		if(g_enforce1fxAdditions.integer){
-		#endif // _GOLD
-			bs->botWeaponWeights[WP_M67_GRENADE] = 6;
-			bs->botWeaponWeights[WP_F1_GRENADE] = 6;
-			bs->botWeaponWeights[WP_L2A2_GRENADE] = 5;
-			bs->botWeaponWeights[WP_MDN11_GRENADE] = 5;
-		#ifdef _GOLD
-		}
-		#endif // _GOLD
+	if(g_enforce1fxAdditions.integer){
+	#endif // _GOLD
+		bs->botWeaponWeights[WP_M67_GRENADE] = 6;
+		bs->botWeaponWeights[WP_F1_GRENADE] = 6;
+		bs->botWeaponWeights[WP_L2A2_GRENADE] = 5;
+		bs->botWeaponWeights[WP_MDN11_GRENADE] = 5;
+	#ifdef _GOLD
 	}
+	#endif // _GOLD
 
 	BotUtilizePersonality(bs);
 
@@ -785,10 +781,7 @@ int BotAIShutdownClient(int client, qboolean restart) {
 	trap_BotFreeGoalState(bs->gs);
 	//free the weapon weights
 	trap_BotFreeWeaponState(bs->ws);
-	// Boe!Man 7/27/15: Free the bot weapon weights.
-	if (bs->botWeaponWeights != NULL) {
-		free(bs->botWeaponWeights);
-	}
+	//
 	//clear the bot state
 	memset(bs, 0, sizeof(bot_state_t));
 	//set the inuse flag to qfalse

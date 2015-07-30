@@ -1537,7 +1537,6 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	}
 	#endif // not _GOLD
 
-	BG_InitializeAvailableOutfitting();
 	BG_InitializeWeaponsAndAmmo();
 
 	BG_ParseInviewFile();
@@ -1797,10 +1796,6 @@ void G_ShutdownGame( int restart )
 
 	// Boe!Man 7/27/15: Free statinfo memory of all clients.
 	G_FreeStatsMemory(NULL);
-
-	// Boe!Man 7/27/15: Free weapon data and ammo memory.
-	BG_FreeWeaponsAndAmmo();
-	BG_FreeAvailableOutfitting();
 }
 
 

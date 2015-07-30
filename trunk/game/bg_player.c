@@ -32,7 +32,7 @@ TIdentity				bg_identities[MAX_IDENTITIES];
 goutfitting_t			bg_outfittings[MAX_OUTFITTINGS];
 int						bg_outfittingCount     = 0;
 
-char					*bg_availableOutfitting = NULL;
+char					bg_availableOutfitting[WP_MAX_WEAPONS] = {-1};
 
 #ifndef _GOLD
 int bg_outfittingGroups[OUTFITTING_GROUP_MAX][MAX_OUTFITTING_GROUPITEM] = 
@@ -1409,37 +1409,6 @@ qboolean BG_ParseAnimationFile ( const char *filename, animation_t* animations )
 	}
 
 	return qtrue;
-}
-
-/*
-========================
-BG_InitializeAvailableOutfitting
-
-Allocates availability table.
-========================
-*/
-
-void BG_InitializeAvailableOutfitting()
-{
-	bg_availableOutfitting = malloc(sizeof(char) * level.wpNumWeapons);
-	if (bg_availableOutfitting == NULL) {
-		Com_Error(ERR_FATAL, "Couldn't allocate available outfitting table memory!");
-	}
-}
-
-/*
-========================
-BG_FreeAvailableOutfitting
-
-Frees availability table.
-========================
-*/
-
-void BG_FreeAvailableOutfitting()
-{
-	if (bg_availableOutfitting != NULL) {
-		free(bg_availableOutfitting);
-	}
 }
 
 /*

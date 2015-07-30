@@ -7,34 +7,14 @@
 #include "bg_local.h"
 #include "g_local.h"
 
-char **bg_weaponNames = NULL;
-char **ammoNames = NULL;
+char *bg_weaponNames[WP_MAX_WEAPONS] = {0};
+char *ammoNames[WP_MAX_AMMO] = {0};
 
-weaponData_t *weaponData = NULL;
-ammoData_t *ammoData = NULL;
+weaponData_t weaponData[WP_MAX_WEAPONS];
+ammoData_t ammoData[WP_MAX_AMMO];
 
 void BG_InitializeWeaponsAndAmmo()
 {
-	bg_weaponNames = malloc(sizeof(char *) * level.wpNumWeapons);
-	if (bg_weaponNames == NULL)
-		Com_Error(ERR_FATAL, "Failed to allocate memory for weapon names!");
-	
-	ammoNames = malloc(sizeof(char *) * level.ammoMax);
-	if(ammoNames == NULL)
-		Com_Error(ERR_FATAL, "Failed to allocate memory for ammo names!");
-
-	weaponData = malloc(sizeof(weaponData_t) * level.wpNumWeapons);
-	if(weaponData == NULL)
-		Com_Error(ERR_FATAL, "Failed to allocate memory for weapon data!");
-
-	ammoData = malloc(sizeof(ammoData_t) * level.ammoMax);
-	if(ammoData == NULL)
-		Com_Error(ERR_FATAL, "Failed to allocate memory for ammo data!");
-
-	weaponParseInfo = malloc(sizeof(TWeaponParseInfo) * level.wpNumWeapons);
-	if(weaponParseInfo == NULL)
-		Com_Error(ERR_FATAL, "Failed to allocate memory for weapon parse info!");
-
 	#ifndef _GOLD
 	bg_weaponNames[0] = "No Weapon";	// WP_NONE
 	bg_weaponNames[1] = "Knife";		// WP_KNIFE
@@ -127,22 +107,6 @@ void BG_InitializeWeaponsAndAmmo()
 		ammoNames[18] = "MDN11";		//	AMMO_MDN11
 	}
 	#endif // not _GOLD
-}
-
-void BG_FreeWeaponsAndAmmo()
-{
-	if(bg_weaponNames != NULL)
-		free(bg_weaponNames);
-	if(ammoNames != NULL)
-		free(ammoNames);
-
-	if(weaponData != NULL)
-		free(weaponData);
-	if (ammoData != NULL)
-		free(ammoData);
-
-	if (weaponParseInfo != NULL)
-		free(weaponParseInfo);
 }
 
 static qboolean BG_ParseAmmoStats(ammo_t ammoNum, void *group)
@@ -559,7 +523,7 @@ qboolean BG_InitWeaponStats(qboolean init)
 
 ////////////////////////////////////////////////////////////////////////////////////
 
-TWeaponParseInfo	*weaponParseInfo;
+TWeaponParseInfo	weaponParseInfo[WP_MAX_WEAPONS];
 char				weaponLeftHand[MAX_QPATH];
 char				weaponRightHand[MAX_QPATH];
 

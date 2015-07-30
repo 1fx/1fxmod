@@ -1119,7 +1119,7 @@ extern int					bg_identityCount;
 extern goutfitting_t		bg_outfittings[];
 extern int					bg_outfittingCount;
 extern int					bg_outfittingGroups[][MAX_OUTFITTING_GROUPITEM];
-extern char					**bg_weaponNames;
+extern char					*bg_weaponNames[WP_MAX_WEAPONS];
 extern stringID_table_t		bg_animTable [MAX_ANIMATIONS+1];
 
 TIdentity*			BG_FindIdentity						( const char *identityName );
@@ -1130,8 +1130,6 @@ qboolean			BG_ParseNPCFiles					( void );
 int					BG_ParseSkin						( const char* filename, char* pairs, int pairsSize ); 
 
 qboolean			BG_IsWeaponAvailableForOutfitting	( weapon_t weapon, int level );
-void				BG_InitializeAvailableOutfitting	( void );
-void				BG_FreeAvailableOutfitting			( void );
 void				BG_SetAvailableOutfitting			( const char* available );
 void				BG_DecompressOutfitting				( const char* compressed, goutfitting_t* outfitting );
 void				BG_CompressOutfitting				( goutfitting_t* outfitting, char* compressed, int size );
@@ -1190,7 +1188,6 @@ const char	*trap_VM_LocalStringAlloc ( const char *source );
 
 // Boe!Man 7/27/15: Dynamic weapon and ammo allocation and freeing.
 void		BG_InitializeWeaponsAndAmmo	(void);
-void		BG_FreeWeaponsAndAmmo		(void);
 
 // Boe!Man 7/12/11: Fixing definitions for compiling under linux systems.
 #ifdef __linux__

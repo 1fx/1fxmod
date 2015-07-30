@@ -1326,16 +1326,10 @@ gentity_t *GetObjectThatTargets(gentity_t *ent)
 	return NULL;
 }
 
-float *botGlobalNavWeaponWeights = NULL;
+float botGlobalNavWeaponWeights[WP_MAX_WEAPONS] = {0};
 
 static void InitializeGlobalNavWeaponWeights()
 {
-	botGlobalNavWeaponWeights = malloc(sizeof(float) * level.wpNumWeapons);
-
-	if (botGlobalNavWeaponWeights == NULL) {
-		return;
-	}
-
 	#ifndef _GOLD
 	botGlobalNavWeaponWeights[0] = 0;	//WP_NONE
 
@@ -1401,13 +1395,6 @@ static void InitializeGlobalNavWeaponWeights()
 	#endif // not _GOLD
 }
 
-static void FreeGlobalNavWeaponWeights()
-{
-	if (botGlobalNavWeaponWeights != NULL) {
-		free(botGlobalNavWeaponWeights);
-	}
-}
-
 int GetNearestVisibleWPToItem(vec3_t org, int ignore)
 {
 	int i;
@@ -1454,7 +1441,7 @@ void CalculateWeightGoals(void)
 	int i = 0;
 	int wpindex = 0;
 	gentity_t *ent;
-	float weight;
+	int weight;
 
 	trap_Cvar_Update(&bot_wp_clearweight);
 
@@ -1533,9 +1520,6 @@ void CalculateWeightGoals(void)
 
 		i++;
 	}
-
-	// Boe!Man 7/27/15: And free the allocated memory.
-	FreeGlobalNavWeaponWeights();
 }
 
 void CalculateJumpRoutes(void)

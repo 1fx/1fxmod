@@ -5,6 +5,10 @@
 #ifndef __BG_WEAPONS_H__
 #define __BG_WEAPONS_H__
 
+// Boe!Man 7/30/15: Hard limits, no dynamic configuration should exceed this.
+#define WP_MAX_WEAPONS	25
+#define WP_MAX_AMMO		19
+
 #ifndef _GOLD
 // MOD and weapon info for v1.00
 
@@ -395,10 +399,9 @@ typedef struct  ammoData_s
 
 } ammoData_t;
 
-extern char *weaponNames;
-extern weaponData_t *weaponData;
-extern char **ammoNames;
-extern ammoData_t *ammoData;
+extern char *ammoNames[WP_MAX_AMMO];
+extern weaponData_t weaponData[WP_MAX_WEAPONS];
+extern ammoData_t ammoData[WP_MAX_AMMO];
 
 // Specific weapon information
 
@@ -521,7 +524,7 @@ typedef struct SWeaponInfo
 	struct SWeaponModel			mWeaponModel;
 } TWeaponParseInfo;
 
-extern TWeaponParseInfo	*weaponParseInfo;
+extern TWeaponParseInfo	weaponParseInfo[WP_MAX_WEAPONS];
 extern char				weaponLeftHand[MAX_QPATH];
 extern char				weaponRightHand[MAX_QPATH];
 
