@@ -780,7 +780,7 @@ void BotUtilizePersonality(bot_state_t *bs)
 	{
 		for (i=0; i < level.wpNumWeapons; i++)
 		{
-			if (GetPairedValue(group, bg_weaponNames[i], readbuf))
+			if (GetPairedValue(group, bg_weaponNames[i], readbuf) || GetPairedValue(group, bg_enumWeaponNames[i], readbuf))
 			{
 				bs->botWeaponWeights[i] = atoi(readbuf);
 			}

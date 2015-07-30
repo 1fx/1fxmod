@@ -1120,6 +1120,7 @@ extern goutfitting_t		bg_outfittings[];
 extern int					bg_outfittingCount;
 extern int					bg_outfittingGroups[][MAX_OUTFITTING_GROUPITEM];
 extern char					*bg_weaponNames[WP_MAX_WEAPONS];
+extern char					*bg_enumWeaponNames[WP_MAX_WEAPONS];
 extern stringID_table_t		bg_animTable [MAX_ANIMATIONS+1];
 
 TIdentity*			BG_FindIdentity						( const char *identityName );

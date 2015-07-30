@@ -8,6 +8,7 @@
 #include "g_local.h"
 
 char *bg_weaponNames[WP_MAX_WEAPONS] = {0};
+char *bg_enumWeaponNames[WP_MAX_WEAPONS] = {0};
 char *ammoNames[WP_MAX_AMMO] = {0};
 
 weaponData_t weaponData[WP_MAX_WEAPONS];
@@ -38,6 +39,29 @@ void BG_InitializeWeaponsAndAmmo()
 	bg_weaponNames[19] = "SMOHG92";		// WP_SMOHG92_GRENADE
 	bg_weaponNames[20] = "ANM14"; 		// WP_ANM14_GRENADE
 	bg_weaponNames[21] = "M15";			// WP_M15_GRENADE
+
+	bg_enumWeaponNames[0] = "WP_NONE";
+	bg_enumWeaponNames[1] = "WP_KNIFE";
+	bg_enumWeaponNames[2] = "WP_M1911A1_PISTOL";
+	bg_enumWeaponNames[3] = "WP_US_SOCOM_PISTOL";
+	bg_enumWeaponNames[4] = "WP_M590_SHOTGUN";
+	bg_enumWeaponNames[5] = "WP_MICRO_UZI_SUBMACHINEGUN";
+	bg_enumWeaponNames[6] = "WP_M3A1_SUBMACHINEGUN";
+	bg_enumWeaponNames[7] = "WP_USAS_12_SHOTGUN";
+	bg_enumWeaponNames[8] = "WP_M4_ASSAULT_RIFLE";
+	bg_enumWeaponNames[9] = "WP_AK74_ASSAULT_RIFLE";
+	bg_enumWeaponNames[10] = "WP_MSG90A1_SNIPER_RIFLE";
+	bg_enumWeaponNames[11] = "WP_M60_MACHINEGUN";
+	bg_enumWeaponNames[12] = "WP_MM1_GRENADE_LAUNCHER";
+	bg_enumWeaponNames[13] = "WP_RPG7_LAUNCHER";
+	bg_enumWeaponNames[14] = "WP_M67_GRENADE";
+	bg_enumWeaponNames[15] = "WP_M84_GRENADE";
+	bg_enumWeaponNames[16] = "WP_F1_GRENADE";
+	bg_enumWeaponNames[17] = "WP_L2A2_GRENADE";
+	bg_enumWeaponNames[18] = "WP_MDN11_GRENADE";
+	bg_enumWeaponNames[19] = "WP_SMOHG92_GRENADE";
+	bg_enumWeaponNames[20] = "WP_ANM14_GRENADE";
+	bg_enumWeaponNames[21] = "WP_M15_GRENADE";
 
 	ammoNames[0] = "Knife";			//	AMMO_KNIFE
 	ammoNames[1] = "0.45 ACP";		//	AMMO_045
@@ -78,6 +102,28 @@ void BG_InitializeWeaponsAndAmmo()
 	bg_weaponNames[19] = "ANM14"; 		// WP_ANM14_GRENADE
 	bg_weaponNames[20] = "M15";			// WP_M15_GRENADE
 
+	bg_enumWeaponNames[0] = "WP_NONE";
+	bg_enumWeaponNames[1] = "WP_KNIFE";
+	bg_enumWeaponNames[2] = "WP_M1911A1_PISTOL";
+	bg_enumWeaponNames[3] = "WP_US_SOCOM_PISTOL";
+	bg_enumWeaponNames[4] = "WP_SILVER_TALON";
+	bg_enumWeaponNames[5] = "WP_M590_SHOTGUN";
+	bg_enumWeaponNames[6] = "WP_MICRO_UZI_SUBMACHINEGUN";
+	bg_enumWeaponNames[7] = "WP_M3A1_SUBMACHINEGUN";
+	bg_enumWeaponNames[8] = "WP_MP5";
+	bg_enumWeaponNames[9] = "WP_USAS_12_SHOTGUN";
+	bg_enumWeaponNames[10] = "WP_M4_ASSAULT_RIFLE";
+	bg_enumWeaponNames[11] = "WP_AK74_ASSAULT_RIFLE";
+	bg_enumWeaponNames[12] = "WP_SIG551";
+	bg_enumWeaponNames[13] = "WP_MSG90A1_SNIPER_RIFLE";
+	bg_enumWeaponNames[14] = "WP_M60_MACHINEGUN";
+	bg_enumWeaponNames[15] = "WP_MM1_GRENADE_LAUNCHER";
+	bg_enumWeaponNames[16] = "WP_RPG7_LAUNCHER";
+	bg_enumWeaponNames[17] = "WP_M84_GRENADE";
+	bg_enumWeaponNames[18] = "WP_SMOHG92_GRENADE";
+	bg_enumWeaponNames[19] = "WP_ANM14_GRENADE";
+	bg_enumWeaponNames[20] = "WP_M15_GRENADE";
+
 	ammoNames[0] = "Knife";			//	AMMO_KNIFE
 	ammoNames[1] = "0.45 ACP";		//	AMMO_045
 	ammoNames[2] = "5.56mm"; 		//	AMMO_556
@@ -99,6 +145,11 @@ void BG_InitializeWeaponsAndAmmo()
 		bg_weaponNames[22] = "F1";			// WP_F1_GRENADE
 		bg_weaponNames[23] = "L2A2";		// WP_L2A2_GRENADE
 		bg_weaponNames[24] = "MDN11";		// WP_MDN11_GRENADE
+
+		bg_enumWeaponNames[21] = "WP_M67_GRENADE";
+		bg_enumWeaponNames[22] = "WP_F1_GRENADE";
+		bg_enumWeaponNames[23] = "WP_L2A2_GRENADE";
+		bg_enumWeaponNames[24] = "WP_MDN11_GRENADE";
 
 		ammoNames[14] = "M67";			//	AMMO_M67
 		ammoNames[15] = "M84";			//	AMMO_M84
