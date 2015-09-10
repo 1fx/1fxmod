@@ -4464,8 +4464,8 @@ void BB_Tell_f( gentity_t *ent, int clientNum )
     gentity_t       *id_ent;
 
     trap_Argv( 1, buffer, sizeof( buffer ) );
-    id = atoi( buffer );
-    if (!CheckID( ent, id )){
+    id = ClientNumberFromString( ent, buffer );
+    if (id == -1){
         return;
     }
 
