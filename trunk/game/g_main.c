@@ -697,7 +697,7 @@ static cvarTable_t gameCvarTable[] =
 #else
 	// Boe!Man 7/7/15: HTTP downloading.
 	{ &g_enforce1fxAdditions, "g_enforce1fxAdditions", "1", CVAR_ARCHIVE | CVAR_LATCH, 0.0, 0.0, 0, qfalse },
-	
+
 	{ &g_httpRefPaks, "g_httpRefPaks", "", CVAR_ARCHIVE | CVAR_SYSTEMINFO, 0.0, 0.0, 0, qfalse },
 	{ &g_httpBaseURL, "g_httpBaseURL", "", CVAR_ARCHIVE | CVAR_SYSTEMINFO, 0.0, 0.0, 0, qfalse },
 #endif // not _GOLD
@@ -992,7 +992,7 @@ void G_UpdateDisableCvars ( void )
 			trap_Cvar_Set ( va("disable_%s", item->classname), "1" );
 		}
 	}
-	
+
 	// Free memory.
 	if(available != NULL){
 		free(available);
@@ -1057,7 +1057,7 @@ void G_UpdateAvailableWeapons ( void )
 ===============
 G_initClientMod
 
-Initializes the client Mod 
+Initializes the client Mod
 specified by the server owner.
 ===============
 */
@@ -1210,7 +1210,7 @@ void G_SetGametype ( const char* gametype )
 static const char *masterIPs[2] = { "master.sof2.ravensoft.com", "master.1fxmod.org" };
 static const int numMasterServers = 2;
 
-#ifdef __linux__
+#if (defined(__linux__) && defined(__GNUC__) && __GNUC__ < 3)
 static void G_ResolveCallback(struct dns_cb_data *cbd)
 {
 	int		i;
@@ -1230,7 +1230,7 @@ static void G_ResolveCallback(struct dns_cb_data *cbd)
 					Com_sprintf(ip, sizeof(ip), "%u.%u.%u.%u",
 						cbd->addr[0], cbd->addr[1],
 						cbd->addr[2], cbd->addr[3]);
-					
+
 					trap_Cvar_Set(master, ip);
 					Com_Printf("Set %s to: %s (resolved from: %s)\n", master, ip, cbd->name);
 				}
@@ -1281,7 +1281,7 @@ static void G_ResolveMasterIPs()
 
 	dns_fini(dns);
 }
-#endif // __linux__
+#endif // __linux__ && __GNUC__ < 3
 /*
 ============
 G_InitGame
@@ -1292,8 +1292,9 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	int			i;
 	#ifdef _DEBUG
 	qtime_t		q;
+    #else
+    char		fs_game[MAX_CVAR_VALUE_STRING];
 	#endif // _DEBUG
-	char		fs_game[MAX_CVAR_VALUE_STRING];
 
 	// Boe!Man 3/30/10
 	Com_Printf ("------- Game Initialization -------\n");
@@ -1325,6 +1326,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	}
 
 	// Boe!Man 4/28/15: Check fs_game string.
+    #ifndef _DEBUG
 	trap_Cvar_VariableStringBuffer("fs_game", fs_game, sizeof(fs_game));
 	if(strcmp(fs_game, "1fx") != 0){
 		Com_Printf("---------------------------\n");
@@ -1332,6 +1334,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 			"Please update your fs_game value to match the exact value.\n");
 		Com_Error(ERR_FATAL, "Invalid fs_game value detected (must be set to \"1fx\")!");
 	}
+    #endif // not _DEBUG
 
 	// Boe!Man 7/28/15: Enable proper multithreading for SQLite.
 	sqlite3_config(SQLITE_CONFIG_SERIALIZED);
@@ -1341,7 +1344,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	memset(memsys5, 0, sizeof(memsys5));
 	sqlite3_config(SQLITE_CONFIG_HEAP, memsys5, 41943040, 64);
 	sqlite3_soft_heap_limit(40894464);
-	
+
 	// Boe!Man 3/5/15: Force master to direct IP instead of hostname on Linux.
 	// Resolve the IP of the master servers using TADNS.
 	Com_Printf("------------------------------------------\n");
@@ -2580,7 +2583,7 @@ void CheckIntermissionExit( void )
 			ShowScores();
 		else
 			RPM_Awards();
-		
+
 		level.lastAwardSent = level.time;
 	}
 	#endif // not _GOLD
@@ -3251,7 +3254,7 @@ void Henk_CheckZombie(void){
 				ent->client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_M590_SHOTGUN );
 				ent->client->ps.clip[ATTACK_NORMAL][WP_M590_SHOTGUN]=9;
 				ent->client->ps.firemode[WP_M590_SHOTGUN] = BG_FindFireMode ( WP_M590_SHOTGUN, ATTACK_NORMAL, WP_FIREMODE_AUTO );
-				
+
 				ent->client->ps.weapon = WP_M590_SHOTGUN;
 				ent->client->ps.weaponstate = WEAPON_READY;
 
@@ -3628,7 +3631,7 @@ void G_RunFrame( int levelTime )
 	// get any cvar changes
 	G_UpdateCvars();
 
-	
+
 	#ifndef _GOLD
 	if(level.clientMod == CL_RPM){
 		// Henk 06/04/10 -> Update tmi every x sec
@@ -3637,7 +3640,7 @@ void G_RunFrame( int levelTime )
 	#else
 	if (level.clientMod == CL_ROCMOD && level.time > level.lastETIupdate) {
 		ROCmod_sendExtraTeamInfo(NULL);
-		
+
 		level.lastETIupdate = level.time + 1000;
 	}
 	#endif // not _GOLD
