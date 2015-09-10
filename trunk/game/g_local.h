@@ -194,13 +194,13 @@ struct gentity_s
 	int			score;
 	char		*broadcast;
 	char		*effect_touch;
-	
+
 	// Boe!Man 5/22/12: Noise for specific entities (e.g. booster).
 	char		*sound;
-	
+
 	// Boe!Man 6/30/12: Size, for the hideseek_cage.
 	char		*size;
-	
+
 	// Boe!Man 11/21/13: Used for the auto section block system.
 	team_t		team2;
 	int			section;
@@ -293,10 +293,10 @@ typedef struct
 	int					teamkillForgiveTime;	// time when team damage will be forgivin
 	qboolean			noTeamChange;			// cant change teams when this is true (rt_none only)
 	qboolean			noNameChange;			// Can't change name when this is true.
-	
+
 	int					lastMessage;			// level.time of the last message sent to this client.
 	int					lastMessagePriority;	// broadcastPrio_t of last message sent.
-	
+
 	// Boe!Man 3/30/10
 	qboolean			firstTime;				// If this is set to 1, it's the first time the client's connecting.
 	int					motdStartTime;			// The time the message of the day will start being sent.
@@ -388,18 +388,18 @@ typedef struct
 	vec3_t		tempangles;
 	int			killtime;		// Boe!Man 7/15/11: Zombies can't do /kill after they've just been stunned.
 	int			regentime;		// Boe!Man 10/28/14: 0 when full, else level.time of the next regen moment.
-	
+
 	int			transformedEntity;	// Boe!Man 2/5/14: Entity number of the entity that the player "transformed" into.
 	int			transformedEntity2;	// Boe!Man 2/5/14: Additional entity number when dealing with a model instead of BSP.
 
 	int			extraIdChanges;	// Boe!Man 8/29/11: Identity changes within the second. Limit id change after 10 of these have happened.
 	int			identityLimit;	// Boe!Man 8/29/11: Limit the identity change for 60 seconds (level.time + 60000).
-	
+
 	// Boe!Man 6/3/12: No roof.
 	int			noroofCheckTime;	// The level.time + 1000, for intervals.
 	qboolean	isOnRoof;			// True if the player is on roof.
 	int			isOnRoofTime;		// Seconds the player is already on roof. Checks against level.noLR[1][1].
-	
+
 	// Boe!Man 9/2/12: Advanced H&S scores.
 	// Hiders.
 	int			MM1HitsTaken;
@@ -409,26 +409,26 @@ typedef struct
 	int			stunAttacks;
 	int			seekersCaged;
 	int			weaponsStolen;
-	
+
 	// Seekers.
 	int			takenMM1;
 	int			stunned;
 	int			trappedInCage;
-	
+
 	int				voiceFloodTimer;		// Timer used to forgive voice chat flooding
 	int				voiceFloodCount;		// Amount of voice chats that need to be forgivin
 	int				voiceFloodPenalty;		// Time when a client can voice chat again
-	
+
 	// Boe!Man 11/11/12: spamTime CVAR for CTB messages informing about /howto.
 	int			spamTime;
-	
+
 	// Boe!Man 11/11/12: Used for determining how fast the hider crossed the bridge.
 	int			ctbStartTime;
-	
+
 	// Boe!Man 4/16/13: Used for accelerator, this is basically level.time + 5000 (the cooldown).
 	int			acceleratorCooldown;
 
-	// Boe!Man 2/2/15: 
+	// Boe!Man 2/2/15:
 	int			lastPmClient;					// Last person the client talked to.
 	int			lastPmClientChange;				// level.time of when the last client change took place.
 
@@ -598,7 +598,7 @@ struct gclient_s
 	vec3_t			maxSave;
 	vec3_t			minSave;
 	//Ryan
-	
+
 	// Boe!Man 6/13/11: Sun respawn time.
 	int				sunRespawnTimer;
 
@@ -772,19 +772,19 @@ typedef struct
 	// Boe!Man 3/30/10
 	int				lastConnectedClient;
 	char			mapname[64];
-	
+
 	// Henk 06/04/10 -> Add TMI for RPM scoreboard compatiblity
 	#ifndef _GOLD
 	int				lastTMIupdate;
 	#else
 	int				lastETIupdate;
 	#endif // not _GOLD
-	
+
 	// Boe!Man 11/21/13: Nolower, Noroof, Nomiddle and Nowhole combined into one system.
 	vec3_t			noLR[2];			// Location for nolower/noroof.
 	qboolean		noLRActive[2];		// If no* is active.
 	qboolean		noLROpened[2];		// If the current state is opened or closed.
-	
+
 	qboolean		noLRMWEntFound[4];	// If the no* entity was found.
 	qboolean		autoLRMWActive[4];	// True if the auto systems are active.
 
@@ -829,7 +829,7 @@ typedef struct
 	// Henk 19/01/10 -> Last alive hiders
 	int			lastalive[2];
 	qboolean	lastaliveCheck[2];
-	
+
 	// Henk 22/01/10 -> Show seekers released.
 	qboolean	messagedisplay;
 	qboolean	messagedisplay1;
@@ -894,23 +894,23 @@ typedef struct
 	//char		deadClients[1024]; // Henk 28/01/11 -> Add new mute system.
 	int         debugtime;
 	int			tipMsg;
-	
+
 	qboolean	nadesFound;		// Boe!Man 11/13/12: qtrue if nades are actually found.
-	
+
 	qboolean	altPath;		// Boe!Man 12/8/12: This is checked during initgame (inview parsing), if the DLL is found outside the RPM dir (in the root directory), this is qtrue.
 	char		altString[16];	// Boe!Man 12/8/12: This is the path (including fs_game), this should speed up every country call (and others) quite a bit.
-	
+
 	qboolean	altEnt;			// Boe!Man 1/27/13: If this is true, an alternative ent was loaded and will be loaded again when a !mr is issued.
-	
+
 	int			sqlBackupTime;		// Boe!Man 5/27/13: The interval for backing up the in-memory databases to disk.
 	qboolean	countryInitialized; // Boe!Man 6/25/13: True if the country database is fully initialized.
 
 	int			nextSound;		// Boe!Man 5/30/15: Sound index for the next sound, if found.
-	
+
 	int			customETHiderAmount[16];
 
 	int			lastSpeedCheck;			// Check speed for zombies only every other frame.
-	
+
 	#ifdef _DEBUG
 	char		dateString[32];
 	#endif
@@ -1189,6 +1189,7 @@ void		G_FreeStatsMemory				( gentity_t *ent );
 qboolean	ConsoleCommand					( void );
 //void		G_ProcessIPBans					( void );
 qboolean	G_FilterPacket					( char *from );
+void        BB_Tell_f                       ( gentity_t *ent, int clientNum );
 
 //
 // g_weapon.c
@@ -1404,7 +1405,7 @@ void		G_ResetGametypeItem					( gitem_t* item );
 void		gametype_item_use					( gentity_t* self, gentity_t* other );
 //RxCxW - 02.03.05 - 11:32am #DropGTItems
 void		G_DropGametypeItems					( gentity_t* self, int delayPickup );
-void		G_FreeEnitityChildren				( gentity_t* ent );		
+void		G_FreeEnitityChildren				( gentity_t* ent );
 //End - 02.03.05 - 11:32am
 void		LogExit								( const char *string );
 
