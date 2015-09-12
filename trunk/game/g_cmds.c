@@ -2694,6 +2694,10 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 			trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7The specified player isn't fully connected yet.\n\""));
 		}
 
+        if(ent == target){
+            trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You cannot send a private message to yourself.\n\""));
+            return;
+        }
 
 		// Copy the message contents.
 		if (trap_Argc() >= 4){
@@ -2892,25 +2896,59 @@ Cmd_Tell_f
 ==================
 */
 static void Cmd_Tell_f( gentity_t *ent ) {
-	int			targetNum;
+	int			i, targetNum, numberOfClients;
 	gentity_t	*target;
 	char		*p;
 	char		arg[MAX_TOKEN_CHARS];
+	char        string[MAX_TOKEN_CHARS] = "\0", string1[MAX_TOKEN_CHARS] = "\0";
+	char        cleanName[MAX_NETNAME];
 
 	if ( trap_Argc () < 2 ) {
 		return;
 	}
 
 	trap_Argv( 1, arg, sizeof( arg ) );
-	targetNum = atoi( arg );
-	if ( targetNum < 0 || targetNum >= level.maxclients ) {
-		return;
-	}
+	if(!henk_ischar(arg[0])){
+		targetNum = atoi(arg);
+	}else if(henk_ischar(arg[0])){
+        Q_strlwr(arg);
+        memset(string, 0, sizeof(string));
+        memset(string1, 0, sizeof(string1));
+        numberOfClients = 0;
+        for(i = 0; i < level.numConnectedClients; i++){
+            Q_strncpyz(cleanName, g_entities[level.sortedClients[i]].client->pers.cleanName, sizeof(cleanName));
+            if(strstr(Q_strlwr(cleanName), arg)){
+                targetNum = level.sortedClients[i];
+                numberOfClients += 1;
+                Com_sprintf(string1, sizeof(string1), "^1[#%i] ^7%s, ",  targetNum, g_entities[level.sortedClients[i]].client->pers.cleanName);
+                Q_strncpyz(string+strlen(string), string1, strlen(string1)+1);
+            }
+        }
+        string[strlen(string)-2] = '\0';
+        if(numberOfClients > 1){
+            trap_SendServerCommand(ent->s.number, va("print\"^3[Info] ^7Multiple names found with ^3%s^7: %s\n\"", arg, string));
+            return;
+        }else if(numberOfClients == 0){
+            targetNum = -1;
+        }
+    }else{
+        targetNum = -1;
+    }
 
-	target = &g_entities[targetNum];
-	if ( !target || !target->inuse || !target->client ) {
-		return;
-	}
+    target = &g_entities[targetNum];
+    if ( targetNum < 0 || targetNum >= g_maxclients.integer || !target || !target->inuse || !target->client ){
+        trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You haven't entered a valid player ID/player name.\n\""));
+        return;
+    }
+
+    if (target->client->pers.connected != CON_CONNECTED){
+		trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7The specified player isn't fully connected yet.\n\""));
+    }
+
+    if(ent == target){
+        trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You cannot send a private message to yourself.\n\""));
+        return;
+    }
 
 	p = ConcatArgs( 2 );
 	G_LogPrintf( "tell: %s to %s: %s\n", ent->client->pers.netname, target->client->pers.netname, p );
