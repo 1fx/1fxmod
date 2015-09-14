@@ -333,6 +333,8 @@ typedef struct
     int                 clientCheckTime;
     #endif // not _GOLD
 
+    int                 connectionCheck;
+
     char                strClient[36];
     qboolean            spectatorFirstPerson;
     int                 totalSpectatorTime;
@@ -1485,6 +1487,7 @@ extern  vmCvar_t    g_smoothClients;
 extern  vmCvar_t    pmove_fixed;
 extern  vmCvar_t    pmove_msec;
 extern  vmCvar_t    g_rankings;
+extern  vmCvar_t    g_fps;
 extern  vmCvar_t    g_respawnInterval;
 extern  vmCvar_t    g_respawnInvulnerability;
 extern  vmCvar_t    RMG;
@@ -1521,6 +1524,7 @@ extern  vmCvar_t    hideSeek_Extra;
 extern  vmCvar_t    server_humanteamprefix;
 extern  vmCvar_t    server_zombieteamprefix;
 extern  vmCvar_t    g_caserun;
+extern  vmCvar_t    g_minRate;
 
 #ifndef _GOLD
 extern  vmCvar_t    g_allowthirdperson;

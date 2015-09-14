@@ -334,6 +334,8 @@ vmCvar_t    g_httpRefPaks;
 vmCvar_t    g_httpBaseURL;
 #endif // not _GOLD
 
+vmCvar_t    g_minRate;
+
 static cvarTable_t gameCvarTable[] =
 {
     // don't override the cheat state set by the system
@@ -367,6 +369,8 @@ static cvarTable_t gameCvarTable[] =
     { &g_dmflags, "dmflags", "8", CVAR_SERVERINFO | CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
     { &g_scorelimit, "scorelimit", "0", CVAR_SERVERINFO | CVAR_ARCHIVE | CVAR_NORESTART, 0.0, 0.0, 0, qtrue },
     { &g_timelimit, "timelimit", "0", CVAR_SERVERINFO | CVAR_ARCHIVE | CVAR_NORESTART, 0.0, 0.0, 0, qtrue },
+
+    { &g_minRate, "g_minRate", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue },
 
     { &g_respawnInterval, "g_respawnInterval", "15", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
     { &g_respawnInvulnerability, "g_respawnInvulnerability", "5", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },

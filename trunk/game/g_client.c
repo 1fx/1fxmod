@@ -83,7 +83,7 @@ void G_AddClientSpawn ( gentity_t* ent, team_t team, qboolean monkey )
 
     // Release the entity and store the spawn in its own array
     VectorCopy ( ent->s.origin, spawns->origin );
-    
+
     // Boe!Man 7/22/13: We use this code for determining the angle, using a float isn't fool-proof here (as with NV_misc_bsp).
     if(G_SpawnVector("angles", "0 0 0", newAngles)){
         spawns->angles[0] = newAngles[0];
@@ -481,7 +481,7 @@ void CopyToBodyQue( gentity_t *ent, int hitLocation, vec3_t direction )
 
     parm  = (DirToByte( direction )&0xFF);
     parm += (hitLocation<<8);
-    
+
     G_AddEvent(body, EV_BODY_QUEUE_COPY, parm);
 
     body->r.svFlags = ent->r.svFlags | SVF_BROADCAST;
@@ -605,11 +605,11 @@ void respawn( gentity_t *ent )
             }
             //Ryan
             break;
-        
+
         case RT_NORMAL:
         case RT_DELAYED:
         case RT_MAX:
-            break;      
+            break;
     }
 
     // If they are a ghost then give a health point, but dont respawn
@@ -764,19 +764,19 @@ int TeamCount( int ignoreClientNum, team_t team, int *alive )
     return count;
 }
 
-int TeamCount1(team_t team) 
+int TeamCount1(team_t team)
 {
     int     i;
     int     count = 0;
 
-    for ( i = 0 ; i < level.maxclients ; i++ ) 
+    for ( i = 0 ; i < level.maxclients ; i++ )
     {
         if (level.clients[i].pers.connected == CON_DISCONNECTED)
         {
             continue;
         }
 
-        if ( level.clients[i].sess.team == team ) 
+        if ( level.clients[i].sess.team == team )
         {
 
             count++;
@@ -786,14 +786,14 @@ int TeamCount1(team_t team)
     return count;
 }
 
-int TeamCountAlive(team_t team) 
+int TeamCountAlive(team_t team)
 {
     int     i;
     int     count = 0;
 
-    for ( i = 0 ; i < level.maxclients ; i++ ) 
+    for ( i = 0 ; i < level.maxclients ; i++ )
     {
-        if ( level.clients[i].sess.team == team && G_IsClientDead(&level.clients[i])) 
+        if ( level.clients[i].sess.team == team && G_IsClientDead(&level.clients[i]))
         {
 
             count++;
@@ -975,7 +975,7 @@ void G_UpdateOutfitting ( int clientNum )
     {
         return;
     }
-    
+
     // Clear all ammo, clips, and weapons
     if(current_gametype.value != GT_HS){
         if(g_disableNades.integer == 0){
@@ -987,7 +987,7 @@ void G_UpdateOutfitting ( int clientNum )
     client->ps.stats[STAT_ARMOR] = 0;
     client->ps.stats[STAT_GOGGLES] = 0;
     // End Boe!Man 5/20/12
-    
+
     memset ( client->ps.ammo, 0, sizeof(client->ps.ammo) );
     memset ( client->ps.clip, 0, sizeof(client->ps.clip) );
     }
@@ -1182,7 +1182,7 @@ void ClientUserinfoChanged( int clientNum )
     {
         client->pers.localClient = qtrue;
     }
-    
+
     // check the item prediction
     s = Info_ValueForKey( userinfo, "cg_predictItems" );
     if ( !atoi( s ) )
@@ -1263,7 +1263,7 @@ void ClientUserinfoChanged( int clientNum )
     // set name
     Q_strncpyz ( oldname, client->pers.netname, sizeof( oldname ) );
     s = Info_ValueForKey (userinfo, "name");
-    
+
     // ... only when the client is allowed to change their name.
     if(!client->sess.noNameChange){
         G_ClientCleanName( s, client->pers.netname, sizeof(client->pers.netname), level.gametypeData->teams?qfalse:qtrue );
@@ -1282,14 +1282,14 @@ void ClientUserinfoChanged( int clientNum )
         }
         strcat(client->pers.netname, S_COLOR_WHITE);
         strcat(client->pers.talkname, S_COLOR_WHITE);
-        
+
         // Boe!Man 12/27/09: Sets if the client gets Admin.
         G_ClientCleanName( s, client->pers.cleanName, sizeof(client->pers.cleanName), qfalse );
     }
-    
-    if ( client->sess.team == TEAM_SPECTATOR ) 
+
+    if ( client->sess.team == TEAM_SPECTATOR )
     {
-        if ( client->sess.spectatorState == SPECTATOR_SCOREBOARD ) 
+        if ( client->sess.spectatorState == SPECTATOR_SCOREBOARD )
         {
             Q_strncpyz( client->pers.netname, "scoreboard", sizeof(client->pers.netname) );
         }
@@ -1302,24 +1302,24 @@ void ClientUserinfoChanged( int clientNum )
     health = atoi( Info_ValueForKey( userinfo, "handicap" ) );
 
     // bots set their team a few frames later
-    if ( level.gametypeData->teams && (g_entities[clientNum].r.svFlags & SVF_BOT)) 
+    if ( level.gametypeData->teams && (g_entities[clientNum].r.svFlags & SVF_BOT))
     {
         s = Info_ValueForKey( userinfo, "team" );
-        if ( !Q_stricmp( s, "red" ) || !Q_stricmp( s, "r" ) ) 
+        if ( !Q_stricmp( s, "red" ) || !Q_stricmp( s, "r" ) )
         {
             team = TEAM_RED;
-        } 
-        else if ( !Q_stricmp( s, "blue" ) || !Q_stricmp( s, "b" ) ) 
+        }
+        else if ( !Q_stricmp( s, "blue" ) || !Q_stricmp( s, "b" ) )
         {
             team = TEAM_BLUE;
-        } 
-        else 
+        }
+        else
         {
             // pick the team with the least number of players
             team = PickTeam( clientNum );
         }
     }
-    else 
+    else
     {
         team = client->sess.team;
     }
@@ -1330,7 +1330,7 @@ void ClientUserinfoChanged( int clientNum )
     /* NOTE (ajay#1#): New Smart identity changer, this way the client can't change their skin too often. */
     if(!(client->sess.extraIdChanges == 10 && client->sess.identityLimit > level.time) || ((current_gametype.value == GT_HS || current_gametype.value == GT_HZ) && client->sess.team == TEAM_BLUE)){
 
-        if( level.gametypeData->teams && current_gametype.value != GT_HS && current_gametype.value != GT_HZ ) 
+        if( level.gametypeData->teams && current_gametype.value != GT_HS && current_gametype.value != GT_HZ )
         {
             s = Info_ValueForKey ( userinfo, "team_identity" );
 
@@ -1347,14 +1347,14 @@ void ClientUserinfoChanged( int clientNum )
                 }
             }
             else
-            {   
+            {
                 // Spectators are going to have to choose one of the two team skins and
                 // the chance of them having the proper one in team_identity is slim, so just
                 // give them a model they may use later
                 client->pers.identity = BG_FindTeamIdentity ( level.gametypeTeam[TEAM_RED], 0 );
             }
-        } 
-        else 
+        }
+        else
         {
             s = Info_ValueForKey ( userinfo, "identity" );
             if(current_gametype.value == GT_HS){
@@ -1372,7 +1372,7 @@ void ClientUserinfoChanged( int clientNum )
                     else
                         client->pers.identity = &bg_identities[102];
                     }else if(strstr(client->pers.identity->mName, "NPC_Swiss_Police/swiss_police_b1") || strstr(client->pers.identity->mName, "NPC_Honor_Guard/honor_guard_w1") || strstr(client->pers.identity->mName, "NPC_Swiss_Police") || strstr(client->pers.identity->mName, "NPC_Sebastian_Jenzer")){
-                    
+
                     }else{
                     random = irand(0, 3);
                     if(random == 0)
@@ -1432,17 +1432,17 @@ void ClientUserinfoChanged( int clientNum )
             }
         }
     }
-    
+
     // If the identity wasnt in the list then just give them the first identity.  We could
-    // be fancy here and give them a random one, but this way you get less unwanted models 
+    // be fancy here and give them a random one, but this way you get less unwanted models
     // loaded
     if ( !client->pers.identity  )
     {
         client->pers.identity = &bg_identities[0];
     }
-    
+
     // Report the identity change
-    if ( client->pers.connected == CON_CONNECTED ) 
+    if ( client->pers.connected == CON_CONNECTED )
     {
         if ( client->pers.identity && oldidentity && client->pers.identity != oldidentity && team != TEAM_SPECTATOR )
         {
@@ -1464,7 +1464,7 @@ void ClientUserinfoChanged( int clientNum )
         }
 
         // If the client is changing their name then handle some delayed name changes
-        if ( strcmp( oldname, client->pers.netname ) ) 
+        if ( strcmp( oldname, client->pers.netname ) )
         {
             // Dont let them change their name too much
             if ( level.time - client->pers.netnameTime < 5000 )
@@ -1494,11 +1494,11 @@ void ClientUserinfoChanged( int clientNum )
                     if(sql_timeBench.integer){
                         start = trap_Milliseconds();
                     }
-                    
+
                     if(!Boe_checkAlias(client->pers.ip, client->pers.cleanName)){
                         Boe_addAlias(client->pers.ip, client->pers.cleanName);
                     }
-                    
+
                     if(sql_timeBench.integer){
                         Com_Printf("Alias check took %ims\n", trap_Milliseconds() - start);
                     }
@@ -1506,7 +1506,7 @@ void ClientUserinfoChanged( int clientNum )
                 client->pers.netnameTime = level.time;
             }
         }
-    
+
         // Boe!Man 12/30/09: Checking for Admin. --- Update 2/12/13
         if(!client->sess.fileChecked && !(ent->r.svFlags & SVF_BOT)){
             char ip[MAX_IP];
@@ -1528,11 +1528,11 @@ void ClientUserinfoChanged( int clientNum )
                 if(sql_timeBench.integer){
                     start = trap_Milliseconds();
                 }
-                
+
                 if(!Boe_checkAlias(client->pers.ip, client->pers.cleanName)){
                     Boe_addAlias(client->pers.ip, client->pers.cleanName);
                 }
-                
+
                 if(sql_timeBench.integer){
                     Com_Printf("Alias check took %ims\n", trap_Milliseconds() - start);
                 }
@@ -1598,18 +1598,18 @@ void ClientUserinfoChanged( int clientNum )
 
     // send over a subset of the userinfo keys so other clients can
     // print scoreboards, display models, and play custom sounds
-    if ( ent->r.svFlags & SVF_BOT ) 
+    if ( ent->r.svFlags & SVF_BOT )
     {
         s = va("n\\%s\\t\\%i\\identity\\%s\\skill\\%s",
-            client->pers.netname, team, client->pers.identity->mName, 
+            client->pers.netname, team, client->pers.identity->mName,
             Info_ValueForKey( userinfo, "skill" ) );
-    } 
-    else 
+    }
+    else
     {
         s = va("n\\%s\\t\\%i\\identity\\%s",
                client->pers.netname, team, client->pers.identity->mName );
     }
-    
+
     trap_SetConfigstring( CS_PLAYERS+clientNum, s );
     //if(!strcmp(s, userinfo))
     //return;
@@ -1655,13 +1655,13 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
     int             start;
 
     ent = &g_entities[ clientNum ];
-    
+
     trap_GetUserinfo( clientNum, userinfo, sizeof( userinfo ) );
-    
+
     // Boe!Man 12/25/09: Get their name and store a clean copy (without colors) of it.
     value = Info_ValueForKey (userinfo, "name");
     G_ClientCleanName( value, name, sizeof(name), qfalse );
-    
+
     //value = Info_ValueForKey (userinfo, "cl_guid");
     //Com_sprintf ( guid, sizeof(guid), value );
 
@@ -1670,7 +1670,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
     Com_sprintf ( ip, sizeof(ip), value );
     // Boe!Man 12/27/09: We need to store the IP without the port numbers.
     ip[0] = '\0';
-    
+
     if ( *value && !( isBot ) && (strcmp(value, "localhost") != 0))
     {
         n = 0;
@@ -1691,28 +1691,28 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 // we don't check password for bots and local client
     // NOTE: local client <-> "ip" "localhost"
     //   this means this client is not running in our current process
-    if ( !( isBot ) && (strcmp(ip, "localhost") != 0)) 
+    if ( !( isBot ) && (strcmp(ip, "localhost") != 0))
     {
         // check for a password
         value = Info_ValueForKey (userinfo, "password");
         if ( g_password.string[0] && Q_stricmp( g_password.string, "none" ) &&
-            strcmp( g_password.string, value) != 0) 
+            strcmp( g_password.string, value) != 0)
         {
             return va("Invalid password: %s", value );
         }
-        
+
         // Boe!Man 10/30/11: Check for duplicate clients (based on IP).
         for(i = 0;i < level.numConnectedClients; i++){
-        
+
             if((g_entities[level.sortedClients[i]].r.svFlags & SVF_BOT ) || isBot)
                 continue;
             if (!Q_stricmp(g_entities[level.sortedClients[i]].client->pers.ip, ip))
                 ipCount++;
         }
-        
+
         // Boe!Man 12/16/12: Check the database for bans.
         db = bansDb;
-        
+
         // Boe!Man 12/16/12: Check bans first, query the database.
         rc = sqlite3_prepare(db, va("select reason from bans where IP='%s'", ip), -1, &stmt, 0);
         if(rc != SQLITE_OK){
@@ -1721,7 +1721,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
         }else while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
             if(rc == SQLITE_ROW){
                 Q_strncpyz(reason, (char *)sqlite3_column_text(stmt, 0), sizeof(reason));
-                
+
                 // Boe!Man 2/6/13: Also close the database (and finalize) upon returning.
                 sqlite3_finalize(stmt);
                 if(strlen(reason) > 0){
@@ -1732,7 +1732,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
             }
         }
         sqlite3_finalize(stmt);
-        
+
         // Boe!Man 12/16/12: Check subnetbans second.
         Q_strncpyz(subnet, ip, 7);
         // Query the database.
@@ -1743,7 +1743,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
         }else while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
             if(rc == SQLITE_ROW){
                 Q_strncpyz(reason, (char *)sqlite3_column_text(stmt, 0), sizeof(reason));
-                
+
                 // Boe!Man 2/6/13: Also close the database (and finalize) upon returning.
                 sqlite3_finalize(stmt);
                 if(strlen(reason) > 0){
@@ -1754,9 +1754,9 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
             }
         }
         sqlite3_finalize(stmt);
-        
+
         // Boe!Man 2/8/10: Limiting the connections.
-        if ( ipCount > g_maxIPConnections.integer ) 
+        if ( ipCount > g_maxIPConnections.integer )
             return "Too many connections from your IP!";
     }
 
@@ -1781,18 +1781,18 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
     Q_strncpyz ( client->pers.ip, ip, MAX_IP);
 
     // read or initialize the session data
-    if ( firstTime || level.newSession ) 
+    if ( firstTime || level.newSession )
     {
         G_InitSessionData( client, userinfo );
     }
     strcpy(ent->client->sess.country, "noneandempty");
     G_ReadSessionData( client );
 
-    if( isBot ) 
+    if( isBot )
     {
         ent->r.svFlags |= SVF_BOT;
         ent->inuse = qtrue;
-        if( !G_BotConnect( clientNum, (qboolean)!firstTime ) ) 
+        if( !G_BotConnect( clientNum, (qboolean)!firstTime ) )
         {
             return "BotConnectfailed";
         }
@@ -1831,7 +1831,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
 
     //Ryan  we'll do this later
     // Broadcast team change if not going to spectator
-    if ( level.gametypeData->teams && client->sess.team != TEAM_SPECTATOR ) 
+    if ( level.gametypeData->teams && client->sess.team != TEAM_SPECTATOR )
     {
             BroadcastTeamChange( client, -1 );
     }
@@ -1885,16 +1885,16 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
     }
     /*if(client->sess.admin == 4 && g_sadminspec.integer == 1)
         client->sess.adminspec = qtrue;*/
-        
+
     // Boe!Man 7/18/13: Fixed clients not getting their mute status back if they were muted prior to disconnecting.
     if(IsClientMuted(ent, qfalse)){
         ent->client->sess.mute = qtrue;
     }
-    
+
     #ifdef _GOLD
     ent->client->sess.clientChecks = 0;
     #endif // _GOLD
-    
+
     // Boe!Man 10/25/10: Make sure their stats are set correctly.
     ent->client->pers.statinfo.weapon_shots = malloc(sizeof(int) * ATTACK_MAX * level.wpNumWeapons);
     ent->client->pers.statinfo.weapon_hits = malloc(sizeof(int) * ATTACK_MAX * level.wpNumWeapons);
@@ -1939,7 +1939,7 @@ void ClientBegin( int clientNum, qboolean setTime )
 
     client = level.clients + clientNum;
 
-    if ( ent->r.linked ) 
+    if ( ent->r.linked )
     {
         trap_UnlinkEntity( ent );
     }
@@ -1958,7 +1958,7 @@ void ClientBegin( int clientNum, qboolean setTime )
     client->pers.connected = CON_CONNECTED;
 
     ///RxCxW - 09.15.06 - 05:09pm #statusCheck
-    if(!ent->client->sess.fileChecked) 
+    if(!ent->client->sess.fileChecked)
         ClientUserinfoChanged( clientNum );
     ///End  - 09.15.06 - 05:09pm
 
@@ -2008,7 +2008,7 @@ void ClientBegin( int clientNum, qboolean setTime )
                 SetTeam(ent, "red", NULL, qfalse);
             }
         }else if(!(ent->r.svFlags & SVF_BOT)){
-            SetTeam(ent, ChooseTeam(), NULL, qfalse); 
+            SetTeam(ent, ChooseTeam(), NULL, qfalse);
         }
     }
 
@@ -2018,6 +2018,9 @@ void ClientBegin( int clientNum, qboolean setTime )
         client->sess.checkCoreUI = qtrue;
     }
     #endif // _GOLD
+
+    // Boe!Man 9/14/15: Start checking the client their /rate and /snaps in 20 seconds.
+    client->sess.connectionCheck = level.time + 20000;
 }
 
 /*
@@ -2035,7 +2038,7 @@ gspawn_t* G_SelectClientSpawnPoint ( gentity_t* ent,  qboolean plantsk )
     gclient_t*  client = ent->client;
     gspawn_t*   spawnPoint;
     int         team;
-    
+
     if( plantsk)
     {
         if(ent->client->sess.team == TEAM_RED)
@@ -2260,7 +2263,7 @@ void ClientSpawn(gentity_t *ent)
         trap_SendServerCommand(ent - g_entities, va("chat -1 \"%s You've been respawned as a ghost in a temporary instance.\n\"", info));
         trap_SendServerCommand(ent - g_entities, va("chat -1 \"%s You can wait around here until the new round starts.\n\"", info));
         trap_SendServerCommand(ent - g_entities, va("chat -1 \"%s If you don't want this, you can switch back using the ^3/ghost^7 command.\n\"", info));
-        
+
         // Give monkeys 1 HP.
         client->ps.stats[STAT_HEALTH] = ent->health = 1;
         client->ps.weapon = WP_NONE;
@@ -2275,7 +2278,7 @@ void ClientSpawn(gentity_t *ent)
     // Give the client their weapons depending on whether or not pickups are enabled
     #ifdef _3DServer
     if (level.pickupsDisabled && !ent->client->sess.deadMonkey)
-    #else 
+    #else
     if ( level.pickupsDisabled )
     #endif // _3DServer
     {
@@ -2374,7 +2377,7 @@ void ClientSpawn(gentity_t *ent)
         // Everyone gets full armor in deathmatch
         client->ps.stats[STAT_ARMOR] = MAX_HEALTH;
     }
-    
+
     #ifdef _3DServer
     if (!ent->client->sess.deadMonkey){
         client->ps.stats[STAT_HEALTH] = ent->health = MAX_HEALTH;
@@ -2419,7 +2422,7 @@ void ClientSpawn(gentity_t *ent)
             client->ps.weaponAnimIdChoice = 0;
             client->ps.weaponCallbackStep = 0;
         }
-        
+
         // Boe!Man 11/10/12: Do reset the voiceChat integers when spawning (only when flood check is enabled)..
         if (g_voiceFloodCount.integer){
             client->sess.voiceFloodPenalty = 0;
@@ -2448,7 +2451,7 @@ void ClientSpawn(gentity_t *ent)
     client->ps.weaponstate = WEAPON_READY;
     client->ps.torsoAnim = -1;
     client->ps.legsAnim = LEGS_IDLE;
-    
+
     ///RxCxW - 09.09.06 - 11:16pm #gold src
     client->ps.weaponAnimIdChoice = 0;
     client->ps.weaponCallbackStep = 0;
@@ -2541,14 +2544,14 @@ void ClientSpawn(gentity_t *ent)
             client->sess.extraIdChanges = 0;
             ClientUserinfoChanged ( client->ps.clientNum );
         }
-        
+
         if(level.gametypeData->teams && client->sess.team != TEAM_SPECTATOR && !strstr(level.gametypeTeam[client->sess.team], client->pers.identity->mTeam)){ // this skin does not belong to this team so change their Identity
             trap_SendServerCommand(ent->s.number, va("print \"^3[Info] ^7Your skin has been changed because it did not match your team.\n\"") );
             client->sess.extraIdChanges = 0; // Boe!Man 8/29/11: Also reset the extraIdChanges because this will bug it.
             ClientUserinfoChanged ( client->ps.clientNum );
         }
     }
-    
+
     // Update the time when other people can join the game
     if ( !level.gametypeJoinTime && level.gametypeData->teams )
     {
@@ -2558,7 +2561,7 @@ void ClientSpawn(gentity_t *ent)
             level.gametypeJoinTime = level.time;
         }
     }
-    
+
     #ifdef _3DServer
     if((current_gametype.value == GT_HS && !ent->client->sess.deadMonkey) || current_gametype.value == GT_HZ)
     #else
@@ -2570,7 +2573,7 @@ void ClientSpawn(gentity_t *ent)
         ent->client->ps.weapon = WP_KNIFE;
         ent->client->ps.weaponstate = WEAPON_READY;
         if(level.crossTheBridge && ent->client->sess.team == TEAM_RED){ // Henk 27/02/10 -> In cross the bridge hiders spawn with 5 smokes // Boe: They start with 4 now. ;)
-            ent->client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_M15_GRENADE);  
+            ent->client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_M15_GRENADE);
             ent->client->ps.ammo[weaponData[WP_M15_GRENADE].attack[ATTACK_NORMAL].ammoIndex] = 3;
             ent->client->ps.clip[ATTACK_NORMAL][WP_M15_GRENADE] = 1;
             ent->client->ps.weapon = WP_M15_GRENADE;
@@ -2579,7 +2582,7 @@ void ClientSpawn(gentity_t *ent)
             //Com_Printf("%c\n",location);
             // Boe!Man 3/17/10: When seekers are spawned on the bridge they get an AK + nades.
             if (strstr(location, "Bridge")){
-            ent->client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_AK74_ASSAULT_RIFLE);   
+            ent->client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_AK74_ASSAULT_RIFLE);
             ent->client->ps.ammo[weaponData[WP_AK74_ASSAULT_RIFLE].attack[ATTACK_NORMAL].ammoIndex] = 175; // Boe!Man 3/17/10: The seekers ALWAYS run out, thus more clips, thus more ammo.
             ent->client->ps.clip[ATTACK_NORMAL][WP_AK74_ASSAULT_RIFLE] = 7; // Boe!Man 3/17/10: We start with 7 bullets in the clip instead of the usual 5.
             ent->client->ps.weapon = WP_AK74_ASSAULT_RIFLE;
@@ -2587,7 +2590,7 @@ void ClientSpawn(gentity_t *ent)
             }
             // Boe!Man 3/17/10: Seekers spawned in the watchtower get only the sniper (nades would be useless).
             else if (strstr(location, "Seeker Watchtower")){
-            ent->client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_MSG90A1);  
+            ent->client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_MSG90A1);
             ent->client->ps.ammo[weaponData[WP_MSG90A1].attack[ATTACK_NORMAL].ammoIndex] = 100;
             ent->client->ps.clip[ATTACK_NORMAL][WP_MSG90A1] = 5;
             ent->client->ps.weapon = WP_MSG90A1;
@@ -2595,7 +2598,7 @@ void ClientSpawn(gentity_t *ent)
         }
         client->ps.stats[STAT_ARMOR]   = 0; // Henk 27/02/10 -> Fix that ppl start with no armor
         client->ps.stats[STAT_GOGGLES] = GOGGLES_NONE;
-        
+
         // Boe!Man 1/28/14: Also (re-)set some inactivity stuff.
         if(!g_inactivity.integer || g_inactivity.integer >= 10){
             if(!level.messagedisplay){ // Seekers are still waiting to be released.
@@ -2658,7 +2661,7 @@ void ClientDisconnect( int clientNum )
     {
         tent = G_TempEntity( ent->client->ps.origin, EV_PLAYER_TELEPORT_OUT );
         tent->s.clientNum = ent->s.clientNum;
-        
+
         // Boe!Man 7/5/13: Toss client weapons prior to resetting them in H&S/H&Z.
         if(current_gametype.value != GT_HS && current_gametype.value != GT_HZ){
             // Dont drop weapons
@@ -2668,12 +2671,12 @@ void ClientDisconnect( int clientNum )
             if(hideSeek_Extra.string[RANDOMGRENADE] == '1' && ent->client->sess.transformedEntity){
                 G_FreeEntity(&g_entities[ent->client->sess.transformedEntity]);
                 ent->client->sess.transformedEntity = 0;
-                
+
                 if(ent->client->sess.transformedEntity2){
                     G_FreeEntity(&g_entities[ent->client->sess.transformedEntity2]);
                     ent->client->sess.transformedEntity2 = 0;
                 }
-                
+
                 strncpy(level.RandomNadeLoc, "Disappeared", sizeof(level.RandomNadeLoc));
             }
         }
@@ -2681,7 +2684,7 @@ void ClientDisconnect( int clientNum )
         // Get rid of things that need to drop
         TossClientItems( ent );
     }
-    
+
     if(g_logExtra.integer){
         G_LogPrintf("ClientDisconnect: [%i] %s\\%s\n", clientNum, ent->client->pers.ip, ent->client->pers.cleanName);
     }
