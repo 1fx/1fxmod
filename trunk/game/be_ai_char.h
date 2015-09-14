@@ -2,9 +2,9 @@
 //
 
 /*****************************************************************************
- * name:		be_ai_char.h
+ * name:        be_ai_char.h
  *
- * desc:		bot characters
+ * desc:        bot characters
  *
  * $Archive: /source/code/botlib/be_ai_char.h $
  * $Author: Mrelusive $ 

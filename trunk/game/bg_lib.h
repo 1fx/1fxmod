@@ -30,9 +30,9 @@ typedef char *  va_list;
 typedef int cmp_t(const void *, const void *);
 void qsort(void *a, size_t n, size_t es, cmp_t *cmp);
 #ifdef Q3_VM
-void	srand( unsigned seed );
+void    srand( unsigned seed );
 #endif
-int		rand( void );
+int     rand( void );
 
 // String functions
 size_t strlen( const char *string );

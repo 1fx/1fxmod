@@ -20,19 +20,19 @@
 
 // Boe!Man 1/11/15: Required information for memory patching in another thread.
 struct patchArgs {
-	pid_t	pid;				// PID of main thread/process.
-	char	*buf;				// Bytedata of the modified call (4 bytes).
-	long	address;			// Address to patch.
+    pid_t   pid;                // PID of main thread/process.
+    char    *buf;               // Bytedata of the modified call (4 bytes).
+    long    address;            // Address to patch.
 };
 #endif // _WIN32
 
 // Function definitions.
-char	*AlignDWORD					(long input);
-void	Patch_detourAddress			(char *genericName, long func, long offset, qboolean jmp);
-void	Patch_autoDownloadExploit	(void);
-void	Patch_dosProtection			(void);
-void	Patch_rconLog				(void);
-void	Patch_fsgameWorkaround		(void);
-void	Patch_q3infofix				(void);
+char    *AlignDWORD                 (long input);
+void    Patch_detourAddress         (char *genericName, long func, long offset, qboolean jmp);
+void    Patch_autoDownloadExploit   (void);
+void    Patch_dosProtection         (void);
+void    Patch_rconLog               (void);
+void    Patch_fsgameWorkaround      (void);
+void    Patch_q3infofix             (void);
 
 #endif // _PATCH_LOCAL

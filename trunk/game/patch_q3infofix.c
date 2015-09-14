@@ -7,7 +7,7 @@
 #include "patch_local.h"
 
 // Local function definitions.
-void	Patch_connectionlessPacketDetour	(char *packet);
+void    Patch_connectionlessPacketDetour    (char *packet);
 
 /*
 ==================
@@ -41,27 +41,27 @@ The code of where we check the packet length, and if too big, truncate it.
 
 void Patch_connectionlessPacketDetour(char *packet)
 {
-	// Check length of packet.
-	if (strlen(packet) > 320){
-		Com_Printf("WARNING: q3infoboom exploit attack.\n");
-		packet[320] = '\0'; // Truncate it.
-	}
+    // Check length of packet.
+    if (strlen(packet) > 320){
+        Com_Printf("WARNING: q3infoboom exploit attack.\n");
+        packet[320] = '\0'; // Truncate it.
+    }
 
-	// Push the parameter back and call the original function.
-	#if defined(__GNUC__) && !defined(MACOS_X) // FIXME: Mac OS X implementation later.
-	__asm__("push %0 \n\t"
-			"movl " ADDRESS ", %%eax \n\t"
-			"call *%%eax \n"
-			"popl %%eax \n\t"
-			:
+    // Push the parameter back and call the original function.
+    #if defined(__GNUC__) && !defined(MACOS_X) // FIXME: Mac OS X implementation later.
+    __asm__("push %0 \n\t"
+            "movl " ADDRESS ", %%eax \n\t"
+            "call *%%eax \n"
+            "popl %%eax \n\t"
+            :
             : "a" (packet));
-	#elif _MSC_VER
-	__asm {
-		push	packet;
-		mov		eax, ADDRESS;
-		call	eax;
-	}
-	#endif // __GNUC__
+    #elif _MSC_VER
+    __asm {
+        push    packet;
+        mov     eax, ADDRESS;
+        call    eax;
+    }
+    #endif // __GNUC__
 }
 
 #undef ADDRESS
@@ -76,17 +76,17 @@ Writes the jump to the detour.
 
 void Patch_q3infofix()
 {
-	#ifdef _WIN32
-	#ifdef _GOLD
-	Patch_detourAddress("q3infoboom/q3msgboom protection", (long)&Patch_connectionlessPacketDetour, 0x00479375, qfalse);
-	#else
-	Patch_detourAddress("q3infoboom/q3msgboom protection", (long)&Patch_connectionlessPacketDetour, 0x00476849, qfalse);
-	#endif // _GOLD
-	#elif __linux__
-	#ifdef _GOLD
-	Patch_detourAddress("q3infoboom/q3msgboom protection", (long)&Patch_connectionlessPacketDetour, 0x08058ad1, qfalse);
-	#else
-	Patch_detourAddress("q3infoboom/q3msgboom protection", (long)&Patch_connectionlessPacketDetour, 0x0805500e, qfalse);
-	#endif // _GOLD
-	#endif // _WIN32
+    #ifdef _WIN32
+    #ifdef _GOLD
+    Patch_detourAddress("q3infoboom/q3msgboom protection", (long)&Patch_connectionlessPacketDetour, 0x00479375, qfalse);
+    #else
+    Patch_detourAddress("q3infoboom/q3msgboom protection", (long)&Patch_connectionlessPacketDetour, 0x00476849, qfalse);
+    #endif // _GOLD
+    #elif __linux__
+    #ifdef _GOLD
+    Patch_detourAddress("q3infoboom/q3msgboom protection", (long)&Patch_connectionlessPacketDetour, 0x08058ad1, qfalse);
+    #else
+    Patch_detourAddress("q3infoboom/q3msgboom protection", (long)&Patch_connectionlessPacketDetour, 0x0805500e, qfalse);
+    #endif // _GOLD
+    #endif // _WIN32
 }

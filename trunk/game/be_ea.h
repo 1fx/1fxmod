@@ -2,9 +2,9 @@
 //
 
 /*****************************************************************************
- * name:		be_ea.h
+ * name:        be_ea.h
  *
- * desc:		elementary actions
+ * desc:        elementary actions
  *
  * $Archive: /source/code/botlib/be_ea.h $
  * $Author: Mrelusive $ 
