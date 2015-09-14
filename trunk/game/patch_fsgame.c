@@ -23,7 +23,11 @@ void Patch_fsgame(char *s, const char *key, const char *value)
 	if (strcmp(key, "fs_game") == 0 && level.clientMod != CL_NONE){
 		#ifdef _GOLD
 		if (level.clientMod == CL_ROCMOD){
-			Info_SetValueForKey_Big(s, key, "rocmod");
+            if(g_enforce1fxAdditions.integer){
+                Info_SetValueForKey_Big(s, key, "1fx.rocmod");
+            }else{
+                Info_SetValueForKey_Big(s, key, "rocmod");
+            }
 		}
 		#else
 		if (level.clientMod == CL_RPM){
@@ -52,7 +56,7 @@ void Patch_fsgameWorkaround()
 	Patch_detourAddress("client fs_game CVAR workaround", (long)&Patch_fsgame, 0x0044B74D, qfalse);
 	#endif // _GOLD
 	#endif // _WIN32
-	
+
 	#ifdef __linux__
 	#ifdef _GOLD
 	Patch_detourAddress("client fs_game CVAR workaround", (long)&Patch_fsgame, 0x08084a07, qfalse);
