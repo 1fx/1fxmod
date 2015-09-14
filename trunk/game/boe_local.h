@@ -36,31 +36,18 @@
 #define INF_STRING "1fx. Mod"
 #define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod"
 
-// Boe!Man 7/12/11: Mod date.
-// Boe!Man 7/29/12: Month first causes confusion. Just hold on to the ISO standard for now (__DATE__).
-/*
-#ifdef Q3_VM
-#define INF_VERSION_DATE "6/14/12"
-#else
-#define YEAR ((((__DATE__ [9] - '0')) * 10 + (__DATE__ [10] - '0')))
-
-#define MONTH (__DATE__ [1] == 'a' && __DATE__[0] == 'J' ? 0 \
-               : __DATE__ [2] == 'b' ? 1 \
-               : __DATE__ [2] == 'r' ? (__DATE__ [0] == 'M' ? 2 : 3) \
-               : __DATE__ [2] == 'y' ? 4 \
-               : __DATE__ [2] == 'n' ? 5 \
-               : __DATE__ [2] == 'l' ? 6 \
-               : __DATE__ [2] == 'g' ? 7 \
-               : __DATE__ [2] == 'p' ? 8 \
-               : __DATE__ [2] == 't' ? 9 \
-               : __DATE__ [2] == 'v' ? 10 : 11)
-
-#define DAY ((__DATE__ [4] == ' ' ? 0 : __DATE__ [4] - '0') * 10 + (__DATE__ [5] - '0'))
-// Date will be generated automatically
-#define INF_VERSION_DATE ""
-#endif
-*/
+// Boe!Man 7/29/12: Mod date, we hold on to the ISO standard.
 #define INF_VERSION_DATE __DATE__
+
+// Boe!Man 9/14/15: 1fx. Client Additions on Gold.
+// Those defines *MUST* be in sync with the latest core UI release.
+#ifdef _GOLD
+#define COREUI_STOCK_PAKNAME "1fx/1fx_coreUI_0.1.pk3"
+#define COREUI_STOCK_PAKNUM -1
+
+#define COREUI_ROCMOD_PAKNAME "1fx.rocmod/ROCmod_1fx_coreUI_0.1.pk3"
+#define COREUI_ROCMOD_PAKNUM -1
+#endif // _GOLD
 
 // 1fx. Mod
 // Developed by: Boe!Man & Henkie

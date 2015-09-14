@@ -1076,6 +1076,14 @@ void G_initClientMod()
 		trap_Cvar_Register(NULL, "g_customRedName", va("%s^7 Team", server_redteamprefix.string), CVAR_SYSTEMINFO | CVAR_ROM, 0.0, 0.0);
 		trap_Cvar_Register(NULL, "g_customBlueName", va("%s^7 Team", server_blueteamprefix.string), CVAR_SYSTEMINFO | CVAR_ROM, 0.0, 0.0);
 
+        // Boe!Man 9/14/15: If we're using 1fx. Client Additions, reference the core UI.
+        #ifdef _GOLD
+        if(g_enforce1fxAdditions.integer){
+            trap_Cvar_Set("sv_referencedPakNames", COREUI_ROCMOD_PAKNAME);
+            trap_Cvar_Set("sv_referencedPaks", va("%d ", COREUI_ROCMOD_PAKNUM));
+        }
+        #endif // _GOLD
+
 		// Client death messages are handled by client.
 		g_clientDeathMessages.integer = 1;
 	}
@@ -1095,11 +1103,18 @@ void G_initClientMod()
 	if (level.clientMod != CL_NONE){
 		Com_Printf("Using %s client-side modifications.\n", g_clientMod.string);
 	}else{
-		if(strcmp(g_clientMod.string, "none") == 0){
-			Com_Printf("Not using any client-side modifications (defaulting to \"1fx\" folder)\n");
-		}else{
+		if(strcmp(g_clientMod.string, "none") != 0){
 			Com_Printf("WARNING: Unknown client-side modification specified: %s\n", g_clientMod.string);
 		}
+        Com_Printf("Not using any client-side modifications (defaulting to \"1fx\" folder)\n");
+
+         // Boe!Man 9/14/15: If we're using 1fx. Client Additions, reference the core UI.
+        #ifdef _GOLD
+        if(g_enforce1fxAdditions.integer){
+            trap_Cvar_Set("sv_referencedPakNames", COREUI_STOCK_PAKNAME);
+            trap_Cvar_Set("sv_referencedPaks", va("%d ", COREUI_STOCK_PAKNUM));
+        }
+        #endif // _GOLD
 
 		// Always register current_gametype even if the client mod doesn't require it.
 		trap_Cvar_Register(&current_gametype, "current_gametype", "3", CVAR_ROM | CVAR_INTERNAL, 0.0, 0.0);
