@@ -700,7 +700,7 @@ static cvarTable_t gameCvarTable[] =
     { &g_allowthirdperson, "g_allowThirdPerson", "1", CVAR_ARCHIVE | CVAR_SERVERINFO, 0.0, 0.0, 0, qfalse },
 #else
     // Boe!Man 7/7/15: HTTP downloading.
-    { &g_enforce1fxAdditions, "g_enforce1fxAdditions", "1", CVAR_ARCHIVE | CVAR_LATCH, 0.0, 0.0, 0, qfalse },
+    { &g_enforce1fxAdditions, "g_enforce1fxAdditions", "0", CVAR_ARCHIVE | CVAR_LATCH, 0.0, 0.0, 0, qfalse },
 
     { &g_httpRefPaks, "g_httpRefPaks", "", CVAR_ARCHIVE | CVAR_SYSTEMINFO, 0.0, 0.0, 0, qfalse },
     { &g_httpBaseURL, "g_httpBaseURL", "", CVAR_ARCHIVE | CVAR_SYSTEMINFO, 0.0, 0.0, 0, qfalse },
@@ -1425,6 +1425,14 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
     G_LoadArenas ( );
 
     G_UpdateCvars();
+
+    #ifdef _GOLD
+    if(g_enforce1fxAdditions.integer){
+        trap_Cvar_Set("g_enforce1fxAdditions", "0");
+        trap_Cvar_Update(&g_enforce1fxAdditions);
+        Com_Printf("WARNING: 1fx. Client Additions aren't available in this preview.\n");
+    }
+    #endif // _GOLD
 
     // Build the gametype list so we can verify the given gametype
     BG_BuildGametypeList ( );
