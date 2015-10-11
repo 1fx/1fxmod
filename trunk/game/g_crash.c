@@ -215,7 +215,7 @@ void doBacktrace(ucontext_t *ctx)
         free(strings);
     }
 }
-#else // libunwind method for Sof2 v1.00.
+#else // libunwind method for SoF2 v1.00.
 void doBacktrace(ucontext_t *ctx)
 {
     unw_cursor_t    cursor;

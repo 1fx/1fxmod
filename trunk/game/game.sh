@@ -17,7 +17,7 @@
 # -cc: Specifies compiler name (default: "gcc").
 # -l: Specifies linker name (default: "gcc" for win32, "ld" for Linux and "cc" for OS X).
 # -p: Specifies platform (either "linux", "win32" or "osx").
-# -c: Compile choice, either 1-4 or 3.1/3.2.
+# -c: Compile choice, either 1-4 or 3.1/3.2/3.3/3.4.
 # -o: Output filename.
 # -g: Build for Gold (v1.03). If not specified, the Mod will be compiled for v1.00.
 # -v: Verbose mode, will print e.g. full compile lines.
@@ -27,14 +27,15 @@
 # The script also depends on the following utilites:
 # - dos2unix (some compilers require all line endings to be LF instead of CRLF). Mac OS X doesn't have this utility in the operating system by default.
 #
-# PLEASE NOTE: most builds are a *release* build. All debug symbols, flags etc. are omitted, even in the so called test releases.
-# *ONLY* if you build a nightly build, debug symbols won't be omitted.
+# PLEASE NOTE: most builds are a *release* build, unless:
+# - You're building a nightly build.
+# - You're building a developer flavour.
 #
 #
 # For further rather obsolete information regarding this, please check the 1fx. Mod source code.
 # There's a whole section regarding *.so considerations.
 # --- Boe!Man  1/26/13 - 11:01 AM
-# Last update: 8/24/15 - 11:20 AM
+# Last update: 10/11/15 - 11:53 PM
 
 # Enable aliases.
 shopt -s expand_aliases
