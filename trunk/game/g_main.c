@@ -713,7 +713,6 @@ static int gameCvarTableSize = sizeof( gameCvarTable ) / sizeof( gameCvarTable[0
 void G_initClientMod            ( void );
 void G_InitGame                 ( int levelTime, int randomSeed, int restart );
 void G_RunFrame                 ( int levelTime );
-void G_ShutdownGame             ( int restart );
 void CheckExitRules             ( void );
 void G_InitGhoul                ( void );
 void G_ShutdownGhoul            ( void );
@@ -737,6 +736,11 @@ int vmMain( int command, int arg0, int arg1, int arg2, int arg3, int arg4, int a
             G_ShutdownGhoul ( );
             return 0;
         case GAME_INIT:
+            #ifdef _DEV
+            // Boe!Man 10/11/15: Enable crash logging prior to initializing the game.
+            enableCrashHandler();
+            #endif // _DEV
+
             G_InitGame( arg0, arg1, arg2 );
             return 0;
         case GAME_SHUTDOWN:

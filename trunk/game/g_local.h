@@ -962,6 +962,12 @@ char        *G_ColorizeMessage(char *broadcast);
 void        G_postExecuteAdminCommand(int funcNum, int idNum, gentity_t *adm);
 
 //
+// g_crash.c
+//
+
+void        enableCrashHandler      ( void );
+
+//
 // g_items.c
 //
 void ItemUse_Shield(gentity_t *ent);
@@ -1319,6 +1325,7 @@ extern  vmCvar_t    g_adminlist;
 void        FindIntermissionPoint               ( void );
 void        SetLeader                           ( int team, int client );
 void        G_RunThink                          ( gentity_t *ent );
+void        G_ShutdownGame                      ( int restart );
 void QDECL  G_LogPrintf                         ( const char *fmt, ... );
 void QDECL  G_LogLogin                          ( const char *fmt, ... );
 void QDECL  G_LogRcon                           ( const char *fmt, ... );

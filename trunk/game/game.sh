@@ -57,6 +57,7 @@ verbose=false
 # Link the Mod based on the build type (default is without symbols).
 strip="-s"
 buildtype=""
+dev=false
 
 # First, we detect if we're manually building the Mod or if we should automatically start determining what to build.
 numargs=$#
@@ -132,9 +133,19 @@ if [ $numargs -gt 0 ]; then
         buildoptions="$buildoptions -fstack-check"
     fi
 else
-    # Properly detect Linux operating system.
-    if [[ `uname -o` == *"Linux"* ]]; then
-        linux=true
+	# Check what version to build. If the host system contains GCC 2.95, we assume we want to build for v1.00.
+    if ! ([[ $compiler == "gcc" ]] && [[ `$compiler -v 2>&1 | tail -1 | awk '{print $3}'` == *"2.95"* ]]); then
+        buildoptions="$buildoptions -D_GOLD"
+        gold=true
+
+        # Optionally detect Linux operating system.
+		if [[ `uname -o` == *"Linux"* ]]; then
+			linux=true
+			outfile="sof2mp_gamei386.so"
+		fi
+    else
+		# GCC 2.95, thus Linux.
+		linux=true
         outfile="sof2mp_gamei386.so"
     fi
 
@@ -163,8 +174,8 @@ else
     # Get the type of build to build.
     echo "Enter the type of build:"
     echo "1: Public release build (e.g. 0.70)"
-    echo "2: Test/Beta release build (e.g. 0.70t)"
-    echo "3: 3D/Regular Pre-release build (e.g. 0.76t.1-pre)"
+    echo "2: Public release build with developer (e.g. 0.78-dev)"
+    echo "3: 3D/Regular Pre-release build (e.g. 0.76t.1-pre) (optionally with developer)"
     echo "4: Nightly build (w/ debug symbols, e.g. 0.76t-master)"
     echo -n "Enter your choice and press [ENTER]: "
     read choice
@@ -192,15 +203,17 @@ if [ $choice == "1" ]; then
     buildoptions="$buildoptions $strip -DNDEBUG"
     buildtype="Public release build"
 elif [ $choice == "2" ]; then
-    buildoptions="$buildoptions $strip -D_DEBUG -DDEBUG"
-    buildtype="Test/Beta release build"
+	buildtype="Public release build with developer"
+    buildoptions="$buildoptions -g -DNDEBUG -D_DEV"
+    dev=true
 elif [[ $choice == "3" ]] || [[ $choice == *"3"* ]]; then
-    buildoptions="$buildoptions $strip -D_DEBUG -DDEBUG"
     if [[ $numargs -eq 0 ]]; then
         clear
         echo "What kind of pre-release should I build?"
         echo "1: Regular Pre-release build"
         echo "2: 3D-specific Pre-release build"
+        echo "3: Regular Pre-release build with developer"
+        echo "4: 3D-specific Pre-release build with developer"
         echo -n "Enter your choice and press [ENTER]: "
         read choice
     elif [[ $numargs -gt 0 ]] && [[ $choice == "3" ]]; then
@@ -210,9 +223,18 @@ elif [[ $choice == "3" ]] || [[ $choice == *"3"* ]]; then
 
     if [[ $choice == "1" ]] || [[ $choice == "3.1" ]]; then
         buildtype="Regular Pre-release build"
+        buildoptions="$buildoptions $strip -DNDEBUG -D_PRE"
     elif [[ $choice == "2" ]] || [[ $choice == "3.2" ]]; then
-        buildoptions="$buildoptions -D_3DServer -D_awesomeToAbuse"
+        buildoptions="$buildoptions $strip -DNDEBUG -D_PRE -D_3DServer -D_awesomeToAbuse"
         buildtype="3D-specific Pre-release build"
+    elif [[ $choice == "3" ]] || [[ $choice == "3.3" ]]; then
+		buildtype="Regular Pre-release build with developer"
+        buildoptions="$buildoptions -DNDEBUG -D_PRE -D_DEV"
+        dev=true
+    elif [[ $choice == "3" ]] || [[ $choice == "3.4" ]]; then
+		buildtype="3D-specific Pre-release build with developer"
+        buildoptions="$buildoptions -DNDEBUG -D_PRE -D_DEV -D_3DServer -D_awesomeToAbuse"
+        dev=true
     else
         echo "Invalid choice specified, exitting.."
         exit 1
@@ -224,6 +246,13 @@ elif [ $choice == "4" ]; then
 else
     echo "Invalid choice specified, exitting.."
     exit 1
+fi
+
+# Add developer build options.
+if [ $dev == true ]; then
+	if [ $linux == true ]; then
+		buildoptions="$buildoptions -g -D_GNU_SOURCE"
+	fi
 fi
 
 # Summarize build environment and choices.
@@ -357,6 +386,8 @@ printf "Now linking the target file.. "
 if [[ $gold == false ]] && [[ $linux == true ]]; then
     # Static libraries to link against (SoF2 v1.00 Linux).
     libs="\
+    /usr/local/lib/libunwind-x86.a \
+    /usr/local/lib/libunwind.a \
     /usr/lib/libpthread.a \
     /usr/lib/libm.a \
     /usr/lib/libc.a \
@@ -364,7 +395,11 @@ if [[ $gold == false ]] && [[ $linux == true ]]; then
     /usr/lib/libdl.a"
 
     # This links the Mod dynamically with static dependencies.
-    ld $strip -shared $linkfiles -Bstatic $libs -o $outfile 2>> compile_log
+    if [ $dev == false ]; then
+		ld $strip -shared $linkfiles -Bstatic $libs -o $outfile 2>> compile_log
+	else
+		ld -E -shared $linkfiles -Bstatic $libs -o $outfile 2>> compile_log
+	fi
 else
     # Regular dynamic linking.
     if [ $macosx == true ]; then
@@ -402,7 +437,18 @@ else
             linker="ld"
         fi
 
-        $linker $strip $m32b -shared $linkfiles -lpthread -lm -lc -ldl -o $outfile 2>> compile_log
+		if [ $dev == false ]; then
+			$linker $strip $m32b -shared $linkfiles -lpthread -lm -lc -ldl -o $outfile 2>> compile_log
+		else
+			# With developer enabled.
+			if [[ $linker == "ld" ]]; then
+				rdynamic="--export-dynamic"
+			else
+				rdynamic="-rdynamic"
+			fi
+
+			$linker $m32b $rdynamic -shared $linkfiles -lpthread -lm -lc -ldl -o $outfile 2>> compile_log
+		fi
     fi
 fi
 printf "done!\n"
