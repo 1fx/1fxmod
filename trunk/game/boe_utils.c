@@ -195,7 +195,7 @@ void Boe_Motd (gentity_t *ent)
         server_motd4.string,
         server_motd5.string,
         server_motd6.string);
-    
+
     gmotd[strlen(gmotd)+1] = '\0';
 
     while(*gs)
@@ -285,9 +285,9 @@ void QDECL Boe_adminLog( const char *command, const char *by, const char *to, ..
         vsprintf( string + 93, temp, argptr); // Boe!Man 3/13/11: Append the client who got it (can't be RCON).
         va_end( argptr );
     }
-        
+
     trap_FS_FOpenFile(g_adminlog.string, &f, FS_APPEND_TEXT);
-    
+
     if ( !f )
         return;
 
@@ -426,13 +426,13 @@ void Boe_Tokens(gentity_t *ent, char *chatText, int mode, qboolean CheckSounds)
     char check;
     gentity_t *tent;
     qboolean text = qtrue;
-    //gitem_t* item;        
-    
+    //gitem_t* item;
+
     if(ent->client->sess.mute)
     {
         return;
     }
-    
+
     newTextp = newText;
     chatTextS = chatText;
     while(*chatText && newTextp < newText + MAX_SAY_TEXT )
@@ -548,7 +548,7 @@ void Boe_Tokens(gentity_t *ent, char *chatText, int mode, qboolean CheckSounds)
                                     if(level.nextSound)
                                         Boe_ClientSound(tent, chatSounds[level.nextSound].sound);
                                 }
-                            }else if(ent->client->sess.team == TEAM_SPECTATOR && current_gametype.value != GT_DM){ 
+                            }else if(ent->client->sess.team == TEAM_SPECTATOR && current_gametype.value != GT_DM){
                                 for (n = 0; n < level.numConnectedClients; n++){
                                     tent = &g_entities[level.sortedClients[n]];
                                     if (!tent || !tent->inuse || !tent->client)
@@ -700,7 +700,7 @@ void Boe_Tokens(gentity_t *ent, char *chatText, int mode, qboolean CheckSounds)
                     Q_strcat(newText, MAX_SAY_TEXT, chatSounds[n].text);
                 chatText++;
             }
-            else{       
+            else{
                 return;
             }
             if(i) {
@@ -733,7 +733,7 @@ void Boe_Tokens(gentity_t *ent, char *chatText, int mode, qboolean CheckSounds)
                                 continue;
                             Boe_ClientSound(tent, i);
                         }
-                    }else if(ent->client->sess.team == TEAM_SPECTATOR && current_gametype.value != GT_DM){ 
+                    }else if(ent->client->sess.team == TEAM_SPECTATOR && current_gametype.value != GT_DM){
                         // Boe!Man 11/10/12: New code for specs (so alive clients can't hear them, only specs and ghosts). Do note that this should not work in DM (not a team based game).
                         for (n = 0; n < level.numConnectedClients; n++){
                             tent = &g_entities[level.sortedClients[n]];
@@ -752,7 +752,7 @@ void Boe_Tokens(gentity_t *ent, char *chatText, int mode, qboolean CheckSounds)
             }
                 else {
                     return;
-                } 
+                }
                 while (*chatText >= '0' && *chatText <= '9')
                     chatText++;
             }else{
@@ -765,7 +765,7 @@ void Boe_Tokens(gentity_t *ent, char *chatText, int mode, qboolean CheckSounds)
         if(*chatText)
         {
             *newTextp++ = *chatText++;
-            
+
         }
         *newTextp = '\0';
     }
@@ -958,7 +958,7 @@ void Boe_ParseChatSounds (void)
         Q_strncpyz(chatSounds[numSounds].text, defaultChatSounds[numSounds][0], MAX_SAY_TEXT);
         chatSounds[numSounds].sound = G_SoundIndex(va("%s", defaultChatSounds[numSounds][1]));
     }
-    
+
     fileCount = trap_FS_GetFileList( "", ".vchat", chatFiles, 1024 );
     filePtr = chatFiles;
 
@@ -1164,7 +1164,7 @@ gentity_t *NV_projectile (gentity_t *ent, vec3_t start, vec3_t dir, int weapon, 
     //missile->s.pos.trType         = TR_INTERPOLATE;
     missile->s.pos.trType           = TR_HEAVYGRAVITY;
     missile->s.pos.trTime           = level.time - 50;
-    
+
     if(weapon == WP_ANM14_GRENADE){
         missile->splashRadius       = 150;
         missile->dflags             = DAMAGE_AREA_DAMAGE;
@@ -1207,7 +1207,7 @@ void Boe_Players(gentity_t *ent)
     }
 
     trap_SendServerCommand( ent-g_entities, "print \"^7------------------------------------------------------------------------\n\"");
-    
+
     // Loop through clients.
     for ( i = 0; i < MAX_CLIENTS; i ++ )
     {
@@ -1320,7 +1320,7 @@ void Boe_Stats ( gentity_t *ent )
     statinfo_t  *stat;
     float       client;
     char        *client0;
-    char        arg1[32];   
+    char        arg1[32];
     char        *rate;
     char        *snaps;
     char        *ip;
@@ -1350,12 +1350,12 @@ void Boe_Stats ( gentity_t *ent )
         trap_GetUserinfo( ent->s.number, userinfo, sizeof( userinfo ) );
         rate    = Info_ValueForKey ( userinfo, "rate" );
         snaps   = Info_ValueForKey ( userinfo, "snaps" );
-        
+
         // Boe!Man 5/14/11: Check if the checking of countries is enabled.
         if(g_checkCountry.integer && level.countryInitialized){
             country = ent->client->sess.country;
         }
-        
+
         idnum = ent->s.number;
         #ifndef _GOLD
         if (level.clientMod == CL_RPM){
@@ -1381,7 +1381,7 @@ void Boe_Stats ( gentity_t *ent )
             client1 = qtrue;
         }
         #endif // not _GOLD
-        
+
 #ifdef _3DServer
         if (ent->client->sess.admin == 2){
             admin = "Admin";
@@ -1452,12 +1452,12 @@ void Boe_Stats ( gentity_t *ent )
         trap_GetUserinfo( g_entities[idnum].s.number, userinfo, sizeof( userinfo ) );
         rate    = Info_ValueForKey ( userinfo, "rate" );
         snaps   = Info_ValueForKey ( userinfo, "snaps" );
-        
+
         // Boe!Man 5/14/11: Check if the checking of countries is enabled.
         if(g_checkCountry.integer && level.countryInitialized){
             country = g_entities[idnum].client->sess.country;
         }
-        
+
         #ifndef _GOLD
         if (level.clientMod == CL_RPM){
             if (g_entities[idnum].client->sess.rpmClient >= 0.1){
@@ -1517,7 +1517,7 @@ void Boe_Stats ( gentity_t *ent )
     if(g_checkCountry.integer && level.countryInitialized){
         trap_SendServerCommand( ent-g_entities, va("print \"%-18s%s\n", "[^3Country^7]", country));
     }
-    
+
     if(client1){
         trap_SendServerCommand( ent-g_entities, va("print \"%-18s%s\n", "[^3Client^7]", client0));
     }else{
@@ -1555,7 +1555,7 @@ void Boe_Stats ( gentity_t *ent )
     }
 
     // Boe!Man 6/2/10: Tier 0 - End.
-    
+
     // Boe!Man 6/2/10: Tier 1 - Start.
     trap_SendServerCommand( ent-g_entities, va("print \"[^3Total kills^7] [^3Total death^7] [^3Damage done^7] [^3Damage take^7]\n"));
     trap_SendServerCommand( ent-g_entities, va("print \"%7d%14d%14d%14d\n\n", stat->kills, stat->deaths, stat->damageDone, stat->damageTaken));
@@ -1582,13 +1582,13 @@ void Boe_Stats ( gentity_t *ent )
                         accuracy = (float)stat->weapon_hits[ATTACK_NORMAL * level.wpNumWeapons + n] / (float)stat->weapon_shots[ATTACK_NORMAL * level.wpNumWeapons + n] * 100;
                     }
                 trap_SendServerCommand( ent-g_entities, va("print \"^3%14s^7%9d^7%9d^7%9d%7s%3.2f\n\"",
-                bg_weaponNames[n], 
+                bg_weaponNames[n],
                 stat->weapon_shots[ATTACK_NORMAL * level.wpNumWeapons + n],
                 stat->weapon_hits[ATTACK_NORMAL * level.wpNumWeapons + n],
                 stat->weapon_headshots[ATTACK_NORMAL * level.wpNumWeapons + n],
                 "^7",
                 accuracy));
-                
+
                 if(stat->weapon_shots[ATTACK_ALTERNATE * level.wpNumWeapons + n])
                 {
                     switch(n)
@@ -1605,8 +1605,8 @@ void Boe_Stats ( gentity_t *ent )
                         altname = "Bludgeon";
                         break;
 
-                    case WP_M1911A1_PISTOL:          
-                    case WP_USSOCOM_PISTOL: 
+                    case WP_M1911A1_PISTOL:
+                    case WP_USSOCOM_PISTOL:
                         altname = "Pistol Whip";
                         break;
 
@@ -1622,7 +1622,7 @@ void Boe_Stats ( gentity_t *ent )
                             accuracy = (float)stat->weapon_hits[ATTACK_ALTERNATE * level.wpNumWeapons + n] / (float)stat->weapon_shots[ATTACK_ALTERNATE * level.wpNumWeapons + n] * 100;
                         }
                 trap_SendServerCommand( ent-g_entities, va("print \"^3%14s^7%9d^7%9d^7%9d%7s%3.2f\n\"",
-                altname, 
+                altname,
                 stat->weapon_shots[ATTACK_ALTERNATE * level.wpNumWeapons + n],
                 stat->weapon_hits[ATTACK_ALTERNATE * level.wpNumWeapons + n],
                 stat->weapon_headshots[ATTACK_ALTERNATE * level.wpNumWeapons + n],
@@ -1632,7 +1632,7 @@ void Boe_Stats ( gentity_t *ent )
             }
         }
     }
-    
+
     trap_SendServerCommand( ent-g_entities, va("print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\""));
 }
 //==============================================================================================================================
@@ -1652,7 +1652,7 @@ void Boe_About( gentity_t *ent )
     trap_SendServerCommand( ent-g_entities, "print \"\n^3Server settings\n\"");
     trap_SendServerCommand( ent-g_entities, "print \"--------------------------------------\n\"");
     trap_SendServerCommand( ent-g_entities, va("print \"%-25s " INF_STRING" " INF_VERSION_STRING "\n", "[^3Mod used^7]"));
-    
+
     // Mod channel.
     #ifdef _DEBUG
     #ifndef _NIGHTLY
@@ -1692,7 +1692,7 @@ void Boe_About( gentity_t *ent )
     trap_SendServerCommand( ent-g_entities, va("print \"%-25s %i\n", "[^3Speed^7]", g_speed.integer));
     trap_SendServerCommand( ent-g_entities, va("print \"%-25s %i\n", "[^3Gravity^7]", g_gravity.integer));
     trap_SendServerCommand( ent-g_entities, va("print \"%-25s %i\n", "[^3Total clients^7]", level.numConnectedClients));
-    
+
     trap_SendServerCommand( ent-g_entities, "print \"\n^3Owner settings\n\"");
     trap_SendServerCommand( ent-g_entities, "print \"--------------------------------------\n\"");
 
@@ -1768,7 +1768,7 @@ Boe_serverMsg
 void Boe_serverMsg (void)
 {
     char    *message;
-    
+
     level.serverMsgCount++;
 
     switch (level.serverMsgCount){
@@ -1963,11 +1963,11 @@ void Boe_mapEvents (void){
                 level.mapSwitchCount = level.time + 1000;
             }else{
                 if(strstr(level.mapPrefix, "D^")){
-                    trap_SendConsoleCommand( EXEC_APPEND, va("devmap %s\n", level.mapSwitchName));  
+                    trap_SendConsoleCommand( EXEC_APPEND, va("devmap %s\n", level.mapSwitchName));
                 }else{
                     trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", level.mapSwitchName));
                 }
-                
+
                 // Boe!Man 7/15/13: Also re-set these values in case the map switch goes wrong.
                 level.mapSwitch = qfalse;
                 level.mapAction = 0;
@@ -1982,7 +1982,7 @@ void Boe_mapEvents (void){
                 // Boe!Man 11/5/12: It's a RMG map, make sure to call the rmgmap 0 command.
                 trap_SendConsoleCommand( EXEC_APPEND, va("rmgmap 0\n"));
             }
-            
+
             // Boe!Man 7/15/13: Also re-set these values in case the map switch goes wrong.
             level.mapSwitch = qfalse;
             level.mapAction = 0;
@@ -1996,7 +1996,7 @@ void Boe_mapEvents (void){
                 level.mapSwitchCount = level.time + 1000;
             }else{
                 trap_SendConsoleCommand( EXEC_APPEND, va("mapcycle\n"));
-                
+
                 // Boe!Man 7/15/13: Also re-set these values in case the map switch goes wrong.
                 level.mapSwitch = qfalse;
                 level.mapAction = 0;
@@ -2055,18 +2055,18 @@ Boe_checkRoof
 ================
 */
 
-void Boe_checkRoof ( gentity_t *ent ) 
-{   
+void Boe_checkRoof ( gentity_t *ent )
+{
     // Boe!Man 11/22/13: Only proceed if this is true.
-    if(!level.noLRActive[1] || !level.noLRMWEntFound[1]){ 
+    if(!level.noLRActive[1] || !level.noLRMWEntFound[1]){
         return;
     }
-    
+
     // Boe!Man 6/3/12: Do this with an interval. It's a shame to be cocky about something this small, so save resources.
     if(ent->client->sess.noroofCheckTime > level.time){
         return;
     }
-    
+
     // Boe!Man 6/3/12: He must be alive.
     if(G_IsClientDead (ent->client)){
         if(ent->client->sess.isOnRoof){ // Well, since he's dead now, reset this..
@@ -2076,7 +2076,7 @@ void Boe_checkRoof ( gentity_t *ent )
         ent->client->sess.noroofCheckTime = level.time + 1000;
         return;
     }
-    
+
     // Boe!Man 6/3/12: Check for the player.
     if(!level.noLROpened[1]){ // Roof must be opened, else don't check this.
         if(!ent->client->sess.isOnRoof){ // Player ISN'T on roof, last time we checked.
@@ -2108,9 +2108,9 @@ void Boe_checkRoof ( gentity_t *ent )
             }
         }
     }
-    
+
     ent->client->sess.noroofCheckTime = level.time + 1000;
-    
+
     return;
 }
 
@@ -2127,7 +2127,7 @@ int Boe_firstDigitOfInt(int i)
     if(!i){
         return -1;
     }
-        
+
     while(i >= 10){
         i /= 10;
     }
@@ -2146,13 +2146,13 @@ Function that replaces arguments in the actual CustomCommand action.
 char *Boe_parseCustomCommandArgs(gentity_t *ent, char *in, qboolean shortCmd)
 {
     static char *buf;
-    char        out[512] = "\0";
+    static char out[512] = "\0";
     char        buf2[5] = "\0";
     char        arg2[1];
     char        arg[MAX_STRING_TOKENS];
     int         pos = 0; // Position of out.
     int         argc;
-    
+
     #ifdef _DEBUG
     Com_Printf("Boe_parseCustomCommandArgs: in: %s\n", in); // Debug.
     #endif
@@ -2160,7 +2160,7 @@ char *Boe_parseCustomCommandArgs(gentity_t *ent, char *in, qboolean shortCmd)
     if (shortCmd) {
         argc = G_GetChatArgumentCount();
     }
-    
+
     buf = in;
     while ( *buf ){
         if(*buf == '%'){ // Check for the identifier of the arg.
@@ -2188,7 +2188,7 @@ char *Boe_parseCustomCommandArgs(gentity_t *ent, char *in, qboolean shortCmd)
                         return NULL;
                     }
                     Q_strcat(out, sizeof(out), arg); // Append the argument.
-                    
+
                     // Set the new positions correctly (so we won't get any left overs or overwriting).
                     pos += (strlen(arg)-1);
                     buf += 4;
@@ -2201,14 +2201,14 @@ char *Boe_parseCustomCommandArgs(gentity_t *ent, char *in, qboolean shortCmd)
         }else{ // Same..
             out[pos] = *buf;
         }
-        
+
         // (Re-)Set pointers.
         pos += 1;
         buf++;
     }
-    
+
     buf = out;
-    
+
     #ifdef _DEBUG
     Com_Printf("Boe_parseCustomCommandArgs: out: %s\n", buf); // Debug.
     #endif
@@ -2277,7 +2277,7 @@ buffer.
 ============
 */
 
-char *G_GetChatArgument(int argNum) 
+char *G_GetChatArgument(int argNum)
 {
     static char newArg[MAX_SAY_TEXT];
     char text[MAX_SAY_TEXT];
@@ -2303,7 +2303,7 @@ char *G_GetChatArgument(int argNum)
 
     while (argc < argNum) {
         text2 = strstr(text2, " ");
-        
+
         // Get rid of extra spaces.
         while (text2 && *text2 == ' ') {
             *text2++;
@@ -2358,11 +2358,11 @@ void Boe_Howto ( gentity_t *ent )
 }
 
 // Boe!Man 5/27/13: Misc. SQLite functions.
-int process_ddl_row2(void * pData, int nColumns, 
+int process_ddl_row2(void * pData, int nColumns,
         char **values, char **columns)
 {
         sqlite3     *db;
-        
+
         if (nColumns != 1)
                 return 1; // Error
 
@@ -2372,15 +2372,15 @@ int process_ddl_row2(void * pData, int nColumns,
         return 0;
 }
 
-int process_dml_row2(void *pData, int nColumns, 
+int process_dml_row2(void *pData, int nColumns,
         char **values, char **columns)
 {
         sqlite3     *db;
         char *stmt;
-        
+
         if (nColumns != 1)
                 return 1; // Error
-        
+
         db = (sqlite3*)pData;
 
         stmt = sqlite3_mprintf("insert into main.%q "
@@ -2408,9 +2408,9 @@ void Boe_userdataIntegrity(void)
     int              rc;
     qboolean         dbOkay;
     struct stat st = {0};
-    
+
     Com_Printf("Checking userdata integrity...\n");
-    
+
     // Check bans.db first. Prior to doing that, check if the folder exists. If not, create it.
     // After that, the first thing we check is if the database exists on one of the two locations.
     if(!level.altPath){
@@ -2425,7 +2425,7 @@ void Boe_userdataIntegrity(void)
             mkdir("./users", 0755);
             #endif
         }
-        
+
         rc = sqlite3_open_v2("./users/bans.db", &db, SQLITE_OPEN_READWRITE, NULL);
     }else{
         if(stat(va("%s/users/", level.altString), &st) == -1){
@@ -2439,12 +2439,12 @@ void Boe_userdataIntegrity(void)
             mkdir(va("%s/users", level.altString), 0755);
             #endif
         }
-        
+
         rc = sqlite3_open_v2(va("%s/users/bans.db", level.altString), &db, SQLITE_OPEN_READWRITE, NULL);
     }
-    
+
     dbOkay = qfalse;
-    
+
     if(rc){
         // The database cannot be found. We try to create it.
         if(!level.altPath){
@@ -2452,7 +2452,7 @@ void Boe_userdataIntegrity(void)
         }else{
             rc = sqlite3_open_v2(va("%s/users/bans.db", level.altString), &db, SQLITE_OPEN_CREATE | SQLITE_OPEN_READWRITE, NULL);
         }
-        
+
         if(rc){
             G_LogPrintf("^1Fatal Error: ^7bans database: %s\n", sqlite3_errmsg(db));
             // Boe!Man 5/27/13: This is bad, drop with a fatal error.
@@ -2463,7 +2463,7 @@ void Boe_userdataIntegrity(void)
     }else{
         dbOkay = qtrue;
     }
-    
+
     if(dbOkay){
         // The database should be opened by now, see if it needs maintenance.
         if(sqlite3_exec(db, "CREATE TABLE IF NOT EXISTS bans(IP VARCHAR(24), name VARCHAR(36), by VARCHAR(36), reason VARCHAR(128))", 0, 0, 0) != SQLITE_OK){
@@ -2473,7 +2473,7 @@ void Boe_userdataIntegrity(void)
             Com_Error(ERR_FATAL, "Bans database: %s", sqlite3_errmsg(db));
             return;
         }
-        
+
         if(sqlite3_exec(db, "CREATE TABLE IF NOT EXISTS subnetbans(IP VARCHAR(8), name VARCHAR(36), by VARCHAR(36), reason VARCHAR(128))", 0, 0, 0) != SQLITE_OK){
             G_LogPrintf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
             sqlite3_close(db);
@@ -2481,17 +2481,17 @@ void Boe_userdataIntegrity(void)
             Com_Error(ERR_FATAL, "Bans database: %s", sqlite3_errmsg(db));
             return;
         }
-        
+
         // Boe!Man 5/27/13: No errors, load the database into memory.
         sqlite3_open(":memory:", &bansDb);
-        
+
         sqlite3_exec(db, "BEGIN", NULL, NULL, NULL);
         sqlite3_exec(db, "SELECT sql FROM sqlite_master WHERE sql NOT NULL", &process_ddl_row2, bansDb, NULL);
         sqlite3_exec(db, "COMMIT", NULL, NULL, NULL);
-        
+
         // Boe!Man 12/12/12: Close the bans database.
         sqlite3_close(db);
-        
+
         // Boe!Man 5/27/13: Attach the database.
         if(!level.altPath){
             sqlite3_exec(bansDb, "ATTACH DATABASE './users/bans.db' as bans", NULL, NULL, NULL);
@@ -2499,13 +2499,13 @@ void Boe_userdataIntegrity(void)
             sqlite3_exec(bansDb, va("ATTACH DATABASE './%s/users/bans.db' as bans", level.altString), NULL, NULL, NULL);
         }
         Q_strncpyz(tempName, "bans", sizeof(tempName));
-        
+
         // Boe!Man 5/17/13: Copy the data from the backup to the in-memory database.
         sqlite3_exec(bansDb, "BEGIN", NULL, NULL, NULL);
         sqlite3_exec(bansDb, "SELECT name FROM bans.sqlite_master WHERE type='table'", &process_dml_row2, bansDb, NULL);
         sqlite3_exec(bansDb, "COMMIT", NULL, NULL, NULL);
     }
-    
+
     // Now we check the alias database.
     // The first thing we check is if the database exists on one of the two locations.
     if(!level.altPath){
@@ -2513,9 +2513,9 @@ void Boe_userdataIntegrity(void)
     }else{
         rc = sqlite3_open_v2(va("%s/users/aliases.db", level.altString), &db, SQLITE_OPEN_READWRITE, NULL);
     }
-    
+
     dbOkay = qfalse;
-    
+
     if(rc){
         // The database cannot be found. We try to create it.
         if(!level.altPath){
@@ -2523,7 +2523,7 @@ void Boe_userdataIntegrity(void)
         }else{
             rc = sqlite3_open_v2(va("%s/users/aliases.db", level.altString), &db, SQLITE_OPEN_CREATE | SQLITE_OPEN_READWRITE, NULL);
         }
-        
+
         if(rc){
             G_LogPrintf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
             // Boe!Man 5/27/13: This is bad, drop with a fatal error.
@@ -2534,11 +2534,11 @@ void Boe_userdataIntegrity(void)
     }else{
         dbOkay = qtrue;
     }
-    
+
     if(dbOkay){
         sqlite3_exec(db, "PRAGMA synchronous = OFF", NULL, NULL, NULL);
         sqlite3_exec(db, "BEGIN TRANSACTION", NULL, NULL, NULL);
-    
+
         // The database should be opened by now, see if it needs maintenance.
         if(sqlite3_exec(db, "CREATE TABLE IF NOT EXISTS aliases_index('ID' INTEGER PRIMARY KEY NOT NULL, 'IP' varchar(24) NOT NULL)", 0, 0, 0) != SQLITE_OK){
             G_LogPrintf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
@@ -2547,7 +2547,7 @@ void Boe_userdataIntegrity(void)
             Com_Error(ERR_FATAL, "Aliases database: %s", sqlite3_errmsg(db));
             return;
         }
-        
+
         if(sqlite3_exec(db, "CREATE TABLE IF NOT EXISTS aliases_names('ID' INTEGER, 'name' varchar(36) collate nocase)", 0, 0, 0) != SQLITE_OK){
             G_LogPrintf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
             sqlite3_close(db);
@@ -2555,7 +2555,7 @@ void Boe_userdataIntegrity(void)
             Com_Error(ERR_FATAL, "Aliases database: %s", sqlite3_errmsg(db));
             return;
         }
-        
+
         // Boe!Man 1/2/13: Check if we can delete all data from the tables if the index exceeds the (user) defined limit.
         sqlite3_prepare(db, "SELECT count(ID) from aliases_index", -1, &stmt, 0);
         if(sqlite3_step(stmt) != SQLITE_DONE){
@@ -2582,17 +2582,17 @@ void Boe_userdataIntegrity(void)
         }
         sqlite3_finalize(stmt);
         sqlite3_exec(db, "COMMIT", NULL, NULL, NULL);
-        
+
         // Boe!Man 5/27/13: No errors, load the database into memory.
         sqlite3_open(":memory:", &aliasesDb);
-        
+
         sqlite3_exec(db, "BEGIN", NULL, NULL, NULL);
         sqlite3_exec(db, "SELECT sql FROM sqlite_master WHERE sql NOT NULL", &process_ddl_row2, aliasesDb, NULL);
         sqlite3_exec(db, "COMMIT", NULL, NULL, NULL);
-        
+
         // Boe!Man 12/30/12: Close the aliases database.
         sqlite3_close(db);
-        
+
         // Boe!Man 5/27/13: Attach the database.
         if(!level.altPath){
             sqlite3_exec(aliasesDb, "ATTACH DATABASE './users/aliases.db' as aliases", NULL, NULL, NULL);
@@ -2600,13 +2600,13 @@ void Boe_userdataIntegrity(void)
             sqlite3_exec(aliasesDb, va("ATTACH DATABASE './%s/users/aliases.db' as aliases", level.altString), NULL, NULL, NULL);
         }
         Q_strncpyz(tempName, "aliases", sizeof(tempName));
-        
+
         // Boe!Man 5/17/13: Copy the data from the backup to the in-memory database.
         sqlite3_exec(aliasesDb, "BEGIN", NULL, NULL, NULL);
         sqlite3_exec(aliasesDb, "SELECT name FROM aliases.sqlite_master WHERE type='table'", &process_dml_row2, aliasesDb, NULL);
         sqlite3_exec(aliasesDb, "COMMIT", NULL, NULL, NULL);
     }
-    
+
     // Boe!Man 2/4/13: Also check the users.db, which handles Admins, Pass Admins and Clan Members.
     // The first thing we check is if the database exists on one of the two locations.
     if(!level.altPath){
@@ -2614,9 +2614,9 @@ void Boe_userdataIntegrity(void)
     }else{
         rc = sqlite3_open_v2(va("%s/users/users.db", level.altString), &db, SQLITE_OPEN_READWRITE, NULL);
     }
-    
+
     dbOkay = qfalse;
-    
+
     if(rc){
         // The database cannot be found. We try to create it.
         if(!level.altPath){
@@ -2624,7 +2624,7 @@ void Boe_userdataIntegrity(void)
         }else{
             rc = sqlite3_open_v2(va("%s/users/users.db", level.altString), &db, SQLITE_OPEN_CREATE | SQLITE_OPEN_READWRITE, NULL);
         }
-        
+
         if(rc){
             G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
             // Boe!Man 5/27/13: This is bad, drop with a fatal error.
@@ -2635,7 +2635,7 @@ void Boe_userdataIntegrity(void)
     }else{
         dbOkay = qtrue;
     }
-    
+
     if(dbOkay){
         // The database should be opened by now, see if it needs maintenance.
         if(sqlite3_exec(db, "CREATE TABLE IF NOT EXISTS admins('IP' VARCHAR(24), 'name' VARCHAR(36) collate nocase, 'by' VARCHAR(36), 'level' INTEGER NOT NULL)", 0, 0, 0) != SQLITE_OK){
@@ -2645,14 +2645,14 @@ void Boe_userdataIntegrity(void)
             Com_Error(ERR_FATAL, "Users database: %s", sqlite3_errmsg(db));
             return;
         }
-        
+
         if (sqlite3_exec(db, "CREATE TABLE IF NOT EXISTS passadmins('name' varchar(36) collate nocase, 'by' VARCHAR(36), 'level' INTEGER NOT NULL, 'pass' VARCHAR(36))", 0, 0, 0) != SQLITE_OK){
             G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
             sqlite3_close(db);
             Com_Error(ERR_FATAL, "Users database: %s", sqlite3_errmsg(db));
             return;
         }
-        
+
         if(sqlite3_exec(db, "CREATE TABLE IF NOT EXISTS clanmembers('IP' VARCHAR(24), 'name' VARCHAR(36) collate nocase, 'by' VARCHAR(36))", 0, 0, 0) != SQLITE_OK){
             G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
             sqlite3_close(db);
@@ -2663,14 +2663,14 @@ void Boe_userdataIntegrity(void)
 
         // Boe!Man 5/27/13: No errors, load the database into memory.
         sqlite3_open(":memory:", &usersDb);
-        
+
         sqlite3_exec(db, "BEGIN", NULL, NULL, NULL);
         sqlite3_exec(db, "SELECT sql FROM sqlite_master WHERE sql NOT NULL", &process_ddl_row2, usersDb, NULL);
         sqlite3_exec(db, "COMMIT", NULL, NULL, NULL);
-        
+
         // Boe!Man 12/12/12: Close the users database.
         sqlite3_close(db);
-        
+
         // Boe!Man 5/27/13: Attach the database.
         if(!level.altPath){
             sqlite3_exec(usersDb, "ATTACH DATABASE './users/users.db' as users", NULL, NULL, NULL);
@@ -2678,13 +2678,13 @@ void Boe_userdataIntegrity(void)
             sqlite3_exec(usersDb, va("ATTACH DATABASE './%s/users/users.db' as users", level.altString), NULL, NULL, NULL);
         }
         Q_strncpyz(tempName, "users", sizeof(tempName));
-        
+
         // Boe!Man 5/17/13: Copy the data from the backup to the in-memory database.
         sqlite3_exec(usersDb, "BEGIN", NULL, NULL, NULL);
         sqlite3_exec(usersDb, "SELECT name FROM users.sqlite_master WHERE type='table'", &process_dml_row2, usersDb, NULL);
         sqlite3_exec(usersDb, "COMMIT", NULL, NULL, NULL);
     }
-    
+
     Com_Printf("Succesfully finished checking userdata integrity.\n");
     dbsLoaded = qtrue;
 }
@@ -2702,12 +2702,12 @@ qboolean Boe_checkAlias(char *ip, char *name2)
     char            name[MAX_NETNAME]; // name2 but without unsupported characters.
     sqlite3         *db;
     sqlite3_stmt    *stmt;
-    
+
     Q_strncpyz(name, name2, sizeof(name)); // Boe!Man 12/30/12: Copy buffer and check for unsupported characters.
     Boe_convertNonSQLChars(name);
-    
+
     db = aliasesDb;
-    
+
     sqlite3_prepare(db, va("SELECT ID from aliases_names WHERE ID=(SELECT ID from aliases_index WHERE IP='%s' LIMIT 1) AND name='%s'", ip, name), -1, &stmt, 0);
     if(sqlite3_step(stmt) == SQLITE_DONE){ // He wasn't found on the aliases table. Return false.
         sqlite3_finalize(stmt);
@@ -2716,7 +2716,7 @@ qboolean Boe_checkAlias(char *ip, char *name2)
         sqlite3_finalize(stmt);
         return qtrue;
     }
-    
+
     return qfalse;
 }
 
@@ -2737,11 +2737,11 @@ void Boe_addAlias(char *ip, char *name2)
 
     Q_strncpyz(name, name2, sizeof(name)); // Boe!Man 12/30/12: Copy buffer and check for unsupported characters.
     Boe_convertNonSQLChars(name);
-    
+
     db = aliasesDb;
 
     sqlite3_exec(db, "BEGIN TRANSACTION", NULL, NULL, NULL);
-    
+
     sqlite3_prepare(db, va("SELECT ID from aliases_index WHERE IP='%s' LIMIT 1", ip), -1, &stmt, 0);
     if(sqlite3_step(stmt) == SQLITE_DONE){ // It wasn't found on the main table, we can safely assume this guy isn't on it.
         sqlite3_finalize(stmt);
@@ -2759,7 +2759,7 @@ void Boe_addAlias(char *ip, char *name2)
         indexnr = sqlite3_column_int(stmt, 0);
         sqlite3_finalize(stmt);
     }
-    
+
     // Boe!Man 1/1/13: Now insert the data onto the next table.
     // First we check how many aliases there are.
     sqlite3_prepare(db, va("SELECT DISTINCT count(ID) from aliases_names WHERE ID='%i'", indexnr), -1, &stmt, 0);
@@ -2774,7 +2774,7 @@ void Boe_addAlias(char *ip, char *name2)
         }
     }
     sqlite3_finalize(stmt);
-    
+
     // Now insert new name into table.
     if(sqlite3_exec(db, va("INSERT INTO aliases_names (ID, name) values (%i, '%s')", indexnr, name), 0, 0, 0) != SQLITE_OK){
         G_LogPrintf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
@@ -2799,13 +2799,13 @@ void Boe_printAliases(gentity_t *ent, char *ip, char *name2)
     int             count;
     char            name[MAX_NETNAME];
     char            names[1024];
-    
+
     count = 0;
     Q_strncpyz(name, name2, sizeof(name)); // Boe!Man 12/30/12: Copy buffer and check for unsupported characters.
     Boe_convertNonSQLChars(name);
-    
+
     db = aliasesDb;
-    
+
     sqlite3_prepare(db, va("SELECT name,ROWID from aliases_names WHERE ID=(SELECT ID from aliases_index WHERE IP='%s' LIMIT 1) AND name!='%s' ORDER BY ROWID DESC LIMIT %i", ip, name, g_aliasCount.integer), -1, &stmt, 0);
     while(sqlite3_step(stmt) != SQLITE_DONE){
         if(!count){
@@ -2815,16 +2815,16 @@ void Boe_printAliases(gentity_t *ent, char *ip, char *name2)
         }
         count++;
     }
-    
+
     sqlite3_finalize(stmt);
-    
+
     if(!count){
         trap_SendServerCommand( ent-g_entities, va("print \"None\""));
     }else{
         names[strlen(names)] = '\0'; // NULL terminate the char array.
         trap_SendServerCommand( ent-g_entities, va("print \"%s\"", names));
     }
-    
+
     memset(name, 0, sizeof(name));
     memset(names, 0, sizeof(names));
 }
@@ -2842,14 +2842,14 @@ void Boe_SQLStats(void)
 {
     int     mem;
     float   memInM;
-    
+
     mem = sqlite3_memory_used();
     memInM = mem;
     memInM = memInM/1024/1024;
-    
+
     Com_Printf("^3[SQLite3 Statistics]\n");
     Com_Printf("--------------------------------------\n");
-    
+
     // Boe!Man 1/30/13: Hard-coded statistics, i.e. things that never change.
     #ifdef WIN32
     Com_Printf("%-25s Windows\n", "[^3Host platform^7]");
@@ -2867,7 +2867,7 @@ void Boe_SQLStats(void)
     Com_Printf("%-25s None defined\n", "[^3Heap limit^7]");
     #endif // __linux__ && GNUC < 3
     Com_Printf("%-25s %iB (%.2fM)\n", "[^3Mem in use^7]", mem, memInM);
-    
+
     Com_Printf("\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n");
 }
 
@@ -2911,12 +2911,12 @@ int Boe_checkAdmin(char *ip, char *name2)
     sqlite3         *db;
     sqlite3_stmt    *stmt;
     int             level2;
-    
+
     G_ClientCleanName(name2, name, sizeof(name), qfalse); // Boe!Man 2/12/13: Get the cleanName first.
     Boe_convertNonSQLChars(name);
-    
+
     db = usersDb;
-    
+
     sqlite3_prepare(db, va("SELECT level from admins WHERE IP='%s' AND name='%s'", ip, name), -1, &stmt, 0);
     if(sqlite3_step(stmt) == SQLITE_DONE){ // He wasn't found on the admin table.
         sqlite3_finalize(stmt);
@@ -2946,9 +2946,9 @@ int Boe_checkPassAdmin(char *name2, char *pass)
     G_ClientCleanName(name2, name, sizeof(name), qtrue); // Boe!Man 2/12/13: Get the cleanName first.
     Boe_convertNonSQLChars(name);
     Boe_convertNonSQLChars(pass);
-    
+
     db = usersDb;
-    
+
     sqlite3_prepare(db, va("SELECT level from passadmins WHERE name='%s' AND pass='%s'", name, pass), -1, &stmt, 0);
     if(sqlite3_step(stmt) == SQLITE_DONE){ // He wasn't found on the admin table.
         level2 = 0;
@@ -3026,12 +3026,12 @@ qboolean Boe_checkClanMember(char *ip, char *name2)
     char            name[MAX_NETNAME]; // name2 but without unsupported characters.
     sqlite3         *db;
     sqlite3_stmt    *stmt;
-    
+
     G_ClientCleanName(name2, name, sizeof(name), qtrue); // Boe!Man 2/12/13: Get the cleanName first.
     Boe_convertNonSQLChars(name);
-    
+
     db = usersDb;
-    
+
     sqlite3_prepare(db, va("SELECT name from clanmembers WHERE IP='%s' AND name='%s'", ip, name), -1, &stmt, 0);
     if(sqlite3_step(stmt) == SQLITE_DONE){ // He wasn't found on the admin table.
         sqlite3_finalize(stmt);
@@ -3054,19 +3054,19 @@ void Boe_unloadUserdataDbs(void)
 {
     if(!dbsLoaded)
         return;
-    
+
     Boe_backupInMemoryDbs("users.db", usersDb);
     sqlite3_exec(usersDb, "DETACH DATABASE users", NULL, NULL, NULL);
     sqlite3_close(usersDb);
-    
+
     Boe_backupInMemoryDbs("aliases.db", aliasesDb);
     sqlite3_exec(aliasesDb, "DETACH DATABASE aliases", NULL, NULL, NULL);
     sqlite3_close(aliasesDb);
-    
+
     Boe_backupInMemoryDbs("bans.db", bansDb);
     sqlite3_exec(bansDb, "DETACH DATABASE bans", NULL, NULL, NULL);
     sqlite3_close(bansDb);
-    
+
     Com_Printf("Unloaded userdata databases.\n");
 }
 
@@ -3083,24 +3083,24 @@ void Boe_backupInMemoryDbs(char *fileName, sqlite3 *db)
     sqlite3_backup  *pBackup;    // Boe!Man 5/27/13: Backup handle used to copy data.
     sqlite3         *pFile;
     int             rc;
-    
+
     if(!level.altPath){
         rc = sqlite3_open(va("./users/%s", fileName), &pFile);
     }else{
         rc = sqlite3_open(va("%s/users/%s", level.altString, fileName), &pFile);
     }
-    
+
     if(rc){
         G_LogPrintf("Critical error backing up in-memory database %s: %s\n", fileName, sqlite3_errmsg(pFile));
         return;
     }
-    
+
     // Boe!Man 7/1/13: Fixed the backup being very slow when databases are relatively full, can especially be noted when restarting the map.
     sqlite3_exec(pFile, "PRAGMA synchronous = OFF", NULL, NULL, NULL);
     sqlite3_exec(pFile, "BEGIN TRANSACTION", NULL, NULL, NULL);
-    
+
     pBackup = sqlite3_backup_init(pFile, "main", db, "main");
-    
+
     if(pBackup){
         sqlite3_backup_step(pBackup, -1);
         // Boe!Man 5/27/13: Release resources allocated by backup_init().
@@ -3111,7 +3111,7 @@ void Boe_backupInMemoryDbs(char *fileName, sqlite3 *db)
     if(rc){
         G_LogPrintf("SQLite3 error while backing up data in %s: %s\n", fileName, sqlite3_errmsg(pFile));
     }
-    
+
     sqlite3_exec(pFile, "COMMIT", NULL, NULL, NULL);
     sqlite3_close(pFile);
 }
@@ -3129,11 +3129,11 @@ void Boe_SQLTableClear(void)
     char    arg[MAX_STRING_TOKENS];
     sqlite3 *db;
     int     rc;
-    
+
     // Fetch the argument so we can determine what list the user wishes to clear.
     trap_Argv(1, arg, sizeof(arg));
     Q_strlwr(arg);
-    
+
     if(strstr(arg, "subnetbanlist")){
         if(sqlite3_exec(bansDb, "DELETE FROM subnetbans", 0, 0, 0) != SQLITE_OK){
             G_LogPrintf("^1Error: ^7Bans database: %s\n", sqlite3_errmsg(bansDb));
@@ -3186,11 +3186,11 @@ void Boe_SQLTableClear(void)
         }else{
             rc = sqlite3_open_v2(va("%s/users/scores.db", level.altString), &db, SQLITE_OPEN_READWRITE, NULL);
         }
-        
+
         if(rc){
             G_LogPrintf("^1Error: ^7scores database: %s\n", sqlite3_errmsg(db));
         }
-        
+
         sqlite3_exec(db, "PRAGMA writable_schema = 1", NULL, NULL, NULL);
         if(sqlite3_exec(db, "delete from sqlite_master where type = 'table'", 0, 0, 0) != SQLITE_OK){
             G_LogPrintf("^1Error: ^7Scores database: %s\n", sqlite3_errmsg(db));
@@ -3202,7 +3202,7 @@ void Boe_SQLTableClear(void)
         }else{
             G_LogPrintf("^1Error: ^7Scores database was not successfully cleared (did not pass integrity check).\n");
         }
-        
+
         sqlite3_close(db);
     }else{
         Com_Printf("^3Info: ^7Invalid choice: %s. Valid choices are: subnetbanlist, banlist, adminlist, passlist, clanlist, aliases, scores.\n", arg);
@@ -3228,15 +3228,15 @@ void writeDebug(int section, char *message)
     if(!g_debug.integer || (g_debug.integer != MODDBG_ALL && !(g_debug.integer & section) && section > 0)){
         return;
     }
-    
+
     Q_strncpyz(msgSafe, message, sizeof(msgSafe));
-    
+
     if(!level.altPath){
         rc = sqlite3_open_v2("./users/debug.db", &db, SQLITE_OPEN_READWRITE, NULL);
     }else{
         rc = sqlite3_open_v2(va("%s/users/debug.db", level.altString), &db, SQLITE_OPEN_READWRITE, NULL);
     }
-    
+
     if(rc){
         // The database cannot be found. We try to create it.
         if(!level.altPath){
@@ -3244,7 +3244,7 @@ void writeDebug(int section, char *message)
         }else{
             rc = sqlite3_open_v2(va("%s/users/debug.db", level.altString), &db, SQLITE_OPEN_CREATE | SQLITE_OPEN_READWRITE, NULL);
         }
-        
+
         if(rc){
             if(section == 0){
                 trap_Cvar_VariableStringBuffer("fs_game", fsGame, sizeof(fsGame));
@@ -3259,7 +3259,7 @@ void writeDebug(int section, char *message)
             }
         }
     }
-    
+
     if(section == 0){ // This could be the first or last write. Verify if the table exists.
         if(sqlite3_exec(db, va("CREATE TABLE IF NOT EXISTS [%s] ('id' INTEGER PRIMARY KEY NOT NULL, 'x' VARCHAR(64))", level.dateString), 0, 0, 0) != SQLITE_OK){
             G_LogPrintf("^1Error creating db: ^7debug database: %s\n", sqlite3_errmsg(db));
@@ -3267,11 +3267,11 @@ void writeDebug(int section, char *message)
             return;
         }
     }
-    
+
     if(sqlite3_exec(db, va("INSERT INTO [%s] (x) values ('%s')", level.dateString, msgSafe), 0, 0, 0) != SQLITE_OK){
         G_LogPrintf("^1Error: ^7debug database: %s\n", sqlite3_errmsg(db));
     }
-    
+
     sqlite3_close(db);
 }
 #endif
@@ -3290,16 +3290,16 @@ void logCrash(void)
     char            crashReason[128];
     char            text[148];
     qtime_t         q;
-    
+
     // Boe!Man 1/2/14: Check if the server crashed.
     trap_Cvar_VariableStringBuffer("com_errorMessage", crashReason, sizeof(crashReason));
     if(crashReason == NULL || strlen(crashReason) == 0){
         return;
     }
-    
+
     // Boe!Man 11/22/10: Appending the date & time.
     trap_RealTime(&q);
-    
+
     Com_sprintf(text, sizeof(text), "%02i/%02i/%i %02i:%02i - %s\n", 1+q.tm_mon,q.tm_mday, q.tm_year+1900,q.tm_hour,q.tm_min, crashReason);
 
     // Boe!Man 11/22/10: Open and write to the crashinfo file.
