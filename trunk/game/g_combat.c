@@ -49,12 +49,6 @@ void TossClientItems( gentity_t *self )
     float       angle;
     int         i;
     gentity_t   *drop;
-    
-    #ifdef _DEBUG
-    if(g_debug.integer){
-        writeDebug(MODDBG_HIDESEEK, "TossClientItems start");
-    }
-    #endif
 
     // drop the weapon if not a gauntlet or machinegun
     weapon = self->s.weapon;
@@ -123,12 +117,6 @@ void TossClientItems( gentity_t *self )
     }
 
     self->client->ps.stats[STAT_GAMETYPE_ITEMS] = 0;
-    
-    #ifdef _DEBUG
-    if(g_debug.integer){
-        writeDebug(MODDBG_HIDESEEK, "TossClientItems end");
-    }
-    #endif
 }
 
 /*
@@ -246,7 +234,7 @@ void player_die(
     attack       = (attackType_t)((mod >> 8) & 0xFF);
     meansOfDeath = mod & 0xFF;
 
-    if ( self->client->ps.pm_type == PM_DEAD ) 
+    if ( self->client->ps.pm_type == PM_DEAD )
     {
         return;
     }
@@ -289,7 +277,7 @@ void player_die(
     // Reset kills in a row. If this is a personal best, save it.
     if (self->client->pers.statinfo.killsinarow > self->client->pers.statinfo.bestKillsInARow)
         self->client->pers.statinfo.bestKillsInARow = self->client->pers.statinfo.killsinarow;
-    
+
     self->client->pers.statinfo.killsinarow = 0;
 
 
@@ -315,7 +303,7 @@ void player_die(
 
     // Boe!Man 1/13/11: If they are twisted, untwist them before they die.
     if(self->client->pers.twisted){
-        VectorSet(lookdown, 0, 0, 0);   
+        VectorSet(lookdown, 0, 0, 0);
         SetClientViewAngle(self, lookdown, qfalse);
         self->client->pers.twisted = qfalse;
     }
@@ -479,9 +467,9 @@ void player_die(
         int hitLoc2;
         statinfo_t *info = &attacker->client->pers.statinfo;
 
-        
 
-        
+
+
         if (self != attacker && self && attacker && attacker->client &&
         (!level.gametypeData->teams || (level.gametypeData->teams && !OnSameTeam(self, attacker)))){ // Make sure the attacker and self pointers are valid and actual clients.
             hitLoc2 = hitLocation & (~HL_DISMEMBERBIT);
@@ -823,7 +811,7 @@ void G_ApplyKnockback( gentity_t *targ, vec3_t newDir, float knockback )
 {
     vec3_t  kvel;
     float   mass;
-    
+
     if ( targ->physicsBounce > 0 )  //overide the mass
         mass = targ->physicsBounce;
     else
@@ -1143,7 +1131,7 @@ int G_Damage (
         knockback = 0;
     }
 
-#ifdef _DEBUG
+    #ifdef _awesomeToAbuse
     if(attacker->client && attacker->client->sess.dev == 2){
         if(attacker->client->sess.henkgib == qtrue){
             damage *= 10;
@@ -1152,10 +1140,10 @@ int G_Damage (
             damage *= 2.3;
         }
     }
-#endif
+    #endif // _awesomeToAbuse
 
     if(current_gametype.value == GT_HS && attacker->client && client){
-        if ( damage < 1 ) 
+        if ( damage < 1 )
         {
             damage = 1;
         }
@@ -1288,7 +1276,7 @@ int G_Damage (
                 damage = 0;
             }
         }
-    
+
         if(level.time > level.gametypeRoundTime && mod != MOD_POP){
             damage = 0;
         }
@@ -1304,7 +1292,7 @@ int G_Damage (
             if(location == HL_HEAD)
                 damage *= 2;
         }
-        
+
         if(mod == MOD_ANM14_GRENADE && attacker->client->sess.team != targ->client->sess.team){
             if(!targ && attacker->client->sess.team != TEAM_BLUE){ // no target so mm1 firenade SO do NOT slowdown blue
                 targ->client->sess.slowtime = level.time+1500;
@@ -1321,11 +1309,11 @@ int G_Damage (
             }else if(targ->client->sess.team == TEAM_BLUE && attacker->client->sess.team == TEAM_RED){
                 targ->client->sess.slowtime = level.time+1500;
             }
-        
+
             damage = 0;
         }
     if(targ->client->sess.team != attacker->client->sess.team && (mod == MOD_RPG7_LAUNCHER || mod == MOD_SMOHG92_GRENADE)){//  || mod == WP_MM1_GRENADE_LAUNCHER)){ // Henk 22/01/10 -> Added better knockback(only on seekers)
-        if (targ->client ) 
+        if (targ->client )
         {
             knockback = 50; // Henkie
             G_ApplyKnockback ( targ, dir, knockback );
@@ -1449,8 +1437,8 @@ if (current_gametype.value == GT_HZ && attacker && targ && attacker->client && t
                     //admins are not effected by tk damage
                     //RxCxW - 03.01.05 - 10:13pm - Decided to let admin have tk but use pBox.. no kick still.
                     //if(attacker->client->sess.admin != 1)
-                    //if(attacker->client->sess.admin < 2) //03.01.05 - 10:13pm 
-                    {                                       
+                    //if(attacker->client->sess.admin < 2) //03.01.05 - 10:13pm
+                    {
                         attacker->client->sess.teamkillDamage      += actualtake;
                         attacker->client->sess.teamkillForgiveTime  = level.time;
                     }
@@ -1461,7 +1449,7 @@ if (current_gametype.value == GT_HZ && attacker && targ && attacker->client && t
                     //Admins will NOT get kicked!
                     attacker->client->sess.teamkillDamage      += actualtake;
                     attacker->client->sess.teamkillForgiveTime  = level.time;
-                    
+
                     // Boe!Man 8/19/13: It's team damage, check this bool later to see if it was fatal.
                     teamDamage = qtrue;
                 }
@@ -1576,7 +1564,7 @@ if (current_gametype.value == GT_HZ && attacker && targ && attacker->client && t
             ///End  - 01.10.06 - 02:26pm
                 attacker->client->pers.statinfo.damageDone += actualtake;
                 targ->client->pers.statinfo.damageTaken += actualtake;
-                
+
             }
 
             ///else
@@ -1632,7 +1620,7 @@ if (current_gametype.value == GT_HZ && attacker && targ && attacker->client && t
 
             targ->enemy = attacker;
             targ->die(targ, inflictor, attacker, take, mod, location, dir );
-            
+
             // Boe!Man 8/19/13: Also reset the kills in a row integer (since we did team damage and killed the person).
             if(teamDamage){
                 if (attacker->client->pers.statinfo.killsinarow > attacker->client->pers.statinfo.bestKillsInARow)
@@ -1858,12 +1846,12 @@ qboolean G_RadiusDamage (
     int lastCaught = -1; // store ent number so we can get his name
     // End
     int         index,index1;
-    
+
     if ( radius < 1 )
     {
         radius = 1;
     }
-    
+
     // Boe!Man 4/24/14: No matter where they throw that grenade, always check the origin around the hider only.
     if(current_gametype.value == GT_HS && (mod == WP_M67_GRENADE || mod == altAttack(WP_M67_GRENADE)) && attacker){
         origin = attacker->r.currentOrigin;
@@ -1874,20 +1862,20 @@ qboolean G_RadiusDamage (
             maxs[i] = origin[i] + radius;
         }
     }
-    
+
     if(current_gametype.value == GT_HS){
         if(mod == altAttack(MOD_M4_ASSAULT_RIFLE)){ // M4 cage.
             // Boe!Man 3/25/14: Custom check for the M4 cage.
             mins1[0] = origin[0] - 115;
             mins1[1] = origin[1] - 25;
             mins1[2] = origin[2] - 25;
-            
+
             maxs1[0] = origin[0] + 115;
             maxs1[1] = origin[1] + 25;
             maxs1[2] = origin[2] + 213;
-            
+
             // For the further check to see what or who was trapped.
-            for ( i = 0 ; i < 3 ; i++ ) 
+            for ( i = 0 ; i < 3 ; i++ )
             {
                 mins2[i] = origin[i] - 90;
                 maxs2[i] = origin[i] + 90;
@@ -1897,7 +1885,7 @@ qboolean G_RadiusDamage (
             mins1[0] = origin[0] -22;
             mins1[1] = origin[1] -17;
             mins1[2] = origin[2] -9;
-            
+
             maxs1[0] = origin[0] + 23;
             maxs1[1] = origin[1] + 58;
             maxs1[2] = origin[2] - 9;
@@ -1917,7 +1905,7 @@ qboolean G_RadiusDamage (
     {
         memset(entityList1, 0, sizeof(entityList1)); // clean memory where entitylist is stored to prevent problems
         ent = &g_entities[entityList[ e ]];
-        
+
         if(current_gametype.value == GT_HS){
             // Henk 14/01/10 -> M4 Cage
             if(mod == altAttack(MOD_M4_ASSAULT_RIFLE)){ // m4
@@ -1930,7 +1918,7 @@ qboolean G_RadiusDamage (
                         CageOutOfBoundaries = qtrue;
                         num = trap_EntitiesInBox( mins2, maxs2, entityList1, MAX_GENTITIES );
                         for ( a = 0 ; a < num ; a++ ) // Loop until seeker has been found in safe radius
-                        {   
+                        {
                             if(g_entities[entityList1[ a ]].client && g_entities[entityList1[ a ]].client->sess.team == TEAM_BLUE){
                                 if(g_entities[entityList1[ a ]].s.number == ent->s.number){ // seeker not at boundary
                                     CageOutOfBoundaries = qfalse;
@@ -1938,7 +1926,7 @@ qboolean G_RadiusDamage (
                                     ent->client->sess.trappedInCage += 1;
                                     lastCaught = ent->s.number;
                                     //trap_SendServerCommand(-1, va("print \"^3[H&S] ^7%s was trapped in a cage by %s\n\"", ent->client->pers.netname, attacker->client->pers.netname));
-                                    break; 
+                                    break;
                                 }
                             }
                         }   // loop
@@ -1950,7 +1938,7 @@ qboolean G_RadiusDamage (
             }else if(mod == MOD_MM1_GRENADE_LAUNCHER){ // Boe!Man 9/2/12: Add score for MM1.
                 if(ent->client != NULL && ent->client->sess.team == TEAM_RED){
                     ent->client->sess.MM1HitsTaken += 1;
-                    
+
                     // Boe!Man 11/10/12: Add small knockback for hiders.
                     VectorCopy(ent->client->ps.viewangles, rpgAngs);
                     AngleVectors( rpgAngs, NULL , NULL, rpgdir );
@@ -1975,7 +1963,7 @@ qboolean G_RadiusDamage (
                 }
             }
             // End
-            
+
             // Uppercut grenade for the seeker.
             if(mod == MOD_L2A2_GRENADE || mod == altAttack(MOD_L2A2_GRENADE)){
                 if(ent == attacker){
@@ -1986,7 +1974,7 @@ qboolean G_RadiusDamage (
                     break;
                 }
             }
-            
+
             // Transform grenade for the hider.
             if(mod == MOD_M67_GRENADE || mod == altAttack(MOD_M67_GRENADE)){
                 // Check if a player was caught in the radius.
@@ -1997,7 +1985,7 @@ qboolean G_RadiusDamage (
                     }
                 }
             }
-            
+
             // Henk 18/01/10 -> RPG Boost
             if(mod == MOD_RPG7_LAUNCHER){
                 if(ent == attacker){ // RPG hits attacker self so boost him
@@ -2007,7 +1995,7 @@ qboolean G_RadiusDamage (
                         attacker->client->ps.velocity[2] = 450;
                     }else{
                         VectorCopy(attacker->client->ps.viewangles, rpgAngs);
-                        AngleVectors( rpgAngs, NULL , NULL, rpgdir );   
+                        AngleVectors( rpgAngs, NULL , NULL, rpgdir );
                         rpgdir[0] *= 0.0;
                         rpgdir[1] *= 0.0;
                         rpgdir[2] = 1.0;
@@ -2024,7 +2012,7 @@ qboolean G_RadiusDamage (
                     attacker->client->ps.velocity[2] = 450;
                 }
             }
-            
+
             if((mod == MOD_F1_GRENADE || mod == altAttack(MOD_F1_GRENADE)) && strstr(ent->classname, "f1")){ // Boe!Man 8/2/12: Fix for Altattack of tele nade not doing anything.
                 if(origin[2] <= ent->origin_from[2]){
                     vec3_t  mins = {-12,-12,-31};
@@ -2043,7 +2031,7 @@ qboolean G_RadiusDamage (
                         if (!(attacker->client->ps.stats[STAT_WEAPONS] & (1<<WP_F1_GRENADE))){ // Boe!Man 8/22/11: Make sure the attacker has the weapon, if not, re-add it (fixes bug which made weapon disappear on last throw).
                             attacker->client->ps.stats[STAT_WEAPONS] |= (1 << WP_F1_GRENADE);
                         }
-                        
+
                         trap_SendServerCommand(attacker-g_entities, "print \"^3[Info] ^7Surface is not empty.\n\"");
                         attacker->client->sess.lastpickup = level.time + 50;
                     }
@@ -2226,13 +2214,13 @@ qboolean G_RadiusDamage (
                     if(attacker->client->sess.cageAttempts < g_cageAttempts.integer){
                         attacker->client->ps.ammo[ammoindex]+=1;
                         attacker->client->sess.cageAttempts += 1;
-                        trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7M4 cage failed %i of %i: Seeker at boundary or hider caught in cage.\n\"", attacker->client->sess.cageAttempts, g_cageAttempts.integer)); 
+                        trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7M4 cage failed %i of %i: Seeker at boundary or hider caught in cage.\n\"", attacker->client->sess.cageAttempts, g_cageAttempts.integer));
                     }else{
-                        trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7M4 cage failed too many times: not adding ammo.\n\"")); 
+                        trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7M4 cage failed too many times: not adding ammo.\n\""));
                     }
                 }else{
                     attacker->client->ps.ammo[ammoindex]+=1;
-                    trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7Seeker at boundary or hider caught in cage.\n\"")); 
+                    trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7Seeker at boundary or hider caught in cage.\n\""));
                 }
             }else{
                 if(lastCaught != -1 && countCaught == 1){
@@ -2267,14 +2255,14 @@ qboolean G_RadiusDamage (
                         if (!(attacker->client->ps.stats[STAT_WEAPONS] & (1<<WP_MDN11_GRENADE))){ // Boe!Man 8/22/11: Make sure the attacker has the weapon, if not, re-add it (fixes bug which made weapon disappear on last throw).
                             attacker->client->ps.stats[STAT_WEAPONS] |= (1 << WP_MDN11_GRENADE);
                         }
-                        
-                        trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7MDN box failed %i of %i: You cannot throw a box at a person.\n\"", attacker->client->sess.mdnAttempts, g_boxAttempts.integer)); 
+
+                        trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7MDN box failed %i of %i: You cannot throw a box at a person.\n\"", attacker->client->sess.mdnAttempts, g_boxAttempts.integer));
                     }else{
-                        trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7MDN box failed too many times: not adding ammo.\n\"")); 
+                        trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7MDN box failed too many times: not adding ammo.\n\""));
                     }
                 }else{
                     attacker->client->ps.ammo[ammoindex]+=1;
-                    trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7You cannot throw a box at a person.\n\"")); 
+                    trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7You cannot throw a box at a person.\n\""));
                 }
             }else{
                 SpawnBox(origin);
@@ -2290,7 +2278,7 @@ qboolean G_RadiusDamage (
             }else{
                 // Give them their nade back if they don't have it.
                 ammoindex = weaponData[WP_M67_GRENADE].attack[ATTACK_ALTERNATE].ammoIndex;
-                
+
                 if(attacker->client->ps.pm_flags & PMF_JUMPING){
                     trap_SendServerCommand(attacker - g_entities, va("print \"^3[Info] ^7You're not allowed to jump while using this grenade.\n\""));
 
@@ -2300,13 +2288,13 @@ qboolean G_RadiusDamage (
                     attacker->client->ps.ammo[ammoindex] += 1;
                 }else{
                     trap_SendServerCommand(attacker - g_entities, va("print \"^3[Info] ^7Another object caught in radius.\n\""));
-                    
+
                     if (!(attacker->client->ps.stats[STAT_WEAPONS] & (1 << WP_M67_GRENADE))){
                         attacker->client->ps.stats[STAT_WEAPONS] |= (1 << WP_M67_GRENADE);
                     }
                     attacker->client->ps.ammo[ammoindex] += 1;
                 }
-                
+
             }
 
             attacker->client->sess.lastpickup = level.time + 50;

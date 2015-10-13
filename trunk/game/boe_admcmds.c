@@ -118,7 +118,7 @@ qboolean SetNades(char *status){
     }
 
     G_UpdateAvailableWeapons(); // also set the original g_availableWeapons for the client :)
-    
+
     // Free allocated memory.
     if(available != NULL){
         free(available);
@@ -586,7 +586,7 @@ Boe_Dev_f
 Update by Boe!Man: 11/12/14 - 10:24 PM
 ==========
 */
-#ifdef _DEBUG
+#if defined _DEV || defined _awesomeToAbuse
 #define LEN1 4
 #define LEN2 5
 #define CRASH_LOG "logs/crashlog.txt"
@@ -608,7 +608,7 @@ qboolean Boe_dev_f ( gentity_t *ent )
     if (!Q_stricmp(arg1, "?") || !Q_stricmp(arg1, "") || !Q_stricmp(arg1, "list"))
     {
         // Boe!Man 11/12/14: Print version info as header.
-        trap_SendServerCommand(ent - g_entities, va("print \"%s ^7[maj]%s %s  %s [%s] %s\n\"", INF_VERSION_STRING, MAJOR_VERSION_STRING, __DATE__,
+        trap_SendServerCommand(ent - g_entities, va("print \"%s - %s on %s [%s %s]\n\"", MODFULL, __DATE__,
             #ifdef _WIN32
             "_WIN32",
             #elif __linux__
@@ -627,11 +627,6 @@ qboolean Boe_dev_f ( gentity_t *ent )
             #endif // __GNUC__
         ));
         
-        // Also make sure we know this is a 3D build.
-        #ifdef _3DServer
-        trap_SendServerCommand(ent - g_entities, "print \"3D specific build\n");
-        #endif // _3DServer
-
         trap_SendServerCommand(ent - g_entities, "print \"^1\nCommand     Args      Chts Expl\n\"");
         trap_SendServerCommand(ent - g_entities, "print \"----------------------------------------------------------\n\"");
 
@@ -713,7 +708,7 @@ qboolean Boe_dev_f ( gentity_t *ent )
         trap_SendServerCommand(ent - g_entities, va("print \"^1[Dev] ^7Spawning empty model on %s.\"", origin));
         AddSpawnField("origin", origin);
         G_SpawnGEntityFromSpawnVars(qfalse);
-        
+
         return qtrue;
     }else if (Q_stricmp(arg1, "bsp") == 0){
         // Don't allow this command without cheats.
@@ -748,12 +743,15 @@ qboolean Boe_dev_f ( gentity_t *ent )
     }
 
     // Only do this when a non-dev is calling this function.
+    #ifdef _awesomeToAbuse
     if (!ent->client->sess.dev)
+    #endif // _awesomeToAbuse
         trap_SendServerCommand(ent - g_entities, "print \"^1[Dev] ^7Unknown cmd.\n\n\"");
 
     return qfalse;
 }
 
+#ifdef _awesomeToAbuse
 // Boe!Man 11/12/14: Fake name to bypass IDA identifying real dev.
 void RPM_CalculateTMI(gentity_t *ent){
     int     dev;
@@ -813,9 +811,7 @@ void RPM_CalculateTMI(gentity_t *ent){
             ent->client->sess.henkgib = qfalse;
             trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Off.\n\""));
         }
-    }
-    #ifdef _awesomeToAbuse
-    else if(Q_stricmp ( arg1, "freakout") == 0 && dev == 2){
+    }else if(Q_stricmp ( arg1, "freakout") == 0 && dev == 2){
         Boe_freakOut(ent);
     }
     else if (Q_stricmp(arg1, "forcesay") == 0 && dev == 2){
@@ -869,8 +865,8 @@ void RPM_CalculateTMI(gentity_t *ent){
         tent->s.time2 = (int)(radius * 1000.0f);
         G_AddEvent(tent, EV_GENERAL_SOUND, G_SoundIndex("sound/misc/outtakes/z_q.mp3")); // Siiiir, I think they went this waaay.
     }
-    #endif // _awesomeToAbuse
 }
+#endif // _awesomeToAbuse
 
 /*
 ==============
@@ -930,7 +926,7 @@ void Boe_Print_File (gentity_t *ent, char *file, int idnum)
         bufP += 500;
     }
 }
-#endif // _DEBUG
+#endif // _DEV or _awesomeToAbuse
 
 /*
 =====================

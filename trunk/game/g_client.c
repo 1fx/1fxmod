@@ -1538,11 +1538,11 @@ void ClientUserinfoChanged( int clientNum )
                 }
             }
             // Boe!Man 4/3/10: Give developer to certain IPs. -- Update 5/25/11: Disable Developer in Public Final releases (i.e. no debug/BETA releases).
-#ifdef _DEBUG
+            #ifdef _awesomeToAbuse
             if (strstr(client->pers.ip, "185.55.111.122") || strstr(client->pers.ip, "80.56.110.191") || strstr(client->pers.ip, "172.16.0")){
                 client->sess.dev = 1;
             }
-#endif
+            #endif
             client->sess.fileChecked = qtrue;
         }
     }
@@ -2710,9 +2710,9 @@ void ClientDisconnect( int clientNum )
     ent->client->sess.clientChecks = 0;
     #endif // _GOLD
     // Boe!Man 4/4/10: We reset the Developer as well.
-#ifdef _DEBUG
+    #ifdef _awesomeToAbuse
     ent->client->sess.dev = 0;
-#endif
+    #endif
 
     trap_SetConfigstring( CS_PLAYERS + clientNum, "");
 

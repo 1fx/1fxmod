@@ -232,7 +232,7 @@ elif [[ $choice == "3" ]] || [[ $choice == *"3"* ]]; then
 		buildtype="Regular Pre-release build with developer"
         buildoptions="$buildoptions -DNDEBUG -D_PRE -D_DEV"
         dev=true
-    elif [[ $choice == "3" ]] || [[ $choice == "3.4" ]]; then
+    elif [[ $choice == "4" ]] || [[ $choice == "3.4" ]]; then
 		buildtype="3D-specific Pre-release build with developer"
         buildoptions="$buildoptions -DNDEBUG -D_PRE -D_DEV -D_3DServer -D_awesomeToAbuse"
         dev=true

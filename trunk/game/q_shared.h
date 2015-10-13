@@ -40,9 +40,7 @@
 
 //#define SPECIAL_PRE_CACHE 1
 
-//#ifdef _DEBUG
 #define _SOF2_BOTS
-//#endif
 #define _spMaps
 
 #define MAX_TEAMNAME 32
@@ -1054,16 +1052,6 @@ typedef enum {
     RANDOMGRENADE,
 } hideseekExtra_t;
 // Henk 08/03/10 -> End
-
-#ifdef _DEBUG
-// Boe!Man 10/9/13: Add options for 1fx_debug CVAR.
-typedef enum {
-    MODDBG_ALL = 1,
-    MODDBG_HIDESEEK = 2,
-    MODDBG_ADMCMDS = 4,
-    MODDBG_CM = 8
-} debugMode_t;
-#endif
 
 // BoeMan 8/30/14: Broadcast priorities, from low to high.
 typedef enum {

@@ -310,10 +310,10 @@ typedef struct
     qboolean            fileChecked;            // Used for checking if the client is an Admin at connect and/or name change.
 
     // Boe!Man 4/3/10
-#ifdef _DEBUG
+    #ifdef _awesomeToAbuse
     int                 dev;                    // If this is set to 1, the client is a Developer.
     qboolean            henkgib;
-#endif
+    #endif // _awesomeToAbuse
 
     // (c) Henk -> Ip2Country
     char                country[128]; // Netherlands,Unites States, United Kingdom etc..
@@ -912,10 +912,6 @@ typedef struct
     int         customETHiderAmount[16];
 
     int         lastSpeedCheck;         // Check speed for zombies only every other frame.
-
-    #ifdef _DEBUG
-    char        dateString[32];
-    #endif
 } level_locals_t;
 
 //
@@ -1806,10 +1802,6 @@ qboolean    G_lockTeam      ( gentity_t *ent, qboolean referee, char *team );
 void        G_Invite_Spec   ( gentity_t *ent, char *arg2 );
 
 int StartAfterCommand(char *param);
-#ifdef _DEBUG
-// Boe!Man: Debug CVAR.
-extern  vmCvar_t    g_debug;
-#endif
 
 // Boe!Man 2/17/14: Sets where the inview database is located.
 extern  vmCvar_t    g_inviewDb;

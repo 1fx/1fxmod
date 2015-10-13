@@ -315,10 +315,6 @@ vmCvar_t    sql_timeBench;
 vmCvar_t    sql_automaticBackup;
 vmCvar_t    g_inviewDb;
 
-#ifdef _DEBUG
-vmCvar_t    g_debug;
-#endif
-
 #ifdef _3DServer
 vmCvar_t    boe_fragWars;
 vmCvar_t    boe_deadMonkey;
@@ -340,15 +336,11 @@ static cvarTable_t gameCvarTable[] =
 {
     // don't override the cheat state set by the system
     { &g_cheats, "sv_cheats", "", 0, 0.0, 0.0, 0, qfalse },
-    { NULL, "^3Mod Name", INF_STRING, CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse  },
-#ifdef _DEBUG
-#ifndef _NIGHTLY
-    { NULL, "^3Mod Channel", "Pre-release", CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse },
-#else
-    { NULL, "^3Mod Channel", "Nightly (master)", CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse },
-#endif // _NIGHTLY
-#endif //_DEBUG
-    { NULL, "^3Mod Version", INF_VERSION_STRING, CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse  },
+    { NULL, "^3Mod Name", MODNAME, CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse  },
+    { NULL, "^3Mod Version", MODVERSION_NOSUFFIX, CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse  },
+    #ifdef MODFLAVORS
+    { NULL, "^3Mod Flavor", MODFLAVORS, CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse },
+    #endif // MODFLAVORS
     { NULL, "^3Mod URL", "1fxmod.org", CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse  },
     { &g_clientMod, "g_clientMod", "none", CVAR_LATCH | CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 
@@ -686,10 +678,6 @@ static cvarTable_t gameCvarTable[] =
     #endif
 
     //http://1fx.uk.to/forums/index.php?/topic/1230-1fx-anticheat/page__view__findpost__p__13498
-#ifdef _DEBUG
-    // Boe!Man: Debug CVAR.
-    { &g_debug, "1fx_debug", "0", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0,  qfalse },
-#endif
 
 #ifdef _3DServer
     { &boe_fragWars, "3d_fragWars", "0", CVAR_ARCHIVE | CVAR_LATCH, 0.0, 0.0, 0, qfalse },
@@ -1318,19 +1306,17 @@ G_InitGame
 void G_InitGame( int levelTime, int randomSeed, int restart )
 {
     int         i;
-    #ifdef _DEBUG
-    qtime_t     q;
-    #else
+    #ifndef _DEBUG
     char        fs_game[MAX_CVAR_VALUE_STRING];
     #endif // _DEBUG
 
     // Boe!Man 3/30/10
     Com_Printf ("------- Game Initialization -------\n");
-    #ifdef _DEBUG
+    #ifdef _PRE
     Com_Printf("! PRE-RELEASE !\n");
-    #endif // _DEBUG
-    Com_Printf ("Mod: %s %s\n", INF_STRING, INF_VERSION_STRING);
-    Com_Printf ("Date: %s\n", INF_VERSION_DATE);
+    #endif // _PRE
+    Com_Printf ("Mod: %s\n", MODFULL);
+    Com_Printf ("Date: %s\n", __DATE__);
     #ifdef _GOLD
     Com_Printf("Port: SoF2 - v1.03\n");
     #else
@@ -1414,15 +1400,6 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 
     // Boe!Man 4/30/15: Initialize client-side modifications.
     G_initClientMod();
-
-    #ifdef _DEBUG
-    // Boe!Man 10/8/13: Init time for the debug database and write to it.
-    if(g_debug.integer){
-        trap_RealTime(&q);
-        strncpy(level.dateString, va("d%i%02i%02i_%02i%02i", q.tm_year+1900, q.tm_mon+1, q.tm_mday, q.tm_hour,q.tm_min), sizeof(level.dateString));
-        writeDebug(0, g_debug.string);
-    }
-    #endif
 
     //Henk 12/10/12 -> Copy disk database to memory database.
     // Boe!Man 6/25/13: Only load if g_checkCountry is enabled, do this *after* the CVARs are initialized.
@@ -1606,12 +1583,12 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
         InitSpawn(6);
     }
 
-    #ifdef _DEBUG
+    #if defined _DEV || defined _awesomeToAbuse
     // Boe!Man 3/19/15: For /dev bsp.
     if (current_gametype.value != GT_HS){
         InitSpawn(2);
     }
-    #endif // _DEBUG
+    #endif // _DEV
 
     // Now parse the gametype information that we need.  This needs to be
     // done after the entity spawn so that the items and triggers can be
@@ -1711,12 +1688,6 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
         Com_Printf("Info: g_passwordAdmins has been set to 0 due to g_preferSubnets being set to %i. Set g_preferSubnets to 0 to allow Admins to login using a password.\n", g_preferSubnets.integer);
     }
 
-    #ifdef _DEBUG
-    if(g_debug.integer){
-        writeDebug(MODDBG_CM, "Start CM check");
-    }
-    #endif
-
     // Boe!Man 11/16/10: Scrim settings.
     if (g_compMode.integer > 0){
         level.compMsgCount = level.time + 6000;
@@ -1756,12 +1727,6 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
             level.compMsgCount = 0;
         }
     }
-
-    #ifdef _DEBUG
-    if(g_debug.integer){
-        writeDebug(MODDBG_CM, "End CM check");
-    }
-    #endif
 }
 
 /*
@@ -1819,12 +1784,6 @@ void G_ShutdownGame( int restart )
 
     // Boe!Man 1/2/14: Check if the engine threw a Com_Error in another function (also logs it upon succesfull detection).
     logCrash();
-
-    #ifdef _DEBUG
-    if(g_debug.integer){
-        writeDebug(0, "Shutdown");
-    }
-    #endif
 
 #ifdef _SOF2_BOTS
     if ( trap_Cvar_VariableIntegerValue( "bot_enable" ) )
@@ -3247,11 +3206,12 @@ void Henk_CheckZombie(void){
                 level.zombietime = level.time+5000;
                 G_Broadcast(va("%s\nwill turn into a \\zombie\nin ^15 ^7seconds!", ent->client->pers.netname), BROADCAST_GAME2, NULL);
                 G_Broadcast("You will turn into a \\zombie\nin ^15 ^7seconds!", BROADCAST_GAME2, ent);
-                }else{
-                    #ifdef _DEBUG
-                    Com_Printf("Weird case\n");
-                    #endif
                 }
+                #ifdef _DEBUG
+                else{
+                    Com_Printf("Weird case\n");
+                }
+                #endif // _DEBUG
             }
         }
     }

@@ -4,40 +4,79 @@
 
 //==================================================================
 
-// Boe!Man 3/30/10
-// Boe!Man 7/12/11: Mod version.
-//#ifdef Q3_VM
-//#define INF_VERSION_STRING "0.60"
-//#else
+// Boe!Man 10/13/15: Mod version.
+//===================================================================
+// MODNAME            : Mod name without colors.
+// MODNAME_COLORED    : Mod name with colors.
+// MODVERSION         : Full Mod version without colors.
+// MODVERSION_COLORED : Full Mod version with colors.
+// MODFLAVORS         : Mod flavors used without colors.
+// MODFLAVORS_COLORED : Mod flavors used with colors.
+// MODFULL            : Mod name and version without colors.
+// MODFULL_COLORED    : Mod name and version with colors.
+// MODDESC            : MOTD description for pre or final release.
+//===================================================================
+#define MODNAME "1fx. Mod"
+#define MODNAME_COLORED "^71fx^1. ^3Mod^7"
 
-/*
-#ifdef WIN32
-#define INF_VERSION_STRING "0.70t-dll"
-#elif __linux__
-#define INF_VERSION_STRING "0.70t-so"
+#define MODVERSION_MAJOR "0.78"
+#define MODVERSION_PRE "0.78t.3"
+
+// Boe!Man 10/13/15: Mod flavors.
+#ifndef _NIGHTLY
+#if !defined _PRE
+#define MODVERSION_NOSUFFIX MODVERSION_MAJOR
+#else
+#define MODVERSION_NOSUFFIX MODVERSION_PRE
+#endif // not _PRE
+
+// _DEV
+#if defined _DEV
+#if defined _PRE
+#if defined _3DServer
+#define MODFLAVORS "pre+3d+dev"
+#define MODFLAVORS_COLORED "^5pre+3d+dev"
+#else
+#define MODFLAVORS "pre+dev"
+#define MODFLAVORS_COLORED "^5pre+dev"
+#endif // _3DServer or !_3DServer
+#else
+#define MODFLAVORS "dev"
+#define MODFLAVORS_COLORED "^5dev"
 #endif
-*/
-// Boe!Man 1/6/13: One string to rule them all.
-#ifndef _DEBUG  // Boe!Man 10/26/14: Regular release (no _DEBUG defined).
-#define INF_VERSION_STRING "0.77"
-#define STABLE_VERSION "Developed by ^GBoe!Man ^7& ^6Henkie\n^71fxmod^1.^7org\n\n"
+#elif defined _PRE
+#if defined _3DServer
+#define MODFLAVORS "pre+3d"
+#define MODFLAVORS_COLORED "^5pre+3d"
 #else
-#define MAJOR_VERSION_STRING "0.78"
-#ifdef _NIGHTLY // Direct build from the master. Only used when debugging/developing.
-#define INF_VERSION_STRING "0.78t-^5master"
+#define MODFLAVORS "pre"
+#define MODFLAVORS_COLORED "^5pre"
+#endif // _3DServer or !_3DServer
+#endif
 #else
-#define INF_VERSION_STRING "0.78t.3-^5pre" // Don't forget to increment this number when test releasing.
+#define MODVERSION_NOSUFFIX MODVERSION_MAJOR "t"
+#define MODFLAVORS "master"
+#define MODFLAVORS_COLORED "^5master"
 #endif // _NIGHTLY
-#define TEST_VERSION "Developed by ^GBoe!Man ^7& ^6Henkie\n^1Test version of " MAJOR_VERSION_STRING "\n\n"
-#endif // _DEBUG
-//#endif
 
-// Boe!Man 7/12/11: Mod name.
-#define INF_STRING "1fx. Mod"
-#define INF_VERSION_STRING_COLORED "^71fx^1. ^3Mod"
+#if !defined MODFLAVORS
+#define MODVERSION MODVERSION_NOSUFFIX
+#define MODVERSION_COLORED MODVERSION_NOSUFFIX
+#else
+#define MODVERSION MODVERSION_NOSUFFIX "-" MODFLAVORS
+#define MODVERSION_COLORED MODVERSION_NOSUFFIX "-" MODFLAVORS_COLORED "^7"
+#endif // not MODFLAVORS
 
-// Boe!Man 7/29/12: Mod date, we hold on to the ISO standard.
-#define INF_VERSION_DATE __DATE__
+#define MODFULL MODNAME " " MODVERSION
+#define MODFULL_COLORED MODNAME_COLORED " " MODVERSION_COLORED
+
+#if !defined _NIGHTLY && !defined _PRE
+#define MODDESC "Developed by ^GBoe!Man ^7& ^6Henkie\n^71fxmod^1.^7org\n\n"
+#else
+#define MODDESC "Developed by ^GBoe!Man ^7& ^6Henkie\n^1Test version of " MODVERSION_MAJOR "\n\n"
+#endif // not _NIGHTLY and not _PRE
+
+//===================================================================
 
 // Boe!Man 9/14/15: 1fx. Client Additions on Gold.
 // Those defines *MUST* be in sync with the latest core UI release.
@@ -345,11 +384,6 @@ void    Boe_Stats( gentity_t *ent );
 
 void    QDECL Boe_adminLog( const char *command, const char *by, const char *to, ... );
 
-// Boe!Man 10/8/13: Debug write function.
-#ifdef _DEBUG
-void    writeDebug(int section, char *msg);
-#endif
-
 // Boe!Man 1/2/14: This function logs soft-crashes (triggered by Com_Error).
 void    logCrash(void);
 
@@ -380,11 +414,11 @@ qboolean BG_InitWeaponStats(qboolean init);
 void Boe_About( gentity_t *ent );
 qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean lineNumber, qboolean silent);
 
-#ifdef _DEBUG
+#if defined _DEV || defined _awesomeToAbuse
 qboolean    Boe_dev_f       (gentity_t *ent);
 void        RPM_CalculateTMI(gentity_t *ent);
 void        Boe_Print_File  (gentity_t *ent, char *file, int idnum);
-#endif
+#endif // _DEV or _awesomeToAbuse
 
 char *GetReason(void);
 

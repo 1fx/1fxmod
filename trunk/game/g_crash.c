@@ -107,7 +107,7 @@ void logStart()
     crashLogger("------------- Crash Report ------------\n");
     crashLogger("--  Please e-mail to boe@1fxmod.org  --\n");
     crashLogger("---------------------------------------\n");
-    crashLogger("1fx. Mod version: " INF_VERSION_STRING "\n");
+    crashLogger("1fx. Mod version: " MODFULL "\n");
 
     // Determine SoF2 version.
     #ifdef _GOLD

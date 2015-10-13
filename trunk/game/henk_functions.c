@@ -617,13 +617,13 @@ void DropRandom( gentity_t *ent, int zombies){
         }
         start = Odds[i][0]+weaponDropOdds[DropGroup][i];
     }
-    #ifdef _DEBUG
+    #ifdef _3DServer
     G_LogPrintf("Group: %i - random: %i - dropGroup: %i\n", group, random, DropGroup);
     if(group < 0 || group >= 6){
         G_Broadcast("CRAAAAASH DETECTED\nBwease report this to boe on forum", BROADCAST_MOTD, NULL);
         return;
     }
-    #endif
+    #endif // _3DServer
 
     if (weaponGroups[group][1] != 0){
         if (weaponGroups[group][2] == 0){

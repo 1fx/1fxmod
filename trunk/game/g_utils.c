@@ -90,16 +90,9 @@ int G_FindConfigstringIndex( char *name, int start, int max, qboolean create )
     ///RxCxW - 09.01.06 - 12:30am #FIX
     /// Debugger barfs - this shouldnt cause any problems.
     /// Might check to see if the qvm needs this modification aswell
-#ifdef _DEBUG
-    if ( !name || name[0] == 0)
+    if ( !name || !name[0] || name[0] == 0)
         return 0;
-#else
-    ///original
-    if ( !name || !name[0] )
-    {
-        return 0;
-    }
-#endif
+
     ///End  - 09.01.06 - 12:30am
 
     for ( i=1 ; i<max ; i++ )

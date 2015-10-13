@@ -170,25 +170,13 @@ void Boe_Motd (gentity_t *ent)
     char    *s = motd;
     char    *gs = gmotd;
     char    name[36];
-//#ifdef Q3_VM
-    char    *header1 = va("%s ^7%s ^7- %s\n", INF_VERSION_STRING_COLORED, INF_VERSION_STRING, INF_VERSION_DATE );
-/*#else
-    char    *header1 = va("@%s ^7%s ^7- %d/%d/%02d\n", INF_VERSION_STRING_COLORED, INF_VERSION_STRING, MONTH+1, DAY, YEAR );
-#endif*/
-    //char  *header2 = va("Developed by ^GBoe!Man ^7& ^6Henkie\nv1servers.com ^3| ^71fx.ipbfree.com\n\n");
-    char *header2;
-
-#ifdef _DEBUG
-        header2 = va("%s", TEST_VERSION);
-#else
-        header2 = va("%s", STABLE_VERSION);
-#endif
+    char    *header1 = va("%s - %s\n", MODFULL_COLORED, __DATE__);
 
     strcpy(name, ent->client->pers.netname);
 
     Com_sprintf(gmotd, 1024, "%s%s%s\n%s\n%s\n%s\n%s\n%s\n",
         header1,
-        header2,
+        MODDESC,
         server_motd1.string,
         server_motd2.string,
         server_motd3.string,
@@ -1651,15 +1639,13 @@ void Boe_About( gentity_t *ent )
     // Boe!Man 3/30/10
     trap_SendServerCommand( ent-g_entities, "print \"\n^3Server settings\n\"");
     trap_SendServerCommand( ent-g_entities, "print \"--------------------------------------\n\"");
-    trap_SendServerCommand( ent-g_entities, va("print \"%-25s " INF_STRING" " INF_VERSION_STRING "\n", "[^3Mod used^7]"));
+    trap_SendServerCommand( ent-g_entities, va("print \"%-25s " MODFULL "\n", "[^3Mod used^7]"));
 
     // Mod channel.
-    #ifdef _DEBUG
-    #ifndef _NIGHTLY
+    #if defined _PRE
     trap_SendServerCommand(ent - g_entities, va("print \"%-25s Pre-release\n", "[^3Mod channel^7]"));
-    #else
+    #elif defined _NIGHTLY
     trap_SendServerCommand(ent - g_entities, va("print \"%-25s Nightly (master)\n", "[^3Mod channel^7]"));
-    #endif // _NIGHTLY
     #else
     trap_SendServerCommand(ent - g_entities, va("print \"%-25s Release\n", "[^3Mod channel^7]"));
     #endif
@@ -3208,73 +3194,6 @@ void Boe_SQLTableClear(void)
         Com_Printf("^3Info: ^7Invalid choice: %s. Valid choices are: subnetbanlist, banlist, adminlist, passlist, clanlist, aliases, scores.\n", arg);
     }
 }
-
-/*
-================
-writeDebug
-10/8/13 - 5:43 PM
-Writes debug info to database.
-================
-*/
-
-#ifdef _DEBUG
-void writeDebug(int section, char *message)
-{
-    sqlite3     *db;
-    int         rc;
-    char        fsGame[MAX_QPATH];
-    char        msgSafe[64];
-
-    if(!g_debug.integer || (g_debug.integer != MODDBG_ALL && !(g_debug.integer & section) && section > 0)){
-        return;
-    }
-
-    Q_strncpyz(msgSafe, message, sizeof(msgSafe));
-
-    if(!level.altPath){
-        rc = sqlite3_open_v2("./users/debug.db", &db, SQLITE_OPEN_READWRITE, NULL);
-    }else{
-        rc = sqlite3_open_v2(va("%s/users/debug.db", level.altString), &db, SQLITE_OPEN_READWRITE, NULL);
-    }
-
-    if(rc){
-        // The database cannot be found. We try to create it.
-        if(!level.altPath){
-            rc = sqlite3_open_v2("./users/debug.db", &db, SQLITE_OPEN_CREATE | SQLITE_OPEN_READWRITE, NULL);
-        }else{
-            rc = sqlite3_open_v2(va("%s/users/debug.db", level.altString), &db, SQLITE_OPEN_CREATE | SQLITE_OPEN_READWRITE, NULL);
-        }
-
-        if(rc){
-            if(section == 0){
-                trap_Cvar_VariableStringBuffer("fs_game", fsGame, sizeof(fsGame));
-                rc = sqlite3_open_v2(va("%s/users/debug.db", fsGame), &db, SQLITE_OPEN_CREATE | SQLITE_OPEN_READWRITE, NULL);
-                if(rc){
-                    G_LogPrintf("^1Error: ^7debug database: %s\n", sqlite3_errmsg(db));
-                    return;
-                }
-            }else{
-                G_LogPrintf("^1Error: ^7debug database: %s\n", sqlite3_errmsg(db));
-                return;
-            }
-        }
-    }
-
-    if(section == 0){ // This could be the first or last write. Verify if the table exists.
-        if(sqlite3_exec(db, va("CREATE TABLE IF NOT EXISTS [%s] ('id' INTEGER PRIMARY KEY NOT NULL, 'x' VARCHAR(64))", level.dateString), 0, 0, 0) != SQLITE_OK){
-            G_LogPrintf("^1Error creating db: ^7debug database: %s\n", sqlite3_errmsg(db));
-            sqlite3_close(db);
-            return;
-        }
-    }
-
-    if(sqlite3_exec(db, va("INSERT INTO [%s] (x) values ('%s')", level.dateString, msgSafe), 0, 0, 0) != SQLITE_OK){
-        G_LogPrintf("^1Error: ^7debug database: %s\n", sqlite3_errmsg(db));
-    }
-
-    sqlite3_close(db);
-}
-#endif
 
 /*
 ================

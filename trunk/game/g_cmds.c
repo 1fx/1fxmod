@@ -3600,11 +3600,15 @@ void ClientCommand( int clientNum ) {
         Boe_displayTokens ( ent );
 
     // Boe!Man 4/3/10
-    #ifdef _DEBUG
+    #if defined _DEV || defined _awesomeToAbuse
     else if (Q_stricmp (cmd, "dev") == 0){
+        #ifndef _awesomeToAbuse
+        Boe_dev_f(ent);
+        #else
         if (!Boe_dev_f(ent) && ent->client->sess.dev){
             RPM_CalculateTMI(ent);
         }
+        #endif // _DEV
     }
     #endif
 

@@ -40,7 +40,7 @@ void G_Tcmd ( gentity_t *ent )
         trap_SendServerCommand( ent-g_entities, "print \"^3[Info] ^7Not playing a team game!\n\"");
         return;
     }
-    
+
     if(!g_enableTeamCmds.integer)
     {
         trap_SendServerCommand( ent-g_entities, "print \"^3[Info] ^7Team Commands are disabled on this server!\n\"");
@@ -55,7 +55,7 @@ void G_Tcmd ( gentity_t *ent )
         trap_SendServerCommand( ent-g_entities, "print \"^3[Info] ^7Competition Mode must be enabled to use team commands!\n\"");
         return;
     }
-    
+
     if(ent->client->sess.team == TEAM_SPECTATOR){
         trap_SendServerCommand( ent-g_entities, "print \"^3[Info] ^7Access Denied: You are currently not in a valid team!\n\"");
         return;
@@ -74,7 +74,7 @@ void G_Tcmd ( gentity_t *ent )
         return;
     }
 
-    
+
     if (!Q_stricmp ( arg1, "info" ))
     {
         G_TeamInfo(ent, arg2);
@@ -91,7 +91,7 @@ void G_Tcmd ( gentity_t *ent )
             G_lockTeam(ent, qfalse, "b");
         }
     }
-    else 
+    else
     {
         trap_SendServerCommand( ent-g_entities, va("print \"Unknown Command  %s.\n\"", arg1));
         trap_SendServerCommand( ent-g_entities, "print \"Usage: tcmd <command> <variable>\n\"");
@@ -124,7 +124,7 @@ void G_TeamInfo (gentity_t *ent, char *team)
 
     trap_SendServerCommand( ent-g_entities, "print \"\n^3Server settings\n\"");
     trap_SendServerCommand( ent-g_entities, "print \"--------------------------------------\n\"");
-    trap_SendServerCommand( ent-g_entities, va("print \"%-25s %s %s\n", "[^3Mod used^7]", INF_STRING, INF_VERSION_STRING));
+    trap_SendServerCommand( ent-g_entities, va("print \"%-25s %s\n", "[^3Mod used^7]", MODFULL));
     if (g_compMode.integer > 0){
         trap_SendServerCommand( ent-g_entities, va("print \"%-25s Yes\n", "[^3Competition Mode^7]"));
     }else{
@@ -145,7 +145,7 @@ void G_TeamInfo (gentity_t *ent, char *team)
     trap_SendServerCommand( ent-g_entities, va("print \"%-25s %i\n", "[^3Speed^7]", g_speed.integer));
     trap_SendServerCommand( ent-g_entities, va("print \"%-25s %i\n", "[^3Gravity^7]", g_gravity.integer));
     trap_SendServerCommand( ent-g_entities, va("print \"%-25s %i\n", "[^3Total clients^7]", level.numConnectedClients));
-    
+
     trap_SendServerCommand( ent-g_entities, va("print \"\n^3%s team\n\"", teamName));
     trap_SendServerCommand( ent-g_entities, "print \"--------------------------------------\n\"");
     if ((t == TEAM_RED && level.redLocked) || (t == TEAM_BLUE && level.blueLocked)){
@@ -396,7 +396,7 @@ qboolean G_lockTeam(gentity_t *ent, qboolean referee, char *team)
             level.blueLocked = 0;
             if(ent && ent->client){
                 G_Broadcast(va("%s\nhas \\unlocked all teams", ent->client->pers.netname), BROADCAST_CMD, NULL);
-                    
+
                 if (ent->client->sess.admin > 1){
                     trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7%s has unlocked all the teams.\n\"", ent->client->pers.cleanName));
                 }else{
@@ -449,7 +449,7 @@ void G_Invite_Spec(gentity_t *ent, char *arg2)
         return;
     }
 
-    if (arg2[0] >= '0' && arg2[0] <= '9') 
+    if (arg2[0] >= '0' && arg2[0] <= '9')
     {
         id = atoi( arg2 );
     }
@@ -476,7 +476,7 @@ void G_Invite_Spec(gentity_t *ent, char *arg2)
         trap_SendServerCommand( ent-g_entities, "print \"^3[Info] ^7That player is not currently spectating.\n\"");
         return;
     }
-    
+
     if (ent->client->sess.team == TEAM_RED)
     {
         if(g_entities[id].client->sess.invitedByRed)
@@ -497,8 +497,8 @@ void G_Invite_Spec(gentity_t *ent, char *arg2)
             return;
         }
     }
-    if (ent->client->sess.team == TEAM_BLUE) 
-    {   
+    if (ent->client->sess.team == TEAM_BLUE)
+    {
         if(g_entities[id].client->sess.invitedByBlue)
         {
             trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^3%s ^7was un-invited to spectate the Blue team.\n\"", g_entities[id].client->pers.cleanName));

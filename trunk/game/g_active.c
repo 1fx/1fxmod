@@ -1241,7 +1241,7 @@ void ClientThink_real(gentity_t *ent)
             char *info = G_ColorizeMessage("\\Info:");
             client->sess.motdStartTime = level.time;
             client->sess.motdStopTime = level.time + 4000;
-            trap_SendServerCommand( ent - g_entities, va("chat -1 \"%s This server is running %s ^7%s\n\"", info, INF_VERSION_STRING_COLORED, INF_VERSION_STRING));
+            trap_SendServerCommand( ent - g_entities, va("chat -1 \"%s This server is running %s\n\"", info, MODFULL_COLORED));
             trap_SendServerCommand( ent - g_entities, va("chat -1 \"%s Please report any bugs on 1fxmod.org\n\"", info));
             Boe_Motd(ent);
         }
@@ -1254,7 +1254,7 @@ void ClientThink_real(gentity_t *ent)
         if (client->sess.clientChecks > 25) {
             char *info = G_ColorizeMessage("\\Info:");
 
-            trap_SendServerCommand(ent - g_entities, va("chat -1 \"%s This " INF_VERSION_STRING_COLORED " ^7server expects you to be running ^1ROCmod 2.1c^7.\n\"", info));
+            trap_SendServerCommand(ent - g_entities, va("chat -1 \"%s This " MODNAME_COLORED " server expects you to be running ^1ROCmod 2.1c^7.\n\"", info));
             trap_SendServerCommand(ent - g_entities, va("chat -1 \"%s You do not appear to be running that specific version of ^1ROCmod^7.\n\"", info));
             trap_SendServerCommand(ent - g_entities, va("chat -1 \"%s Please ^1download the mod^7, or ^1turn on auto-downloading^7, and re-join the game.\n\"", info));
 
