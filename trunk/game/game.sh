@@ -251,8 +251,11 @@ fi
 
 # Add developer build options.
 if [ $dev == true ]; then
+	# Enforce debug symbols.
+	buildoptions="$buildoptions -g"
+
 	if [ $linux == true ]; then
-		buildoptions="$buildoptions -g -D_GNU_SOURCE"
+		 buildoptions="$buildoptions -D_GNU_SOURCE"
 	fi
 fi
 
@@ -426,8 +429,12 @@ else
             pthread="-lpthread"
         fi
 
-        $linker $m32b $strip -shared $linkfiles -static -static-libgcc $pthread -o $outfile 2>> compile_log
-    else
+		if [ $dev == false ]; then
+			$linker $m32b $strip -shared $linkfiles -static -static-libgcc $pthread -o $outfile 2>> compile_log
+		else
+			$linker $m32b -shared $linkfiles -static -static-libgcc $pthread -o $outfile 2>> compile_log
+		fi
+    else # Linux.
         if [ $m32 == true ]; then
             m32b="-m elf_i386"
         else
@@ -459,7 +466,7 @@ printf "\e[00;36mChecking end-result\e[00m\n"
 printf "=====================================================\n"
 
 # Now check if the output file was indeed created..
-if [ -f ./$outfile ]; then
+if [ -f $outfile ]; then
     echo -e "Compiling the Mod was \e[00;32msuccessfull\e[00m!"
 
     if [[ `uname -a` == *"Msys"* ]] && [[ `uname -a` == "MINGW32"* ]]; then

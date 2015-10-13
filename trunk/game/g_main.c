@@ -745,6 +745,11 @@ int vmMain( int command, int arg0, int arg1, int arg2, int arg3, int arg4, int a
             return 0;
         case GAME_SHUTDOWN:
             G_ShutdownGame( arg0 );
+
+            #ifdef _DEV
+            // Boe!Man 10/13/15: Cleanup after shutdown.
+            disableCrashHandler();
+            #endif // _DEV
             return 0;
         case GAME_CLIENT_CONNECT:
             return (int)ClientConnect( arg0, (qboolean)arg1, (qboolean)arg2 );

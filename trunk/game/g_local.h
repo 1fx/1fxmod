@@ -966,6 +966,7 @@ void        G_postExecuteAdminCommand(int funcNum, int idNum, gentity_t *adm);
 //
 
 void        enableCrashHandler      ( void );
+void        disableCrashHandler     ( void );
 
 //
 // g_items.c
