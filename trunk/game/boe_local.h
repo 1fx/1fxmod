@@ -20,7 +20,7 @@
 #define MODNAME_COLORED "^71fx^1. ^3Mod^7"
 
 #define MODVERSION_MAJOR "0.78"
-#define MODVERSION_PRE "0.78t.3"
+#define MODVERSION_PRE "0.78t.3a"
 
 // Boe!Man 10/13/15: Mod flavors.
 #ifndef _NIGHTLY
