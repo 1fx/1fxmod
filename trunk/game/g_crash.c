@@ -650,7 +650,7 @@ LONG CALLBACK crashHandler(LPEXCEPTION_POINTERS e)
 
     // Log if imagehlp is unavailable on the host system.
     if(imagehlp == NULL){
-        crashLogger("imagehlp.dll is missing exports or is unavailable on system.");
+        crashLogger("imagehlp.dll is missing exports or is unavailable on system.\n");
     }
 
     // Retrieve what exception we got.
