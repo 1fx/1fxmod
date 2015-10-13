@@ -98,34 +98,34 @@ void logStart()
     G_LogPrintf("Now gathering information regarding the crash.\n");
 
     // Open the crash log.
-	if(!openCrashLog()){
-		G_LogPrintf("Unable to create crashdump (couldn't open file for writing).\n");
-		G_LogPrintf("Writing to logfile or console instead.\n");
-	}
+    if(!openCrashLog()){
+        G_LogPrintf("Unable to create crashdump (couldn't open file for writing).\n");
+        G_LogPrintf("Writing to logfile or console instead.\n");
+    }
 
-	// Write header.
-	crashLogger("------------- Crash Report ------------\n");
-	crashLogger("--  Please e-mail to boe@1fxmod.org  --\n");
-	crashLogger("---------------------------------------\n");
-	crashLogger("1fx. Mod version: " INF_VERSION_STRING "\n");
+    // Write header.
+    crashLogger("------------- Crash Report ------------\n");
+    crashLogger("--  Please e-mail to boe@1fxmod.org  --\n");
+    crashLogger("---------------------------------------\n");
+    crashLogger("1fx. Mod version: " INF_VERSION_STRING "\n");
 
     // Determine SoF2 version.
-	#ifdef _GOLD
-	crashLogger("SoF2 version: v1.03\n");
-	#else
-	crashLogger("SoF2 version: v1.00\n");
-	#endif // _GOLD
+    #ifdef _GOLD
+    crashLogger("SoF2 version: v1.03\n");
+    #else
+    crashLogger("SoF2 version: v1.00\n");
+    #endif // _GOLD
 
     // Log Operating System.
     #ifdef _WIN32
     crashLogger("OS: WIN32\n");
     #else
-	crashLogger("OS: Linux\n");
+    crashLogger("OS: Linux\n");
     #endif // _WIN32
 
     // See if we can log the map played.
     // During init this may be empty.
-	crashLogger(va("Map: %s\n",level.mapname));
+    crashLogger(va("Map: %s\n",level.mapname));
 }
 
 /*
@@ -637,12 +637,12 @@ Original code from ETpub.
 LONG CALLBACK crashHandler(LPEXCEPTION_POINTERS e)
 {
     char basepath[MAX_PATH];
-	char gamepath[MAX_PATH];
+    char gamepath[MAX_PATH];
 
     // Try to load the symbols.
     trap_Cvar_VariableStringBuffer("fs_basepath", basepath, sizeof(basepath));
-	trap_Cvar_VariableStringBuffer("fs_game", gamepath, sizeof(gamepath));
-	pfnSymInitialize(GetCurrentProcess(), va("%s\\%s", basepath, gamepath), TRUE);
+    trap_Cvar_VariableStringBuffer("fs_game", gamepath, sizeof(gamepath));
+    pfnSymInitialize(GetCurrentProcess(), va("%s\\%s", basepath, gamepath), TRUE);
 
     // Open the crash log and log the generic information
     // such as header, operating system and such.
