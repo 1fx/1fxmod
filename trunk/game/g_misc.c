@@ -24,7 +24,7 @@ void SP_info_notnull( gentity_t *self )
 TeleportPlayer
 =================================================================================
 */
-void TeleportPlayer ( gentity_t *player, vec3_t origin, vec3_t angles, qboolean nojump) 
+void TeleportPlayer ( gentity_t *player, vec3_t origin, vec3_t angles, qboolean nojump)
 {
     gentity_t   *tent;
 
@@ -35,7 +35,7 @@ void TeleportPlayer ( gentity_t *player, vec3_t origin, vec3_t angles, qboolean 
     //Com_Printf("%s is teleporting to %s\n", player->client->pers.netname, vtos(origin));
     // use temp events at source and destination to prevent the effect
     // from getting dropped by a second player event
-    if ( !G_IsClientSpectating ( player->client ) ) 
+    if ( !G_IsClientSpectating ( player->client ) )
     {
         tent = G_TempEntity( player->client->ps.origin, EV_PLAYER_TELEPORT_OUT );
         tent->s.clientNum = player->s.clientNum;
@@ -72,7 +72,7 @@ void TeleportPlayer ( gentity_t *player, vec3_t origin, vec3_t angles, qboolean 
     SetClientViewAngle( player, angles, qtrue );
 
     // kill anything at the destination
-    if ( !G_IsClientSpectating ( player->client ) ) 
+    if ( !G_IsClientSpectating ( player->client ) )
     {
         G_KillBox (player, qtrue);
     }
@@ -83,11 +83,11 @@ void TeleportPlayer ( gentity_t *player, vec3_t origin, vec3_t angles, qboolean 
     // use the precise origin for linking
     VectorCopy( player->client->ps.origin, player->r.currentOrigin );
 
-    if ( !G_IsClientSpectating ( player->client ) ) 
+    if ( !G_IsClientSpectating ( player->client ) )
     {
         trap_LinkEntity (player);
     }
-    
+
     if(!nojump && player->client->sess.team != TEAM_SPECTATOR)
     G_PlayEffect ( G_EffectIndex("misc/electrical"),player->client->ps.origin, player->pos1);
 }
@@ -98,7 +98,7 @@ Point teleporters at these.
 Now that we don't have teleport destination pads, this is just
 an info_notnull
 */
-void SP_misc_teleporter_dest( gentity_t *ent ) 
+void SP_misc_teleporter_dest( gentity_t *ent )
 {
 }
 
@@ -108,7 +108,7 @@ void SP_misc_teleporter_dest( gentity_t *ent )
 this model is inserted into the bsp file
 "model"     arbitrary .md3 file to display
 */
-void SP_misc_model( gentity_t *ent ) 
+void SP_misc_model( gentity_t *ent )
 {
 #if 0
     ent->s.modelindex = G_ModelIndex( ent->model );
@@ -147,14 +147,14 @@ void SP_misc_G2model( gentity_t *ent ) {
 
 //===========================================================
 
-void locateCamera( gentity_t *ent ) 
+void locateCamera( gentity_t *ent )
 {
     vec3_t      dir;
     gentity_t   *target;
     gentity_t   *owner;
 
     owner = G_PickTarget( ent->target );
-    if ( !owner ) 
+    if ( !owner )
     {
         Com_Printf( "Couldn't find target for misc_partal_surface\n" );
         G_FreeEntity( ent );
@@ -163,22 +163,22 @@ void locateCamera( gentity_t *ent )
     ent->r.ownerNum = owner->s.number;
 
     // frame holds the rotate speed
-    if ( owner->spawnflags & 1 ) 
+    if ( owner->spawnflags & 1 )
     {
         ent->s.frame = 25;
-    } 
-    else if ( owner->spawnflags & 2 ) 
+    }
+    else if ( owner->spawnflags & 2 )
     {
         ent->s.frame = 75;
     }
 
     // swing camera ?
-    if ( owner->spawnflags & 4 ) 
+    if ( owner->spawnflags & 4 )
     {
         // set to 0 for no rotation at all
         ent->s.gametypeitems = 0;
     }
-    else 
+    else
     {
         ent->s.gametypeitems = 1;
     }
@@ -204,7 +204,7 @@ void locateCamera( gentity_t *ent )
 The portal surface nearest this entity will show a view from the targeted misc_portal_camera, or a mirror view if untargeted.
 This must be within 64 world units of the surface!
 */
-void SP_misc_portal_surface(gentity_t *ent) 
+void SP_misc_portal_surface(gentity_t *ent)
 {
     VectorClear( ent->r.mins );
     VectorClear( ent->r.maxs );
@@ -213,11 +213,11 @@ void SP_misc_portal_surface(gentity_t *ent)
     ent->r.svFlags = SVF_PORTAL;
     ent->s.eType = ET_PORTAL;
 
-    if ( !ent->target ) 
+    if ( !ent->target )
     {
         VectorCopy( ent->s.origin, ent->s.origin2 );
-    } 
-    else 
+    }
+    else
     {
         ent->think = locateCamera;
         ent->nextthink = level.time + 100;
@@ -228,7 +228,7 @@ void SP_misc_portal_surface(gentity_t *ent)
 The target for a misc_portal_director.  You can set either angles or target another entity to determine the direction of view.
 "roll" an angle modifier to orient the camera around the target vector;
 */
-void SP_misc_portal_camera(gentity_t *ent) 
+void SP_misc_portal_camera(gentity_t *ent)
 {
     float   roll;
 
@@ -244,7 +244,7 @@ void SP_misc_portal_camera(gentity_t *ent)
 /*QUAKED misc_bsp (1 0 0) (-16 -16 -16) (16 16 16)
 "bspmodel"      arbitrary .bsp file to display
 */
-void SP_misc_bsp(gentity_t *ent) 
+void SP_misc_bsp(gentity_t *ent)
 {
     char    temp[MAX_QPATH];
     char    *out;
@@ -257,7 +257,7 @@ void SP_misc_bsp(gentity_t *ent)
         ent->s.angles[1] = newAngle[1];
         ent->s.angles[2] = newAngle[2];
     }
-    
+
     G_SpawnString("bspmodel", "", &out);
 
     //ent->s.eFlags = EF_PERMANENT; //EF_TELEPORT_BIT;
@@ -311,11 +311,11 @@ void SP_misc_bsp(gentity_t *ent)
     }
 }
 
-// ORIGINAL DATA BELOW 
+// ORIGINAL DATA BELOW
 /*QUAKED misc_bsp (1 0 0) (-16 -16 -16) (16 16 16)
 "bspmodel"      arbitrary .bsp file to display
 */
-/*void SP_misc_bsp(gentity_t *ent) 
+/*void SP_misc_bsp(gentity_t *ent)
 {
     char    temp[MAX_QPATH];
     char    *out;
@@ -330,7 +330,7 @@ void SP_misc_bsp(gentity_t *ent)
     // don't support rotation any other way
     ent->s.angles[0] = 0.0;
     ent->s.angles[2] = 0.0;
-    
+
     G_SpawnString("bspmodel", "", &out);
 
     ent->s.eFlags = EF_PERMANENT;
@@ -399,7 +399,7 @@ miscentDef - defines which client models spawn on the terrain (file is base/ext_
 densityMap - how dense the client models are packed
 
 */
-void SP_terrain(gentity_t *ent) 
+void SP_terrain(gentity_t *ent)
 {
     char                temp[MAX_INFO_STRING];
     char                final[MAX_QPATH];
@@ -432,7 +432,7 @@ void SP_terrain(gentity_t *ent)
         trap_Cvar_VariableStringBuffer("RMG_terrain", temp, MAX_QPATH);
         Com_sprintf(final, MAX_QPATH, "%s", temp);
         AddSpawnField("terrainDef", temp);
- 
+
         trap_Cvar_VariableStringBuffer("RMG_instances", temp, MAX_QPATH);
         Com_sprintf(final, MAX_QPATH, "%s", temp);
         AddSpawnField("instanceDef", temp);
@@ -494,7 +494,7 @@ void SP_terrain(gentity_t *ent)
     Info_SetValueForKey(temp, "miscentDef", value);
 
     Info_SetValueForKey(temp, "missionType", missionType);
-    
+
     for(i = 0; i < MAX_INSTANCE_TYPES; i++)
     {
         trap_Cvar_VariableStringBuffer(va("RMG_instance%d", i), final, MAX_QPATH);
@@ -537,7 +537,7 @@ void SP_terrain(gentity_t *ent)
     trap_LinkEntity(ent);
 
     // If running RMG then initialize the terrain and handle team skins
-    if ( RMG.integer ) 
+    if ( RMG.integer )
     {
         trap_RMG_Init(terrainID);
 
@@ -576,11 +576,11 @@ void G_DebugCylinderThink ( gentity_t* ent )
 
     VectorCopy ( ent->parent->client->ps.origin, vec1 );
     VectorCopy ( ent->r.currentOrigin, vec2 );
-    
+
     vec1[2] = 0;
     vec2[2] = 0;
 
-    // IF we are too far away then kill it 
+    // IF we are too far away then kill it
     if ( Distance ( vec1, vec2 ) > ent->speed )
     {
         trap_UnlinkEntity ( ent );
@@ -616,12 +616,12 @@ void G_SpawnDebugCylinder ( vec3_t origin, float radius, gentity_t* clientent, f
 
     ent->nextthink = level.time + 1000;
     ent->think = G_DebugCylinderThink;
-    
+
     trap_LinkEntity ( ent );
 }
 
 
-void fx_think( gentity_t *ent ) 
+void fx_think( gentity_t *ent )
 {
     int     time;
 
@@ -641,7 +641,7 @@ void fx_think( gentity_t *ent )
     }
 
     // calc next play time
-    time = (ent->wait + flrand(0.0f, ent->random)) * 1000;  // need it in milliseconds 
+    time = (ent->wait + flrand(0.0f, ent->random)) * 1000;  // need it in milliseconds
 
     ent->think = fx_think;
     ent->nextthink = level.time + time;
@@ -653,7 +653,7 @@ nolower, noroof, nomiddle, nowhole.
 =================================================================================
 */
 
-typedef enum 
+typedef enum
 {
     NOLOWER,
     NOROOF,
@@ -672,7 +672,7 @@ typedef enum
 
 void g_sectionAddOrDelInstances(gentity_t *ent, qboolean add){
     gentity_t *ent2 = NULL;
-    
+
     while (NULL != (ent2 = G_Find ( ent2, FOFS(target), ent->classname ))){
         if(ent2 != ent){ // Make sure we don't get the parent ent.
             if(!add){ // Upon removal, just make sure they are not drawed and clients can't interact with them.
@@ -719,7 +719,7 @@ void g_sectionAutoCheck(gentity_t *ent){
                 g_sectionAddOrDelInstances(ent, qtrue);
                 if(ent->section < NOMIDDLE)
                     level.noLROpened[ent->section] = qfalse;
-                    
+
                 G_Broadcast(va("%s ^7closed!", ent->message), BROADCAST_GAME, NULL);
                 trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s is now closed.\n\"", ent->message2));
                 break;
@@ -729,15 +729,15 @@ void g_sectionAutoCheck(gentity_t *ent){
                 g_sectionAddOrDelInstances(ent, qfalse);
                 if(ent->section < NOMIDDLE)
                     level.noLROpened[ent->section] = qtrue;
-                    
+
                 G_Broadcast(va("%s ^7opened!", ent->message), BROADCAST_GAME, NULL);
                 trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s is now opened.\n\"", ent->message2));
                 break;
             default:
-                break;      
+                break;
         }
     }
-    
+
     // Boe!Man 11/22/13: When's our next check?
     if(ent->sectionState == CLOSING || ent->sectionState == OPENING){
         ent->nextthink = level.time + (int)ent->wait * 1000;
@@ -749,22 +749,22 @@ void g_sectionAutoCheck(gentity_t *ent){
 void g_blockSection(gentity_t *ent, int section){
     if(section < NOMIDDLE){
         G_SpawnVector("origin", "0", level.noLR[section]);
-        
+
         // Boe!Man 11/26/13: Not depending on the original state, if this check fails, it's always disabled..
         if(level.noLR[section][2] == 0){
             level.noLRActive[section] = qfalse;
         }
     }
-    
+
     // Boe!Man 11/21/13: The entity is found.
     level.noLRMWEntFound[section] = qtrue;
-    
+
     // Boe!Man 11/21/13: Is auto nolower enabled?
     if(ent->autoSection && strstr(ent->autoSection, "yes") && ent->min_players > 0){
         if(!ent->wait){ // There should be a delay. Default is to wait 10 seconds.
             ent->wait = 10;
         }
-        
+
         // Check if a team is defined.
         if(ent->team && strlen(ent->team) > 0){
             if(strstr(ent->team, "red")){
@@ -781,11 +781,11 @@ void g_blockSection(gentity_t *ent, int section){
         }else{ // All.
             ent->team2 = TEAM_FREE;
         }
-        
+
         // The think function needs to know what section is about to be closed/opened.
         ent->section = section;
         ent->sectionState = INIT;
-        
+
         // Boe!Man 11/21/13: Create the event.
         ent->think = g_sectionAutoCheck;
         ent->nextthink = level.time + 1000; // Check every 10 seconds, except the first time (init).
@@ -800,18 +800,18 @@ void g_checkSectionState(){
         level.noLRActive[NOLOWER] = qtrue;
         level.autoLRMWActive[NOLOWER] = qtrue;
     }
-    
+
     // Noroof.
     if(g_useNoRoof.integer){
         level.noLRActive[NOROOF] = qtrue;
         level.autoLRMWActive[NOROOF] = qtrue;
     }
-    
+
     // Nomiddle.
     if(g_useNoMiddle.integer){
         level.autoLRMWActive[NOMIDDLE] = qtrue;
     }
-    
+
     // Nowhole.
     if(g_useNoWhole.integer){
         level.autoLRMWActive[NOWHOLE] = qtrue;
@@ -820,7 +820,7 @@ void g_checkSectionState(){
 
 void nolower(gentity_t *ent){
     static char message[24];
-    
+
     strncpy(message, G_ColorizeMessage("Lower"), sizeof(message));
     ent->message = message;
     ent->message2 = "\\Lower";
@@ -829,7 +829,7 @@ void nolower(gentity_t *ent){
 
 void noroof(gentity_t *ent){
     static char message[24];
-    
+
     strncpy(message, G_ColorizeMessage("Roof"), sizeof(message));
     ent->message = message;
     ent->message2 = "\\Roof";
@@ -838,7 +838,7 @@ void noroof(gentity_t *ent){
 
 void nomiddle(gentity_t *ent){
     static char message[24];
-    
+
     strncpy(message, G_ColorizeMessage("Middle"), sizeof(message));
     ent->message = message;
     ent->message2 = "\\Middle";
@@ -847,7 +847,7 @@ void nomiddle(gentity_t *ent){
 
 void nowhole(gentity_t *ent){
     static char message[24];
-    
+
     strncpy(message, G_ColorizeMessage("Whole"), sizeof(message));
     ent->message = message;
     ent->message2 = "\\Whole";
@@ -861,7 +861,7 @@ Plays specified effect file
 "wait"      seconds between triggerings, default 0.3
 "random"    wait variance in seconds, default 0
 "target"    direction of effect, default up
-"count"     plays effect this many times then deletes itself, default -1 = infinite 
+"count"     plays effect this many times then deletes itself, default -1 = infinite
 
 
 START_OFF    fx starts off
@@ -882,7 +882,7 @@ void SP_fx_play_effect(gentity_t *ent)
     {
         ent->wait = 0.3;
     }
-    
+
     /*
     target = G_Find(0, FOFS(targetname), ent->target);
     if (target)
@@ -892,7 +892,7 @@ void SP_fx_play_effect(gentity_t *ent)
         // find angles
         vectoangles( ent->pos1, ent->r.currentAngles );
         // copy over to other angles
-        VectorCopy( ent->r.currentAngles, ent->s.angles );  
+        VectorCopy( ent->r.currentAngles, ent->s.angles );
         VectorCopy( ent->r.currentAngles, ent->s.apos.trBase );
     }
     else
@@ -916,12 +916,12 @@ Entity that lets a user define the team balance.
 void SP_seekers(gentity_t* ent)
 {
     int i, tempInt;
-    
+
     // We loop through the command, and check if we can find something useful.
     // The even teams command blindly checks whatever the user put here, it's up to the server owner to declare valid values.
     for(i = 1; i <= 16; i++){
         G_SpawnInt(va("%i", i), "-1", &tempInt);
-        
+
         if(tempInt){
             level.customETHiderAmount[i-1] = tempInt;
         }
@@ -943,7 +943,7 @@ void G_AdjustClientBBox(gentity_t *other)
     other->client->maxSave[1] = other->r.maxs[1];
     other->client->maxSave[2] = other->r.maxs[2];
 
-    // Adjust the hit box to account for hands and such 
+    // Adjust the hit box to account for hands and such
     // that are sticking out of the normal bounding box
     if (other->client->ps.pm_flags & PMF_LEANING)
     {
@@ -1189,7 +1189,20 @@ void G_Refresh(gentity_t *ent)
         player_die(ent, ent, ent, 100000, MOD_REFRESH, HL_NONE, vec3_origin);
     }
 
+    // Free the stats memory before memsetting the struct.
+    G_FreeStatsMemory(ent);
+
+    // Memset it now.
     memset(&ent->client->pers.statinfo, 0, sizeof(ent->client->pers.statinfo));
+
+    // Re-allocate the memory.
+    ent->client->pers.statinfo.weapon_shots = calloc(ATTACK_MAX * level.wpNumWeapons, sizeof(int));
+    ent->client->pers.statinfo.weapon_hits = calloc(ATTACK_MAX * level.wpNumWeapons, sizeof(int));
+    ent->client->pers.statinfo.weapon_headshots = calloc(ATTACK_MAX * level.wpNumWeapons, sizeof(int));
+    if(!ent->client->pers.statinfo.weapon_shots || !ent->client->pers.statinfo.weapon_hits || !ent->client->pers.statinfo.weapon_headshots){
+        Com_Error(ERR_FATAL, "Unable to re-initialize memory for weapon stats! Out of memory?");
+    }
+
     ent->client->pers.enterTime = level.time;
     ent->client->ps.persistant[PERS_SCORE] = 0;
     ent->client->sess.score = 0;
@@ -1235,7 +1248,7 @@ void G_Obituary(gentity_t *target, gentity_t *attacker, int mod, attackType_t at
     targetColor = S_COLOR_WHITE;
     message2 = "";
     message3 = "";
-    
+
     if (!level.gametypeData->teams || (level.gametypeData->teams && !OnSameTeam(target, attacker)))
     {
         statOk = qtrue;
@@ -1311,7 +1324,7 @@ void G_Obituary(gentity_t *target, gentity_t *attacker, int mod, attackType_t at
             Boe_ClientSound(target, G_SoundIndex("sound/self_frag.mp3"));
         }
         else if (headShot) {
-            //if they use rpm client-side the client will 
+            //if they use rpm client-side the client will
             //handle the sound etc...
             #ifndef _GOLD
             if (attacker->client->sess.rpmClient)
@@ -1331,7 +1344,7 @@ void G_Obituary(gentity_t *target, gentity_t *attacker, int mod, attackType_t at
             }
             #endif // not _GOLD
 
-            //if we can show kills we'll display the 
+            //if we can show kills we'll display the
             //heashot message with the "you killed" message
             if (level.gametypeData->showKills)
             {
@@ -1348,7 +1361,7 @@ void G_Obituary(gentity_t *target, gentity_t *attacker, int mod, attackType_t at
             Boe_ClientSound(attacker, G_SoundIndex("sound/frag.mp3"));
         }
 
-        //set the time here now 
+        //set the time here now
         attacker->client->lastKillTime = level.time;
     }
     //set the teamcolor of the killed client

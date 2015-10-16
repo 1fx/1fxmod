@@ -1883,8 +1883,6 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
     if (client->sess.admin >= g_adminSpec.integer  && g_adminSpec.integer != 0 && g_compMode.integer == 0){
         client->sess.adminspec = qtrue;
     }
-    /*if(client->sess.admin == 4 && g_sadminspec.integer == 1)
-        client->sess.adminspec = qtrue;*/
 
     // Boe!Man 7/18/13: Fixed clients not getting their mute status back if they were muted prior to disconnecting.
     if(IsClientMuted(ent, qfalse)){
@@ -1896,12 +1894,12 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
     #endif // _GOLD
 
     // Boe!Man 10/25/10: Make sure their stats are set correctly.
-    ent->client->pers.statinfo.weapon_shots = malloc(sizeof(int) * ATTACK_MAX * level.wpNumWeapons);
-    ent->client->pers.statinfo.weapon_hits = malloc(sizeof(int) * ATTACK_MAX * level.wpNumWeapons);
-    ent->client->pers.statinfo.weapon_headshots = malloc(sizeof(int) * ATTACK_MAX * level.wpNumWeapons);
-    memset(ent->client->pers.statinfo.weapon_shots, 0, sizeof(int) * ATTACK_MAX * level.wpNumWeapons);
-    memset(ent->client->pers.statinfo.weapon_hits, 0, sizeof(int) * ATTACK_MAX * level.wpNumWeapons);
-    memset(ent->client->pers.statinfo.weapon_headshots, 0, sizeof(int) * ATTACK_MAX * level.wpNumWeapons);
+    ent->client->pers.statinfo.weapon_shots = calloc(ATTACK_MAX * level.wpNumWeapons, sizeof(int));
+    ent->client->pers.statinfo.weapon_hits = calloc(ATTACK_MAX * level.wpNumWeapons, sizeof(int));
+    ent->client->pers.statinfo.weapon_headshots = calloc(ATTACK_MAX * level.wpNumWeapons, sizeof(int));
+    if(!ent->client->pers.statinfo.weapon_shots || !ent->client->pers.statinfo.weapon_hits || !ent->client->pers.statinfo.weapon_headshots){
+        Com_Error(ERR_FATAL, "Unable to initialize memory for weapon stats! Out of memory?");
+    }
 
     ent->client->pers.statinfo.lasthurtby = -1;
     ent->client->pers.statinfo.lastclient_hurt = -1;
