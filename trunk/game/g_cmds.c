@@ -2384,6 +2384,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
     int         a = 0;
     // Boe!Man 5/3/10: Fix.
     qboolean    acmd = qfalse;
+    char        originalTextBuffer[MAX_SAY_TEXT];
     char        fullTextBuffer[MAX_SAY_TEXT];
     char        cmd[MAX_SAY_TEXT];
     int         ignore = -1;
@@ -2414,7 +2415,23 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
     else
         p = ConcatArgs( 1 );
 
-    strncpy(fullTextBuffer, p, sizeof(fullTextBuffer)); // Henk 08/09/10 -> Copy p to buffer to prevent unwanted changes by other functions
+    // Save a copy of p on the stack.
+    strncpy(originalTextBuffer, p, sizeof(originalTextBuffer));
+
+    // Text might turn into something else (not terminated?), so null terminate the buffer now.
+    originalTextBuffer[strlen(p)] = '\0';
+
+    // Try to remove additional carets from the buffer, and make p point to our modified buffer.
+    G_RemoveAdditionalCarets(originalTextBuffer);
+    p = originalTextBuffer;
+
+    // Is there anything to say now or did we remove everything from the buffer? If so, it's useless to continue here.
+    if(strlen(p) == 0){
+        return;
+    }
+
+    // Now fill the full text buffer which we're allowed to modify later on.
+    strncpy(fullTextBuffer, originalTextBuffer, sizeof(fullTextBuffer));
 
     // Boe!Man 6/5/15: Get the first argument.
     if (trap_Argc() > 2) {

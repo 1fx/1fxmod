@@ -1852,3 +1852,29 @@ void RemoveColorEscapeSequences(char *text) {
     }
     text[l] = '\0';
 }
+
+/*
+==============
+G_RemoveAdditionalCarets
+10/17/15: 7:22 PM
+Removes additional carets from text.
+==============
+*/
+
+void G_RemoveAdditionalCarets(char *text)
+{
+    int i, l;
+
+    l = 0;
+    for (i = 0; text[i]; i++) {
+        if (text[i] == '^' &&
+            (text[i + 1] == '^' || i + 1 == strlen(text))) {
+            i++;
+            continue;
+        }
+
+        text[l++] = text[i];
+    }
+
+    text[l] = '\0';
+}

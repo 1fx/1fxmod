@@ -1151,7 +1151,8 @@ void        G_unPause                       ( gentity_t *adm );
 void        G_ReadyUp                       ( gentity_t *ent );
 void        G_ReadyCheck                    ( gentity_t *ent );
 
-void        RemoveColorEscapeSequences      (char *text);
+void        RemoveColorEscapeSequences      ( char *text );
+void        G_RemoveAdditionalCarets        ( char *text );
 
 //
 // g_weapon.c
