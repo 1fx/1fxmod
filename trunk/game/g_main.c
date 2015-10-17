@@ -7,6 +7,7 @@
 #ifdef __linux__
 #include "./tadns/tadns.h"
 #include <netdb.h>
+#include <asm/sigcontext.h>
 
 #if (defined(__GNUC__) && __GNUC__ < 3)
 unsigned char   memsys5[41943040]; // Boe!Man 1/29/13: Buffer of 40 MB, available for SQLite memory management (Linux).
@@ -1298,6 +1299,20 @@ static void G_ResolveMasterIPs()
     dns_fini(dns);
 }
 #endif // __linux__ && __GNUC__ < 3
+
+// SIGINT handler.
+
+#ifdef __linux__
+__sighandler_t G_InterruptHandler(int signal, struct sigcontext ctx)
+{
+    Com_Printf("\n-------------------------------------------------\n");
+    Com_Printf("Ctrl-C is not the proper way to kill the server.\n");
+    Com_Printf("Please use the 'quit' command to gracefully exit.\n");
+    Com_Printf("-------------------------------------------------\n");
+    return 0;
+}
+#endif // __linux__
+
 /*
 ============
 G_InitGame
@@ -1338,6 +1353,11 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
         Com_Error(ERR_FATAL, "Another instance is running!");
         #endif
     }
+
+    #ifdef __linux__
+    // Boe!Man 10/17/15: Trap Ctrl+C on Linux.
+    signal(SIGINT, (void *)G_InterruptHandler);
+    #endif // __linux__
 
     // Boe!Man 4/28/15: Check fs_game string.
     #ifndef _DEBUG
