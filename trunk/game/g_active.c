@@ -1240,7 +1240,7 @@ void ClientThink_real(gentity_t *ent)
         {
             char *info = G_ColorizeMessage("\\Info:");
             client->sess.motdStartTime = level.time;
-            client->sess.motdStopTime = level.time + 4000;
+            client->sess.motdStopTime = level.time + 10000;
             trap_SendServerCommand( ent - g_entities, va("chat -1 \"%s This server is running %s\n\"", info, MODFULL_COLORED));
             trap_SendServerCommand( ent - g_entities, va("chat -1 \"%s Please report any bugs on 1fxmod.org\n\"", info));
             Boe_Motd(ent);
@@ -1301,9 +1301,12 @@ void ClientThink_real(gentity_t *ent)
     //Ryan july 1 2003
     if(client->sess.motdStartTime)
     {
-        // Boe!Man 3/16/11: Better to reset the values and actually put firstTime to qfalse so it doesn't mess up when we want to broadcast a teamchange.
-        if(level.time >= client->sess.motdStopTime)
-        {
+        // Boe!Man 10/18/15: Make sure the motd is being broadcasted several times.
+        if (level.time >= client->sess.motdStartTime + 1000 && level.time < client->sess.motdStopTime - 3500){
+			client->sess.motdStartTime += 1000;
+			Boe_Motd(ent);
+		}else if(level.time >= client->sess.motdStopTime && level.time > (ent->client->sess.lastMessage + 4000)){
+            // Boe!Man 3/16/11: Better to reset the values and actually put firstTime to qfalse so it doesn't mess up when we want to broadcast a teamchange.
             client->sess.motdStartTime = 0;
             client->sess.motdStopTime = 0;
             if(client->sess.firstTime)
