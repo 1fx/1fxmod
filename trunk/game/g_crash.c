@@ -126,6 +126,31 @@ void logStart()
     // See if we can log the map played.
     // During init this may be empty.
     crashLogger(va("Map: %s\n",level.mapname));
+
+    // Try to log gametype if it is set.
+    crashLogger("Gametype: ");
+    if(current_gametype.value == GT_NONE){
+        crashLogger("Unknown\n");
+    }else if(current_gametype.value == GT_HS){
+        crashLogger("Hide&Seek\n");
+    }else if(current_gametype.value == GT_INF){
+        crashLogger("Infiltration\n");
+    }else if(current_gametype.value == GT_CTF){
+        crashLogger("Capture the Flag\n");
+    }else if(current_gametype.value == GT_DM){
+        crashLogger("Deathmatch\n");
+    }else if(current_gametype.value == GT_TDM){
+        crashLogger("Team Deathmatch\n");
+    }else if(current_gametype.value == GT_ELIM){
+        crashLogger("Elimination\n");
+    }else if(current_gametype.value == GT_HZ){
+        crashLogger("Humans&Zombies\n");
+    }
+
+    // Is competition mode enabled?
+    if(g_compMode.integer && cm_enabled.integer){
+        crashLogger("Comp mode is enabled and in state: %d\n", cm_enabled.integer);
+    }
 }
 
 /*
