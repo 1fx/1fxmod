@@ -17,11 +17,15 @@ Aligns DWORD value from ulong to C string.
 char *AlignDWORD(long input)
 {
     static char output[9];
-    char tempStr[9];
+    char tempStr[11];
     int n;
 
-    n = sprintf(tempStr, "%p", input);
-    tempStr[n] = '\0';
+    #ifdef __GNUC__
+    n = snprintf(tempStr, sizeof(tempStr), "%p", input);
+    #elif _MSC_VER
+    n = _snprintf_s(tempStr, sizeof(tempStr), "%p", input);
+    #endif // __GNUC__
+
     output[0] = tempStr[n - 2];
     output[1] = tempStr[n - 1];
     output[2] = tempStr[n - 4];
