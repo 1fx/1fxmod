@@ -149,7 +149,7 @@ void logStart()
 
     // Is competition mode enabled?
     if(g_compMode.integer && cm_enabled.integer){
-        crashLogger("Comp mode is enabled and in state: %d\n", cm_enabled.integer);
+        crashLogger(va("Comp mode is enabled and in state: %d\n", cm_enabled.integer));
     }
 }
 
