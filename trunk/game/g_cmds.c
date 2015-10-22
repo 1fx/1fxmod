@@ -4276,6 +4276,20 @@ qboolean ConsoleCommand( void )
         return qtrue;
     }
 
+    if (Q_stricmp(cmd, "1fxver") == 0 )
+    {
+        Com_Printf("-------------------------------------\n");
+        Com_Printf("This server is running 1fx. Mod!\n");
+        Com_Printf("Version: " MODVERSION_NOSUFFIX "\n");
+        Com_Printf("Date: " __DATE__ "\n");
+        #ifdef MODFLAVORS
+        Com_Printf("Flavors: " MODFLAVORS "\n");
+        #endif // MODFLAVORS
+        Com_Printf("-------------------------------------\n");
+
+        return qtrue;
+    }
+
     if (g_dedicated.integer)
     {
         if (Q_stricmp (cmd, "say") == 0)
