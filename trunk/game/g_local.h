@@ -1187,6 +1187,7 @@ void        G_UpdateClientAnimations        ( gentity_t* ent );
 void        G_SetRespawnTimer               ( gentity_t* ent );
 gentity_t*  G_FindNearbyClient              ( vec3_t origin, team_t team, float radius, gentity_t* ignore );
 void        G_AddClientSpawn                ( gentity_t* ent, team_t team, qboolean monkey );
+void        G_AllocateStatsMemory           ( gentity_t *ent );
 void        G_FreeStatsMemory               ( gentity_t *ent );
 
 //

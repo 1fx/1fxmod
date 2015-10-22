@@ -1196,12 +1196,7 @@ void G_Refresh(gentity_t *ent)
     memset(&ent->client->pers.statinfo, 0, sizeof(ent->client->pers.statinfo));
 
     // Re-allocate the memory.
-    ent->client->pers.statinfo.weapon_shots = calloc(ATTACK_MAX * level.wpNumWeapons, sizeof(int));
-    ent->client->pers.statinfo.weapon_hits = calloc(ATTACK_MAX * level.wpNumWeapons, sizeof(int));
-    ent->client->pers.statinfo.weapon_headshots = calloc(ATTACK_MAX * level.wpNumWeapons, sizeof(int));
-    if(!ent->client->pers.statinfo.weapon_shots || !ent->client->pers.statinfo.weapon_hits || !ent->client->pers.statinfo.weapon_headshots){
-        Com_Error(ERR_FATAL, "Unable to re-initialize memory for weapon stats! Out of memory?");
-    }
+    G_AllocateStatsMemory(ent);
 
     ent->client->pers.enterTime = level.time;
     ent->client->ps.persistant[PERS_SCORE] = 0;

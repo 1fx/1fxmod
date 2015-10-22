@@ -1894,13 +1894,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
     #endif // _GOLD
 
     // Boe!Man 10/25/10: Make sure their stats are set correctly.
-    ent->client->pers.statinfo.weapon_shots = calloc(ATTACK_MAX * level.wpNumWeapons, sizeof(int));
-    ent->client->pers.statinfo.weapon_hits = calloc(ATTACK_MAX * level.wpNumWeapons, sizeof(int));
-    ent->client->pers.statinfo.weapon_headshots = calloc(ATTACK_MAX * level.wpNumWeapons, sizeof(int));
-    if(!ent->client->pers.statinfo.weapon_shots || !ent->client->pers.statinfo.weapon_hits || !ent->client->pers.statinfo.weapon_headshots){
-        Com_Error(ERR_FATAL, "Unable to initialize memory for weapon stats! Out of memory?");
-    }
-
+    memset(&ent->client->pers.statinfo, 0, sizeof(ent->client->pers.statinfo));
     ent->client->pers.statinfo.lasthurtby = -1;
     ent->client->pers.statinfo.lastclient_hurt = -1;
     memset(ent->client->sess.IgnoredClients, -1, sizeof(ent->client->sess.IgnoredClients));
@@ -1954,6 +1948,11 @@ void ClientBegin( int clientNum, qboolean setTime )
     ent->client = client;
 
     client->pers.connected = CON_CONNECTED;
+
+    // Boe!Man 10/22/15: Allocate their stats memory.
+    if(setTime){
+        G_AllocateStatsMemory(ent);
+    }
 
     ///RxCxW - 09.15.06 - 05:09pm #statusCheck
     if(!ent->client->sess.fileChecked)
@@ -2687,6 +2686,9 @@ void ClientDisconnect( int clientNum )
         G_LogPrintf("ClientDisconnect: [%i] %s\\%s\n", clientNum, ent->client->pers.ip, ent->client->pers.cleanName);
     }
 
+    // Boe!Man 7/27/15: Free allocated stats memory.
+    G_FreeStatsMemory(ent);
+
     trap_UnlinkEntity (ent);
     ent->s.modelindex = 0;
     ent->inuse = qfalse;
@@ -2694,9 +2696,6 @@ void ClientDisconnect( int clientNum )
     ent->client->pers.connected = CON_DISCONNECTED;
     ent->client->ps.persistant[PERS_TEAM] = TEAM_FREE;
     ent->client->sess.team = TEAM_FREE;
-
-    // Boe!Man 7/27/15: Free allocated stats memory.
-    G_FreeStatsMemory(ent);
 
     // Boe!Man 12/27/09: Resetting the Admin 'status' for the disconnected client here, so a future client with the same ID doesn't get his Admin status..
     ent->client->sess.admin = 0;
@@ -2846,11 +2845,34 @@ gentity_t* G_FindNearbyClient ( vec3_t origin, team_t team, float radius, gentit
 
 /*
 ===========
+G_AllocateStatsMemory
+
+Allocates stats memory of a client.
+============
+*/
+
+void G_AllocateStatsMemory(gentity_t *ent)
+{
+    if(ent->client->pers.connected != CON_CONNECTED){
+        return;
+    }
+
+    ent->client->pers.statinfo.weapon_shots = calloc(ATTACK_MAX * level.wpNumWeapons, sizeof(int));
+    ent->client->pers.statinfo.weapon_hits = calloc(ATTACK_MAX * level.wpNumWeapons, sizeof(int));
+    ent->client->pers.statinfo.weapon_headshots = calloc(ATTACK_MAX * level.wpNumWeapons, sizeof(int));
+    if(!ent->client->pers.statinfo.weapon_shots || !ent->client->pers.statinfo.weapon_hits || !ent->client->pers.statinfo.weapon_headshots){
+        Com_Error(ERR_FATAL, "Unable to initialize memory for weapon stats! Out of memory?");
+    }
+}
+
+/*
+===========
 G_FreeStatsMemory
 
 Frees stats memory either of a client or all.
 ============
 */
+
 void G_FreeStatsMemory(gentity_t *ent)
 {
     int i;
@@ -2879,6 +2901,13 @@ void G_FreeStatsMemory(gentity_t *ent)
             tent->pers.statinfo.weapon_headshots = NULL;
         }
     }else{
+        if(ent == NULL)
+            return;
+        if(ent->client == NULL)
+            return;
+        if(ent->client->pers.connected != CON_CONNECTED)
+            return;
+
         if (ent->client->pers.statinfo.weapon_shots != NULL)
             free(ent->client->pers.statinfo.weapon_shots);
         if (ent->client->pers.statinfo.weapon_hits != NULL)
