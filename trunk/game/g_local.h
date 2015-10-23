@@ -1085,6 +1085,7 @@ qboolean    CanDamage           ( gentity_t *targ, vec3_t origin);
 int         G_GetHitLocation    ( gentity_t *target, vec3_t ppoint, vec3_t dir );
 int         G_Damage            ( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t dir, vec3_t point, int damage, int dflags, int mod, int location );
 int         altAttack           (int weapon);
+int         normalAttackMod     (int mod);
 qboolean    G_RadiusDamage      ( vec3_t origin, gentity_t *attacker, float damage, float radius, gentity_t *ignore, int power, int mod);
 void        body_die            ( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, int meansOfDeath, int hitLocation, vec3_t hitDir );
 void        TossClientItems     ( gentity_t *self );

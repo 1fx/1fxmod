@@ -502,7 +502,8 @@ void player_die(
                     {
                         info->hitcount++;
                         info->accuracy = (float)info->hitcount / (float)info->shotcount * 100;
-                        info->weapon_hits[ATTACK_NORMAL * level.wpNumWeapons + mod]++;
+                        info->weapon_hits[((mod > 256) ? ATTACK_ALTERNATE : ATTACK_NORMAL) * level.wpNumWeapons + normalAttackMod(mod)]++;
+
                     }
 
                     info->explosiveKills++;
@@ -1812,6 +1813,22 @@ int altAttack(int weapon){
 }
 
 /*
+================
+normalAttackMod
+10/23/15 - 10:13 PM
+Convenience function to quickly get normalized WP_* value of a mod.
+================
+*/
+
+int normalAttackMod(int mod){
+    if(mod > 256){
+        return mod - 256;
+    }
+
+    return mod;
+}
+
+/*
 ============
 G_RadiusDamage
 ============
@@ -2155,15 +2172,7 @@ qboolean G_RadiusDamage (
                 {
                     stat->hitcount++;
                     stat->accuracy = (float)stat->hitcount / (float)stat->shotcount * 100;
-
-                    if(mod - 256 == MOD_M4_ASSAULT_RIFLE)
-                    {
-                        stat->weapon_hits[ATTACK_ALTERNATE * level.wpNumWeapons + WP_M4_ASSAULT_RIFLE]++;
-                    }
-                    else
-                    {
-                        stat->weapon_hits[ATTACK_NORMAL * level.wpNumWeapons + mod]++;
-                    }
+                    stat->weapon_hits[((mod > 256) ? ATTACK_ALTERNATE : ATTACK_NORMAL) * level.wpNumWeapons + normalAttackMod(mod)]++;
                 }
                 //Ryan
 

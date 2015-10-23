@@ -2901,8 +2901,6 @@ void G_FreeStatsMemory(gentity_t *ent)
             tent->pers.statinfo.weapon_headshots = NULL;
         }
     }else{
-        if(ent == NULL)
-            return;
         if(ent->client == NULL)
             return;
         if(ent->client->pers.connected != CON_CONNECTED)

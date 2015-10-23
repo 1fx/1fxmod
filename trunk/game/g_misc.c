@@ -1666,7 +1666,7 @@ void G_Obituary(gentity_t *target, gentity_t *attacker, int mod, attackType_t at
                 {
                     atrstat->hitcount++;
                     atrstat->accuracy = (float)atrstat->hitcount / (float)atrstat->shotcount * 100;
-                    atrstat->weapon_hits[ATTACK_NORMAL * level.wpNumWeapons + mod]++;
+                    atrstat->weapon_hits[((mod > 256) ? ATTACK_ALTERNATE : ATTACK_NORMAL) * level.wpNumWeapons + normalAttackMod(mod)]++;
                 }
 
                 atrstat->explosiveKills++;

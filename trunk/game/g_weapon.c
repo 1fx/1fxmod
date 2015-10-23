@@ -1,6 +1,6 @@
 // Copyright (C) 2001-2002 Raven Software
 //
-// g_weapon.c 
+// g_weapon.c
 // perform the server side effects of a weapon firing
 
 #include "g_local.h"
@@ -141,12 +141,12 @@ void G_TraceBullet ( weapon_t weapon, trace_t* tr, G2Trace_t G2Trace, vec3_t sta
             anim = &level.ghoulAnimations[traceEnt->client->torso.anim&(~ANIM_TOGGLEBIT)];
             trap_G2API_SetBoneAnim(level.serverGhoul2, 0, "lower_lumbar", anim->firstFrame, anim->firstFrame + anim->numFrames, BONE_ANIM_OVERRIDE_LOOP, 50.0f / anim->frameLerp, traceEnt->client->torso.animTime, -1, 0);
 
-            trap_G2API_SetBoneAngles( level.serverGhoul2, 0, "upper_lumbar", traceEnt->client->ghoulUpperTorsoAngles, BONE_ANGLES_POSTMULT, POSITIVE_X, NEGATIVE_Y, NEGATIVE_Z, 0, 0, level.time ); 
-            trap_G2API_SetBoneAngles( level.serverGhoul2, 0, "lower_lumbar", traceEnt->client->ghoulLowerTorsoAngles, BONE_ANGLES_POSTMULT, POSITIVE_X, NEGATIVE_Y, NEGATIVE_Z, 0, 0, level.time ); 
-            trap_G2API_SetBoneAngles( level.serverGhoul2, 0, "cranium",      traceEnt->client->ghoulHeadAngles, BONE_ANGLES_POSTMULT, POSITIVE_Z, NEGATIVE_Y, POSITIVE_X, 0,0, level.time ); 
-            
+            trap_G2API_SetBoneAngles( level.serverGhoul2, 0, "upper_lumbar", traceEnt->client->ghoulUpperTorsoAngles, BONE_ANGLES_POSTMULT, POSITIVE_X, NEGATIVE_Y, NEGATIVE_Z, 0, 0, level.time );
+            trap_G2API_SetBoneAngles( level.serverGhoul2, 0, "lower_lumbar", traceEnt->client->ghoulLowerTorsoAngles, BONE_ANGLES_POSTMULT, POSITIVE_X, NEGATIVE_Y, NEGATIVE_Z, 0, 0, level.time );
+            trap_G2API_SetBoneAngles( level.serverGhoul2, 0, "cranium",      traceEnt->client->ghoulHeadAngles, BONE_ANGLES_POSTMULT, POSITIVE_Z, NEGATIVE_Y, POSITIVE_X, 0,0, level.time );
+
             trap_G2API_CollisionDetect ( G2Trace, level.serverGhoul2, traceEnt->client->ghoulLegsAngles, traceEnt->r.currentOrigin, level.time, traceEnt->s.number, start, end, vec3_identity, 0, 2 );
-        
+
             // Check to see if anyone should yell SNIPER!
             G_CheckSniperCall ( weapon, &g_entities[passent], traceEnt, G2Trace[0].mEntityNum != traceEnt->s.number ? qtrue : qfalse );
 
@@ -160,11 +160,11 @@ void G_TraceBullet ( weapon_t weapon, trace_t* tr, G2Trace_t G2Trace, vec3_t sta
 
             trap_UnlinkEntity ( traceEnt );
 
-            // Unfortunately because the players bounding box is doubled we have to run 
+            // Unfortunately because the players bounding box is doubled we have to run
             // on more trace to make sure the player is actually able to be hit where they
             // were hit.  The bounding box is doubled to ensure that the entire ghoul model
             // is accounted for, but that means the player will stick through walls too.  To check
-            // for this we run a trace from the hit location on the big bounding box to the 
+            // for this we run a trace from the hit location on the big bounding box to the
             // hit location of the ghoul model and make sure there is nothing solid in the way
             trap_Trace ( &vtr, tr->endpos, NULL, NULL, G2Trace[0].mCollisionPosition, passent, MASK_SHOT&(~CONTENTS_BODY) );
             if ( vtr.entityNum != G2Trace[0].mEntityNum )
@@ -187,9 +187,9 @@ void G_TraceBullet ( weapon_t weapon, trace_t* tr, G2Trace_t G2Trace, vec3_t sta
 
             // ok, we've hit someone who is leaning...
             //Com_Printf(S_COLOR_YELLOW"G_TraceBullet(): - hit client %i who is leaning\n", tr->entityNum);
-                    
+
             other = &g_entities[tr->entityNum];
-                    
+
             // adjust the standard bbox to compensate for
             // different head position and trace against that
             G_UndoAdjustedClientBBox(other);
@@ -215,8 +215,8 @@ void G_TraceBullet ( weapon_t weapon, trace_t* tr, G2Trace_t G2Trace, vec3_t sta
                     last_showBBox = level.time;
                 }
                 // KRIS
-            */  
-                //Ryan april 6 2004 
+            */
+                //Ryan april 6 2004
                 //these are all wrong r.currentOrigin always is at a certain height
                 //above the ground the player is on and if he's ducking it stays the
                 //same so these hit locations will be way off
@@ -295,7 +295,7 @@ void G_TraceBullet ( weapon_t weapon, trace_t* tr, G2Trace_t G2Trace, vec3_t sta
             {
                 G_ShowClientBBox(other);
             }
-        */  
+        */
             trap_LinkEntity ( other );
 
             // trace against smaller, offset bbox
@@ -310,7 +310,7 @@ void G_TraceBullet ( weapon_t weapon, trace_t* tr, G2Trace_t G2Trace, vec3_t sta
 
             // good leaning hit, stop here
             if (tr->entityNum == other->s.number)
-            {   
+            {
                 //Com_Printf(S_COLOR_YELLOW"G_TraceBullet(): - good leaning hit, stop here\n");
                 //Ryan this is off to for the same reason as above
                 /*if (tr->endpos[2] > other->r.currentOrigin[2] + 8)
@@ -321,7 +321,7 @@ void G_TraceBullet ( weapon_t weapon, trace_t* tr, G2Trace_t G2Trace, vec3_t sta
                 {
                     G2Trace[0].mLocation = HL_WAIST;
                 }*/
-                
+
                 if (tr->endpos[2] > (other->r.currentOrigin[2] + other->r.maxs[2]) - 10)
                 {
                     G2Trace[0].mLocation = HL_HEAD;
@@ -331,7 +331,7 @@ void G_TraceBullet ( weapon_t weapon, trace_t* tr, G2Trace_t G2Trace, vec3_t sta
                     G2Trace[0].mLocation = HL_CHEST;
                 }
                 //Ryan
-                
+
                 // reset origins
                 VectorCopy (rOrigin, other->r.currentOrigin);
                 break;
@@ -339,7 +339,7 @@ void G_TraceBullet ( weapon_t weapon, trace_t* tr, G2Trace_t G2Trace, vec3_t sta
 
             // reset origins
             VectorCopy (rOrigin, other->r.currentOrigin);
-                    
+
             // bad hit, ignore them and move on
             //Com_Printf(S_COLOR_YELLOW"G_TraceBullet(): - bad hit, ignore them and move on\n");
             unlinked[unlinkCount++] = other;
@@ -389,7 +389,7 @@ void G_FireBullet ( gentity_t* ent, int weapon, int attack )
     float       damageMult;
     int         hitcount;
     G2Trace_t   G2Trace;
-    
+
     int             maxFx;
     weaponData_t*   weaponDat;
     attackData_t*   attackDat;
@@ -459,15 +459,15 @@ void G_FireBullet ( gentity_t* ent, int weapon, int attack )
         vectoangles(fwd, fireAngs);
     }
 */  // KRIS
-        
+
     // Run a trace for each pellet being fired
-    for (i = 0; i < attackDat->pellets; i++) 
+    for (i = 0; i < attackDat->pellets; i++)
     {
         int location = HL_NONE;
 
         //Ryan april 7 2003
         //add to the number of shots this client has made
-        stat->weapon_shots[attack * level.wpNumWeapons + weapon]++; 
+        stat->weapon_shots[attack * level.wpNumWeapons + weapon]++;
         stat->shotcount++;
         //Ryan
 
@@ -500,19 +500,19 @@ void G_FireBullet ( gentity_t* ent, int weapon, int attack )
         }
     */  // KRIS
 
-        if ( (tr.surfaceFlags & SURF_NOIMPACT) || tr.entityNum == ENTITYNUM_NONE ) 
-        {   
+        if ( (tr.surfaceFlags & SURF_NOIMPACT) || tr.entityNum == ENTITYNUM_NONE )
+        {
             // a big miss
             continue;
         }
-        
+
         traceEnt = &g_entities[ tr.entityNum ];
 
         // snap the endpos to integers, but nudged towards the line
         SnapVectorTowards( tr.endpos, muzzlePoint );
 
         damageMult = 1.0f;
-        if ( traceEnt->takedamage ) 
+        if ( traceEnt->takedamage )
         {
             // Where did the bullet hit?
             if ( ent->client && traceEnt->client )
@@ -533,7 +533,7 @@ void G_FireBullet ( gentity_t* ent, int weapon, int attack )
                     else
                     // KRIS
                     location = G_GetHitLocation ( traceEnt, muzzlePoint, dir );
-                    
+
                     switch ( location )
                     {
                         case HL_FOOT_RT:
@@ -598,7 +598,7 @@ void G_FireBullet ( gentity_t* ent, int weapon, int attack )
                     float   accuracyRatio;
                     float   maxinaccuracy;
                     float   addinaccuracy;
-                    
+
                     location      = HL_NONE;
                     damageMult    = 0;
                     accuracyRatio = 1.0f;
@@ -631,7 +631,7 @@ void G_FireBullet ( gentity_t* ent, int weapon, int attack )
                             {
                                 temp_location = hitLocationConversion[l].hitLocation;
 
-                                // Special cases 
+                                // Special cases
                                 if (hitLocationConversion[l].damageMultiplier==HITLOC_HEAD_DM)  // Head
                                 {
                                     temp_damageMult = 1.0f + 2.0f * accuracyRatio;
@@ -640,7 +640,7 @@ void G_FireBullet ( gentity_t* ent, int weapon, int attack )
                                 {
                                     temp_damageMult = 1.0f + 0.75f * accuracyRatio;
                                 }
-                                else 
+                                else
                                 {
                                     temp_damageMult = hitLocationConversion[l].damageMultiplier;
                                 }
@@ -689,7 +689,7 @@ void G_FireBullet ( gentity_t* ent, int weapon, int attack )
                 if ( dist > attackDat->rV.range * 0.5f )
                 {
                     dist -= (attackDat->rV.range * 0.5f);
-                    
+
                     // Scale oof the damage
                     damageMult *= (1.0f - (dist / (float)checkrange));
                 }
@@ -710,9 +710,9 @@ void G_FireBullet ( gentity_t* ent, int weapon, int attack )
 
                 hitcount++;
                 // Boe!Man 6/2/10: Used for the obiturary and the stats.
-                stat->weapon = weapon; 
+                stat->weapon = weapon;
                 //set the weapons attack used (for G_Obituary)
-                stat->attack = attack; 
+                stat->attack = attack;
 
                 //Add to the number of hits for this client, If it was a teamate dont count it
                 if (!level.gametypeData->teams || !OnSameTeam(ent,traceEnt))
@@ -721,7 +721,7 @@ void G_FireBullet ( gentity_t* ent, int weapon, int attack )
                     stat->weapon_hits[attack * level.wpNumWeapons + weapon]++;
                     //add to the hit total
                     stat->hitcount++;
-                    
+
                     switch ( location )
                     {
                         case HL_FOOT_RT:
@@ -794,21 +794,21 @@ void G_FireBullet ( gentity_t* ent, int weapon, int attack )
             }
 
             // If it was a client that was hit and it wasnt by a teammate when friendly fire is off then send blood!
-            if ( flesh  ) 
+            if ( flesh  )
             {
                 tent = G_TempEntity( tr.endpos, EV_BULLET_HIT_FLESH );
-                
+
                 // send entity and direction
                 tent->s.eventParm = DirToByte( fwd );
                 tent->s.otherEntityNum = ent->s.number;
                 tent->s.otherEntityNum2 = traceEnt->s.number;
 
                 // Pack the shot info into the temp end for gore
-                tent->s.time  = weapon + ((attack&0xFF)<<8) + ((((int)traceEnt->s.apos.trBase[YAW]&0x7FFF) % 360) << 16);       
+                tent->s.time  = weapon + ((attack&0xFF)<<8) + ((((int)traceEnt->s.apos.trBase[YAW]&0x7FFF) % 360) << 16);
                 VectorCopy ( traceEnt->r.currentOrigin, tent->s.angles );
                 SnapVector ( tent->s.angles );
 
-                // Some procedural gore should be ignored because it would look odd on the player. For 
+                // Some procedural gore should be ignored because it would look odd on the player. For
                 // example, if someone gets shot in the head but doesnt die from it.
                 if ( traceEnt->client->ps.stats[STAT_HEALTH] > 0 )
                 {
@@ -817,8 +817,8 @@ void G_FireBullet ( gentity_t* ent, int weapon, int attack )
                         tent->s.time |= GORE_NONE;
                     }
                 }
-            } 
-            else 
+            }
+            else
             {
                 tent = G_TempEntity( tr.endpos, EV_BULLET_HIT_WALL );
                 // send direction and material
@@ -866,8 +866,8 @@ void G_FireBullet ( gentity_t* ent, int weapon, int attack )
         flags |= (hitcount > 2 ? DAMAGE_FORCE_GORE : 0 );
 
         for ( h = 0; h < hitcount; h ++ )
-        {   
-            // We want all pellets counting towards team damage     
+        {
+            // We want all pellets counting towards team damage
             if ( ent->client )
             {
                 ent->client->sess.teamkillForgiveTime = 0;
@@ -907,7 +907,7 @@ gentity_t* G_FireProjectile ( gentity_t *ent, weapon_t weapon, attackType_t atta
     if ( weapon >= WP_M67_GRENADE && weapon < WP_M15_GRENADE && (flags&PROJECTILE_TIMED) && (ent->client->ps.pm_type == PM_NORMAL) )
     {
         gentity_t* nearby;
-        
+
         // Make sure there is someone nearby to hear you yell
         nearby = G_FindNearbyClient ( ent->r.currentOrigin, ent->client->sess.team, 1200, ent );
         if ( nearby )
@@ -918,7 +918,7 @@ gentity_t* G_FireProjectile ( gentity_t *ent, weapon_t weapon, attackType_t atta
 
     // snap to integer coordinates for more efficient network bandwidth usage
     SnapVector( muzzlePoint );
-    
+
     VectorCopy(ent->client->ps.viewangles, fireAngs);
 
     if ( ent->client->ps.pm_flags & PMF_LEANING )
@@ -928,7 +928,7 @@ gentity_t* G_FireProjectile ( gentity_t *ent, weapon_t weapon, attackType_t atta
 
     AngleVectors( fireAngs, fwd, right, up );
 
-    for (i = 0; i < attackDat->pellets; i++) 
+    for (i = 0; i < attackDat->pellets; i++)
     {
         vec3_t      dir;
 
@@ -948,14 +948,14 @@ gentity_t* G_FireProjectile ( gentity_t *ent, weapon_t weapon, attackType_t atta
         stat->accuracy = (float)stat->hitcount / (float)stat->shotcount * 100;
 
         VectorCopy( fwd, dir );
-        
+
         if ( inaccuracy != 0)
         {   // add in some spread / scatter
             dir[0] += flrand(-0.1 * inaccuracy, 0.1 * inaccuracy);
             dir[1] += flrand(-0.1 * inaccuracy, 0.1 * inaccuracy);
             dir[2] += flrand(-0.1 * inaccuracy, 0.1 * inaccuracy);
         }
-        
+
         missile = G_CreateMissile( muzzlePoint, dir, attackDat->rV.velocity, minimum(projectileLifetime, 10000), ent, attack );
 
         missile->classname = ammoData[attackDat->ammoIndex].name;
@@ -992,13 +992,13 @@ gentity_t* G_FireProjectile ( gentity_t *ent, weapon_t weapon, attackType_t atta
         }
 
         if (flags & PROJECTILE_TIMED)
-        {   
+        {
             missile->s.eFlags |= EF_BOUNCE_SCALE;
             missile->think = G_GrenadeThink;
             missile->bounceScale = attackDat->bounceScale;
         }
         else
-        {   
+        {
             // we don't want it to bounce, just blow up
             missile->bounceScale = 0;
             missile->think = G_ExplodeMissile;
@@ -1026,7 +1026,7 @@ SnapVectorTowards
 
 Round a vector to integers for more efficient network
 transmission, but make sure that it rounds towards a given point
-rather than blindly truncating.  This prevents it from truncating 
+rather than blindly truncating.  This prevents it from truncating
 into a wall.
 ======================
 */
@@ -1049,7 +1049,7 @@ G_FireWeapon
 Fires either a bullet or a projectile
 ===============
 */
-gentity_t* G_FireWeapon( gentity_t *ent, attackType_t attack ) 
+gentity_t* G_FireWeapon( gentity_t *ent, attackType_t attack )
 {
     weaponData_t *weaponDat;
     attackData_t *attackDat;
@@ -1163,8 +1163,8 @@ void* G_InitHitModel ( void )
     ghoul2 = NULL;
 
     // Initialize the ghoul2 model
-    trap_G2API_InitGhoul2Model ( &ghoul2, 
-                                 "models/characters/average_sleeves/average_sleeves.glm", 
+    trap_G2API_InitGhoul2Model ( &ghoul2,
+                                 "models/characters/average_sleeves/average_sleeves.glm",
                                  0, 0, 0, (1<<4), 2 );
 
     // Verify it
