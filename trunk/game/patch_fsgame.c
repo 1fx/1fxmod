@@ -20,7 +20,7 @@ The actual code of where we change the fs_game CVAR to the appropriate value.
 
 void Patch_fsgame(char *s, const char *key, const char *value)
 {
-    if (strcmp(key, "fs_game") == 0 && level.clientMod != CL_NONE){
+    if (strcmp(key, "fs_game") == 0){
         #ifdef _GOLD
         if (level.clientMod == CL_ROCMOD){
             if(g_enforce1fxAdditions.integer){
@@ -28,6 +28,8 @@ void Patch_fsgame(char *s, const char *key, const char *value)
             }else{
                 Info_SetValueForKey_Big(s, key, "rocmod");
             }
+        }else if(level.clientMod == CL_NONE && g_enforce1fxAdditions.integer){
+            Info_SetValueForKey_Big(s, key, "1fx.additions");
         }
         #else
         if (level.clientMod == CL_RPM){

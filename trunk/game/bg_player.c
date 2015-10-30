@@ -35,7 +35,7 @@ int                     bg_outfittingCount     = 0;
 char                    bg_availableOutfitting[WP_MAX_WEAPONS] = {-1};
 
 #ifndef _GOLD
-int bg_outfittingGroups[OUTFITTING_GROUP_MAX][MAX_OUTFITTING_GROUPITEM] = 
+int bg_outfittingGroups[OUTFITTING_GROUP_MAX][MAX_OUTFITTING_GROUPITEM] =
 {
     { MODELINDEX_WEAPON_AK74,       MODELINDEX_WEAPON_M4,       MODELINDEX_WEAPON_USAS12, MODELINDEX_WEAPON_MSG90A1,    MODELINDEX_WEAPON_M60,      MODELINDEX_WEAPON_RPG7,  MODELINDEX_WEAPON_MM1, -1, -1, -1 },
     { MODELINDEX_WEAPON_M590,       MODELINDEX_WEAPON_MICROUZI, MODELINDEX_WEAPON_M3A1,     -1, -1, -1, -1, -1, -1, - 1 },
@@ -44,7 +44,7 @@ int bg_outfittingGroups[OUTFITTING_GROUP_MAX][MAX_OUTFITTING_GROUPITEM] =
     { MODELINDEX_ARMOR,             MODELINDEX_NIGHTVISION,     MODELINDEX_THERMAL,         -1,                         -1, -1, -1, -1, -1, -1 },
 };
 #else
-int bg_outfittingGroups[OUTFITTING_GROUP_MAX][MAX_OUTFITTING_GROUPITEM] = 
+int bg_outfittingGroups[OUTFITTING_GROUP_MAX][MAX_OUTFITTING_GROUPITEM] =
 {
     { MODELINDEX_WEAPON_AK74,       MODELINDEX_WEAPON_M4,       MODELINDEX_WEAPON_SIG551,   MODELINDEX_WEAPON_USAS12, MODELINDEX_WEAPON_MSG90A1,    MODELINDEX_WEAPON_M60,  MODELINDEX_WEAPON_MP5,  MODELINDEX_WEAPON_RPG7,  MODELINDEX_WEAPON_MM1, -1, -1, -1 },
     { MODELINDEX_WEAPON_M590,       MODELINDEX_WEAPON_MICROUZI, MODELINDEX_WEAPON_M3A1,     -1, -1, -1, -1, -1, -1, -1, -1, -1 },
@@ -61,9 +61,9 @@ PM_StartLegsAnim
 Starts a new leg animation for the given playerstate
 ===================
 */
-static void PM_StartLegsAnim( playerState_t* ps, int anim ) 
+static void PM_StartLegsAnim( playerState_t* ps, int anim )
 {
-    if ( ps->pm_type >= PM_DEAD ) 
+    if ( ps->pm_type >= PM_DEAD )
     {
         return;
     }
@@ -78,13 +78,13 @@ PM_ContinueLegsAnim
 Continues running the given leg animation, if its a new animation then it is started
 ===================
 */
-void PM_ContinueLegsAnim( playerState_t* ps, int anim ) 
+void PM_ContinueLegsAnim( playerState_t* ps, int anim )
 {
-    if ( ( ps->legsAnim & ~ANIM_TOGGLEBIT ) == anim ) 
+    if ( ( ps->legsAnim & ~ANIM_TOGGLEBIT ) == anim )
     {
         return;
     }
-    
+
     PM_StartLegsAnim( ps, anim );
 }
 
@@ -93,7 +93,7 @@ void PM_ContinueLegsAnim( playerState_t* ps, int anim )
 PM_ForceLegsAnim
 ===================
 */
-void PM_ForceLegsAnim( playerState_t* ps, int anim) 
+void PM_ForceLegsAnim( playerState_t* ps, int anim)
 {
     PM_StartLegsAnim( ps, anim );
 }
@@ -103,18 +103,18 @@ void PM_ForceLegsAnim( playerState_t* ps, int anim)
 PM_StartTorsoAnim
 ===================
 */
-void PM_StartTorsoAnim( playerState_t* ps, int anim, int time ) 
+void PM_StartTorsoAnim( playerState_t* ps, int anim, int time )
 {
     if ( anim == -1 )
     {
         return;
     }
 
-    if ( ps->pm_type >= PM_DEAD ) 
+    if ( ps->pm_type >= PM_DEAD )
     {
         return;
     }
-    
+
     ps->torsoAnim  = ( ( ps->torsoAnim & ANIM_TOGGLEBIT ) ^ ANIM_TOGGLEBIT ) | anim;
     ps->torsoTimer = time;
 }
@@ -126,18 +126,18 @@ PM_ContinueTorsoAnim
 Continues running the given torso animation, if its a new animation then it is started
 ===================
 */
-static void PM_ContinueTorsoAnim( playerState_t* ps, int anim ) 
+static void PM_ContinueTorsoAnim( playerState_t* ps, int anim )
 {
     if ( anim == -1 )
     {
         return;
     }
 
-    if ( ( ps->torsoAnim & ~ANIM_TOGGLEBIT ) == anim ) 
+    if ( ( ps->torsoAnim & ~ANIM_TOGGLEBIT ) == anim )
     {
         return;
     }
-    
+
     PM_StartTorsoAnim( ps, anim, 0 );
 }
 
@@ -148,9 +148,9 @@ PM_TorsoAnimation
 Sets the current torso animation based on the given playerstate
 ==============
 */
-void PM_TorsoAnimation( playerState_t* ps ) 
+void PM_TorsoAnimation( playerState_t* ps )
 {
-    switch ( ps->weaponstate ) 
+    switch ( ps->weaponstate )
     {
         case WEAPON_SPAWNING:
         case WEAPON_READY:
@@ -226,10 +226,10 @@ TInventoryTemplate *BG_ParseInventory ( TGPGroup group )
             top = inv;
         }
 
-        // Move to the next group   
+        // Move to the next group
         subGroup = trap_GPG_GetNext ( subGroup );
     }
-    
+
     return top;
 }
 
@@ -285,7 +285,7 @@ TSkinTemplate *BG_ParseSkins( TCharacterTemplate* character, TGPGroup group )
 #else
             Com_sprintf( temp, sizeof(temp), "models/characters/skins/%s.g2skin", skin->mSkin );
             len = trap_FS_FOpenFile( temp, &f, FS_READ );
-            if (f != 0) 
+            if (f != 0)
             {
                 trap_FS_FCloseFile(f);
                 validSkin = qtrue;
@@ -303,7 +303,7 @@ TSkinTemplate *BG_ParseSkins( TCharacterTemplate* character, TGPGroup group )
             skin->mNext = character->mSkins;
             character->mSkins = skin;
 
-            // If the character isnt deathmatch then dont add it to the 
+            // If the character isnt deathmatch then dont add it to the
             // identity list
             if ( character->mDeathmatch && validSkin)
             {
@@ -339,7 +339,7 @@ TSkinTemplate *BG_ParseSkins( TCharacterTemplate* character, TGPGroup group )
         // Move to the next sub group in the parsers list
         subGroup = trap_GPG_GetNext ( subGroup );
     }
-    
+
     return character->mSkins;
 }
 
@@ -386,7 +386,7 @@ TModelSounds *BG_ParseModelSounds( TGPGroup group )
         if ( trap_GPV_IsList ( pairs ) )
         {
             TGPValue list;
-            
+
             // Run through the list
             list = trap_GPV_GetList ( pairs );
             while ( list && sounds->mCount < MAX_MODEL_SOUNDS )
@@ -411,7 +411,7 @@ TModelSounds *BG_ParseModelSounds( TGPGroup group )
 =================
 BG_ParseItemFile
 
-Parses the item file.  The item file contains a list of all of the 
+Parses the item file.  The item file contains a list of all of the
 items that can be used as inventory items for a given skin
 =================
 */
@@ -430,7 +430,7 @@ qboolean BG_ParseItemFile ( void )
     {
         return qfalse;
     }
-    
+
     // Boe!Man 9/27/12: Native on newer Linux-based systems fix.
 #ifdef __linux__
     bg_itemTemplates = NULL;
@@ -583,7 +583,7 @@ TItemTemplate *BG_FindItemTemplate(const char *name)
 =================
 BG_LinkTemplates
 
-Cross links the various templates 
+Cross links the various templates
 =================
 */
 static void BG_LinkTemplates(void)
@@ -595,7 +595,7 @@ static void BG_LinkTemplates(void)
     current = bg_characterTemplates;
     while(current)
     {
-        // If this template has a parent then find it and link it up as 
+        // If this template has a parent then find it and link it up as
         // its parent.  Ensure that the parent doesnt link back to itself
         current->mParent = BG_FindCharacterTemplate(current->mParentName);
         if (current->mParent == current)
@@ -616,7 +616,7 @@ static void BG_LinkTemplates(void)
         inv = current->mInventory;
         while(inv)
         {
-            inv->mItem = BG_FindItemTemplate(inv->mName);       
+            inv->mItem = BG_FindItemTemplate(inv->mName);
             inv = inv->mNext;
         }
 
@@ -646,7 +646,7 @@ static void BG_LinkTemplates(void)
 BG_ParseNPCFiles
 
 Parses all the the .npc files in the npc directory and
-stores their info into global lists.  
+stores their info into global lists.
 =================
 */
 qboolean BG_ParseNPCFiles ( void )
@@ -661,7 +661,7 @@ qboolean BG_ParseNPCFiles ( void )
     char                temp[1024];
     char                *fileptr;
 
-    // Clear the current list 
+    // Clear the current list
     bg_characterTemplates = NULL;
 
     // Grab the list of NPC files
@@ -739,7 +739,7 @@ qboolean BG_ParseNPCFiles ( void )
                     newTemplate->mFormalName = trap_VM_LocalStringAlloc ( temp );
                 }
 
-                // Template model 
+                // Template model
                 trap_GPG_FindPairValue ( subGroup, "Model", "", temp );
                 if ( temp[0] )
                 {
@@ -771,7 +771,7 @@ qboolean BG_ParseNPCFiles ( void )
 
     // Link up all the templates
     BG_LinkTemplates();
-    
+
     return qtrue;
 }
 
@@ -788,7 +788,7 @@ TModelSounds* BG_GetModelSoundsGroup ( const char* Identity, const char* SoundGr
     TIdentity           *identity;
     TCharacterTemplate  *character;
     TModelSounds        *sounds;
-    
+
     // Grab the identity in question
     identity = BG_FindIdentity (Identity );
     if ( !identity )
@@ -857,7 +857,7 @@ const char *BG_GetModelSound ( const char *Identity, const char *SoundGroup, int
     // Grab the sounds
     sounds = BG_GetModelSoundsGroup( Identity, SoundGroup );
     if ( !sounds )
-    {       
+    {
         return NULL;
     }
 
@@ -934,7 +934,7 @@ TIdentity* BG_FindTeamIdentity ( const char* teamName, int index )
     {
         return NULL;
     }
-    
+
     if ( index != -1 )
     {
         if ( index >= count )
@@ -1026,67 +1026,67 @@ int BG_ParseSkin ( const char* filename, char* pairs, int pairsSize )
 BG_SwingAngles
 ==================
 */
-static void BG_SwingAngles ( 
-    float       destination, 
-    float       swingTolerance, 
+static void BG_SwingAngles (
+    float       destination,
+    float       swingTolerance,
     float       clampTolerance,
-    float       speed, 
-    float       *angle, 
-    qboolean    *swinging, 
-    int         frameTime 
-    ) 
+    float       speed,
+    float       *angle,
+    qboolean    *swinging,
+    int         frameTime
+    )
 {
     float   swing;
     float   move;
     float   scale;
 
-    if ( !*swinging ) 
+    if ( !*swinging )
     {
         // see if a swing should be started
         swing = AngleSubtract( *angle, destination );
-        if ( swing > swingTolerance || swing < -swingTolerance ) 
+        if ( swing > swingTolerance || swing < -swingTolerance )
         {
             *swinging = qtrue;
         }
     }
 
-    if ( !*swinging ) 
+    if ( !*swinging )
     {
         return;
     }
-    
+
     // modify the speed depending on the delta
     // so it doesn't seem so linear
     swing = AngleSubtract( destination, *angle );
     scale = fabs( swing );
-    if ( scale < swingTolerance * 0.5 ) 
+    if ( scale < swingTolerance * 0.5 )
     {
         scale = 0.5;
-    } 
-    else if ( scale < swingTolerance ) 
+    }
+    else if ( scale < swingTolerance )
     {
         scale = 1.0;
-    } 
-    else 
+    }
+    else
     {
         scale = 2.0;
     }
 
     // swing towards the destination angle
-    if ( swing >= 0 ) 
+    if ( swing >= 0 )
     {
         move = frameTime * scale * speed;
-        if ( move >= swing ) 
+        if ( move >= swing )
         {
             move = swing;
             *swinging = qfalse;
         }
         *angle = AngleMod( *angle + move );
-    } 
-    else if ( swing < 0 ) 
+    }
+    else if ( swing < 0 )
     {
         move = frameTime * scale * -speed;
-        if ( move <= swing ) 
+        if ( move <= swing )
         {
             move = swing;
             *swinging = qfalse;
@@ -1096,11 +1096,11 @@ static void BG_SwingAngles (
 
     // clamp to no more than tolerance
     swing = AngleSubtract( destination, *angle );
-    if ( swing > clampTolerance ) 
+    if ( swing > clampTolerance )
     {
         *angle = AngleMod( destination - (clampTolerance - 1) );
-    } 
-    else if ( swing < -clampTolerance ) 
+    }
+    else if ( swing < -clampTolerance )
     {
         *angle = AngleMod( destination + (clampTolerance - 1) );
     }
@@ -1145,10 +1145,10 @@ float BG_CalculateLeanOffset ( int leanTime )
 BG_PlayerAngles
 =================
 */
-void BG_PlayerAngles ( 
+void BG_PlayerAngles (
 
-    vec3_t      startAngles, 
-    vec3_t      legs[3], 
+    vec3_t      startAngles,
+    vec3_t      legs[3],
 
     vec3_t      legsAngles,             // out
     vec3_t      lowerTorsoAngles,
@@ -1157,14 +1157,14 @@ void BG_PlayerAngles (
 
     int         leanOffset,
 
-    int         painTime, 
-    int         painDirection, 
+    int         painTime,
+    int         painDirection,
     int         currentTime,
 
     animInfo_t* torsoInfo,
     animInfo_t* legsInfo,
 
-    int         frameTime, 
+    int         frameTime,
     vec3_t      realvelocity,
     qboolean    dead,
     float       movementDir,
@@ -1181,13 +1181,13 @@ void BG_PlayerAngles (
     VectorCopy ( realvelocity, velocity );
     headAngles[YAW] = AngleMod( headAngles[YAW] );
     VectorClear( legsAngles );
-    VectorClear( lowerTorsoAngles );    
+    VectorClear( lowerTorsoAngles );
     VectorClear( upperTorsoAngles );
 
     // --------- yaw -------------
 
     // allow yaw to drift a bit
-    if ( ( legsInfo->anim & ~ANIM_TOGGLEBIT ) != TORSO_IDLE_PISTOL  ) 
+    if ( ( legsInfo->anim & ~ANIM_TOGGLEBIT ) != TORSO_IDLE_PISTOL  )
     {
         // if not standing still, always point all in the same direction
         torsoInfo->yawing   = qtrue;
@@ -1198,11 +1198,11 @@ void BG_PlayerAngles (
     speed = VectorNormalize( velocity );
 
     // adjust legs for movement dir
-    if (dead) 
+    if (dead)
     {
         dir = 0;
-    } 
-    else 
+    }
+    else
     {
         dir = movementDir;
 
@@ -1211,7 +1211,7 @@ void BG_PlayerAngles (
             dir = 0;
         }
     }
-    
+
 //  legsAngles[YAW]   = headAngles[YAW] + 2 * movementOffsets[ dir ];
 //  torsoAngles[YAW]  = headAngles[YAW] + 2 * movementOffsets[ dir ];
     legsAngles[YAW]   = headAngles[YAW] + 2 * movementOffsets[ dir ];
@@ -1260,7 +1260,7 @@ void BG_PlayerAngles (
         headAngles[YAW] -= ((float)leanOffset/LEAN_OFFSET) * dest;
         headAngles[ROLL] -= ((float)leanOffset * 1.25f);
     }
-    else if ( speed ) 
+    else if ( speed )
     {
         vec3_t  axis[3];
         float   side;
@@ -1284,10 +1284,10 @@ void BG_PlayerAngles (
         AnglesToAxis( legsAngles, legs );
 
         // Apply the rotations
-        trap_G2API_SetBoneAngles(ghoul2, 0, "upper_lumbar", upperTorsoAngles, BONE_ANGLES_POSTMULT, POSITIVE_X, NEGATIVE_Y, NEGATIVE_Z, 0, 0, currentTime); 
+        trap_G2API_SetBoneAngles(ghoul2, 0, "upper_lumbar", upperTorsoAngles, BONE_ANGLES_POSTMULT, POSITIVE_X, NEGATIVE_Y, NEGATIVE_Z, 0, 0, currentTime);
 
-        trap_G2API_SetBoneAngles(ghoul2, 0, "lower_lumbar", lowerTorsoAngles, BONE_ANGLES_POSTMULT, POSITIVE_X, NEGATIVE_Y, NEGATIVE_Z, 0, 0, currentTime); 
-        trap_G2API_SetBoneAngles(ghoul2, 0, "cranium", headAngles, BONE_ANGLES_POSTMULT, POSITIVE_Z, NEGATIVE_Y, POSITIVE_X, 0,0, currentTime); 
+        trap_G2API_SetBoneAngles(ghoul2, 0, "lower_lumbar", lowerTorsoAngles, BONE_ANGLES_POSTMULT, POSITIVE_X, NEGATIVE_Y, NEGATIVE_Z, 0, 0, currentTime);
+        trap_G2API_SetBoneAngles(ghoul2, 0, "cranium", headAngles, BONE_ANGLES_POSTMULT, POSITIVE_Z, NEGATIVE_Y, POSITIVE_X, 0,0, currentTime);
     }
 }
 
@@ -1299,7 +1299,7 @@ Read a configuration file containing animation counts and rates
 models/players/visor/animation.cfg, etc
 ======================
 */
-qboolean BG_ParseAnimationFile ( const char *filename, animation_t* animations ) 
+qboolean BG_ParseAnimationFile ( const char *filename, animation_t* animations )
 {
     const char      *text_p;
     int             len;
@@ -1319,7 +1319,7 @@ qboolean BG_ParseAnimationFile ( const char *filename, animation_t* animations )
         return qfalse;
     ///End  - 09.10.06 - 12:21am
 
-    if ( len <= 0 || len >= sizeof( text ) - 1 ) 
+    if ( len <= 0 || len >= sizeof( text ) - 1 )
     {
         ///RxCxW - 09.10.06 - 12:21am #fileHandles
         trap_FS_FCloseFile( f );
@@ -1346,11 +1346,11 @@ qboolean BG_ParseAnimationFile ( const char *filename, animation_t* animations )
     }
 
     // read information for each frame
-    while(1) 
+    while(1)
     {
         token = COM_Parse( &text_p );
 
-        if ( !token || !token[0]) 
+        if ( !token || !token[0])
         {
             break;
         }
@@ -1366,33 +1366,33 @@ qboolean BG_ParseAnimationFile ( const char *filename, animation_t* animations )
         }
 
         token = COM_Parse( &text_p );
-        if ( !token ) 
+        if ( !token )
         {
             break;
         }
         animations[animNum].firstFrame = atoi( token );
 
         token = COM_Parse( &text_p );
-        if ( !token ) 
+        if ( !token )
         {
             break;
         }
         animations[animNum].numFrames = atoi( token );
 
         token = COM_Parse( &text_p );
-        if ( !token ) 
+        if ( !token )
         {
             break;
         }
         animations[animNum].loopFrames = atoi( token );
 
         token = COM_Parse( &text_p );
-        if ( !token ) 
+        if ( !token )
         {
             break;
         }
         fps = atof( token );
-        if ( fps == 0 ) 
+        if ( fps == 0 )
         {
             fps = 1;//Don't allow divide by zero error
         }
@@ -1498,8 +1498,8 @@ void BG_DecompressOutfitting ( const char* compressed, goutfitting_t* outfitting
         {
             item = 0;
             continue;
-        }           
-                            
+        }
+
         // No initialized
         if ( bg_availableOutfitting[0] == -1 )
         {
@@ -1527,7 +1527,7 @@ void BG_DecompressOutfitting ( const char* compressed, goutfitting_t* outfitting
             }
         }
 
-        // Ok to set the item now   
+        // Ok to set the item now
         outfitting->items[group] = item;
     }
 }
@@ -1626,7 +1626,7 @@ qboolean BG_ParseOutfittingTemplate ( const char* fileName, goutfitting_t* outfi
     if ( pairs )
     {
         TGPValue list;
-        
+
         // Run through the list
         list = trap_GPV_GetList ( pairs );
         while ( list )
@@ -1660,7 +1660,7 @@ qboolean BG_ParseOutfittingTemplate ( const char* fileName, goutfitting_t* outfi
     if ( pairs )
     {
         TGPValue list;
-        
+
         // Run through the list
         list = trap_GPV_GetList ( pairs );
         while ( list )
@@ -1674,19 +1674,19 @@ qboolean BG_ParseOutfittingTemplate ( const char* fileName, goutfitting_t* outfi
             for( i = WP_NONE + 1, item=NULL; i < level.wpNumWeapons; i++ )
             {
                 if ( Q_stricmp(bg_weaponNames[i], temp ) == 0)
-                {                   
+                {
                     // translate the weapon index into an item index.
-                    item = BG_FindWeaponItem ( (weapon_t) i );                  
+                    item = BG_FindWeaponItem ( (weapon_t) i );
                     break;
                 }
-            }           
+            }
 
             // If the weapon translated into an item ok then drop it
             // in its appropriate slot.
             if ( item )
             {
                 int index;
-    
+
                 // Make sure outfitting groups that have weapons that are not available
                 // do not show up
                 if ( !BG_IsWeaponAvailableForOutfitting ( (weapon_t)item->giTag, 2 ) )
@@ -1736,7 +1736,7 @@ int BG_ParseOutfittingTemplates ( qboolean force )
         return bg_outfittingCount;
     }
 
-    // Clear the current list 
+    // Clear the current list
     bg_outfittingCount = 1;
     strcpy ( bg_outfittings[0].name, "CUSTOM" );
 

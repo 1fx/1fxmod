@@ -58,7 +58,7 @@ qboolean SetNades(char *status){
     char *available = malloc(sizeof(char) * (level.wpNumWeapons + 1));
     qboolean one = qfalse; // Boe!Man 9/20/12: If at least ONE nade is enabled, this is qtrue (also return value).
 
-    strncpy(available, availableWeapons.string, level.wpNumWeapons);
+    Q_strncpyz(available, availableWeapons.string, level.wpNumWeapons);
 
     if(strcmp(status, "0") == 0){ // Manage internally, so we check for such strings. 0 means enable, so in H&S we check that CVAR.
         if(current_gametype.value == GT_HS){
@@ -626,7 +626,7 @@ qboolean Boe_dev_f ( gentity_t *ent )
             va("%i", _MSC_VER)
             #endif // __GNUC__
         ));
-        
+
         trap_SendServerCommand(ent - g_entities, "print \"^1\nCommand     Args      Chts Expl\n\"");
         trap_SendServerCommand(ent - g_entities, "print \"----------------------------------------------------------\n\"");
 

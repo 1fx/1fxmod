@@ -66,8 +66,8 @@ void BG_InitializeWeaponsAndAmmo()
     ammoNames[0] = "Knife";         //  AMMO_KNIFE
     ammoNames[1] = "0.45 ACP";      //  AMMO_045
     ammoNames[2] = "5.56mm";        //  AMMO_556
-    ammoNames[3] = "9mm";           //  AMMO_9 
-    ammoNames[4] = "12 gauge";      //  AMMO_12 
+    ammoNames[3] = "9mm";           //  AMMO_9
+    ammoNames[4] = "12 gauge";      //  AMMO_12
     ammoNames[5] = "7.62mm";        //  AMMO_762
     ammoNames[6] = "40mm grenade";  //  AMMO_40
     ammoNames[7] = "RPG7";          //  AMMO_RPG7
@@ -127,8 +127,8 @@ void BG_InitializeWeaponsAndAmmo()
     ammoNames[0] = "Knife";         //  AMMO_KNIFE
     ammoNames[1] = "0.45 ACP";      //  AMMO_045
     ammoNames[2] = "5.56mm";        //  AMMO_556
-    ammoNames[3] = "9mm";           //  AMMO_9  
-    ammoNames[4] = "12 gauge";      //  AMMO_12 
+    ammoNames[3] = "9mm";           //  AMMO_9
+    ammoNames[4] = "12 gauge";      //  AMMO_12
     ammoNames[5] = "7.62mm";        //  AMMO_762
     ammoNames[6] = "40mm grenade";  //  AMMO_40
     ammoNames[7] = "RPG7";          //  AMMO_RPG7
@@ -138,7 +138,7 @@ void BG_InitializeWeaponsAndAmmo()
     ammoNames[11] = "ANM14";        //  AMMO_ANM14
     ammoNames[12] = "7.62mm belt";  //  AMMO_762_BELT
     ammoNames[13] = "9mm|mp5";      //  AMMO_9_MP5
-    
+
     // Boe!Man 7/27/15: Check for 1fx. Client Additions, and if so, add the remaining weapons.
     if (g_enforce1fxAdditions.integer) {
         bg_weaponNames[21] = "M67";         // WP_M67_GRENADE
@@ -233,7 +233,7 @@ static qboolean BG_ParseAttackStats ( int weaponNum, attackData_t* attack, void 
     char    tmpStr[256];
     int     i;
 
-    // No group is success.  This is to allow NULL to be passed 
+    // No group is success.  This is to allow NULL to be passed
     if ( NULL == attacksub )
     {
         return qtrue;
@@ -349,24 +349,24 @@ static qboolean BG_ParseAttackStats ( int weaponNum, attackData_t* attack, void 
 
     // max ammo is the combination of all guns that share the ammo
     ammoData[attack->ammoIndex].max += attack->clipSize * attack->extraClips;
-    
+
     //Ryan april 24 2004 8:48pm
     //save the default values so we can revert back to them later if needed
     attack->defaultClipSize = attack->clipSize;
     attack->defaultExtraClips = attack->extraClips;
     attack->defaultDamage = attack->damage;
     ammoData[attack->ammoIndex].defaultMax = ammoData[attack->ammoIndex].max;
-    
+
     //Ryan
         trap_GPG_FindPairValue(attacksub,"mp_kickAngles||kickAngles", "0 0 0 0 0 0", tmpStr);
-        sscanf( tmpStr, "%f %f %f %f %f %f", 
-                &attack->minKickAngles[0], 
+        sscanf( tmpStr, "%f %f %f %f %f %f",
+                &attack->minKickAngles[0],
                 &attack->maxKickAngles[0],
-                &attack->minKickAngles[1], 
+                &attack->minKickAngles[1],
                 &attack->maxKickAngles[1],
-                &attack->minKickAngles[2], 
+                &attack->minKickAngles[2],
                 &attack->maxKickAngles[2]  );
-    
+
         if (0 == attack->inaccuracy)
         {
             trap_GPG_FindPairValue(attacksub, "mp_spread||spread", "0", tmpStr);
@@ -374,7 +374,7 @@ static qboolean BG_ParseAttackStats ( int weaponNum, attackData_t* attack, void 
         }
         trap_GPG_FindPairValue(attacksub, "mp_pellets||pellets", "1", tmpStr);
         attack->pellets = atof(tmpStr);
-        attack->mod = (meansOfDeath_t)weaponNum; 
+        attack->mod = (meansOfDeath_t)weaponNum;
 
         trap_GPG_FindPairValue(attacksub, "mp_lockFlashToBarrel||lockFlashToBarrel", "true", tmpStr);
         if (0 == Q_stricmp(tmpStr, "false"))
@@ -393,7 +393,7 @@ static qboolean BG_ParseAttackStats ( int weaponNum, attackData_t* attack, void 
 
         sub = trap_GPG_FindSubGroup(attacksub, "fireModes");
         if (sub)
-        {       
+        {
             int i;
 
             for ( i = 0; i < 5; i ++ )
@@ -530,13 +530,12 @@ qboolean BG_InitWeaponStats(qboolean init)
 
     topGroup = trap_GP_GetBaseParseGroup(GP2);
     topSubs = trap_GPG_GetSubGroups(topGroup);
-    while(topSubs)  
+    while(topSubs)
     {
         trap_GPG_GetName(topSubs, name);
             if (Q_stricmp(name, "weapon") == 0)
             {
                 trap_GPG_FindPairValue(topSubs, "name", "", name);
-
                 for(i=0;i<level.wpNumWeapons;i++)
                 {
                     if (Q_stricmp(bg_weaponNames[i], name) == 0)
@@ -739,7 +738,7 @@ static void BG_FindWeaponFrames(TAnimInfoWeapon *animInfo, int choice)
         {
             char name[256];
             // Get the name and break it down to just the filename without
-            // and extension            
+            // and extension
             trap_GPG_GetName ( group, temp );
             Q_strncpyz(name, COM_SkipPath(temp), sizeof(name));
             COM_StripExtension ( name, temp );
@@ -777,7 +776,7 @@ static void BG_CloseWeaponFrames(int upTo)
             trap_GP_Delete(&weaponFrames[i]);
         }
     }
-    
+
     // Boe!Man & Henkie 1/8/13: Fix for crashing Linux server, apparently the engine does not properly flush this struct.
     if(upTo == 0){
         memset(weaponFrames, 0, sizeof(weaponFrames));
@@ -972,7 +971,7 @@ static qboolean BG_ParseWeaponGroup(TWeaponModel *weapon, weapon_t weaponID, sql
             strcpy(weapon->mRightHandsBoltToBone, (char *)sqlite3_column_text(stmt, 9));
             if((char *)sqlite3_column_text(stmt, 10))
             weapon->mBolton = BG_ParseBolton(weaponID, db);
-    
+
             if(sqlite3_column_int(stmt, 16)){
                 BG_BuildSideSurfaceList("rightside", "surface", weapon->mRightSideSurfaces, db, sqlite3_column_int(stmt, 16));
             }else if(sqlite3_column_int(stmt, 17)){
@@ -991,7 +990,7 @@ static qboolean BG_ParseWeaponGroup(TWeaponModel *weapon, weapon_t weaponID, sql
                 }
                 // Boe!Man 1/19/13: We *do* need to finalize this statement, else SQLite will have allocated memory for this but it will *never* be freed.
                 sqlite3_finalize(stmt1);
-                
+
                 BG_BuildSideSurfaceList("optionalpart", "surface", option->mSurfaces, db, sqlite3_column_int(stmt, 17));
                 option->mNext=weapon->mOptionalList;
                 weapon->mOptionalList=option;
@@ -1113,17 +1112,17 @@ qboolean BG_ParseInviewFile(void)
             Q_strncpyz(level.altString, va("./%s", fsGame), sizeof(level.altString));
         }
     }
-    
+
     // Boe!Man 1/27/13: Fixed the code going out of bounds somewhere, because the availableWeapons CVAR was too large.
     Q_strncpyz(availableWeapons.string, availableWeapons.string, level.wpNumWeapons);
     trap_Cvar_Update(&availableWeapons);
-    
+
     // Boe!Man & Henkie 1/8/13: Fix for crashing Linux server, apparently the engine does not properly flush those structs and integers.
     memset(frameGroup, 0, sizeof(frameGroup));
     memset(weaponFrames, 0, sizeof(weaponFrames));
     numWeaponFiles = 0;
     numInitialFiles = 0;
-    
+
     weaponLeftHand[0] = 0;
     weaponRightHand[0] = 0;
 
@@ -1280,7 +1279,7 @@ int BG_FindFireMode ( weapon_t weapon, attackType_t attack, int firemode )
     }
 
     assert ( firemode < WP_FIREMODE_MAX );
-    
+
     return firemode;
 }
 
@@ -1311,18 +1310,18 @@ void BG_CalculateBulletEndpoint ( vec3_t muzzlePoint, vec3_t fireAngs, float ina
 
     // Gaussian spread should keep it a bit less random looking
     while ( 1 )
-    {   
+    {
         float fGaussian;
         float f1;
         float f2;
 
         f1 = (float)(Q_rand ( seed ) % 15000) / 15000.0f;
         f2 = (float)(Q_rand ( seed ) % 15000) / 15000.0f;
-        fGaussianX = (f1-0.5f) + (f2-0.5f); 
+        fGaussianX = (f1-0.5f) + (f2-0.5f);
 
         f1 = (float)(Q_rand ( seed ) % 15000) / 15000.0f;
         f2 = (float)(Q_rand ( seed ) % 15000) / 15000.0f;
-        fGaussianY = (f1-0.5f) + (f2-0.5f); 
+        fGaussianY = (f1-0.5f) + (f2-0.5f);
 
         fGaussian = fGaussianX * fGaussianX + fGaussianY * fGaussianY;
 
@@ -1330,7 +1329,7 @@ void BG_CalculateBulletEndpoint ( vec3_t muzzlePoint, vec3_t fireAngs, float ina
         {
             break;
         }
-    } 
+    }
 
     VectorMA ( fwd, 0.05f * inaccuracy * fGaussianX, right, dir );
     VectorMA ( dir, 0.05f * inaccuracy * fGaussianY, up, dir );

@@ -608,15 +608,14 @@ static cvarTable_t gameCvarTable[] =
     { NULL,                 "disable_pickup_weapon_SMOHG92",        "0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
     { NULL,                 "disable_pickup_weapon_AN_M14",         "0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
     { NULL,                 "disable_pickup_weapon_M15",            "0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
-#ifndef _GOLD
     { NULL,                 "disable_pickup_weapon_M67",            "0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
     { NULL,                 "disable_pickup_weapon_F1",             "0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
     { NULL,                 "disable_pickup_weapon_L2A2",           "0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
     { NULL,                 "disable_pickup_weapon_MDN11",          "0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
-#else
+#ifdef _GOLD
     { NULL,                 "disable_pickup_weapon_MP5",            "0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
     { NULL,                 "disable_pickup_weapon_SIG551",         "0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
-#endif // not _GOLD
+#endif // _GOLD
 
     { &g_alternateMap, "g_alternateMap", "0", CVAR_ROM|CVAR_INTERNAL|CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
     { &g_enableCustomCommands, "g_enableCustomCommands", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
@@ -691,8 +690,8 @@ static cvarTable_t gameCvarTable[] =
     // Boe!Man 7/7/15: HTTP downloading.
     { &g_enforce1fxAdditions, "g_enforce1fxAdditions", "0", CVAR_ARCHIVE | CVAR_LATCH, 0.0, 0.0, 0, qfalse },
 
-    { &g_httpRefPaks, "g_httpRefPaks", "", CVAR_ARCHIVE | CVAR_SYSTEMINFO, 0.0, 0.0, 0, qfalse },
-    { &g_httpBaseURL, "g_httpBaseURL", "", CVAR_ARCHIVE | CVAR_SYSTEMINFO, 0.0, 0.0, 0, qfalse },
+    { &g_httpRefPaks, "g_httpRefPaks", "none", CVAR_ARCHIVE | CVAR_SYSTEMINFO, 0.0, 0.0, 0, qfalse },
+    { &g_httpBaseURL, "g_httpBaseURL", "none", CVAR_ARCHIVE | CVAR_SYSTEMINFO, 0.0, 0.0, 0, qfalse },
 #endif // not _GOLD
 };
 
@@ -937,6 +936,18 @@ void G_UpdateCvars( void )
                     }
                 }
 
+                #ifdef _GOLD
+                // Boe!Man 10/26/15: Handle referenced paks and base URL CVARs here.
+                if(g_enforce1fxAdditions.integer){
+                    if (!Q_stricmp (cv->cvarName, "g_httpRefPaks") && !strlen(cv->cvarName)){
+                        trap_Cvar_Set("g_httpRefPaks", "none");
+                    }
+                    if (!Q_stricmp (cv->cvarName, "g_httpBaseURL") && !strlen(cv->cvarName)){
+                        trap_Cvar_Set("g_httpBaseURL", "none");
+                    }
+                }
+                #endif // _GOLD
+
                 cv->modificationCount = cv->vmCvar->modificationCount;
 
                 if ( cv->trackChange )
@@ -973,12 +984,12 @@ void G_UpdateDisableCvars ( void )
     int     weapon;
     char    *available;
 
-    available = malloc(sizeof(char) * (level.wpNumWeapons + 1));
+    available = calloc(level.wpNumWeapons + 1, sizeof(char));
 
     if(current_gametype.value == GT_HS)
-        strcpy(available, hideSeek_availableWeapons.string);
+        Q_strncpyz(available, hideSeek_availableWeapons.string, level.wpNumWeapons);
     else
-        strcpy(available, availableWeapons.string);
+        Q_strncpyz(available, availableWeapons.string, level.wpNumWeapons);
 
     for ( weapon = WP_KNIFE; weapon < level.wpNumWeapons; weapon++)
     {
@@ -1013,9 +1024,7 @@ void G_UpdateAvailableWeapons ( void )
     int     weapon;
     char    *available;
 
-    available = malloc(sizeof(char) * (level.wpNumWeapons + 1));
-
-    memset ( available, 0, sizeof(available) );
+    available = calloc(level.wpNumWeapons + 1, sizeof(char));
 
     for ( weapon = WP_KNIFE; weapon < level.wpNumWeapons; weapon ++ )
     {
@@ -1113,8 +1122,8 @@ void G_initClientMod()
          // Boe!Man 9/14/15: If we're using 1fx. Client Additions, reference the core UI.
         #ifdef _GOLD
         if(g_enforce1fxAdditions.integer){
-            trap_Cvar_Set("sv_referencedPakNames", COREUI_STOCK_PAKNAME);
-            trap_Cvar_Set("sv_referencedPaks", va("%d ", COREUI_STOCK_PAKNUM));
+            trap_Cvar_Set("sv_referencedPakNames", COREUI_DEFAULT_PAKNAME);
+            trap_Cvar_Set("sv_referencedPaks", va("%d ", COREUI_DEFAULT_PAKNUM));
         }
         #endif // _GOLD
 
@@ -1433,10 +1442,16 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
     G_UpdateCvars();
 
     #ifdef _GOLD
+    // Boe!Man 10/26/15: Ensure referenced paks and base URL CVARs aren't empty.
     if(g_enforce1fxAdditions.integer){
-        trap_Cvar_Set("g_enforce1fxAdditions", "0");
-        trap_Cvar_Update(&g_enforce1fxAdditions);
-        Com_Printf("WARNING: 1fx. Client Additions aren't available in this preview.\n");
+        if (!strlen(g_httpRefPaks.string)){
+            trap_Cvar_Set("g_httpRefPaks", "none");
+            trap_Cvar_Update(&g_httpRefPaks);
+        }
+        if (!strlen(g_httpBaseURL.string)){
+            trap_Cvar_Set("g_httpBaseURL", "none");
+            trap_Cvar_Update(&g_httpBaseURL);
+        }
     }
     #endif // _GOLD
 
@@ -1785,6 +1800,11 @@ void G_ShutdownGame( int restart )
 
     // write all the client session data so we can get it back
     G_WriteSessionData();
+
+    #ifdef __linux__
+    // Boe!Man 10/30/15: Restore sigint handler.
+    signal(SIGINT, SIG_DFL);
+    #endif // __linux__
 
     #if defined(__linux__) && (defined(__GNUC__) && __GNUC__ < 3)
     sqlite3_shutdown();
