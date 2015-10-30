@@ -321,15 +321,11 @@ vmCvar_t    boe_fragWars;
 vmCvar_t    boe_deadMonkey;
 #endif // _3DServer
 
-#ifndef _GOLD
-// v1.00 only CVARs.
 vmCvar_t    g_allowthirdperson;
-#else
-vmCvar_t    g_enforce1fxAdditions;
 
+vmCvar_t    g_enforce1fxAdditions;
 vmCvar_t    g_httpRefPaks;
 vmCvar_t    g_httpBaseURL;
-#endif // not _GOLD
 
 vmCvar_t    g_minRate;
 
@@ -684,15 +680,12 @@ static cvarTable_t gameCvarTable[] =
     { &boe_deadMonkey, "3d_deadMonkey", "0", CVAR_ARCHIVE | CVAR_LATCH, 0.0, 0.0, 0, qfalse },
 #endif // _3DServer
 
-#ifndef _GOLD
     { &g_allowthirdperson, "g_allowThirdPerson", "1", CVAR_ARCHIVE | CVAR_SERVERINFO, 0.0, 0.0, 0, qfalse },
-#else
+
     // Boe!Man 7/7/15: HTTP downloading.
     { &g_enforce1fxAdditions, "g_enforce1fxAdditions", "0", CVAR_ARCHIVE | CVAR_LATCH, 0.0, 0.0, 0, qfalse },
-
     { &g_httpRefPaks, "g_httpRefPaks", "none", CVAR_ARCHIVE | CVAR_SYSTEMINFO, 0.0, 0.0, 0, qfalse },
     { &g_httpBaseURL, "g_httpBaseURL", "none", CVAR_ARCHIVE | CVAR_SYSTEMINFO, 0.0, 0.0, 0, qfalse },
-#endif // not _GOLD
 };
 
 // bk001129 - made static to avoid aliasing
@@ -1441,7 +1434,6 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 
     G_UpdateCvars();
 
-    #ifdef _GOLD
     // Boe!Man 10/26/15: Ensure referenced paks and base URL CVARs aren't empty.
     if(g_enforce1fxAdditions.integer){
         if (!strlen(g_httpRefPaks.string)){
@@ -1452,8 +1444,12 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
             trap_Cvar_Set("g_httpBaseURL", "none");
             trap_Cvar_Update(&g_httpBaseURL);
         }
+        #ifndef _GOLD
+        // Boe!Man 10/30/15: Temporarily disable client additions for v1.00.
+        trap_Cvar_Set("g_enforce1fxAdditions", "0");
+        trap_Cvar_Update(&g_enforce1fxAdditions);
+        #endif // not _GOLD
     }
-    #endif // _GOLD
 
     // Build the gametype list so we can verify the given gametype
     BG_BuildGametypeList ( );

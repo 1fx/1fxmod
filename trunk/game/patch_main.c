@@ -201,7 +201,7 @@ void Patch_Main()
     Patch_autoDownloadExploit();
     #endif // not _GOLD
     Patch_rconLog();
-    Patch_fsgameWorkaround();
+    Patch_sysinfoWorkaround();
 
     Com_Printf("Patching took %d milliseconds.\n", trap_Milliseconds() - i);
 }

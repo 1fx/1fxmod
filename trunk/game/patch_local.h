@@ -8,6 +8,7 @@
 #define _PATCH_LOCAL
 
 #include "g_local.h"
+#include "boe_local.h"
 #ifdef _WIN32
 #include <windows.h>
 #elif __linux__
@@ -32,7 +33,7 @@ void    Patch_detourAddress         (char *genericName, long func, long offset, 
 void    Patch_autoDownloadExploit   (void);
 void    Patch_dosProtection         (void);
 void    Patch_rconLog               (void);
-void    Patch_fsgameWorkaround      (void);
+void    Patch_sysinfoWorkaround     (void);
 void    Patch_q3infofix             (void);
 
 #endif // _PATCH_LOCAL
