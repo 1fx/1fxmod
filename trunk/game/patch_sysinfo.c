@@ -22,7 +22,7 @@ void Patch_systemInfo(char *s, const char *key, const char *value)
 {
     if (strcmp(key, "fs_game") == 0){
         if(level.clientMod == CL_NONE){
-            Info_SetValueForKey_Big(s, key, g_enforce1fxAdditions.integer ? "1fx.additions" : "1fx");
+            Info_SetValueForKey_Big(s, key, g_enforce1fxAdditions.integer ? "1fx.additions" : value);
         }
         #ifdef _GOLD
         else if (level.clientMod == CL_ROCMOD){
