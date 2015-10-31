@@ -929,7 +929,6 @@ void G_UpdateCvars( void )
                     }
                 }
 
-                #ifdef _GOLD
                 // Boe!Man 10/26/15: Handle referenced paks and base URL CVARs here.
                 if(g_enforce1fxAdditions.integer){
                     if (!Q_stricmp (cv->cvarName, "g_httpRefPaks") && !strlen(cv->cvarName)){
@@ -939,7 +938,6 @@ void G_UpdateCvars( void )
                         trap_Cvar_Set("g_httpBaseURL", "none");
                     }
                 }
-                #endif // _GOLD
 
                 cv->modificationCount = cv->vmCvar->modificationCount;
 
@@ -1428,6 +1426,11 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
             trap_Cvar_Set("g_httpBaseURL", "none");
             trap_Cvar_Update(&g_httpBaseURL);
         }
+
+        // Servers must always have download enabled with 1fx. Additions,
+        // otherwise clients can't download the Core UI.
+        trap_Cvar_Set("sv_allowDownload", "1");
+
         #ifndef _GOLD
         // Boe!Man 10/30/15: Temporarily disable client additions for v1.00.
         trap_Cvar_Set("g_enforce1fxAdditions", "0");

@@ -2012,7 +2012,7 @@ void ClientBegin( int clientNum, qboolean setTime )
     #ifdef _GOLD
     // Boe!Man 7/6/15: Check if we require the use of the modified cgame.
     if (g_enforce1fxAdditions.integer) {
-        client->sess.checkCoreUI = qtrue;
+        client->sess.checkClientAdditions = qtrue;
     }
     #endif // _GOLD
 

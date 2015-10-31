@@ -324,8 +324,8 @@ typedef struct
     float               rpmClient;
     float               proClient;
     #else
-    // Boe!Man 7/6/15: Core UI checking.
-    qboolean            checkCoreUI;
+    // Boe!Man 7/6/15: Client addition checking.
+    qboolean            checkClientAdditions;
 
     qboolean            rocModClient;
     int                 rocExtraFeatures;
