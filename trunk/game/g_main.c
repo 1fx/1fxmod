@@ -1564,7 +1564,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
     #else
     if (g_enforce1fxAdditions.integer) {
         level.wpNumWeapons = 25;
-        level.ammoMax = 19;
+        level.ammoMax = 18;
     }else{
         level.wpNumWeapons = 21;
         level.ammoMax = 14;

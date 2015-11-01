@@ -152,10 +152,9 @@ void BG_InitializeWeaponsAndAmmo()
         bg_enumWeaponNames[24] = "WP_MDN11_GRENADE";
 
         ammoNames[14] = "M67";          //  AMMO_M67
-        ammoNames[15] = "M84";          //  AMMO_M84
-        ammoNames[16] = "F1";           //  AMMO_F1
-        ammoNames[17] = "L2A2";         //  AMMO_L2A2
-        ammoNames[18] = "MDN11";        //  AMMO_MDN11
+        ammoNames[15] = "F1";           //  AMMO_F1
+        ammoNames[16] = "L2A2";         //  AMMO_L2A2
+        ammoNames[17] = "MDN11";        //  AMMO_MDN11
     }
     #endif // not _GOLD
 }
