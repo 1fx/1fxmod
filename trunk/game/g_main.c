@@ -7,7 +7,9 @@
 #ifdef __linux__
 #include "./tadns/tadns.h"
 #include <netdb.h>
+#ifndef __USE_POSIX199309
 #include <asm/sigcontext.h>
+#endif // __USE_POSIX199309
 
 #if (defined(__GNUC__) && __GNUC__ < 3)
 unsigned char   memsys5[41943040]; // Boe!Man 1/29/13: Buffer of 40 MB, available for SQLite memory management (Linux).
