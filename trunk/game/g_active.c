@@ -1131,7 +1131,7 @@ void ClientThink_real(gentity_t *ent)
         char *s;
 
         trap_GetUserinfo(ent->s.number, userinfo, sizeof(userinfo));
-        s = Info_ValueForKey(userinfo, "1fx_clientAdditions");
+        s = Info_ValueForKey(userinfo, "1fx_ca");
         if (strcmp(s, "1") != 0) {
             trap_SendConsoleCommand(EXEC_INSERT, va("clientkick \"%d\" \"This server ^1requires ^7you to use the 1fx. Client Additions. You can get those by turning on ^1auto-downloading ^7and ^1reconnecting.\"\n", ent->s.number));
             return;
