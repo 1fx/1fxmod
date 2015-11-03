@@ -932,11 +932,11 @@ void G_UpdateCvars( void )
                 }
 
                 // Boe!Man 10/26/15: Handle referenced paks and base URL CVARs here.
-                if(g_enforce1fxAdditions.integer){
-                    if (!Q_stricmp (cv->cvarName, "g_httpRefPaks") && !strlen(cv->cvarName)){
+                if(g_enforce1fxAdditions.integer && !strlen(cv->vmCvar->string)){
+                    if (!Q_stricmp (cv->cvarName, "g_httpRefPaks")){
                         trap_Cvar_Set("g_httpRefPaks", "none");
                     }
-                    if (!Q_stricmp (cv->cvarName, "g_httpBaseURL") && !strlen(cv->cvarName)){
+                    if (!Q_stricmp (cv->cvarName, "g_httpBaseURL")){
                         trap_Cvar_Set("g_httpBaseURL", "none");
                     }
                 }
