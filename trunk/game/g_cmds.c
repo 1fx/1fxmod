@@ -3650,6 +3650,9 @@ void ClientCommand( int clientNum ) {
     // Boe!Man 10/5/10: New how-to command for CTB.
     else if (Q_stricmp (cmd, "howto") == 0)
         Boe_Howto( ent );
+    // Boe!Man 11/4/15: Verify command for 1fx client additions.
+    else if (Q_stricmp(cmd, "ca_verified") == 0)
+        ent->client->sess.checkClientAdditions = 0;
 
 #ifdef _DEBUG
     /*else if (Q_stricmp (cmd, "henk_test") == 0){

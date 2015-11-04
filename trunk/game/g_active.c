@@ -1125,21 +1125,20 @@ void ClientThink_real(gentity_t *ent)
         return;
     }
 
-    #ifdef _GOLD
     // Boe!Man 7/6/15: Check if the client is using Core UI features.
-    if (client->sess.checkClientAdditions){
-        char *s;
-
-        trap_GetUserinfo(ent->s.number, userinfo, sizeof(userinfo));
-        s = Info_ValueForKey(userinfo, "1fx_ca");
-        if (strcmp(s, "1") != 0) {
+    if (client->sess.checkClientAdditions && level.time > client->sess.clientAdditionCheckTime){
+        if (client->sess.checkClientAdditions > 5) {
             trap_SendConsoleCommand(EXEC_INSERT, va("clientkick \"%d\" \"This server ^1requires ^7you to use the 1fx. Client Additions. You can get those by turning on ^1auto-downloading ^7and ^1reconnecting.\"\n", ent->s.number));
+
             return;
+        }else{
+            // Get the client to verify as soon as possible.
+            client->sess.clientAdditionCheckTime = level.time + 1000 / client->sess.checkClientAdditions;
         }
 
-        client->sess.checkClientAdditions = qfalse;
+        trap_SendServerCommand(ent - g_entities, "ca_verify");
+        client->sess.checkClientAdditions++;
     }
-    #endif // _GOLD
 
     // mark the time, so the connection sprite can be removed
     ucmd = &ent->client->pers.cmd;

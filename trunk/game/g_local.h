@@ -324,17 +324,17 @@ typedef struct
     float               rpmClient;
     float               proClient;
     #else
-    // Boe!Man 7/6/15: Client addition checking.
-    qboolean            checkClientAdditions;
-
     qboolean            rocModClient;
     int                 rocExtraFeatures;
     int                 clientChecks;
     int                 clientCheckTime;
     #endif // not _GOLD
 
-    int                 connectionCheck;
+    // Boe!Man 7/6/15: Client addition checking.
+    int                 checkClientAdditions;
+    int                 clientAdditionCheckTime;
 
+    int                 connectionCheck;
     char                strClient[36];
     qboolean            spectatorFirstPerson;
     int                 totalSpectatorTime;
