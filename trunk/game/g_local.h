@@ -659,8 +659,13 @@ typedef struct
     int         startTime;              // level.time the map was started
     int         globalVoiceTime;        // last global voice
 
-    int         wpNumWeapons;           // Dynamic number of weapons available.
-    int         ammoMax;                // Dynamic number of the amount of ammo available.
+    // Dynamic weapon system.
+    int         wpNumWeapons;           // Number of weapons available.
+    int         ammoMax;                // Number of the amount of ammo available.
+
+    int         grenadeMin;             // First WP_ which is a grenade.
+    int         grenadeMax;             // Last WP_ which is a grenade.
+    // End dynamic weapon system.
 
     int         teamScores[TEAM_NUM_TEAMS];
 

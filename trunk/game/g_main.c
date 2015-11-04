@@ -1565,13 +1565,20 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
     #ifndef _GOLD
     level.wpNumWeapons = 22;
     level.ammoMax = 16;
+
+    level.grenadeMin = 14;
+    level.grenadeMax = 21;
     #else
+    level.grenadeMin = 17;
+
     if (g_enforce1fxAdditions.integer) {
         level.wpNumWeapons = 25;
         level.ammoMax = 18;
+        level.grenadeMax = 24;
     }else{
         level.wpNumWeapons = 21;
         level.ammoMax = 14;
+        level.grenadeMax = 20;
     }
     #endif // not _GOLD
 

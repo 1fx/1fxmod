@@ -155,6 +155,11 @@ typedef enum
     MODELINDEX_NIGHTVISION,
     MODELINDEX_THERMAL,
 
+    // Boe!Man 11/04/15: Add modelindex number for missing grenades.
+    MODELINDEX_WEAPON_M67,
+    MODELINDEX_WEAPON_F1,
+    MODELINDEX_WEAPON_L2A2,
+    MODELINDEX_WEAPON_MDN11,
 } modelIndex_t;
 #endif // not _GOLD
 

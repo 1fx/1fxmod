@@ -87,11 +87,7 @@ qboolean SetNades(char *status){
                     trap_Cvar_Set("disable_pickup_weapon_AN_M14", "0");
             }
         }else{ // If not H&S, check other gametypes. Since we might not want to enable all nades (it should respect availablenades CVAR), check for it.
-                #ifndef _GOLD
-                for (weapon = WP_M67_GRENADE; weapon < level.wpNumWeapons; weapon ++)
-                #else
-                for (weapon = WP_M84_GRENADE; weapon < level.wpNumWeapons; weapon++)
-                #endif // not _GOLD
+                for (weapon = level.grenadeMin; weapon <= level.grenadeMax; weapon ++)
                 {
                     gitem_t* item = BG_FindWeaponItem ( (weapon_t)weapon );
                     if (!item){

@@ -904,7 +904,7 @@ gentity_t* G_FireProjectile ( gentity_t *ent, weapon_t weapon, attackType_t atta
     muzzlePoint[2] += ent->client->ps.viewheight;
 
     // Inform of the grenade toss if its a timed grenade
-    if ( weapon >= WP_M67_GRENADE && weapon < WP_M15_GRENADE && (flags&PROJECTILE_TIMED) && (ent->client->ps.pm_type == PM_NORMAL) )
+    if ( weapon >= level.grenadeMin && weapon < level.grenadeMax && (flags&PROJECTILE_TIMED) && (ent->client->ps.pm_type == PM_NORMAL) )
     {
         gentity_t* nearby;
 
