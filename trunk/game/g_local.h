@@ -1539,6 +1539,7 @@ extern  vmCvar_t    g_allowthirdperson;
 extern  vmCvar_t    g_enforce1fxAdditions;
 extern  vmCvar_t    g_httpRefPaks;
 extern  vmCvar_t    g_httpBaseURL;
+extern  vmCvar_t    g_httpMaxSpeed;
 
 void    trap_Printf( const char *fmt );
 void    trap_Error( const char *fmt );

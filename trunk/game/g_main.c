@@ -328,6 +328,7 @@ vmCvar_t    g_allowthirdperson;
 vmCvar_t    g_enforce1fxAdditions;
 vmCvar_t    g_httpRefPaks;
 vmCvar_t    g_httpBaseURL;
+vmCvar_t    g_httpMaxSpeed;
 
 vmCvar_t    g_minRate;
 
@@ -688,6 +689,7 @@ static cvarTable_t gameCvarTable[] =
     { &g_enforce1fxAdditions, "g_enforce1fxAdditions", "0", CVAR_ARCHIVE | CVAR_LATCH, 0.0, 0.0, 0, qfalse },
     { &g_httpRefPaks, "g_httpRefPaks", "none", CVAR_ARCHIVE | CVAR_SYSTEMINFO, 0.0, 0.0, 0, qfalse },
     { &g_httpBaseURL, "g_httpBaseURL", "none", CVAR_ARCHIVE | CVAR_SYSTEMINFO, 0.0, 0.0, 0, qfalse },
+    { &g_httpMaxSpeed, "g_httpMaxSpeed", "0", CVAR_ARCHIVE | CVAR_SYSTEMINFO, 0.0, 0.0, 0, qfalse },
 };
 
 // bk001129 - made static to avoid aliasing
