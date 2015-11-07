@@ -979,23 +979,26 @@ void G_UpdateOutfitting ( int clientNum )
     // Clear all ammo, clips, and weapons
     if(current_gametype.value != GT_HS){
         if(g_disableNades.integer == 0){
-            if(client->pers.outfitting.items[OUTFITTING_GROUP_GRENADE] == -1)
-            client->pers.outfitting.items[OUTFITTING_GROUP_GRENADE] = 0;
+            if(client->pers.outfitting.items[OUTFITTING_GROUP_GRENADE] == -1){
+                client->pers.outfitting.items[OUTFITTING_GROUP_GRENADE] = 0;
+            }
         }
-    client->ps.stats[STAT_WEAPONS] = 0; // Henk 15/01/11 -> Fix for disspearing shit
-    // Boe!Man 5/20/12: Fix for glitch so armor and goggles could be used simultaneously.
-    client->ps.stats[STAT_ARMOR] = 0;
-    client->ps.stats[STAT_GOGGLES] = 0;
-    // End Boe!Man 5/20/12
 
-    memset ( client->ps.ammo, 0, sizeof(client->ps.ammo) );
-    memset ( client->ps.clip, 0, sizeof(client->ps.clip) );
+        client->ps.stats[STAT_WEAPONS] = 0; // Henk 15/01/11 -> Fix for disspearing shit
+        // Boe!Man 5/20/12: Fix for glitch so armor and goggles could be used simultaneously.
+        client->ps.stats[STAT_ARMOR] = 0;
+        client->ps.stats[STAT_GOGGLES] = 0;
+        // End Boe!Man 5/20/12
+
+        memset ( client->ps.ammo, 0, sizeof(client->ps.ammo) );
+        memset ( client->ps.clip, 0, sizeof(client->ps.clip) );
     }
 
     // Henkie -> Put zoom off!
     client->ps.zoomFov = 0;
-    if(current_gametype.value != GT_HS)
-    client->ps.pm_flags &= ~(PMF_GOGGLES_ON|PMF_ZOOM_FLAGS);
+    if(current_gametype.value != GT_HS){
+        client->ps.pm_flags &= ~(PMF_GOGGLES_ON|PMF_ZOOM_FLAGS);
+    }
 
     // Everyone gets some knives
     client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_KNIFE );
@@ -1003,9 +1006,7 @@ void G_UpdateOutfitting ( int clientNum )
     client->ps.clip[ATTACK_NORMAL][WP_KNIFE]=weaponData[WP_KNIFE].attack[ATTACK_NORMAL].clipSize;
     client->ps.firemode[WP_KNIFE] = BG_FindFireMode ( WP_KNIFE, ATTACK_NORMAL, WP_FIREMODE_AUTO );
 
-    if ( BG_IsWeaponAvailableForOutfitting ( WP_KNIFE, 2 ) )
-    {
-        if(current_gametype.value != GT_HS)
+    if ( BG_IsWeaponAvailableForOutfitting ( WP_KNIFE, 2 ) && current_gametype.value != GT_HS){
         client->ps.ammo[ammoIndex]=ammoData[ammoIndex].max;
     }
 
@@ -1074,8 +1075,8 @@ void G_UpdateOutfitting ( int clientNum )
     #endif // _GOLD
 
     if(current_gametype.value != GT_HS){ // Henk 15/01/11 -> don't select new weapons when we get them
-    client->ps.weapon = equipWeapon;
-    client->ps.weaponstate = WEAPON_READY; //WEAPON_SPAWNING;
+        client->ps.weapon = equipWeapon;
+        client->ps.weaponstate = WEAPON_READY;
     }
     client->ps.weaponTime = 0;
     client->ps.weaponAnimTime = 0;
@@ -1129,13 +1130,14 @@ void G_UpdateOutfitting ( int clientNum )
 
     // Stuff which grenade is being used into stats for later use by
     // the backpack code
-    if(current_gametype.value != GT_HS)
-    client->ps.ammo[weaponData[WP_KNIFE].attack[ATTACK_NORMAL].ammoIndex]=weaponData[WP_KNIFE].attack->extraClips;
-    else if(client->sess.team == TEAM_BLUE)
+    if(current_gametype.value != GT_HS){
+        client->ps.ammo[weaponData[WP_KNIFE].attack[ATTACK_NORMAL].ammoIndex]=weaponData[WP_KNIFE].attack->extraClips;
+    }else if(client->sess.team == TEAM_BLUE){
         client->ps.ammo[weaponData[WP_KNIFE].attack[ATTACK_ALTERNATE].ammoIndex]=0;
+    }
+
     if(g_disableNades.integer == 0){
         client->ps.stats[STAT_OUTFIT_GRENADE] = bg_itemlist[bg_outfittingGroups[OUTFITTING_GROUP_GRENADE][client->pers.outfitting.items[OUTFITTING_GROUP_GRENADE]]].giTag;
-        //Com_Printf("Item is %i\n", client->pers.outfitting.items[OUTFITTING_GROUP_GRENADE]);
     }
 }
 

@@ -55,10 +55,14 @@ Instead of forcing everything to on/off, check available weapons as well.
 */
 qboolean SetNades(char *status){
     int weapon;
-    char *available = malloc(sizeof(char) * (level.wpNumWeapons + 1));
+    char *available = calloc(level.wpNumWeapons + 1, sizeof(char));
     qboolean one = qfalse; // Boe!Man 9/20/12: If at least ONE nade is enabled, this is qtrue (also return value).
 
-    Q_strncpyz(available, availableWeapons.string, level.wpNumWeapons);
+    if(current_gametype.value == GT_HS){
+        strncpy(available, hideSeek_availableWeapons.string, (strlen(hideSeek_availableWeapons.string) <= level.wpNumWeapons) ? strlen(hideSeek_availableWeapons.string) : level.wpNumWeapons);
+    }else{
+        strncpy(available, availableWeapons.string, (strlen(availableWeapons.string) <= level.wpNumWeapons) ? strlen(availableWeapons.string) : level.wpNumWeapons);
+    }
 
     if(strcmp(status, "0") == 0){ // Manage internally, so we check for such strings. 0 means enable, so in H&S we check that CVAR.
         if(current_gametype.value == GT_HS){

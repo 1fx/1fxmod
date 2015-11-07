@@ -96,7 +96,7 @@ int adm_Pop(int argNum, gentity_t *adm, qboolean shortCmd)
 
     // Allow to pop players in godmode.
     ent->flags &= ~FL_GODMODE;
-    
+
     // Do the actual damage.
     G_Damage(ent, NULL, NULL, NULL, NULL, 10000, 0, MOD_POP, HL_HEAD | HL_FOOT_RT | HL_FOOT_LT | HL_LEG_UPPER_RT | HL_LEG_UPPER_LT | HL_HAND_RT | HL_HAND_LT | HL_WAIST | HL_CHEST | HL_NECK);
 
@@ -260,7 +260,7 @@ static void adm_addAdmin_f(int argNum, gentity_t *adm, qboolean shortCmd, int le
             }else{
                 G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
             }
-            
+
             return;
         }
     }else{
@@ -291,7 +291,7 @@ static void adm_addAdmin_f(int argNum, gentity_t *adm, qboolean shortCmd, int le
         G_Broadcast(va("%s\nis now a %s", g_entities[idNum].client->pers.netname, admLevelPrefixed), BROADCAST_CMD, NULL);
         g_entities[idNum].client->sess.admin = level2;
     }
-    
+
     Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
     if (adm){
         if (!passAdmin){
@@ -381,7 +381,7 @@ static void adm_unTwist(int idNum, gentity_t *adm)
 {
     gentity_t   *ent;
     vec3_t      lookDown;
-    
+
     ent = g_entities + idNum;
 
     // Untwist the player.
@@ -435,7 +435,7 @@ int adm_Plant(int argNum, gentity_t *adm, qboolean shortCmd)
 
     // Boe!Man 1/29/10: Only the victim will have to hear the wood breaking sound.
     Boe_ClientSound(ent, G_SoundIndex("sound/misc/confused/wood_break.mp3"));
-    
+
     return idNum;
 }
 
@@ -450,7 +450,7 @@ Resets the earlier planted state.
 static void adm_unPlant(int idNum, gentity_t *adm)
 {
     gentity_t   *ent;
-    
+
     ent = g_entities + idNum;
 
     ent->client->ps.origin[2] += 65;
@@ -643,9 +643,9 @@ int adm_Burn(int argNum, gentity_t *adm, qboolean shortCmd)
 
     idNum = Boe_ClientNumFromArg(adm, argNum, "burn <id/name>", "burn", qtrue, qtrue, shortCmd);
     if (idNum < 0) return idNum;
-    
+
     ent = g_entities + idNum;
-    
+
     // Create temporary entity for the burn effect.
     tent = G_TempEntity(g_entities[ent->s.number].r.currentOrigin, EV_EXPLOSION_HIT_FLESH);
     tent->s.eventParm = 0;
@@ -657,7 +657,7 @@ int adm_Burn(int argNum, gentity_t *adm, qboolean shortCmd)
     // Set burn seconds and notify the player of what happened with a sound effect.
     ent->client->sess.burnSeconds = 4;
     Boe_ClientSound(ent, G_SoundIndex("/sound/weapons/incendiary_grenade/incen01.mp3"));
-    
+
     return idNum;
 }
 
@@ -729,7 +729,7 @@ int adm_Mute(int argNum, gentity_t *adm, qboolean shortCmd)
         trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s ^7was %s%s\n\"", g_entities[idNum].client->pers.netname, (unMute) ? "unmuted" : "muted", (unMute) ? "." : va(" for %i minutes.", time)));
         Boe_adminLog("muted", "RCON", va("%s\\%s", g_entities[idNum].client->pers.ip, g_entities[idNum].client->pers.cleanName));
     }
-    
+
     return -1;
 }
 
@@ -843,7 +843,7 @@ int adm_forceTeam(int argNum, gentity_t *adm, qboolean shortCmd)
     }else{
         Q_strncpyz(str, G_GetChatArgument(1), sizeof(str));
     }
-    
+
     Q_strlwr(str);
 
     // Check for "all".
@@ -950,7 +950,7 @@ int adm_forceTeam(int argNum, gentity_t *adm, qboolean shortCmd)
             Info_SetValueForKey(userinfo, "team", str);
             trap_SetUserinfo(idNum, userinfo);
             g_entities[idNum].client->sess.team = (team_t)xTeam;
-            
+
             if (current_gametype.value != GT_HS){
                 g_entities[idNum].client->pers.identity = BG_FindTeamIdentity(level.gametypeTeam[xTeam], -1);
             }
@@ -1111,7 +1111,7 @@ int adm_shuffleTeams(int argNum, gentity_t *adm, qboolean shortCmd){
         }else{
             Com_Printf("^7You cannot shuffle the teams in this gametype.\n");
         }
-        
+
         return -1;
     }
 
@@ -1251,7 +1251,7 @@ int adm_noNades(int argNum, gentity_t *adm, qboolean shortCmd){
         if (adm && adm->client){
             trap_SendServerCommand(adm-g_entities, "print\"^3[Info] ^7No nades are set to be used (availableWeapons CVAR).\n\"");
         }else{
-            Com_Printf("^7No nades are set to be used (availableWeapons CVAR).\n");
+            Com_Printf("No nades are set to be used (availableWeapons CVAR).\n");
         }
 
         return -1;
@@ -1268,6 +1268,7 @@ int adm_noNades(int argNum, gentity_t *adm, qboolean shortCmd){
     trap_Cvar_Update(&g_disableNades);
     SetNades(va("%i", state));
     BG_SetAvailableOutfitting(g_availableWeapons.string);
+
     for (i = 0; i<level.numConnectedClients; i++){
         level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
         G_UpdateOutfitting(g_entities[level.sortedClients[i]].s.number);
@@ -1348,7 +1349,7 @@ static void adm_toggleCVAR(gentity_t *adm, int argNum, qboolean shortCmd, char *
     #ifdef _GOLD
     int i;
     #endif // _GOLD
-    
+
     // Copy the name of the CVAR without capital.
     strncpy(cvarNameWithoutCap, cvarName, sizeof(cvarNameWithoutCap));
 
@@ -1501,7 +1502,7 @@ int adm_gametypeRestart(int argNum, gentity_t *adm, qboolean shortCmd)
     // Broadcast the change and restart it.
     Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
     G_Broadcast("\\Gametype restart!", BROADCAST_CMD, NULL);
-    
+
     if (adm && adm->client){
         trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Gametype restart by %s.\n\"", adm->client->pers.cleanName));
         Boe_adminLog("gametype restart", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "none");
@@ -1622,7 +1623,7 @@ int adm_removeClanMember(int argNum, gentity_t *adm, qboolean shortCmd)
     // Remove the client both in-game and from the database.
     g_entities[idNum].client->sess.clanMember = qfalse;
     Boe_removeClanMemberFromDb(adm, g_entities[idNum].client->pers.ip, qfalse, qtrue);
-    
+
     // Broadcast the change and log it.
     Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
     G_Broadcast(va("%s\nis no longer a \\Clan member!", g_entities[idNum].client->pers.netname), BROADCAST_CMD, NULL);
@@ -1697,7 +1698,7 @@ int adm_compMode(int argNum, gentity_t *adm, qboolean shortCmd)
         }else{
             Com_Printf("^7You cannot enable Competition Mode in this gametype.\n");
         }
-        
+
         return -1;
     }
 
@@ -1717,7 +1718,7 @@ int adm_compMode(int argNum, gentity_t *adm, qboolean shortCmd)
                 Com_Printf("^3[Info] ^7A map switch is already in progress.\n");
             }
         }
-        
+
         return -1;
     }
 
@@ -1835,7 +1836,7 @@ static char *adm_checkListFilters(gentity_t *adm, int argNum, qboolean shortCmd,
 
     // Convert the listname to the real, capitalized, list name.
     Q_strncpyz(listNameReal, listName, sizeof(listNameReal));
-    
+
     if (strlen(listNameReal) < 1)
         return filterQuery;
 
@@ -1855,7 +1856,7 @@ static char *adm_checkListFilters(gentity_t *adm, int argNum, qboolean shortCmd,
         Com_Printf("^5%-21s Value\n" \
                     "^7--------------------------------------------------\n", "Filter");
     }
-    
+
     // Get amount of arguments.
     if (shortCmd){
         argCount = G_GetChatArgumentCount();
@@ -1901,7 +1902,7 @@ static char *adm_checkListFilters(gentity_t *adm, int argNum, qboolean shortCmd,
                                                         "%-27s ^7Filters on %s by.\n\n" \
                                                         "%-27s ^7/adm %s -i 172.16 -n boe -b RCON\n",
                                                     "^7[^1Help^7]", "^7[^5-i^7]", "^7[^5-n^7]", "^7[^5-b^7]", byFieldName, "^7[^5Example usage^7]", listName));
-                            
+
                         trap_SendServerCommand( adm-g_entities, va("print \"%s\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\"", buf2));
                     }else{
                         Com_Printf("%-27s ^7There are several filter options for you to use:\n" \
@@ -1910,10 +1911,10 @@ static char *adm_checkListFilters(gentity_t *adm, int argNum, qboolean shortCmd,
                                     "%-27s ^7Filters on %s by.\n\n" \
                                     "%-27s ^7/adm %s -i 172.16 -n boe -b RCON\n",
                                     "^7[^1Help^7]", "^7[^5-i^7]", "^7[^5-n^7]", "^7[^5-b^7]", byFieldName, "^7[^5Example usage^7]", listName);
-                            
+
                         Com_Printf("\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n");
                     }
-                        
+
                     return NULL;
                 }else if(strstr(arg, "-i")){ // Client wants to filter on an IP.
                     strcpy(filterIP, arg2);
@@ -2022,7 +2023,7 @@ static void adm_showBanList(int argNum, gentity_t *adm, qboolean shortCmd, qbool
     int              rc;
     // We use the following variable for filter options.
     char            *filterQuery;
-    
+
     db = bansDb;
     memset(buf2, 0, sizeof(buf2));
 
@@ -2304,7 +2305,7 @@ int adm_Broadcast(int argNum, gentity_t *adm, qboolean shortCmd)
             strcpy(buffer1, ConcatArgs1(1));
         }
     }
-    
+
     // Broadcast the message.
     Boe_GlobalSound(G_SoundIndex("sound/misc/menus/invalid.wav"));
     G_Broadcast(buffer1, BROADCAST_CMD, NULL);
@@ -2356,7 +2357,7 @@ int adm_clanVsAll(int argNum, gentity_t *adm, qboolean shortCmd)
         }else{
             Com_Printf("Not playing a team game.\n");
         }
-        
+
         return -1;
     }
 
@@ -2369,7 +2370,7 @@ int adm_clanVsAll(int argNum, gentity_t *adm, qboolean shortCmd)
     // Which team has the most clan members on it?
     for (i = 0; i < level.numConnectedClients; i++) {
         sess = &g_entities[level.sortedClients[i]].client->sess;
-        
+
         if (!sess->clanMember)
             continue;
         if (sess->team != TEAM_RED && sess->team != TEAM_BLUE)
@@ -2458,7 +2459,7 @@ int adm_clanVsAll(int argNum, gentity_t *adm, qboolean shortCmd)
         Boe_adminLog("clan vs all", "RCON", "none");
         trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Clan vs all.\n\""));
     }
-    
+
     return -1;
 }
 
@@ -2501,7 +2502,7 @@ int adm_swapTeams(int argNum, gentity_t *adm, qboolean shortCmd)
             trap_Cvar_Set("cm_awap", "1");
         }
         trap_Cvar_Update(&cm_aswap);
-        
+
         // Broadcast change.
         G_Broadcast(va("\\Autoswap %s!", (enabled) ? "disabled" : "enabled"), BROADCAST_CMD, NULL);
 
@@ -2632,7 +2633,7 @@ int adm_lockTeam(int argNum, gentity_t *adm, qboolean shortCmd)
     qboolean    done = qfalse;
 
     trap_Argv(argNum, arg, sizeof(arg));
-    
+
     if (shortCmd){
         if (strstr(arg, "r")){
             done = G_lockTeam(adm, qfalse, "r");
@@ -2678,7 +2679,7 @@ int adm_Flash(int argNum, gentity_t *adm, qboolean shortCmd)
     }else{
         Q_strncpyz(arg, G_GetChatArgument(1), sizeof(arg));
     }
-    
+
     Q_strlwr(arg);
 
     // Check for "all".
@@ -2690,7 +2691,7 @@ int adm_Flash(int argNum, gentity_t *adm, qboolean shortCmd)
 
         targ = g_entities + idNum;
     }
-    
+
     weapon = WP_M84_GRENADE;
     nadeDir = 1;
     for (i = 0; i < 1; i++) {
@@ -2722,7 +2723,7 @@ int adm_Flash(int argNum, gentity_t *adm, qboolean shortCmd)
 
     missile = NV_projectile(targ, targ->r.currentOrigin, dir, weapon, 0);
     missile->nextthink = level.time + 250;
-        
+
     return idNum;
 }
 
@@ -2839,7 +2840,7 @@ int adm_Gametype(int argNum, gentity_t *adm, qboolean shortCmd)
 
         return -1;
     }
-    
+
     Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
     if (adm && adm->client){
         trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7Gametype changed to %s by %s.\n\"", gametype, adm->client->pers.cleanName));
@@ -2849,7 +2850,7 @@ int adm_Gametype(int argNum, gentity_t *adm, qboolean shortCmd)
         trap_SendServerCommand(-1, va("print \"^3[Rcon Action] ^7Gametype changed to %s.\n\"", gametype));
         Boe_adminLog(va("gametype - %s", gametype), "RCON", "none");
     }
-    
+
     level.mapSwitch = qtrue;
     level.mapAction = 3;
     level.mapSwitchCount = level.time;
@@ -2890,7 +2891,7 @@ int adm_Pause(int argNum, gentity_t *adm, qboolean shortCmd)
         ent = g_entities + i;
         if (!ent->inuse)
             continue;
-        
+
         if (G_IsClientDead(ent->client)){
             ent->client->sess.pausespawn = qtrue;
             ent->client->ps.oldTimer = ent->client->ps.respawnTimer - level.time;
@@ -3284,7 +3285,7 @@ int adm_mapCycle(int argNum, gentity_t *adm, qboolean shortCmd)
             level.mapAction = 4;
             level.mapSwitchCount = level.time;
             level.mapSwitchCount2 = 5; // 5 seconds remaining on the timer.
-            
+
             Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
             Boe_adminLog("Mapcycle", "RCON", "none");
             trap_SendServerCommand(-1, "print\"^3[Rcon Action] ^7Mapcycle.\n\"");
@@ -3349,7 +3350,7 @@ int adm_adminList(int argNum, gentity_t *adm, qboolean shortCmd)
         }else{
             Com_Printf("Access denied: No password logins allowed by the server!\n");
         }
-        
+
         return -1;
     }
 
@@ -3377,7 +3378,7 @@ int adm_adminList(int argNum, gentity_t *adm, qboolean shortCmd)
         }else{
             G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
         }
-        
+
         return -1;
     }else while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
         if(rc == SQLITE_ROW){
@@ -3518,7 +3519,7 @@ int adm_adminRemove(int argNum, gentity_t *adm, qboolean shortCmd)
                 }else{
                     Com_Printf("Access denied: No password logins allowed by the server!\n");
                 }
-                
+
                 return -1;
             }
         }else{
@@ -3533,7 +3534,7 @@ int adm_adminRemove(int argNum, gentity_t *adm, qboolean shortCmd)
                     }else{
                         Com_Printf("Access denied: No password logins allowed by the server!\n");
                     }
-                    
+
                     return -1;
                 }
             }
@@ -3558,7 +3559,7 @@ int adm_adminRemove(int argNum, gentity_t *adm, qboolean shortCmd)
                 }else{
                     Com_Printf("Access denied: No password logins allowed by the server!\n");
                 }
-                
+
                 return -1;
             }
         }
@@ -3569,7 +3570,7 @@ int adm_adminRemove(int argNum, gentity_t *adm, qboolean shortCmd)
             Boe_removeAdminFromDb(adm, arg, passAdmin, qfalse, qfalse);
         }
     }
-    
+
     return -1;
 }
 
@@ -3584,7 +3585,7 @@ Toggle friendly fire.
 int adm_friendlyFire(int argNum, gentity_t *adm, qboolean shortCmd)
 {
     qboolean enable = !g_friendlyFire.integer;
-    
+
     // Toggle state.
     Boe_setTrackedCvar(&g_friendlyFire, enable);
 
@@ -3818,7 +3819,7 @@ int adm_Map(int argNum, gentity_t *adm, qboolean shortCmd)
         if(!g_enforce1fxAdditions.integer && (strcmp(gametype, "h&s") == 0 || strcmp(gametype, "h&z") == 0)){
             trap_SendServerCommand(adm-g_entities, "print\"^3[Info] ^7This gametype is unavailable when you're not enforcing 1fx. Client Additions.\n\"");
             trap_SendServerCommand(adm-g_entities, "print\"^3[Info] ^7Please have someone with RCON access put g_enforce1fxAdditions to 1 and restart the map.\n\"");
-            
+
             return -1;
         }
         #endif // _GOLD
@@ -3885,7 +3886,7 @@ int adm_Third(int argNum, gentity_t *adm, qboolean shortCmd)
         trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Thirdperson enabled.\n\""));
         Boe_adminLog(va("3rd %s", (enable) ? "enabled" : "disabled"), "RCON", "none");
     }
-    
+
     return -1;
 }
 #endif // not _GOLD
@@ -3916,7 +3917,7 @@ int adm_Rounds(int argNum, gentity_t *adm, qboolean shortCmd)
     if(number <= 0){
         // Show current round value if there's no arg.
         trap_SendServerCommand(adm - g_entities, va("print \"^3[Info] ^7Number of rounds for this match: %s.\n\"", (cm_dr.integer == 0) ? "1" : "2"));
-        
+
         return -1;
     }else if(number == 1){ // If they want a single round..
         trap_Cvar_Set("cm_dr", "0");
@@ -4015,7 +4016,7 @@ int adm_Switch(int argNum, gentity_t *adm, qboolean shortCmd)
             Info_SetValueForKey(userinfo, "team", str);
             trap_SetUserinfo(idNum, userinfo);
             g_entities[idNum].client->sess.team = (team_t)xTeam;
-            
+
             if (current_gametype.value != GT_HS){
                 g_entities[idNum].client->pers.identity = BG_FindTeamIdentity(level.gametypeTeam[xTeam], -1);
             }

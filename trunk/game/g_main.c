@@ -427,11 +427,12 @@ static cvarTable_t gameCvarTable[] =
     { &hideSeek_roundstartdelay,    "hideSeek_roundstartdelay", "30",       CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 
 #ifndef _GOLD
-    { &g_availableWeapons,  "g_availableWeapons", "2222222222211", CVAR_ARCHIVE|CVAR_SERVERINFO|CVAR_LATCH|CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
+    { &g_availableWeapons,  "g_availableWeapons", "2222222222211", CVAR_SERVERINFO | CVAR_INTERAL | CVAR_ROM, 0.0, 0.0, 0, qfalse },
+    { &hideSeek_availableWeapons,   "hideSeek_availableWeapons", "200000000000022222222", CVAR_INTERNAL | CVAR_ROM, 0.0, 0.0, 0, qfalse },
 #else
-    { &g_availableWeapons,  "g_available", "2222222222211", CVAR_ARCHIVE|CVAR_SERVERINFO|CVAR_LATCH|CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
+    { &g_availableWeapons,  "g_available", "2222222222211", CVAR_SERVERINFO | CVAR_INTERNAL | CVAR_ROM, 0.0, 0.0, 0, qfalse },
+    { &hideSeek_availableWeapons,   "hideSeek_availableWeapons", "200000000000000022220000", CVAR_INTERNAL | CVAR_ROM, 0.0, 0.0, 0, qfalse },
 #endif // not _GOLD
-    { &hideSeek_availableWeapons,   "hideSeek_availableWeapons", "200000000000022222222", CVAR_INTERNAL|CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
     { &availableWeapons,    "availableWeapons", "2222222222211", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
     // Henk 01/04/10
     { &g_disableNades,  "g_disableNades", "1", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
@@ -981,10 +982,11 @@ void G_UpdateDisableCvars ( void )
 
     available = calloc(level.wpNumWeapons + 1, sizeof(char));
 
-    if(current_gametype.value == GT_HS)
-        Q_strncpyz(available, hideSeek_availableWeapons.string, level.wpNumWeapons);
-    else
-        Q_strncpyz(available, availableWeapons.string, level.wpNumWeapons);
+    if(current_gametype.value == GT_HS){
+        strncpy(available, hideSeek_availableWeapons.string, (strlen(hideSeek_availableWeapons.string) <= level.wpNumWeapons) ? strlen(hideSeek_availableWeapons.string) : level.wpNumWeapons);
+    }else{
+        strncpy(available, availableWeapons.string, (strlen(availableWeapons.string) <= level.wpNumWeapons) ? strlen(availableWeapons.string) : level.wpNumWeapons);
+    }
 
     for ( weapon = WP_KNIFE; weapon < level.wpNumWeapons; weapon++)
     {
@@ -1664,6 +1666,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
     if(g_disableNades.integer){
         SetNades("1");
     }
+
     BG_SetAvailableOutfitting(g_availableWeapons.string);
 
     // Initialize the gametype
