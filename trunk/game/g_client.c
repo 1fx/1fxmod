@@ -2012,6 +2012,7 @@ void ClientBegin( int clientNum, qboolean setTime )
     // Boe!Man 7/6/15: Check if we require the use of the modified cgame.
     if (g_enforce1fxAdditions.integer) {
         client->sess.checkClientAdditions = 1;
+        client->sess.clientAdditionCheckTime = level.time + 1000; // Check after 1 second to avoid flooding the client.
     }
 
     // Boe!Man 9/14/15: Start checking the client their /rate and /snaps in 20 seconds.

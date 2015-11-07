@@ -3779,7 +3779,7 @@ void ClientCommand( int clientNum ) {
 #endif // _DEBUG
 
 #ifdef _3DServer
-    else if (Q_stricmp(cmd, "ghost") == 0){ // Boe!Man 3/20/15: Switch between monkey-mode and acutal ghost.
+    else if (Q_stricmp(cmd, "ghost") == 0){ // Boe!Man 3/20/15: Switch between monkey-mode and actual ghost.
         Boe_switchGhost(ent);
     }
 #endif // _3DServer

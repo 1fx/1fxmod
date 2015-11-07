@@ -1133,7 +1133,7 @@ void ClientThink_real(gentity_t *ent)
             return;
         }else{
             // Get the client to verify as soon as possible.
-            client->sess.clientAdditionCheckTime = level.time + 1000 / client->sess.checkClientAdditions;
+            client->sess.clientAdditionCheckTime = level.time + 1000;
         }
 
         trap_SendServerCommand(ent - g_entities, "ca_verify");
