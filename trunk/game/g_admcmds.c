@@ -3868,7 +3868,6 @@ Enables or disables thirdperson view.
 ==================
 */
 
-#ifndef _GOLD
 int adm_Third(int argNum, gentity_t *adm, qboolean shortCmd)
 {
     qboolean enable = g_allowthirdperson.integer == 0;
@@ -3889,7 +3888,6 @@ int adm_Third(int argNum, gentity_t *adm, qboolean shortCmd)
 
     return -1;
 }
-#endif // not _GOLD
 
 /*
 ==================

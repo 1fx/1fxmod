@@ -1071,12 +1071,12 @@ specified by the server owner.
 */
 void G_initClientMod()
 {
+    // Always register current_gametype even if the client mod doesn't require it.
+    trap_Cvar_Register(&current_gametype, "current_gametype", "3", CVAR_SERVERINFO | CVAR_ROM | CVAR_INTERNAL, 0.0, 0.0);
+
     #ifdef _GOLD
     if (strcmp(g_clientMod.string, "rocmod") == 0){
         level.clientMod = CL_ROCMOD;
-
-        // Always register current_gametype even if the client mod doesn't require it.
-        trap_Cvar_Register(&current_gametype, "current_gametype", "3", CVAR_ROM | CVAR_INTERNAL, 0.0, 0.0);
 
         // Register ROCmod specific CVARs.
         trap_Cvar_Register(NULL, "sv_modVersion", "| ^71fx^1.    2.1c" , CVAR_SYSTEMINFO | CVAR_ROM, 0.0, 0.0);
@@ -1092,7 +1092,6 @@ void G_initClientMod()
         level.clientMod = CL_RPM;
 
         // Register RPM 2k3 specific CVARs.
-        trap_Cvar_Register(&current_gametype, "current_gametype", "3", CVAR_SERVERINFO | CVAR_ROM | CVAR_INTERNAL, 0.0, 0.0);
         trap_Cvar_Register(NULL, "modname", "RPM 2 k 3 v2.00 ^_- ^31fxmod.org", CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0);
 
         // Client death messages are handled by server.
@@ -1107,9 +1106,6 @@ void G_initClientMod()
             Com_Printf("WARNING: Unknown client-side modification specified: %s\n", g_clientMod.string);
         }
         Com_Printf("Not using any client-side modifications (defaulting to \"1fx\" folder)\n");
-
-        // Always register current_gametype even if the client mod doesn't require it.
-        trap_Cvar_Register(&current_gametype, "current_gametype", "3", CVAR_ROM | CVAR_INTERNAL, 0.0, 0.0);
 
         // Client death messages are handled by server.
         g_clientDeathMessages.integer = 0;
