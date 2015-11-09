@@ -26,7 +26,7 @@ void RPM_WeaponMod (void)
     attackData_t    *attack;
     char            WpnFile[64];
 
-    ammoMaxs = malloc(sizeof(int) * level.ammoMax);
+    ammoMaxs = calloc(level.ammoMax * ATTACK_MAX, sizeof(int));
 
     // Henk 06/04/10 -> Different wpn files(H&S, Real Damage, Normal Damage)
     if(current_gametype.value == GT_HS){
