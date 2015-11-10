@@ -151,10 +151,13 @@ void BG_InitializeWeaponsAndAmmo()
         bg_enumWeaponNames[23] = "WP_L2A2_GRENADE";
         bg_enumWeaponNames[24] = "WP_MDN11_GRENADE";
 
+        if(current_gametype.value == GT_HS){
+            // Boe!Man 11/9/15: Don't cross any hard-defined bit fields for ammo types. Re-use some to stay under the hard limit of MAX_AMMO.
+            ammoNames[12] = "F1";       //  AMMO_F1
+            ammoNames[13] = "MDN11";    //  AMMO_MDN11
+        }
         ammoNames[14] = "M67";          //  AMMO_M67
-        ammoNames[15] = "F1";           //  AMMO_F1
-        ammoNames[16] = "L2A2";         //  AMMO_L2A2
-        ammoNames[17] = "MDN11";        //  AMMO_MDN11
+        ammoNames[15] = "L2A2";         //  AMMO_L2A2
     }
     #endif // not _GOLD
 }

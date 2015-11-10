@@ -6,8 +6,8 @@
 #define __BG_WEAPONS_H__
 
 // Boe!Man 7/30/15: Hard limits, no dynamic configuration should exceed this.
-#define WP_MAX_WEAPONS  25
-#define WP_MAX_AMMO     19
+#define WP_MAX_WEAPONS  25  // Never make this exceed MAX_WEAPONS.
+#define WP_MAX_AMMO     16  // Never make this exceed MAX_AMMO.
 
 #ifndef _GOLD
 // MOD and weapon info for v1.00
@@ -255,9 +255,7 @@ typedef enum
 
     // Boe!Man 7/27/15: Extra grenade ammo types for 1fx. Client Additions.
     AMMO_M67,
-    AMMO_F1,
     AMMO_L2A2,
-    AMMO_MDN11,
 
     AMMO_NONE,
 
