@@ -750,6 +750,15 @@ void Cmd_Give_f (gentity_t *ent)
         {
             int a;
 
+            #ifdef _GOLD
+            // Boe!Man 11/11/15: Skip weapons that have shared ammo in specific gametypes in give me all.
+            if(current_gametype.value != GT_HS && i >= WP_M67_GRENADE && i <= WP_MDN11_GRENADE){
+                continue;
+            }else if(current_gametype.value == GT_HS && (i == WP_M60_MACHINEGUN || i == WP_MP5)){
+                continue;
+            }
+            #endif // _GOLD
+
             for ( a = ATTACK_NORMAL; a < ATTACK_MAX; a ++ )
             {
                 ent->client->ps.clip[a][i] = 250; //weaponData[i].attack[a].clipSize;
