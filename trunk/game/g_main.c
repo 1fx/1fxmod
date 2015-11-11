@@ -1559,6 +1559,9 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
     // reserve some spots for dead player bodies
     G_InitBodyQueue();
 
+    // Boe!Man 11/11/15: Initialize stats memory.
+    G_AllocateStatsMemory(NULL);
+
     // Boe!Man 7/27/15: Initialize weapon and ammo globals.
     #ifndef _GOLD
     level.wpNumWeapons = 22;

@@ -1195,6 +1195,7 @@ gentity_t*  G_FindNearbyClient              ( vec3_t origin, team_t team, float 
 void        G_AddClientSpawn                ( gentity_t* ent, team_t team, qboolean monkey );
 void        G_AllocateStatsMemory           ( gentity_t *ent );
 void        G_FreeStatsMemory               ( gentity_t *ent );
+void        G_EmptyStatsMemory              ( gentity_t *ent );
 
 //
 // g_svcmds.c

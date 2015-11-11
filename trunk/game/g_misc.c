@@ -1189,14 +1189,8 @@ void G_Refresh(gentity_t *ent)
         player_die(ent, ent, ent, 100000, MOD_REFRESH, HL_NONE, vec3_origin);
     }
 
-    // Free the stats memory before memsetting the struct.
-    G_FreeStatsMemory(ent);
-
-    // Memset it now.
-    memset(&ent->client->pers.statinfo, 0, sizeof(ent->client->pers.statinfo));
-
-    // Re-allocate the memory.
-    G_AllocateStatsMemory(ent);
+    // Empty the stats.
+    G_EmptyStatsMemory(ent);
 
     ent->client->pers.enterTime = level.time;
     ent->client->ps.persistant[PERS_SCORE] = 0;

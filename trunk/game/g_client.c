@@ -1951,10 +1951,7 @@ void ClientBegin( int clientNum, qboolean setTime )
 
     client->pers.connected = CON_CONNECTED;
 
-    // Boe!Man 10/22/15: Allocate their stats memory.
-    if(setTime){
-        G_AllocateStatsMemory(ent);
-    }
+    G_EmptyStatsMemory(ent);
 
     ///RxCxW - 09.15.06 - 05:09pm #statusCheck
     if(!ent->client->sess.fileChecked)
@@ -2685,9 +2682,6 @@ void ClientDisconnect( int clientNum )
         G_LogPrintf("ClientDisconnect: [%i] %s\\%s\n", clientNum, ent->client->pers.ip, ent->client->pers.cleanName);
     }
 
-    // Boe!Man 7/27/15: Free allocated stats memory.
-    G_FreeStatsMemory(ent);
-
     trap_UnlinkEntity (ent);
     ent->s.modelindex = 0;
     ent->inuse = qfalse;
@@ -2846,21 +2840,36 @@ gentity_t* G_FindNearbyClient ( vec3_t origin, team_t team, float radius, gentit
 ===========
 G_AllocateStatsMemory
 
-Allocates stats memory of a client.
+Allocates stats memory of all or one client.
 ============
 */
 
 void G_AllocateStatsMemory(gentity_t *ent)
 {
-    if(ent->client->pers.connected != CON_CONNECTED){
-        return;
-    }
+    int i;
+    gclient_t *client;
 
-    ent->client->pers.statinfo.weapon_shots = calloc(ATTACK_MAX * level.wpNumWeapons, sizeof(int));
-    ent->client->pers.statinfo.weapon_hits = calloc(ATTACK_MAX * level.wpNumWeapons, sizeof(int));
-    ent->client->pers.statinfo.weapon_headshots = calloc(ATTACK_MAX * level.wpNumWeapons, sizeof(int));
-    if(!ent->client->pers.statinfo.weapon_shots || !ent->client->pers.statinfo.weapon_hits || !ent->client->pers.statinfo.weapon_headshots){
-        Com_Error(ERR_FATAL, "Unable to initialize memory for weapon stats! Out of memory?");
+    if(ent == NULL){
+        for (i = 0; i < level.maxclients; i++)
+        {
+            client = &level.clients[i];
+
+            client->pers.statinfo.weapon_shots = calloc(ATTACK_MAX * level.wpNumWeapons, sizeof(int));
+            client->pers.statinfo.weapon_hits = calloc(ATTACK_MAX * level.wpNumWeapons, sizeof(int));
+            client->pers.statinfo.weapon_headshots = calloc(ATTACK_MAX * level.wpNumWeapons, sizeof(int));
+            if(!client->pers.statinfo.weapon_shots || !client->pers.statinfo.weapon_hits || !client->pers.statinfo.weapon_headshots){
+                Com_Error(ERR_FATAL, "Unable to initialize memory for weapon stats! Out of memory?");
+            }
+        }
+    }else{
+        client = ent->client;
+
+        client->pers.statinfo.weapon_shots = calloc(ATTACK_MAX * level.wpNumWeapons, sizeof(int));
+        client->pers.statinfo.weapon_hits = calloc(ATTACK_MAX * level.wpNumWeapons, sizeof(int));
+        client->pers.statinfo.weapon_headshots = calloc(ATTACK_MAX * level.wpNumWeapons, sizeof(int));
+        if(!client->pers.statinfo.weapon_shots || !client->pers.statinfo.weapon_hits || !client->pers.statinfo.weapon_headshots){
+            Com_Error(ERR_FATAL, "Unable to initialize memory for weapon stats! Out of memory?");
+        }
     }
 }
 
@@ -2868,52 +2877,63 @@ void G_AllocateStatsMemory(gentity_t *ent)
 ===========
 G_FreeStatsMemory
 
-Frees stats memory either of a client or all.
+Frees stats memory of all clients or one.
 ============
 */
 
 void G_FreeStatsMemory(gentity_t *ent)
 {
     int i;
+    gclient_t *client;
 
-    if (ent == NULL){
-        gclient_t *tent;
-
+    if(ent == NULL){
         for (i = 0; i < level.maxclients; i++)
         {
-            tent = &level.clients[i];
+            client = &level.clients[i];
 
-            if (tent == NULL)
-                continue;
-            if (tent->pers.connected != CON_CONNECTED)
-                continue;
+            if (client->pers.statinfo.weapon_shots != NULL)
+                free(client->pers.statinfo.weapon_shots);
+            if (client->pers.statinfo.weapon_hits != NULL)
+                free(client->pers.statinfo.weapon_hits);
+            if (client->pers.statinfo.weapon_headshots != NULL)
+                free(client->pers.statinfo.weapon_headshots);
 
-            if (tent->pers.statinfo.weapon_shots != NULL)
-                free(tent->pers.statinfo.weapon_shots);
-            if (tent->pers.statinfo.weapon_hits != NULL)
-                free(tent->pers.statinfo.weapon_hits);
-            if (tent->pers.statinfo.weapon_headshots != NULL)
-                free(tent->pers.statinfo.weapon_headshots);
-
-            tent->pers.statinfo.weapon_shots = NULL;
-            tent->pers.statinfo.weapon_hits = NULL;
-            tent->pers.statinfo.weapon_headshots = NULL;
+            client->pers.statinfo.weapon_shots = NULL;
+            client->pers.statinfo.weapon_hits = NULL;
+            client->pers.statinfo.weapon_headshots = NULL;
         }
     }else{
-        if(ent->client == NULL)
-            return;
-        if(ent->client->pers.connected != CON_CONNECTED)
-            return;
+        client = ent->client;
 
-        if (ent->client->pers.statinfo.weapon_shots != NULL)
-            free(ent->client->pers.statinfo.weapon_shots);
-        if (ent->client->pers.statinfo.weapon_hits != NULL)
-            free(ent->client->pers.statinfo.weapon_hits);
-        if (ent->client->pers.statinfo.weapon_headshots != NULL)
-            free(ent->client->pers.statinfo.weapon_headshots);
+        if (client->pers.statinfo.weapon_shots != NULL)
+            free(client->pers.statinfo.weapon_shots);
+        if (client->pers.statinfo.weapon_hits != NULL)
+            free(client->pers.statinfo.weapon_hits);
+        if (client->pers.statinfo.weapon_headshots != NULL)
+            free(client->pers.statinfo.weapon_headshots);
 
-        ent->client->pers.statinfo.weapon_shots = NULL;
-        ent->client->pers.statinfo.weapon_hits = NULL;
-        ent->client->pers.statinfo.weapon_headshots = NULL;
+        client->pers.statinfo.weapon_shots = NULL;
+        client->pers.statinfo.weapon_hits = NULL;
+        client->pers.statinfo.weapon_headshots = NULL;
     }
+}
+
+/*
+===========
+G_EmptyStatsMemory
+
+Empties stats memory of specified client.
+============
+*/
+
+void G_EmptyStatsMemory(gentity_t *ent)
+{
+    // Free the stats memory before memsetting the struct.
+    G_FreeStatsMemory(ent);
+
+    // Memset it now.
+    memset(&ent->client->pers.statinfo, 0, sizeof(ent->client->pers.statinfo));
+
+    // Re-allocate the memory.
+    G_AllocateStatsMemory(ent);
 }
