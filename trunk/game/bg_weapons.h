@@ -8,6 +8,7 @@
 // Boe!Man 7/30/15: Hard limits, no dynamic configuration should exceed this.
 #define WP_MAX_WEAPONS  25  // Never make this exceed MAX_WEAPONS.
 #define WP_MAX_AMMO     16  // Never make this exceed MAX_AMMO.
+#define WP_MAX_MODS     40
 
 #ifndef _GOLD
 // MOD and weapon info for v1.00
@@ -402,6 +403,7 @@ typedef struct  ammoData_s
 extern char *ammoNames[WP_MAX_AMMO];
 extern weaponData_t weaponData[WP_MAX_WEAPONS];
 extern ammoData_t ammoData[WP_MAX_AMMO];
+extern char *modNames[WP_MAX_MODS];
 
 // Specific weapon information
 

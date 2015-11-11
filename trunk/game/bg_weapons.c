@@ -10,6 +10,7 @@
 char *bg_weaponNames[WP_MAX_WEAPONS] = {0};
 char *bg_enumWeaponNames[WP_MAX_WEAPONS] = {0};
 char *ammoNames[WP_MAX_AMMO] = {0};
+char *modNames[WP_MAX_MODS] = {0};
 
 weaponData_t weaponData[WP_MAX_WEAPONS];
 ammoData_t ammoData[WP_MAX_AMMO];
@@ -79,6 +80,43 @@ void BG_InitializeWeaponsAndAmmo()
     ammoNames[13] = "MDN11";        //  AMMO_MDN11
     ammoNames[14] = "SMOHG92";      //  AMMO_SMOHG92
     ammoNames[15] = "ANM14";        //  AMMO_ANM14
+
+    modNames[0] = "Unknown";
+    modNames[1] = "Knife";
+    modNames[2] = "M1911A1";
+    modNames[3] = "US SOCOM";
+    modNames[4] = "M590";
+    modNames[5] = "Micro Uzi";
+    modNames[6] = "M3A1";
+    modNames[7] = "USAS-12";
+    modNames[8] = "M4";
+    modNames[9] = "AK74";
+    modNames[10] = "M1911A1";
+    modNames[11] = "M60";
+    modNames[12] = "MM1";
+    modNames[13] = "RPG7";
+    modNames[14] = "M67";
+    modNames[15] = "M84";
+    modNames[16] = "F1";
+    modNames[17] = "L2A2";
+    modNames[18] = "MDN11";
+    modNames[19] = "SMOHG92";
+    modNames[20] = "ANM14";
+    modNames[21] = "M15";
+    modNames[22] = "Water";
+    modNames[23] = "Crushing entity";
+    modNames[24] = "Telefrag";
+    modNames[25] = "Falling";
+    modNames[26] = "Sucicide";
+    modNames[27] = "Team change";
+    modNames[28] = "Target Laser";
+    modNames[29] = "Trigger hurt entity";
+    modNames[30] = "Car";
+    modNames[31] = "Pop";
+    modNames[32] = "Refresh";
+    modNames[33] = "Plant up";
+    modNames[34] = "Burn";
+
     #else
     bg_weaponNames[0] = "No Weapon";    // WP_NONE
     bg_weaponNames[1] = "Knife";        // WP_KNIFE
@@ -159,6 +197,45 @@ void BG_InitializeWeaponsAndAmmo()
         ammoNames[14] = "M67";          //  AMMO_M67
         ammoNames[15] = "L2A2";         //  AMMO_L2A2
     }
+
+    modNames[0] = "Unknown";
+    modNames[1] = "Knife";
+    modNames[2] = "M1911A1";
+    modNames[3] = "US SOCOM";
+    modNames[4] = "Silver Talon";
+    modNames[5] = "M590";
+    modNames[6] = "Micro Uzi";
+    modNames[7] = "M3A1";
+    modNames[8] = "MP5";
+    modNames[9] = "USAS-12";
+    modNames[10] = "M4";
+    modNames[11] = "AK74";
+    modNames[12] = "Sig 551";
+    modNames[13] = "M1911A1";
+    modNames[14] = "M60";
+    modNames[15] = "MM1";
+    modNames[16] = "RPG7";
+    modNames[17] = "M84";
+    modNames[18] = "SMOHG92";
+    modNames[19] = "ANM14";
+    modNames[20] = "M15";
+    modNames[21] = "M67";
+    modNames[22] = "F1";
+    modNames[23] = "L2A2";
+    modNames[24] = "MDN11";
+    modNames[25] = "Water";
+    modNames[26] = "Crushing entity";
+    modNames[27] = "Telefrag";
+    modNames[28] = "Falling";
+    modNames[29] = "Sucicide";
+    modNames[30] = "Team change";
+    modNames[31] = "Target Laser";
+    modNames[32] = "Trigger hurt entity";
+    modNames[33] = "Car";
+    modNames[34] = "Pop";
+    modNames[35] = "Refresh";
+    modNames[36] = "Plant up";
+    modNames[37] = "Burn";
     #endif // not _GOLD
 }
 

@@ -154,58 +154,6 @@ void body_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int d
     return;
 }
 
-
-// these are just for logging, the client prints its own messages
-char *modNames[] =
-{
-    "MOD_UNKNOWN",
-
-    "MOD_KNIFE",
-
-    "MOD_M1911A1_PISTOL",
-    "MOD_US_SOCOM_PISTOL",
-
-    "MOD_M590_SHOTGUN",
-    "MOD_MICRO_UZI_SUBMACHINEGUN",
-    "MOD_M3A1_SUBMACHINEGUN",
-
-    "MOD_USAS_12_SHOTGUN",
-    "MOD_M4_ASSAULT_RIFLE",
-    "MOD_AK74_ASSAULT_RIFLE",
-    "MOD_MSG90A1_SNIPER_RIFLE",
-    "MOD_M60_MACHINEGUN",
-    "MOD_MM1_GRENADE_LAUNCHER",
-    "MOD_RPG7_LAUNCHER",
-
-    "MOD_M67_GRENADE",
-    "MOD_M84_GRENADE",
-    "MOD_F1_GRENADE",
-    "MOD_L2A2_GRENADE",
-    "MOD_MDN11_GRENADE",
-    "MOD_SMOHG92_GRENADE",
-    "MOD_ANM14_GRENADE",
-    "MOD_M15_GRENADE",
-
-    "MOD_WATER",
-    "MOD_CRUSH",
-    "MOD_TELEFRAG",
-    "MOD_FALLING",
-    "MOD_SUICIDE",
-    "MOD_TEAMCHANGE",
-    "MOD_TARGET_LASER",
-    "MOD_TRIGGER_HURT",
-    //Ryan
-    "MOD_CAR",
-    "MOD_POP",
-    "MOD_REFRESH",
-    //Ryan
-    //RxCxW #MOD
-    "MOD_DUGUP",
-    "MOD_BURN"
-
-    //End
-};
-
 /*
 ==================
 player_die
@@ -345,7 +293,7 @@ void player_die(
     {
         if ( attack == ATTACK_ALTERNATE )
         {
-            obit = va ( "%s_ALT", modNames[ meansOfDeath ] );
+            obit = va ( "%s (Alternate attack)", modNames[ meansOfDeath ] );
         }
         else
         {
