@@ -2768,7 +2768,11 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
     }
     else if (strcmp(cmd, "!re") == 0){
         int client = ent->client->sess.lastPmClient;
-        gentity_t *target = &g_entities[client];
+        gentity_t *target = NULL;
+
+        if(client != -1){
+            target = &g_entities[client];
+        }
 
         if (client == -1 || !target || !target->client || target->client->pers.connected != CON_CONNECTED){
             trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7You don't have anyone to reply to (or the client went offline).\n\""));
@@ -2777,7 +2781,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
             // Reset client.
             ent->client->sess.lastPmClient = -1;
             return;
-        }else if ((ent->client->sess.lastPmClientChange + 2000) > level.time){
+        }else if ((ent->client->sess.lastPmClientChange + 1000) > level.time){
             trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7You just got PMed by someone else - as security measure we're not sending your message.\n\""));
 
             ent->client->sess.lastPmClient = -1;
