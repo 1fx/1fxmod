@@ -2739,8 +2739,18 @@ int adm_Gametype(int argNum, gentity_t *adm, qboolean shortCmd)
 {
     char        gametype[8];
     char        arg[16] = "\0";
+    int         argc;
 
-    trap_Argv(argNum, arg, sizeof(arg));
+    if (shortCmd) {
+        argc = G_GetChatArgumentCount();
+    }
+
+    if (!shortCmd || shortCmd && !argc){
+        trap_Argv((!shortCmd) ? argNum : argNum + 1, arg, sizeof(arg));
+    }else{
+        Q_strncpyz(arg, G_GetChatArgument(1), sizeof(arg));
+    }
+
     // Boe!Man 2/4/11: Adding support for uppercase arguments.
     Q_strlwr(arg);
 
