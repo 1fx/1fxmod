@@ -427,7 +427,7 @@ static cvarTable_t gameCvarTable[] =
     { &hideSeek_roundstartdelay,    "hideSeek_roundstartdelay", "30",       CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 
 #ifndef _GOLD
-    { &g_availableWeapons,  "g_availableWeapons", "2222222222211", CVAR_SERVERINFO | CVAR_INTERAL | CVAR_ROM, 0.0, 0.0, 0, qfalse },
+    { &g_availableWeapons,  "g_availableWeapons", "2222222222211", CVAR_SERVERINFO | CVAR_INTERNAL | CVAR_ROM, 0.0, 0.0, 0, qfalse },
     { &hideSeek_availableWeapons,   "hideSeek_availableWeapons", "200000000000022222222", CVAR_INTERNAL | CVAR_ROM, 0.0, 0.0, 0, qfalse },
 #else
     { &g_availableWeapons,  "g_available", "2222222222211", CVAR_SERVERINFO | CVAR_INTERNAL | CVAR_ROM, 0.0, 0.0, 0, qfalse },
