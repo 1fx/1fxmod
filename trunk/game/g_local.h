@@ -1342,6 +1342,7 @@ qboolean    G_CheckAlive                        ( void );
 extern  vmCvar_t    g_dosPatch;
 
 void        Patch_Main                          ( void );
+void        Patch_addAdditionalFSGame           ( char *searchpath );
 
 //
 // g_client.c

@@ -39,7 +39,7 @@ to the specified memory address.
 
 void Patch_engineCVARs()
 {
-    Com_Printf("Patching engine CVAR attributes...\n");
+    Com_Printf("Applying engine CVAR attributes patch...\n");
 
     // Modify sv_floodProtect with read only attribute.
     (*(cvar_t **)FLOODPROTECT_ADDRESS)->flags |= CVAR_ROM;

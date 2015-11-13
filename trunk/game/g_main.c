@@ -1101,6 +1101,12 @@ void G_initClientMod()
 
     if (level.clientMod != CL_NONE){
         Com_Printf("Using %s client-side modifications.\n", g_clientMod.string);
+
+        // Also add the .pk3s from this fake fs_game in the sv_ref* list,
+        // if 1fx. Additions are not enforced.
+        if(!g_enforce1fxAdditions.integer){
+            Patch_addAdditionalFSGame(g_clientMod.string);
+        }
     }else{
         if(strcmp(g_clientMod.string, "none") != 0){
             Com_Printf("WARNING: Unknown client-side modification specified: %s\n", g_clientMod.string);
