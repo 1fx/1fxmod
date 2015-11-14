@@ -1845,7 +1845,7 @@ void RemoveColorEscapeSequences(char *text) {
 /*
 ==============
 G_RemoveAdditionalCarets
-10/17/15: 7:22 PM
+10/17/15 - 7:22 PM
 Removes additional carets from text.
 ==============
 */
@@ -1866,4 +1866,56 @@ void G_RemoveAdditionalCarets(char *text)
     }
 
     text[l] = '\0';
+}
+
+/*
+==============
+G_Hash
+11/14/15 - 11:39 AM
+Hash function reverse engineered from the engine,
+so we can manually enable/disable it with a CVAR.
+==============
+*/
+
+void G_Hash()
+{
+    int             i, hashCharVal, hashSignedIntVal;
+    float           hashFloatVal;
+    char            c;
+    char            cvarName[MAX_TOKEN_CHARS];
+    char            hashNewVal[MAX_TOKEN_CHARS];
+    char            cvarNewVal[MAX_TOKEN_CHARS];
+    unsigned int    hash = 0;
+
+    // Check parameters specified.
+    if ( trap_Argc() != 3 ){
+        Com_Printf("usage: hash <cvar> <string>\n");
+        return;
+    }
+
+    // Bitshift result while there is data.
+    trap_Argv(2, hashNewVal, sizeof(hashNewVal));
+    for(i = 0; i < strlen(hashNewVal); i++){
+        c = hashNewVal[i];
+        hashCharVal = 16 * hash + c - 97;
+        hash ^= (hash >> 28) ^ hashCharVal;
+    }
+
+    // Cast to float and signed integer, and see if they are the same.
+    hashFloatVal = hash;
+    hashSignedIntVal = hashFloatVal;
+    if ( hashSignedIntVal == hashFloatVal){
+        // Safe to set it as a regular integer.
+        Com_sprintf(cvarNewVal, sizeof(cvarNewVal), "%i", hashSignedIntVal);
+    }else{
+        // Must be set as float, different values.
+        Com_sprintf(cvarNewVal, sizeof(cvarNewVal), "%f", hashFloatVal);
+    }
+
+    // Get CVAR name and set the new data.
+    trap_Argv(1, cvarName, sizeof(cvarName));
+    trap_Cvar_Set(cvarName, cvarNewVal);
+
+    // Always print result, unlike the real function where it is actually a Com_DPrintf.
+    Com_Printf("Cvar %s given hashed integer %d\n", cvarName, hash);
 }
