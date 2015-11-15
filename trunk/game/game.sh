@@ -292,7 +292,7 @@ cFileCount="$(echo -e "${cFileCount}" | sed -e 's/^[[:space:]]*//')" # Remove wh
 cFileCount=$((10#$cFileCount+1)) # Convert to int + 1 for the "special" SQLite3 file.
 
 if [ $gold == false ] && [ $linux == true ]; then
-    $cFileCount=$((cFileCount+1)) # Extra addition of the "special" TADNS file.
+    cFileCount=$((cFileCount+1)) # Extra addition of the "special" TADNS file.
 fi
 
 # Clean up compile_log file and Mod.
