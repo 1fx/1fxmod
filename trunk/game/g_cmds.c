@@ -4306,6 +4306,12 @@ qboolean ConsoleCommand( void )
         return qtrue;
     }
 
+    if(Q_stricmp(cmd, "hash") == 0 )
+    {
+        G_Hash();
+        return qtrue;
+    }
+
     if (g_dedicated.integer)
     {
         if (Q_stricmp (cmd, "say") == 0)

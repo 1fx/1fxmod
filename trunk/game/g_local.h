@@ -1160,6 +1160,8 @@ void        G_ReadyCheck                    ( gentity_t *ent );
 void        RemoveColorEscapeSequences      ( char *text );
 void        G_RemoveAdditionalCarets        ( char *text );
 
+void        G_Hash                          ( void );
+
 //
 // g_weapon.c
 //
@@ -1499,6 +1501,7 @@ extern  vmCvar_t    pmove_fixed;
 extern  vmCvar_t    pmove_msec;
 extern  vmCvar_t    g_rankings;
 extern  vmCvar_t    g_fps;
+extern  vmCvar_t    g_enableHash;
 extern  vmCvar_t    g_respawnInterval;
 extern  vmCvar_t    g_respawnInvulnerability;
 extern  vmCvar_t    RMG;

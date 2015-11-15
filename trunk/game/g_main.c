@@ -96,6 +96,7 @@ vmCvar_t    pmove_msec;
 vmCvar_t    g_rankings;
 vmCvar_t    g_listEntity;
 vmCvar_t    g_fps;
+vmCvar_t    g_enableHash;
 vmCvar_t    g_respawnInterval;
 vmCvar_t    g_respawnInvulnerability;
 vmCvar_t    g_roundtimelimit;
@@ -351,6 +352,7 @@ static cvarTable_t gameCvarTable[] =
     { NULL, "sv_mapname", "", CVAR_SERVERINFO | CVAR_ROM, 0.0, 0.0, 0, qfalse  },
 
     { &g_fps, "sv_fps", "", CVAR_ROM, 0.0, 0.0, 0, qfalse },
+    { &g_enableHash, "g_enableHash", "0", CVAR_ROM, 0.0, 0.0, 0, qfalse },
 
     // latched vars
     { &g_gametype, "g_gametype", "dm", CVAR_SERVERINFO | CVAR_LATCH, 0.0, 0.0, 0, qfalse  },

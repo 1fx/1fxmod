@@ -1887,6 +1887,12 @@ void G_Hash()
     char            cvarNewVal[MAX_TOKEN_CHARS];
     unsigned int    hash = 0;
 
+    // Check if the server started with hash enabled.
+    if(!g_enableHash.integer){
+        Com_Printf("Hash is disabled, the server owner can enable it with g_enableHash.\n");
+        return;
+    }
+
     // Check parameters specified.
     if ( trap_Argc() != 3 ){
         Com_Printf("usage: hash <cvar> <string>\n");

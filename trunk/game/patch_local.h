@@ -39,5 +39,6 @@ void    Patch_rconLog               ( void );
 void    Patch_sysinfoWorkaround     ( void );
 void    Patch_q3infofix             ( void );
 void    Patch_engineCVARs           ( void );
+void    Patch_removeCommand         ( const char *cmd );
 
 #endif // _PATCH_LOCAL
