@@ -54,5 +54,5 @@ void Patch_removeCommand(const char *cmd)
     (*(Cmd_RemoveCommand *)CMD_REMOVECOMMAND)(cmd);
     #endif // __linux __ && __GNUC__ < 3
 
-    Com_Printf("done\n");
+    Com_Printf("done!\n");
 }

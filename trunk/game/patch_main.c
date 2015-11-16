@@ -275,6 +275,9 @@ void Patch_Main()
 
     // Also remove the hash command from the v1.00 command list.
     Patch_removeCommand("hash");
+    #else
+    // Remove the banlist function from the v1.03 command list.
+    Patch_removeCommand("banlist");
     #endif // not _GOLD
     Patch_rconLog();
     Patch_sysinfoWorkaround();
