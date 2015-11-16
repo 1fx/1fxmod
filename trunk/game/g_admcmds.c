@@ -3181,15 +3181,15 @@ static void adm_unbanFromDatabase(gentity_t *adm, char *ip, qboolean subnet)
     // Log the unban.
     if(subnet){
         if(adm && adm->client){
-            Boe_adminLog ("subnet unban", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", name, ip2));
+            Boe_adminLog ("subnet unban", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", ip2, name));
         }else{
-            Boe_adminLog ("subnet unban", "RCON", name);
+            Boe_adminLog ("subnet unban", "RCON", va("%s\\%s", ip2, name));
         }
     }else{
         if(adm && adm->client){
-            Boe_adminLog ("unban", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", name, ip2));
+            Boe_adminLog ("unban", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", ip2, name));
         }else{
-            Boe_adminLog ("unban", "RCON", name);
+            Boe_adminLog ("unban", "RCON", va("%s\\%s", ip2, name));
         }
     }
 }
