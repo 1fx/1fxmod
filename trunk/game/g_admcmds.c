@@ -2020,33 +2020,49 @@ static void adm_showBanList(int argNum, gentity_t *adm, qboolean shortCmd, qbool
 {
     // We use this in order to send as little packets as possible.
     // Packet max size is 1024 minus some overhead, 1000 char.max should take care of this. (adm only, RCON remains unaffected).
-    char             buf2[1000] = "\0";
+    char             buf2[1000] = "\0", arg[10];
     // SQLite variables.
     sqlite3         *db;
     sqlite3_stmt    *stmt;
     int              rc;
     // We use the following variable for filter options.
     char            *filterQuery;
+    qboolean        noFormat = qfalse;
 
     db = bansDb;
     memset(buf2, 0, sizeof(buf2));
 
-    // Check if we can apply filters.
-    if(subnet)
-        filterQuery = adm_checkListFilters(adm, argNum, shortCmd, "subnetbanlist", "banned");
-    else
-        filterQuery = adm_checkListFilters(adm, argNum, shortCmd, "banlist", "banned");
+    // Check if we should apply no formatting to the output (API).
+    if(!adm){
+        trap_Argv(argNum, arg, sizeof(arg));
 
-    if (!filterQuery) // The call returned NULL, meaning we should quit parsing the list.
-        return;
+        if(Q_stricmp(arg, "noformat") == 0){
+            noFormat = qtrue;
+        }
+    }
+
+    if(!noFormat){
+        // Check if we can apply filters.
+        if(subnet)
+            filterQuery = adm_checkListFilters(adm, argNum, shortCmd, "subnetbanlist", "banned");
+        else
+            filterQuery = adm_checkListFilters(adm, argNum, shortCmd, "banlist", "banned");
+
+        if (!filterQuery) // The call returned NULL, meaning we should quit parsing the list.
+            return;
+    }else{
+        filterQuery = " ";
+    }
 
     if(adm){
         Q_strcat(buf2, sizeof(buf2), va("^3 %-4s %-15s %-15s %-18s By\n" \
                                      "^7------------------------------------------------------------------------\n",
                                      "#", "IP", "Name", "Reason"));
-    }else{
+    }else if(!noFormat){
         Com_Printf("^3 %-4s %-15s %-15s %-18s By\n", "#", "IP", "Name", "Reason");
         Com_Printf("^7------------------------------------------------------------------------\n");
+    }else{
+        Com_Printf("#\tIP\tName\tReason\n");
     }
 
     if(subnet){
@@ -2072,7 +2088,11 @@ static void adm_showBanList(int argNum, gentity_t *adm, qboolean shortCmd, qbool
                 }
                 Q_strcat(buf2, sizeof(buf2), va("[^3%-3.3i^7] %-15.15s %-15.15s %-18.18s %-15.15s\n", sqlite3_column_int(stmt, 0), sqlite3_column_text(stmt, 1), sqlite3_column_text(stmt, 2), sqlite3_column_text(stmt, 4), sqlite3_column_text(stmt, 3)));
             }else{
-                Com_Printf("[^3%-3.3i^7] %-15.15s %-15.15s %-18.18s %-15.15s\n", sqlite3_column_int(stmt, 0), sqlite3_column_text(stmt, 1), sqlite3_column_text(stmt, 2), sqlite3_column_text(stmt, 4), sqlite3_column_text(stmt, 3));
+                if(!noFormat){
+                    Com_Printf("[^3%-3.3d^7] %-15.15s %-15.15s %-18.18s %-15.15s\n", sqlite3_column_int(stmt, 0), sqlite3_column_text(stmt, 1), sqlite3_column_text(stmt, 2), sqlite3_column_text(stmt, 4), sqlite3_column_text(stmt, 3));
+                }else{
+                    Com_Printf("%d\t%s\t%s\t%s\t%s\n", sqlite3_column_int(stmt, 0), sqlite3_column_text(stmt, 1), sqlite3_column_text(stmt, 2), sqlite3_column_text(stmt, 4), sqlite3_column_text(stmt, 3));
+                }
             }
         }
     }
@@ -2082,8 +2102,10 @@ static void adm_showBanList(int argNum, gentity_t *adm, qboolean shortCmd, qbool
     // Boe!Man 11/04/11: Fix for RCON not properly showing footer of banlist.
     if(adm && adm->client){
         trap_SendServerCommand( adm-g_entities, va("print \"%s\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\"", buf2)); // Boe!Man 11/04/11: Also send the last buf2 (that wasn't filled as a whole yet).
-    }else{
+    }else if(!noFormat){
         Com_Printf("\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n");
+    }else{
+        Com_Printf("\n");
     }
 
     return;
