@@ -1080,6 +1080,8 @@ void G_UpdateOutfitting ( int clientNum )
     }
 
     if(current_gametype.value != GT_HS || client->ps.weaponTime == 0 || client->sess.team != TEAM_RED){
+        client->ps.weaponTime = 0;
+
         // Default to auto (or next available fire mode).
         BG_GetInviewAnim(client->ps.weapon,"idle",&idle);
         client->ps.weaponAnimId = idle;
