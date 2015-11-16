@@ -3784,7 +3784,7 @@ void G_RunFrame( int levelTime )
         }
 
         if(ent->client->sess.team != TEAM_SPECTATOR && ent->client->sess.zombie == qtrue && ent->client->sess.zombiebody != -1 && current_gametype.value == GT_HZ){
-                if(g_entities[ent->client->sess.zombiebody].s.pos.trType == TR_STATIONARY){
+                if(g_entities[ent->client->sess.zombiebody].s.pos.trType == TR_STATIONARY || g_entities[ent->client->sess.zombiebody].timestamp > level.time + 5000){
                     SetTeam(ent, "blue", NULL, qtrue);
                     G_StopFollowing ( ent );
                     ent->client->ps.pm_flags &= ~PMF_GHOST;
@@ -3792,10 +3792,13 @@ void G_RunFrame( int levelTime )
                     ent->client->sess.ghost = qfalse;
                     trap_UnlinkEntity (ent);
                     ClientSpawn(ent);
-                    //trap_SendServerCommand(-1, va("print\"^3[Debug] ^7Teleport angles: %s.\n\"", vtos(ent->client->sess.tempangles)));
-                    TeleportPlayer(ent, g_entities[ent->client->sess.zombiebody].r.currentOrigin, ent->client->sess.tempangles, qtrue);
-                    SetClientViewAngle(ent, ent->client->sess.tempangles, qfalse);
-                    //G_FreeEntity(&g_entities[ent->client->sess.zombiebody]);
+
+                    // Boe!Man 11/16/15: Only teleport if their new location was stationary.
+                    if(g_entities[ent->client->sess.zombiebody].s.pos.trType == TR_STATIONARY){
+                        TeleportPlayer(ent, g_entities[ent->client->sess.zombiebody].r.currentOrigin, ent->client->sess.tempangles, qtrue);
+                        SetClientViewAngle(ent, ent->client->sess.tempangles, qfalse);
+                    }
+
                     g_entities[ent->client->sess.zombiebody].nextthink = level.time+1000;
                     g_entities[ent->client->sess.zombiebody].think = G_FreeEntity;
                     ent->client->sess.zombie = qfalse;
