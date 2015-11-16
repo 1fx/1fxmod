@@ -938,6 +938,7 @@ void G_UpdateCvars( void )
                             trap_Cvar_Set("cm_slock", "1");
                             trap_SendServerCommand(-1, va("print \"^3[Rcon Action] ^7Spectator team locked during match.\n\""));
                         }
+                        level.specsLocked = (cv->vmCvar->integer) ? 1 : 0;
                     }
                 }
 

@@ -455,6 +455,8 @@ extern  vmCvar_t    g_matchTimeLimit;
 extern  vmCvar_t    g_matchScoreLimit;
 extern  vmCvar_t    g_matchDisableEvents;
 extern  vmCvar_t    g_matchRounds;
+extern  vmCvar_t    g_matchDisablePubChat;
+extern  vmCvar_t    g_matchDisableTell;
 
 extern vmCvar_t cm_enabled;
 extern vmCvar_t cm_sl;

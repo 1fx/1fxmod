@@ -688,20 +688,8 @@ void SpectatorThink( gentity_t *ent, usercmd_t *ucmd )
         G_StopFollowing( ent );
     }
 
-    if (g_compMode.integer){
-        if(client->sess.spectating >= 0 && client->sess.spectating <= 64){
-            if(level.clients[client->sess.spectating].sess.thirdperson == 1){
-                client->sess.spectatorFirstPerson = qfalse;
-            }else if(level.clients[client->sess.spectating].sess.thirdperson == 0){
-                client->sess.spectatorFirstPerson = qtrue;
-            }else{
-                client->sess.spectatorFirstPerson = qtrue;
-            }
-        }
-    }
-
     //Ryan june 7 2003
-    else if (client->sess.adminspec && ucmd->upmove > 0 && (client->ps.pm_flags & PMF_FOLLOW) )
+    if (client->sess.adminspec && ucmd->upmove > 0 && (client->ps.pm_flags & PMF_FOLLOW) )
     {
         G_StopFollowing( ent );
     }
