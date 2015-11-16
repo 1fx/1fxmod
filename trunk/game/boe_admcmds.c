@@ -233,7 +233,7 @@ qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean 
 
             sqlite3_finalize(stmt);
             return qfalse;
-        }else if(!silent){ // Boe!Man 2/6/13: Also store info for the info line.
+        }else{ // Boe!Man 2/6/13: Also store info for the info line and/or the Admin log.
             line = sqlite3_column_int(stmt, 0);
             Q_strncpyz(IP, (char *)sqlite3_column_text(stmt, 1), sizeof(IP));
             Q_strncpyz(name, (char *)sqlite3_column_text(stmt, 2), sizeof(name));
@@ -281,9 +281,9 @@ qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean 
 
     // Boe!Man 2/6/13: Log the clan removal.
     if(adm && adm->client){
-        Boe_adminLog ("Remove Clan", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", IP, name));
+        Boe_adminLog ("remove clan", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", IP, name));
     }else{
-        Boe_adminLog ("Remove Clan", "RCON", va("%s\\%s", IP, name));
+        Boe_adminLog ("remove clan", "RCON", va("%s\\%s", IP, name));
     }
 
     return qtrue;
@@ -1125,9 +1125,9 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
 
     // Boe!Man 2/6/13: Log the admin removal.
     if(adm && adm->client){
-        Boe_adminLog ("Remove Admin", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", IP, name));
+        Boe_adminLog ("remove admin", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", IP, name));
     }else{
-        Boe_adminLog ("Remove Admin", "RCON", va("%s\\%s", IP, name));
+        Boe_adminLog ("remove admin", "RCON", va("%s\\%s", IP, name));
     }
 
     return qtrue;

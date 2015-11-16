@@ -248,11 +248,11 @@ void EvenTeams (gentity_t *adm, qboolean aet)
     if(adm && adm->client){
         G_Broadcast("\\Evening teams!", BROADCAST_CMD, NULL);
         trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Eventeams by %s.\n\"", adm->client->pers.netname));
-        Boe_adminLog ("Eventeams", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "none");
+        Boe_adminLog ("eventeams", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "none");
     }else if (aet == qfalse){
         G_Broadcast("\\Evening teams!", BROADCAST_CMD, NULL);
         trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Eventeams.\n\""));
-        Boe_adminLog ("Eventeams", "RCON", "none");
+        Boe_adminLog ("eventeams", "RCON", "none");
     }else{
         trap_SendServerCommand(-1, va("print\"^3[Auto Action] ^7Eventeams.\n\""));
     }

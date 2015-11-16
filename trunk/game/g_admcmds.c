@@ -587,7 +587,7 @@ int adm_mapRestart(int argNum, gentity_t *adm, qboolean shortCmd){
             }
 
             Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-            Boe_adminLog("Map Restart", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "none");
+            Boe_adminLog("map restart", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "none");
         }else{
             if (level.mapAction == 1 || level.mapAction == 3){
                 trap_SendServerCommand(adm-g_entities, "print\"^3[Info] ^7A map restart is already in progress.\n\"");
@@ -615,7 +615,7 @@ int adm_mapRestart(int argNum, gentity_t *adm, qboolean shortCmd){
             }
 
             Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-            Boe_adminLog("Map Restart", "RCON", "none");
+            Boe_adminLog("map restart", "RCON", "none");
         }else{
             if (level.mapAction == 1 || level.mapAction == 3){
                 Com_Printf("^3[Info] ^7A map restart is already in progress.\n");
@@ -3297,7 +3297,7 @@ int adm_mapCycle(int argNum, gentity_t *adm, qboolean shortCmd)
             level.mapSwitchCount2 = 5; // 5 seconds remaining on the timer.
 
             Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-            Boe_adminLog("Mapcycle", "RCON", "none");
+            Boe_adminLog("mapcycle", "RCON", "none");
             trap_SendServerCommand(-1, "print\"^3[Rcon Action] ^7Mapcycle.\n\"");
         }else{
             if(level.mapAction == 1 || level.mapAction == 3){
