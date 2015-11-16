@@ -1753,6 +1753,11 @@ int adm_compMode(int argNum, gentity_t *adm, qboolean shortCmd)
         trap_Cvar_Set("cm_devents", "0"); // It's used for more things than just in a scrim, so make sure to reset it!
         trap_Cvar_Set("scorelimit", cm_oldsl.string);
         trap_Cvar_Set("timelimit", cm_oldtl.string);
+
+        // Ensure teams are also unlocked now.
+        level.blueLocked = 0;
+        level.redLocked = 0;
+        level.specsLocked = 0;
     }
 
     // Broadcast the change.
