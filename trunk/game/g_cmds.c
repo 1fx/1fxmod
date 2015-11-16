@@ -97,7 +97,7 @@ static admCmd_t AdminCommands[] =
     {"!u",      "uppercut",         &g_uppercut.integer,        &adm_Uppercut,                  "Launch a player upwards",          "<i/n>",            NULL},
     {"!uc",     "uppercut",         &g_uppercut.integer,        &adm_Uppercut,                  "Launch a player upwards",          "<i/n>",            NULL},
     #ifdef _GOLD
-    {"!la",     "launch",           &g_uppercut.integer,        &adm_Uppercut,                  "Launch a player upwards",          "<i/n>",            NULL},
+    {"!la",     "launch",           &g_uppercut.integer,        &adm_Uppercut,                  "Launch a player upwards",          "<i/n>",            "ed"},
     #endif // _GOLD
 };
 
@@ -2725,6 +2725,11 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
             return;
         }
 
+        if (g_compMode.integer > 0 && cm_enabled.integer > 1 && g_matchDisableTell.integer && ent->client->sess.team == TEAM_SPECTATOR && !OnSameTeam(ent, target)){
+            trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You cannot send a private message to players in-game.\n\""));
+            return;
+        }
+
         // Copy the message contents.
         if (trap_Argc() >= 4){
             // Calling from console.
@@ -2785,6 +2790,9 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
             trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7You just got PMed by someone else - as security measure we're not sending your message.\n\""));
 
             ent->client->sess.lastPmClient = -1;
+            return;
+        }else if (g_compMode.integer > 0 && cm_enabled.integer > 1 && g_matchDisableTell.integer && ent->client->sess.team == TEAM_SPECTATOR && !OnSameTeam(ent, target)){
+            trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You cannot send a private message to players in-game.\n\""));
             return;
         }
 
@@ -2977,6 +2985,11 @@ static void Cmd_Tell_f( gentity_t *ent ) {
 
     if(ent == target){
         trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You cannot send a private message to yourself.\n\""));
+        return;
+    }
+
+    if (g_compMode.integer > 0 && cm_enabled.integer > 1 && g_matchDisableTell.integer && ent->client->sess.team == TEAM_SPECTATOR && !OnSameTeam(ent, target)){
+        trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You cannot send a private message to players in-game.\n\""));
         return;
     }
 
@@ -3505,8 +3518,12 @@ void ClientCommand( int clientNum ) {
         // Boe!Man 1/30/10: We need to make sure the clients aren't muted.. And otherwise prevent them talking.
         if(IsClientMuted(ent, qtrue)){
             return;
+        }else if( g_compMode.integer > 0 && cm_enabled.integer > 1 && g_matchDisablePubChat.integer && ent->client->sess.team == TEAM_SPECTATOR){
+            Cmd_Say_f (ent, SAY_TEAM, qfalse);
+        }else{
+            Cmd_Say_f (ent, SAY_ALL, qfalse);
         }
-        Cmd_Say_f (ent, SAY_ALL, qfalse);
+
         return;
     }
     if (Q_stricmp (cmd, "say_team") == 0) {

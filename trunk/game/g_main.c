@@ -229,6 +229,9 @@ vmCvar_t    g_matchTimeLimit;
 vmCvar_t    g_matchScoreLimit;
 vmCvar_t    g_matchDisableEvents;
 vmCvar_t    g_matchRounds;
+vmCvar_t    g_matchDisablePubChat;
+vmCvar_t    g_matchDisableTell;
+
 vmCvar_t    cm_enabled;
 vmCvar_t    cm_sl;
 vmCvar_t    cm_tl;
@@ -568,12 +571,14 @@ static cvarTable_t gameCvarTable[] =
     { &g_adminSpec, "g_adminSpec", "4", CVAR_ARCHIVE | CVAR_LATCH, 0.0, 0.0, 0,  qfalse },
 
     // Boe!Man 11/16/10: Default scrim settings.
-    { &g_matchLockSpec, "g_matchLockSpec", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
-    { &g_matchSwapTeams, "g_matchSwapTeams", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
-    { &g_matchTimeLimit, "g_matchTimeLimit", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
-    { &g_matchScoreLimit, "g_matchScoreLimit", "10", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
-    { &g_matchDisableEvents, "g_matchDisableEvents", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
+    { &g_matchLockSpec, "g_matchLockSpec", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
+    { &g_matchSwapTeams, "g_matchSwapTeams", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
+    { &g_matchTimeLimit, "g_matchTimeLimit", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
+    { &g_matchScoreLimit, "g_matchScoreLimit", "10", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
+    { &g_matchDisableEvents, "g_matchDisableEvents", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
     { &g_matchRounds, "g_matchRounds", "2", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
+    { &g_matchDisablePubChat, "g_matchDisablePubChat", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
+    { &g_matchDisableTell, "g_matchDisableTell", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 
     // Boe!Man 11/16/10: For Compmode. As most structures get cleared during shut down, and writing everything to temp CVARs will be more time/resource consuming, we'll simply use a couple of CVARs to update everything.
     { &cm_enabled, "cm_enabled", "0", CVAR_ROM|CVAR_INTERNAL, 0.0, 0.0, 0, qfalse  },
