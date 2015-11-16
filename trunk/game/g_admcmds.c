@@ -174,14 +174,15 @@ Does the actual logic of adding an Admin.
 
 static void adm_addAdmin_f(int argNum, gentity_t *adm, qboolean shortCmd, int level2, char *commandName)
 {
-    int              idNum;
-    char             arg[64] = "\0";
-    char             clientName[MAX_NETNAME];
-    char             admName[MAX_NETNAME];
-    char             ip[MAX_IP];
-    char             admLevel[12];
-    char             admLevelPrefixed[32];
-    qboolean         passAdmin = qfalse;
+    int             idNum;
+    char            arg[64] = "\0";
+    char            clientName[MAX_NETNAME];
+    char            admName[MAX_NETNAME];
+    char            ip[MAX_IP];
+    char            admLevel[12];
+    char            admLevelPrefixed[32];
+    char            admLog[12];
+    qboolean        passAdmin = qfalse;
     sqlite3         *db;
 
     idNum = Boe_ClientNumFromArg(adm, argNum, va("%s <id/name>", commandName), "do this to", qfalse, qfalse, shortCmd);
@@ -278,12 +279,15 @@ static void adm_addAdmin_f(int argNum, gentity_t *adm, qboolean shortCmd, int le
     if (level2 == 2){
         strcpy(admLevel, "B-Admin");
         Q_strncpyz(admLevelPrefixed, server_badminprefix.string, sizeof(admLevelPrefixed));
+        Q_strncpyz(admLog, "add b-admin", sizeof(admLog));
     }else if (level2 == 3){
         strcpy(admLevel, "Admin");
         Q_strncpyz(admLevelPrefixed, server_adminprefix.string, sizeof(admLevelPrefixed));
+        Q_strncpyz(admLog, "add admin", sizeof(admLog));
     }else{
         strcpy(admLevel, "S-Admin");
         Q_strncpyz(admLevelPrefixed, server_sadminprefix.string, sizeof(admLevelPrefixed));
+        Q_strncpyz(admLog, "add s-admin", sizeof(admLog));
     }
 
     // *DON'T* let the Admin system handle the post processing on this command, because it simply works in a different fashion.
@@ -300,7 +304,7 @@ static void adm_addAdmin_f(int argNum, gentity_t *adm, qboolean shortCmd, int le
             trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was added to the %s password list by %s.\n\"", g_entities[idNum].client->pers.cleanName, admLevel, adm->client->pers.cleanName));
         }
 
-        Boe_adminLog(va("add %s", admLevel), va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", g_entities[idNum].client->pers.ip, g_entities[idNum].client->pers.cleanName));
+        Boe_adminLog(admLog, va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", g_entities[idNum].client->pers.ip, g_entities[idNum].client->pers.cleanName));
     }
     else{
         if (!passAdmin){
@@ -309,7 +313,7 @@ static void adm_addAdmin_f(int argNum, gentity_t *adm, qboolean shortCmd, int le
             trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s was added to the %s password list.\n\"", g_entities[idNum].client->pers.cleanName, admLevel));
         }
 
-        Boe_adminLog(va("add %s", admLevel), "RCON", va("%s\\%s", g_entities[idNum].client->pers.ip, g_entities[idNum].client->pers.cleanName));
+        Boe_adminLog(admLog, "RCON", va("%s\\%s", g_entities[idNum].client->pers.ip, g_entities[idNum].client->pers.cleanName));
     }
 
     // Boe!Man 2/5/13: Inform a passworded Admin of the system he can now use.

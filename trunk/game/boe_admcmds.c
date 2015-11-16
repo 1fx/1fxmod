@@ -1054,7 +1054,7 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
 
             sqlite3_finalize(stmt);
             return qfalse;
-        }else if(!silent){ // Boe!Man 2/6/13: Also store info for the info line.
+        }else{ // Boe!Man 2/6/13: Also store info for the info line and/or the Admin log.
             line = sqlite3_column_int(stmt, 0);
             Q_strncpyz(IP, (char *)sqlite3_column_text(stmt, 1), sizeof(IP));
             Q_strncpyz(name, (char *)sqlite3_column_text(stmt, 2), sizeof(name));
