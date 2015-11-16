@@ -2310,6 +2310,11 @@ int adm_Broadcast(int argNum, gentity_t *adm, qboolean shortCmd)
         }
     }
 
+    // Boe!Man 11/16/15: Parse the tokens from the chat if we're broadcasting in-game.
+    if(adm && adm->client){
+        Boe_Tokens(adm, buffer1, SAY_TELL, qfalse);
+    }
+
     // Broadcast the message.
     Boe_GlobalSound(G_SoundIndex("sound/misc/menus/invalid.wav"));
     G_Broadcast(buffer1, BROADCAST_CMD, NULL);
