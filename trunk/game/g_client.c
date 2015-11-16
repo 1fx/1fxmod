@@ -1078,7 +1078,15 @@ void G_UpdateOutfitting ( int clientNum )
         client->ps.weapon = equipWeapon;
         client->ps.weaponstate = WEAPON_READY;
     }
-    client->ps.weaponTime = 0;
+
+    if(current_gametype.value != GT_HS || client->ps.weaponTime == 0 || client->sess.team != TEAM_RED){
+        // Default to auto (or next available fire mode).
+        BG_GetInviewAnim(client->ps.weapon,"idle",&idle);
+        client->ps.weaponAnimId = idle;
+        client->ps.weaponAnimIdChoice = 0;
+        client->ps.weaponCallbackStep = 0;
+    }
+
     client->ps.weaponAnimTime = 0;
 
     // Bot clients cant use the spawning state
@@ -1088,12 +1096,6 @@ void G_UpdateOutfitting ( int clientNum )
         client->ps.weaponstate = WEAPON_READY;
     }
 #endif
-
-    // Default to auto (or next available fire mode).
-    BG_GetInviewAnim(client->ps.weapon,"idle",&idle);
-    client->ps.weaponAnimId = idle;
-    client->ps.weaponAnimIdChoice = 0;
-    client->ps.weaponCallbackStep = 0;
 
     // Armor?
     //client->ps.stats[STAT_ARMOR]   = 0;
