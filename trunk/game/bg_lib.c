@@ -745,14 +745,14 @@ double atan2( double y, double x ) {
         }
     }
 
-    return base + dir * i * ( M_PI/2048); 
+    return base + dir * i * ( M_PI/2048);
 }
 
 
 #endif
 
 #ifdef Q3_VM
-// bk001127 - guarded this tan replacement 
+// bk001127 - guarded this tan replacement
 // ld: undefined versioned symbol name tan@@GLIBC_2.0
 double tan( double x ) {
     return sin(x) / cos(x);

@@ -4,15 +4,9 @@
 // Henk 20/02/10 -> Add UpdateScores()
 void ShowScores(void)
 {
-    char winner[128];
+    char winner[64];
 
-    if(strstr(level.cagewinner, va("%s", server_seekerteamprefix.string))){ // Boe!Man 8/7/12: Meaning the seekers won, display msg.
-        Com_sprintf(winner, sizeof(winner), "%s", level.cagewinner);
-    }else if(!strstr(level.cagewinner, "none")){
-        Com_sprintf(winner, sizeof(winner), "%s ^7won the round!", level.cagewinner);
-    }else{ // This shouldn't happen anymore.
-        memset(winner, 0, sizeof(winner));
-    }
+    Com_sprintf(winner, sizeof(winner), "%s ^7won the round!", level.cagewinner);
 
     // Boe!Man 9/2/12: Advanced H&S statistics.
     if(hideSeek_ExtendedRoundStats.integer && level.time > level.awardTime + 8000 && level.awardTime){
@@ -233,10 +227,7 @@ void UpdateScores(void)
                 strcpy(level.advancedHsScores[8].name, ent->client->pers.cleanName);
             }
         }else{ // Red team.
-            if(level.cagefightdone && ent->client->sess.cagescore > highestScore){
-                highestHider = ent->s.number;
-                highestScore = ent->client->sess.cagescore;
-            }else if(!level.cagefightdone && ent->client->sess.score > highestScore){
+            if(ent->client->sess.kills > highestScore){
                 highestHider = ent->s.number;
                 highestScore = ent->client->sess.kills;
             }
@@ -264,8 +255,9 @@ void UpdateScores(void)
         // Boe!Man 9/2/12: Also add his score to the advanced table.
         level.advancedHsScores[0].score = g_entities[highestHider].client->sess.kills;
         strcpy(level.advancedHsScores[0].name, g_entities[highestHider].client->pers.cleanName);
+        strcpy(level.cagewinner, g_entities[highestHider].client->pers.netname);
     }else{ // highestScore wasn't filled.. Seekers won this time.
-        strcpy(level.cagewinner, va("%s ^7won the round!", server_seekerteamprefix.string));
+        strncpy(level.cagewinner, server_seekerteamprefix.string, sizeof(level.cagewinner));
         strcpy(level.advancedHsScores[0].name, "none");
     }
 
@@ -611,7 +603,6 @@ void StripHiders(void)
                 continue;
             }
         }
-
 
         ent->client->sess.timeOfDeath = 1;
         ent->client->ps.zoomFov = 0;    ///if they are looking through a scope go to normal view

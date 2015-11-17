@@ -7,7 +7,7 @@
 void InitTrigger( gentity_t *self ) {
     if (!VectorCompare (self->s.angles, vec3_origin))
         G_SetMovedir (self->s.angles, self->movedir);
-    
+
     // Boe!Man 1/23/13: We do need to allow trigger_teleports to bypass this check..
     if((!strstr(self->classname, "teleport") || strstr(self->classname, "trigger_teleport")) && !strstr(self->model, "NV_MODEL") && !strstr(self->model, "BLOCKED_TRIGGER")){
         trap_SetBrushModel( self, self->model ); // Henk -> This crashes teleports
@@ -34,12 +34,12 @@ void multi_trigger( gentity_t *ent, gentity_t *activator ) {
     }
 
     if ( activator->client ) {
-        if ( ( ent->spawnflags & 1 ) && activator->client->sess.team != TEAM_RED ) 
+        if ( ( ent->spawnflags & 1 ) && activator->client->sess.team != TEAM_RED )
         {
             return;
         }
-        
-        if ( ( ent->spawnflags & 2 ) && activator->client->sess.team != TEAM_BLUE ) 
+
+        if ( ( ent->spawnflags & 2 ) && activator->client->sess.team != TEAM_BLUE )
         {
             return;
         }
@@ -77,7 +77,7 @@ Variable sized repeatable trigger.  Must be targeted at one or more entities.
 so, the basic time between firing is a random time between
 (wait - random) and (wait + random)
 */
-void SP_trigger_multiple( gentity_t *ent ) 
+void SP_trigger_multiple( gentity_t *ent )
 {
     // This is a hack because the single player game has usable triggers
     // in shared bsp instances, since multiplayer doesnt have useable triggers
@@ -91,7 +91,7 @@ void SP_trigger_multiple( gentity_t *ent )
     G_SpawnFloat( "wait", "0.5", &ent->wait );
     G_SpawnFloat( "random", "0", &ent->random );
 
-    if ( ent->random >= ent->wait && ent->wait >= 0 ) 
+    if ( ent->random >= ent->wait && ent->wait >= 0 )
     {
         ent->random = ent->wait - FRAMETIME;
         Com_Printf( "trigger_multiple has random >= wait\n" );
@@ -144,7 +144,7 @@ trigger_push
 ==============================================================================
 */
 
-void trigger_push_touch (gentity_t *self, gentity_t *other, trace_t *trace ) 
+void trigger_push_touch (gentity_t *self, gentity_t *other, trace_t *trace )
 {
 }
 
@@ -267,7 +267,7 @@ void trigger_booster_touch (gentity_t *self, gentity_t *other, trace_t *trace ) 
         return;
     }
 
-    if (G_IsClientSpectating ( other->client ) ) 
+    if (G_IsClientSpectating ( other->client ) )
     {
         return;
     }
@@ -476,7 +476,7 @@ void trigger_NewTeleporter_touch (gentity_t *self, gentity_t *other, trace_t *tr
         return;
     }
     // Spectators only?
-    if ( ( self->spawnflags & 1 ) && !G_IsClientSpectating ( other->client ) ) 
+    if ( ( self->spawnflags & 1 ) && !G_IsClientSpectating ( other->client ) )
     {
         return;
     }
@@ -520,7 +520,7 @@ void trigger_teleporter_touch (gentity_t *self, gentity_t *other, trace_t *trace
     int         i;
     qboolean    roundShouldEnd;             // Boe!Man 4/9/13: For cross the bridge.
     char        loc[MAX_LOCATIONS];         // Boe!Man 4/9/13: Current location per hider.
-    
+
     origin2 = va("%.0f %.0f %.0f", self->r.currentOrigin[0], self->r.currentOrigin[1], self->r.currentOrigin[2]+30);
     if ( !other->client ) {
         return;
@@ -529,7 +529,7 @@ void trigger_teleporter_touch (gentity_t *self, gentity_t *other, trace_t *trace
         return;
     }
     // Spectators only?
-    if ( ( self->spawnflags & 1 ) && !G_IsClientSpectating ( other->client ) ) 
+    if ( ( self->spawnflags & 1 ) && !G_IsClientSpectating ( other->client ) )
     {
         return;
     }
@@ -543,11 +543,11 @@ void trigger_teleporter_touch (gentity_t *self, gentity_t *other, trace_t *trace
             other->client->sess.lastmsg = level.time+10000;
             return;
         }
-    
+
         // Boe!Man 11/11/12: Timers for Cross The Bridge go here.
         if(level.crossTheBridge){
             roundShouldEnd = qfalse;
-                
+
             if(strstr(self->target, "bridge")){
                 other->client->sess.ctbStartTime = level.time;
             }else if(strstr(self->target, "safe")){
@@ -559,17 +559,17 @@ void trigger_teleporter_touch (gentity_t *self, gentity_t *other, trace_t *trace
                     }else{
                         trap_SendServerCommand ( other->s.number, va("print\"^3[Cross The Bridge] ^7You made it in %i seconds!\n\"", (level.time - other->client->sess.ctbStartTime) / 1000));
                     }
-                    
+
                     // Boe!Man 4/9/13: If all the hiders crossed, the round should end as well. Setting this to qtrue triggers the check.
                     roundShouldEnd = qtrue;
                 }
             }
         }
     }
-    
+
     G_PlayEffect ( G_EffectIndex("misc/electrical"),other->client->ps.origin, other->pos1);
     //G_SpawnGEntityFromSpawnVars (qtrue);
-    
+
     dest =  G_PickTarget( self->target );
     if (!dest) {
         Com_Printf ("Couldn't find teleporter destination\n");
@@ -577,7 +577,7 @@ void trigger_teleporter_touch (gentity_t *self, gentity_t *other, trace_t *trace
     }
 
     TeleportPlayer( other, dest->s.origin, dest->s.angles, qfalse );
-    
+
     // Boe!Man 4/9/13: This isn't really resource friendly, but still better than waiting a pretty long while for the round to end in CTB.
     if(level.crossTheBridge && roundShouldEnd){
         for(i = 0; i < level.numConnectedClients; i++){
@@ -590,7 +590,7 @@ void trigger_teleporter_touch (gentity_t *self, gentity_t *other, trace_t *trace
                 }
             }
         }
-            
+
         if(roundShouldEnd){
             trap_GT_SendEvent ( GTEV_TIME_EXPIRED, level.time, 0, 0, 0, 0, 0 ); // Hiders won.
         }
@@ -738,7 +738,7 @@ void SP_trigger_hurt( gentity_t *self ) {
     }
 }
 
-/*QUAKED trigger_ladder (.5 .5 .5) ? 
+/*QUAKED trigger_ladder (.5 .5 .5) ?
 Indicates a ladder and its normal
 
 "angles"        angle ladder faces
@@ -749,8 +749,8 @@ void SP_trigger_ladder ( gentity_t* self )
 
     trap_LinkEntity ( self );
 
-    trap_SetConfigstring( CS_LADDERS + level.ladderCount++, 
-                          va("%i,%i,%i,%i,%i,%i,%i", 
+    trap_SetConfigstring( CS_LADDERS + level.ladderCount++,
+                          va("%i,%i,%i,%i,%i,%i,%i",
                              (int)self->r.absmin[0],(int)self->r.absmin[1],(int)self->r.absmin[2],
                              (int)self->r.absmax[0],(int)self->r.absmax[1],(int)self->r.absmax[2],
                              (int)self->s.angles[YAW] ) );
@@ -762,7 +762,7 @@ void SP_trigger_ladder ( gentity_t* self )
     self->r.absmax[0] = (int)self->r.absmax[0];
     self->r.absmax[1] = (int)self->r.absmax[1];
     self->r.absmax[2] = (int)self->r.absmax[2];
-    
+
     self->s.angles[PITCH] = self->s.angles[ROLL] = 0;
     self->s.angles[YAW] = (int)self->s.angles[YAW];
     AngleVectors( self->s.angles, fwd, 0, 0);
@@ -770,7 +770,7 @@ void SP_trigger_ladder ( gentity_t* self )
     BG_AddLadder ( self->r.absmin, self->r.absmax, fwd );
 
     G_FreeEntity ( self );
-}   
+}
 
 /*
 ==============================================================================
@@ -831,7 +831,7 @@ void SP_func_timer( gentity_t *self ) {
     self->r.svFlags = SVF_NOCLIENT;
 }
 
-/* 
+/*
 ================
 NV_blocked_trigger
 RxCxW - 10.01.06
@@ -841,8 +841,8 @@ void NV_blocked_trigger (gentity_t *ent)
 {
     ent->r.contents = MASK_SHOT;
     ent->r.svFlags = SVF_NOCLIENT;
-    ent->s.eType =  ET_TERRAIN; 
-    
+    ent->s.eType =  ET_TERRAIN;
+
     if ( ent->damage ) {
         ent->noise_index = 0;
         ent->touch = hurt_touch;
@@ -851,7 +851,7 @@ void NV_blocked_trigger (gentity_t *ent)
     }
     trap_LinkEntity (ent);
 }
-/* 
+/*
 ================
 NV_blocked_Teleport
 RxCxW - 10.01.06
@@ -894,7 +894,7 @@ void SP_teleporter(gentity_t* ent){
     VectorSet( dest, ent->origin_from[0], ent->origin_from[1], ent->origin_from[2] - 4096 );
     trap_Trace( &tr, src, ent->r.mins, ent->r.maxs, dest, ent->s.number, MASK_SOLID );
 
-    if ( tr.startsolid ) 
+    if ( tr.startsolid )
     {
         Com_Printf ("Teleporter: %s startsolid at %s\n", ent->classname, vtos(ent->origin_from));
         G_FreeEntity( ent );
@@ -906,7 +906,7 @@ void SP_teleporter(gentity_t* ent){
     origin1[2] += 30;
     G_SetOrigin( ent,origin1 );
     // origin_to until ground
-    
+
     if(ent->both_sides && strstr(ent->both_sides, "yes")){
         AddSpawnField("classname", "teleporter");
         origin = va("%.0f %.0f %.0f", ent->origin_to[0], ent->origin_to[1], ent->origin_to[2]);
@@ -974,7 +974,7 @@ void SP_booster(gentity_t* ent){
     VectorSet( src, ent->s.origin[0], ent->s.origin[1], ent->s.origin[2] + 1 );
     VectorSet( dest, ent->s.origin[0], ent->s.origin[1], ent->s.origin[2] - 4096 );
     trap_Trace( &tr, src, ent->r.mins, ent->r.maxs, dest, ent->s.number, MASK_SOLID );
-    if ( tr.startsolid ) 
+    if ( tr.startsolid )
     {
         Com_Printf ("Booster: %s startsolid at %s\n", ent->classname, vtos(ent->s.origin));
         G_FreeEntity( ent );
@@ -1073,8 +1073,8 @@ void SP_sun(gentity_t* ent){
         AddSpawnField("wait", "0.7");
         G_SpawnGEntityFromSpawnVars (qtrue);
     }
-    
-    
+
+
     if(strlen(bspName) > 0){ // Same goes out for the model.
         AddSpawnField("classname", "misc_bsp");
         AddSpawnField("bspmodel", bspName);
@@ -1108,7 +1108,7 @@ void SP_accelerator_touch (gentity_t *self, gentity_t *other, trace_t *trace ) {
         return;
     }
 
-    if (G_IsClientSpectating ( other->client ) ) 
+    if (G_IsClientSpectating ( other->client ) )
     {
         return;
     }
@@ -1116,7 +1116,7 @@ void SP_accelerator_touch (gentity_t *self, gentity_t *other, trace_t *trace ) {
     if(other->client->sess.lastjump >= level.time){
         return;
     }
-    
+
     // Boe!Man 4/16/13: If he's already "accelerating", return.
     if(other->client->sess.acceleratorCooldown){
         return;
@@ -1131,7 +1131,7 @@ void SP_accelerator_touch (gentity_t *self, gentity_t *other, trace_t *trace ) {
                     }else if(strstr(self->team, "blue")){
                         trap_SendServerCommand ( other->s.number, va("cp\"@^7Accelerator is for %s ^7team only!", server_blueteamprefix.string));
                     }
-                    
+
                     other->client->sess.lastmsg = level.time + 5000;
                 }
                 return;
@@ -1150,14 +1150,14 @@ void SP_accelerator_touch (gentity_t *self, gentity_t *other, trace_t *trace ) {
 
     // Boe!Man 4/16/13: Apply the knockback.
     VectorCopy(self->s.angles, fireAngs);
-    AngleVectors( fireAngs, dir, NULL, NULL );  
+    AngleVectors( fireAngs, dir, NULL, NULL );
     dir[0] *= 1.0;
     dir[1] *= 1.0;
     dir[2] = 0.0;
     VectorNormalize ( dir );
     other->client->ps.velocity[2] = 20;
     G_ApplyKnockback(other, dir, self->speed);
-    
+
     // Boe!Man 4/16/13: Set the acceleratorCooldown variable, this will be handled in the clienthink_real function.
     other->client->sess.acceleratorCooldown = level.time + 5000;
 }
@@ -1167,7 +1167,7 @@ void SP_accelerator_delay (gentity_t *self){
     AddSpawnField("effect", "explosions/phosphorus_trail");
     AddSpawnField("count", "-1");
     AddSpawnField("wait", "1");
-    
+
     if(self->s.angles[YAW] == 0 || self->s.angles[YAW] == 360)
         AddSpawnField("origin", va("%0.f %0.f %0.f", self->r.currentOrigin[0]+(self->health*25), self->r.currentOrigin[1], self->r.currentOrigin[2]-10));
     else if(self->s.angles[YAW] == 90)
@@ -1176,9 +1176,9 @@ void SP_accelerator_delay (gentity_t *self){
         AddSpawnField("origin", va("%0.f %0.f %0.f", self->r.currentOrigin[0]-(self->health*25), self->r.currentOrigin[1], self->r.currentOrigin[2]-10));
     else if(self->s.angles[YAW] == 270)
         AddSpawnField("origin", va("%0.f %0.f %0.f", self->r.currentOrigin[0], self->r.currentOrigin[1]-(self->health*25), self->r.currentOrigin[2]-10));
-        
+
     G_SpawnGEntityFromSpawnVars (qtrue);
-    
+
     self->health++;
     if(self->health < 5){ // Boe!Man 4/15/13: Only spawn four flares, after that, free the accelerator.
         self->nextthink = level.time + 200;
@@ -1190,20 +1190,20 @@ void SP_accelerator(gentity_t *ent){
     vec3_t      dest;
     vec3_t      src;
     int         i;
-    
+
     // Boe!Man 4/15/13: Determine the solid ground to spawn upon.
     VectorSet( ent->r.mins, -ITEM_RADIUS, -ITEM_RADIUS, -ITEM_RADIUS );
     VectorSet( ent->r.maxs, ITEM_RADIUS, ITEM_RADIUS, ITEM_RADIUS );
     VectorSet( src, ent->s.origin[0], ent->s.origin[1], ent->s.origin[2] + 1 );
     VectorSet( dest, ent->s.origin[0], ent->s.origin[1], ent->s.origin[2] - 4096 );
     trap_Trace( &tr, src, ent->r.mins, ent->r.maxs, dest, ent->s.number, MASK_SOLID );
-    
+
     if (tr.startsolid){
         Com_Printf ("Accelerator: %s startsolid at %s\n", ent->classname, vtos(ent->s.origin));
         G_FreeEntity( ent );
         return;
     }
-    
+
     // Boe!Man 4/15/13: Spawn the initial effect.
     AddSpawnField("classname", "fx_play_effect");
     AddSpawnField("effect", "explosions/phosphorus_trail");
@@ -1211,13 +1211,13 @@ void SP_accelerator(gentity_t *ent){
     AddSpawnField("wait", "1");
     AddSpawnField("origin", va("%0.f %0.f %0.f", tr.endpos[0], tr.endpos[1], tr.endpos[2]-10));
     G_SpawnGEntityFromSpawnVars (qtrue);
-    
+
     // Boe!Man 4/15/13: Copy this origin to the "accelerator" entity, this way the additional flares can copy its origin.
     VectorCopy(tr.endpos, ent->r.currentOrigin);
     ent->think = SP_accelerator_delay;
     ent->nextthink = level.time + 200;
     ent->health = 1; // No delay option? Using health as counter for the entities spawned.
-    
+
     // Boe!Man 4/16/13: Copy the proper angels (only allow 90/180/270/360).
     for(i = 0; i <= 360; i += 90){
         if(ent->s.angles[YAW] > i-90 && ent->s.angles[YAW] <= i){
@@ -1226,11 +1226,11 @@ void SP_accelerator(gentity_t *ent){
             break;
         }
     }
-    
+
     // Boe!Man 4/16/13: Set the other properties of the entity.
     ent->r.contents = CONTENTS_TRIGGER;
     ent->r.svFlags &= ~SVF_NOCLIENT;
     ent->touch = SP_accelerator_touch;
-    
+
     trap_LinkEntity(ent);
 }

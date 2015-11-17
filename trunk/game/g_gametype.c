@@ -418,7 +418,6 @@ void G_RespawnClients ( qboolean force, team_t team, qboolean fullRestart )
             ent->client->sess.teamkillForgiveTime = 0;
             ent->client->pers.enterTime = level.time;
             ent->client->sess.timeOfDeath = 0;
-            ent->client->sess.cagescore = 0;
         }
     }
 }
@@ -733,7 +732,6 @@ void G_ResetGametype ( qboolean fullRestart, qboolean cagefight )
         level.MM1Time = 0;
         level.RPGTime = 0;
         level.M4Time = 0;
-        strcpy(level.cagewinner, "none");
         level.timelimithit = qfalse; // allow timelimit hit message
         // Henkie 23/02/10 -> Cache the sounds' index
         level.clicksound = G_SoundIndex("sound/misc/menus/click.wav");
@@ -1209,7 +1207,7 @@ void CheckGametype ( void )
             for ( i = 0; i < level.numConnectedClients; i ++ ){
                 if(!G_IsClientDead(g_entities[level.sortedClients[i]].client) && g_entities[level.sortedClients[i]].client->sess.team == TEAM_RED){
                     G_AddScore(&g_entities[level.sortedClients[i]], 100);
-                    strncpy(level.cagewinner, g_entities[level.sortedClients[i]].client->pers.netname, sizeof(level.cagewinner));
+                    g_entities[level.sortedClients[i]].client->sess.kills += 1; // round winner should get 1 point more.
                 }
             }
             trap_SendServerCommand(-1, va("print \"^3[H&S] ^7Fight ended.\n\""));
@@ -1233,7 +1231,6 @@ void CheckGametype ( void )
                     if(!G_IsClientDead(g_entities[level.sortedClients[i]].client) && g_entities[level.sortedClients[i]].client->sess.team == TEAM_RED){
                         G_AddScore(&g_entities[level.sortedClients[i]], 100);
                         g_entities[level.sortedClients[i]].client->sess.kills += 1; // round winner should get 1 point more.
-                        strcpy(level.cagewinner, g_entities[level.sortedClients[i]].client->pers.netname);
                     }
                 }
                 trap_SendServerCommand(-1, va("print \"^3[H&S] ^7Fight ended.\n\""));

@@ -1609,6 +1609,9 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
         AddSpawnField("gametype", "inf");
         AddSpawnField("origin", "9999 9999 9999"); // Boe!Man 9/10/11: "999 999 999" bugs in a few maps (start solid), so changed the origin a bit.
         trap_UnlinkEntity(&g_entities[G_SpawnGEntityFromSpawnVars(qtrue)]);
+
+        // No case fight winner at first.
+        strcpy(level.cagewinner, "none");
     }
 
     // parse the key/value pairs and spawn gentities
@@ -1984,6 +1987,7 @@ void CalculateRanks( void )
     int         score;
     int         newScore;
     gclient_t   *cl;
+    int         sortedClients[MAX_CLIENTS];
 
     level.follow1 = -1;
     level.follow2 = -1;
@@ -2028,8 +2032,10 @@ void CalculateRanks( void )
         }
     }
 
-    qsort( level.sortedClients, level.numConnectedClients,
-           sizeof(level.sortedClients[0]), SortRanks );
+    // Boe!Man 11/17/15: Never modify the actual sorted clients, bad things happen.
+    memcpy(sortedClients, level.sortedClients, sizeof(sortedClients));
+    qsort( sortedClients, level.numConnectedClients,
+           MAX_CLIENTS, SortRanks );
 
     // set the rank value for all clients that are connected and not spectators
     if ( level.gametypeData->teams )
@@ -2051,7 +2057,7 @@ void CalculateRanks( void )
         // in team games, rank is just the order of the teams, 0=red, 1=blue, 2=tied
         for ( i = 0;  i < level.numConnectedClients; i++ )
         {
-            cl = &level.clients[ level.sortedClients[i] ];
+            cl = &level.clients[ sortedClients[i] ];
             cl->ps.persistant[PERS_RANK] = rank;
         }
     }
@@ -2061,19 +2067,19 @@ void CalculateRanks( void )
         score = 0;
         for ( i = 0;  i < level.numPlayingClients; i++ )
         {
-            cl = &level.clients[ level.sortedClients[i] ];
+            cl = &level.clients[ sortedClients[i] ];
             newScore = cl->sess.score;
             if ( i == 0 || newScore != score )
             {
                 rank = i;
                 // assume we aren't tied until the next client is checked
-                level.clients[ level.sortedClients[i] ].ps.persistant[PERS_RANK] = rank;
+                level.clients[ sortedClients[i] ].ps.persistant[PERS_RANK] = rank;
             }
             else
             {
                 // we are tied with the previous client
-                level.clients[ level.sortedClients[i-1] ].ps.persistant[PERS_RANK] = rank | RANK_TIED_FLAG;
-                level.clients[ level.sortedClients[i] ].ps.persistant[PERS_RANK] = rank | RANK_TIED_FLAG;
+                level.clients[ sortedClients[i-1] ].ps.persistant[PERS_RANK] = rank | RANK_TIED_FLAG;
+                level.clients[ sortedClients[i] ].ps.persistant[PERS_RANK] = rank | RANK_TIED_FLAG;
             }
             score = newScore;
         }
@@ -2585,9 +2591,9 @@ void CheckIntermissionExit( void )
 
     if(!level.awardTime)
     {
-        #ifndef _GOLD
         if(current_gametype.value == GT_HS)
             ShowScores();
+        #ifndef _GOLD
         else
             RPM_Awards();
         #endif // not _GOLD
@@ -2619,17 +2625,16 @@ void CheckIntermissionExit( void )
         return;
     }
 
-    #ifndef _GOLD
     if(level.awardTime && (level.time > level.lastAwardSent + 3000))
     {
         if(current_gametype.value == GT_HS)
             ShowScores();
+        #ifndef _GOLD
         else
             RPM_Awards();
-
+        #endif // not _GOLD
         level.lastAwardSent = level.time;
     }
-    #endif // not _GOLD
 
     if(level.time < level.awardTime + 15000)
     {

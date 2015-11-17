@@ -373,7 +373,6 @@ typedef struct
     int         timeOfDeath;
 
     qboolean    pausespawn;
-    int         cagescore;
     qboolean    cageFighter;        // Boe!Man 8/30/11: qtrue for being a tied player (and thus anticipating in the cagefight).
     qboolean    invisibleGoggles;   // Boe!Man 9/16/12: qtrue if they're on.
     qboolean    freeze;             // Boe!Man 8/20/14: qtrue if the client shouldn't be able to move.
