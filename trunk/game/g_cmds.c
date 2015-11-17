@@ -30,7 +30,6 @@ static admCmd_t AdminCommands[] =
     {"!sw",     "swapteams",        &g_swapteams.integer,       &adm_swapTeams,                 "Swap the players from team",       "",                 NULL},
     {"!rounds", "rounds",           &g_cm.integer,              &adm_Rounds,                    "Set the number of rounds",         "<rounds>",         NULL},
     // Boe!Man 6/2/15: Don't move or modify anything above this comment, the /adm list expects them in that specific order.
-    {"!tw",     "twist",            &g_twist.integer,           &adm_Twist,                     "Twist or untwist a player",        "<i/n>",            "ed"},
     {"!pl",     "plant",            &g_plant.integer,           &adm_Plant,                     "Plant or unplant a player",        "<i/n>",            "ed"},
     {"!ro",     "runover",          &g_runover.integer,         &adm_Runover,                   "Push a player backwards",          "<i/n>",            NULL},
     {"!r",      "respawn",          &g_respawn.integer,         &adm_Respawn,                   "Respawn a player",                 "<i/n>",            "ed"},

@@ -249,13 +249,6 @@ void player_die(
     }
     //Ryan
 
-    // Boe!Man 1/13/11: If they are twisted, untwist them before they die.
-    if(self->client->pers.twisted){
-        VectorSet(lookdown, 0, 0, 0);
-        SetClientViewAngle(self, lookdown, qfalse);
-        self->client->pers.twisted = qfalse;
-    }
-
     // This is just to ensure that the player wont render for even a single frame
     self->s.eFlags |= EF_DEAD;
 

@@ -142,7 +142,6 @@ vmCvar_t    server_colors;                  // Broadcast color fades.
 vmCvar_t    g_uppercut;                     // Admin CVAR.
 vmCvar_t    g_adminremove;
 vmCvar_t    g_runover;                      // Admin CVAR.
-vmCvar_t    g_twist;                        // Admin CVAR.
 vmCvar_t    g_respawn;                      // Admin CVAR.
 vmCvar_t    server_badminprefix;
 vmCvar_t    server_adminprefix;
@@ -479,7 +478,6 @@ static cvarTable_t gameCvarTable[] =
     { &g_removeadmin,               "g_removeadmin",        "4",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
     { &g_uppercut,                  "g_uppercut",           "3",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
     { &g_runover,                   "g_runover",            "2",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
-    { &g_twist,                     "g_twist",              "2",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
     { &g_respawn,                   "g_respawn",            "4",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
     { &g_mapswitch,                 "g_mapswitch",          "4",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
     { &g_flash,                     "g_flash",              "3",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },

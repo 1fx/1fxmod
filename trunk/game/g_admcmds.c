@@ -8,7 +8,6 @@
 // Local function definitions.
 static char*adm_checkListFilters    (gentity_t *adm, int argNum, qboolean shortCmd, char *listName, char *byFieldName);
 static void adm_addAdmin_f          (int argNum, gentity_t *adm, qboolean shortCmd, int level2, char *commandName);
-static void adm_unTwist             (int idNum, gentity_t *adm);
 static void adm_unPlant             (int idNum, gentity_t *adm);
 static void adm_toggleSection       (gentity_t *adm, char *sectionName, int sectionID, int useSection);
 static void adm_toggleCVAR          (gentity_t *adm, int argNum, qboolean shortCmd, char *cvarName, vmCvar_t *cvar1, qboolean availableInCM, char *cvarNameCM, vmCvar_t *cvar2);
@@ -335,77 +334,6 @@ static void adm_addAdmin_f(int argNum, gentity_t *adm, qboolean shortCmd, int le
 
 /*
 ================
-adm_Twist
-
-Inverts movement keypresses and makes the player look upside down.
-================
-*/
-
-int adm_Twist(int argNum, gentity_t *adm, qboolean shortCmd)
-{
-    gentity_t       *ent;
-    int             idNum;
-    vec3_t          lookDown;
-    char            a[4], b[4], c[4];
-
-    idNum = Boe_ClientNumFromArg(adm, argNum, "twist <id/name>", "twist", qtrue, qtrue, shortCmd);
-    if (idNum < 0)  return -1;
-
-    ent = g_entities + idNum;
-    // Boe!Man 1/13/11: If the client is already twisted, untwist him.
-    if (ent->client->pers.twisted == qtrue){
-        adm_unTwist(idNum, adm);
-        return -1;
-    }
-
-    trap_Argv(argNum + 1, c, sizeof(c));
-    trap_Argv(argNum + 2, b, sizeof(b));
-    trap_Argv(argNum + 3, a, sizeof(a));
-    if (!c[0]) {
-        VectorSet(lookDown, 100, 0, 130);
-    }else{
-        VectorSet(lookDown, atoi(a), atoi(b), atoi(c));
-    }
-
-    SetClientViewAngle(ent, lookDown, qfalse);
-    ent->client->pers.twisted = qtrue;
-
-    return idNum;
-}
-
-/*
-================
-adm_unTwist
-
-Resets the earlier twisted state.
-================
-*/
-
-static void adm_unTwist(int idNum, gentity_t *adm)
-{
-    gentity_t   *ent;
-    vec3_t      lookDown;
-
-    ent = g_entities + idNum;
-
-    // Untwist the player.
-    VectorSet(lookDown, 0, 0, 0);
-    SetClientViewAngle(ent, lookDown, qfalse);
-    ent->client->pers.twisted = qfalse;
-
-    // Broadcast the change.
-    Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-    if (adm && adm->client){
-        G_Broadcast(va("%s\nwas \\untwisted\nby %s", ent->client->pers.netname, adm->client->pers.netname), BROADCAST_CMD, NULL);
-        trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was untwisted by %s.\n\"", ent->client->pers.cleanName, adm->client->pers.cleanName));
-    }else{
-        G_Broadcast(va("%s\nwas \\untwisted", ent->client->pers.netname), BROADCAST_CMD, NULL);
-        trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s was untwisted.\n\"", ent->client->pers.cleanName));
-    }
-}
-
-/*
-================
 adm_Plant
 
 Plants a player into the ground.
@@ -445,7 +373,7 @@ int adm_Plant(int argNum, gentity_t *adm, qboolean shortCmd)
 
 /*
 ================
-adm_unTwist
+adm_unPlant
 
 Resets the earlier planted state.
 ================

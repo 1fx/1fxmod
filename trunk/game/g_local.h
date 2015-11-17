@@ -480,11 +480,6 @@ typedef struct
     qboolean            planted;                    // As soon a player gets planted, this is set to qtrue, to avoid further plants/unplant a non-planted player.
     int                 ready;
     int                 readyMessageTime;           // used for displaying the please ready up message every 3 seconds
-
-    // Boe!Man 1/13/11
-    qboolean            twisted;                    // If a player is twisted, this will be set to qtrue.
-
-
 } clientPersistant_t;
 
 #define MAX_SERVER_FPS      40
@@ -1229,7 +1224,6 @@ extern  vmCvar_t    g_kick;
 extern  vmCvar_t    g_addbadmin;
 extern  vmCvar_t    g_addadmin;
 extern  vmCvar_t    g_addsadmin;
-extern  vmCvar_t    g_twist;
 extern  vmCvar_t    g_plant;
 extern  vmCvar_t    g_runover;
 extern  vmCvar_t    g_respawn;
@@ -1266,7 +1260,6 @@ int             adm_Uppercut                        (int argNum, gentity_t *adm,
 int             adm_Pop                             (int argNum, gentity_t *adm, qboolean shortCmd);
 int             adm_Kick                            (int argNum, gentity_t *adm, qboolean shortCmd);
 int             adm_addAdmin                        (int argNum, gentity_t *adm, qboolean shortCmd);
-int             adm_Twist                           (int argNum, gentity_t *adm, qboolean shortCmd);
 int             adm_Plant                           (int argNum, gentity_t *adm, qboolean shortCmd);
 int             adm_Runover                         (int argNum, gentity_t *adm, qboolean shortCmd);
 int             adm_Respawn                         (int argNum, gentity_t *adm, qboolean shortCmd);
