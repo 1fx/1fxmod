@@ -1249,9 +1249,19 @@ void CheckGametype ( void )
                 LogExit( "Timelimit hit" );
                 return;
             }
+
             if(current_gametype.value == GT_HS){
                 StripHiders();
+            }else if(current_gametype.value == GT_HZ){
+                // Add 5 points for each human that's still alive.
+                for (i = 0; i < level.numConnectedClients; i++){
+                    if(g_entities[level.sortedClients[i]].client->sess.team == TEAM_RED && !G_IsClientDead(g_entities[level.sortedClients[i]].client)){
+                        g_entities[level.sortedClients[i]].client->sess.score += 5;
+                        g_entities[level.sortedClients[i]].client->sess.kills += 5;
+                    }
+                }
             }
+
             trap_GT_SendEvent ( GTEV_TIME_EXPIRED, level.time, 0, 0, 0, 0, 0 );
             if(level.timelimithit == qtrue && (strstr(g_gametype.string, "inf") || strstr(g_gametype.string, "elim"))){
                 gentity_t*  tent;
