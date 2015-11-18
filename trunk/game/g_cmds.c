@@ -3308,6 +3308,17 @@ void Cmd_CallVote_f( gentity_t *ent )
     }
     else if ( !Q_stricmp( arg1, "map" ) )
     {
+        fileHandle_t mapFile;
+
+        // Boe!Man 11/18/15: Map must be valid in order to switch to it.
+        trap_FS_FOpenFile(va("maps/%s.bsp", arg2), &mapFile, FS_READ);
+        if(mapFile == 0){
+            trap_SendServerCommand( ent-g_entities, "print \"Map not found.\n\"" );
+            return;
+        }
+
+        trap_FS_FCloseFile(mapFile);
+
         Com_sprintf( level.voteString, sizeof( level.voteString ), "%s %s", arg1, arg2 );
         Com_sprintf( level.voteDisplayString, sizeof( level.voteDisplayString ), "%s", level.voteString );
     }

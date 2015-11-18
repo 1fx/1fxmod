@@ -1925,3 +1925,167 @@ void G_Hash()
     // Always print result, unlike the real function where it is actually a Com_DPrintf.
     Com_Printf("Cvar %s given hashed integer %d\n", cvarName, hash);
 }
+
+/*
+==============
+G_switchToNextMapInCycle
+11/17/15 - 11:21 PM
+Checks next map in the
+map cycle played.
+
+If it is found to be
+invalid, it is skipped
+and a will continue to switch
+until a replacement is arranged.
+==============
+*/
+
+void G_switchToNextMapInCycle(qboolean force)
+{
+    char            currentMap[12], nextMap[MAX_QPATH];
+    char            command[MAX_QPATH];
+    int             mapIndex, mapStart, i;
+    TGenericParser2 GP2;
+    TGPGroup        topGroup;
+    TGPGroup        mcGroup;
+    TGPGroup        mapSubGroup;
+    fileHandle_t    mapFile;
+    char            *mapStrStart, *mapStrEnd;
+
+    // Check if we're running a mapcycle.
+    if (!*g_mapcycle.string || !Q_stricmp (g_mapcycle.string, "none")){
+        G_LogPrintf("Not actively playing a mapcycle, sv_mapcycle is empty or set to none!\n");
+
+        if(force){
+            G_LogPrintf("Server expects a switch - switching to mp_shop instead.\n");
+            trap_SendConsoleCommand(EXEC_APPEND, "map mp_shop\n");
+        }
+        return;
+    }
+
+    // Check last map in the cycle.
+    trap_Cvar_VariableStringBuffer("sv_lastmapcycle", currentMap, sizeof(currentMap));
+    if(!strlen(currentMap)){
+        // Want to switch to the first map in the cycle.
+        mapStart = 0;
+    }else if(strlen(currentMap) >= 4){
+        // We've played a map previously,
+        // check this value and add one to it.
+        mapStart = atoi((char *)currentMap + 3) + 1;
+    }
+
+    // Parse the mapcycle file.
+    GP2 = trap_GP_ParseFile(g_mapcycle.string, qtrue, qfalse);
+    if(!GP2){
+        Com_Printf("ERROR: trying to read the mapcycle file, but it failed. Has it been moved or altered in the meantime?\n");
+
+        if(force){
+            G_LogPrintf("Server expects a switch - switching to mp_shop instead.\n");
+            trap_SendConsoleCommand(EXEC_APPEND, "map mp_shop\n");
+        }
+        return;
+    }
+
+    // Top group.
+    topGroup = trap_GP_GetBaseParseGroup(GP2);
+    if (!topGroup){
+        Com_Printf("ERROR: trying to read the mapcycle file, but it failed. Has it been moved or altered in the meantime?\n");
+
+        if(force){
+            G_LogPrintf("Server expects a switch - switching to mp_shop instead.\n");
+            trap_SendConsoleCommand(EXEC_APPEND, "map mp_shop\n");
+        }
+        return;
+    }
+
+    // Group in top group should only contain the "mapcycle" sub group.
+    mcGroup = trap_GPG_FindSubGroup(topGroup, "mapcycle");
+    if (!mcGroup){
+        Com_Printf("ERROR: trying to read the mapcycle file, but it failed. Has it been moved or altered in the meantime?\n");
+
+        if(force){
+            G_LogPrintf("Server expects a switch - switching to mp_shop instead.\n");
+            trap_SendConsoleCommand(EXEC_APPEND, "map mp_shop\n");
+        }
+        return;
+    }
+
+    // Loop through the available maps.
+    mapIndex = mapStart;
+    for(;;){
+        // Grab the mapx sub group.
+        // This could fail (ran out of maps), so start back at 0 if this fails.
+        mapSubGroup = trap_GPG_FindSubGroup (mcGroup, va("map%d", mapIndex));
+        if (!mapSubGroup){
+            if(mapIndex == 0){
+                // No recursive loops.
+                level.mcSkipMaps = 0;
+                break;
+            }else{
+                mapIndex = 0;
+                continue;
+            }
+        }
+
+        // Parse out the command.
+        trap_GPG_FindPairValue (mapSubGroup, "command", "", command);
+        if (!command[0]){
+            // Empty command, continue to the next map in the cycle.
+            G_LogPrintf("ERROR: empty command in the mapcycle for map %d\n", mapIndex);
+            goto advanceNextMap;
+        }
+
+        // Figure out what map we're trying to play.
+        mapStrStart = strstr(command, "map ");
+        if(mapStrStart == NULL){
+            // No "map" in the command.
+            G_LogPrintf("ERROR: no map specified to switch to in the mapcycle for map %d\n", mapIndex);
+            goto advanceNextMap;
+        }
+
+        // Determine end of the string and resulting map name.
+        mapStrEnd = strstr(mapStrStart, ";");
+        if(!mapStrEnd){
+            mapStrEnd = strrchr(mapStrStart, 0);
+        }
+
+        mapStrStart += 4;
+        Q_strncpyz(nextMap, mapStrStart, (int)(mapStrEnd - mapStrStart) + 1);
+
+        // Remove possible whitespace.
+        for(i = strlen(nextMap); i >= 0; i--){
+            if(!isspace(nextMap[i])){
+                break;
+            }else{
+                nextMap[i] = '\0';
+            }
+        }
+
+        // Now try to open the map we found.
+        trap_FS_FOpenFile(va("maps/%s.bsp", nextMap), &mapFile, FS_READ);
+        if(mapFile != 0){
+            // Found a valid map!
+            trap_FS_FCloseFile(mapFile);
+            level.mcSkipMaps++;
+            break;
+        }else{
+            G_LogPrintf("ERROR: invalid map in mapcycle for map entry %d: %s\n", mapIndex, nextMap);
+        }
+
+    advanceNextMap:
+        if(mapIndex == mapStart && level.mcSkipMaps != 0){
+            G_LogPrintf("ERROR: no maps available in the mapcycle to play, they are all invalid!\n");
+            level.mcSkipMaps = 0;
+
+            if(force){
+                G_LogPrintf("Bailing out by switching to mp_shop for your sake...\n");
+                trap_SendConsoleCommand(EXEC_APPEND, "map mp_shop\n");
+            }
+            break;
+        }
+
+        // Advance to the next map.
+        level.mcSkipMaps++;
+        mapIndex++;
+    }
+}

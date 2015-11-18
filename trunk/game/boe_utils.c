@@ -1981,7 +1981,7 @@ void Boe_mapEvents (void){
                 level.mapSwitchCount2--;
                 level.mapSwitchCount = level.time + 1000;
             }else{
-                trap_SendConsoleCommand( EXEC_APPEND, va("mapcycle\n"));
+                G_switchToNextMapInCycle(qtrue);
 
                 // Boe!Man 7/15/13: Also re-set these values in case the map switch goes wrong.
                 level.mapSwitch = qfalse;

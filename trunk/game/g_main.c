@@ -2300,7 +2300,7 @@ void ExitLevel (void)
     }
     ///Ryan
 
-    trap_SendConsoleCommand( EXEC_APPEND, "mapcycle\n" );
+    G_switchToNextMapInCycle(qtrue);
     level.changemap = NULL;
     level.intermissiontime = 0;
 
@@ -3044,7 +3044,11 @@ void CheckVote( void )
             }
         }
 
-        trap_SendConsoleCommand( EXEC_APPEND, va("%s\n", level.voteString ) );
+        if(!strcmp(level.voteString, "mapcycle") == 0 ){
+            G_switchToNextMapInCycle(qfalse);
+        }else{
+            trap_SendConsoleCommand( EXEC_APPEND, va("%s\n", level.voteString ) );
+        }
     }
 
     if ( !level.voteTime )
@@ -3654,6 +3658,12 @@ void G_RunFrame( int levelTime )
     if ( level.restarted )
     {
         return;
+    }
+    // Or if we're waiting for the server to switch to a valid next map..
+    else if ( level.mcSkipMaps )
+    {
+        trap_SendConsoleCommand(EXEC_APPEND, "mapcycle\n");
+        level.mcSkipMaps--;
     }
 
     level.framenum++;

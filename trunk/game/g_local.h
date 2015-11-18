@@ -774,6 +774,8 @@ typedef struct
     int             lastConnectedClient;
     char            mapname[64];
 
+    int             mcSkipMaps;         // Number of additional "mapcycle" commands to send to the engine to switch to a map we do have.
+
     // Henk 06/04/10 -> Add TMI for RPM scoreboard compatiblity
     #ifndef _GOLD
     int             lastTMIupdate;
@@ -1155,6 +1157,7 @@ void        RemoveColorEscapeSequences      ( char *text );
 void        G_RemoveAdditionalCarets        ( char *text );
 
 void        G_Hash                          ( void );
+void        G_switchToNextMapInCycle        ( qboolean force );
 
 //
 // g_weapon.c
