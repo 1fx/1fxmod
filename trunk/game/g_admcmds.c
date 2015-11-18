@@ -3723,10 +3723,12 @@ int adm_Map(int argNum, gentity_t *adm, qboolean shortCmd)
                     trap_Argv( 2, arg, sizeof( arg ) ); // Short cmd from console.
                     strcpy(map, arg);
                 }
+                Q_strlwr(map);
             }else{
                 strcpy(map, arg);
                 // Check for the gametype.
                 trap_Argv(3, arg, sizeof(arg));
+                Q_strlwr(map);
                 gt = Q_strlwr(arg); // So the gametype check will not fall over captials.
             }
             trap_FS_FOpenFile( va("maps\\%s.bsp", map), &f, FS_READ );
