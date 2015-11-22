@@ -2132,7 +2132,7 @@ Function that replaces arguments in the actual CustomCommand action.
 char *Boe_parseCustomCommandArgs(gentity_t *ent, char *in, qboolean shortCmd)
 {
     static char *buf;
-    static char out[512] = "\0";
+    static char out[512];
     char        buf2[5] = "\0";
     char        arg2[1];
     char        arg[MAX_STRING_TOKENS];
@@ -2146,6 +2146,9 @@ char *Boe_parseCustomCommandArgs(gentity_t *ent, char *in, qboolean shortCmd)
     if (shortCmd) {
         argc = G_GetChatArgumentCount();
     }
+
+    // Boe!Man 11/22/15: Make sure we empty this buffer properly.
+    memset(out, 0, sizeof(out));
 
     buf = in;
     while ( *buf ){
