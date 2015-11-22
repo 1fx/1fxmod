@@ -1086,12 +1086,12 @@ int G_Damage (
         {
             damage = 1;
         }
-        //Com_Printf("G_Damage() -> Mod: %i\n", mod); // HENK DEBUG
+
         // Henk 18/01/10 ->  Knife damage and stun function
         if(client->sess.team == TEAM_BLUE && attacker->client->sess.team == TEAM_RED){ // if target is a seeker
             damage = 0;
             if(!client->seekerAway){ // Boe!Man 1/29/14: Make sure the seeker can be stunned.
-                if(mod == 1){ // hider has stunned a seeker
+                if(mod == MOD_KNIFE){ // hider has stunned a seeker
                 // Add ammo to hider
                 ammoindex=weaponData[WP_KNIFE].attack[ATTACK_ALTERNATE].ammoIndex;
                     if(level.messagedisplay){ // Boe!Man 7/15/11: No need to check for 30 seconds. If people alter hideSeek_RoundStartDelay this will be buggy.. Just check for the message (are seekers released yet?).
@@ -1104,7 +1104,7 @@ int G_Damage (
                         if(attacker->client->ps.ammo[ammoindex] < 5)
                         attacker->client->ps.ammo[ammoindex]+=1;
                     }
-                }else if(mod == 257){ // Henk 22/01/10 -> Add throw knife
+                }else if(mod == altAttack(MOD_KNIFE)){ // Henk 22/01/10 -> Add throw knife
                     client->sess.slowtime = level.time+4000; // after 4 seconds slowdown stops
                     attacker->client->sess.speedtime = level.time+4000; // after 4 seconds speedup stops
 
@@ -1127,9 +1127,9 @@ int G_Damage (
         #else
         }else if(client->sess.team == TEAM_RED && attacker->client->sess.team == TEAM_BLUE){ // if target is a hider
         #endif // _3DServer
-            if(mod != 1){
+            if(mod != MOD_KNIFE){
                 damage = 0;
-            }else if(mod == 1){
+            }else if(mod == MOD_KNIFE){
                 if(level.MM1given == qfalse){ // MM1 has not been given to a seeker, so give it to him.
                     if(hideSeek_Weapons.string[2] == '1'){
                     attacker->client->ps.ammo[weaponData[WP_MM1_GRENADE_LAUNCHER].attack[ATTACK_NORMAL].ammoIndex]=2;
@@ -1211,7 +1211,12 @@ int G_Damage (
             // Boe!Man 9/20/12: Fix for telefrag not working.
             if(!g_friendlyFire.integer && mod != MOD_TELEFRAG){
                 damage = 0;
-            }else if(g_friendlyFire.integer && ((attacker->client->ps.weapon == WP_M4_ASSAULT_RIFLE || attacker->client->ps.weapon >= 12) || (mod == 8 || (mod >= 12 && mod <= 21)))){ // Boe!Man 8/10/11: Deal with Friendly fire in H&S.
+            }else if(g_friendlyFire.integer &&
+                (  attacker->client->ps.weapon == WP_M4_ASSAULT_RIFLE
+                || attacker->client->ps.weapon == WP_MM1_GRENADE_LAUNCHER
+                || attacker->client->ps.weapon == WP_RPG7_LAUNCHER
+                || (attacker->client->ps.weapon >= level.grenadeMin && attacker->client->ps.weapon <= level.grenadeMax)
+                )){ // Boe!Man 8/10/11: Deal with Friendly fire in H&S.
                 damage = 0;
             }
         }
@@ -1852,7 +1857,6 @@ qboolean G_RadiusDamage (
         }
     }
     maxs1[2] += 50;
-    //Com_Printf("Mod: %i\n", mod); // HENK DEBUG
 
     numListedEntities = trap_EntitiesInBox( mins, maxs, entityList, MAX_GENTITIES );
 
@@ -2146,11 +2150,11 @@ qboolean G_RadiusDamage (
     }
 
     if(current_gametype.value == GT_HZ){
-            if(mod == MOD_M67_GRENADE || mod == altAttack(MOD_M67_GRENADE)){
-                G_CreateDamageArea ( origin, attacker, 0.00, radius, 20000, mod );
-            }else if (mod == MOD_L2A2_GRENADE || mod == altAttack(MOD_L2A2_GRENADE)){
-                G_CreateDamageArea(origin, attacker, 0.00, 500, 20000, mod);
-            }
+        if(mod == MOD_M67_GRENADE || mod == altAttack(MOD_M67_GRENADE)){
+            G_CreateDamageArea ( origin, attacker, 0.00, radius, 20000, mod );
+        }else if (mod == MOD_L2A2_GRENADE || mod == altAttack(MOD_L2A2_GRENADE)){
+            G_CreateDamageArea(origin, attacker, 0.00, 500, 20000, mod);
+        }
     }
 
     if(current_gametype.value == GT_HS){
