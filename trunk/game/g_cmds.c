@@ -1234,14 +1234,14 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
                     return;
                 }
             }else if (current_gametype.value == GT_HZ){
-                if (TeamCount1(TEAM_BLUE) < 3 && team == TEAM_BLUE){
-                    trap_SendServerCommand(client - &level.clients[0], "print\"^3[H&Z] ^7Zombie team is locked.\n\"");
-                    return;
-                }
+                if (team == TEAM_RED && level.gametypeStartTime != level.time && !level.blueLocked){
+                    if(client->sess.team != TEAM_BLUE){
+                        trap_SendServerCommand(client - &level.clients[0], "print\"^3[H&Z] ^7Round already started, forcing you to the zombie team.\n\"");
+                    }else{
+                        trap_SendServerCommand(client - &level.clients[0], "print\"^3[H&Z] ^7Humans are locked, stay put in the zombie team.\n\"");
+                    }
 
-                if (TeamCount1(TEAM_BLUE) >= 3 && team == TEAM_RED){
-                    trap_SendServerCommand(client - &level.clients[0], "print\"^3[H&Z] ^7Human team is locked.\n\"");
-                    return;
+                    team = TEAM_BLUE;
                 }
             }else{
                 counts[TEAM_BLUE] = TeamCount( ent->client->ps.clientNum, TEAM_BLUE, NULL );
