@@ -1206,8 +1206,8 @@ void CheckGametype ( void )
         if(level.cagefight == qtrue && level.teamAliveCount[TEAM_RED] == 1){
             for ( i = 0; i < level.numConnectedClients; i ++ ){
                 if(!G_IsClientDead(g_entities[level.sortedClients[i]].client) && g_entities[level.sortedClients[i]].client->sess.team == TEAM_RED){
-                    G_AddScore(&g_entities[level.sortedClients[i]], 100);
                     g_entities[level.sortedClients[i]].client->sess.kills += 1; // round winner should get 1 point more.
+                    G_AddScore(&g_entities[level.sortedClients[i]], 100);
                 }
             }
             trap_SendServerCommand(-1, va("print \"^3[H&S] ^7Fight ended.\n\""));
@@ -1229,8 +1229,8 @@ void CheckGametype ( void )
             if(level.cagefight == qtrue && current_gametype.value == GT_HS){
                 for ( i = 0; i < level.numConnectedClients; i ++ ){
                     if(!G_IsClientDead(g_entities[level.sortedClients[i]].client) && g_entities[level.sortedClients[i]].client->sess.team == TEAM_RED){
-                        G_AddScore(&g_entities[level.sortedClients[i]], 100);
                         g_entities[level.sortedClients[i]].client->sess.kills += 1; // round winner should get 1 point more.
+                        G_AddScore(&g_entities[level.sortedClients[i]], 100);
                     }
                 }
                 trap_SendServerCommand(-1, va("print \"^3[H&S] ^7Fight ended.\n\""));

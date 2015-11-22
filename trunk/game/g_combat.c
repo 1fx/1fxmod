@@ -348,8 +348,7 @@ void player_die(
             if ( mod != MOD_TELEFRAG && current_gametype.value != GT_HS && current_gametype.value != GT_HZ )
             {
                 G_AddScore( attacker, g_teamkillPenalty.integer );
-            }
-            if(current_gametype.value == GT_HS && level.cagefight == qtrue){
+            }else if(current_gametype.value == GT_HS && level.cagefight == qtrue){
                 G_AddScore(attacker, 10);
             }
         }
@@ -1226,7 +1225,7 @@ int G_Damage (
          }else if(mod == MOD_AK74_ASSAULT_RIFLE && level.crossTheBridge){
             attack = &weaponData[WP_AK74_ASSAULT_RIFLE].attack[ATTACK_NORMAL];
             damage = attack->damage;
-         }else if(level.cagefight == qtrue && mod == 265){
+         }else if(level.cagefight == qtrue && mod == altAttack(MOD_AK74_ASSAULT_RIFLE)){
             attack = &weaponData[WP_AK74_ASSAULT_RIFLE].attack[ATTACK_ALTERNATE];
             damage = attack->damage;
             if(location == HL_HEAD)

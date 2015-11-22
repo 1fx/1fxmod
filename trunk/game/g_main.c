@@ -1979,7 +1979,6 @@ void CalculateRanks( void )
     int         score;
     int         newScore;
     gclient_t   *cl;
-    int         sortedClients[MAX_CLIENTS];
 
     level.follow1 = -1;
     level.follow2 = -1;
@@ -2003,11 +2002,7 @@ void CalculateRanks( void )
                 if ( level.clients[i].pers.connected == CON_CONNECTED )
                 {
                     level.numPlayingClients++;
-#ifdef _DEBUG
-                    if (1)
-#else
                     if ( !(g_entities[i].r.svFlags & SVF_BOT) )
-#endif
                     {
                         level.numVotingClients++;
                     }
@@ -2024,10 +2019,8 @@ void CalculateRanks( void )
         }
     }
 
-    // Boe!Man 11/17/15: Never modify the actual sorted clients, bad things happen.
-    memcpy(sortedClients, level.sortedClients, sizeof(sortedClients));
-    qsort( sortedClients, level.numConnectedClients,
-           MAX_CLIENTS, SortRanks );
+    qsort( level.sortedClients, level.numConnectedClients,
+           sizeof(level.sortedClients[0]), SortRanks );
 
     // set the rank value for all clients that are connected and not spectators
     if ( level.gametypeData->teams )
@@ -2049,7 +2042,7 @@ void CalculateRanks( void )
         // in team games, rank is just the order of the teams, 0=red, 1=blue, 2=tied
         for ( i = 0;  i < level.numConnectedClients; i++ )
         {
-            cl = &level.clients[ sortedClients[i] ];
+            cl = &level.clients[ level.sortedClients[i] ];
             cl->ps.persistant[PERS_RANK] = rank;
         }
     }
@@ -2059,19 +2052,19 @@ void CalculateRanks( void )
         score = 0;
         for ( i = 0;  i < level.numPlayingClients; i++ )
         {
-            cl = &level.clients[ sortedClients[i] ];
+            cl = &level.clients[ level.sortedClients[i] ];
             newScore = cl->sess.score;
             if ( i == 0 || newScore != score )
             {
                 rank = i;
                 // assume we aren't tied until the next client is checked
-                level.clients[ sortedClients[i] ].ps.persistant[PERS_RANK] = rank;
+                level.clients[ level.sortedClients[i] ].ps.persistant[PERS_RANK] = rank;
             }
             else
             {
                 // we are tied with the previous client
-                level.clients[ sortedClients[i-1] ].ps.persistant[PERS_RANK] = rank | RANK_TIED_FLAG;
-                level.clients[ sortedClients[i] ].ps.persistant[PERS_RANK] = rank | RANK_TIED_FLAG;
+                level.clients[ level.sortedClients[i-1] ].ps.persistant[PERS_RANK] = rank | RANK_TIED_FLAG;
+                level.clients[ level.sortedClients[i] ].ps.persistant[PERS_RANK] = rank | RANK_TIED_FLAG;
             }
             score = newScore;
         }
