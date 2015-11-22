@@ -1253,7 +1253,6 @@ extern  vmCvar_t    g_lock;
 extern  vmCvar_t    g_flash;
 extern  vmCvar_t    g_pause;
 extern  vmCvar_t    g_forcevote;
-extern  vmCvar_t    g_adminremove;
 extern  vmCvar_t    g_ff;
 extern  vmCvar_t    g_rename;
 extern  vmCvar_t    g_3rd;

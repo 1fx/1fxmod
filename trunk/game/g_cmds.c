@@ -19,7 +19,7 @@ typedef struct
 
 static admCmd_t AdminCommands[] =
 {
-    {"!adr",    "adminremove",      &g_adminremove.integer,     &adm_adminRemove,               "Remove an Admin from the list",    "<line #>",         NULL},
+    {"!adr",    "adminremove",      &g_removeadmin.integer,     &adm_adminRemove,               "Remove an Admin from the list",    "<line #>",         NULL},
     {"!adl",    "adminlist",        &g_adminlist.integer,       &adm_adminList,                 "Show the Adminlist",               "",                 NULL},
     {"!al",     "adminlist",        &g_adminlist.integer,       &adm_adminList,                 "Show the Adminlist",               "",                 NULL},
     {"!ab",     "addbadmin",        &g_addbadmin.integer,       &adm_addAdmin,                  "Basic Admin",                      "<i/n>",            NULL},

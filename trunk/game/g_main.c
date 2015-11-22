@@ -140,7 +140,6 @@ vmCvar_t    g_broadcast;
 vmCvar_t    g_removeadmin;                  // Admin CVAR.
 vmCvar_t    server_colors;                  // Broadcast color fades.
 vmCvar_t    g_uppercut;                     // Admin CVAR.
-vmCvar_t    g_adminremove;
 vmCvar_t    g_runover;                      // Admin CVAR.
 vmCvar_t    g_respawn;                      // Admin CVAR.
 vmCvar_t    server_badminprefix;
@@ -465,9 +464,7 @@ static cvarTable_t gameCvarTable[] =
     { &server_motd5, "server_motd5", "", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
     { &server_motd6, "server_motd6", "", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 
-    //{ &g_adminfile,           "g_adminfile", "users/admins.txt", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
-
-    // Boe!Man 3/30/10: --- ADMIN--- Updated: 3/30/10
+    // Boe!Man 3/30/10: --- ADMIN--- Updated: 11/22/15
     { &g_kick,                      "g_kick",               "3",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
     { &g_addbadmin,                 "g_addbadmin",          "3",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
     { &g_addadmin,                  "g_addadmin",           "4",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
@@ -487,7 +484,6 @@ static cvarTable_t gameCvarTable[] =
     { &g_mute,                      "g_mute",               "2",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
     { &g_strip,                     "g_strip",              "2",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
     { &g_eventeams,                 "g_eventeams",          "2",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
-    //{ &g_333,                     "g_333",                "3",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
     { &g_forceteam,                 "g_forceteam",          "4",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
     { &g_nosection,                 "g_nosection",          "4",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
     { &g_nades,                     "g_nades",              "4",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
@@ -503,15 +499,11 @@ static cvarTable_t gameCvarTable[] =
     { &g_3rd,                       "g_3rd",                "4",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
     { &g_cm,                        "g_cm",                 "4",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
     { &g_forcevote,                 "g_forcevote",          "3",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
-    { &g_adminremove,               "g_adminremove",        "4",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
     { &g_pause,                     "g_pause",              "3",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
-    { &g_adminlist,                 "g_adminlist",          "4",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse }, // Boe!Man 6/17/11: Solved bug where ALL admins could see the list (wasn't added to the CVAR table and thus 0).
+    { &g_adminlist,                 "g_adminlist",          "4",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
     { &g_shuffleteams,              "g_shuffleteams",       "3",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
     { &g_ff,                        "g_ff",                 "4",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
     { &g_rename,                    "g_rename",             "4",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
-
-//  { &g_clanfile,          "g_clanfile",           "users/clanmembers.txt",    CVAR_ARCHIVE,   0.0,    0.0,  0, qfalse  },
-//  { &g_banfile,           "g_banfile",            "users/bans.txt",       CVAR_ARCHIVE,   0.0,    0.0,  0, qfalse  },
 
     { &server_colors, "server_colors", "GgKk+7", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 
