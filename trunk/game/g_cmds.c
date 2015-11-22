@@ -751,7 +751,8 @@ void Cmd_Give_f (gentity_t *ent)
 
             #ifdef _GOLD
             // Boe!Man 11/11/15: Skip weapons (and remove from outfitting) that have shared ammo in specific gametypes in give me all.
-            if(current_gametype.value != GT_HS && i >= WP_M67_GRENADE && i <= WP_MDN11_GRENADE){
+            if(current_gametype.value != GT_HS && i >= WP_M67_GRENADE && i <= WP_MDN11_GRENADE
+            && !(current_gametype.value == GT_HZ && (i == WP_M67_GRENADE || i == WP_L2A2_GRENADE))){
                 ent->client->ps.stats[STAT_WEAPONS] &= ~(1 << i);
                 continue;
             }else if(current_gametype.value == GT_HS && (i == WP_M60_MACHINEGUN || i == WP_MP5)){
