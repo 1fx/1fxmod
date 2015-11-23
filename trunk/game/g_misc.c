@@ -260,7 +260,10 @@ void SP_misc_bsp(gentity_t *ent)
 
     G_SpawnString("bspmodel", "", &out);
 
-    //ent->s.eFlags = EF_PERMANENT; //EF_TELEPORT_BIT;
+    // Boe!Man 11/24/15: Make this entity permanent if spawned upon start of the map.
+    if(level.time == level.startTime){
+        ent->s.eFlags = EF_PERMANENT;
+    }
 
     // Mainly for debugging
     G_SpawnInt( "spacing", "0", &tempint);
