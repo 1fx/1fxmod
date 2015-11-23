@@ -228,9 +228,12 @@ void player_die(
 
 
     // Add to the number of deaths for this player
-    self->client->pers.statinfo.deaths++;
-    // Boe!Man 6/3/10: Fix for not showing deaths in scoreboard.
-    self->client->sess.deaths++;
+    if(current_gametype.value != GT_HS || current_gametype.value == GT_HS && !level.cagefight){
+        self->client->pers.statinfo.deaths++;
+        // Boe!Man 6/3/10: Fix for not showing deaths in scoreboard.
+        self->client->sess.deaths++;
+    }
+
     if(current_gametype.value == GT_HS){
         if ((self->client->sess.timeOfDeath == 1 && level.messagedisplay1) || self->client->sess.timeOfDeath != 1){
             self->client->sess.timeOfDeath = level.time;
