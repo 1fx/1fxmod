@@ -140,7 +140,7 @@ qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean 
     sqlite3         *db;
     sqlite3_stmt    *stmt;
     int              rc, i;
-    char             IP[MAX_IP];
+    char             IP[MAX_IP], *ip2;
     char             name[MAX_NETNAME];
     int              line;
 
@@ -261,18 +261,22 @@ qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean 
     }
 
     // Boe!Man 2/12/13: If the Clan Member is found on the server, remove his Clan status as well.
-    for(i = 0; i < level.numConnectedClients; i++){
-        if(strstr(g_entities[level.sortedClients[i]].client->pers.ip, IP) && g_entities[level.sortedClients[i]].client->sess.clanMember){
-            g_entities[level.sortedClients[i]].client->sess.clanMember = qfalse;
+    if(strlen(IP) > 1){
+        for(i = 0; i < level.numConnectedClients; i++){
+            ip2 = g_entities[level.sortedClients[i]].client->pers.ip;
 
-            // Boe!Man 2/12/13: Inform the Clan Member he's off the list..
-            if(adm){
-                trap_SendServerCommand(g_entities[level.sortedClients[i]].s.number, va("print\"^3[Info] ^7You were removed from the Clanlist by %s.\n\"", adm->client->pers.cleanName));
-            }else{
-                trap_SendServerCommand(g_entities[level.sortedClients[i]].s.number, va("print\"^3[Info] ^7You were removed from the Clanlist by RCON.\n\""));
+            if(strstr(ip2, IP) == ip2 && g_entities[level.sortedClients[i]].client->sess.clanMember){
+                g_entities[level.sortedClients[i]].client->sess.clanMember = qfalse;
+
+                // Boe!Man 2/12/13: Inform the Clan Member he's off the list..
+                if(adm){
+                    trap_SendServerCommand(g_entities[level.sortedClients[i]].s.number, va("print\"^3[Info] ^7You were removed from the clanlist by %s.\n\"", adm->client->pers.cleanName));
+                }else{
+                    trap_SendServerCommand(g_entities[level.sortedClients[i]].s.number, va("print\"^3[Info] ^7You were removed from the clanlist by RCON.\n\""));
+                }
+
+                break;
             }
-
-            break;
         }
     }
 
