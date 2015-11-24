@@ -998,6 +998,17 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
             sqlite3_finalize(stmt);
         }
 
+        // Boe!Man 11/24/15: User must have enough privileges to remove this Admin.
+        if(adm && adm->client && !silent){
+            // Boe!Man 11/24/15: User must have enough privileges to remove this Admin.
+            if((level2 == 2 && adm->client->sess.admin < g_badmin.integer)
+            || (level2 == 3 && adm->client->sess.admin < g_admin.integer)
+            || (level2 == 4 && adm->client->sess.admin < g_sadmin.integer)){
+                trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to remove this Admin.\n\""));
+                return qfalse;
+            }
+        }
+
         // Boe!Man 2/6/13: If the previous query succeeded, we can delete the record.
         if(!passAdmin){
             rc = sqlite3_exec(db, va("DELETE FROM admins WHERE ROWID='%i'", line), 0, 0, 0);
@@ -1066,6 +1077,17 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
         }
         sqlite3_finalize(stmt);
 
+        // Boe!Man 11/24/15: User must have enough privileges to remove this Admin.
+        if(adm && adm->client && !silent){
+            // Boe!Man 11/24/15: User must have enough privileges to remove this Admin.
+            if((level2 == 2 && adm->client->sess.admin < g_badmin.integer)
+            || (level2 == 3 && adm->client->sess.admin < g_admin.integer)
+            || (level2 == 4 && adm->client->sess.admin < g_sadmin.integer)){
+                trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to remove this Admin.\n\""));
+                return qfalse;
+            }
+        }
+
         // Boe!Man 2/6/13: If the previous query succeeded, we can delete the record.
         if(!passAdmin){
             rc = sqlite3_exec(db, va("DELETE FROM admins WHERE IP='%s'", value), 0, 0, 0);
@@ -1098,27 +1120,30 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
                 g_entities[level.sortedClients[i]].client->sess.adminspec = qfalse;
 
                 // Boe!Man 2/12/13: Inform the Admin he's off the list..
-                if (adm){
-                    trap_SendServerCommand(g_entities[level.sortedClients[i]].s.number, va("print\"^3[Info] ^7You were removed from the Adminlist by %s.\n\"", adm->client->pers.cleanName));
-                }
-                else{
-                    trap_SendServerCommand(g_entities[level.sortedClients[i]].s.number, va("print\"^3[Info] ^7You were removed from the Adminlist by RCON.\n\""));
+                if(!silent){
+                    if (adm){
+                        trap_SendServerCommand(g_entities[level.sortedClients[i]].s.number, va("print\"^3[Info] ^7You were removed from the Adminlist by %s.\n\"", adm->client->pers.cleanName));
+                    }
+                    else{
+                        trap_SendServerCommand(g_entities[level.sortedClients[i]].s.number, va("print\"^3[Info] ^7You were removed from the Adminlist by RCON.\n\""));
+                    }
                 }
             }
         }
-    }
-    else{
+    }else{
         for (i = 0; i < level.numConnectedClients; i++){
             if (strstr(g_entities[level.sortedClients[i]].client->pers.cleanName, name) && g_entities[level.sortedClients[i]].client->sess.admin == level2){
                 g_entities[level.sortedClients[i]].client->sess.admin = 0;
                 g_entities[level.sortedClients[i]].client->sess.adminspec = qfalse;
 
                 // Boe!Man 2/12/13: Inform the Admin he's off the list..
-                if (adm){
-                    trap_SendServerCommand(g_entities[level.sortedClients[i]].s.number, va("print\"^3[Info] ^7You were removed from the Adminlist by %s.\n\"", adm->client->pers.cleanName));
-                }
-                else{
-                    trap_SendServerCommand(g_entities[level.sortedClients[i]].s.number, va("print\"^3[Info] ^7You were removed from the Adminlist by RCON.\n\""));
+                if(!silent){
+                    if (adm){
+                        trap_SendServerCommand(g_entities[level.sortedClients[i]].s.number, va("print\"^3[Info] ^7You were removed from the Adminlist by %s.\n\"", adm->client->pers.cleanName));
+                    }
+                    else{
+                        trap_SendServerCommand(g_entities[level.sortedClients[i]].s.number, va("print\"^3[Info] ^7You were removed from the Adminlist by RCON.\n\""));
+                    }
                 }
             }
         }

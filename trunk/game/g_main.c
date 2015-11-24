@@ -129,15 +129,14 @@ vmCvar_t    server_motd3;                   // or decides to view it using the /
 vmCvar_t    server_motd4;
 vmCvar_t    server_motd5;
 vmCvar_t    server_motd6;
-//vmCvar_t  g_adminfile;                    // Stores the admins in the server.
-vmCvar_t    g_addbadmin;                    // Adds a B-Admin to the Admin file.
-vmCvar_t    g_addadmin;                     // Adds an Admin to the Admin file.
-vmCvar_t    g_addsadmin;                    // Adds a S-Admin to the Admin file.
+
+vmCvar_t    g_badmin;                       // Adds or removes a B-Admin.
+vmCvar_t    g_admin;                        // Adds or removes an Admin.
+vmCvar_t    g_sadmin;                       // Adds or removes a S-Admin.
 vmCvar_t    g_kick;                         // Admin CVAR.
 vmCvar_t    g_subnetban;                    // Admin CVAR.
 vmCvar_t    g_ban;                          // Admin CVAR.
 vmCvar_t    g_broadcast;
-vmCvar_t    g_removeadmin;                  // Admin CVAR.
 vmCvar_t    server_colors;                  // Broadcast color fades.
 vmCvar_t    g_uppercut;                     // Admin CVAR.
 vmCvar_t    g_runover;                      // Admin CVAR.
@@ -464,15 +463,14 @@ static cvarTable_t gameCvarTable[] =
     { &server_motd5, "server_motd5", "", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
     { &server_motd6, "server_motd6", "", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 
-    // Boe!Man 3/30/10: --- ADMIN--- Updated: 11/22/15
+    // Boe!Man 3/30/10: --- ADMIN--- Updated: 11/24/15
     { &g_kick,                      "g_kick",               "3",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
-    { &g_addbadmin,                 "g_addbadmin",          "3",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
-    { &g_addadmin,                  "g_addadmin",           "4",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
-    { &g_addsadmin,                 "g_addsadmin",          "5",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
+    { &g_badmin,                    "g_badmin",             "3",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
+    { &g_admin,                     "g_admin",              "4",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
+    { &g_sadmin,                    "g_sadmin",             "5",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
     { &g_ban,                       "g_ban",                "4",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
     { &g_broadcast,                 "g_broadcast",          "3",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
     { &g_subnetban,                 "g_subnetban",          "5",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
-    { &g_removeadmin,               "g_removeadmin",        "4",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
     { &g_uppercut,                  "g_uppercut",           "3",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
     { &g_runover,                   "g_runover",            "2",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
     { &g_respawn,                   "g_respawn",            "4",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },

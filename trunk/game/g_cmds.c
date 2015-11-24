@@ -17,14 +17,18 @@ typedef struct
     char    *suffix; // Suffix for post processing broadcast, or NULL when function doesn't use it/has no suffix.
 } admCmd_t;
 
+// Boe!Man 11/24/15: Lowest Admin level is specified here.
+// The commands that use this value have specific Admin level handling.
+static int minimumAdmLevel = 2;
+
 static admCmd_t AdminCommands[] =
 {
-    {"!adr",    "adminremove",      &g_removeadmin.integer,     &adm_adminRemove,               "Remove an Admin from the list",    "<line #>",         NULL},
+    {"!adr",    "adminremove",      &minimumAdmLevel,           &adm_adminRemove,               "Remove an Admin from the list",    "<line #>",         NULL},
     {"!adl",    "adminlist",        &g_adminlist.integer,       &adm_adminList,                 "Show the Adminlist",               "",                 NULL},
     {"!al",     "adminlist",        &g_adminlist.integer,       &adm_adminList,                 "Show the Adminlist",               "",                 NULL},
-    {"!ab",     "addbadmin",        &g_addbadmin.integer,       &adm_addAdmin,                  "Basic Admin",                      "<i/n>",            NULL},
-    {"!aa",     "addadmin",         &g_addadmin.integer,        &adm_addAdmin,                  "Admin",                            "<i/n>",            NULL},
-    {"!as",     "addsadmin",        &g_addsadmin.integer,       &adm_addAdmin,                  "Server Admin",                     "<i/n>",            NULL},
+    {"!ab",     "addbadmin",        &g_badmin.integer,          &adm_addAdmin,                  "Add a Basic Admin",                "<i/n>",            NULL},
+    {"!aa",     "addadmin",         &g_admin.integer,           &adm_addAdmin,                  "Add an Admin",                     "<i/n>",            NULL},
+    {"!as",     "addsadmin",        &g_sadmin.integer,          &adm_addAdmin,                  "Add a Server Admin",               "<i/n>",            NULL},
     {"!sl",     "scorelimit",       &g_sl.integer,              &adm_scoreLimit,                "Change the scorelimit",            "<time>",           NULL},
     {"!tl",     "timelimit",        &g_tl.integer,              &adm_timeLimit,                 "Change the timelimit",             "<time>",           NULL},
     {"!sw",     "swapteams",        &g_swapteams.integer,       &adm_swapTeams,                 "Swap the players from team",       "",                 NULL},
@@ -37,7 +41,7 @@ static admCmd_t AdminCommands[] =
     {"!mr",     "maprestart",       &g_mapswitch.integer,       &adm_mapRestart,                "Restart the current map",          "",                 NULL},
     {"!mr",     "map_restart",      &g_mapswitch.integer,       &adm_mapRestart,                "Restart the current map",          "",                 NULL },
     {"!st",     "strip",            &g_strip.integer,           &adm_Strip,                     "Remove weapons from a player",     "<i/n>",            "ped"},
-    {"!ra",     "removeadmin",      &g_removeadmin.integer,     &adm_removeAdmin,               "Remove an Admin",                  "<i/n>",            NULL},
+    {"!ra",     "removeadmin",      &minimumAdmLevel,           &adm_removeAdmin,               "Remove an Admin",                  "<i/n>",            NULL},
     {"!ft",     "forceteam",        &g_forceteam.integer,       &adm_forceTeam,                 "Force a player to join a team",    "<i/n> <team>",     "ed"},
     {"!nl",     "nolower",          &g_nosection.integer,       &adm_noLower,                   "Enable/Disable Nolower",           "",                 NULL},
     {"!nr",     "noroof",           &g_nosection.integer,       &adm_noRoof,                    "Enable/Disable Noroof",            "",                 NULL},

@@ -715,10 +715,22 @@ Removes the players' Admin.
 
 int adm_removeAdmin(int argNum, gentity_t *adm, qboolean shortCmd)
 {
-    int         idNum;
+    int         idNum, admLvl;
 
     idNum = Boe_ClientNumFromArg(adm, argNum, "removeadmin <id/name>", "do this to", qfalse, qtrue, shortCmd);
     if (idNum < 0) return idNum;
+
+    // Boe!Man 11/24/15: User must have enough privileges to remove this Admin.
+    if(adm && adm->client){
+        admLvl = g_entities[idNum].client->sess.admin;
+
+        if((admLvl == 2 && adm->client->sess.admin < g_badmin.integer)
+        || (admLvl == 3 && adm->client->sess.admin < g_admin.integer)
+        || (admLvl == 4 && adm->client->sess.admin < g_sadmin.integer)){
+            trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to remove this Admin.\n\""));
+            return -1;
+        }
+    }
 
     // The user should probably be an Admin in order to remove him. ;-)
     if (!g_entities[idNum].client->sess.admin){
