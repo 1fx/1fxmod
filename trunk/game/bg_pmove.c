@@ -1880,6 +1880,7 @@ static void PM_SetWeaponTime ( TAnimWeapon *aW )
     if(!aW)
     {
         assert(0);
+        return;
     }
 
     // Weapon model info tells us how long the anim is
@@ -1956,11 +1957,10 @@ void PM_CheckWeaponNotes ( void )
     step = 0;
     ps   = pm->ps;
     aW   = BG_GetInviewAnimFromIndex ( ps->weapon, (ps->weaponAnimId&~ANIM_TOGGLEBIT) );
-    #ifdef Q3_VM
-    assert ( aW );
-    #endif
+
     if ( !aW )
     {
+        assert (0);
         return;
     }
 
@@ -2031,9 +2031,7 @@ void PM_SetWeaponAnimChoice(TAnimWeapon *aW)
 
     if(!aW)
     {
-    #ifdef Q3_VM
         assert(0);
-    #endif
         return;
     }
 
