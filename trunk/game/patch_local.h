@@ -17,15 +17,19 @@
 
 #if (defined(__GNUC__) && __GNUC__ < 3)
 #include <linux/user.h>
+#else
+#define __USE_MISC
+#include <sys/mman.h>
 #endif // GNUC < 3
 
 // Boe!Man 1/11/15: Required information for memory patching in another thread.
-struct patchArgs {
-    pid_t   pid;                // PID of main thread/process.
-    char    *buf;               // Bytedata of the modified call (variable length).
-    long    address;            // Address to patch.
-    int     length;             // Length of the byte data (buf).
-};
+typedef struct patchArgs {
+    pid_t       pid;        // PID of main thread/process.
+    char        *buf;       // Bytedata of the modified call (variable length).
+    long        address;    // Address to patch.
+    int         length;     // Length of the byte data (buf).
+    qboolean    success;    // True if the patch was successful.
+}patchArgs_t;
 #endif // _WIN32
 
 // Function definitions.

@@ -48,6 +48,10 @@ Logic to patch an address in another thread using ptrace (Linux).
 */
 
 #ifdef __linux__
+#if (defined (__GNUC__) && __GNUC__ > 2)
+static int *exitStatus;
+#endif // GNUC > 2
+
 void *Patch_linuxPatchAddress(void *arguments)
 {
     char *modifiedData;
@@ -56,18 +60,32 @@ void *Patch_linuxPatchAddress(void *arguments)
         long val;
         char chars[4];
     }data;
-    struct patchArgs *args = arguments;
+    patchArgs_t *args = (patchArgs_t *)arguments;
 
     #if (defined(__GNUC__) && __GNUC__ < 3)
     usleep(15000); // Boe!Man 3/8/15: Sleep for 15msec, this fixes a very strange problem of LinuxThreads sending a SIGSTOP while attaching.
     #else
-    pid_t pID = fork();
+    pid_t pID;
+
+    // Create the shared memory map, so we can read the proper exit status of the patch.
+    exitStatus = mmap(NULL, sizeof *exitStatus, PROT_READ | PROT_WRITE,
+                    MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+    *exitStatus = 1;
+
+    // Fork the process.
+    pID = fork();
 
     if(pID < 0){
         perror("fail!\nForking process failed");
     }else if(pID != 0){
         // Wait for the child.
         wait(NULL);
+
+        // Take note of the proper success value, and unmap the shared memory.
+        if(*exitStatus == 0){
+            args->success = qtrue;
+        }
+        munmap(exitStatus, sizeof *exitStatus);
 
         return NULL;
     }
@@ -119,7 +137,10 @@ void *Patch_linuxPatchAddress(void *arguments)
 
     printf("done!\n");
     #if (defined (__GNUC__) && __GNUC__ > 2)
+    *exitStatus = 0;
     _Exit(EXIT_SUCCESS);
+    #else
+    args->success = qtrue;
     #endif // GNUC > 2
 }
 #endif // __linux__
@@ -141,7 +162,7 @@ void Patch_detourAddress(char *genericName, long func, long offset, qboolean jmp
     unsigned char buf[5];
     #elif defined(__linux__) || defined(MACOS_X)
     pthread_t thread;
-    struct patchArgs args;
+    patchArgs_t args;
 
     unsigned char buf[4];
     #endif // _WIN32
@@ -169,8 +190,12 @@ void Patch_detourAddress(char *genericName, long func, long offset, qboolean jmp
     }
 
     #ifdef _WIN32
+    // Patch and check if the patch was successful, if not, throw a fatal error.
     if(WriteProcessMemory(GetCurrentProcess(), (void *)(offset - 5), buf, 5, NULL) == 0){ // Write the new call.
         Com_Printf("fail!\n");
+        #ifdef NDEBUG
+        Com_Error(ERR_FATAL, "Patching the executable failed! Aborting the game.");
+        #endif // NDEBUG
     }else{
         Com_Printf("done!\n");
     }
@@ -185,15 +210,22 @@ void Patch_detourAddress(char *genericName, long func, long offset, qboolean jmp
     args.buf = (char *)&buf;
     args.address = offset - 4;
     args.length = 4;
+    args.success = qfalse;
 
     // Create the thread that patches the address with the modified data.
     if (pthread_create(&thread, NULL, &Patch_linuxPatchAddress, (void *)&args) != 0){
         perror("fail!\nCreate thread failed");
-        return;
+    }else{
+        // Wait for the thread to finish.
+        pthread_join(thread, NULL);
     }
 
-    // Wait for the thread to finish.
-    pthread_join(thread, NULL);
+    #ifdef NDEBUG
+    // Check if the patch was successful, and if not, throw a fatal error.
+    if(!args.success){
+        Com_Error(ERR_FATAL, "Patching the executable failed! Aborting the game.");
+    }
+    #endif // NDEBUG
     #endif // _WIN32
 #endif // TEMP not MACOS_X
 }
@@ -213,13 +245,17 @@ void Patch_writeBytes(char *genericName, long offset, unsigned char *buf)
 #ifndef MACOS_X // FIXME!
     #ifdef __linux__
     pthread_t thread;
-    struct patchArgs args;
+    patchArgs_t args;
     #endif // __linux__
 
     Com_Printf("Applying %s... ", genericName);
     #ifdef _WIN32
+    // Patch and check if the patch was successful, if not, throw a fatal error.
     if(WriteProcessMemory(GetCurrentProcess(), (void *)(offset - strlen(buf)), buf, strlen(buf), NULL) == 0){ // Write the modified data.
         Com_Printf("fail!\n");
+        #ifdef NDEBUG
+        Com_Error(ERR_FATAL, "Patching the executable failed! Aborting the game.");
+        #endif // NDEBUG
     }else{
         Com_Printf("done!\n");
     }
@@ -234,15 +270,22 @@ void Patch_writeBytes(char *genericName, long offset, unsigned char *buf)
     args.buf = (char *)buf;
     args.length = strlen(buf);
     args.address = offset - args.length;
+    args.success = qfalse;
 
     // Create the thread that patches the address with the modified data.
     if (pthread_create(&thread, NULL, &Patch_linuxPatchAddress, (void *)&args) != 0){
         perror("fail!\nCreate thread failed");
-        return;
+    }else{
+        // Wait for the thread to finish.
+        pthread_join(thread, NULL);
     }
 
-    // Wait for the thread to finish.
-    pthread_join(thread, NULL);
+    #ifdef NDEBUG
+    // Check if the patch was successful, and if not, throw a fatal error.
+    if(!args.success){
+        Com_Error(ERR_FATAL, "Patching the executable failed! Aborting the game.");
+    }
+    #endif // NDEBUG
     #endif // _WIN32
 #endif // TEMP not MACOS_X
 }
