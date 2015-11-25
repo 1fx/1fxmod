@@ -90,6 +90,7 @@ static admCmd_t AdminCommands[] =
     {"!swi",    "switch",           &g_forceteam.integer,       &adm_Switch,                    "Switch one to the opposite team",  "<i/n>",            "ed"},
     {"!3rd",    "3rd",              &g_3rd.integer,             &adm_Third,                     "Toggles Thirdperson on or off",    "",                 NULL},
     {"!third",  "third",            &g_3rd.integer,             &adm_Third,                     "Toggles Thirdperson on or off",    "",                 NULL},
+    {"!wp",     "weapon",           &g_toggleweapon.integer,    &adm_toggleWeapon,              "Toggles weapon on or off",         "",                 NULL},
     // Boe!Man 6/2/15: Admin synonyms for Gold.
     // Pop/explode.
     {"!p",      "pop",              &g_pop.integer,             &adm_Pop,                       "Pop/explodes a player",            "<i/n>",            "ped"},

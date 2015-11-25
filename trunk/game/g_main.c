@@ -307,6 +307,7 @@ vmCvar_t    hideSeek_ExtendedRoundStats;
 // Boe!Man 11/5/12
 vmCvar_t    g_ff;
 vmCvar_t    g_rename;
+vmCvar_t    g_toggleweapon;
 
 vmCvar_t    g_dosPatch;
 
@@ -502,6 +503,7 @@ static cvarTable_t gameCvarTable[] =
     { &g_shuffleteams,              "g_shuffleteams",       "3",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
     { &g_ff,                        "g_ff",                 "4",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
     { &g_rename,                    "g_rename",             "4",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
+    { &g_toggleweapon,              "g_toggleweapon",       "4",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
 
     { &server_colors, "server_colors", "GgKk+7", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 

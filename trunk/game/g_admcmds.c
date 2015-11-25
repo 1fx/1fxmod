@@ -3870,7 +3870,7 @@ int adm_Third(int argNum, gentity_t *adm, qboolean shortCmd)
         trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7Thirdperson %s by %s.\n\"", (enable) ? "enabled" : "disabled", adm->client->pers.netname));
         Boe_adminLog(va("3rd %s", (enable) ? "enabled" : "disabled"), va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "none");
     }else{
-        trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Thirdperson enabled.\n\""));
+        trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Thirdperson %s.\n\"", (enable) ? "enabled" : "disabled"));
         Boe_adminLog(va("3rd %s", (enable) ? "enabled" : "disabled"), "RCON", "none");
     }
 
@@ -3894,7 +3894,7 @@ int adm_Rounds(int argNum, gentity_t *adm, qboolean shortCmd)
         if (adm && adm->client){
             trap_SendServerCommand(adm-g_entities, "print\"^3[Info] ^7You can only change this setting during Competition Warmup.\n\"");
         }else{
-            Com_Printf("^3[Info] ^7You can only change this setting during Competition Warmup.\n");
+            Com_Printf("You can only change this setting during Competition Warmup.\n");
         }
 
         return -1;
@@ -4027,4 +4027,105 @@ int adm_Switch(int argNum, gentity_t *adm, qboolean shortCmd)
     }
 
     return idNum;
+}
+
+/*
+================
+adm_toggleWeapon
+
+Enables or disables the specified weapon.
+================
+*/
+
+int adm_toggleWeapon(int argNum, gentity_t *adm, qboolean shortCmd)
+{
+    char        arg[16] = "\0";
+    char        userinfo[MAX_INFO_STRING];
+    int         argc, i, wpNum = 0;
+    qboolean    enable;
+    gitem_t     *item;
+    gentity_t   *ent;
+
+    // Can't toggle weapons like this in Hide&Seek.
+    if(current_gametype.value == GT_HS || current_gametype.value == GT_HZ){
+        if (adm && adm->client){
+            trap_SendServerCommand(adm-g_entities, va("print\"^3[Info] ^7You cannot use this command in %s.\n\"", (current_gametype.value == GT_HS) ? "Hide&Seek" : "Humans&Zombies"));
+        }else{
+            Com_Printf("You cannot use this command in %s.\n", (current_gametype.value == GT_HS) ? "Hide&Seek" : "Humans&Zombies");
+        }
+
+        return -1;
+    }
+
+    // Get the argument.
+    if(shortCmd){
+        argc = G_GetChatArgumentCount();
+    }
+
+    if(!shortCmd || shortCmd && !argc){
+        trap_Argv((!shortCmd) ? argNum : argNum + 1, arg, sizeof(arg));
+    }else{
+        Q_strncpyz(arg, G_GetChatArgument(1), sizeof(arg));
+    }
+    Q_strlwr(arg);
+
+    // Check if there was a weapon specified.
+    if(strlen(arg) == 0){
+        if (adm && adm->client){
+            trap_SendServerCommand(adm-g_entities, "print\"^3[Info] ^7You must specify a weapon to toggle.\n\"");
+        }else{
+            Com_Printf("You must specify a weapon to toggle.\n");
+        }
+
+        return -1;
+    }
+
+    // Get the weapon number.
+    for(i = 2; i < level.wpNumWeapons; i++){
+        if(strstr(Q_strlwr(va("%s", bg_weaponNames[i])), arg)){
+            wpNum = i;
+            item = BG_FindWeaponItem((weapon_t)wpNum);
+            break;
+        }
+    }
+
+    // Not an existing weapon specified.
+    if(!wpNum || !item){
+        if (adm && adm->client){
+            trap_SendServerCommand(adm-g_entities, va("print\"^3[Info] ^7Weapon %s was not found!\n\"", arg));
+        }else{
+            Com_Printf("Weapon %s was not found!\n", arg);
+        }
+
+        return -1;
+    }
+
+    // Toggle the weapon state.
+	enable = trap_Cvar_VariableIntegerValue(va("disable_%s", item->classname)) > 0;
+    trap_Cvar_Set(va("disable_%s", item->classname), (enable) ? "0" : "1");
+
+    // Set the available weapons for the client.
+    G_UpdateAvailableWeapons();
+    BG_SetAvailableOutfitting(g_availableWeapons.string);
+
+    for (i = 0; i < level.numConnectedClients; i++){
+        ent = &g_entities[level.sortedClients[i]];
+        ent->client->noOutfittingChange = qfalse;
+        trap_GetUserinfo(ent->s.number, userinfo, sizeof(userinfo));
+        BG_DecompressOutfitting(Info_ValueForKey(userinfo, "outfitting"), &ent->client->pers.outfitting);
+        G_UpdateOutfitting(ent->s.number);
+    }
+
+    // Broadcast the change.
+    Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+    G_Broadcast(va("\\Weapon %s %s!", bg_weaponNames[wpNum], (enable) ? "enabled" : "disabled"), BROADCAST_CMD, NULL);
+    if (adm && adm->client){
+        trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7Weapon %s %s by %s.\n\"", bg_weaponNames[wpNum], (enable) ? "enabled" : "disabled", adm->client->pers.netname));
+        Boe_adminLog(va("weapon %d %s", wpNum, (enable) ? "enabled" : "disabled"), va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "none");
+    }else{
+        trap_SendServerCommand(-1, va("print \"^3[Rcon Action] ^7Weapon %s %s.\n\"", bg_weaponNames[wpNum], (enable) ? "enabled" : "disabled"));
+        Boe_adminLog(va("weapon %d %s", wpNum, (enable) ? "enabled" : "disabled"), "RCON", "none");
+    }
+
+    return -1;
 }
