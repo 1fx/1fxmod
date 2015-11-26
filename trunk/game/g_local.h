@@ -443,6 +443,7 @@ typedef struct
     // Boe!Man 3/19/15: deadMonkey.
     int         deadMonkey;
     qboolean    monkeyPreferGhost;
+    qboolean    deadMonkeyDie;
     #endif // _3DServer
 } clientSession_t;
 

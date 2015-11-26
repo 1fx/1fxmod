@@ -1888,7 +1888,11 @@ void Cmd_FollowCycle_f( gentity_t *ent, int dir )
         }
 
         // Cant switch to dead people unless there is nobody else to switch to
+        #ifdef _3DServer
+        if ( G_IsClientDead ( &level.clients[clientnum] ) && !level.clients[clientnum].sess.deadMonkey )
+        #else
         if ( G_IsClientDead ( &level.clients[clientnum] ) )
+        #endif // _3DServer
         {
             deadclient = clientnum;
             continue;
@@ -4656,6 +4660,7 @@ void Boe_switchGhost(gentity_t *ent)
             ent->flags &= ~FL_GODMODE;
             ent->client->ps.stats[STAT_HEALTH] = ent->health = -999;
             ent->client->sess.deadMonkey = 0;
+            ent->client->sess.deadMonkeyDie = qtrue;
             player_die(ent, ent, ent, 100000, MOD_SUICIDE, HL_NONE, vec3_origin);
         }
 

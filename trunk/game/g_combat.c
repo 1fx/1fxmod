@@ -236,7 +236,15 @@ void player_die(
 
     if(current_gametype.value == GT_HS){
         if ((self->client->sess.timeOfDeath == 1 && level.messagedisplay1) || self->client->sess.timeOfDeath != 1){
+            #ifdef _3DServer
+            if(!self->client->sess.deadMonkeyDie){
+                self->client->sess.timeOfDeath = level.time;
+            }else{
+                self->client->sess.deadMonkeyDie = qfalse;
+            }
+            #else
             self->client->sess.timeOfDeath = level.time;
+            #endif // _3DServer
         }
     }
 
@@ -704,7 +712,7 @@ void player_die(
     #ifdef _3DServer
     // Check if player should be a monkey.
     if (current_gametype.value == GT_HS && boe_deadMonkey.integer && level.monkeySpawnCount && !level.cagefight
-        && !self->client->sess.monkeyPreferGhost && self->client->sess.team == TEAM_RED)
+        && !self->client->sess.monkeyPreferGhost && self->client->sess.team == TEAM_RED && mod != MOD_TEAMCHANGE)
     {
         self->client->sess.deadMonkey = level.time;
         ClientSpawn(self);

@@ -1960,7 +1960,6 @@ void PM_CheckWeaponNotes ( void )
 
     if ( !aW )
     {
-        assert (0);
         return;
     }
 
@@ -2031,7 +2030,6 @@ void PM_SetWeaponAnimChoice(TAnimWeapon *aW)
 
     if(!aW)
     {
-        assert(0);
         return;
     }
 
