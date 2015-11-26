@@ -1321,6 +1321,11 @@ void ClientThink_real(gentity_t *ent)
             VectorNormalize ( dir );
             G_ApplyKnockback ( ent, dir, 10 );  //knock them back
         }
+
+        // Boe!Man 11/26/15: Check for anticamp.
+        if(g_camperPunish.integer){
+            G_checkAntiCamp(ent);
+        }
     }
     // spectators don't do much
     if ( G_IsClientSpectating ( client ) )
@@ -1994,4 +1999,72 @@ void ClientEndFrame( gentity_t *ent )
 //  ent->client->areabits[i >> 3] |= 1 << (i & 7);
 }
 
+/*
+==============
+G_checkAntiCamp
+11/26/15 - 10:03 AM
+Checks if players are
+camping and if they
+should be punished.
+==============
+*/
 
+void G_checkAntiCamp(gentity_t *ent)
+{
+    int     distance;
+    vec3_t  diff;
+
+    // Checks if anticamp should apply to this player.
+    if(
+    // Don't check spectators.
+    ent->client->sess.team == TEAM_SPECTATOR
+    // Players must be alive and kicking.
+    || ent->client->ps.pm_type == PM_DEAD
+    || ent->client->ps.pm_type == PM_INTERMISSION
+    || ent->client->ps.respawnTimer
+    || ent->client->sess.ghost
+    #ifdef _3DServer
+    // They must not be dead monkeys.
+    || ent->client->sess.deadMonkey
+    #endif // _3DServer
+    // Don't check planted players.
+    || ent->client->pers.planted
+    // Don't check anticamp if they're carrying gametype items.
+    || ent->s.gametypeitems
+    // Don't check sniping players if they are allowed to camp.
+    || (g_camperSniper.integer && ent->client->ps.weapon == WP_MSG90A1)
+    ){
+        VectorCopy(ent->r.currentOrigin, ent->camperOrigin);
+        ent->client->sess.camperSeconds = 0;
+        return;
+    }
+
+    // The client should be checked for camping.
+    // Calculate distance.
+    VectorSubtract( ent->r.currentOrigin, ent->camperOrigin, diff);
+    distance=(int)VectorLength(diff);
+
+    if ((level.time - ent->client->sess.camperSeconds) / 1000 == 10){
+        // Not camping anymore.
+        ent->client->sess.camperSeconds = 0;
+    }
+
+    if (distance < g_camperRadius.integer){
+        ent->client->sess.camperSeconds++;
+
+        if (ent->client->sess.camperSeconds >= g_camperAllowTime.integer - 5 && ent->client->sess.camperSeconds < g_camperAllowTime.integer){
+            Boe_ClientSound(&g_entities[ent->s.number], G_SoundIndex("sound/movers/buttons/button03.mp3"));
+            G_Broadcast(va("You are about to be \\punished for camping!\nTime until punishment: %d seconds", g_camperAllowTime.integer - ent->client->sess.camperSeconds), BROADCAST_GAME2, ent);
+        }
+        else if(ent->client->sess.camperSeconds == g_camperAllowTime.integer){
+            trap_SendConsoleCommand( EXEC_INSERT, va("%s %i\n", g_camperPunishment.string, ent->s.number));
+            ent->client->sess.camper = qtrue;
+
+            VectorCopy(ent->r.currentOrigin, ent->camperOrigin);
+            ent->client->sess.camperSeconds = 0;
+        }
+    }else{
+        VectorCopy(ent->r.currentOrigin, ent->camperOrigin);
+        ent->client->sess.camperSeconds = 0;
+    }
+}

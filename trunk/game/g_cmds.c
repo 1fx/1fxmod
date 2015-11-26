@@ -4570,8 +4570,16 @@ void G_postExecuteAdminCommand(int funcNum, int idNum, gentity_t *adm)
         Boe_adminLog(AdminCommands[funcNum].adminCmd, va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", g_entities[idNum].client->pers.ip, g_entities[idNum].client->pers.cleanName));
     }else{
         // RCON action.
-        G_Broadcast(va("%s\nwas \\%s%s", g_entities[idNum].client->pers.netname, AdminCommands[funcNum].adminCmd, (AdminCommands[funcNum].suffix != NULL) ? AdminCommands[funcNum].suffix : ""), BROADCAST_CMD, NULL);
-        trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s was %s%s.\n\"", g_entities[idNum].client->pers.cleanName, AdminCommands[funcNum].adminCmd, (AdminCommands[funcNum].suffix != NULL) ? AdminCommands[funcNum].suffix : ""));
+        if(!g_entities[idNum].client->sess.camper){
+            // Regular Admin command, not invoked because of camping.
+            G_Broadcast(va("%s\nwas \\%s%s", g_entities[idNum].client->pers.netname, AdminCommands[funcNum].adminCmd, (AdminCommands[funcNum].suffix != NULL) ? AdminCommands[funcNum].suffix : ""), BROADCAST_CMD, NULL);
+            trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s was %s%s.\n\"", g_entities[idNum].client->pers.cleanName, AdminCommands[funcNum].adminCmd, (AdminCommands[funcNum].suffix != NULL) ? AdminCommands[funcNum].suffix : ""));
+        }else{
+            // Punished for camping.
+            G_Broadcast(va("%s\nwas \\punished for camping", g_entities[idNum].client->pers.netname), BROADCAST_CMD, NULL);
+            trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s was punished for camping (%s%s).\n\"", g_entities[idNum].client->pers.cleanName, AdminCommands[funcNum].adminCmd, (AdminCommands[funcNum].suffix != NULL) ? AdminCommands[funcNum].suffix : ""));
+            g_entities[idNum].client->sess.camper = qfalse;
+        }
         Boe_adminLog(AdminCommands[funcNum].adminCmd, va("%s", "RCON"), va("%s\\%s", g_entities[idNum].client->pers.ip, g_entities[idNum].client->pers.cleanName));
     }
 

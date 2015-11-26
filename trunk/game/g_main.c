@@ -334,6 +334,13 @@ vmCvar_t    g_httpMaxSpeed;
 
 vmCvar_t    g_minRate;
 
+// Boe!Man 11/26/15: --- Anticamp CVARs, from RPM 0.75.x ---
+vmCvar_t    g_camperAllowTime;
+vmCvar_t    g_camperPunish;
+vmCvar_t    g_camperRadius;
+vmCvar_t    g_camperSniper;
+vmCvar_t    g_camperPunishment;
+
 static cvarTable_t gameCvarTable[] =
 {
     // don't override the cheat state set by the system
@@ -663,6 +670,13 @@ static cvarTable_t gameCvarTable[] =
 
     // Boe!Man 12/2/14: Caserun.
     { &g_caserun,                   "g_caserun",                "0",        CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
+
+    // Boe!Man 11/26/15: --- Anticamp CVARs, from RPM 0.75.x ---
+    { &g_camperAllowTime,           "g_camperAllowTime",        "30",               CVAR_ARCHIVE, 0.0f,     0.0f,       0, qtrue },
+    { &g_camperPunish,              "g_camperPunish",           "0",                CVAR_ARCHIVE, 0.0f,     0.0f,       0, qtrue },
+    { &g_camperRadius,              "g_camperRadius",           "300",              CVAR_ARCHIVE, 20.0f,    2000.0f,    0, qtrue },
+    { &g_camperPunishment,          "g_camperPunishment",       "pop",              CVAR_ARCHIVE, 0.0f,     0.0f,       0, qtrue },
+    { &g_camperSniper,              "g_camperSniper",           "1",                CVAR_ARCHIVE, 0.0f,     0.0f,       0, qtrue },
 
     // Boe!Man 1/2/13: --- SQLite3 Related CVARs ---
     { &sql_aliasFlushCount,         "sql_aliasFlushCount",      "7500",             CVAR_ARCHIVE,               0.0f,   0.0f, 0,  qfalse },

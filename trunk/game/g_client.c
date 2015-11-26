@@ -2455,6 +2455,9 @@ void ClientSpawn(gentity_t *ent)
     // Not on a ladder
     client->ps.ladder = -1;
 
+    // Not camping
+    client->sess.camperSeconds = 0;
+
     // Not leaning
     client->ps.leanTime = LEAN_TIME;
 

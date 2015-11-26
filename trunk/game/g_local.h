@@ -205,6 +205,9 @@ struct gentity_s
     team_t      team2;
     int         section;
     int         sectionState;
+
+    // Boe!Man 11/26/15: Used for anticamp.
+    vec3_t      camperOrigin;
 };
 
 typedef struct gspawn_s
@@ -432,6 +435,9 @@ typedef struct
     // Boe!Man 2/2/15:
     int         lastPmClient;                   // Last person the client talked to.
     int         lastPmClientChange;             // level.time of when the last client change took place.
+
+    int		camperSeconds;                  // Seconds this player is camping.
+    qboolean    camper;                         // True if the player is about to be punished for camping.
 
     #ifdef _3DServer
     // Boe!Man 3/19/15: deadMonkey.
@@ -1364,6 +1370,7 @@ void ClientThink            ( int clientNum );
 void ClientEndFrame         ( gentity_t *ent );
 void G_RunClient            ( gentity_t *ent );
 void gametype_trigger_touch ( gentity_t *self, gentity_t *other, trace_t *trace );
+void G_checkAntiCamp        ( gentity_t *ent );
 
 //
 // g_team.c
@@ -1542,6 +1549,12 @@ extern  vmCvar_t    g_enforce1fxAdditions;
 extern  vmCvar_t    g_httpRefPaks;
 extern  vmCvar_t    g_httpBaseURL;
 extern  vmCvar_t    g_httpMaxSpeed;
+
+extern  vmCvar_t    g_camperAllowTime;
+extern  vmCvar_t    g_camperPunish;
+extern  vmCvar_t    g_camperRadius;
+extern  vmCvar_t    g_camperSniper;
+extern  vmCvar_t    g_camperPunishment;
 
 void    trap_Printf( const char *fmt );
 void    trap_Error( const char *fmt );
