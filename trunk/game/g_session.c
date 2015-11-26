@@ -15,7 +15,7 @@ G_WriteClientSessionData
 Called on game shutdown
 ================
 */
-void G_WriteClientSessionData( gclient_t *client ) 
+void G_WriteClientSessionData( gclient_t *client )
 {
     const char  *s;
     const char  *var;
@@ -46,7 +46,7 @@ G_ReadSessionData
 Called on a reconnect
 ================
 */
-void G_ReadSessionData( gclient_t *client ) 
+void G_ReadSessionData( gclient_t *client )
 {
     char        s[MAX_STRING_CHARS];
     const char  *var;
@@ -99,45 +99,45 @@ G_InitSessionData
 Called on a first-time connect
 ================
 */
-void G_InitSessionData( gclient_t *client, char *userinfo ) 
+void G_InitSessionData( gclient_t *client, char *userinfo )
 {
     clientSession_t *sess;
     const char      *value;
-    
+
 
     sess = &client->sess;
 
     // initial team determination
-    if ( level.gametypeData->teams ) 
+    if ( level.gametypeData->teams )
     {
-        if ( g_teamAutoJoin.integer && current_gametype.value != GT_HS && current_gametype.value != GT_HZ ) 
+        if ( g_teamAutoJoin.integer && current_gametype.value != GT_HS && current_gametype.value != GT_HZ )
         {
             sess->team = PickTeam( -1 );
-            //Ryan We'll do this later 
+            //Ryan We'll do this later
             //BroadcastTeamChange( client, -1 );
             //Ryan
-        } 
-        else 
+        }
+        else
         {
             // always spawn as spectator in team games
-            sess->team = TEAM_SPECTATOR;    
+            sess->team = TEAM_SPECTATOR;
         }
-    } 
-    else 
+    }
+    else
     {
         value = Info_ValueForKey( userinfo, "team" );
-        if ( value[0] == 's' ) 
+        if ( value[0] == 's' )
         {
             // a willing spectator, not a waiting-in-line
             sess->team = TEAM_SPECTATOR;
-        } 
-        else 
+        }
+        else
         {
-            if ( g_maxGameClients.integer > 0 && level.numNonSpectatorClients >= g_maxGameClients.integer ) 
+            if ( g_maxGameClients.integer > 0 && level.numNonSpectatorClients >= g_maxGameClients.integer )
             {
                 sess->team = TEAM_SPECTATOR;
-            } 
-            else 
+            }
+            else
             {
                 sess->team = TEAM_FREE;
             }
@@ -160,21 +160,110 @@ G_InitWorldSession
 
 ==================
 */
-void G_InitWorldSession( void ) 
+void G_InitWorldSession( void )
 {
     char    s[MAX_STRING_CHARS];
     int     gt;
 
     trap_Cvar_VariableStringBuffer( "session", s, sizeof(s) );
-    
+
     gt = BG_FindGametype ( s );
-    
+
     // if the gametype changed since the last session, don't use any
     // client sessions
-    if ( level.gametype != gt ) 
+    if ( level.gametype != gt )
     {
         level.newSession = qtrue;
         Com_Printf( "Gametype changed, clearing session data.\n" );
+    }
+}
+
+/*
+==============
+G_WriteMuteSessionData
+11/26/15 - 1:08 PM
+Writes a mute state to
+the session data.
+==============
+*/
+
+static void G_WriteMuteSessionData(int muteSlot)
+{
+    const char  *var;
+    char        *s;
+    muted_t     *m;
+
+    var = va("sessionmute%d", muteSlot);
+    m = &level.mutedClients[muteSlot];
+
+    // Check if this muted slot was used.
+    if(m->used == qfalse){
+        trap_Cvar_Set(var, "0");
+        return;
+    }
+
+    // If so, write the mute data.
+    s = va("1 %s %d %d", level.mutedClients[muteSlot].ip, m->startTime + m->time - level.time, m->totalDuration);
+    trap_Cvar_Set(var, s);
+}
+
+/*
+==============
+G_ReadMuteSessionData
+11/26/15 - 1:55 PM
+Reads a mute state from
+the session data.
+==============
+*/
+
+static void G_ReadMuteSessionData(int muteSlot)
+{
+    const char  *var;
+    char        s[MAX_STRING_CHARS];
+    muted_t     *m;
+
+    int         slotUsed;
+    char        slotIP[MAX_IP];
+    int         slotRemaining;
+    int         slotDuration;
+
+    var = va("sessionmute%d", muteSlot);
+    trap_Cvar_VariableStringBuffer(var, s, sizeof(s));
+
+    // Read the mute slot session data.
+    if(sscanf(s, "%d %s %d %d", &slotUsed, &slotIP, &slotRemaining, &slotDuration) != 4){
+        return;
+    }
+
+    // Fill the muted slot.
+    m = &level.mutedClients[muteSlot];
+
+    m->used = qtrue;
+    strcpy(m->ip, slotIP);
+    m->startTime = level.time;
+    m->time = slotRemaining;
+    m->totalDuration = slotDuration;
+
+    // And up the total client count.
+    level.muteClientCount++;
+}
+
+/*
+==============
+G_InitMutesFromSession
+11/26/15 - 1:57 PM
+Reads all muted session
+data to the mute struct.
+==============
+*/
+
+void G_InitMutesFromSession()
+{
+    int i;
+
+    for (i = 0 ; i < MAX_CLIENTS; i++)
+    {
+        G_ReadMuteSessionData(i);
     }
 }
 
@@ -183,18 +272,24 @@ void G_InitWorldSession( void )
 G_WriteSessionData
 ==================
 */
-void G_WriteSessionData( void ) 
+void G_WriteSessionData( void )
 {
     int     i;
 
     if(level.gametypeData)
     trap_Cvar_Set( "session", level.gametypeData->name );
 
-    for ( i = 0 ; i < level.maxclients ; i++ ) 
+    for ( i = 0 ; i < level.maxclients ; i++ )
     {
-        if ( level.clients[i].pers.connected == CON_CONNECTED ) 
+        if ( level.clients[i].pers.connected == CON_CONNECTED )
         {
             G_WriteClientSessionData( &level.clients[i] );
         }
+    }
+
+    // Boe!Man 11/26/15: Write mute session data.
+    for (i = 0 ; i < MAX_CLIENTS; i++)
+    {
+        G_WriteMuteSessionData(i);
     }
 }

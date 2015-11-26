@@ -811,19 +811,18 @@ qboolean IsClientMuted(gentity_t *ent, qboolean message){
     for(i = 0; i < MAX_CLIENTS; i++){
         if(level.mutedClients[i].used == qtrue){
             counter++;
-            if(strstr(level.mutedClients[i].ip, ent->client->pers.ip)){
-                if(level.time < (level.mutedClients[i].startTime+((level.mutedClients[i].time*60)*1000))){
+            if(!strcmp(level.mutedClients[i].ip, ent->client->pers.ip)){
+                if(level.time < (level.mutedClients[i].startTime + level.mutedClients[i].time )){
                     if(message){
-                        remain = ((level.mutedClients[i].startTime+((level.mutedClients[i].time*60)*1000)-level.time)/1000)/60;
-                        remainS = ((level.mutedClients[i].startTime+((level.mutedClients[i].time*60)*1000)-level.time)/1000);
-                        trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You were muted for %i minutes, %i:%02i minutes remaining.\n\"", level.mutedClients[i].time, remain, remainS-(remain*60)) );
+                        remain = ((level.mutedClients[i].startTime + level.mutedClients[i].time - level.time) / 1000) / 60;
+                        remainS = ((level.mutedClients[i].startTime + level.mutedClients[i].time - level.time) / 1000);
+                        trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You were muted for %d minutes, %d:%02d minutes remaining.\n\"", level.mutedClients[i].totalDuration, remain, remainS-(remain*60)) );
                     }
                     return qtrue;
                 }else{
-                    trap_SendServerCommand(-1, va("print \"^3[Auto action] ^7%s has been unmuted.\n\"", ent->client->pers.netname) );
-                    level.mutedClients[i].used = qfalse;
-                    level.mutedClients[i].time = 0;
-                    memset(level.mutedClients[i].ip, 0, sizeof(level.mutedClients[i]));
+                    trap_SendServerCommand(-1, va("print \"^3[Auto action] ^7%s has been unmuted.\n\"", ent->client->pers.netname));
+                    memset(&level.mutedClients[i], 0, sizeof(muted_t));
+                    level.muteClientCount--;
                     ent->client->sess.mute = qfalse;
                 }
             }
@@ -868,7 +867,8 @@ qboolean AddMutedClient(gentity_t *ent, int time){
         if(level.mutedClients[i].used == qfalse){
             strcpy(level.mutedClients[i].ip, ent->client->pers.ip);
             level.mutedClients[i].used = qtrue;
-            level.mutedClients[i].time = time;
+            level.mutedClients[i].time = time * 60000;
+            level.mutedClients[i].totalDuration = time;
             level.mutedClients[i].startTime = level.time;
             // Boe!Man 12/11/11: Handle this globally.
             ent->client->sess.mute = qtrue;
@@ -886,13 +886,11 @@ qboolean RemoveMutedClient(gentity_t *ent){
     for(i = 0; i < MAX_CLIENTS; i++){
         if(level.mutedClients[i].used == qtrue){
             counter++;
-            if(strstr(level.mutedClients[i].ip, ent->client->pers.ip)){
-                level.mutedClients[i].used = qfalse;
-                level.mutedClients[i].time = 0;
-                memset(level.mutedClients[i].ip, 0, sizeof(level.mutedClients[i]));
+            if(!strcmp(level.mutedClients[i].ip, ent->client->pers.ip)){
+                memset(&level.mutedClients[i], 0, sizeof(muted_t));
                 ent->client->sess.mute = qfalse;
-                unmuted = qtrue;
                 level.muteClientCount--;
+                unmuted = qtrue;
             }
 
             if(level.muteClientCount == counter)

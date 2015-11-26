@@ -616,10 +616,11 @@ struct gclient_s
 #define MAX_SPAWN_VARS_CHARS    4096
 
 typedef struct {
-    char ip[36];
-    int  time;
-    int  startTime;
-    qboolean used;
+    char        ip[MAX_IP];     // IP of the muted client.
+    int         time;           // Total duration of the mute in msec.
+    int         startTime;      // level.time of when the mute started.
+    qboolean    used;           // True if this slot is used.
+    int         totalDuration;  // Total duration in minutes, so we still have the original value when reading the session data.
 }muted_t;
 
 typedef struct {
@@ -1383,11 +1384,12 @@ void Team_CheckDroppedItem( gentity_t *dropped );
 //
 // g_session.c
 //
-void G_ReadSessionData( gclient_t *client );
-void G_InitSessionData( gclient_t *client, char *userinfo );
+void G_ReadSessionData      ( gclient_t *client );
+void G_InitSessionData      ( gclient_t *client, char *userinfo );
 
-void G_InitWorldSession( void );
-void G_WriteSessionData( void );
+void G_InitWorldSession     ( void );
+void G_WriteSessionData     ( void );
+void G_InitMutesFromSession ( void );
 
 //
 // g_bot.c

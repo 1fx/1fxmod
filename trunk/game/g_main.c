@@ -1545,6 +1545,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
     }
 
     G_InitWorldSession();
+    G_InitMutesFromSession();
 
     // initialize all entities for this game
     memset( g_entities, 0, MAX_GENTITIES * sizeof(g_entities[0]) );

@@ -1326,6 +1326,11 @@ void ClientThink_real(gentity_t *ent)
         if(g_camperPunish.integer){
             G_checkAntiCamp(ent);
         }
+
+        // Boe!Man 11/26/15: Check if they were muted.
+        if(client->sess.mute){
+            IsClientMuted(ent, false);
+        }
     }
     // spectators don't do much
     if ( G_IsClientSpectating ( client ) )
