@@ -1262,6 +1262,7 @@ extern  vmCvar_t    g_ff;
 extern  vmCvar_t    g_rename;
 extern  vmCvar_t    g_3rd;
 extern  vmCvar_t    g_toggleweapon;
+extern  vmCvar_t    g_anticamp;
 
 int             adm_Uppercut                        (int argNum, gentity_t *adm, qboolean shortCmd);
 int             adm_Pop                             (int argNum, gentity_t *adm, qboolean shortCmd);
@@ -1319,6 +1320,7 @@ int             adm_Rounds                          (int argNum, gentity_t *adm,
 int             adm_Switch                          (int argNum, gentity_t *adm, qboolean shortCmd);
 int             adm_Third                           (int argNum, gentity_t *adm, qboolean shortCmd);
 int             adm_toggleWeapon                    (int argNum, gentity_t *adm, qboolean shortCmd);
+int             adm_Anticamp                        (int argNum, gentity_t *adm, qboolean shortCmd);
 
 //
 // g_main.c

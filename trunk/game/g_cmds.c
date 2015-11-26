@@ -91,6 +91,7 @@ static admCmd_t AdminCommands[] =
     {"!3rd",    "3rd",              &g_3rd.integer,             &adm_Third,                     "Toggles Thirdperson on or off",    "",                 NULL},
     {"!third",  "third",            &g_3rd.integer,             &adm_Third,                     "Toggles Thirdperson on or off",    "",                 NULL},
     {"!wp",     "weapon",           &g_toggleweapon.integer,    &adm_toggleWeapon,              "Toggles weapon on or off",         "",                 NULL},
+    {"!aca",    "anticamp",         &g_anticamp.integer,        &adm_Anticamp,                  "Toggles anticamp on or off",       "",                 NULL},
     // Boe!Man 6/2/15: Admin synonyms for Gold.
     // Pop/explode.
     {"!p",      "pop",              &g_pop.integer,             &adm_Pop,                       "Pop/explodes a player",            "<i/n>",            "ped"},
@@ -4576,7 +4577,7 @@ void G_postExecuteAdminCommand(int funcNum, int idNum, gentity_t *adm)
             trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s was %s%s.\n\"", g_entities[idNum].client->pers.cleanName, AdminCommands[funcNum].adminCmd, (AdminCommands[funcNum].suffix != NULL) ? AdminCommands[funcNum].suffix : ""));
         }else{
             // Punished for camping.
-            G_Broadcast(va("%s\nwas \\punished for camping", g_entities[idNum].client->pers.netname), BROADCAST_CMD, NULL);
+            G_Broadcast(va("%s\nwas \\punished for camping!", g_entities[idNum].client->pers.netname), BROADCAST_CMD, NULL);
             trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s was punished for camping (%s%s).\n\"", g_entities[idNum].client->pers.cleanName, AdminCommands[funcNum].adminCmd, (AdminCommands[funcNum].suffix != NULL) ? AdminCommands[funcNum].suffix : ""));
             g_entities[idNum].client->sess.camper = qfalse;
         }

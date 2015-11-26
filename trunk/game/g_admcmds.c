@@ -4129,3 +4129,32 @@ int adm_toggleWeapon(int argNum, gentity_t *adm, qboolean shortCmd)
 
     return -1;
 }
+
+/*
+==================
+adm_Anticamp
+
+Enables or disables anticamp.
+==================
+*/
+
+int adm_Anticamp(int argNum, gentity_t *adm, qboolean shortCmd)
+{
+    qboolean enable = g_camperPunish.integer == 0;
+
+    // Enable or disable it via CVAR.
+    Boe_setTrackedCvar(&g_camperPunish, enable);
+
+    // Broadcast the change.
+    Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+    G_Broadcast(va("\\Anticamp %s!", (enable) ? "enabled" : "disabled"), BROADCAST_CMD, NULL);
+    if (adm && adm->client){
+        trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7Anticamp %s by %s.\n\"", (enable) ? "enabled" : "disabled", adm->client->pers.netname));
+        Boe_adminLog(va("anticamp %s", (enable) ? "enabled" : "disabled"), va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "none");
+    }else{
+        trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Anticamp %s.\n\"", (enable) ? "enabled" : "disabled"));
+        Boe_adminLog(va("anticamp %s", (enable) ? "enabled" : "disabled"), "RCON", "none");
+    }
+
+    return -1;
+}
