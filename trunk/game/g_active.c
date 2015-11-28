@@ -2036,6 +2036,8 @@ void G_checkAntiCamp(gentity_t *ent)
     || ent->client->pers.planted
     // Don't check anticamp if they're carrying gametype items.
     || ent->s.gametypeitems
+    // They must be able to move.
+    || ent->client->ps.stats[STAT_FROZEN]
     // Don't check sniping players if they are allowed to camp.
     || (g_camperSniper.integer && ent->client->ps.weapon == WP_MSG90A1)
     ){
