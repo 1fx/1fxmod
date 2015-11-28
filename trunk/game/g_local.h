@@ -336,6 +336,7 @@ typedef struct
     // Boe!Man 7/6/15: Client addition checking.
     int                 checkClientAdditions;
     int                 clientAdditionCheckTime;
+    char                clientAdditionsVersion[36];
 
     int                 connectionCheck;
     char                strClient[36];

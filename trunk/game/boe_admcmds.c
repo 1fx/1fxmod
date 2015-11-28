@@ -261,7 +261,7 @@ qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean 
     }
 
     // Boe!Man 2/12/13: If the Clan Member is found on the server, remove his Clan status as well.
-    if(strlen(IP) > 1){
+    if(IP[0] && IP[1]){
         for(i = 0; i < level.numConnectedClients; i++){
             ip2 = g_entities[level.sortedClients[i]].client->pers.ip;
 
@@ -378,7 +378,7 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
                             //break;
                         }
                     }
-                    if(strlen(string) > 1){
+                    if(string[0] && string[1]){
                         string[strlen(string) - 2] = '\0';
                         if (numberofclients > 1){
                             trap_SendServerCommand(ent->s.number, va("print\"^3[Info] ^7Multiple names found with ^3%s^7: %s\n\"", numb, string));
@@ -404,7 +404,7 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
         }
         if(num == -1){ // Get second argument because they use it from the console
             trap_Argv( 2, arg, sizeof( arg ) );
-            if(strlen(arg) >= 1){
+            if(arg[0]){
                 if(henk_isdigit(arg[0])){
                     num = atoi(arg);
                 }else{
@@ -427,7 +427,7 @@ int Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const c
         if (arg[0] >= '0' && arg[0] <= '9')
         {
             num = atoi( arg );
-        }else if(strlen(arg) >= 1){
+        }else if(arg[0]){
             for(i=0;i<level.numConnectedClients;i++){
                 //trap_SendServerCommand(-1, va("print\"^3[Debug] ^7%s comparing with %s.\n\"", g_entities[level.sortedClients[i]].client->pers.cleanName,numb));
                 Q_strncpyz(cleanName, g_entities[level.sortedClients[i]].client->pers.cleanName, sizeof(cleanName));

@@ -3702,9 +3702,14 @@ void ClientCommand( int clientNum ) {
     else if (Q_stricmp (cmd, "howto") == 0)
         Boe_Howto( ent );
     // Boe!Man 11/4/15: Verify command for 1fx client additions.
-    else if (Q_stricmp(cmd, "ca_verified") == 0)
+    else if (Q_stricmp(cmd, "ca_verified") == 0 && ent->client->sess.checkClientAdditions){
         ent->client->sess.checkClientAdditions = 0;
 
+        trap_Argv(1, cmd, sizeof(cmd));
+        if(cmd[0]){
+            strncpy(ent->client->sess.clientAdditionsVersion, cmd, sizeof(ent->client->sess.clientAdditionsVersion));
+        }
+    }
 #ifdef _DEBUG
     /*else if (Q_stricmp (cmd, "henk_test") == 0){
         ent->client->sess.zombie = qfalse;

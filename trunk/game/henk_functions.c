@@ -274,7 +274,7 @@ void Henk_Ignore(gentity_t *ent){
     char cleanName[MAX_NETNAME];
 
     trap_Argv( 1, arg1, sizeof( arg1 ) );
-    if(strlen(arg1) < 1){
+    if(!arg1[0]){
         trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You haven't entered a valid player ID/player name.\n\""));
         return;
     }
@@ -917,7 +917,7 @@ char *GetReason(void) {
                     }
                     reason = va("%s%c", reason, arg[z]);
                 }
-                if(strlen(reason) < 1){
+                if(!reason[0]){
                     strcpy(arg ,ConcatArgs1(3));
                     //trap_Argv( 3, arg, sizeof( arg ) );
                     return arg;
@@ -927,7 +927,7 @@ char *GetReason(void) {
         Do = qtrue;
         }
     }
-    if(strlen(reason) < 1){
+    if(!reason[0]){
         strcpy(arg ,ConcatArgs1(3));
         //trap_Argv( 3, arg, sizeof( arg ) );
         return arg;

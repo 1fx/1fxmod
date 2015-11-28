@@ -1316,6 +1316,8 @@ void Boe_Stats ( gentity_t *ent )
     char        *admin;
     char        *country;
     qboolean    client1 = qfalse;
+    qboolean    clientAdditions = qfalse;
+    char        *cAdditions;
     char        userinfo[MAX_INFO_STRING];
     int         idnum, n;
     char        *altname;
@@ -1369,6 +1371,12 @@ void Boe_Stats ( gentity_t *ent )
             client1 = qtrue;
         }
         #endif // not _GOLD
+
+        // Boe!Man 11/28/15: Client additions.
+        if(g_enforce1fxAdditions.integer && ent->client->sess.clientAdditionsVersion[0]){
+            clientAdditions = qtrue;
+            cAdditions = ent->client->sess.clientAdditionsVersion;
+        }
 
 #ifdef _3DServer
         if (ent->client->sess.admin == 2){
@@ -1471,6 +1479,12 @@ void Boe_Stats ( gentity_t *ent )
         }
         #endif // not _GOLD
 
+        // Boe!Man 11/28/15: Client additions.
+        if(g_enforce1fxAdditions.integer && g_entities[idnum].client->sess.clientAdditionsVersion[0]){
+            clientAdditions = qtrue;
+            cAdditions = g_entities[idnum].client->sess.clientAdditionsVersion;
+        }
+
         if (g_entities[idnum].client->sess.admin == 2){
             admin = "B-Admin";
         }else if (g_entities[idnum].client->sess.admin == 3){
@@ -1486,46 +1500,56 @@ void Boe_Stats ( gentity_t *ent )
     trap_SendServerCommand( ent-g_entities, va("print \"\n^3Player statistics for ^7%s\n\"", player));
     trap_SendServerCommand( ent-g_entities, va("print \"-------------------------------------------------------\n"));
     if(g_aliasCheck.integer > 0){ // Boe!Man 12/13/10: Only show when the Aliases are enabled.
-        trap_SendServerCommand( ent-g_entities, va("print \"%-18s", "[^3Aliases^7]"));
+        trap_SendServerCommand( ent-g_entities, va("print \"%-23s", "[^3Aliases^7]"));
         if (otherClient == qfalse){
             Boe_printAliases(ent, ip, ent->client->pers.cleanName);
         }else{
             Boe_printAliases(ent, ip, g_entities[idnum].client->pers.cleanName);
         }
-        trap_SendServerCommand( ent-g_entities, va("print \"\n%-18s%s\n", "[^3Admin^7]", admin));
+        trap_SendServerCommand( ent-g_entities, va("print \"\n%-23s%s\n", "[^3Admin^7]", admin));
     }else{
-        trap_SendServerCommand( ent-g_entities, va("print \"%-18s%s\n", "[^3Admin^7]", admin));
+        trap_SendServerCommand( ent-g_entities, va("print \"%-23s%s\n", "[^3Admin^7]", admin));
     }
 
     // Boe!Man 5/20/12: Check if g_publicIPs is set to 1. If not, hide in stats (this will prevent IP abuse by other players).
     if (g_publicIPs.integer && (g_publicIPs.integer == 1 || ent->client->sess.admin >= g_publicIPs.integer)){
-        trap_SendServerCommand( ent-g_entities, va("print \"%-18s%s\n", "[^3IP^7]", ip));
+        trap_SendServerCommand( ent-g_entities, va("print \"%-23s%s\n", "[^3IP^7]", ip));
     }
     // Boe!Man 5/14/11: Check if the checking of countries is enabled.
     if(g_checkCountry.integer && level.countryInitialized){
-        trap_SendServerCommand( ent-g_entities, va("print \"%-18s%s\n", "[^3Country^7]", country));
+        trap_SendServerCommand( ent-g_entities, va("print \"%-23s%s\n", "[^3Country^7]", country));
     }
 
     if(client1){
-        trap_SendServerCommand( ent-g_entities, va("print \"%-18s%s\n", "[^3Client^7]", client0));
+        trap_SendServerCommand( ent-g_entities, va("print \"%-23s%s\n", "[^3Client^7]", client0));
     }else{
         if(strlen(g_entities[idnum].client->sess.strClient) >= 2){
-            trap_SendServerCommand( ent-g_entities, va("print \"%-18s%s\n", "[^3Client^7]", g_entities[idnum].client->sess.strClient));
+            trap_SendServerCommand( ent-g_entities, va("print \"%-23s%s\n", "[^3Client^7]", g_entities[idnum].client->sess.strClient));
         }else{
             if(client >= 0.1){
-                trap_SendServerCommand( ent-g_entities, va("print \"%-18s%.1f\n", "[^3Client^7]", client));
+                trap_SendServerCommand( ent-g_entities, va("print \"%-23s%.1f\n", "[^3Client^7]", client));
             }else{
                 #ifndef _GOLD
                 if(g_entities[idnum].client->sess.proClient >= 0.1){
                     trap_SendServerCommand( ent-g_entities, va("print \"%18-sP%.1f\n", "[^3Client^7]", g_entities[idnum].client->sess.proClient));
                 }else
                 #endif // not _GOLD
-                    trap_SendServerCommand( ent-g_entities, va("print \"%-18sN/A\n", "[^3Client^7]"));
+                    trap_SendServerCommand( ent-g_entities, va("print \"%-23sN/A\n", "[^3Client^7]"));
             }
         }
     }
-    trap_SendServerCommand( ent-g_entities, va("print \"%-18s%s\n", "[^3Rate^7]", rate));
-    trap_SendServerCommand( ent-g_entities, va("print \"%-18s%s\n", "[^3Snaps^7]", snaps));
+
+    if(g_enforce1fxAdditions.integer){
+        trap_SendServerCommand( ent-g_entities, va("print \"%-23s", "[^3Client Additions^7]"));
+        if(clientAdditions){
+            trap_SendServerCommand( ent-g_entities, va("print \"%s\n", cAdditions));
+        }else{
+            trap_SendServerCommand( ent-g_entities, "print \"Unknown\n");
+        }
+    }
+
+    trap_SendServerCommand( ent-g_entities, va("print \"%-23s%s\n", "[^3Rate^7]", rate));
+    trap_SendServerCommand( ent-g_entities, va("print \"%-23s%s\n", "[^3Snaps^7]", snaps));
 
     if( g_entities[idnum].client->sess.mute){
         for(i = 0; i < MAX_CLIENTS; i++){
@@ -1533,7 +1557,7 @@ void Boe_Stats ( gentity_t *ent )
                 if(!strcmp(level.mutedClients[i].ip,  g_entities[idnum].client->pers.ip)){
                     remain = ((level.mutedClients[i].startTime + level.mutedClients[i].time -level.time) /1000) / 60;
                     remainS = ((level.mutedClients[i].startTime + level.mutedClients[i].time -level.time) /1000);
-                    trap_SendServerCommand(  ent-g_entities, va("print \"%-18s%i:%02i minutes remaining\n\n", "[^3Mute^7]", remain, remainS-(remain*60)));
+                    trap_SendServerCommand(  ent-g_entities, va("print \"%-23s%i:%02i minutes remaining\n\n", "[^3Mute^7]", remain, remainS-(remain*60)));
                     break; // Boe!Man 2/15/13: Duplicate line fix and speed optimize.
                 }
             }

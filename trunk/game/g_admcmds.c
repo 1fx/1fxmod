@@ -3024,7 +3024,7 @@ static void adm_unbanFromDatabase(gentity_t *adm, char *ip, qboolean subnet)
     db = bansDb;
 
     // Delete by line/record.
-    if(strlen(ip) >= 1 && !strstr(ip, ".") && !strstr(ip, "bot")){
+    if(ip[0] && !strstr(ip, ".") && !strstr(ip, "bot")){
         // Unban record from database.
         iLine = atoi(ip);
 
@@ -3723,7 +3723,7 @@ int adm_Map(int argNum, gentity_t *adm, qboolean shortCmd)
                 gt = Q_strlwr(GetReason());
                 for(i=0;i<=strlen(arg);i++){
                     if(arg[i] == ' '){
-                        if(strlen(gt) > 1){
+                        if(gt[0] && gt[1]){
                             strncpy(map, arg+i+1, strlen(arg) -i - 1 - strlen(gt) - 1);
                         }else{
                             strncpy(map, arg+i+1, strlen(arg) -i - 1);
@@ -3731,7 +3731,7 @@ int adm_Map(int argNum, gentity_t *adm, qboolean shortCmd)
                         break;
                     }
                 }
-                if(strlen(map) <= 1){
+                if(!map[0] || !map[1]){
                     trap_Argv( 2, arg, sizeof( arg ) ); // Short cmd from console.
                     strcpy(map, arg);
                 }
@@ -3830,7 +3830,7 @@ int adm_Map(int argNum, gentity_t *adm, qboolean shortCmd)
             strncpy(level.mapPrefix, G_ColorizeMessage("\\Map"), sizeof(level.mapPrefix));
         }
 
-        if(strlen(gametype) > 0){ // Boe!Man 2/26/11: If there's actually a gametype found..
+        if(gametype[0]){ // Boe!Man 2/26/11: If there's actually a gametype found..
             trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Map switch to %s [%s] by %s.\n\"", map, gametype, adm->client->pers.netname));
             Boe_adminLog ("map switch", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", map, gametype));
         }else{
