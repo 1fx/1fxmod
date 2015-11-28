@@ -1316,8 +1316,7 @@ void Boe_Stats ( gentity_t *ent )
     char        *admin;
     char        *country;
     qboolean    client1 = qfalse;
-    qboolean    clientAdditions = qfalse;
-    char        *cAdditions;
+    char        *cAdditions = NULL;
     char        userinfo[MAX_INFO_STRING];
     int         idnum, n;
     char        *altname;
@@ -1374,7 +1373,6 @@ void Boe_Stats ( gentity_t *ent )
 
         // Boe!Man 11/28/15: Client additions.
         if(g_enforce1fxAdditions.integer && ent->client->sess.clientAdditionsVersion[0]){
-            clientAdditions = qtrue;
             cAdditions = ent->client->sess.clientAdditionsVersion;
         }
 
@@ -1481,7 +1479,6 @@ void Boe_Stats ( gentity_t *ent )
 
         // Boe!Man 11/28/15: Client additions.
         if(g_enforce1fxAdditions.integer && g_entities[idnum].client->sess.clientAdditionsVersion[0]){
-            clientAdditions = qtrue;
             cAdditions = g_entities[idnum].client->sess.clientAdditionsVersion;
         }
 
@@ -1541,7 +1538,7 @@ void Boe_Stats ( gentity_t *ent )
 
     if(g_enforce1fxAdditions.integer){
         trap_SendServerCommand( ent-g_entities, va("print \"%-23s", "[^3Client Additions^7]"));
-        if(clientAdditions){
+        if(cAdditions != NULL){
             trap_SendServerCommand( ent-g_entities, va("print \"%s\n", cAdditions));
         }else{
             trap_SendServerCommand( ent-g_entities, "print \"Unknown\n");
