@@ -2821,7 +2821,7 @@ void Boe_printAliases(gentity_t *ent, char *ip, char *name2)
         if(!count){
             Com_sprintf(names, sizeof(names), "%s", sqlite3_column_text(stmt, 0));
         }else{
-            Com_sprintf(names+strlen(names), sizeof(names), "%-14s %s", "\n", sqlite3_column_text(stmt, 0));
+            Com_sprintf(names+strlen(names), sizeof(names), "%-19s %s", "\n", sqlite3_column_text(stmt, 0));
         }
         count++;
     }
