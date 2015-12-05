@@ -21,6 +21,7 @@
 # -o: Output filename.
 # -g: Build for Gold (v1.03). If not specified, the Mod will be compiled for v1.00.
 # -v: Verbose mode, will print e.g. full compile lines.
+# -noclear: Don't clear upon selecting choice.
 # When parameters are used, no questions are asked and the script will continue with the given parameters.
 # If parameters that are crucial to compiling the Mod correctly are missing, the script will break and throw an error.
 #
@@ -32,10 +33,10 @@
 # - You're building a developer flavour.
 #
 #
-# For further rather obsolete information regarding this, please check the 1fx. Mod source code.
+# For other rather obsolete information regarding this, please check the 1fx. Mod source code.
 # There's a whole section regarding *.so considerations.
 # --- Boe!Man  1/26/13 - 11:01 AM
-# Last update: 10/11/15 - 11:53 PM
+# Last update: 12/05/15 - 2:28 PM
 
 # Enable aliases.
 shopt -s expand_aliases
@@ -54,6 +55,7 @@ compiler="gcc" # Default the compiler to gcc.
 linker=""
 count=0
 verbose=false
+noclear=false
 
 # Link the Mod based on the build type (default is without symbols).
 strip="-s"
@@ -76,6 +78,9 @@ if [ $numargs -gt 0 ]; then
         elif [ $1 == "-v" ]; then
             # Verbose mode.
             verbose=true
+        elif [ $1 == "-noclear" ]; then
+			# Don't clear, mostly used in auto mode.
+			noclear=true
         fi
 
         if [ $[$#-1] -lt 1 ] || [[ $2 = "-"* ]]; then
@@ -215,6 +220,7 @@ elif [[ $choice == "3" ]] || [[ $choice == *"3"* ]]; then
         echo "2: 3D-specific Pre-release build"
         echo "3: Regular Pre-release build with developer"
         echo "4: 3D-specific Pre-release build with developer"
+        echo "5: Regular Pre-release build with developer and extra abuse cmds (USE WITH CAUTION!)"
         echo -n "Enter your choice and press [ENTER]: "
         read choice
     elif [[ $numargs -gt 0 ]] && [[ $choice == "3" ]]; then
@@ -235,6 +241,10 @@ elif [[ $choice == "3" ]] || [[ $choice == *"3"* ]]; then
     elif [[ $choice == "4" ]] || [[ $choice == "3.4" ]]; then
 		buildtype="3D-specific Pre-release build with developer"
         buildoptions="$buildoptions -DNDEBUG -D_PRE -D_DEV -D_3DServer -D_awesomeToAbuse"
+        dev=true
+    elif [[ $choice == "5" ]] || [[ $choice == "3.5" ]]; then
+		buildtype="Regular Pre-release build with developer and extra abuse cmds"
+        buildoptions="$buildoptions -DNDEBUG -D_PRE -D_DEV -D_awesomeToAbuse"
         dev=true
     else
         echo "Invalid choice specified, exitting.."
@@ -260,7 +270,9 @@ if [ $dev == true ]; then
 fi
 
 # Summarize build environment and choices.
-clear
+if [ $noclear == false ]; then
+	clear
+fi
 printf "\e[00;36mPre-build summary\e[00m\n"
 printf "=====================================================\n"
 printf "\e[00;33m%-25s \e[00;32m%s\e[00m\n" "Build type" "$buildtype"
