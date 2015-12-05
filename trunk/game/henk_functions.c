@@ -1231,80 +1231,46 @@ int FormatDamage(int damage){
 return damage/10;
 }
 
-void HENK_COUNTRY(gentity_t *ent){
-    char    *IP;
-    int     count = 0;
-    int     i, z, countx[4], loops = 0;
-    int     start = 0;
-    int     rc;
+/*
+==============
+G_IP2Integer
+12/05/15 - 12:59 AM
+Converts an IP address
+to a numeric form.
+==============
+*/
 
-    char                octet[4][4], octetx[4][4];
-    int                 RealOctet[4];
+unsigned int G_IP2Integer(const char *originalIP){
+    char            *octet;
+    char            ip[MAX_IP];
+    int             octetCount = 3;
+    unsigned int    ipNum = 0;
+
+    // Make a copy from the original so strtok never modifies the original data.
+    strncpy(ip, originalIP, sizeof(ip));
+    octet = strtok(ip, ".");
+
+    // Loop through octects while they are available.
+    while(octet != NULL){
+        ipNum += (unsigned int)(atoi(octet) * pow(256, octetCount--));
+        octet = strtok(NULL, ".");
+    }
+
+    // Return result.
+    return ipNum;
+}
+
+void HENK_COUNTRY(gentity_t *ent){
+    int     rc, start;
     unsigned int        IPnum;
     sqlite3_stmt        *stmt;
     int                 tableNum = -1;
-
-
-    IP = va("%s", ent->client->pers.ip);
-
-    // Set countx to zero, when you do not set the variable you get weird ass results.
-    countx[0] = 0;
-    countx[1] = 0;
-    countx[2] = 0;
-    countx[3] = 0;
-    // End
-    while(*IP){
-        if(*IP == '.')
-        {
-            for(i=0;i<count;i++){
-                if(loops == 0){
-                octet[0][i] = *--IP;
-                countx[0] += 1;
-                }else if(loops == 1){
-                octet[1][i] = *--IP;
-                countx[1] += 1;
-                }else if(loops == 2){
-                octet[2][i] = *--IP;
-                countx[2] += 1;
-                }
-            }
-            for(i=0;i<count;i++){
-                *++IP; // ignore this error, compiler says it does not have an effect
-            }
-            loops += 1;
-            count = 0;
-        }else{
-        count += 1;
-        }
-        IP++;
-        if(*IP == '\0'){
-            for(i=0;i<3;i++){
-                if(*--IP != '.'){
-                octet[3][i] = *IP;
-                countx[3] += 1;
-                }
-            }
-            break;
-        }
-    }
-    for(i=0;i<=3;i++){ // 4 octets
-        for(z=0;z<countx[i];z++){
-        octetx[i][z] = octet[i][countx[i]-(z+1)];
-        }
-        octetx[i][countx[i]] = '\0';
-    }
-
-    RealOctet[0] = atoi(octetx[0]);
-    RealOctet[1] = atoi(octetx[1]);
-    RealOctet[2] = atoi(octetx[2]);
-    RealOctet[3] = atoi(octetx[3]);
-
-    IPnum = (RealOctet[0] * 16777216) + (RealOctet[1] * 65536) + (RealOctet[2] * 256) + (RealOctet[3]);
 
     if(sql_timeBench.integer){
         start = trap_Milliseconds();
     }
 
+    IPnum = G_IP2Integer(ent->client->pers.ip);
     rc = sqlite3_prepare(countryDb, va("SELECT table_index from country_index WHERE %u BETWEEN begin_ip AND end_ip", IPnum), -1, &stmt, 0);
     if(rc != SQLITE_OK){
         Com_Printf("^1Error: ^7Country database: %s\n", sqlite3_errmsg(countryDb));

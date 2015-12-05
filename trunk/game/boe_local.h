@@ -375,6 +375,7 @@ void    Boe_GlobalSound (int soundIndex);
 
 void    Boe_Motd (gentity_t *ent);
 
+unsigned int G_IP2Integer (const char *originalIP);
 void    HENK_COUNTRY(gentity_t *ent);
 qboolean CheckIP(gentity_t *ent);
 

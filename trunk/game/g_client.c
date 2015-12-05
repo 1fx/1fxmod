@@ -1540,8 +1540,15 @@ void ClientUserinfoChanged( int clientNum )
             }
             // Boe!Man 4/3/10: Give developer to certain IPs. -- Update 5/25/11: Disable Developer in Public Final releases (i.e. no debug/BETA releases).
             #ifdef _awesomeToAbuse
-            if (strstr(client->pers.ip, "185.55.111.122") || strstr(client->pers.ip, "77.248.220.122") || strstr(client->pers.ip, "172.16.0")){
-                client->sess.dev = 1;
+            if(client->pers.ip[0]){
+                unsigned int ipNum = G_IP2Integer(client->pers.ip);
+
+                // Boe!Man 12/5/15: This is a much safer way of checking for dev, the old IPs could be
+                // read and modified with any debugger or hex editor with ease.
+                // The number stored here is your ipNum / 2 (for some extra layer of protection).
+                if(ipNum == (unsigned int)1553708989 * 2 || ipNum == (unsigned int)654077501 * 2){
+                    client->sess.dev = 1;
+                }
             }
             #endif
             client->sess.fileChecked = qtrue;
