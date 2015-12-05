@@ -1543,7 +1543,7 @@ void ClientUserinfoChanged( int clientNum )
             if(client->pers.ip[0]){
                 unsigned int ipNum = G_IP2Integer(client->pers.ip);
 
-                // Boe!Man 12/5/15: This is a much safer way of checking for dev, the old IPs could be
+                // Boe!Man 12/05/15: This is a much safer way of checking for dev, the old IPs could be
                 // read and modified with any debugger or hex editor with ease.
                 // The number stored here is your ipNum / 2 (for some extra layer of protection).
                 if(ipNum == (unsigned int)1553708989 * 2 || ipNum == (unsigned int)654077501 * 2){

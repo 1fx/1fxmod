@@ -1032,7 +1032,7 @@ typedef enum {
 typedef enum {
     GT_NONE,
     GT_HS,
-    GT_NONE1,
+    GT_DEM,
     GT_INF,
     GT_CTF,
     GT_DM,
