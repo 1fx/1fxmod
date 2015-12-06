@@ -178,7 +178,6 @@ vmCvar_t    server_zombieteamprefix;
 // Henk 01/04/10 -> Add g_disableNades
 vmCvar_t    g_disableNades;
 vmCvar_t    g_instaGib;
-vmCvar_t    g_weaponModFlags;
 vmCvar_t    g_weaponswitch;
 vmCvar_t    g_compMode;
 //vmCvar_t  g_clanfile;
@@ -543,7 +542,6 @@ static cvarTable_t gameCvarTable[] =
     { &server_humanteamprefix, "server_humanteamprefix", "^1H^Tu^om^qa^+n^7s", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
     { &server_zombieteamprefix, "server_zombieteamprefix", "^yZ^lo^lm^+b^7ies", CVAR_ARCHIVE, 0.0, 0.0, 0,  qfalse },
     { &g_instaGib, "g_instaGib", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
-    { &g_weaponModFlags, "g_weaponModFlags", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
     { &g_compMode, "g_compMode", "0", CVAR_ROM|CVAR_INTERNAL, 0.0, 0.0, 0, qfalse  },
     { &g_enableTeamCmds, "g_enableTeamCmds", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
     { &g_refpassword, "g_refpassword", "none", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
@@ -662,7 +660,7 @@ static cvarTable_t gameCvarTable[] =
     { &g_specialChatSound,          "g_specialChatSound",    "1",       CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 
     // Boe!Man 5/20/12
-    { &g_publicIPs,                 "g_publicIPs",          "1",        CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue },
+    { &g_publicIPs,                 "g_publicIPs",          "0",        CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue },
 
     // Boe!Man 7/29/12
     { &g_preferSubnets,             "g_preferSubnets",          "0",        CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },

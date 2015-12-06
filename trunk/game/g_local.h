@@ -1524,7 +1524,6 @@ extern  vmCvar_t    hideSeek_availableWeapons;
 extern  vmCvar_t    availableWeapons;
 extern  vmCvar_t    g_disableNades; // Henk 01/04/10
 extern  vmCvar_t    g_instaGib; // Henk 08/04/10
-extern  vmCvar_t    g_weaponModFlags; // Henk 08/04/10
 extern  vmCvar_t    g_weaponswitch;
 extern  vmCvar_t    g_compMode;
 extern  vmCvar_t    g_enableTeamCmds;
@@ -1805,7 +1804,6 @@ void SP_func_door_rotating( gentity_t *ent );
 #ifndef _GOLD
 // rpm_functions.c
 void        RPM_UpdateTMI               (void);
-void        RPM_UpdateLoadScreenMessage (void);
 void        RPM_Awards                  (void);
 #else
 // rocmod_functions.c

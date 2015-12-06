@@ -130,17 +130,10 @@ void RPM_WeaponMod (void)
 
                     ammoMaxs[attack->ammoIndex] += clipSize * numExtraClips;
 
-                    //if(g_weaponModFlags.integer & AMMO_MOD)
-                    //{
-                        attack->clipSize = clipSize;
-                        attack->extraClips = numExtraClips;
-                        ammoData[attack->ammoIndex].max = ammoMaxs[attack->ammoIndex];
-                    //}
-
-                    //if(g_weaponModFlags.integer & DAMAGE_MOD)
-                    //{
-                        attack->damage = damage;
-                    //}
+                    attack->clipSize = clipSize;
+                    attack->extraClips = numExtraClips;
+                    ammoData[attack->ammoIndex].max = ammoMaxs[attack->ammoIndex];
+                    attack->damage = damage;
                 }
             }
         }

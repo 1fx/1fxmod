@@ -4,18 +4,18 @@
 #include "g_local.h"
 #include "boe_local.h"
 
-qboolean G_SpawnString( const char *key, const char *defaultString, char **out ) 
+qboolean G_SpawnString( const char *key, const char *defaultString, char **out )
 {
     int     i;
 
-    if ( !level.spawning ) 
+    if ( !level.spawning )
     {
         *out = (char *)defaultString;
     }
 
-    for ( i = 0 ; i < level.numSpawnVars ; i++ ) 
+    for ( i = 0 ; i < level.numSpawnVars ; i++ )
     {
-        if ( !Q_stricmp( key, level.spawnVars[i][0] ) ) 
+        if ( !Q_stricmp( key, level.spawnVars[i][0] ) )
         {
             *out = level.spawnVars[i][1];
             return qtrue;
@@ -26,7 +26,7 @@ qboolean G_SpawnString( const char *key, const char *defaultString, char **out )
     return qfalse;
 }
 
-qboolean G_SpawnFloat( const char *key, const char *defaultString, float *out ) 
+qboolean G_SpawnFloat( const char *key, const char *defaultString, float *out )
 {
     char        *s;
     qboolean    present;
@@ -36,7 +36,7 @@ qboolean G_SpawnFloat( const char *key, const char *defaultString, float *out )
     return present;
 }
 
-qboolean G_SpawnInt( const char *key, const char *defaultString, int *out ) 
+qboolean G_SpawnInt( const char *key, const char *defaultString, int *out )
 {
     char        *s;
     qboolean    present;
@@ -46,7 +46,7 @@ qboolean G_SpawnInt( const char *key, const char *defaultString, int *out )
     return present;
 }
 
-qboolean G_SpawnVector( const char *key, const char *defaultString, float *out ) 
+qboolean G_SpawnVector( const char *key, const char *defaultString, float *out )
 {
     char        *s;
     qboolean    present;
@@ -61,9 +61,9 @@ qboolean G_SpawnVector( const char *key, const char *defaultString, float *out )
 //
 // fields are needed for spawning from the entity string
 //
-typedef enum 
+typedef enum
 {
-    F_INT, 
+    F_INT,
     F_FLOAT,
     F_LSTRING,          // string on disk, pointer in memory, TAG_LEVEL
     F_GSTRING,          // string on disk, pointer in memory, TAG_GAME
@@ -85,7 +85,7 @@ typedef struct
 
 } field_t;
 
-field_t fields[] = 
+field_t fields[] =
 {
     {"classname",           FOFS(classname),            F_LSTRING},
     {"origin",              FOFS(s.origin),             F_VECTOR},
@@ -113,7 +113,7 @@ field_t fields[] =
     {"origin2",             FOFS(s.origin2),            F_VECTOR},
     ///Henk 15/01/10 -> Door rotate
     // Boe!Man 1/24/10: This can now be used for door_sliding.
-    
+
     // Henk 26/02/10 -> minimum hiders before teleport can be triggered
     {"minimumhiders",       FOFS(minimumhiders),        F_INT},
     {"apos1",               FOFS(apos1),                F_VECTOR},
@@ -138,18 +138,18 @@ field_t fields[] =
     {"score",               FOFS(score),                F_INT},
     {"broadcast",           FOFS(broadcast),            F_LSTRING},
     {"effect_touch",        FOFS(effect_touch),         F_LSTRING},
-    
+
     // Boe!Man 5/22/12: Sound set for some entities (like the booster).
     {"sound",               FOFS(sound),                F_LSTRING},
-    
+
     // Boe!Man 6/30/12: Add 'size' -> This is for hideseek_cage.
     {"size",                FOFS(size),                 F_LSTRING},
-    
+
     {NULL}
 };
 
 
-typedef struct 
+typedef struct
 {
     char    *name;
     void    (*spawn)(gentity_t *ent);
@@ -219,7 +219,7 @@ void SP_sun                         (gentity_t* ent);
 void SP_seekers                     (gentity_t* ent);
 void hideseek_cage                  (gentity_t* ent);
 void SP_accelerator                 (gentity_t* ent);
-                                    
+
 void SP_fx_play_effect              (gentity_t* ent);
 void nolower                        (gentity_t* ent);
 void noroof                         (gentity_t *ent);
@@ -227,13 +227,13 @@ void nomiddle                       (gentity_t *ent);
 void nowhole                        (gentity_t *ent);
 void NV_blocked_trigger             (gentity_t *ent);
 void NV_blocked_Teleport            (gentity_t *ent);
-void NV_misc_bsp                    (gentity_t *ent); 
+void NV_misc_bsp                    (gentity_t *ent);
 
 #ifdef _3DServer
 void SP_monkey_player               (gentity_t* ent);
 #endif // _3DServer
 
-spawn_t spawns[] = 
+spawn_t spawns[] =
 {
     // info entities don't do anything at all, but provide positional
     // information for things controlled by other processes
@@ -323,7 +323,7 @@ spawn_t spawns[] =
     {"reachable_object",            SP_sun},
     {"hideseek_cage",               hideseek_cage},
     {"accelerator",                 SP_accelerator},
-    // The following classnames are instantly removed when spawned.  The RMG 
+    // The following classnames are instantly removed when spawned.  The RMG
     // shares instances with single player which is what causes these things
     // to attempt to spawn
     {"light",                       0},
@@ -338,7 +338,7 @@ spawn_t spawns[] =
     {"ce_*",                        0},
     {"pickup_ammo",                 0},
     {"script_runner",               0},
-    {"trigger_arioche_objective",   0},     
+    {"trigger_arioche_objective",   0},
 
     #ifdef _3DServer
     // TODO: If we ever move the monkey code into the base, be sure to properly put it under gametype_player...
@@ -356,21 +356,21 @@ Finds the spawn function for the entity and calls it,
 returning qfalse if not found
 ===============
 */
-qboolean G_CallSpawn( gentity_t *ent ) 
+qboolean G_CallSpawn( gentity_t *ent )
 {
     spawn_t *s;
     gitem_t *item;
 
-    if ( !ent->classname ) 
+    if ( !ent->classname )
     {
         Com_Printf ("G_CallSpawn: NULL classname\n");
         return qfalse;
     }
 
     // check item spawn functions
-    for ( item=bg_itemlist+1 ; item->classname ; item++ ) 
+    for ( item=bg_itemlist+1 ; item->classname ; item++ )
     {
-        if ( !strcmp(item->classname, ent->classname) ) 
+        if ( !strcmp(item->classname, ent->classname) )
         {
             // If this is a backpack then handle it specially
             if ( item->giType == IT_BACKPACK )
@@ -398,11 +398,11 @@ qboolean G_CallSpawn( gentity_t *ent )
     }
 
     // check normal spawn functions
-    for ( s=spawns ; s->name ; s++ ) 
+    for ( s=spawns ; s->name ; s++ )
     {
         char* wildcard = strchr ( s->name, '*' );
         int   result;
-        
+
         if ( wildcard )
         {
             result = Q_strncmp ( s->name, ent->classname, wildcard - s->name );
@@ -412,7 +412,7 @@ qboolean G_CallSpawn( gentity_t *ent )
             result = strcmp(s->name, ent->classname);
         }
 
-        if ( !result ) 
+        if ( !result )
         {
             if (s->spawn)
             {   // found it
@@ -425,7 +425,7 @@ qboolean G_CallSpawn( gentity_t *ent )
             }
         }
     }
-    
+
     Com_Printf ("%s doesn't have a spawn function\n", ent->classname);
     return qfalse;
 }
@@ -438,11 +438,11 @@ Builds a copy of the string, translating \n to real linefeeds
 so message texts can be multi-line
 =============
 */
-char *G_NewString( const char *string ) 
+char *G_NewString( const char *string )
 {
     char    *newb, *new_p;
     int     i,l;
-    
+
     l = strlen(string) + 1;
     newb = (char *)trap_VM_LocalAlloc( l );
 
@@ -461,7 +461,7 @@ char *G_NewString( const char *string )
             *new_p++ = string[i];
         }
     }
-    
+
     return newb;
 }
 
@@ -544,7 +544,7 @@ qboolean G_IsGametypeInList ( const char* gametype, const char* list )
     }
 
     return qfalse;
-}   
+}
 // Ryan
 
 /*
@@ -555,18 +555,18 @@ Spawn an entity and fill in all of the level fields from
 level.spawnVars[], then call the class specfic spawn function
 ===================
 */
-int G_SpawnGEntityFromSpawnVars( qboolean inSubBSP ) 
+int G_SpawnGEntityFromSpawnVars( qboolean inSubBSP )
 {
     int         i;
     gentity_t   *ent;
     char        *value;
 
     if (inSubBSP)
-    {   
+    {
         // filter out the unwanted entities
         G_SpawnString("filter", "", &value);
         if (value[0] && Q_stricmp(level.mFilter, value))
-        {   
+        {
             // we are not matching up to the filter, so no spawney
             return -1;
         }
@@ -574,7 +574,7 @@ int G_SpawnGEntityFromSpawnVars( qboolean inSubBSP )
 
     // get the next free entity
     ent = G_Spawn();
-    for ( i = 0 ; i < level.numSpawnVars ; i++ ) 
+    for ( i = 0 ; i < level.numSpawnVars ; i++ )
     {
         if(current_gametype.value == GT_HS){
             if(strstr(level.spawnVars[i][1], "gametype_item")){
@@ -607,19 +607,19 @@ int G_SpawnGEntityFromSpawnVars( qboolean inSubBSP )
     }
 
     // check for "notteam" flag (GT_DM)
-    if ( level.gametypeData->teams ) 
+    if ( level.gametypeData->teams )
     {
         G_SpawnInt( "notteam", "0", &i );
-        if ( i ) 
+        if ( i )
         {
             G_FreeEntity( ent );
             return -1;
         }
-    } 
-    else 
+    }
+    else
     {
         G_SpawnInt( "notfree", "0", &i );
-        if ( i ) 
+        if ( i )
         {
             G_FreeEntity( ent );
             return -1;
@@ -629,7 +629,7 @@ int G_SpawnGEntityFromSpawnVars( qboolean inSubBSP )
     // Only spawn this entity in the specified gametype
     // Ryan Dec 5 2004
     // More code from gold to fix gametypes
-    if( G_SpawnString( "gametype", NULL, &value ) && value ) 
+    if( G_SpawnString( "gametype", NULL, &value ) && value )
     {
         if ( !G_IsGametypeInList ( level.gametypeData->name, value ) )
         {
@@ -646,9 +646,9 @@ int G_SpawnGEntityFromSpawnVars( qboolean inSubBSP )
                 G_FreeEntity ( ent );
                 return -1;
             }
-        } 
+        }
     }
-/*  if( G_SpawnString( "gametype", NULL, &value ) ) 
+/*  if( G_SpawnString( "gametype", NULL, &value ) )
     {
         // Has to be a case match
         if ( value && !strstr ( value, level.gametypeData->name ) )
@@ -665,7 +665,7 @@ int G_SpawnGEntityFromSpawnVars( qboolean inSubBSP )
     VectorCopy( ent->s.origin, ent->r.currentOrigin );
 
     // if we didn't get a classname, don't bother spawning anything
-        if ( !G_CallSpawn( ent ) ) 
+        if ( !G_CallSpawn( ent ) )
         {
             G_FreeEntity( ent );
         }
@@ -681,13 +681,13 @@ int G_SpawnGEntityFromSpawnVars( qboolean inSubBSP )
 G_AddSpawnVarToken
 ====================
 */
-char *G_AddSpawnVarToken( const char *string ) 
+char *G_AddSpawnVarToken( const char *string )
 {
     int     l;
     char    *dest;
 
     l = strlen( string );
-    if ( level.numSpawnVarChars + l + 1 > MAX_SPAWN_VARS_CHARS ) 
+    if ( level.numSpawnVarChars + l + 1 > MAX_SPAWN_VARS_CHARS )
     {
         Com_Error( ERR_FATAL, "G_AddSpawnVarToken: MAX_SPAWN_CHARS" );
     }
@@ -850,7 +850,7 @@ level's entity strings into level.spawnVars[]
 This does not actually spawn an entity.
 ====================
 */
-qboolean G_ParseSpawnVars( qboolean inSubBSP ) 
+qboolean G_ParseSpawnVars( qboolean inSubBSP )
 {
     char    keyname[MAX_TOKEN_CHARS];
     char    com_token[MAX_TOKEN_CHARS];
@@ -874,19 +874,19 @@ qboolean G_ParseSpawnVars( qboolean inSubBSP )
 #endif
 
     // parse the opening brace
-    if ( !trap_GetEntityToken( com_token, sizeof( com_token ) ) ) 
+    if ( !trap_GetEntityToken( com_token, sizeof( com_token ) ) )
     {
         // end of spawn string
         return qfalse;
     }
-    
-    if ( com_token[0] != '{' ) 
+
+    if ( com_token[0] != '{' )
     {
         Com_Error( ERR_FATAL, "G_ParseSpawnVars: found %s when expecting {",com_token );
     }
 
     // go through all the key / value pairs
-    while ( 1 ) 
+    while ( 1 )
     {
 #ifdef _spMaps
         if (G_ReadingFromEntFile(inSubBSP)) {
@@ -898,12 +898,12 @@ qboolean G_ParseSpawnVars( qboolean inSubBSP )
         else
 #endif
         // parse key
-        if ( !trap_GetEntityToken( keyname, sizeof( keyname ) ) ) 
+        if ( !trap_GetEntityToken( keyname, sizeof( keyname ) ) )
         {
             Com_Error( ERR_FATAL, "G_ParseSpawnVars: EOF without closing brace" );
         }
 
-        if ( keyname[0] == '}' ) 
+        if ( keyname[0] == '}' )
         {
             break;
         }
@@ -918,22 +918,22 @@ qboolean G_ParseSpawnVars( qboolean inSubBSP )
         else
 #endif
 
-        // parse value  
-        if ( !trap_GetEntityToken( com_token, sizeof( com_token ) ) ) 
+        // parse value
+        if ( !trap_GetEntityToken( com_token, sizeof( com_token ) ) )
         {
             Com_Error( ERR_FATAL, "G_ParseSpawnVars: EOF without closing brace" );
         }
 
-        if ( com_token[0] == '}' ) 
+        if ( com_token[0] == '}' )
         {
             Com_Error( ERR_FATAL, "G_ParseSpawnVars: closing brace without data" );
         }
-        
-        if ( level.numSpawnVars == MAX_SPAWN_VARS ) 
+
+        if ( level.numSpawnVars == MAX_SPAWN_VARS )
         {
             Com_Error( ERR_FATAL, "G_ParseSpawnVars: MAX_SPAWN_VARS" );
         }
-        
+
         AddSpawnField(keyname, com_token);
     }
 
@@ -945,7 +945,7 @@ qboolean G_ParseSpawnVars( qboolean inSubBSP )
     return qtrue;
 }
 
-static char *defaultStyles[32][3] = 
+static char *defaultStyles[32][3] =
 {
     {   // 0 normal
         "z",
@@ -1123,14 +1123,14 @@ Every map should have exactly one worldspawn.
 "message"       Text to print during connection process
 "mission"       Indicates which mission script file should be used to find the scripts for mission mode
 */
-void SP_worldspawn( void ) 
+void SP_worldspawn( void )
 {
     char        *text, temp[32];
     int         i;
     int         lengthRed, lengthBlue, lengthGreen;
 
     G_SpawnString( "classname", "", &text );
-    if ( Q_stricmp( text, "worldspawn" ) ) 
+    if ( Q_stricmp( text, "worldspawn" ) )
     {
         Com_Error( ERR_FATAL, "SP_worldspawn: The first entity isn't 'worldspawn'" );
     }
@@ -1173,17 +1173,6 @@ void SP_worldspawn( void )
         trap_SetConfigstring( CS_GAMETYPE_BLUETEAM, level.gametypeTeam[TEAM_BLUE] );
     }
 
-    /*
-    G_SpawnString( "message", "", &text );
-    trap_SetConfigstring( CS_MESSAGE, text );               // map specific message
-*/
-
-    #ifndef _GOLD
-    if (level.clientMod == CL_RPM){
-        RPM_UpdateLoadScreenMessage();
-    }
-    #endif // not _GOLD
-
     trap_SetConfigstring( CS_MOTD, g_motd.string );     // message of the day
 
     // Boe!Man 9/6/12: Fix gravity resetting every round.
@@ -1199,13 +1188,13 @@ void SP_worldspawn( void )
 
     // see if we want a warmup time
     trap_SetConfigstring( CS_WARMUP, "" );
-    if ( g_restarted.integer ) 
+    if ( g_restarted.integer )
     {
         trap_Cvar_Set( "g_restarted", "0" );
         level.warmupTime = 0;
-    } 
-    else if ( g_doWarmup.integer ) 
-    { 
+    }
+    else if ( g_doWarmup.integer )
+    {
         // Turn it on
         level.warmupTime = -1;
         trap_SetConfigstring( CS_WARMUP, va("%i", level.warmupTime) );
@@ -1221,7 +1210,7 @@ void SP_worldspawn( void )
     trap_SetConfigstring(CS_LIGHT_STYLES+(LS_STYLES_START*3)+0, defaultStyles[0][0]);
     trap_SetConfigstring(CS_LIGHT_STYLES+(LS_STYLES_START*3)+1, defaultStyles[0][1]);
     trap_SetConfigstring(CS_LIGHT_STYLES+(LS_STYLES_START*3)+2, defaultStyles[0][2]);
-    
+
     for(i=1;i<LS_NUM_STYLES;i++)
     {
         Com_sprintf(temp, sizeof(temp), "ls_%dr", i);
@@ -1241,11 +1230,11 @@ void SP_worldspawn( void )
 
         if (lengthRed != lengthGreen || lengthGreen != lengthBlue)
         {
-            Com_Error(ERR_DROP, "Style %d has inconsistent lengths: R %d, G %d, B %d", 
+            Com_Error(ERR_DROP, "Style %d has inconsistent lengths: R %d, G %d, B %d",
                 i, lengthRed, lengthGreen, lengthBlue);
         }
     }
-    
+
     // Boe!Man 10/14/12: New check for the CTB minigame.
     trap_Cvar_VariableStringBuffer ( "mapname", level.mapname, MAX_QPATH );
     G_SpawnString( "minigame", "", &text );
@@ -1266,7 +1255,7 @@ G_SpawnEntitiesFromString
 Parses textual entity definitions out of an entstring and spawns gentities.
 ==============
 */
-void G_SpawnEntitiesFromString( qboolean inSubBSP ) 
+void G_SpawnEntitiesFromString( qboolean inSubBSP )
 {
     // allow calls to G_Spawn*()
     level.spawning = qtrue;
@@ -1283,11 +1272,11 @@ void G_SpawnEntitiesFromString( qboolean inSubBSP )
 #endif
     //End  - 04.20.06 - 03:48pm
 
-    if ( !G_ParseSpawnVars(inSubBSP) ) 
+    if ( !G_ParseSpawnVars(inSubBSP) )
     {
         Com_Error( ERR_FATAL, "SpawnEntities: no entities" );
     }
-    
+
     if (!inSubBSP)
     {
         SP_worldspawn();
@@ -1302,10 +1291,10 @@ void G_SpawnEntitiesFromString( qboolean inSubBSP )
     }
 
     // parse ents
-    while( G_ParseSpawnVars(inSubBSP) ) 
+    while( G_ParseSpawnVars(inSubBSP) )
     {
         G_SpawnGEntityFromSpawnVars(inSubBSP);
-    }   
+    }
 
     if (!inSubBSP)
     {
@@ -1313,7 +1302,7 @@ void G_SpawnEntitiesFromString( qboolean inSubBSP )
     }
 }
 
-void NV_model( gentity_t *ent ) 
+void NV_model( gentity_t *ent )
 {
     ent->s.modelindex = G_ModelIndex( ent->model );
     VectorSet (ent->r.mins, -16, -16, -16);
@@ -1335,7 +1324,7 @@ void SP_model_static ( gentity_t* ent )
     }
 
     G_SetOrigin( ent, ent->s.origin );
-    
+
     VectorCopy(ent->s.angles, ent->r.currentAngles);
     VectorCopy(ent->s.angles, ent->s.apos.trBase );
 
@@ -1354,7 +1343,7 @@ void SP_model_static ( gentity_t* ent )
     trap_LinkEntity ( ent );
 }
 
-void NV_misc_bsp(gentity_t *ent) 
+void NV_misc_bsp(gentity_t *ent)
 {
     char    temp[MAX_QPATH];
     char    *out;
@@ -1368,7 +1357,7 @@ void NV_misc_bsp(gentity_t *ent)
         ent->s.angles[0] = newAngle[0];
         ent->s.angles[1] = newAngle[1];
         ent->s.angles[2] = newAngle[2];
-#ifdef _SPMAPS  
+#ifdef _SPMAPS
     VectorCopy( ent->s.angles, ent->savedAngles );
 #endif
 
@@ -1376,7 +1365,7 @@ void NV_misc_bsp(gentity_t *ent)
     // don't support rotation any other way
     //ent->s.angles[0] = 0.0;
     //ent->s.angles[2] = 0.0;
-    
+
     G_SpawnString("bspmodel", "", &out);
 
     //ent->s.eFlags = /*EF_PERMANENT*/ EF_TELEPORT_BIT;
@@ -1397,7 +1386,7 @@ void NV_misc_bsp(gentity_t *ent)
         ent->r.maxs[1] = (int)maxs[1];
         ent->r.maxs[2] = (int)maxs[2];
     }
-    
+
     if(G_SpawnVector( "mins", "0 0 0", mins )){
         //VectorCopy(ent->r.mins, mins);
         ent->r.mins[0] = (int)mins[0];
@@ -1442,7 +1431,7 @@ void NV_misc_bsp(gentity_t *ent)
             G_SpawnDebugCylinder ( ent->s.origin, ent->s.time, &g_entities[0], 2000, COLOR_RED );
         }
     }
-    
+
 }
 
 /*
@@ -1453,7 +1442,7 @@ Transforms a player into an object.
 ==============
 */
 
-typedef struct 
+typedef struct
 {
     char    *modelName;
     char    *angles;
@@ -1463,7 +1452,7 @@ typedef struct
     char    *maxs;
 } transformObject_t;
 
-static transformObject_t TransformObjects[] = 
+static transformObject_t TransformObjects[] =
 {
     {"instances/Colombia/tree01",                       "90 0 0",   20,     qfalse,     NULL,           NULL},
     {"instances/Colombia/tree02",                       "0 0 0",    -35,    qfalse,     NULL,           NULL},
@@ -1483,26 +1472,26 @@ void TransformPlayerBack(gentity_t *self, gentity_t *other, trace_t *trace)
     }
 
     self->hideseek -= 256;
-    
+
     if(!g_entities[self->hideseek].client || g_entities[self->hideseek].client->pers.connected != CON_CONNECTED || G_IsClientSpectating(g_entities[self->hideseek].client)){
         trap_SendServerCommand(other-g_entities, "print \"^3[H&S] ^7Woops, nothing here!\n\"");
         G_FreeEntity(self);
         return;
     }
-    
+
     // First we make sure he can walk again.
     g_entities[self->hideseek].client->sess.freeze = qfalse;
     g_entities[self->hideseek].client->ps.pm_type = PM_NORMAL;
     g_entities[self->hideseek].client->sess.invisibleGoggles = qfalse; // And that others can see him again as well.
-    
+
     // Good, now we can free the entities spawned.
     if(g_entities[self->hideseek].client->sess.transformedEntity2){
         G_FreeEntity(&g_entities[g_entities[self->hideseek].client->sess.transformedEntity]);
         g_entities[self->hideseek].client->sess.transformedEntity = 0;
     }
-    
+
     trap_SendServerCommand(-1, va("print \"^3[H&S] ^7%s scared %s back to %s original form!\n\"", other->client->pers.cleanName, g_entities[self->hideseek].client->pers.cleanName, (strstr(g_entities[self->hideseek].client->pers.identity->mCharacter->mModel, "female") ? "her" : "his")));
-    
+
     strncpy(level.RandomNadeLoc, "Disappeared", sizeof(level.RandomNadeLoc));
     G_FreeEntity(self);
 }
@@ -1510,13 +1499,13 @@ void TransformPlayerBack(gentity_t *self, gentity_t *other, trace_t *trace)
 void G_TransformPlayerToObject(gentity_t *ent)
 {
     int object;
-    
+
     // Boe!Man 2/5/14: First pick a random object.
     object = irand(0, sizeof(TransformObjects) / sizeof(TransformObjects[0]) - 1);
-    
+
     // Do this so the server knows where the player is.
     VectorCopy( ent->client->ps.origin, ent->s.origin );
-    
+
     // Put the object on the client their position.
     if(!TransformObjects[object].isModel){
         AddSpawnField("classname", "misc_bsp");
@@ -1527,11 +1516,11 @@ void G_TransformPlayerToObject(gentity_t *ent)
     }
     AddSpawnField("origin", va("%0.f %0.f %0.f", ent->s.origin[0], ent->s.origin[1], ent->s.origin[2] + TransformObjects[object].originOffset));
     AddSpawnField("angles", TransformObjects[object].angles);
-    
+
     // Take care of the player.
     ent->client->sess.invisibleGoggles = qtrue; // Make sure he's invisible,
     ent->client->sess.freeze = qtrue; // .. and that he can't move.
-    
+
     // Reset the transformed entity if there is one.
     if(ent->client->sess.transformedEntity){
         G_FreeEntity(&g_entities[ent->client->sess.transformedEntity]);
@@ -1543,7 +1532,7 @@ void G_TransformPlayerToObject(gentity_t *ent)
     }
     // And store the entity number for later usage.
     ent->client->sess.transformedEntity = G_SpawnGEntityFromSpawnVars(qfalse);
-    
+
     // Don't forget a blocked trigger for models.
     if(TransformObjects[object].isModel){
         AddSpawnField("classname", "blocked_trigger");
@@ -1552,7 +1541,7 @@ void G_TransformPlayerToObject(gentity_t *ent)
         AddSpawnField("mins", TransformObjects[object].mins);
         AddSpawnField("maxs", TransformObjects[object].maxs);
         ent->client->sess.transformedEntity2 = G_SpawnGEntityFromSpawnVars(qfalse);
-        
+
         // Make sure the seeker can pop the hider out.
         g_entities[ent->client->sess.transformedEntity2].touch = TransformPlayerBack;
         g_entities[ent->client->sess.transformedEntity2].hideseek = ent->s.number + 256;

@@ -2907,7 +2907,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
                                     if (command){
                                         trap_GPG_FindPairValue(group, "Broadcast", "Custom action applied", broadcast);
                                         trap_GPG_FindPairValue(group, "Message", "Custom action has been applied.", message);
-                                        trap_SendServerCommand(-1, va("print \"^3[Custom Admin Action] ^7%s.\n\"", message));
+                                        trap_SendServerCommand(-1, va("print \"^3[Custom Admin Action] ^7%s\n\"", message));
                                         G_Broadcast(broadcast, BROADCAST_CMD, NULL);
                                         memset(level.action, 0, sizeof(level.action));
                                         Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));

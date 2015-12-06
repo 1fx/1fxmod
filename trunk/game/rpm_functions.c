@@ -8,41 +8,9 @@
 #include "g_local.h"
 #include "boe_local.h"
 
-/*
-=============
-RPM_UpdateLoadScreenMessage
-=============
-*/
-
-void RPM_UpdateLoadScreenMessage (void)
-{
-    char    *ammo, *damage;
-
-    switch (g_weaponModFlags.integer)
-    {
-        case 1:
-            ammo = "ON";
-            damage = "OFF";
-            break;
-        case 2:
-            ammo = "OFF";
-            damage = "ON";
-            break;
-        case 3:
-            ammo = "ON";
-            damage = "ON";
-            break;
-        default:
-            ammo = "OFF";
-            damage = "OFF";
-    }
-
-    trap_SetConfigstring( CS_MESSAGE, va(" Modified Damage: %s  Modified Ammo: %s\n", damage, ammo));
-}
-
 // Henk 07/04/10 -> Copied from RPM to make scoreboard from RPM client working
 /*
-=================   
+=================
 RPM_UpdateTMI
 
 //Used to only send teammate info hence "TMI" but I have decided to
@@ -98,14 +66,14 @@ void RPM_UpdateTMI(void)
     infoString[0] = 0;
     infoStringLength = 0;
     numAdded = 0;
-    
+
     for (i = 0; i < level.numConnectedClients; i++)
     {
         cl = &level.clients[level.sortedClients[i]];
-        
+
         //IsClientMuted(&g_entities[cl->ps.clientNum], qfalse);
         IsClientMuted(&g_entities[level.sortedClients[i]], qfalse);
-        if (G_IsClientSpectating(cl))// || G_IsClientDead (cl)) 
+        if (G_IsClientSpectating(cl))// || G_IsClientDead (cl))
         {
             continue;
         }
@@ -149,9 +117,9 @@ void RPM_UpdateTMI(void)
                 if(cl->ps.weapon >= 10){ // fix for large weapon string = damage *10 on scoreboard
                     damage = damage/10;
                 }
-                string = va("%i%i", damage, cl->ps.weapon); 
+                string = va("%i%i", damage, cl->ps.weapon);
             }
-            
+
             //if(cl->sess.rpmClient > 0.6){
             Com_sprintf (entry, sizeof(entry),
                 " %i %i %i %i %i %i %s %i %i",
@@ -191,7 +159,7 @@ void RPM_UpdateTMI(void)
     for (i = 0 ; i < level.numConnectedClients; i++)
     {
         cl = &level.clients[level.sortedClients[i]];
-        
+
         // Boe!Man 6/5/13: Don't send if the player is timing out..
         if(cl->ps.ping >= 999)
         {
@@ -199,7 +167,7 @@ void RPM_UpdateTMI(void)
         }
 
 //RxCxW - 1.20.2005 - #scoreboard #Version compatiblity
-        if(cl->sess.rpmClient > 0.6)    
+        if(cl->sess.rpmClient > 0.6)
             trap_SendServerCommand(level.sortedClients[i], va("tmi %i%s", numAdded, infoString));
         else if(cl->sess.proClient > 4.0)
             trap_SendServerCommand(level.sortedClients[i], va("tmi %i%s", numAdded, infoString));
@@ -225,7 +193,7 @@ void RPM_Awards(void)
     gentity_t *bestOverall = NULL, *headshooter = NULL, *killer = NULL;
     gentity_t *accurate = NULL, *bestRatio = NULL, *explosive = NULL, *knifer = NULL;
     gentity_t *ent;
-    
+
     /*
     Boe!Man 2/20/13: Oh noooess this is crappy. ;_; But there's no other fix for dynlib it seems.
     Structure:
@@ -415,7 +383,7 @@ void RPM_Awards(void)
                 }
             }
         }
-        
+
         // Boe!Man 2/20/13: Put data in struct. Nasty piece of code but effective.
         if(bestOverall){
             Q_strncpyz(bestScores[0].name, g_entities[bestOverall->s.number].client->pers.netname, sizeof(bestScores[0].name));
@@ -467,7 +435,7 @@ void RPM_Awards(void)
             bestScores[6].number = -1;
         }
     }
-    
+
     for (i = 0; i < level.maxclients ; i++)
     {
         ent = g_entities + i;
@@ -503,21 +471,21 @@ void RPM_Awards(void)
         }
         if(!level.awardTime)
         {
-            trap_SendServerCommand( i, va("awards %i %i %i %i %i %i %i %.2f %i %.2f %i %i %i %i", 
+            trap_SendServerCommand( i, va("awards %i %i %i %i %i %i %i %.2f %i %.2f %i %i %i %i",
                 bestScores[0].number,
                 overallScore,
                 bestScores[1].number,
-                headshots, 
+                headshots,
                 bestScores[2].number,
-                damage, 
+                damage,
                 bestScores[3].number,
                 accuracy,
                 bestScores[4].number,
-                ratio, 
+                ratio,
                 bestScores[5].number,
-                explosiveKills, 
+                explosiveKills,
                 bestScores[6].number,
-                knifeKills 
+                knifeKills
                 ));
         }
     }
