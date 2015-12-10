@@ -4062,8 +4062,18 @@ void PM_UpdatePVSOrigin ( pmove_t *pmove )
     // Set a pm flag for leaning and calculate the view origin for the lean
     if ( pm->ps->leanTime - LEAN_TIME != 0 )
     {
+        #ifndef _GOLD
+        vec3_t	right;
+        float	leanOffset;
+
+        leanOffset = (float)(pm->ps->leanTime - LEAN_TIME) / LEAN_TIME * LEAN_OFFSET;
+
+        AngleVectors( pm->ps->viewangles, NULL, right, NULL );
+        VectorMA( pm->ps->origin, leanOffset, right, pm->ps->pvsOrigin );
+        #else
         VectorCopy(pm->ps->origin, pm->ps->pvsOrigin);
         BG_ApplyLeanOffset(pm->ps, pm->ps->pvsOrigin);
+        #endif // not _GOLD
     }
     else
     {

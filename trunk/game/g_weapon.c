@@ -440,7 +440,16 @@ void G_FireBullet ( gentity_t* ent, int weapon, int attack )
     VectorCopy(ent->client->ps.viewangles, fireAngs);
     if ( ent->client->ps.pm_flags & PMF_LEANING )
     {
+        #ifndef _GOLD
+        vec3_t  right;
+        float   leanOffset;
+
+        leanOffset = (float)(ent->client->ps.leanTime - LEAN_TIME) / LEAN_TIME * LEAN_OFFSET;
+        AngleVectors( fireAngs, NULL, right, NULL );
+        VectorMA( muzzlePoint, leanOffset, right, muzzlePoint );
+        #else
         BG_ApplyLeanOffset(&ent->client->ps, muzzlePoint);
+        #endif // not _GOLD
     }
 
     AngleVectors( fireAngs, fwd, NULL, NULL );
@@ -923,7 +932,16 @@ gentity_t* G_FireProjectile ( gentity_t *ent, weapon_t weapon, attackType_t atta
 
     if ( ent->client->ps.pm_flags & PMF_LEANING )
     {
+        #ifndef _GOLD
+        float leanOffset;
+
+        leanOffset = (float)(ent->client->ps.leanTime - LEAN_TIME) / LEAN_TIME * LEAN_OFFSET;
+        fireAngs[ROLL] += leanOffset / 4;
+        AngleVectors( fireAngs, NULL, right, NULL );
+        VectorMA( muzzlePoint, leanOffset /* * 0.75f */, right, muzzlePoint );
+        #else
         BG_ApplyLeanOffset(&ent->client->ps, muzzlePoint);
+        #endif // not _GOLD
     }
 
     AngleVectors( fireAngs, fwd, right, up );

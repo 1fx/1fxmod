@@ -1766,6 +1766,8 @@ int BG_ParseOutfittingTemplates ( qboolean force )
     return bg_outfittingCount;
 }
 
+#ifdef _GOLD
+
 /*
 ========================
 BG_ApplyLeanOffset
@@ -1773,6 +1775,7 @@ BG_ApplyLeanOffset
 Applies the given lean offset to the origin
 ========================
 */
+
 void BG_ApplyLeanOffset(playerState_t* ps, vec3_t origin)
 {
     float   leanOffset;
@@ -1784,3 +1787,5 @@ void BG_ApplyLeanOffset(playerState_t* ps, vec3_t origin)
     VectorMA(origin, leanOffset, right, origin);
     VectorMA(origin, Q_fabs(leanOffset) * -0.20f, up, origin);
 }
+
+#endif // _GOLD

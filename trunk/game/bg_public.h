@@ -1136,7 +1136,9 @@ void                BG_DecompressOutfitting             ( const char* compressed
 void                BG_CompressOutfitting               ( goutfitting_t* outfitting, char* compressed, int size );
 int                 BG_ParseOutfittingTemplates         ( qboolean force );
 int                 BG_FindOutfitting                   ( goutfitting_t* outfitting);
+#ifdef _GOLD
 void                BG_ApplyLeanOffset                  ( playerState_t* ps, vec3_t origin );
+#endif // _GOLD
                                                         
 /*******************************************************************************
  *
