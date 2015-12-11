@@ -3580,9 +3580,16 @@ static void PM_CheckLean( void )
 
         // check for collision
         VectorCopy( pm->ps->origin, start );
+        #ifndef _GOLD
+        start[2] += pm->ps->viewheight;
+        AngleVectors( pm->ps->viewangles, NULL, right, NULL );
+        VectorSet( mins, -6, -6, -8 );
+        VectorSet( maxs, 6, 6, 8 );
+        #else
         AngleVectors( pm->ps->viewangles, NULL, right, NULL );
         VectorSet( mins, -6, -6, -20 );
         VectorSet( maxs, 6, 6, 20 );
+        #endif // not _GOLD
 
         // since we're moving the camera over
         // check that move
