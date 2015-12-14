@@ -3223,13 +3223,13 @@ Writes soft-crash information (triggered on Com_Error) to the crashlog file.
 void logCrash(void)
 {
     fileHandle_t    crashFile;
-    char            crashReason[128];
-    char            text[148];
+    char            crashReason[MAX_CVAR_VALUE_STRING];
+    char            text[278];
     qtime_t         q;
 
     // Boe!Man 1/2/14: Check if the server crashed.
     trap_Cvar_VariableStringBuffer("com_errorMessage", crashReason, sizeof(crashReason));
-    if(crashReason == NULL || strlen(crashReason) == 0){
+    if(strlen(crashReason) == 0){
         return;
     }
 

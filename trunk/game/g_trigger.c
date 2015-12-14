@@ -276,21 +276,19 @@ void trigger_booster_touch (gentity_t *self, gentity_t *other, trace_t *trace ) 
         return;
     }
 
-    if(self->team){
-        if(!strstr(self->team, "all")){
-            if(other->client->sess.team == TEAM_RED && !strstr(self->team, "red") || other->client->sess.team == TEAM_BLUE && !strstr(self->team, "blue")){
-                if(level.time >= other->client->sess.lastmsg){
-                    if(strstr(self->team, "red")){
-                        trap_SendServerCommand ( other->s.number, va("cp\"@^7Booster is for %s ^7team only!", server_redteamprefix.string));
-                    }else if(strstr(self->team, "blue")){
-                        trap_SendServerCommand ( other->s.number, va("cp\"@^7Booster is for %s ^7team only!", server_blueteamprefix.string));
-                    }
-                    //trap_SendServerCommand(other->s.number, va("print\"^3[Info] ^7Only the %s team can use this teleporter.\n\"", self->team));
-                    other->client->sess.lastmsg = level.time+5000;
+    if(self->team2 != TEAM_FREE){
+        if(other->client->sess.team != self->team2){
+            if(level.time >= other->client->sess.lastmsg){
+                if(self->team2 == TEAM_RED){
+                    G_Broadcast(va("Booster is for %s ^7team only!", server_redteamprefix.string), BROADCAST_GAME, other);
+                }else{
+                    G_Broadcast(va("Booster is for %s ^7team only!", server_blueteamprefix.string), BROADCAST_GAME, other);
                 }
-                return;
+
+                other->client->sess.lastmsg = level.time + 5000;
             }
-    }
+            return;
+        }
     }
 
     VectorCopy(self->r.currentOrigin, origin);
@@ -349,19 +347,18 @@ void trigger_ReachableObject_touch ( gentity_t *self, gentity_t *other, trace_t 
     }
 
     // Boe!Man 6/3/11: Check team if needed.
-    if(self->team){
-        if(!strstr(Q_strlwr(self->team), "all")){
-            if(other->client->sess.team == TEAM_RED && !strstr(Q_strlwr(self->team), "red") || other->client->sess.team == TEAM_BLUE && !strstr(Q_strlwr(self->team), "blue")){
-                if(level.time >= other->client->sess.lastmsg){
-                    if(strstr(Q_strlwr(self->team), "red")){
-                        trap_SendServerCommand ( other->s.number, va("cp\"@^7Object is for %s ^7team only!", server_redteamprefix.string));
-                    }else if(strstr(Q_strlwr(self->team), "blue")){
-                        trap_SendServerCommand ( other->s.number, va("cp\"@^7Object is for %s ^7team only!", server_blueteamprefix.string));
-                    }
-                    other->client->sess.lastmsg = level.time+3000;
+    if(self->team2 != TEAM_FREE){
+        if(other->client->sess.team != self->team2){
+            if(level.time >= other->client->sess.lastmsg){
+                if(self->team2 == TEAM_RED){
+                    G_Broadcast(va("Object is for %s ^7team only!", server_redteamprefix.string), BROADCAST_GAME, other);
+                }else{
+                    G_Broadcast(va("Object is for %s ^7team only!", server_blueteamprefix.string), BROADCAST_GAME, other);
                 }
-                return;
+
+                other->client->sess.lastmsg = level.time + 3000;
             }
+            return;
         }
     }
 
@@ -480,20 +477,19 @@ void trigger_NewTeleporter_touch (gentity_t *self, gentity_t *other, trace_t *tr
     {
         return;
     }
-    if(self->team){
-        if(!strstr(Q_strlwr(self->team), "all")){
-            if(other->client->sess.team == TEAM_RED && !strstr(Q_strlwr(self->team), "red") || other->client->sess.team == TEAM_BLUE && !strstr(Q_strlwr(self->team), "blue")){
-                if(level.time >= other->client->sess.lastmsg){
-                    if(strstr(Q_strlwr(self->team), "red")){
-                        trap_SendServerCommand ( other->s.number, va("cp\"@^7Teleporter is for %s ^7team only!", server_redteamprefix.string));
-                    }else if(strstr(Q_strlwr(self->team), "blue")){
-                        trap_SendServerCommand ( other->s.number, va("cp\"@^7Teleporter is for %s ^7team only!", server_blueteamprefix.string));
-                    }
-                    //trap_SendServerCommand(other->s.number, va("print\"^3[Info] ^7Only the %s team can use this teleporter.\n\"", self->team));
-                    other->client->sess.lastmsg = level.time+5000;
+
+    if(self->team2 != TEAM_FREE){
+        if(other->client->sess.team != self->team2){
+            if(level.time >= other->client->sess.lastmsg){
+                if(self->team2 == TEAM_RED){
+                    G_Broadcast(va("Teleporter is for %s ^7team only!", server_redteamprefix.string), BROADCAST_GAME, other);
+                }else{
+                    G_Broadcast(va("Teleporter is for %s ^7team only!", server_blueteamprefix.string), BROADCAST_GAME, other);
                 }
-                return;
+
+                other->client->sess.lastmsg = level.time + 5000;
             }
+            return;
         }
     }
 
@@ -953,6 +949,15 @@ void SP_teleporter(gentity_t* ent){
     ent->r.contents = CONTENTS_TRIGGER;
     ent->r.svFlags &= ~SVF_NOCLIENT;
 
+    // Determine if the teleporter can be used for a specific team only.
+    if(Q_stricmp(ent->team, "red") == 0){
+        ent->team2 = TEAM_RED;
+    }else if(Q_stricmp(ent->team, "blue") == 0){
+        ent->team2 = TEAM_BLUE;
+    }else{
+        ent->team2 = TEAM_FREE;
+    }
+
     // make sure the client precaches this sound
     G_SoundIndex("sound/world/jumppad.wav");
 
@@ -980,6 +985,16 @@ void SP_booster(gentity_t* ent){
         G_FreeEntity( ent );
         return;
     }
+
+    // Determine if the booster can be used for a specific team only.
+    if(Q_stricmp(ent->team, "red") == 0){
+        ent->team2 = TEAM_RED;
+    }else if(Q_stricmp(ent->team, "blue") == 0){
+        ent->team2 = TEAM_BLUE;
+    }else{
+        ent->team2 = TEAM_FREE;
+    }
+
     ent->s.groundEntityNum = tr.entityNum;
     G_SetOrigin( ent, tr.endpos );
     origin = va("%.0f %.0f %.0f", ent->r.currentOrigin[0], ent->r.currentOrigin[1], ent->r.currentOrigin[2]-15);
@@ -1082,6 +1097,15 @@ void SP_sun(gentity_t* ent){
         G_SpawnGEntityFromSpawnVars (qtrue);
     }
 
+    // Determine if the reachable object can be used for a specific team only.
+    if(Q_stricmp(ent->team, "red") == 0){
+        ent->team2 = TEAM_RED;
+    }else if(Q_stricmp(ent->team, "blue") == 0){
+        ent->team2 = TEAM_BLUE;
+    }else{
+        ent->team2 = TEAM_FREE;
+    }
+
     ent->r.contents = CONTENTS_TRIGGER;
     ent->r.svFlags &= ~SVF_NOCLIENT;
     ent->touch = trigger_ReachableObject_touch;
@@ -1122,20 +1146,18 @@ void SP_accelerator_touch (gentity_t *self, gentity_t *other, trace_t *trace ) {
         return;
     }
 
-    if(self->team){
-        if(!strstr(self->team, "all")){
-            if(other->client->sess.team == TEAM_RED && !strstr(self->team, "red") || other->client->sess.team == TEAM_BLUE && !strstr(self->team, "blue")){
-                if(level.time >= other->client->sess.lastmsg){
-                    if(strstr(self->team, "red")){
-                        trap_SendServerCommand ( other->s.number, va("cp\"@^7Accelerator is for %s ^7team only!", server_redteamprefix.string));
-                    }else if(strstr(self->team, "blue")){
-                        trap_SendServerCommand ( other->s.number, va("cp\"@^7Accelerator is for %s ^7team only!", server_blueteamprefix.string));
-                    }
-
-                    other->client->sess.lastmsg = level.time + 5000;
+    if(self->team2 != TEAM_FREE){
+        if(other->client->sess.team != self->team2){
+            if(level.time >= other->client->sess.lastmsg){
+                if(self->team2 == TEAM_RED){
+                    G_Broadcast(va("Accelerator is for %s ^7team only!", server_redteamprefix.string), BROADCAST_GAME, other);
+                }else{
+                    G_Broadcast(va("Accelerator is for %s ^7team only!", server_blueteamprefix.string), BROADCAST_GAME, other);
                 }
-                return;
+
+                other->client->sess.lastmsg = level.time + 5000;
             }
+            return;
         }
     }
 
@@ -1225,6 +1247,15 @@ void SP_accelerator(gentity_t *ent){
         }else{
             break;
         }
+    }
+
+    // Determine if the accelerator can be used for a specific team only.
+    if(Q_stricmp(ent->team, "red") == 0){
+        ent->team2 = TEAM_RED;
+    }else if(Q_stricmp(ent->team, "blue") == 0){
+        ent->team2 = TEAM_BLUE;
+    }else{
+        ent->team2 = TEAM_FREE;
     }
 
     // Boe!Man 4/16/13: Set the other properties of the entity.
