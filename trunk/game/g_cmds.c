@@ -1203,28 +1203,16 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
                         }
                     }
                 }else{
-                    if(counts[TEAM_RED] >= 4 && counts[TEAM_RED] <= 7){
-                        seekers = 2;
-                    }else if(counts[TEAM_RED] >= 8 && counts[TEAM_RED] <= 12){
-                        seekers = 3;
-                    }else if(counts[TEAM_RED] >= 13 && counts[TEAM_RED] <= 17){
-                        seekers = 4;
-                    }else if(counts[TEAM_RED] >= 18){
-                        seekers = 5;
-                    }else{
+                    if(counts[TEAM_RED] < 4){
                         seekers = 1;
+                    }else{
+                        seekers = (counts[TEAM_RED] + 2) / 5 + 1;
                     }
 
-                    if(counts[TEAM_BLUE] == 2){
-                        maxhiders = 8;
-                    }else if(counts[TEAM_BLUE] == 3){
-                        maxhiders = 13;
-                    }else if(counts[TEAM_BLUE] == 4){
-                        maxhiders = 18;
-                    }else if(counts[TEAM_BLUE] == 5){
-                        maxhiders = 24;
-                    }else{
+                    if(counts[TEAM_BLUE] < 2){
                         maxhiders = 6; // Henkie 24/02/10 -> Was 4
+                    }else{
+                        maxhiders = seekers * 5 - 2;
                     }
                 }
 
