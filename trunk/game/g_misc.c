@@ -262,7 +262,14 @@ void SP_misc_bsp(gentity_t *ent)
 
     // Boe!Man 11/24/15: Make this entity permanent if spawned upon start of the map.
     if(level.time == level.startTime){
-        ent->s.eFlags = EF_PERMANENT;
+        // Boe!Man 12/16/15: Make sure they are not part of any section blocker.
+        if(Q_stricmp(ent->target, "nolower")
+        && Q_stricmp(ent->target, "noroof")
+        && Q_stricmp(ent->target, "nomiddle")
+        && Q_stricmp(ent->target, "nowhole")
+        ){
+            ent->s.eFlags = EF_PERMANENT;
+        }
     }
 
     // Mainly for debugging
@@ -705,7 +712,7 @@ void g_sectionAutoCheck(gentity_t *ent){
                     // Open the section.
                     ent->sectionState = OPENING;
                     G_Broadcast(va("%s ^7will be opened in %0.f seconds!", ent->message, ent->wait), BROADCAST_GAME, NULL);
-                    trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s will be opened in %0.f seconds.\n\"", ent->message2, ent->wait));
+                    trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s will be opened in %0.f seconds.\n\"", ent->message2 + 1, ent->wait));
                 }
                 break;
             case OPENED:
@@ -713,7 +720,7 @@ void g_sectionAutoCheck(gentity_t *ent){
                     // Close the section.
                     ent->sectionState = CLOSING;
                     G_Broadcast(va("%s ^7will be closed in %0.f seconds!", ent->message, ent->wait), BROADCAST_GAME, NULL);
-                    trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s will be closed in %0.f seconds.\n\"", ent->message2, ent->wait));
+                    trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s will be closed in %0.f seconds.\n\"", ent->message2 + 1, ent->wait));
                 }
                 break;
             case CLOSING:
@@ -724,7 +731,7 @@ void g_sectionAutoCheck(gentity_t *ent){
                     level.noLROpened[ent->section] = qfalse;
 
                 G_Broadcast(va("%s ^7closed!", ent->message), BROADCAST_GAME, NULL);
-                trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s is now closed.\n\"", ent->message2));
+                trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s is now closed.\n\"", ent->message2 + 1));
                 break;
             case OPENING:
                 // Open it now, the wait has passed.
@@ -734,7 +741,7 @@ void g_sectionAutoCheck(gentity_t *ent){
                     level.noLROpened[ent->section] = qtrue;
 
                 G_Broadcast(va("%s ^7opened!", ent->message), BROADCAST_GAME, NULL);
-                trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s is now opened.\n\"", ent->message2));
+                trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s is now opened.\n\"", ent->message2 + 1));
                 break;
             default:
                 break;
