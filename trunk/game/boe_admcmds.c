@@ -709,7 +709,7 @@ qboolean Boe_dev_f ( gentity_t *ent )
             Q_strncpyz(origin, va("%s %s %s", arg2, arg3, arg4), sizeof(origin));
         }
 
-        trap_SendServerCommand(ent - g_entities, va("print \"^1[Dev] ^7Spawning empty model on %s.\"", origin));
+        trap_SendServerCommand(ent - g_entities, va("print \"^1[Dev] ^7Spawning empty model on %s.\n\"", origin));
         AddSpawnField("origin", origin);
         G_SpawnGEntityFromSpawnVars(qfalse);
 
@@ -721,7 +721,7 @@ qboolean Boe_dev_f ( gentity_t *ent )
         }
 
         if (!ent->client->noclip){
-            trap_SendServerCommand(ent - g_entities, "print \"^1[Dev] ^7Turned on noclip for ya.\n\"");
+            trap_SendServerCommand(ent - g_entities, "print \"^1[Dev] ^7Turned on noclip (you'd be stuck otherwise).\n\"");
             ent->client->noclip = qtrue;
         }
 
@@ -737,7 +737,7 @@ qboolean Boe_dev_f ( gentity_t *ent )
             AddSpawnField("origin", va("%s %s %s", arg2, arg3, arg4));
         }
 
-        trap_SendServerCommand(ent - g_entities, va("print \"^1[Dev] ^7Spawning your BSP model.\""));
+        trap_SendServerCommand(ent - g_entities, va("print \"^1[Dev] ^7Spawning your BSP model.\n\""));
         AddSpawnField("angles", "0 90 0");
         AddSpawnField("model", "trigger_hurt"); //blocked_trigger
         AddSpawnField("count", "1");
