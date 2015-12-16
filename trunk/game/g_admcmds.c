@@ -2469,6 +2469,17 @@ int adm_swapTeams(int argNum, gentity_t *adm, qboolean shortCmd)
         return -1;
     }
 
+    // Boe!Man 12/16/15: Don't allow swapteams if the weapons are already given out.
+    if(current_gametype.value == GT_HS && level.messagedisplay1){
+        if (adm && adm->client) {
+            trap_SendServerCommand(adm - g_entities, "print \"^3[Info] ^7Swapteams is only possible before the weapons are given out.\n\"");
+        }else{
+            Com_Printf("^7Swapteams is only possible before the weapons are given out.\n");
+        }
+
+        return -1;
+    }
+
     // Toggle the setting if they're on the Match Settings screen instead of swapping the teams.
     if (cm_enabled.integer == 1){
         enabled = cm_aswap.integer == 1;
@@ -2498,81 +2509,101 @@ int adm_swapTeams(int argNum, gentity_t *adm, qboolean shortCmd)
         trap_Argv(1, score, sizeof(score));
     }
 
-    for (i = 0; i < level.numConnectedClients; i++){
-        ent = &g_entities[level.sortedClients[i]];
-        sess = &ent->client->sess;
+    // Boe!Man 12/16/15: Enforce the new round start here so seekers won't get released sooner then they are supposed to.
+    if (current_gametype.value == GT_HS){
+        for (i = 0; i < level.numConnectedClients; i++){
+            ent = &g_entities[level.sortedClients[i]];
 
-        // Do the team changing.
-        if (ent->client->sess.team == TEAM_SPECTATOR)
-            continue;
-        if (ent->client->pers.connected != CON_CONNECTED)
-            continue;
+            if (ent->client->sess.team == TEAM_RED){
+                ent->client->sess.team = TEAM_BLUE;
+            }else if (ent->client->sess.team == TEAM_BLUE){
+                ent->client->sess.team = TEAM_RED;
+            }
 
-        // Drop any gametype items they might have.
-        if (ent->s.gametypeitems > 0){
-            G_DropGametypeItems(ent, 0);
+            // Take care of the bots.
+            if (ent->r.svFlags & SVF_BOT){
+                char    userinfo[MAX_INFO_STRING];
+
+                trap_GetUserinfo(ent->s.number, userinfo, sizeof(userinfo));
+                Info_SetValueForKey(userinfo, "team", sess->team == TEAM_RED ? "red" : "blue");
+                trap_SetUserinfo(ent->s.number, userinfo);
+            }
         }
 
-        ///01.24.06e - 07:42pm - remove their weapons
-        ///and set them as a ghost
-        ent->client->ps.stats[STAT_WEAPONS] = 0;
-        TossClientItems(ent);
-        G_StartGhosting(ent);
-        ///End  - 01.24.06 - 07:43pm
+        G_ResetGametype(qtrue, qfalse);
+    }else{
+        for (i = 0; i < level.numConnectedClients; i++){
+            ent = &g_entities[level.sortedClients[i]];
+            sess = &ent->client->sess;
 
-        if (ent->client->sess.team == TEAM_RED){
-            ent->client->sess.team = TEAM_BLUE;
-        }else if (ent->client->sess.team == TEAM_BLUE){
-            ent->client->sess.team = TEAM_RED;
+            // Do the team changing.
+            if (ent->client->sess.team == TEAM_SPECTATOR)
+                continue;
+            if (ent->client->pers.connected != CON_CONNECTED)
+                continue;
+
+            // Drop any gametype items they might have.
+            if (ent->s.gametypeitems > 0){
+                G_DropGametypeItems(ent, 0);
+            }
+
+            ///01.24.06e - 07:42pm - remove their weapons
+            ///and set them as a ghost
+            ent->client->ps.stats[STAT_WEAPONS] = 0;
+            TossClientItems(ent);
+            G_StartGhosting(ent);
+            ///End  - 01.24.06 - 07:43pm
+
+            if (ent->client->sess.team == TEAM_RED){
+                ent->client->sess.team = TEAM_BLUE;
+            }else if (ent->client->sess.team == TEAM_BLUE){
+                ent->client->sess.team = TEAM_RED;
+            }
+
+            // Take care of the bots.
+            if (ent->r.svFlags & SVF_BOT){
+                char    userinfo[MAX_INFO_STRING];
+
+                trap_GetUserinfo(ent->s.number, userinfo, sizeof(userinfo));
+                Info_SetValueForKey(userinfo, "team", sess->team == TEAM_RED ? "red" : "blue");
+                trap_SetUserinfo(ent->s.number, userinfo);
+            }
+
+            ///Prepare the clients for team change then repawn
+            ///01.24.06 - 07:43pm
+            ent->client->pers.identity = NULL;
+            ClientUserinfoChanged(ent->s.number);
+            CalculateRanks();
+
+            G_StopFollowing(ent);
+            G_StopGhosting(ent);
+            trap_UnlinkEntity(ent);
+            ClientSpawn(ent);
         }
 
-        // Take care of the bots.
-        if (ent->r.svFlags & SVF_BOT){
-            char    userinfo[MAX_INFO_STRING];
-
-            trap_GetUserinfo(ent->s.number, userinfo, sizeof(userinfo));
-            Info_SetValueForKey(userinfo, "team", sess->team == TEAM_RED ? "red" : "blue");
-            trap_SetUserinfo(ent->s.number, userinfo);
+        // Reset gametype item.
+        find = NULL;
+        while (NULL != (find = G_Find(find, FOFS(classname), "gametype_item"))){
+            G_ResetGametypeItem(find->item);
         }
 
-        ///Prepare the clients for team change then repawn
-        ///01.24.06 - 07:43pm
-        ent->client->pers.identity = NULL;
-        ClientUserinfoChanged(ent->s.number);
-        CalculateRanks();
+        ///04.22.05 - 02:44am - swap scores & locks
+        if (!score[0]){
+            level.teamScores[TEAM_BLUE] = rs;
+            level.teamScores[TEAM_RED] = bs;
+        }
+        level.redLocked = bl;
+        level.blueLocked = rl;
+        ///End  - 04.22.05 - 02:45am
 
-        G_StopFollowing(ent);
-        G_StopGhosting(ent);
-        trap_UnlinkEntity(ent);
-        ClientSpawn(ent);
-    }
-
-    // Reset gametype item.
-    find = NULL;
-    while (NULL != (find = G_Find(find, FOFS(classname), "gametype_item"))){
-        G_ResetGametypeItem(find->item);
-    }
-
-    ///04.22.05 - 02:44am - swap scores & locks
-    if (!score[0]){
-        level.teamScores[TEAM_BLUE] = rs;
-        level.teamScores[TEAM_RED] = bs;
-    }
-    level.redLocked = bl;
-    level.blueLocked = rl;
-    ///End  - 04.22.05 - 02:45am
-
-    // Enable roundtime for gametypes without respawn intervals.
-    if (level.gametypeData->respawnType != RT_INTERVAL){
-        if (current_gametype.value == GT_HS){
-            level.gametypeDelayTime = level.time + hideSeek_roundstartdelay.integer * 1000;
-        }else{
+        // Enable roundtime for gametypes without respawn intervals.
+        if (level.gametypeData->respawnType != RT_INTERVAL){
             level.gametypeDelayTime = level.time + g_roundstartdelay.integer * 1000;
-        }
 
-        level.gametypeRoundTime = level.time + (g_roundtimelimit.integer * 60000);
-        if (level.gametypeDelayTime != level.time){
-            trap_SetConfigstring(CS_GAMETYPE_TIMER, va("%i", level.gametypeRoundTime));
+            level.gametypeRoundTime = level.time + (g_roundtimelimit.integer * 60000);
+            if (level.gametypeDelayTime != level.time){
+                trap_SetConfigstring(CS_GAMETYPE_TIMER, va("%i", level.gametypeRoundTime));
+            }
         }
     }
 
