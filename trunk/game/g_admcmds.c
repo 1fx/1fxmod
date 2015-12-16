@@ -2007,7 +2007,7 @@ static void adm_showBanList(int argNum, gentity_t *adm, qboolean shortCmd, qbool
         Com_Printf("^3 %-4s %-15s %-15s %-18s By\n", "#", "IP", "Name", "Reason");
         Com_Printf("^7------------------------------------------------------------------------\n");
     }else{
-        Com_Printf("#\tIP\tName\tReason\n");
+        Com_Printf("#\tIP\tName\tReason\tBy\n");
     }
 
     if(subnet){
@@ -3299,8 +3299,8 @@ int adm_adminList(int argNum, gentity_t *adm, qboolean shortCmd)
 {
     // We use this in order to send as little packets as possible.
     // Packet max size is 1024 minus some overhead, 1000 char. max should take care of this. (adm only, RCON remains unaffected).
-    char             arg[32] = "\0";
-    char             buf2[1000] = "\0";
+    char             arg[32];
+    char             buf2[1000];
     qboolean         passwordList = qfalse; // If this is true, the user wishes to see the passworded Admins.
     // SQLite variables.
     sqlite3         *db;
@@ -3308,10 +3308,11 @@ int adm_adminList(int argNum, gentity_t *adm, qboolean shortCmd)
     int              rc;
     // We use the following variable for filter options.
     char            *filterQuery;
+    qboolean        noFormat = qfalse;
 
     // Open users database.
     db = usersDb;
-    Q_strlwr(arg);
+    memset(buf2, 0, sizeof(buf2));
 
     // Check for password argument.
     if(shortCmd){
@@ -3325,7 +3326,7 @@ int adm_adminList(int argNum, gentity_t *adm, qboolean shortCmd)
         trap_Argv( argNum, arg, sizeof( arg ) );
     }
 
-    if(strstr(arg, "pass")){
+    if(Q_stricmp(arg, "pass") == 0){
         passwordList = qtrue;
     }
 
@@ -3340,17 +3341,36 @@ int adm_adminList(int argNum, gentity_t *adm, qboolean shortCmd)
         return -1;
     }
 
-    // Check if we can apply filters.
-    filterQuery = adm_checkListFilters(adm, argNum, shortCmd, "adminlist", "added");
-    if (!filterQuery) // The call returned NULL, meaning we should quit parsing the list.
-        return -1;
+    // Check if we should apply no formatting to the output (API).
+    if(!adm){
+        if(!passwordList){
+            trap_Argv(argNum, arg, sizeof(arg));
+        }else{
+            trap_Argv(argNum + 1, arg, sizeof(arg));
+        }
+
+        if(Q_stricmp(arg, "noformat") == 0){
+            noFormat = qtrue;
+        }
+    }
+
+    if(!noFormat){
+        // Check if we can apply filters.
+        filterQuery = adm_checkListFilters(adm, argNum, shortCmd, "adminlist", "added");
+        if (!filterQuery) // The call returned NULL, meaning we should quit parsing the list.
+            return -1;
+    }else{
+        filterQuery = " ";
+    }
 
     // Display header.
     if(adm && adm->client){
         Q_strcat(buf2, sizeof(buf2), va("^3 %-6s%-5s%-16s%-22sBy\n^7------------------------------------------------------------------------\n", "#", "Lvl", "IP", "Name"));
-    }else{
+    }else if(!noFormat){
         Com_Printf("^3 %-6s%-5s%-16s%-22sBy\n", "#", "Lvl", "IP", "Name");
         Com_Printf("^7------------------------------------------------------------------------\n");
+    }else{
+        Com_Printf("#\tLvl\tIP\tName\tBy\n");
     }
 
     if(!passwordList){
@@ -3376,7 +3396,11 @@ int adm_adminList(int argNum, gentity_t *adm, qboolean shortCmd)
                 }
                 Q_strcat(buf2, sizeof(buf2), va("[^3%-3.3i^7%-3s[^3%i^7%-3s%-15.15s %-21.21s %-21.21s\n", sqlite3_column_int(stmt, 0), "]", sqlite3_column_int(stmt, 1), "]", sqlite3_column_text(stmt, 2), sqlite3_column_text(stmt, 3), sqlite3_column_text(stmt, 4)));
             }else{
-                Com_Printf("[^3%-3.3i^7%-3s[^3%i^7%-3s%-15.15s %-21.21s %-21.21s\n", sqlite3_column_int(stmt, 0), "]", sqlite3_column_int(stmt, 1), "]", sqlite3_column_text(stmt, 2), sqlite3_column_text(stmt, 3), sqlite3_column_text(stmt, 4));
+                if(!noFormat){
+                    Com_Printf("[^3%-3.3i^7%-3s[^3%i^7%-3s%-15.15s %-21.21s %-21.21s\n", sqlite3_column_int(stmt, 0), "]", sqlite3_column_int(stmt, 1), "]", sqlite3_column_text(stmt, 2), sqlite3_column_text(stmt, 3), sqlite3_column_text(stmt, 4));
+                }else{
+                    Com_Printf("%d\t%d\t%s\t%s\t%s\n", sqlite3_column_int(stmt, 0), sqlite3_column_int(stmt, 1), sqlite3_column_text(stmt, 2), sqlite3_column_text(stmt, 3),sqlite3_column_text(stmt, 4));
+                }
             }
         }
     }
@@ -3386,8 +3410,10 @@ int adm_adminList(int argNum, gentity_t *adm, qboolean shortCmd)
     // Boe!Man 11/04/11: Fix for RCON not properly showing footer of banlist.
     if(adm && adm->client){
         trap_SendServerCommand( adm-g_entities, va("print \"%s\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\"", buf2)); // Boe!Man 11/04/11: Also send the last buf2 (that wasn't filled as a whole yet).
-    }else{
+    }else if(!noFormat){
         Com_Printf("\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n");
+    }else{
+        Com_Printf("\n");
     }
 
     return -1;
@@ -3405,28 +3431,46 @@ int adm_clanList(int argNum, gentity_t *adm, qboolean shortCmd)
 {
     // We use this in order to send as little packets as possible.
     // Packet max size is 1024 minus some overhead, 1000 char. max should take care of this. (adm only, RCON remains unaffected).
-    char             buf2[1000]     = "\0";
+    char            arg[32];
+    char            buf2[1000];
     // SQLite variables.
     sqlite3         *db;
     sqlite3_stmt    *stmt;
-    int              rc;
+    int             rc;
     // We use the following variable for filter options.
     char            *filterQuery;
+    qboolean        noFormat = qfalse;
 
     // Open database.
     db = usersDb;
+    memset(buf2, 0, sizeof(buf2));
 
-    // Check if we can apply filters.
-    filterQuery = adm_checkListFilters(adm, argNum, shortCmd, "clanlist", "added");
-    if (!filterQuery) // The call returned NULL, meaning we should quit parsing the list.
-        return -1;
+    // Check if we should apply no formatting to the output (API).
+    if(!adm){
+        trap_Argv(argNum, arg, sizeof(arg));
+
+        if(Q_stricmp(arg, "noformat") == 0){
+            noFormat = qtrue;
+        }
+    }
+
+    if(!noFormat){
+        // Check if we can apply filters.
+        filterQuery = adm_checkListFilters(adm, argNum, shortCmd, "clanlist", "added");
+        if (!filterQuery) // The call returned NULL, meaning we should quit parsing the list.
+            return -1;
+    }else{
+        filterQuery = " ";
+    }
 
     // Display header.
     if(adm && adm->client){
         Q_strcat(buf2, sizeof(buf2), va("^3 %-6s%-16s%-22sBy\n^7------------------------------------------------------------------------\n", "#", "IP", "Name"));
-    }else{
+    }else if(!noFormat){
         Com_Printf("^3 %-6s%-16s%-22sBy\n", "#", "IP", "Name");
         Com_Printf("^7------------------------------------------------------------------------\n");
+    }else{
+        Com_Printf("#\tIP\tName\tBy\n");
     }
 
     rc = sqlite3_prepare(db, va("select ROWID,IP,name,by from clanmembers%sorder by ROWID", filterQuery), -1, &stmt, 0);
@@ -3449,7 +3493,11 @@ int adm_clanList(int argNum, gentity_t *adm, qboolean shortCmd)
                 }
                 Q_strcat(buf2, sizeof(buf2), va("[^3%-3.3i^7%-3s%-15.15s %-21.21s %-21.21s\n", sqlite3_column_int(stmt, 0),"]", sqlite3_column_text(stmt, 1), sqlite3_column_text(stmt, 2), sqlite3_column_text(stmt, 3)));
             }else{
-                Com_Printf("[^3%-3.3i^7%-3s%-15.15s %-21.21s %-21.21s\n", sqlite3_column_int(stmt, 0), "]", sqlite3_column_text(stmt, 1), sqlite3_column_text(stmt, 2), sqlite3_column_text(stmt, 3));
+                if(!noFormat){
+                    Com_Printf("[^3%-3.3i^7%-3s%-15.15s %-21.21s %-21.21s\n", sqlite3_column_int(stmt, 0), "]", sqlite3_column_text(stmt, 1), sqlite3_column_text(stmt, 2), sqlite3_column_text(stmt, 3));
+                }else{
+                    Com_Printf("%d\t%s\t%s\t%s\n", sqlite3_column_int(stmt, 0), sqlite3_column_text(stmt, 1), sqlite3_column_text(stmt, 2), sqlite3_column_text(stmt, 3));
+                }
             }
         }
     }
@@ -3459,8 +3507,10 @@ int adm_clanList(int argNum, gentity_t *adm, qboolean shortCmd)
     // Boe!Man 11/04/11: Fix for RCON not properly showing footer of banlist.
     if(adm && adm->client){
         trap_SendServerCommand( adm-g_entities, va("print \"%s\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\"", buf2)); // Boe!Man 11/04/11: Also send the last buf2 (that wasn't filled as a whole yet).
-    }else{
+    }else if(!noFormat){
         Com_Printf("\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n");
+    }else{
+        Com_Printf("\n");
     }
 
     return -1;
