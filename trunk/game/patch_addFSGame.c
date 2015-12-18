@@ -10,20 +10,25 @@
 
 #include "patch_local.h"
 
-// Addresses hard-defined for the FS_AddGameDirectory routine in the engine.
+// Addresses hard-defined for the FS_AddGameDirectory routine in the engine,
+// and also the fs_gamedir buffer that contains the last loaded mod dir.
 #ifdef _WIN32
 #ifdef _GOLD
 #define FS_ADDGAMEDIR 0x00451630
+#define FS_GAMEDIRBUF 0x00B55898
 #else
 #define FS_ADDGAMEDIR 0x00450420
+#define FS_GAMEDIRBUF 0x00B2C9F0
 #endif // _GOLD
 #endif // _WIN32
 
 #ifdef __linux__
 #ifdef _GOLD
 #define FS_ADDGAMEDIR 0x080889b4
+#define FS_GAMEDIRBUF 0x08237f80
 #else
 #define FS_ADDGAMEDIR "$0x08084808"
+#define FS_GAMEDIRBUF 0x0828d3a0
 #endif // _GOLD
 #endif // __linux__
 
@@ -83,4 +88,8 @@ void Patch_addAdditionalFSGame(char *searchpath)
     if(tempCvarValue[0]){
         FS_AddGameDirectory(tempCvarValue, searchpath);
     }
+
+    // Reset the fs_gamedir buffer to 1fx, so the file system doesn't break,
+    // such as logs written to new searchpath etc.
+    Q_strncpyz((char *)FS_GAMEDIRBUF, "1fx", MAX_OSPATH);
 }
