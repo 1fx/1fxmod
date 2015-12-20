@@ -1961,6 +1961,7 @@ void G_switchToNextMapInCycle(qboolean force)
     TGPGroup        mapSubGroup;
     fileHandle_t    mapFile;
     char            *mapStrStart, *mapStrEnd;
+    qboolean        tryNextMap = qfalse;
 
     // Check if we're running a mapcycle.
     if (!*g_mapcycle.string || !Q_stricmp (g_mapcycle.string, "none")){
@@ -2028,8 +2029,25 @@ void G_switchToNextMapInCycle(qboolean force)
         mapSubGroup = trap_GPG_FindSubGroup (mcGroup, va("map%d", mapIndex));
         if (!mapSubGroup){
             if(mapIndex == 0){
-                // No recursive loops.
+                if(mapStart > 1){
+                    // map0 seems to be invalid, try map1 as backup.
+                    G_LogPrintf("ERROR: map0 in the mapcycle is missing!\n");
+                    tryNextMap = qtrue;
+                    mapIndex++;
+                    continue;
+                }else{
+                    // No recursive loops if we're not coming from a higher map.
+                    level.mcSkipMaps = 0;
+                    G_LogPrintf("ERROR: map0 in the mapcycle is missing!\n");
+                    G_LogPrintf("Bailing out by switching to mp_shop for your sake...\n");
+                    trap_SendConsoleCommand(EXEC_APPEND, "map mp_shop\n");
+                    break;
+                }
+            }else if(mapIndex == 1 && tryNextMap){
                 level.mcSkipMaps = 0;
+                G_LogPrintf("ERROR: Tried map1, but it can also not be found!\n");
+                G_LogPrintf("Bailing out by switching to mp_shop for your sake...\n");
+                trap_SendConsoleCommand(EXEC_APPEND, "map mp_shop\n");
                 break;
             }else{
                 mapIndex = 0;
