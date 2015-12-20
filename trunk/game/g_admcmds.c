@@ -1172,7 +1172,8 @@ Disables or enables nades.
 */
 
 int adm_noNades(int argNum, gentity_t *adm, qboolean shortCmd){
-    int i, state;
+    int     i, state;
+    char    *available;
 
     // Boe!Man 1/19/11: Disable NN in H&S.
     if (current_gametype.value == GT_HS){
@@ -1191,20 +1192,41 @@ int adm_noNades(int argNum, gentity_t *adm, qboolean shortCmd){
         }
 
         return -1;
-    }else if (!level.nadesFound){
-        if (adm && adm->client){
-            trap_SendServerCommand(adm-g_entities, "print\"^3[Info] ^7No nades are set to be used (availableWeapons CVAR).\n\"");
-        }else{
-            Com_Printf("No nades are set to be used (availableWeapons CVAR).\n");
-        }
-
-        return -1;
     }
 
+    // Check if there are nades ready to be re-enabled.
+    // Dynamically enabling nades in-game can alter the nades found state,
+    // meaning we have to re-check if they were enabled to begin with (in the availableWeapons CVAR).
     if (g_disableNades.integer > 0){
+        level.nadesFound = qfalse;
+
+        available = calloc(level.wpNumWeapons + 1, sizeof(char));
+        if(available != NULL){
+            strncpy(available, availableWeapons.string, (strlen(availableWeapons.string) <= level.wpNumWeapons) ? strlen(availableWeapons.string) : level.wpNumWeapons);
+
+            for(i = level.grenadeMin; i <= level.grenadeMax; i++){
+                if(available[i - 1] == '1' || available[i - 1] == '2'){
+                    level.nadesFound = qtrue;
+                    break;
+                }
+            }
+
+            free(available);
+        }
+
         state = 0;
     }else{
         state = 1;
+    }
+
+    if(!level.nadesFound){
+        if (adm && adm->client){
+            trap_SendServerCommand(adm-g_entities, "print\"^3[Info] ^7No nades are set to be used (enable nades with /adm toggleweapon or !wp).\n\"");
+        }else{
+            Com_Printf("No nades are set to be used (enable nades with toggleweapon).\n");
+        }
+
+        return -1;
     }
 
     g_disableNades.integer = state;
@@ -4188,6 +4210,41 @@ int adm_toggleWeapon(int argNum, gentity_t *adm, qboolean shortCmd)
     // Set the available weapons for the client.
     G_UpdateAvailableWeapons();
     BG_SetAvailableOutfitting(g_availableWeapons.string);
+
+    // Grenades need to be enabled for the nonades Admin command as well.
+    if(wpNum >= level.grenadeMin && wpNum <= level.grenadeMax){
+        if(enable){
+            // Disable the nonades check, since we just enabled one.
+            if(g_disableNades.integer > 0){
+                trap_Cvar_Set("g_disableNades", "0");
+                trap_Cvar_Update(&g_disableNades);
+            }
+
+            level.nadesFound = qtrue;
+        }else{
+            level.nadesFound = qfalse;
+
+            for(i = level.grenadeMin; i <= level.grenadeMax; i++){
+                item = BG_FindWeaponItem((weapon_t)i);
+
+                if(!item){
+                    continue;
+                }
+
+                if(trap_Cvar_VariableIntegerValue(va("disable_%s", item->classname)) == 0){
+                    // One grenade is enabled, so there are still nades in play.
+                    level.nadesFound = qtrue;
+                    break;
+                }
+            }
+
+            // No nades left in play but they are enabled, disable them so nonades knows they can be re-enabled.
+            if(!level.nadesFound && g_disableNades.integer == 0){
+                trap_Cvar_Set("g_disableNades", "1");
+                trap_Cvar_Update(&g_disableNades);
+            }
+        }
+    }
 
     for (i = 0; i < level.numConnectedClients; i++){
         ent = &g_entities[level.sortedClients[i]];
