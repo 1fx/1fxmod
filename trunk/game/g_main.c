@@ -3048,7 +3048,7 @@ void CheckVote( void )
             }
         }
 
-        if(!strcmp(level.voteString, "mapcycle") == 0 ){
+        if(strcmp(level.voteString, "mapcycle") == 0 ){
             G_switchToNextMapInCycle(qfalse);
         }else{
             trap_SendConsoleCommand( EXEC_APPEND, va("%s\n", level.voteString ) );
