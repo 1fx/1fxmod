@@ -24,10 +24,13 @@ server if they are disabled.
 static void G_removeExtraWeapons()
 {
     // Boe!Man 12/21/15: If the M203 is disabled, make sure we never get any grenades for it.
-    if(g_enableM203.integer == 0){
+    if(g_enableM203.integer == 0 && current_gametype.value != GT_HS && current_gametype.value != GT_HZ){
         weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_ALTERNATE].clipSize = 0;
         weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_ALTERNATE].extraClips = 0;
-        ammoData[AMMO_40].max = 0;
+
+        if(!g_pickupsDisabled.integer && (current_gametype.value == GT_DM || current_gametype.value == GT_TDM)){
+            ammoData[AMMO_40].max = 0;
+        }
     }
 }
 
