@@ -1533,6 +1533,7 @@ extern  vmCvar_t    g_forceFollow;
 extern  vmCvar_t    g_followEnemy;
 extern  vmCvar_t    g_mapcycle;
 extern  vmCvar_t    g_pickupsDisabled;
+extern  vmCvar_t    g_enableM203;
 extern  vmCvar_t    g_suicidePenalty;
 extern  vmCvar_t    g_teamkillPenalty;
 extern  vmCvar_t    g_teamkillDamageMax;

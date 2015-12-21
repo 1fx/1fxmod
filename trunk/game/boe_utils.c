@@ -13,11 +13,31 @@
 #endif
 
 /*
+==============
+G_removeExtraWeapons
+12/21/15 - 1:16 PM
+Removes additional weapons from the
+server if they are disabled.
+==============
+*/
+
+static void G_removeExtraWeapons()
+{
+    // Boe!Man 12/21/15: If the M203 is disabled, make sure we never get any grenades for it.
+    if(g_enableM203.integer == 0){
+        weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_ALTERNATE].clipSize = 0;
+        weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_ALTERNATE].extraClips = 0;
+        ammoData[AMMO_40].max = 0;
+    }
+}
+
+/*
 ================
-RPM_WeaponMod
+G_WeaponMod
 ================
 */
-void RPM_WeaponMod (void)
+
+void G_WeaponMod (void)
 {
     void            *GP2, *group, *attackType;
     char            name[64], tmpStr[64];
@@ -66,6 +86,8 @@ void RPM_WeaponMod (void)
         if(ammoMaxs != NULL){
             free(ammoMaxs);
         }
+
+        G_removeExtraWeapons();
         return;
     }
 
@@ -147,6 +169,8 @@ void RPM_WeaponMod (void)
     if (ammoMaxs != NULL) {
         free(ammoMaxs);
     }
+
+    G_removeExtraWeapons();
 }
 
 /*

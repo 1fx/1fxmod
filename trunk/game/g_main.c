@@ -111,6 +111,7 @@ vmCvar_t    g_forceFollow;
 vmCvar_t    g_followEnemy;
 vmCvar_t    g_mapcycle;
 vmCvar_t    g_pickupsDisabled;              // Whether or not pickups are available in a map (uses outfitting if not)
+vmCvar_t    g_enableM203;                   // Whether or not M203 grenades are enabled on the M4.
 vmCvar_t    g_suicidePenalty;               // Amount of score added for killing yourself (typically negative)
 vmCvar_t    g_teamkillPenalty;              // Amount of score added for killing a teammates (typically negative)
 vmCvar_t    g_teamkillDamageMax;            // max damage one can do to teammates before being kicked
@@ -453,6 +454,7 @@ static cvarTable_t gameCvarTable[] =
     { &g_mapcycle,          "sv_mapcycle",       "none",        CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 
     { &g_pickupsDisabled,   "g_pickupsDisabled", "0",                   CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
+    { &g_enableM203,        "g_enableM203",      "0",                   CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
 
     { &g_suicidePenalty,    "g_suicidePenalty",  "-1",                  CVAR_ARCHIVE,   0.0f,   0.0f,   0,  qfalse },
 
@@ -1610,8 +1612,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 
     BG_ParseInviewFile();
 
-    RPM_WeaponMod();
-    //BG_InitWeaponStats(qfalse); // Henk 22/01/11 -> Parse other stats :)
+    G_WeaponMod();
 
     ClearRegisteredItems();
     if(current_gametype.value == GT_HS){

@@ -523,7 +523,7 @@ void Svcmd_ExtendTime_f(void);
 qboolean IsClientMuted(gentity_t *ent, qboolean message);
 qboolean AddMutedClient(gentity_t *ent, int time);
 qboolean RemoveMutedClient(gentity_t *ent);
-void RPM_WeaponMod (void);
+void G_WeaponMod (void);
 int FormatDamage(int damage);
 
 extern vmCvar_t g_enableCustomCommands;

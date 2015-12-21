@@ -1435,7 +1435,7 @@ static void adm_Damage(gentity_t *adm, char *damageName, int value)
     }
 
     g_instaGib.integer = value;
-    RPM_WeaponMod();
+    G_WeaponMod();
 
     for (i = 0; i < level.numConnectedClients; i++){
         level.clients[level.sortedClients[i]].noOutfittingChange = qfalse;
