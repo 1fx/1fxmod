@@ -45,10 +45,28 @@ int process_dml_row(void *pData, int nColumns,
 qboolean G_isCountryDatabaseInitialized()
 {
     qboolean result;
+    int i;
 
     pthread_mutex_lock(&level.countryInitLock);
     result = level.countryInitialized;
     pthread_mutex_unlock(&level.countryInitLock);
+
+    if(!level.countryPostProcessed && result){
+        // Boe!Man 6/25/13: Parse the clients their country now.
+        for (i = 0; i < level.numConnectedClients; i++){
+            gentity_t* ent = &g_entities[level.sortedClients[i]];
+
+            if (ent->client->pers.connected != CON_CONNECTED)
+                continue;
+
+            if (ent->r.svFlags & SVF_BOT)
+                continue;
+
+            HENK_COUNTRY(ent);
+        }
+
+        level.countryPostProcessed = qtrue;
+    }
 
     return result;
 }
@@ -92,20 +110,6 @@ void *Thread_countryInit(){
     sqlite3_exec(countryDb, "BEGIN", NULL, NULL, NULL);
     sqlite3_exec(countryDb, "SELECT name FROM country.sqlite_master WHERE type='table'", &process_dml_row, countryDb, NULL);
     sqlite3_exec(countryDb, "COMMIT", NULL, NULL, NULL);
-
-    // Boe!Man 6/25/13: Parse the clients their country now.
-    for (i = 0; i < level.numConnectedClients; i++){
-        gentity_t* ent = &g_entities[level.sortedClients[i]];
-
-        if (ent->client->pers.connected != CON_CONNECTED)
-            continue;
-
-        if (ent->r.svFlags & SVF_BOT)
-            continue;
-
-        HENK_COUNTRY(ent);
-    }
-
 
     // Boe!Man 6/25/13: The game can use the country system now..
     pthread_mutex_lock(&level.countryInitLock);

@@ -916,8 +916,9 @@ typedef struct
 
     int         sqlBackupTime;      // Boe!Man 5/27/13: The interval for backing up the in-memory databases to disk.
 
-    pthread_mutex_t countryInitLock;    // Boe!Man 12/24/15: Mutex lock for the country database initialization.
-    qboolean        countryInitialized; // Boe!Man 6/25/13: True if the country database is fully initialized. Protected by mutex.
+    qboolean        countryInitialized;     // Boe!Man 6/25/13: True if the country database is fully initialized. Protected by mutex.
+    pthread_mutex_t countryInitLock;        // Boe!Man 12/24/15: Mutex lock for the country database initialization.
+    qboolean        countryPostProcessed;   // Boe!Man 12/24/15: True when the post processing is finished after thread completion.
 
     int         nextSound;      // Boe!Man 5/30/15: Sound index for the next sound, if found.
 
