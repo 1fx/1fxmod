@@ -638,8 +638,9 @@ extern      sqlite3     *usersDb;
 extern      qboolean    dbsLoaded;
 extern      char        tempName[16];
 
-void        LoadCountries           (void);
-void        UnloadCountries         (void);
+qboolean    G_isCountryDatabaseInitialized  (void);
+void        LoadCountries                   (void);
+void        UnloadCountries                 (void);
 
 // Boe!Man 1/2/13: --- SQLite3 Related CVARs ---
 extern      vmCvar_t        sql_aliasFlushCount;

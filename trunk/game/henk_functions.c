@@ -42,6 +42,17 @@ int process_dml_row(void *pData, int nColumns,
         return 0;
 }
 
+qboolean G_isCountryDatabaseInitialized()
+{
+    qboolean result;
+
+    pthread_mutex_lock(&level.countryInitLock);
+    result = level.countryInitialized;
+    pthread_mutex_unlock(&level.countryInitLock);
+
+    return result;
+}
+
 void *Thread_countryInit(){
     int         rc, i;
     sqlite3     *db;
@@ -51,7 +62,7 @@ void *Thread_countryInit(){
     // Boe!Man 12/6/12
     // The file can be on two locations. The DLL should always be in the fs_game folder, however, this could be misconfigured.
     // The Mod takes care of this problem and should load the file correctly, even if misplaced.
-    rc = sqlite3_open_v2("./core/country.db", &db, SQLITE_OPEN_READONLY, NULL); // Boe!Man 12/5/12: *_v2 can make sure an empty database is NOT created. After all, the inview db is READ ONLY.
+    rc = sqlite3_open_v2("./core/country.db", &db, SQLITE_OPEN_READONLY, NULL); // Boe!Man 12/5/12: *_v2 can make sure an empty database is NOT created. After all, the country db is READ ONLY.
     if(rc){
         trap_Cvar_VariableStringBuffer("fs_game", fsGame, sizeof(fsGame));
         rc = sqlite3_open_v2(va("./%s/core/country.db", fsGame), &db, SQLITE_OPEN_READONLY, NULL);
@@ -97,7 +108,9 @@ void *Thread_countryInit(){
 
 
     // Boe!Man 6/25/13: The game can use the country system now..
+    pthread_mutex_lock(&level.countryInitLock);
     level.countryInitialized = qtrue;
+    pthread_mutex_unlock(&level.countryInitLock);
 }
 
 //Henk 12/10/12 -> Copy country database to an in memory database.
@@ -117,7 +130,6 @@ void LoadCountries(){
         trap_Cvar_Set("g_checkCountry", "0");
         trap_Cvar_Update(&g_checkCountry);
         G_ShutdownGame(1); // Restart the game module.
-        return;
         #endif
     }
 }

@@ -915,7 +915,9 @@ typedef struct
     qboolean    altEnt;         // Boe!Man 1/27/13: If this is true, an alternative ent was loaded and will be loaded again when a !mr is issued.
 
     int         sqlBackupTime;      // Boe!Man 5/27/13: The interval for backing up the in-memory databases to disk.
-    qboolean    countryInitialized; // Boe!Man 6/25/13: True if the country database is fully initialized.
+
+    pthread_mutex_t countryInitLock;    // Boe!Man 12/24/15: Mutex lock for the country database initialization.
+    qboolean        countryInitialized; // Boe!Man 6/25/13: True if the country database is fully initialized. Protected by mutex.
 
     int         nextSound;      // Boe!Man 5/30/15: Sound index for the next sound, if found.
 

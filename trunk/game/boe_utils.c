@@ -1202,16 +1202,18 @@ void Boe_Players(gentity_t *ent)
 {
     char *admin;
     char *clan;
-    qboolean hasClient;
+    qboolean hasClient, displayCountry;
     char client[12], id[9], ping[10], name[41];
     char *mute;
     int i, color;
 
     // Boe!Man 5/30/15: Only print the country column if countries are indeed enabled.
-    if (g_checkCountry.integer > 0) {
+    if (g_checkCountry.integer > 0 && G_isCountryDatabaseInitialized()) {
         trap_SendServerCommand(ent - g_entities, va("print \"\n^3%-5s%-37s %-5s Coun Adm Cln Mut Ver\n\"", "Id#", "Name", "Ping"));
+        displayCountry = qtrue;
     }else{
         trap_SendServerCommand(ent - g_entities, va("print \"\n^3%-5s%-37s %-5s Adm Cln Mut Ver\n\"", "Id#", "Name", "Ping"));
+        displayCountry = qfalse;
     }
 
     trap_SendServerCommand( ent-g_entities, "print \"^7------------------------------------------------------------------------\n\"");
@@ -1304,7 +1306,7 @@ void Boe_Players(gentity_t *ent)
         }
 
         // Print the line containing client specifics.
-        if (g_checkCountry.integer > 0) {
+        if (displayCountry) {
             trap_SendServerCommand(ent - g_entities, va("print \"%-9s%-42s%-10s[^3%s^7] %-3s %-3s %-3s %s\n\"",
                 id, name, ping, level.clients[i].sess.countryext, admin, clan, mute, client));
         }else{
@@ -1361,7 +1363,7 @@ void Boe_Stats ( gentity_t *ent )
         snaps   = Info_ValueForKey ( userinfo, "snaps" );
 
         // Boe!Man 5/14/11: Check if the checking of countries is enabled.
-        if(g_checkCountry.integer && level.countryInitialized){
+        if(g_checkCountry.integer && G_isCountryDatabaseInitialized()){
             country = ent->client->sess.country;
         }
 
@@ -1468,7 +1470,7 @@ void Boe_Stats ( gentity_t *ent )
         snaps   = Info_ValueForKey ( userinfo, "snaps" );
 
         // Boe!Man 5/14/11: Check if the checking of countries is enabled.
-        if(g_checkCountry.integer && level.countryInitialized){
+        if(g_checkCountry.integer && G_isCountryDatabaseInitialized()){
             country = g_entities[idnum].client->sess.country;
         }
 
@@ -1533,7 +1535,7 @@ void Boe_Stats ( gentity_t *ent )
         trap_SendServerCommand( ent-g_entities, va("print \"%-23s%s\n", "[^3IP^7]", ip));
     }
     // Boe!Man 5/14/11: Check if the checking of countries is enabled.
-    if(g_checkCountry.integer && level.countryInitialized){
+    if(g_checkCountry.integer && G_isCountryDatabaseInitialized()){
         trap_SendServerCommand( ent-g_entities, va("print \"%-23s%s\n", "[^3Country^7]", country));
     }
 

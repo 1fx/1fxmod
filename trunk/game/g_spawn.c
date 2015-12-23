@@ -1238,7 +1238,7 @@ void SP_worldspawn( void )
     // Boe!Man 10/14/12: New check for the CTB minigame.
     trap_Cvar_VariableStringBuffer ( "mapname", level.mapname, MAX_QPATH );
     G_SpawnString( "minigame", "", &text );
-    if(strstr(level.mapname, "col9") && current_gametype.value == GT_HS && strstr(text, "ctb")){
+    if(strcmp(text, "ctb") == 0 && Q_stricmp(level.mapname, "col9") == 0 && current_gametype.value == GT_HS){
         level.crossTheBridge = qtrue;
         Com_Printf("Cross The Bridge entity file, reloading weapon file.\n");
         G_WeaponMod();

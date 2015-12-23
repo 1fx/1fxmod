@@ -1811,7 +1811,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
         G_LogPrintf("ClientConnect: [%i] %s\n", clientNum, client->pers.ip);
     }
     // Boe!Man 3/31/10: First off we search in the Country database.
-    if(g_checkCountry.integer && level.countryInitialized && !strstr(ent->client->sess.country, "noneandempty")){
+    if(g_checkCountry.integer && G_isCountryDatabaseInitialized() && !strstr(ent->client->sess.country, "noneandempty")){
         if(isBot){
             strcpy(ent->client->sess.country, "None");
             strcpy(ent->client->sess.countryext, "??");
@@ -1830,7 +1830,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
     // don't do the "xxx connected" messages if they were caried over from previous level
     if ( firstTime )
     {
-        if(g_checkCountry.integer && level.countryInitialized){
+        if(g_checkCountry.integer && G_isCountryDatabaseInitialized()){
             trap_SendServerCommand( -1, va("print \"%s ^5[%s]^7 is connecting...\n\"", client->pers.cleanName, client->sess.country) );
         }else{
             trap_SendServerCommand( -1, va("print \"%s ^7 is connecting...\n\"", client->pers.cleanName));
