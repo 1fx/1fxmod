@@ -1399,27 +1399,28 @@ void G_InitMutesFromSession ( void );
 //
 // g_bot.c
 //
-void G_InitBots( qboolean restart );
-char *G_GetBotInfoByNumber( int num );
-char *G_GetBotInfoByName( const char *name );
-void G_CheckBotSpawn( void );
-void G_RemoveQueuedBotBegin( int clientNum );
-qboolean G_BotConnect( int clientNum, qboolean restart );
-void Svcmd_AddBot_f( void );
-void Svcmd_BotList_f( void );
-void BotInterbreedEndMatch( void );
-void Boe_kickSpecBots(void);
 
-qboolean G_DoesMapSupportGametype ( const char* gametype );
-qboolean Henk_DoesMapSupportGametype(const char* gametype, char *mapname);
-//Ryan
-qboolean G_DoesMapExist             ( const char* mapname );
-//Ryan
-void G_LoadArenas ( void );
+void        G_InitBots                  ( qboolean restart );
+char        *G_GetBotInfoByNumber       ( int num );
+char        *G_GetBotInfoByName         ( const char *name );
+void        G_CheckBotSpawn             ( void );
+void        G_RemoveQueuedBotBegin      ( int clientNum );
+qboolean    G_BotConnect                ( int clientNum, qboolean restart );
+void        Svcmd_AddBot_f              ( void );
+void        Svcmd_BotList_f             ( void );
+void        BotInterbreedEndMatch       ( void );
+void        Boe_kickSpecBots            ( void );
+
+const char  *G_GetArenaInfoByMap        ( const char *map );
+qboolean    G_DoesMapSupportGametype    ( const char* gametype );
+qboolean    Henk_DoesMapSupportGametype ( const char* gametype, char *mapname );
+qboolean    G_DoesMapExist              ( const char* mapname );
+void        G_LoadArenas ( void );
 
 //
 // g_gametype.c
 //
+
 gentity_t*  G_SelectGametypeSpawnPoint          ( team_t team, vec3_t origin, vec3_t angles );
 gentity_t*  G_SpawnGametypeItem                 ( const char* pickup_name, qboolean dropped );
 gentity_t*  G_SelectRandomGametypeSpawnPoint    ( team_t team );

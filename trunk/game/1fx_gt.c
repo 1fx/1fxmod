@@ -15,7 +15,7 @@ int     GT_Event    ( int cmd, int time, int arg0, int arg1, int arg2, int arg3,
 
 gametypeLocals_t    gametype;
 
-typedef struct 
+typedef struct
 {
     vmCvar_t    *vmCvar;
     char        *cvarName;
@@ -28,7 +28,7 @@ typedef struct
 
 } cvarTable_t;
 
-static cvarTable_t gametypeCvarTable[] = 
+static cvarTable_t gametypeCvarTable[] =
 {
     { &gt_simpleScoring,    "gt_simpleScoring",     "0",  CVAR_ARCHIVE, 0.0f, 0.0f, 0, qfalse }, // INF, CTF
     { &gt_flagReturnTime,   "gt_flagReturnTime",    "30", CVAR_ARCHIVE, 0.0f, 0.0f, 0, qfalse }, // CTF
@@ -47,9 +47,9 @@ The function then takes control of whatever parameters are passed to the module.
 ================
 */
 
-int gtCall( int command, int arg0, int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int arg7, int arg8, int arg9, int arg10, int arg11 ) 
+int gtCall( int command, int arg0, int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int arg7, int arg8, int arg9, int arg10, int arg11 )
 {
-    switch ( command ) 
+    switch ( command )
     {
         case GAMETYPE_INIT:
             GT_Init ( );
@@ -78,14 +78,14 @@ int gtCall( int command, int arg0, int arg1, int arg2, int arg3, int arg4, int a
 GT_RegisterCvars
 =================
 */
-void GT_RegisterCvars( void ) 
+void GT_RegisterCvars( void )
 {
     cvarTable_t *cv;
 
-    for ( cv = gametypeCvarTable ; cv->cvarName != NULL; cv++ ) 
+    for ( cv = gametypeCvarTable ; cv->cvarName != NULL; cv++ )
     {
         trap_Cvar_Register( cv->vmCvar, cv->cvarName, cv->defaultString, cv->cvarFlags, cv->mMinValue, cv->mMaxValue );
-        
+
         if ( cv->vmCvar )
         {
             cv->modificationCount = cv->vmCvar->modificationCount;
@@ -98,17 +98,17 @@ void GT_RegisterCvars( void )
 GT_UpdateCvars
 =================
 */
-void GT_UpdateCvars( void ) 
+void GT_UpdateCvars( void )
 {
     cvarTable_t *cv;
 
-    for ( cv = gametypeCvarTable ; cv->cvarName != NULL; cv++ ) 
+    for ( cv = gametypeCvarTable ; cv->cvarName != NULL; cv++ )
     {
-        if ( cv->vmCvar ) 
+        if ( cv->vmCvar )
         {
             trap_Cvar_Update( cv->vmCvar );
 
-            if ( cv->modificationCount != cv->vmCvar->modificationCount ) 
+            if ( cv->modificationCount != cv->vmCvar->modificationCount )
             {
                 cv->modificationCount = cv->vmCvar->modificationCount;
             }
@@ -120,7 +120,7 @@ void GT_UpdateCvars( void )
 ================
 GT_Init
 
-initializes the gametype by spawning the gametype items and 
+initializes the gametype by spawning the gametype items and
 preparing them
 
 -- Boe!Man 11/29/12: Since we spawn the GT items now from the game itself, this can be partly recoded.
@@ -155,7 +155,7 @@ void GT_Init ( void )
 
     // Register the items
     memset ( &itemDef, 0, sizeof(itemDef) );
-    
+
     // Boe!Man 11/29/12: Register items per gametype.
     if(current_gametype.value == GT_INF || current_gametype.value == GT_HS){
         item = BG_FindItem ("briefcase");
@@ -167,7 +167,7 @@ void GT_Init ( void )
         if (item){
             item->quantity = ITEM_REDFLAG;
         }
-        
+
         item = NULL;
         item = BG_FindItem ("blue_flag");
         if (item){
@@ -177,7 +177,7 @@ void GT_Init ( void )
 
     // Register the triggers
     memset ( &triggerDef, 0, sizeof(triggerDef) );
-    
+
     // Boe!Man 11/29/12: Register triggers per gametype.
     find = NULL;
     if(current_gametype.value == GT_INF){
@@ -206,7 +206,7 @@ void GT_Init ( void )
             find->touch  = gametype_trigger_touch;
             trap_LinkEntity (find);
         }
-        
+
         // Boe!Man 11/30/12: Two items, NULL find again.
         find = NULL;
         while ( NULL != (find = G_Find ( find, FOFS(classname), "gametype_trigger" ) ) )
@@ -222,7 +222,7 @@ void GT_Init ( void )
             trap_LinkEntity (find);
         }
     }
-    
+
     // Boe!Man 11/29/12: Semi-debug, but we let the admin know the gt has been loaded.
     if(current_gametype.value == GT_HS){
         Com_Printf("Gametype initialized: h&s\n");
@@ -245,7 +245,7 @@ void GT_RunFrame ( int time )
     gametype.time = time;
 
     GT_UpdateCvars ();
-    
+
     // Boe!Man 4/22/12: Only check if flags need to be returned when the game is NOT paused.
     if(current_gametype.value == GT_CTF && !level.pause){
         // See if we need to return the red flag yet
@@ -253,15 +253,15 @@ void GT_RunFrame ( int time )
         {
             // Boe!Man 11/29/12: Reset item.
             gitem_t* item;
-            
+
             item = BG_FindGametypeItemByID ( ITEM_REDFLAG );
             if (item){
                 G_ResetGametypeItem ( item );
             }
-            
+
             G_Broadcast(va("The %s ^7flag has \\returned!", server_redteamprefix.string), BROADCAST_GAME, NULL);
             trap_SendServerCommand( -1, "print \"^3[CTF] ^7The Red flag has returned.\n\"");
-            
+
             // Boe!Man 11/29/12: Global sound.
             if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime){
                 gentity_t* tent;
@@ -269,7 +269,7 @@ void GT_RunFrame ( int time )
                 tent->s.eventParm = gametype.flagReturnSound;
                 tent->r.svFlags = SVF_BROADCAST;
             }
-            
+
             gametype.redFlagDropTime = 0;
             gametype.flagTaken[REDFLAG] = qfalse;
         }
@@ -278,15 +278,15 @@ void GT_RunFrame ( int time )
         {
             // Boe!Man 11/29/12: Reset item.
             gitem_t* item;
-            
+
             item = BG_FindGametypeItemByID ( ITEM_BLUEFLAG );
             if (item){
                 G_ResetGametypeItem ( item );
             }
-            
-            G_Broadcast(va("The %s ^7flag has \\returned!", server_blueteamprefix.string), BROADCAST_GAME, NULL);           
+
+            G_Broadcast(va("The %s ^7flag has \\returned!", server_blueteamprefix.string), BROADCAST_GAME, NULL);
             trap_SendServerCommand( -1, "print \"^3[CTF] ^7The Blue flag has returned.\n\"");
-            
+
             // Boe!Man 11/29/12: Global sound.
             if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime){
                 gentity_t* tent;
@@ -294,7 +294,7 @@ void GT_RunFrame ( int time )
                 tent->s.eventParm = gametype.flagReturnSound;
                 tent->r.svFlags = SVF_BROADCAST;
             }
-            
+
             gametype.blueFlagDropTime = 0;
             gametype.flagTaken[BLUEFLAG] = qfalse;
         }
@@ -306,7 +306,7 @@ void GT_RunFrame ( int time )
 GT_Event
 
 Handles all events sent to the gametype
-Boe!Man 11/29/12: Instead of sending events back to the game to process, everything happens here. This is obviously a massive speed boost, 
+Boe!Man 11/29/12: Instead of sending events back to the game to process, everything happens here. This is obviously a massive speed boost,
                   since normally the code would send the syscall to the engine, engine -> gametype, gametype -> engine, engine -> game.
                   Now everything happens here, in the game module.
 ================
@@ -325,7 +325,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                 g_entities[arg1].client->pers.statinfo.itemDefends++;
             }
             return 0;
-            
+
         // Boe!Man 4/22/12: Pause code in CTF.
         case GTEV_PAUSE:
             if(current_gametype.value == GT_CTF){
@@ -339,7 +339,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                     if(gametype.redFlagDropTime){ // NOT else if because BOTH flags can be dropped..
                         gametype.redFlagDropTime += (time - gametype.pauseTime);
                     }
-                    
+
                     // Reset timer.
                     gametype.pauseTime = 0;
                 }
@@ -351,7 +351,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
             if(current_gametype.value == GT_INF){
                 int i;
                 gitem_t* item;
-                
+
                 if (!g_caserun.integer){
                     G_Broadcast("The briefcase has \\returned!", BROADCAST_GAME, NULL);
                     trap_SendServerCommand( -1, "print \"^3[INF] ^7The briefcase has returned.\n\"");
@@ -371,13 +371,13 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                         }
                     }
                 }
-                
+
                 // Boe!Man 11/29/12: Reset item.
                 item = BG_FindGametypeItemByID ( ITEM_BRIEFCASE );
                 if (item){
                     G_ResetGametypeItem ( item );
                 }
-                
+
                 // Boe!Man 11/29/12: Global sound.
                 if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime){
                     gentity_t* tent;
@@ -390,18 +390,18 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                 switch (arg0)
                 {
                     gitem_t* item;
-                    
+
                     case ITEM_REDFLAG:
                         G_Broadcast(va("The %s ^7flag has \\returned!", server_redteamprefix.string), BROADCAST_GAME, NULL);
                         trap_SendServerCommand( -1, "print \"^3[CTF] ^7The Red flag has returned.\n\"");
-                        
+
                         // Boe!Man 11/29/12: Reset item.
                         item = BG_FindGametypeItemByID ( ITEM_REDFLAG );
                         if (item){
                             G_ResetGametypeItem ( item );
                         }
-                        
-                        
+
+
                         // Boe!Man 11/29/12: Global sound.
                         if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime){
                             gentity_t* tent;
@@ -409,22 +409,22 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                             tent->s.eventParm = gametype.flagReturnSound;
                             tent->r.svFlags = SVF_BROADCAST;
                         }
-                        
+
                         gametype.redFlagDropTime = 0;
                         gametype.flagTaken[REDFLAG] = qfalse;
                         return 1;
-                        
+
                     case ITEM_BLUEFLAG:
                         G_Broadcast(va("The %s ^7flag has \\returned!", server_blueteamprefix.string), BROADCAST_GAME, NULL);
                         trap_SendServerCommand( -1, "print \"^3[CTF] ^7The Blue flag has returned.\n\"");
-                        
+
                         // Boe!Man 11/29/12: Reset item.
                         item = BG_FindGametypeItemByID ( ITEM_BLUEFLAG );
                         if (item){
                             G_ResetGametypeItem ( item );
                         }
-                        
-                        
+
+
                         // Boe!Man 11/29/12: Global sound.
                         if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime){
                             gentity_t* tent;
@@ -432,7 +432,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                             tent->s.eventParm = gametype.flagReturnSound;
                             tent->r.svFlags = SVF_BROADCAST;
                         }
-                        
+
                         gametype.blueFlagDropTime = 0;
                         gametype.flagTaken[BLUEFLAG] = qfalse;
                         return 1;
@@ -441,7 +441,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                 trap_SendServerCommand( -1, "print \"^3[H&S] ^7The briefcase has disappeared.\n\"");
                 return 1;
             }
-            
+
             break;
 
         case GTEV_TEAM_ELIMINATED:
@@ -463,7 +463,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                         }
                         tent->r.svFlags = SVF_BROADCAST;
                         }
-                        
+
                         // Boe!Man 11/29/12: Reset gametype.
                         level.gametypeResetTime = level.time + 5000;
                         break;
@@ -483,7 +483,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                         }
                         tent->r.svFlags = SVF_BROADCAST;
                         }
-                        
+
                         // Boe!Man 11/29/12: Reset gametype.
                         level.gametypeResetTime = level.time + 5000;
                         break;
@@ -502,11 +502,11 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                         tent->s.eventParm = gametype.caseCaptureSound;
                         tent->r.svFlags = SVF_BROADCAST;
                         }
-                        
+
                         // Boe!Man 11/29/12: Reset gametype.
                         level.gametypeResetTime = level.time + 5000;
                         break;
-                    
+
                     case TEAM_BLUE:
                         break;
                 }
@@ -524,11 +524,11 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                         tent->s.eventParm = gametype.caseCaptureSound;
                         tent->r.svFlags = SVF_BROADCAST;
                         }
-                        
+
                         // Boe!Man 11/29/12: Reset gametype.
                         level.gametypeResetTime = level.time + 5000;
                         break;
-                    
+
                     case TEAM_BLUE:
                         break;
                 }
@@ -540,7 +540,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                 G_Broadcast(va("%s ^7team\n\\defended the briefcase!", server_redteamprefix.string), BROADCAST_GAME, NULL);
                 trap_SendServerCommand( -1, va("print\"^3[INF] ^7Red team defended the briefcase.\n\""));
                 G_AddTeamScore ((team_t) TEAM_RED, 1);
-                
+
                 // Boe!Man 11/29/12: Reset gametype.
                 level.gametypeResetTime = level.time + 5000;
             }else if(current_gametype.value == GT_ELIM){
@@ -559,7 +559,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                 tent->s.eventParm = gametype.caseCaptureSound;
                 tent->r.svFlags = SVF_BROADCAST;
                 }
-                
+
                 // Boe!Man 11/29/12: Reset gametype.
                 level.gametypeResetTime = level.time + 5000;
                 break;
@@ -574,7 +574,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                 tent->s.eventParm = gametype.caseCaptureSound;
                 tent->r.svFlags = SVF_BROADCAST;
                 }
-                
+
                 // Boe!Man 11/29/12: Reset gametype.
                 level.gametypeResetTime = level.time + 5000;
                 break;
@@ -623,7 +623,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                             if (g_caserun.integer){
                                 g_entities[arg1].client->caserunHoldTime = level.time + 5000;
                             }
-                            
+
                             // Boe!Man 11/29/12: Radio message.
                             G_Voice ( &g_entities[arg1], NULL, SAY_TEAM, "got_it", qfalse );
                             return 1;
@@ -634,13 +634,13 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                 switch (arg0)
                 {
                     gitem_t* item;
-                    
+
                     case ITEM_BLUEFLAG:
                         if(arg2 == TEAM_RED)
                         {
                             G_Broadcast(va("%s\nhas \\taken the %s ^7flag!", g_entities[arg1].client->pers.netname, server_blueteamprefix.string), BROADCAST_GAME, NULL);
                             trap_SendServerCommand(-1, va("print\"^3[CTF] %s ^7has taken the Blue flag.\n\"", g_entities[arg1].client->pers.netname));
-                            
+
                             // Boe!Man 11/29/12: Global sound.
                             if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime){
                             gentity_t* tent;
@@ -648,7 +648,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                             tent->s.eventParm = gametype.flagTakenSound;
                             tent->r.svFlags = SVF_BROADCAST;
                             }
-                            
+
                             // Boe!Man 11/29/12: Radio message.
                             G_Voice ( &g_entities[arg1], NULL, SAY_TEAM, "got_it", qfalse );
                             gametype.blueFlagDropTime = 0;
@@ -657,12 +657,12 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                         }else if(arg2 == TEAM_BLUE && g_ctfClassic.integer && gametype.blueFlagDropTime){ // Boe!Man 2/1/13: Include touch-flag (classic) CTF mode.
                             G_Broadcast(va("%s\nhas \\returned the %s ^7flag!", g_entities[arg1].client->pers.netname, server_blueteamprefix.string), BROADCAST_GAME, NULL);
                             trap_SendServerCommand(-1, va("print\"^3[CTF] %s ^7has returned the Blue flag.\n\"", g_entities[arg1].client->pers.netname));
-                            
+
                             item = BG_FindGametypeItemByID ( ITEM_BLUEFLAG );
                             if (item){
                                 G_ResetGametypeItem ( item );
                             }
-                            
+
                             // Boe!Man 11/29/12: Global sound.
                             if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime){
                                 gentity_t* tent;
@@ -675,13 +675,13 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                             return 0;
                         }
                         break;
-                    
+
                     case ITEM_REDFLAG:
                         if(arg2 == TEAM_BLUE)
                         {
                             G_Broadcast(va("%s\nhas \\taken the %s ^7flag!", g_entities[arg1].client->pers.netname, server_redteamprefix.string), BROADCAST_GAME, NULL);
                             trap_SendServerCommand(-1, va("print\"^3[CTF] %s ^7has taken the Red flag.\n\"", g_entities[arg1].client->pers.netname));
-                            
+
                             // Boe!Man 11/29/12: Global sound.
                             if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime){
                             gentity_t* tent;
@@ -689,7 +689,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                             tent->s.eventParm = gametype.flagTakenSound;
                             tent->r.svFlags = SVF_BROADCAST;
                             }
-                            
+
                             // Boe!Man 11/29/12: Radio message.
                             G_Voice ( &g_entities[arg1], NULL, SAY_TEAM, "got_it", qfalse );
                             gametype.redFlagDropTime = 0;
@@ -698,12 +698,12 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                         }else if(arg2 == TEAM_RED && g_ctfClassic.integer && gametype.redFlagDropTime){ // Boe!Man 2/1/13: Include touch-flag (classic) CTF mode.
                             G_Broadcast(va("%s\nhas \\returned the %s ^7flag!", g_entities[arg1].client->pers.netname, server_redteamprefix.string), BROADCAST_GAME, NULL);
                             trap_SendServerCommand(-1, va("print\"^3[CTF] %s ^7has returned the Red flag.\n\"", g_entities[arg1].client->pers.netname));
-                            
+
                             item = BG_FindGametypeItemByID ( ITEM_REDFLAG );
                             if (item){
                                 G_ResetGametypeItem ( item );
                             }
-                            
+
                             // Boe!Man 11/29/12: Global sound.
                             if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime){
                                 gentity_t* tent;
@@ -756,7 +756,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                                 tent->s.eventParm = gametype.caseCaptureSound;
                                 tent->r.svFlags = SVF_BROADCAST;
                                 }
-                                
+
                                 G_AddTeamScore ((team_t) arg2, 1);
                                 if ( !gt_simpleScoring.integer )
                                 {
@@ -775,7 +775,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                 {
                     gitem_t*    item;
                     gentity_t*  ent;
-                    
+
                     case TRIGGER_BLUECAPTURE:
                         ent  = &g_entities[arg1];
                         item = BG_FindGametypeItemByID ( ITEM_REDFLAG );
@@ -787,10 +787,10 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                                 G_Broadcast(va("%s\nhas \\captured the %s ^7flag!", g_entities[arg1].client->pers.netname, server_redteamprefix.string), BROADCAST_GAME, NULL);
                                 trap_SendServerCommand( -1, va("print\"^3[CTF] %s ^7has captured the Red flag.\n\"", g_entities[arg1].client->pers.cleanName));
                                 g_entities[arg1].client->pers.statinfo.itemCaptures++;
-                                
+
                                 // Boe!Man 11/29/12: Reset item.
                                 G_ResetGametypeItem ( item );
-                                
+
                                 // Boe!Man 11/29/12: Global sound.
                                 if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime){
                                 gentity_t* tent;
@@ -798,7 +798,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                                 tent->s.eventParm = gametype.flagCaptureSound;
                                 tent->r.svFlags = SVF_BROADCAST;
                                 }
-                                
+
                                 G_AddTeamScore ((team_t) arg2, 1);
                                 if ( !gt_simpleScoring.integer )
                                 {
@@ -810,7 +810,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                             }
                         }
                         break;
-                        
+
                     case TRIGGER_REDCAPTURE:
                         ent  = &g_entities[arg1];
                         item = BG_FindGametypeItemByID ( ITEM_BLUEFLAG );
@@ -822,10 +822,10 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                                 G_Broadcast(va("%s\nhas \\captured the %s ^7flag!", g_entities[arg1].client->pers.netname, server_blueteamprefix.string), BROADCAST_GAME, NULL);
                                 trap_SendServerCommand( -1, va("print\"^3[CTF] %s ^7has captured the Blue flag.\n\"", g_entities[arg1].client->pers.cleanName));
                                 g_entities[arg1].client->pers.statinfo.itemCaptures++;
-                                
+
                                 // Boe!Man 11/29/12: Reset item.
                                 G_ResetGametypeItem ( item );
-                                
+
                                 // Boe!Man 11/29/12: Global sound.
                                 if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime){
                                 gentity_t* tent;
@@ -833,7 +833,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                                 tent->s.eventParm = gametype.flagCaptureSound;
                                 tent->r.svFlags = SVF_BROADCAST;
                                 }
-                                
+
                                 G_AddTeamScore ((team_t) arg2, 1);
                                 if ( !gt_simpleScoring.integer )
                                 {
@@ -847,14 +847,14 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                         break;
                 }
             }
-            
+
         case GTEV_CLIENT_DEATH:
             if(current_gametype.value == GT_TDM){
                 // arg0 = clientID;
                 // arg1 = clientTeam;
                 // arg2 = killerID
                 // arg3 = killerTeam
-                
+
                 // If another client killed this guy and wasnt on the same team, then
                 // augment the team score for the killer
                 if ( arg2 != -1 && arg3 != arg1 )
@@ -863,10 +863,10 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                 }
             }
             break;
-        
+
         default:
             break;
-            
+
         return 0;
     }
 

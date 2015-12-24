@@ -1138,6 +1138,63 @@ void G_initClientMod()
 
 /*
 ===============
+G_setCurrentGametype
+
+Sets the current_gametype CVAR, so the game
+knows how to handle the gametype.
+===============
+*/
+
+static void G_setCurrentGametype()
+{
+    if(Q_stricmp(g_gametype.string, "inf") == 0){
+        trap_Cvar_Set("current_gametype", "3");
+    #ifdef _GOLD
+    }else if(g_enforce1fxAdditions.integer && Q_stricmp(g_gametype.string, "h&s") == 0){
+    #else
+    }else if(Q_stricmp(g_gametype.string, "h&s") == 0){
+    #endif // _GOLD
+        trap_Cvar_Set("current_gametype", "1");
+        trap_Cvar_Set( "g_gametype", "inf" );
+        trap_Cvar_Update(&g_gametype);
+        // Boe!Man 10/4/12: Reset g_gametype to set the gt latched, so it will remain effective upon the next /rcon map switch..
+        trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype h&s\n"));
+    #ifdef _GOLD
+    }else if(g_enforce1fxAdditions.integer && Q_stricmp(g_gametype.string, "h&z") == 0){
+    #else
+    }else if(Q_stricmp(g_gametype.string, "h&z") == 0){
+    #endif // _GOLD
+        trap_Cvar_Set("current_gametype", "8");
+        trap_Cvar_Set( "g_gametype", "inf" );
+        trap_Cvar_Update(&g_gametype);
+        // Boe!Man 10/4/12: Reset g_gametype to set the gt latched, so it will remain effective upon the next /rcon map switch..
+        trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype h&z\n"));
+    #ifdef _GOLD
+    }else if (!g_enforce1fxAdditions.integer && (Q_stricmp(g_gametype.string, "h&s") == 0 || Q_stricmp(g_gametype.string, "h&z") == 0)) {
+        Com_Printf("This gametype is unavailable when you're not enforcing 1fx. Client Additions.\n");
+        Com_Printf("Please set g_enforce1fxAdditions to 1 and restart the map, reverting to INF now.\n");
+        trap_Cvar_Set("current_gametype", "3");
+        trap_Cvar_Set("g_gametype", "inf");
+        trap_Cvar_Update(&g_gametype);
+    #endif // _GOLD
+    }else if(Q_stricmp(g_gametype.string, "elim") == 0){
+        trap_Cvar_Set("current_gametype", "7");
+    }else if(Q_stricmp(g_gametype.string, "tdm") == 0){
+        trap_Cvar_Set("current_gametype", "6");
+    }else if(Q_stricmp(g_gametype.string, "dm") == 0){
+        trap_Cvar_Set("current_gametype", "5");
+    }else if(Q_stricmp(g_gametype.string, "ctf") == 0){
+        trap_Cvar_Set("current_gametype", "4");
+    }else{
+        // Unsupported map.
+        trap_Cvar_Set("current_gametype", "0");
+    }
+
+    trap_Cvar_Update(&current_gametype);
+}
+
+/*
+===============
 G_SetGametype
 
 Sets the current gametype to the given value, if the map doesnt support it then it will
@@ -1188,13 +1245,24 @@ void G_SetGametype ( const char* gametype )
         if(current_gametype.value == GT_HS || current_gametype.value == GT_HZ){
             Com_Printf("WARNING: Map does not support inf (or it is not added in the arena file)\n");
         }else{
-            // Find a gametype it does support
-            for ( i = 0; i < bg_gametypeCount; i ++ )
-            {
-                    if ( G_DoesMapSupportGametype ( bg_gametypeData[i].name ) )
-                    {
+            // Boe!Man 12/24/15: Check if this map has a valid arena file.
+            // If it doesn't, we should force the default to dm (instead of dem on Gold).
+            if(G_GetArenaInfoByMap(mapname) == NULL){
+                for ( i = 0; i < bg_gametypeCount; i ++ )
+                {
+                    if(Q_stricmp(bg_gametypeData[i].name, "dm") == 0){
                         break;
                     }
+                }
+            }else{
+                // We have a valid arena file.
+                // Find a gametype that this map does support.
+                for ( i = 0; i < bg_gametypeCount; i ++ )
+                {
+                    if ( G_DoesMapSupportGametype ( bg_gametypeData[i].name ) ){
+                        break;
+                    }
+                }
             }
 
             // This is bad, this means the map doesnt support any gametypes
@@ -1210,6 +1278,7 @@ void G_SetGametype ( const char* gametype )
             gametype = bg_gametypeData[i].name;
             trap_Cvar_Set( "g_gametype", gametype );
             level.gametype = BG_FindGametype ( gametype );
+            G_setCurrentGametype(); // Also force the current_gametype CVAR to the new value.
 
             trap_Cvar_Update( &g_gametype );
         }
@@ -1469,46 +1538,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 
     //Before we set the gametype we change current_gametype and we set H&S to INF
     if(!restart){
-        if(strstr(g_gametype.string, "inf")){
-            trap_Cvar_Set("current_gametype", "3");
-        #ifdef _GOLD
-        }else if(g_enforce1fxAdditions.integer && strstr(g_gametype.string, "h&s")){
-        #else
-        }else if(strstr(g_gametype.string, "h&s")){
-        #endif // _GOLD
-            trap_Cvar_Set("current_gametype", "1");
-            trap_Cvar_Set( "g_gametype", "inf" );
-            trap_Cvar_Update(&g_gametype);
-            // Boe!Man 10/4/12: Reset g_gametype to set the gt latched, so it will remain effective upon the next /rcon map switch..
-            trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype h&s\n"));
-        #ifdef _GOLD
-        }else if(g_enforce1fxAdditions.integer && strstr(g_gametype.string, "h&z")){
-        #else
-        }else if(strstr(g_gametype.string, "h&z")){
-        #endif // _GOLD
-            trap_Cvar_Set("current_gametype", "8");
-            trap_Cvar_Set( "g_gametype", "inf" );
-            trap_Cvar_Update(&g_gametype);
-            // Boe!Man 10/4/12: Reset g_gametype to set the gt latched, so it will remain effective upon the next /rcon map switch..
-            trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype h&z\n"));
-        #ifdef _GOLD
-        }else if (!g_enforce1fxAdditions.integer && (strstr(g_gametype.string, "h&s") || strstr(g_gametype.string, "h&z"))) {
-            Com_Printf("This gametype is unavailable when you're not enforcing 1fx. Client Additions.\n");
-            Com_Printf("Please set g_enforce1fxAdditions to 1 and restart the map, reverting to INF now.\n");
-            trap_Cvar_Set("current_gametype", "3");
-            trap_Cvar_Set("g_gametype", "inf");
-            trap_Cvar_Update(&g_gametype);
-        #endif // _GOLD
-        }else if(strstr(g_gametype.string, "elim")){
-            trap_Cvar_Set("current_gametype", "7");
-        }else if(strstr(g_gametype.string, "tdm")){
-            trap_Cvar_Set("current_gametype", "6");
-        }else if(strstr(g_gametype.string, "dm")){
-            trap_Cvar_Set("current_gametype", "5");
-        }else if(strstr(g_gametype.string, "ctf")){
-            trap_Cvar_Set("current_gametype", "4");
-        }
-    trap_Cvar_Update(&current_gametype);
+        G_setCurrentGametype();
     }
 
     // Set the current gametype
