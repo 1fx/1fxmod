@@ -919,7 +919,7 @@ void SP_teleporter(gentity_t* ent){
             AddSpawnField("min_players", va("%i", ent->min_players));
         if(ent->max_players)
             AddSpawnField("max_players", va("%i", ent->max_players));
-        if(ent->invisible)
+        if(ent->invisible != NULL)
             AddSpawnField("invisible", va("%s", ent->invisible));
         AddSpawnField("both_sides", "no");
         G_SpawnGEntityFromSpawnVars (qtrue);
@@ -936,8 +936,7 @@ void SP_teleporter(gentity_t* ent){
         */
     }
 
-    //origin = va("%.0f %.0f %.0f", ent->r.currentOrigin[0], ent->r.currentOrigin[1], ent->r.currentOrigin[2]-30);
-    if(!ent->invisible || !strstr(ent->invisible, "yes")){
+    if(ent->invisible == NULL || Q_stricmp(ent->invisible, "yes") != 0){
         origin = va("%.0f %.0f %.0f", ent->r.currentOrigin[0], ent->r.currentOrigin[1], ent->r.currentOrigin[2]-30);
         AddSpawnField("classname", "fx_play_effect");
         AddSpawnField("effect", "fire/blue_target_flame");
