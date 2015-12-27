@@ -63,9 +63,9 @@ qboolean Patch_dosDetour(const char *message, char *from, char *req)
         // Invalid IP specified, don't allow this packet.
         // We don't print a warning message unless in local debug mode,
         // so this can never be abused on live servers (print spam).
-        #ifdef _NIGHTLY
+        #ifdef _DEBUG
         Com_Printf("DoS protection: invalid IP: %s -> %u\n", ip, ipNum);
-        #endif // _NIGHTLY
+        #endif // _DEBUG
         return qfalse;
     }
 
