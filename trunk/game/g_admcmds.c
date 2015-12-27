@@ -2402,8 +2402,11 @@ int adm_clanVsAll(int argNum, gentity_t *adm, qboolean shortCmd)
 
         if (sess->clanMember){
             if (sess->team != clanTeam){
-                ent->client->ps.stats[STAT_WEAPONS] = 0;
-                TossClientItems(ent);
+                if (!G_IsClientDead(ent->client)){
+                    ent->client->ps.stats[STAT_WEAPONS] = 0;
+                    TossClientItems(ent);
+                }
+
                 G_StartGhosting(ent);
                 sess->team = (team_t)clanTeam;
             }else{
@@ -2411,8 +2414,11 @@ int adm_clanVsAll(int argNum, gentity_t *adm, qboolean shortCmd)
             }
         }else{
             if (sess->team != othersTeam) {
-                ent->client->ps.stats[STAT_WEAPONS] = 0;
-                TossClientItems(ent);
+                if (!G_IsClientDead(ent->client)){
+                    ent->client->ps.stats[STAT_WEAPONS] = 0;
+                    TossClientItems(ent);
+                }
+
                 G_StartGhosting(ent);
                 sess->team = (team_t)othersTeam;
             }else{

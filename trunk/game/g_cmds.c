@@ -218,12 +218,15 @@ void EvenTeams (gentity_t *adm, qboolean aet)
         }
 
         if(!canBeMoved || !highTeam){
-            if(adm != NULL) trap_SendServerCommand( adm->s.number, va("print \"^3[Info] ^7Teams cannot be evened [all admin or item holders].\n\"") );
-            else if (aet == qfalse) Com_Printf("Teams cannot be evened [all admin or item holders]\n");
+            if(adm != NULL) trap_SendServerCommand( adm->s.number, va("print \"^3[Info] ^7Teams cannot be evened [all item holders].\n\"") );
+            else if (aet == qfalse) Com_Printf("Teams cannot be evened [all item holders]\n");
             return;
         }
-        lastConnected->client->ps.stats[STAT_WEAPONS] = 0;
-        TossClientItems( lastConnected );
+
+        if (!G_IsClientDead(lastConnected->client)){
+            lastConnected->client->ps.stats[STAT_WEAPONS] = 0;
+            TossClientItems( lastConnected );
+        }
         G_StartGhosting( lastConnected );
 
         if(highTeam == TEAM_RED) lastConnected->client->sess.team = TEAM_BLUE;
