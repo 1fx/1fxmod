@@ -329,7 +329,7 @@ void Henk_Ignore(gentity_t *ent){
             trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7The player is not connected.\n\""));
             return;
         }
-        if( g_entities[idnum].client->sess.admin >= 2){
+        if( !ent->client->sess.admin && g_entities[idnum].client->sess.admin >= 2 ){
             trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You can't ignore an admin.\n\""));
             return;
         }
