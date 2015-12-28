@@ -153,32 +153,25 @@ __asm__(".globl Patch_dosDetour0 \n\t"
     "call _Patch_dosDetour \n"
     #elif __linux__
     "Patch_dosDetour0: \n"
-    // Push the first parameter to the local stack frame.
-    // We retrieve it later when returning.
+    // Push the first parameter to the local stack frame,
+    // the function expects them in that order.
     "movl 8(%ebp), %ecx \n\t"
     "movl %ecx, -4(%ebp) \n\t"
     "pop 8(%ebp) \n\t"
     "call Patch_dosDetour \n"
+    // Put it back before returning.
+    "movl -4(%ebp), %ecx \n\t"
+    "movl %ecx, 8(%ebp) \n\t"
+    "pop %ecx \n\t"
+    "pop -4(%ebp) \n\t"
     #endif // _WIN32
 
     "cmp $0, %eax \n\t"
     "je notAllowed \n\t"
-    #ifdef __linux__
-    "movl -4(%ebp), %ecx \n\t"
-    "movl %ecx, 8(%ebp) \n\t"
-    "pop %ecx \n\t"
-    "pop -4(%ebp) \n\t"
-    #endif // __linux__
     "push " ADDRESS " \n\t"
     "ret \n"
 
     "notAllowed: \n\t"
-    #ifdef __linux__
-    "movl -4(%ebp), %ecx \n\t"
-    "movl %ecx, 8(%ebp) \n\t"
-    "pop %ecx \n\t"
-    "pop -4(%ebp) \n\t"
-    #endif // __linux__
     "push " ADDRESS2 " \n\t"
     "ret \n"
     );
