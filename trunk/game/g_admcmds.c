@@ -4190,7 +4190,7 @@ int adm_toggleWeapon(int argNum, gentity_t *adm, qboolean shortCmd)
     }
 
     // Get the weapon number.
-    for(i = 2; i < level.wpNumWeapons; i++){
+    for(i = WP_KNIFE + 1; i < level.wpNumWeapons; i++){
         if(strstr(Q_strlwr(va("%s", bg_weaponNames[i])), arg)){
             wpNum = i;
             item = BG_FindWeaponItem((weapon_t)wpNum);

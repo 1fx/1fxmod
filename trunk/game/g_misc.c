@@ -123,6 +123,61 @@ void SP_misc_model( gentity_t *ent )
 #endif
 }
 
+/*
+==============
+SP_misc_weaponmodel
+12/28/15 - 11:18 PM
+Spawns a weapon that cannot be picked up
+and has no other effects on the specified
+origin.
+==============
+*/
+
+void SP_misc_weaponmodel ( gentity_t *ent )
+{
+    int         i;
+    gentity_t   *weapon = NULL;
+    gitem_t     *weaponItem = NULL;
+
+    // Check if there was a weapon specified.
+    if(!ent->model || !ent->model[0]){
+        Com_Printf ("misc_weaponmodel: no model specified, not spawning.\n");
+        G_FreeEntity(ent);
+        return;
+    }
+
+    // Get the weapon number.
+    Q_strlwr(ent->model);
+    for(i = WP_KNIFE; i < level.wpNumWeapons; i++){
+        if(strstr(Q_strlwr(va("%s", bg_weaponNames[i])), ent->model)){
+            weaponItem = BG_FindWeaponItem((weapon_t)i);
+            break;
+        }
+    }
+
+    // Invalid weapon specified, name not found.
+    if(weaponItem == NULL){
+        Com_Printf ("misc_weaponmodel: invalid weapon specified (%s), not spawning.\n", ent->model);
+        G_FreeEntity(ent);
+        return;
+    }
+
+    // Spawn the weapon and set the model.
+    weapon = G_Spawn();
+    weapon->classname = ent->classname;
+    weapon->s.eType = ET_ITEM;
+    weapon->s.eFlags = EF_PERMANENT;
+    weapon->s.modelindex = weaponItem - bg_itemlist;
+
+    // Update its origin and angle(s).
+    G_SetOrigin(weapon, ent->s.origin);
+    VectorCopy (ent->s.angles, weapon->s.angles);
+
+    trap_LinkEntity (weapon);
+
+    // Free the original entity, no need to keep this around.
+    G_FreeEntity(ent);
+}
 
 /*QUAKED misc_G2model (1 0 0) (-16 -16 -16) (16 16 16)
 "model"     arbitrary .glm file to display

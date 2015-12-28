@@ -199,6 +199,7 @@ void SP_path_corner                 (gentity_t *ent);
 
 void SP_misc_teleporter_dest        (gentity_t *ent);
 void SP_misc_model                  (gentity_t *ent);
+void SP_misc_weaponmodel            (gentity_t *ent);
 void SP_misc_G2model                (gentity_t *ent);
 void SP_misc_portal_camera          (gentity_t *ent);
 void SP_misc_portal_surface         (gentity_t *ent);
@@ -289,6 +290,7 @@ spawn_t spawns[] =
     {"misc_model",                  SP_misc_model},
     {"client_model",                SP_model_static},
     {"client_model1",               SP_model_static},
+    {"misc_weaponmodel",            SP_misc_weaponmodel},
     {"misc_G2model",                SP_misc_G2model},
     {"misc_portal_surface",         SP_misc_portal_surface},
     {"misc_portal_camera",          SP_misc_portal_camera},
