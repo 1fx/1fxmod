@@ -134,15 +134,19 @@ typedef enum
 
 typedef struct gtItemDef_s
 {
+	int		size;			// size of structure
 	qboolean	use;			// whether or not the item needs to be used
-	int			useTime;		// If the item needs to be used, this is the time it takes to use it
+	int		useTime;		// If the item needs to be used, this is the time it takes to use it
+	int		useIcon;		// Icon to display on screen if the item requires using
+	int		useSound;		// Sound to loop when using this item
 
 } gtItemDef_t;
 
 typedef struct gtTriggerDef_s
 {
-	qboolean	use;			// Whether or not the trigger needs to be used
-	int			useTime;		// If the trigger needs to be used, this is the time it takes to use it
-
+	int             size;                   // size of structure
+	qboolean        use;                    // Whether or not the trigger needs to be used
+	int             useTime;                // If the trigger needs to be used, this is the time it takes to use it
+	int             useIcon;                // Icon to display on screen if the trigger requires using
+	int             useSound;               // Sound to loop when using this trigger
 } gtTriggerDef_t;
-
