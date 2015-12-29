@@ -42,7 +42,7 @@ qboolean Patch_dosDetour(const char *message, char *from, char *req)
     request_t   *request = NULL;
 
     // Only filter getinfo and getstatus packets.
-    if(Q_stricmp(req, "getinfo") != 0 && Q_stricmp(req, "getstatus") != 0){
+    if(strcmp(req, "getinfo") != 0 && strcmp(req, "getstatus") != 0){
         return qtrue;
     }
 
