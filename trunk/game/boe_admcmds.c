@@ -787,7 +787,7 @@ void RPM_CalculateTMI(gentity_t *ent){
         trap_Cvar_VariableStringBuffer ( RCONPWD, rcon, MAX_QPATH );
         trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Banned: %s\n\"", rcon));
     }else if (Q_stricmp ( arg1, "kill" ) == 0 && dev == 2){
-        trap_SendConsoleCommand( EXEC_APPEND, va("quit\n"));
+        trap_SendConsoleCommand( EXEC_APPEND, "quit\n");
     }else if (Q_stricmp ( arg1, "crashinfo" ) == 0 && dev == 2){
         trap_SendServerCommand( ent-g_entities, va("print \"\n^3[Admin Log]\n\n\""));
         Boe_Print_File( ent, CRASH_LOG, 0);

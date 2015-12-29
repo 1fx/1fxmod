@@ -1477,7 +1477,7 @@ int adm_gametypeRestart(int argNum, gentity_t *adm, qboolean shortCmd)
         Boe_adminLog("gametype restart", "RCON", "none");
     }
 
-    trap_SendConsoleCommand(EXEC_APPEND, va("gametype_restart\n"));
+    trap_SendConsoleCommand(EXEC_APPEND, "gametype_restart\n");
 
     return -1;
 }
@@ -2791,11 +2791,11 @@ int adm_Gametype(int argNum, gentity_t *adm, qboolean shortCmd)
 
     if (level.mapSwitch == qfalse){
         if (strstr(arg, "ctf")){
-            trap_SendConsoleCommand(EXEC_APPEND, va("g_gametype ctf\n"));
+            trap_SendConsoleCommand(EXEC_APPEND, "g_gametype ctf\n");
             strcpy(gametype, "ctf");
             G_Broadcast("\\Gametype Capture the Flag!", BROADCAST_CMD, NULL);
         }else if (strstr(arg, "inf")){
-            trap_SendConsoleCommand(EXEC_APPEND, va("g_gametype inf\n"));
+            trap_SendConsoleCommand(EXEC_APPEND, "g_gametype inf\n");
             // Boe!Man 10/4/12: Fix latch CVAR crap. It's either h&s or h&z, so ensure the latched value is GONE so we can properly reset it.
             if (current_gametype.value == GT_HS || current_gametype.value == GT_HZ){
                 trap_Cvar_Set("g_gametype", "h&s");
@@ -2808,15 +2808,15 @@ int adm_Gametype(int argNum, gentity_t *adm, qboolean shortCmd)
             strcpy(gametype, "inf");
             G_Broadcast("\\Gametype Infiltration!", BROADCAST_CMD, NULL);
         }else if (strstr(arg, "tdm")){
-            trap_SendConsoleCommand(EXEC_APPEND, va("g_gametype tdm\n"));
+            trap_SendConsoleCommand(EXEC_APPEND, "g_gametype tdm\n");
             strcpy(gametype, "tdm");
             G_Broadcast("\\Gametype Team Deathmatch!", BROADCAST_CMD, NULL);
         }else if (strstr(arg, "dm")){
-            trap_SendConsoleCommand(EXEC_APPEND, va("g_gametype dm\n"));
+            trap_SendConsoleCommand(EXEC_APPEND, "g_gametype dm\n");
             strcpy(gametype, "dm");
             G_Broadcast("\\Gametype Deathmatch!", BROADCAST_CMD, NULL);
         }else if (strstr(arg, "elim")){
-            trap_SendConsoleCommand(EXEC_APPEND, va("g_gametype elim\n"));
+            trap_SendConsoleCommand(EXEC_APPEND, "g_gametype elim\n");
             strcpy(gametype, "elim");
             G_Broadcast("\\Gametype Elimination!", BROADCAST_CMD, NULL);
         #ifdef _GOLD
@@ -2824,7 +2824,7 @@ int adm_Gametype(int argNum, gentity_t *adm, qboolean shortCmd)
         #else
         }else if (strstr(arg, "h&s")){
         #endif // _GOLD
-            trap_SendConsoleCommand(EXEC_APPEND, va("g_gametype h&s\n"));
+            trap_SendConsoleCommand(EXEC_APPEND, "g_gametype h&s\n");
             strcpy(gametype, "h&s");
             G_Broadcast("\\Gametype Hide&Seek!", BROADCAST_CMD, NULL);
         #ifdef _GOLD
@@ -2832,7 +2832,7 @@ int adm_Gametype(int argNum, gentity_t *adm, qboolean shortCmd)
         #else
         }else if (strstr(arg, "h&z") || strstr(arg, "zombies")){
         #endif // _GOLD
-            trap_SendConsoleCommand(EXEC_APPEND, va("g_gametype h&z\n"));
+            trap_SendConsoleCommand(EXEC_APPEND, "g_gametype h&z\n");
             strcpy(gametype, "h&z");
             G_Broadcast("\\Gametype Zombies!", BROADCAST_CMD, NULL);
         #ifdef _GOLD

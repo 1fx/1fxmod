@@ -1953,7 +1953,7 @@ void Boe_mapEvents (void){
     if(level.mapAction == 1){
         if (g_compMode.integer > 0 && cm_enabled.integer == 1){
             if(level.time >= level.mapSwitchCount + 2000){
-                trap_SendConsoleCommand( EXEC_APPEND, va("map_restart 0\n"));
+                trap_SendConsoleCommand( EXEC_APPEND, "map_restart 0\n");
             }
         }
         else if (g_compMode.integer > 0 && cm_enabled.integer == 3){
@@ -1963,7 +1963,7 @@ void Boe_mapEvents (void){
                 if (cm_aswap.integer > 0){
                     Boe_SwapTeams(NULL);
                 }*/
-                trap_SendConsoleCommand( EXEC_APPEND, va("map_restart 0\n"));
+                trap_SendConsoleCommand( EXEC_APPEND, "map_restart 0\n");
             }
         }
         else{
@@ -1973,13 +1973,7 @@ void Boe_mapEvents (void){
                     level.mapSwitchCount2--;
                     level.mapSwitchCount = level.time + 1000;
                 }else{
-                    /*
-                    if(current_gametype.value == GT_HS){
-                        trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype h&s\n"));
-                    }else if(current_gametype.value == GT_HZ){
-                        trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype h&z\n"));
-                    }*/
-                trap_SendConsoleCommand( EXEC_APPEND, va("map_restart 0\n"));
+                    trap_SendConsoleCommand( EXEC_APPEND, "map_restart 0\n");
                 }
             }
         }
@@ -2008,7 +2002,7 @@ void Boe_mapEvents (void){
                 trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", level.mapname));
             }else{
                 // Boe!Man 11/5/12: It's a RMG map, make sure to call the rmgmap 0 command.
-                trap_SendConsoleCommand( EXEC_APPEND, va("rmgmap 0\n"));
+                trap_SendConsoleCommand( EXEC_APPEND, "rmgmap 0\n");
             }
 
             // Boe!Man 7/15/13: Also re-set these values in case the map switch goes wrong.

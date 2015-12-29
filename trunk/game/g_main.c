@@ -1158,7 +1158,7 @@ static void G_setCurrentGametype()
         trap_Cvar_Set( "g_gametype", "inf" );
         trap_Cvar_Update(&g_gametype);
         // Boe!Man 10/4/12: Reset g_gametype to set the gt latched, so it will remain effective upon the next /rcon map switch..
-        trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype h&s\n"));
+        trap_SendConsoleCommand( EXEC_APPEND, "g_gametype h&s\n");
     #ifdef _GOLD
     }else if(g_enforce1fxAdditions.integer && Q_stricmp(g_gametype.string, "h&z") == 0){
     #else
@@ -1168,7 +1168,7 @@ static void G_setCurrentGametype()
         trap_Cvar_Set( "g_gametype", "inf" );
         trap_Cvar_Update(&g_gametype);
         // Boe!Man 10/4/12: Reset g_gametype to set the gt latched, so it will remain effective upon the next /rcon map switch..
-        trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype h&z\n"));
+        trap_SendConsoleCommand( EXEC_APPEND, "g_gametype h&z\n");
     #ifdef _GOLD
     }else if (!g_enforce1fxAdditions.integer && (Q_stricmp(g_gametype.string, "h&s") == 0 || Q_stricmp(g_gametype.string, "h&z") == 0)) {
         Com_Printf("This gametype is unavailable when you're not enforcing 1fx. Client Additions.\n");
