@@ -28,7 +28,7 @@ void    trap_Error( const char *fmt ) {
 }
 
 int     trap_Milliseconds( void ) {
-    return syscall( G_MILLISECONDS ); 
+    return syscall( G_MILLISECONDS );
 }
 int     trap_Argc( void ) {
     return syscall( G_ARGC );
@@ -113,9 +113,9 @@ void trap_GetUserinfo( int num, char *buffer, int bufferSize ) {
     char        buf2[MAX_INFO_STRING];
     qboolean    found;
     int         i;
-    
+
     syscall( G_GET_USERINFO, num, buffer, bufferSize );
-    
+
     // Boe!Man 1/31/13: Fix for weird movement when people connect/change teams etc. with unsupported characters in their names.
     Q_strncpyz(buf2, buffer, sizeof(buf2));
     for(i = 0; i < strlen(buffer); i++){
@@ -124,7 +124,7 @@ void trap_GetUserinfo( int num, char *buffer, int bufferSize ) {
             found = qtrue;
         }
     }
-    
+
     if(found){
         trap_SetUserinfo(num, buf2);
         syscall( G_GET_USERINFO, num, buffer, bufferSize );
@@ -870,17 +870,17 @@ void trap_G2API_CleanGhoul2Models ( void **ghoul2Ptr )
     syscall(G_G2_CLEANMODELS, ghoul2Ptr);
 }
 
-void trap_G2API_CollisionDetect ( 
-    CollisionRecord_t *collRecMap, 
-    void* ghoul2, 
-    const vec3_t angles, 
+void trap_G2API_CollisionDetect (
+    CollisionRecord_t *collRecMap,
+    void* ghoul2,
+    const vec3_t angles,
     const vec3_t position,
-    int frameNumber, 
-    int entNum, 
-    vec3_t rayStart, 
-    vec3_t rayEnd, 
-    vec3_t scale, 
-    int traceFlags, 
+    int frameNumber,
+    int entNum,
+    vec3_t rayStart,
+    vec3_t rayEnd,
+    vec3_t scale,
+    int traceFlags,
     int useLod
     )
 {

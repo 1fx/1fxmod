@@ -1833,7 +1833,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
         if(g_checkCountry.integer && G_isCountryDatabaseInitialized()){
             trap_SendServerCommand( -1, va("print \"%s ^5[%s]^7 is connecting...\n\"", client->pers.cleanName, client->sess.country) );
         }else{
-            trap_SendServerCommand( -1, va("print \"%s ^7 is connecting...\n\"", client->pers.cleanName));
+            trap_SendServerCommand( -1, va("print \"%s is connecting...\n\"", client->pers.cleanName));
         }
     }
 

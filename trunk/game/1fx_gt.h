@@ -19,29 +19,44 @@
 #define TRIGGER_REDCAPTURE      200
 #define TRIGGER_BLUECAPTURE     201
 
+#ifdef _GOLD
+// DEM
+#define TRIGGER_DEMOSITE_1      200
+#define TRIGGER_DEMOSITE_2	201
+
+#define ITEM_BOMB		300
+#define ITEM_PLANTED_BOMB	301
+#endif // _GOLD
+
 // CVAR internal declarations.
 vmCvar_t    gt_simpleScoring;
 vmCvar_t    gt_flagReturnTime;
+
+#ifdef _GOLD
+vmCvar_t    gt_bombFuseTime;
+vmCvar_t    gt_bombDefuseTime;
+vmCvar_t    gt_bombPlantTime;
+#endif // _GOLD
 
 typedef struct gametypeLocals_s
 {
     int     time;
 
     // INF (and partly H&S/H&Z)
-    int     caseTakenSound;
-    int     caseCaptureSound; // Also used in H&S and H&Z.
-    int     caseReturnSound;
+    int         caseTakenSound;
+    int         caseCaptureSound; // Also used in H&S and H&Z.
+    int         caseReturnSound;
 
     // CTF
-    int     redFlagDropTime;
-    int     blueFlagDropTime;
+    int         redFlagDropTime;
+    int         blueFlagDropTime;
     
-    int     flagReturnSound;
-    int     flagTakenSound;
-    int     flagCaptureSound;
+    int         flagReturnSound;
+    int         flagTakenSound;
+    int         flagCaptureSound;
     
-    int     redCaptureEffect;
-    int     blueCaptureEffect;
+    int         redCaptureEffect;
+    int         blueCaptureEffect;
     
     // Boe!Man 4/22/12: We use this for pause stuff.
     int         pauseTime;      // Restore time.
@@ -49,8 +64,42 @@ typedef struct gametypeLocals_s
     // Boe!Man 10/30/13: We use this to determine if the flag is taken.
     qboolean    flagTaken[2];
     
+    #ifdef _GOLD
+    // Gold CTF HUD icons, v1.00 doesn't have these.
+    int         iconRedFlag;
+    int         iconBlueFlag;
+    int         iconRedFlagDropped;
+    int         iconBlueFlagDropped;
+    int         iconRedFlagCarried;
+    int         iconBlueFlagCarried;
+    #endif // _GOLD
+
     // ELIM
-    int     captureSound;
+    int         captureSound;
+
+    #ifdef _GOLD
+    // DEM
+    int         bombBeepTime;
+
+    int         bombPlantTime;
+    vec3_t      bombPlantOrigin;
+    char        bombPlantTarget[MAX_QPATH];
+
+    qboolean    firstFrame;
+
+    int         bombExplodeEffect;
+    int         bombBeepSound;
+    int         bombTakenSound;
+    int         bombExplodedSound;
+    int         bombPlantedSound;
+
+    int         iconBombPlanted[7];
+
+    int         bombGiveClient;
+    int         bombPlantClient;
+
+    qboolean    roundOver;
+    #endif // _GOLD
     
 } gametypeLocals_t;
 

@@ -511,7 +511,6 @@ void        HZ_claymoreExplode      (gentity_t *ent);
 gentity_t*  findLastEnteredPlayer   (int highTeam, qboolean scoresAllowed);
 
 void Use_BinaryMover( gentity_t *ent, gentity_t *other, gentity_t *activator );
-gentity_t* G_RealSpawnGametypeItem1 ( gitem_t* item, vec3_t origin, vec3_t angles, qboolean dropped );
 void G_RespawnClients ( qboolean force, team_t team, qboolean fullRestart );
 void G_UpdateAvailableWeapons(void);
 //void Henk_RemoveLineFromFile(gentity_t *ent, int line, char *file, qboolean subnet, qboolean ban, qboolean banremove, char *banremovestring);

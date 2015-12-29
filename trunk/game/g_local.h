@@ -991,7 +991,7 @@ void RespawnItem( gentity_t *ent );
 void        PrecacheItem        ( gitem_t *it );
 gentity_t*  G_DropItem          ( gentity_t *ent, gitem_t *item, float angle );
 gentity_t*  G_DropItem2         ( vec3_t Origin, vec3_t angles, gitem_t *item );
-gentity_t*  G_LaunchItem        ( gitem_t *item, vec3_t origin, vec3_t velocity );
+gentity_t*  LaunchItem          ( gitem_t *item, vec3_t origin, vec3_t velocity );
 gentity_t*  G_DropWeapon        ( gentity_t* ent, weapon_t weapon, int pickupDelay );
 
 void SetRespawn (gentity_t *ent, float delay);
@@ -1030,6 +1030,9 @@ void    G_InitGentity( gentity_t *e );
 gentity_t   *G_Spawn (void);
 gentity_t *G_TempEntity( vec3_t origin, int event );
 void    G_PlayEffect(int fxID, vec3_t org, vec3_t ang);
+#ifdef _GOLD
+void    G_SetHUDIcon ( int index, int icon );
+#endif // _GOLD
 void    G_Sound( gentity_t *ent, int channel, int soundIndex );
 void    G_SoundAtLoc( vec3_t loc, int channel, int soundIndex );
 void    G_EntitySound( gentity_t *ent, int channel, int soundIndex );
@@ -1144,6 +1147,9 @@ void        trigger_booster_touch           ( gentity_t *self, gentity_t *other,
 void        trigger_ReachableObject_touch   ( gentity_t *self, gentity_t *other, trace_t *trace );
 void        InitTrigger                     ( gentity_t *self );
 void        ReachableObject_events          ( gentity_t *self );
+
+void        hurt_use                        ( gentity_t *self, gentity_t *other, gentity_t *activator );
+void        target_effect_delayed_use       ( gentity_t* self );
 
 //
 // g_misc.c
@@ -1378,6 +1384,7 @@ void ClientThink            ( int clientNum );
 void ClientEndFrame         ( gentity_t *ent );
 void G_RunClient            ( gentity_t *ent );
 void gametype_trigger_touch ( gentity_t *self, gentity_t *other, trace_t *trace );
+void gametype_trigger_use   ( gentity_t *self, gentity_t *other, gentity_t *activator );
 void G_checkAntiCamp        ( gentity_t *ent );
 
 //
@@ -1422,7 +1429,8 @@ void        G_LoadArenas ( void );
 //
 
 gentity_t*  G_SelectGametypeSpawnPoint          ( team_t team, vec3_t origin, vec3_t angles );
-gentity_t*  G_SpawnGametypeItem                 ( const char* pickup_name, qboolean dropped );
+gentity_t*  G_RealSpawnGametypeItem             ( gitem_t* item, vec3_t origin, vec3_t angles, qboolean dropped );
+gentity_t*  G_SpawnGametypeItem                 ( const char* pickup_name, qboolean dropped, vec3_t origin );
 gentity_t*  G_SelectRandomGametypeSpawnPoint    ( team_t team );
 qboolean    G_ParseGametypeFile                 ( void );
 qboolean    G_ExecuteGametypeScript             ( gentity_t* activator, const char* name );

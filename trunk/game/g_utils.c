@@ -749,6 +749,18 @@ void G_PlayEffect(int fxID, vec3_t org, vec3_t ang)
     te->s.eventParm = fxID;
 }
 
+#ifdef _GOLD
+/*
+=============
+G_SetHUDIcon
+=============
+*/
+void G_SetHUDIcon ( int index, int icon )
+{
+	trap_SetConfigstring ( CS_HUDICONS + index, va("%i", icon ) );
+}
+#endif // _GOLD
+
 /*
 =============
 G_Sound

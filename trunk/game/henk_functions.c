@@ -301,7 +301,6 @@ void Henk_Ignore(gentity_t *ent){
             memset(string1, 0, sizeof(string1));
             numberofclients = 0;
             for(i=0;i<level.numConnectedClients;i++){
-                //trap_SendServerCommand(-1, va("print\"^3[Debug] ^7%s comparing with %s.\n\"", g_entities[level.sortedClients[i]].client->pers.cleanName,numb));
                 Q_strncpyz(cleanName, g_entities[level.sortedClients[i]].client->pers.cleanName, sizeof(cleanName));
                 if(strstr(Q_strlwr(cleanName), Q_strlwr(arg1))){
                     idnum = level.sortedClients[i];
@@ -349,7 +348,7 @@ void Henk_Ignore(gentity_t *ent){
                     g_entities[idnum].client->sess.IgnoredClients[z] = temparray[z];
                 }
                 g_entities[idnum].client->sess.IgnoredClientCount--;
-                trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You are not ignoring %s anymore.\n\"", g_entities[idnum].client->pers.netname));
+                trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You are not ignoring %s anymore.\n\"", g_entities[idnum].client->pers.cleanName));
                 return;
             }
         }
@@ -359,8 +358,8 @@ void Henk_Ignore(gentity_t *ent){
         }
         g_entities[idnum].client->sess.IgnoredClients[g_entities[idnum].client->sess.IgnoredClientCount] = ent->s.number;
         g_entities[idnum].client->sess.IgnoredClientCount++;
-        trap_SendServerCommand( g_entities[idnum].s.number, va("print \"^3[Info] ^7%s has ignored you.\n\"", ent->client->pers.netname));
-        trap_SendServerCommand( ent->s.number, va("print \"^3[Info] ^7You have ignored %s.\n\"", g_entities[idnum].client->pers.netname));
+        trap_SendServerCommand( g_entities[idnum].s.number, va("print \"^3[Info] ^7%s has ignored you.\n\"", ent->client->pers.cleanName));
+        trap_SendServerCommand( ent->s.number, va("print \"^3[Info] ^7You have ignored %s.\n\"", g_entities[idnum].client->pers.cleanName));
 }
 
 int TiedPlayers(void){
@@ -836,7 +835,7 @@ qboolean IsClientMuted(gentity_t *ent, qboolean message){
                     }
                     return qtrue;
                 }else{
-                    trap_SendServerCommand(-1, va("print \"^3[Auto action] ^7%s has been unmuted.\n\"", ent->client->pers.netname));
+                    trap_SendServerCommand(-1, va("print \"^3[Auto action] ^7%s has been unmuted.\n\"", ent->client->pers.cleanName));
                     memset(&level.mutedClients[i], 0, sizeof(muted_t));
                     level.muteClientCount--;
                     ent->client->sess.mute = qfalse;

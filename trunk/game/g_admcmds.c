@@ -500,7 +500,7 @@ int adm_mapRestart(int argNum, gentity_t *adm, qboolean shortCmd){
             level.mapSwitchCount2 = 5; // Boe!Man 7/22/12: 5 seconds remaining on the timer.
 
             if (g_compMode.integer == 0){
-                trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Map restarted by %s.\n\"", adm->client->pers.netname));
+                trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Map restarted by %s.\n\"", adm->client->pers.cleanName));
             }else if (g_compMode.integer > 0 && cm_enabled.integer == 1){
                 if (cm_dr.integer == 1){ // Boe!Man 3/18/11: If dual rounds are enabled, the first round would be started.
                     trap_SendServerCommand(-1, "print \"^3[Info] ^7First round started.\n\"");
@@ -654,11 +654,11 @@ int adm_Mute(int argNum, gentity_t *adm, qboolean shortCmd)
     Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
     if (adm && adm->client){
         G_Broadcast(va("%s\nwas \\%s\nby %s", g_entities[idNum].client->pers.netname, (unMute) ? "unmuted" : "muted", adm->client->pers.netname), BROADCAST_CMD, NULL);
-        trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s ^7was %s by %s%s\n\"", g_entities[idNum].client->pers.netname, (unMute) ? "unmuted" : "muted", adm->client->pers.netname, (unMute) ? "." : va(" for %i minutes.", time)));
+        trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was %s by %s%s\n\"", g_entities[idNum].client->pers.cleanName, (unMute) ? "unmuted" : "muted", adm->client->pers.cleanName, (unMute) ? "." : va(" for %i minutes.", time)));
         Boe_adminLog("muted", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", g_entities[idNum].client->pers.ip, g_entities[idNum].client->pers.cleanName));
     }else{
         G_Broadcast(va("%s\nwas \\%s", g_entities[idNum].client->pers.netname, (unMute) ? "unmuted" : "muted"), BROADCAST_CMD, NULL);
-        trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s ^7was %s%s\n\"", g_entities[idNum].client->pers.netname, (unMute) ? "unmuted" : "muted", (unMute) ? "." : va(" for %i minutes.", time)));
+        trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s was %s%s\n\"", g_entities[idNum].client->pers.cleanName, (unMute) ? "unmuted" : "muted", (unMute) ? "." : va(" for %i minutes.", time)));
         Boe_adminLog("muted", "RCON", va("%s\\%s", g_entities[idNum].client->pers.ip, g_entities[idNum].client->pers.cleanName));
     }
 
@@ -750,9 +750,9 @@ int adm_removeAdmin(int argNum, gentity_t *adm, qboolean shortCmd)
     G_Broadcast(va("%s\nis no longer an \\Admin", g_entities[idNum].client->pers.netname), BROADCAST_CMD, NULL);
     Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
     if (adm && adm->client){
-        trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s ^7was removed as Admin by %s.\n\"", g_entities[idNum].client->pers.cleanName, adm->client->pers.cleanName));
+        trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was removed as Admin by %s.\n\"", g_entities[idNum].client->pers.cleanName, adm->client->pers.cleanName));
     }else{
-        trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s ^7was removed as Admin.\n\"", g_entities[idNum].client->pers.cleanName));
+        trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7%s was removed as Admin.\n\"", g_entities[idNum].client->pers.cleanName));
     }
 
     // He's not an Admin anymore so it doesn't matter if he was a B-Admin, Admin or S-Admin: in any way he shouldn't be allowed to spec the opposite team.
@@ -1014,7 +1014,7 @@ static void adm_toggleSection(gentity_t *adm, char *sectionName, int sectionID, 
     G_Broadcast(va("\\%s %s!", sectionName, (enabled) ? "enabled" : "disabled"), BROADCAST_CMD, NULL);
 
     if (adm && adm->client){
-        trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7%s %s by %s.\n\"", sectionName, (enabled) ? "enabled" : "disabled", adm->client->pers.netname));
+        trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7%s %s by %s.\n\"", sectionName, (enabled) ? "enabled" : "disabled", adm->client->pers.cleanName));
         Boe_adminLog(va("%s %s", sectionNameWithoutCap, (enabled) ? "enabled" : "disabled"), va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "none");
     }else{
         trap_SendServerCommand(-1, va("print \"^3[Rcon Action] ^7%s %s.\n\"", sectionName, (enabled) ? "enabled" : "disabled"));
@@ -1152,7 +1152,7 @@ int adm_shuffleTeams(int argNum, gentity_t *adm, qboolean shortCmd){
     G_Broadcast("\\Shuffle teams!", BROADCAST_CMD, NULL);
 
     if (adm && adm->client){
-        trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Shuffle teams by %s.\n\"", adm->client->pers.netname));
+        trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Shuffle teams by %s.\n\"", adm->client->pers.cleanName));
         Boe_adminLog("shuffleteams", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "none");
     }
     else{
@@ -1244,7 +1244,7 @@ int adm_noNades(int argNum, gentity_t *adm, qboolean shortCmd){
     Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
     G_Broadcast(va("Nades \\%s!", (!state) ? "enabled" : "disabled"), BROADCAST_CMD, NULL);
     if (adm && adm->client){
-        trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7Nades %s by %s.\n\"", (!state) ? "enabled" : "disabled", adm->client->pers.netname));
+        trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7Nades %s by %s.\n\"", (!state) ? "enabled" : "disabled", adm->client->pers.cleanName));
         Boe_adminLog(va("nades %s", (!state) ? "enabled" : "disabled"), va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "none");
     }else{
         trap_SendServerCommand(-1, va("print \"^3[Rcon Action] ^7Nades %s.\n\"", (!state) ? "enabled" : "disabled"));
@@ -1446,7 +1446,7 @@ static void adm_Damage(gentity_t *adm, char *damageName, int value)
     G_Broadcast(va("\\%s!", damageName), BROADCAST_CMD, NULL);
 
     if (adm && adm->client){
-        trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7%s by %s.\n\"", damageName, adm->client->pers.netname));
+        trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7%s by %s.\n\"", damageName, adm->client->pers.cleanName));
         Boe_adminLog(damageName, va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "none");
     }
     else{
@@ -1727,7 +1727,7 @@ int adm_compMode(int argNum, gentity_t *adm, qboolean shortCmd)
     G_Broadcast(va("\\Competition mode %s!", (enabled) ? "enabled" : "disabled"), BROADCAST_CMD, NULL);
 
     if (adm && adm->client){
-        trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7Competition mode %s by %s.\n\"", (enabled) ? "enabled" : "disabled", adm->client->pers.netname));
+        trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7Competition mode %s by %s.\n\"", (enabled) ? "enabled" : "disabled", adm->client->pers.cleanName));
         Boe_adminLog(va("compmode %s", (enabled) ? "enabled" : "disabled"), va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "none");
     }else{
         trap_SendServerCommand(-1, va("print \"^3[Rcon Action] ^7Competition mode %s.\n\"", (enabled) ? "enabled" : "disabled"));
@@ -2309,7 +2309,7 @@ int adm_Broadcast(int argNum, gentity_t *adm, qboolean shortCmd)
     G_Broadcast(buffer1, BROADCAST_CMD, NULL);
 
     if (adm && adm->client){
-        trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Broadcast by %s.\n\"", adm->client->pers.netname));
+        trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Broadcast by %s.\n\"", adm->client->pers.cleanName));
     }else{
         trap_SendServerCommand(-1, "print\"^3[Rcon Action] ^7Broadcast.\n\"");
     }
@@ -2522,7 +2522,7 @@ int adm_swapTeams(int argNum, gentity_t *adm, qboolean shortCmd)
         G_Broadcast(va("\\Autoswap %s!", (enabled) ? "disabled" : "enabled"), BROADCAST_CMD, NULL);
 
         if (adm&&adm->client){
-            trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Auto swap %s by %s.\n\"", (enabled) ? "disabled" : "enabled", adm->client->pers.netname));
+            trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Auto swap %s by %s.\n\"", (enabled) ? "disabled" : "enabled", adm->client->pers.cleanName));
         }else{
             trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Auto swap %s.\n\"", (enabled) ? "disabled" : "enabled"));
         }
@@ -2953,7 +2953,7 @@ int adm_Pause(int argNum, gentity_t *adm, qboolean shortCmd)
 
     if (adm && adm->client){
         Boe_adminLog("paused", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "none");
-        trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Paused by %s.\n\"", adm->client->pers.netname));
+        trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Paused by %s.\n\"", adm->client->pers.cleanName));
     }else{
         Boe_adminLog("paused", "RCON", "none");
         trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Paused.\n\""));
@@ -2977,7 +2977,7 @@ static void adm_unPause(gentity_t *adm)
 
     if (adm && adm->client){
         Boe_adminLog("unpause", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "none");
-        trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Unpause by %s.\n\"", adm->client->pers.netname));
+        trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Unpause by %s.\n\"", adm->client->pers.cleanName));
     }else{
         trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Unpaused.\n\""));
         Boe_adminLog("unpause", "RCON", "none");
@@ -3689,7 +3689,7 @@ int adm_friendlyFire(int argNum, gentity_t *adm, qboolean shortCmd)
     G_Broadcast(va("\\Friendlyfire %s", (enable) ? "enabled!" : "disabled!"), BROADCAST_CMD, NULL);
     if (adm && adm->client){
         Boe_adminLog(va("friendlyfire %s", (enable) ? "enabled" : "disabled"), va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "none");
-        trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7Friendly fire %s by %s.\n\"", (enable) ? "enabled" : "disabled", adm->client->pers.netname));
+        trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7Friendly fire %s by %s.\n\"", (enable) ? "enabled" : "disabled", adm->client->pers.cleanName));
     }else{
         Boe_adminLog(va("friendly fire %s", (enable) ? "enabled" : "disabled"), "RCON", "none");
         trap_SendServerCommand(-1, va("print \"^3[Rcon Action] ^7Friendly fire %s.\n", (enable) ? "enabled" : "disabled"));
@@ -3940,10 +3940,10 @@ int adm_Map(int argNum, gentity_t *adm, qboolean shortCmd)
         }
 
         if(gametype[0]){ // Boe!Man 2/26/11: If there's actually a gametype found..
-            trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Map switch to %s [%s] by %s.\n\"", map, gametype, adm->client->pers.netname));
+            trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Map switch to %s [%s] by %s.\n\"", map, gametype, adm->client->pers.cleanName));
             Boe_adminLog ("map switch", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", map, gametype));
         }else{
-            trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Map switch to %s by %s.\n\"", map, adm->client->pers.netname));
+            trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Map switch to %s by %s.\n\"", map, adm->client->pers.cleanName));
             Boe_adminLog ("map switch", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), map);
         }
     }else{
@@ -3976,7 +3976,7 @@ int adm_Third(int argNum, gentity_t *adm, qboolean shortCmd)
     Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
     G_Broadcast(va("\\Thirdperson %s!", (enable) ? "enabled" : "disabled"), BROADCAST_CMD, NULL);
     if (adm && adm->client){
-        trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7Thirdperson %s by %s.\n\"", (enable) ? "enabled" : "disabled", adm->client->pers.netname));
+        trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7Thirdperson %s by %s.\n\"", (enable) ? "enabled" : "disabled", adm->client->pers.cleanName));
         Boe_adminLog(va("3rd %s", (enable) ? "enabled" : "disabled"), va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "none");
     }else{
         trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Thirdperson %s.\n\"", (enable) ? "enabled" : "disabled"));
@@ -4264,7 +4264,7 @@ int adm_toggleWeapon(int argNum, gentity_t *adm, qboolean shortCmd)
     Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
     G_Broadcast(va("\\Weapon %s %s!", bg_weaponNames[wpNum], (enable) ? "enabled" : "disabled"), BROADCAST_CMD, NULL);
     if (adm && adm->client){
-        trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7Weapon %s %s by %s.\n\"", bg_weaponNames[wpNum], (enable) ? "enabled" : "disabled", adm->client->pers.netname));
+        trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7Weapon %s %s by %s.\n\"", bg_weaponNames[wpNum], (enable) ? "enabled" : "disabled", adm->client->pers.cleanName));
         Boe_adminLog(va("weapon %d %s", wpNum, (enable) ? "enabled" : "disabled"), va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "none");
     }else{
         trap_SendServerCommand(-1, va("print \"^3[Rcon Action] ^7Weapon %s %s.\n\"", bg_weaponNames[wpNum], (enable) ? "enabled" : "disabled"));
@@ -4293,7 +4293,7 @@ int adm_Anticamp(int argNum, gentity_t *adm, qboolean shortCmd)
     Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
     G_Broadcast(va("\\Anticamp %s!", (enable) ? "enabled" : "disabled"), BROADCAST_CMD, NULL);
     if (adm && adm->client){
-        trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7Anticamp %s by %s.\n\"", (enable) ? "enabled" : "disabled", adm->client->pers.netname));
+        trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7Anticamp %s by %s.\n\"", (enable) ? "enabled" : "disabled", adm->client->pers.cleanName));
         Boe_adminLog(va("anticamp %s", (enable) ? "enabled" : "disabled"), va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "none");
     }else{
         trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Anticamp %s.\n\"", (enable) ? "enabled" : "disabled"));

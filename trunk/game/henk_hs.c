@@ -763,7 +763,7 @@ void EvenTeams_HS (gentity_t *adm, qboolean aet)
     Boe_GlobalSound (G_SoundIndex("sound/misc/events/tut_lift02.mp3"));
 
     if(adm && adm->client) {
-        trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Eventeams by %s.\n\"", adm->client->pers.netname));
+        trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Eventeams by %s.\n\"", adm->client->pers.cleanName));
     } else  {
         if(aet == qfalse)
         trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Eventeams.\n\""));
@@ -850,7 +850,7 @@ void EvenTeams_HZ(gentity_t *adm, qboolean aet){
     Boe_GlobalSound(G_SoundIndex("sound/misc/events/tut_lift02.mp3"));
 
     if (adm && adm->client) {
-        trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Eventeams by %s.\n\"", adm->client->pers.netname));
+        trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Eventeams by %s.\n\"", adm->client->pers.cleanName));
     }else{
         if (aet == qfalse)
             trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Eventeams.\n\""));

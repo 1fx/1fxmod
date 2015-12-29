@@ -33,6 +33,13 @@ static cvarTable_t gametypeCvarTable[] =
     { &gt_simpleScoring,    "gt_simpleScoring",     "0",  CVAR_ARCHIVE, 0.0f, 0.0f, 0, qfalse }, // INF, CTF
     { &gt_flagReturnTime,   "gt_flagReturnTime",    "30", CVAR_ARCHIVE, 0.0f, 0.0f, 0, qfalse }, // CTF
 
+    #ifdef _GOLD
+    // DEM
+    { &gt_bombFuseTime,		"gt_bombFuseTime",		"30", CVAR_ARCHIVE, 0.0f, 0.0f, 0, qfalse },
+	{ &gt_bombDefuseTime,	"gt_bombDefuseTime",	"3",  CVAR_ARCHIVE | CVAR_LATCH, 0.0f, 0.0f, 0, qfalse },
+	{ &gt_bombPlantTime,	"gt_bombPlantTime",		"3",  CVAR_ARCHIVE | CVAR_LATCH, 0.0f, 0.0f, 0, qfalse },
+    #endif // _GOLD
+
     { NULL, NULL, NULL, 0, 0.0f, 0.0f, 0, qfalse }
 };
 
@@ -59,6 +66,17 @@ int gtCall( int command, int arg0, int arg1, int arg2, int arg3, int arg4, int a
             if(current_gametype.value == GT_CTF){
                 gametype.redFlagDropTime = 0;
                 gametype.blueFlagDropTime = 0;
+
+            #ifdef _GOLD
+                G_SetHUDIcon (REDFLAG, gametype.iconRedFlag );
+                G_SetHUDIcon (BLUEFLAG, gametype.iconBlueFlag );
+            }else if(current_gametype.value == GT_DEM){
+                gametype.firstFrame    = qtrue;
+                gametype.bombPlantTime = 0;
+                gametype.bombBeepTime  = 0;
+                gametype.roundOver     = qfalse;
+                G_SetHUDIcon ( 0, 0 );
+            #endif // _GOLD
             }
             return 0;
 
@@ -131,14 +149,17 @@ void GT_Init ( void )
     gtItemDef_t     itemDef;
     gtTriggerDef_t  triggerDef;
     gitem_t*        item;
-    gentity_t*      find;
+    gentity_t*      find = NULL;
+    gtitem_t        *gtitem;
 
     memset ( &gametype, 0, sizeof(gametype) );
+    memset ( &triggerDef, 0, sizeof(triggerDef) );
+    memset ( &itemDef, 0, sizeof(itemDef) );
 
     // Register all cvars for this gametype
     GT_RegisterCvars ();
 
-    // Boe!Man 11/30/12: Register the global sounds per gametype.
+    // Boe!Man 11/30/12: Register the global sounds per gametype, and/or effects.
     if(current_gametype.value == GT_INF){
         gametype.caseTakenSound   = G_SoundIndex ("sound/ctf_flag.mp3");
         gametype.caseCaptureSound = G_SoundIndex ("sound/ctf_win.mp3");
@@ -152,39 +173,130 @@ void GT_Init ( void )
     }else if(current_gametype.value == GT_HS || current_gametype.value == GT_HZ){
         gametype.caseCaptureSound = G_SoundIndex ("sound/ctf_win.mp3");
     }
+    #ifdef _GOLD
+    else if(current_gametype.value == GT_DEM){
+        gametype.bombTakenSound    = G_SoundIndex ( "sound/ctf_flag.mp3" );
+        gametype.bombExplodedSound = G_SoundIndex ( "sound/ctf_win.mp3" );
+        gametype.bombPlantedSound  = G_SoundIndex ( "sound/ctf_base.mp3" );
+        gametype.bombBeepSound     = G_SoundIndex ( "sound/misc/c4/beep" );
+        gametype.bombExplodeEffect = G_EffectIndex ( "explosions/mushroom_explosion.efx" );
+    }
+    #endif // _GOLD
 
-    // Register the items
-    memset ( &itemDef, 0, sizeof(itemDef) );
+    #ifdef _GOLD
+    // Register HUD icons.
+    if(current_gametype.value == GT_CTF){
+        gametype.iconRedFlag = G_IconIndex ( "gfx/menus/hud/ctf_red" );
+        gametype.iconBlueFlag = G_IconIndex ( "gfx/menus/hud/ctf_blue" );
 
-    // Boe!Man 11/29/12: Register items per gametype.
+        gametype.iconRedFlagDropped = G_IconIndex ( "gfx/menus/hud/ctf_red_dropped" );
+        gametype.iconBlueFlagDropped = G_IconIndex ( "gfx/menus/hud/ctf_blue_dropped" );
+
+        gametype.iconRedFlagCarried = G_IconIndex ( "gfx/menus/hud/ctf_red_carried" );
+        gametype.iconBlueFlagCarried = G_IconIndex ( "gfx/menus/hud/ctf_blue_carried" );
+    }else if(current_gametype.value == GT_DEM){
+        gametype.iconBombPlanted[0] = G_IconIndex ( "gfx/menus/hud/dem_planted" );
+        gametype.iconBombPlanted[1] = G_IconIndex ( "gfx/menus/hud/dem_planted1" );
+        gametype.iconBombPlanted[2] = G_IconIndex ( "gfx/menus/hud/dem_planted2" );
+        gametype.iconBombPlanted[3] = G_IconIndex ( "gfx/menus/hud/dem_planted3" );
+        gametype.iconBombPlanted[4] = G_IconIndex ( "gfx/menus/hud/dem_planted4" );
+        gametype.iconBombPlanted[5] = G_IconIndex ( "gfx/menus/hud/dem_planted5" );
+        gametype.iconBombPlanted[6] = G_IconIndex ( "gfx/menus/hud/dem_planted6" );
+    }
+    #endif // _GOLD
+
+    // Register the items per gametype.
     if(current_gametype.value == GT_INF || current_gametype.value == GT_HS){
         item = BG_FindItem ("briefcase");
         if (item){
+            gtitem = &level.gametypeItems[item->giTag];
+            gtitem->id = ITEM_BRIEFCASE;
+
             item->quantity = ITEM_BRIEFCASE;
         }
     }else if(current_gametype.value == GT_CTF){
         item = BG_FindItem ("red_flag");
         if (item){
+            gtitem = &level.gametypeItems[item->giTag];
+            gtitem->id = ITEM_REDFLAG;
+
             item->quantity = ITEM_REDFLAG;
         }
 
         item = NULL;
         item = BG_FindItem ("blue_flag");
         if (item){
+            gtitem = &level.gametypeItems[item->giTag];
+            gtitem->id = ITEM_BLUEFLAG;
+
             item->quantity = ITEM_BLUEFLAG;
         }
     }
+    #ifdef _GOLD
+    else if(current_gametype.value == GT_DEM){
+        // Register the trigger first, we need the sound from the trigger later.
+        memset ( &triggerDef, 0, sizeof(triggerDef) );
+        triggerDef.size		= sizeof(triggerDef);
+        triggerDef.use		= qtrue;
+        triggerDef.useTime	= gt_bombPlantTime.integer * 1000;
+        triggerDef.useIcon	= G_IconIndex ( "gfx/menus/hud/tnt" );
+        triggerDef.useSound = G_SoundIndex ( "sound/misc/c4/c4_loop" );
 
-    // Register the triggers
-    memset ( &triggerDef, 0, sizeof(triggerDef) );
+        while ( NULL != (find = G_Find ( find, FOFS(classname), "gametype_trigger" ) ) )
+        {
+            if ( Q_stricmp ( find->targetname, "demolition_site_1") && Q_stricmp ( find->targetname, "demolition_site_2")){
+                continue;
+            }
 
-    // Boe!Man 11/29/12: Register triggers per gametype.
-    find = NULL;
+            // Assign the id to it.
+            if(Q_stricmp ( find->targetname, "demolition_site_1") == 0){
+                find->health    = TRIGGER_DEMOSITE_1;
+            }else{
+                find->health    = TRIGGER_DEMOSITE_2;
+            }
+            find->touch     = gametype_trigger_touch;
+            find->use		= gametype_trigger_use;
+            find->delay		= triggerDef.useIcon;
+            find->soundPos1 = triggerDef.useTime;
+            find->soundLoop = triggerDef.useSound;
+
+            trap_LinkEntity (find);
+        }
+
+        // Now register the items.
+        itemDef.size = sizeof(itemDef);
+        item = BG_FindItem ("c4");
+        if (item){
+            gtitem = &level.gametypeItems[item->giTag];
+            gtitem->id = ITEM_BOMB;
+
+            item->quantity = ITEM_BOMB;
+        }
+
+        itemDef.use = qtrue;
+        itemDef.useTime = gt_bombDefuseTime.integer * 1000;
+        itemDef.useSound = triggerDef.useSound;
+        itemDef.useIcon = G_IconIndex ( "gfx/menus/hud/wire_cutters" );
+        item = NULL;
+        item = BG_FindItem ("armed_c4");
+        if (item){
+            gtitem = &level.gametypeItems[item->giTag];
+            gtitem->id = ITEM_PLANTED_BOMB;
+
+            item->quantity = ITEM_PLANTED_BOMB;
+
+            gtitem->useIcon  = itemDef.useIcon;
+            gtitem->useTime  = itemDef.useTime;
+            gtitem->useSound = itemDef.useSound;
+        }
+    }
+    #endif // _GOLD
+
+    // Register triggers per gametype.
     if(current_gametype.value == GT_INF){
         while ( NULL != (find = G_Find ( find, FOFS(classname), "gametype_trigger" ) ) )
         {
-            if ( Q_stricmp ( find->targetname, (const char*) "briefcase_destination"))
-            {
+            if ( Q_stricmp ( find->targetname, (const char*) "briefcase_destination")){
                 continue;
             }
 
@@ -196,8 +308,7 @@ void GT_Init ( void )
     }else if(current_gametype.value == GT_CTF){
         while ( NULL != (find = G_Find ( find, FOFS(classname), "gametype_trigger" ) ) )
         {
-            if ( Q_stricmp ( find->targetname, (const char*) "red_capture_point"))
-            {
+            if ( Q_stricmp ( find->targetname, (const char*) "red_capture_point")){
                 continue;
             }
 
@@ -211,8 +322,7 @@ void GT_Init ( void )
         find = NULL;
         while ( NULL != (find = G_Find ( find, FOFS(classname), "gametype_trigger" ) ) )
         {
-            if ( Q_stricmp ( find->targetname, (const char*) "blue_capture_point"))
-            {
+            if ( Q_stricmp ( find->targetname, (const char*) "blue_capture_point")){
                 continue;
             }
 
@@ -244,6 +354,135 @@ void GT_RunFrame ( int time )
 {
     gametype.time = time;
 
+    #ifdef _GOLD
+    if(current_gametype.value == GT_DEM){
+        gitem_t* item;
+
+        if (gametype.firstFrame)
+        {
+            int clients[MAX_CLIENTS];
+            int i, count = 0;
+
+            for (i = 0; i < level.numConnectedClients && count < MAX_CLIENTS; i++){
+                gclient_t* client = &level.clients[level.sortedClients[i]];
+
+                if ( client->pers.connected != CON_CONNECTED )
+				{
+					continue;
+				}
+
+				if (client->sess.team == TEAM_BLUE){
+					clients[count++] = level.sortedClients[i];
+				}
+            }
+
+            if ( count > 0 ){
+                gametype.bombGiveClient = gametype.bombGiveClient % count;
+
+                // Give the gametype item.
+                item = BG_FindGametypeItemByID ( ITEM_BOMB );
+                if ( item ){
+                    level.clients[clients[gametype.bombGiveClient]].ps.stats[STAT_GAMETYPE_ITEMS] |= (1<<item->giTag);
+                }
+                gametype.firstFrame = qfalse;
+
+                // Next time use the next client in the list
+                gametype.bombGiveClient = (gametype.bombGiveClient + 1 ) % count;
+            }
+        }
+
+        if ( gametype.bombPlantTime )
+        {
+            static const int slowTime = 1000;
+            static const int fastTime = 100;
+
+            if ( !gametype.bombBeepTime || gametype.time > gametype.bombBeepTime )
+            {
+                float addTime;
+
+                addTime = (float)(gametype.bombPlantTime - gametype.time) / (float)(gt_bombFuseTime.integer * 1000);
+                addTime = fastTime + (addTime * (float)(slowTime - fastTime) );
+
+                gametype.bombBeepTime = gametype.time + (int)addTime;
+
+                G_SoundAtLoc (gametype.bombPlantOrigin, CHAN_AUTO, gametype.bombBeepSound);
+
+                addTime = (float)(gametype.bombPlantTime - gametype.time) / (float)(gt_bombFuseTime.integer * 1000);
+                addTime = 6.0f - 6.0f * addTime ;
+                G_SetHUDIcon(0, gametype.iconBombPlanted[ Com_Clamp ( 0, 6, (int)addTime ) ]);
+            }
+        }
+
+        if ( gametype.bombPlantTime && gametype.time > gametype.bombPlantTime )
+        {
+            static vec3_t up = {0,0,1};
+            int clients[MAX_CLIENTS];
+            int i, count = 0;
+
+            G_PlayEffect (gametype.bombExplodeEffect, gametype.bombPlantOrigin, up);
+            G_UseTargetsByName (gametype.bombPlantTarget, NULL, NULL );
+            item = BG_FindGametypeItemByID (ITEM_PLANTED_BOMB);
+			if ( item ){
+				G_ResetGametypeItem ( item );
+			}
+
+            if ( !gametype.roundOver )
+            {
+                G_AddTeamScore (TEAM_BLUE, 1);
+                G_Broadcast(va("%s ^7team\nhas \\destroyed the target!", server_blueteamprefix.string), BROADCAST_GAME, NULL);
+                trap_SendServerCommand( -1, "print\"^3[DEM] ^7Blue team has destroyed the target.\n\"");
+                G_SetHUDIcon(0, gametype.iconBombPlanted[6]);
+
+                // Start a global sound.
+                if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime){
+                    gentity_t* tent;
+                    tent = G_TempEntity( vec3_origin, EV_GLOBAL_SOUND );
+                    tent->s.eventParm = gametype.bombExplodedSound;
+                    tent->r.svFlags = SVF_BROADCAST;
+                }
+
+                level.gametypeResetTime = level.time + 5000;
+
+                // Give the guy who planted it some props
+                if ( !gt_simpleScoring.integer )
+                {
+                    G_AddScore(&g_entities[gametype.bombPlantClient], 10);
+                }
+            }
+
+            gametype.bombPlantTime = 0;
+
+            // Get the bomb client # so we can give the bomb to the same guy again
+            for (i = 0; i < level.numConnectedClients && count < MAX_CLIENTS; i++){
+                gclient_t* client = &level.clients[level.sortedClients[i]];
+
+                if ( client->pers.connected != CON_CONNECTED )
+				{
+					continue;
+				}
+
+				if (client->sess.team == TEAM_BLUE){
+					clients[count++] = level.sortedClients[i];
+				}
+            }
+
+            if (count > 0)
+            {
+                for ( count--; count >= 0; count-- )
+                {
+                    if ( clients[count] == gametype.bombPlantClient )
+                    {
+                        gametype.bombGiveClient = count;
+                        break;
+                    }
+                }
+            }
+
+            gametype.roundOver = qtrue;
+        }
+    }
+    #endif // _GOLD
+
     GT_UpdateCvars ();
 
     // Boe!Man 4/22/12: Only check if flags need to be returned when the game is NOT paused.
@@ -272,6 +511,10 @@ void GT_RunFrame ( int time )
 
             gametype.redFlagDropTime = 0;
             gametype.flagTaken[REDFLAG] = qfalse;
+
+            #ifdef _GOLD
+            G_SetHUDIcon (REDFLAG, gametype.iconRedFlag);
+            #endif // _GOLD
         }
         // See if we need to return the blue flag yet
         if ( gametype.blueFlagDropTime && time - gametype.blueFlagDropTime > gt_flagReturnTime.integer * 1000 )
@@ -297,6 +540,10 @@ void GT_RunFrame ( int time )
 
             gametype.blueFlagDropTime = 0;
             gametype.flagTaken[BLUEFLAG] = qfalse;
+
+            #ifdef _GOLD
+            G_SetHUDIcon (BLUEFLAG, gametype.iconBlueFlag);
+            #endif // _GOLD
         }
     }
 }
@@ -316,7 +563,12 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
     switch ( cmd )
     {
         case GTEV_ITEM_DEFEND:
-            if(current_gametype.value == GT_INF || current_gametype.value == GT_CTF){
+            #ifdef _GOLD
+            if(current_gametype.value == GT_INF || current_gametype.value == GT_CTF || current_gametype.value == GT_DEM)
+            #else
+            if(current_gametype.value == GT_INF || current_gametype.value == GT_CTF)
+            #endif // _GOLD
+            {
                 if ( !gt_simpleScoring.integer )
                 {
                     G_AddScore ( &g_entities[arg1], 5);
@@ -401,7 +653,6 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                             G_ResetGametypeItem ( item );
                         }
 
-
                         // Boe!Man 11/29/12: Global sound.
                         if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime){
                             gentity_t* tent;
@@ -412,6 +663,10 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 
                         gametype.redFlagDropTime = 0;
                         gametype.flagTaken[REDFLAG] = qfalse;
+
+                        #ifdef _GOLD
+                        G_SetHUDIcon (REDFLAG, gametype.iconRedFlag);
+                        #endif // _GOLD
                         return 1;
 
                     case ITEM_BLUEFLAG:
@@ -435,6 +690,10 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 
                         gametype.blueFlagDropTime = 0;
                         gametype.flagTaken[BLUEFLAG] = qfalse;
+
+                        #ifdef _GOLD
+                        G_SetHUDIcon (BLUEFLAG, gametype.iconBlueFlag);
+                        #endif // _GOLD
                         return 1;
                 }
             }else if(current_gametype.value == GT_HS){
@@ -533,12 +792,60 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                         break;
                 }
             }
+            #ifdef _GOLD
+            else if(current_gametype.value == GT_DEM){
+                switch ( arg0 )
+                {
+                    case TEAM_RED:
+                        G_Broadcast(va("%s ^7team \\eliminated!", server_redteamprefix.string), BROADCAST_GAME, NULL);
+                        trap_SendServerCommand( -1, "print\"^3[DEM] ^7Red team eliminated.\n\"");
+                        G_AddTeamScore ((team_t) TEAM_BLUE, 1);
+                        // Boe!Man 11/29/12: Global sound.
+                        if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime){
+                            gentity_t* tent;
+                            tent = G_TempEntity( vec3_origin, EV_GLOBAL_SOUND );
+                            tent->s.eventParm = gametype.bombExplodedSound;
+                            tent->r.svFlags = SVF_BROADCAST;
+                        }
+
+                        // Boe!Man 11/29/12: Reset gametype.
+                        level.gametypeResetTime = level.time + 5000;
+                        gametype.roundOver = qtrue;
+                        break;
+
+                    case TEAM_BLUE:
+                        // If the bomb is planted the defending team MUST defuse it.
+                        if ( !gametype.bombPlantTime )
+                        {
+                            G_Broadcast(va("%s ^7team \\eliminated!", server_blueteamprefix.string), BROADCAST_GAME, NULL);
+                            trap_SendServerCommand( -1, "print\"^3[DEM] ^7Blue team eliminated.\n\"");
+                            G_AddTeamScore ((team_t) TEAM_RED, 1);
+                            // Boe!Man 11/29/12: Global sound.
+                            if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime){
+                                gentity_t* tent;
+                                tent = G_TempEntity( vec3_origin, EV_GLOBAL_SOUND );
+                                tent->s.eventParm = gametype.bombExplodedSound;
+                                tent->r.svFlags = SVF_BROADCAST;
+                            }
+
+                            // Boe!Man 11/29/12: Reset gametype.
+                            level.gametypeResetTime = level.time + 5000;
+                            gametype.roundOver = qtrue;
+                        }
+
+                        break;
+                }
+
+                break;
+            }
+            #endif // _GOLD
+
             break;
 
         case GTEV_TIME_EXPIRED:
             if(current_gametype.value == GT_INF){
                 G_Broadcast(va("%s ^7team\n\\defended the briefcase!", server_redteamprefix.string), BROADCAST_GAME, NULL);
-                trap_SendServerCommand( -1, va("print\"^3[INF] ^7Red team defended the briefcase.\n\""));
+                trap_SendServerCommand( -1, "print\"^3[INF] ^7Red team defended the briefcase.\n\"");
                 G_AddTeamScore ((team_t) TEAM_RED, 1);
 
                 // Boe!Man 11/29/12: Reset gametype.
@@ -579,6 +886,18 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                 level.gametypeResetTime = level.time + 5000;
                 break;
             }
+            #ifdef _GOLD
+            else if(current_gametype.value == GT_DEM){
+                G_Broadcast(va("%s ^7team\nhas \\defended the bomb site!", server_redteamprefix.string), BROADCAST_GAME, NULL);
+                trap_SendServerCommand( -1, "print\"^3[DEM] ^7Red team has defended the bomb site.\n\"");
+                G_AddTeamScore ((team_t) TEAM_RED, 1);
+
+                // Boe!Man 11/29/12: Reset gametype.
+                level.gametypeResetTime = level.time + 5000;
+                gametype.roundOver = qtrue;
+            }
+            #endif // _GOLD
+
             break;
 
         case GTEV_ITEM_DROPPED:
@@ -590,15 +909,28 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                     case ITEM_BLUEFLAG:
                         G_Broadcast(va("%s\n\\dropped the %s ^7flag!", g_entities[arg1].client->pers.netname, server_blueteamprefix.string), BROADCAST_GAME, NULL);
                         gametype.blueFlagDropTime = time;
+
+                        #ifdef _GOLD
+                        G_SetHUDIcon (BLUEFLAG, gametype.iconBlueFlagDropped);
+                        #endif // _GOLD
                         break;
                     case ITEM_REDFLAG:
                         G_Broadcast(va("%s\n\\dropped the %s ^7flag!", g_entities[arg1].client->pers.netname, server_redteamprefix.string), BROADCAST_GAME, NULL);
                         gametype.redFlagDropTime = time;
+
+                        #ifdef _GOLD
+                        G_SetHUDIcon (REDFLAG, gametype.iconRedFlagDropped);
+                        #endif // _GOLD
                         break;
                     default:
                         break;
                 }
             }
+            #ifdef _GOLD
+            else if(current_gametype.value == GT_DEM){
+                G_Broadcast(va("%s\nhas \\dropped the bomb!", g_entities[arg1].client->pers.netname), BROADCAST_GAME, NULL);
+            }
+            #endif // _GOLD
 
             break;
 
@@ -610,7 +942,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                         if ( arg2 == TEAM_BLUE || g_caserun.integer )
                         {
                             G_Broadcast(va("%s\nhas \\taken the briefcase!", g_entities[arg1].client->pers.netname), BROADCAST_GAME, NULL);
-                            trap_SendServerCommand(-1, va("print\"^3[%s] %s ^7has taken the briefcase.\n\"", (g_caserun.integer) ? "CR" : "INF", g_entities[arg1].client->pers.netname));
+                            trap_SendServerCommand(-1, va("print\"^3[%s] ^7%s has taken the briefcase.\n\"", (g_caserun.integer) ? "CR" : "INF", g_entities[arg1].client->pers.cleanName));
 
                             // Boe!Man 11/29/12: Global sound.
                             if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime){
@@ -639,7 +971,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                         if(arg2 == TEAM_RED)
                         {
                             G_Broadcast(va("%s\nhas \\taken the %s ^7flag!", g_entities[arg1].client->pers.netname, server_blueteamprefix.string), BROADCAST_GAME, NULL);
-                            trap_SendServerCommand(-1, va("print\"^3[CTF] %s ^7has taken the Blue flag.\n\"", g_entities[arg1].client->pers.netname));
+                            trap_SendServerCommand(-1, va("print\"^3[CTF] ^7%s has taken the Blue flag.\n\"", g_entities[arg1].client->pers.cleanName));
 
                             // Boe!Man 11/29/12: Global sound.
                             if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime){
@@ -653,10 +985,13 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                             G_Voice ( &g_entities[arg1], NULL, SAY_TEAM, "got_it", qfalse );
                             gametype.blueFlagDropTime = 0;
                             gametype.flagTaken[BLUEFLAG] = qtrue;
+                            #ifdef _GOLD
+                            G_SetHUDIcon (BLUEFLAG, gametype.iconBlueFlagCarried);
+                            #endif // _GOLD
                             return 1;
                         }else if(arg2 == TEAM_BLUE && g_ctfClassic.integer && gametype.blueFlagDropTime){ // Boe!Man 2/1/13: Include touch-flag (classic) CTF mode.
                             G_Broadcast(va("%s\nhas \\returned the %s ^7flag!", g_entities[arg1].client->pers.netname, server_blueteamprefix.string), BROADCAST_GAME, NULL);
-                            trap_SendServerCommand(-1, va("print\"^3[CTF] %s ^7has returned the Blue flag.\n\"", g_entities[arg1].client->pers.netname));
+                            trap_SendServerCommand(-1, va("print\"^3[CTF] ^7%s has returned the Blue flag.\n\"", g_entities[arg1].client->pers.cleanName));
 
                             item = BG_FindGametypeItemByID ( ITEM_BLUEFLAG );
                             if (item){
@@ -672,6 +1007,9 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                             }
                             gametype.blueFlagDropTime = 0;
                             gametype.flagTaken[BLUEFLAG] = qfalse;
+                            #ifdef _GOLD
+                            G_SetHUDIcon (BLUEFLAG, gametype.iconBlueFlag);
+                            #endif // _GOLD
                             return 0;
                         }
                         break;
@@ -680,7 +1018,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                         if(arg2 == TEAM_BLUE)
                         {
                             G_Broadcast(va("%s\nhas \\taken the %s ^7flag!", g_entities[arg1].client->pers.netname, server_redteamprefix.string), BROADCAST_GAME, NULL);
-                            trap_SendServerCommand(-1, va("print\"^3[CTF] %s ^7has taken the Red flag.\n\"", g_entities[arg1].client->pers.netname));
+                            trap_SendServerCommand(-1, va("print\"^3[CTF] ^7%s has taken the Red flag.\n\"", g_entities[arg1].client->pers.cleanName));
 
                             // Boe!Man 11/29/12: Global sound.
                             if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime){
@@ -694,10 +1032,14 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                             G_Voice ( &g_entities[arg1], NULL, SAY_TEAM, "got_it", qfalse );
                             gametype.redFlagDropTime = 0;
                             gametype.flagTaken[REDFLAG] = qtrue;
+
+                            #ifdef _GOLD
+                            G_SetHUDIcon (REDFLAG, gametype.iconRedFlagCarried);
+                            #endif // _GOLD
                             return 1;
                         }else if(arg2 == TEAM_RED && g_ctfClassic.integer && gametype.redFlagDropTime){ // Boe!Man 2/1/13: Include touch-flag (classic) CTF mode.
                             G_Broadcast(va("%s\nhas \\returned the %s ^7flag!", g_entities[arg1].client->pers.netname, server_redteamprefix.string), BROADCAST_GAME, NULL);
-                            trap_SendServerCommand(-1, va("print\"^3[CTF] %s ^7has returned the Red flag.\n\"", g_entities[arg1].client->pers.netname));
+                            trap_SendServerCommand(-1, va("print\"^3[CTF] ^7%s has returned the Red flag.\n\"", g_entities[arg1].client->pers.cleanName));
 
                             item = BG_FindGametypeItemByID ( ITEM_REDFLAG );
                             if (item){
@@ -713,6 +1055,10 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                             }
                             gametype.redFlagDropTime = 0;
                             gametype.flagTaken[REDFLAG] = qfalse;
+
+                            #ifdef _GOLD
+                            G_SetHUDIcon (REDFLAG, gametype.iconRedFlag);
+                            #endif // _GOLD
                             return 0;
                         }
                         break;
@@ -722,7 +1068,31 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                     return 1;
                 }
             }
-            return 0;
+            #ifdef _GOLD
+            else if(current_gametype.value == GT_DEM){
+                if( arg0 == ITEM_BOMB && arg2 == TEAM_BLUE ){
+                    G_Broadcast(va("%s\nhas \\taken the bomb!", g_entities[arg1].client->pers.netname), BROADCAST_GAME, NULL);
+                    trap_SendServerCommand( -1, va("print\"^3[DEM] ^7%s has taken the bomb.\n\"", g_entities[arg1].client->pers.cleanName));
+
+                    // Boe!Man 11/29/12: Global sound.
+                    if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime){
+                        gentity_t* tent;
+                        tent = G_TempEntity( vec3_origin, EV_GLOBAL_SOUND );
+                        tent->s.eventParm = gametype.bombTakenSound;
+                        tent->r.svFlags = SVF_BROADCAST;
+                    }
+
+                    // Boe!Man 11/29/12: Radio message.
+                    G_Voice ( &g_entities[arg1], NULL, SAY_TEAM, "got_it", qfalse );
+
+                    return 1;
+                }
+
+                return 0;
+            }
+            #endif // _GOLD
+
+            break;
 
         case GTEV_TRIGGER_TOUCHED:
             if(current_gametype.value == GT_INF){
@@ -746,7 +1116,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                             if ( ent->client->ps.stats[STAT_GAMETYPE_ITEMS] & (1<<item->giTag) )
                             {
                                 G_Broadcast(va("%s\nhas \\captured the briefcase!", g_entities[arg1].client->pers.netname), BROADCAST_GAME, NULL);
-                                trap_SendServerCommand( -1, va("print\"^3[INF] %s ^7has captured the briefcase.\n\"", g_entities[arg1].client->pers.cleanName));
+                                trap_SendServerCommand( -1, va("print\"^3[INF] ^7%s has captured the briefcase.\n\"", g_entities[arg1].client->pers.cleanName));
                                 g_entities[arg1].client->pers.statinfo.itemCaptures++;
 
                                 // Boe!Man 11/29/12: Global sound.
@@ -785,7 +1155,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                             if ( ent->client->ps.stats[STAT_GAMETYPE_ITEMS] & (1<<item->giTag) && ((g_ctfClassic.integer == 2 && !gametype.flagTaken[BLUEFLAG]) || g_ctfClassic.integer != 2))
                             {
                                 G_Broadcast(va("%s\nhas \\captured the %s ^7flag!", g_entities[arg1].client->pers.netname, server_redteamprefix.string), BROADCAST_GAME, NULL);
-                                trap_SendServerCommand( -1, va("print\"^3[CTF] %s ^7has captured the Red flag.\n\"", g_entities[arg1].client->pers.cleanName));
+                                trap_SendServerCommand( -1, va("print\"^3[CTF] ^7%s has captured the Red flag.\n\"", g_entities[arg1].client->pers.cleanName));
                                 g_entities[arg1].client->pers.statinfo.itemCaptures++;
 
                                 // Boe!Man 11/29/12: Reset item.
@@ -806,6 +1176,10 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                                 }
                                 gametype.redFlagDropTime = 0;
                                 gametype.flagTaken[REDFLAG] = qfalse;
+
+                                #ifdef _GOLD
+                                G_SetHUDIcon (REDFLAG, gametype.iconRedFlag);
+                                #endif // _GOLD
                                 return 1;
                             }
                         }
@@ -820,7 +1194,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                             if ( ent->client->ps.stats[STAT_GAMETYPE_ITEMS] & (1<<item->giTag) && ((g_ctfClassic.integer == 2 && !gametype.flagTaken[REDFLAG]) || g_ctfClassic.integer != 2))
                             {
                                 G_Broadcast(va("%s\nhas \\captured the %s ^7flag!", g_entities[arg1].client->pers.netname, server_blueteamprefix.string), BROADCAST_GAME, NULL);
-                                trap_SendServerCommand( -1, va("print\"^3[CTF] %s ^7has captured the Blue flag.\n\"", g_entities[arg1].client->pers.cleanName));
+                                trap_SendServerCommand( -1, va("print\"^3[CTF] ^7%s has captured the Blue flag.\n\"", g_entities[arg1].client->pers.cleanName));
                                 g_entities[arg1].client->pers.statinfo.itemCaptures++;
 
                                 // Boe!Man 11/29/12: Reset item.
@@ -841,12 +1215,18 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                                 }
                                 gametype.blueFlagDropTime = 0;
                                 gametype.flagTaken[BLUEFLAG] = qfalse;
+
+                                #ifdef _GOLD
+                                G_SetHUDIcon (BLUEFLAG, gametype.iconBlueFlag);
+                                #endif // _GOLD
                                 return 1;
                             }
                         }
                         break;
                 }
             }
+
+            break;
 
         case GTEV_CLIENT_DEATH:
             if(current_gametype.value == GT_TDM){
@@ -863,6 +1243,130 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                 }
             }
             break;
+
+        #ifdef _GOLD
+        case GTEV_ITEM_CANBEUSED:
+            if (current_gametype.value == GT_DEM && arg0 == ITEM_PLANTED_BOMB && arg2 == TEAM_RED){
+				return 1;
+			}
+
+			return 0;
+
+        case GTEV_TRIGGER_CANBEUSED:
+            if(current_gametype.value == GT_DEM){
+                gitem_t*	item;
+                gentity_t*	ent;
+
+                ent  = &g_entities[arg1];
+                item = BG_FindGametypeItemByID ( ITEM_BOMB );
+
+                if (item && ent->client->ps.stats[STAT_GAMETYPE_ITEMS] & (1<<item->giTag)){
+                    return 1;
+                }
+            }
+
+            break;
+
+        case GTEV_ITEM_USED:
+            if(current_gametype.value == GT_DEM){
+                gitem_t *item;
+
+                // Reset gametype item.
+                item = BG_FindGametypeItemByID ( ITEM_PLANTED_BOMB );
+                if ( item )
+                {
+                    G_ResetGametypeItem ( item );
+                }
+
+                gametype.bombPlantTime = 0;
+                gametype.bombBeepTime = 0;
+
+                G_AddTeamScore (TEAM_RED, 1);
+
+                G_Broadcast(va("%s\nhas \\defused the bomb!", g_entities[arg1].client->pers.netname), BROADCAST_GAME, NULL);
+                trap_SendServerCommand( -1, va("print\"^3[DEM] ^7%s has defused the bomb.\n\"", g_entities[arg1].client->pers.cleanName));
+
+                // Boe!Man 11/29/12: Global sound.
+                if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime){
+                    gentity_t* tent;
+                    tent = G_TempEntity( vec3_origin, EV_GLOBAL_SOUND );
+                    tent->s.eventParm = gametype.bombExplodedSound;
+                    tent->r.svFlags = SVF_BROADCAST;
+                }
+
+                level.gametypeResetTime = level.time + 5000;
+                gametype.roundOver = qtrue;
+
+                // Give the guy who defused it some props
+                if ( !gt_simpleScoring.integer )
+                {
+                    G_AddScore ( &g_entities[arg1], 10 );
+                }
+
+                return 1;
+            }
+
+            break;
+
+        case GTEV_TRIGGER_USED:
+            if(current_gametype.value == GT_DEM){
+                gitem_t     *item;
+                gentity_t	*find;
+
+                gametype.bombPlantTime = time + gt_bombFuseTime.integer * 1000;
+                gametype.bombPlantClient = arg1;
+
+                // Set the bomb plant origin.
+                VectorCopy (g_entities[arg1].client->ps.origin, gametype.bombPlantOrigin);
+
+                // Take the bomb away from the client.
+                item = BG_FindGametypeItemByID ( ITEM_BOMB );
+                if ( item ){
+                    level.clients[arg1].ps.stats[STAT_GAMETYPE_ITEMS] &= ~(1<<item->giTag);
+                }
+
+                // Spawn the bomb.
+                item = BG_FindGametypeItemByID ( ITEM_PLANTED_BOMB );
+                if ( item )
+                {
+                    gentity_t* ent = LaunchItem ( item, gametype.bombPlantOrigin, vec3_origin);
+                    if ( ent )
+                    {
+                        VectorCopy (vec3_origin, ent->s.angles );
+                    }
+                }
+
+                // Broadcast the change.
+                G_Broadcast(va("%s\nhas \\planted the bomb!", g_entities[arg1].client->pers.netname), BROADCAST_GAME, NULL);
+                trap_SendServerCommand( -1, va("print\"^3[DEM] ^7%s has planted the bomb.\n\"", g_entities[arg1].client->pers.cleanName));
+
+                // Get the trigger target.
+                Com_sprintf (gametype.bombPlantTarget, sizeof(gametype.bombPlantTarget), "");
+                find = NULL;
+                while (NULL != (find = G_Find (find, FOFS(classname), "gametype_trigger"))){
+                    if ( find->health == arg0 )
+                    {
+                        Com_sprintf (gametype.bombPlantTarget, sizeof(gametype.bombPlantTarget), "%s", find->target );
+                        break;
+                    }
+                }
+
+                // Set the HUD icon.
+                G_SetHUDIcon(0, gametype.iconBombPlanted[0]);
+
+                // Start global sound.
+                if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime){
+                    gentity_t* tent;
+                    tent = G_TempEntity( vec3_origin, EV_GLOBAL_SOUND );
+                    tent->s.eventParm = gametype.bombPlantedSound;
+                    tent->r.svFlags = SVF_BROADCAST;
+                }
+
+                return 0;
+            }
+
+            break;
+        #endif // _GOLD
 
         default:
             break;

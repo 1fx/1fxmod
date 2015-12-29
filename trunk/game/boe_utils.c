@@ -1430,7 +1430,6 @@ void Boe_Stats ( gentity_t *ent )
             for(i=0;i<level.numConnectedClients;i++){
                 Q_strncpyz(cleanName, g_entities[level.sortedClients[i]].client->pers.cleanName, sizeof(cleanName)); // Boe!Man 2/20/13: With NULL terminator.
                 Q_strlwr(cleanName);
-                //trap_SendServerCommand(-1, va("print\"^3[Debug] ^7%s comparing with %s.\n\"", g_entities[level.sortedClients[i]].client->pers.cleanName,numb));
                 if(strstr(cleanName, Q_strlwr(arg1))){
                     idnum = level.sortedClients[i];
                     numberofclients += 1;
@@ -2112,7 +2111,7 @@ void Boe_checkRoof ( gentity_t *ent )
             if(ent->r.currentOrigin[2] >= level.noLR[1][2]){ // Well he is now. Check for the timeout.
                 if(!level.noLR[1][1]){ // 0 or less.. Meaning, instant pop. No need for further checks.
                     G_Damage(ent, NULL, NULL, NULL, NULL, 10000, 0, MOD_TRIGGER_HURT, 0);
-                    trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s ^7was killed for not leaving the roof.\n\"", ent->client->pers.cleanName));
+                    trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s was killed for not leaving the roof.\n\"", ent->client->pers.cleanName));
                 }else{
                     ent->client->sess.isOnRoof = qtrue; // The server owner specified a timer. So, first, the player initialised this process by being on roof.
                     G_Broadcast(va("\\Leave the roof within ^1%.0f ^7seconds!", level.noLR[1][1]), BROADCAST_GAME, ent);
@@ -2127,7 +2126,7 @@ void Boe_checkRoof ( gentity_t *ent )
             }else{ // He's still on the roof.
                 if(level.noLR[1][1] == ent->client->sess.isOnRoofTime){ // Well, he waited it out. Pop him.
                     G_Damage(ent, NULL, NULL, NULL, NULL, 10000, 0, MOD_TRIGGER_HURT, 0);
-                    trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s ^7was killed for not leaving the roof.\n\"", ent->client->pers.netname));
+                    trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s was killed for not leaving the roof.\n\"", ent->client->pers.cleanName));
                     ent->client->sess.isOnRoof = qfalse;
                     ent->client->sess.isOnRoofTime = 0;
                 }else{ // Give him another warning.

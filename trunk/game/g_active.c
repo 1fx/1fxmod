@@ -119,7 +119,7 @@ void P_WorldEffects( gentity_t *ent )
     if(level.noLRActive[0] && level.noLRMWEntFound[0]){ // if enabled -- Boe!Man 6/2/12: Also check for nolower2. This is qtrue when the entity was found.
         if(ent->r.currentOrigin[2] <= level.noLR[0][2] && !G_IsClientDead(ent->client)){
             //trap_SendServerCommand( ent->s.number, va("print \"nolower = %.2f.\n\"", level.nolower[2]) );
-            trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s ^7was killed for being lower.\n\"", ent->client->pers.cleanName));
+            trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s was killed for being lower.\n\"", ent->client->pers.cleanName));
 
             // Make sure godmode isn't an issue with being lower.
             if(ent->flags & FL_GODMODE){
@@ -754,7 +754,7 @@ qboolean ClientInactivityTimer( gclient_t *client ) {
         #endif
         if ( level.time > client->inactivityTime ) {
             SetTeam(&g_entities[client-level.clients], "s", NULL, qtrue); // Henk 08/04/10 -> Force ppl to spec instead of kicking them when afk
-            trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s ^7was forced to spectator for being AFK.\n\"", g_entities[client-level.clients].client->pers.netname));
+            trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s was forced to spectator for being AFK.\n\"", g_entities[client-level.clients].client->pers.cleanName));
             //trap_DropClient( client - level.clients, "Dropped due to inactivity" );
             return qfalse;
         }

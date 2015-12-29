@@ -111,11 +111,12 @@ void BG_InitializeWeaponsAndAmmo()
     modNames[27] = "Team change";
     modNames[28] = "Target Laser";
     modNames[29] = "Trigger hurt entity";
-    modNames[30] = "Car";
-    modNames[31] = "Pop";
-    modNames[32] = "Refresh";
-    modNames[33] = "Plant up";
-    modNames[34] = "Burn";
+    modNames[30] = "Trigger hurt entity (no suicide)";
+    modNames[31] = "Car";
+    modNames[32] = "Pop";
+    modNames[33] = "Refresh";
+    modNames[34] = "Plant up";
+    modNames[35] = "Burn";
 
     #else
     bg_weaponNames[0] = "No Weapon";    // WP_NONE
@@ -231,11 +232,12 @@ void BG_InitializeWeaponsAndAmmo()
     modNames[30] = "Team change";
     modNames[31] = "Target Laser";
     modNames[32] = "Trigger hurt entity";
-    modNames[33] = "Car";
-    modNames[34] = "Pop";
-    modNames[35] = "Refresh";
-    modNames[36] = "Plant up";
-    modNames[37] = "Burn";
+    modNames[33] = "Trigger hurt entity (no suicide)";
+    modNames[34] = "Car";
+    modNames[35] = "Pop";
+    modNames[36] = "Refresh";
+    modNames[37] = "Plant up";
+    modNames[38] = "Burn";
     #endif // not _GOLD
 }
 

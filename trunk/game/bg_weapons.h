@@ -57,6 +57,7 @@ typedef enum
     MOD_TEAMCHANGE,
     MOD_TARGET_LASER,
     MOD_TRIGGER_HURT,
+    MOD_TRIGGER_HURT_NOSUICIDE,
     //Ryan april 6 2003
     MOD_CAR,
     MOD_POP,
@@ -181,6 +182,7 @@ typedef enum
     MOD_TEAMCHANGE,
     MOD_TARGET_LASER,
     MOD_TRIGGER_HURT,
+    MOD_TRIGGER_HURT_NOSUICIDE,
     //Ryan april 6 2003
     MOD_CAR,
     MOD_POP,

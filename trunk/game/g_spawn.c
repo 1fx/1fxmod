@@ -252,7 +252,7 @@ spawn_t spawns[] =
     {"func_train",                  SP_func_train},
     {"func_timer",                  SP_func_timer},
     {"func_glass",                  SP_func_glass},
-    //{"func_wall",                 SP_func_wall},
+    {"func_wall",                   SP_func_wall},
 
     // Triggers are brush objects that cause an effect when contacted
     // by a living player, usually involving firing targets.
@@ -333,7 +333,6 @@ spawn_t spawns[] =
     {"info_camp",                   0},
     {"info_null",                   0},
     {"emplaced_wpn",                0},
-    {"func_wall",                   0},
     {"info_NPC*",                   0},
     {"info_player_start",           0},
     {"NPC_*",                       0},
@@ -341,6 +340,7 @@ spawn_t spawns[] =
     {"pickup_ammo",                 0},
     {"script_runner",               0},
     {"trigger_arioche_objective",   0},
+    {"func_brushmodel_child",       0},
 
     #ifdef _3DServer
     // TODO: If we ever move the monkey code into the base, be sure to properly put it under gametype_player...

@@ -255,7 +255,7 @@ void EvenTeams (gentity_t *adm, qboolean aet)
 
     if(adm && adm->client){
         G_Broadcast("\\Evening teams!", BROADCAST_CMD, NULL);
-        trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Eventeams by %s.\n\"", adm->client->pers.netname));
+        trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Eventeams by %s.\n\"", adm->client->pers.cleanName));
         Boe_adminLog ("eventeams", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "none");
     }else if (aet == qfalse){
         G_Broadcast("\\Evening teams!", BROADCAST_CMD, NULL);
@@ -978,19 +978,19 @@ void BroadcastTeamChange( gclient_t *client, int oldTeam )
         {
             case TEAM_RED:
                 strcpy(message, va("%s" S_COLOR_WHITE "\njoined the %s\n\"", client->pers.netname, server_hiderteamprefix.string));
-                trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s ^7joined the hiders.\n\"", client->pers.cleanName));
+                trap_SendServerCommand( -1, va("print \"^3[Info] 7%s joined the hiders.\n\"", client->pers.cleanName));
                 break;
 
             case TEAM_BLUE:
                 strcpy(message, va("%s" S_COLOR_WHITE "\njoined the %s\n\"", client->pers.netname, server_seekerteamprefix.string));
-                trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s ^7joined the seekers.\n\"", client->pers.cleanName));
+                trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s joined the seekers.\n\"", client->pers.cleanName));
                 break;
 
             case TEAM_SPECTATOR:
                 if ( oldTeam != TEAM_SPECTATOR )
                 {
                     strcpy(message, va("%s" S_COLOR_WHITE "\njoined the %s\n\"", client->pers.netname, server_specteamprefix.string));
-                    trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s ^7joined the spectators.\n\"", client->pers.cleanName));
+                    trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s joined the spectators.\n\"", client->pers.cleanName));
                 }
                 else
                 {
@@ -1003,19 +1003,19 @@ void BroadcastTeamChange( gclient_t *client, int oldTeam )
         {
             case TEAM_RED:
                 strcpy(message, va("%s" S_COLOR_WHITE "\njoined the %s\n\"", client->pers.netname, server_humanteamprefix.string));
-                trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s ^7joined the humans.\n\"", client->pers.cleanName));
+                trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s joined the humans.\n\"", client->pers.cleanName));
                 break;
 
             case TEAM_BLUE:
                 strcpy(message, va("%s" S_COLOR_WHITE "\njoined the %s\n\"", client->pers.netname, server_zombieteamprefix.string));
-                trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s ^7joined the zombies.\n\"", client->pers.cleanName));
+                trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s joined the zombies.\n\"", client->pers.cleanName));
                 break;
 
             case TEAM_SPECTATOR:
                 if ( oldTeam != TEAM_SPECTATOR )
                 {
                     strcpy(message, va("%s" S_COLOR_WHITE "\njoined the %s\n\"", client->pers.netname, server_specteamprefix.string));
-                    trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s ^7joined the spectators.\n\"", client->pers.cleanName));
+                    trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s joined the spectators.\n\"", client->pers.cleanName));
                 }
                 else
                 {
@@ -1028,19 +1028,19 @@ void BroadcastTeamChange( gclient_t *client, int oldTeam )
         {
             case TEAM_RED:
                 strcpy(message, va("%s\n^7joined the %s ^7team", client->pers.netname, server_redteamprefix.string));
-                trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s ^7joined the red team.\n\"", client->pers.cleanName));
+                trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s joined the red team.\n\"", client->pers.cleanName));
                 break;
 
             case TEAM_BLUE:
                 strcpy(message, va("%s" S_COLOR_WHITE "\njoined the %s ^7team\n\"", client->pers.netname, server_blueteamprefix.string));
-                trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s ^7joined the blue team.\n\"", client->pers.cleanName));
+                trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s joined the blue team.\n\"", client->pers.cleanName));
                 break;
 
             case TEAM_SPECTATOR:
                 if ( oldTeam != TEAM_SPECTATOR )
                 {
                     strcpy(message, va("%s" S_COLOR_WHITE "\njoined the %s\n\"", client->pers.netname, server_specteamprefix.string));
-                    trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s ^7joined the spectators.\n\"", client->pers.cleanName));
+                    trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s joined the spectators.\n\"", client->pers.cleanName));
                 }else
                 {
                     return;
@@ -1049,7 +1049,7 @@ void BroadcastTeamChange( gclient_t *client, int oldTeam )
 
             case TEAM_FREE:
                 strcpy(message, G_ColorizeMessage(va("%s" S_COLOR_WHITE "\njoined the \\battle\n\"", client->pers.netname)));
-                trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s ^7joined the battle.\n\"", client->pers.cleanName));
+                trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s joined the battle.\n\"", client->pers.cleanName));
                 break;
         }
     }
@@ -3400,7 +3400,7 @@ void Cmd_CallVote_f( gentity_t *ent )
         Com_sprintf( level.voteDisplayString, sizeof( level.voteDisplayString ), "%s", level.voteString );
     }
 
-    trap_SendServerCommand( -1, va("print \"%s called a vote.\n\"", ent->client->pers.netname ) );
+    trap_SendServerCommand( -1, va("print \"%s called a vote.\n\"", ent->client->pers.cleanName ) );
 
     // start the voting.
     level.voteTime = level.time;

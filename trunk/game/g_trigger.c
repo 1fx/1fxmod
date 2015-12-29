@@ -674,11 +674,15 @@ NO_PROTECTION   *nothing* stops the damage
 
 */
 void hurt_use( gentity_t *self, gentity_t *other, gentity_t *activator ) {
-    if ( self->r.linked ) {
-        trap_UnlinkEntity( self );
-    } else {
-        trap_LinkEntity( self );
-    }
+
+	if ( self->r.linked ) {
+		trap_UnlinkEntity( self );
+	} else {
+		// Triggers that are used to turn them on no longer cause suicide penalty
+		self->methodOfDeath = MOD_TRIGGER_HURT_NOSUICIDE;
+
+		trap_LinkEntity( self );
+	}
 }
 
 void hurt_touch( gentity_t *self, gentity_t *other, trace_t *trace ) {
@@ -709,7 +713,7 @@ void hurt_touch( gentity_t *self, gentity_t *other, trace_t *trace ) {
         dflags = DAMAGE_NO_PROTECTION;
     else
         dflags = 0;
-    G_Damage (other, self, self, NULL, NULL, self->damage, dflags, MOD_TRIGGER_HURT, HL_NONE );
+    G_Damage (other, self, self, NULL, NULL, self->damage, dflags, self->methodOfDeath, HL_NONE );
 }
 
 void SP_trigger_hurt( gentity_t *self ) {
@@ -722,11 +726,9 @@ void SP_trigger_hurt( gentity_t *self ) {
         self->damage = 5;
     }
 
+    self->methodOfDeath = MOD_TRIGGER_HURT;
     self->r.contents = CONTENTS_TRIGGER;
-
-    if ( self->spawnflags & 2 ) {
-        self->use = hurt_use;
-    }
+    self->use = hurt_use;
 
     // link in to the world if starting active
     if ( ! (self->spawnflags & 1) ) {

@@ -349,14 +349,14 @@ void player_die(
 
         if ( attacker == self )
         {
-            if ( mod != MOD_TEAMCHANGE && current_gametype.value != GT_HS && current_gametype.value != GT_HZ)
+            if ( mod != MOD_TEAMCHANGE && mod != MOD_TRIGGER_HURT_NOSUICIDE &&  current_gametype.value != GT_HS && current_gametype.value != GT_HZ)
             {
                 G_AddScore( attacker, g_suicidePenalty.integer );
             }
         }
         else if ( OnSameTeam ( self, attacker ) )
         {
-            if ( mod != MOD_TELEFRAG && current_gametype.value != GT_HS && current_gametype.value != GT_HZ )
+            if ( mod != MOD_TELEFRAG && mod != MOD_TRIGGER_HURT_NOSUICIDE && current_gametype.value != GT_HS && current_gametype.value != GT_HZ )
             {
                 G_AddScore( attacker, g_teamkillPenalty.integer );
             }else if(current_gametype.value == GT_HS && level.cagefight == qtrue){
@@ -398,7 +398,7 @@ void player_die(
             }
         }
     }
-    else if ( mod != MOD_TEAMCHANGE && current_gametype.value != GT_HS && current_gametype.value != GT_HZ )
+    else if ( mod != MOD_TEAMCHANGE && mod != MOD_TRIGGER_HURT_NOSUICIDE && current_gametype.value != GT_HS && current_gametype.value != GT_HZ )
     {
         G_AddScore( self, g_suicidePenalty.integer );
     }
@@ -538,7 +538,7 @@ void player_die(
 
     // Henk 01/04/10 -> Hp/armor message if you are killed
     if(attacker->client && self->client && attacker->s.number != self->s.number && current_gametype.value != GT_HS){ // if the attacker and target are both clients
-        trap_SendServerCommand( self->s.number, va("print \"^3[Info] ^7%s ^7had ^3%i ^7health and ^3%i ^7armor left.\n\"", attacker->client->pers.netname, attacker->health, attacker->client->ps.stats[STAT_ARMOR]));
+        trap_SendServerCommand( self->s.number, va("print \"^3[Info] ^7%s had ^3%i ^7health and ^3%i ^7armor left.\n\"", attacker->client->pers.cleanName, attacker->health, attacker->client->ps.stats[STAT_ARMOR]));
     }
     // End
 
@@ -1150,7 +1150,7 @@ int G_Damage (
                     Com_sprintf(level.MM1loc, sizeof(level.MM1loc), "%s", attacker->client->pers.netname);
                     level.MM1ent = -1;
                     level.MM1Time = 0;
-                    trap_SendServerCommand(-1, va("print\"^3[H&S] ^7First Blood: %s ^7has taken the MM1\n\"", attacker->client->pers.netname));
+                    trap_SendServerCommand(-1, va("print\"^3[H&S] ^7First Blood: %s has taken the MM1\n\"", attacker->client->pers.cleanName));
                     G_Broadcast("You now have the \\MM1!", BROADCAST_GAME, attacker);
                     attacker->client->sess.takenMM1 += 1;
                     }
@@ -1180,7 +1180,7 @@ int G_Damage (
                         client->ps.weapon = WP_KNIFE;
                         client->ps.weaponstate = WEAPON_READY;
                         Com_sprintf(level.RPGloc, sizeof(level.RPGloc), "%s", attacker->client->pers.netname);
-                        trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s took the RPG from %s.\n\"", attacker->client->pers.netname, client->pers.netname));
+                        trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s took the RPG from %s.\n\"", attacker->client->pers.cleanName, client->pers.cleanName));
                         G_Broadcast("You stole the \\RPG!", BROADCAST_GAME, attacker);
                         G_Broadcast(va("%s stole your \\RPG!", attacker->client->pers.netname), BROADCAST_GAME, targ);
                         attacker->client->sess.weaponsStolen += 1;
@@ -1212,7 +1212,7 @@ int G_Damage (
                         client->ps.weapon = WP_KNIFE;
                         client->ps.weaponstate = WEAPON_READY;
                         Com_sprintf(level.M4loc, sizeof(level.M4loc), "%s", attacker->client->pers.netname);
-                        trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s took the M4 from %s.\n\"", attacker->client->pers.netname, client->pers.netname));
+                        trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s took the M4 from %s.\n\"", attacker->client->pers.cleanName, client->pers.cleanName));
                         G_Broadcast("You stole the \\M4!", BROADCAST_GAME, attacker);
                         G_Broadcast(va("%s stole your \\M4!", attacker->client->pers.netname), BROADCAST_GAME, targ);
                         attacker->client->sess.weaponsStolen += 1;
@@ -1304,7 +1304,7 @@ if (current_gametype.value == GT_HZ && attacker && targ && attacker->client && t
         G_Damage (targ, NULL, NULL, NULL, NULL, 10000, 0, MOD_TEAMCHANGE, HL_HEAD);
         CloneBody(attacker, targ->s.number);
         damage = 0;
-        trap_SendServerCommand(-1, va("print \"^3[H&Z] ^7%s was zombified by %s.\n\"", targ->client->pers.netname, attacker->client->pers.netname) );
+        trap_SendServerCommand(-1, va("print \"^3[H&Z] ^7%s was zombified by %s.\n\"", targ->client->pers.cleanName, attacker->client->pers.cleanName) );
         attacker->client->sess.score++;
         attacker->client->sess.killsAsZombie++;
 
@@ -1895,7 +1895,6 @@ qboolean G_RadiusDamage (
                                     countCaught += 1;
                                     ent->client->sess.trappedInCage += 1;
                                     lastCaught = ent->s.number;
-                                    //trap_SendServerCommand(-1, va("print \"^3[H&S] ^7%s was trapped in a cage by %s\n\"", ent->client->pers.netname, attacker->client->pers.netname));
                                     break;
                                 }
                             }
@@ -2186,9 +2185,9 @@ qboolean G_RadiusDamage (
                 }
             }else{
                 if(lastCaught != -1 && countCaught == 1){
-                    trap_SendServerCommand(-1, va("print \"^3[H&S] ^7%s was trapped in a cage by %s\n\"", g_entities[lastCaught].client->pers.netname, attacker->client->pers.netname));
+                    trap_SendServerCommand(-1, va("print \"^3[H&S] ^7%s was trapped in a cage by %s\n\"", g_entities[lastCaught].client->pers.cleanName, attacker->client->pers.cleanName));
                 }else if(countCaught > 1){
-                    trap_SendServerCommand(-1, va("print \"^3[H&S] ^7%i seekers were trapped in a cage by %s\n\"", countCaught, attacker->client->pers.netname));
+                    trap_SendServerCommand(-1, va("print \"^3[H&S] ^7%i seekers were trapped in a cage by %s\n\"", countCaught, attacker->client->pers.cleanName));
                 }
                 attacker->client->sess.seekersCaged += 1;
                 // Check if ammo is empty

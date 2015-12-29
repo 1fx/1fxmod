@@ -48,7 +48,7 @@ void G_ref_cmd( gentity_t *ent)
         trap_SendServerCommand( ent-g_entities, va("print \" [^3R^7%-3s %-3s %-26s ^7[^3Pauses/resumes the game^7]\n\"", "]", "pa", "pause"));
         return;
     }
-    
+
     if (!g_compMode.integer) {
         trap_SendServerCommand( ent-g_entities, "print \"^3[Info] ^7Server must be in Competetion Mode to become a Referee.\n\"");
         return;
@@ -64,7 +64,7 @@ void G_ref_cmd( gentity_t *ent)
         }
 
         if(ent->client->sess.admin)
-        {   
+        {
             trap_SendServerCommand( ent-g_entities, "print \"^3[Info] ^7You are already an Admin.\n\"");
             return;
         }
@@ -78,7 +78,7 @@ void G_ref_cmd( gentity_t *ent)
         {
             ent->client->sess.referee = 1;
             G_Broadcast(va("%s\nis now a \\Referee", ent->client->pers.netname), BROADCAST_CMD, NULL);
-            trap_SendServerCommand(-1, va("print\"^3[Referee Action] ^7%s ^7is now a Referee.\n\"", ent->client->pers.netname));
+            trap_SendServerCommand(-1, va("print\"^3[Referee Action] ^7%s is now a Referee.\n\"", ent->client->pers.cleanName));
             return;
         }
         else

@@ -1460,6 +1460,7 @@ void G_Obituary(gentity_t *target, gentity_t *attacker, int mod, attackType_t at
             strncpy(message, "saw the light", sizeof(message));
             break;
         case MOD_TRIGGER_HURT:
+        case MOD_TRIGGER_HURT_NOSUICIDE:
             strncpy(message, "was in the wrong place", sizeof(message));
             break;
         case MOD_TEAMCHANGE:

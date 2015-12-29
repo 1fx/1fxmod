@@ -69,22 +69,22 @@ int Pickup_Weapon (gentity_t *ent, gentity_t *other, qboolean* autoswitch )
                 G_FreeEntity(&g_entities[level.M4Flare]);
                 level.M4ent = -1;
                 level.M4Time = 0;
-                trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s has taken the M4.\n\"", other->client->pers.netname));
+                trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s has taken the M4.\n\"", other->client->pers.cleanName));
                 Com_sprintf(level.M4loc, sizeof(level.M4loc), "%s", other->client->pers.netname);
             }else if(weaponNum == WP_RPG7_LAUNCHER){
                 G_FreeEntity(&g_entities[level.RPGFlare]);
                 level.RPGent = -1;
                 level.RPGTime = 0;
-                trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s has taken the RPG.\n\"", other->client->pers.netname));
+                trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s has taken the RPG.\n\"", other->client->pers.cleanName));
                 Com_sprintf(level.RPGloc, sizeof(level.RPGloc), "%s", other->client->pers.netname);
             }else if(weaponNum == WP_MM1_GRENADE_LAUNCHER){
                 G_FreeEntity(&g_entities[level.MM1Flare]);
                 level.MM1ent = -1;
                 level.MM1Time = 0;
-                trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s has taken the MM1.\n\"", other->client->pers.netname));
+                trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s has taken the MM1.\n\"", other->client->pers.cleanName));
                 Com_sprintf(level.MM1loc, sizeof(level.MM1loc), "%s", other->client->pers.netname);
             }else if(weaponNum == WP_M67_GRENADE){
-                trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s has taken the ? grenade.\n\"", other->client->pers.netname));
+                trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s has taken the ? grenade.\n\"", other->client->pers.cleanName));
                 Com_sprintf(level.RandomNadeLoc, sizeof(level.RandomNadeLoc), "%s", other->client->pers.netname);
             }
         }
@@ -427,7 +427,7 @@ void Touch_Item (gentity_t *ent, gentity_t *other, trace_t *trace)
             break;
         case IT_GAMETYPE:
             if(current_gametype.value == GT_HS){
-                trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s ^7has taken the briefcase.\n\"", other->client->pers.netname));
+                trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s has taken the briefcase.\n\"", other->client->pers.cleanName));
             }
             respawn = Pickup_Gametype(ent, other);
             predict = qfalse;
@@ -539,7 +539,7 @@ gentity_t *LaunchItem( gitem_t *item, vec3_t origin, vec3_t velocity )
     // Gametype items must be spawned using the spawn mission item function
     if ( item->giType == IT_GAMETYPE )
     {
-        dropped = G_SpawnGametypeItem ( item->pickup_name, qtrue );
+        dropped = G_SpawnGametypeItem ( item->pickup_name, qtrue, origin );
         dropped->nextthink = 0;
     }
     else
@@ -619,19 +619,19 @@ gentity_t *G_DropItem( gentity_t *ent, gitem_t *item, float angle )
 
         if(current_gametype.value == GT_HS){
             trap_GT_SendEvent ( GTEV_ITEM_DROPPED, level.time, level.gametypeItems[item->giTag].id, ent->s.number, 0, 0, 0 );
-            trap_SendServerCommand(-1, va("print\"^3[H&S] %s ^7has dropped the briefcase%s.\n\"", ent->client->pers.netname, location)); // Henkie 24/02/10 -> Add drop briefcase msg
+            trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s has dropped the briefcase%s.\n\"", ent->client->pers.cleanName, location)); // Henkie 24/02/10 -> Add drop briefcase msg
         }else{
             if(current_gametype.value == GT_CTF){
                 if(item->quantity == 101){ // Blue flag.
-                    trap_SendServerCommand( -1, va("print \"^3[CTF] %s ^7has dropped the Blue Flag%s.\n\"", ent->client->pers.netname, location));
+                    trap_SendServerCommand( -1, va("print \"^3[CTF] ^7%s has dropped the Blue Flag%s.\n\"", ent->client->pers.cleanName, location));
                 }
                 if(item->quantity == 100){ // Red flag.
-                    trap_SendServerCommand( -1, va("print \"^3[CTF] %s ^7has dropped the Red Flag%s.\n\"", ent->client->pers.netname, location));
+                    trap_SendServerCommand( -1, va("print \"^3[CTF] ^7%s has dropped the Red Flag%s.\n\"", ent->client->pers.cleanName, location));
                 }
             }else if(current_gametype.value == GT_INF){
                 if(item->quantity == 100){ // Briefcase.
                     if (!g_caserun.integer){
-                        trap_SendServerCommand(-1, va("print \"^3[INF] %s ^7has dropped the briefcase%s.\n\"", ent->client->pers.netname, location));
+                        trap_SendServerCommand(-1, va("print \"^3[INF] ^7%s has dropped the briefcase%s.\n\"", ent->client->pers.cleanName, location));
                     }else{
                         // Boe!Man 12/2/14: Let the gametype handle the respawn.
                         if (trap_GT_SendEvent(GTEV_ITEM_STUCK, level.time, item->quantity, 0, 0, 0, 0)){
@@ -647,6 +647,12 @@ gentity_t *G_DropItem( gentity_t *ent, gitem_t *item, float angle )
                     }
                 }
             }
+            #ifdef _GOLD
+            else if(current_gametype.value == GT_DEM){
+                trap_SendServerCommand( -1, va("print \"^3[DEM] ^7%s has dropped the bomb%s.\n\"", ent->client->pers.cleanName, location));
+            }
+            #endif // _GOLD
+
             trap_GT_SendEvent ( GTEV_ITEM_DROPPED, level.time, item->quantity, ent->s.number, 0, 0, 0 );
         }
     }
@@ -858,34 +864,34 @@ gentity_t* G_DropWeapon ( gentity_t* ent, weapon_t weapon, int pickupDelay )
             level.RPGent = dropped->s.number;
             level.RPGTime = level.time+500;
             if(!noloc){
-                trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s has dropped the RPG at %s.\n\"", ent->client->pers.netname, level.RPGloc));
+                trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s has dropped the RPG at %s.\n\"", ent->client->pers.cleanName, level.RPGloc));
             }else{
-                trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s has dropped the RPG.\n\"", ent->client->pers.netname));
+                trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s has dropped the RPG.\n\"", ent->client->pers.cleanName));
             }
         }else if(weapon == WP_M4_ASSAULT_RIFLE){
             Com_sprintf(level.M4loc, sizeof(level.M4loc), "%s", location);
             level.M4ent = dropped->s.number;
             level.M4Time = level.time+500;
             if(!noloc){
-                trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s has dropped the M4 at %s.\n\"", ent->client->pers.netname, level.M4loc));
+                trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s has dropped the M4 at %s.\n\"", ent->client->pers.cleanName, level.M4loc));
             }else{
-                trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s has dropped the M4.\n\"", ent->client->pers.netname));
+                trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s has dropped the M4.\n\"", ent->client->pers.cleanName));
             }
         }else if(weapon == WP_MM1_GRENADE_LAUNCHER){
             Com_sprintf(level.MM1loc, sizeof(level.MM1loc), "%s", location);
             level.MM1ent = dropped->s.number;
             level.MM1Time = level.time+500;
             if(!noloc){
-                trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s has dropped the MM1 at %s.\n\"", ent->client->pers.netname, level.MM1loc));
+                trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s has dropped the MM1 at %s.\n\"", ent->client->pers.cleanName, level.MM1loc));
             }else{
-                trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s has dropped the MM1.\n\"", ent->client->pers.netname));
+                trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s has dropped the MM1.\n\"", ent->client->pers.cleanName));
             }
         }else if(weapon == WP_M67_GRENADE){
             Com_sprintf(level.RandomNadeLoc, sizeof(level.RandomNadeLoc), "%s", location);
             if(!noloc){
-                trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s has dropped the ? grenade at %s.\n\"", ent->client->pers.netname, location));
+                trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s has dropped the ? grenade at %s.\n\"", ent->client->pers.cleanName, location));
             }else{
-                trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s has dropped the ? grenade.\n\"", ent->client->pers.netname));
+                trap_SendServerCommand(-1, va("print\"^3[H&S] ^7%s has dropped the ? grenade.\n\"", ent->client->pers.cleanName));
             }
         }
         ent->client->ps.weapon = WP_KNIFE;

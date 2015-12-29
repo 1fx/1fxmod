@@ -114,6 +114,15 @@ void gametype_trigger_use ( gentity_t *self, gentity_t *other, gentity_t *activa
     {
         return;
     }
+
+    #ifdef _GOLD
+    if(current_gametype.value == GT_DEM){
+        if ( trap_GT_SendEvent ( GTEV_TRIGGER_USED, level.time, self->health, other->s.number, other->client->sess.team, 0, 0 ) )
+        {
+            G_UseTargets ( self, other );
+        }
+    }
+    #endif // _GOLD
 }
 
 void gametype_trigger_touch ( gentity_t *self, gentity_t *other, trace_t *trace )
@@ -140,81 +149,49 @@ void SP_gametype_trigger ( gentity_t* ent )
             ent->targetname = strchr ( ent->targetname, '-' ) + 1;
     }
 
-    /*
-    ///RxCxW - 09.30.06 - 08:17pm #spMaps
-    if(!Q_stricmp(ent->model, "NV_MODEL")){
-        if (!VectorCompare (ent->s.angles, vec3_origin))
-            G_SetMovedir (ent->s.angles, ent->movedir);
-        ent->r.contents = CONTENTS_TRIGGER;
-        ent->r.svFlags = SVF_NOCLIENT;
-        //ent->s.eType = ET_GAMETYPE_TRIGGER;
-        return;
-    }
-    */
-
     InitTrigger (ent);
 
     #ifdef _GOLD
     ent->s.eType = ET_GAMETYPE_TRIGGER;
     #endif // _GOLD
 }
-static gentity_t* G_RealSpawnGametypeItem ( gentity_t* ent, qboolean dropped )
+
+gentity_t* G_RealSpawnGametypeItem ( gitem_t* item, vec3_t origin, vec3_t angles, qboolean dropped )
 {
-    gentity_t* it_ent;
+	gentity_t* it_ent;
 
-    it_ent = G_Spawn();
+	it_ent = G_Spawn();
 
-    it_ent->flags |= FL_DROPPED_ITEM;
-    it_ent->item = ent->item;
+	it_ent->flags |= FL_DROPPED_ITEM;
+	it_ent->item = item;
 
-    VectorCopy( ent->r.currentOrigin, it_ent->s.origin );
-    VectorCopy ( ent->s.angles, it_ent->s.apos.trBase );
-    it_ent->classname = ent->item->classname;
-    G_SpawnItem ( it_ent, it_ent->item );
-    FinishSpawningItem(it_ent);
+	VectorCopy( origin, it_ent->s.origin );
+	VectorCopy ( angles, it_ent->s.apos.trBase );
+	VectorCopy ( angles, it_ent->s.angles );
+	it_ent->classname = item->classname;
+	G_SpawnItem ( it_ent, it_ent->item );
+	FinishSpawningItem(it_ent);
 
-    VectorSet( it_ent->r.mins, -ITEM_RADIUS * 4 / 3, -ITEM_RADIUS * 4 / 3, -ITEM_RADIUS );
-    VectorSet( it_ent->r.maxs, ITEM_RADIUS * 4 / 3, ITEM_RADIUS * 4 / 3, ITEM_RADIUS );
+	VectorSet( it_ent->r.mins, -ITEM_RADIUS * 4 / 3, -ITEM_RADIUS * 4 / 3, -ITEM_RADIUS );
+	VectorSet( it_ent->r.maxs, ITEM_RADIUS * 4 / 3, ITEM_RADIUS * 4 / 3, ITEM_RADIUS );
 
-    // Red team only
-    if ( ent->s.eFlags & EF_REDTEAM )
-    {
-        it_ent->s.eFlags |= EF_REDTEAM;
-    }
-
-    if ( ent->s.eFlags & EF_BLUETEAM )
-    {
-        it_ent->s.eFlags |= EF_BLUETEAM;
-    }
-
-    return it_ent;
+	return it_ent;
 }
 
-gentity_t* G_RealSpawnGametypeItem1 ( gitem_t* item, vec3_t origin, vec3_t angles, qboolean dropped ) // used to spawn briefcase at a player
-{
-    gentity_t* it_ent;
-
-    it_ent = G_Spawn();
-
-    it_ent->flags |= FL_DROPPED_ITEM;
-    it_ent->item = item;
-
-    VectorCopy( origin, it_ent->s.origin );
-    VectorCopy ( angles, it_ent->s.apos.trBase );
-    VectorCopy ( angles, it_ent->s.angles );
-    it_ent->classname = item->classname;
-    G_SpawnItem ( it_ent, it_ent->item );
-    FinishSpawningItem(it_ent);
-
-    VectorSet( it_ent->r.mins, -ITEM_RADIUS * 4 / 3, -ITEM_RADIUS * 4 / 3, -ITEM_RADIUS );
-    VectorSet( it_ent->r.maxs, ITEM_RADIUS * 4 / 3, ITEM_RADIUS * 4 / 3, ITEM_RADIUS );
-
-    return it_ent;
-}
-
-gentity_t* G_SpawnGametypeItem ( const char* pickup_name, qboolean dropped )
+gentity_t* G_SpawnGametypeItem ( const char* pickup_name, qboolean dropped, vec3_t origin )
 {
     gentity_t* ent;
+
+    if ( dropped )
+	{
+		gitem_t* item = BG_FindItem ( pickup_name );
+		if ( item )
+		{
+			return G_RealSpawnGametypeItem ( item, origin, vec3_origin, dropped );
+		}
+
+		return NULL;
+	}
 
     // Look for the gametype item in the map
     ent = NULL;
@@ -234,12 +211,12 @@ gentity_t* G_SpawnGametypeItem ( const char* pickup_name, qboolean dropped )
         return NULL;
     }
 
-    return G_RealSpawnGametypeItem ( ent, dropped );
+    return G_RealSpawnGametypeItem ( ent->item, ent->r.currentOrigin, ent->s.angles, dropped );
 }
 
 void G_GametypeItemThink ( gentity_t* ent )
 {
-    G_RealSpawnGametypeItem ( ent, qfalse );
+    G_RealSpawnGametypeItem ( ent->item, ent->r.currentOrigin, ent->s.angles, qfalse );
 }
 
 /*QUAKED gametype_item (0 0 1) (-16 -16 -16) (16 16 16)
@@ -315,7 +292,7 @@ void G_ResetGametypeItem ( gitem_t* item )
             continue;
         }
 
-        G_RealSpawnGametypeItem ( find, qfalse );
+        G_RealSpawnGametypeItem ( find->item, find->r.currentOrigin, find->s.angles, qfalse );
     }
 }
 
@@ -466,9 +443,21 @@ void G_ResetEntities ( void )
         {
             G_FreeEntity ( ent );
         }
-        #ifdef _GOLD
         // func_wall's can be toggled off/on
+        #ifdef _GOLD
         else if ( ent->s.eType == ET_WALL )
+        {
+            if ( ent->spawnflags & 1 )
+            {
+                trap_UnlinkEntity ( ent );
+            }
+            else
+            {
+                trap_LinkEntity ( ent );
+            }
+        }
+        #else
+        else if ( ent->s.eType == ET_MOVER && ent->use != NULL && ent->use == G_WallUse )
         {
             if ( ent->spawnflags & 1 )
             {
@@ -493,17 +482,20 @@ void G_ResetEntities ( void )
         else if ( ent->s.eType == ET_DAMAGEAREA )
         {
             G_FreeEntity ( ent );
-        }else if ( ent->s.eType == ET_MOVER && ent->use != NULL && ent->use == G_WallUse )
-        {
-            if ( ent->spawnflags & 1 )
-            {
-                trap_UnlinkEntity ( ent );
-            }
-            else
-            {
-                trap_LinkEntity ( ent );
-            }
         }
+        else if ( ent->use == hurt_use )
+		{
+			if ( ent->spawnflags & 1 )
+			{
+				trap_UnlinkEntity ( ent );
+			}
+		}
+        // Boe!Man 12/29/15: May break v1.00, remove if it does..
+		else if ( ent->think == target_effect_delayed_use )
+		{
+			ent->think = 0;
+			ent->nextthink = 0;
+		}
     }
 }
 
@@ -1091,9 +1083,9 @@ void CheckGametype ( void )
             }
 
             if(ent->client->ps.weapon == WP_NONE && !G_IsClientDead(ent->client) && current_gametype.value != GT_HS && ent->client->sunRespawnTimer == 0 && ent->client->sess.team != TEAM_SPECTATOR){ // Boe!Man 6/14/11: Don't respawn them if they're waiting to be respawned with the sun condition.
+                // Respawn because they have been spawned without weapons.
                 trap_UnlinkEntity (ent);
                 ClientSpawn(ent);
-                //trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s has been respawned due to being spawned with no weapons.\n\"", ent->client->pers.netname));
             }
 
             players[ent->client->sess.team] ++;
@@ -1130,7 +1122,7 @@ void CheckGametype ( void )
                 gentity_t* ent = &g_entities[level.sortedClients[i]];
                 if ( ent->client->sess.team == TEAM_BLUE && !G_IsClientDead ( ent->client )){
                     G_Broadcast("You are the \\last player alive!", BROADCAST_GAME, ent);
-                    trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s is the last alive player in the blue team.\n\"", ent->client->pers.netname));
+                    trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s is the last alive player in the blue team.\n\"", ent->client->pers.cleanName));
                     Boe_ClientSound(ent, G_SoundIndex("sound/misc/events/tut_door01.mp3"));
                     level.blueMsgSent = qtrue;
                 }
