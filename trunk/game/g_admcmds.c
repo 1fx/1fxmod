@@ -2820,6 +2820,10 @@ int adm_Gametype(int argNum, gentity_t *adm, qboolean shortCmd)
             strcpy(gametype, "elim");
             G_Broadcast("\\Gametype Elimination!", BROADCAST_CMD, NULL);
         #ifdef _GOLD
+        }else if (strstr(arg, "dem")){
+            trap_SendConsoleCommand(EXEC_APPEND, "g_gametype dem\n");
+            strcpy(gametype, "dem");
+            G_Broadcast("\\Gametype Demolition!", BROADCAST_CMD, NULL);
         }else if (g_enforce1fxAdditions.integer && strstr(arg, "h&s")){
         #else
         }else if (strstr(arg, "h&s")){
@@ -3889,6 +3893,10 @@ int adm_Map(int argNum, gentity_t *adm, qboolean shortCmd)
                 strcpy(gametype, "h&s");
             }else if(strstr(gt, "h&z")){
                 strcpy(gametype, "h&z");
+            #ifdef _GOLD
+            }else if(strstr(gt, "dem")){
+                strcpy(gametype, "dem");
+            #endif // _GOLD
             }else{
                 if(current_gametype.value == GT_HS){
                     strcpy(gametype, "h&s");
