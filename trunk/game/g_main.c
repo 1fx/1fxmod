@@ -332,6 +332,7 @@ vmCvar_t    g_enforce1fxAdditions;
 vmCvar_t    g_httpRefPaks;
 vmCvar_t    g_httpBaseURL;
 vmCvar_t    g_httpMaxSpeed;
+vmCvar_t    g_recoilRatio;
 
 vmCvar_t    g_minRate;
 
@@ -701,9 +702,10 @@ static cvarTable_t gameCvarTable[] =
 
     // Boe!Man 7/7/15: HTTP downloading.
     { &g_enforce1fxAdditions, "g_enforce1fxAdditions", "0", CVAR_ARCHIVE | CVAR_LATCH, 0.0, 0.0, 0, qfalse },
-    { &g_httpRefPaks, "g_httpRefPaks", "none", CVAR_ARCHIVE | CVAR_SYSTEMINFO, 0.0, 0.0, 0, qfalse },
-    { &g_httpBaseURL, "g_httpBaseURL", "none", CVAR_ARCHIVE | CVAR_SYSTEMINFO, 0.0, 0.0, 0, qfalse },
-    { &g_httpMaxSpeed, "g_httpMaxSpeed", "0", CVAR_ARCHIVE | CVAR_SYSTEMINFO, 0.0, 0.0, 0, qfalse },
+    { &g_httpRefPaks,   "g_httpRefPaks", "none", CVAR_ARCHIVE | CVAR_SYSTEMINFO, 0.0, 0.0, 0, qfalse },
+    { &g_httpBaseURL,   "g_httpBaseURL", "none", CVAR_ARCHIVE | CVAR_SYSTEMINFO, 0.0, 0.0, 0, qfalse },
+    { &g_httpMaxSpeed,  "g_httpMaxSpeed", "0", CVAR_ARCHIVE | CVAR_SYSTEMINFO, 0.0, 0.0, 0, qfalse },
+    { &g_recoilRatio,   "g_recoilRatio", "1.0", CVAR_ARCHIVE | CVAR_SYSTEMINFO | CVAR_LATCH | CVAR_LOCK_RANGE, 0.0, 1.0, 0, qfalse },
 };
 
 // bk001129 - made static to avoid aliasing
@@ -1535,6 +1537,10 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
         trap_Cvar_Set("g_enforce1fxAdditions", "0");
         trap_Cvar_Update(&g_enforce1fxAdditions);
         #endif // not _GOLD
+    }else{
+        Com_Printf("Info: g_recoilRatio has been reset to 1.0, needs Client Additions enabled.\n");
+        trap_Cvar_Set("g_recoilRatio", "1.0");
+        trap_Cvar_Update(&g_recoilRatio);
     }
 
     // Build the gametype list so we can verify the given gametype

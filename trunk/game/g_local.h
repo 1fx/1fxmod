@@ -1567,6 +1567,7 @@ extern  vmCvar_t    g_enforce1fxAdditions;
 extern  vmCvar_t    g_httpRefPaks;
 extern  vmCvar_t    g_httpBaseURL;
 extern  vmCvar_t    g_httpMaxSpeed;
+extern  vmCvar_t    g_recoilRatio;
 
 extern  vmCvar_t    g_camperAllowTime;
 extern  vmCvar_t    g_camperPunish;

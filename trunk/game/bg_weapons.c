@@ -313,6 +313,7 @@ static qboolean BG_ParseAttackStats ( int weaponNum, attackData_t* attack, void 
     void*   sub;
     char    tmpStr[256];
     int     i;
+    float   recoilRatioInaccuracy, recoilRatioKickAngles;
 
     // No group is success.  This is to allow NULL to be passed
     if ( NULL == attacksub )
@@ -395,6 +396,14 @@ static qboolean BG_ParseAttackStats ( int weaponNum, attackData_t* attack, void 
     }
 #endif
 
+    // Determine recoil ratio.
+    if(weaponNum == WP_M590_SHOTGUN){
+        recoilRatioInaccuracy = 1.0f;
+    }else{
+        recoilRatioInaccuracy = g_recoilRatio.value;
+    }
+    recoilRatioKickAngles = g_recoilRatio.value;
+
     // Parse the weapon animations
     trap_GPG_FindPairValue( attacksub, "mp_animFire", "TORSO_ATTACK_PISTOL", tmpStr );
     attack->animFire = GetIDForString ( bg_animTable, tmpStr );
@@ -410,7 +419,7 @@ static qboolean BG_ParseAttackStats ( int weaponNum, attackData_t* attack, void 
     trap_GPG_FindPairValue(attacksub, "mp_fireFromClip||fireFromClip", "1", tmpStr);
     attack->fireFromClip = atoi(tmpStr);
     trap_GPG_FindPairValue(attacksub, "mp_inaccuracy||inaccuracy", "0", tmpStr);
-    attack->inaccuracy = (int)(atof(tmpStr)*1000.0f);
+    attack->inaccuracy = (int)(atof(tmpStr) * recoilRatioInaccuracy * 1000.0f);
     #ifdef _GOLD
     trap_GPG_FindPairValue(attacksub, "mp_zoominaccuracy", "0", tmpStr);
     attack->zoomInaccuracy = (int)(atof(tmpStr)*1000.0f);
@@ -438,111 +447,116 @@ static qboolean BG_ParseAttackStats ( int weaponNum, attackData_t* attack, void 
     attack->defaultDamage = attack->damage;
     ammoData[attack->ammoIndex].defaultMax = ammoData[attack->ammoIndex].max;
 
-    //Ryan
-        trap_GPG_FindPairValue(attacksub,"mp_kickAngles||kickAngles", "0 0 0 0 0 0", tmpStr);
-        sscanf( tmpStr, "%f %f %f %f %f %f",
-                &attack->minKickAngles[0],
-                &attack->maxKickAngles[0],
-                &attack->minKickAngles[1],
-                &attack->maxKickAngles[1],
-                &attack->minKickAngles[2],
-                &attack->maxKickAngles[2]  );
+    trap_GPG_FindPairValue(attacksub,"mp_kickAngles||kickAngles", "0 0 0 0 0 0", tmpStr);
+    sscanf( tmpStr, "%f %f %f %f %f %f",
+            &attack->minKickAngles[0],
+            &attack->maxKickAngles[0],
+            &attack->minKickAngles[1],
+            &attack->maxKickAngles[1],
+            &attack->minKickAngles[2],
+            &attack->maxKickAngles[2]);
 
-        if (0 == attack->inaccuracy)
+    if (0 == attack->inaccuracy)
+    {
+        trap_GPG_FindPairValue(attacksub, "mp_spread||spread", "0", tmpStr);
+        attack->inaccuracy = atof(tmpStr);
+    }
+
+    for(i = 0; i < 3; i++){
+        attack->minKickAngles[i] *= recoilRatioKickAngles;
+        attack->maxKickAngles[i] *= recoilRatioKickAngles;
+    }
+
+    trap_GPG_FindPairValue(attacksub, "mp_pellets||pellets", "1", tmpStr);
+    attack->pellets = atof(tmpStr);
+    attack->mod = (meansOfDeath_t)weaponNum;
+
+    trap_GPG_FindPairValue(attacksub, "mp_lockFlashToBarrel||lockFlashToBarrel", "true", tmpStr);
+    if (0 == Q_stricmp(tmpStr, "false"))
+    {
+        attack->weaponFlags |= UNLOCK_MUZZLEFLASH;
+    }
+    // load effects, sounds
+    trap_GPG_FindPairValue(attacksub, "muzzleFlash", "", attack->muzzleEffect);
+    trap_GPG_FindPairValue(attacksub, "3rdPersonMuzzleFlash", "", attack->muzzleEffectInWorld);
+    trap_GPG_FindPairValue(attacksub, "EjectBone", "", attack->ejectBone);
+    trap_GPG_FindPairValue(attacksub, "ShellCasingEject", "", attack->shellEject);
+    trap_GPG_FindPairValue(attacksub, "TracerEffect", "", attack->tracerEffect);
+
+    // Some alt attacks have special bones they need their muzzle flashes attached to
+    trap_GPG_FindPairValue ( attacksub, "mp_muzzleFlashBone", "", attack->muzzleEffectBone );
+
+    sub = trap_GPG_FindSubGroup(attacksub, "fireModes");
+    if (sub)
+    {
+        int i;
+
+        for ( i = 0; i < 5; i ++ )
         {
-            trap_GPG_FindPairValue(attacksub, "mp_spread||spread", "0", tmpStr);
-            attack->inaccuracy = atof(tmpStr);
-        }
-        trap_GPG_FindPairValue(attacksub, "mp_pellets||pellets", "1", tmpStr);
-        attack->pellets = atof(tmpStr);
-        attack->mod = (meansOfDeath_t)weaponNum;
-
-        trap_GPG_FindPairValue(attacksub, "mp_lockFlashToBarrel||lockFlashToBarrel", "true", tmpStr);
-        if (0 == Q_stricmp(tmpStr, "false"))
-        {
-            attack->weaponFlags |= UNLOCK_MUZZLEFLASH;
-        }
-        // load effects, sounds
-        trap_GPG_FindPairValue(attacksub, "muzzleFlash", "", attack->muzzleEffect);
-        trap_GPG_FindPairValue(attacksub, "3rdPersonMuzzleFlash", "", attack->muzzleEffectInWorld);
-        trap_GPG_FindPairValue(attacksub, "EjectBone", "", attack->ejectBone);
-        trap_GPG_FindPairValue(attacksub, "ShellCasingEject", "", attack->shellEject);
-        trap_GPG_FindPairValue(attacksub, "TracerEffect", "", attack->tracerEffect);
-
-        // Some alt attacks have special bones they need their muzzle flashes attached to
-        trap_GPG_FindPairValue ( attacksub, "mp_muzzleFlashBone", "", attack->muzzleEffectBone );
-
-        sub = trap_GPG_FindSubGroup(attacksub, "fireModes");
-        if (sub)
-        {
-            int i;
-
-            for ( i = 0; i < 5; i ++ )
+            trap_GPG_FindPairValue ( sub, va("mp_mode%i||mode%i", i, i ), "", tmpStr );
+            if ( !tmpStr[0] )
             {
-                trap_GPG_FindPairValue ( sub, va("mp_mode%i||mode%i", i, i ), "", tmpStr );
-                if ( !tmpStr[0] )
+                continue;
+            }
+
+            if (0 == Q_stricmp("single", tmpStr))
+                attack->weaponFlags |= (1<<WP_FIREMODE_SINGLE);
+            else if (0 == Q_stricmp("auto", tmpStr))
+                attack->weaponFlags |= (1<<WP_FIREMODE_AUTO);
+            else if (0 == Q_stricmp("burst", tmpStr))
+                attack->weaponFlags |= (1<<WP_FIREMODE_BURST);
+            else
+                attack->weaponFlags |= (1<<WP_FIREMODE_SINGLE);
+        }
+    }
+    else
+    {
+        attack->weaponFlags |= (1<<WP_FIREMODE_SINGLE);
+    }
+
+    sub = trap_GPG_FindSubGroup(attacksub, "projectile");
+    if (sub)
+    {
+        attack->weaponFlags |= PROJECTILE_FIRE;
+
+        trap_GPG_FindPairValue(sub, "gravity", "1", tmpStr);
+        if (0 < atof(tmpStr))
+            attack->weaponFlags |= PROJECTILE_GRAVITY;
+
+        trap_GPG_FindPairValue(sub, "detonation", "0", tmpStr);
+        if (0 == Q_stricmp(tmpStr,"timer"))
+            attack->weaponFlags |= PROJECTILE_TIMED;
+
+        trap_GPG_FindPairValue(sub, "mp_bounce||bounce", "0", tmpStr );
+        attack->bounceScale = atof ( tmpStr );
+
+        switch ( weaponNum )
+        {
+            case WP_ANM14_GRENADE:
+                // incediary grenade
+                attack->weaponFlags |= PROJECTILE_DAMAGE_AREA;
+                break;
+
+            case WP_KNIFE:
+                if ( attack->weaponFlags & PROJECTILE_GRAVITY )
                 {
-                    continue;
+                    attack->weaponFlags &= ~PROJECTILE_GRAVITY;
+                    attack->weaponFlags |= PROJECTILE_LIGHTGRAVITY;
                 }
-
-                if (0 == Q_stricmp("single", tmpStr))
-                    attack->weaponFlags |= (1<<WP_FIREMODE_SINGLE);
-                else if (0 == Q_stricmp("auto", tmpStr))
-                    attack->weaponFlags |= (1<<WP_FIREMODE_AUTO);
-                else if (0 == Q_stricmp("burst", tmpStr))
-                    attack->weaponFlags |= (1<<WP_FIREMODE_BURST);
-                else
-                    attack->weaponFlags |= (1<<WP_FIREMODE_SINGLE);
-            }
+                break;
         }
-        else
-        {
-            attack->weaponFlags |= (1<<WP_FIREMODE_SINGLE);
-        }
+        trap_GPG_FindPairValue(sub, "mp_speed||speed", "0", tmpStr);
+        attack->rV.velocity = atoi(tmpStr);
+        trap_GPG_FindPairValue(sub, "mp_timer||timer", "10", tmpStr);
+        attack->projectileLifetime = (int)(atof(tmpStr) * 1000);
 
-        sub = trap_GPG_FindSubGroup(attacksub, "projectile");
-        if (sub)
-        {
-            attack->weaponFlags |= PROJECTILE_FIRE;
+        // 'trail' effect
+        trap_GPG_FindPairValue(sub, "mp_effect||effect", "", attack->tracerEffect);
+        trap_GPG_FindPairValue(sub, "model", "", attack->missileG2Model);
+        trap_GPG_FindPairValue(sub, "mp_explosionEffect||explosionEffect", "", attack->explosionEffect);
 
-            trap_GPG_FindPairValue(sub, "gravity", "1", tmpStr);
-            if (0 < atof(tmpStr))
-                attack->weaponFlags |= PROJECTILE_GRAVITY;
-
-            trap_GPG_FindPairValue(sub, "detonation", "0", tmpStr);
-            if (0 == Q_stricmp(tmpStr,"timer"))
-                attack->weaponFlags |= PROJECTILE_TIMED;
-
-            trap_GPG_FindPairValue(sub, "mp_bounce||bounce", "0", tmpStr );
-            attack->bounceScale = atof ( tmpStr );
-
-            switch ( weaponNum )
-            {
-                case WP_ANM14_GRENADE:
-                    // incediary grenade
-                    attack->weaponFlags |= PROJECTILE_DAMAGE_AREA;
-                    break;
-
-                case WP_KNIFE:
-                    if ( attack->weaponFlags & PROJECTILE_GRAVITY )
-                    {
-                        attack->weaponFlags &= ~PROJECTILE_GRAVITY;
-                        attack->weaponFlags |= PROJECTILE_LIGHTGRAVITY;
-                    }
-                    break;
-            }
-            trap_GPG_FindPairValue(sub, "mp_speed||speed", "0", tmpStr);
-            attack->rV.velocity = atoi(tmpStr);
-            trap_GPG_FindPairValue(sub, "mp_timer||timer", "10", tmpStr);
-            attack->projectileLifetime = (int)(atof(tmpStr) * 1000);
-
-            // 'trail' effect
-            trap_GPG_FindPairValue(sub, "mp_effect||effect", "", attack->tracerEffect);
-            trap_GPG_FindPairValue(sub, "model", "", attack->missileG2Model);
-            trap_GPG_FindPairValue(sub, "mp_explosionEffect||explosionEffect", "", attack->explosionEffect);
-
-            trap_GPG_FindPairValue(sub, "mp_explosionSound||explosionSound", "", attack->explosionSound);
-        }
+        trap_GPG_FindPairValue(sub, "mp_explosionSound||explosionSound", "", attack->explosionSound);
+    }
 
     return qtrue;
 }
