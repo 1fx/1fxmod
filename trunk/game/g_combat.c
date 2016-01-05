@@ -1982,7 +1982,7 @@ qboolean G_RadiusDamage (
                 }
             }
 
-            if((mod == MOD_F1_GRENADE || mod == altAttack(MOD_F1_GRENADE)) && strstr(ent->classname, "f1")){ // Boe!Man 8/2/12: Fix for Altattack of tele nade not doing anything.
+            if((mod == MOD_F1_GRENADE || mod == altAttack(MOD_F1_GRENADE)) && ent->classname && strstr(ent->classname, "f1")){ // Boe!Man 8/2/12: Fix for Altattack of tele nade not doing anything.
                 if(origin[2] <= ent->origin_from[2]){
                     vec3_t  mins = {-12,-12,-31};
                     vec3_t  maxs = {12,12,32};
@@ -2019,7 +2019,7 @@ qboolean G_RadiusDamage (
         }
 #ifdef _3DServer
         else if (current_gametype.value == GT_ELIM && boe_fragWars.integer){
-            if ((mod == MOD_F1_GRENADE || mod == altAttack(MOD_F1_GRENADE)) && strstr(ent->classname, "f1")){ // Boe!Man 8/2/12: Fix for Altattack of tele nade not doing anything.
+            if ((mod == MOD_F1_GRENADE || mod == altAttack(MOD_F1_GRENADE)) && ent->classname && strstr(ent->classname, "f1")){ // Boe!Man 8/2/12: Fix for Altattack of tele nade not doing anything.
                 if (origin[2] <= ent->origin_from[2]){
                     vec3_t  mins = { -12, -12, -31 };
                     vec3_t  maxs = { 12, 12, 32 };
