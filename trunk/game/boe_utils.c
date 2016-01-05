@@ -1287,11 +1287,11 @@ void Boe_Players(gentity_t *ent)
         if (level.clientMod == CL_RPM){
             if (level.clients[i].sess.rpmClient >= 0.1){
                 hasClient = qtrue;
-                Q_strncpyz(client, va("[^3%2.f^7]", level.clients[i].sess.rpmClient), sizeof(client));
+                Q_strncpyz(client, va("[^3%1.2f^7]", level.clients[i].sess.rpmClient), sizeof(client));
             }
             else if (level.clients[i].sess.proClient >= 0.1){
                 hasClient = qtrue;
-                Q_strncpyz(client, va("[^3P%2.f^7]", level.clients[i].sess.proClient), sizeof(client));
+                Q_strncpyz(client, va("[^3P%1.2f^7]", level.clients[i].sess.proClient), sizeof(client));
             }
         }
         #else
