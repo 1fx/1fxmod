@@ -313,7 +313,7 @@ static qboolean BG_ParseAttackStats ( int weaponNum, attackData_t* attack, void 
     void*   sub;
     char    tmpStr[256];
     int     i;
-    float   recoilRatioInaccuracy, recoilRatioKickAngles;
+    float   recoilRatio, inaccuracyRatio;
 
     // No group is success.  This is to allow NULL to be passed
     if ( NULL == attacksub )
@@ -396,13 +396,13 @@ static qboolean BG_ParseAttackStats ( int weaponNum, attackData_t* attack, void 
     }
 #endif
 
-    // Determine recoil ratio.
+    // Determine recoil and inaccuracy ratio.
     if(weaponNum == WP_M590_SHOTGUN){
-        recoilRatioInaccuracy = 1.0f;
+        inaccuracyRatio = 1.0f;
     }else{
-        recoilRatioInaccuracy = g_recoilRatio.value;
+        inaccuracyRatio = g_inaccuracyRatio.value;
     }
-    recoilRatioKickAngles = g_recoilRatio.value;
+    recoilRatio = g_recoilRatio.value;
 
     // Parse the weapon animations
     trap_GPG_FindPairValue( attacksub, "mp_animFire", "TORSO_ATTACK_PISTOL", tmpStr );
@@ -419,7 +419,7 @@ static qboolean BG_ParseAttackStats ( int weaponNum, attackData_t* attack, void 
     trap_GPG_FindPairValue(attacksub, "mp_fireFromClip||fireFromClip", "1", tmpStr);
     attack->fireFromClip = atoi(tmpStr);
     trap_GPG_FindPairValue(attacksub, "mp_inaccuracy||inaccuracy", "0", tmpStr);
-    attack->inaccuracy = (int)(atof(tmpStr) * recoilRatioInaccuracy * 1000.0f);
+    attack->inaccuracy = (int)(atof(tmpStr) * inaccuracyRatio * 1000.0f);
     #ifdef _GOLD
     trap_GPG_FindPairValue(attacksub, "mp_zoominaccuracy", "0", tmpStr);
     attack->zoomInaccuracy = (int)(atof(tmpStr)*1000.0f);
@@ -463,8 +463,8 @@ static qboolean BG_ParseAttackStats ( int weaponNum, attackData_t* attack, void 
     }
 
     for(i = 0; i < 3; i++){
-        attack->minKickAngles[i] *= recoilRatioKickAngles;
-        attack->maxKickAngles[i] *= recoilRatioKickAngles;
+        attack->minKickAngles[i] *= recoilRatio;
+        attack->maxKickAngles[i] *= recoilRatio;
     }
 
     trap_GPG_FindPairValue(attacksub, "mp_pellets||pellets", "1", tmpStr);

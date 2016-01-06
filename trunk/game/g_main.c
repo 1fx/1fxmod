@@ -333,6 +333,7 @@ vmCvar_t    g_httpRefPaks;
 vmCvar_t    g_httpBaseURL;
 vmCvar_t    g_httpMaxSpeed;
 vmCvar_t    g_recoilRatio;
+vmCvar_t    g_inaccuracyRatio;
 
 vmCvar_t    g_minRate;
 
@@ -700,12 +701,13 @@ static cvarTable_t gameCvarTable[] =
 
     { &g_allowthirdperson, "g_allowThirdPerson", "1", CVAR_ARCHIVE | CVAR_SERVERINFO, 0.0, 0.0, 0, qfalse },
 
-    // Boe!Man 7/7/15: HTTP downloading.
-    { &g_enforce1fxAdditions, "g_enforce1fxAdditions", "0", CVAR_ARCHIVE | CVAR_LATCH, 0.0, 0.0, 0, qfalse },
-    { &g_httpRefPaks,   "g_httpRefPaks", "none", CVAR_ARCHIVE | CVAR_SYSTEMINFO, 0.0, 0.0, 0, qfalse },
-    { &g_httpBaseURL,   "g_httpBaseURL", "none", CVAR_ARCHIVE | CVAR_SYSTEMINFO, 0.0, 0.0, 0, qfalse },
-    { &g_httpMaxSpeed,  "g_httpMaxSpeed", "0", CVAR_ARCHIVE | CVAR_SYSTEMINFO, 0.0, 0.0, 0, qfalse },
-    { &g_recoilRatio,   "g_recoilRatio", "1.0", CVAR_ARCHIVE | CVAR_SYSTEMINFO | CVAR_LATCH | CVAR_LOCK_RANGE, 0.0, 1.0, 0, qfalse },
+    // Boe!Man 7/7/15: HTTP downloading and other client addition CVARs.
+    { &g_enforce1fxAdditions,   "g_enforce1fxAdditions",    "0",    CVAR_ARCHIVE | CVAR_LATCH,                                      0.0, 0.0, 0, qfalse },
+    { &g_httpRefPaks,           "g_httpRefPaks",            "none", CVAR_ARCHIVE | CVAR_SYSTEMINFO,                                 0.0, 0.0, 0, qfalse },
+    { &g_httpBaseURL,           "g_httpBaseURL",            "none", CVAR_ARCHIVE | CVAR_SYSTEMINFO,                                 0.0, 0.0, 0, qfalse },
+    { &g_httpMaxSpeed,          "g_httpMaxSpeed",           "0",    CVAR_ARCHIVE | CVAR_SYSTEMINFO,                                 0.0, 0.0, 0, qfalse },
+    { &g_recoilRatio,           "g_recoilRatio",            "1.0",  CVAR_ARCHIVE | CVAR_SYSTEMINFO | CVAR_LATCH | CVAR_LOCK_RANGE,  0.0, 1.0, 0, qfalse },
+    { &g_inaccuracyRatio,       "g_inaccuracyRatio",        "1.0",  CVAR_ARCHIVE | CVAR_SYSTEMINFO | CVAR_LATCH | CVAR_LOCK_RANGE,  0.0, 1.0, 0, qfalse },
 };
 
 // bk001129 - made static to avoid aliasing

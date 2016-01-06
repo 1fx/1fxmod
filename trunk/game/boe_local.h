@@ -20,7 +20,7 @@
 #define MODNAME_COLORED "^71fx^1. ^3Mod^7"
 
 #define MODVERSION_MAJOR "0.78"
-#define MODVERSION_PRE "0.78t.5"
+#define MODVERSION_PRE "0.78t.6"
 
 // Boe!Man 10/13/15: Mod flavors.
 #ifndef _NIGHTLY
@@ -81,11 +81,11 @@
 // Boe!Man 9/14/15: 1fx. Client Additions on Gold.
 // Those defines *MUST* be in sync with the latest core UI release.
 #ifdef _GOLD
-#define COREUI_DEFAULT_PAKNAME "1fx.additions/1fx_coreUI_1.00"
-#define COREUI_DEFAULT_PAKNUM 926582380
+#define COREUI_DEFAULT_PAKNAME "1fx.additions/1fx_coreUI_1.02"
+#define COREUI_DEFAULT_PAKNUM 2028150485
 
-#define COREUI_ROCMOD_PAKNAME "1fx.rocmod/ROCmod_1fx_coreUI_1.00"
-#define COREUI_ROCMOD_PAKNUM -2112230672
+#define COREUI_ROCMOD_PAKNAME "1fx.rocmod/ROCmod_1fx_coreUI_1.02"
+#define COREUI_ROCMOD_PAKNUM -421333079
 #endif // _GOLD
 
 // 1fx. Mod

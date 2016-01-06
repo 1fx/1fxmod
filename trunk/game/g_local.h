@@ -1568,6 +1568,7 @@ extern  vmCvar_t    g_httpRefPaks;
 extern  vmCvar_t    g_httpBaseURL;
 extern  vmCvar_t    g_httpMaxSpeed;
 extern  vmCvar_t    g_recoilRatio;
+extern  vmCvar_t    g_inaccuracyRatio;
 
 extern  vmCvar_t    g_camperAllowTime;
 extern  vmCvar_t    g_camperPunish;
