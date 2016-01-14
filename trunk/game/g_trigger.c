@@ -393,7 +393,7 @@ void trigger_ReachableObject_touch ( gentity_t *self, gentity_t *other, trace_t 
     }
 
     // Boe!Man 6/14/11: If an effect_touch is specified, display it!
-    if(strlen(self->effect_touch) > 0){
+    if(self->effect_touch != NULL && self->effect_touch[0]){
         //Effect(self->r.currentOrigin, self->effect_touch, qfalse); // Boe!Man 6/14/11: Fix for effect not going up. Just use this function.
         origin = va("%.0f %.0f %.0f", self->r.currentOrigin[0], self->r.currentOrigin[1], self->r.currentOrigin[2]);
         AddSpawnField("classname", "1fx_play_effect");
@@ -423,7 +423,7 @@ void trigger_ReachableObject_touch ( gentity_t *self, gentity_t *other, trace_t 
 
 
     // Boe!Man 6/13/11: Broadcast in console if specified.
-    if(strlen(self->broadcast) > 0){
+    if(self->broadcast && self->broadcast[0]){
         G_Broadcast(va("%s %s", other->client->pers.netname, self->broadcast), BROADCAST_GAME, NULL);
     }else{ // Boe!Man 6/14/11: Else the standard broadcast to the player itself.
         G_Broadcast("You have reached the \\object!", BROADCAST_GAME, other);

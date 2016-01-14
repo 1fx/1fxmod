@@ -978,7 +978,7 @@ void BroadcastTeamChange( gclient_t *client, int oldTeam )
         {
             case TEAM_RED:
                 strcpy(message, va("%s" S_COLOR_WHITE "\njoined the %s\n\"", client->pers.netname, server_hiderteamprefix.string));
-                trap_SendServerCommand( -1, va("print \"^3[Info] 7%s joined the hiders.\n\"", client->pers.cleanName));
+                trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s joined the hiders.\n\"", client->pers.cleanName));
                 break;
 
             case TEAM_BLUE:
