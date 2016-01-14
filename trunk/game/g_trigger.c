@@ -342,7 +342,14 @@ void trigger_ReachableObject_touch ( gentity_t *self, gentity_t *other, trace_t 
     }
 
     // Boe!Man 6/13/11: Someone else has beaten the client to it. Don't continue.
-    if(strstr(Q_strlwr(self->endround), "yes") && self->nextthink != 0){
+    if(self->endround2 && self->nextthink != 0){
+        return;
+    }
+
+    if(level.time < other->client->sess.lastmsg){
+        return;
+    }
+    if(other->client->sunRespawnTimer != 0){
         return;
     }
 
@@ -362,65 +369,68 @@ void trigger_ReachableObject_touch ( gentity_t *self, gentity_t *other, trace_t 
         }
     }
 
-    if(level.time >= other->client->sess.lastmsg && other->client->sunRespawnTimer == 0){
-        other->client->sess.lastmsg = level.time + 3000;
-        other->client->sunRespawnTimer = level.time + 6000;
+    other->client->sess.lastmsg = level.time + 3000;
+    other->client->sunRespawnTimer = level.time + 6000;
 
-        // Boe!Man 6/3/11: Add score if defined.
-        if(self->score > 0){
-            other->client->sess.score += self->score;
-            other->client->sess.kills += self->score;
-            // Boe!Man 6/14/11: Update everything properly so the client doesn't mess up the score tables.
-            other->client->ps.persistant[PERS_SCORE] = other->client->sess.score;
-            CalculateRanks();
+    // Boe!Man 6/3/11: Add score if defined.
+    if(self->score > 0){
+        other->client->sess.score += self->score;
+        other->client->sess.kills += self->score;
+        // Boe!Man 6/14/11: Update everything properly so the client doesn't mess up the score tables.
+        other->client->ps.persistant[PERS_SCORE] = other->client->sess.score;
+        CalculateRanks();
+
+        // Boe!Man 1/14/16: Add a point to the team they're representing if we're not playing H&S or H&Z.
+        if(level.gametypeData->teams && current_gametype.value != GT_HS && current_gametype.value != GT_HZ){
+            G_AddTeamScore (other->client->sess.team, 1);
         }
-
-        // Boe!Man 6/13/11: If a nextthink is already defined, we don't need to define it again (and thus can create an infinite loop). The think func will take care of multiple clients walking into the 'sun'.
-        if(self->nextthink == 0){
-                self->nextthink = level.time + 6000;
-                self->think = ReachableObject_events;
-        }
-
-        // Boe!Man 6/14/11: If an effect_touch is specified, display it!
-        if(strlen(self->effect_touch) > 0){
-            //Effect(self->r.currentOrigin, self->effect_touch, qfalse); // Boe!Man 6/14/11: Fix for effect not going up. Just use this function.
-            origin = va("%.0f %.0f %.0f", self->r.currentOrigin[0], self->r.currentOrigin[1], self->r.currentOrigin[2]);
-            AddSpawnField("classname", "1fx_play_effect");
-            AddSpawnField("effect", self->effect_touch);
-            AddSpawnField("origin", origin);
-            AddSpawnField("count", "1");
-            G_SpawnGEntityFromSpawnVars(qtrue);
-        }
-
-        // Boe!Man 6/14/11: Play hotshot sound.
-        Boe_ClientSound(other, G_SoundIndex("sound/misc/outtakes/todd_s.mp3"));
-
-        // Boe!Man 6/14/11: Strip the player.
-        // Henk 26/01/10 -> Dead clients dun have to be stripped
-        if(!G_IsClientDead(other->client)){
-            other->client->ps.zoomFov = 0;  ///if they are looking through a scope go to normal view
-            other->client->ps.pm_flags &= ~(PMF_GOGGLES_ON|PMF_ZOOM_FLAGS);
-            other->client->ps.stats[STAT_WEAPONS] = 0;
-            other->client->ps.stats[STAT_GOGGLES] = GOGGLES_NONE;
-            memset ( other->client->ps.ammo, 0, sizeof(other->client->ps.ammo) );
-            memset ( other->client->ps.clip, 0, sizeof(other->client->ps.clip) );
-            other->client->ps.weapon = WP_NONE;
-            other->client->ps.weaponstate = WEAPON_READY;
-            other->client->ps.weaponTime = 0;
-            other->client->ps.weaponAnimTime = 0;
-        }
-
-
-        // Boe!Man 6/13/11: Broadcast in console if specified.
-        if(strlen(self->broadcast) > 0){
-            G_Broadcast(va("%s %s", other->client->pers.netname, self->broadcast), BROADCAST_GAME, NULL);
-        }else{ // Boe!Man 6/14/11: Else the standard broadcast to the player itself.
-            G_Broadcast("You have reached the \\object!", BROADCAST_GAME, other);
-        }
-
-        // Boe!Man 6/14/11: Always notify all players in the console.
-        trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s has reached the object.\n\"", other->client->pers.cleanName));
     }
+
+    // Boe!Man 6/13/11: If a nextthink is already defined, we don't need to define it again (and thus can create an infinite loop). The think func will take care of multiple clients walking into the 'sun'.
+    if(self->nextthink == 0){
+        self->nextthink = level.time + 6000;
+        self->think = ReachableObject_events;
+    }
+
+    // Boe!Man 6/14/11: If an effect_touch is specified, display it!
+    if(strlen(self->effect_touch) > 0){
+        //Effect(self->r.currentOrigin, self->effect_touch, qfalse); // Boe!Man 6/14/11: Fix for effect not going up. Just use this function.
+        origin = va("%.0f %.0f %.0f", self->r.currentOrigin[0], self->r.currentOrigin[1], self->r.currentOrigin[2]);
+        AddSpawnField("classname", "1fx_play_effect");
+        AddSpawnField("effect", self->effect_touch);
+        AddSpawnField("origin", origin);
+        AddSpawnField("count", "1");
+        G_SpawnGEntityFromSpawnVars(qtrue);
+    }
+
+    // Boe!Man 6/14/11: Play hotshot sound.
+    Boe_ClientSound(other, G_SoundIndex("sound/misc/outtakes/todd_s.mp3"));
+
+    // Boe!Man 6/14/11: Strip the player.
+    // Henk 26/01/10 -> Dead clients dun have to be stripped
+    if(!G_IsClientDead(other->client)){
+        other->client->ps.zoomFov = 0;  ///if they are looking through a scope go to normal view
+        other->client->ps.pm_flags &= ~(PMF_GOGGLES_ON|PMF_ZOOM_FLAGS);
+        other->client->ps.stats[STAT_WEAPONS] = 0;
+        other->client->ps.stats[STAT_GOGGLES] = GOGGLES_NONE;
+        memset ( other->client->ps.ammo, 0, sizeof(other->client->ps.ammo) );
+        memset ( other->client->ps.clip, 0, sizeof(other->client->ps.clip) );
+        other->client->ps.weapon = WP_NONE;
+        other->client->ps.weaponstate = WEAPON_READY;
+        other->client->ps.weaponTime = 0;
+        other->client->ps.weaponAnimTime = 0;
+    }
+
+
+    // Boe!Man 6/13/11: Broadcast in console if specified.
+    if(strlen(self->broadcast) > 0){
+        G_Broadcast(va("%s %s", other->client->pers.netname, self->broadcast), BROADCAST_GAME, NULL);
+    }else{ // Boe!Man 6/14/11: Else the standard broadcast to the player itself.
+        G_Broadcast("You have reached the \\object!", BROADCAST_GAME, other);
+    }
+
+    // Boe!Man 6/14/11: Always notify all players in the console.
+    trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s has reached the object.\n\"", other->client->pers.cleanName));
 }
 
 void ReachableObject_events ( gentity_t *self ){
@@ -431,7 +441,7 @@ void ReachableObject_events ( gentity_t *self ){
         if(level.clients[level.sortedClients[i]].sunRespawnTimer != 0 && level.time >= level.clients[level.sortedClients[i]].sunRespawnTimer){ // Boe!Man 6/14/11: A client should be respawned.
             level.clients[level.sortedClients[i]].sunRespawnTimer = 0; // Reset his timer.
             // Boe!Man 6/13/11: End the round if specified.
-            if(strstr(Q_strlwr(self->endround), "yes")){
+            if(self->endround2){
                 // Boe!Man 6/13/11: Gametype restart.
                 G_ResetGametype(qfalse, qfalse);
             }else{
@@ -1072,7 +1082,7 @@ void SP_sun(gentity_t* ent){
     origin = va("%.0f %.0f %.0f", ent->r.currentOrigin[0], ent->r.currentOrigin[1], ent->r.currentOrigin[2]);
 
     // Boe!Man 6/14/11: Spawn the touching effect & preload it so we can properly play it later.
-    if(strlen(ent->effect_touch) > 0){ // We don't want the "effect_touch" to be empty, so only attempt to spawn it if it's not empty.
+    if(ent->effect_touch != NULL && ent->effect_touch[0]){
         AddSpawnField("classname", "fx_play_effect");
         AddSpawnField("effect", ent->effect_touch);
         AddSpawnField("tempent", "1");
@@ -1081,7 +1091,7 @@ void SP_sun(gentity_t* ent){
     }
 
     // Boe!Man 6/3/11: Spawn the effect.
-    if(strlen(fxName) > 0){ // We don't want the "effect" to be empty, so only attempt to spawn it if it's not empty.
+    if(fxName[0]){
         AddSpawnField("classname", "fx_play_effect");
         AddSpawnField("effect", fxName);
         AddSpawnField("origin", origin);
@@ -1091,7 +1101,7 @@ void SP_sun(gentity_t* ent){
     }
 
 
-    if(strlen(bspName) > 0){ // Same goes out for the model.
+    if(bspName[0]){ // Same goes out for the model.
         AddSpawnField("classname", "misc_bsp");
         AddSpawnField("bspmodel", bspName);
         AddSpawnField("origin", origin);
@@ -1099,12 +1109,19 @@ void SP_sun(gentity_t* ent){
     }
 
     // Determine if the reachable object can be used for a specific team only.
-    if(Q_stricmp(ent->team, "red") == 0){
-        ent->team2 = TEAM_RED;
-    }else if(Q_stricmp(ent->team, "blue") == 0){
-        ent->team2 = TEAM_BLUE;
-    }else{
-        ent->team2 = TEAM_FREE;
+    if(ent->team != NULL){
+        if(Q_stricmp(ent->team, "red") == 0){
+            ent->team2 = TEAM_RED;
+        }else if(Q_stricmp(ent->team, "blue") == 0){
+            ent->team2 = TEAM_BLUE;
+        }
+    }
+
+    if(ent->endround != NULL){
+        Q_strlwr(ent->endround);
+        if(strstr(ent->endround, "yes")){
+            ent->endround2 = 1;
+        }
     }
 
     ent->r.contents = CONTENTS_TRIGGER;

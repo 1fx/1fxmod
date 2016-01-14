@@ -135,6 +135,7 @@ field_t fields[] =
 
     // Boe!Man 6/3/11: Parts for the reachable object (sun).
     {"endround",            FOFS(endround),             F_LSTRING},
+    {"endround2",           FOFS(endround2),            F_INT},
     {"score",               FOFS(score),                F_INT},
     {"broadcast",           FOFS(broadcast),            F_LSTRING},
     {"effect_touch",        FOFS(effect_touch),         F_LSTRING},

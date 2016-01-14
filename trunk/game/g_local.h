@@ -191,6 +191,7 @@ struct gentity_s
 
     // Boe!Man 6/3/11: Reachable object.
     char        *endround;
+    int         endround2;
     int         score;
     char        *broadcast;
     char        *effect_touch;
