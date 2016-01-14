@@ -65,7 +65,7 @@ static qboolean BG_ParseGametypeInfo ( int gametypeIndex )
 
     // Get the pointer for the gametype data
     gametype = &bg_gametypeData[gametypeIndex];
-    
+
     // Open the gametype's script file
     GP2 = trap_GP_ParseFile( (char*)gametype->script, qtrue, qfalse);
     if (!GP2)
@@ -182,12 +182,12 @@ qboolean BG_BuildGametypeList ( void )
 
     bg_gametypeCount = 0;
 
-    // Retrieve the list of gametype files.  The returned list is a 
+    // Retrieve the list of gametype files.  The returned list is a
     // null separated list with the number of entries returned by the call
     filecount = trap_FS_GetFileList("scripts", ".gametype", filelist, 4096 );
     fileptr   = filelist;
-    
-    for ( i = 0; i < filecount; i++, fileptr += filelen+1) 
+
+    for ( i = 0; i < filecount; i++, fileptr += filelen+1)
     {
         // Grab the length so we can skip this file later
         filelen = strlen(fileptr);
@@ -203,7 +203,7 @@ qboolean BG_BuildGametypeList ( void )
         s  = strchr ( fileptr, '.' );
         *s = '\0';
         bg_gametypeData[bg_gametypeCount].name   = trap_VM_LocalStringAlloc ( fileptr );
-        
+
         // TODO: Parse the gametype file
         BG_ParseGametypeInfo ( bg_gametypeCount++ );
     }
@@ -223,7 +223,7 @@ int BG_FindGametype ( const char* name )
 {
     int i;
 
-    // Loop through the known gametypes and compare their names to 
+    // Loop through the known gametypes and compare their names to
     // the name given
     for ( i = 0; i < bg_gametypeCount; i ++ )
     {
@@ -245,7 +245,7 @@ Search through the item list for the gametype item with
 the given index.
 ==============
 */
-gitem_t *BG_FindGametypeItem ( int index ) 
+gitem_t *BG_FindGametypeItem ( int index )
 {
     return &bg_itemlist[index + MODELINDEX_GAMETYPE_ITEM];
 }
@@ -254,7 +254,7 @@ gitem_t *BG_FindGametypeItem ( int index )
 ==============
 BG_FindGametypeItemByID
 
-Gametype will assign ids to the gametype items for them for future reference, the 
+Gametype will assign ids to the gametype items for them for future reference, the
 id is crammed into the quantity field of the gametype item.  This function will
 find the gametype item with the given item id.
 ==============
@@ -262,7 +262,7 @@ find the gametype item with the given item id.
 gitem_t *BG_FindGametypeItemByID ( int itemid )
 {
     int i;
-    
+
     for ( i = 0; i < MAX_GAMETYPE_ITEMS; i ++ )
     {
         if ( bg_itemlist[i + MODELINDEX_GAMETYPE_ITEM].quantity == itemid )

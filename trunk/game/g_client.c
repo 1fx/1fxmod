@@ -2065,7 +2065,7 @@ gspawn_t* G_SelectClientSpawnPoint ( gentity_t* ent,  qboolean plantsk )
     }
     else
     {
-        if ( level.gametypeData->teams && level.gametypeData->respawnType != RT_NORMAL )
+        if ( level.gametypeData->teams && (level.gametypeData->respawnType != RT_NORMAL || (current_gametype.value == GT_TDM && g_tdmUseTeamSpawns.integer )))
         {
             // Dont bother selecting a safe spawn on non-respawn games, the map creator should
             // have done this for us.
