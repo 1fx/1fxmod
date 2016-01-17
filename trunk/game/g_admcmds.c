@@ -804,10 +804,10 @@ int adm_forceTeam(int argNum, gentity_t *adm, qboolean shortCmd)
                 idNum = Boe_ClientNumFromArg(adm, 1, "forceteam <id/name>", "forceteam", qfalse, qtrue, shortCmd);
             }
         }
-    }
 
-    // Boe!Man 1/22/14: If "all" or the client wasn't found, return.
-    if (idNum < 0) return -1;
+        // Boe!Man 1/22/14: If "all" or the client wasn't found, return.
+        if (idNum < 0) return -1;
+    }
 
     // Set the team.
     if (shortCmd){
@@ -2718,7 +2718,7 @@ int adm_Flash(int argNum, gentity_t *adm, qboolean shortCmd)
     Q_strlwr(arg);
 
     // Check for "all".
-    if (shortCmd && strcmp(arg, "all") == 0 || !shortCmd && strcmp(arg, "all") == 0){
+    if (strcmp(arg, "all") == 0){
         all = qtrue;
     }else{
         idNum = Boe_ClientNumFromArg(adm, argNum, "flash <id/name>", "flash", qtrue, qtrue, shortCmd);
