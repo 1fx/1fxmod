@@ -824,6 +824,12 @@ qboolean G_ParseGametypeItems ( TGPGroup* itemsGroup )
             ent->item      = item;
             ent->nextthink = level.time + 200;
             ent->think     = G_GametypeItemThink;
+
+            #ifndef _GOLD
+            if(ent->useangles == NULL || (Q_strlwr(ent->useangles) && !strstr(ent->useangles, "yes") && !strstr(ent->useangles, "1"))){
+                VectorClear(ent->s.angles);
+            }
+            #endif // not _GOLD
         }
 
         // Next sub group

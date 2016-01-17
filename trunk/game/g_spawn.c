@@ -105,6 +105,9 @@ field_t fields[] =
     {"dmg",                 FOFS(damage),               F_INT},
     {"angles",              FOFS(s.angles),             F_VECTOR},
     {"angle",               FOFS(s.angles),             F_ANGLEHACK},
+    #ifndef _GOLD
+    {"useangles",           FOFS(useangles),            F_LSTRING},
+    #endif // not _GOLD
     {"targetShaderName",    FOFS(targetShaderName),     F_LSTRING},
     {"targetShaderNewName", FOFS(targetShaderNewName),  F_LSTRING},
     {"bspmodel",            FOFS(bspmodel),             F_LSTRING},

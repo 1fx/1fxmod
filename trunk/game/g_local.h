@@ -209,6 +209,10 @@ struct gentity_s
 
     // Boe!Man 11/26/15: Used for anticamp.
     vec3_t      camperOrigin;
+
+    #ifndef _GOLD
+    char        *useangles;
+    #endif // not _GOLD
 };
 
 typedef struct gspawn_s
