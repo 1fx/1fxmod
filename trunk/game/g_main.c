@@ -3305,10 +3305,10 @@ void Henk_CheckZombie(void){
 
             if(ent && ent->client && ent->client->sess.team == TEAM_RED && !G_IsClientDead(ent->client)){
                 if(ent->client->sess.team != TEAM_SPECTATOR){ // extra check
-                level.zombie = ent->s.number;
-                level.zombietime = level.time+5000;
-                G_Broadcast(va("%s\nwill turn into a \\zombie\nin ^15 ^7seconds!", ent->client->pers.netname), BROADCAST_GAME2, NULL);
-                G_Broadcast("You will turn into a \\zombie\nin ^15 ^7seconds!", BROADCAST_GAME2, ent);
+                    level.zombie = ent->s.number;
+                    level.zombietime = level.time + 5000;
+                    G_Broadcast(va("%s\nwill turn into a \\zombie\nin ^15 ^7seconds!", ent->client->pers.netname), BROADCAST_GAME2, NULL);
+                    G_Broadcast("You will turn into a \\zombie\nin ^15 ^7seconds!", BROADCAST_GAME2, ent);
                 }
                 #ifdef _DEBUG
                 else{
@@ -3849,7 +3849,7 @@ void G_RunFrame( int levelTime )
         }
 
         if(ent->client->sess.team != TEAM_SPECTATOR && ent->client->sess.zombie == qtrue && ent->client->sess.zombiebody != -1 && current_gametype.value == GT_HZ){
-                if(g_entities[ent->client->sess.zombiebody].s.pos.trType == TR_STATIONARY || g_entities[ent->client->sess.zombiebody].timestamp > level.time + 5000){
+                if(g_entities[ent->client->sess.zombiebody].s.pos.trType == TR_STATIONARY || level.time > g_entities[ent->client->sess.zombiebody].timestamp + 5000){
                     SetTeam(ent, "blue", NULL, qtrue);
                     G_StopFollowing ( ent );
                     ent->client->ps.pm_flags &= ~PMF_GHOST;
