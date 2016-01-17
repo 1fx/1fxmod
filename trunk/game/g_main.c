@@ -1542,9 +1542,16 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
         trap_Cvar_Update(&g_enforce1fxAdditions);
         #endif // not _GOLD
     }else{
-        Com_Printf("Info: g_recoilRatio has been reset to 1.0, needs Client Additions enabled.\n");
-        trap_Cvar_Set("g_recoilRatio", "1.0");
-        trap_Cvar_Update(&g_recoilRatio);
+        if(g_recoilRatio.value != 1.0f){
+            Com_Printf("Info: g_recoilRatio has been reset to 1.0, needs Client Additions enabled.\n");
+            trap_Cvar_Set("g_recoilRatio", "1.0");
+            trap_Cvar_Update(&g_recoilRatio);
+        }
+        if(g_inaccuracyRatio.value != 1.0f){
+            Com_Printf("Info: g_inaccuracyRatio has been reset to 1.0, needs Client Additions enabled.\n");
+            trap_Cvar_Set("g_inaccuracyRatio", "1.0");
+            trap_Cvar_Update(&g_recoilRatio);
+        }
     }
 
     // Build the gametype list so we can verify the given gametype

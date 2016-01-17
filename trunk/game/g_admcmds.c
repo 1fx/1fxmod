@@ -791,7 +791,7 @@ int adm_forceTeam(int argNum, gentity_t *adm, qboolean shortCmd)
     Q_strlwr(str);
 
     // Check for "all".
-    if (shortCmd && strcmp(str, "all") == 0 || !shortCmd && strcmp(str, "all") == 0){
+    if (strcmp(str, "all") == 0){
         all = qtrue;
     }else{
         // Find the player.
