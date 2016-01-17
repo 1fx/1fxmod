@@ -1558,7 +1558,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
         if(g_inaccuracyRatio.value != 1.0f){
             Com_Printf("Info: g_inaccuracyRatio has been reset to 1.0, needs Client Additions enabled.\n");
             trap_Cvar_Set("g_inaccuracyRatio", "1.0");
-            trap_Cvar_Update(&g_recoilRatio);
+            trap_Cvar_Update(&g_inaccuracyRatio);
         }
     }
 
@@ -3967,9 +3967,8 @@ void G_RunFrame( int levelTime )
     // We make sure no actual players are connected to the server.
     // If we don't do this the server will kill the server anyway around the 23-day mark,
     // this is just safer and way more user friendly than just kicking everybody.
-    if(level.time - level.startTime > 604800000 && level.checkServerShutdown != -1){
-        if(level.time > level.checkServerShutdown
-        && level.numConnectedClients == 0 || NumBots() == level.numConnectedClients){
+    if(level.time > 604800000 && level.checkServerShutdown != -1 && level.time > level.checkServerShutdown){
+        if(level.numConnectedClients == 0 || NumBots() == level.numConnectedClients){
             if (*g_mapcycle.string && Q_stricmp (g_mapcycle.string, "none")){
                 level.mcKillServer = qtrue;
                 G_switchToNextMapInCycle(qtrue);
