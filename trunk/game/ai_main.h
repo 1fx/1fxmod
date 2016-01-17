@@ -317,8 +317,6 @@ void B_Free(void *ptr);
 
 //resets the whole bot state
 void BotResetState(bot_state_t *bs);
-//returns the number of bots in the game
-int NumBots(void);
 
 void BotUtilizePersonality(bot_state_t *bs);
 int BotDoChat(bot_state_t *bs, char *section, int always);

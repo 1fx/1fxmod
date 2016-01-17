@@ -2010,7 +2010,7 @@ void G_switchToNextMapInCycle(qboolean force)
 {
     char            currentMap[12], nextMap[MAX_QPATH];
     char            command[MAX_QPATH];
-    int             mapIndex, mapStart, i;
+    int             mapIndex, mapStart, mapOffset, i;
     TGenericParser2 GP2;
     TGPGroup        topGroup;
     TGPGroup        mcGroup;
@@ -2018,6 +2018,16 @@ void G_switchToNextMapInCycle(qboolean force)
     fileHandle_t    mapFile;
     char            *mapStrStart, *mapStrEnd;
     qboolean        tryNextMap = qfalse;
+    char            mapCommand[32];
+
+    // Figure out the map command we should execute.
+    if(level.mcKillServer){
+        // Server expects a server kill to reset the level.time and other game specifics.
+        Q_strncpyz(mapCommand, "killserver; map mp_shop\n", sizeof(mapCommand));
+    }else{
+        // Regular map switch: we don't need to kill the server.
+        Q_strncpyz(mapCommand, "map mp_shop\n", sizeof(mapCommand));
+    }
 
     // Check if we're running a mapcycle.
     if (!*g_mapcycle.string || !Q_stricmp (g_mapcycle.string, "none")){
@@ -2025,7 +2035,7 @@ void G_switchToNextMapInCycle(qboolean force)
 
         if(force){
             G_LogPrintf("Server expects a switch - switching to mp_shop instead.\n");
-            trap_SendConsoleCommand(EXEC_APPEND, "map mp_shop\n");
+            trap_SendConsoleCommand(EXEC_APPEND, mapCommand);
         }
         return;
     }
@@ -2048,7 +2058,7 @@ void G_switchToNextMapInCycle(qboolean force)
 
         if(force){
             G_LogPrintf("Server expects a switch - switching to mp_shop instead.\n");
-            trap_SendConsoleCommand(EXEC_APPEND, "map mp_shop\n");
+            trap_SendConsoleCommand(EXEC_APPEND, mapCommand);
         }
         return;
     }
@@ -2060,7 +2070,7 @@ void G_switchToNextMapInCycle(qboolean force)
 
         if(force){
             G_LogPrintf("Server expects a switch - switching to mp_shop instead.\n");
-            trap_SendConsoleCommand(EXEC_APPEND, "map mp_shop\n");
+            trap_SendConsoleCommand(EXEC_APPEND, mapCommand);
         }
         return;
     }
@@ -2072,7 +2082,7 @@ void G_switchToNextMapInCycle(qboolean force)
 
         if(force){
             G_LogPrintf("Server expects a switch - switching to mp_shop instead.\n");
-            trap_SendConsoleCommand(EXEC_APPEND, "map mp_shop\n");
+            trap_SendConsoleCommand(EXEC_APPEND, mapCommand);
         }
         return;
     }
@@ -2096,14 +2106,14 @@ void G_switchToNextMapInCycle(qboolean force)
                     level.mcSkipMaps = 0;
                     G_LogPrintf("ERROR: map0 in the mapcycle is missing!\n");
                     G_LogPrintf("Bailing out by switching to mp_shop for your sake...\n");
-                    trap_SendConsoleCommand(EXEC_APPEND, "map mp_shop\n");
+                    trap_SendConsoleCommand(EXEC_APPEND, mapCommand);
                     break;
                 }
             }else if(mapIndex == 1 && tryNextMap){
                 level.mcSkipMaps = 0;
                 G_LogPrintf("ERROR: Tried map1, but it can also not be found!\n");
                 G_LogPrintf("Bailing out by switching to mp_shop for your sake...\n");
-                trap_SendConsoleCommand(EXEC_APPEND, "map mp_shop\n");
+                trap_SendConsoleCommand(EXEC_APPEND, mapCommand);
                 break;
             }else{
                 mapIndex = 0;
@@ -2120,11 +2130,22 @@ void G_switchToNextMapInCycle(qboolean force)
         }
 
         // Figure out what map we're trying to play.
-        mapStrStart = strstr(command, "map ");
+        mapStrStart = strstr(command, "devmap ");
         if(mapStrStart == NULL){
-            // No "map" in the command.
-            G_LogPrintf("ERROR: no map specified to switch to in the mapcycle for map %d\n", mapIndex);
-            goto advanceNextMap;
+            mapStrStart = strstr(command, "altmap ");
+            if(mapStrStart == NULL){
+                mapStrStart = strstr(command, "map ");
+                if(mapStrStart == NULL){
+                    // No "map" in the command.
+                    G_LogPrintf("ERROR: no map specified to switch to in the mapcycle for map %d\n", mapIndex);
+                    goto advanceNextMap;
+                }
+                mapOffset = 4;
+            }else{
+                mapOffset = 7;
+            }
+        }else{
+            mapOffset = 7;
         }
 
         // Determine end of the string and resulting map name.
@@ -2133,7 +2154,7 @@ void G_switchToNextMapInCycle(qboolean force)
             mapStrEnd = strrchr(mapStrStart, 0);
         }
 
-        mapStrStart += 4;
+        mapStrStart += mapOffset;
         Q_strncpyz(nextMap, mapStrStart, (int)(mapStrEnd - mapStrStart) + 1);
 
         // Remove possible whitespace.
@@ -2163,7 +2184,7 @@ void G_switchToNextMapInCycle(qboolean force)
 
             if(force){
                 G_LogPrintf("Bailing out by switching to mp_shop for your sake...\n");
-                trap_SendConsoleCommand(EXEC_APPEND, "map mp_shop\n");
+                trap_SendConsoleCommand(EXEC_APPEND, mapCommand);
             }
             break;
         }

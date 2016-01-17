@@ -789,6 +789,8 @@ typedef struct
     char            mapname[64];
 
     int             mcSkipMaps;         // Number of additional "mapcycle" commands to send to the engine to switch to a map we do have.
+    qboolean        mcKillServer;       // True if we should kill the server to reset the level.time count when doing the final mapcycle.
+    int             checkServerShutdown;
 
     // Henk 06/04/10 -> Add TMI for RPM scoreboard compatiblity
     #ifndef _GOLD
@@ -931,6 +933,11 @@ typedef struct
 
     int         lastSpeedCheck;         // Check speed for zombies only every other frame.
 } level_locals_t;
+
+//
+// ai_main.c
+//
+int         NumBots         ( void ); // Returns the number of bots in the game.
 
 //
 // g_spawn.c

@@ -1498,6 +1498,14 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
     #endif // __linux__ && __GNUC__ < 3
     trap_Cvar_Update(gameCvarTable->vmCvar);
 
+    // Boe!Man 1/17/16: There's a small chance this will ever happen, but
+    // do make sure the server can properly recover from time or numSnapshotEntities wrapping.
+    // We also have our own mechanism in place to restart after a week, but this is the
+    // emergency backup so to speak.
+    // N.B.: We use map mp_shop instead of mapcycle, since a mapcycle file can contain non-recoverable errors.
+    // If mp_shop is not present there is something terribly, truly terribly.. wrong..
+    trap_Cvar_Register(NULL, "nextmap", "map mp_shop", CVAR_ROM | CVAR_INTERNAL, 0.0, 0.0);
+
     srand( randomSeed );
 
     // set some level globals
@@ -3708,7 +3716,11 @@ void G_RunFrame( int levelTime )
     // Or if we're waiting for the server to switch to a valid next map..
     else if ( level.mcSkipMaps )
     {
+        if(level.mcKillServer && level.mcSkipMaps == 1){
+            trap_SendConsoleCommand(EXEC_APPEND, "killserver; ");
+        }
         trap_SendConsoleCommand(EXEC_APPEND, "mapcycle\n");
+
         level.mcSkipMaps--;
     }
 
@@ -3950,11 +3962,28 @@ void G_RunFrame( int levelTime )
         trap_SendConsoleCommand( EXEC_APPEND, va("%s\n", level.action) );
         }
     }
-    // Boe!Man 8/25/10: Auto restart after 60000000 milliseconds, or 1000 minutes with an empty server. This ensures no crashes.
-    // FIX ME (Prio low): Bots aren't supported as of right now.
-    if ( level.time - level.startTime > 60000000 && level.numConnectedClients == 0){
-        trap_Cvar_VariableStringBuffer ( "mapname", level.mapname, MAX_QPATH );
-        trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", level.mapname));
+
+    // Boe!Man 1/17/16: Try to kill the server from time to time, a week to be exact.
+    // We make sure no actual players are connected to the server.
+    // If we don't do this the server will kill the server anyway around the 23-day mark,
+    // this is just safer and way more user friendly than just kicking everybody.
+    if(level.time - level.startTime > 604800000 && level.checkServerShutdown != -1){
+        if(level.time > level.checkServerShutdown
+        && level.numConnectedClients == 0 || NumBots() == level.numConnectedClients){
+            if (*g_mapcycle.string && Q_stricmp (g_mapcycle.string, "none")){
+                level.mcKillServer = qtrue;
+                G_switchToNextMapInCycle(qtrue);
+            }else{
+                // 'mapcycle' should restart the current map since there is none.
+                trap_SendConsoleCommand( EXEC_APPEND, "killserver; mapcycle\n");
+            }
+
+            // Make sure we don't process this again.
+            level.checkServerShutdown = -1;
+        }else{
+            // Check again the next second.
+            level.checkServerShutdown = level.time + 1000;
+        }
     }
 
     // Boe!Man 5/27/13: The automatic in-memory to disk backup. Note this only happens when playing a game which doesn't have a round limit.
