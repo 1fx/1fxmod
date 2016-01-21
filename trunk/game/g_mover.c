@@ -1767,8 +1767,8 @@ void SP_func_bobbing (gentity_t *ent) {
 
     VectorCopy( ent->s.origin, ent->s.pos.trBase );
     VectorCopy( ent->s.origin, ent->r.currentOrigin );
+
     VectorCopy( ent->s.angles, ent->s.apos.trBase );
-    VectorCopy( ent->s.apos.trBase, ent->r.currentAngles );
 
     ent->s.pos.trDuration = ent->speed * 1000;
     ent->s.pos.trTime = ent->s.pos.trDuration * phase;
