@@ -28,7 +28,7 @@ static void G_removeExtraWeapons()
         weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_ALTERNATE].clipSize = 0;
         weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_ALTERNATE].extraClips = 0;
 
-        if(!g_pickupsDisabled.integer && (current_gametype.value == GT_DM || current_gametype.value == GT_TDM)){
+        if(!level.pickupsDisabled && !level.gametypeData->pickupsDisabled){
             ammoData[AMMO_40].max = 0;
         }
     }
