@@ -671,8 +671,14 @@ void G_ResetGametype ( qboolean fullRestart, qboolean cagefight )
                 }
             }
 
-            if (g_autoEvenTeams.integer == 1 && current_gametype.value != GT_HS){
-                EvenTeams(NULL, qtrue);
+            if (current_gametype.value != GT_HS){
+                if(g_autoEvenTeams.integer == 1){
+                    EvenTeams(NULL, qtrue);
+                }
+
+                if(g_autoSwapTeams.integer == 1 && current_gametype.value != GT_HZ){
+                    SwapTeams(NULL, qtrue);
+                }
             }
 
             // Boe!Man 1/30/14: We're in a gametype with rounds and the user wishes to have backups of the databases enabled, do this every start of another round.

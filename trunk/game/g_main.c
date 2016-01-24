@@ -207,6 +207,7 @@ vmCvar_t    g_clan;
 
 // Boe!Man 6/2/10
 vmCvar_t    g_autoEvenTeams;
+vmCvar_t    g_autoSwapTeams;
 vmCvar_t    server_msgInterval;
 vmCvar_t    server_enableServerMsgs;
 vmCvar_t    server_enableTips;
@@ -552,7 +553,8 @@ static cvarTable_t gameCvarTable[] =
     { &g_enableTeamCmds, "g_enableTeamCmds", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
     { &g_refpassword, "g_refpassword", "none", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
     { &g_checkCountry, "g_checkCountry", "1", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse  },
-    { &g_autoEvenTeams, "g_autoEvenTeams", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
+    { &g_autoEvenTeams, "g_autoEvenTeams", "1", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue },
+    { &g_autoSwapTeams, "g_autoSwapTeams", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue },
 
     // Boe!Man 11/24/13: No section CVARs.
     { &g_useNoLower,    "g_useNoLower", "1", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse  },
@@ -4055,7 +4057,7 @@ void G_RunFrame( int levelTime )
 
             // Boe!Man 1/24/11: Swap the teams.
             if (cm_aswap.integer > 0 && level.swappedteams == qfalse){
-                adm_swapTeams(-1, NULL, qfalse);
+                SwapTeams(NULL, qtrue);
                 for(i=0;i<level.numConnectedClients;i++){ // Henk swap the invites aswell
                     if(level.clients[level.sortedClients[i]].sess.invitedByRed == qtrue){
                         level.clients[level.sortedClients[i]].sess.invitedByRed = qfalse;

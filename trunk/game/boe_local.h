@@ -388,8 +388,9 @@ void    QDECL Boe_adminLog( const char *command, const char *by, const char *to,
 // Boe!Man 1/2/14: This function logs soft-crashes (triggered by Com_Error).
 void    logCrash(void);
 
-// Henk 28/01/10 -> Add eventeams
+// Henk 28/01/10 -> Add eventeams and swap teams.
 void    EvenTeams (gentity_t *adm, qboolean aet);
+void    SwapTeams (gentity_t *adm, qboolean aswap);
 
 extern  vmCvar_t    server_badminprefix;
 extern  vmCvar_t    server_adminprefix;
@@ -436,6 +437,7 @@ qboolean henk_ischar(char c);
 
 // Boe!Man 6/2/10
 extern  vmCvar_t    g_autoEvenTeams;
+extern  vmCvar_t    g_autoSwapTeams;
 extern  vmCvar_t    server_msgInterval;
 extern  vmCvar_t    server_enableServerMsgs;
 extern  vmCvar_t    server_enableTips;

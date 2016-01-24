@@ -1958,11 +1958,6 @@ void Boe_mapEvents (void){
         }
         else if (g_compMode.integer > 0 && cm_enabled.integer == 3){
             if(level.time >= level.mapSwitchCount + 2000){
-                /*
-                // Boe!Man 11/17/10: Is auto swap enabled? -- Update 1/24/11: Swap the teams when the round has just ended. -- Update 3/19/11: Swap the teams when the round has just started.. The temporary round.
-                if (cm_aswap.integer > 0){
-                    Boe_SwapTeams(NULL);
-                }*/
                 trap_SendConsoleCommand( EXEC_APPEND, "map_restart 0\n");
             }
         }

@@ -266,6 +266,181 @@ void EvenTeams (gentity_t *adm, qboolean aet)
     }
 }
 
+void SwapTeams (gentity_t *adm, qboolean aswap)
+{
+    int             i;
+    int             rs = level.teamScores[TEAM_RED];
+    int             bs = level.teamScores[TEAM_BLUE];
+    int             rl = level.redLocked;
+    int             bl = level.blueLocked;
+    clientSession_t *sess;
+    gentity_t       *ent, *find;
+    qboolean        enabled;
+
+    if(!aswap){
+        if (!level.gametypeData->teams) {
+            if (adm && adm->client) {
+                trap_SendServerCommand(adm - g_entities, "print \"^3[Info] ^7Currently not playing a team game.\n\"");
+            }else{
+                Com_Printf("Currently not playing a team game.\n");
+            }
+
+            return;
+        }
+
+        // Boe!Man 12/16/15: Don't allow swapteams if the weapons are already given out.
+        if(current_gametype.value == GT_HS && level.messagedisplay1){
+            if (adm && adm->client) {
+                trap_SendServerCommand(adm - g_entities, "print \"^3[Info] ^7Swapteams is only possible before the weapons are given out.\n\"");
+            }else{
+                Com_Printf("Swapteams is only possible before the weapons are given out.\n");
+            }
+
+            return;
+        }
+
+        // Toggle the setting if they're on the Match Settings screen instead of swapping the teams.
+        if (cm_enabled.integer == 1){
+            enabled = cm_aswap.integer == 1;
+            if (enabled){
+                trap_Cvar_Set("cm_aswap", "0"); // Disable it.
+            }else{
+                trap_Cvar_Set("cm_awap", "1");
+            }
+            trap_Cvar_Update(&cm_aswap);
+
+            // Broadcast change.
+            G_Broadcast(va("\\Autoswap %s!", (enabled) ? "disabled" : "enabled"), BROADCAST_CMD, NULL);
+
+            if (adm&&adm->client){
+                trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Auto swap %s by %s.\n\"", (enabled) ? "disabled" : "enabled", adm->client->pers.cleanName));
+            }else{
+                trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Auto swap %s.\n\"", (enabled) ? "disabled" : "enabled"));
+            }
+
+            return;
+        }
+    }
+
+    // Boe!Man 12/16/15: Enforce the new round start here so seekers won't get released sooner then they are supposed to.
+    if (current_gametype.value == GT_HS){
+        for (i = 0; i < level.numConnectedClients; i++){
+            ent = &g_entities[level.sortedClients[i]];
+
+            if (ent->client->sess.team == TEAM_RED){
+                ent->client->sess.team = TEAM_BLUE;
+            }else if (ent->client->sess.team == TEAM_BLUE){
+                ent->client->sess.team = TEAM_RED;
+            }
+
+            // Take care of the bots.
+            if (ent->r.svFlags & SVF_BOT){
+                char    userinfo[MAX_INFO_STRING];
+
+                trap_GetUserinfo(ent->s.number, userinfo, sizeof(userinfo));
+                Info_SetValueForKey(userinfo, "team", sess->team == TEAM_RED ? "red" : "blue");
+                trap_SetUserinfo(ent->s.number, userinfo);
+            }
+        }
+
+        if(!aswap){
+            G_ResetGametype(qtrue, qfalse);
+        }
+    }else{
+        for (i = 0; i < level.numConnectedClients; i++){
+            ent = &g_entities[level.sortedClients[i]];
+            sess = &ent->client->sess;
+
+            // Do the team changing.
+            if (ent->client->sess.team == TEAM_SPECTATOR)
+                continue;
+            if (ent->client->pers.connected != CON_CONNECTED)
+                continue;
+
+            // Drop any gametype items they might have.
+            if (ent->s.gametypeitems > 0){
+                G_DropGametypeItems(ent, 0);
+            }
+
+            ///01.24.06e - 07:42pm - remove their weapons
+            ///and set them as a ghost
+            ent->client->ps.stats[STAT_WEAPONS] = 0;
+            TossClientItems(ent);
+            G_StartGhosting(ent);
+            ///End  - 01.24.06 - 07:43pm
+
+            if (ent->client->sess.team == TEAM_RED){
+                ent->client->sess.team = TEAM_BLUE;
+            }else if (ent->client->sess.team == TEAM_BLUE){
+                ent->client->sess.team = TEAM_RED;
+            }
+
+            // Take care of the bots.
+            if (ent->r.svFlags & SVF_BOT){
+                char    userinfo[MAX_INFO_STRING];
+
+                trap_GetUserinfo(ent->s.number, userinfo, sizeof(userinfo));
+                Info_SetValueForKey(userinfo, "team", sess->team == TEAM_RED ? "red" : "blue");
+                trap_SetUserinfo(ent->s.number, userinfo);
+            }
+
+            ///Prepare the clients for team change then repawn
+            ///01.24.06 - 07:43pm
+            ent->client->pers.identity = NULL;
+            ClientUserinfoChanged(ent->s.number);
+            CalculateRanks();
+
+            G_StopFollowing(ent);
+            G_StopGhosting(ent);
+            trap_UnlinkEntity(ent);
+            ClientSpawn(ent);
+        }
+
+        // Reset gametype item.
+        find = NULL;
+        while (NULL != (find = G_Find(find, FOFS(classname), "gametype_item"))){
+            G_ResetGametypeItem(find->item);
+        }
+
+        ///04.22.05 - 02:44am - swap scores & locks
+        level.teamScores[TEAM_BLUE] = rs;
+        level.teamScores[TEAM_RED] = bs;
+        level.redLocked = bl;
+        level.blueLocked = rl;
+        ///End  - 04.22.05 - 02:45am
+
+        // Enable roundtime for gametypes without respawn intervals.
+        if (level.gametypeData->respawnType != RT_INTERVAL){
+            level.gametypeDelayTime = level.time + g_roundstartdelay.integer * 1000;
+
+            level.gametypeRoundTime = level.time + (g_roundtimelimit.integer * 60000);
+            if (level.gametypeDelayTime != level.time){
+                trap_SetConfigstring(CS_GAMETYPE_TIMER, va("%i", level.gametypeRoundTime));
+            }
+        }
+    }
+
+    // Proper messaging/logging.
+    Boe_GlobalSound(G_SoundIndex("sound/misc/events/tut_lift02.mp3"));
+
+    if(!aswap){
+        G_Broadcast("\\Swapteams!", BROADCAST_CMD, NULL);
+    }
+
+    if (adm && adm->client){
+        trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Swap teams by %s.\n\"", adm->client->pers.cleanName));
+        Boe_adminLog("swapteams", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "none");
+    }else{
+        // Boe!Man 11/17/10: Auto swap in compmode.
+        if (aswap){
+            trap_SendServerCommand(-1, va("print\"^3[Auto Action] ^7Swap teams.\n\""));
+        }else{
+            trap_SendServerCommand(-1, va("print\"^3[Rcon Action] ^7Swap teams.\n\""));
+            Boe_adminLog("swapteams", "RCON", "none");
+        }
+    }
+}
+
 /*
 ==================
 DeathmatchScoreboardMessage
