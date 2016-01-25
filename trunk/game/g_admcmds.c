@@ -1294,6 +1294,26 @@ Sets the respawninterval or shows it to the one issuing the command.
 
 int adm_respawnInterval(int argNum, gentity_t *adm, qboolean shortCmd)
 {
+    char    arg[32];
+
+    if(adm == NULL){
+        trap_Argv(argNum, arg, sizeof(arg));
+
+        if(!arg[0]){
+            Com_Printf("Respawn interval is %d.\n", g_respawnInterval.integer);
+            return -1;
+        }
+
+        trap_Cvar_Set("g_respawninterval", arg);
+        trap_Cvar_Update(&g_respawnInterval);
+
+        trap_SendServerCommand(-1, va("print \"^3[Rcon Action] ^7Respawn interval changed to %d.\n\"", g_respawnInterval.integer));
+        G_Broadcast(va("\\Respawn interval %d!", g_respawnInterval.integer), BROADCAST_CMD, NULL);
+        Boe_adminLog(va("Respawn interval %d", g_respawnInterval.integer), "RCON", "none");
+
+        return -1;
+    }
+
     adm_toggleCVAR(adm, argNum, shortCmd, "Respawn interval", &g_respawnInterval, qfalse, NULL, NULL);
 
     return -1;
@@ -1326,7 +1346,7 @@ static void adm_toggleCVAR(gentity_t *adm, int argNum, qboolean shortCmd, char *
         arg[0] = 0;
 
         trap_Argv(argNum, arg, sizeof(arg));
-        if (strlen(arg) > 0) {
+        if (arg[0]) {
             cvarValue = atoi(arg);
         }else{
             cvarValue = -1;
