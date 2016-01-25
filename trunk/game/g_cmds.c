@@ -4531,6 +4531,12 @@ qboolean ConsoleCommand( void )
         return qtrue;
     }
 
+    if(Q_stricmp(cmd, "mapcycle_s") == 0 )
+    {
+        G_switchToNextMapInCycle(qtrue);
+        return qtrue;
+    }
+
     if (g_dedicated.integer)
     {
         if (Q_stricmp (cmd, "say") == 0)
