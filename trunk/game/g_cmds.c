@@ -2573,7 +2573,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
     char        fullTextBuffer[MAX_SAY_TEXT];
     char        cmd[MAX_SAY_TEXT];
     int         ignore = -1;
-    qboolean    command;
+    qboolean    command, parseTokens = qtrue;
 
     void    *GP2, *group;
     char txtlevel[2];
@@ -3094,7 +3094,17 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
         }
     }
 
-    if (!(strcmp(cmd, "!3rd") == 0 && ent->client->sess.admin)){
+    // Don't parse tokens in commands that start with !0-9.
+    if (command && ent->client->sess.admin){
+        for (i = 0; i <= strlen(p); i++){
+            if (p[i] == '!' && i + 1 <= strlen(p) && p[i + 1] >= '0' && p[i + 1] <= '9'){
+                parseTokens = qfalse;
+                break;
+            }
+        }
+    }
+
+    if(parseTokens){
         // Boe!Man 12/20/09
         Boe_Tokens(ent, p, mode, qtrue);
         Boe_Tokens(ent, p, mode, qfalse);
