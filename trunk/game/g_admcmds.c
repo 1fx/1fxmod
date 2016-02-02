@@ -2513,22 +2513,11 @@ Locks or unlocks specified team.
 int adm_lockTeam(int argNum, gentity_t *adm, qboolean shortCmd)
 {
     char        arg[16] = "\0"; // increase buffer so we can process more commands
-    qboolean    done = qfalse;
 
     trap_Argv(argNum, arg, sizeof(arg));
 
     if (shortCmd){
-        if (strstr(arg, "r")){
-            done = G_lockTeam(adm, qfalse, "r");
-        }else if (strstr(arg, "b")){
-            done = G_lockTeam(adm, qfalse, "b");
-        }else if (strstr(arg, "s")){
-            done = G_lockTeam(adm, qfalse, "s");
-        }else if (strstr(arg, "a")){
-            done = G_lockTeam(adm, qfalse, "a");
-        }
-
-        if (!done){
+        if(!G_GetChatArgumentCount() || !G_lockTeam(adm, qfalse, G_GetChatArgument(1))){
             trap_SendServerCommand(adm - g_entities, va("print \"^3[Info] ^7Unknown team entered.\n\""));
         }
     }else{
