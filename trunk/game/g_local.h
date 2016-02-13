@@ -667,6 +667,10 @@ typedef struct
     int         startTime;              // level.time the map was started
     int         globalVoiceTime;        // last global voice
 
+    #ifdef __linux__
+    qboolean    forceExit;              // Raise a SIGUSR1 when this is qtrue to ensure we don't exit with status 0.
+    #endif // __linux__
+
     // Dynamic weapon system.
     int         wpNumWeapons;           // Number of weapons available.
     int         ammoMax;                // Number of the amount of ammo available.

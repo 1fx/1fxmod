@@ -1441,7 +1441,12 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
             Com_Error(ERR_FATAL, "Another instance is running!");
         }
         #elif __linux__
-        Com_Error(ERR_FATAL, "Another instance is running!");
+        G_LogPrintf("********************\n" \
+                    "ERROR: Another instance is running!\n" \
+                    "********************\n");
+
+        level.forceExit = qtrue;
+        trap_SendConsoleCommand(EXEC_NOW, "quit\n");
         #endif
     }
 
@@ -1918,6 +1923,13 @@ void G_ShutdownGame( int restart )
 
     // Boe!Man 7/27/15: Free statinfo memory of all clients.
     G_FreeStatsMemory(NULL);
+
+    #ifdef __linux__
+    if(level.forceExit){
+        // Raise SIGUSR1 when we want to force an unsuccessful exit.
+        raise(SIGUSR1);
+    }
+    #endif // __linux__
 }
 
 
