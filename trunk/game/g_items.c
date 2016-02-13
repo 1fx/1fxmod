@@ -369,7 +369,10 @@ void Touch_Item (gentity_t *ent, gentity_t *other, trace_t *trace)
     }
 
     if(current_gametype.value == GT_HS){
-        if((ent->item->giTag == WP_MM1_GRENADE_LAUNCHER || ent->item->giTag == WP_F1_GRENADE || ent->item->giTag == WP_MDN11_GRENADE || ent->item->giTag == WP_L2A2_GRENADE) && other->client->sess.team == TEAM_RED){
+        if(level.gametypeResetTime){
+            // Don't allow pickups when hiders or seekers have already won.
+            return;
+        }else if((ent->item->giTag == WP_MM1_GRENADE_LAUNCHER || ent->item->giTag == WP_F1_GRENADE || ent->item->giTag == WP_MDN11_GRENADE || ent->item->giTag == WP_L2A2_GRENADE) && other->client->sess.team == TEAM_RED){
             return;
         }else if((ent->item->giTag == WP_M4_ASSAULT_RIFLE || ent->item->giTag == WP_RPG7_LAUNCHER || ent->item->giTag == WP_M67_GRENADE) && other->client->sess.team == TEAM_BLUE){
             return;
