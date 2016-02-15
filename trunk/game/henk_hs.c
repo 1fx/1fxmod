@@ -669,19 +669,13 @@ void EvenTeams_HS (gentity_t *adm, qboolean aet)
             }
         }
     }else{
-        // Check default code.
-        if(totalplayers >= 3 && totalplayers <= 6){ // hiders = totalplayers-seekers
+        if(counts[TEAM_RED] < 4){
             seekers = 1;
-        }else if(totalplayers >= 7 && totalplayers <= 11){ // hiders = totalplayers-seekers
-            seekers = 2;
-        }else if(totalplayers >= 12 && totalplayers <= 17){ // hiders = totalplayers-seekers
-            seekers = 3;
-        }else if(totalplayers >= 18 && totalplayers <= 23){ // hiders = totalplayers-seekers
-            seekers = 4;
-        }else if(totalplayers >= 24){
-            seekers = 5;
+        }else{
+            seekers = (totalplayers + 1) / 5;
         }
     }
+
     maxhiders = totalplayers-seekers;
 
     if(counts[TEAM_BLUE] < seekers){ // too few seekers
