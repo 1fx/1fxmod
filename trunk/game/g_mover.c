@@ -1662,6 +1662,11 @@ void SP_func_wall ( gentity_t* ent )
         return;
     }
 
+    if(level.mBSPInstanceDepth && !ent->spawnflags){
+        // Boe!Man 2/15/16: Take the parent (misc_bsp) their spawnflags if we don't have any.
+        ent->spawnflags = level.mSpawnFlags;
+    }
+
     trap_SetBrushModel( ent, ent->model );
 
     InitMover( ent );

@@ -359,7 +359,9 @@ void SP_misc_bsp(gentity_t *ent)
     trap_LinkEntity (ent);
 
     trap_SetActiveSubBSP(ent->s.modelindex);
+    level.mSpawnFlags = ent->spawnflags;
     G_SpawnEntitiesFromString(qtrue);
+    level.mSpawnFlags = 0;
     trap_SetActiveSubBSP(-1);
 
     level.mBSPInstanceDepth--;

@@ -757,6 +757,7 @@ typedef struct
     float       mRotationAdjust;
     char        *mTargetAdjust;
     qboolean    hasBspInstances;
+    int         mSpawnFlags;
     char        mFilter[MAX_QPATH];
     char        mTeamFilter[MAX_QPATH];
 
