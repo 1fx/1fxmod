@@ -1665,11 +1665,16 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
             // Henk 02/02/10 -> Set score to 0 when switching team.
             // Boe!Man 2/8/11: Forcing this to be H&S only.
             if (current_gametype.value == GT_HS){
-                ent->client->sess.score = 0;
-                ent->client->sess.kills = 0;
-                ent->client->sess.deaths = 0;
+                if(client->sess.lastTeam != team){
+                    ent->client->sess.score = 0;
+                    ent->client->sess.kills = 0;
+                    ent->client->sess.deaths = 0;
+                    client->sess.lastTeam = team;
+                }
+
                 ent->client->sess.timeOfDeath = 0; // Boe!Man 8/29/11: Also reset this when switching team (so seekers that won won't get RPG for example).
             }
+
 
             // Boe!Man 6/3/12: Reset noroof data when setting team.
             ent->client->sess.isOnRoof = qfalse;
@@ -1687,9 +1692,13 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
 
     // Henk 02/02/10 -> Set score to 0 when switching team.
     if (current_gametype.value == GT_HS){
-        ent->client->sess.score = 0;
-        ent->client->sess.kills = 0;
-        ent->client->sess.deaths = 0;
+        if(team != TEAM_SPECTATOR && client->sess.lastTeam != team){
+            ent->client->sess.score = 0;
+            ent->client->sess.kills = 0;
+            ent->client->sess.deaths = 0;
+            client->sess.lastTeam = team;
+        }
+
         ent->client->sess.timeOfDeath = 0; // Boe!Man 8/29/11: Also reset this when switching team (so seekers that won won't get RPG for example).
 
         // Also check the random grenade.

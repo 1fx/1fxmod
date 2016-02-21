@@ -1902,7 +1902,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
     #endif // _GOLD
 
     // Boe!Man 10/25/10: Make sure their stats are set correctly.
-    memset(&ent->client->pers.statinfo, 0, sizeof(ent->client->pers.statinfo));
+    G_EmptyStatsMemory(ent);
     ent->client->pers.statinfo.lasthurtby = -1;
     ent->client->pers.statinfo.lastclient_hurt = -1;
     memset(ent->client->sess.IgnoredClients, -1, sizeof(ent->client->sess.IgnoredClients));
@@ -1956,8 +1956,6 @@ void ClientBegin( int clientNum, qboolean setTime )
     ent->client = client;
 
     client->pers.connected = CON_CONNECTED;
-
-    G_EmptyStatsMemory(ent);
 
     ///RxCxW - 09.15.06 - 05:09pm #statusCheck
     if(!ent->client->sess.fileChecked)

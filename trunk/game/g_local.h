@@ -301,6 +301,7 @@ typedef struct
     int                 teamkillForgiveTime;    // time when team damage will be forgivin
     qboolean            noTeamChange;           // cant change teams when this is true (rt_none only)
     qboolean            noNameChange;           // Can't change name when this is true.
+    team_t              lastTeam;               // Last team entered except spectator team.
 
     int                 lastMessage;            // level.time of the last message sent to this client.
     int                 lastMessagePriority;    // broadcastPrio_t of last message sent.
