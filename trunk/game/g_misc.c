@@ -68,8 +68,9 @@ void TeleportPlayer ( gentity_t *player, vec3_t origin, vec3_t angles, qboolean 
     player->client->ps.eFlags ^= EF_TELEPORT_BIT;
 
     // set angles
-    if(!nojump)
-    SetClientViewAngle( player, angles, qtrue );
+    if(!nojump){
+        SetClientViewAngle( player, angles );
+    }
 
     // kill anything at the destination
     if ( !G_IsClientSpectating ( player->client ) )

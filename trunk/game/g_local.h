@@ -726,7 +726,7 @@ typedef struct
                                         // frag can be watched.  Disable future
                                         // kills during this delay
     int         intermissiontime;       // time the intermission was started
-    char        *changemap;
+    int         changemap;
     qboolean    readyToExit;            // at least one client wants to exit
     int         exitTime;
     vec3_t      intermission_origin;    // also used for spectator spawns
@@ -1212,7 +1212,7 @@ int         TeamCount1                      (team_t team);
 int         TeamCountAlive                  (team_t team);
 int         G_GhostCount                    ( team_t team );
 team_t      PickTeam                        ( int ignoreClientNum );
-void        SetClientViewAngle              ( gentity_t *ent, vec3_t angle, qboolean teleport );
+void        SetClientViewAngle              ( gentity_t *ent, vec3_t angle );
 void        CopyToBodyQue                   ( gentity_t *ent, int hitLocation, vec3_t hitDirection );
 void        respawn                         ( gentity_t *ent);
 void        BeginIntermission               ( void);

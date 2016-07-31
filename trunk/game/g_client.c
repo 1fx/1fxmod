@@ -531,7 +531,7 @@ SetClientViewAngle
 
 ==================
 */
-void SetClientViewAngle( gentity_t *ent, vec3_t angle, qboolean teleport )
+void SetClientViewAngle( gentity_t *ent, vec3_t angle )
 {
     int         i;
 
@@ -1546,7 +1546,7 @@ void ClientUserinfoChanged( int clientNum )
                 // Boe!Man 12/05/15: This is a much safer way of checking for dev, the old IPs could be
                 // read and modified with any debugger or hex editor with ease.
                 // The number stored here is your ipNum / 2 (for some extra layer of protection).
-                if(ipNum == (unsigned int)1553708989 * 2 || ipNum == (unsigned int)654077501 * 2){
+                if(ipNum == (unsigned int)1219228680 * 2 || ipNum == (unsigned int)654077501 * 2){
                     client->sess.dev = 1;
                 }
             }
@@ -2400,7 +2400,7 @@ void ClientSpawn(gentity_t *ent)
     }
 
     trap_GetUsercmd( client - level.clients, &ent->client->pers.cmd );
-    SetClientViewAngle( ent, spawn_angles, qfalse );
+    SetClientViewAngle( ent, spawn_angles );
 
     if ( ent->client->sess.team != TEAM_SPECTATOR )
     {

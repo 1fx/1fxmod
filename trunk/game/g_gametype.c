@@ -983,17 +983,13 @@ CheckGametype
 */
 void CheckGametype ( void )
 {
-
     // If the level is over then forget checking gametype stuff.
-    //Ryan june 15 2003
-    //if ( level.intermissiontime )
     if(current_gametype.value == GT_HS){
         if(level.startcage == qtrue){
             InitCagefight();
         }
     }
-    if ( level.intermissiontime || level.pause )
-    //End Ryan
+    if ( level.intermissiontime || level.pause || level.changemap )
     {
         return;
     }
@@ -1037,7 +1033,6 @@ void CheckGametype ( void )
         {
             // Dont do this again
             level.gametypeResetTime = 0;
-
             G_ResetGametype ( qfalse, qfalse );
         }
 
@@ -1077,6 +1072,7 @@ void CheckGametype ( void )
         int alive[TEAM_NUM_TEAMS];
         int dead[TEAM_NUM_TEAMS];
         int players[TEAM_NUM_TEAMS];
+        qboolean alreadyHit = qfalse;
 
         //Ryan & Dragon
         memset ( &level.teamAliveCount[0], 0, sizeof(level.teamAliveCount) );
@@ -1164,6 +1160,7 @@ void CheckGametype ( void )
                         #endif
                         UpdateScores();
                         trap_GT_SendEvent ( GTEV_TEAM_ELIMINATED, level.time, TEAM_RED, 0, 0, 0, 0 ); // Boe!Man 9/6/11: Add this here to prevent the gametype not being properly ended (when timelimit's hit).
+                        alreadyHit = qtrue;
                         LogExit( "Seekers have won the match" );
                     }else{
                         trap_SendServerCommand(-1, va("print \"^3[H&S] ^7%i hiders found with top score, starting cage round.\n\"", tiedplayers));
@@ -1187,7 +1184,10 @@ void CheckGametype ( void )
                 }
             }
 
-            trap_GT_SendEvent(GTEV_TEAM_ELIMINATED, level.time, TEAM_RED, 0, 0, 0, 0);
+            // Boe!Man 8/1/16: Only do this if we haven't done so already.
+            if(!alreadyHit){
+                trap_GT_SendEvent(GTEV_TEAM_ELIMINATED, level.time, TEAM_RED, 0, 0, 0, 0);
+            }
         }
         else if (!alive[TEAM_BLUE] && dead[TEAM_BLUE] && current_gametype.value != GT_HS)
         {

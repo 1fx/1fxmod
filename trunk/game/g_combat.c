@@ -185,7 +185,7 @@ void player_die(
         return;
     }
 
-    if ( level.intermissiontime)
+    if ( level.intermissiontime || level.changemap )
     {
         return;
     }

@@ -629,7 +629,7 @@ void EvenTeams_HS (gentity_t *adm, qboolean aet)
     gentity_t *lastConnected;
     int seekers, maxhiders, totalplayers;
 
-    if(level.intermissiontime)
+    if(level.intermissiontime || level.changemap)
         return;
 
     // Boe!Man 1/19/11: If teams are locked don't proceed with evening the teams.
@@ -770,7 +770,7 @@ void EvenTeams_HZ(gentity_t *adm, qboolean aet){
     int i;
     gentity_t *ent, *lastConnected;
 
-    if (level.intermissiontime)
+    if (level.intermissiontime || level.changemap)
         return;
 
     // Boe!Man 1/19/11: If teams are locked don't proceed with evening the teams.

@@ -2168,10 +2168,7 @@ void CalculateRanks( void )
     CheckExitRules();
 
     // if we are at the intermission, send the new info to everyone
-    //Ryan june 15 2003
-        //if ( level.intermissiontime )
-    if ( level.intermissiontime || level.pause)
-    //Ryan
+    if (level.intermissiontime || level.pause)
     {
         SendScoreboardMessageToAllClients();
     }
@@ -2379,7 +2376,7 @@ void ExitLevel (void)
     ///Ryan
 
     G_switchToNextMapInCycle(qtrue);
-    level.changemap = NULL;
+    level.changemap = 1;
     level.intermissiontime = 0;
 
 
@@ -2764,7 +2761,7 @@ void CheckExitRules( void )
 
     // if at the intermission, wait for all non-bots to
     // signal ready, then go to next level
-    if ( level.intermissiontime )
+    if ( level.intermissiontime || level.changemap )
     {
         CheckIntermissionExit ();
         return;
@@ -3887,7 +3884,7 @@ void G_RunFrame( int levelTime )
                     // Boe!Man 11/16/15: Only teleport if their new location was stationary.
                     if(g_entities[ent->client->sess.zombiebody].s.pos.trType == TR_STATIONARY){
                         TeleportPlayer(ent, g_entities[ent->client->sess.zombiebody].r.currentOrigin, ent->client->sess.tempangles, qtrue);
-                        SetClientViewAngle(ent, ent->client->sess.tempangles, qfalse);
+                        SetClientViewAngle(ent, ent->client->sess.tempangles);
                     }
 
                     g_entities[ent->client->sess.zombiebody].nextthink = level.time+1000;

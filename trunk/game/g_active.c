@@ -600,7 +600,7 @@ void SpectatorThink( gentity_t *ent, usercmd_t *ucmd )
                 {
                     vec3_t lookdown;
                     VectorSet(lookdown, 90, 0, 0);
-                    SetClientViewAngle(ent, lookdown, qfalse);
+                    SetClientViewAngle(ent, lookdown);
                     client->ps.pm_type = PM_FREEZE;
                 }
 
@@ -1205,6 +1205,12 @@ void ClientThink_real(gentity_t *ent)
     if( level.intermissiontime )
     {
         ClientIntermissionThink( client );
+        return;
+    }
+
+    // Boe!Man 8/1/16: Don't continue if the map is done and the clients are about to switch.
+    if(level.changemap)
+    {
         return;
     }
 
@@ -1958,10 +1964,7 @@ void ClientEndFrame( gentity_t *ent )
     // the player any normal movement attributes
     //
 
-    //Ryan june 15 2003
-        //if ( level.intermissiontime )
-    if ( level.intermissiontime || level.pause )
-    //Ryan
+    if ( level.intermissiontime || level.pause || level.changemap )
     {
         return;
     }

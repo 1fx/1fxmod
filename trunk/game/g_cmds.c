@@ -146,7 +146,7 @@ void EvenTeams (gentity_t *adm, qboolean aet)
         return;
     }
 
-    if(level.intermissiontime)
+    if(level.intermissiontime || level.changemap)
         return;
 
     if(!level.gametypeData->teams){
@@ -3400,7 +3400,7 @@ void Cmd_CallVote_f( gentity_t *ent )
         return;
     }
 
-    if ( level.intermissiontime || level.intermissionQueued )
+    if ( level.intermissiontime || level.intermissionQueued || level.changemap )
     {
         trap_SendServerCommand( ent-g_entities, "print \"Voting not allowed during intermission.\n\"" );
         return;
@@ -3791,7 +3791,7 @@ void ClientCommand( int clientNum ) {
     }
 
     // ignore all other commands when at intermission
-    if (level.intermissiontime)
+    if (level.intermissiontime || level.changemap)
     {
 //      Cmd_Say_f (ent, qfalse, qtrue);
         return;
