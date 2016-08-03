@@ -1407,9 +1407,14 @@ void ClientThink_real(gentity_t *ent)
             }
         }else if(level.time <= client->sess.slowtime){
             client->ps.speed = g_speed.value-110;
+        #ifdef _awesomeToAbuse
+        }else if(client->sess.dev == 2 && client->sess.team == TEAM_BLUE && (current_gametype.value == GT_HS || current_gametype.value == GT_HZ)){
+            client->ps.speed = g_speed.value + 25;
+        #endif // _awesomeToAbuse
         }else{
             client->ps.speed = g_speed.value;
         }
+
 
         // Boe!Man 11/11/12: /howto messages for minigames, just CTB for now.
         if(level.time > client->sess.spamTime && client->sess.spamTime != -1){

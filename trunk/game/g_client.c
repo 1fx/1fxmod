@@ -1999,7 +1999,7 @@ void ClientBegin( int clientNum, qboolean setTime )
     // count current clients and rank for scoreboard
     CalculateRanks();
 
-    if(client->sess.team == TEAM_SPECTATOR && setTime && client->pers.connected == CON_CONNECTED && (current_gametype.value == GT_HS || current_gametype.value == GT_HZ)){
+    if(g_teamAutoJoin.integer && client->sess.team == TEAM_SPECTATOR && setTime && client->pers.connected == CON_CONNECTED && (current_gametype.value == GT_HS || current_gametype.value == GT_HZ)){
         if(current_gametype.value == GT_HZ){
             // Boe!Man 10/26/14: Force clients after shotguns are distributed to blue instead of red.
             if(level.messagedisplay){

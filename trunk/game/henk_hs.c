@@ -725,10 +725,14 @@ void EvenTeams_HS (gentity_t *adm, qboolean aet)
         lastConnected->client->ps.stats[STAT_WEAPONS] = 0;
         G_StartGhosting( lastConnected );
 
-        if(highTeam == TEAM_RED)
-        lastConnected->client->sess.team = TEAM_BLUE;
-        else
-        lastConnected->client->sess.team = TEAM_RED;
+        if(highTeam == TEAM_RED){
+            lastConnected->client->sess.team = TEAM_BLUE;
+        }else{
+            lastConnected->client->sess.team = TEAM_RED;
+        }
+
+        // Boe!Man 8/3/16: Ensure the last team is also set when forcefully switched.
+        lastConnected->client->sess.lastTeam = lastConnected->client->sess.team;
 
         if (lastConnected->r.svFlags & SVF_BOT) {
             char userinfo[MAX_INFO_STRING];

@@ -866,6 +866,11 @@ int adm_forceTeam(int argNum, gentity_t *adm, qboolean shortCmd)
 
                 if (current_gametype.value != GT_HS){
                     g_entities[level.sortedClients[i]].client->pers.identity = BG_FindTeamIdentity(level.gametypeTeam[xTeam], -1);
+                }else{
+                    // Boe!Man 8/3/16: Don't forget to wipe the scores of the bot in H&S.
+                    g_entities[level.sortedClients[i]].client->sess.score = 0;
+                    g_entities[level.sortedClients[i]].client->sess.kills = 0;
+                    g_entities[level.sortedClients[i]].client->sess.deaths = 0;
                 }
                 ClientBegin(g_entities[level.sortedClients[i]].s.number, qfalse);
             }else{
@@ -897,7 +902,13 @@ int adm_forceTeam(int argNum, gentity_t *adm, qboolean shortCmd)
 
             if (current_gametype.value != GT_HS){
                 g_entities[idNum].client->pers.identity = BG_FindTeamIdentity(level.gametypeTeam[xTeam], -1);
+            }else{
+                // Boe!Man 8/3/16: Don't forget to wipe the scores of the bot in H&S.
+                g_entities[idNum].client->sess.score = 0;
+                g_entities[idNum].client->sess.kills = 0;
+                g_entities[idNum].client->sess.deaths = 0;
             }
+
             ClientBegin(idNum, qfalse);
         }else{
             SetTeam(&g_entities[idNum], str, NULL, qtrue);
