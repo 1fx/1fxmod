@@ -1681,6 +1681,24 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
     G_WeaponMod();
 
     ClearRegisteredItems();
+
+    // Henk 22/01/11 -> New weapon cvars.
+    G_UpdateDisableCvars(); // Set the disabled_ cvars from availableWeapons and hideSeek_availableWeapons
+
+    G_UpdateAvailableWeapons(); // also set the original g_availableWeapons for the client :)
+    // End
+
+    // Boe!Man 11/13/12: New check for Nades, see if they are used at all in the server (faster !nn checking, and proper backpack fix).
+    if(SetNades("0")){ // 0 means disable_* CVAR to 0, so enabled.
+        level.nadesFound = qtrue;
+    }
+    // Set the available outfitting -- Boe!Man 5/22/12: Update, now also checks H&S settings.
+    if(g_disableNades.integer){
+        SetNades("1");
+    }
+
+    BG_SetAvailableOutfitting(g_availableWeapons.string);
+
     if(current_gametype.value == GT_HS){
         AddSpawnField("classname", "gametype_item");
         AddSpawnField("targetname", "briefcase");
@@ -1744,22 +1762,6 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 #endif
 
     G_RemapTeamShaders();
-    // Henk 22/01/11 -> New weapon cvars.
-    G_UpdateDisableCvars(); // Set the disabled_ cvars from availableWeapons and hideSeek_availableWeapons
-
-    G_UpdateAvailableWeapons(); // also set the original g_availableWeapons for the client :)
-    // End
-
-    // Boe!Man 11/13/12: New check for Nades, see if they are used at all in the server (faster !nn checking, and proper backpack fix).
-    if(SetNades("0")){ // 0 means disable_* CVAR to 0, so enabled.
-        level.nadesFound = qtrue;
-    }
-    // Set the available outfitting -- Boe!Man 5/22/12: Update, now also checks H&S settings.
-    if(g_disableNades.integer){
-        SetNades("1");
-    }
-
-    BG_SetAvailableOutfitting(g_availableWeapons.string);
 
     // Initialize the gametype
     // Boe!Man 11/29/12: Now that the gametype is in the game, the gt can check what gametype it is using current_gametype.
