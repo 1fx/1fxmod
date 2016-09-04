@@ -1094,6 +1094,14 @@ void G_SpawnItem (gentity_t *ent, gitem_t *item)
         return;
     }
 
+    #ifdef _GOLD
+    // Don't spawn any 1fx. Client Additions-enabled grenades if we're not enforcing them.
+    if(!g_enforce1fxAdditions.integer && item->giType == IT_WEAPON &&
+        (item->giTag == WP_M67_GRENADE || item->giTag == WP_F1_GRENADE || item->giTag == WP_L2A2_GRENADE || item->giTag == WP_MDN11_GRENADE)){
+        return;
+    }
+    #endif // _GOLD
+
     G_SpawnFloat( "random", "0", &ent->random );
     G_SpawnFloat( "wait", "0", &ent->wait );
 
