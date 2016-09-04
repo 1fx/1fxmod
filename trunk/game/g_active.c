@@ -1415,7 +1415,6 @@ void ClientThink_real(gentity_t *ent)
             client->ps.speed = g_speed.value;
         }
 
-
         // Boe!Man 11/11/12: /howto messages for minigames, just CTB for now.
         if(level.time > client->sess.spamTime && client->sess.spamTime != -1){
             client->sess.spamTime = -1; // Boe!Man 10/5/10: Just display these at map restart/client begin.

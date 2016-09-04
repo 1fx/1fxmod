@@ -307,21 +307,20 @@ void Patch_Main()
 
     // Get rid of common exploits like q3infoboom.
     Patch_q3infofix();
+    Patch_autoDownloadExploit();
 
     if(g_dosPatch.integer){
         Patch_dosProtection();
     }
 
     #ifndef _GOLD
-    // Only patch the auto download exploit on v1.00, not on v1.03.
-    Patch_autoDownloadExploit();
-
-    // Also remove the hash command from the v1.00 command list.
+    // Remove the hash command from the v1.00 command list.
     Patch_removeCommand("hash");
     #else
     // Remove the banlist function from the v1.03 command list.
     Patch_removeCommand("banlist");
     #endif // not _GOLD
+
     Patch_rconLog();
     Patch_sysinfoWorkaround();
     Patch_engineCVARs();

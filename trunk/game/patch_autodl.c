@@ -4,7 +4,6 @@
 
 //==================================================================
 
-#ifndef _GOLD
 #include "patch_local.h"
 
 // Local function definitions.
@@ -42,10 +41,16 @@ Writes the jump to the detour.
 void Patch_autoDownloadExploit()
 {
     #ifdef _WIN32
+    #ifdef _GOLD
+    Patch_detourAddress("Auto D/L exploit protection", (long)&Patch_autoDownloadDetour, 0x00471552, qfalse);
+    #else
     Patch_detourAddress("Auto D/L exploit protection", (long)&Patch_autoDownloadDetour, 0x0046EF20, qfalse);
+    #endif // _GOLD
     #elif __linux__
+    #ifdef _GOLD
+    Patch_detourAddress("Auto D/L exploit protection", (long)&Patch_autoDownloadDetour, 0x0804d9f1, qfalse);
+    #else
     Patch_detourAddress("Auto D/L exploit protection", (long)&Patch_autoDownloadDetour, 0x0804b185, qfalse);
+    #endif // _GOLD
     #endif // _WIN32
 }
-
-#endif // not _GOLD
