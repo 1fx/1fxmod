@@ -646,9 +646,9 @@ void G_ResetGametype ( qboolean fullRestart, qboolean cagefight )
                         if (level.teamScores[TEAM_RED] == level.teamScores[TEAM_BLUE]){
                             G_Broadcast(va("Score \\tied with %i - %i!", level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE]), BROADCAST_GAME, NULL);
                         }else if (level.teamScores[TEAM_RED] > level.teamScores[TEAM_BLUE]){
-                            G_Broadcast(va("%s team leads with %i - %i!", server_redteamprefix.string, level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE]), BROADCAST_GAME, NULL);
+                            G_Broadcast(va("%s ^7team leads with %i - %i!", server_redteamprefix.string, level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE]), BROADCAST_GAME, NULL);
                         }else if (level.teamScores[TEAM_BLUE] > level.teamScores[TEAM_RED]){
-                            G_Broadcast(va("%s team leads with %i - %i!", server_blueteamprefix.string, level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]), BROADCAST_GAME, NULL);
+                            G_Broadcast(va("%s ^7team leads with %i - %i!", server_blueteamprefix.string, level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]), BROADCAST_GAME, NULL);
                         }
                     }
                     // Boe!Man 11/19/10: Messages for round two.
@@ -656,9 +656,9 @@ void G_ResetGametype ( qboolean fullRestart, qboolean cagefight )
                         if (level.teamScores[TEAM_RED]+cm_sr.integer == level.teamScores[TEAM_BLUE]+cm_sb.integer){
                             G_Broadcast(va("Score \\tied with %i - %i!", level.teamScores[TEAM_RED] + cm_sr.integer, level.teamScores[TEAM_BLUE] + cm_sb.integer), BROADCAST_GAME, NULL);
                         }else if (level.teamScores[TEAM_RED]+cm_sr.integer > level.teamScores[TEAM_BLUE]+cm_sb.integer){
-                            G_Broadcast(va("%s team leads with %i - %i!", server_redteamprefix.string, level.teamScores[TEAM_RED] + cm_sr.integer, level.teamScores[TEAM_BLUE] + cm_sb.integer), BROADCAST_GAME, NULL);
+                            G_Broadcast(va("%s ^7team leads with %i - %i!", server_redteamprefix.string, level.teamScores[TEAM_RED] + cm_sr.integer, level.teamScores[TEAM_BLUE] + cm_sb.integer), BROADCAST_GAME, NULL);
                         }else if (level.teamScores[TEAM_BLUE]+cm_sb.integer > level.teamScores[TEAM_RED]+cm_sr.integer){
-                            G_Broadcast(va("%s team leads with %i - %i!", server_blueteamprefix.string, level.teamScores[TEAM_BLUE] + cm_sb.integer, level.teamScores[TEAM_RED] + cm_sr.integer), BROADCAST_GAME, NULL);
+                            G_Broadcast(va("%s ^7team leads with %i - %i!", server_blueteamprefix.string, level.teamScores[TEAM_BLUE] + cm_sb.integer, level.teamScores[TEAM_RED] + cm_sr.integer), BROADCAST_GAME, NULL);
                         }
                     }
                 }
@@ -666,7 +666,7 @@ void G_ResetGametype ( qboolean fullRestart, qboolean cagefight )
                 else{
                     // Get Ready
                     if (current_gametype.value != GT_HS && current_gametype.value != GT_HZ){
-                        G_Broadcast("\\Get ready!", BROADCAST_GAME, NULL);
+                        G_Broadcast("Get \\ready!", BROADCAST_GAME, NULL);
                     }
                 }
             }
