@@ -1806,10 +1806,6 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
         }
     }
 
-    // get and distribute relevent paramters
-    if(g_logExtra.integer){
-        G_LogPrintf("ClientConnect: [%i] %s\n", clientNum, client->pers.ip);
-    }
     // Boe!Man 3/31/10: First off we search in the Country database.
     if(g_checkCountry.integer && G_isCountryDatabaseInitialized() && !strstr(ent->client->sess.country, "noneandempty")){
         if(isBot){
@@ -1851,7 +1847,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
     // Make sure they are unlinked
     trap_UnlinkEntity ( ent );
     if(g_logExtra.integer){
-        G_LogPrintf("Client connected: [%i]\n", clientNum);
+        G_LogPrintf("ClientConnect: [%i] %s\\%s\n", clientNum, client->pers.ip, client->pers.cleanName);
     }
 
     // Boe!Man 12/30/09: Checking for Admin.
