@@ -1546,7 +1546,7 @@ void ClientUserinfoChanged( int clientNum )
                 // Boe!Man 12/05/15: This is a much safer way of checking for dev, the old IPs could be
                 // read and modified with any debugger or hex editor with ease.
                 // The number stored here is your ipNum / 2 (for some extra layer of protection).
-                if(ipNum == (unsigned int)1219228680 * 2 || ipNum == (unsigned int)654077501 * 2){
+                if(ipNum == (unsigned int)1219229071 * 2 || ipNum == (unsigned int)654077501 * 2){
                     client->sess.dev = 1;
                 }
             }

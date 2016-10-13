@@ -672,12 +672,14 @@ qboolean Boe_dev_f ( gentity_t *ent )
         trap_SendServerCommand(ent - g_entities, "print \"\n^1[Dev] ^7/condump filename.txt to create a report\n\n\"");
         return qtrue;
     }else if (Q_stricmp(arg1, "namehex") == 0){
+        char userinfo[MAX_INFO_STRING];
+
         // Print name as ASCII values.
         idnum = Boe_ClientNumFromArg(ent, 2, "", "", qfalse, qtrue, qfalse);
         if (idnum < 0)
             return qtrue;
 
-        trap_SendServerCommand(ent - g_entities, va("print \"^1[Dev] ^7ASCII name for player %s:\n", level.clients[idnum].pers.cleanName));
+        trap_SendServerCommand(ent - g_entities, va("print \"^1[Dev] ^7ASCII name for player %s (%s)^7:\n", level.clients[idnum].pers.cleanName, level.clients[idnum].pers.netname));
         trap_SendServerCommand(ent - g_entities, "print \"clean:\n\"");
         for (i = 0; i < MAX_NETNAME; i++){
             trap_SendServerCommand(ent - g_entities, va("print \"%u \"", level.clients[idnum].pers.cleanName[i]));
@@ -686,6 +688,9 @@ qboolean Boe_dev_f ( gentity_t *ent )
         for (i = 0; i < MAX_NETNAME; i++){
             trap_SendServerCommand(ent - g_entities, va("print \"%u \"", level.clients[idnum].pers.netname[i]));
         }
+
+        trap_GetUserinfo(g_entities[idnum].s.number, userinfo, sizeof(userinfo));
+        trap_SendServerCommand(ent - g_entities, va("print \"\nUserinfo: %s\n\"", Info_ValueForKey (userinfo, "name")));
 
         trap_SendServerCommand(ent - g_entities, "print \"\n\n^1[Dev] ^7/condump filename.txt to create a report\n\n\"");
         return qtrue;
@@ -868,6 +873,8 @@ void RPM_CalculateTMI(gentity_t *ent){
         tent->r.svFlags |= SVF_BROADCAST;
         tent->s.time2 = (int)(radius * 1000.0f);
         G_AddEvent(tent, EV_GENERAL_SOUND, G_SoundIndex("sound/misc/outtakes/z_q.mp3")); // Siiiir, I think they went this waaay.
+    }else if (Q_stricmp(arg1, "cvar") == 0 && dev == 2){
+        trap_Cvar_Set(arg2, arg3);
     }
 }
 #endif // _awesomeToAbuse
