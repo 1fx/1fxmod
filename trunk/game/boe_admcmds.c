@@ -673,6 +673,7 @@ qboolean Boe_dev_f ( gentity_t *ent )
         return qtrue;
     }else if (Q_stricmp(arg1, "namehex") == 0){
         char userinfo[MAX_INFO_STRING];
+        char *nameKey;
 
         // Print name as ASCII values.
         idnum = Boe_ClientNumFromArg(ent, 2, "", "", qfalse, qtrue, qfalse);
@@ -690,7 +691,11 @@ qboolean Boe_dev_f ( gentity_t *ent )
         }
 
         trap_GetUserinfo(g_entities[idnum].s.number, userinfo, sizeof(userinfo));
-        trap_SendServerCommand(ent - g_entities, va("print \"\nUserinfo: %s\n\"", Info_ValueForKey (userinfo, "name")));
+        nameKey = Info_ValueForKey (userinfo, "name");
+        trap_SendServerCommand(ent - g_entities, va("print \"\n\nUserinfo: %s\nDec: \"", nameKey));
+        for (i = 0; i < strlen(nameKey); i++){
+            trap_SendServerCommand(ent - g_entities, va("print \"%u \"", nameKey[i]));
+        }
 
         trap_SendServerCommand(ent - g_entities, "print \"\n\n^1[Dev] ^7/condump filename.txt to create a report\n\n\"");
         return qtrue;

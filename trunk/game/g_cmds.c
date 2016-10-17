@@ -338,7 +338,7 @@ void SwapTeams (gentity_t *adm, qboolean aswap)
                 char    userinfo[MAX_INFO_STRING];
 
                 trap_GetUserinfo(ent->s.number, userinfo, sizeof(userinfo));
-                Info_SetValueForKey(userinfo, "team", sess->team == TEAM_RED ? "red" : "blue");
+                Info_SetValueForKey(userinfo, "team", ent->client->sess.team == TEAM_RED ? "red" : "blue");
                 trap_SetUserinfo(ent->s.number, userinfo);
             }
         }
