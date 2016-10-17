@@ -1232,20 +1232,22 @@ int G_Damage (
             }
         }
 
-        if(level.time > level.gametypeRoundTime && mod != MOD_POP){
+        if((level.time > level.gametypeRoundTime || targ->client->sunRespawnTimer) && mod != MOD_POP){
             damage = 0;
         }
-         if(mod == MOD_MSG90A1_SNIPER_RIFLE && level.crossTheBridge){
+
+        if(mod == MOD_MSG90A1_SNIPER_RIFLE && level.crossTheBridge){
             attack = &weaponData[WP_MSG90A1].attack[ATTACK_NORMAL];
             damage = attack->damage;
-         }else if(mod == MOD_AK74_ASSAULT_RIFLE && level.crossTheBridge){
+        }else if(mod == MOD_AK74_ASSAULT_RIFLE && level.crossTheBridge){
             attack = &weaponData[WP_AK74_ASSAULT_RIFLE].attack[ATTACK_NORMAL];
             damage = attack->damage;
-         }else if(level.cagefight == qtrue && mod == altAttack(MOD_AK74_ASSAULT_RIFLE)){
+        }else if(level.cagefight == qtrue && mod == altAttack(MOD_AK74_ASSAULT_RIFLE)){
             attack = &weaponData[WP_AK74_ASSAULT_RIFLE].attack[ATTACK_ALTERNATE];
             damage = attack->damage;
-            if(location == HL_HEAD)
+            if(location == HL_HEAD){
                 damage *= 2;
+            }
         }
 
         if(mod == MOD_ANM14_GRENADE && attacker->client->sess.team != targ->client->sess.team){

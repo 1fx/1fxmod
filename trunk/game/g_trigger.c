@@ -440,11 +440,18 @@ void ReachableObject_events ( gentity_t *self ){
     for(i=0;i<level.numConnectedClients;i++){
         if(level.clients[level.sortedClients[i]].sunRespawnTimer != 0 && level.time >= level.clients[level.sortedClients[i]].sunRespawnTimer){ // Boe!Man 6/14/11: A client should be respawned.
             level.clients[level.sortedClients[i]].sunRespawnTimer = 0; // Reset his timer.
+
             // Boe!Man 6/13/11: End the round if specified.
             if(self->endround2){
                 // Boe!Man 6/13/11: Gametype restart.
                 G_ResetGametype(qfalse, qfalse);
             }else{
+                // Wait, is the client dead already? Or has he moved to the spectator team?
+                // If we don't do this check, the spec or free ghost will be teleported anyway.
+                if(G_IsClientDead(g_entities[level.sortedClients[i]].client) || level.clients[level.sortedClients[i]].sess.team == TEAM_SPECTATOR){
+                    continue;
+                }
+
                 level.clients[level.sortedClients[i]].sess.noTeamChange = qfalse;
                 trap_UnlinkEntity (&g_entities[level.sortedClients[i]]);
                 ClientSpawn(&g_entities[level.sortedClients[i]]);
