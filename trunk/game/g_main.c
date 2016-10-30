@@ -74,7 +74,6 @@ vmCvar_t    current_gametype;
 vmCvar_t    g_clientMod;
 vmCvar_t    g_rpmEnt;
 vmCvar_t    g_passwordAdmins;
-vmCvar_t    g_shortCommandStyle;
 vmCvar_t    g_boxAttempts;
 vmCvar_t    g_cageAttempts;
 vmCvar_t    g_RpgStyle;
@@ -650,7 +649,6 @@ static cvarTable_t gameCvarTable[] =
 
     { &g_passwordAdmins, "g_passwordAdmins", "0", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse  },
 
-    { &g_shortCommandStyle, "g_shortCommandStyle", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
     { &g_boxAttempts, "g_boxAttempts", "3", CVAR_ARCHIVE,   0.0,    0.0,  0, qtrue  },
     { &g_cageAttempts, "g_cageAttempts", "3",   CVAR_ARCHIVE,   0.0,    0.0,  0, qtrue  },
     { &g_RpgStyle, "g_RpgStyle", "0",   CVAR_ARCHIVE,   0.0,    0.0,  0, qtrue  },

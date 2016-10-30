@@ -984,9 +984,10 @@ void        G_UndoAdjustedClientBBoxs(void);
 void        G_SetClientPreLeaningBBox(gentity_t *ent);
 void        G_SetClientLeaningBBox(gentity_t *ent);
 
-void        G_Broadcast(char *broadcast, int broadcastLevel, gentity_t *to);
-char        *G_ColorizeMessage(char *broadcast);
-void        G_postExecuteAdminCommand(int funcNum, int idNum, gentity_t *adm);
+void        G_Broadcast                 (char *broadcast, int broadcastLevel, gentity_t *to);
+char        *G_ColorizeMessage          (char *broadcast);
+void        G_postExecuteAdminCommand   (int funcNum, int idNum, gentity_t *adm);
+void        G_printInfoMessage          (gentity_t *ent, const char *msg);
 
 //
 // g_crash.c
@@ -1499,7 +1500,6 @@ extern  vmCvar_t    current_gametype;
 extern  vmCvar_t    g_clientMod;
 extern  vmCvar_t    g_rpmEnt;
 extern  vmCvar_t    g_passwordAdmins;
-extern  vmCvar_t    g_shortCommandStyle;
 extern  vmCvar_t    g_boxAttempts;
 extern  vmCvar_t    g_cageAttempts;
 extern  vmCvar_t    g_RpgStyle;

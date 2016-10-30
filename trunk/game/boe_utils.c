@@ -2191,17 +2191,17 @@ char *Boe_parseCustomCommandArgs(gentity_t *ent, char *in, qboolean shortCmd)
                     arg2[0] = buf2[4]; // Copy the argument string to the new buffer, including a terminator.
                     arg2[1] = '\0';
                     if (!shortCmd || shortCmd && !argc){
-                        trap_Argv(henk_atoi(arg2) + 1, arg, sizeof(arg)); // Fetch arg.
+                        trap_Argv(atoi(arg2) + 1, arg, sizeof(arg)); // Fetch arg.
                     }else{
-                        if (argc && argc >= henk_atoi(arg2)) {
-                            Q_strncpyz(arg, G_GetChatArgument(henk_atoi(arg2)), sizeof(arg));
+                        if (argc && argc >= atoi(arg2)) {
+                            Q_strncpyz(arg, G_GetChatArgument(atoi(arg2)), sizeof(arg));
                         }else{
                             arg[0] = '\0';
                         }
                     }
 
                     #ifdef _DEBUG
-                    Com_Printf("Argument %i: %s\n", henk_atoi(arg2), arg);
+                    Com_Printf("Argument %d: %s\n", atoi(arg2), arg);
                     #endif
                     if (strlen(arg) == 0) {
                         trap_SendServerCommand(ent - g_entities, "print \"^3[Info] ^7Error: You need to append additional arguments to this command!\n\"");
@@ -2345,6 +2345,173 @@ char *G_GetChatArgument(int argNum)
     RemoveColorEscapeSequences(newArg);
 
     return newArg;
+}
+
+/*
+==============
+G_clientNumFromArg
+10/30/16 - 5:29 PM
+Gets client number from the argument.
+
+Has support for both regular Admin commands (console)
+and the short commands (! in chat).
+Can fail on request depending on supplied boolean parameters.
+==============
+*/
+
+int G_clientNumFromArg(gentity_t *ent, int argNum, const char *action,
+    qboolean aliveOnly, qboolean otherAdmins, qboolean shortCmd)
+{
+    char        arg[16];
+    char        cleanName[MAX_NETNAME];
+    int         argc, i, clientsFound;
+    int         clientID;
+    qboolean    name;
+
+    // Determine if there are parameters present.
+    // Not being present could indicate a short command from the console.
+    if (shortCmd) {
+        argc = G_GetChatArgumentCount();
+    }
+
+    // Now fetch the argument.
+    if (!shortCmd || shortCmd && !argc){
+        trap_Argv((shortCmd) ? argNum + 1 : argNum, arg, sizeof(arg));
+    }else{
+        Q_strncpyz(arg, G_GetChatArgument(1), sizeof(arg));
+    }
+
+    // Check if there's a parameter specified at all.
+    if(!strlen(arg)){
+        G_printInfoMessage(ent,
+            "You haven't entered a valid player ID/player name.");
+        return -1;
+    }
+
+    // We can continue.
+    // Now check whether the client specified an ID or a name.
+    name = qfalse;
+    for(i = 0; i < strlen(arg); i++){
+        if(!isdigit(arg[i])){
+            // Letter was found, safe to assume this is a name.
+            name = qtrue;
+            break;
+        }
+    }
+
+    if(name){ // Argument potentially contains a name.
+        char multipleNamesFound[512];
+
+        // Compare using lowercase characters.
+        Q_strlwr(arg);
+
+        // Loop through connected clients, and check who the client meant.
+        clientsFound = 0;
+        memset(multipleNamesFound, 0, sizeof(multipleNamesFound));
+        for(i = 0; i < level.numConnectedClients; i++){
+            gclient_t *cl = g_entities[level.sortedClients[i]].client;
+            Q_strncpyz(cleanName, cl->pers.cleanName, sizeof(cleanName));
+
+            if(strstr(Q_strlwr(cleanName), arg)){
+                // Match. Save the client ID.
+                clientID = i;
+                clientsFound++;
+
+                // Also fill the "multiple found" buffer.
+                // We might need to print this later on.
+                #ifdef __GNUC__
+                snprintf(multipleNamesFound + strlen(multipleNamesFound),
+                    sizeof(multipleNamesFound) - strlen(multipleNamesFound),
+                    "^1[#%i] ^7%s, ", clientID, cl->pers.cleanName);
+                #elif _MSC_VER_
+                _snprintf_s(multipleNamesFound + strlen(multipleNamesFound),
+                    sizeof(multipleNamesFound) - strlen(multipleNamesFound),
+                    "^1[#%i] ^7%s, ", clientID, cl->pers.cleanName);
+                #endif // __GNUC__
+            }
+        }
+
+        // Multiple clients found?
+        if(clientsFound > 1){
+            // Remove the trailing ", ".
+            multipleNamesFound[strlen(multipleNamesFound) -2] = '\0';
+
+            // Print message.
+            G_printInfoMessage(ent,
+                va("Multiple names found with ^3%s^7: %s",
+                arg, multipleNamesFound));
+
+            return -1;
+        }
+    }else{ // Argument only contains numbers.
+        clientID = atoi(arg);
+    }
+
+    // Do some checks, ID must be a valid ID.
+    if(clientID < 0 || clientID >= g_maxclients.integer){
+        G_printInfoMessage(ent,
+            "You haven't entered a valid player ID/player name.");
+        return -1;
+    }
+
+    if (g_entities[clientID].client->pers.connected == CON_DISCONNECTED){
+        G_printInfoMessage(ent, "This client is not connected.");
+        return -1;
+    }
+
+    // Check if the executing Admin is doing this,
+    // and not RCON. If so, perform some extra checks.
+    if(ent && ent->client
+        && ent->client->sess.admin && g_entities[clientID].client->sess.admin){
+        // Don't allow to execute the command on higher level Admins.
+        #ifdef _awesomeToAbuse
+        if(g_entities[clientID].client->sess.admin > ent->client->sess.admin
+            && !strstr(action, "forceteam") && !strstr(action, "!pm")
+            && ent->client->sess.dev != 2)
+        #else
+        if (g_entities[clientID].client->sess.admin > ent->client->sess.admin
+            && !strstr(action, "forceteam") && !strstr(action, "!pm"))
+        #endif // _awesomeToAbuse
+        {
+            G_printInfoMessage(ent,
+                va("You cannot %s higher level Admins.", action));
+            return -1;
+        }
+
+        // Don't allow this command on other Admins?
+        if(!otherAdmins){
+            G_printInfoMessage(ent,
+                "You cannot use this command on other Admins.");
+            return -1;
+        }
+    }
+
+    // Check if the targeted player has to be alive for this command.
+    if(aliveOnly){
+        // Are they dead?
+        #ifdef _3DServer
+        if(G_IsClientDead(g_entities[clientID].client)
+            && !g_entities[clientID].client->sess.deadMonkey)
+        #else
+        if(G_IsClientDead (g_entities[num].client))
+        #endif // _3DServer
+        {
+            G_printInfoMessage(ent,
+                va("You cannot %s dead players.", action));
+            return -1;
+        }
+
+        // Are they spectating?
+        if (G_IsClientSpectating(g_entities[clientID].client))
+        {
+            G_printInfoMessage(ent,
+                va("You cannot %s a spectator.", action));
+            return -1;
+        }
+    }
+
+    // Everything checked out, return the ID.
+    return clientID;
 }
 
 /*

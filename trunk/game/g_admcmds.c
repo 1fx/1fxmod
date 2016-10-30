@@ -31,7 +31,7 @@ int adm_Uppercut(int argNum, gentity_t *adm, qboolean shortCmd)
     int             ucLevel;
     char            arg[64] = "\0";
 
-    idNum = Boe_ClientNumFromArg(adm, argNum, "uppercut <id/name>", "uppercut", qtrue, qtrue, shortCmd);
+    idNum = G_clientNumFromArg(adm, argNum, "uppercut", qtrue, qtrue, shortCmd);
     if (idNum < 0) return idNum;
 
     ent = g_entities + idNum;
@@ -87,7 +87,7 @@ int adm_Pop(int argNum, gentity_t *adm, qboolean shortCmd)
     gentity_t       *ent;
     int             idNum;
 
-    idNum = Boe_ClientNumFromArg(adm, argNum, "pop <id/name>", "pop", qtrue, qfalse, shortCmd);
+    idNum = G_clientNumFromArg(adm, argNum, "pop", qtrue, qfalse, shortCmd);
     if (idNum < 0) return idNum;
     ent = g_entities + idNum;
 
@@ -114,14 +114,16 @@ int adm_Kick(int argNum, gentity_t *adm, qboolean shortCmd){
     int     idNum;
     char    reason[32];
 
+    // Get the client ID.
+    idNum = G_clientNumFromArg(adm, argNum, "kick", qfalse, qfalse, shortCmd);
+    if (idNum < 0) return idNum;
+
+    // Get the reason.
     if (shortCmd){
-        idNum = Boe_ClientNumFromArg(adm, 1, "kick <id/name> <reason>", "kick", qfalse, qfalse, qtrue);
         strncpy(reason, GetReason(), sizeof(reason));
     }else{
-        idNum = Boe_ClientNumFromArg(adm, 2, "kick <id/name> <reason>", "kick", qfalse, qfalse, qfalse);
         trap_Argv(3, reason, sizeof(reason));
     }
-    if (idNum < 0) return idNum;
 
     // Kick the player.
     trap_SendConsoleCommand(EXEC_INSERT, va("clientkick \"%d\" \"%s\"\n", idNum, reason));
@@ -184,7 +186,7 @@ static void adm_addAdmin_f(int argNum, gentity_t *adm, qboolean shortCmd, int le
     qboolean        passAdmin = qfalse;
     sqlite3         *db;
 
-    idNum = Boe_ClientNumFromArg(adm, argNum, va("%s <id/name>", commandName), "do this to", qfalse, qfalse, shortCmd);
+    idNum = G_clientNumFromArg(adm, argNum, "do this to", qfalse, qfalse, shortCmd);
     if (idNum < 0) return;
 
     // Boe!Man 4/27/11: RCON has to be able to do everything. However, there are a few things that should be excluded. Instead of processing which command was entered in the ClientNumFromArg func, we deploy this check in the addxadmin functions (to save resources).
@@ -345,7 +347,7 @@ int adm_Plant(int argNum, gentity_t *adm, qboolean shortCmd)
     gentity_t   *ent;
     int         idNum;
 
-    idNum = Boe_ClientNumFromArg(adm, argNum, "plant <id/name>", "plant", qtrue, qtrue, shortCmd);
+    idNum = G_clientNumFromArg(adm, argNum, "plant", qtrue, qtrue, shortCmd);
     if (idNum < 0) return idNum;
 
     ent = g_entities + idNum;
@@ -416,7 +418,7 @@ int adm_Runover(int argNum, gentity_t *adm, qboolean shortCmd)
     vec3_t      fireAngs;
     int         idNum;
 
-    idNum = Boe_ClientNumFromArg(adm, argNum, "runover <id/name>", "runover", qtrue, qtrue, shortCmd);
+    idNum = G_clientNumFromArg(adm, argNum, "runover", qtrue, qtrue, shortCmd);
     if (idNum < 0) return idNum;
 
     ent = g_entities + idNum;
@@ -451,7 +453,7 @@ int adm_Respawn(int argNum, gentity_t *adm, qboolean shortCmd)
     gentity_t       *ent;
     int             idNum;
 
-    idNum = Boe_ClientNumFromArg(adm, argNum, "respawn <id/name>", "respawn", qfalse, qtrue, shortCmd);
+    idNum = G_clientNumFromArg(adm, argNum, "respawn", qfalse, qtrue, shortCmd);
     if (idNum < 0) return idNum;
 
     ent = g_entities + idNum;
@@ -573,7 +575,7 @@ int adm_Burn(int argNum, gentity_t *adm, qboolean shortCmd)
     gentity_t       *ent, *tent;
     int             idNum;
 
-    idNum = Boe_ClientNumFromArg(adm, argNum, "burn <id/name>", "burn", qtrue, qtrue, shortCmd);
+    idNum = G_clientNumFromArg(adm, argNum, "burn", qtrue, qtrue, shortCmd);
     if (idNum < 0) return idNum;
 
     ent = g_entities + idNum;
@@ -607,7 +609,7 @@ int adm_Mute(int argNum, gentity_t *adm, qboolean shortCmd)
     char        arg[128];
     qboolean    unMute = qfalse;
 
-    idNum = Boe_ClientNumFromArg(adm, argNum, "mute <id/name>", "mute", qfalse, qfalse, shortCmd);
+    idNum = G_clientNumFromArg(adm, argNum, "mute", qfalse, qfalse, shortCmd);
     if (idNum < 0) return idNum;
 
     // Boe!Man 1/13/11: If the client's already muted, unmute him instead.
@@ -678,7 +680,7 @@ int adm_Strip(int argNum, gentity_t *adm, qboolean shortCmd)
     gentity_t   *ent;
     int         idNum, idle;
 
-    idNum = Boe_ClientNumFromArg(adm, argNum, "strip <id/name>", "strip", qtrue, qtrue, shortCmd);
+    idNum = G_clientNumFromArg(adm, argNum, "strip", qtrue, qtrue, shortCmd);
     if (idNum < 0) return idNum;
 
     ent = g_entities + idNum;
@@ -717,7 +719,7 @@ int adm_removeAdmin(int argNum, gentity_t *adm, qboolean shortCmd)
 {
     int         idNum, admLvl;
 
-    idNum = Boe_ClientNumFromArg(adm, argNum, "removeadmin <id/name>", "do this to", qfalse, qtrue, shortCmd);
+    idNum = G_clientNumFromArg(adm, argNum, "do this to", qfalse, qtrue, shortCmd);
     if (idNum < 0) return idNum;
 
     // Boe!Man 11/24/15: User must have enough privileges to remove this Admin.
@@ -783,7 +785,7 @@ int adm_forceTeam(int argNum, gentity_t *adm, qboolean shortCmd)
     }
 
     if (!shortCmd || shortCmd && !argc){
-        trap_Argv((!shortCmd) ? argNum : argNum + 1, str, sizeof(str));
+        trap_Argv((shortCmd) ? argNum + 1 : argNum, str, sizeof(str));
     }else{
         Q_strncpyz(str, G_GetChatArgument(1), sizeof(str));
     }
@@ -795,15 +797,7 @@ int adm_forceTeam(int argNum, gentity_t *adm, qboolean shortCmd)
         all = qtrue;
     }else{
         // Find the player.
-        if (shortCmd == qtrue){
-            idNum = Boe_ClientNumFromArg(adm, 1, "forceteam <id/name>", "forceteam", qfalse, qtrue, shortCmd);
-        }else{
-            if (adm){
-                idNum = Boe_ClientNumFromArg(adm, 2, "forceteam <id/name>", "forceteam", qfalse, qtrue, shortCmd);
-            }else{
-                idNum = Boe_ClientNumFromArg(adm, 1, "forceteam <id/name>", "forceteam", qfalse, qtrue, shortCmd);
-            }
-        }
+        idNum = G_clientNumFromArg(adm, argNum, "forceteam", qfalse, qtrue, shortCmd);
 
         // Boe!Man 1/22/14: If "all" or the client wasn't found, return.
         if (idNum < 0) return -1;
@@ -1529,7 +1523,7 @@ int adm_addClanMember(int argNum, gentity_t *adm, qboolean shortCmd)
     char        ip[MAX_IP];
     sqlite3     *db;
 
-    idNum = Boe_ClientNumFromArg(adm, argNum, "addclan <id/name>", "do this to", qfalse, qtrue, shortCmd);
+    idNum = G_clientNumFromArg(adm, argNum, "do this to", qfalse, qtrue, shortCmd);
     if (idNum < 0) return idNum;
 
     // Boe!Man 2/6/13: Check if the client is already a clan member.
@@ -1604,7 +1598,7 @@ int adm_removeClanMember(int argNum, gentity_t *adm, qboolean shortCmd)
 {
     int         idNum;
 
-    idNum = Boe_ClientNumFromArg(adm, argNum, "removeclan <id/name>", "remove", qfalse, qtrue, shortCmd);
+    idNum = G_clientNumFromArg(adm, argNum, "remove", qfalse, qtrue, shortCmd);
     if (idNum < 0) return idNum;
 
     if(!g_entities[idNum].client->sess.clanMember){
@@ -2133,7 +2127,7 @@ int adm_Ban(int argNum, gentity_t *adm, qboolean shortCmd)
         start = trap_Milliseconds();
     }
 
-    idNum = Boe_ClientNumFromArg(adm, argNum, "ban <id/name> <reason>", "ban", qfalse, qfalse, shortCmd);
+    idNum = G_clientNumFromArg(adm, argNum, "ban", qfalse, qfalse, shortCmd);
     if (idNum < 0) return idNum;
 
     if (adm && adm->client){
@@ -2222,7 +2216,7 @@ int adm_subnetBan(int argNum, gentity_t *adm, qboolean shortCmd)
     qboolean    first = qfalse;
     sqlite3     *db;
 
-    idNum = Boe_ClientNumFromArg(adm, argNum, "subnetban <id/name> <reason>", "subnetban", qfalse, qfalse, shortCmd);
+    idNum = G_clientNumFromArg(adm, argNum, "subnetban", qfalse, qfalse, shortCmd);
     if (idNum < 0) return idNum;
 
     if(adm && adm->client){
@@ -2569,7 +2563,7 @@ int adm_Flash(int argNum, gentity_t *adm, qboolean shortCmd)
     if (strcmp(arg, "all") == 0){
         all = qtrue;
     }else{
-        idNum = Boe_ClientNumFromArg(adm, argNum, "flash <id/name>", "flash", qtrue, qtrue, shortCmd);
+        idNum = G_clientNumFromArg(adm, argNum, "flash", qtrue, qtrue, shortCmd);
         if (idNum < 0) return idNum;
 
         targ = g_entities + idNum;
@@ -3566,7 +3560,7 @@ int adm_Rename(int argNum, gentity_t *adm, qboolean shortCmd)
     char newName[MAX_NETNAME];
     char userinfo[MAX_INFO_STRING];
 
-    idNum = Boe_ClientNumFromArg(adm, argNum, "rename <id/name> <newname>", "rename", qfalse, qfalse, shortCmd);
+    idNum = G_clientNumFromArg(adm, argNum, "rename", qfalse, qfalse, shortCmd);
     if (idNum < 0) return idNum;
 
     // Fetch the new name from the arguments given.
@@ -3939,15 +3933,7 @@ int adm_Switch(int argNum, gentity_t *adm, qboolean shortCmd)
     Q_strlwr(str);
 
     // Find the player.
-    if (shortCmd == qtrue){
-        idNum = Boe_ClientNumFromArg(adm, 1, "switch <id/name>", "switch", qtrue, qtrue, shortCmd);
-    }else{
-        if (adm){
-            idNum = Boe_ClientNumFromArg(adm, 2, "switch <id/name>", "switch", qtrue, qtrue, shortCmd);
-        }else{
-            idNum = Boe_ClientNumFromArg(adm, 1, "switch <id/name>", "switch", qtrue, qtrue, shortCmd);
-        }
-    }
+    idNum = G_clientNumFromArg(adm, argNum, "switch", qtrue, qtrue, shortCmd);
 
     // Boe!Man 1/22/14: If the client wasn't found, return.
     if (idNum < 0) return -1;

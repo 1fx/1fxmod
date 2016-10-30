@@ -272,8 +272,6 @@ on a Linux platform.
 
 // Boe!Man 3/30/10
 void    Boe_adm_f ( gentity_t *ent );
-int     Boe_ClientNumFromArg (gentity_t *ent, int argNum, const char* usage, const char* type, qboolean aliveOnly, qboolean otheradmins, qboolean shortCmd);
-
 
 //extern    admCmd_t AdminCommands[124];
 
@@ -583,9 +581,12 @@ void    Boe_checkRoof(gentity_t *ent);
 int Boe_firstDigitOfInt(int i);
 
 // Boe!Man 7/27/12: Function that replaces arguments in the actual CustomCommand action.
-char *Boe_parseCustomCommandArgs(gentity_t *ent, char *in, qboolean shortCmd);
-char *G_GetChatArgument(int argNum);
-int G_GetChatArgumentCount(void);
+char    *Boe_parseCustomCommandArgs(gentity_t *ent, char *in, qboolean shortCmd);
+
+// Boe!Man 10/30/16: Functions used for various chat-based command solutions.
+char    *G_GetChatArgument(int argNum);
+int     G_GetChatArgumentCount(void);
+int     G_clientNumFromArg(gentity_t *ent, int argNum, const char *action, qboolean aliveOnly, qboolean otherAdmins, qboolean shortCmd);
 
 // Boe!Man 7/29/12: CVAR that handles admins/clan members on subnet rather than Full IP -> This effectively disables the admin login system.
 extern  vmCvar_t    g_preferSubnets;

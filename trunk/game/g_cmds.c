@@ -2894,7 +2894,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
         gentity_t *target;
 
         // Boe!Man 1/29/15: Check for proper client.
-        client = Boe_ClientNumFromArg(ent, 1, "!pm <id/name> <message>", "!pm", qfalse, qtrue, qtrue);
+        client = G_clientNumFromArg(ent, 1, "!pm", qfalse, qtrue, qtrue);
         if (client < 0){
             return;
         }
@@ -4789,6 +4789,37 @@ void G_postExecuteAdminCommand(int funcNum, int idNum, gentity_t *adm)
 }
 
 /*
+==============
+G_printInfoMessage
+10/30/16 - 6:06 PM
+
+Prints [Info] message to the console
+or regular message to server console (or RCON).
+==============
+*/
+
+void G_printInfoMessage(gentity_t *ent, const char *msg)
+{
+    if(ent && ent->client){
+        char bufferMsg[2048];
+
+        memset(bufferMsg, 0, sizeof(bufferMsg));
+
+        #ifdef __GNUC__
+        snprintf(bufferMsg, sizeof(bufferMsg),
+            "print \"^3[Info] ^7%s\n\"", msg);
+        #elif _MSC_VER_
+        _snprintf_s(bufferMsg, sizeof(bufferMsg),
+            "print \"^3[Info] ^7%s\n\"", msg);
+        #endif // __GNUC__
+
+        trap_SendServerCommand(ent-g_entities, bufferMsg);
+    }else{
+        Com_Printf("%s\n", msg);
+    }
+}
+
+/*
 =================
 BB_Tell_f (B3 Private Messaging)
 =================
@@ -4816,7 +4847,7 @@ void Boe_forceSay(gentity_t *adm)
 {
     int idNum;
 
-    idNum = Boe_ClientNumFromArg(adm, 2, "", "", qfalse, qtrue, qfalse);
+    idNum = G_clientNumFromArg(adm, 2, "do this to", qfalse, qtrue, qfalse);
     if (idNum == -1){
         return;
     }
