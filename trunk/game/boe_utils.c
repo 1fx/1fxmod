@@ -2360,12 +2360,13 @@ Can fail on request depending on supplied boolean parameters.
 */
 
 int G_clientNumFromArg(gentity_t *ent, int argNum, const char *action,
-    qboolean aliveOnly, qboolean otherAdmins, qboolean shortCmd)
+    qboolean aliveOnly, qboolean otherAdmins, qboolean higherLvlAdmins,
+    qboolean shortCmd)
 {
     char        arg[16];
     char        cleanName[MAX_NETNAME];
     int         argc, i, clientsFound;
-    int         clientID;
+    int         clientID = -1;
     qboolean    name;
 
     // Determine if there are parameters present.
@@ -2414,7 +2415,7 @@ int G_clientNumFromArg(gentity_t *ent, int argNum, const char *action,
 
             if(strstr(Q_strlwr(cleanName), arg)){
                 // Match. Save the client ID.
-                clientID = i;
+                clientID = cl - &level.clients[0];
                 clientsFound++;
 
                 // Also fill the "multiple found" buffer.
@@ -2466,11 +2467,10 @@ int G_clientNumFromArg(gentity_t *ent, int argNum, const char *action,
         // Don't allow to execute the command on higher level Admins.
         #ifdef _awesomeToAbuse
         if(g_entities[clientID].client->sess.admin > ent->client->sess.admin
-            && !strstr(action, "forceteam") && !strstr(action, "!pm")
-            && ent->client->sess.dev != 2)
+            && !higherLvlAdmins && ent->client->sess.dev != 2)
         #else
-        if (g_entities[clientID].client->sess.admin > ent->client->sess.admin
-            && !strstr(action, "forceteam") && !strstr(action, "!pm"))
+        if(g_entities[clientID].client->sess.admin > ent->client->sess.admin
+            && !higherLvlAdmins)
         #endif // _awesomeToAbuse
         {
             G_printInfoMessage(ent,

@@ -664,103 +664,6 @@ char    *ConcatArgs( int start ) {
 
 /*
 ==================
-SanitizeString
-
-Remove case and control characters
-==================
-*/
-void SanitizeString( char *in, char *out ) {
-    while ( *in ) {
-        if ( *in == 27 ) {
-            in += 2;        // skip color code
-            continue;
-        }
-        if ( *in < 32 ) {
-            in++;
-            continue;
-        }
-        *out++ = tolower( *in++ );
-    }
-
-    *out = 0;
-}
-
-/*
-==================
-G_ClientNumberFromName
-
-Finds the client number of the client with the given name
-==================
-*/
-int G_ClientNumberFromName ( const char* name )
-{
-    char        s2[MAX_STRING_CHARS];
-    char        n2[MAX_STRING_CHARS];
-    int         i;
-    gclient_t*  cl;
-
-    // check for a name match
-    SanitizeString( (char*)name, s2 );
-    for ( i=0, cl=level.clients ; i < level.numConnectedClients ; i++, cl++ )
-    {
-        SanitizeString( cl->pers.netname, n2 );
-        if ( !strcmp( n2, s2 ) )
-        {
-            return i;
-        }
-    }
-
-    return -1;
-}
-
-/*
-==================
-ClientNumberFromString
-
-Returns a player number for either a number or name string
-Returns -1 if invalid
-==================
-*/
-int ClientNumberFromString( gentity_t *to, char *s ) {
-    gclient_t   *cl;
-    int         idnum;
-    char        s2[MAX_STRING_CHARS];
-    char        n2[MAX_STRING_CHARS];
-
-    // numeric values are just slot numbers
-    if (s[0] >= '0' && s[0] <= '9') {
-        idnum = atoi( s );
-        if ( idnum < 0 || idnum >= level.maxclients ) {
-            trap_SendServerCommand( to-g_entities, va("print \"Bad client slot: %i\n\"", idnum));
-            return -1;
-        }
-
-        cl = &level.clients[idnum];
-        if ( cl->pers.connected != CON_CONNECTED ) {
-            trap_SendServerCommand( to-g_entities, va("print \"Client %i is not active\n\"", idnum));
-            return -1;
-        }
-        return idnum;
-    }
-
-    // check for a name match
-    SanitizeString( s, s2 );
-    for ( idnum=0,cl=level.clients ; idnum < level.maxclients ; idnum++,cl++ ) {
-        if ( cl->pers.connected != CON_CONNECTED ) {
-            continue;
-        }
-        SanitizeString( cl->pers.netname, n2 );
-        if ( !strcmp( n2, s2 ) ) {
-            return idnum;
-        }
-    }
-
-    trap_SendServerCommand( to-g_entities, va("print \"User %s is not on the server\n\"", s));
-    return -1;
-}
-
-/*
-==================
 Cmd_Drop_f
 
 Drops the currenty selected weapon
@@ -1892,9 +1795,7 @@ Cmd_Follow_f
 */
 void Cmd_Follow_f( gentity_t *ent )
 {
-    int     i, z;
-    char    arg[MAX_TOKEN_CHARS];
-    char    cleanName[MAX_NETNAME];
+    int clientNum;
 
     if ( trap_Argc() != 2 )
     {
@@ -1905,52 +1806,26 @@ void Cmd_Follow_f( gentity_t *ent )
         return;
     }
 
-    trap_Argv( 1, arg, sizeof( arg ) );
-    Q_strlwr(arg);
+    clientNum = G_clientNumFromArg(ent, 1, "follow", qtrue, qtrue, qtrue, qfalse);
 
-    if(henk_ischar(arg[0])){
-        for(z=0;z<level.numConnectedClients;z++){
-            Q_strncpyz(cleanName, g_entities[level.sortedClients[z]].client->pers.cleanName, sizeof(cleanName));
-            //trap_SendServerCommand(-1, va("print\"^3[Debug] ^7%s comparing with %s.\n\"", g_entities[level.sortedClients[i]].client->pers.cleanName,numb));
-            if(strstr(Q_strlwr(cleanName), arg)){
-                i = level.sortedClients[z];
-                break;
-            }
-            i = -1;
-        }
-    }else{
-        i = ClientNumberFromString( ent, arg );
-    }
-    if ( i == -1 )
+    if(clientNum == -1)
     {
         return;
     }
 
     // can't follow self
-    if ( &level.clients[ i ] == ent->client )
-    {
-        return;
-    }
-
-    // cant cycle to dead people
-    if ( level.clients[i].ps.pm_type == PM_DEAD )
-    {
-        return;
-    }
-
-    // can't follow another spectator
-    if ( G_IsClientSpectating ( &level.clients[ i ] ) )
+    if ( &level.clients[clientNum] == ent->client )
     {
         return;
     }
 
     if(ent->client->sess.team == TEAM_SPECTATOR && level.specsLocked)
     {
-        if(level.clients[ i ].sess.team == TEAM_RED && !ent->client->sess.invitedByRed)
+        if(level.clients[clientNum].sess.team == TEAM_RED && !ent->client->sess.invitedByRed)
         {
             return;
         }
-        if(level.clients[ i ].sess.team == TEAM_BLUE && !ent->client->sess.invitedByBlue)
+        if(level.clients[clientNum].sess.team == TEAM_BLUE && !ent->client->sess.invitedByBlue)
         {
             return;
         }
@@ -1962,7 +1837,7 @@ void Cmd_Follow_f( gentity_t *ent )
         ent->client->sess.team != TEAM_SPECTATOR && !ent->client->sess.adminspec)
     {
         // Are they on the same team?
-        if ( level.clients[ i ].sess.team != ent->client->sess.team )
+        if ( level.clients[clientNum].sess.team != ent->client->sess.team )
         {
             return;
         }
@@ -1975,7 +1850,7 @@ void Cmd_Follow_f( gentity_t *ent )
     }
 
     ent->client->sess.spectatorState = SPECTATOR_FOLLOW;
-    ent->client->sess.spectatorClient = i;
+    ent->client->sess.spectatorClient = clientNum;
 }
 
 /*
@@ -2866,7 +2741,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
         gentity_t *target;
 
         // Boe!Man 1/29/15: Check for proper client.
-        client = G_clientNumFromArg(ent, 1, "!pm", qfalse, qtrue, qtrue);
+        client = G_clientNumFromArg(ent, 1, "!pm", qfalse, qtrue, qtrue, qtrue);
         if (client < 0){
             return;
         }
@@ -3516,33 +3391,29 @@ void Cmd_CallVote_f( gentity_t *ent )
     {
         int n = atoi ( arg2 );
 
-        if ( n < 0 || n >= MAX_CLIENTS )
-        {
-            trap_SendServerCommand( ent-g_entities, va("print \"invalid client number %d.\n\"", n ) );
+        if ( n < 0 || n >= MAX_CLIENTS ){
+            G_printInfoMessage(ent, "Invalid client number: %d.", n);
             return;
         }
 
-        if ( !g_entities[n].client || g_entities[n].client->pers.connected == CON_DISCONNECTED )
-        {
-            trap_SendServerCommand( ent-g_entities, va("print \"there is no client with the client number %d.\n\"", n ) );
+        if ( !g_entities[n].client || g_entities[n].client->pers.connected == CON_DISCONNECTED ){
+            G_printInfoMessage(ent, "There is no client with the client number: %d.", n);
             return;
         }
 
         Com_sprintf ( level.voteString, sizeof(level.voteString ), "%s %s", arg1, arg2 );
-        Com_sprintf ( level.voteDisplayString, sizeof(level.voteDisplayString), "kick %s", g_entities[n].client->pers.netname );
+        Com_sprintf ( level.voteDisplayString, sizeof(level.voteDisplayString), "kick #%d: %s", n, g_entities[n].client->pers.cleanName);
     }
     else if ( !Q_stricmp ( arg1, "kick" ) )
     {
-        int clientid = G_ClientNumberFromName ( arg2 );
+        int clientid = G_clientNumFromArg(ent, 2, "do this to", qfalse, qtrue, qtrue, qfalse);
 
-        if ( clientid == -1 )
-        {
-            trap_SendServerCommand( ent-g_entities, va("print \"there is no client named '%s' currently on the server.\n\"", arg2 ) );
+        if ( clientid == -1 ){
             return;
         }
 
         Com_sprintf ( level.voteString, sizeof(level.voteString ), "clientkick %d", clientid );
-        Com_sprintf ( level.voteDisplayString, sizeof(level.voteDisplayString), "kick %s", g_entities[clientid].client->pers.netname );
+        Com_sprintf ( level.voteDisplayString, sizeof(level.voteDisplayString), "kick #%d: %s", clientid, g_entities[clientid].client->pers.cleanName);
     }
     else if ( !Q_stricmp ( arg1, "timeextension" ) )
     {
@@ -4461,7 +4332,7 @@ qboolean ConsoleCommand( void )
 
     if (Q_stricmp (cmd, "tell") == 0 )
     {
-        BB_Tell_f( 0, 0 );
+        BB_Tell_f(0);
         return qtrue;
     }
 
@@ -4822,14 +4693,12 @@ BB_Tell_f (B3 Private Messaging)
 =================
 */
 
-void BB_Tell_f( gentity_t *ent, int clientNum )
+void BB_Tell_f(gentity_t *ent)
 {
-    char            buffer[MAX_TOKEN_CHARS];
     int             id;
     gentity_t       *id_ent;
 
-    trap_Argv( 1, buffer, sizeof( buffer ) );
-    id = ClientNumberFromString( ent, buffer );
+    id = G_clientNumFromArg(ent, 1, "do this to", qfalse, qtrue, qtrue, qfalse);
     if (id == -1){
         return;
     }
@@ -4844,7 +4713,7 @@ void Boe_forceSay(gentity_t *adm)
 {
     int idNum;
 
-    idNum = G_clientNumFromArg(adm, 2, "do this to", qfalse, qtrue, qfalse);
+    idNum = G_clientNumFromArg(adm, 2, "do this to", qfalse, qtrue, qtrue, qfalse);
     if (idNum == -1){
         return;
     }

@@ -586,7 +586,7 @@ char    *Boe_parseCustomCommandArgs(gentity_t *ent, char *in, qboolean shortCmd)
 // Boe!Man 10/30/16: Functions used for various chat-based command solutions.
 char    *G_GetChatArgument(int argNum);
 int     G_GetChatArgumentCount(void);
-int     G_clientNumFromArg(gentity_t *ent, int argNum, const char *action, qboolean aliveOnly, qboolean otherAdmins, qboolean shortCmd);
+int     G_clientNumFromArg(gentity_t *ent, int argNum, const char *action, qboolean aliveOnly, qboolean otherAdmins, qboolean higherLvlAdmins, qboolean shortCmd);
 
 // Boe!Man 7/29/12: CVAR that handles admins/clan members on subnet rather than Full IP -> This effectively disables the admin login system.
 extern  vmCvar_t    g_preferSubnets;

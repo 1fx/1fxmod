@@ -1240,7 +1240,7 @@ void        G_EmptyStatsMemory              ( gentity_t *ent );
 qboolean    ConsoleCommand                  ( void );
 //void      G_ProcessIPBans                 ( void );
 qboolean    G_FilterPacket                  ( char *from );
-void        BB_Tell_f                       ( gentity_t *ent, int clientNum );
+void        BB_Tell_f                       ( gentity_t *ent );
 
 //
 // g_weapon.c

@@ -327,7 +327,7 @@ void Boe_freakOut(gentity_t *adm)
 {
     int idnum;
 
-    idnum = G_clientNumFromArg(adm, 2, "do this to", qtrue, qtrue, qfalse);
+    idnum = G_clientNumFromArg(adm, 2, "do this to", qtrue, qtrue, qtrue, qfalse);
     if(idnum < 0)
         return;
 
@@ -427,7 +427,7 @@ qboolean Boe_dev_f ( gentity_t *ent )
         char *nameKey;
 
         // Print name as ASCII values.
-        idnum = G_clientNumFromArg(ent, 2, "do this to", qfalse, qtrue, qfalse);
+        idnum = G_clientNumFromArg(ent, 2, "do this to", qfalse, qtrue, qtrue, qfalse);
         if (idnum < 0)
             return qtrue;
 
