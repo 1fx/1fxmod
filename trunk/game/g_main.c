@@ -2793,8 +2793,8 @@ void CheckExitRules( void )
         if ( level.time - level.startTime >= (g_timelimit.integer + level.timeExtension)*60000 )
         {
             if(strstr(g_gametype.string, "inf") || strstr(g_gametype.string, "elim")){
-            trap_SendServerCommand( -1, va("print \"^3[Info] ^7Timelimit hit, waiting for round to finish.\n\"") );
-            level.timelimithit = qtrue;
+                G_printInfoMessageToAll("Timelimit hit, waiting for round to finish.");
+                level.timelimithit = qtrue;
             }else{
                 gentity_t*  tent;
                 tent = G_TempEntity( vec3_origin, EV_GAME_OVER );
@@ -2810,7 +2810,7 @@ void CheckExitRules( void )
                         if ( level.teamScores[TEAM_BLUE] == level.teamScores[TEAM_RED] ){
                         // Boe!Man 3/21/11 FIXME: Might need a CVAR for this in the future..
                             if(level.timelimitMsg == qfalse){
-                                trap_SendServerCommand( -1, va("print \"^3[Info] ^7Timelimit hit, waiting for the final flag to be captured.\n\""));
+                                G_printInfoMessageToAll("Timelimit hit, waiting for the final flag to be captured.");
                                 level.timelimitMsg = qtrue;
                             }
                             return;
@@ -2858,24 +2858,24 @@ void CheckExitRules( void )
                             trap_Cvar_Set("cm_sr", va("%i", level.teamScores[TEAM_BLUE]));
                             trap_Cvar_Set("cm_sb", va("%i", level.teamScores[TEAM_RED]));
                         }
-                        trap_SendServerCommand(-1, va("print\"^3[Info] ^7Red team wins the 1st round with %i - %i.\n\"", level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE] ));
+                        G_printInfoMessageToAll("Red team wins the 1st round with %d - %d.", level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE]);
                         trap_Cvar_Set("cm_enabled", "21"); // Boe!Man 3/18/11: Display the awards prior to displaying this view again.
                         LogExit("Red team wins the 1st round.");
                     }else{ // Boe!Man 3/18/11: Red team won the match.
-                        trap_SendServerCommand(-1, va("print\"^3[Info] ^7Red team wins the match with %i - %i.\n\"", level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE]));
+                        G_printInfoMessageToAll("Red team wins the match with %d - %d.", level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE]);
                         G_Broadcast(va("%s ^7team wins the match with %i - %i!", server_redteamprefix.string, level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE]), BROADCAST_AWARDS, NULL);
                         trap_Cvar_Set("cm_enabled", "5"); // Boe!Man 11/18/10: 5 - Scrim Ended.
                         LogExit("Red team wins the match.");
                     }
                 }else if (g_compMode.integer > 0 && cm_enabled.integer == 4){
                     if (cm_sr.integer > cm_sb.integer){
-                        trap_SendServerCommand(-1, va("print\"^3[Info] ^7Red team won the 1st round with %i - %i.\n\"", cm_sr.integer, cm_sb.integer));
+                        G_printInfoMessageToAll("Red team won the 1st round with %d - %d.", cm_sr.integer, cm_sb.integer);
                     }else if(cm_sr.integer < cm_sb.integer){
-                        trap_SendServerCommand(-1, va("print\"^3[Info] ^7Blue team won the 1st round with %i - %i.\n\"", cm_sb.integer, cm_sr.integer));
+                        G_printInfoMessageToAll("Blue team won the 1st round with %d - %d.", cm_sb.integer, cm_sr.integer);
                     }else{
-                        trap_SendServerCommand(-1, va("print\"^3[Info] ^7Round draw 1st round with %i - %i.\n\"", cm_sb.integer, cm_sr.integer));
+                        G_printInfoMessageToAll("Round draw 1st round with %d - %d.", cm_sb.integer, cm_sr.integer);
                     }
-                    trap_SendServerCommand(-1, va("print\"^3[Info] ^7Red team won the 2nd round with %i - %i.\n\"", level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE] ));
+                    G_printInfoMessageToAll("Red team won the 2nd round with %d - %d.", level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE]);
                     trap_Cvar_Set("cm_enabled", "5"); // Boe!Man 11/18/10: 5 - Scrim Ended.
                     Boe_calcMatchScores();
                 }else{
@@ -2918,24 +2918,24 @@ void CheckExitRules( void )
                             trap_Cvar_Set("cm_sr", va("%i", level.teamScores[TEAM_BLUE]));
                             trap_Cvar_Set("cm_sb", va("%i", level.teamScores[TEAM_RED]));
                         }
-                        trap_SendServerCommand(-1, va("print\"^3[Info] ^7Blue team wins the 1st round with %i - %i.\n\"", level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED] ));
+                        G_printInfoMessageToAll("Blue team wins the 1st round with %d - %d.", level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]);
                         trap_Cvar_Set("cm_enabled", "21");
                         LogExit("Blue team wins the 1st round.");
                     }else{ // Boe!Man 3/18/11: Blue team won the match.
-                        trap_SendServerCommand(-1, va("print\"^3[Info] ^7Blue team wins the match with %i - %i.\n\"", level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]));
+                        G_printInfoMessageToAll("Blue team wins the match with %d - %d.", level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]);
                         G_Broadcast(va("%s ^7team wins the match with %i - %i!", server_blueteamprefix.string, level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]), BROADCAST_AWARDS, NULL);
                         trap_Cvar_Set("cm_enabled", "5"); // Boe!Man 11/18/10: 5 - Scrim Ended.
                         LogExit("Blue team wins the match.");
                     }
                 }else if (g_compMode.integer > 0 && cm_enabled.integer == 4){
                     if (cm_sr.integer > cm_sb.integer){
-                        trap_SendServerCommand(-1, va("print\"^3[Info] ^7Red team won the 1st round with %i - %i.\n\"", cm_sr.integer, cm_sb.integer));
+                        G_printInfoMessageToAll("Red team won the 1st round with %d - %d.", cm_sr.integer, cm_sb.integer);
                     }else if(cm_sr.integer < cm_sb.integer){
-                        trap_SendServerCommand(-1, va("print\"^3[Info] ^7Blue team won the 1st round with %i - %i.\n\"", cm_sb.integer, cm_sr.integer));
+                        G_printInfoMessageToAll("Blue team won the 1st round with %d - %d.", cm_sb.integer, cm_sr.integer);
                     }else{
-                        trap_SendServerCommand(-1, va("print\"^3[Info] ^7Round draw 1st round with %i - %i.\n\"", cm_sb.integer, cm_sr.integer));
+                        G_printInfoMessageToAll("Round draw 1st round with %d - %d.", cm_sb.integer, cm_sr.integer);
                     }
-                    trap_SendServerCommand(-1, va("print\"^3[Info] ^7Blue team won the 2nd round with %i - %i.\n\"", level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED] ));
+                    G_printInfoMessageToAll("Blue team won the 2nd round with %d - %d.", level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]);
                     trap_Cvar_Set("cm_enabled", "5"); // Boe!Man 11/18/10: 5 - Scrim Ended.
                     Boe_calcMatchScores();
                 }

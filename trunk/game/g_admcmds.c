@@ -209,11 +209,7 @@ static void adm_addAdmin_f(int argNum, gentity_t *adm, qboolean shortCmd, int le
         if (g_passwordAdmins.integer){
             passAdmin = qtrue;
         }else{
-            if (adm){
-                trap_SendServerCommand(adm - g_entities, va("print \"^3[Info] ^7Access denied: No password logins allowed by the server!\n\""));
-            }else{
-                Com_Printf("Access denied: No password logins allowed by the server!\n");
-            }
+            G_printInfoMessage(adm, "Access denied: No password logins allowed by the server!");
             return;
         }
     }else{
@@ -237,13 +233,8 @@ static void adm_addAdmin_f(int argNum, gentity_t *adm, qboolean shortCmd, int le
     // Boe!Man 8/25/14: Instead of immediately inserting into the database, check if someone added this guy yet.
     if (passAdmin){
         if (Boe_checkPassAdmin2(clientName)){
-            if (adm){
-                trap_SendServerCommand(adm - g_entities, va("print \"^3[Info] ^7A client with this name was already added once!\n\""));
-                trap_SendServerCommand(adm - g_entities, va("print \"^3[Info] ^7He can now reset his password.\n\""));
-            }else{
-                Com_Printf("A client with this name was already added once!\n");
-                Com_Printf("He can now reset his password.\n");
-            }
+            G_printInfoMessage(adm, "A client with this name was already added once!");
+            G_printInfoMessage(adm, "He can now reset his password.");
 
             g_entities[idNum].client->sess.setAdminPassword = qtrue;
             return;
@@ -459,12 +450,7 @@ int adm_Respawn(int argNum, gentity_t *adm, qboolean shortCmd)
     ent = g_entities + idNum;
 
     if (ent->client->sess.team == TEAM_SPECTATOR){
-        if (adm && adm->client){
-            trap_SendServerCommand(adm - g_entities, "print \"^3[Info] ^7You cannot respawn a spectator.\n\"");
-        }else{
-            Com_Printf("You cannot respawn a spectator.\n");
-        }
-
+        G_printInfoMessage(adm, "You cannot respawn a spectator.");
         return -1;
     }
 
@@ -505,18 +491,18 @@ int adm_mapRestart(int argNum, gentity_t *adm, qboolean shortCmd){
                 trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Map restarted by %s.\n\"", adm->client->pers.cleanName));
             }else if (g_compMode.integer > 0 && cm_enabled.integer == 1){
                 if (cm_dr.integer == 1){ // Boe!Man 3/18/11: If dual rounds are enabled, the first round would be started.
-                    trap_SendServerCommand(-1, "print \"^3[Info] ^7First round started.\n\"");
+                    G_printInfoMessageToAll("First round started.");
                     G_Broadcast("\\First round started!", BROADCAST_GAME, NULL);
                     level.compMsgCount = -1;
                 }
                 else{ // Boe!Man 3/18/11: If not, general message.
-                    trap_SendServerCommand(-1, "print \"^3[Info] ^7Match started.\n\"");
+                    G_printInfoMessageToAll("Match started.");
                     G_Broadcast("\\Match started!", BROADCAST_GAME, NULL);
                     level.compMsgCount = -1;
                 }
             }else if (g_compMode.integer > 0 && cm_enabled.integer == 3){
                 G_Broadcast("\\Second round started!", BROADCAST_GAME, NULL);
-                trap_SendServerCommand(-1, "print \"^3[Info] ^7Second round started.\n\"");
+                G_printInfoMessageToAll("Second round started.");
                 level.compMsgCount = -1;
             }
 
@@ -524,9 +510,9 @@ int adm_mapRestart(int argNum, gentity_t *adm, qboolean shortCmd){
             Boe_adminLog("map restart", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "none");
         }else{
             if (level.mapAction == 1 || level.mapAction == 3){
-                trap_SendServerCommand(adm-g_entities, "print\"^3[Info] ^7A map restart is already in progress.\n\"");
+                G_printInfoMessage(adm, "A map restart is already in progress.");
             }else if (level.mapAction == 2 || level.mapAction == 4){
-                trap_SendServerCommand(adm-g_entities, "print\"^3[Info] ^7A map switch is already in progress.\n\"");
+                G_printInfoMessage(adm, "A map switch is already in progress.");
             }
         }
     }else{
@@ -540,11 +526,11 @@ int adm_mapRestart(int argNum, gentity_t *adm, qboolean shortCmd){
                 trap_SendServerCommand(-1, "print \"^3[Rcon Action] ^7Map restarted.\n\"");
             }else if (g_compMode.integer > 0 && cm_enabled.integer == 1){
                 G_Broadcast("\\First round started!", BROADCAST_GAME, NULL);
-                trap_SendServerCommand(-1, "print \"^3[Info] ^7First round started.\n\"");
+                G_printInfoMessageToAll("First round started.");
                 level.compMsgCount = -1;
             }else if (g_compMode.integer > 0 && cm_enabled.integer == 3){
                 G_Broadcast("\\Second round started!", BROADCAST_GAME, NULL);
-                trap_SendServerCommand(-1, "print \"^3[Info] ^7Second round started.\n\"");
+                G_printInfoMessageToAll("Second round started.");
                 level.compMsgCount = -1;
             }
 
@@ -552,9 +538,9 @@ int adm_mapRestart(int argNum, gentity_t *adm, qboolean shortCmd){
             Boe_adminLog("map restart", "RCON", "none");
         }else{
             if (level.mapAction == 1 || level.mapAction == 3){
-                Com_Printf("^3[Info] ^7A map restart is already in progress.\n");
+                G_printInfoMessage(NULL, "A map restart is already in progress.");
             }else if (level.mapAction == 2 || level.mapAction == 4){
-                Com_Printf("^3[Info] ^7A map switch is already in progress.\n");
+                G_printInfoMessage(NULL, "A map switch is already in progress.");
             }
         }
     }
@@ -622,7 +608,7 @@ int adm_Mute(int argNum, gentity_t *adm, qboolean shortCmd)
         if (atoi(GetReason()) <= 0){
             time = 5;
         }else if (atoi(GetReason()) > 60){
-            trap_SendServerCommand(adm - g_entities, "print \"^3[Info] ^7The maximum timelimit for mute is 60 minutes.\n\"");
+            G_printInfoMessage(adm, "The maximum timelimit for mute is 60 minutes.");
             time = 60;
         }else{
             time = atoi(GetReason());
@@ -729,19 +715,14 @@ int adm_removeAdmin(int argNum, gentity_t *adm, qboolean shortCmd)
         if((admLvl == 2 && adm->client->sess.admin < g_badmin.integer)
         || (admLvl == 3 && adm->client->sess.admin < g_admin.integer)
         || (admLvl == 4 && adm->client->sess.admin < g_sadmin.integer)){
-            trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to remove this Admin.\n\""));
+            G_printInfoMessage(adm, "Your Admin level is too low to remove this Admin.");
             return -1;
         }
     }
 
     // The user should probably be an Admin in order to remove him. ;-)
     if (!g_entities[idNum].client->sess.admin){
-        if (adm && adm->client){
-            trap_SendServerCommand(adm-g_entities, va("print\"^3[Info] ^7%s is not an Admin!\n\"", g_entities[idNum].client->pers.cleanName));
-        }else{
-            Com_Printf("^3[Info] ^7%s is not an Admin!\n", g_entities[idNum].client->pers.cleanName);
-        }
-
+        G_printInfoMessage(adm, "%s is not an Admin!", g_entities[idNum].client->pers.cleanName);
         return -1;
     }
 
@@ -823,7 +804,7 @@ int adm_forceTeam(int argNum, gentity_t *adm, qboolean shortCmd)
             strcpy(str, "blue");
             xTeam = TEAM_BLUE;
         }else{
-            trap_SendServerCommand(adm->s.number, va("print\"^3[Info] ^7Wrong team specified.\n\""));
+            G_printInfoMessage(adm, "Wrong team specified.");
             return -1;
         }
     }else{
@@ -840,11 +821,7 @@ int adm_forceTeam(int argNum, gentity_t *adm, qboolean shortCmd)
             strcpy(str, "blue");
             xTeam = TEAM_BLUE;
         }else{
-            if (adm && adm->client){
-                trap_SendServerCommand(adm->s.number, va("print\"^3[Info] ^7Wrong team: %s.\n\"", str));
-            }else{
-                Com_Printf("Wrong team specified: %s\n", str);
-            }
+            G_printInfoMessage(adm, "Wrong team specified: %s.", str);
             return -1;
         }
     }
@@ -991,22 +968,12 @@ static void adm_toggleSection(gentity_t *adm, char *sectionName, int sectionID, 
 
     // Boe!Man 2/27/11: If people don't want to use this section they can specify to disable it.
     if (useSection <= 0){
-        if (adm && adm->client){
-            trap_SendServerCommand(adm - g_entities, va("print\"^3[Info] ^7%s has been disabled on this server.\n\"", sectionName));
-        }else{
-            Com_Printf("%s has been disabled on this server.\n", sectionName);
-        }
-
+        G_printInfoMessage(adm, "%s has been disabled on this server.", sectionName);
         return;
     }
     // Boe!Man 1/8/12: If people want to use nolower but if there's no such entity found, inform the user.
     if (!level.noLRMWEntFound[sectionID]){
-        if (adm && adm->client){
-            trap_SendServerCommand(adm - g_entities, va("print\"^3[Info] ^7No entity found to toggle %s.\n\"", sectionNameWithoutCap));
-        }else{
-            Com_Printf("No entity found to toggle %s.\n", sectionNameWithoutCap);
-        }
-
+        G_printInfoMessage(adm, "No entity found to toggle %s.", sectionNameWithoutCap);
         return;
     }
 
@@ -1055,35 +1022,19 @@ int adm_shuffleTeams(int argNum, gentity_t *adm, qboolean shortCmd){
 
     // Boe!Man 7/13/12: Do not allow shuffleteams during Zombies.
     if (current_gametype.value == GT_HZ){
-        if (adm && adm->client){
-            trap_SendServerCommand(adm-g_entities, "print\"^3[Info] ^7You cannot shuffle the teams in this gametype.\n\"");
-        }else{
-            Com_Printf("^7You cannot shuffle the teams in this gametype.\n");
-        }
-
+        G_printInfoMessage(adm, "You cannot shuffle the teams in this gametype.");
         return -1;
     }
 
     // Boe!Man 6/16/12: Check gametype first.
     if (!level.gametypeData->teams){
-        if (adm && adm->client){
-            trap_SendServerCommand(adm-g_entities, "print \"^3[Info] ^7Not playing a team game.\n\"");
-        }else{
-            Com_Printf("Not playing a team game.\n");
-        }
-
+        G_printInfoMessage(adm, "Not playing a team game.");
         return -1;
     }
 
     if (level.blueLocked || level.redLocked){
-        if (adm && adm->client){
-            trap_SendServerCommand(adm-g_entities, "print \"^3[Info] ^7Teams are locked.\n\"");
-        }else{
-            Com_Printf("Teams are locked.\n");
-        }
-
+        G_printInfoMessage(adm, "Teams are locked.");
         return -1;
-
     }
 
     // Preserve team balance.
@@ -1182,20 +1133,10 @@ int adm_noNades(int argNum, gentity_t *adm, qboolean shortCmd){
 
     // Boe!Man 1/19/11: Disable NN in H&S.
     if (current_gametype.value == GT_HS){
-        if (adm && adm->client){
-            trap_SendServerCommand(adm-g_entities, "print\"^3[Info] ^7You cannot enable/disable Nades in Hide&Seek.\n\"");
-        }else{
-            Com_Printf("You cannot enable/disable Nades in Hide&Seek.\n");
-        }
-
+        G_printInfoMessage(adm, "You cannot enable/disable Nades in Hide&Seek.");
         return -1;
     }else if (current_gametype.value == GT_HZ){ // Boe!Man 9/20/12: And H&Z.
-        if (adm && adm->client){
-            trap_SendServerCommand(adm-g_entities, "print\"^3[Info] ^7You cannot enable/disable Nades in Humans&Zombies.\n\"");
-        }else{
-            Com_Printf("You cannot enable/disable Nades in Humans&Zombies.\n");
-        }
-
+        G_printInfoMessage(adm, "You cannot enable/disable Nades in Humans&Zombies.");
         return -1;
     }
 
@@ -1226,9 +1167,9 @@ int adm_noNades(int argNum, gentity_t *adm, qboolean shortCmd){
 
     if(!level.nadesFound){
         if (adm && adm->client){
-            trap_SendServerCommand(adm-g_entities, "print\"^3[Info] ^7No nades are set to be used (enable nades with /adm toggleweapon or !wp).\n\"");
+            G_printInfoMessage(adm, "No nades are set to be used (enable nades with /adm toggleweapon or !wp).");
         }else{
-            Com_Printf("No nades are set to be used (enable nades with toggleweapon).\n");
+            G_printInfoMessage(NULL, "No nades are set to be used (enable nades with toggleweapon).");
         }
 
         return -1;
@@ -1361,9 +1302,9 @@ static void adm_toggleCVAR(gentity_t *adm, int argNum, qboolean shortCmd, char *
     // Check if the player supplied an argument. If not, show him the current values.
     if (cvarValue < 0){
         if (availableInCM && g_compMode.integer > 0 && cm_enabled.integer >= 1){
-            trap_SendServerCommand(adm-g_entities, va("print \"^3[Info] ^7Match %s is %i.\n\"", cvarNameWithoutCap, (cvar2 != NULL) ? cvar2->integer : cvar1->integer));
+            G_printInfoMessage(adm, "Match %s is %d.", cvarNameWithoutCap, (cvar2 != NULL) ? cvar2->integer : cvar1->integer);
         }else{
-            trap_SendServerCommand(adm-g_entities, va("print \"^3[Info] ^7%s is %i.\n\"", cvarName, cvar1->integer));
+            G_printInfoMessage(adm, "%s is %d.", cvarName, cvar1->integer);
         }
 
         return;
@@ -1449,13 +1390,7 @@ static void adm_Damage(gentity_t *adm, char *damageName, int value)
 
     // No such thing as ND or RD in Hide&Seek or Humans&Zombies.
     if (current_gametype.value == GT_HS || current_gametype.value == GT_HZ){
-        if (adm && adm->client){
-            trap_SendServerCommand(adm - g_entities, va("print\"^3[Info] ^7You cannot switch to %s in this gametype.\n\"", damageName));
-        }
-        else{
-            Com_Printf("^7You cannot switch to %s in this gametype.\n", damageName);
-        }
-
+        G_printInfoMessage(adm, "You cannot switch to %s in this gametype.", damageName);
         return;
     }
 
@@ -1528,12 +1463,7 @@ int adm_addClanMember(int argNum, gentity_t *adm, qboolean shortCmd)
 
     // Boe!Man 2/6/13: Check if the client is already a clan member.
     if (g_entities[idNum].client->sess.clanMember){
-        if (adm){
-            trap_SendServerCommand(adm-g_entities, va("print\"^3[Info] ^7%s already is a clan member.\n\"", g_entities[idNum].client->pers.cleanName));
-        }else{
-            Com_Printf("^3[Info] ^7%s ^7already is a clan member.\n", g_entities[idNum].client->pers.cleanName);
-        }
-
+        G_printInfoMessage(adm, "%s already is a clan member.", g_entities[idNum].client->pers.cleanName);
         return -1;
     }
 
@@ -1602,12 +1532,7 @@ int adm_removeClanMember(int argNum, gentity_t *adm, qboolean shortCmd)
     if (idNum < 0) return idNum;
 
     if(!g_entities[idNum].client->sess.clanMember){
-        if (adm && adm->client){
-            trap_SendServerCommand(adm - g_entities, va("print\"^3[Info] ^7%s is not a Clan member!\n\"", g_entities[idNum].client->pers.cleanName));
-        }else{
-            Com_Printf("^3[Info] ^7%s is not a Clan member!\n", g_entities[idNum].client->pers.cleanName);
-        }
-
+        G_printInfoMessage(adm, "%s is not a clan member!", g_entities[idNum].client->pers.cleanName);
         return -1;
     }
 
@@ -1684,30 +1609,16 @@ int adm_compMode(int argNum, gentity_t *adm, qboolean shortCmd)
 
     // Don't allow the client to toggle CM in H&S/H&Z.
     if (current_gametype.value == GT_HS || current_gametype.value == GT_HZ){
-        if (adm && adm->client){
-            trap_SendServerCommand(adm-g_entities, "print\"^3[Info] ^7You cannot enable Competition Mode in this gametype.\n\"");
-        }else{
-            Com_Printf("^7You cannot enable Competition Mode in this gametype.\n");
-        }
-
+        G_printInfoMessage(adm, "You cannot enable Competition Mode in this gametype.");
         return -1;
     }
 
     // Disable Competition Mode when a user is changing maps.
     if (level.mapAction){
-        if (adm && adm->client){
-            if (level.mapAction == 1 || level.mapAction == 3){
-                trap_SendServerCommand(adm - g_entities, "print\"^3[Info] ^7A map restart is already in progress.\n\"");
-            }else if (level.mapAction == 2 || level.mapAction == 4){
-                trap_SendServerCommand(adm - g_entities, "print\"^3[Info] ^7A map switch is already in progress.\n\"");
-            }
-        }else{
-            if (level.mapAction == 1 || level.mapAction == 3){
-                Com_Printf("^3[Info] ^7A map restart is already in progress.\n");
-            }
-            else if (level.mapAction == 2 || level.mapAction == 4){
-                Com_Printf("^3[Info] ^7A map switch is already in progress.\n");
-            }
+        if (level.mapAction == 1 || level.mapAction == 3){
+            G_printInfoMessage(adm, "A map restart is already in progress.");
+        }else if (level.mapAction == 2 || level.mapAction == 4){
+            G_printInfoMessage(adm, "A map switch is already in progress.");
         }
 
         return -1;
@@ -2375,12 +2286,7 @@ int adm_clanVsAll(int argNum, gentity_t *adm, qboolean shortCmd)
 
     // Verify that we're playing a team game before continuing.
     if (!level.gametypeData->teams){
-        if (adm && adm->client){
-            trap_SendServerCommand(adm - g_entities, "print \"^3[Info] ^7Not playing a team game.\n\"");
-        }else{
-            Com_Printf("Not playing a team game.\n");
-        }
-
+        G_printInfoMessage(adm, "Not playing a team game.");
         return -1;
     }
 
@@ -2523,11 +2429,11 @@ int adm_lockTeam(int argNum, gentity_t *adm, qboolean shortCmd)
 
     if (shortCmd){
         if(!G_GetChatArgumentCount() || !G_lockTeam(adm, qfalse, G_GetChatArgument(1))){
-            trap_SendServerCommand(adm - g_entities, va("print \"^3[Info] ^7Unknown team entered.\n\""));
+            G_printInfoMessage(adm, "Unknown team entered.");
         }
     }else{
         if (!G_lockTeam(adm, qfalse, arg)){
-            trap_SendServerCommand(adm - g_entities, va("print \"^3[Info] ^7Unknown team entered.\n\""));
+            G_printInfoMessage(adm, "Unknown team entered.");
         }
     }
 
@@ -2683,50 +2589,29 @@ int adm_Gametype(int argNum, gentity_t *adm, qboolean shortCmd)
             G_Broadcast("\\Gametype Zombies!", BROADCAST_CMD, NULL);
         #ifdef _GOLD
         }else if (!g_enforce1fxAdditions.integer && (strstr(arg, "h&s") || strstr(arg, "h&z") || strstr(arg, "zombies"))){
-            if (adm && adm->client){
-                trap_SendServerCommand(adm-g_entities, "print\"^3[Info] ^7This gametype is unavailable when you're not enforcing 1fx. Client Additions.\n\"");
-                trap_SendServerCommand(adm-g_entities, "print\"^3[Info] ^7Please have someone with RCON access put g_enforce1fxAdditions to 1 and restart the map.\n\"");
-            }else{
-                Com_Printf("This gametype is unavailable when you're not enforcing 1fx. Client Additions.\n");
-                Com_Printf("Put g_enforce1fxAdditions to 1 and restart the map to enable the additional gametypes.\n");
-            }
+            G_printInfoMessage(adm, "This gametype is unavailable when you're not enforcing 1fx. Client Additions.");
+            G_printInfoMessage(adm, "Put g_enforce1fxAdditions to 1 and restart the map to enable the additional gametypes.");
         #endif // GOLD
         }else{
             // Boe!Man 2/4/11: In case no argument is found we just display the current gametype.
             if (strstr(g_gametype.string, "inf")){
                 if (current_gametype.value == GT_HS){
-                    if (adm && adm->client){
-                        trap_SendServerCommand(adm-g_entities, "print\"^3[Info] ^7Unknown gametype. Gametype is: h&s.\n\"");
-                    }else{
-                        Com_Printf("Unknown gametype. Gametype is: h&s.\n");
-                    }
+                    G_printInfoMessage(adm, "Unknown gametype. Gametype is: h&s.");
                 }else if (current_gametype.value == GT_HZ){
-                    if (adm && adm->client){
-                        trap_SendServerCommand(adm-g_entities, "print\"^3[Info] ^7Unknown gametype. Gametype is: h&z.\n\"");
-                    }else{
-                        Com_Printf("Unknown gametype. Gametype is: h&z.\n");
-                    }
+                    G_printInfoMessage(adm, "Unknown gametype. Gametype is: h&z.");
                 }else{
-                    if (adm && adm->client){
-                        trap_SendServerCommand(adm - g_entities, "print\"^3[Info] ^7Unknown gametype. Gametype is: inf.\n\"");
-                    }else{
-                        Com_Printf("Unknown gametype. Gametype is: inf.\n");
-                    }
+                    G_printInfoMessage(adm, "Unknown gametype. Gametype is: inf.");
                 }
             }else{
-                if (adm && adm->client){
-                    trap_SendServerCommand(adm-g_entities, va("print\"^3[Info] ^7Unknown gametype. Gametype is: %s.\n\"", g_gametype.string));
-                }else{
-                    Com_Printf("Unknown gametype. Gametype is: %s.\n", g_gametype.string);
-                }
+                G_printInfoMessage(adm, "Unknown gametype. Gametype is: %s.", g_gametype.string);
             }
             return -1;
         }
     }else{
         if (level.mapAction == 1 || level.mapAction == 3){
-            trap_SendServerCommand(adm - g_entities, va("print\"^3[Info] ^7A map restart is already in progress.\n\""));
+            G_printInfoMessage(adm, "A map restart is already in progress.");
         }else if (level.mapAction == 2 || level.mapAction == 4){
-            trap_SendServerCommand(adm - g_entities, va("print\"^3[Info] ^7A map switch is already in progress.\n\""));
+            G_printInfoMessage(adm, "A map switch is already in progress.");
         }
 
         return -1;
@@ -2921,7 +2806,7 @@ static void adm_unbanFromDatabase(gentity_t *adm, char *ip, qboolean subnet)
 
 
     if(strlen(ip) < 2 && strstr(ip, ".")){
-        trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid IP, usage: adm unban <IP/Line>.\n\""));
+        G_printInfoMessage(adm, "Invalid IP, usage: adm unban <IP/Line>.");
         return;
     }
 
@@ -2951,12 +2836,7 @@ static void adm_unbanFromDatabase(gentity_t *adm, char *ip, qboolean subnet)
             sqlite3_finalize(stmt);
             return;
         }else if((rc = sqlite3_step(stmt)) == SQLITE_DONE){
-            if(adm && adm->client){
-                trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Could not find line %i.\n\"", iLine));
-            }else{
-                Com_Printf("^3[Info] ^7Could not find line %i.\n", iLine);
-            }
-
+            G_printInfoMessage(adm, "Could not find line %d.", iLine);
             sqlite3_finalize(stmt);
             return;
         }else{ // Store info for the unban line given to the Admin (to let him know it went correctly).
@@ -2981,19 +2861,10 @@ static void adm_unbanFromDatabase(gentity_t *adm, char *ip, qboolean subnet)
 
             return;
         }else{
-            if(adm && adm->client){
-                trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Unbanned %s (IP: %s) from line %i.\n\"", name, ip2, iLine));
-            }else{
-                Com_Printf("^3[Info] ^7Unbanned %s (IP: %s) from line %i.\n", name, ip2, iLine);
-            }
+            G_printInfoMessage(adm, "Unbanned %s (IP: %s) from line %d.", name, ip2, iLine);
         }
     }else if(strlen(ip) < 3){
-        if(adm && adm->client){
-            trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid IP, usage: adm unban <IP/Line>.\n\""));
-        }else{
-            Com_Printf("^3[Info] ^7Invalid IP, usage: adm unban <IP/Line>.\n");
-        }
-
+        G_printInfoMessage(adm, "Invalid IP, usage: adm unban <IP/Line>.");
         return;
     }else{ // Delete by full IP.
         // First check if the record exists.
@@ -3014,12 +2885,7 @@ static void adm_unbanFromDatabase(gentity_t *adm, char *ip, qboolean subnet)
             sqlite3_finalize(stmt);
             return;
         }else if((rc = sqlite3_step(stmt)) == SQLITE_DONE){
-            if(adm && adm->client){
-                trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Could not find IP %s.\n\"", ip));
-            }else{
-                Com_Printf("^3[Info] ^7Could not find IP %s.\n", ip);
-            }
-
+            G_printInfoMessage(adm, "Could not find IP %s.", ip);
             sqlite3_finalize(stmt);
             return;
         }else{ // Store info for the unban line given to the Admin (to let him know it went correctly).
@@ -3045,11 +2911,7 @@ static void adm_unbanFromDatabase(gentity_t *adm, char *ip, qboolean subnet)
 
             return;
         }else{
-            if(adm && adm->client){
-                trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Unbanned %s (IP: %s) from line %s.\n\"", name, ip, ip2));
-            }else{
-                Com_Printf("^3[Info] ^7Unbanned %s (IP: %s) from line %s.\n", name, ip, ip2);
-            }
+            G_printInfoMessage(adm, "Unbanned %s (IP: %s) from line %s.", name, ip, ip2);
             // Copy the actual IP to ip2, for logging purposes.
             Q_strncpyz(ip2, ip, sizeof(ip2));
         }
@@ -3086,7 +2948,7 @@ Passes a running vote.
 int adm_passVote(int argNum, gentity_t *adm, qboolean shortCmd)
 {
     if ( !level.voteTime ){
-        trap_SendServerCommand( adm-g_entities, "print \"^3[Info] ^7No vote in progress.\n\"" );
+        G_printInfoMessage(adm, "No vote in progress.");
         return -1;
     }
 
@@ -3120,7 +2982,7 @@ Cancels a running vote.
 int adm_cancelVote(int argNum, gentity_t *adm, qboolean shortCmd)
 {
     if ( !level.voteTime ){
-        trap_SendServerCommand( adm-g_entities, "print \"^3[Info] ^7No vote in progress.\n\"" );
+        G_printInfoMessage(adm, "No vote in progress.");
         return -1;
     }
 
@@ -3165,9 +3027,9 @@ int adm_mapCycle(int argNum, gentity_t *adm, qboolean shortCmd)
             trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Mapcycle by %s.\n\"", adm->client->pers.cleanName));
         }else{
             if(level.mapAction == 1 || level.mapAction == 3){
-                trap_SendServerCommand(adm-g_entities, va("print\"^3[Info] ^7A map restart is already in progress.\n\""));
+                G_printInfoMessage(adm, "A map restart is already in progress.");
             }else if(level.mapAction == 2 || level.mapAction == 4){
-                trap_SendServerCommand(adm-g_entities, va("print\"^3[Info] ^7A map switch is already in progress.\n\""));
+                G_printInfoMessage(adm, "A map switch is already in progress.");
             }
         }
     }else{
@@ -3182,9 +3044,9 @@ int adm_mapCycle(int argNum, gentity_t *adm, qboolean shortCmd)
             trap_SendServerCommand(-1, "print\"^3[Rcon Action] ^7Mapcycle.\n\"");
         }else{
             if(level.mapAction == 1 || level.mapAction == 3){
-                Com_Printf("^3[Info] ^7A map restart is already in progress.\n");
+                G_printInfoMessage(NULL, "A map restart is already in progress.");
             }else if(level.mapAction == 2 || level.mapAction == 4){
-                Com_Printf("^3[Info] ^7A map switch is already in progress.\n");
+                G_printInfoMessage(NULL, "A map switch is already in progress.");
             }
         }
     }
@@ -3237,12 +3099,7 @@ int adm_adminList(int argNum, gentity_t *adm, qboolean shortCmd)
 
     // If the password login system isn't allowed by the server, by all means, also disallow the showing of the list.
     if(passwordList && !g_passwordAdmins.integer){
-        if(adm && adm->client){
-            trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Access denied: No password logins allowed by the server!\n\""));
-        }else{
-            Com_Printf("Access denied: No password logins allowed by the server!\n");
-        }
-
+        G_printInfoMessage(adm, "Access denied: No password logins allowed by the server!");
         return -1;
     }
 
@@ -3455,12 +3312,7 @@ int adm_adminRemove(int argNum, gentity_t *adm, qboolean shortCmd)
             if(g_passwordAdmins.integer){
                 passAdmin = qtrue;
             }else{
-                if(adm && adm->client){
-                    trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Access denied: No password logins allowed by the server!\n\""));
-                }else{
-                    Com_Printf("Access denied: No password logins allowed by the server!\n");
-                }
-
+                G_printInfoMessage(adm, "Access denied: No password logins allowed by the server!");
                 return -1;
             }
         }else{
@@ -3470,12 +3322,7 @@ int adm_adminRemove(int argNum, gentity_t *adm, qboolean shortCmd)
                 if(g_passwordAdmins.integer){
                     passAdmin = qtrue;
                 }else{
-                    if(adm && adm->client){
-                        trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Access denied: No password logins allowed by the server!\n\""));
-                    }else{
-                        Com_Printf("Access denied: No password logins allowed by the server!\n");
-                    }
-
+                    G_printInfoMessage(adm, "Access denied: No password logins allowed by the server!");
                     return -1;
                 }
             }
@@ -3495,12 +3342,7 @@ int adm_adminRemove(int argNum, gentity_t *adm, qboolean shortCmd)
             if(g_passwordAdmins.integer){
                 passAdmin = qtrue;
             }else{
-                if(adm && adm->client){
-                    trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Access denied: No password logins allowed by the server!\n\""));
-                }else{
-                    Com_Printf("Access denied: No password logins allowed by the server!\n");
-                }
-
+                G_printInfoMessage(adm, "Access denied: No password logins allowed by the server!");
                 return -1;
             }
         }
@@ -3572,12 +3414,7 @@ int adm_Rename(int argNum, gentity_t *adm, qboolean shortCmd)
 
     if (!newName || !newName[0] || newName[0] == '\\' || strlen(newName) == 0){
         if (!g_entities[idNum].client->sess.noNameChange){
-            if (adm && adm->client){
-                trap_SendServerCommand(adm-g_entities, va("print \"^3[Info] ^7You cannot set an empty name or unlock someone that's not locked from changing names.\n\""));
-            }else{
-                Com_Printf("You cannot set an empty name or unlock someone that's not locked from changing names.\n");
-            }
-
+            G_printInfoMessage(adm, "You cannot set an empty name or unlock someone that's not locked from changing names.");
             return -1;
         }else{
             g_entities[idNum].client->sess.noNameChange = qfalse;
@@ -3700,13 +3537,13 @@ int adm_Map(int argNum, gentity_t *adm, qboolean shortCmd)
             }
             trap_FS_FOpenFile( va("maps\\%s.bsp", map), &f, FS_READ );
             if ( !f ){
-                trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Map not found.\n\""));
+                G_printInfoMessage(adm, "Map not found.");
                 return -1;
             }
             trap_FS_FCloseFile(f);
         // There are no maps that contain less than two characters. Obviously the map isn't found.
         }else{
-            trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Map not found.\n\""));
+            G_printInfoMessage(adm, "Map not found.");
             return -1;
         }
 
@@ -3759,13 +3596,13 @@ int adm_Map(int argNum, gentity_t *adm, qboolean shortCmd)
         }
 
         if(!Henk_DoesMapSupportGametype(gametype, map)){
-            trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7This map does not support the gametype %s, please add it in the ARENA file.\n\"", gametype));
+            G_printInfoMessage(adm, "This map does not support the gametype %s, please add it in the ARENA file.", gametype);
             return -1;
         }
         #ifdef _GOLD
         if(!g_enforce1fxAdditions.integer && (strcmp(gametype, "h&s") == 0 || strcmp(gametype, "h&z") == 0)){
-            trap_SendServerCommand(adm-g_entities, "print\"^3[Info] ^7This gametype is unavailable when you're not enforcing 1fx. Client Additions.\n\"");
-            trap_SendServerCommand(adm-g_entities, "print\"^3[Info] ^7Please have someone with RCON access put g_enforce1fxAdditions to 1 and restart the map.\n\"");
+            G_printInfoMessage(adm, "This gametype is unavailable when you're not enforcing 1fx. Client Additions.");
+            G_printInfoMessage(adm, "Please have someone with RCON access put g_enforce1fxAdditions to 1 and restart the map.");
 
             return -1;
         }
@@ -3798,9 +3635,9 @@ int adm_Map(int argNum, gentity_t *adm, qboolean shortCmd)
         }
     }else{
         if(level.mapAction == 1 || level.mapAction == 3){
-            trap_SendServerCommand(adm-g_entities, "print\"^3[Info] ^7A map restart is already in progress.\n\"");
+            G_printInfoMessage(adm, "A map restart is already in progress.");
         }else if(level.mapAction == 2 || level.mapAction == 4){
-            trap_SendServerCommand(adm-g_entities, "print\"^3[Info] ^7A map switch is already in progress.\n\"");
+            G_printInfoMessage(adm, "A map switch is already in progress.");
         }
     }
 
@@ -3850,19 +3687,13 @@ int adm_Rounds(int argNum, gentity_t *adm, qboolean shortCmd)
     number = GetArgument(argNum);
 
     if(cm_enabled.integer != 1){ // We need to insure Competition Mode is at it's starting stage. Do NOT allow changes to this before or during the scrim.
-        if (adm && adm->client){
-            trap_SendServerCommand(adm-g_entities, "print\"^3[Info] ^7You can only change this setting during Competition Warmup.\n\"");
-        }else{
-            Com_Printf("You can only change this setting during Competition Warmup.\n");
-        }
-
+        G_printInfoMessage(adm, "You can only change this setting during Competition Warmup.");
         return -1;
     }
 
     if(number <= 0){
         // Show current round value if there's no arg.
-        trap_SendServerCommand(adm - g_entities, va("print \"^3[Info] ^7Number of rounds for this match: %s.\n\"", (cm_dr.integer == 0) ? "1" : "2"));
-
+        G_printInfoMessage(adm, "Number of rounds for this match: %s.", (cm_dr.integer == 0) ? "1" : "2");
         return -1;
     }else if(number == 1){ // If they want a single round..
         trap_Cvar_Set("cm_dr", "0");
@@ -3875,11 +3706,7 @@ int adm_Rounds(int argNum, gentity_t *adm, qboolean shortCmd)
         }
     }else if(number > 1){ // Or two.
         if(number > 2){
-            if(adm && adm->client){
-                trap_SendServerCommand(adm-g_entities, "print\"^3[Info] ^7Maximum of two is allowed, switching to two.\n\"");
-            }else{
-                Com_Printf("^3[Info] ^7Maximum of two is allowed, switching to two.\n");
-            }
+            G_printInfoMessage(adm, "Maximum of two is allowed, switching to two.");
         }
         trap_Cvar_Set("cm_dr", "1");
 
@@ -3911,12 +3738,7 @@ int adm_Switch(int argNum, gentity_t *adm, qboolean shortCmd)
 
     // Boe!Man 6/16/12: Check gametype first.
     if (!level.gametypeData->teams) {
-        if (adm && adm->client) {
-            trap_SendServerCommand(adm - g_entities, "print \"^3[Info] ^7Not playing a team game.\n\"");
-        }else{
-            Com_Printf("Not playing a team game.\n");
-        }
-
+        G_printInfoMessage(adm, "Not playing a team game.");
         return -1;
     }
 
@@ -3999,12 +3821,7 @@ int adm_toggleWeapon(int argNum, gentity_t *adm, qboolean shortCmd)
 
     // Can't toggle weapons like this in Hide&Seek.
     if(current_gametype.value == GT_HS || current_gametype.value == GT_HZ){
-        if (adm && adm->client){
-            trap_SendServerCommand(adm-g_entities, va("print\"^3[Info] ^7You cannot use this command in %s.\n\"", (current_gametype.value == GT_HS) ? "Hide&Seek" : "Humans&Zombies"));
-        }else{
-            Com_Printf("You cannot use this command in %s.\n", (current_gametype.value == GT_HS) ? "Hide&Seek" : "Humans&Zombies");
-        }
-
+        G_printInfoMessage(adm, "You cannot use this command in %s.", (current_gametype.value == GT_HS) ? "Hide&Seek" : "Humans&Zombies");
         return -1;
     }
 
@@ -4022,12 +3839,7 @@ int adm_toggleWeapon(int argNum, gentity_t *adm, qboolean shortCmd)
 
     // Check if there was a weapon specified.
     if(strlen(arg) == 0){
-        if (adm && adm->client){
-            trap_SendServerCommand(adm-g_entities, "print\"^3[Info] ^7You must specify a weapon to toggle.\n\"");
-        }else{
-            Com_Printf("You must specify a weapon to toggle.\n");
-        }
-
+        G_printInfoMessage(adm, "You must specify a weapon to toggle.");
         return -1;
     }
 
@@ -4042,12 +3854,7 @@ int adm_toggleWeapon(int argNum, gentity_t *adm, qboolean shortCmd)
 
     // Not an existing weapon specified.
     if(!wpNum || !item){
-        if (adm && adm->client){
-            trap_SendServerCommand(adm-g_entities, va("print\"^3[Info] ^7Weapon %s was not found!\n\"", arg));
-        }else{
-            Com_Printf("Weapon %s was not found!\n", arg);
-        }
-
+        G_printInfoMessage(adm, "Weapon %s was not found!", arg);
         return -1;
     }
 

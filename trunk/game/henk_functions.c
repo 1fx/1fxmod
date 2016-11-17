@@ -291,7 +291,7 @@ void Henk_Ignore(gentity_t *ent){
 
     trap_Argv( 1, arg1, sizeof( arg1 ) );
     if(!arg1[0]){
-        trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You haven't entered a valid player ID/player name.\n\""));
+        G_printInfoMessage(ent, "You haven't entered a valid player ID/player name.");
         return;
     }
     if(!henk_ischar(arg1[0])){
@@ -311,7 +311,7 @@ void Henk_Ignore(gentity_t *ent){
             }
             string[strlen(string)-2] = '\0';
             if(numberofclients > 1){
-                trap_SendServerCommand(ent->s.number, va("print\"^3[Info] ^7Multiple names found with ^3%s^7: %s\n\"", arg1, string));
+                G_printInfoMessage(ent, "Multiple names found with ^3%s^7: %s", arg1, string);
                 return;
             }else if(numberofclients == 0)
                 idnum = -1;
@@ -319,17 +319,17 @@ void Henk_Ignore(gentity_t *ent){
             idnum = -1;
         if ( idnum < 0 || idnum >= g_maxclients.integer )
         {
-            trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You haven't entered a valid player ID/player name.\n\""));
+            G_printInfoMessage(ent, "You haven't entered a valid player ID/player name.");
             return;
         }
 
         if ( g_entities[idnum].client->pers.connected == CON_DISCONNECTED )
         {
-            trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7The player is not connected.\n\""));
+            G_printInfoMessage(ent, "The player is not connected.");
             return;
         }
         if( !ent->client->sess.admin && g_entities[idnum].client->sess.admin >= 2 ){
-            trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You can't ignore an admin.\n\""));
+            G_printInfoMessage(ent, "You can't ignore an Admin.");
             return;
         }
         // Check if he's already ignored then unignore him
@@ -348,18 +348,18 @@ void Henk_Ignore(gentity_t *ent){
                     g_entities[idnum].client->sess.IgnoredClients[z] = temparray[z];
                 }
                 g_entities[idnum].client->sess.IgnoredClientCount--;
-                trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You are not ignoring %s anymore.\n\"", g_entities[idnum].client->pers.cleanName));
+                G_printInfoMessage(ent, "You are not ignoring %s anymore.", g_entities[idnum].client->pers.cleanName);
                 return;
             }
         }
         if(g_entities[idnum].client->sess.IgnoredClientCount >= 32){
-            trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You can't ignore more than 32 people.\n\""));
+            G_printInfoMessage(ent, "You can't ignore more than 32 players.");
             return;
         }
         g_entities[idnum].client->sess.IgnoredClients[g_entities[idnum].client->sess.IgnoredClientCount] = ent->s.number;
         g_entities[idnum].client->sess.IgnoredClientCount++;
-        trap_SendServerCommand( g_entities[idnum].s.number, va("print \"^3[Info] ^7%s has ignored you.\n\"", ent->client->pers.cleanName));
-        trap_SendServerCommand( ent->s.number, va("print \"^3[Info] ^7You have ignored %s.\n\"", g_entities[idnum].client->pers.cleanName));
+        G_printInfoMessage(&g_entities[idnum], "%s has ignored you.", ent->client->pers.cleanName);
+        G_printInfoMessage(ent, "You have ignored %s.", g_entities[idnum].client->pers.cleanName);
 }
 
 int TiedPlayers(void){
@@ -831,7 +831,7 @@ qboolean IsClientMuted(gentity_t *ent, qboolean message){
                     if(message){
                         remain = ((level.mutedClients[i].startTime + level.mutedClients[i].time - level.time) / 1000) / 60;
                         remainS = ((level.mutedClients[i].startTime + level.mutedClients[i].time - level.time) / 1000);
-                        trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You were muted for %d minutes, %d:%02d minutes remaining.\n\"", level.mutedClients[i].totalDuration, remain, remainS-(remain*60)) );
+                        G_printInfoMessage(ent, "You were muted for %d minutes, %d:%02d minutes remaining.", level.mutedClients[i].totalDuration, remain, remainS-(remain*60));
                     }
                     return qtrue;
                 }else{
@@ -1029,96 +1029,6 @@ void InitSpawn(int choice) // load bsp models before players loads a map(SOF2 cl
 
     G_SpawnGEntityFromSpawnVars(qfalse);
 }
-
-/*void AddToPasswordList(gentity_t *ent, int lvl){
-    int len;
-    fileHandle_t f;
-    char str[512], octet[4];
-    char levelstr[32];
-    len = trap_FS_FOpenFile(g_adminPassFile.string, &f, FS_APPEND_TEXT);
-    if(!f){
-        G_LogPrintf("Error while opening %s\n", g_adminPassFile.string);
-        return;
-    }
-    strcpy(octet, va("%c%c%c", ent->client->pers.ip[0], ent->client->pers.ip[1], ent->client->pers.ip[2]));
-    strcpy(str, va("%s\\%s:%i\n", ent->client->pers.cleanName, octet, lvl));
-    str[strlen(str)] = '\0';
-    trap_FS_Write(str, strlen(str), f);
-    trap_FS_FCloseFile(f);
-    if(lvl == 2)
-        strcpy(levelstr, "B-Admin");
-    else if(lvl == 3)
-        strcpy(levelstr, "Admin");
-    else if(lvl == 4)
-        strcpy(levelstr, "S-Admin");
-
-    trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s has been added to the %s list.\n\"", ent->client->pers.netname, levelstr));
-
-}*/
-
-/*qboolean CheckPasswordList(gentity_t *ent, char *pass){
-    fileHandle_t f;
-    int len, i, start, end;
-    char lvl, passlvl;
-    char buf[1024], octet[5], name[64], myoctet[5];
-
-    // sort out what admin lvl pass he entered
-    if(!Q_stricmp(pass, g_badminPass.string))
-        passlvl = '2';
-    else if(!Q_stricmp(pass, g_adminPass.string))
-        passlvl = '3';
-    else if(!Q_stricmp(pass, g_sadminPass.string))
-        passlvl = '4';
-
-    // set our first octet
-    strcpy(myoctet, va("%c%c%c", ent->client->pers.ip[0], ent->client->pers.ip[1], ent->client->pers.ip[2]));
-
-    len = trap_FS_FOpenFile(g_adminPassFile.string, &f, FS_READ_TEXT);
-    if(!f){
-        G_LogPrintf("Error while opening %s\n", g_adminPassFile.string);
-        return qfalse;
-    }
-    trap_FS_Read(buf, len, f);
-    for(i=0;i<=len;i++){
-        if(i==0)
-            start = 0;
-        if(buf[i] == '\n'){
-            end = i;
-            lvl = buf[i-1];
-            strcpy(octet, va("%c%c%c", buf[i-5], buf[i-4], buf[i-3]));
-            memset(name, 0, sizeof(name));
-            strncpy(name, buf+start, (i-6)-start);
-            //Com_Printf("Name: %s(%i - %i)\nLevel: %c\nOctet: %s\n\n", name, i, len, lvl, octet);
-            if(!Q_stricmp(octet, myoctet) && !Q_stricmp(ent->client->pers.cleanName, name) && lvl == passlvl){ // found octet
-                if(lvl == '2'){
-                    ent->client->sess.admin = 2;
-                    trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s has been granted B-Admin.\n\"", ent->client->pers.netname));
-                }else if(lvl == '3'){
-                    ent->client->sess.admin = 3;
-                    trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s has been granted Admin.\n\"", ent->client->pers.netname));
-                }else if(lvl == '4'){
-                    ent->client->sess.admin = 4;
-                    trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s has been granted S-Admin.\n\"", ent->client->pers.netname));
-                }
-                // Boe!Man 5/27/11: Is the Admin level allowed to spec the opposite team?
-                if (g_adminSpec.integer <= ent->client->sess.admin && g_adminSpec.integer != 0 && cm_enabled.integer < 2){
-                    ent->client->sess.adminspec = qtrue;
-                }
-                trap_FS_FCloseFile(f);
-                return qtrue;
-            }
-            start = i+1;
-        }
-    }
-
-    trap_FS_FCloseFile(f);
-    // this guy has the password but didn't match our file.
-    // This could mean:
-    // - He changed name
-    // - Password was leaked to some idiot who's not on the list.
-    // We are going to log this.
-    return qfalse;
-}*/
 
 qboolean henk_isdigit(char c){ // by henk
     if(c >= 48 && c <= 57){

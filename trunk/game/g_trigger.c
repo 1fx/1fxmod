@@ -430,7 +430,7 @@ void trigger_ReachableObject_touch ( gentity_t *self, gentity_t *other, trace_t 
     }
 
     // Boe!Man 6/14/11: Always notify all players in the console.
-    trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s has reached the object.\n\"", other->client->pers.cleanName));
+    G_printInfoMessageToAll("%s has reached the object.", other->client->pers.cleanName);
 }
 
 void ReachableObject_events ( gentity_t *self ){
@@ -551,7 +551,7 @@ void trigger_teleporter_touch (gentity_t *self, gentity_t *other, trace_t *trace
     if(current_gametype.value == GT_HS){
         if(TeamCount1(TEAM_RED) < self->minimumhiders){
             if(level.time >= other->client->sess.lastmsg){
-            trap_SendServerCommand(other->s.number, va("print\"^3[Info] ^7There has to be a minimum of %i hiders to use this teleport.\n\"", self->minimumhiders));
+                G_printInfoMessage(other, "There has to be a minimum of %d hiders to use this teleport.", self->minimumhiders);
             }
             other->client->sess.lastmsg = level.time+10000;
             return;

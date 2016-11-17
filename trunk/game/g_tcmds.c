@@ -37,13 +37,13 @@ void G_Tcmd ( gentity_t *ent )
 
     if ( !level.gametypeData->teams )
     {
-        trap_SendServerCommand( ent-g_entities, "print \"^3[Info] ^7Not playing a team game!\n\"");
+        G_printInfoMessage(ent, "Not playing a team game!");
         return;
     }
 
     if(!g_enableTeamCmds.integer)
     {
-        trap_SendServerCommand( ent-g_entities, "print \"^3[Info] ^7Team Commands are disabled on this server!\n\"");
+        G_printInfoMessage(ent, "Team commands are disabled on this server!");
         return;
     }
 
@@ -52,12 +52,12 @@ void G_Tcmd ( gentity_t *ent )
     if (!g_compMode.integer && g_enableTeamCmds.integer != 2 && !cm_enabled.integer)
     ///End  - 09.18.06 - 04:58pm
     {
-        trap_SendServerCommand( ent-g_entities, "print \"^3[Info] ^7Competition Mode must be enabled to use team commands!\n\"");
+        G_printInfoMessage(ent, "Competition Mode must be enabled to use team commands!");
         return;
     }
 
     if(ent->client->sess.team == TEAM_SPECTATOR){
-        trap_SendServerCommand( ent-g_entities, "print \"^3[Info] ^7Access Denied: You are currently not in a valid team!\n\"");
+        G_printInfoMessage(ent, "Access Denied: You are currently not in a valid team!");
         return;
     }
 
@@ -118,7 +118,7 @@ void G_TeamInfo (gentity_t *ent, char *team)
     else if (t == 2){
         teamName = "Blue";
     }else{
-        trap_SendServerCommand( ent-g_entities, "print \"^3[Info] ^7You must be in a team to use team commands!\n\"");
+        G_printInfoMessage(ent, "You must be in a team to use team commands!");
         return;
     }
 
@@ -445,7 +445,7 @@ void G_Invite_Spec(gentity_t *ent, char *arg2)
 
     if ((ent->client->sess.team != TEAM_RED) && (ent->client->sess.team != TEAM_BLUE) )
     {
-        trap_SendServerCommand( ent-g_entities, "print \"^3[Info] ^7Not on a valid team.\n\"");
+        G_printInfoMessage(ent, "You're not on a valid team.");
         return;
     }
 
@@ -456,24 +456,24 @@ void G_Invite_Spec(gentity_t *ent, char *arg2)
     else
     {
         // Boe!Man 2/7/11: Merging two messages into one.
-        trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Bad client slot: %s. Usage: tcmd invite/uninvite <idnumber>\n\"", arg2));
+        G_printInfoMessage(ent, "Bad client slot: %s. Usage: tcmd invite/uninvite <idnumber>.", arg2);
         return;
     }
 
     if ( id < 0 || id >= g_maxclients.integer )
     {
-        trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Invalid client number %d.\n\"",id));
+        G_printInfoMessage(ent, "Invalid client number %d.", id);
         return;
     }
 
     if ( g_entities[id].client->pers.connected == CON_DISCONNECTED )
     {
-        trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7There is no client with the client number %d.\n\"", id));
+        G_printInfoMessage(ent, "There is no client with the client number %d.", id);
         return;
     }
     if( g_entities[id].client->sess.team != TEAM_SPECTATOR)
     {
-        trap_SendServerCommand( ent-g_entities, "print \"^3[Info] ^7That player is not currently spectating.\n\"");
+        G_printInfoMessage(ent, "That player is not currently spectating.");
         return;
     }
 
@@ -481,14 +481,14 @@ void G_Invite_Spec(gentity_t *ent, char *arg2)
     {
         if(g_entities[id].client->sess.invitedByRed)
         {
-            trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7%s was un-invited to spectate the Red team.\n\"", g_entities[id].client->pers.cleanName));
+            G_printInfoMessage(ent, "%s was un-invited to spectate the Red team.", g_entities[id].client->pers.cleanName);
             G_Broadcast(va("You were \\un-invited \nto spectate the %s ^7team!", server_redteamprefix.string), BROADCAST_CMD, &g_entities[id]);
             g_entities[id].client->sess.invitedByRed = qfalse;
             return;
         }
         else
         {
-            trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7%s was invited to spectate the Red team.\n\"", g_entities[id].client->pers.cleanName));
+            G_printInfoMessage(ent, "%s was invited to spectate the Red team.", g_entities[id].client->pers.cleanName);
             G_Broadcast(va("You were \\invited \nto spectate the %s ^7team!", server_redteamprefix.string), BROADCAST_CMD, &g_entities[id]);
             g_entities[id].client->sess.invitedByRed = qtrue;
             g_entities[id].client->ps.pm_type = PM_SPECTATOR;
@@ -501,14 +501,14 @@ void G_Invite_Spec(gentity_t *ent, char *arg2)
     {
         if(g_entities[id].client->sess.invitedByBlue)
         {
-            trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7%s was un-invited to spectate the Blue team.\n\"", g_entities[id].client->pers.cleanName));
+            G_printInfoMessage(ent, "%s was un-invited to spectate the Blue team.", g_entities[id].client->pers.cleanName);
             G_Broadcast(va("You were \\un-invited \nto spectate the %s ^7team!", server_blueteamprefix.string), BROADCAST_CMD, &g_entities[id]);
             g_entities[id].client->sess.invitedByBlue = qfalse;
             return;
         }
         else
         {
-            trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7%s was invited to spectate your team.\n\"", g_entities[id].client->pers.cleanName ));
+            G_printInfoMessage(ent, "%s was invited to spectate the Blue team.", g_entities[id].client->pers.cleanName);
             G_Broadcast(va("You were \\invited \nto spectate the %s ^7team!", server_blueteamprefix.string), BROADCAST_CMD, &g_entities[id]);
             g_entities[id].client->sess.invitedByBlue = qtrue;
             g_entities[id].client->ps.pm_type = PM_SPECTATOR;

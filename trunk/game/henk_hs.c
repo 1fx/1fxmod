@@ -634,10 +634,8 @@ void EvenTeams_HS (gentity_t *adm, qboolean aet)
 
     // Boe!Man 1/19/11: If teams are locked don't proceed with evening the teams.
     if(level.blueLocked || level.redLocked){
-        if(adm && adm->client){
-            trap_SendServerCommand( adm - g_entities, va("print \"^3[Info] ^7Teams are locked.\n\"") );
-        }else if (aet == qfalse){
-            Com_Printf("Teams are locked.\n");
+        if((adm && adm->client) || aet == qfalse){
+            G_printInfoMessage(adm, "Teams are locked.");
         }
         return;
     }
@@ -647,10 +645,9 @@ void EvenTeams_HS (gentity_t *adm, qboolean aet)
     totalplayers = counts[TEAM_BLUE]+counts[TEAM_RED];
     // Henk 29/01/10 -> New player balance code
     if(totalplayers <= 2){
-        if(adm && adm->client)
-            trap_SendServerCommand( adm - g_entities, va("print \"^3[Info] ^7You need atleast 3 players to use eventeams.\n\"") );
-        else
-            Com_Printf("You need at least 3 players to use eventeams.\n");
+        if((adm && adm->client) || aet == qfalse){
+            G_printInfoMessage(adm, "You need at least 3 players to use eventeams.");
+        }
         return;
     }
 
@@ -686,18 +683,16 @@ void EvenTeams_HS (gentity_t *adm, qboolean aet)
         diff = (counts[TEAM_BLUE] - seekers); // move diff to hiders team
     }
     else {
-        if(adm && adm->client)
-            trap_SendServerCommand( adm - g_entities, va("print \"^3[Info] ^7Teams are as even as possible.\n\"") );
-        else
-            Com_Printf("Teams are as even as possible.\n");
+        if((adm && adm->client) || aet == qfalse){
+            G_printInfoMessage(adm, "Teams are as even as possible.");
+        }
         return;
     }
     // if less than 2 players difference, you cant make it any more even
     if(diff < 0){
-        if(adm && adm->client)
-            trap_SendServerCommand( adm - g_entities, va("print \"^3[Info] ^7Teams are as even as possible.\n\"") );
-        else
-            Com_Printf("Teams are as even as possible.\n");
+        if((adm && adm->client) || aet == qfalse){
+            G_printInfoMessage(adm, "Teams are as even as possible.");
+        }
         return;
     }
 
@@ -709,10 +704,8 @@ void EvenTeams_HS (gentity_t *adm, qboolean aet)
             lastConnected = findLastEnteredPlayer(highTeam, qtrue); // Try to search for it again but also try to even the teams regardless of players with scores.
 
             if(lastConnected == NULL){
-                if(adm && adm->client){
-                    trap_SendServerCommand( adm - g_entities, va("print \"^3[Info] ^7You cannot even the teams this fast.\n\"") );
-                }else if(!aet){
-                    Com_Printf("You cannot even the teams this fast.\n");
+                if((adm && adm->client) || aet == qfalse){
+                    G_printInfoMessage(adm, "You cannot even the teams this fast.");
                 }
                 return;
             }
@@ -779,23 +772,16 @@ void EvenTeams_HZ(gentity_t *adm, qboolean aet){
 
     // Boe!Man 1/19/11: If teams are locked don't proceed with evening the teams.
     if (level.blueLocked || level.redLocked){
-        if (adm && adm->client){
-            trap_SendServerCommand(adm - g_entities, va("print \"^3[Info] ^7Teams are locked.\n\""));
-        }
-        else if (aet == qfalse){
-            Com_Printf("Teams are locked.\n");
+        if((adm && adm->client) || aet == qfalse){
+            G_printInfoMessage(adm, "Teams are locked.");
         }
         return;
     }
 
     if (TeamCount1(TEAM_BLUE) == 1){
-        if (adm && adm->client){
-            trap_SendServerCommand(adm - g_entities, va("print \"^3[Info] ^7Teams are as even as possible.\n\""));
+        if((adm && adm->client) || aet == qfalse){
+            G_printInfoMessage(adm, "Teams are as even as possible.");
         }
-        else{
-            Com_Printf("Teams are as even as possible.\n");
-        }
-
         return;
     }
 

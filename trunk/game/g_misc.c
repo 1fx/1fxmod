@@ -770,7 +770,7 @@ void g_sectionAutoCheck(gentity_t *ent){
                     // Open the section.
                     ent->sectionState = OPENING;
                     G_Broadcast(va("%s ^7will be opened in %0.f seconds!", ent->message, ent->wait), BROADCAST_GAME, NULL);
-                    trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s will be opened in %0.f seconds.\n\"", ent->message2 + 1, ent->wait));
+                    G_printInfoMessageToAll("%s will be opened in %0.f seconds.", ent->message2 + 1, ent->wait);
                 }
                 break;
             case OPENED:
@@ -778,7 +778,7 @@ void g_sectionAutoCheck(gentity_t *ent){
                     // Close the section.
                     ent->sectionState = CLOSING;
                     G_Broadcast(va("%s ^7will be closed in %0.f seconds!", ent->message, ent->wait), BROADCAST_GAME, NULL);
-                    trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s will be closed in %0.f seconds.\n\"", ent->message2 + 1, ent->wait));
+                    G_printInfoMessageToAll("%s will be closed in %0.f seconds.", ent->message2 + 1, ent->wait);
                 }
                 break;
             case CLOSING:
@@ -789,7 +789,7 @@ void g_sectionAutoCheck(gentity_t *ent){
                     level.noLROpened[ent->section] = qfalse;
 
                 G_Broadcast(va("%s ^7closed!", ent->message), BROADCAST_GAME, NULL);
-                trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s is now closed.\n\"", ent->message2 + 1));
+                G_printInfoMessageToAll("%s is now closed.", ent->message2 + 1);
                 break;
             case OPENING:
                 // Open it now, the wait has passed.
@@ -799,7 +799,7 @@ void g_sectionAutoCheck(gentity_t *ent){
                     level.noLROpened[ent->section] = qtrue;
 
                 G_Broadcast(va("%s ^7opened!", ent->message), BROADCAST_GAME, NULL);
-                trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s is now opened.\n\"", ent->message2 + 1));
+                G_printInfoMessageToAll("%s is now opened.", ent->message2 + 1);
                 break;
             default:
                 break;
@@ -1238,7 +1238,7 @@ G_Refresh
 void G_Refresh(gentity_t *ent)
 {
     if (level.time <= level.gametypeStartTime + 5000) {
-        trap_SendServerCommand(ent->s.number, "print\"^3[Info] ^7You shouldn't refresh at the start of a new round.\n\"");
+        G_printInfoMessage(ent, "You shouldn't refresh at the start of a new round.");
         return;
     }
     else if (current_gametype.value == GT_HZ) {
@@ -1772,11 +1772,7 @@ void G_unPause(gentity_t *adm)
 
     if (!level.pause)
     {
-        if (adm && adm->client)
-            trap_SendServerCommand(adm - g_entities, va("print \"^3[Info] ^7The game is not currently paused.\n\""));
-        else
-            Com_Printf("The game is not currently paused.\n");
-
+        G_printInfoMessage(adm, "The game is currently not paused.");
         return;
     }
 

@@ -50,7 +50,8 @@ void G_ref_cmd( gentity_t *ent)
     }
 
     if (!g_compMode.integer) {
-        trap_SendServerCommand( ent-g_entities, "print \"^3[Info] ^7Server must be in Competetion Mode to become a Referee.\n\"");
+        G_printInfoMessage(ent,
+            "Server must be in Competetion Mode to become a Referee.");
         return;
     }
 
@@ -59,31 +60,38 @@ void G_ref_cmd( gentity_t *ent)
     {
         if(ent->client->sess.referee)
         {
-            trap_SendServerCommand( ent-g_entities, "print \"^3[Info] ^7You are already a Referee.\n\"");
+            G_printInfoMessage(ent, "You are already a Referee.");
             return;
         }
 
         if(ent->client->sess.admin)
         {
-            trap_SendServerCommand( ent-g_entities, "print \"^3[Info] ^7You are already an Admin.\n\"");
+            G_printInfoMessage(ent, "You are already an Admin.");
             return;
         }
 
-        if(!Q_stricmp ( g_refpassword.string, "none" )||!Q_stricmp ( g_refpassword.string, "\0" ))
+        if(!Q_stricmp ( g_refpassword.string, "none" )
+            || !Q_stricmp ( g_refpassword.string, "\0" ))
         {
-            trap_SendServerCommand( ent-g_entities, "print \"^3[Info] ^7This server does not have a Referee password.\n\"");
+            G_printInfoMessage(ent,
+                "This server does not have a Referee password.");
+
             return;
         }
         if(!Q_stricmp ( g_refpassword.string, arg2 ))
         {
             ent->client->sess.referee = 1;
-            G_Broadcast(va("%s\nis now a \\Referee", ent->client->pers.netname), BROADCAST_CMD, NULL);
-            trap_SendServerCommand(-1, va("print\"^3[Referee Action] ^7%s is now a Referee.\n\"", ent->client->pers.cleanName));
+            G_Broadcast(
+                va("%s\nis now a \\Referee", ent->client->pers.netname),
+                BROADCAST_CMD, NULL);
+            trap_SendServerCommand(-1,
+                va("print\"^3[Referee Action] ^7%s is now a Referee.\n\"",
+                ent->client->pers.cleanName));
             return;
         }
         else
         {
-            trap_SendServerCommand( ent-g_entities, "print \"[^3Info] ^7Incorrect Referee password entered.\n\"");
+            G_printInfoMessage(ent, "Incorrect Referee password entered.");
             return;
         }
     }

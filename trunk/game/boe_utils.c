@@ -534,9 +534,9 @@ void Boe_Tokens(gentity_t *ent, char *chatText, int mode, qboolean CheckSounds)
                             ent->client->sess.voiceFloodCount = 0;
                             ent->client->sess.voiceFloodTimer = 0;
                             ent->client->sess.voiceFloodPenalty = level.time + g_voiceFloodPenalty.integer * 1000;
-                            trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Voice chat flooded, you will be able use voice chats again in %d seconds.\n\"", g_voiceFloodPenalty.integer ) );
+                            G_printInfoMessage(ent, "Voice chat flooded, you will be able use voice chats again in %d seconds.", g_voiceFloodPenalty.integer);
                         }else if ( ent->client->sess.voiceFloodPenalty > level.time ) {
-                            //trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Voice chat flooded, you will be able use voice chats again in %d seconds.\n\"", g_voiceFloodPenalty.integer ) );
+                            // Voice chat still flooded.
                         }else if(!playedSound && strlen(g_motd.string) > 0){
                             // Boe!Man 7/3/13: Check if this doesn't happen twice, in order to avoid multiple sounds in one sentence.
                             ent->client->sess.voiceFloodCount++; // add one to floodcount as they could massively flood this
@@ -665,7 +665,7 @@ void Boe_Tokens(gentity_t *ent, char *chatText, int mode, qboolean CheckSounds)
                     ent->client->sess.voiceFloodTimer = 0;
                     ent->client->sess.voiceFloodPenalty = level.time + g_voiceFloodPenalty.integer * 1000;
                     // Boe!Man 12/20/09 - Update 12/22/09 [Yellow color instead of Red].
-                    trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Voice chat flooded, you will be able use voice chats again in %d seconds.\n\"", g_voiceFloodPenalty.integer ) );
+                    G_printInfoMessage(ent, "Voice chat flooded, you will be able use voice chats again in %d seconds.", g_voiceFloodPenalty.integer);
                     // Boe!Man 11/5/12: Fix for no text when on flood penalty.
                     chatText++;
                     n = atoi(chatText) - 1;
@@ -690,7 +690,7 @@ void Boe_Tokens(gentity_t *ent, char *chatText, int mode, qboolean CheckSounds)
                         while (*chatText >= '0' && *chatText <= '9'){
                             chatText++;
                         }
-                        trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Sounds are currently disabled in Competition Mode.\n\"" ) );
+                        G_printInfoMessage(ent, "Sounds are currently disabled in Competition Mode.");
                         playedSound = qtrue;
                         continue;
                     }
@@ -1439,7 +1439,7 @@ void Boe_Stats ( gentity_t *ent )
             }
             string[strlen(string)-2] = '\0';
             if(numberofclients > 1){
-                trap_SendServerCommand(ent->s.number, va("print\"^3[Info] ^7Multiple names found with ^3%s^7: %s\n\"", arg1, string));
+                G_printInfoMessage(ent, "Multiple names found with ^3%s^7: %s", arg1, string);
                 return;
             }else if(numberofclients == 0){
                 idnum = -1;
@@ -1451,13 +1451,13 @@ void Boe_Stats ( gentity_t *ent )
         // Boe!Man 2/21/10: The client number needs to be valid.
         if ( idnum < 0 || idnum >= g_maxclients.integer )
         {
-            trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You haven't entered a valid player ID/player name.\n\""));
+            G_printInfoMessage(ent, "You haven't entered a valid player ID/player name.");
             return;
         }
         // Boe!Man 2/21/10: The client needs to be connected.
         if ( g_entities[idnum].client->pers.connected == CON_DISCONNECTED )
         {
-            trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7The player is not connected.\n\""));
+            G_printInfoMessage(ent, "The player is not connected.");
             return;
         }
         // Boe!Man 2/21/10: We can continue..
@@ -1840,15 +1840,15 @@ void Boe_calcMatchScores (void)
     if(cm_enabled.integer == 2){ // Boe!Man 3/19/11: Can only be timelimit as the scorelimit won't use this function after one round. Calculate all.
         if (level.teamScores[TEAM_RED] > level.teamScores[TEAM_BLUE]){ // Red team won.
             G_Broadcast(va("%s ^7team wins the match with %i - %i!", server_redteamprefix.string, level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE]), BROADCAST_AWARDS, NULL);
-            trap_SendServerCommand(-1, va("print\"^3[Info] ^7Red team wins the match with %i - %i.\n\"", level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE]));
+            G_printInfoMessageToAll("Red team wins the match with %d - %d.", level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE]);
             LogExit("Red team wins the match.");
         }else if(level.teamScores[TEAM_BLUE] > level.teamScores[TEAM_RED]){
             G_Broadcast(va("%s ^7team wins the match with %i - %i!", server_blueteamprefix.string, level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]), BROADCAST_AWARDS, NULL);
-            trap_SendServerCommand(-1, va("print\"^3[Info] ^7Blue team wins the match with %i - %i.\n\"", level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]));
+            G_printInfoMessageToAll("Blue team wins the match with %d - %d.", level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]);
             LogExit("Blue team wins the match.");
         }else if(level.teamScores[TEAM_BLUE] == level.teamScores[TEAM_RED]){
             G_Broadcast(va("Match draw with %i - %i!", level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]), BROADCAST_AWARDS, NULL);
-            trap_SendServerCommand(-1, va("print\"^3[Info] ^7Match draw with %i - %i.\n\"", level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]));
+            G_printInfoMessageToAll("Match draw with %d - %d.", level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]);
             LogExit("Match draw.");
         }
         return;
@@ -1857,15 +1857,15 @@ void Boe_calcMatchScores (void)
     // Boe!Man 3/19/11: Else it's the scorelimit or timelimit that kicks in after two rounds.
     if (cm_sr.integer + level.teamScores[TEAM_RED] > cm_sb.integer + level.teamScores[TEAM_BLUE]){
         G_Broadcast(va("%s ^7team wins the match with %i - %i!", server_redteamprefix.string, level.teamScores[TEAM_RED] + cm_sr.integer, level.teamScores[TEAM_BLUE] + cm_sb.integer), BROADCAST_AWARDS, NULL);
-        trap_SendServerCommand(-1, va("print\"^3[Info] ^7Red team wins the match with %i - %i.\n\"", level.teamScores[TEAM_RED] + cm_sr.integer, level.teamScores[TEAM_BLUE] + cm_sb.integer));
+        G_printInfoMessageToAll("Red team wins the match with %d - %d.", level.teamScores[TEAM_RED] + cm_sr.integer, level.teamScores[TEAM_BLUE] + cm_sb.integer);
         LogExit("Red team wins the match.");
     }else if(cm_sb.integer + level.teamScores[TEAM_BLUE] > cm_sr.integer + level.teamScores[TEAM_RED]){
         G_Broadcast(va("%s ^7team wins the match with %i - %i!", server_blueteamprefix.string, level.teamScores[TEAM_BLUE] + cm_sb.integer, level.teamScores[TEAM_RED] + cm_sr.integer), BROADCAST_AWARDS, NULL);
-        trap_SendServerCommand(-1, va("print\"^3[Info] ^7Blue team wins the match with %i - %i.\n\"", level.teamScores[TEAM_BLUE] + cm_sb.integer, level.teamScores[TEAM_RED] + cm_sr.integer));
+        G_printInfoMessageToAll("Blue team wins the match with %d - %d.", level.teamScores[TEAM_BLUE] + cm_sb.integer, level.teamScores[TEAM_RED] + cm_sr.integer);
         LogExit("Blue team wins the match.");
     }else if (cm_sb.integer + level.teamScores[TEAM_BLUE] == cm_sr.integer + level.teamScores[TEAM_RED]){
         G_Broadcast(va("Match draw with %i - %i!", level.teamScores[TEAM_BLUE] + cm_sb.integer, level.teamScores[TEAM_RED] + cm_sr.integer), BROADCAST_AWARDS, NULL);
-        trap_SendServerCommand(-1, va("print\"^3[Info] ^7Match draw with %i - %i.\n\"", level.teamScores[TEAM_BLUE] + cm_sb.integer, level.teamScores[TEAM_RED] + cm_sr.integer));
+        G_printInfoMessageToAll("Match draw with %d - %d.", level.teamScores[TEAM_BLUE] + cm_sb.integer, level.teamScores[TEAM_RED] + cm_sr.integer);
         LogExit("Match draw.");
     }
 }
@@ -1883,7 +1883,7 @@ void Boe_compTimeLimitCheck (void)
         if(cm_dr.integer == 1){ // Boe!Man 3/18/11: If dual rounds are enabled, make use of them and display the temporary stuff.
             if ( level.teamScores[TEAM_RED] > level.teamScores[TEAM_BLUE] ){
                 G_Broadcast(va("%s ^7team wins the 1st round with %i - %i!", server_redteamprefix.string, level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE]), BROADCAST_AWARDS, NULL);
-                trap_SendServerCommand(-1, va("print\"^3[Info] ^7Red team wins the 1st round with %i - %i.\n\"", level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE] ));
+                G_printInfoMessageToAll("Red team wins the 1st round with %d - %d.", level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE]);
                 // Boe!Man 11/18/10: Set the scores right (for logging purposes).
                 if (cm_aswap.integer == 0){
                     trap_Cvar_Set("cm_sr", va("%i", level.teamScores[TEAM_RED]));
@@ -1896,7 +1896,7 @@ void Boe_compTimeLimitCheck (void)
                 LogExit("Red team wins the 1st round.");
             }else if ( level.teamScores[TEAM_BLUE] > level.teamScores[TEAM_RED] ){
                 G_Broadcast(va("%s ^7team wins the 1st round with %i - %i!", server_blueteamprefix.string, level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]), BROADCAST_AWARDS, NULL);
-                trap_SendServerCommand(-1, va("print\"^3[Info] ^7Blue team wins the 1st round with %i - %i.\n\"", level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED] ));
+                G_printInfoMessageToAll("Blue team wins the 1st round with %d - %d.", level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]);
                 // Boe!Man 11/18/10: Set the scores right (for logging purposes).
                 if (cm_aswap.integer == 0){
                     trap_Cvar_Set("cm_sr", va("%i", level.teamScores[TEAM_RED]));
@@ -1909,7 +1909,7 @@ void Boe_compTimeLimitCheck (void)
                 LogExit("Blue team wins the 1st round.");
             }else{ // Boe!Man 3/19/11: Tie is perfectly capable when a timelimit is set.
                 G_Broadcast(va("\\Round draw with %i - %i!", level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]), BROADCAST_AWARDS, NULL);
-                trap_SendServerCommand(-1, va("print\"^3[Info] ^7Round draw with %i - %i.\n\"", level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE] ));
+                G_printInfoMessageToAll("Round draw with %d - %d.", level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE]);
                 // Boe!Man 11/18/10: Set the scores right (for logging purposes).
                 trap_Cvar_Set("cm_sr", va("%i", level.teamScores[TEAM_RED]));
                 trap_Cvar_Set("cm_sb", va("%i", level.teamScores[TEAM_BLUE]));
@@ -1922,19 +1922,19 @@ void Boe_compTimeLimitCheck (void)
         }
     }else if(g_compMode.integer > 0 && cm_enabled.integer == 4){ // Scrim ended, can ONLY BE DUAL ROUNDS.
         if (cm_sr.integer > cm_sb.integer){ // Round 1 scores.
-            trap_SendServerCommand(-1, va("print\"^3[Info] ^7Red team won the 1st round with %i - %i.\n\"", cm_sr.integer, cm_sb.integer));
+            G_printInfoMessageToAll("Red team won the 1st round with %d - %d.", cm_sr.integer, cm_sb.integer);
         }else if(cm_sb.integer > cm_sr.integer){
-            trap_SendServerCommand(-1, va("print\"^3[Info] ^7Blue team won the 1st round with %i - %i.\n\"", cm_sb.integer, cm_sr.integer));
+            G_printInfoMessageToAll("Blue team won the 1st round with %d - %d.", cm_sb.integer, cm_sr.integer);
         }else{
-            trap_SendServerCommand(-1, va("print\"^3[Info] ^7Round draw 1st round with %i - %i.\n\"", cm_sb.integer, cm_sr.integer));
+            G_printInfoMessageToAll("Round draw 1st round with %d - %d.", cm_sb.integer, cm_sr.integer);
         }
 
         if(level.teamScores[TEAM_RED] > level.teamScores[TEAM_BLUE]){ // Round 2 scores.
-            trap_SendServerCommand(-1, va("print\"^3[Info] ^7Red team won the 2nd round with %i - %i.\n\"", level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE]));
+            G_printInfoMessageToAll("Red team won the 2nd round with %d - %d.", level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE]);
         }else if(level.teamScores[TEAM_BLUE] > level.teamScores[TEAM_RED]){
-            trap_SendServerCommand(-1, va("print\"^3[Info] ^7Blue team won the 2nd round with %i - %i.\n\"", level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]));
+            G_printInfoMessageToAll("Blue team won the 2nd round with %d - %d.", level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]);
         }else{
-            trap_SendServerCommand(-1, va("print\"^3[Info] ^7Round draw 2nd round with %i - %i.\n\"", level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]));
+            G_printInfoMessageToAll("Round draw 2nd round with %d - %d.", level.teamScores[TEAM_BLUE], level.teamScores[TEAM_RED]);
         }
         Boe_calcMatchScores(); // Boe!Man 3/19/11: Calculate the match scores, could be a match draw or anything really.
         trap_Cvar_Set("cm_enabled", "5"); // Boe!Man 11/18/10: 5 - Scrim Ended.
@@ -2100,7 +2100,7 @@ void Boe_checkRoof ( gentity_t *ent )
             if(ent->r.currentOrigin[2] >= level.noLR[1][2]){ // Well he is now. Check for the timeout.
                 if(!level.noLR[1][1]){ // 0 or less.. Meaning, instant pop. No need for further checks.
                     G_Damage(ent, NULL, NULL, NULL, NULL, 10000, 0, MOD_TRIGGER_HURT, 0);
-                    trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s was killed for not leaving the roof.\n\"", ent->client->pers.cleanName));
+                    G_printInfoMessageToAll("%s was killed for being on the roof.", ent->client->pers.cleanName);
                 }else{
                     ent->client->sess.isOnRoof = qtrue; // The server owner specified a timer. So, first, the player initialised this process by being on roof.
                     G_Broadcast(va("\\Leave the roof within ^1%.0f ^7seconds!", level.noLR[1][1]), BROADCAST_GAME, ent);
@@ -2115,7 +2115,7 @@ void Boe_checkRoof ( gentity_t *ent )
             }else{ // He's still on the roof.
                 if(level.noLR[1][1] == ent->client->sess.isOnRoofTime){ // Well, he waited it out. Pop him.
                     G_Damage(ent, NULL, NULL, NULL, NULL, 10000, 0, MOD_TRIGGER_HURT, 0);
-                    trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s was killed for not leaving the roof.\n\"", ent->client->pers.cleanName));
+                    G_printInfoMessageToAll("%s was killed for not leaving the roof.", ent->client->pers.cleanName);
                     ent->client->sess.isOnRoof = qfalse;
                     ent->client->sess.isOnRoofTime = 0;
                 }else{ // Give him another warning.
@@ -2204,7 +2204,7 @@ char *Boe_parseCustomCommandArgs(gentity_t *ent, char *in, qboolean shortCmd)
                     Com_Printf("Argument %d: %s\n", atoi(arg2), arg);
                     #endif
                     if (strlen(arg) == 0) {
-                        trap_SendServerCommand(ent - g_entities, "print \"^3[Info] ^7Error: You need to append additional arguments to this command!\n\"");
+                        G_printInfoMessage(ent, "Error: You need to append additional arguments to this command!");
                         return NULL;
                     }
                     Q_strcat(out, sizeof(out), arg); // Append the argument.

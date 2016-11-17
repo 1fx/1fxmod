@@ -1031,7 +1031,7 @@ void G_UpdateOutfitting ( int clientNum )
 
         // Henk 06/10/10 -> Fix for ravensoft's crappy weapon check
         if(!BG_IsWeaponAvailableForOutfitting ( (weapon_t)item->giTag, 2 )){
-            //trap_SendServerCommand(ent->s.number, va("print\"^3[Info] ^7Your outfitting contains a disabled weapon.\n\""));
+            // The client his outfitting contains a disabled weapon.
             continue;
         }
 
@@ -2542,7 +2542,7 @@ void ClientSpawn(gentity_t *ent)
             client->sess.extraIdChanges = 0;
             ClientUserinfoChanged ( client->ps.clientNum );
         }else if(!strstr(level.gametypeTeam[client->sess.team], client->pers.identity->mTeam)){ // this skin does not belong to this team so change their Identity
-            trap_SendServerCommand(ent->s.number, va("print \"^3[Info] ^7Your skin has been changed because it did not match your team.\n\"") );
+            G_printInfoMessage(ent, "Your skin has been changed because it did not match your team.");
             client->sess.extraIdChanges = 0; // Boe!Man 8/29/11: Also reset the extraIdChanges because this will bug it.
             ClientUserinfoChanged ( client->ps.clientNum );
         }

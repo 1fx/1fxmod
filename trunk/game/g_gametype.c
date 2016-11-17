@@ -1114,7 +1114,8 @@ void CheckGametype ( void )
                 gentity_t* ent = &g_entities[level.sortedClients[i]];
                 if ( ent->client->sess.team == TEAM_RED && !G_IsClientDead ( ent->client )){
                     G_Broadcast("You are the \\last player alive!", BROADCAST_GAME, ent);
-                    trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s is the last player alive in the red team.\n\"", ent->client->pers.cleanName));
+                    G_printInfoMessageToAll("%s is the last player alive in the red team.", ent->client->pers.cleanName);
+
                     Boe_ClientSound(ent, G_SoundIndex("sound/misc/events/tut_door01.mp3"));
                     level.redMsgSent = qtrue;
                     if(current_gametype.value == GT_HZ){
@@ -1130,7 +1131,7 @@ void CheckGametype ( void )
                 gentity_t* ent = &g_entities[level.sortedClients[i]];
                 if ( ent->client->sess.team == TEAM_BLUE && !G_IsClientDead ( ent->client )){
                     G_Broadcast("You are the \\last player alive!", BROADCAST_GAME, ent);
-                    trap_SendServerCommand(-1, va("print\"^3[Info] ^7%s is the last alive player in the blue team.\n\"", ent->client->pers.cleanName));
+                    G_printInfoMessageToAll("%s is the last player alive in the blue team.", ent->client->pers.cleanName);
                     Boe_ClientSound(ent, G_SoundIndex("sound/misc/events/tut_door01.mp3"));
                     level.blueMsgSent = qtrue;
                 }

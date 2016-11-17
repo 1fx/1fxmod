@@ -538,7 +538,7 @@ void player_die(
 
     // Henk 01/04/10 -> Hp/armor message if you are killed
     if(attacker->client && self->client && attacker->s.number != self->s.number && current_gametype.value != GT_HS){ // if the attacker and target are both clients
-        trap_SendServerCommand( self->s.number, va("print \"^3[Info] ^7%s had ^3%i ^7health and ^3%i ^7armor left.\n\"", attacker->client->pers.cleanName, attacker->health, attacker->client->ps.stats[STAT_ARMOR]));
+        G_printInfoMessage(self, "%s had ^3%i ^7health and ^3%i ^7armor left.", attacker->client->pers.cleanName, attacker->health, attacker->client->ps.stats[STAT_ARMOR]);
     }
     // End
 
@@ -2003,7 +2003,7 @@ qboolean G_RadiusDamage (
                             attacker->client->ps.stats[STAT_WEAPONS] |= (1 << WP_F1_GRENADE);
                         }
 
-                        trap_SendServerCommand(attacker-g_entities, "print \"^3[Info] ^7Surface is not empty.\n\"");
+                        G_printInfoMessage(attacker, "Surface is not empty.");
                         attacker->client->sess.lastpickup = level.time + 50;
                     }
                 }else if (level.time > attacker->client->sess.lastpickup){
@@ -2013,7 +2013,7 @@ qboolean G_RadiusDamage (
                         attacker->client->ps.stats[STAT_WEAPONS] |= (1 << WP_F1_GRENADE);
                     }
 
-                    trap_SendServerCommand(attacker - g_entities, "print \"^3[Info] ^7Surface is too high.\n\"");
+                    G_printInfoMessage(attacker, "Surface is too high.");
                     attacker->client->sess.lastpickup = level.time + 50;
                 }
             }
@@ -2040,7 +2040,7 @@ qboolean G_RadiusDamage (
                             attacker->client->ps.stats[STAT_WEAPONS] |= (1 << WP_F1_GRENADE);
                         }
 
-                        trap_SendServerCommand(attacker - g_entities, "print \"^3[Info] ^7Surface is not empty.\n\"");
+                        G_printInfoMessage(attacker, "Surface is not empty.");
                         attacker->client->sess.lastpickup = level.time + 50;
                     }
                 }else if (level.time > attacker->client->sess.lastpickup){
@@ -2050,7 +2050,7 @@ qboolean G_RadiusDamage (
                         attacker->client->ps.stats[STAT_WEAPONS] |= (1 << WP_F1_GRENADE);
                     }
 
-                    trap_SendServerCommand(attacker - g_entities, "print \"^3[Info] ^7Surface is too high.\n\"");
+                    G_printInfoMessage(attacker, "Surface is too high.");
                     attacker->client->sess.lastpickup = level.time + 50;
                 }
             }
@@ -2177,19 +2177,19 @@ qboolean G_RadiusDamage (
                     if(attacker->client->sess.cageAttempts < g_cageAttempts.integer){
                         attacker->client->ps.ammo[ammoindex]+=1;
                         attacker->client->sess.cageAttempts += 1;
-                        trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7M4 cage failed %i of %i: Seeker at boundary or hider caught in cage.\n\"", attacker->client->sess.cageAttempts, g_cageAttempts.integer));
+                        G_printInfoMessage(attacker, "M4 cage failed %d of %d: Seeker at boundary or hider caught in cage.", attacker->client->sess.cageAttempts, g_cageAttempts.integer);
                     }else{
-                        trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7M4 cage failed too many times: not adding ammo.\n\""));
+                        G_printInfoMessage(attacker, "M4 cage failed too many times: not adding ammo.");
                     }
                 }else{
                     attacker->client->ps.ammo[ammoindex]+=1;
-                    trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7Seeker at boundary or hider caught in cage.\n\""));
+                    G_printInfoMessage(attacker, "Seeker at boundary or hider caught in cage.");
                 }
             }else{
                 if(lastCaught != -1 && countCaught == 1){
-                    trap_SendServerCommand(-1, va("print \"^3[H&S] ^7%s was trapped in a cage by %s\n\"", g_entities[lastCaught].client->pers.cleanName, attacker->client->pers.cleanName));
+                    trap_SendServerCommand(-1, va("print \"^3[H&S] ^7%s was trapped in a cage by %s.\n\"", g_entities[lastCaught].client->pers.cleanName, attacker->client->pers.cleanName));
                 }else if(countCaught > 1){
-                    trap_SendServerCommand(-1, va("print \"^3[H&S] ^7%i seekers were trapped in a cage by %s\n\"", countCaught, attacker->client->pers.cleanName));
+                    trap_SendServerCommand(-1, va("print \"^3[H&S] ^7%i seekers were trapped in a cage by %s.\n\"", countCaught, attacker->client->pers.cleanName));
                 }
                 attacker->client->sess.seekersCaged += 1;
                 // Check if ammo is empty
@@ -2219,13 +2219,13 @@ qboolean G_RadiusDamage (
                             attacker->client->ps.stats[STAT_WEAPONS] |= (1 << WP_MDN11_GRENADE);
                         }
 
-                        trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7MDN box failed %i of %i: You cannot throw a box at a person.\n\"", attacker->client->sess.mdnAttempts, g_boxAttempts.integer));
+                        G_printInfoMessage(attacker, "MDN box failed %d of %d: You cannot throw a box at a person.", attacker->client->sess.mdnAttempts, g_boxAttempts.integer);
                     }else{
-                        trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7MDN box failed too many times: not adding ammo.\n\""));
+                        G_printInfoMessage(attacker, "MDN box failed too many times: not adding ammo.");
                     }
                 }else{
                     attacker->client->ps.ammo[ammoindex]+=1;
-                    trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7You cannot throw a box at a person.\n\""));
+                    G_printInfoMessage(attacker, "You cannot throw a box at a person.");
                 }
             }else{
                 SpawnBox(origin);
@@ -2236,21 +2236,21 @@ qboolean G_RadiusDamage (
         }else if ((mod == MOD_M67_GRENADE || mod == altAttack(MOD_M67_GRENADE)) && level.time > attacker->client->sess.lastpickup){
             if (!(attacker->client->ps.pm_flags & PMF_JUMPING) && !NadeOutOfBoundaries){
                 trap_SendServerCommand(-1, va("print \"^3[H&S] ^7%s transformed into something...\n\"", attacker->client->pers.cleanName));
-                trap_SendServerCommand(attacker-g_entities, va("print \"^3[Info] ^7Hit your Reload button to get out (usually 'R').\n\""));
+                G_printInfoMessage(attacker, "Hit your Reload button to get out (usually 'R').");
                 G_TransformPlayerToObject(attacker);
             }else{
                 // Give them their nade back if they don't have it.
                 ammoindex = weaponData[WP_M67_GRENADE].attack[ATTACK_ALTERNATE].ammoIndex;
 
                 if(attacker->client->ps.pm_flags & PMF_JUMPING){
-                    trap_SendServerCommand(attacker - g_entities, va("print \"^3[Info] ^7You're not allowed to jump while using this grenade.\n\""));
+                    G_printInfoMessage(attacker, "You're not allowed to jump while using this grenade.");
 
                     if (!(attacker->client->ps.stats[STAT_WEAPONS] & (1 << WP_M67_GRENADE))){
                         attacker->client->ps.stats[STAT_WEAPONS] |= (1 << WP_M67_GRENADE);
                     }
                     attacker->client->ps.ammo[ammoindex] += 1;
                 }else{
-                    trap_SendServerCommand(attacker - g_entities, va("print \"^3[Info] ^7Another object caught in radius.\n\""));
+                    G_printInfoMessage(attacker, "Another object caught in radius.");
 
                     if (!(attacker->client->ps.stats[STAT_WEAPONS] & (1 << WP_M67_GRENADE))){
                         attacker->client->ps.stats[STAT_WEAPONS] |= (1 << WP_M67_GRENADE);

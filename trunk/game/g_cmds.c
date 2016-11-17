@@ -132,11 +132,7 @@ void EvenTeams (gentity_t *adm, qboolean aet)
 
     if(current_gametype.value == GT_HS){
         if(level.cagefight){
-            if(adm && adm->client){
-                trap_SendServerCommand( adm - g_entities, va("print \"^3[Info] ^7You cannot even the teams during cagefight.\n\"") );
-            }else{ // This can only happen by non-AET (since we're playing in the cage).
-                Com_Printf("You cannot even the teams during cagefight.\n");
-            }
+            G_printInfoMessage(adm, "You cannot even the teams during cagefight.");
         }else{
             EvenTeams_HS(adm, aet);
         }
@@ -150,18 +146,16 @@ void EvenTeams (gentity_t *adm, qboolean aet)
         return;
 
     if(!level.gametypeData->teams){
-        if(adm && adm->client)
-            trap_SendServerCommand( adm - g_entities, va("print \"^3[Info] ^7Not playing a team game.\n\"") );
-        else if (aet == qfalse)
-            Com_Printf("Not playing a team game.\n");
+        if((adm && adm->client) || aet == qfalse){
+            G_printInfoMessage(adm, "Not playing a team game.");
+        }
         return;
     }
 
     if(level.blueLocked || level.redLocked){
-        if(adm && adm->client)
-            trap_SendServerCommand( adm - g_entities, va("print \"^3[Info] ^7Teams are locked.\n\"") );
-        else if (aet == qfalse)
-            Com_Printf("Teams are locked.\n");
+        if((adm && adm->client) || aet == qfalse){
+            G_printInfoMessage(adm, "Teams are locked.");
+        }
         return;
 
     }
@@ -178,18 +172,17 @@ void EvenTeams (gentity_t *adm, qboolean aet)
         diff = (counts[TEAM_RED] - counts[TEAM_BLUE]);
     }
     else {
-        if(adm && adm->client)
-            trap_SendServerCommand( adm - g_entities, va("print \"^3[Info] ^7Teams are as even as possible.\n\"") );
-        else if (aet == qfalse)
-            Com_Printf("Teams are as even as possible.\n");
+        if((adm && adm->client) || aet == qfalse){
+            G_printInfoMessage(adm, "Teams are as even as possible.");
+        }
         return;
     }
 
     if(diff < 2){
-        if(adm && adm->client)
-            trap_SendServerCommand( adm - g_entities, va("print \"^3[Info] ^7Teams are as even as possible.\n\"") );
-        else if (aet == qfalse)
-            Com_Printf("Teams are as even as possible.\n");
+        if((adm && adm->client) || aet == qfalse){
+            G_printInfoMessage(adm, "Teams are as even as possible.");
+        }
+
         return;
     }
     diff /= 2;
@@ -218,8 +211,10 @@ void EvenTeams (gentity_t *adm, qboolean aet)
         }
 
         if(!canBeMoved || !highTeam){
-            if(adm != NULL) trap_SendServerCommand( adm->s.number, va("print \"^3[Info] ^7Teams cannot be evened [all item holders].\n\"") );
-            else if (aet == qfalse) Com_Printf("Teams cannot be evened [all item holders]\n");
+            if((adm && adm->client) || aet == qfalse){
+                G_printInfoMessage(adm, "Teams cannot be evened [all item holders].");
+            }
+
             return;
         }
 
@@ -279,23 +274,13 @@ void SwapTeams (gentity_t *adm, qboolean aswap)
 
     if(!aswap){
         if (!level.gametypeData->teams) {
-            if (adm && adm->client) {
-                trap_SendServerCommand(adm - g_entities, "print \"^3[Info] ^7Currently not playing a team game.\n\"");
-            }else{
-                Com_Printf("Currently not playing a team game.\n");
-            }
-
+            G_printInfoMessage(adm, "Currently not playing a team game.");
             return;
         }
 
         // Boe!Man 12/16/15: Don't allow swapteams if the weapons are already given out.
         if(current_gametype.value == GT_HS && level.messagedisplay1){
-            if (adm && adm->client) {
-                trap_SendServerCommand(adm - g_entities, "print \"^3[Info] ^7Swapteams is only possible before the weapons are given out.\n\"");
-            }else{
-                Com_Printf("Swapteams is only possible before the weapons are given out.\n");
-            }
-
+            G_printInfoMessage(adm, "Swapteams is only possible before the weapons are given out.");
             return;
         }
 
@@ -805,7 +790,7 @@ void Cmd_Drop_f ( gentity_t* ent )
         }
         if(!ent->client->ps.stats[STAT_WEAPONS] & ( 1 << atoi(ConcatArgs( 1 )) ))
         {
-            //trap_SendServerCommand(ent->s.number, va("print\"^3[Info] ^7You don't have any item to drop\n\""));
+            // The client doesn't have any item to drop.
             ent->client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_KNIFE );
             ent->client->ps.ammo[weaponData[WP_KNIFE].attack[ATTACK_NORMAL].ammoIndex]=0;
             ent->client->ps.clip[ATTACK_NORMAL][WP_KNIFE]=weaponData[WP_KNIFE].attack[ATTACK_NORMAL].clipSize;
@@ -823,7 +808,7 @@ void Cmd_Drop_f ( gentity_t* ent )
         dropped = G_DropWeapon ( ent, (weapon_t)atoi(ConcatArgs( 1 )), 1000 );
         if ( !dropped )
         {
-            //trap_SendServerCommand(ent->s.number, va("print\"^3[Info] ^7You don't have any item to drop\n\""));
+            // The client doesn't have any item to drop.
             return;
         }
     }
@@ -842,7 +827,7 @@ void Cmd_DropItem_f ( gentity_t* ent )
 
     // Nothing to drop
     if ( !ent->client->ps.stats[STAT_GAMETYPE_ITEMS] ){
-        trap_SendServerCommand(ent->s.number, va("print\"^3[Info] ^7You don't have any gametype item to drop\n\""));
+        G_printInfoMessage(ent, "You don't have any gametype item to drop.");
         return;
     }
 
@@ -1153,19 +1138,19 @@ void BroadcastTeamChange( gclient_t *client, int oldTeam )
         {
             case TEAM_RED:
                 strcpy(message, va("%s" S_COLOR_WHITE "\njoined the %s\n\"", client->pers.netname, server_hiderteamprefix.string));
-                trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s joined the hiders.\n\"", client->pers.cleanName));
+                G_printInfoMessageToAll("%s joined the hiders.", client->pers.cleanName);
                 break;
 
             case TEAM_BLUE:
                 strcpy(message, va("%s" S_COLOR_WHITE "\njoined the %s\n\"", client->pers.netname, server_seekerteamprefix.string));
-                trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s joined the seekers.\n\"", client->pers.cleanName));
+                G_printInfoMessageToAll("%s joined the seekers.", client->pers.cleanName);
                 break;
 
             case TEAM_SPECTATOR:
                 if ( oldTeam != TEAM_SPECTATOR )
                 {
                     strcpy(message, va("%s" S_COLOR_WHITE "\njoined the %s\n\"", client->pers.netname, server_specteamprefix.string));
-                    trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s joined the spectators.\n\"", client->pers.cleanName));
+                    G_printInfoMessageToAll("%s joined the spectators.", client->pers.cleanName);
                 }
                 else
                 {
@@ -1178,19 +1163,19 @@ void BroadcastTeamChange( gclient_t *client, int oldTeam )
         {
             case TEAM_RED:
                 strcpy(message, va("%s" S_COLOR_WHITE "\njoined the %s\n\"", client->pers.netname, server_humanteamprefix.string));
-                trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s joined the humans.\n\"", client->pers.cleanName));
+                G_printInfoMessageToAll("%s joined the humans.", client->pers.cleanName);
                 break;
 
             case TEAM_BLUE:
                 strcpy(message, va("%s" S_COLOR_WHITE "\njoined the %s\n\"", client->pers.netname, server_zombieteamprefix.string));
-                trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s joined the zombies.\n\"", client->pers.cleanName));
+                G_printInfoMessageToAll("%s joined the zombies.", client->pers.cleanName);
                 break;
 
             case TEAM_SPECTATOR:
                 if ( oldTeam != TEAM_SPECTATOR )
                 {
                     strcpy(message, va("%s" S_COLOR_WHITE "\njoined the %s\n\"", client->pers.netname, server_specteamprefix.string));
-                    trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s joined the spectators.\n\"", client->pers.cleanName));
+                    G_printInfoMessageToAll("%s joined the spectators.", client->pers.cleanName);
                 }
                 else
                 {
@@ -1203,19 +1188,19 @@ void BroadcastTeamChange( gclient_t *client, int oldTeam )
         {
             case TEAM_RED:
                 strcpy(message, va("%s\n^7joined the %s ^7team", client->pers.netname, server_redteamprefix.string));
-                trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s joined the red team.\n\"", client->pers.cleanName));
+                G_printInfoMessageToAll("%s joined the red team.", client->pers.cleanName);
                 break;
 
             case TEAM_BLUE:
                 strcpy(message, va("%s" S_COLOR_WHITE "\njoined the %s ^7team\n\"", client->pers.netname, server_blueteamprefix.string));
-                trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s joined the blue team.\n\"", client->pers.cleanName));
+                G_printInfoMessageToAll("%s joined the blue team.", client->pers.cleanName);
                 break;
 
             case TEAM_SPECTATOR:
                 if ( oldTeam != TEAM_SPECTATOR )
                 {
                     strcpy(message, va("%s" S_COLOR_WHITE "\njoined the %s\n\"", client->pers.netname, server_specteamprefix.string));
-                    trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s joined the spectators.\n\"", client->pers.cleanName));
+                    G_printInfoMessageToAll("%s joined the spectators.", client->pers.cleanName);
                 }else
                 {
                     return;
@@ -1224,7 +1209,7 @@ void BroadcastTeamChange( gclient_t *client, int oldTeam )
 
             case TEAM_FREE:
                 strcpy(message, G_ColorizeMessage(va("%s" S_COLOR_WHITE "\njoined the \\battle\n\"", client->pers.netname)));
-                trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s joined the battle.\n\"", client->pers.cleanName));
+                G_printInfoMessageToAll("%s joined the battle.", client->pers.cleanName);
                 break;
         }
     }
@@ -1422,16 +1407,13 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
                 // We allow a spread of two
                 if ( team == TEAM_RED && counts[TEAM_RED] - counts[TEAM_BLUE] > 1 )
                 {
-                    trap_SendServerCommand( ent->s.number,
-                                            "print \"^3[Info] ^7Red team has too many players.\n\"" );
-
+                    G_printInfoMessage(ent, "Red team has too many players.");
                     // ignore the request
                     return;
                 }
                 if ( team == TEAM_BLUE && counts[TEAM_BLUE] - counts[TEAM_RED] > 1 )
                 {
-                    trap_SendServerCommand( ent->s.number,
-                                            "print \"^3[Info] ^7Blue team has too many players.\n\"" );
+                    G_printInfoMessage(ent, "Blue team has too many players.");
 
                     // ignore the request
                     return;
@@ -1446,16 +1428,6 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
         // force them to spectators if there aren't any spots free
         team = TEAM_FREE;
     }
-
-    // Henk 26/05/11 -> Add check to prevent switch team respawn
-    // Henk 31/05/11 -> Removed due alot of possible faults
-    /*if(level.time <= level.gametypeStartTime+20000){ // only check within the delay time
-        if(strstr(level.deadClients, ent->client->pers.ip) && team == TEAM_RED || team == TEAM_BLUE){
-            trap_SendServerCommand (ent->s.number, "print\"^3[Info] ^7You just died, please wait before switching teams.\n\"" );
-            return;
-        }
-    }*/
-    // End
 
     // override decision if limiting the players
     if ( g_maxGameClients.integer > 0 && level.numNonSpectatorClients >= g_maxGameClients.integer )
@@ -1487,20 +1459,20 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
             // Boe!Man 2/15/11: H&S messages are different as they use another team prefix.
             if(current_gametype.value == GT_HS){
                 G_Broadcast(va("%s ^7are \\locked!", server_hiderteamprefix.string), BROADCAST_GAME, ent);
-                trap_SendServerCommand(clientNum, va("print \"^3[Info] ^7Hiders are locked.\n\"") );
+                G_printInfoMessage(ent, "Hiders are locked.");
             }else{
                 G_Broadcast(va("%s ^7team is \\locked!", server_redteamprefix.string), BROADCAST_GAME, ent);
-                trap_SendServerCommand(clientNum, va("print \"^3[Info] ^7Red team is locked.\n\"") );
+                G_printInfoMessage(ent, "Red team is locked.");
             }
             return;
         }else if ((team == TEAM_BLUE) && level.blueLocked){
             // Boe!Man 2/15/11: H&S messages are different as they use another team prefix.
             if(current_gametype.value == GT_HS){
                 G_Broadcast(va("%s ^7are \\locked!", server_seekerteamprefix.string), BROADCAST_GAME, ent);
-                trap_SendServerCommand(clientNum, va("print \"^3[Info] ^7Seekers are locked.\n\"") );
+                G_printInfoMessage(ent, "Seekers are locked.");
             }else{
                 G_Broadcast(va("%s ^7team is \\locked!", server_blueteamprefix.string), BROADCAST_GAME, ent);
-                trap_SendServerCommand(clientNum, va("print \"^3[Info] ^7Blue team is locked.\n\"") );
+                G_printInfoMessage(ent, "Blue team is locked.");
             }
             return;
         }
@@ -2902,16 +2874,16 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
         // Check target.
         target = &g_entities[client];
         if (target->client->pers.connected != CON_CONNECTED){
-            trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7The specified player isn't fully connected yet.\n\""));
+            G_printInfoMessage(ent, "The specified player isn't fully connected yet.");
         }
 
         if(ent == target){
-            trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You cannot send a private message to yourself.\n\""));
+            G_printInfoMessage(ent, "You cannot send a private message to yourself.");
             return;
         }
 
         if (g_compMode.integer > 0 && cm_enabled.integer > 1 && g_matchDisableTell.integer && ent->client->sess.team == TEAM_SPECTATOR && !OnSameTeam(ent, target)){
-            trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You cannot send a private message to players in-game.\n\""));
+            G_printInfoMessage(ent, "You cannot send a private message to players in-game.");
             return;
         }
 
@@ -2925,13 +2897,13 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
                 p = strstr(p, " ");
 
                 if (p == NULL || strlen(p) < 2){
-                    trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7You should specify a message to send.\n\""));
+                    G_printInfoMessage(ent, "You should specify a message to send.");
                     return;
                 }
                 p++;
             }
         }else{
-            trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7You should specify a message to send.\n\""));
+            G_printInfoMessage(ent, "You should specify a message to send.");
             return;
         }
 
@@ -2965,19 +2937,19 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
         }
 
         if (client == -1 || !target || !target->client || target->client->pers.connected != CON_CONNECTED){
-            trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7You don't have anyone to reply to (or the client went offline).\n\""));
-            trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7Please send your message with '!pm <id/name> <message>' instead.\n\""));
+            G_printInfoMessage(ent, "You don't have anyone to reply to (or the client went offline).");
+            G_printInfoMessage(ent, "Please send your message with '!pm <id/name> <message>' instead.");
 
             // Reset client.
             ent->client->sess.lastPmClient = -1;
             return;
         }else if ((ent->client->sess.lastPmClientChange + 1000) > level.time){
-            trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7You just got PMed by someone else - as security measure we're not sending your message.\n\""));
+            G_printInfoMessage(ent, "You just got PMed by someone else - as security measure we're not sending your message.");
 
             ent->client->sess.lastPmClient = -1;
             return;
         }else if (g_compMode.integer > 0 && cm_enabled.integer > 1 && g_matchDisableTell.integer && ent->client->sess.team == TEAM_SPECTATOR && !OnSameTeam(ent, target)){
-            trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You cannot send a private message to players in-game.\n\""));
+            G_printInfoMessage(ent, "You cannot send a private message to players in-game.");
             return;
         }
 
@@ -2987,11 +2959,11 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
             p = ConcatArgs(2);
         }else if (trap_Argc() == 2){
             if (p == NULL || strlen(p) < 2){
-                trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7You should specify a message to send.\n\""));
+                G_printInfoMessage(ent, "You should specify a message to send.");
                 return;
             }
         }else{
-            trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7You should specify a message to send.\n\""));
+            G_printInfoMessage(ent, "You should specify a message to send.");
             return;
         }
 
@@ -3043,7 +3015,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
                     if(ent->client->sess.referee && strcmp(cmd, "!l") == 0){ // exception for referee lock
                         adm_lockTeam(1, ent, qtrue);
                     }
-                    trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to use this command.\n\""));
+                    G_printInfoMessage(ent, "Your Admin level is too low to use this command.");
                 }
 
                 break;
@@ -3061,7 +3033,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
                     if(!strstr(name, "none")){
                         if(strcmp(cmd, name) == 0){
                             if (level.custom == qtrue) {
-                                trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7There's already a custom command being executed.\n\""));
+                                G_printInfoMessage(ent, "There's already a custom command being executed.");
                                 return;
                             }else{
                                 command = qtrue;
@@ -3091,7 +3063,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
                                         level.custom = qtrue;
                                     }
                                 }else{
-                                    trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your admin level is too low to use this command.\n\""));
+                                    G_printInfoMessage(ent, "Your admin level is too low to use this command.");
                                 }
                             }
                         }
@@ -3159,7 +3131,7 @@ static void Cmd_Tell_f( gentity_t *ent ) {
         }
         string[strlen(string)-2] = '\0';
         if(numberOfClients > 1){
-            trap_SendServerCommand(ent->s.number, va("print\"^3[Info] ^7Multiple names found with ^3%s^7: %s\n\"", arg, string));
+            G_printInfoMessage(ent, "Multiple names found with ^3%s^7: %s", arg, string);
             return;
         }else if(numberOfClients == 0){
             targetNum = -1;
@@ -3170,21 +3142,21 @@ static void Cmd_Tell_f( gentity_t *ent ) {
 
     target = &g_entities[targetNum];
     if ( targetNum < 0 || targetNum >= g_maxclients.integer || !target || !target->inuse || !target->client ){
-        trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You haven't entered a valid player ID/player name.\n\""));
+        G_printInfoMessage(ent, "You haven't entered a valid player ID/player name.");
         return;
     }
 
     if (target->client->pers.connected != CON_CONNECTED){
-        trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7The specified player isn't fully connected yet.\n\""));
+        G_printInfoMessage(ent, "The specified player isn't fully connected yet.");
     }
 
     if(ent == target){
-        trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You cannot send a private message to yourself.\n\""));
+        G_printInfoMessage(ent, "You cannot send a private message to yourself.");
         return;
     }
 
     if (g_compMode.integer > 0 && cm_enabled.integer > 1 && g_matchDisableTell.integer && ent->client->sess.team == TEAM_SPECTATOR && !OnSameTeam(ent, target)){
-        trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You cannot send a private message to players in-game.\n\""));
+        G_printInfoMessage(ent, "You cannot send a private message to players in-game.");
         return;
     }
 
@@ -3734,10 +3706,6 @@ void ClientCommand( int clientNum ) {
     }
     if (Q_stricmp (cmd, "say_team") == 0) {
         // Boe!Man 1/30/10: We need to make sure the clients aren't muted.. And otherwise prevent them talking.
-        /*if(ent->client->sess.mute){
-        trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You are currently muted by an Admin.\n\"") );
-        return;
-        }*/
         if(IsClientMuted(ent, qtrue)){
             return;
         }
@@ -3748,10 +3716,6 @@ void ClientCommand( int clientNum ) {
     if (Q_stricmp (cmd, "tell") == 0)
     {
         // Boe!Man 1/30/10: We need to make sure the clients aren't muted.. And otherwise prevent them talking.
-        /*if(ent->client->sess.mute){
-        trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You are currently muted by an Admin.\n\"") );
-        return;
-        }*/
         if(IsClientMuted(ent, qtrue)){
             return;
         }
@@ -3762,10 +3726,6 @@ void ClientCommand( int clientNum ) {
     if (Q_stricmp (cmd, "vsay_team") == 0)
     {
         // Boe!Man 1/30/10: We need to make sure the clients aren't muted.. And otherwise prevent them talking.
-        /*if(ent->client->sess.mute){
-        trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You are currently muted by an Admin.\n\"") );
-        return;
-        }*/
         if(IsClientMuted(ent, qtrue)){
             return;
         }
@@ -4068,7 +4028,7 @@ void Boe_adm_f ( gentity_t *ent )
     if(!Q_stricmp(arg1, "login")){ // Boe!Man 4/3/11: Very small optimize.
         if(g_passwordAdmins.integer && !adm){ // only check if its enabled -- Boe!Man 6/28/11: And check if they're admin-less still.
             if (!strlen(arg2)){
-                trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7You need to enter your password with this command!\n\""));
+                G_printInfoMessage(ent, "You need to enter your password with this command!");
                 return;
             }
 
@@ -4076,13 +4036,13 @@ void Boe_adm_f ( gentity_t *ent )
             if(levelx){
                 ent->client->sess.admin = levelx;
                 if(levelx == 2){
-                    trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s has been granted B-Admin.\n\"", ent->client->pers.cleanName));
+                    G_printInfoMessageToAll("%s has been granted B-Admin.", ent->client->pers.cleanName);
                     G_LogLogin(va("Player '%s' has been granted B-Admin. IP: %s.", ent->client->pers.cleanName, ent->client->pers.ip));
                 }else if(levelx == 3){
-                    trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s has been granted Admin.\n\"", ent->client->pers.cleanName));
+                    G_printInfoMessageToAll("%s has been granted Admin.", ent->client->pers.cleanName);
                     G_LogLogin(va("Player '%s' has been granted Admin. IP: %s.", ent->client->pers.cleanName, ent->client->pers.ip));
                 }else if(levelx == 4){
-                    trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s has been granted S-Admin.\n\"", ent->client->pers.cleanName));
+                    G_printInfoMessageToAll("%s has been granted S-Admin.", ent->client->pers.cleanName);
                     G_LogLogin(va("Player '%s' has been granted S-Admin. IP: %s.", ent->client->pers.cleanName, ent->client->pers.ip));
                 }
                 // Boe!Man 5/27/11: Is the Admin level allowed to spec the opposite team?
@@ -4090,12 +4050,12 @@ void Boe_adm_f ( gentity_t *ent )
                     ent->client->sess.adminspec = qtrue;
                 }
             }else{
-                trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Access denied: Invalid password!\n\""));
+                G_printInfoMessage(ent, "Access denied: Invalid password!");
             }
         }else if(!g_passwordAdmins.integer){ // Boe!Man 3/31/11: Else display an alternate message, instead of the "You don't have Admin powers!" message (confusing).
-            trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Access denied: No password logins allowed by the server!\n\""));
+            G_printInfoMessage(ent, "Access denied: No password logins allowed by the server!");
         }else if(adm){
-            trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Access denied: You already have Admin powers!\n\""));
+            G_printInfoMessage(ent, "Access denied: You already have Admin powers!");
         }
 
         return;
@@ -4103,31 +4063,31 @@ void Boe_adm_f ( gentity_t *ent )
     else if (!Q_stricmp(arg1, "pass")){
         if (ent->client->sess.setAdminPassword || Boe_checkPassAdmin2(ent->client->pers.cleanName)){
             if (!strlen(arg2)){
-                trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7You need to enter your password with this command!\n\""));
+                G_printInfoMessage(ent, "You need to enter your password with this command!");
                 return;
             }
             if (!ent->client->sess.setAdminPassword && !ent->client->sess.admin){
-                trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7Login prior to changing your password!\n\""));
+                G_printInfoMessage(ent, "Login prior to changing your password!");
                 return;
             }
 
             Boe_addPasswordToDatabase(ent->client->pers.ip, ent->client->pers.cleanName, arg2);
             ent->client->sess.setAdminPassword = qfalse;
 
-            trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7You updated your password to: %s.\n\"", arg2));
+            G_printInfoMessage(ent, "You updated your password to: %s.", arg2);
             if (!ent->client->sess.admin){
-                trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7Login with /adm login %s.\n\"", arg2));
+                G_printInfoMessage(ent, "Login with /adm login %s", arg2);
             }
         }
         else{
-            trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7Access denied: You are not on the password list!\n\""));
+            G_printInfoMessage(ent, "Access denied: You are not on the password list!");
         }
 
         return;
     }
 
     if(!adm){
-        trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Access denied: You don't have Admin powers!\n\""));
+        G_printInfoMessage(ent, "Access denied: You don't have Admin powers!");
         return;
     }
     if (!Q_stricmp ( arg1, "?" )||!Q_stricmp ( arg1, "" )||!Q_stricmp(arg1, "list"))
@@ -4284,11 +4244,6 @@ void Boe_adm_f ( gentity_t *ent )
     // Henk loop through my admin command array
 
     if (!Q_stricmp ( arg1, "chat" ) || !Q_stricmp ( arg1, "adminchat" )){
-        /*
-        if(ent->client->sess.mute){
-            trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You are currently muted by admin.\n\"") );
-            return;
-        }*/
         if(IsClientMuted(ent, qtrue)){
             return;
         }
@@ -4296,10 +4251,6 @@ void Boe_adm_f ( gentity_t *ent )
         return;
     }
     if (!Q_stricmp ( arg1, "talk" ) || !Q_stricmp ( arg1, "admintalk" )){
-        /*if(ent->client->sess.mute){
-            trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You are currently muted by admin.\n\"") );
-            return;
-        }*/
         if(IsClientMuted(ent, qtrue)){
             return;
         }
@@ -4308,14 +4259,10 @@ void Boe_adm_f ( gentity_t *ent )
     }
 
     if (!Q_stricmp ( arg1, "clanchat" )){
-        /*if(ent->client->sess.mute){
-            trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You are currently muted by admin.\n\"") );
-            return;
-        }*/
         if(IsClientMuted(ent, qtrue)){
             return;
         }else if(!ent->client->sess.clanMember){
-            trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7You are no clan member.\n\"") );
+            G_printInfoMessage(ent, "You are no clan member.");
             return;
         }
         Cmd_Say_f (ent, CLAN_CHAT, qfalse);
@@ -4330,9 +4277,9 @@ void Boe_adm_f ( gentity_t *ent )
                 G_postExecuteAdminCommand(i, AdminCommands[i].Function(2, ent, qfalse), ent);
                 return;
             }else{
-            // Boe!Man 12/30/09: Putting two Info messages together.
-            trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your admin level is too low to use this command.\n\""));
-            return;
+                // Boe!Man 12/30/09: Putting two Info messages together.
+                G_printInfoMessage(ent, "Your admin level is too low to use this command.");
+                return;
             }
         }
     }
@@ -4349,7 +4296,7 @@ void Boe_adm_f ( gentity_t *ent )
             trap_GPG_FindPairValue(group, "Command", "none", name);
             if(!Q_stricmp(arg1, name)){
                 if (level.custom == qtrue) {
-                    trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7There's already a custom command being executed.\n\""));
+                    G_printInfoMessage(ent, "There's already a custom command being executed.");
                     return;
                 }
 
@@ -4380,7 +4327,7 @@ void Boe_adm_f ( gentity_t *ent )
 
                     return;
                 }else{
-                    trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Your admin level is too low to use this command.\n\""));
+                    G_printInfoMessage(ent, "Your admin level is too low to use this command.");
                     return;
                 }
             }
@@ -4449,14 +4396,12 @@ qboolean ConsoleCommand( void )
 
     if (Q_stricmp (cmd, "addbot") == 0)
     {
-        //trap_Printf("^3[Info] ^7This command has been temporary disabled by the Mod Developers.\n");
         Svcmd_AddBot_f();
         return qtrue;
     }
 
     if (Q_stricmp (cmd, "botlist") == 0)
     {
-        //trap_Printf("^3[Info] ^7This command has been temporary disabled by the Mod Developers.\n");
         Svcmd_BotList_f();
         return qtrue;
     }
@@ -4778,7 +4723,7 @@ void G_postExecuteAdminCommand(int funcNum, int idNum, gentity_t *adm)
         }else{
             // Punished for camping.
             G_Broadcast(va("%s\nwas \\punished for camping!", g_entities[idNum].client->pers.netname), BROADCAST_CMD, NULL);
-            trap_SendServerCommand( -1, va("print \"^3[Info] ^7%s was punished for camping (%s%s).\n\"", g_entities[idNum].client->pers.cleanName, AdminCommands[funcNum].adminCmd, (AdminCommands[funcNum].suffix != NULL) ? AdminCommands[funcNum].suffix : ""));
+            G_printInfoMessageToAll("%s was punished for camping (%s%s).", g_entities[idNum].client->pers.cleanName, AdminCommands[funcNum].adminCmd, (AdminCommands[funcNum].suffix != NULL) ? AdminCommands[funcNum].suffix : "");
             g_entities[idNum].client->sess.camper = qfalse;
         }
         Boe_adminLog(AdminCommands[funcNum].adminCmd, va("%s", "RCON"), va("%s\\%s", g_entities[idNum].client->pers.ip, g_entities[idNum].client->pers.cleanName));
@@ -4793,30 +4738,82 @@ void G_postExecuteAdminCommand(int funcNum, int idNum, gentity_t *adm)
 G_printInfoMessage
 10/30/16 - 6:06 PM
 
-Prints [Info] message to the console
+Prints [Info] message to the console of a player
 or regular message to server console (or RCON).
 ==============
 */
 
-void G_printInfoMessage(gentity_t *ent, const char *msg)
+void QDECL G_printInfoMessage(gentity_t *ent, const char *msg, ...)
 {
+    va_list     argptr;
+    int         len;
+    char        text[1024];
+
+    memset(text, 0, sizeof(text));
+
+    // If we're printing this message to a client,
+    // ensure we prepend the [Info] part.
     if(ent && ent->client){
-        char bufferMsg[2048];
+        // Prepend the [Info].
+        strncat(text, "print \"^3[Info] ^7", sizeof(text));
 
-        memset(bufferMsg, 0, sizeof(bufferMsg));
+        // Concatenate the message.
+        va_start(argptr, msg);
+        len = vsnprintf(text + 18, sizeof(text) - 20, msg, argptr) + 18;
+        va_end(argptr);
 
-        #ifdef __GNUC__
-        snprintf(bufferMsg, sizeof(bufferMsg),
-            "print \"^3[Info] ^7%s\n\"", msg);
-        #elif _MSC_VER_
-        _snprintf_s(bufferMsg, sizeof(bufferMsg),
-            "print \"^3[Info] ^7%s\n\"", msg);
-        #endif // __GNUC__
-
-        trap_SendServerCommand(ent-g_entities, bufferMsg);
+        // Append the newline.
+        strncat(text + len, "\n\"", sizeof(text) - len);
     }else{
-        Com_Printf("%s\n", msg);
+        // Concatenate the message.
+        va_start(argptr, msg);
+        len = vsnprintf(text, sizeof(text) - 1, msg, argptr);
+        va_end(argptr);
+
+        // Append the newline.
+        strncat(text + len, "\n", sizeof(text) - len);
     }
+
+    // Print the info message.
+    if(ent && ent->client){
+        trap_SendServerCommand(ent-g_entities, text);
+    }else{
+        trap_Printf(text);
+    }
+}
+
+/*
+==============
+G_printInfoMessageToAll
+10/30/16 - 6:06 PM
+
+Prints [Info] message to the console
+of all players.
+==============
+*/
+
+void QDECL G_printInfoMessageToAll(const char *msg, ...)
+{
+    va_list     argptr;
+    int         len;
+    char        text[1024];
+
+    memset(text, 0, sizeof(text));
+
+    // If we're printing this message to a client,
+    // ensure we prepend the [Info] part.
+    strncat(text, "print \"^3[Info] ^7", sizeof(text));
+
+    // Concatenate the message.
+    va_start(argptr, msg);
+    len = vsnprintf(text + 18, sizeof(text) - 20, msg, argptr) + 18;
+    va_end(argptr);
+
+    // Append the newline.
+    strncat(text + len, "\n\"", sizeof(text) - len);
+
+    // Print the info message.
+    trap_SendServerCommand(-1, text);
 }
 
 /*
@@ -4862,18 +4859,18 @@ void Boe_switchGhost(gentity_t *ent)
 {
     // System only works in H&S.
     if (current_gametype.value != GT_HS){
-        trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7This command only works in Hide&Seek!\n\""));
+        G_printInfoMessage(ent, "This command only works in Hide&Seek!");
         return;
     }
 
     // System must be enabled.
     if (!boe_deadMonkey.integer){
-        trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7This feature is disabled on the server!\n\""));
+        G_printInfoMessage(ent, "This feature is disabled on the server!");
         return;
     }
 
     if (!level.monkeySpawnCount){
-        trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7No monkey spawns available on the server so the feature is disabled!\n\""));
+        G_printInfoMessage(ent, "No monkey spawns available on the server, so this feature is disabled!");
         return;
     }
 
@@ -4891,7 +4888,7 @@ void Boe_switchGhost(gentity_t *ent)
             player_die(ent, ent, ent, 100000, MOD_SUICIDE, HL_NONE, vec3_origin);
         }
 
-        trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7You won't be respawned as dead player anymore.\n\""));
+        G_printInfoMessage(ent, "You won't be respawned as dead player anymore.");
     }else{
         // Is the client dead and in ghost mode? If so, respawn.
         if ((ent->client->sess.ghost || ent->client->ps.stats[STAT_HEALTH] < 1) && !level.cagefight && ent->client->sess.team == TEAM_RED){
@@ -4900,9 +4897,9 @@ void Boe_switchGhost(gentity_t *ent)
             ClientSpawn(ent);
         }
 
-        trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7You will be respawned as a dead player from now on.\n\""));
+        G_printInfoMessage(ent, "You will be respawned as a dead player from now on.");
     }
 
-    trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7Issue the ^3/ghost ^7command again to toggle the behavior.\n\""));
+    G_printInfoMessage(ent, "Issue the ^3/ghost ^7command again to toggle the behavior.");
 }
 #endif // _3DServer

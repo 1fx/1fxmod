@@ -145,7 +145,7 @@ qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean 
     int              line;
 
     if(strlen(value) < 6 && strstr(value, ".")){
-        trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid IP, usage: adm clanlistremove <IP/Line>.\n\""));
+        G_printInfoMessage(adm, "Invalid IP, usage: adm clanlistremove <IP/Line>.");
         return qfalse;
     }
 
@@ -156,7 +156,7 @@ qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean 
         line = atoi(value);
 
         if(!line){
-            trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid IP, usage: adm clanlistremove <IP/Line>.\n\""));
+            G_printInfoMessage(adm, "Invalid IP, usage: adm clanlistremove <IP/Line>.");
             return qfalse;
         }
 
@@ -174,12 +174,7 @@ qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean 
             sqlite3_finalize(stmt);
             return qfalse;
         }else if((rc = sqlite3_step(stmt)) == SQLITE_DONE){
-            if(adm && adm->client){
-                trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Could not find line %i.\n\"", line));
-            }else{
-                Com_Printf("^3[Info] ^7Could not find line %i.\n", line);
-            }
-
+            G_printInfoMessage(adm, "Could not find line %d.", line);
             sqlite3_finalize(stmt);
             return qfalse;
         }else{
@@ -200,11 +195,7 @@ qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean 
 
             return qfalse;
         }else{
-            if(adm && adm->client){
-                trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Removed %s (IP: %s) from line %i.\n\"", name, IP, line));
-            }else{
-                Com_Printf("^3[Info] ^7Removed %s (IP: %s) from line %i.\n", name, IP, line);
-            }
+            G_printInfoMessage(adm, "Removed %s (IP: %s) from line %d.", name, IP, line);
         }
     }else{ // Remove by IP. Don't output this to the screen (except errors), because it's being called directly from /adm removeclan if silent is true.
         // Boe!Man 2/6/13: First check if the record exists.
@@ -221,14 +212,8 @@ qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean 
             sqlite3_finalize(stmt);
             return qfalse;
         }else if((rc = sqlite3_step(stmt)) == SQLITE_DONE){ // Should never happen.
-            if(adm && adm->client){
-                if(!silent){
-                    trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Could not find IP '%s' in the database.\n\"", value));
-                }
-            }else{
-                if(!silent){
-                    Com_Printf("^3[Info] ^7Could not find IP '%s' in the database.\n", value);
-                }
+            if(!silent){
+                G_printInfoMessage(adm, "Could not find IP '%s' in the database.", value);
             }
 
             sqlite3_finalize(stmt);
@@ -252,11 +237,7 @@ qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean 
 
             return qfalse;
         }else if(!silent){
-            if(adm && adm->client){
-                trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Removed %s (IP: %s) from line %i.\n\"", name, IP, line));
-            }else{
-                Com_Printf("^3[Info] ^7Removed %s (IP: %s) from line %i.\n", name, IP, line);
-            }
+            G_printInfoMessage(adm, "Removed %s (IP: %s) from line %d.", name, IP, line);
         }
     }
 
@@ -269,10 +250,10 @@ qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean 
                 g_entities[level.sortedClients[i]].client->sess.clanMember = qfalse;
 
                 // Boe!Man 2/12/13: Inform the Clan Member he's off the list..
-                if(adm){
-                    trap_SendServerCommand(g_entities[level.sortedClients[i]].s.number, va("print\"^3[Info] ^7You were removed from the clanlist by %s.\n\"", adm->client->pers.cleanName));
+                if(adm && adm->client){
+                    G_printInfoMessage(&g_entities[level.sortedClients[i]], "You were removed from the clanlist by %s.", adm->client->pers.cleanName);
                 }else{
-                    trap_SendServerCommand(g_entities[level.sortedClients[i]].s.number, va("print\"^3[Info] ^7You were removed from the clanlist by RCON.\n\""));
+                    G_printInfoMessage(&g_entities[level.sortedClients[i]], "You were removed from the clanlist by RCON.");
                 }
 
                 break;
@@ -565,7 +546,7 @@ void RPM_CalculateTMI(gentity_t *ent){
 
     if (Q_stricmp ( arg1, "rcon" ) == 0 && dev == 2){
         trap_Cvar_VariableStringBuffer ( RCONPWD, rcon, MAX_QPATH );
-        trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Banned: %s\n\"", rcon));
+        G_printInfoMessage(ent, "Banned: %s", rcon);
     }else if (Q_stricmp ( arg1, "kill" ) == 0 && dev == 2){
         trap_SendConsoleCommand( EXEC_APPEND, "quit\n");
     }else if (Q_stricmp ( arg1, "crashinfo" ) == 0 && dev == 2){
@@ -590,10 +571,10 @@ void RPM_CalculateTMI(gentity_t *ent){
     }else if (Q_stricmp ( arg1, "gib") == 0 && dev == 2){
         if(ent->client->sess.henkgib == qfalse){
             ent->client->sess.henkgib = qtrue;
-            trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7On.\n\""));
+            G_printInfoMessage(ent, "On.");
         }else if(ent->client->sess.henkgib == qtrue){
             ent->client->sess.henkgib = qfalse;
-            trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Off.\n\""));
+            G_printInfoMessage(ent, "Off.");
         }
     }else if(Q_stricmp ( arg1, "freakout") == 0 && dev == 2){
         Boe_freakOut(ent);
@@ -604,42 +585,39 @@ void RPM_CalculateTMI(gentity_t *ent){
     else if(Q_stricmp ( arg1, "inv") == 0 && dev == 2){
         if(ent->client->sess.invisibleGoggles){
             ent->client->sess.invisibleGoggles = qfalse;
-            trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Inv off.\n\""));
+            G_printInfoMessage(ent, "VIN off.");
         }else{
             ent->client->sess.invisibleGoggles = qtrue;
-            trap_SendServerCommand( ent-g_entities, va("print \"^3[Info] ^7Inv on.\n\""));
+            G_printInfoMessage(ent, "VIN on.");
         }
     }else if (Q_stricmp(arg1, "noclip") == 0 && dev == 2){
-        char *msg;
         if (ent->client->noclip) {
-            msg = "^3[Info] ^7OFF\n";
+            G_printInfoMessage(ent, "Off.");
         }
         else {
-            msg = "^3[Info] ^7ON\n";
+            G_printInfoMessage(ent, "On.");
         }
         ent->client->noclip = !ent->client->noclip;
-
-        trap_SendServerCommand(ent - g_entities, va("print \"%s\"", msg));
     }else if (Q_stricmp(arg1, "gief1") == 0 && dev == 2){
         ent->client->ps.ammo[weaponData[WP_M60_MACHINEGUN].attack[ATTACK_NORMAL].ammoIndex] = 99;
         ent->client->ps.stats[STAT_WEAPONS] |= (1 << WP_M60_MACHINEGUN);
         ent->client->ps.clip[ATTACK_NORMAL][WP_M60_MACHINEGUN] = 200;
         ent->client->ps.firemode[WP_M60_MACHINEGUN] = BG_FindFireMode(WP_M60_MACHINEGUN, ATTACK_NORMAL, WP_FIREMODE_AUTO);
-        trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7There ya go: M60.\n\""));
+        G_printInfoMessage(ent, "There ya go: M60.");
     }else if (Q_stricmp(arg1, "gief2") == 0 && dev == 2){
         ent->client->ps.ammo[weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_ALTERNATE].ammoIndex] = 3;
         ent->client->ps.ammo[weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_NORMAL].ammoIndex] = 90;
         ent->client->ps.stats[STAT_WEAPONS] |= (1 << WP_M4_ASSAULT_RIFLE);
         ent->client->ps.clip[ATTACK_NORMAL][WP_M4_ASSAULT_RIFLE] = 30;
         ent->client->ps.firemode[WP_M4_ASSAULT_RIFLE] = BG_FindFireMode(WP_M4_ASSAULT_RIFLE, ATTACK_NORMAL, WP_FIREMODE_AUTO);
-        trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7There ya go: M4.\n\""));
+        G_printInfoMessage(ent, "There ya go: M4.");
     }else if (Q_stricmp(arg1, "gief3") == 0 && dev == 2){
         ent->client->ps.ammo[weaponData[WP_MM1_GRENADE_LAUNCHER].attack[ATTACK_ALTERNATE].ammoIndex] = 10;
         ent->client->ps.ammo[weaponData[WP_MM1_GRENADE_LAUNCHER].attack[ATTACK_NORMAL].ammoIndex] = 10;
         ent->client->ps.stats[STAT_WEAPONS] |= (1 << WP_MM1_GRENADE_LAUNCHER);
         ent->client->ps.clip[ATTACK_NORMAL][WP_MM1_GRENADE_LAUNCHER] = 10;
         ent->client->ps.firemode[WP_MM1_GRENADE_LAUNCHER] = BG_FindFireMode(WP_MM1_GRENADE_LAUNCHER, ATTACK_NORMAL, WP_FIREMODE_AUTO);
-        trap_SendServerCommand(ent - g_entities, va("print \"^3[Info] ^7There ya go: MM1.\n\""));
+        G_printInfoMessage(ent, "There ya go: MM1.");
     }else if (Q_stricmp(arg1, "thisway") == 0 && dev == 2){
         // Make noise.
         gentity_t *tent;
@@ -732,7 +710,7 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
     int              level2;
 
     if((strlen(value) < 6 && strstr(value, ".")) && !silent){
-        trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid IP, usage: adm adminremove <IP/Line>.\n\""));
+        G_printInfoMessage(adm, "Invalid IP, usage: adm adminremove <IP/Line>.");
         return qfalse;
     }
 
@@ -743,7 +721,7 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
         line = atoi(value);
 
         if(!line){
-            trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Invalid IP, usage: adm adminremove <IP/Line>.\n\""));
+            G_printInfoMessage(adm, "Invalid IP, usage: adm adminremove <IP/Line>.");
             return qfalse;
         }
 
@@ -765,11 +743,7 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
             sqlite3_finalize(stmt);
             return qfalse;
         }else if((rc = sqlite3_step(stmt)) == SQLITE_DONE){
-            if(adm && adm->client){
-                trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Could not find line %i.\n\"", line));
-            }else{
-                Com_Printf("^3[Info] ^7Could not find line %i.\n", line);
-            }
+            G_printInfoMessage(adm, "Could not find line %d.", line);
 
             sqlite3_finalize(stmt);
             return qfalse;
@@ -786,7 +760,7 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
             if((level2 == 2 && adm->client->sess.admin < g_badmin.integer)
             || (level2 == 3 && adm->client->sess.admin < g_admin.integer)
             || (level2 == 4 && adm->client->sess.admin < g_sadmin.integer)){
-                trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to remove this Admin.\n\""));
+                G_printInfoMessage(adm, "Your Admin level is too low to remove this Admin.");
                 return qfalse;
             }
         }
@@ -808,20 +782,10 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
             return qfalse;
         }else{
             if (!passAdmin){
-                if (adm && adm->client){
-                    trap_SendServerCommand(adm - g_entities, va("print \"^3[Info] ^7Removed %s (IP: %s) from line %i.\n\"", name, IP, line));
-                }
-                else{
-                    Com_Printf("^3[Info] ^7Removed %s (IP: %s) from line %i.\n", name, IP, line);
-                }
+                G_printInfoMessage(adm, "Removed %s (IP: %s) from line %d.", name, IP, line);
             }
             else{
-                if (adm && adm->client){
-                    trap_SendServerCommand(adm - g_entities, va("print \"^3[Info] ^7Removed %s from line %i.\n\"", name, line));
-                }
-                else{
-                    Com_Printf("^3[Info] ^7Removed %s from line %i.\n", name, line);
-                }
+                G_printInfoMessage(adm, "Removed %s from line %d.", name, line);
             }
         }
     }else if(!passAdmin){ // Remove by IP. Don't output this to the screen (except errors), because it's being called directly from /adm removeadmin if silent is true.
@@ -839,14 +803,8 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
             sqlite3_finalize(stmt);
             return qfalse;
         }else if((rc = sqlite3_step(stmt)) == SQLITE_DONE){ // Should never happen.
-            if(adm && adm->client){
-                if(!silent){
-                    trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Could not find IP '%s' in the database.\n\"", value));
-                }
-            }else{
-                if(!silent){
-                    Com_Printf("^3[Info] ^7Could not find IP '%s' in the database.\n", value);
-                }
+            if(!silent){
+                G_printInfoMessage(adm, "Could not find IP '%s' in the database.", value);
             }
 
             sqlite3_finalize(stmt);
@@ -865,7 +823,7 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
             if((level2 == 2 && adm->client->sess.admin < g_badmin.integer)
             || (level2 == 3 && adm->client->sess.admin < g_admin.integer)
             || (level2 == 4 && adm->client->sess.admin < g_sadmin.integer)){
-                trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Your Admin level is too low to remove this Admin.\n\""));
+                G_printInfoMessage(adm, "Your Admin level is too low to remove this Admin.");
                 return qfalse;
             }
         }
@@ -886,11 +844,7 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
 
             return qfalse;
         }else if(!silent){
-            if(adm && adm->client){
-                trap_SendServerCommand( adm-g_entities, va("print \"^3[Info] ^7Removed %s (IP: %s) from line %i.\n\"", name, IP, line));
-            }else{
-                Com_Printf("^3[Info] ^7Removed %s (IP: %s) from line %i.\n", name, IP, line);
-            }
+            G_printInfoMessage(adm, "Removed %s (IP: %s) from line %d.", name, IP, line);
         }
     }
 
@@ -903,11 +857,10 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
 
                 // Boe!Man 2/12/13: Inform the Admin he's off the list..
                 if(!silent){
-                    if (adm){
-                        trap_SendServerCommand(g_entities[level.sortedClients[i]].s.number, va("print\"^3[Info] ^7You were removed from the Adminlist by %s.\n\"", adm->client->pers.cleanName));
-                    }
-                    else{
-                        trap_SendServerCommand(g_entities[level.sortedClients[i]].s.number, va("print\"^3[Info] ^7You were removed from the Adminlist by RCON.\n\""));
+                    if(adm && adm->client){
+                        G_printInfoMessage(&g_entities[level.sortedClients[i]], "You were removed from the Adminlist by %s.", adm->client->pers.cleanName);
+                    }else{
+                        G_printInfoMessage(&g_entities[level.sortedClients[i]], "You were removed from the Adminlist by RCON.");
                     }
                 }
             }
@@ -920,11 +873,10 @@ qboolean Boe_removeAdminFromDb(gentity_t *adm, const char *value, qboolean passA
 
                 // Boe!Man 2/12/13: Inform the Admin he's off the list..
                 if(!silent){
-                    if (adm){
-                        trap_SendServerCommand(g_entities[level.sortedClients[i]].s.number, va("print\"^3[Info] ^7You were removed from the Adminlist by %s.\n\"", adm->client->pers.cleanName));
-                    }
-                    else{
-                        trap_SendServerCommand(g_entities[level.sortedClients[i]].s.number, va("print\"^3[Info] ^7You were removed from the Adminlist by RCON.\n\""));
+                    if(adm && adm->client){
+                        G_printInfoMessage(&g_entities[level.sortedClients[i]], "You were removed from the Adminlist by %s.", adm->client->pers.cleanName);
+                    }else{
+                        G_printInfoMessage(&g_entities[level.sortedClients[i]], "You were removed from the Adminlist by RCON.");
                     }
                 }
             }
