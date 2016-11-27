@@ -4362,6 +4362,13 @@ qboolean ConsoleCommand( void )
         return qtrue;
     }
 
+    // Add synonym for the quit command.
+    if(Q_stricmp(cmd, "exit") == 0 )
+    {
+        trap_SendConsoleCommand( EXEC_APPEND, "quit\n");
+        return qtrue;
+    }
+
     if (g_dedicated.integer)
     {
         if (Q_stricmp (cmd, "say") == 0)
