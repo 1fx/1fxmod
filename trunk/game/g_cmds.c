@@ -4463,8 +4463,8 @@ char *G_ColorizeMessage(char *broadcast)
         }
 
         // Check if line is too big to copy.
-        if (lineLength > sizeof(line)){
-            lineLength = sizeof(line);
+        if (lineLength >= sizeof(line)){
+            lineLength = sizeof(line) - 1;
         }
 
         // Copy line.
@@ -4533,7 +4533,7 @@ char *G_ColorizeMessage(char *broadcast)
                         }
                     }
 
-                    // Copy each individal char to the new buffer, plus the color associated to it.
+                    // Copy each individual char to the new buffer, plus the color associated to it.
                     strncpy(wordToCopy, broadcast + newWordPosition + 1, newWordLength);
                     for (i = 0; i < newWordLength; i++){
                         if (color < availableColors){
