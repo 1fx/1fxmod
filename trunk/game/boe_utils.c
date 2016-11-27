@@ -1250,16 +1250,6 @@ void Boe_Players(gentity_t *ent)
         // We use the found color for the name.
         Q_strncpyz(name, va("[^%d%s^7]", color, level.clients[i].pers.cleanName), sizeof(name));
 
-        #ifdef _3DServer
-        // 3D.
-        if (level.clients[i].sess.admin == 2)
-            admin = "[^3A^7]";
-        else if (level.clients[i].sess.admin >= 3)
-            admin = "[^3S^7]";
-        else
-            admin = "";
-        #else
-        // Regular.
         if (level.clients[i].sess.admin == 2)
             admin = "[^3B^7]";
         else if(level.clients[i].sess.admin == 3)
@@ -1268,7 +1258,6 @@ void Boe_Players(gentity_t *ent)
             admin = "[^3S^7]";
         else
             admin = "";
-        #endif // _3DServer
 
         if (level.clients[i].sess.clanMember == qtrue)
             clan = "[^3C^7]";
@@ -1398,15 +1387,6 @@ void Boe_Stats ( gentity_t *ent )
             cAdditions = ent->client->sess.clientAdditionsVersion;
         }
 
-#ifdef _3DServer
-        if (ent->client->sess.admin == 2){
-            admin = "Admin";
-        }else if (ent->client->sess.admin >= 3){
-            admin = "S-Admin";
-        }else{
-            admin = "No";
-        }
-#else
         if (ent->client->sess.admin == 2){
             admin = "B-Admin";
         }
@@ -1419,7 +1399,6 @@ void Boe_Stats ( gentity_t *ent )
         else{
             admin = "No";
         }
-#endif // _3DServer
     }
     // Boe!Man 2/21/10: If a ID is entered, we're going to display that users' status.
     else{

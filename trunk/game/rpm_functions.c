@@ -98,17 +98,7 @@ void RPM_UpdateTMI(void)
         }else{
             cl->sess.thirdperson = 2;
         }
-            #ifdef _3DServer
-            if (cl->sess.admin == 2){
-                adm = 3;
-            }else if(cl->sess.admin >= 3){
-                adm = 4;
-            }else{
-                adm = 0;
-            }
-            #else
             adm = cl->sess.admin;
-            #endif // not _3DServer
             damage = cl->pers.statinfo.damageDone;
             if(damage < 100){
                 string = va("%i", cl->ps.weapon);
