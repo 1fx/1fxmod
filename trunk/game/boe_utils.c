@@ -2418,8 +2418,8 @@ int G_clientNumFromArg(gentity_t *ent, int argNum, const char *action,
 
             // Print message.
             G_printInfoMessage(ent,
-                va("Multiple names found with ^3%s^7: %s",
-                arg, multipleNamesFound));
+                "Multiple names found with ^3%s^7: %s",
+                arg, multipleNamesFound);
 
             return -1;
         }
@@ -2453,7 +2453,7 @@ int G_clientNumFromArg(gentity_t *ent, int argNum, const char *action,
         #endif // _awesomeToAbuse
         {
             G_printInfoMessage(ent,
-                va("You cannot %s higher level Admins.", action));
+                "You cannot %s higher level Admins.", action);
             return -1;
         }
 
@@ -2476,7 +2476,7 @@ int G_clientNumFromArg(gentity_t *ent, int argNum, const char *action,
         #endif // _3DServer
         {
             G_printInfoMessage(ent,
-                va("You cannot %s dead players.", action));
+                "You cannot %s dead players.", action);
             return -1;
         }
 
@@ -2484,7 +2484,7 @@ int G_clientNumFromArg(gentity_t *ent, int argNum, const char *action,
         if (G_IsClientSpectating(g_entities[clientID].client))
         {
             G_printInfoMessage(ent,
-                va("You cannot %s a spectator.", action));
+                "You cannot %s a spectator.", action);
             return -1;
         }
     }
