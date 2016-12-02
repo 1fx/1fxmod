@@ -2472,7 +2472,7 @@ int G_clientNumFromArg(gentity_t *ent, int argNum, const char *action,
         if(G_IsClientDead(g_entities[clientID].client)
             && !g_entities[clientID].client->sess.deadMonkey)
         #else
-        if(G_IsClientDead (g_entities[num].client))
+        if(G_IsClientDead (g_entities[clientID].client))
         #endif // _3DServer
         {
             G_printInfoMessage(ent,
