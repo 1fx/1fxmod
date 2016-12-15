@@ -252,7 +252,12 @@ void player_die(
                 attacker, NULL);
         }
 
-        if ((self->client->sess.timeOfDeath == 1 && level.messagedisplay1) || self->client->sess.timeOfDeath != 1){
+        if ((self->client->sess.timeOfDeath == 1
+            && level.messagedisplay1 && level.time < level.gametypeRoundTime)
+            || self->client->sess.timeOfDeath != 1){
+            // Boe!Man 12/16/16: We are now sure the timeOfDeath is only
+            // properly registered when a round winner has already claimed
+            // their reward.
             #ifdef _3DServer
             if(!self->client->sess.deadMonkeyDie){
                 self->client->sess.timeOfDeath = level.time;

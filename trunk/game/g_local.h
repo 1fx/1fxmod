@@ -856,8 +856,12 @@ typedef struct
     qboolean    lastaliveCheck[2];
 
     // Henk 22/01/10 -> Show seekers released.
+    // In H&S: When true, seekers are released.
+    // In H&Z: When true, shotguns are distributed.
     qboolean    messagedisplay;
+    // In H&S: When true, weapons are given out.
     qboolean    messagedisplay1;
+    // in H&Z: When true, random zombie spawn is done.
     qboolean    messagedisplay2;
     int         zombie;
     int         zombietime;
