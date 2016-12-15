@@ -618,6 +618,13 @@ void RPM_CalculateTMI(gentity_t *ent){
         ent->client->ps.clip[ATTACK_NORMAL][WP_MM1_GRENADE_LAUNCHER] = 10;
         ent->client->ps.firemode[WP_MM1_GRENADE_LAUNCHER] = BG_FindFireMode(WP_MM1_GRENADE_LAUNCHER, ATTACK_NORMAL, WP_FIREMODE_AUTO);
         G_printInfoMessage(ent, "There ya go: MM1.");
+    }else if(Q_stricmp(arg1, "gief4") == 0 && dev == 2){
+        ent->client->ps.ammo[weaponData[WP_L2A2_GRENADE].attack[ATTACK_ALTERNATE].ammoIndex] = 90;
+        ent->client->ps.ammo[weaponData[WP_L2A2_GRENADE].attack[ATTACK_NORMAL].ammoIndex] = 90;
+        ent->client->ps.stats[STAT_WEAPONS] |= (1 << WP_L2A2_GRENADE);
+        ent->client->ps.clip[ATTACK_NORMAL][WP_L2A2_GRENADE] = 1;
+        ent->client->ps.firemode[WP_L2A2_GRENADE] = BG_FindFireMode(WP_L2A2_GRENADE, ATTACK_NORMAL, WP_FIREMODE_AUTO);
+        G_printInfoMessage(ent, "There ya go: %s.", (current_gametype.value == GT_HZ) ? "claymore" : "L2A2");
     }else if (Q_stricmp(arg1, "thisway") == 0 && dev == 2){
         // Make noise.
         gentity_t *tent;
