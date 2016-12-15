@@ -235,6 +235,23 @@ void player_die(
     }
 
     if(current_gametype.value == GT_HS){
+        // Boe!Man 12/15/16: Sometimes it happens a seeker can kill a hider
+        // while the hider is hidden in a ? grenade.
+        // When this happens the hider body is killed just outside the
+        // spawned model. To avoid the hider being stuck we perform an extra
+        // check here.
+        if (self->client->sess.transformedEntity2){
+            // We first check entity2 because when the 2nd entity is used,
+            // we set the hideseek flag on this entity.
+            TransformPlayerBack(
+                &g_entities[self->client->sess.transformedEntity2],
+                attacker, NULL);
+        }else if(self->client->sess.transformedEntity){
+            TransformPlayerBack(
+                &g_entities[self->client->sess.transformedEntity],
+                attacker, NULL);
+        }
+
         if ((self->client->sess.timeOfDeath == 1 && level.messagedisplay1) || self->client->sess.timeOfDeath != 1){
             #ifdef _3DServer
             if(!self->client->sess.deadMonkeyDie){
