@@ -3612,7 +3612,7 @@ int adm_Map(int argNum, gentity_t *adm, qboolean shortCmd)
             }
         }
 
-        if(!Henk_DoesMapSupportGametype(gametype, map)){
+        if(g_enforceArenaCheck.integer && !Henk_DoesMapSupportGametype(gametype, map)){
             G_printInfoMessage(adm, "This map does not support the gametype %s, please add it in the ARENA file.", gametype);
             return -1;
         }

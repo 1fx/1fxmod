@@ -1586,6 +1586,7 @@ extern  vmCvar_t    server_humanteamprefix;
 extern  vmCvar_t    server_zombieteamprefix;
 extern  vmCvar_t    g_caserun;
 extern  vmCvar_t    g_minRate;
+extern  vmCvar_t    g_enforceArenaCheck;
 
 
 extern  vmCvar_t    g_allowthirdperson;

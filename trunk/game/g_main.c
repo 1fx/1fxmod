@@ -346,6 +346,8 @@ vmCvar_t    g_camperRadius;
 vmCvar_t    g_camperSniper;
 vmCvar_t    g_camperPunishment;
 
+vmCvar_t    g_enforceArenaCheck;
+
 static cvarTable_t gameCvarTable[] =
 {
     // don't override the cheat state set by the system
@@ -678,6 +680,8 @@ static cvarTable_t gameCvarTable[] =
 
     // Boe!Man 12/2/14: Caserun.
     { &g_caserun,                   "g_caserun",                "0",        CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
+
+    { &g_enforceArenaCheck,         "g_enforceArenaCheck",      "1",        CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue },
 
     // Boe!Man 11/26/15: --- Anticamp CVARs, from RPM 0.75.x ---
     { &g_camperAllowTime,           "g_camperAllowTime",        "30",               CVAR_ARCHIVE, 0.0f,     0.0f,       0, qtrue },
