@@ -513,6 +513,8 @@ int adm_mapRestart(int argNum, gentity_t *adm, qboolean shortCmd){
                 G_printInfoMessage(adm, "A map restart is already in progress.");
             }else if (level.mapAction == 2 || level.mapAction == 4){
                 G_printInfoMessage(adm, "A map switch is already in progress.");
+            }else if(level.mapAction == 5){
+                G_printInfoMessage(adm, "The map is already ending.");
             }
         }
     }else{
@@ -541,6 +543,8 @@ int adm_mapRestart(int argNum, gentity_t *adm, qboolean shortCmd){
                 G_printInfoMessage(NULL, "A map restart is already in progress.");
             }else if (level.mapAction == 2 || level.mapAction == 4){
                 G_printInfoMessage(NULL, "A map switch is already in progress.");
+            }else if(level.mapAction == 5){
+                G_printInfoMessage(NULL, "The map is already ending.");
             }
         }
     }
@@ -608,7 +612,7 @@ int adm_Mute(int argNum, gentity_t *adm, qboolean shortCmd)
         if (atoi(GetReason()) <= 0){
             time = 5;
         }else if (atoi(GetReason()) > 60){
-            G_printInfoMessage(adm, "The maximum timelimit for mute is 60 minutes.");
+            G_printInfoMessage(adm, "The maximum time for mute is 60 minutes.");
             time = 60;
         }else{
             time = atoi(GetReason());
@@ -1619,6 +1623,8 @@ int adm_compMode(int argNum, gentity_t *adm, qboolean shortCmd)
             G_printInfoMessage(adm, "A map restart is already in progress.");
         }else if (level.mapAction == 2 || level.mapAction == 4){
             G_printInfoMessage(adm, "A map switch is already in progress.");
+        }else if(level.mapAction == 5){
+            G_printInfoMessage(adm, "The map is already ending.");
         }
 
         return -1;
@@ -2612,6 +2618,8 @@ int adm_Gametype(int argNum, gentity_t *adm, qboolean shortCmd)
             G_printInfoMessage(adm, "A map restart is already in progress.");
         }else if (level.mapAction == 2 || level.mapAction == 4){
             G_printInfoMessage(adm, "A map switch is already in progress.");
+        }else if(level.mapAction == 5){
+            G_printInfoMessage(adm, "The map is already ending.");
         }
 
         return -1;
@@ -2953,7 +2961,12 @@ int adm_passVote(int argNum, gentity_t *adm, qboolean shortCmd)
     }
 
     // Let the vote pass.
-    level.voteYes = level.numVotingClients / 2 + 1;
+    if(strcmp(level.voteString, "poll") != 0){
+        // Only set the voters who voted yes to a higher number
+        // if we're not doing a poll.
+        level.voteYes = level.numVotingClients / 2 + 1;
+    }
+
     level.forceVote = qtrue;
 
     // Let everybody know what happened.
@@ -3030,6 +3043,8 @@ int adm_mapCycle(int argNum, gentity_t *adm, qboolean shortCmd)
                 G_printInfoMessage(adm, "A map restart is already in progress.");
             }else if(level.mapAction == 2 || level.mapAction == 4){
                 G_printInfoMessage(adm, "A map switch is already in progress.");
+            }else if(level.mapAction == 5){
+                G_printInfoMessage(adm, "The map is already ending.");
             }
         }
     }else{
@@ -3047,6 +3062,8 @@ int adm_mapCycle(int argNum, gentity_t *adm, qboolean shortCmd)
                 G_printInfoMessage(NULL, "A map restart is already in progress.");
             }else if(level.mapAction == 2 || level.mapAction == 4){
                 G_printInfoMessage(NULL, "A map switch is already in progress.");
+            }else if(level.mapAction == 5){
+                G_printInfoMessage(NULL, "The map is already ending.");
             }
         }
     }
@@ -3638,6 +3655,8 @@ int adm_Map(int argNum, gentity_t *adm, qboolean shortCmd)
             G_printInfoMessage(adm, "A map restart is already in progress.");
         }else if(level.mapAction == 2 || level.mapAction == 4){
             G_printInfoMessage(adm, "A map switch is already in progress.");
+        }else if(level.mapAction == 5){
+            G_printInfoMessage(adm, "The map is already ending.");
         }
     }
 
@@ -3947,6 +3966,63 @@ int adm_Anticamp(int argNum, gentity_t *adm, qboolean shortCmd)
     }else{
         trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7Anticamp %s.\n\"", (enable) ? "enabled" : "disabled"));
         Boe_adminLog(va("anticamp %s", (enable) ? "enabled" : "disabled"), "RCON", "none");
+    }
+
+    return -1;
+}
+
+/*
+==================
+adm_endMap
+
+Ends the current map.
+==================
+*/
+
+int adm_endMap(int argNum, gentity_t *adm, qboolean shortCmd)
+{
+    // Check if we already requested to end the map,
+    // or are doing another map switch.
+    if(level.mapSwitch){
+        if(level.mapAction == 1 || level.mapAction == 3){
+            G_printInfoMessage(adm, "A map restart is already in progress.");
+        }else if(level.mapAction == 2 || level.mapAction == 4){
+            G_printInfoMessage(adm, "A map switch is already in progress.");
+        }else if(level.mapAction == 5){
+            // Cancel the request.
+            level.mapSwitch = qfalse;
+            level.mapAction = 0;
+
+            // Broadcast the change.
+            Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+            G_Broadcast("\\Map end cancelled!", BROADCAST_CMD, NULL);
+            if (adm && adm->client){
+                trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7Map end cancelled by %s.\n\"", adm->client->pers.cleanName));
+                Boe_adminLog("map end cancel", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "none");
+            }else{
+                trap_SendServerCommand(-1, "print \"^3[Rcon Action] ^7Map end cancelled.\n\"");
+                Boe_adminLog("map end cancel", "RCON", "none");
+            }
+        }
+
+        return -1;
+    }
+
+    // Request the map to end in 5 seconds.
+    level.mapSwitch = qtrue;
+    level.mapAction = 5;
+    level.mapSwitchCount = level.time;
+    level.mapSwitchCount2 = 5; // Boe!Man 7/22/12: 5 seconds remaining on the timer.
+
+    // Broadcast the change.
+    Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+    G_Broadcast("\\Map ends in 5 sec!", BROADCAST_CMD, NULL);
+    if (adm && adm->client){
+        trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7Requested map end by %s.\n\"", adm->client->pers.cleanName));
+        Boe_adminLog("map end", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "none");
+    }else{
+        trap_SendServerCommand(-1, "print \"^3[Rcon Action] ^7Requested map end.\n\"");
+        Boe_adminLog("map end", "RCON", "none");
     }
 
     return -1;

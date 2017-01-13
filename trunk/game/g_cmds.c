@@ -92,6 +92,7 @@ static admCmd_t AdminCommands[] =
     {"!third",  "third",            &g_3rd.integer,             &adm_Third,                     "Toggles Thirdperson on or off",    "",                 NULL},
     {"!wp",     "weapon",           &g_toggleweapon.integer,    &adm_toggleWeapon,              "Toggles weapon on or off",         "",                 NULL},
     {"!aca",    "anticamp",         &g_anticamp.integer,        &adm_Anticamp,                  "Toggles anticamp on or off",       "",                 NULL},
+    {"!em",     "endmap",           &g_endmap.integer,          &adm_endMap,                    "Requests map to end",              "",                 NULL},
     // Boe!Man 6/2/15: Admin synonyms for Gold.
     // Pop/explode.
     {"!p",      "pop",              &g_pop.integer,             &adm_Pop,                       "Pop/explodes a player",            "<i/n>",            "ped"},
@@ -3297,6 +3298,10 @@ void Cmd_CallVote_f( gentity_t *ent )
     trap_Argv( 1, arg1, sizeof( arg1 ) );
     trap_Argv( 2, arg2, sizeof( arg2 ) );
 
+    // Ensure the voting command is lowercase, so we can
+    // compare it in other functions.
+    Q_strlwr(arg1);
+
     if( strchr( arg1, ';' ) || strchr( arg2, ';' ) )
     {
         trap_SendServerCommand( ent-g_entities, "print \"Invalid vote string.\n\"" );
@@ -3314,10 +3319,16 @@ void Cmd_CallVote_f( gentity_t *ent )
     } else if ( !Q_stricmp( arg1, "timelimit" ) ) {
     } else if ( !Q_stricmp( arg1, "timeextension" ) ) {
     } else if ( !Q_stricmp( arg1, "scorelimit" ) ) {
+    } else if ( !Q_stricmp( arg1, "endmap" ) ) {
+    } else if ( !Q_stricmp( arg1, "shuffleteams" ) ) {
+    } else if ( !Q_stricmp( arg1, "swapteams" ) ) {
+    } else if ( !Q_stricmp( arg1, "mute" ) ) {
+    } else if ( !Q_stricmp( arg1, "clanvsall" ) ) {
+    } else if ( !Q_stricmp( arg1, "poll" ) ) {
     } else
     {
         trap_SendServerCommand( ent-g_entities, "print \"Invalid vote string.\n\"" );
-        trap_SendServerCommand( ent-g_entities, "print \"Vote commands are: map_restart, nextmap, map <mapname>, g_gametype <n>, kick <player>, clientkick <clientnum>, g_doWarmup, timelimit <time>, scorelimit <score>.\n\"" );
+        trap_SendServerCommand( ent-g_entities, "print \"Vote commands are: map_restart, nextmap, map <mapname>, g_gametype <n>, kick <player>, clientkick <clientnum>, g_doWarmup, timelimit <time>, scorelimit <score>, endmap, shuffleteams, swapteams, mute <player> <time>, clanvsall <team>, poll <question>.\n\"" );
         return;
     }
 
@@ -3406,7 +3417,7 @@ void Cmd_CallVote_f( gentity_t *ent )
     }
     else if ( !Q_stricmp ( arg1, "kick" ) )
     {
-        int clientid = G_clientNumFromArg(ent, 2, "do this to", qfalse, qtrue, qtrue, qfalse);
+        int clientid = G_clientNumFromArg(ent, 2, "kick", qfalse, qtrue, qtrue, qfalse);
 
         if ( clientid == -1 ){
             return;
@@ -3430,6 +3441,83 @@ void Cmd_CallVote_f( gentity_t *ent )
         }
         Com_sprintf ( level.voteString, sizeof(level.voteString ), "extendtime %d", g_timeextension.integer );
         Com_sprintf ( level.voteDisplayString, sizeof(level.voteDisplayString), "extend timelimit by %d minutes", g_timeextension.integer );
+    }
+    else if ( !Q_stricmp ( arg1, "endmap" ) )
+    {
+        Com_sprintf ( level.voteString, sizeof(level.voteString ), "%s", arg1 );
+        Com_sprintf( level.voteDisplayString, sizeof( level.voteDisplayString ), "%s", arg1 );
+    }
+    else if (!Q_stricmp ( arg1, "shuffleteams") )
+    {
+        // Do not allow shuffleteams during Zombies.
+        if (current_gametype.value == GT_HZ){
+            G_printInfoMessage(ent, "You cannot shuffle the teams in this gametype.");
+            return;
+        }
+
+        // Check gametype first.
+        if (!level.gametypeData->teams){
+            G_printInfoMessage(ent, "Not playing a team game.");
+            return;
+        }
+
+        // Ensure teams are not locked.
+        if (level.blueLocked || level.redLocked){
+            G_printInfoMessage(ent, "Teams are locked.");
+            return;
+        }
+
+        Com_sprintf ( level.voteString, sizeof(level.voteString ), "%s", arg1 );
+        Com_sprintf( level.voteDisplayString, sizeof( level.voteDisplayString ), "%s", arg1 );
+    }
+    else if (!Q_stricmp ( arg1, "swapteams") )
+    {
+        // Check gametype first.
+        if (!level.gametypeData->teams){
+            G_printInfoMessage(ent, "Not playing a team game.");
+            return;
+        }
+
+        Com_sprintf ( level.voteString, sizeof(level.voteString ), "%s", arg1 );
+        Com_sprintf( level.voteDisplayString, sizeof( level.voteDisplayString ), "%s", arg1 );
+    }
+    else if ( !Q_stricmp ( arg1, "mute" ) )
+    {
+        char    arg3[MAX_STRING_TOKENS];
+        int     clientid;
+        int     muteTime;
+
+        // Check if the client ID specified is valid.
+        clientid = G_clientNumFromArg(ent, 2, "mute", qfalse, qfalse, qfalse, qfalse);
+        if ( clientid == -1 ){
+            return;
+        }
+
+        // Check if the voter specified a mute time.
+        trap_Argv(3, arg3, sizeof(arg3));
+        muteTime = atoi(arg3);
+
+        if(!muteTime){
+            // If no mutetime is specified, set it to the default 5 minutes.
+            muteTime = 5;
+        }else if(muteTime > 60){
+            // Always check for the 60 minute mute max.
+            G_printInfoMessage(ent, "The maximum time for mute is 60 minutes.");
+            muteTime = 60;
+        }
+
+        Com_sprintf ( level.voteString, sizeof(level.voteString ), "mute %d %d", clientid, muteTime );
+        Com_sprintf ( level.voteDisplayString, sizeof(level.voteDisplayString), "mute #%d: %s %d min", clientid, g_entities[clientid].client->pers.cleanName, muteTime);
+    }
+    else if ( !Q_stricmp ( arg1, "clanvsall" ) )
+    {
+        Com_sprintf ( level.voteDisplayString, sizeof(level.voteDisplayString), "clanvsall %s", arg2 );
+        Com_sprintf ( level.voteString, sizeof(level.voteString ), "clanvsall %s", arg2 );
+    }
+    else if ( !Q_stricmp ( arg1, "poll" ) )
+    {
+        Com_sprintf ( level.voteDisplayString, sizeof(level.voteDisplayString), "Poll: %s", ConcatArgs(2));
+        Com_sprintf ( level.voteString, sizeof(level.voteString ), "%s", arg1 );
     }
     else
     {
@@ -3886,7 +3974,9 @@ void Boe_adm_f ( gentity_t *ent )
     char message[512];
     char broadcast[512];
 
-    // Boe!Man 7/9/12: strcat everything to a 'big buffer', and afterwards send big packets to the client (to keep the packet size as small as possible).
+    // Boe!Man 7/9/12: strcat everything to a 'big buffer', and afterwards
+    // send big packets to the client (to keep the number of packets as small
+    // as possible).
     char bigbuf[16384] = "\0";
     char sendbuf[1024] = "\0";
     char *point;
@@ -4206,6 +4296,9 @@ void Boe_adm_f ( gentity_t *ent )
         }
         trap_GP_Delete(&GP2);
     }
+
+    G_printInfoMessage(ent, "This command is not available in 1fx. Mod!");
+    G_printInfoMessage(ent, "Type '/adm ?' to see commands for your level or '/adm list' for all commands.");
 }
 
 /*

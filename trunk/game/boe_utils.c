@@ -1943,7 +1943,7 @@ void Boe_mapEvents (void){
         else{
             if(level.time >= level.mapSwitchCount){
                 if(level.mapSwitchCount2){
-                    G_Broadcast(va("\\Map restart in %i!", level.mapSwitchCount2), BROADCAST_CMD, NULL);
+                    G_Broadcast(va("\\Map restart in %d!", level.mapSwitchCount2), BROADCAST_CMD, NULL);
                     level.mapSwitchCount2--;
                     level.mapSwitchCount = level.time + 1000;
                 }else{
@@ -1954,7 +1954,7 @@ void Boe_mapEvents (void){
     }else if(level.mapAction == 2){
         if(level.time >= level.mapSwitchCount){
             if(level.mapSwitchCount2){
-                G_Broadcast(va("%s ^7%s ^7in %i!", level.mapPrefix, level.mapSwitchName, level.mapSwitchCount2), BROADCAST_CMD, NULL);
+                G_Broadcast(va("%s ^7%s ^7in %d!", level.mapPrefix, level.mapSwitchName, level.mapSwitchCount2), BROADCAST_CMD, NULL);
                 level.mapSwitchCount2--;
                 level.mapSwitchCount = level.time + 1000;
             }else{
@@ -1983,11 +1983,10 @@ void Boe_mapEvents (void){
             level.mapSwitch = qfalse;
             level.mapAction = 0;
         }
-    }
-    else if(level.mapAction == 4){
+    }else if(level.mapAction == 4){
         if(level.time >= level.mapSwitchCount){
             if(level.mapSwitchCount2){
-                G_Broadcast(va("\\Mapcycle in %i!", level.mapSwitchCount2), BROADCAST_CMD, NULL);
+                G_Broadcast(va("\\Mapcycle in %d!", level.mapSwitchCount2), BROADCAST_CMD, NULL);
                 level.mapSwitchCount2--;
                 level.mapSwitchCount = level.time + 1000;
             }else{
@@ -1998,8 +1997,21 @@ void Boe_mapEvents (void){
                 level.mapAction = 0;
             }
         }
+    }else if(level.mapAction == 5){
+        if(level.time >= level.mapSwitchCount){
+            if(level.mapSwitchCount2){
+                G_Broadcast(va("\\Map ends in %d!", level.mapSwitchCount2), BROADCAST_CMD, NULL);
+                level.mapSwitchCount2--;
+                level.mapSwitchCount = level.time + 1000;
+            }else{
+                G_Broadcast(va("\\Map ends!", level.mapSwitchCount2), BROADCAST_GAME2, NULL);
+                level.endMap = level.time;
+
+                level.mapSwitch = qfalse;
+                level.mapAction = 0;
+            }
+        }
     }
-    return;
 }
 
 /*
@@ -2460,9 +2472,17 @@ int G_clientNumFromArg(gentity_t *ent, int argNum, const char *action,
         // Don't allow this command on other Admins?
         if(!otherAdmins){
             G_printInfoMessage(ent,
-                "You cannot use this command on other Admins.");
+                "You cannot %s other Admins.", action);
             return -1;
         }
+    }
+    // Perform an additional check for when a non-Admin calls this function,
+    // and this action is not allowed on Admins.
+    else if(!otherAdmins && ent && ent->client && !ent->client->sess.admin
+        && g_entities[clientID].client->sess.admin)
+    {
+        G_printInfoMessage(ent, "You cannot %s an Admin.", action);
+        return -1;
     }
 
     // Check if the targeted player has to be alive for this command.

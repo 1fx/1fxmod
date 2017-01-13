@@ -667,6 +667,7 @@ typedef struct
 
     int         startTime;              // level.time the map was started
     int         globalVoiceTime;        // last global voice
+    int         endMap;                 // If the map should end at this time.
 
     #ifdef __linux__
     qboolean    forceExit;              // Raise a SIGUSR1 when this is qtrue to ensure we don't exit with status 0.
@@ -711,6 +712,7 @@ typedef struct
     int         voteClient;             // client who initiated vote
     int         numVotingClients;       // set by CalculateRanks
     qboolean    forceVote;              // Boe!Man 2/13/11: If the vote has been forced to pass/cancel, the admin command will handle the messaging.
+    int         votePollDisplayMsg;     // The number of times a poll result has been displayed.
 
     // spawn variables
     qboolean    spawning;               // the G_Spawn*() functions are valid
@@ -1299,6 +1301,7 @@ extern  vmCvar_t    g_rename;
 extern  vmCvar_t    g_3rd;
 extern  vmCvar_t    g_toggleweapon;
 extern  vmCvar_t    g_anticamp;
+extern  vmCvar_t    g_endmap;
 
 int             adm_Uppercut                        (int argNum, gentity_t *adm, qboolean shortCmd);
 int             adm_Pop                             (int argNum, gentity_t *adm, qboolean shortCmd);
@@ -1357,6 +1360,7 @@ int             adm_Switch                          (int argNum, gentity_t *adm,
 int             adm_Third                           (int argNum, gentity_t *adm, qboolean shortCmd);
 int             adm_toggleWeapon                    (int argNum, gentity_t *adm, qboolean shortCmd);
 int             adm_Anticamp                        (int argNum, gentity_t *adm, qboolean shortCmd);
+int             adm_endMap                          (int argNum, gentity_t *adm, qboolean shortCmd);
 
 //
 // g_main.c

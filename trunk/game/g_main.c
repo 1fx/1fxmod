@@ -310,6 +310,7 @@ vmCvar_t    g_ff;
 vmCvar_t    g_rename;
 vmCvar_t    g_toggleweapon;
 vmCvar_t    g_anticamp;
+vmCvar_t    g_endmap;
 
 vmCvar_t    g_dosPatch;
 
@@ -518,6 +519,7 @@ static cvarTable_t gameCvarTable[] =
     { &g_rename,                    "g_rename",             "4",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
     { &g_toggleweapon,              "g_toggleweapon",       "4",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
     { &g_anticamp,                  "g_anticamp",           "4",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
+    { &g_endmap,                    "g_endmap",             "4",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
 
     { &server_colors, "server_colors", "GgKk+7", CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 
@@ -2983,6 +2985,11 @@ void CheckExitRules( void )
             }
         }
     }
+
+    // Boe!Man 12/28/16: Check if the map is requested to end.
+    if(level.endMap == level.time){
+        LogExit("Map ended on request.");
+    }
 }
 
 /*
@@ -3121,6 +3128,43 @@ void CheckVote( void )
 
         if(strcmp(level.voteString, "mapcycle") == 0 ){
             G_switchToNextMapInCycle(qfalse);
+        }else if(strcmp(level.voteString, "poll") == 0){
+            char color[4] = "\0";
+            char outcome[50] = "\0";
+
+            // Use a color from the server_colors CVAR so the results are always
+            // somewhat in-style with the current color-scheme.
+            if (server_colors.string != NULL && strlen(server_colors.string) >= 3){
+                strncpy(color, va("^%c", server_colors.string[3]), sizeof(color));
+            }else{
+                // Always have some sort of backup in case no colors are set (highly unlikely though).
+                strncpy(color, "^1", sizeof(color));
+            }
+
+            // Determine outcome.
+            if(level.voteYes > level.voteNo){
+                strncpy(outcome, "Most players agreed on the question!", sizeof(outcome));
+            }else if(level.voteNo > level.voteYes){
+                strncpy(outcome, "Most players didn't agree on the question!", sizeof(outcome));
+            }else{
+                strncpy(outcome, "Poll draw!", sizeof(outcome));
+            }
+
+            // Broadcast the outcome.
+            G_Broadcast(va("%sPoll results\n\n^7[^3Question^7] %s%s\n^7[^3Voted yes^7]  %s%d\n^7[^3Voted no^7]  %s%d\n\n%s%s",
+                color, color, level.voteDisplayString + 6, color, level.voteYes, color, level.voteNo, color, outcome), BROADCAST_GAME2, NULL);
+
+            if(level.votePollDisplayMsg < 3){
+                level.voteExecuteTime = level.time + 3500;
+                level.votePollDisplayMsg++;
+            }
+        }else if(strcmp(level.voteString, "swapteams") == 0){
+            // Boe!Man 12/16/15: Don't allow swapteams if the weapons are already given out.
+            if(current_gametype.value == GT_HS && level.messagedisplay1){
+                G_printInfoMessageToAll("Swapteams is only possible before the weapons are given out!");
+            }else{
+                SwapTeams(NULL, qtrue);
+            }
         }else{
             trap_SendConsoleCommand( EXEC_APPEND, va("%s\n", level.voteString ) );
         }
@@ -3131,37 +3175,65 @@ void CheckVote( void )
         return;
     }
 
-    // Update the needed clients
-    trap_SetConfigstring ( CS_VOTE_NEEDED, va("%i", (level.numVotingClients / 2) + 1 ) );
+    // If we're just asking a poll, the vote can never fail.
+    // Because of this, the poll vote has its own routine.
+    if(strcmp(level.voteString, "poll") == 0){
+        // There are never votes needed to pass since this is a poll.
+        trap_SetConfigstring ( CS_VOTE_NEEDED, "0" );
 
-    if ( level.time - level.voteTime >= g_voteDuration.integer*1000 )
-    {
-        trap_SendServerCommand( -1, "print \"Vote failed.\n\"" );
-        level.clients[level.voteClient].voteDelayTime = level.time + g_failedVoteDelay.integer * 60000;
-    }
-    else
-    {
-        if ( level.voteYes > level.numVotingClients/2 )
-        {
-            // execute the command, then remove the vote
-            // Boe!Man 2/13/11: Make sure the vote hasn't been forced by an Admin.
-            if (level.forceVote == qfalse){
-                trap_SendServerCommand( -1, "print \"Vote passed.\n\"" );
-            }else{ // Boe!Man 2/13/11: Else it must've been, just reset the forceVote state and don't broadcast the message.. again..
-                level.forceVote = qfalse;
-            }
+        // Check if the poll time ended.
+        if ( level.time - level.voteTime >= g_voteDuration.integer*1000 ){
+            trap_SendServerCommand( -1, "print \"Poll time ended.\n\"" );
             level.voteExecuteTime = level.time + 3000;
+            level.votePollDisplayMsg = 0;
+        }else{
+            if(level.forceVote){
+                // An Admin decided the poll should be ended.
+                trap_SendServerCommand( -1, "print \"Poll time ended.\n\"" );
+                level.voteExecuteTime = level.time + 3000;
+                level.votePollDisplayMsg = 0;
+
+                level.forceVote = qfalse;
+            }else{
+                // still waiting for a majority
+                return;
+            }
         }
-        else if ( level.voteNo >= level.numVotingClients/2 )
+    }else{
+        // Regular routines.
+
+        // Update the needed clients
+        trap_SetConfigstring ( CS_VOTE_NEEDED, va("%i", (level.numVotingClients / 2) + 1 ) );
+
+        if ( level.time - level.voteTime >= g_voteDuration.integer*1000 )
         {
-            // same behavior as a timeout
             trap_SendServerCommand( -1, "print \"Vote failed.\n\"" );
             level.clients[level.voteClient].voteDelayTime = level.time + g_failedVoteDelay.integer * 60000;
         }
         else
         {
-            // still waiting for a majority
-            return;
+            if ( level.voteYes > level.numVotingClients/2 )
+            {
+                // execute the command, then remove the vote
+                // Boe!Man 2/13/11: Make sure the vote hasn't been forced by an Admin.
+                if (level.forceVote == qfalse){
+                    trap_SendServerCommand( -1, "print \"Vote passed.\n\"" );
+                }else{ // Boe!Man 2/13/11: Else it must've been, just reset the forceVote state and don't broadcast the message.. again..
+                    level.forceVote = qfalse;
+                }
+                level.voteExecuteTime = level.time + 3000;
+            }
+            else if ( level.voteNo >= level.numVotingClients/2 )
+            {
+                // same behavior as a timeout
+                trap_SendServerCommand( -1, "print \"Vote failed.\n\"" );
+                level.clients[level.voteClient].voteDelayTime = level.time + g_failedVoteDelay.integer * 60000;
+            }
+            else
+            {
+                // still waiting for a majority
+                return;
+            }
         }
     }
 
