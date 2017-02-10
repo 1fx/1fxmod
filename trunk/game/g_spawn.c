@@ -1206,12 +1206,6 @@ void SP_worldspawn( void )
         trap_SetConfigstring( CS_WARMUP, va("%i", level.warmupTime) );
         G_LogPrintf( "Warmup:\n" );
     }
-    //Ryan if in competition mode auto set the spectators to locked
-    if(g_compMode.integer)
-    {
-        level.specsLocked = 1;
-    }
-    //Ryan
 
     trap_SetConfigstring(CS_LIGHT_STYLES+(LS_STYLES_START*3)+0, defaultStyles[0][0]);
     trap_SetConfigstring(CS_LIGHT_STYLES+(LS_STYLES_START*3)+1, defaultStyles[0][1]);
