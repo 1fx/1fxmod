@@ -2753,6 +2753,58 @@ qboolean ScoreIsTied( void )
 
 /*
 =================
+checkExitTimes
+
+Check if the level is about to end in a couple of minutes.
+If so, inform all players.
+=================
+*/
+
+void checkExitTimes ( void )
+{
+    int timeRemaining;
+    int roundLevelTime;
+
+    // Don't check exit times if we don't enforce a timelimit.
+    if(!g_timelimit.integer){
+        return;
+    }
+
+    // Only check the exit times once a second.
+    if(level.lastTimeEndCheck > level.time){
+        return;
+    }
+    level.lastTimeEndCheck = level.time + 1000;
+
+    // Determine the minutes remaining.
+    roundLevelTime = level.time - level.startTime;
+    timeRemaining = g_timelimit.integer - roundLevelTime / 60000;
+
+    // Only print in the first second of a whole minute.
+    if(timeRemaining == 5 || timeRemaining == 3 || timeRemaining == 1){
+        if(roundLevelTime % 60000 < 1000){
+            char color[4];
+            memset(color, 0, sizeof(color));
+
+            // Use a color from the server_colors CVAR so the results are
+            // always somewhat in-style with the current color-scheme.
+            if (server_colors.string != NULL
+                && strlen(server_colors.string) >= 3){
+                strncpy(color, va("^%c", server_colors.string[3]),
+                    sizeof(color));
+            }else{
+                // Always have some sort of backup in case no colors are set.
+                strncpy(color, "^1", sizeof(color));
+            }
+
+            G_Broadcast(va("%s%d \\minute%s remaining!", color, timeRemaining,
+                (timeRemaining != 1) ? "s" : ""), BROADCAST_GAME2, NULL);
+        }
+    }
+}
+
+/*
+=================
 CheckExitRules
 
 There will be a delay between the time the exit is qualified for
@@ -4173,6 +4225,9 @@ void G_RunFrame( int levelTime )
 
     // Check warmup rules
     CheckWarmup();
+
+    // Boe!Man 2/10/17: Check if it's nearly time to end the level.
+    checkExitTimes();
 
     // see if it is time to end the level
     CheckExitRules();

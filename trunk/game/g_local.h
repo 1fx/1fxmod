@@ -944,6 +944,8 @@ typedef struct
     int         customETHiderAmount[16];
 
     int         lastSpeedCheck;         // Check speed for zombies only every other frame.
+
+    int         lastTimeEndCheck;       // Checks if the level is about to exit in a couple of minutes.
 } level_locals_t;
 
 //
@@ -1587,7 +1589,6 @@ extern  vmCvar_t    server_zombieteamprefix;
 extern  vmCvar_t    g_caserun;
 extern  vmCvar_t    g_minRate;
 extern  vmCvar_t    g_enforceArenaCheck;
-
 
 extern  vmCvar_t    g_allowthirdperson;
 
