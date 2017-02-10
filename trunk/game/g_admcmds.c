@@ -500,6 +500,15 @@ int adm_mapRestart(int argNum, gentity_t *adm, qboolean shortCmd){
                     G_Broadcast("\\Match started!", BROADCAST_GAME, NULL);
                     level.compMsgCount = -1;
                 }
+
+                #ifdef _GOLD
+                if(level.clientMod == CL_ROCMOD){
+                    // Enable the ROCmod match mode.
+                    trap_Cvar_Set("inMatch",
+                        (trap_Cvar_VariableIntegerValue("g_autoMatchDemo"))
+                        ? "1" : "2");
+                }
+                #endif // _GOLD
             }else if (g_compMode.integer > 0 && cm_enabled.integer == 3){
                 G_Broadcast("\\Second round started!", BROADCAST_GAME, NULL);
                 G_printInfoMessageToAll("Second round started.");
@@ -1662,6 +1671,13 @@ int adm_compMode(int argNum, gentity_t *adm, qboolean shortCmd)
         level.blueLocked = 0;
         level.redLocked = 0;
         level.specsLocked = 0;
+
+        #ifdef _GOLD
+        if(level.clientMod == CL_ROCMOD){
+            // Ensure we stop the match mode.
+            trap_Cvar_Set("inMatch", "0");
+        }
+        #endif // _GOLD
     }
 
     // Broadcast the change.

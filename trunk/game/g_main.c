@@ -1114,6 +1114,10 @@ void G_initClientMod()
         trap_Cvar_Register(NULL, "g_customRedName", va("%s^7 Team", server_redteamprefix.string), CVAR_SYSTEMINFO | CVAR_ROM, 0.0, 0.0);
         trap_Cvar_Register(NULL, "g_customBlueName", va("%s^7 Team", server_blueteamprefix.string), CVAR_SYSTEMINFO | CVAR_ROM, 0.0, 0.0);
 
+        // Automatic demo recording in ROCmod.
+        trap_Cvar_Register(NULL, "g_autoMatchDemo", "1", CVAR_ARCHIVE, 0.0, 0.0);
+        trap_Cvar_Register(NULL, "inMatch", "0", CVAR_SYSTEMINFO|CVAR_ROM|CVAR_TEMP, 0.0, 0.0);
+
         // Client death messages are handled by client.
         g_clientDeathMessages.integer = 1;
     }
@@ -1851,6 +1855,13 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
                 g_entities[level.sortedClients[i]].client->sess.invitedByBlue = qfalse;
                 g_entities[level.sortedClients[i]].client->sess.invitedByRed = qfalse;
             }
+
+            #ifdef _GOLD
+            if(level.clientMod == CL_ROCMOD){
+                // Ensure we stop the match mode.
+                trap_Cvar_Set("inMatch", "0");
+            }
+            #endif // _GOLD
         }
         if (cm_enabled.integer == 0){ // Boe!Man 6/2/11: Little piece of error handling. When someone decides to reboot the server; either a crash or intented, Competition Mode didn't completely shut down. We don't worry about the score- or timelimit, Config should always be executed first?
             trap_Cvar_Set("g_compMode", "0");
