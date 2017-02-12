@@ -18,7 +18,10 @@
 #if (defined(__GNUC__) && __GNUC__ < 3)
 #include <linux/user.h>
 #else
-#define __USE_MISC
+#ifndef __USE_MISC
+#define __USE_MISC 1
+#endif // not __USE_MISC
+
 #include <sys/mman.h>
 #endif // GNUC < 3
 

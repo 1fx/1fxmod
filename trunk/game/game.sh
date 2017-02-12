@@ -481,28 +481,10 @@ printf "=====================================================\n"
 if [ -f $outfile ]; then
     echo -e "Compiling the Mod was \e[00;32msuccessfull\e[00m!"
 
-    if [[ `uname -a` == *"Msys"* ]] && [[ `uname -a` == "MINGW32"* ]]; then
-        echo "Check the file manually for warnings (stat not supported in MSYS)."
+    if [ -s "compile_log" ]; then
+        echo -e "Some \e[00;33mwarnings\e[00m did occur."
     else
-        if [ $gold == false ] && [ $linux == true ]; then
-            if [ $(stat -c %s compile_log 2>/dev/null || echo 0) -gt 0 ]; then
-                echo -e "Some \e[00;33mwarnings\e[00m did occur."
-            else
-                echo "No warnings occured."
-            fi
-        else
-            if [ $macosx == true ]; then
-                param="-f%z"
-            else
-                param="-c 0"
-            fi
-
-            if [ $(stat $param compile_log 2>/dev/null) -gt 0 ]; then
-                echo -e "Some \e[00;33mwarnings\e[00m did occur."
-            else
-                echo "No warnings occured."
-            fi
-        fi
+        echo "No warnings occured."
     fi
 else
     echo -e "Compiling the Mod \e[00;31mfailed\e[00m!"
