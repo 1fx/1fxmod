@@ -219,6 +219,16 @@ void EvenTeams (gentity_t *adm, qboolean aet)
             return;
         }
 
+        // Boe!Man 7/13/12: Fix crash issue with auto eventeams too soon
+        // before entering the map.
+        if(lastConnected == NULL){
+            if((adm && adm->client) || aet == qfalse){
+                G_printInfoMessage(adm,
+                    "You cannot even the teams this fast.");
+            }
+            return;
+        }
+
         if (!G_IsClientDead(lastConnected->client)){
             lastConnected->client->ps.stats[STAT_WEAPONS] = 0;
             TossClientItems( lastConnected );
