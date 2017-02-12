@@ -855,6 +855,7 @@ void G_ClientCleanName ( const char *in, char *out, int outSize, qboolean colors
     char    ch;
     char    *p;
     int     spaces;
+    int     characters;
 
     //save room for trailing null byte
     outSize--;
@@ -864,6 +865,7 @@ void G_ClientCleanName ( const char *in, char *out, int outSize, qboolean colors
     p = out;
     *p = 0;
     spaces = 0;
+    characters = 0;
 
     while( 1 )
     {
@@ -919,6 +921,7 @@ void G_ClientCleanName ( const char *in, char *out, int outSize, qboolean colors
         else
         {
             spaces = 0;
+            characters++;
         }
 
         if( len > outSize - 1 )
@@ -940,7 +943,7 @@ void G_ClientCleanName ( const char *in, char *out, int outSize, qboolean colors
     }
 
     // don't allow empty names
-    if( *p == 0 || colorlessLen == 0 )
+    if( *p == 0 || colorlessLen == 0 || characters == 0 )
     {
         Q_strncpyz( p, "UnnamedPlayer", outSize );
     }
