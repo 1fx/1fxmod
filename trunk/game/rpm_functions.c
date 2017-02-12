@@ -270,7 +270,8 @@ void RPM_Awards(void)
                 overallScore = stat->overallScore;
                 bestOverall = ent;
             }
-            else if(stat->overallScore == overallScore && overallScore)
+            else if(stat->overallScore == overallScore &&
+                overallScore && bestOverall)
             {
                 //if they got the same amout of points in less time
                 //make them mvp
