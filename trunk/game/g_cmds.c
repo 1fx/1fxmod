@@ -3,7 +3,7 @@
 #include "g_local.h"
 #include "boe_local.h"
 
-#include "../../ui/menudef.h"
+#include "../ui/menudef.h"
 
 // Henk 04/05/10 -> New command system(Yus this is very pro)
 typedef struct

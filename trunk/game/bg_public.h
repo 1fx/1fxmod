@@ -9,7 +9,7 @@
 #define __BG_PUBLIC_H__
 
 #include "bg_weapons.h"
-#include "../../ui/menudef.h"
+#include "../ui/menudef.h"
 #include "inv.h"
 
 //#define   GAME_VERSION        "sof2mp-0.01"   sent on 11/26/2001
