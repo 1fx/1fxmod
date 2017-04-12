@@ -3054,7 +3054,7 @@ void CheckExitRules( void )
     }
 
     // Boe!Man 12/28/16: Check if the map is requested to end.
-    if(level.endMap == level.time){
+    if(level.endMap && level.endMap == level.time){
         LogExit("Map ended on request.");
     }
 }
