@@ -19,7 +19,7 @@
 #define MODNAME "1fx. Mod"
 #define MODNAME_COLORED "^71fx^1. ^3Mod^7"
 
-#define MODVERSION_MAJOR "0.78"
+#define MODVERSION_MAJOR "0.80"
 #define MODVERSION_PRE "0.78t.7"
 
 // Boe!Man 10/13/15: Mod flavors.
@@ -209,6 +209,10 @@
 // 0.75         Release                                     12/29/14    // Sent out to public on 12/29/14
 // 0.76         Release                                     1/29/15     // Sent out to public on 1/29/15
 // 0.77         Release                                     4/6/15      // Sent out to public on 4/6/15
+
+// Branch 0.80
+//
+// 0.80         Release                                     4/24/17     // Sent out to public on 4/24/17
 
 //===================================================================
 
