@@ -481,7 +481,14 @@ qboolean G_MoverPush( gentity_t *pusher, vec3_t move, vec3_t amove, gentity_t **
         // If being blocked by an item just let it pass through it and get rid of the item
         if ( check->s.eType == ET_ITEM )
         {
-            G_FreeEntity ( check );
+            // If the item is a gametype item, it should respawn properly.
+            if (check->item && check->item->giType == IT_GAMETYPE){
+                trap_GT_SendEvent(GTEV_ITEM_STUCK, level.time,
+                    check->item->quantity, 0, 0, 0, 0);
+            }else{
+                G_FreeEntity ( check );
+            }
+
             continue;
         }
 
