@@ -347,6 +347,7 @@ vmCvar_t    g_camperSniper;
 vmCvar_t    g_camperPunishment;
 
 vmCvar_t    g_enforceArenaCheck;
+vmCvar_t    g_checkTimeRemaining;
 
 static cvarTable_t gameCvarTable[] =
 {
@@ -699,6 +700,8 @@ static cvarTable_t gameCvarTable[] =
     #else
     { &sql_timeBench,               "sql_timeBench",            "0",                CVAR_ARCHIVE,               0.0f,   0.0f, 0,  qfalse },
     #endif
+
+    { &g_checkTimeRemaining,        "g_checkTimeRemaining",     "7",                CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue },
 
     //http://1fx.uk.to/forums/index.php?/topic/1230-1fx-anticheat/page__view__findpost__p__13498
 
@@ -2792,8 +2795,17 @@ void checkExitTimes ( void )
     timeRemaining = g_timelimit.integer - roundLevelTime / 60000;
 
     // Only print in the first second of a whole minute.
-    if(timeRemaining == 5 || timeRemaining == 3 || timeRemaining == 1){
-        if(roundLevelTime % 60000 < 1000){
+    if(roundLevelTime % 60000 < 1000){
+        // Check if we should print this time remaining message.
+        // The g_checkTimeRemaining CVAR value is bitflag based.
+        // 0 = disabled.
+        // 1 = print 1 minute remaining.
+        // 2 = print 3 minutes remaining.
+        // 4 = print 5 minutes remaining.
+        if((g_checkTimeRemaining.integer & 1 && timeRemaining == 1)
+            || (g_checkTimeRemaining.integer & 2 && timeRemaining == 3)
+            || (g_checkTimeRemaining.integer & 4 && timeRemaining == 5)){
+
             char color[4];
             memset(color, 0, sizeof(color));
 
