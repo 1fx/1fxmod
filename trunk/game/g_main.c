@@ -2808,8 +2808,11 @@ void checkExitTimes ( void )
                 strncpy(color, "^1", sizeof(color));
             }
 
+            // Broadcast the change.
             G_Broadcast(va("%s%d \\minute%s remaining!", color, timeRemaining,
                 (timeRemaining != 1) ? "s" : ""), BROADCAST_GAME2, NULL);
+            G_printInfoMessageToAll("%d minute%s remaining!", timeRemaining,
+                (timeRemaining != 1) ? "s" : "");
         }
     }
 }
