@@ -406,9 +406,9 @@ void Touch_Item (gentity_t *ent, gentity_t *other, trace_t *trace)
         return;
     }
 
-#ifdef _DEBUG
+    #ifdef _DEBUG
     G_LogPrintf( "Item: %i %s\n", other->s.number, ent->item->classname );
-#endif
+    #endif
 
     // Initialize booleans
     predict    = other->client->pers.predictItemPickup;
@@ -417,6 +417,15 @@ void Touch_Item (gentity_t *ent, gentity_t *other, trace_t *trace)
     switch( ent->item->giType )
     {
         case IT_WEAPON:
+            // Disabled weapons cannot be picked up. This might happen if a weapon
+            // that was previously enabled with the weapon Admin command has been
+            // dropped somewhere.
+            if(!BG_IsWeaponAvailableForOutfitting(ent->item->giTag, 2)
+                && level.pickupsDisabled && current_gametype.value != GT_HS
+                && current_gametype.value != GT_HZ){
+                return;
+            }
+
             respawn = Pickup_Weapon(ent, other, &autoswitch );
             break;
         case IT_AMMO:
