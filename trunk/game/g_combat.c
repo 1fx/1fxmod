@@ -2202,6 +2202,21 @@ qboolean G_RadiusDamage (
                         G_printInfoMessage(attacker, "M4 cage failed %d of %d: Seeker at boundary or hider caught in cage.", attacker->client->sess.cageAttempts, g_cageAttempts.integer);
                     }else{
                         G_printInfoMessage(attacker, "M4 cage failed too many times: not adding ammo.");
+
+                        // Boe!Man 5/6/17: We're not adding ammo (so we're,
+                        // losing some). Also check here if the M4 cage should
+                        // disappear.
+                        index = weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_ALTERNATE].ammoIndex;
+                        index1 = weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_NORMAL].ammoIndex;
+                        if(attacker->client->ps.ammo[index] == 0 && attacker->client->ps.ammo[index1] == 0 && attacker->client->ps.clip[ATTACK_NORMAL][WP_M4_ASSAULT_RIFLE] == 0 && attacker->client->ps.clip[ATTACK_ALTERNATE][WP_M4_ASSAULT_RIFLE] == 0){
+                            attacker->client->ps.clip[ATTACK_NORMAL][WP_M4_ASSAULT_RIFLE] = 0;
+                            attacker->client->ps.clip[ATTACK_ALTERNATE][WP_M4_ASSAULT_RIFLE] = 0;
+                            attacker->client->ps.stats[STAT_WEAPONS] &= ~(1<<WP_M4_ASSAULT_RIFLE);
+                            attacker->client->ps.weapon = WP_KNIFE;
+                            attacker->client->ps.weaponstate = WEAPON_READY;
+                            Com_sprintf(level.M4loc, sizeof(level.M4loc), "%s", "Disappeared");
+                            trap_SendServerCommand(-1, va("print\"^3[H&S] ^7M4 has disappeared\n\""));
+                        }
                     }
                 }else{
                     attacker->client->ps.ammo[ammoindex]+=1;
