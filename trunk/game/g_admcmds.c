@@ -3860,6 +3860,13 @@ int adm_toggleWeapon(int argNum, gentity_t *adm, qboolean shortCmd)
         return -1;
     }
 
+    // Can't toggle weapons when pickups are enabled.
+    if(!level.pickupsDisabled){
+        G_printInfoMessage(adm, "You cannot toggle weapons when pickups " \
+            "are enabled.");
+        return -1;
+    }
+
     // Get the argument.
     if(shortCmd){
         argc = G_GetChatArgumentCount();
