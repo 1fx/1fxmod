@@ -1247,7 +1247,6 @@ int adm_timeLimit(int argNum, gentity_t *adm, qboolean shortCmd)
         level.timelimithit = qfalse;
         G_printInfoMessageToAll("Timelimit is not hit anymore, " \
             "continuing map.");
-
     }
 
     return -1;
@@ -1412,7 +1411,7 @@ static void adm_Damage(gentity_t *adm, char *damageName, int value)
     int i;
 
     // No such thing as ND or RD in Hide&Seek or Humans&Zombies.
-    if (current_gametype.value == GT_HS || current_gametype.value == GT_HZ){
+    if(current_gametype.value == GT_HS || current_gametype.value == GT_HZ){
         G_printInfoMessage(adm, "You cannot switch to %s in this gametype.", damageName);
         return;
     }
@@ -1448,6 +1447,12 @@ Restarts gametype.
 
 int adm_gametypeRestart(int argNum, gentity_t *adm, qboolean shortCmd)
 {
+    // Cannot restart the gametype in DM (at least, no visible effect).
+    if(current_gametype.value == GT_DM){
+        G_printInfoMessage(adm, "You cannot restart this gametype.");
+        return -1;
+    }
+
     // Broadcast the change and restart it.
     Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
     G_Broadcast("\\Gametype restart!", BROADCAST_CMD, NULL);
