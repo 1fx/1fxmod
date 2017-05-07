@@ -1240,6 +1240,16 @@ int adm_timeLimit(int argNum, gentity_t *adm, qboolean shortCmd)
 {
     adm_toggleCVAR(adm, argNum, shortCmd, "Timelimit", &g_timelimit, qtrue, "cm_tl", &cm_tl);
 
+    // Boe!Man 5/7/17: If the timelimit is hit already, check
+    // if the new value makes the timelimit not being hit anymore.
+    if(level.timelimithit && level.time - level.startTime
+        < (g_timelimit.integer + level.timeExtension) * 60000){
+        level.timelimithit = qfalse;
+        G_printInfoMessageToAll("Timelimit is not hit anymore, " \
+            "continuing map.");
+
+    }
+
     return -1;
 }
 

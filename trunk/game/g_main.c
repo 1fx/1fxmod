@@ -979,7 +979,23 @@ void G_UpdateCvars( void )
                 {
                     //trap_SendServerCommand( -1, va("print \"Server: %s changed to %s\n\"", cv->cvarName, cv->vmCvar->string ) );
                     trap_SendServerCommand( -1, va("print \"^3[Rcon Action] ^7%s changed to %s.\n\"", cv->cvarName, cv->vmCvar->string ) );
+
+                    if(level.timelimithit
+                        && !Q_stricmp (cv->cvarName, "timelimit")){
+                        // Boe!Man 5/7/17: If the timelimit is hit already, check
+                        // if the new value makes the timelimit not being hit
+                        // anymore.
+                        if(level.time - level.startTime
+                            < (g_timelimit.integer + level.timeExtension)
+                            * 60000){
+                            level.timelimithit = qfalse;
+                            G_printInfoMessageToAll("Timelimit is not hit " \
+                                "anymore, continuing map.");
+                        }
+                    }
                 }
+
+
 
                 if (cv->teamShader)
                 {
