@@ -3242,7 +3242,7 @@ void CheckVote( void )
             G_Broadcast(va("%sPoll results\n\n^7[^3Question^7] %s%s\n^7[^3Voted yes^7]  %s%d\n^7[^3Voted no^7]  %s%d\n\n%s%s",
                 color, color, level.voteDisplayString + 6, color, level.voteYes, color, level.voteNo, color, outcome), BROADCAST_GAME2, NULL);
 
-            if(level.votePollDisplayMsg < 3){
+            if(level.votePollDisplayMsg < 2){
                 level.voteExecuteTime = level.time + 3500;
                 level.votePollDisplayMsg++;
             }
