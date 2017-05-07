@@ -171,21 +171,13 @@ RPM_Awards
 */
 void RPM_Awards(void)
 {
-    static int overallScore = 0, headshots = 0, damage = 0, explosiveKills = 0, knifeKills = 0;
-    static float  accuracy = 0, ratio = 0;
-    unsigned int i, numPlayers = 0;
-    //I changed this to an integer so players who connect
-    //faster than the rest don't bump up the avg. time
-    //float avgtime = 0.0, playerTime = 0.0;
-    int avgtime = 0, playerTime = 0;
-    statinfo_t     *stat;
-    // Boe!Man 2/20/13: No need to be static again, the struct already is.
-    gentity_t *bestOverall = NULL, *headshooter = NULL, *killer = NULL;
-    gentity_t *accurate = NULL, *bestRatio = NULL, *explosive = NULL, *knifer = NULL;
-    gentity_t *ent;
+    unsigned int    i, numPlayers = 0;
+    int             avgtime = 0, playerTime = 0;
+    statinfo_t      *stat;
+    gentity_t       *ent;
 
     /*
-    Boe!Man 2/20/13: Oh noooess this is crappy. ;_; But there's no other fix for dynlib it seems.
+    Boe!Man 2/20/13: Award scoring structure.
     Structure:
     [0] - bestOverall
     [1] - headshooter
@@ -196,13 +188,23 @@ void RPM_Awards(void)
     [6] - knifer
     */
     typedef struct {
-        char name[MAX_NETNAME];
-        int  number;
+        char    name[MAX_NETNAME];
+        int     number;
+        int     score;
+        float   scoreF;
     }scores_t;
     static scores_t     bestScores[7];
 
     if(!level.awardTime)
     {
+        int overallScore = 0, headshots = 0, damage = 0;
+        int explosiveKills = 0, knifeKills = 0;
+        float accuracy = 0, ratio = 0;
+
+        gentity_t *bestOverall = NULL, *headshooter = NULL, *killer = NULL;
+        gentity_t *accurate = NULL, *bestRatio = NULL, *explosive = NULL;
+        gentity_t *knifer = NULL;
+
         //find the average time player by all connected clients
         for (i=0; i < level.maxclients ; i++)
         {
@@ -383,6 +385,8 @@ void RPM_Awards(void)
             strcpy(bestScores[0].name, "None");
             bestScores[0].number = -1;
         }
+        bestScores[0].score = overallScore;
+
         if(headshooter){
             Q_strncpyz(bestScores[1].name, g_entities[headshooter->s.number].client->pers.netname, sizeof(bestScores[1].name));
             bestScores[1].number = headshooter->s.number;
@@ -390,6 +394,8 @@ void RPM_Awards(void)
             strcpy(bestScores[1].name, "None");
             bestScores[1].number = -1;
         }
+        bestScores[1].score = headshots;
+
         if(killer){
             Q_strncpyz(bestScores[2].name, g_entities[killer->s.number].client->pers.netname, sizeof(bestScores[2].name));
             bestScores[2].number = killer->s.number;
@@ -397,6 +403,8 @@ void RPM_Awards(void)
             strcpy(bestScores[2].name, "None");
             bestScores[2].number = -1;
         }
+        bestScores[2].score = damage;
+
         if(accurate){
             Q_strncpyz(bestScores[3].name, g_entities[accurate->s.number].client->pers.netname, sizeof(bestScores[3].name));
             bestScores[3].number = accurate->s.number;
@@ -404,6 +412,8 @@ void RPM_Awards(void)
             strcpy(bestScores[3].name, "None");
             bestScores[3].number = -1;
         }
+        bestScores[3].scoreF = accuracy;
+
         if(bestRatio){
             Q_strncpyz(bestScores[4].name, g_entities[bestRatio->s.number].client->pers.netname, sizeof(bestScores[4].name));
             bestScores[4].number = bestRatio->s.number;
@@ -411,6 +421,8 @@ void RPM_Awards(void)
             strcpy(bestScores[4].name, "None");
             bestScores[4].number = -1;
         }
+        bestScores[4].scoreF = ratio;
+
         if(explosive){
             Q_strncpyz(bestScores[5].name, g_entities[explosive->s.number].client->pers.netname, sizeof(bestScores[5].name));
             bestScores[5].number = explosive->s.number;
@@ -418,6 +430,8 @@ void RPM_Awards(void)
             strcpy(bestScores[5].name, "None");
             bestScores[5].number = -1;
         }
+        bestScores[5].score = explosiveKills;
+
         if(knifer){
             Q_strncpyz(bestScores[6].name, g_entities[knifer->s.number].client->pers.netname, sizeof(bestScores[6].name));
             bestScores[6].number = knifer->s.number;
@@ -425,6 +439,7 @@ void RPM_Awards(void)
             strcpy(bestScores[6].name, "None");
             bestScores[6].number = -1;
         }
+        bestScores[6].score = knifeKills;
     }
 
     for (i = 0; i < level.maxclients ; i++)
@@ -445,41 +460,40 @@ void RPM_Awards(void)
         {
             G_Broadcast(va("^1Best Overall: ^7%s - %i\n^1Headshots: ^7%s - %i\n^1Killer: ^7%s - %i\n^1Accurate: ^7%s - %.2f percent\n^1Best Ratio: ^7%s - %.2f\n^1Nades: ^7%s - %i detonated\n^1Knifer: ^7%s - %i shanked",
                 bestScores[0].name,
-                overallScore,
+                bestScores[0].score,
                 bestScores[1].name,
-                headshots,
+                bestScores[1].score,
                 bestScores[2].name,
-                damage,
+                bestScores[2].score,
                 bestScores[3].name,
-                accuracy,
+                bestScores[3].scoreF,
                 bestScores[4].name,
-                ratio,
+                bestScores[4].scoreF,
                 bestScores[5].name,
-                explosiveKills,
+                bestScores[5].score,
                 bestScores[6].name,
-                knifeKills ), BROADCAST_AWARDS, ent);
+                bestScores[6].score ), BROADCAST_AWARDS, ent);
             continue;
         }
         if(!level.awardTime)
         {
             trap_SendServerCommand( i, va("awards %i %i %i %i %i %i %i %.2f %i %.2f %i %i %i %i",
                 bestScores[0].number,
-                overallScore,
+                bestScores[0].score,
                 bestScores[1].number,
-                headshots,
+                bestScores[1].score,
                 bestScores[2].number,
-                damage,
+                bestScores[2].score,
                 bestScores[3].number,
-                accuracy,
+                bestScores[3].scoreF,
                 bestScores[4].number,
-                ratio,
+                bestScores[4].scoreF,
                 bestScores[5].number,
-                explosiveKills,
+                bestScores[5].score,
                 bestScores[6].number,
-                knifeKills
+                bestScores[6].score
                 ));
         }
     }
 }
-
 #endif // not _GOLD
