@@ -1145,7 +1145,7 @@ void CheckGametype ( void )
             ((current_gametype.value == GT_HS && level.messagedisplay) || current_gametype.value != GT_HS))
             || (current_gametype.value == GT_HZ && players[TEAM_BLUE] > 1))
             ){
-            if(level.timelimithit == qtrue && level.cagefight != qtrue && (strstr(g_gametype.string, "inf") || strstr(g_gametype.string, "elim"))){
+            if(level.timelimithit && !level.cagefight){
                 gentity_t*  tent;
                 int         tiedplayers;
 
@@ -1162,7 +1162,7 @@ void CheckGametype ( void )
                         UpdateScores();
                         trap_GT_SendEvent ( GTEV_TEAM_ELIMINATED, level.time, TEAM_RED, 0, 0, 0, 0 ); // Boe!Man 9/6/11: Add this here to prevent the gametype not being properly ended (when timelimit's hit).
                         alreadyHit = qtrue;
-                        LogExit( "Seekers have won the match" );
+                        LogExit("Timelimit hit.");
                     }else{
                         trap_SendServerCommand(-1, va("print \"^3[H&S] ^7%i hiders found with top score, starting cage round.\n\"", tiedplayers));
                         level.cagefighttimer = level.time+3000;
@@ -1180,7 +1180,7 @@ void CheckGametype ( void )
                     if (g_compMode.integer > 0 && cm_enabled.integer > 1){
                         Boe_compTimeLimitCheck();
                     }else{
-                        LogExit( "Timelimit Hit." );
+                        LogExit("Timelimit hit.");
                     }
                 }
             }
@@ -1192,13 +1192,13 @@ void CheckGametype ( void )
         }
         else if (!alive[TEAM_BLUE] && dead[TEAM_BLUE] && current_gametype.value != GT_HS)
         {
-            if(level.timelimithit == qtrue && (strstr(g_gametype.string, "inf") || strstr(g_gametype.string, "elim"))){
+            if(level.timelimithit){
                 gentity_t*  tent;
                 tent = G_TempEntity( vec3_origin, EV_GAME_OVER );
                 tent->s.eventParm = GAME_OVER_TIMELIMIT;
                 tent->r.svFlags = SVF_BROADCAST;
                 level.timelimithit = qfalse;
-                LogExit( "Blue team has been eliminated" );
+                LogExit("Timelimit hit.");
             }
 
             trap_GT_SendEvent ( GTEV_TEAM_ELIMINATED, level.time, TEAM_BLUE, 0, 0, 0, 0 );
@@ -1221,7 +1221,7 @@ void CheckGametype ( void )
             level.timelimithit = qfalse;
             level.cagefight = qfalse;
             level.cagefightdone = qtrue;
-            LogExit( "Someone has won the cagefight" );
+            LogExit("Cagefight is done.");
             return;
         }
         // See if the time has expired
@@ -1244,7 +1244,7 @@ void CheckGametype ( void )
                 UpdateScores();
                 level.timelimithit = qfalse;
                 level.cagefight = qfalse;
-                LogExit( "Timelimit hit" );
+                LogExit("Timelimit hit.");
                 return;
             }
 
@@ -1261,7 +1261,7 @@ void CheckGametype ( void )
             }
 
             trap_GT_SendEvent ( GTEV_TIME_EXPIRED, level.time, 0, 0, 0, 0, 0 );
-            if(level.timelimithit == qtrue && (strstr(g_gametype.string, "inf") || strstr(g_gametype.string, "elim"))){
+            if(level.timelimithit){
                 gentity_t*  tent;
                 int         tiedplayers;
 
@@ -1273,6 +1273,7 @@ void CheckGametype ( void )
                     tent->s.eventParm = GAME_OVER_TIMELIMIT;
                 }
                 tent->r.svFlags = SVF_BROADCAST;
+
                 if(current_gametype.value == GT_HS){
                     tiedplayers = TiedPlayers();
                     if(tiedplayers < 2 || !level.cagefightloaded){
@@ -1281,7 +1282,7 @@ void CheckGametype ( void )
                         #endif
                         UpdateScores();
                         level.timelimithit = qfalse;
-                        LogExit( "Timelimit hit." );
+                        LogExit("Timelimit hit.");
                     }else{
                         trap_SendServerCommand(-1, va("print \"^3[H&S] ^7%i hiders found with top score, starting cage round.\n\"", tiedplayers));
                         level.cagefighttimer = level.time+3000;
@@ -1291,7 +1292,7 @@ void CheckGametype ( void )
                     if (g_compMode.integer > 0 && cm_enabled.integer > 1){
                         Boe_compTimeLimitCheck();
                     }else{
-                        LogExit( "Timelimit Hit." );
+                        LogExit("Timelimit hit.");
                     }
                 }
             }

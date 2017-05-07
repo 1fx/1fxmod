@@ -448,6 +448,16 @@ void GT_RunFrame ( int time )
                 {
                     G_AddScore(&g_entities[gametype.bombPlantClient], 10);
                 }
+
+                // Is the timelimit hit already?
+                if(level.timelimithit){
+                    gentity_t*  tent;
+                    tent = G_TempEntity( vec3_origin, EV_GAME_OVER );
+                    tent->s.eventParm = GAME_OVER_TIMELIMIT;
+                    tent->r.svFlags = SVF_BROADCAST;
+                    level.timelimithit = qfalse;
+                    LogExit("Timelimit hit.");
+                }
             }
 
             gametype.bombPlantTime = 0;
@@ -1135,6 +1145,16 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 
                                 // Boe!Man 11/29/12: Reset gametype.
                                 level.gametypeResetTime = level.time + 5000;
+
+                                // Is the timelimit hit already?
+                                if(level.timelimithit){
+                                    gentity_t*  tent;
+                                    tent = G_TempEntity( vec3_origin, EV_GAME_OVER );
+                                    tent->s.eventParm = GAME_OVER_TIMELIMIT;
+                                    tent->r.svFlags = SVF_BROADCAST;
+                                    level.timelimithit = qfalse;
+                                    LogExit("Timelimit hit.");
+                                }
                             }
                         }
                         break;
@@ -1301,6 +1321,16 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                 if ( !gt_simpleScoring.integer )
                 {
                     G_AddScore ( &g_entities[arg1], 10 );
+                }
+
+                // Is the timelimit hit already?
+                if(level.timelimithit){
+                    gentity_t*  tent;
+                    tent = G_TempEntity( vec3_origin, EV_GAME_OVER );
+                    tent->s.eventParm = GAME_OVER_TIMELIMIT;
+                    tent->r.svFlags = SVF_BROADCAST;
+                    level.timelimithit = qfalse;
+                    LogExit("Timelimit hit.");
                 }
 
                 return 1;

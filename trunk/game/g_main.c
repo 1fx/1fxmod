@@ -2876,7 +2876,13 @@ void CheckExitRules( void )
     {
         if ( level.time - level.startTime >= (g_timelimit.integer + level.timeExtension)*60000 )
         {
-            if(strstr(g_gametype.string, "inf") || strstr(g_gametype.string, "elim")){
+            if(current_gametype.value == GT_INF
+                || current_gametype.value == GT_ELIM
+                #ifdef _GOLD
+                || current_gametype.value == GT_DEM
+                #endif // _GOLD
+                || current_gametype.value == GT_HS
+                || current_gametype.value == GT_HZ){
                 G_printInfoMessageToAll("Timelimit hit, waiting for round to finish.");
                 level.timelimithit = qtrue;
             }else{
@@ -2902,7 +2908,7 @@ void CheckExitRules( void )
                     }
                     Boe_compTimeLimitCheck();
                 }else{
-                    LogExit( "Timelimit hit." );
+                    LogExit("Timelimit hit.");
                 }
             }
             return;
@@ -2968,7 +2974,7 @@ void CheckExitRules( void )
                         Com_Printf("Updating scores..\n");
                         #endif
                         UpdateScores();
-                        LogExit("Hiders have won");
+                        LogExit("Hiders hit the score limit.");
                     }else
                     LogExit( "Red team hit the score limit." );
                 }
@@ -3029,7 +3035,7 @@ void CheckExitRules( void )
                         Com_Printf("Updating scores..\n");
                         #endif
                         UpdateScores();
-                        LogExit("Seekers have won");
+                        LogExit("Seekers hit the score limit.");
                     }else
                     LogExit( "Blue team hit the score limit." );
                 }
