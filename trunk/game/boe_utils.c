@@ -2159,7 +2159,7 @@ char *Boe_parseCustomCommandArgs(gentity_t *ent, char *in, qboolean shortCmd)
     char        arg2[1];
     char        arg[MAX_STRING_TOKENS];
     int         pos = 0; // Position of out.
-    int         argc;
+    int         argc, i;
 
     #ifdef _DEBUG
     Com_Printf("Boe_parseCustomCommandArgs: in: %s\n", in); // Debug.
@@ -2188,6 +2188,18 @@ char *Boe_parseCustomCommandArgs(gentity_t *ent, char *in, qboolean shortCmd)
                             Q_strncpyz(arg, G_GetChatArgument(atoi(arg2)), sizeof(arg));
                         }else{
                             arg[0] = '\0';
+                        }
+                    }
+
+                    // Iterate through the argument.
+                    // Don't allow illegal characters that can lead to exploits,
+                    // namely the ;
+                    for(i = 0; i < strlen(arg); i++){
+                        if(arg[i] == ';'){
+                            // Argument separator detected.
+                            // Terminate the argument there.
+                            arg[i] = '\0';
+                            break;
                         }
                     }
 
