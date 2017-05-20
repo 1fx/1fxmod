@@ -41,9 +41,14 @@ The code of where we check the packet length, and if too big, truncate it.
 
 void Patch_connectionlessPacketDetour(char *packet)
 {
+    int packetLength = strlen(packet);
+
     // Check length of packet.
-    if (strlen(packet) > 320){
-        Com_Printf("WARNING: q3infoboom exploit attack.\n");
+    if (packetLength > 320){
+        // Only warn people when a genuine attack happens.
+        if(packetLength > 512){
+            Com_Printf("WARNING: q3infoboom exploit attack.\n");
+        }
         packet[320] = '\0'; // Truncate it.
     }
 
