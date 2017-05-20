@@ -995,8 +995,6 @@ void G_UpdateCvars( void )
                     }
                 }
 
-
-
                 if (cv->teamShader)
                 {
                     remapped = qtrue;

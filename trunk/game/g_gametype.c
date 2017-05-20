@@ -303,19 +303,27 @@ G_ResetGametypeEntities
 */
 void G_ResetGametypeEntities ( void )
 {
-    gentity_t* find;
-    qboolean   initVisible;
+    gentity_t   *find;
+    qboolean    initVisible;
+    int         i;
 
     // Show total time
     initVisible = qtrue;
     trap_SetConfigstring ( CS_GAMETYPE_TIMER, "0" );
 
-    // Reset all of the gametype items.  This must be done last because the spawn
-    // function may alter enabled states of triggers or scripts
+    // Reset all of the gametype items.  This must be done last because the
+    // spawn function may alter enabled states of triggers or scripts.
     find = NULL;
-    while ( NULL != (find = G_Find ( find, FOFS(classname), "gametype_item" ) ) )
-    {
+    while(NULL != (find = G_Find ( find, FOFS(classname), "gametype_item"))){
         G_ResetGametypeItem ( find->item );
+    }
+
+    // Boe!Man 5/21/17: Get rid of any remaining items just in case.
+    // For example, in DEM, this fixes a duplicate gametype item during
+    // autoswap.
+    for(i = 0; i < level.numConnectedClients; i++){
+        g_entities[level.sortedClients[i]].client->ps.stats \
+            [STAT_GAMETYPE_ITEMS] = 0;
     }
 }
 
