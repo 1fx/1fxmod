@@ -713,6 +713,8 @@ typedef struct
     int         numVotingClients;       // set by CalculateRanks
     qboolean    forceVote;              // Boe!Man 2/13/11: If the vote has been forced to pass/cancel, the admin command will handle the messaging.
     int         votePollDisplayMsg;     // The number of times a poll result has been displayed.
+    qboolean    voteMsg30Sec;           // If this is true, the 30 sec vote expiry warning message has been displayed.
+    qboolean    voteMsg10Sec;           // If this is true, the 10 sec vote expiry reminder message has been displayed.
 
     // spawn variables
     qboolean    spawning;               // the G_Spawn*() functions are valid

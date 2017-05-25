@@ -3542,6 +3542,8 @@ void Cmd_CallVote_f( gentity_t *ent )
     level.voteTime = level.time;
     level.voteYes = 0;
     level.voteNo = 0;
+    level.voteMsg30Sec = qfalse;
+    level.voteMsg10Sec = qfalse;
 
     for ( i = 0 ; i < level.maxclients ; i++ )
     {

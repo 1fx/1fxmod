@@ -3216,6 +3216,9 @@ CheckVote
 */
 void CheckVote( void )
 {
+    int         i;
+    gentity_t   *ent;
+
     if ( level.voteExecuteTime && level.voteExecuteTime < level.time )
     {
         level.voteExecuteTime = 0;
@@ -3275,6 +3278,34 @@ void CheckVote( void )
     if ( !level.voteTime )
     {
         return;
+    }
+
+    // Check if we displayed the vote expiry warning messages yet.
+    if(!level.voteMsg30Sec && level.time > level.voteTime + 30000){
+        for (i = 0; i < level.numConnectedClients; i++){
+            ent = &g_entities[level.sortedClients[i]];
+
+            if(~ent->client->ps.eFlags & EF_VOTED){
+                G_printInfoMessage(ent, "It seems you haven't voted yet!");
+                G_printInfoMessage(ent, "You can usually do this with " \
+                    "F1 (yes) or F2 (no).");
+            }
+        }
+
+        level.voteMsg30Sec = qtrue;
+    }else if(!level.voteMsg10Sec && level.time > level.voteTime + 50000){
+        for (i = 0; i < level.numConnectedClients; i++){
+            ent = &g_entities[level.sortedClients[i]];
+
+            if(~ent->client->ps.eFlags & EF_VOTED){
+                G_printInfoMessage(ent, "Hurry up! Just 10 seconds left " \
+                    "to vote!");
+                G_printInfoMessage(ent, "You can usually do this with " \
+                    "F1 (yes) or F2 (no).");
+            }
+        }
+
+        level.voteMsg10Sec = qtrue;
     }
 
     // If we're just asking a poll, the vote can never fail.
