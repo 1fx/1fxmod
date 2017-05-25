@@ -1229,6 +1229,7 @@ void CheckGametype ( void )
             level.timelimithit = qfalse;
             level.cagefight = qfalse;
             level.cagefightdone = qtrue;
+            level.gametypeResetTime = level.time + 30000;
             LogExit("Cagefight is done.");
             return;
         }
