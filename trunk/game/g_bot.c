@@ -133,8 +133,8 @@ G_LoadArenas
 void G_LoadArenas( void )
 {
     int         numdirs;
-    char        filename[128];
-    char        dirlist[1024];
+    char        filename[MAX_QPATH];
+    char        dirlist[16384];
     char*       dirptr;
     int         i, n;
     int         dirlen;
@@ -142,7 +142,8 @@ void G_LoadArenas( void )
     g_numArenas = 0;
 
     // get all arenas from .arena files
-    numdirs = trap_FS_GetFileList("scripts", ".arena", dirlist, 1024 );
+    numdirs = trap_FS_GetFileList("scripts", ".arena",
+        dirlist, sizeof(dirlist));
     dirptr  = dirlist;
     for (i = 0; i < numdirs; i++, dirptr += dirlen+1)
     {
@@ -152,13 +153,12 @@ void G_LoadArenas( void )
         G_LoadArenasFromFile(filename);
     }
 
-#ifdef _DEBUG
-    Com_Printf ( "%i arenas parsed\n", g_numArenas );
-#endif
+    #ifdef _DEBUG
+    Com_Printf ("%d arenas parsed.\n", g_numArenas);
+    #endif
 
-    for( n = 0; n < g_numArenas; n++ )
-    {
-        Info_SetValueForKey( g_arenaInfos[n], "num", va( "%i", n ) );
+    for(n = 0; n < g_numArenas; n++){
+        Info_SetValueForKey(g_arenaInfos[n], "num", va( "%d", n));
     }
 }
 

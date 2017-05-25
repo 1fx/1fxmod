@@ -622,7 +622,7 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace )
                     pickupEnt->splashMethodOfDeath = ent->splashMethodOfDeath;
 
                     // Check if a human was caught in the radius.
-                    // If so, instantly explode.
+                    // If so, get rid of this claymore.
                     VectorAdd(trace->endpos, mins, bboxMins);
                     VectorAdd(trace->endpos, maxs, bboxMaxs);
 
