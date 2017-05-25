@@ -285,6 +285,40 @@ qboolean Henk_DoesMapSupportGametype ( const char* gametype, char *mapname )
 }
 
 /*
+==============
+G_getArenaCount
+5/25/17 - 9:31 AM
+
+Gets arena file count.
+==============
+*/
+
+int G_getArenaCount()
+{
+    return g_numArenas;
+}
+
+/*
+==============
+G_getArenaNames
+5/25/17 - 9:18 AM
+
+Gets all arena names and
+copies them to the dest buffer.
+==============
+*/
+
+void G_getArenaNames(char **dest, int destSize)
+{
+    int i;
+
+    for(i = 0; i < g_numArenas; i++){
+        Q_strncpyz(*&dest[i], Info_ValueForKey(g_arenaInfos[i], "map"),
+            destSize);
+    }
+}
+
+/*
 =================
 PlayerIntroSound
 =================

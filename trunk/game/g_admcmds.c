@@ -4065,3 +4065,151 @@ int adm_endMap(int argNum, gentity_t *adm, qboolean shortCmd)
 
     return -1;
 }
+
+/*
+==================
+adm_mapList
+
+Shows the map list.
+==================
+*/
+
+static int sortAlpha(const void *a, const void *b)
+{
+    return strcmp (*(const char **) a, *(const char **) b);
+}
+
+int adm_mapList(int argNum, gentity_t *adm, qboolean shortCmd)
+{
+    char        buf2[1000] = "\0";
+    char        gtbuf[128];
+    char        **arenaNames;
+    int         arenaCount, i, n;
+    qboolean    gtAvailable;
+    char        *gameTypes[] = {"dm", "tdm", "ctf", "inf", "elim", "h&s", "h&z"
+        #ifdef _GOLD
+        , "dem"};
+        #else
+        };
+        #endif // _GOLD
+
+    // Print header.
+    if(adm){
+        Q_strcat(buf2, sizeof(buf2),
+            #ifdef _GOLD
+            va("^3[Maplist]\n\n^7" \
+                " %-22s^1%-6s^2%-6s^3%-6s^4%-6s^5%-6s^6%-6s^1%-6s^2%-6s\n%s",
+            #else
+            va("^3[Maplist]\n\n^7" \
+                " %-28s^1%-6s^2%-6s^3%-6s^4%-6s^5%-6s^6%-6s^1%-6s\n%s",
+            #endif // _GOLD
+            "Mapname", "  DM", "  TDM", "  CTF", "  INF", "  ELIM", "  H&S",
+            "  H&Z"
+            #ifdef _GOLD
+            , "  DEM"
+            #endif // _GOLD
+            ,
+            "^7-----------------------------------" \
+            "-------------------------------------\n"
+            ));
+    }else{
+        Com_Printf("^3[Maplist]\n\n");
+        Com_Printf(
+            #ifdef _GOLD
+            " %-22s^1%-6s^2%-6s^3%-6s^4%-6s^5%-6s^6%-6s^1%-6s^2%-6s\n",
+            #else
+            " %-28s^1%-6s^2%-6s^3%-6s^4%-6s^5%-6s^6%-6s^1%-6s\n",
+            #endif // _GOLD
+            "Mapname", "  DM", "  TDM", "  CTF", "  INF", "  ELIM", "  H&S",
+            "  H&Z"
+            #ifdef _GOLD
+            , "  DEM"
+            #endif // _GOLD
+            );
+        Com_Printf("^7-----------------------------------"
+            "-------------------------------------\n");
+    }
+
+    // Get the amount of maps available.
+    arenaCount = G_getArenaCount();
+
+    // Allocate memory to store the map names.
+    arenaNames = malloc(arenaCount * sizeof(char *));
+    for(i = 0; i < arenaCount; i++){
+        arenaNames[i] = malloc(32 * sizeof(char *));
+    }
+
+    // Fetch the map names.
+    G_getArenaNames(arenaNames, 32);
+
+    // We now got all the available maps that are defined through arena files.
+    // Sort alphabetically.
+    qsort(arenaNames, arenaCount, sizeof(char *), sortAlpha);
+
+    // Start iterating through them.
+    for(i = 0; i < arenaCount; i++){
+        // Skip special "RMG" map.
+        if(strcmp(arenaNames[i], "*random") == 0){
+            free(arenaNames[i]);
+            continue;
+        }
+
+        // Print mapname.
+        if(adm){
+            #ifdef _GOLD
+            Q_strcat(buf2, sizeof(buf2), va(" %-22s", arenaNames[i]));
+            #else
+            Q_strcat(buf2, sizeof(buf2), va(" %-28s", arenaNames[i]));
+            #endif // _GOLD
+        }else{
+            #ifdef _GOLD
+            Com_Printf(" %-22s", arenaNames[i]);
+            #else
+            Com_Printf(" %-28s", arenaNames[i]);
+            #endif // _GOLD
+        }
+
+        // Iterate through gametypes.
+        memset(gtbuf, 0, sizeof(gtbuf));
+        for(n = 0; n < sizeof(gameTypes)/sizeof(gameTypes[0]); n++){
+            gtAvailable = Henk_DoesMapSupportGametype(gameTypes[n],
+                arenaNames[i]);
+
+            // Append gametype info the buffer.
+            Q_strcat(gtbuf, sizeof(gtbuf),
+                (gtAvailable) ? va("|  ^%dX^7  ", n % 6 + 1) : "|     ");
+        }
+
+        // Print available gametypes and leading characters.
+        if(adm){
+            Q_strcat(buf2, sizeof(buf2), va("%s|\n", gtbuf));
+        }else{
+            Com_Printf("%s|\n", gtbuf);
+        }
+
+        // Put packet through to clients if char size would exceed 1000
+        // and reset buf2.
+        if(strlen(buf2) > 900){
+            trap_SendServerCommand(adm-g_entities, va("print \"%s\"", buf2));
+            memset(buf2, 0, sizeof(buf2));
+        }
+
+        // Free allocated entry.
+        free(arenaNames[i]);
+    }
+
+    // Free allocated pointers.
+    free(arenaNames);
+
+    // Print footer, and in the case of calling via adm, also the last entry.
+    if(adm){
+        trap_SendServerCommand(adm-g_entities,
+            va("print \"%s\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys " \
+            "to scroll\n\n\"", buf2));
+    }else{
+        Com_Printf("\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys " \
+            "to scroll\n\n");
+    }
+
+    return -1;
+}

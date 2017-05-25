@@ -1363,6 +1363,7 @@ int             adm_Third                           (int argNum, gentity_t *adm,
 int             adm_toggleWeapon                    (int argNum, gentity_t *adm, qboolean shortCmd);
 int             adm_Anticamp                        (int argNum, gentity_t *adm, qboolean shortCmd);
 int             adm_endMap                          (int argNum, gentity_t *adm, qboolean shortCmd);
+int             adm_mapList                         (int argNum, gentity_t *adm, qboolean shortCmd);
 
 //
 // g_main.c
@@ -1452,7 +1453,9 @@ const char  *G_GetArenaInfoByMap        ( const char *map );
 qboolean    G_DoesMapSupportGametype    ( const char* gametype );
 qboolean    Henk_DoesMapSupportGametype ( const char* gametype, char *mapname );
 qboolean    G_DoesMapExist              ( const char* mapname );
-void        G_LoadArenas ( void );
+int         G_getArenaCount             ( void );
+void        G_getArenaNames             ( char **dest, int destSize );
+void        G_LoadArenas                ( void );
 
 //
 // g_gametype.c
