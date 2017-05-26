@@ -1904,6 +1904,8 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot )
     G_EmptyStatsMemory(ent);
     ent->client->pers.statinfo.lasthurtby = -1;
     ent->client->pers.statinfo.lastclient_hurt = -1;
+    ent->client->pers.statinfo.lastKillerHealth = -1;
+    ent->client->pers.statinfo.lastKillerArmor = -1;
     memset(ent->client->sess.IgnoredClients, -1, sizeof(ent->client->sess.IgnoredClients));
     ent->client->sess.IgnoredClientCount = 0;
     ent->client->sess.deathTime = 0;

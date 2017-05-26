@@ -1270,6 +1270,8 @@ void G_Refresh(gentity_t *ent)
     ent->client->sess.teamkillForgiveTime = 0;
     ent->client->pers.statinfo.lastclient_hurt = -1;
     ent->client->pers.statinfo.lasthurtby = -1;
+    ent->client->pers.statinfo.lastKillerHealth = -1;
+    ent->client->pers.statinfo.lastKillerArmor = -1;
 }
 
 /*

@@ -561,6 +561,8 @@ void player_die(
     // Henk 01/04/10 -> Hp/armor message if you are killed
     if(attacker->client && self->client && attacker->s.number != self->s.number && current_gametype.value != GT_HS){ // if the attacker and target are both clients
         G_printInfoMessage(self, "%s had ^3%i ^7health and ^3%i ^7armor left.", attacker->client->pers.cleanName, attacker->health, attacker->client->ps.stats[STAT_ARMOR]);
+        self->client->pers.statinfo.lastKillerHealth = attacker->health;
+        self->client->pers.statinfo.lastKillerArmor = attacker->client->ps.stats[STAT_ARMOR];
     }
     // End
 

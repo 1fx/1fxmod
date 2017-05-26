@@ -554,6 +554,8 @@ typedef struct statinfo_s
     int         damageTaken;
     int         lastclient_hurt;
     int         lasthurtby;
+    int         lastKillerHealth;
+    int         lastKillerArmor;
     int         overallScore;
     int         explosiveKills;
     int         knifeKills;

@@ -480,6 +480,22 @@ void Boe_Tokens(gentity_t *ent, char *chatText, int mode, qboolean CheckSounds)
                     Q_strcat(newText, MAX_SAY_TEXT, va("%d", ent->client->ps.stats[STAT_ARMOR]));
                     chatText++;
                     continue;
+                case 'k':
+                    Q_strcat(newText, MAX_SAY_TEXT, va("%s%d^2",Boe_StatColor(ent->client->pers.statinfo.lastKillerHealth), ent->client->pers.statinfo.lastKillerHealth));
+                    chatText++;
+                    continue;
+                case 'K':
+                    Q_strcat(newText, MAX_SAY_TEXT, va("%d", ent->client->pers.statinfo.lastKillerHealth));
+                    chatText++;
+                    continue;
+                case 'i':
+                    Q_strcat(newText, MAX_SAY_TEXT, va("%s%d^2",Boe_StatColor(ent->client->pers.statinfo.lastKillerArmor), ent->client->pers.statinfo.lastKillerArmor));
+                    chatText++;
+                    continue;
+                case 'I':
+                    Q_strcat(newText, MAX_SAY_TEXT, va("%d", ent->client->pers.statinfo.lastKillerArmor));
+                    chatText++;
+                    continue;
                 case 'd':
                 case 'D':
                     if(ent->client->pers.statinfo.lasthurtby == -1 || !g_entities[ent->client->pers.statinfo.lasthurtby].client)
@@ -2060,51 +2076,97 @@ Boe_displayTokens
 void Boe_displayTokens ( gentity_t *ent )
 {
     // Header.
-    trap_SendServerCommand( ent-g_entities, "print \"\n^3Key      Explanation\n\"");
-    trap_SendServerCommand( ent-g_entities, "print \"--------------------------------------\n\"");
+    trap_SendServerCommand(ent-g_entities,
+        "print \"\n^3Key      Explanation\n\"");
+    trap_SendServerCommand(ent-g_entities,
+        "print \"--------------------------------------\n\"");
     // Tokens body.
-    trap_SendServerCommand( ent-g_entities, va("print \"^7%-8s [^3Health in bar format^7]\n", "#b"));
-    trap_SendServerCommand( ent-g_entities, va("print \"^7%-8s [^3Armor in bar format^7]\n", "#B"));
-    trap_SendServerCommand( ent-g_entities, va("print \"^7%-8s [^3Health colored^7]\n", "#h"));
-    trap_SendServerCommand( ent-g_entities, va("print \"^7%-8s [^3Health non-colored^7]\n", "#H"));
-    trap_SendServerCommand( ent-g_entities, va("print \"^7%-8s [^3Armor colored^7]\n", "#a"));
-    trap_SendServerCommand( ent-g_entities, va("print \"^7%-8s [^3Armor non-colored^7]\n", "#A"));
+    trap_SendServerCommand(ent-g_entities,
+        va("print \"^7%-8s [^3Health in bar format^7]\n", "#b"));
+    trap_SendServerCommand(ent-g_entities,
+        va("print \"^7%-8s [^3Armor in bar format^7]\n", "#B"));
+    trap_SendServerCommand(ent-g_entities,
+        va("print \"^7%-8s [^3Health colored^7]\n", "#h"));
+    trap_SendServerCommand(ent-g_entities,
+        va("print \"^7%-8s [^3Health non-colored^7]\n", "#H"));
+    trap_SendServerCommand(ent-g_entities,
+        va("print \"^7%-8s [^3Armor colored^7]\n", "#a"));
+    trap_SendServerCommand(ent-g_entities,
+        va("print \"^7%-8s [^3Armor non-colored^7]\n", "#A"));
+    trap_SendServerCommand(ent-g_entities,
+        va("print \"^7%-8s [^3HP of who last killed you colored^7]\n", "#k"));
+    trap_SendServerCommand(ent-g_entities,
+        va("print \"^7%-8s [^3HP of who last killed you non-colored^7]\n",
+        "#K"));
+    trap_SendServerCommand(ent-g_entities,
+        va("print \"^7%-8s [^3Armor of who last killed you colored^7]\n",
+        "#i"));
+    trap_SendServerCommand(ent-g_entities,
+        va("print \"^7%-8s [^3Armor of who last killed you non-colored^7]\n",
+        "#I"));
 
     // Tokens to display info about the objective(s).
     if(g_objectiveLocations.integer){
         if(current_gametype.value == GT_INF){
-            trap_SendServerCommand( ent-g_entities, va("print \"^7%-8s [^3Shows the briefcase location^7]\n", "#o"));
+            trap_SendServerCommand(ent-g_entities,
+                va("print \"^7%-8s [^3Shows the briefcase location^7]\n",
+                "#o"));
         }else if(current_gametype.value == GT_CTF){
-            trap_SendServerCommand( ent-g_entities, va("print \"^7%-8s [^3Shows the flag location of your own team^7]\n", "#o"));
-            trap_SendServerCommand( ent-g_entities, va("print \"^7%-8s [^3Shows the flag location of the enemy team^7]\n", "#O"));
+            trap_SendServerCommand(ent-g_entities,
+                va("print \"^7%-8s [^3Shows the flag location of your " \
+                "own team^7]\n", "#o"));
+            trap_SendServerCommand(ent-g_entities,
+                va("print \"^7%-8s [^3Shows the flag location of the " \
+                "enemy team^7]\n", "#O"));
         #ifdef _GOLD
         }else if(current_gametype.value == GT_DEM){
-            trap_SendServerCommand( ent-g_entities, va("print \"^7%-8s [^3Shows the bomb location^7]\n", "#o"));
+            trap_SendServerCommand(ent-g_entities,
+                va("print \"^7%-8s [^3Shows the bomb location^7]\n", "#o"));
         #endif // _GOLD
         }
     }
 
-    trap_SendServerCommand( ent-g_entities, va("print \"^7%-12s [^3Last player that hurt you^7]\n", "#d^1/^7#D"));
-    trap_SendServerCommand( ent-g_entities, va("print \"^7%-12s [^3Last player that you hurt^7]\n", "#t^1/^7#T"));
-    trap_SendServerCommand( ent-g_entities, va("print \"^7%-12s [^3Shows the server g_motd (usually next map)^7]\n", "#n^1/^7#N"));
-    if(current_gametype.value != GT_DM){ // Don't show closest team-mate in DM (there is none).
-        trap_SendServerCommand( ent-g_entities, va("print \"^7%-12s [^3Shows your closest team-mate name^7]\n", "#f^1/^7#F"));
+    trap_SendServerCommand(ent-g_entities,
+        va("print \"^7%-12s [^3Last player that hurt you^7]\n", "#d^1/^7#D"));
+    trap_SendServerCommand(ent-g_entities,
+        va("print \"^7%-12s [^3Last player that you hurt^7]\n", "#t^1/^7#T"));
+    trap_SendServerCommand(ent-g_entities,
+        va("print \"^7%-12s [^3Shows the server g_motd (usually next map)^7]\n",
+        "#n^1/^7#N"));
+    // Don't show closest team-mate in DM (there is none).
+    if(current_gametype.value != GT_DM){
+        trap_SendServerCommand(ent-g_entities,
+            va("print \"^7%-12s [^3Shows your closest team-mate name^7]\n",
+            "#f^1/^7#F"));
     }
-    trap_SendServerCommand( ent-g_entities, va("print \"^7%-12s [^3Shows your closest enemy name^7]\n", "#e^1/^7#E"));
-    trap_SendServerCommand( ent-g_entities, va("print \"^7%-12s [^3Shows your current location^7]\n", "#l^1/^7#L"));
-    trap_SendServerCommand( ent-g_entities, va("print \"^7%-12s [^3Shows the last connected player name^7]\n", "#z^1/^7#Z"));
+    trap_SendServerCommand(ent-g_entities,
+        va("print \"^7%-12s [^3Shows your closest enemy name^7]\n",
+        "#e^1/^7#E"));
+    trap_SendServerCommand(ent-g_entities,
+        va("print \"^7%-12s [^3Shows your current location^7]\n",
+        "#l^1/^7#L"));
+    trap_SendServerCommand(ent-g_entities,
+        va("print \"^7%-12s [^3Shows the last connected player name^7]\n",
+        "#z^1/^7#Z"));
 
     // H&S tokens (only show them when it's actually H&S).
     if(current_gametype.value == GT_HS){
-        trap_SendServerCommand( ent-g_entities, va("print \"\n^7%-12s [^3Shows players' name that holds RPG or its location^7]\n", "#r^1/^7#R"));
-        trap_SendServerCommand( ent-g_entities, va("print \"^7%-12s [^3Shows players' name that holds M4 or its location^7]\n", "#c^1/^7#C"));
-        trap_SendServerCommand( ent-g_entities, va("print \"^7%-12s [^3Shows players' name that holds MM1 or its location^7]\n", "#m^1/^7#M"));
-        trap_SendServerCommand( ent-g_entities, va("print \"^7%-8s [^3Shows players' name that holds '? grenade' or its location^7]\n", "#?"));
+        trap_SendServerCommand(ent-g_entities,
+            va("print \"\n^7%-12s [^3Shows players' name that holds RPG or " \
+            "its location^7]\n", "#r^1/^7#R"));
+        trap_SendServerCommand(ent-g_entities,
+            va("print \"^7%-12s [^3Shows players' name that holds M4 or " \
+            "its location^7]\n", "#c^1/^7#C"));
+        trap_SendServerCommand(ent-g_entities,
+            va("print \"^7%-12s [^3Shows players' name that holds MM1 or " \
+            "its location^7]\n", "#m^1/^7#M"));
+        trap_SendServerCommand(ent-g_entities,
+            va("print \"^7%-8s [^3Shows players' name that holds '? grenade' " \
+            "or its location^7]\n", "#?"));
     }
 
-    trap_SendServerCommand( ent-g_entities, "print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\"");
-
-    return;
+    trap_SendServerCommand( ent-g_entities,
+        "print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\"");
 }
 
 /*
