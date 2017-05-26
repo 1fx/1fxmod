@@ -93,7 +93,7 @@ static admCmd_t AdminCommands[] =
     {"!wp",     "weapon",           &g_toggleweapon.integer,    &adm_toggleWeapon,              "Toggles weapon on or off",         "",                 NULL},
     {"!aca",    "anticamp",         &g_anticamp.integer,        &adm_Anticamp,                  "Toggles anticamp on or off",       "",                 NULL},
     {"!em",     "endmap",           &g_endmap.integer,          &adm_endMap,                    "Requests map to end",              "",                 NULL},
-    {"!ml",     "maplist",          &g_mapswitch.integer,       &adm_mapList,                   "Shows the map list",               "",                 NULL},
+    {"!ml",     "maplist",          &g_mapswitch.integer,       &adm_mapList,                   "Lists all available maps",         "",                 NULL},
     // Boe!Man 6/2/15: Admin synonyms for Gold.
     // Pop/explode.
     {"!p",      "pop",              &g_pop.integer,             &adm_Pop,                       "Pop/explodes a player",            "<i/n>",            "ped"},

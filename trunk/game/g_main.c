@@ -284,7 +284,7 @@ vmCvar_t    g_customWeaponFile;
 vmCvar_t    g_pause;
 
 // Boe!Man 8/18/11
-vmCvar_t    g_dropLocationMessage;
+vmCvar_t    g_objectiveLocations;
 
 // Boe!Man 8/25/11
 vmCvar_t    g_logSpecialChat;
@@ -664,7 +664,7 @@ static cvarTable_t gameCvarTable[] =
     { &g_customWeaponFile,          "g_customWeaponFile",        "none",        CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 
     // Boe!Man 8/18/11
-    { &g_dropLocationMessage,           "g_dropLocationMessage",         "1",       CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue },
+    { &g_objectiveLocations,           "g_objectiveLocations",         "1",       CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue },
 
     // Boe!Man 8/25/11
     { &g_logSpecialChat,            "g_logSpecialChat",      "1",       CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },

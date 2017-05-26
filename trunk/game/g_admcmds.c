@@ -4076,7 +4076,7 @@ Shows the map list.
 
 static int sortAlpha(const void *a, const void *b)
 {
-    return strcmp (*(const char **) a, *(const char **) b);
+    return strcmp(*(const char **)a, *(const char **)b);
 }
 
 int adm_mapList(int argNum, gentity_t *adm, qboolean shortCmd)

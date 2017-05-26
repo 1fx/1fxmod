@@ -610,6 +610,42 @@ void Boe_Tokens(gentity_t *ent, char *chatText, int mode, qboolean CheckSounds)
                     Q_strcat(newText, MAX_SAY_TEXT, g_entities[level.lastConnectedClient].client->pers.netname );
                     chatText++;
                     continue;
+                case 'o':
+                    if(current_gametype.value == GT_INF){
+                        Q_strcat(newText, MAX_SAY_TEXT, va("%s",
+                            level.objectiveLoc));
+                    }else if(current_gametype.value == GT_CTF){
+                        if(ent->client->sess.team == TEAM_BLUE){
+                            Q_strcat(newText, MAX_SAY_TEXT, va("%s",
+                                level.objectiveLoc));
+                        }else if(ent->client->sess.team == TEAM_RED){
+                            Q_strcat(newText, MAX_SAY_TEXT, va("%s",
+                                level.objective2Loc));
+                        }
+                    #ifdef _GOLD
+                    }else if(current_gametype.value == GT_DEM){
+                        Q_strcat(newText, MAX_SAY_TEXT, va("%s",
+                            level.objectiveLoc));
+                    #endif // _GOLD
+                    }
+
+                    chatText++;
+                    continue;
+                case 'O':
+                    // Show enemy team flag location.
+                    // So blue team -> red flag location and vice versa.
+                    if(current_gametype.value == GT_CTF){
+                        if(ent->client->sess.team == TEAM_BLUE){
+                            Q_strcat(newText, MAX_SAY_TEXT, va("%s",
+                                level.objective2Loc));
+                        }else if(ent->client->sess.team == TEAM_RED){
+                            Q_strcat(newText, MAX_SAY_TEXT, va("%s",
+                                level.objectiveLoc));
+                        }
+                    }
+
+                    chatText++;
+                    continue;
                 default:
                     if(*chatText >= '0' && *chatText <= '9')
                     {
@@ -2033,6 +2069,21 @@ void Boe_displayTokens ( gentity_t *ent )
     trap_SendServerCommand( ent-g_entities, va("print \"^7%-8s [^3Health non-colored^7]\n", "#H"));
     trap_SendServerCommand( ent-g_entities, va("print \"^7%-8s [^3Armor colored^7]\n", "#a"));
     trap_SendServerCommand( ent-g_entities, va("print \"^7%-8s [^3Armor non-colored^7]\n", "#A"));
+
+    // Tokens to display info about the objective(s).
+    if(g_objectiveLocations.integer){
+        if(current_gametype.value == GT_INF){
+            trap_SendServerCommand( ent-g_entities, va("print \"^7%-8s [^3Shows the briefcase location^7]\n", "#o"));
+        }else if(current_gametype.value == GT_CTF){
+            trap_SendServerCommand( ent-g_entities, va("print \"^7%-8s [^3Shows the flag location of your own team^7]\n", "#o"));
+            trap_SendServerCommand( ent-g_entities, va("print \"^7%-8s [^3Shows the flag location of the enemy team^7]\n", "#O"));
+        #ifdef _GOLD
+        }else if(current_gametype.value == GT_DEM){
+            trap_SendServerCommand( ent-g_entities, va("print \"^7%-8s [^3Shows the bomb location^7]\n", "#o"));
+        #endif // _GOLD
+        }
+    }
+
     trap_SendServerCommand( ent-g_entities, va("print \"^7%-12s [^3Last player that hurt you^7]\n", "#d^1/^7#D"));
     trap_SendServerCommand( ent-g_entities, va("print \"^7%-12s [^3Last player that you hurt^7]\n", "#t^1/^7#T"));
     trap_SendServerCommand( ent-g_entities, va("print \"^7%-12s [^3Shows the server g_motd (usually next map)^7]\n", "#n^1/^7#N"));

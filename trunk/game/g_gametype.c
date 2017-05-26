@@ -255,8 +255,10 @@ G_ResetGametypeItem
 */
 void G_ResetGametypeItem ( gitem_t* item )
 {
-    gentity_t *find;
-    int       i;
+    gentity_t   *find;
+    gentity_t   *location;
+    int         i;
+
     // Convience check
     if ( !item )
     {
@@ -292,7 +294,50 @@ void G_ResetGametypeItem ( gitem_t* item )
             continue;
         }
 
-        G_RealSpawnGametypeItem ( find->item, find->r.currentOrigin, find->s.angles, qfalse );
+        // Keep track of where the gametype items are,
+        // if they are to be known anyway.
+        if(g_objectiveLocations.integer){
+            location = Team_GetLocation(find);
+
+            if(current_gametype.value == GT_INF){
+                // Briefcase.
+                if(location){
+                    Q_strncpyz(level.objectiveLoc, location->message,
+                        sizeof(level.objectiveLoc));
+                }else{
+                    Q_strncpyz(level.objectiveLoc, "Briefcase spawnpoint",
+                        sizeof(level.objectiveLoc));
+                }
+            }else if(current_gametype.value == GT_CTF){
+                if(item->quantity == 101){ // Blue flag.
+                    if(location){
+                        Q_strncpyz(level.objectiveLoc, location->message,
+                        sizeof(level.objectiveLoc));
+                    }else{
+                        Q_strncpyz(level.objectiveLoc, "Blue base",
+                            sizeof(level.objectiveLoc));
+                    }
+                }else{ // Red flag.
+                    if(location){
+                        Q_strncpyz(level.objective2Loc, location->message,
+                        sizeof(level.objective2Loc));
+                    }else{
+                        Q_strncpyz(level.objective2Loc, "Red base",
+                            sizeof(level.objective2Loc));
+                    }
+                }
+            }
+        }else{
+            // Tokens are disabled. This CVAR might change in-game,
+            // so update the tokens upon every reset of a gametype item.
+            Q_strncpyz(level.objectiveLoc,  "Disabled",
+                sizeof(level.objectiveLoc));
+            Q_strncpyz(level.objective2Loc,  "Disabled",
+                sizeof(level.objective2Loc));
+        }
+
+        G_RealSpawnGametypeItem ( find->item, find->r.currentOrigin,
+            find->s.angles, qfalse );
     }
 }
 

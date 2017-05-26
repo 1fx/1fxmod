@@ -604,7 +604,7 @@ gentity_t *G_DropItem( gentity_t *ent, gitem_t *item, float angle )
     vec3_t      velocity;
     vec3_t      angles;
     gentity_t*  dropped;
-    gentity_t  *test;
+    gentity_t  *itemLocation;
     char        location[128] = "\0";
 
     VectorCopy( ent->s.apos.trBase, angles );
@@ -622,10 +622,10 @@ gentity_t *G_DropItem( gentity_t *ent, gitem_t *item, float angle )
     if ( item->giType == IT_GAMETYPE )
     {
         // Boe!Man 8/19/11: Add drop location message for all major gametypes (using a simplified system). Do note that this should remain disabled during the scrim itself (public/match warmup are allowed).
-        if (g_dropLocationMessage.integer >= 1 && cm_enabled.integer <= 1 && !(current_gametype.value == GT_INF && g_caserun.integer)){
-            test = Team_GetLocation(dropped);
-            if(test){
-                strncpy(location, va(" at %s", test->message), sizeof(location));
+        if (g_objectiveLocations.integer >= 1 && cm_enabled.integer <= 1 && !(current_gametype.value == GT_INF && g_caserun.integer)){
+            itemLocation = Team_GetLocation(dropped);
+            if(itemLocation){
+                strncpy(location, va(" at %s", itemLocation->message), sizeof(location));
             }
         }
 
@@ -636,14 +636,49 @@ gentity_t *G_DropItem( gentity_t *ent, gitem_t *item, float angle )
             if(current_gametype.value == GT_CTF){
                 if(item->quantity == 101){ // Blue flag.
                     trap_SendServerCommand( -1, va("print \"^3[CTF] ^7%s has dropped the Blue Flag%s.\n\"", ent->client->pers.cleanName, location));
-                }
-                if(item->quantity == 100){ // Red flag.
+
+                    // Update blue flag location.
+                    if(g_objectiveLocations.integer){
+                        if(itemLocation){
+                            Q_strncpyz(level.objectiveLoc,
+                                itemLocation->message,
+                                sizeof(level.objectiveLoc));
+                        }else{
+                            Q_strncpyz(level.objectiveLoc, "Dropped",
+                                sizeof(level.objectiveLoc));
+                        }
+                    }
+                }else if(item->quantity == 100){ // Red flag.
                     trap_SendServerCommand( -1, va("print \"^3[CTF] ^7%s has dropped the Red Flag%s.\n\"", ent->client->pers.cleanName, location));
+
+                    // Update red flag location.
+                    if(g_objectiveLocations.integer){
+                        if(itemLocation){
+                            Q_strncpyz(level.objective2Loc,
+                                itemLocation->message,
+                                sizeof(level.objective2Loc));
+                        }else{
+                            Q_strncpyz(level.objective2Loc, "Dropped",
+                                sizeof(level.objective2Loc));
+                        }
+                    }
                 }
             }else if(current_gametype.value == GT_INF){
                 if(item->quantity == 100){ // Briefcase.
                     if (!g_caserun.integer){
                         trap_SendServerCommand(-1, va("print \"^3[INF] ^7%s has dropped the briefcase%s.\n\"", ent->client->pers.cleanName, location));
+
+                        // Update briefcase location.
+                        if(g_objectiveLocations.integer){
+                            if(itemLocation){
+                                Q_strncpyz(level.objectiveLoc,
+                                    itemLocation->message,
+                                    sizeof(level.objectiveLoc));
+                            }else{
+                                Q_strncpyz(level.objectiveLoc, "Dropped",
+                                    sizeof(level.objectiveLoc));
+                            }
+                        }
                     }else{
                         // Boe!Man 12/2/14: Let the gametype handle the respawn.
                         if (trap_GT_SendEvent(GTEV_ITEM_STUCK, level.time, item->quantity, 0, 0, 0, 0)){
@@ -662,6 +697,18 @@ gentity_t *G_DropItem( gentity_t *ent, gitem_t *item, float angle )
             #ifdef _GOLD
             else if(current_gametype.value == GT_DEM){
                 trap_SendServerCommand( -1, va("print \"^3[DEM] ^7%s has dropped the bomb%s.\n\"", ent->client->pers.cleanName, location));
+
+                // Update bomb location.
+                if(g_objectiveLocations.integer){
+                    if(itemLocation){
+                        Q_strncpyz(level.objectiveLoc,
+                            itemLocation->message,
+                            sizeof(level.objectiveLoc));
+                    }else{
+                        Q_strncpyz(level.objectiveLoc, "Dropped",
+                            sizeof(level.objectiveLoc));
+                    }
+                }
             }
             #endif // _GOLD
 

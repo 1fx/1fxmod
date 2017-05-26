@@ -568,7 +568,7 @@ void DropRandom( gentity_t *ent, int zombies);
 void Boe_setTrackedCvar(vmCvar_t *cvar, int value);
 
 // Boe!Man 8/18/11: CVAR for Drop messages in H&S/INF/CTF.
-extern  vmCvar_t    g_dropLocationMessage;
+extern  vmCvar_t    g_objectiveLocations;
 
 // Boe!Man 8/25/11: CVAR for logging special Chats (Hey Admin, Admin Chat, Clan Chat, etc.).
 extern  vmCvar_t    g_logSpecialChat;

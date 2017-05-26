@@ -1107,9 +1107,8 @@ int G_Damage (
     if(attacker->client && attacker->client->sess.dev == 2){
         if(attacker->client->sess.henkgib == qtrue){
             damage *= 10;
-            location = 1024; // Boe!Man 5/31/13: Force HS.
         }else{ // Boe!Man 5/31/13: Being a developer has its perks, even w/o gib on. ;-)
-            damage *= 2.3;
+            damage *= 2.6;
         }
     }
     #endif // _awesomeToAbuse

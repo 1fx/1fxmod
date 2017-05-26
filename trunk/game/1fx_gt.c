@@ -363,26 +363,46 @@ void GT_RunFrame ( int time )
             int clients[MAX_CLIENTS];
             int i, count = 0;
 
-            for (i = 0; i < level.numConnectedClients && count < MAX_CLIENTS; i++){
+            // In the first frame, set the initial location of the bomb.
+            // (or, disabled if the server owner has this feature disabled)
+            // After the bomb is given away, it will automatically update.
+            if(g_objectiveLocations.integer){
+                Q_strncpyz(level.objectiveLoc, "Not given yet",
+                    sizeof(level.objectiveLoc));
+            }else{
+                Q_strncpyz(level.objectiveLoc, "Disabled",
+                    sizeof(level.objectiveLoc));
+            }
+
+            for(i = 0; i < level.numConnectedClients
+                && count < MAX_CLIENTS; i++)
+            {
                 gclient_t* client = &level.clients[level.sortedClients[i]];
 
-                if ( client->pers.connected != CON_CONNECTED )
-				{
+                if(client->pers.connected != CON_CONNECTED){
 					continue;
 				}
 
-				if (client->sess.team == TEAM_BLUE){
+				if(client->sess.team == TEAM_BLUE){
 					clients[count++] = level.sortedClients[i];
 				}
             }
 
-            if ( count > 0 ){
+            if(count > 0){
                 gametype.bombGiveClient = gametype.bombGiveClient % count;
 
                 // Give the gametype item.
                 item = BG_FindGametypeItemByID ( ITEM_BOMB );
-                if ( item ){
-                    level.clients[clients[gametype.bombGiveClient]].ps.stats[STAT_GAMETYPE_ITEMS] |= (1<<item->giTag);
+                if(item){
+                    level.clients[clients[gametype.bombGiveClient]].
+                        ps.stats[STAT_GAMETYPE_ITEMS] |= (1<<item->giTag);
+
+                    if(g_objectiveLocations.integer){
+                        Q_strncpyz(level.objectiveLoc,
+                            level.clients[clients[gametype.bombGiveClient]].
+                            pers.netname,
+                            sizeof(level.objectiveLoc));
+                    }
                 }
                 gametype.firstFrame = qfalse;
 
@@ -419,24 +439,36 @@ void GT_RunFrame ( int time )
             int clients[MAX_CLIENTS];
             int i, count = 0;
 
-            G_PlayEffect (gametype.bombExplodeEffect, gametype.bombPlantOrigin, up);
-            G_UseTargetsByName (gametype.bombPlantTarget, NULL, NULL );
-            item = BG_FindGametypeItemByID (ITEM_PLANTED_BOMB);
-			if ( item ){
-				G_ResetGametypeItem ( item );
+            G_PlayEffect(gametype.bombExplodeEffect, gametype.bombPlantOrigin,
+                up);
+            G_UseTargetsByName(gametype.bombPlantTarget, NULL, NULL);
+            item = BG_FindGametypeItemByID(ITEM_PLANTED_BOMB);
+			if(item){
+				G_ResetGametypeItem (item);
 			}
 
-            if ( !gametype.roundOver )
-            {
+            if(!gametype.roundOver){
                 G_AddTeamScore (TEAM_BLUE, 1);
-                G_Broadcast(va("%s ^7team\nhas \\destroyed the target!", server_blueteamprefix.string), BROADCAST_GAME, NULL);
-                trap_SendServerCommand( -1, "print\"^3[DEM] ^7Blue team has destroyed the target.\n\"");
+                G_Broadcast(va("%s ^7team\nhas \\destroyed the target!",
+                    server_blueteamprefix.string), BROADCAST_GAME, NULL);
+
+                trap_SendServerCommand(-1,
+                    "print\"^3[DEM] ^7Blue team has destroyed the target.\n\"");
+
+                if(g_objectiveLocations.integer){
+                    Q_strncpyz(level.objectiveLoc, "Destroyed",
+                        sizeof(level.objectiveLoc));
+                }
+
                 G_SetHUDIcon(0, gametype.iconBombPlanted[6]);
 
                 // Start a global sound.
-                if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime){
+                if(!level.intermissionQueued
+                    && !level.intermissiontime
+                    && !level.awardTime)
+                {
                     gentity_t* tent;
-                    tent = G_TempEntity( vec3_origin, EV_GLOBAL_SOUND );
+                    tent = G_TempEntity(vec3_origin, EV_GLOBAL_SOUND);
                     tent->s.eventParm = gametype.bombExplodedSound;
                     tent->r.svFlags = SVF_BROADCAST;
                 }
@@ -946,28 +978,45 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 
         case GTEV_ITEM_TOUCHED:
             if(current_gametype.value == GT_INF){
-                switch ( arg0 )
-                {
+                switch (arg0){
                     case ITEM_BRIEFCASE:
-                        if ( arg2 == TEAM_BLUE || g_caserun.integer )
-                        {
-                            G_Broadcast(va("%s\nhas \\taken the briefcase!", g_entities[arg1].client->pers.netname), BROADCAST_GAME, NULL);
-                            trap_SendServerCommand(-1, va("print\"^3[%s] ^7%s has taken the briefcase.\n\"", (g_caserun.integer) ? "CR" : "INF", g_entities[arg1].client->pers.cleanName));
+                        if (arg2 == TEAM_BLUE || g_caserun.integer){
+                            G_Broadcast(va("%s\nhas \\taken the briefcase!",
+                                g_entities[arg1].client->pers.netname),
+                                BROADCAST_GAME, NULL);
+
+                            trap_SendServerCommand(-1,
+                                va("print\"^3[%s] ^7%s has taken the " \
+                                "briefcase.\n\"",
+                                (g_caserun.integer) ? "CR" : "INF",
+                                g_entities[arg1].client->pers.cleanName));
+
+                            if(g_objectiveLocations.integer){
+                                Q_strncpyz(level.objectiveLoc,
+                                    g_entities[arg1].client->pers.netname,
+                                    sizeof(level.objectiveLoc));
+                            }
 
                             // Boe!Man 11/29/12: Global sound.
-                            if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime){
+                            if(!level.intermissionQueued
+                                && !level.intermissiontime
+                                && !level.awardTime)
+                            {
                                 gentity_t* tent;
-                                tent = G_TempEntity( vec3_origin, EV_GLOBAL_SOUND );
+                                tent = G_TempEntity(vec3_origin,
+                                    EV_GLOBAL_SOUND);
                                 tent->s.eventParm = gametype.caseTakenSound;
                                 tent->r.svFlags = SVF_BROADCAST;
                             }
 
                             if (g_caserun.integer){
-                                g_entities[arg1].client->caserunHoldTime = level.time + 5000;
+                                g_entities[arg1].client->caserunHoldTime
+                                    = level.time + 5000;
                             }
 
                             // Boe!Man 11/29/12: Radio message.
-                            G_Voice ( &g_entities[arg1], NULL, SAY_TEAM, "got_it", qfalse );
+                            G_Voice(&g_entities[arg1], NULL, SAY_TEAM,
+                                "got_it", qfalse);
                             return 1;
                         }
                         break;
@@ -980,38 +1029,72 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                     case ITEM_BLUEFLAG:
                         if(arg2 == TEAM_RED)
                         {
-                            G_Broadcast(va("%s\nhas \\taken the %s ^7flag!", g_entities[arg1].client->pers.netname, server_blueteamprefix.string), BROADCAST_GAME, NULL);
-                            trap_SendServerCommand(-1, va("print\"^3[CTF] ^7%s has taken the Blue flag.\n\"", g_entities[arg1].client->pers.cleanName));
+                            G_Broadcast(va("%s\nhas \\taken the %s ^7flag!",
+                                g_entities[arg1].client->pers.netname,
+                                server_blueteamprefix.string),
+                                BROADCAST_GAME, NULL);
+
+                            trap_SendServerCommand(-1,
+                                va("print\"^3[CTF] ^7%s has taken the Blue " \
+                                "flag.\n\"",
+                                g_entities[arg1].client->pers.cleanName));
+
+                            if(g_objectiveLocations.integer){
+                                Q_strncpyz(level.objectiveLoc,
+                                    g_entities[arg1].client->pers.netname,
+                                    sizeof(level.objectiveLoc));
+                            }
 
                             // Boe!Man 11/29/12: Global sound.
-                            if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime){
-                            gentity_t* tent;
-                            tent = G_TempEntity( vec3_origin, EV_GLOBAL_SOUND );
-                            tent->s.eventParm = gametype.flagTakenSound;
-                            tent->r.svFlags = SVF_BROADCAST;
+                            if(!level.intermissionQueued
+                                && !level.intermissiontime
+                                && !level.awardTime)
+                            {
+                                gentity_t* tent;
+                                tent = G_TempEntity(vec3_origin,
+                                    EV_GLOBAL_SOUND);
+                                tent->s.eventParm = gametype.flagTakenSound;
+                                tent->r.svFlags = SVF_BROADCAST;
                             }
 
                             // Boe!Man 11/29/12: Radio message.
-                            G_Voice ( &g_entities[arg1], NULL, SAY_TEAM, "got_it", qfalse );
+                            G_Voice(&g_entities[arg1], NULL, SAY_TEAM,
+                                "got_it", qfalse);
                             gametype.blueFlagDropTime = 0;
                             gametype.flagTaken[BLUEFLAG] = qtrue;
                             #ifdef _GOLD
-                            G_SetHUDIcon (BLUEFLAG, gametype.iconBlueFlagCarried);
+                            G_SetHUDIcon (BLUEFLAG,
+                                gametype.iconBlueFlagCarried);
                             #endif // _GOLD
                             return 1;
-                        }else if(arg2 == TEAM_BLUE && g_ctfClassic.integer && gametype.blueFlagDropTime){ // Boe!Man 2/1/13: Include touch-flag (classic) CTF mode.
-                            G_Broadcast(va("%s\nhas \\returned the %s ^7flag!", g_entities[arg1].client->pers.netname, server_blueteamprefix.string), BROADCAST_GAME, NULL);
-                            trap_SendServerCommand(-1, va("print\"^3[CTF] ^7%s has returned the Blue flag.\n\"", g_entities[arg1].client->pers.cleanName));
+                        }else if(arg2 == TEAM_BLUE && g_ctfClassic.integer
+                            && gametype.blueFlagDropTime)
+                        {
+                            // Boe!Man 2/1/13: Include touch-flag
+                            // (classic) CTF mode.
+                            G_Broadcast(va("%s\nhas \\returned the %s ^7flag!",
+                                g_entities[arg1].client->pers.netname,
+                                server_blueteamprefix.string),
+                                BROADCAST_GAME, NULL);
 
-                            item = BG_FindGametypeItemByID ( ITEM_BLUEFLAG );
-                            if (item){
-                                G_ResetGametypeItem ( item );
+                            trap_SendServerCommand(-1,
+                                va("print\"^3[CTF] ^7%s has returned the " \
+                                "Blue flag.\n\"",
+                                g_entities[arg1].client->pers.cleanName));
+
+                            item = BG_FindGametypeItemByID (ITEM_BLUEFLAG);
+                            if(item){
+                                G_ResetGametypeItem (item);
                             }
 
                             // Boe!Man 11/29/12: Global sound.
-                            if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime){
+                            if(!level.intermissionQueued
+                                && !level.intermissiontime
+                                && !level.awardTime)
+                            {
                                 gentity_t* tent;
-                                tent = G_TempEntity( vec3_origin, EV_GLOBAL_SOUND );
+                                tent = G_TempEntity(vec3_origin,
+                                    EV_GLOBAL_SOUND);
                                 tent->s.eventParm = gametype.flagReturnSound;
                                 tent->r.svFlags = SVF_BROADCAST;
                             }
@@ -1027,19 +1110,37 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                     case ITEM_REDFLAG:
                         if(arg2 == TEAM_BLUE)
                         {
-                            G_Broadcast(va("%s\nhas \\taken the %s ^7flag!", g_entities[arg1].client->pers.netname, server_redteamprefix.string), BROADCAST_GAME, NULL);
-                            trap_SendServerCommand(-1, va("print\"^3[CTF] ^7%s has taken the Red flag.\n\"", g_entities[arg1].client->pers.cleanName));
+                            G_Broadcast(va("%s\nhas \\taken the %s ^7flag!",
+                                g_entities[arg1].client->pers.netname,
+                                server_redteamprefix.string),
+                                BROADCAST_GAME, NULL);
+
+                            trap_SendServerCommand(-1,
+                                va("print\"^3[CTF] ^7%s has taken the " \
+                                "Red flag.\n\"",
+                                g_entities[arg1].client->pers.cleanName));
+
+                            if(g_objectiveLocations.integer){
+                                Q_strncpyz(level.objective2Loc,
+                                    g_entities[arg1].client->pers.netname,
+                                    sizeof(level.objective2Loc));
+                            }
 
                             // Boe!Man 11/29/12: Global sound.
-                            if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime){
+                            if(!level.intermissionQueued
+                                && !level.intermissiontime
+                                && !level.awardTime)
+                            {
                             gentity_t* tent;
-                            tent = G_TempEntity( vec3_origin, EV_GLOBAL_SOUND );
-                            tent->s.eventParm = gametype.flagTakenSound;
-                            tent->r.svFlags = SVF_BROADCAST;
+                                tent = G_TempEntity(vec3_origin,
+                                    EV_GLOBAL_SOUND);
+                                tent->s.eventParm = gametype.flagTakenSound;
+                                tent->r.svFlags = SVF_BROADCAST;
                             }
 
                             // Boe!Man 11/29/12: Radio message.
-                            G_Voice ( &g_entities[arg1], NULL, SAY_TEAM, "got_it", qfalse );
+                            G_Voice (&g_entities[arg1], NULL, SAY_TEAM,
+                                "got_it", qfalse);
                             gametype.redFlagDropTime = 0;
                             gametype.flagTaken[REDFLAG] = qtrue;
 
@@ -1047,19 +1148,34 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                             G_SetHUDIcon (REDFLAG, gametype.iconRedFlagCarried);
                             #endif // _GOLD
                             return 1;
-                        }else if(arg2 == TEAM_RED && g_ctfClassic.integer && gametype.redFlagDropTime){ // Boe!Man 2/1/13: Include touch-flag (classic) CTF mode.
-                            G_Broadcast(va("%s\nhas \\returned the %s ^7flag!", g_entities[arg1].client->pers.netname, server_redteamprefix.string), BROADCAST_GAME, NULL);
-                            trap_SendServerCommand(-1, va("print\"^3[CTF] ^7%s has returned the Red flag.\n\"", g_entities[arg1].client->pers.cleanName));
+                        }else if(arg2 == TEAM_RED && g_ctfClassic.integer
+                            && gametype.redFlagDropTime)
+                        {
+                            // Boe!Man 2/1/13: Include touch-flag
+                            // (classic) CTF mode.
+                            G_Broadcast(va("%s\nhas \\returned the %s ^7flag!",
+                                g_entities[arg1].client->pers.netname,
+                                server_redteamprefix.string),
+                                BROADCAST_GAME, NULL);
 
-                            item = BG_FindGametypeItemByID ( ITEM_REDFLAG );
-                            if (item){
-                                G_ResetGametypeItem ( item );
+                            trap_SendServerCommand(-1,
+                                va("print\"^3[CTF] ^7%s has returned the " \
+                                "Red flag.\n\"",
+                                g_entities[arg1].client->pers.cleanName));
+
+                            item = BG_FindGametypeItemByID(ITEM_REDFLAG);
+                            if(item){
+                                G_ResetGametypeItem(item);
                             }
 
                             // Boe!Man 11/29/12: Global sound.
-                            if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime){
+                            if(!level.intermissionQueued
+                                && !level.intermissiontime
+                                && !level.awardTime)
+                            {
                                 gentity_t* tent;
-                                tent = G_TempEntity( vec3_origin, EV_GLOBAL_SOUND );
+                                tent = G_TempEntity(vec3_origin,
+                                    EV_GLOBAL_SOUND);
                                 tent->s.eventParm = gametype.flagReturnSound;
                                 tent->r.svFlags = SVF_BROADCAST;
                             }
@@ -1067,7 +1183,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                             gametype.flagTaken[REDFLAG] = qfalse;
 
                             #ifdef _GOLD
-                            G_SetHUDIcon (REDFLAG, gametype.iconRedFlag);
+                            G_SetHUDIcon(REDFLAG, gametype.iconRedFlag);
                             #endif // _GOLD
                             return 0;
                         }
@@ -1080,20 +1196,34 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
             }
             #ifdef _GOLD
             else if(current_gametype.value == GT_DEM){
-                if( arg0 == ITEM_BOMB && arg2 == TEAM_BLUE ){
-                    G_Broadcast(va("%s\nhas \\taken the bomb!", g_entities[arg1].client->pers.netname), BROADCAST_GAME, NULL);
-                    trap_SendServerCommand( -1, va("print\"^3[DEM] ^7%s has taken the bomb.\n\"", g_entities[arg1].client->pers.cleanName));
+                if(arg0 == ITEM_BOMB && arg2 == TEAM_BLUE){
+                    G_Broadcast(va("%s\nhas \\taken the bomb!",
+                        g_entities[arg1].client->pers.netname),
+                        BROADCAST_GAME, NULL);
+
+                    trap_SendServerCommand(-1, va("print\"^3[DEM] ^7%s has " \
+                        "taken the bomb.\n\"",
+                        g_entities[arg1].client->pers.cleanName));
+
+                    if(g_objectiveLocations.integer){
+                        Q_strncpyz(level.objectiveLoc,
+                            g_entities[arg1].client->pers.netname,
+                            sizeof(level.objectiveLoc));
+                    }
 
                     // Boe!Man 11/29/12: Global sound.
-                    if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime){
+                    if(!level.intermissionQueued
+                        && !level.intermissiontime && !level.awardTime)
+                    {
                         gentity_t* tent;
-                        tent = G_TempEntity( vec3_origin, EV_GLOBAL_SOUND );
+                        tent = G_TempEntity(vec3_origin, EV_GLOBAL_SOUND);
                         tent->s.eventParm = gametype.bombTakenSound;
                         tent->r.svFlags = SVF_BROADCAST;
                     }
 
                     // Boe!Man 11/29/12: Radio message.
-                    G_Voice ( &g_entities[arg1], NULL, SAY_TEAM, "got_it", qfalse );
+                    G_Voice(&g_entities[arg1], NULL, SAY_TEAM,
+                        "got_it", qfalse);
 
                     return 1;
                 }
@@ -1303,13 +1433,27 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
 
                 G_AddTeamScore (TEAM_RED, 1);
 
-                G_Broadcast(va("%s\nhas \\defused the bomb!", g_entities[arg1].client->pers.netname), BROADCAST_GAME, NULL);
-                trap_SendServerCommand( -1, va("print\"^3[DEM] ^7%s has defused the bomb.\n\"", g_entities[arg1].client->pers.cleanName));
+                G_Broadcast(
+                    va("%s\nhas \\defused the bomb!",
+                    g_entities[arg1].client->pers.netname),
+                    BROADCAST_GAME, NULL);
+
+                trap_SendServerCommand(-1,
+                    va("print\"^3[DEM] ^7%s has defused the bomb.\n\"",
+                    g_entities[arg1].client->pers.cleanName));
+
+                if(g_objectiveLocations.integer){
+                    Q_strncpyz(level.objectiveLoc, "Defused",
+                        sizeof(level.objectiveLoc));
+                }
 
                 // Boe!Man 11/29/12: Global sound.
-                if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime){
+                if(!level.intermissionQueued
+                    && !level.intermissiontime
+                    && !level.awardTime)
+                {
                     gentity_t* tent;
-                    tent = G_TempEntity( vec3_origin, EV_GLOBAL_SOUND );
+                    tent = G_TempEntity(vec3_origin, EV_GLOBAL_SOUND);
                     tent->s.eventParm = gametype.bombExplodedSound;
                     tent->r.svFlags = SVF_BROADCAST;
                 }
@@ -1318,9 +1462,8 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                 gametype.roundOver = qtrue;
 
                 // Give the guy who defused it some props
-                if ( !gt_simpleScoring.integer )
-                {
-                    G_AddScore ( &g_entities[arg1], 10 );
+                if(!gt_simpleScoring.integer){
+                    G_AddScore(&g_entities[arg1], 10);
                 }
 
                 // Is the timelimit hit already?
@@ -1367,16 +1510,30 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                 }
 
                 // Broadcast the change.
-                G_Broadcast(va("%s\nhas \\planted the bomb!", g_entities[arg1].client->pers.netname), BROADCAST_GAME, NULL);
-                trap_SendServerCommand( -1, va("print\"^3[DEM] ^7%s has planted the bomb.\n\"", g_entities[arg1].client->pers.cleanName));
+                G_Broadcast(va("%s\nhas \\planted the bomb!",
+                    g_entities[arg1].client->pers.netname),
+                    BROADCAST_GAME, NULL);
+
+                trap_SendServerCommand(-1,
+                    va("print\"^3[DEM] ^7%s has planted the bomb.\n\"",
+                    g_entities[arg1].client->pers.cleanName));
+
+                if(g_objectiveLocations.integer){
+                    Q_strncpyz(level.objectiveLoc, "Planted",
+                        sizeof(level.objectiveLoc));
+                }
 
                 // Get the trigger target.
-                Com_sprintf (gametype.bombPlantTarget, sizeof(gametype.bombPlantTarget), "");
+                Com_sprintf(gametype.bombPlantTarget,
+                    sizeof(gametype.bombPlantTarget), "");
                 find = NULL;
-                while (NULL != (find = G_Find (find, FOFS(classname), "gametype_trigger"))){
-                    if ( find->health == arg0 )
-                    {
-                        Com_sprintf (gametype.bombPlantTarget, sizeof(gametype.bombPlantTarget), "%s", find->target );
+                while(NULL != (find = G_Find (find, FOFS(classname),
+                    "gametype_trigger")))
+                {
+                    if(find->health == arg0){
+                        Com_sprintf(gametype.bombPlantTarget,
+                            sizeof(gametype.bombPlantTarget), "%s",
+                            find->target);
                         break;
                     }
                 }
@@ -1385,7 +1542,9 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                 G_SetHUDIcon(0, gametype.iconBombPlanted[0]);
 
                 // Start global sound.
-                if(!level.intermissionQueued && !level.intermissiontime && !level.awardTime){
+                if(!level.intermissionQueued
+                    && !level.intermissiontime && !level.awardTime)
+                {
                     gentity_t* tent;
                     tent = G_TempEntity( vec3_origin, EV_GLOBAL_SOUND );
                     tent->s.eventParm = gametype.bombPlantedSound;
