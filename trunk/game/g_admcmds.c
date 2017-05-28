@@ -2316,7 +2316,7 @@ Forces all clan members in one team.
 int adm_clanVsAll(int argNum, gentity_t *adm, qboolean shortCmd)
 {
     int             counts[TEAM_NUM_TEAMS] = { 0 };
-    int             i, clanTeam, othersTeam;
+    int             argc, i, clanTeam, othersTeam;
     char            team[6];
     clientSession_t *sess;
     gentity_t       *ent;
@@ -2327,10 +2327,12 @@ int adm_clanVsAll(int argNum, gentity_t *adm, qboolean shortCmd)
         return -1;
     }
 
-    if (adm && adm->client){
-        trap_Argv(2, team, sizeof(team));
+    argc = G_GetChatArgumentCount();
+
+    if (!shortCmd || shortCmd && !argc){
+        trap_Argv((shortCmd) ? argNum + 1 : argNum, team, sizeof(team));
     }else{
-        trap_Argv(1, team, sizeof(team));
+        Q_strncpyz(team, G_GetChatArgument(1), sizeof(team));
     }
 
     // Which team has the most clan members on it?

@@ -1876,6 +1876,13 @@ void        G_TeamInfo      ( gentity_t *ent, char *team );
 qboolean    G_lockTeam      ( gentity_t *ent, qboolean referee, char *team );
 void        G_Invite_Spec   ( gentity_t *ent, char *arg2 );
 
+//
+// g_vote.c
+//
+void        vote_callVote_f     ( gentity_t *ent );
+void        vote_clientVote_f   ( gentity_t *ent );
+void        vote_checkVote_f    ( void );
+
 int StartAfterCommand(char *param);
 
 // Boe!Man 2/17/14: Sets where the inview database is located.
