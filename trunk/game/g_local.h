@@ -1209,6 +1209,8 @@ void        G_RemoveAdditionalCarets        ( char *text );
 void        G_Hash                          ( void );
 void        G_switchToNextMapInCycle        ( qboolean force );
 
+qboolean    G_showItemLocations             ( void );
+
 //
 // g_weapon.c
 //

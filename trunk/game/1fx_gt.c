@@ -366,7 +366,7 @@ void GT_RunFrame ( int time )
             // In the first frame, set the initial location of the bomb.
             // (or, disabled if the server owner has this feature disabled)
             // After the bomb is given away, it will automatically update.
-            if(g_objectiveLocations.integer){
+            if(G_showItemLocations()){
                 Q_strncpyz(level.objectiveLoc, "Not given yet",
                     sizeof(level.objectiveLoc));
             }else{
@@ -397,7 +397,7 @@ void GT_RunFrame ( int time )
                     level.clients[clients[gametype.bombGiveClient]].
                         ps.stats[STAT_GAMETYPE_ITEMS] |= (1<<item->giTag);
 
-                    if(g_objectiveLocations.integer){
+                    if(G_showItemLocations()){
                         Q_strncpyz(level.objectiveLoc,
                             level.clients[clients[gametype.bombGiveClient]].
                             pers.netname,
@@ -455,7 +455,7 @@ void GT_RunFrame ( int time )
                 trap_SendServerCommand(-1,
                     "print\"^3[DEM] ^7Blue team has destroyed the target.\n\"");
 
-                if(g_objectiveLocations.integer){
+                if(G_showItemLocations()){
                     Q_strncpyz(level.objectiveLoc, "Destroyed",
                         sizeof(level.objectiveLoc));
                 }
@@ -991,7 +991,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                                 (g_caserun.integer) ? "CR" : "INF",
                                 g_entities[arg1].client->pers.cleanName));
 
-                            if(g_objectiveLocations.integer){
+                            if(G_showItemLocations()){
                                 Q_strncpyz(level.objectiveLoc,
                                     g_entities[arg1].client->pers.netname,
                                     sizeof(level.objectiveLoc));
@@ -1039,7 +1039,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                                 "flag.\n\"",
                                 g_entities[arg1].client->pers.cleanName));
 
-                            if(g_objectiveLocations.integer){
+                            if(G_showItemLocations()){
                                 Q_strncpyz(level.objectiveLoc,
                                     g_entities[arg1].client->pers.netname,
                                     sizeof(level.objectiveLoc));
@@ -1120,7 +1120,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                                 "Red flag.\n\"",
                                 g_entities[arg1].client->pers.cleanName));
 
-                            if(g_objectiveLocations.integer){
+                            if(G_showItemLocations()){
                                 Q_strncpyz(level.objective2Loc,
                                     g_entities[arg1].client->pers.netname,
                                     sizeof(level.objective2Loc));
@@ -1205,7 +1205,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                         "taken the bomb.\n\"",
                         g_entities[arg1].client->pers.cleanName));
 
-                    if(g_objectiveLocations.integer){
+                    if(G_showItemLocations()){
                         Q_strncpyz(level.objectiveLoc,
                             g_entities[arg1].client->pers.netname,
                             sizeof(level.objectiveLoc));
@@ -1442,7 +1442,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                     va("print\"^3[DEM] ^7%s has defused the bomb.\n\"",
                     g_entities[arg1].client->pers.cleanName));
 
-                if(g_objectiveLocations.integer){
+                if(G_showItemLocations()){
                     Q_strncpyz(level.objectiveLoc, "Defused",
                         sizeof(level.objectiveLoc));
                 }
@@ -1518,7 +1518,7 @@ int GT_Event ( int cmd, int time, int arg0, int arg1, int arg2, int arg3, int ar
                     va("print\"^3[DEM] ^7%s has planted the bomb.\n\"",
                     g_entities[arg1].client->pers.cleanName));
 
-                if(g_objectiveLocations.integer){
+                if(G_showItemLocations()){
                     Q_strncpyz(level.objectiveLoc, "Planted",
                         sizeof(level.objectiveLoc));
                 }

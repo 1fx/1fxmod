@@ -2195,3 +2195,29 @@ void G_switchToNextMapInCycle(qboolean force)
         mapIndex++;
     }
 }
+
+/*
+==============
+G_showItemLocations
+5/28/17 - 7:05 AM
+Determines whether the item locations
+are to be known to the user.
+==============
+*/
+
+qboolean G_showItemLocations()
+{
+    if(!g_objectiveLocations.integer){
+        return qfalse;
+    }
+
+    if(cm_enabled.integer > 1){
+        return qfalse;
+    }
+
+    if(current_gametype.value == GT_INF && g_caserun.integer){
+        return qfalse;
+    }
+
+    return qtrue;
+}

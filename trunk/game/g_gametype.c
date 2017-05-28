@@ -296,7 +296,7 @@ void G_ResetGametypeItem ( gitem_t* item )
 
         // Keep track of where the gametype items are,
         // if they are to be known anyway.
-        if(g_objectiveLocations.integer){
+        if(G_showItemLocations()){
             location = Team_GetLocation(find);
 
             if(current_gametype.value == GT_INF){

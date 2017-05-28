@@ -622,7 +622,7 @@ gentity_t *G_DropItem( gentity_t *ent, gitem_t *item, float angle )
     if ( item->giType == IT_GAMETYPE )
     {
         // Boe!Man 8/19/11: Add drop location message for all major gametypes (using a simplified system). Do note that this should remain disabled during the scrim itself (public/match warmup are allowed).
-        if (g_objectiveLocations.integer >= 1 && cm_enabled.integer <= 1 && !(current_gametype.value == GT_INF && g_caserun.integer)){
+        if (G_showItemLocations()){
             itemLocation = Team_GetLocation(dropped);
             if(itemLocation){
                 strncpy(location, va(" at %s", itemLocation->message), sizeof(location));
@@ -638,7 +638,7 @@ gentity_t *G_DropItem( gentity_t *ent, gitem_t *item, float angle )
                     trap_SendServerCommand( -1, va("print \"^3[CTF] ^7%s has dropped the Blue Flag%s.\n\"", ent->client->pers.cleanName, location));
 
                     // Update blue flag location.
-                    if(g_objectiveLocations.integer){
+                    if(G_showItemLocations()){
                         if(itemLocation){
                             Q_strncpyz(level.objectiveLoc,
                                 itemLocation->message,
@@ -652,7 +652,7 @@ gentity_t *G_DropItem( gentity_t *ent, gitem_t *item, float angle )
                     trap_SendServerCommand( -1, va("print \"^3[CTF] ^7%s has dropped the Red Flag%s.\n\"", ent->client->pers.cleanName, location));
 
                     // Update red flag location.
-                    if(g_objectiveLocations.integer){
+                    if(G_showItemLocations()){
                         if(itemLocation){
                             Q_strncpyz(level.objective2Loc,
                                 itemLocation->message,
@@ -669,7 +669,7 @@ gentity_t *G_DropItem( gentity_t *ent, gitem_t *item, float angle )
                         trap_SendServerCommand(-1, va("print \"^3[INF] ^7%s has dropped the briefcase%s.\n\"", ent->client->pers.cleanName, location));
 
                         // Update briefcase location.
-                        if(g_objectiveLocations.integer){
+                        if(G_showItemLocations()){
                             if(itemLocation){
                                 Q_strncpyz(level.objectiveLoc,
                                     itemLocation->message,
@@ -699,7 +699,7 @@ gentity_t *G_DropItem( gentity_t *ent, gitem_t *item, float angle )
                 trap_SendServerCommand( -1, va("print \"^3[DEM] ^7%s has dropped the bomb%s.\n\"", ent->client->pers.cleanName, location));
 
                 // Update bomb location.
-                if(g_objectiveLocations.integer){
+                if(G_showItemLocations()){
                     if(itemLocation){
                         Q_strncpyz(level.objectiveLoc,
                             itemLocation->message,

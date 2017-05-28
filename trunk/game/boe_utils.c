@@ -2106,7 +2106,7 @@ void Boe_displayTokens ( gentity_t *ent )
         "#I"));
 
     // Tokens to display info about the objective(s).
-    if(g_objectiveLocations.integer){
+    if(G_showItemLocations()){
         if(current_gametype.value == GT_INF){
             trap_SendServerCommand(ent-g_entities,
                 va("print \"^7%-8s [^3Shows the briefcase location^7]\n",
