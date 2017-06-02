@@ -1966,6 +1966,32 @@ void G_ShutdownGame( int restart )
     #endif // __linux__
 }
 
+/*
+==============
+G_softCrashHandler
+6/2/17 - 8:15 PM
+Handles the soft crash
+that just happened.
+==============
+*/
+
+static void G_softCrashHandler(const char *message)
+{
+    #ifdef __linux__
+    // Linux.
+    level.forceExit = qtrue;
+
+    #ifdef _DEV
+    trap_Cvar_Set("com_errorMessage", message);
+    raise(SIGUSR2);
+    #else
+    trap_Error(message);
+    #endif // _DEV
+    #else
+    // Windows.
+    trap_Error(message);
+    #endif // __linux__
+}
 
 #ifndef GAME_HARD_LINKED
 
@@ -1978,7 +2004,7 @@ void QDECL Com_Error ( int level, const char *fmt, ... )
     vsprintf (text, fmt, argptr);
     va_end (argptr);
 
-    trap_Error( text );
+    G_softCrashHandler(text);
 }
 
 void QDECL Com_Printf( const char *msg, ... )

@@ -230,6 +230,7 @@ void enableCrashHandler()
     sigaction(SIGILL, &act, &oldact[SIGILL]);
     sigaction(SIGFPE, &act, &oldact[SIGFPE]);
     sigaction(SIGBUS, &act, &oldact[SIGBUS]);
+    sigaction(SIGUSR2, &act, &oldact[SIGUSR2]);
 }
 
 /*
@@ -264,7 +265,16 @@ void retrieveSigInfo(int signal, siginfo_t *siginfo)
     crashLogger(va("Siginfo: %p\n", siginfo));
     if(siginfo){
         crashLogger(va("Code: %d\n", siginfo->si_code));
-        crashLogger(va("Faulting Memory Ref/Instruction: %p\n",siginfo->si_addr));
+        crashLogger(va("Faulting Memory Ref/Instruction: %p\n",
+            siginfo->si_addr));
+    }
+    if(signal == SIGUSR2){
+        char crashReason[1024];
+        trap_Cvar_VariableStringBuffer("com_errorMessage",
+            crashReason, sizeof(crashReason));
+
+        crashLogger(va("Soft crash detected. Error message was: %s\n",
+            crashReason));
     }
 }
 
