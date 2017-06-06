@@ -74,14 +74,14 @@ void SP_target_delay( gentity_t *ent ) {
 
 The activator is given this many points.
 */
-void Use_Target_Score (gentity_t *ent, gentity_t *other, gentity_t *activator) 
+void Use_Target_Score (gentity_t *ent, gentity_t *other, gentity_t *activator)
 {
     G_AddScore( activator, ent->count );
 }
 
-void SP_target_score( gentity_t *ent ) 
+void SP_target_score( gentity_t *ent )
 {
-    if ( !ent->count ) 
+    if ( !ent->count )
     {
         ent->count = 1;
     }
@@ -154,7 +154,7 @@ void Use_Target_Speaker (gentity_t *ent, gentity_t *other, gentity_t *activator)
     }
 }
 
-void SP_target_speaker( gentity_t *ent ) 
+void SP_target_speaker( gentity_t *ent )
 {
     char    buffer[MAX_QPATH];
     char    *s;
@@ -169,7 +169,7 @@ void SP_target_speaker( gentity_t *ent )
         return;
     }
 
-    if ( !G_SpawnString( "noise", "NOSOUND", &s ) ) 
+    if ( !G_SpawnString( "noise", "NOSOUND", &s ) )
     {
 //      G_Error( "target_speaker without a noise key at %s", vtos( ent->s.origin ) );
         G_FreeEntity( ent );
@@ -248,7 +248,7 @@ void target_laser_think (gentity_t *self) {
 
     if ( tr.entityNum ) {
         // hurt it if we can
-        G_Damage ( &g_entities[tr.entityNum], self, self->activator, self->movedir, 
+        G_Damage ( &g_entities[tr.entityNum], self, self->activator, self->movedir,
             tr.endpos, self->damage, DAMAGE_NO_KNOCKBACK, MOD_TARGET_LASER, HL_NONE );
     }
 
@@ -286,16 +286,16 @@ void target_laser_start (gentity_t *self)
 
     self->s.eType = ET_BEAM;
 
-    if (self->target) 
+    if (self->target)
     {
         ent = G_Find (NULL, FOFS(targetname), self->target);
-        if (!ent) 
+        if (!ent)
         {
             Com_Printf ("%s at %s: %s is a bad target\n", self->classname, vtos(self->s.origin), self->target);
         }
         self->enemy = ent;
-    } 
-    else 
+    }
+    else
     {
         G_SetMovedir (self->s.angles, self->movedir);
     }
@@ -303,7 +303,7 @@ void target_laser_start (gentity_t *self)
     self->use = target_laser_use;
     self->think = target_laser_think;
 
-    if ( !self->damage ) 
+    if ( !self->damage )
     {
         self->damage = 1;
     }
@@ -328,7 +328,7 @@ void SP_target_laser (gentity_t *self)
 
 //==========================================================
 
-void target_teleporter_use( gentity_t *self, gentity_t *other, gentity_t *activator ) 
+void target_teleporter_use( gentity_t *self, gentity_t *other, gentity_t *activator )
 {
     gentity_t   *dest;
     //Com_Printf("Teleporting %s to origin\n", activator->client->pers.cleanName);
@@ -336,9 +336,9 @@ void target_teleporter_use( gentity_t *self, gentity_t *other, gentity_t *activa
     {
         return;
     }
-    
+
     dest =  G_PickTarget( self->target );
-    if (!dest) 
+    if (!dest)
     {
         Com_Printf ("Couldn't find teleporter destination\n");
         return;
@@ -365,14 +365,14 @@ This doesn't perform any actions except fire its targets.
 The activator can be forced to be from a certain team.
 if RANDOM is checked, only one of the targets will be fired, not all of them
 */
-void target_relay_use (gentity_t *self, gentity_t *other, gentity_t *activator) 
+void target_relay_use (gentity_t *self, gentity_t *other, gentity_t *activator)
 {
-    if ( ( self->spawnflags & 1 ) && activator->client 
-        && activator->client->sess.team != TEAM_RED ) 
+    if ( ( self->spawnflags & 1 ) && activator->client
+        && activator->client->sess.team != TEAM_RED )
     {
         return;
     }
-    if ( ( self->spawnflags & 2 ) && activator->client 
+    if ( ( self->spawnflags & 2 ) && activator->client
         && activator->client->sess.team != TEAM_BLUE ) {
         return;
     }
@@ -398,7 +398,7 @@ void SP_target_relay (gentity_t *self) {
 /*QUAKED target_kill (.5 .5 .5) (-8 -8 -8) (8 8 8)
 Kills the activator.
 */
-void target_kill_use( gentity_t *self, gentity_t *other, gentity_t *activator ) 
+void target_kill_use( gentity_t *self, gentity_t *other, gentity_t *activator )
 {
     G_Damage ( activator, NULL, NULL, NULL, NULL, 100000, DAMAGE_NO_PROTECTION, MOD_TELEFRAG, HL_NONE );
 }
@@ -419,7 +419,7 @@ static void target_location_linkup(gentity_t *ent)
     int i;
     int n;
 
-    if (level.locationLinked) 
+    if (level.locationLinked)
         return;
 
     level.locationLinked = qtrue;
@@ -430,9 +430,9 @@ static void target_location_linkup(gentity_t *ent)
 
     for ( i = 0, ent = g_entities, n = 1;
           i < level.num_entities;
-          i++, ent++) 
+          i++, ent++)
     {
-        if (ent->classname && !Q_stricmp(ent->classname, "target_location")) 
+        if (ent->classname && !Q_stricmp(ent->classname, "target_location"))
         {
             // lets overload some variables!
             ent->health = n; // use for location marking
@@ -457,6 +457,9 @@ void SP_target_location( gentity_t *self )
 {
     self->think = target_location_linkup;
     self->nextthink = level.time + 200;  // Let them all spawn first
+    if(self->message == NULL){
+        self->message = "an unknown location";
+    }
 
     G_SetOrigin( self, self->s.origin );
 }
@@ -509,7 +512,7 @@ void SP_target_effect ( gentity_t *ent )
         // find angles
         vectoangles( ent->pos1, ent->r.currentAngles );
         // copy over to other angles
-        VectorCopy( ent->r.currentAngles, ent->s.angles );  
+        VectorCopy( ent->r.currentAngles, ent->s.angles );
         VectorCopy( ent->r.currentAngles, ent->s.apos.trBase );
     }
     else
