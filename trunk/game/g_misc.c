@@ -1436,7 +1436,8 @@ void G_Obituary(gentity_t *target, gentity_t *attacker, int mod, attackType_t at
 
     gender = GENDER_MALE;
 
-    if (strstr(target->client->pers.identity->mCharacter->mModel, "female"))
+    if (target->client->pers.identity &&
+        strstr(target->client->pers.identity->mCharacter->mModel, "female"))
     {
         gender = GENDER_FEMALE;
     }
