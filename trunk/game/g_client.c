@@ -2866,7 +2866,7 @@ void G_AllocateStatsMemory(gentity_t *ent)
             client->pers.statinfo.weapon_hits = calloc(ATTACK_MAX * level.wpNumWeapons, sizeof(int));
             client->pers.statinfo.weapon_headshots = calloc(ATTACK_MAX * level.wpNumWeapons, sizeof(int));
             if(!client->pers.statinfo.weapon_shots || !client->pers.statinfo.weapon_hits || !client->pers.statinfo.weapon_headshots){
-                Com_Error(ERR_FATAL, "Unable to initialize memory for weapon stats! Out of memory?");
+                Com_Error(ERR_FATAL_NOLOG, "Unable to initialize memory for weapon stats! Out of memory?");
             }
         }
     }else{
@@ -2876,7 +2876,7 @@ void G_AllocateStatsMemory(gentity_t *ent)
         client->pers.statinfo.weapon_hits = calloc(ATTACK_MAX * level.wpNumWeapons, sizeof(int));
         client->pers.statinfo.weapon_headshots = calloc(ATTACK_MAX * level.wpNumWeapons, sizeof(int));
         if(!client->pers.statinfo.weapon_shots || !client->pers.statinfo.weapon_hits || !client->pers.statinfo.weapon_headshots){
-            Com_Error(ERR_FATAL, "Unable to initialize memory for weapon stats! Out of memory?");
+            Com_Error(ERR_FATAL_NOLOG, "Unable to initialize memory for weapon stats! Out of memory?");
         }
     }
 }

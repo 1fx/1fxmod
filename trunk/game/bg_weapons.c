@@ -1201,7 +1201,7 @@ qboolean BG_ParseInviewFile(void)
         rc = sqlite3_open_v2(va("./%s/%s", fsGame, g_inviewDb.string), &db, SQLITE_OPEN_READONLY, NULL);
         if(rc){
             G_LogPrintf("^1Error: ^7Inview database: %s\n", sqlite3_errmsg(db));
-            Com_Error(ERR_FATAL, "^1Failed to load inview database: %s", sqlite3_errmsg(db));
+            Com_Error(ERR_FATAL_NOLOG, "Failed to load inview database: %s", sqlite3_errmsg(db));
         }else{
             level.altPath = qtrue;
             Q_strncpyz(level.altString, va("./%s", fsGame), sizeof(level.altString));

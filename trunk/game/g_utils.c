@@ -115,7 +115,7 @@ int G_FindConfigstringIndex( char *name, int start, int max, qboolean create )
 
     if ( i == max )
     {
-        Com_Error( ERR_FATAL, "G_FindConfigstringIndex: overflow" );
+        Com_Error(ERR_FATAL, "G_FindConfigstringIndex: overflow");
         return 0;           /// ROCmod - RxCxW - 01.27.06 - 09:51pm
     }
 
@@ -484,7 +484,7 @@ gentity_t* G_Spawn( void )
             Com_Printf("%4i: %s\n", i, g_entities[i].classname);
         }
 
-        Com_Error( ERR_FATAL, "G_Spawn: no free entities" );
+        Com_Error(ERR_FATAL_NOLOG, "G_Spawn: no free entities");
     }
 
     // open up a new slot

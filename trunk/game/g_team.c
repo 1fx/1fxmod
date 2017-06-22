@@ -8,7 +8,7 @@
 OtherTeam
 ==============
 */
-int OtherTeam(team_t team) 
+int OtherTeam(team_t team)
 {
     if (team==TEAM_RED)
         return TEAM_BLUE;
@@ -22,7 +22,7 @@ int OtherTeam(team_t team)
 TeamName
 ==============
 */
-const char *TeamName(team_t team)  
+const char *TeamName(team_t team)
 {
     switch ( team )
     {
@@ -51,7 +51,7 @@ const char *TeamName(team_t team)
 OtherTeamName
 ==============
 */
-const char *OtherTeamName(team_t team) 
+const char *OtherTeamName(team_t team)
 {
     if (team==TEAM_RED)
         return TeamName ( TEAM_BLUE );
@@ -66,7 +66,7 @@ const char *OtherTeamName(team_t team)
 TeamColorString
 ==============
 */
-const char *TeamColorString(team_t team) 
+const char *TeamColorString(team_t team)
 {
     if (team==TEAM_RED)
         return S_COLOR_RED;
@@ -78,29 +78,6 @@ const char *TeamColorString(team_t team)
     return S_COLOR_WHITE;
 }
 
-// NULL for everyone
-void QDECL PrintMsg( gentity_t *ent, const char *fmt, ... ) 
-{
-    char        msg[1024];
-    va_list     argptr;
-    char        *p;
-    
-    va_start (argptr,fmt);
-    if (vsprintf (msg, fmt, argptr) > sizeof(msg)) 
-    {
-        Com_Error ( ERR_FATAL, "PrintMsg overrun" );
-    }
-    va_end (argptr);
-
-    // double quotes are bad
-    while ((p = strchr(msg, '"')) != NULL)
-    {
-        *p = '\'';
-    }
-
-    trap_SendServerCommand ( ( (ent == NULL) ? -1 : ent-g_entities ), va("print \"%s\"", msg ));
-}
-
 /*
 ==============
 G_AddTeamScore
@@ -109,9 +86,9 @@ used for gametype > GT_TDM
 for gametype GT_TDM the level.teamScores is updated in AddScore in g_combat.c
 ==============
 */
-void G_AddTeamScore( team_t team, int score ) 
+void G_AddTeamScore( team_t team, int score )
 {
-    // Dont allow negative scores to affect the team score.  The reason for this is 
+    // Dont allow negative scores to affect the team score.  The reason for this is
     // that negative scores come from the actions of one bad player and a single player
     // can cause a team to loose because he/she wants to just kill the rest of their team, or
     // continue to kill themselves.
@@ -128,19 +105,19 @@ void G_AddTeamScore( team_t team, int score )
 OnSameTeam
 ==============
 */
-qboolean OnSameTeam( gentity_t *ent1, gentity_t *ent2 ) 
+qboolean OnSameTeam( gentity_t *ent1, gentity_t *ent2 )
 {
-    if ( !ent1->client || !ent2->client ) 
+    if ( !ent1->client || !ent2->client )
     {
         return qfalse;
     }
 
-    if ( !level.gametypeData->teams ) 
+    if ( !level.gametypeData->teams )
     {
         return qfalse;
     }
 
-    if ( ent1->client->sess.team == ent2->client->sess.team ) 
+    if ( ent1->client->sess.team == ent2->client->sess.team )
     {
         return qtrue;
     }
@@ -165,18 +142,18 @@ gentity_t *Team_GetLocation(gentity_t *ent)
 
     VectorCopy( ent->r.currentOrigin, origin );
 
-    for (eloc = level.locationHead; eloc; eloc = eloc->nextTrain) 
+    for (eloc = level.locationHead; eloc; eloc = eloc->nextTrain)
     {
         len = ( origin[0] - eloc->r.currentOrigin[0] ) * ( origin[0] - eloc->r.currentOrigin[0] )
             + ( origin[1] - eloc->r.currentOrigin[1] ) * ( origin[1] - eloc->r.currentOrigin[1] )
             + ( origin[2] - eloc->r.currentOrigin[2] ) * ( origin[2] - eloc->r.currentOrigin[2] );
 
-        if ( len > bestlen ) 
+        if ( len > bestlen )
         {
             continue;
         }
 
-        if ( !trap_InPVS( origin, eloc->r.currentOrigin ) ) 
+        if ( !trap_InPVS( origin, eloc->r.currentOrigin ) )
         {
             continue;
         }
@@ -199,7 +176,7 @@ qboolean Team_GetLocationMsg ( gentity_t *ent, char *loc, int loclen )
     gentity_t *best;
 
     best = Team_GetLocation( ent );
-    
+
     if (!best)
     {
         return qfalse;

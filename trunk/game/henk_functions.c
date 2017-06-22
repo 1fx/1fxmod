@@ -128,7 +128,7 @@ void LoadCountries(){
     // Boe!Man 6/25/13: Try to init the thread.
     if(pthread_create(&countryInit, NULL, &Thread_countryInit, NULL) != 0){
         #ifdef _DEBUG
-        Com_Error(ERR_FATAL, "Couldn't create Country initialization thread.");
+        Com_Error(ERR_FATAL_NOLOG, "Couldn't create Country initialization thread.");
         #else
         G_LogPrintf("Couldn't ininitalize Country database due to thread creation failing..\n"); // Don't throw a fatal error out of debug mode.
         trap_Cvar_Set("g_checkCountry", "0");

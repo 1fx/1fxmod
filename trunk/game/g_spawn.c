@@ -695,7 +695,7 @@ char *G_AddSpawnVarToken( const char *string )
     l = strlen( string );
     if ( level.numSpawnVarChars + l + 1 > MAX_SPAWN_VARS_CHARS )
     {
-        Com_Error( ERR_FATAL, "G_AddSpawnVarToken: MAX_SPAWN_CHARS" );
+        Com_Error(ERR_FATAL_NOLOG, "G_AddSpawnVarToken: MAX_SPAWN_CHARS");
     }
 
     dest = level.spawnVarChars + level.numSpawnVarChars;
@@ -888,7 +888,8 @@ qboolean G_ParseSpawnVars( qboolean inSubBSP )
 
     if ( com_token[0] != '{' )
     {
-        Com_Error( ERR_FATAL, "G_ParseSpawnVars: found %s when expecting {",com_token );
+        Com_Error(ERR_FATAL_NOLOG, "G_ParseSpawnVars: found %s when " \
+            "expecting {", com_token);
     }
 
     // go through all the key / value pairs
@@ -897,8 +898,10 @@ qboolean G_ParseSpawnVars( qboolean inSubBSP )
 #ifdef _spMaps
         if (G_ReadingFromEntFile(inSubBSP)) {
             token = G_GetEntFileToken();
-            if (!token)
-                Com_Error( ERR_FATAL, "G_ParseSpawnVars: EOF without closing brace" );
+            if (!token){
+                Com_Error(ERR_FATAL_NOLOG, "G_ParseSpawnVars: EOF without " \
+                    "closing brace");
+            }
             Com_sprintf(keyname, sizeof(keyname), "%s", token);
         }
         else
@@ -906,7 +909,8 @@ qboolean G_ParseSpawnVars( qboolean inSubBSP )
         // parse key
         if ( !trap_GetEntityToken( keyname, sizeof( keyname ) ) )
         {
-            Com_Error( ERR_FATAL, "G_ParseSpawnVars: EOF without closing brace" );
+            Com_Error(ERR_FATAL_NOLOG, "G_ParseSpawnVars: EOF without " \
+                "closing brace");
         }
 
         if ( keyname[0] == '}' )
@@ -918,7 +922,8 @@ qboolean G_ParseSpawnVars( qboolean inSubBSP )
         if (G_ReadingFromEntFile(inSubBSP)) {
             token = G_GetEntFileToken();
             if (!token)
-                Com_Error( ERR_FATAL, "G_ParseSpawnVars: EOF without closing brace" );
+                Com_Error(ERR_FATAL_NOLOG, "G_ParseSpawnVars: EOF without " \
+                    "closing brace");
             Com_sprintf(com_token, sizeof(com_token), "%s", token);
         }
         else
@@ -927,17 +932,19 @@ qboolean G_ParseSpawnVars( qboolean inSubBSP )
         // parse value
         if ( !trap_GetEntityToken( com_token, sizeof( com_token ) ) )
         {
-            Com_Error( ERR_FATAL, "G_ParseSpawnVars: EOF without closing brace" );
+            Com_Error(ERR_FATAL_NOLOG, "G_ParseSpawnVars: EOF without " \
+                "closing brace");
         }
 
         if ( com_token[0] == '}' )
         {
-            Com_Error( ERR_FATAL, "G_ParseSpawnVars: closing brace without data" );
+            Com_Error(ERR_FATAL_NOLOG, "G_ParseSpawnVars: closing brace " \
+                "without data");
         }
 
         if ( level.numSpawnVars == MAX_SPAWN_VARS )
         {
-            Com_Error( ERR_FATAL, "G_ParseSpawnVars: MAX_SPAWN_VARS" );
+            Com_Error(ERR_FATAL_NOLOG, "G_ParseSpawnVars: MAX_SPAWN_VARS");
         }
 
         AddSpawnField(keyname, com_token);
@@ -1138,7 +1145,7 @@ void SP_worldspawn( void )
     G_SpawnString( "classname", "", &text );
     if ( Q_stricmp( text, "worldspawn" ) )
     {
-        Com_Error( ERR_FATAL, "SP_worldspawn: The first entity isn't 'worldspawn'" );
+        Com_Error(ERR_FATAL_NOLOG, "SP_worldspawn: The first entity isn't 'worldspawn'");
     }
 
     // make some data visible to connecting client
@@ -1230,8 +1237,8 @@ void SP_worldspawn( void )
 
         if (lengthRed != lengthGreen || lengthGreen != lengthBlue)
         {
-            Com_Error(ERR_DROP, "Style %d has inconsistent lengths: R %d, G %d, B %d",
-                i, lengthRed, lengthGreen, lengthBlue);
+            Com_Error(ERR_FATAL_NOLOG, "Style %d has inconsistent lengths: " \
+                "R %d, G %d, B %d", i, lengthRed, lengthGreen, lengthBlue);
         }
     }
 
@@ -1274,7 +1281,7 @@ void G_SpawnEntitiesFromString( qboolean inSubBSP )
 
     if ( !G_ParseSpawnVars(inSubBSP) )
     {
-        Com_Error( ERR_FATAL, "SpawnEntities: no entities" );
+        Com_Error(ERR_FATAL_NOLOG, "SpawnEntities: no entities");
     }
 
     if (!inSubBSP)

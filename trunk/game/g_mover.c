@@ -265,7 +265,7 @@ qboolean G_TryPushingEntity( gentity_t *check, gentity_t *pusher, vec3_t move, v
     // save off the old position
     if (pushed_p > &pushed[MAX_GENTITIES])
     {
-        Com_Error ( ERR_FATAL, "pushed_p > &pushed[MAX_GENTITIES]" );
+        Com_Error(ERR_FATAL, "pushed_p > &pushed[MAX_GENTITIES]");
     }
 
     pushed_p->ent = check;
@@ -760,7 +760,7 @@ void Reached_BinaryMover( gentity_t *ent )
     }
     else
     {
-        Com_Error( ERR_FATAL, "Reached_BinaryMover: bad moverState" );
+        Com_Error(ERR_FATAL, "Reached_BinaryMover: bad moverState");
     }
 }
 

@@ -425,11 +425,10 @@ typedef enum {
 
 // parameters to the main Error routine
 typedef enum {
-    ERR_FATAL,                  // exit the entire game with a popup window
-    ERR_DROP,                   // print to console and disconnect from game
-    ERR_SERVERDISCONNECT,       // don't kill server
-    ERR_DISCONNECT,             // client disconnected from the server
-    ERR_NEED_CD                 // pop up the need-cd dialog
+    ERR_FATAL,              // Exit the entire game and log the crash
+                            // if debugging is enabled.
+    ERR_FATAL_NOLOG,        // Exit the entire game but don't log the
+                            // crash if debugging is enabled.
 } errorParm_t;
 
 
@@ -1147,8 +1146,8 @@ void Info_SetValueForKey_Big( char *s, const char *key, const char *value );
 qboolean Info_Validate( const char *s );
 void Info_NextPair( const char **s, char *key, char *value );
 
-void    QDECL Com_Error( int level, const char *error, ... );
-void    QDECL Com_Printf( const char *msg, ... );
+void    QDECL Com_Error     ( int level, const char *fmt, ... );
+void    QDECL Com_Printf    ( const char *msg, ... );
 
 
 /*

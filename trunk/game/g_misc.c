@@ -1330,7 +1330,6 @@ void G_Obituary(gentity_t *target, gentity_t *attacker, int mod, attackType_t at
 
     if (targ < 0 || targ >= MAX_CLIENTS)
     {
-        G_LogPrintf("Out of range..\n");
         Com_Error(ERR_FATAL, "G_Obituary: target out of range");
     }
     Q_strncpyz(targetName, target->client->pers.netname, sizeof(targetName));

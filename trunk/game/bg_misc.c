@@ -1817,7 +1817,7 @@ gitem_t *BG_FindWeaponItem ( weapon_t weapon )
         }
     }
 
-    Com_Error( ERR_DROP, "Couldn't find item for weapon %i", weapon);
+    Com_Error(ERR_FATAL, "Couldn't find item for weapon %i", weapon);
     return NULL;
 }
 
@@ -1902,7 +1902,7 @@ qboolean BG_CanItemBeGrabbed( int gametype, const entityState_t *ent, const play
 
     if ( ent->modelindex < 1 || ent->modelindex >= bg_numItems )
     {
-        Com_Error( ERR_DROP, "BG_CanItemBeGrabbed: index out of range" );
+        Com_Error(ERR_FATAL, "BG_CanItemBeGrabbed: index out of range");
     }
 
     item = &bg_itemlist[ent->modelindex];
@@ -2065,7 +2065,7 @@ qboolean BG_CanItemBeGrabbed( int gametype, const entityState_t *ent, const play
             return qtrue;
 
         case IT_BAD:
-            Com_Error( ERR_DROP, "BG_CanItemBeGrabbed: IT_BAD" );
+            Com_Error(ERR_FATAL, "BG_CanItemBeGrabbed: IT_BAD");
             break;
 
         case IT_BACKPACK:
@@ -2204,7 +2204,7 @@ void BG_EvaluateTrajectory( const trajectory_t *tr, int atTime, vec3_t result ) 
         result[2] -= 1.0 * DEFAULT_GRAVITY * deltaTime * deltaTime;     // FIXME: local gravity...
         break;
     default:
-        Com_Error( ERR_DROP, "BG_EvaluateTrajectory: unknown trType: %i", tr->trTime );
+        Com_Error(ERR_FATAL, "BG_EvaluateTrajectory: unknown trType: %i", tr->trTime);
         break;
     }
 }
@@ -2257,7 +2257,7 @@ void BG_EvaluateTrajectoryDelta( const trajectory_t *tr, int atTime, vec3_t resu
         result[2] -= 2.0f * DEFAULT_GRAVITY * deltaTime;        // FIXME: local gravity...
         break;
     default:
-        Com_Error( ERR_DROP, "BG_EvaluateTrajectoryDelta: unknown trType: %i", tr->trTime );
+        Com_Error(ERR_FATAL, "BG_EvaluateTrajectoryDelta: unknown trType: %i", tr->trTime);
         break;
     }
 }

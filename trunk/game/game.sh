@@ -42,7 +42,7 @@
 shopt -s expand_aliases
 
 # The compile options relevant for all builds are noted here.
-buildoptions="-O2 -DQAGAME -D_SOF2"
+buildoptions="-DQAGAME -D_SOF2"
 
 # Some global booleans we switch depending on user choice and host platform.
 linux=false
@@ -56,11 +56,12 @@ linker=""
 count=0
 verbose=false
 noclear=false
+dev=false
+win32dev=false
 
 # Link the Mod based on the build type (default is without symbols).
 strip="-s"
 buildtype=""
-dev=false
 
 # First, we detect if we're manually building the Mod or if we should automatically start determining what to build.
 numargs=$#
@@ -210,7 +211,7 @@ if [ $choice == "1" ]; then
     buildtype="Public release build"
 elif [ $choice == "2" ]; then
 	buildtype="Public release build with developer"
-    buildoptions="$buildoptions -g -DNDEBUG -D_DEV"
+    buildoptions="$buildoptions -DNDEBUG -D_DEV"
     dev=true
 elif [[ $choice == "3" ]] || [[ $choice == *"3"* ]]; then
     if [[ $numargs -eq 0 ]]; then
@@ -251,7 +252,7 @@ elif [[ $choice == "3" ]] || [[ $choice == *"3"* ]]; then
         exit 1
     fi
 elif [ $choice == "4" ]; then
-    buildoptions="$buildoptions -g -D_DEBUG -DDEBUG -D_NIGHTLY"
+    buildoptions="$buildoptions -D_DEBUG -DDEBUG -D_NIGHTLY"
     strip=""
     buildtype="Nightly build"
 else
@@ -259,14 +260,18 @@ else
     exit 1
 fi
 
-# Add developer build options.
-if [ $dev == true ]; then
-	# Enforce debug symbols.
-	buildoptions="$buildoptions -g"
+# Now determine if we should enable optimization.
+if [[ $dev == true ]] && [[ $win32 == true ]]; then
+    win32dev=true
+else
+    # O2 optimization on anything except win32 debug builds.
+    buildoptions="-O2 $buildoptions"
+fi
 
-	if [ $linux == true ]; then
-		 buildoptions="$buildoptions -D_GNU_SOURCE"
-	fi
+# Add additional preprocessor defintion needed for Linux builds with the crash
+# handler.
+if [[ $dev == true ]] && [[ $linux == true ]]; then
+    buildoptions="$buildoptions -D_GNU_SOURCE"
 fi
 
 # Summarize build environment and choices.
@@ -374,13 +379,21 @@ linkfiles=""
 echo "Now compiling (verbose output to compile_log file).."
 for cFile in *.c
 do
-    compile $cFile "$buildoptions"
+    if [ $win32dev == false ]; then
+        compile $cFile "$buildoptions"
+    else
+        if [[ $cFile == "patch_"* ]]; then
+            compile $cFile "-O2 $buildoptions"
+        else
+            compile $cFile "$buildoptions"
+        fi
+    fi
 done
 
 # SQLite (and TADNS for SoF2 - v1.00 on Linux).
 if [[ $gold == false ]] && [[ $linux == true ]]; then
-    compile "./tadns/tadns.c" "$strip -fstack-check -fPIC -c"
-    compile "./sqlite/sqlite3.c" "$strip -fstack-check -DNDEBUG -DSQLITE_OMIT_LOAD_EXTENSION -DSQLITE_ENABLE_MEMSYS5 -fPIC -c"
+    compile "./tadns/tadns.c" "-O2 $strip -fstack-check -fPIC -c"
+    compile "./sqlite/sqlite3.c" "-O2 $strip -fstack-check -DNDEBUG -DSQLITE_OMIT_LOAD_EXTENSION -DSQLITE_ENABLE_MEMSYS5 -fPIC -c"
 else
     if [ $m32 == true ]; then
         m32b="-m32"
@@ -389,31 +402,48 @@ else
     fi
 
     if [ $win32 == true ]; then
-        compile "./sqlite/sqlite3.c" "$m32b $strip -fstack-check -DNDEBUG -DSQLITE_OMIT_LOAD_EXTENSION -c"
+        compile "./sqlite/sqlite3.c" "-O2 $m32b $strip -fstack-check -DNDEBUG -DSQLITE_OMIT_LOAD_EXTENSION -c"
     elif [ $linux == true ]; then
-        compile "./sqlite/sqlite3.c" "$m32b $strip -fstack-check -DNDEBUG -DSQLITE_OMIT_LOAD_EXTENSION -fPIC -c"
+        compile "./sqlite/sqlite3.c" "-O2 $m32b $strip -fstack-check -DNDEBUG -DSQLITE_OMIT_LOAD_EXTENSION -fPIC -c"
     elif [ $macosx == true ]; then
-        compile "./sqlite/sqlite3.c" "$m32b $strip -fstack-check -DNDEBUG -DSQLITE_OMIT_LOAD_EXTENSION -DSQLITE_WITHOUT_ZONEMALLOC -fPIC -c"
+        compile "./sqlite/sqlite3.c" "-O2 $m32b $strip -fstack-check -DNDEBUG -DSQLITE_OMIT_LOAD_EXTENSION -DSQLITE_WITHOUT_ZONEMALLOC -fPIC -c"
     fi
 fi
 
 printf "Now linking the target file.. "
 # Link the Mod.
 if [[ $gold == false ]] && [[ $linux == true ]]; then
-    # Static libraries to link against (SoF2 v1.00 Linux).
-    libs="\
-    /usr/local/lib/libunwind-x86.a \
-    /usr/local/lib/libunwind.a \
-    /usr/lib/libpthread.a \
-    /usr/lib/libm.a \
-    /usr/lib/libc.a \
-    /usr/lib/gcc-lib/i386-linux/2.95.4/libgcc.a \
-    /usr/lib/libdl.a"
-
     # This links the Mod dynamically with static dependencies.
     if [ $dev == false ]; then
+        # Static libraries to link against (SoF2 v1.00 Linux).
+        # Don't include libunwind in release builds.
+        libs=""
+        libs="$libs /usr/lib/libpthread.a"
+        libs="$libs /usr/lib/libm.a"
+        libs="$libs /usr/lib/libc.a"
+        libs="$libs /usr/lib/gcc-lib/i386-linux/2.95.4/libgcc.a"
+        libs="$libs /usr/lib/libdl.a"
+
+        if [ $verbose == true ]; then
+            printf "ld $strip -shared $linkfiles -Bstatic $libs -o $outfile.. "
+        fi
+
 		ld $strip -shared $linkfiles -Bstatic $libs -o $outfile 2>> compile_log
 	else
+        # Static libraries to link against (SoF2 v1.00 Linux).
+        libs=""
+        libs="$libs /usr/local/lib/libunwind-x86.a"
+        libs="$libs /usr/local/lib/libunwind.a"
+        libs="$libs /usr/lib/libpthread.a"
+        libs="$libs /usr/lib/libm.a"
+        libs="$libs /usr/lib/libc.a"
+        libs="$libs /usr/lib/gcc-lib/i386-linux/2.95.4/libgcc.a"
+        libs="$libs /usr/lib/libdl.a"
+
+        if [ $verbose == true ]; then
+            printf "ld -E -shared $linkfiles -Bstatic $libs -o $outfile.. "
+        fi
+
 		ld -E -shared $linkfiles -Bstatic $libs -o $outfile 2>> compile_log
 	fi
 else
@@ -447,14 +477,18 @@ else
 			$linker $m32b -shared $linkfiles -static -static-libgcc $pthread -o $outfile 2>> compile_log
 		fi
     else # Linux.
-        if [ $m32 == true ]; then
-            m32b="-m elf_i386"
-        else
-            m32b=""
+        if [[ $linker == "" ]]; then
+            linker="gcc"
         fi
 
-        if [[ $linker == "" ]]; then
-            linker="ld"
+        if [ $m32 == true ]; then
+            if [[ $linker == "ld" ]]; then
+                m32b="-m elf_i386"
+            else
+                m32b="-m32"
+            fi
+        else
+            m32b=""
         fi
 
 		if [ $dev == false ]; then
@@ -462,12 +496,17 @@ else
 		else
 			# With developer enabled.
 			if [[ $linker == "ld" ]]; then
+                printf "WARNING: linking with 'ld' may cause a broken backtrace, consider using 'gcc' instead.. "
 				rdynamic="--export-dynamic"
 			else
 				rdynamic="-rdynamic"
 			fi
 
-			$linker $m32b $rdynamic -shared $linkfiles -lpthread -lm -lc -ldl -o $outfile 2>> compile_log
+            if [ $verbose == true ]; then
+                printf "$linker $m32b -fPIC $rdynamic -shared $linkfiles -lpthread -lm -lc -ldl -o $outfile.. "
+            fi
+
+			$linker $m32b -fPIC $rdynamic -shared $linkfiles -lpthread -lm -lc -ldl -o $outfile 2>> compile_log
 		fi
     fi
 fi

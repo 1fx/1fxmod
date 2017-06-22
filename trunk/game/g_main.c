@@ -1305,12 +1305,12 @@ void G_SetGametype ( const char* gametype )
             // This is bad, this means the map doesnt support any gametypes
             if ( i >= bg_gametypeCount )
             {
-                Com_Error ( ERR_FATAL, "map does not support any of the available gametypes" );
+                Com_Error(ERR_FATAL_NOLOG, "Map does not support any of the available " \
+                    "gametypes.");
             }
 
-            G_LogPrintf ( "gametype '%s' is not supported on this map and was defaulted to '%s'\n",
-                         gametype,
-                         bg_gametypeData[i].name );
+            G_LogPrintf("Gametype '%s' is not supported on this map and was " \
+                "defaulted to '%s'.\n", gametype, bg_gametypeData[i].name);
 
             gametype = bg_gametypeData[i].name;
             trap_Cvar_Set( "g_gametype", gametype );
@@ -1416,9 +1416,8 @@ static void G_ResolveMasterIPs()
 }
 #endif // __linux__ && __GNUC__ < 3
 
-// SIGINT handler.
-
 #ifdef __linux__
+// SIGINT handler.
 __sighandler_t G_InterruptHandler(int signal, struct sigcontext ctx)
 {
     Com_Printf("\n-------------------------------------------------\n");
@@ -1463,7 +1462,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
         DeleteFile(TEXT(va("%s\\srv.lck", fsGame)));
 
         if (G_CheckAlive()){
-            Com_Error(ERR_FATAL, "Another instance is running!");
+            Com_Error(ERR_FATAL_NOLOG, "Another instance is running!");
         }
         #elif __linux__
         G_LogPrintf("********************\n" \
@@ -1475,6 +1474,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
         #endif
     }
 
+    // Register signal handlers.
     #ifdef __linux__
     // Boe!Man 10/17/15: Trap Ctrl+C on Linux.
     signal(SIGINT, (void *)G_InterruptHandler);
@@ -1487,7 +1487,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
         Com_Printf("---------------------------\n");
         Com_Printf("ERROR: fs_game doesn't match the exact value of \"1fx\" (with or without quotes).\n" \
             "Please update your fs_game value to match the exact value.\n");
-        Com_Error(ERR_FATAL, "Invalid fs_game value detected (must be set to \"1fx\")!");
+        Com_Error(ERR_FATAL_NOLOG, "Invalid fs_game value detected (must be set to \"1fx\")!");
     }
     #endif // not _DEBUG
 
@@ -1945,15 +1945,11 @@ void G_ShutdownGame( int restart )
     DeleteFile(TEXT(va("%s\\srv.lck", fsGame)));
     #endif // __linux__ && GNUC < 3
 
-    // Boe!Man 1/2/14: Check if the engine threw a Com_Error in another function (also logs it upon succesfull detection).
-    logCrash();
-
-#ifdef _SOF2_BOTS
-    if ( trap_Cvar_VariableIntegerValue( "bot_enable" ) )
-    {
+    #ifdef _SOF2_BOTS
+    if(trap_Cvar_VariableIntegerValue("bot_enable")){
         BotAIShutdown( restart );
     }
-#endif
+    #endif
 
     // Boe!Man 7/27/15: Free statinfo memory of all clients.
     G_FreeStatsMemory(NULL);
@@ -1975,27 +1971,31 @@ that just happened.
 ==============
 */
 
-static void G_softCrashHandler(const char *message)
+static void G_softCrashHandler(int lvl, const char *msg)
 {
-    #ifdef __linux__
-    // Linux.
-    level.forceExit = qtrue;
-
     #ifdef _DEV
-    trap_Cvar_Set("com_errorMessage", message);
+    if(lvl == ERR_FATAL_NOLOG){
+        trap_Error(msg);
+        return;
+    }
+
+    trap_Cvar_Set("com_errorMessage", msg);
+
+    #ifdef __linux__
+    level.forceExit = qtrue;
     raise(SIGUSR2);
-    #else
-    trap_Error(message);
-    #endif // _DEV
-    #else
-    // Windows.
-    trap_Error(message);
+    #else // _WIN32
+    RaiseException(EXCEPTION_NONCONTINUABLE_EXCEPTION,
+        EXCEPTION_NONCONTINUABLE_EXCEPTION, 0, NULL);
     #endif // __linux__
+    #else
+    trap_Error(msg);
+    #endif // _DEV
 }
 
 #ifndef GAME_HARD_LINKED
 
-void QDECL Com_Error ( int level, const char *fmt, ... )
+void QDECL Com_Error(int level, const char *fmt, ...)
 {
     va_list     argptr;
     char        text[1024];
@@ -2004,7 +2004,7 @@ void QDECL Com_Error ( int level, const char *fmt, ... )
     vsprintf (text, fmt, argptr);
     va_end (argptr);
 
-    G_softCrashHandler(text);
+    G_softCrashHandler(level, text);
 }
 
 void QDECL Com_Printf( const char *msg, ... )
@@ -3299,9 +3299,8 @@ void G_RunThink (gentity_t *ent)
     }
 
     ent->nextthink = 0;
-    if (!ent->think)
-    {
-        Com_Error ( ERR_FATAL, "NULL ent->think");
+    if(!ent->think){
+        Com_Error(ERR_FATAL, "NULL ent->think");
     }
     ent->think (ent);
 }

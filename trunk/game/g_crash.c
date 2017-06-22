@@ -411,7 +411,8 @@ void crashHandler(int signal, siginfo_t *siginfo, ucontext_t *ctx)
         }
     }else{
         // Recursive segfault detected.
-        Com_Error(ERR_FATAL, "Recursive segmentation fault. Bailing out.");
+        Com_Error(ERR_FATAL_NOLOG, "Recursive segmentation fault. " \
+            "Bailing out.");
         oldHandler = (void *)oldact[SIGSEGV].sa_sigaction;
         (*oldHandler)(signal);
     }
@@ -571,9 +572,20 @@ Original code from ETpub.
 
 void retrieveExceptionInfo(LPEXCEPTION_POINTERS e)
 {
+    char crashReason[1024];
+
     // Log the exception thrown.
     crashLogger(va("Exception: %s (0x%08x)\n", ExceptionName(e->ExceptionRecord->ExceptionCode), e->ExceptionRecord->ExceptionCode));
     crashLogger(va("Exception address: 0x%08x\n", e->ExceptionRecord->ExceptionAddress));
+
+    // Is it a soft crash? If yes, print the error.
+    trap_Cvar_VariableStringBuffer("com_errorMessage",
+        crashReason, sizeof(crashReason));
+
+    if(strlen(crashReason)){
+        crashLogger(va("Soft crash detected. Error message was: %s\n",
+        crashReason));
+    }
 }
 
 /*

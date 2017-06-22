@@ -387,9 +387,6 @@ void    Boe_Stats( gentity_t *ent );
 
 void    QDECL Boe_adminLog( const char *command, const char *by, const char *to, ... );
 
-// Boe!Man 1/2/14: This function logs soft-crashes (triggered by Com_Error).
-void    logCrash(void);
-
 // Henk 28/01/10 -> Add eventeams and swap teams.
 void    EvenTeams (gentity_t *adm, qboolean aet);
 void    SwapTeams (gentity_t *adm, qboolean aswap);

@@ -2767,7 +2767,7 @@ void Boe_userdataIntegrity(void)
         if(rc){
             G_LogPrintf("^1Fatal Error: ^7bans database: %s\n", sqlite3_errmsg(db));
             // Boe!Man 5/27/13: This is bad, drop with a fatal error.
-            Com_Error(ERR_FATAL, "Bans database: %s", sqlite3_errmsg(db));
+            Com_Error(ERR_FATAL_NOLOG, "Bans database: %s", sqlite3_errmsg(db));
         }else{
             dbOkay = qtrue;
         }
@@ -2781,7 +2781,7 @@ void Boe_userdataIntegrity(void)
             G_LogPrintf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
             sqlite3_close(db);
             // Boe!Man 5/27/13: This is bad, drop with a fatal error.
-            Com_Error(ERR_FATAL, "Bans database: %s", sqlite3_errmsg(db));
+            Com_Error(ERR_FATAL_NOLOG, "Bans database: %s", sqlite3_errmsg(db));
             return;
         }
 
@@ -2789,7 +2789,7 @@ void Boe_userdataIntegrity(void)
             G_LogPrintf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
             sqlite3_close(db);
             // Boe!Man 5/27/13: This is bad, drop with a fatal error.
-            Com_Error(ERR_FATAL, "Bans database: %s", sqlite3_errmsg(db));
+            Com_Error(ERR_FATAL_NOLOG, "Bans database: %s", sqlite3_errmsg(db));
             return;
         }
 
@@ -2838,7 +2838,7 @@ void Boe_userdataIntegrity(void)
         if(rc){
             G_LogPrintf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
             // Boe!Man 5/27/13: This is bad, drop with a fatal error.
-            Com_Error(ERR_FATAL, "Aliases database: %s", sqlite3_errmsg(db));
+            Com_Error(ERR_FATAL_NOLOG, "Aliases database: %s", sqlite3_errmsg(db));
         }else{
             dbOkay = qtrue;
         }
@@ -2855,7 +2855,7 @@ void Boe_userdataIntegrity(void)
             G_LogPrintf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
             sqlite3_close(db);
             // Boe!Man 5/27/13: This is bad, drop with a fatal error.
-            Com_Error(ERR_FATAL, "Aliases database: %s", sqlite3_errmsg(db));
+            Com_Error(ERR_FATAL_NOLOG, "Aliases database: %s", sqlite3_errmsg(db));
             return;
         }
 
@@ -2863,7 +2863,7 @@ void Boe_userdataIntegrity(void)
             G_LogPrintf("^1Error: ^7aliases database: %s\n", sqlite3_errmsg(db));
             sqlite3_close(db);
             // Boe!Man 5/27/13: This is bad, drop with a fatal error.
-            Com_Error(ERR_FATAL, "Aliases database: %s", sqlite3_errmsg(db));
+            Com_Error(ERR_FATAL_NOLOG, "Aliases database: %s", sqlite3_errmsg(db));
             return;
         }
 
@@ -2877,7 +2877,7 @@ void Boe_userdataIntegrity(void)
                     sqlite3_finalize(stmt);
                     sqlite3_close(db);
                     // Boe!Man 5/27/13: This is bad, drop with a fatal error.
-                    Com_Error(ERR_FATAL, "Aliases database: %s", sqlite3_errmsg(db));
+                    Com_Error(ERR_FATAL_NOLOG, "Aliases database: %s", sqlite3_errmsg(db));
                     return;
                 }
                 if(sqlite3_exec(db, "DELETE FROM aliases_names", 0, 0, 0) != SQLITE_OK){
@@ -2885,7 +2885,7 @@ void Boe_userdataIntegrity(void)
                     sqlite3_finalize(stmt);
                     sqlite3_close(db);
                     // Boe!Man 5/27/13: This is bad, drop with a fatal error.
-                    Com_Error(ERR_FATAL, "Aliases database: %s", sqlite3_errmsg(db));
+                    Com_Error(ERR_FATAL_NOLOG, "Aliases database: %s", sqlite3_errmsg(db));
                     return;
                 }
                 Com_Printf("Emptied aliases database due to the data exceeding the limit..\n");
@@ -2939,7 +2939,7 @@ void Boe_userdataIntegrity(void)
         if(rc){
             G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
             // Boe!Man 5/27/13: This is bad, drop with a fatal error.
-            Com_Error(ERR_FATAL, "Users database: %s", sqlite3_errmsg(db));
+            Com_Error(ERR_FATAL_NOLOG, "Users database: %s", sqlite3_errmsg(db));
         }else{
             dbOkay = qtrue;
         }
@@ -2953,14 +2953,14 @@ void Boe_userdataIntegrity(void)
             G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
             sqlite3_close(db);
             // Boe!Man 5/27/13: This is bad, drop with a fatal error.
-            Com_Error(ERR_FATAL, "Users database: %s", sqlite3_errmsg(db));
+            Com_Error(ERR_FATAL_NOLOG, "Users database: %s", sqlite3_errmsg(db));
             return;
         }
 
         if (sqlite3_exec(db, "CREATE TABLE IF NOT EXISTS passadmins('name' varchar(36) collate nocase, 'by' VARCHAR(36), 'level' INTEGER NOT NULL, 'pass' VARCHAR(36))", 0, 0, 0) != SQLITE_OK){
             G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
             sqlite3_close(db);
-            Com_Error(ERR_FATAL, "Users database: %s", sqlite3_errmsg(db));
+            Com_Error(ERR_FATAL_NOLOG, "Users database: %s", sqlite3_errmsg(db));
             return;
         }
 
@@ -2968,7 +2968,7 @@ void Boe_userdataIntegrity(void)
             G_LogPrintf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
             sqlite3_close(db);
             // Boe!Man 5/27/13: This is bad, drop with a fatal error.
-            Com_Error(ERR_FATAL, "Users database: %s", sqlite3_errmsg(db));
+            Com_Error(ERR_FATAL_NOLOG, "Users database: %s", sqlite3_errmsg(db));
             return;
         }
 
@@ -3518,40 +3518,4 @@ void Boe_SQLTableClear(void)
     }else{
         Com_Printf("^3Info: ^7Invalid choice: %s. Valid choices are: subnetbanlist, banlist, adminlist, passlist, clanlist, aliases, scores.\n", arg);
     }
-}
-
-/*
-================
-logCrash
-10/8/13 - 5:43 PM
-Writes soft-crash information (triggered on Com_Error) to the crashlog file.
-================
-*/
-
-void logCrash(void)
-{
-    fileHandle_t    crashFile;
-    char            crashReason[MAX_CVAR_VALUE_STRING];
-    char            text[278];
-    qtime_t         q;
-
-    // Boe!Man 1/2/14: Check if the server crashed.
-    trap_Cvar_VariableStringBuffer("com_errorMessage", crashReason, sizeof(crashReason));
-    if(strlen(crashReason) == 0){
-        return;
-    }
-
-    // Boe!Man 11/22/10: Appending the date & time.
-    trap_RealTime(&q);
-
-    Com_sprintf(text, sizeof(text), "%02i/%02i/%i %02i:%02i - %s\n", 1+q.tm_mon,q.tm_mday, q.tm_year+1900,q.tm_hour,q.tm_min, crashReason);
-
-    // Boe!Man 11/22/10: Open and write to the crashinfo file.
-    trap_FS_FOpenFile("logs/crashlog.txt", &crashFile, FS_APPEND_TEXT);
-    if(!crashFile){
-        return;
-    }
-
-    trap_FS_Write(text, strlen(text), crashFile);
-    trap_FS_FCloseFile(crashFile);
 }

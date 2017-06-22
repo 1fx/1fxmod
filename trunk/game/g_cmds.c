@@ -1884,7 +1884,7 @@ void Cmd_FollowCycle_f( gentity_t *ent, int dir )
 
     if ( dir != 1 && dir != -1 )
     {
-        Com_Error( ERR_FATAL, "Cmd_FollowCycle_f: bad dir %i", dir );
+        Com_Error(ERR_FATAL, "Cmd_FollowCycle_f: bad dir %i", dir);
     }
 
     if ( ent->client->sess.spectatorClient == -1 )

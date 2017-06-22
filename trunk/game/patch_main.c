@@ -194,7 +194,7 @@ void Patch_detourAddress(char *genericName, long func, long offset, qboolean jmp
     if(WriteProcessMemory(GetCurrentProcess(), (void *)(offset - 5), buf, 5, NULL) == 0){ // Write the new call.
         Com_Printf("fail!\n");
         #ifdef NDEBUG
-        Com_Error(ERR_FATAL, "Patching the executable failed! Aborting the game.");
+        Com_Error(ERR_FATAL_NOLOG, "Patching the executable failed! Aborting the game.");
         #endif // NDEBUG
     }else{
         Com_Printf("done!\n");
@@ -223,7 +223,7 @@ void Patch_detourAddress(char *genericName, long func, long offset, qboolean jmp
     #ifdef NDEBUG
     // Check if the patch was successful, and if not, throw a fatal error.
     if(!args.success){
-        Com_Error(ERR_FATAL, "Patching the executable failed! Aborting the game.");
+        Com_Error(ERR_FATAL_NOLOG, "Patching the executable failed! Aborting the game.");
     }
     #endif // NDEBUG
     #endif // _WIN32
@@ -254,7 +254,7 @@ void Patch_writeBytes(char *genericName, long offset, unsigned char *buf)
     if(WriteProcessMemory(GetCurrentProcess(), (void *)(offset - strlen(buf)), buf, strlen(buf), NULL) == 0){ // Write the modified data.
         Com_Printf("fail!\n");
         #ifdef NDEBUG
-        Com_Error(ERR_FATAL, "Patching the executable failed! Aborting the game.");
+        Com_Error(ERR_FATAL_NOLOG, "Patching the executable failed! Aborting the game.");
         #endif // NDEBUG
     }else{
         Com_Printf("done!\n");
@@ -283,7 +283,7 @@ void Patch_writeBytes(char *genericName, long offset, unsigned char *buf)
     #ifdef NDEBUG
     // Check if the patch was successful, and if not, throw a fatal error.
     if(!args.success){
-        Com_Error(ERR_FATAL, "Patching the executable failed! Aborting the game.");
+        Com_Error(ERR_FATAL_NOLOG, "Patching the executable failed! Aborting the game.");
     }
     #endif // NDEBUG
     #endif // _WIN32

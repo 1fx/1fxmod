@@ -207,7 +207,7 @@ gentity_t* G_SpawnGametypeItem ( const char* pickup_name, qboolean dropped, vec3
     // If we couldnt find the item spawner then we have a problem
     if ( !ent )
     {
-        Com_Error ( ERR_FATAL, "Could not spawn gametype item '%s'\n", pickup_name );
+        Com_Error(ERR_FATAL, "Could not spawn gametype item '%s'\n", pickup_name);
         return NULL;
     }
 

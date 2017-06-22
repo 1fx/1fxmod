@@ -311,7 +311,7 @@ void RespawnItem( gentity_t *ent )
 
         if ( !ent->teammaster )
         {
-            Com_Error( ERR_FATAL, "RespawnItem: bad teammaster");
+            Com_Error(ERR_FATAL, "RespawnItem: bad teammaster");
         }
         master = ent->teammaster;
 
