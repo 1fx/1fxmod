@@ -179,8 +179,10 @@ void logStop()
 
     G_LogPrintf("Trying to gracefully shut down the server...\n\n");
 
+    #ifdef __linux__
     // Change stdin to non blocking, so this terminal keeps working properly.
     fcntl(0, F_SETFL, fcntl (0, F_GETFL, 0) & ~FNDELAY);
+    #endif // __linux__
 
     // Shutdown the game module.
     G_ShutdownGame(0);
