@@ -408,7 +408,11 @@ static cvarTable_t gameCvarTable[] =
 
     { &g_dedicated, "dedicated", "0", 0, 0.0, 0.0, 0, qfalse  },
 
+    #if !defined(_GOLD) && !defined(_DEMO)
     { &g_speed, "g_speed", "300", 0, 0.0, 0.0, 0, qtrue  },
+    #else
+    { &g_speed, "g_speed", "280", 0, 0.0, 0.0, 0, qtrue  },
+    #endif // not _GOLD and not _DEMO
     { &g_gravity, "g_gravity", "800", 0, 0.0, 0.0, 0, qtrue  },
     { &g_knockback, "g_knockback", "700", 0, 0.0, 0.0, 0, qtrue  },
     { &g_weaponRespawn, "g_weaponrespawn", "15", 0, 0.0, 0.0, 0, qtrue  },
