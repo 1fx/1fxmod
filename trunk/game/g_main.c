@@ -1452,10 +1452,12 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
     Com_Printf ("Mod: %s\n", MODFULL);
     Com_Printf ("Date: %s\n", __DATE__);
     #ifdef _GOLD
-    Com_Printf("Port: SoF2 - v1.03\n");
+    Com_Printf("Platform: SoF2 - v1.03 (Gold)\n");
+    #elif _DEMO
+    Com_Printf("Platform: SoF2 - v1.02t (MP TEST)\n");
     #else
-    Com_Printf("Port: SoF2 - v1.00\n");
-    #endif // _GOLD
+    Com_Printf("Platform: SoF2 - v1.00 (Full)\n");
+    #endif // _GOLD, _DEMO or else Full
 
     // Boe!Man 3/14/14: Check if we can actually start the server.
     if(G_CheckAlive()){

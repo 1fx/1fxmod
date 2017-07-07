@@ -1724,10 +1724,12 @@ void Boe_About( gentity_t *ent )
     #endif
 
     #ifdef _GOLD
-    trap_SendServerCommand( ent-g_entities, va("print \"%-25s SoF2 v1.03 (Gold)\n", "[^3Mod port^7]"));
+    trap_SendServerCommand( ent-g_entities, va("print \"%-25s SoF2 v1.03 (Gold)\n", "[^3Mod platform^7]"));
+    #elif _DEMO
+    trap_SendServerCommand( ent-g_entities, va("print \"%-25s SoF2 v1.02t (MP TEST)\n", "[^3Mod platform^7]"));
     #else
-    trap_SendServerCommand( ent-g_entities, va("print \"%-25s SoF2 v1.00\n", "[^3Mod port^7]"));
-    #endif // _GOLD
+    trap_SendServerCommand( ent-g_entities, va("print \"%-25s SoF2 v1.00 (Full)\n", "[^3Mod platform^7]"));
+    #endif // _GOLD, _DEMO or else Full
 
     #ifdef WIN32
     trap_SendServerCommand( ent-g_entities, va("print \"%-25s Windows (*.dll)\n", "[^3Host platform^7]"));
