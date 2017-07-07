@@ -143,6 +143,9 @@ The detour for both GCC and VC++.
 #define ADDRESS  "$0x004793a5"
 #define ADDRESS2 "$0x00479528"
 #endif // __linux__
+#elif _DEMO
+#define ADDRESS  "$0x00474599"
+#define ADDRESS2 "$0x00474715"
 #else
 #ifdef __linux__
 #define ADDRESS  "$0x0805505c"
@@ -187,10 +190,13 @@ __asm__(".globl Patch_dosDetour0 \n\t"
 #ifdef _GOLD
 #define ADDRESS  0x004793a5
 #define ADDRESS2 0x00479528
+#elif _DEMO
+#define ADDRESS  0x00474599
+#define ADDRESS2 0x00474715
 #else
 #define ADDRESS  0x00476879
 #define ADDRESS2 0x004769f5
-#endif // _GOLD
+#endif // _GOLD, _DEMO or Full
 
 __declspec(naked) void Patch_dosDetour0()
 {
@@ -224,9 +230,11 @@ void Patch_dosProtection()
     #ifdef _WIN32
     #ifdef _GOLD
     Patch_detourAddress("DoS protection", (long)&Patch_dosDetour0, 0x004793a5, qtrue);
+    #elif _DEMO
+    Patch_detourAddress("DoS protection", (long)&Patch_dosDetour0, 0x00474599, qtrue);
     #else
     Patch_detourAddress("DoS protection", (long)&Patch_dosDetour0, 0x00476879, qtrue);
-    #endif // _GOLD
+    #endif // _GOLD, _DEMO or Full
     #endif // _WIN32
 
     #ifdef __linux__

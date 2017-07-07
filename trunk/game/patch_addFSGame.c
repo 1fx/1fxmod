@@ -15,11 +15,14 @@
 #ifdef _WIN32
 #ifdef _GOLD
 #define FS_ADDGAMEDIR 0x00451630
-#define FS_GAMEDIRBUF 0x00B55898
+#define FS_GAMEDIRBUF 0x00b55898
+#elif _DEMO
+#define FS_ADDGAMEDIR 0x0044f190
+#define FS_GAMEDIRBUF 0x00b28274
 #else
 #define FS_ADDGAMEDIR 0x00450420
-#define FS_GAMEDIRBUF 0x00B2C9F0
-#endif // _GOLD
+#define FS_GAMEDIRBUF 0x00b2c9f0
+#endif // _GOLD, _DEMO or Full
 #endif // _WIN32
 
 #ifdef __linux__

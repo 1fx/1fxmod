@@ -26,17 +26,21 @@ The code of where we check the packet length, and if too big, truncate it.
 #endif // _GOLD
 #elif _WIN32
 #ifdef _GOLD
-#define ADDRESS "$0x004459D0"
+#define ADDRESS "$0x004459d0"
+#elif _DEMO
+#define ADDRESS "$0x00443560"
 #else
-#define ADDRESS "$0x00444B00"
-#endif // _GOLD
+#define ADDRESS "$0x00444b00"
+#endif // _GOLD, _DEMO or Full
 #endif // __linux__
 #elif _MSC_VER
 #ifdef _GOLD
-#define ADDRESS 0x004459D0
+#define ADDRESS 0x004459d0
+#elif _DEMO
+#define ADDRESS 0x00443560
 #else
-#define ADDRESS 0x00444B00
-#endif // _GOLD
+#define ADDRESS 0x00444b00
+#endif // _GOLD, _DEMO or Full
 #endif // __GNUC__
 
 void Patch_connectionlessPacketDetour(char *packet)
@@ -84,9 +88,11 @@ void Patch_q3infofix()
     #ifdef _WIN32
     #ifdef _GOLD
     Patch_detourAddress("q3infoboom/q3msgboom protection", (long)&Patch_connectionlessPacketDetour, 0x00479375, qfalse);
+    #elif _DEMO
+    Patch_detourAddress("q3infoboom/q3msgboom protection", (long)&Patch_connectionlessPacketDetour, 0x00474569, qfalse);
     #else
     Patch_detourAddress("q3infoboom/q3msgboom protection", (long)&Patch_connectionlessPacketDetour, 0x00476849, qfalse);
-    #endif // _GOLD
+    #endif // _GOLD, _DEMO or Full
     #elif __linux__
     #ifdef _GOLD
     Patch_detourAddress("q3infoboom/q3msgboom protection", (long)&Patch_connectionlessPacketDetour, 0x08058ad1, qfalse);

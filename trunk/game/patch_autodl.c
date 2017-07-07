@@ -43,9 +43,11 @@ void Patch_autoDownloadExploit()
     #ifdef _WIN32
     #ifdef _GOLD
     Patch_detourAddress("Auto D/L exploit protection", (long)&Patch_autoDownloadDetour, 0x00471552, qfalse);
+    #elif _DEMO
+    Patch_detourAddress("Auto D/L exploit protection", (long)&Patch_autoDownloadDetour, 0x0046ca80, qfalse);
     #else
-    Patch_detourAddress("Auto D/L exploit protection", (long)&Patch_autoDownloadDetour, 0x0046EF20, qfalse);
-    #endif // _GOLD
+    Patch_detourAddress("Auto D/L exploit protection", (long)&Patch_autoDownloadDetour, 0x0046ef20, qfalse);
+    #endif // _GOLD, _DEMO or Full
     #elif __linux__
     #ifdef _GOLD
     Patch_detourAddress("Auto D/L exploit protection", (long)&Patch_autoDownloadDetour, 0x0804d9f1, qfalse);

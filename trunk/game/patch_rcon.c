@@ -50,12 +50,14 @@ void Patch_rconLog()
 {
     #ifdef _WIN32
     #ifdef _GOLD
-    Patch_detourAddress("RCON log patch", (long)&Patch_rconLogging, 0x0047908A, qfalse);
+    Patch_detourAddress("RCON log patch", (long)&Patch_rconLogging, 0x0047908a, qfalse);
+    #elif _DEMO
+    Patch_detourAddress("RCON log patch", (long)&Patch_rconLogging, 0x004743f4, qfalse);
     #else
-    Patch_detourAddress("RCON log patch", (long)&Patch_rconLogging, 0x0047666A, qfalse);
-    #endif // _GOLD
+    Patch_detourAddress("RCON log patch", (long)&Patch_rconLogging, 0x0047666a, qfalse);
+    #endif // _GOLD, _DEMO or Full
     #endif // _WIN32
-    
+
     #ifdef __linux__
     #ifdef _GOLD
     Patch_detourAddress("RCON log patch (1/2)", (long)&Patch_rconLogging, 0x0805876b, qfalse);

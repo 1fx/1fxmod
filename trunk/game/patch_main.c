@@ -314,7 +314,7 @@ void Patch_Main()
     }
 
     #ifndef _GOLD
-    // Remove the hash command from the v1.00 command list.
+    // Remove the hash command from the v1.00 and v1.02t command list.
     Patch_removeCommand("hash");
     #else
     // Remove the banlist function from the v1.03 command list.

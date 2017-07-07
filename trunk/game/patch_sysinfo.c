@@ -64,10 +64,12 @@ void Patch_sysinfoWorkaround()
 {
     #ifdef _WIN32
     #ifdef _GOLD
-    Patch_detourAddress("client system info CVAR workaround", (long)&Patch_systemInfo, 0x0044C7ED, qfalse);
+    Patch_detourAddress("client system info CVAR workaround", (long)&Patch_systemInfo, 0x0044c7ed, qfalse);
+    #elif _DEMO
+    Patch_detourAddress("client system info CVAR workaround", (long)&Patch_systemInfo, 0x0044a1ed, qfalse);
     #else
-    Patch_detourAddress("client system info CVAR workaround", (long)&Patch_systemInfo, 0x0044B74D, qfalse);
-    #endif // _GOLD
+    Patch_detourAddress("client system info CVAR workaround", (long)&Patch_systemInfo, 0x0044b74d, qfalse);
+    #endif // _GOLD, _DEMO or Full
     #endif // _WIN32
 
     #ifdef __linux__

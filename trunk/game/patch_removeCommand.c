@@ -11,9 +11,11 @@
 #ifdef _WIN32
 #ifdef _GOLD
 #define CMD_REMOVECOMMAND 0x00445b80
+#elif _DEMO
+#define CMD_REMOVECOMMAND 0x00443700
 #else
 #define CMD_REMOVECOMMAND 0x00444cb0
-#endif // _GOLD
+#endif // _GOLD, _DEMO or Full
 #endif // _WIN32
 
 #ifdef __linux__

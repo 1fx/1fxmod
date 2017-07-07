@@ -12,10 +12,13 @@
 #ifdef _GOLD
 #define FLOODPROTECT_ADDRESS 0x00ba3d38
 #define ALLOWDOWNLOAD_ADDRESS 0x00bfdd8c
+#elif _DEMO
+#define FLOODPROTECT_ADDRESS 0x00b76168
+#define ALLOWDOWNLOAD_ADDRESS 0x00bd0024
 #else
 #define FLOODPROTECT_ADDRESS 0x00b7a974
 #define ALLOWDOWNLOAD_ADDRESS 0x00bd39c4
-#endif // _GOLD
+#endif // _GOLD, _DEMO, or Full
 #endif // _WIN32
 
 #ifdef __linux__
