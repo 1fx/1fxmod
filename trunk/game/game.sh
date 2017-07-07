@@ -20,6 +20,7 @@
 # -c: Compile choice, either 1-4 or 3.1/3.2/3.3/3.4.
 # -o: Output filename.
 # -g: Build for Gold (v1.03). If not specified, the Mod will be compiled for v1.00.
+# -d: Build for MP TEST/Demo (v1.02t). If not specified, the Mod will be compiled for v1.00.
 # -v: Verbose mode, will print e.g. full compile lines.
 # -noclear: Don't clear upon selecting choice.
 # When parameters are used, no questions are asked and the script will continue with the given parameters.
@@ -47,6 +48,7 @@ buildoptions="-DQAGAME -D_SOF2"
 # Some global booleans we switch depending on user choice and host platform.
 linux=false
 gold=false
+demo=false
 macosx=false
 win32=false
 
@@ -76,6 +78,10 @@ if [ $numargs -gt 0 ]; then
             # Build for SoF2 v1.03 (Gold).
             buildoptions="$buildoptions -D_GOLD"
             gold=true
+        elif [ $1 == "-d" ]; then
+            # Build for SoF2 v1.02t (MP TEST/Demo).
+            buildoptions="$buildoptions -D_DEMO"
+            demo=true
         elif [ $1 == "-v" ]; then
             # Verbose mode.
             verbose=true
@@ -291,10 +297,12 @@ elif [ $win32 == true ]; then
     printf "\e[00;33m%-25s \e[00;32m%s\e[00m\n" "Target platform" "WIN32"
 fi
 
-if [ $gold == false ]; then
-    printf "\e[00;33m%-25s \e[00;32m%s\e[00m\n" "SoF2 version" "v1.00"
+if [ $gold == true ]; then
+    printf "\e[00;33m%-25s \e[00;32m%s\e[00m\n" "SoF2 version" "v1.03 (Gold)"
+elif [ $demo == true ]; then
+    printf "\e[00;33m%-25s \e[00;32m%s\e[00m\n" "SoF2 version" "v1.02t (MP TEST/Demo)"
 else
-    printf "\e[00;33m%-25s \e[00;32m%s\e[00m\n" "SoF2 version" "v1.03"
+    printf "\e[00;33m%-25s \e[00;32m%s\e[00m\n" "SoF2 version" "v1.00 (Full)"
 fi
 
 printf "\n"
