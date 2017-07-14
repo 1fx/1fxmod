@@ -309,10 +309,17 @@ static qboolean vote_timelimitExt(gentity_t *ent)
         return qfalse;
     }
 
+    #ifndef _DEMO
     Com_sprintf(level.voteString, sizeof(level.voteString),
         "extendtime %d", g_timeextension.integer);
     Com_sprintf(level.voteDisplayString, sizeof(level.voteDisplayString),
         "extend timelimit by %d minutes", g_timeextension.integer);
+    #else
+    Com_sprintf(level.voteString, sizeof(level.voteString),
+        "timeextension");
+    Com_sprintf(level.voteDisplayString, sizeof(level.voteDisplayString),
+        "extend timelimit by %d minutes", g_timeextension.integer);
+    #endif // not _DEMO
 
     return qtrue;
 }
@@ -691,7 +698,10 @@ void vote_callVote_f(gentity_t *ent)
     trap_SetConfigstring(CS_VOTE_STRING, level.voteDisplayString);
     trap_SetConfigstring(CS_VOTE_YES, va("%i", level.voteYes));
     trap_SetConfigstring(CS_VOTE_NO, va("%i", level.voteNo));
+    // The CS_VOTE_NEEDED is NOT present in demo, they simply do not show how many votes are needed.
+    #ifndef _DEMO
     trap_SetConfigstring(CS_VOTE_NEEDED, va("%i", level.numVotingClients / 2));
+    #endif // not _DEMO
 }
 
 /*
@@ -855,8 +865,10 @@ void vote_checkVote_f()
     // If we're just asking a poll, the vote can never fail.
     // Because of this, the poll vote has its own routine.
     if(strcmp(level.voteString, "poll") == 0){
+        #ifndef _DEMO
         // There are never votes needed to pass since this is a poll.
         trap_SetConfigstring (CS_VOTE_NEEDED, "0");
+        #endif // not _DEMO
 
         // Check if the poll time ended.
         if (level.time - level.voteTime >= g_voteDuration.integer*1000){
@@ -880,8 +892,11 @@ void vote_checkVote_f()
         // Regular routines.
 
         // Update the needed clients.
+        #ifndef _DEMO
+        // Not present in demo.
         trap_SetConfigstring(CS_VOTE_NEEDED,
             va("%i", (level.numVotingClients / 2) + 1));
+        #endif // not _DEMO
 
         if(level.time - level.voteTime >= g_voteDuration.integer * 1000){
             G_printInfoMessageToAll("Vote failed.");

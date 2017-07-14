@@ -1,6 +1,6 @@
 // Copyright (C) 2000-2001 Raven Software, Inc.
 //
-// g_antilag.c -- handles server side anti-lag 
+// g_antilag.c -- handles server side anti-lag
 
 #include "g_local.h"
 
@@ -17,13 +17,13 @@ void G_UpdateClientAntiLag ( gentity_t* ent )
 
     head = ent->client->antilagHead;
 
-    // If on a new frame snap the head up to the end of the last frame and 
+    // If on a new frame snap the head up to the end of the last frame and
     // add a new head
     if ( ent->client->antilag[head].leveltime < level.time )
     {
         ent->client->antilag[head].time = level.previousTime;
 
-        // Move to the next position 
+        // Move to the next position
         if ( (++ent->client->antilagHead) > MAX_ANTILAG )
         {
             ent->client->antilagHead = 0;
@@ -33,20 +33,20 @@ void G_UpdateClientAntiLag ( gentity_t* ent )
     }
 
     // Bots only move once per frame
-    if ( ent->r.svFlags & SVF_BOT ) 
+    if ( ent->r.svFlags & SVF_BOT )
     {
         newtime = level.time;
-    } 
-    else 
+    }
+    else
     {
-        // calculate the actual server time     
+        // calculate the actual server time
         newtime = level.previousTime + trap_Milliseconds() - level.frameStartTime;
-        
-        if ( newtime > level.time ) 
+
+        if ( newtime > level.time )
         {
             newtime = level.time;
-        } 
-        else if ( newtime <= level.previousTime ) 
+        }
+        else if ( newtime <= level.previousTime )
         {
             newtime = level.previousTime + 1;
         }
@@ -62,7 +62,9 @@ void G_UpdateClientAntiLag ( gentity_t* ent )
 
     VectorCopy ( ent->client->ghoulLegsAngles, ent->client->antilag[head].legsAngles );
     VectorCopy ( ent->client->ghoulLowerTorsoAngles, ent->client->antilag[head].lowerTorsoAngles );
+    #ifndef _DEMO
     VectorCopy ( ent->client->ghoulUpperTorsoAngles, ent->client->antilag[head].upperTorsoAngles );
+    #endif // not _DEMO
     VectorCopy ( ent->client->ghoulHeadAngles, ent->client->antilag[head].headAngles );
 
     ent->client->antilag[head].legsAnim  = ent->s.legsAnim;
@@ -78,7 +80,7 @@ G_UndoClientAntiLag
 */
 void G_UndoClientAntiLag ( gentity_t* ent )
 {
-    // If the client isnt already in the past then 
+    // If the client isnt already in the past then
     // dont bother doing anything
     if ( ent->client->antilagUndo.leveltime != level.time  )
         return;
@@ -91,7 +93,9 @@ void G_UndoClientAntiLag ( gentity_t* ent )
 
     VectorCopy ( ent->client->antilagUndo.legsAngles, ent->client->ghoulLegsAngles );
     VectorCopy ( ent->client->antilagUndo.lowerTorsoAngles, ent->client->ghoulLowerTorsoAngles );
+    #ifndef _DEMO
     VectorCopy ( ent->client->antilagUndo.upperTorsoAngles, ent->client->ghoulUpperTorsoAngles );
+    #endif // not _DEMO
     VectorCopy ( ent->client->antilagUndo.headAngles, ent->client->ghoulHeadAngles );
 
     ent->s.legsAnim = ent->client->antilagUndo.legsAnim;
@@ -155,7 +159,9 @@ void G_ApplyClientAntiLag ( gentity_t* ent, int time )
 
         VectorCopy ( ent->client->ghoulLegsAngles, ent->client->antilagUndo.legsAngles );
         VectorCopy ( ent->client->ghoulLowerTorsoAngles, ent->client->antilagUndo.lowerTorsoAngles );
+        #ifndef _DEMO
         VectorCopy ( ent->client->ghoulUpperTorsoAngles, ent->client->antilagUndo.upperTorsoAngles );
+        #endif // not _DEMO
         VectorCopy ( ent->client->ghoulHeadAngles, ent->client->antilagUndo.headAngles );
 
         ent->client->antilagUndo.legsAnim  = ent->s.legsAnim;
@@ -175,7 +181,9 @@ void G_ApplyClientAntiLag ( gentity_t* ent, int time )
 
         VectorCopy ( ent->client->antilag[to].legsAngles, ent->client->ghoulLegsAngles );
         VectorCopy ( ent->client->antilag[to].lowerTorsoAngles, ent->client->ghoulLowerTorsoAngles );
+        #ifndef _DEMO
         VectorCopy ( ent->client->antilag[to].upperTorsoAngles, ent->client->ghoulUpperTorsoAngles );
+        #endif // not _DEMO
         VectorCopy ( ent->client->antilag[to].headAngles, ent->client->ghoulHeadAngles );
 
         ent->s.legsAnim  = ent->client->antilag[to].legsAnim;
@@ -196,7 +204,9 @@ void G_ApplyClientAntiLag ( gentity_t* ent, int time )
 
         LerpVector ( ent->client->antilag[from].legsAngles, ent->client->antilag[to].legsAngles, lerp, ent->client->ghoulLegsAngles );
         LerpVector ( ent->client->antilag[from].lowerTorsoAngles, ent->client->antilag[to].lowerTorsoAngles, lerp, ent->client->ghoulLowerTorsoAngles );
+        #ifndef _DEMO
         LerpVector ( ent->client->antilag[from].upperTorsoAngles, ent->client->antilag[to].upperTorsoAngles, lerp, ent->client->ghoulUpperTorsoAngles );
+        #endif // not _DEMO
         LerpVector ( ent->client->antilag[from].headAngles, ent->client->antilag[to].headAngles, lerp, ent->client->ghoulHeadAngles );
 
         ent->client->ps.leanTime = ent->client->antilag[from].leanTime + (ent->client->antilag[from].leanTime-ent->client->antilag[to].leanTime) * lerp;
@@ -220,7 +230,7 @@ void G_UndoAntiLag ( void )
     for ( i = 0; i < level.numConnectedClients; i ++ )
     {
         gentity_t* other = &g_entities[level.sortedClients[i]];
-        
+
         if ( other->client->pers.connected != CON_CONNECTED )
         {
             continue;
@@ -247,7 +257,7 @@ void G_UndoAntiLag ( void )
 
             other->r.svFlags &= (~SVF_DOUBLED_BBOX);
         }
-        
+
         /*if ( other->r.svFlags & SVF_DOUBLED_BBOX )
         {
             // Put the hitbox back the way it was
@@ -279,7 +289,7 @@ void G_ApplyAntiLag ( gentity_t* ref, qboolean enlargeHitBox )
 
     // Figure out the reference time based on the reference clients server time
     reftime = ref->client->pers.cmd.serverTime;
-    if ( reftime > level.time ) 
+    if ( reftime > level.time )
     {
         reftime = level.time;
     }
@@ -319,7 +329,7 @@ void G_ApplyAntiLag ( gentity_t* ref, qboolean enlargeHitBox )
             G_ApplyClientAntiLag ( other, reftime );
         }
 
-        //Ryan april 6 2004 9:01pm   
+        //Ryan april 6 2004 9:01pm
         //took this from gold code, its much better for hitting leaning players
         if ( enlargeHitBox )
         {
@@ -336,7 +346,7 @@ void G_ApplyAntiLag ( gentity_t* ref, qboolean enlargeHitBox )
                 other->r.maxs[2] += 10;
             }
 
-            // Adjust the hit box to account for hands and such 
+            // Adjust the hit box to account for hands and such
             // that are sticking out of the normal bounding box
 
             if ( other->client->ps.pm_flags & PMF_LEANING )
@@ -358,7 +368,7 @@ void G_ApplyAntiLag ( gentity_t* ref, qboolean enlargeHitBox )
         }
         /*if ( enlargeHitBox )
         {
-            // Adjust the hit box to account for hands and such 
+            // Adjust the hit box to account for hands and such
             // that are sticking out of the normal bounding box
             other->r.maxs[0] *= 2;
             other->r.maxs[1] *= 2;
@@ -370,5 +380,5 @@ void G_ApplyAntiLag ( gentity_t* ref, qboolean enlargeHitBox )
 
         // Relink the entity into the world
         trap_LinkEntity ( other );
-    }   
+    }
 }

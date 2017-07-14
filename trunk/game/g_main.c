@@ -100,6 +100,9 @@ vmCvar_t    g_respawnInterval;
 vmCvar_t    g_respawnInvulnerability;
 vmCvar_t    g_roundtimelimit;
 vmCvar_t    g_timeextension;
+#ifdef _DEMO
+vmCvar_t    g_timeextensionmultiplier;
+#endif // _DEMO
 vmCvar_t    g_timeouttospec;
 vmCvar_t    g_roundstartdelay;
 vmCvar_t    hideSeek_roundstartdelay;
@@ -113,7 +116,9 @@ vmCvar_t    g_pickupsDisabled;              // Whether or not pickups are availa
 vmCvar_t    g_enableM203;                   // Whether or not M203 grenades are enabled on the M4.
 vmCvar_t    g_suicidePenalty;               // Amount of score added for killing yourself (typically negative)
 vmCvar_t    g_teamkillPenalty;              // Amount of score added for killing a teammates (typically negative)
+#ifndef _DEMO
 vmCvar_t    g_teamkillDamageMax;            // max damage one can do to teammates before being kicked
+#endif // not _DEMO
 vmCvar_t    g_teamkillDamageForgive;        // amount of teamkill damage forgiven each minute
 vmCvar_t    g_voiceFloodCount;              // Number of voice messages in one minute to be concidered flooding
 vmCvar_t    g_voiceFloodPenalty;            // Amount of time a void flooder must wait before they can use voice again
@@ -377,8 +382,12 @@ static cvarTable_t gameCvarTable[] =
     { &g_maxGameClients, "g_maxGameClients", "0", CVAR_SERVERINFO | CVAR_LATCH | CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
 
     { &g_dmflags, "dmflags", "8", CVAR_SERVERINFO | CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
+    #ifndef _DEMO
     { &g_scorelimit, "scorelimit", "0", CVAR_SERVERINFO | CVAR_ARCHIVE | CVAR_NORESTART, 0.0, 0.0, 0, qtrue },
-    { &g_timelimit, "timelimit", "0", CVAR_SERVERINFO | CVAR_ARCHIVE | CVAR_NORESTART, 0.0, 0.0, 0, qtrue },
+    #else
+    { &g_scorelimit, "fraglimit",  "0", CVAR_SERVERINFO | CVAR_ARCHIVE | CVAR_NORESTART, 0.0, 0.0, 0, qtrue },
+    #endif // not _DEMO
+    { &g_timelimit,  "timelimit",  "0", CVAR_SERVERINFO | CVAR_ARCHIVE | CVAR_NORESTART, 0.0, 0.0, 0, qtrue },
 
     { &g_minRate, "g_minRate", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue },
 
@@ -445,17 +454,20 @@ static cvarTable_t gameCvarTable[] =
     { &g_timeouttospec,     "g_timeouttospec",  "15",       CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
     { &g_roundtimelimit,    "g_roundtimelimit", "5",        CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
     { &g_timeextension,     "g_timeextension",  "15",       CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
+    #ifdef _DEMO
+    { &g_timeextensionmultiplier,       "g_timeextensionmultiplier",    "0", 0, 0.0, 0.0, 0, qfalse },
+    #endif // _DEMO
 
     { &g_roundstartdelay,   "g_roundstartdelay", "3",       CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
     { &hideSeek_roundstartdelay,    "hideSeek_roundstartdelay", "30",       CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 
-#ifndef _GOLD
+    #ifndef _GOLD
     { &g_availableWeapons,  "g_availableWeapons", "2222222222211", CVAR_SERVERINFO | CVAR_INTERNAL | CVAR_ROM, 0.0, 0.0, 0, qfalse },
     { &hideSeek_availableWeapons,   "hideSeek_availableWeapons", "200000000000022222222", CVAR_INTERNAL | CVAR_ROM, 0.0, 0.0, 0, qfalse },
-#else
+    #else
     { &g_availableWeapons,  "g_available", "2222222222211", CVAR_SERVERINFO | CVAR_INTERNAL | CVAR_ROM, 0.0, 0.0, 0, qfalse },
     { &hideSeek_availableWeapons,   "hideSeek_availableWeapons", "200000000000000022220000", CVAR_INTERNAL | CVAR_ROM, 0.0, 0.0, 0, qfalse },
-#endif // not _GOLD
+    #endif // not _GOLD
     { &availableWeapons,    "availableWeapons", "2222222222211", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
     // Henk 01/04/10
     { &g_disableNades,  "g_disableNades", "1", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
@@ -465,7 +477,12 @@ static cvarTable_t gameCvarTable[] =
 
     { &g_mapcycle,          "sv_mapcycle",       "none",        CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 
+    #ifndef _DEMO
     { &g_pickupsDisabled,   "g_pickupsDisabled", "0",                   CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
+    #else
+    // The client knows whether pickups are enabled or disabled through the server info in demo.
+    { &g_pickupsDisabled,   "g_pickupsDisabled", "0",                   CVAR_ARCHIVE|CVAR_LATCH|CVAR_SERVERINFO, 0.0, 0.0, 0, qfalse },
+    #endif // not _DEMO
     { &g_enableM203,        "g_enableM203",      "0",                   CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
 
     { &g_suicidePenalty,    "g_suicidePenalty",  "-1",                  CVAR_ARCHIVE,   0.0f,   0.0f,   0,  qfalse },
@@ -474,7 +491,9 @@ static cvarTable_t gameCvarTable[] =
     { &g_voiceFloodPenalty, "g_voiceFloodPenalty",  "60",               CVAR_ARCHIVE,   0.0f,   0.0f,   0,  qfalse },
 
     { &g_teamkillPenalty,       "g_teamkillPenalty",        "-1",       CVAR_ARCHIVE,   0.0f,   0.0f,   0,  qfalse },
+    #ifndef _DEMO
     { &g_teamkillDamageMax,     "g_teamkillDamageMax",      "300",      CVAR_ARCHIVE,   0.0f,   0.0f,   0,  qfalse },
+    #endif // not _DEMO
     { &g_teamkillDamageForgive, "g_teamkillDamageForgive",  "50",       CVAR_ARCHIVE,   0.0f,   0.0f,   0,  qfalse },
 
     // Boe!Man 3/30/10
@@ -990,7 +1009,12 @@ void G_UpdateCvars( void )
                         // if the new value makes the timelimit not being hit
                         // anymore.
                         if(level.time - level.startTime
+                            #ifndef _DEMO
                             < (g_timelimit.integer + level.timeExtension)
+                            #else
+                            < (g_timelimit.integer + g_timeextension.integer
+                            * g_timeextensionmultiplier.integer)
+                            #endif // not _DEMO
                             * 60000){
                             level.timelimithit = qfalse;
                             G_printInfoMessageToAll("Timelimit is not hit " \
@@ -1334,12 +1358,16 @@ void G_SetGametype ( const char* gametype )
     if ( RMG.integer || g_pickupsDisabled.integer || level.gametypeData->pickupsDisabled )
     {
         level.pickupsDisabled = qtrue;
+        #ifndef _DEMO
         trap_SetConfigstring ( CS_PICKUPSDISABLED, "1" );
+        #endif // not _DEMO
     }
     else
     {
         level.pickupsDisabled = qfalse;
+        #ifndef _DEMO
         trap_SetConfigstring ( CS_PICKUPSDISABLED, "0" );
+        #endif // not _DEMO
     }
 }
 
@@ -1610,8 +1638,11 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 
     // Set the current gametype
     G_SetGametype(g_gametype.string);
+
+    #ifndef _DEMO
     // Give the game a uniqe id
     trap_SetConfigstring ( CS_GAME_ID, va("%d", randomSeed ) );
+    #endif // not _DEMO
 
     // Apply memory runtime modifications.
     Patch_Main();
@@ -1744,6 +1775,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
     // parse the key/value pairs and spawn gentities
     G_SpawnEntitiesFromString(qfalse);
 
+    #ifndef _DEMO
     InitSpawn(3);
 
     if(current_gametype.value == GT_HS){
@@ -1761,6 +1793,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
         InitSpawn(2);
     }
     #endif // _DEV
+    #endif // not _DEMO
 
     // Now parse the gametype information that we need.  This needs to be
     // done after the entity spawn so that the items and triggers can be
@@ -1807,6 +1840,10 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
         trap_Cvar_VariableStringBuffer("RMG_music", temp, MAX_QPATH);
         trap_SetConfigstring( CS_MUSIC, temp );
     }
+
+    #ifdef _DEMO
+    trap_Cvar_Set("g_timeextensionmultiplier", "0");
+    #endif // _DEMO
 
     trap_SetConfigstring( CS_VOTE_TIME, "" );
 
@@ -2316,7 +2353,7 @@ void FindIntermissionPoint( void )
     ent = G_Find (NULL, FOFS(classname), "info_player_intermission");
     if ( !ent )
     {
-        gspawn_t* spawn = G_SelectRandomSpawnPoint ( (team_t)-1, NULL );
+        gspawn_t* spawn = G_SelectRandomSpawnPoint ( (team_t)-1, NULL, qfalse );
         if ( spawn )
         {
             VectorCopy (spawn->origin, level.intermission_origin);
@@ -2920,7 +2957,11 @@ void CheckExitRules( void )
     // Check to see if the timelimit was hit
     if (g_timelimit.integer && !level.warmupTime && !level.timelimithit && !level.cagefight)
     {
-        if ( level.time - level.startTime >= (g_timelimit.integer + level.timeExtension)*60000 )
+        #ifndef _DEMO
+        if (level.time - level.startTime >= (g_timelimit.integer + level.timeExtension)*60000)
+        #else
+        if (level.time - level.startTime >= (g_timelimit.integer + g_timeextension.integer * g_timeextensionmultiplier.integer) * 60000)
+        #endif // not _DEMO
         {
             if(current_gametype.value == GT_INF
                 || current_gametype.value == GT_ELIM
@@ -3021,9 +3062,15 @@ void CheckExitRules( void )
                         #endif
                         UpdateScores();
                         LogExit("Hiders hit the score limit.");
-                    }else
-                    LogExit( "Red team hit the score limit." );
+                    }else{
+                    #ifndef _DEMO
+                    LogExit("Red team hit the score limit.");
+                    #else
+                    LogExit("Red Team hit the Team Score Limit.");
+                    #endif // not _DEMO
+                    }
                 }
+
                 return;
             }
 
@@ -3082,8 +3129,13 @@ void CheckExitRules( void )
                         #endif
                         UpdateScores();
                         LogExit("Seekers hit the score limit.");
-                    }else
-                    LogExit( "Blue team hit the score limit." );
+                    }else{
+                        #ifndef _DEMO
+                        LogExit("Blue team hit the score limit.");
+                        #else
+                        LogExit("Blue Team hit the Team Score Limit.");
+                        #endif // not _DEMO
+                    }
                 }
                 return;
             }
@@ -3113,7 +3165,11 @@ void CheckExitRules( void )
                     tent->r.svFlags = SVF_BROADCAST;
                     tent->s.otherEntityNum = level.sortedClients[i];
 
-                    LogExit( "Scorelimit hit." );
+                    #ifndef _DEMO
+                    LogExit("Scorelimit hit.");
+                    #else
+                    LogExit("Fraglimit hit.");
+                    #endif // not _DEMO
                     return;
                 }
             }
@@ -3581,7 +3637,7 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
             }
         }else{
             if(hideSeek_Extra.string[BRIEFCASE] == '1'){
-                spawnPoint = G_SelectRandomSpawnPoint ( TEAM_BLUE, NULL );
+                spawnPoint = G_SelectRandomSpawnPoint ( TEAM_BLUE, NULL, qfalse );
                 // Boe!Man 5/7/12: Fixing crash issue. The briefcase MUST have a location to spawn.
                 if(spawnPoint){
                     G_RealSpawnGametypeItem ( BG_FindGametypeItem (0), spawnPoint->origin, spawnPoint->angles, qtrue );
@@ -3615,7 +3671,7 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
             G_Broadcast("You now have the \\RPG!", BROADCAST_GAME, &g_entities[rpgwinner]);
             // End
         }else if(rpgwinner >= 100 && m4winner < 100){
-                spawnPoint = G_SelectRandomSpawnPoint ( TEAM_BLUE, NULL );
+                spawnPoint = G_SelectRandomSpawnPoint ( TEAM_BLUE, NULL, qfalse );
                 // Boe!Man 5/7/12: Fixing crash issue. The RPG MUST have a location to spawn.
                 if(spawnPoint){
                     dropped = G_DropItem2(spawnPoint->origin, spawnPoint->angles, BG_FindWeaponItem ( WP_RPG7_LAUNCHER ));
@@ -3714,7 +3770,7 @@ if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
                 break;
             }
         }else{
-            spawnPoint = G_SelectRandomSpawnPoint ( TEAM_BLUE, NULL );
+            spawnPoint = G_SelectRandomSpawnPoint ( TEAM_BLUE, NULL, qfalse );
             // Boe!Man 5/7/12: Fixing crash issue. The M4 MUST have a location to spawn.
             if(spawnPoint){
                 dropped = G_DropItem2(spawnPoint->origin, spawnPoint->angles, BG_FindWeaponItem ( WP_M4_ASSAULT_RIFLE ));
@@ -3915,7 +3971,9 @@ void G_RunFrame( int levelTime )
         {
             G_CheckClientTimeouts ( ent );
             G_RunClient( ent );
+            #ifndef _DEMO
             G_CheckClientTeamkill ( ent );
+            #endif // not _DEMO
             continue;
         }
 

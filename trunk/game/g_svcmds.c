@@ -250,12 +250,12 @@ void Svcmd_AddIP_f (void)
         Com_Printf("Usage:  addip <list> <IP/subnet> <clientname> <opt:reason/req:level>\n");
         return;
     }
-    
+
     trap_Argv(1, arg, sizeof(arg));
-    
+
     // Fetch the IP and store it.
     if(strstr(arg, "subnetban")){
-        
+
         trap_Argv(2, arg, sizeof(arg));
         if(strlen(arg) <= 7){
             Q_strncpyz(ip, arg, sizeof(arg));
@@ -267,19 +267,19 @@ void Svcmd_AddIP_f (void)
         Q_strncpyz(ip, arg, sizeof(ip));
     }
     Boe_convertNonSQLChars(ip);
-    
+
     // Fetch the client name.
     trap_Argv(3, arg, sizeof(arg));
     Q_strncpyz(name, arg, sizeof(name));
     Boe_convertNonSQLChars(name);
-    
+
     // Fetch the reason, if given.
     trap_Argv(4, arg, sizeof(arg));
     if(strlen(arg) > 0){
         Q_strncpyz(reason, arg, sizeof(reason));
         Boe_convertNonSQLChars(reason);
     }
-    
+
     trap_Argv(1, arg, sizeof(arg));
     if(strstr(arg, "admin") || strstr(arg, "pass")){
         admLevel = atoi(reason);
@@ -288,17 +288,17 @@ void Svcmd_AddIP_f (void)
             return;
         }
     }
-    
+
     // Boe!Man 9/26/13: We're going to add it to the database now.
     if(strstr(arg, "banlist")){
         db = bansDb;
-        
+
         if(strstr(arg, "sub")){
             Q_strncpyz(arg, "subnetbans", sizeof(arg));
         }else{
             Q_strncpyz(arg, "bans", sizeof(arg));
         }
-        
+
         if(sqlite3_exec(db, va("INSERT INTO %s (IP, name, by, reason) values ('%s', '%s', 'RCON', '%s')", arg, ip, name, reason), 0, 0, 0) != SQLITE_OK){
             Com_Printf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
         }else{
@@ -306,13 +306,13 @@ void Svcmd_AddIP_f (void)
         }
     }else if(strstr(arg, "admin") || strstr(arg, "pass")){
         db = usersDb;
-        
+
         if(strstr(arg, "pass")){
             Q_strncpyz(arg, "passadmins", sizeof(arg));
         }else{
             Q_strncpyz(arg, "admins", sizeof(arg));
         }
-        
+
         if(sqlite3_exec(db, va("INSERT INTO %s (%sname, by, level) values (%s'%s', 'RCON', '%i')", arg, strstr(arg, "pass") ? "" : "ip, ", strstr(arg, "pass") ? "" : va("'%s', ", ip), name, admLevel), 0, 0, 0) != SQLITE_OK){
             Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
         }else{
@@ -320,14 +320,14 @@ void Svcmd_AddIP_f (void)
         }
     }else if(strstr(arg, "clan")){
         db = usersDb;
-        
+
         if(sqlite3_exec(db, va("INSERT INTO clanmembers (IP, name, by) values ('%s', '%s', 'RCON')", ip, name), 0, 0, 0) != SQLITE_OK){
             Com_Printf("^1Error: ^7users database: %s\n", sqlite3_errmsg(db));
         }else{
             Com_Printf(va("Success adding [%s] to the clanlist (name: %s).\n", ip, name));
         }
     }else{
-        Com_Printf("^3Info: ^7Invalid choice: %s. Valid choices are: subnetbanlist, banlist, adminlist, passlist, clanlist.\n", arg);   
+        Com_Printf("^3Info: ^7Invalid choice: %s. Valid choices are: subnetbanlist, banlist, adminlist, passlist, clanlist.\n", arg);
     }
 }
 
@@ -431,7 +431,7 @@ void    Svcmd_EntityList_f (void) {
     }
 }
 
-
+#ifndef _DEMO
 void Svcmd_ExtendTime_f (void)
 {
     char str[MAX_TOKEN_CHARS];
@@ -452,6 +452,7 @@ void Svcmd_ExtendTime_f (void)
 
     trap_SendServerCommand( -1, va("print \"timelimit extended by %d minutes\n\"", time) );
 }
+#endif // not _DEMO
 
 gclient_t   *ClientForString( const char *s ) {
     gclient_t   *cl;

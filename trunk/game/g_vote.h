@@ -44,8 +44,10 @@ static voteCmd_t VoteCommands[] =
         "Go to next map in mapcycle",           ""},
     {"map",             &vote_map,
         "Switch server to the specified map",   "<mapname>"},
+    #ifndef _DEMO
     {"rmgmap",          &vote_rmgMap,
         "Generate RMG map",                     "size loc time seed"},
+    #endif // not -DEMO
     {"gametype",        &vote_gameType,
         "Load a gametype",                      "<gametype>"},
     {"kick",            &vote_kick,
@@ -58,8 +60,13 @@ static voteCmd_t VoteCommands[] =
         "Change the timelimit",                 "<time>"},
     {"timeextension",   &vote_timelimitExt,
         "Extends the timelimit",                ""},
+    #ifndef _DEMO
     {"scorelimit",      &vote_toggleIntegerCVAR,
-        "Change the scorelimit",                "<time>"},
+        "Change the scorelimit",                "<score>"},
+    #else
+    {"fraglimit",       &vote_toggleIntegerCVAR,
+        "Change the fraglimit",                "<frags>"},
+    #endif // not _DEMO
     {"endmap",          &vote_endMap,
         "End the current map",                  ""},
     {"shuffleteams",    &vote_shuffleTeams,

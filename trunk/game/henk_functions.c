@@ -658,7 +658,12 @@ void CloneBody( gentity_t *ent, int number )
     vec3_t  direction;
 
     // Boe!Man 10/21/14: Turn off any kind of zooming when zombifying.
-    if (ent->client->ps.pm_flags & PMF_ZOOMED){
+    #ifndef _DEMO
+    if(ent->client->ps.pm_flags & PMF_ZOOMED)
+    #else
+    if(ent->client->ps.zoomFov)
+    #endif // not _DEMO
+    {
         ent->client->ps.zoomFov = 0;
         ent->client->ps.zoomTime = pm->ps->commandTime;
         ent->client->ps.pm_flags &= ~(PMF_ZOOM_FLAGS);
@@ -682,7 +687,11 @@ void CloneBody( gentity_t *ent, int number )
     // grab a body que and cycle to the next one
     body = level.bodyQue[ level.bodyQueIndex ];
 
+    #ifndef _DEMO
     level.bodyQueIndex = (level.bodyQueIndex + 1) % level.bodyQueSize;
+    #else
+    level.bodyQueIndex = (level.bodyQueIndex + 1) % BODY_QUEUE_SIZE;
+    #endif // not _DEMO
 
     trap_UnlinkEntity (body);
 

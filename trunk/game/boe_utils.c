@@ -309,7 +309,7 @@ void QDECL Boe_adminLog( const char *command, const char *by, const char *to, ..
 //
 // Boe!Man 12/20/09
 void ExitLevel( void );
-gspawn_t* G_SelectRandomSafeSpawnPoint ( team_t team, float safeDistance, gclient_t *client );
+gspawn_t* G_SelectRandomSafeSpawnPoint ( team_t team, float safeDistance, gclient_t *client, qboolean isBot );
 
 chatSounds_t chatSounds[MAX_BOE_CHATS];
 
@@ -1220,7 +1220,11 @@ gentity_t *NV_projectile (gentity_t *ent, vec3_t start, vec3_t dir, int weapon, 
     missile->classname              = "grenade";
     missile->splashRadius           = 500;
     missile->s.eFlags               = EF_BOUNCE_HALF | EF_BOUNCE;
+    #ifndef _DEMO
     missile->clipmask               = MASK_SHOT | CONTENTS_MISSILECLIP;
+    #else
+    missile->clipmask               = MASK_SHOT;
+    #endif // not _DEMO
     //missile->s.pos.trType         = TR_INTERPOLATE;
     missile->s.pos.trType           = TR_HEAVYGRAVITY;
     missile->s.pos.trTime           = level.time - 50;

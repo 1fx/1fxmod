@@ -1401,6 +1401,7 @@ if (current_gametype.value == GT_HZ && attacker && targ && attacker->client && t
     actualtake = Com_Clamp ( 0, targ->health, take );
     //Ryan
 
+    #ifndef _DEMO
     // Teamkill dmage thats not caused by a telefrag?
     if ( g_teamkillDamageMax.integer && mod != MOD_TELEFRAG )
     {
@@ -1436,6 +1437,7 @@ if (current_gametype.value == GT_HZ && attacker && targ && attacker->client && t
             }
         }
     }
+    #endif // not _DEMO
 
     // Output hits
     if ( g_logHits.integer && attacker && targ && attacker->client && targ->client )
@@ -2138,6 +2140,7 @@ qboolean G_RadiusDamage (
 
             d = G_Damage (ent, NULL, attacker, dir, origin, (int)points, DAMAGE_RADIUS|DAMAGE_NO_ARMOR, mod, location );
 
+            #ifndef _DEMO
             if ( d && ent->client )
             {
                 //Ryan may 16 2004
@@ -2181,6 +2184,7 @@ qboolean G_RadiusDamage (
                 VectorCopy ( ent->r.currentOrigin, tent->s.angles );
                 SnapVector ( tent->s.angles );
             }
+            #endif // not _DEMO
         }
     }
 

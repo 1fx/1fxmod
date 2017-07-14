@@ -580,7 +580,11 @@ int adm_Burn(int argNum, gentity_t *adm, qboolean shortCmd)
     ent = g_entities + idNum;
 
     // Create temporary entity for the burn effect.
+    #ifndef _DEMO
     tent = G_TempEntity(g_entities[ent->s.number].r.currentOrigin, EV_EXPLOSION_HIT_FLESH);
+    #else
+    tent = G_TempEntity(g_entities[ent->s.number].r.currentOrigin, EV_BULLET_HIT_FLESH);
+    #endif // not _DEMO
     tent->s.eventParm = 0;
     tent->s.otherEntityNum2 = g_entities[ent->s.number].s.number;
     tent->s.time = WP_ANM14_GRENADE + ((((int)g_entities[ent->s.number].s.apos.trBase[YAW] & 0x7FFF) % 360) << 16);
@@ -1243,7 +1247,14 @@ int adm_timeLimit(int argNum, gentity_t *adm, qboolean shortCmd)
     // Boe!Man 5/7/17: If the timelimit is hit already, check
     // if the new value makes the timelimit not being hit anymore.
     if(level.timelimithit && level.time - level.startTime
-        < (g_timelimit.integer + level.timeExtension) * 60000){
+        #ifndef _DEMO
+        < (g_timelimit.integer + level.timeExtension)
+        #else
+        < (g_timelimit.integer + g_timeextension.integer
+        * g_timeextensionmultiplier.integer)
+        #endif // not _DEMO
+        * 60000
+    ){
         level.timelimithit = qfalse;
         G_printInfoMessageToAll("Timelimit is not hit anymore, " \
             "continuing map.");

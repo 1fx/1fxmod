@@ -160,9 +160,11 @@ void PM_TorsoAnimation( playerState_t* ps )
                 PM_ContinueTorsoAnim(ps, TORSO_USE);
             }
             else if ((ps->pm_flags & PMF_ZOOMED) && weaponData[ps->weapon].animIdleZoomed)
+            #elif _DEMO
+            if (ps->zoomFov && weaponData[ps->weapon].animIdleZoomed)
             #else
             if ( (ps->pm_flags & PMF_ZOOMED) && weaponData[ps->weapon].animIdleZoomed )
-            #endif // _GOLD
+            #endif // _GOLD, _DEMO or Full
             {
                 PM_ContinueTorsoAnim ( ps, weaponData[ps->weapon].animIdleZoomed );
             }
@@ -1152,7 +1154,9 @@ void BG_PlayerAngles (
 
     vec3_t      legsAngles,             // out
     vec3_t      lowerTorsoAngles,
+    #ifndef _DEMO
     vec3_t      upperTorsoAngles,
+    #endif // not _DEMO
     vec3_t      headAngles,
 
     int         leanOffset,
@@ -1182,7 +1186,9 @@ void BG_PlayerAngles (
     headAngles[YAW] = AngleMod( headAngles[YAW] );
     VectorClear( legsAngles );
     VectorClear( lowerTorsoAngles );
+    #ifndef _DEMO
     VectorClear( upperTorsoAngles );
+    #endif // not _DEMO
 
     // --------- yaw -------------
 
@@ -1221,6 +1227,7 @@ void BG_PlayerAngles (
     BG_SwingAngles( lowerTorsoAngles[YAW], 25, 90, 0.3f, &torsoInfo->yawAngle, &torsoInfo->yawing, frameTime );
     BG_SwingAngles( legsAngles[YAW],  40, 90, 0.3f, &legsInfo->yawAngle,  &legsInfo->yawing,  frameTime );
 
+    #ifndef _DEMO
     if ( leanOffset )
     {
         legsAngles[YAW] = headAngles[YAW];
@@ -1235,7 +1242,7 @@ void BG_PlayerAngles (
     lowerTorsoAngles[YAW]  = legsAngles[YAW] + lowerTorsoAngles[YAW] / 2;
 
     headAngles[YAW] -= upperTorsoAngles[YAW];
-
+    #endif // not _DEMO
 
     // --------- pitch -------------
 
@@ -1255,11 +1262,15 @@ void BG_PlayerAngles (
     // Add in leanoffset
     if ( leanOffset )
     {
+        #ifdef _DEMO
+        legsAngles[ROLL] += ((float)leanOffset/LEAN_OFFSET * 4.0f);
+        #endif // _DEMO
         lowerTorsoAngles[ROLL] -= ((float)leanOffset * 1.25f);
         lowerTorsoAngles[YAW] -= 1.25f * ((float)leanOffset/LEAN_OFFSET) * dest;
         headAngles[YAW] -= ((float)leanOffset/LEAN_OFFSET) * dest;
         headAngles[ROLL] -= ((float)leanOffset * 1.25f);
     }
+    #ifndef _DEMO
     else if ( speed )
     {
         vec3_t  axis[3];
@@ -1271,6 +1282,7 @@ void BG_PlayerAngles (
         side = speed * DotProduct( velocity, axis[1] );
         legsAngles[ROLL] -= side;
     }
+    #endif // not _DEMO
 
     // pain twitch
     BG_AddPainTwitch( painTime, painDirection, currentTime, lowerTorsoAngles );
@@ -1284,7 +1296,9 @@ void BG_PlayerAngles (
         AnglesToAxis( legsAngles, legs );
 
         // Apply the rotations
+        #ifndef _DEMO
         trap_G2API_SetBoneAngles(ghoul2, 0, "upper_lumbar", upperTorsoAngles, BONE_ANGLES_POSTMULT, POSITIVE_X, NEGATIVE_Y, NEGATIVE_Z, 0, 0, currentTime);
+        #endif // not _DEMO
 
         trap_G2API_SetBoneAngles(ghoul2, 0, "lower_lumbar", lowerTorsoAngles, BONE_ANGLES_POSTMULT, POSITIVE_X, NEGATIVE_Y, NEGATIVE_Z, 0, 0, currentTime);
         trap_G2API_SetBoneAngles(ghoul2, 0, "cranium", headAngles, BONE_ANGLES_POSTMULT, POSITIVE_Z, NEGATIVE_Y, POSITIVE_X, 0,0, currentTime);

@@ -21,7 +21,9 @@ float powf(float x, float y);
 // the "gameversion" client command will print this plus compile date
 #define GAMEVERSION "sof2mp"
 
+#ifndef _DEMO
 #define BODY_QUEUE_SIZE_MAX         MAX_CLIENTS
+#endif // not _DEMO
 #define BODY_QUEUE_SIZE             8
 
 #define Q3_INFINITE                 16777216
@@ -220,7 +222,7 @@ typedef struct gspawn_s
     team_t      team;
     vec3_t      origin;
     vec3_t      angles;
-
+    int         flags;
 } gspawn_t;
 
 typedef struct gtitem_s
@@ -473,7 +475,9 @@ typedef struct
     qboolean            predictItemPickup;          // based on cg_predictItems userinfo
     qboolean            pmoveFixed;                 //
     qboolean            antiLag;                    // anti-lag on or off
+    #ifndef _DEMO
     qboolean            autoReload;                 // auto rellaod turned on or off
+    #endif // not _DEMO
     char                netname[MAX_NETNAME];
     char                deferredname[MAX_NETNAME];
     int                 netnameTime;                // Last time the name was changed
@@ -508,7 +512,9 @@ typedef struct gantilag_s
 
     vec3_t  legsAngles;             // entity.client.ghoulLegsAngles
     vec3_t  lowerTorsoAngles;       // entity.client.ghoulLowerTorsoAngles
+    #ifndef _DEMO
     vec3_t  upperTorsoAngles;       // entity.client.ghoulUpperTorsoAngles
+    #endif // not _DEMO
     vec3_t  headAngles;             // entity.client.ghoulHeadAngles
 
     int     time;                   // time history item was saved
@@ -595,10 +601,15 @@ struct gclient_s
     animInfo_t      legs;
     vec3_t          ghoulLegsAngles;
     vec3_t          ghoulLowerTorsoAngles;
+    #ifndef _DEMO
     vec3_t          ghoulUpperTorsoAngles;
+    #endif // not _DEMO
     vec3_t          ghoulHeadAngles;
 
+    #ifndef _DEMO
     gentity_t       *siameseTwin;
+    #endif // not _DEMO
+
     #ifdef _GOLD
     gentity_t       *useEntity;
     #endif // _GOLD
@@ -750,9 +761,15 @@ typedef struct
 
     // body queue
     int         bodyQueIndex;           // dead bodies
+    #ifndef _DEMO
+    // Not present in DEMO.
     int         bodyQueSize;            // how many dead bodies can there be
     int         bodySinkTime;
+
     gentity_t   *bodyQue[BODY_QUEUE_SIZE_MAX];
+    #else
+    gentity_t   *bodyQue[BODY_QUEUE_SIZE];
+    #endif // not _DEMO
 
     int         portalSequence;
 
@@ -793,7 +810,10 @@ typedef struct
 
     qboolean        pickupsDisabled;
 
+    #ifndef _DEMO
     int             timeExtension;
+    #endif // _DEMO
+
     // Boe!Man 3/30/10
     int             lastConnectedClient;
     char            mapname[64];
@@ -1241,7 +1261,9 @@ void        G_AddScore                      ( gentity_t *ent, int score );
 void        CalculateRanks                  ( void );
 qboolean    G_SpotWouldTelefrag             ( gspawn_t* spawn );
 void        G_UpdateClientAnimations        ( gentity_t* ent );
+#ifndef _DEMO
 void        G_SetRespawnTimer               ( gentity_t* ent );
+#endif // not _DEMO
 gentity_t*  G_FindNearbyClient              ( vec3_t origin, team_t team, float radius, gentity_t* ignore );
 void        G_AddClientSpawn                ( gentity_t* ent, team_t team, qboolean monkey );
 void        G_AllocateStatsMemory           ( gentity_t *ent );
@@ -1409,14 +1431,16 @@ void        ClientDisconnect                    ( int clientNum );
 void        ClientBegin                         ( int clientNum, qboolean setTime );
 //Ryan
 void        ClientCommand                       ( int clientNum );
-gspawn_t*   G_SelectRandomSpawnPoint            ( team_t team, gclient_t *client );
+gspawn_t*   G_SelectRandomSpawnPoint            ( team_t team, gclient_t *client, qboolean isBot );
 int         G_GametypeCommand                   ( int cmd, int arg0, int arg1, int arg2, int arg3, int arg4 );
 
 //
 // g_active.c
 //
 void G_CheckClientTimeouts  ( gentity_t *ent );
+#ifndef _DEMO
 void G_CheckClientTeamkill  ( gentity_t *ent );
+#endif // not _DEMO
 void ClientThink            ( int clientNum );
 void ClientEndFrame         ( gentity_t *ent );
 void G_RunClient            ( gentity_t *ent );
@@ -1567,6 +1591,9 @@ extern  vmCvar_t    g_debugRMG;
 extern  vmCvar_t    g_timeouttospec;
 extern  vmCvar_t    g_roundtimelimit;
 extern  vmCvar_t    g_timeextension;
+#ifdef _DEMO
+extern  vmCvar_t    g_timeextensionmultiplier;
+#endif // _DEMO
 extern  vmCvar_t    g_roundstartdelay;
 extern  vmCvar_t    hideSeek_roundstartdelay;
 extern  vmCvar_t    g_availableWeapons;
@@ -1586,7 +1613,9 @@ extern  vmCvar_t    g_pickupsDisabled;
 extern  vmCvar_t    g_enableM203;
 extern  vmCvar_t    g_suicidePenalty;
 extern  vmCvar_t    g_teamkillPenalty;
+#ifndef _DEMO
 extern  vmCvar_t    g_teamkillDamageMax;
+#endif // not _DEMO
 extern  vmCvar_t    g_teamkillDamageForgive;
 extern  vmCvar_t    g_voiceFloodCount;
 extern  vmCvar_t    g_voiceFloodPenalty;

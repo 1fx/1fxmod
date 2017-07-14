@@ -1015,7 +1015,11 @@ typedef enum {
     FS_WRITE,
     FS_APPEND,
     FS_APPEND_SYNC,
+    #ifndef _DEMO
     FS_READ_TEXT,
+    #else
+    FS_READ_TEXT = 0,
+    #endif // not _DEMO
     FS_WRITE_TEXT,
     FS_APPEND_TEXT,
     FS_APPEND_SYNC_TEXT
@@ -1269,7 +1273,9 @@ typedef struct
 
 #define MAX_G2_COLLISIONS 16
 
+#ifndef _DEMO
 typedef CollisionRecord_t G2Trace_t[MAX_G2_COLLISIONS]; // map that describes all of the parts of ghoul2 models that got hit
+#endif // not _DEMO
 
 /*
 Ghoul2 Insert End
@@ -1284,6 +1290,10 @@ typedef struct {
     int         surfaceFlags;   // surface hit
     int         contents;   // contents on other side of surface hit
     int         entityNum;  // entity the contacted sirface is a part of
+
+    #ifdef _DEMO
+    CollisionRecord_t G2CollisionMap[MAX_G2_COLLISIONS]; // map that describes all of the parts of ghoul2 models that got hit
+    #endif // _DEMO
 } trace_t;
 
 // calling defines for the trace function
@@ -1384,7 +1394,11 @@ typedef enum {
 //
 #define MAX_CLIENTS         64      // absolute limit
 #define MAX_LOCATIONS       64
-#define MAX_TERRAINS        32
+#ifndef _DEMO
+#define MAX_TERRAINS		32
+#else
+#define MAX_TERRAINS		96
+#endif // not _DEMO
 #define MAX_LADDERS         64
 
 #define MAX_INSTANCE_TYPES      16
@@ -1418,8 +1432,11 @@ typedef enum {
 // other ones are strictly for servergame to clientgame communication
 #define CS_SERVERINFO       0       // an info string with all the serverinfo cvars
 #define CS_SYSTEMINFO       1       // an info string for server system to client system configuration (timescale, etc)
+
+#ifndef _DEMO
 #define CS_PLAYERS          2       // info string for player user info
 #define CS_CUSTOM           (CS_PLAYERS + MAX_CLIENTS )
+#endif // not _DEMO
 
 #define RESERVED_CONFIGSTRINGS  2   // game can't modify below this, only the system can
 
@@ -1487,7 +1504,10 @@ typedef struct playerState_s
     int         delta_angles[3];                // add to command angles to get view direction
                                                 // changed by spawns, rotating objects, and teleporters
     int         groundEntityNum;                // ENTITYNUM_NONE = in air
-                                                
+
+    #ifdef _DEMO
+    int         legsTimer;                      // don't change low priority animations until this runs out
+    #endif // _DEMO
     int         legsAnim;                       // mask off ANIM_TOGGLEBIT
                                                 
     int         torsoTimer;                     // don't change low priority animations until this runs out
@@ -1543,9 +1563,12 @@ typedef struct playerState_s
     int         pmove_framecount;               // FIXME: don't transmit over the network
     int         jumppad_frame;
     int         entityEventSequence;
+    #ifndef _DEMO
+    // pvsOrigin is NOT present in DEMO.
     vec3_t      pvsOrigin;                      // view origin used to calculate PVS (also the lean origin)
                                                 // THIS VARIABLE MUST AT LEAST BE THE PLAYERS ORIGIN ALL OF THE 
                                                 // TIME OR THE PVS CALCULATIONS WILL NOT WORK.
+    #endif // not _DEMO
 
     // Zooming
     int         zoomTime;
@@ -1629,7 +1652,10 @@ typedef enum {
     TR_SINE,                    // value = base + sin( time / duration ) * delta
     TR_GRAVITY,
     TR_HEAVYGRAVITY,
+    #ifndef _DEMO
+    // Not present in demo.
     TR_LIGHTGRAVITY
+    #endif // not _DEMO
 } trType_t;
 
 typedef struct {
@@ -1669,7 +1695,10 @@ typedef struct entityState_s
     int             otherEntityNum2;
                     
     int             groundEntityNum;    // -1 = in air
-                    
+
+    #ifdef _DEMO
+    int             constantLight;  // r + (g<<8) + (b<<16) + (intensity<<24)
+    #endif // not _DEMO
     int             loopSound;      // constantly loop this sound
     int             mSoundSet;
                                         
@@ -1683,7 +1712,10 @@ typedef struct entityState_s
     int             event;          // impulse events -- muzzle flashes, footsteps, etc
     int             eventParm;
 
+    #ifndef _DEMO
     int             generic1;
+    #endif // not _DEMO
+
     // for players
     // these fields are only transmitted for client entities!!!!!
     int             gametypeitems;  // bit flags indicating which items are carried
@@ -1692,6 +1724,10 @@ typedef struct entityState_s
     int             torsoAnim;      // mask off ANIM_TOGGLEBIT
     int             torsoTimer;     // time the animation will play for
     int             leanOffset;     // Lean direction
+
+    #ifdef _DEMO
+    int             generic1;
+    #endif // _DEMO
 } entityState_t;
 
 

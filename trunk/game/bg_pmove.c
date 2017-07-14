@@ -192,11 +192,13 @@ static void PM_Friction( void )
     {
         drop += speed*pm_waterfriction*pm->waterlevel*pml.frametime;
     }
+    #ifndef _DEMO
     // If on someones head then use special friction
     else if ( pm->ps->groundEntityNum < MAX_CLIENTS )
     {
         drop = speed*pm_headfriction*pml.frametime;
     }
+    #endif // not _DEMO
 
     if ( pm->ps->pm_type == PM_SPECTATOR)
     {
@@ -371,10 +373,12 @@ PM_CheckJump
 */
 static qboolean PM_CheckJump( void )
 {
+    #ifndef _DEMO
     if ( pm->ps->pm_time )
     {
         return qfalse;
     }
+    #endif // not _DEMO
 
     // Cant jump when ducked
     if ( pm->ps->pm_flags & PMF_DUCKED )
@@ -1200,17 +1204,21 @@ static void PM_CrashLand( int impactMaterial, vec3_t impactNormal )
     {
         return;
     }
-    else if ( jumped && delta >= minDeltaForSlowDown )
+    #ifndef _DEMO
+    else if(jumped && delta >= minDeltaForSlowDown)
+    #else
+    else if(jumped)
+    #endif // not _DEMO
     {
         // Cut their forward velocity, this pretty much eliminates strafe jumping
         pm->ps->velocity[0] *= 0.25f;
         pm->ps->velocity[1] *= 0.25f;
 
-        #ifndef _GOLD
-        pm->ps->pm_time = 500;
-        #else
+        #ifdef _GOLD
         pm->ps->pm_time = 750;
-        #endif // not _GOLD
+        #elif !(_DEMO)
+        pm->ps->pm_time = 500;
+        #endif // _GOLD, or not _DEMO
     }
 
     // create a local entity event to play the sound
@@ -1359,11 +1367,13 @@ static void PM_GroundTrace( void )
     pm->trace (&trace, pm->ps->origin, pm->mins, pm->maxs, point, pm->ps->clientNum, pm->tracemask);
     pml.groundTrace = trace;
 
+    #ifndef _DEMO
     // When stuck to antoher player set a flag to let the trigger code know so it can unstick the player
     if ( (trace.allsolid || trace.startsolid) && trace.entityNum < MAX_CLIENTS )
     {
         pm->ps->pm_flags |= PMF_SIAMESETWINS;
     }
+    #endif // not _DEMO
 
     // if the trace didn't hit anything, we are in free fall
     if ( trace.fraction == 1.0 ) {
@@ -1678,6 +1688,7 @@ static void PM_Footsteps( void )
 
             if ( pm->ps->pm_flags & PMF_DUCKED )
             {
+                #ifndef _DEMO
                 if ( pm->ps->leanTime - LEAN_TIME < 0 )
                 {
                     PM_ContinueLegsAnim( pm->ps, LEGS_LEAN_CROUCH_LEFT );
@@ -1687,12 +1698,12 @@ static void PM_Footsteps( void )
                     PM_ContinueLegsAnim( pm->ps, LEGS_LEAN_CROUCH_RIGHT );
                 }
                 else
-                {
+                #endif // not _DEMO
                     PM_ContinueLegsAnim( pm->ps, LEGS_IDLE_CROUCH );
-                }
             }
             else
             {
+                #ifndef _DEMO
                 if ( pm->ps->leanTime - LEAN_TIME < 0 )
                 {
                     PM_ContinueLegsAnim( pm->ps, LEGS_LEAN_LEFT );
@@ -1702,9 +1713,8 @@ static void PM_Footsteps( void )
                     PM_ContinueLegsAnim( pm->ps, LEGS_LEAN_RIGHT );
                 }
                 else
-                {
+                #endif // not _DEMO
                     PM_ContinueLegsAnim( pm->ps, TORSO_IDLE_PISTOL );
-                }
             }
         }
         return;
@@ -1723,6 +1733,7 @@ static void PM_Footsteps( void )
         }
         else
         {
+            #ifndef _DEMO
             if ( pm->ps->leanTime - LEAN_TIME < 0 )
             {
                 if ( pm->cmd.rightmove > 0 )
@@ -1746,9 +1757,8 @@ static void PM_Footsteps( void )
                 }
             }
             else
-            {
+            #endif // not _DEMO
                 PM_ContinueLegsAnim( pm->ps, LEGS_WALK_CROUCH );
-            }
         }
     }
     else
@@ -1777,6 +1787,7 @@ static void PM_Footsteps( void )
             }
             else
             {
+                #ifndef _DEMO
                 if ( pm->ps->leanTime - LEAN_TIME < 0 )
                 {
                     if ( pm->cmd.rightmove > 0 )
@@ -1800,9 +1811,8 @@ static void PM_Footsteps( void )
                     }
                 }
                 else
-                {
+                #endif // not _DEMO
                     PM_ContinueLegsAnim( pm->ps, LEGS_WALK );
-                }
             }
         }
     }
@@ -1860,12 +1870,14 @@ static void PM_WaterEvents( void )
         }
     }
 
+    #ifndef _DEMO
     //
     // check for head just coming out of water
     //
     if (pml.previous_waterlevel == 3 && pm->waterlevel != 3) {
         PM_AddEvent( EV_WATER_CLEAR );
     }
+    #endif // not _DEMO
 }
 
 /*
@@ -2284,11 +2296,13 @@ PM_BeginZoomIn
 */
 static void PM_BeginZoomIn(void)
 {
+    #ifndef _DEMO
     // Reset the zom fov if not rezooming
     if ( !(pm->ps->pm_flags & PMF_ZOOM_REZOOM) )
     {
         pm->ps->zoomFov = 0;
     }
+    #endif // not _DEMO
 
     pm->ps->weaponstate=WEAPON_ZOOMIN;
     PM_HandleWeaponAction(WACT_ZOOMIN);
@@ -2301,6 +2315,7 @@ PM_BeginZoomOut
 */
 static void PM_BeginZoomOut(void)
 {
+    #ifndef _DEMO
     if ( !(pm->ps->pm_flags & PMF_ZOOMED) )
     {
         return;
@@ -2310,11 +2325,23 @@ static void PM_BeginZoomOut(void)
     {
         pm->ps->zoomFov = 0;
     }
+    #else
+    // We need to be zoomed in for the player to zoom out.
+    if(!pm->ps->zoomFov){
+        return;
+    }
+
+    pm->ps->zoomFov = 0;
+    #endif // not _DEMO
 
     pm->ps->weaponstate=WEAPON_ZOOMOUT;
     PM_HandleWeaponAction(WACT_ZOOMOUT);
     pm->ps->zoomTime=pm->ps->commandTime;
+    #ifndef _DEMO
     pm->ps->pm_flags &= ~(PMF_ZOOM_LOCKED|PMF_ZOOM_REZOOM|PMF_ZOOMED);
+    #else
+    pm->ps->pm_flags &= ~(PMF_ZOOM_LOCKED | PMF_ZOOM_REZOOM);
+    #endif // not _DEMO
 }
 
 
@@ -2357,7 +2384,11 @@ static void PM_BeginWeaponChange(int weapon)
 
     // turn off any kind of zooming when weapon switching.
     #ifndef _GOLD
+    #ifndef _DEMO
     if( pm->ps->pm_flags & PMF_ZOOMED )
+    #else
+    if(pm->ps->zoomFov)
+    #endif // not _DEMO
     {
         pm->ps->zoomFov   = 0;
         pm->ps->zoomTime  = pm->ps->commandTime;
@@ -2460,7 +2491,11 @@ void PM_StartRefillClip ( attackType_t attack )
     assert ( attack >= ATTACK_NORMAL && attack < ATTACK_MAX );
 
     // Sniper rifle should unzoom first before reloading.
+    #ifndef _DEMO
     if( pm->ps->pm_flags & PMF_ZOOMED )
+    #else
+    if(pm->ps->zoomFov)
+    #endif // not _DEMO
     {
         pm->ps->pm_flags |= PMF_ZOOM_DEFER_RELOAD;
         PM_BeginZoomOut();
@@ -2721,7 +2756,11 @@ static void PM_Weapon_AddInaccuracy( attackType_t attack )
 
     // Zoomed sniper weapons don't add innacuracy if ont hte ground
     #ifndef _GOLD
+    #ifndef _DEMO
     if( (pm->ps->pm_flags & PMF_ZOOMED) && pml.groundPlane )
+    #else
+    if(pm->ps->zoomFov && pml.groundPlane)
+    #endif // not _DEMO
     {
         return;
     }
@@ -2896,7 +2935,11 @@ static void PM_Goggles ( void )
     if ( pm->ps->stats[STAT_GOGGLES] == GOGGLES_INFRARED )
     {
         // If the player is zoomed then no goggles
+        #ifndef _DEMO
         if ( pm->ps->pm_flags & PMF_ZOOMED )
+        #else
+        if(pm->ps->zoomFov)
+        #endif // not _DEMO
         {
             pm->ps->pm_flags &= ~PMF_GOGGLES_ON;
             return;
@@ -3085,14 +3128,18 @@ static void PM_Weapon( void )
     if( pm->ps->weaponstate == WEAPON_ZOOMIN )
     {
         // The zoomfov may still be remembered from a reload while zooming
-        #ifndef _GOLD
+        #if !defined(_GOLD) && !defined(_DEMO)
         if ( !pm->ps->zoomFov )
         {
             pm->ps->zoomFov = 20;
         }
-        #endif // not _GOLD
+        #endif // not _GOLD and not _DEMO
 
+        #ifndef _DEMO
         pm->ps->pm_flags |= PMF_ZOOMED;
+        #else
+        pm->ps->zoomFov = 20;
+        #endif // not _DEMO
         pm->ps->pm_flags |= PMF_ZOOM_LOCKED;
         pm->ps->pm_flags &= ~PMF_ZOOM_REZOOM;
         pm->ps->weaponstate=WEAPON_READY;
@@ -3268,7 +3315,11 @@ static void PM_Weapon( void )
     {
         if( (attackButtons&BUTTON_ALT_ATTACK) || (pm->ps->pm_flags & PMF_ZOOM_REZOOM) )
         {
+            #ifndef _DEMO
             if( pm->ps->pm_flags & PMF_ZOOMED )
+            #else
+            if(pm->ps->zoomFov)
+            #endif // not _DEMO
             {
                 PM_BeginZoomOut();
             }
@@ -3278,7 +3329,11 @@ static void PM_Weapon( void )
             }
             return;
         }
+        #ifndef _DEMO
         else if( pm->ps->pm_flags & PMF_ZOOMED )
+        #else
+        else if(pm->ps->zoomFov)
+        #endif // not _DEMO
         {
             if(pm->cmd.buttons&BUTTON_ZOOMIN)
             {
@@ -3386,8 +3441,11 @@ static void PM_Weapon( void )
         if( pm->ps->ammo[ attackData->ammoIndex ] > 0 )
         {
             // If auto reloading is enabled then reload the gun
+            #ifndef _DEMO
+            // In demo, auto reloading is always enabled.
             if ( pm->ps->pm_flags & PMF_AUTORELOAD )
             {
+            #endif // not _DEMO
                 switch ( attackData->fireFromClip)
                 {
                     case 1:
@@ -3400,7 +3458,9 @@ static void PM_Weapon( void )
                         PM_StartRefillClip( ATTACK_ALTERNATE );
                         return;
                 }
+            #ifndef _DEMO
             }
+            #endif // not _DEMO
         }
         // Out of ammo, switch weapons if not an alt-attack
         else if ( !altFire )
@@ -3501,7 +3561,11 @@ static void PM_Weapon( void )
             pm->ps->weaponTime += attackData->fireDelay;
 
             // Play the torso animation associated with the attack
+            #ifndef _DEMO
             if ( pm->ps->pm_flags & PMF_ZOOMED )
+            #else
+            if(pm->ps->zoomFov)
+            #endif // not _DEMO
             {
                 PM_StartTorsoAnim ( pm->ps, attackData->animFireZoomed, pm->ps->weaponTime );
             }
@@ -3544,8 +3608,13 @@ PM_CheckLean
 static void PM_CheckLean( void )
 {
     trace_t     trace;
-    qboolean    canlean;
     float       leanTime;
+
+    #ifndef _DEMO
+    qboolean	canlean;
+
+    canlean = qfalse;
+    #endif // not _DEMO
 
     if ( !pm || !pm->ps )
     {
@@ -3561,7 +3630,6 @@ static void PM_CheckLean( void )
     }
 
     leanTime = (float)pm->ps->leanTime - LEAN_TIME;
-    canlean  = qfalse;
 
     // If their lean button is being pressed and they are on the ground then perform the lean
     if( (pm->cmd.buttons & (BUTTON_LEAN_RIGHT|BUTTON_LEAN_LEFT)) && (pm->ps->groundEntityNum != ENTITYNUM_NONE) )
@@ -3583,8 +3651,14 @@ static void PM_CheckLean( void )
         #ifndef _GOLD
         start[2] += pm->ps->viewheight;
         AngleVectors( pm->ps->viewangles, NULL, right, NULL );
+
+        #ifndef _DEMO
         VectorSet( mins, -6, -6, -8 );
         VectorSet( maxs, 6, 6, 8 );
+        #else
+        VectorSet(mins, -8, -8, -8);
+        VectorSet(maxs, 8, 8, 8);
+        #endif // not _DEMO
         #else
         AngleVectors( pm->ps->viewangles, NULL, right, NULL );
         VectorSet( mins, -6, -6, -20 );
@@ -3593,7 +3667,12 @@ static void PM_CheckLean( void )
 
         // since we're moving the camera over
         // check that move
+        #ifndef _DEMO
         VectorMA( start, leanDir * LEAN_OFFSET * 1.25f, right, end );
+        #else
+        VectorMA(start, leanDir * LEAN_OFFSET, right, end);
+        #endif // not _DEMO
+
         if(pm->trace)
         pm->trace(&trace, start, mins, maxs, end, pm->ps->clientNum, pm->tracemask );
 
@@ -3609,20 +3688,45 @@ static void PM_CheckLean( void )
                 leanTime = -LEAN_TIME;
             }
 
+            #ifndef _DEMO
             canlean = qtrue;
+            #endif // not _DEMO
         }
-        else if ( (pm->ps->pm_flags&PMF_LEANING) && trace.fraction < 1.0f )
+        #ifndef _DEMO
+        else if((pm->ps->pm_flags&PMF_LEANING) && trace.fraction < 1.0f)
+        #else
+        else if(trace.fraction < 1.0f)
+        #endif // not _DEMO
         {
-            int templeanTime = (float)leanDir * (float)LEAN_TIME * trace.fraction;
+            #ifndef _DEMO
+            int templeanTime = (float)leanDir * (float)LEAN_TIME
+                * trace.fraction;
 
             if ( fabs((float)templeanTime) < fabs(leanTime) )
             {
                 leanTime = templeanTime;
             }
+            #else
+            int origLeanTime = leanTime + (leanDir * pml.msec);
+            int newLeanTime = (float)leanDir * (float)LEAN_TIME
+                * trace.fraction;
+
+            if((leanDir < 0 && origLeanTime > newLeanTime)
+                || (leanDir > 0 && origLeanTime < newLeanTime))
+            {
+                leanTime = origLeanTime;
+            }else{
+                leanTime = newLeanTime;
+            }
+            #endif // not _DEMO
         }
     }
 
+    #ifdef _DEMO
+    else if (leanTime != 0)
+    #else
     if ( !canlean )
+    #endif // _DEMO
     {
         if( leanTime > 0 )
         {
@@ -3805,6 +3909,7 @@ void PmoveSingle (pmove_t *pmove) {
         pm->cmd.rightmove = 0;
     }
 
+    #ifndef _DEMO
     // Cant move when leaning
     if ( (pm->cmd.buttons & (BUTTON_LEAN_LEFT|BUTTON_LEAN_RIGHT)))
     {
@@ -3817,18 +3922,24 @@ void PmoveSingle (pmove_t *pmove) {
             pm->cmd.upmove = 0;
         }
     }
+    #endif // not _DEMO
 
     // Cant run when zoomed
     #ifndef _GOLD
-    if ( (pm->ps->pm_flags&PMF_ZOOMED) || pm->ps->weaponstate == WEAPON_ZOOMIN || (pm->cmd.buttons & (BUTTON_LEAN_LEFT|BUTTON_LEAN_RIGHT)) )
+    #ifndef _DEMO
+    if((pm->ps->pm_flags & PMF_ZOOMED)
+    #else
+    if(pm->ps->zoomFov
+    #endif // not _DEMO
+        || pm->ps->weaponstate == WEAPON_ZOOMIN || (pm->cmd.buttons & (BUTTON_LEAN_LEFT|BUTTON_LEAN_RIGHT))
     #else
     // Cant run when zoomed, leaning, or using something that takes time
     if ( (pm->ps->pm_flags&PMF_ZOOMED) ||
          (pm->ps->weaponstate == WEAPON_ZOOMIN) ||
          (pm->cmd.buttons & (BUTTON_LEAN_LEFT|BUTTON_LEAN_RIGHT)) ||
-         (pm->ps->stats[STAT_USEWEAPONDROP]) )
+         (pm->ps->stats[STAT_USEWEAPONDROP])
     #endif // not _GOLD
-    {
+    ){
         if ( pm->cmd.forwardmove > 64 )
         {
             pm->cmd.forwardmove = 64;
@@ -4052,6 +4163,7 @@ void PmoveSingle (pmove_t *pmove) {
     trap_SnapVector( pm->ps->velocity );
 }
 
+#ifndef _DEMO
 /*
 ================
 PM_UpdatePVSOrigin
@@ -4087,6 +4199,7 @@ void PM_UpdatePVSOrigin ( pmove_t *pmove )
         VectorCopy ( pm->ps->origin, pm->ps->pvsOrigin );
     }
 }
+#endif // not _DEMO
 
 /*
 ================
@@ -4132,7 +4245,9 @@ void Pmove (pmove_t *pmove) {
 
         PmoveSingle( pmove );
 
+        #ifndef _DEMO
         PM_UpdatePVSOrigin ( pmove );
+        #endif // not _DEMO
 
         if ( pmove->ps->pm_debounce & PMD_JUMP )
         {

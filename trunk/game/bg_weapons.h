@@ -278,7 +278,9 @@ typedef enum
 #define PROJECTILE_GRAVITY      0x0040  // projectile obeys gravity
 #define PROJECTILE_DAMAGE_AREA  0x0080 // projectile does area damage over time
 #define UNLOCK_MUZZLEFLASH      0x0100  // muzzle flash is locked to muzzle bolt by default
+#ifndef _DEMO
 #define PROJECTILE_LIGHTGRAVITY 0x0200  // projectile has light gravity
+#endif // not _DEMO
 
 typedef enum
 {

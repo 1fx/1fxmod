@@ -80,6 +80,7 @@ void G_AddClientSpawn ( gentity_t* ent, team_t team, qboolean monkey )
     #endif // _3DServer
 
     spawns->team = team;
+    spawns->flags = ent->flags;
 
     // Release the entity and store the spawn in its own array
     VectorCopy ( ent->s.origin, spawns->origin );
@@ -107,11 +108,22 @@ Targets will be fired when someone spawns in on them.
 */
 void SP_info_player_deathmatch( gentity_t *ent )
 {
+    int i;
+
     // Cant take any more spawns!!
     if ( level.spawnCount >= MAX_SPAWNS )
     {
         G_FreeEntity ( ent );
         return;
+    }
+
+    G_SpawnInt("nobots", "0", &i);
+    if(i){
+        ent->flags |= FL_NO_BOTS;
+    }
+    G_SpawnInt("nohumans", "0", &i);
+    if(i){
+        ent->flags |= FL_NO_HUMANS;
     }
 
     G_AddClientSpawn ( ent, TEAM_FREE, qfalse );
@@ -172,7 +184,7 @@ G_SelectRandomSpawnPoint
 go to a random point that doesn't telefrag
 ================
 */
-gspawn_t* G_SelectRandomSpawnPoint ( team_t team, gclient_t *client )
+gspawn_t* G_SelectRandomSpawnPoint(team_t team, gclient_t *client, qboolean isBot)
 {
     int         i;
     int         count, sCount;
@@ -208,6 +220,15 @@ gspawn_t* G_SelectRandomSpawnPoint ( team_t team, gclient_t *client )
 
         if ( team != -1 && team != spawn->team )
         {
+            continue;
+        }
+
+        // Check if only bots or humans are supposed to spawn at this spawnpoint.
+        if(isBot && spawn->flags & FL_NO_BOTS){
+            continue;
+        }
+
+        if(!isBot && client != NULL && spawn->flags & FL_NO_HUMANS){
             continue;
         }
 
@@ -247,7 +268,7 @@ Select a random spawn point that is safe for the client to spawn at.  A safe spa
 is one that is at least a certain distance from another client.
 ============
 */
-gspawn_t* G_SelectRandomSafeSpawnPoint ( team_t team, float safeDistance, gclient_t *client )
+gspawn_t* G_SelectRandomSafeSpawnPoint ( team_t team, float safeDistance, gclient_t *client, qboolean isBot )
 {
     gspawn_t*   spawns[MAX_SPAWNS];
     float       safeDistanceSquared;
@@ -292,6 +313,15 @@ gspawn_t* G_SelectRandomSafeSpawnPoint ( team_t team, float safeDistance, gclien
         // Make sure this spot wont kill another player
         if ( G_SpotWouldTelefrag( spawn ) )
         {
+            continue;
+        }
+
+        // Check if only bots or humans are supposed to spawn at this spawnpoint.
+        if(isBot && spawn->flags & FL_NO_BOTS){
+            continue;
+        }
+
+        if(!isBot && client != NULL && spawn->flags & FL_NO_HUMANS){
             continue;
         }
 
@@ -342,11 +372,11 @@ gspawn_t* G_SelectRandomSafeSpawnPoint ( team_t team, float safeDistance, gclien
         // Gotta stop somewhere
         if ( safeDistance / 2 < 250 )
         {
-            return G_SelectRandomSpawnPoint ( team, client );
+            return G_SelectRandomSpawnPoint ( team, client, isBot );
         }
         else
         {
-            return G_SelectRandomSafeSpawnPoint ( team, safeDistance / 2, client );
+            return G_SelectRandomSafeSpawnPoint ( team, safeDistance / 2, client, isBot );
         }
     }
 
@@ -376,32 +406,43 @@ gspawn_t* G_SelectSpectatorSpawnPoint( void )
 G_InitBodyQueue
 ===============
 */
-void G_InitBodyQueue (void)
+
+void G_InitBodyQueue(void)
 {
     gentity_t   *ent;
+
+    #ifndef _DEMO
     int         max;
 
-    if ( level.gametypeData->respawnType == RT_NONE )
-    {
+    if(level.gametypeData->respawnType == RT_NONE){
         level.bodySinkTime = 0;
         max = BODY_QUEUE_SIZE_MAX;
-    }
-    else
-    {
+    }else{
         level.bodySinkTime = BODY_SINK_DELAY;
         max = BODY_QUEUE_SIZE;
     }
 
     level.bodyQueIndex = 0;
-    for ( level.bodyQueSize = 0;
-          level.bodyQueSize < max && level.bodyQueSize < level.maxclients;
-          level.bodyQueSize++)
-    {
+    for(level.bodyQueSize = 0;
+        level.bodyQueSize < max && level.bodyQueSize < level.maxclients;
+        level.bodyQueSize++){
         ent = G_Spawn();
         ent->classname = "bodyque";
         ent->neverFree = qtrue;
         level.bodyQue[level.bodyQueSize] = ent;
     }
+    #else
+    int i;
+
+    level.bodyQueIndex = 0;
+
+    for(i = 0; i < BODY_QUEUE_SIZE; i++){
+        ent = G_Spawn();
+        ent->classname = "bodyque";
+        ent->neverFree = qtrue;
+        level.bodyQue[i] = ent;
+    }
+    #endif // not _DEMO
 }
 
 /*
@@ -411,12 +452,17 @@ BodySink
 After sitting around for five seconds, fall into the ground and dissapear
 =============
 */
-void BodySink( gentity_t *ent )
+
+void BodySink(gentity_t *ent)
 {
-    if ( level.time - ent->timestamp > level.bodySinkTime + BODY_SINK_TIME )
+    #ifndef _DEMO
+    if(level.time - ent->timestamp > level.bodySinkTime + BODY_SINK_TIME)
+    #else
+    if(level.time - ent->timestamp > BODY_SINK_DELAY + BODY_SINK_TIME)
+        #endif // not _DEMO
     {
         // the body ques are never actually freed, they are just unlinked
-        trap_UnlinkEntity( ent );
+        trap_UnlinkEntity(ent);
         ent->physicsObject = qfalse;
         return;
     }
@@ -435,60 +481,62 @@ A player is respawning, so make an entity that looks
 just like the existing corpse to leave behind.
 =============
 */
-void CopyToBodyQue( gentity_t *ent, int hitLocation, vec3_t direction )
+
+void CopyToBodyQue(gentity_t *ent, int hitLocation, vec3_t direction)
 {
     gentity_t   *body;
     int         contents;
     int         parm;
-    trap_UnlinkEntity (ent);
+
+    trap_UnlinkEntity(ent);
 
     // if client is in a nodrop area, don't leave the body
-    contents = trap_PointContents( ent->r.currentOrigin, -1 );
-    if ( contents & CONTENTS_NODROP )
-    {
+    contents = trap_PointContents(ent->r.currentOrigin, -1);
+    if(contents & CONTENTS_NODROP){
         return;
     }
 
     // grab a body que and cycle to the next one
     body = level.bodyQue[ level.bodyQueIndex ];
+    #ifndef _DEMO
     level.bodyQueIndex = (level.bodyQueIndex + 1) % level.bodyQueSize;
+    #else
+    level.bodyQueIndex = (level.bodyQueIndex + 1) % BODY_QUEUE_SIZE;
+    #endif // not _DEMO
 
-    trap_UnlinkEntity (body);
+    trap_UnlinkEntity(body);
 
-    body->s                 = ent->s;
-    body->s.eType           = ET_BODY;
-    body->s.eFlags          = EF_DEAD;
-    body->s.gametypeitems   = 0;
-    body->s.loopSound       = 0;
-    body->s.number          = body - g_entities;
-    body->timestamp         = level.time;
-    body->physicsObject     = qtrue;
-    body->physicsBounce     = 0;
-    body->s.otherEntityNum  = ent->s.clientNum;
+    body->s = ent->s;
+    body->s.eType = ET_BODY;
+    body->s.eFlags = EF_DEAD;
+    body->s.gametypeitems = 0;
+    body->s.loopSound = 0;
+    body->s.number = body - g_entities;
+    body->timestamp = level.time;
+    body->physicsObject = qtrue;
+    body->physicsBounce = 0;
+    body->s.otherEntityNum = ent->s.clientNum;
 
-    if ( body->s.groundEntityNum == ENTITYNUM_NONE )
-    {
+    if(body->s.groundEntityNum == ENTITYNUM_NONE){
         body->s.pos.trType = TR_GRAVITY;
         body->s.pos.trTime = level.time;
-        VectorCopy( ent->client->ps.velocity, body->s.pos.trDelta );
-    }
-    else
-    {
+        VectorCopy(ent->client->ps.velocity, body->s.pos.trDelta);
+    }else{
         body->s.pos.trType = TR_STATIONARY;
     }
 
     body->s.event = 0;
 
-    parm  = (DirToByte( direction )&0xFF);
-    parm += (hitLocation<<8);
+    parm = (DirToByte(direction)&0xFF);
+    parm += (hitLocation << 8);
 
     G_AddEvent(body, EV_BODY_QUEUE_COPY, parm);
 
     body->r.svFlags = ent->r.svFlags | SVF_BROADCAST;
-    VectorCopy (ent->r.mins, body->r.mins);
-    VectorCopy (ent->r.maxs, body->r.maxs);
-    VectorCopy (ent->r.absmin, body->r.absmin);
-    VectorCopy (ent->r.absmax, body->r.absmax);
+    VectorCopy(ent->r.mins, body->r.mins);
+    VectorCopy(ent->r.maxs, body->r.maxs);
+    VectorCopy(ent->r.absmin, body->r.absmin);
+    VectorCopy(ent->r.absmax, body->r.absmax);
 
     body->s.torsoAnim = body->s.legsAnim = ent->client->ps.legsAnim & ~ANIM_TOGGLEBIT;
 
@@ -496,18 +544,20 @@ void CopyToBodyQue( gentity_t *ent, int hitLocation, vec3_t direction )
     body->r.contents = 0; // CONTENTS_CORPSE;
     body->r.ownerNum = ent->s.number;
 
-    if ( level.bodySinkTime )
-    {
+    #ifndef _DEMO
+    if(level.bodySinkTime){
         body->nextthink = level.time + level.bodySinkTime;
         body->think = BodySink;
         body->s.time2 = 0;
-    }
-    else
-    {
+    }else{
         // Store the time the body was spawned so the client can make them
         // dissapear if need be.
         body->s.time2 = level.time;
     }
+    #else
+    body->nextthink = level.time + BODY_SINK_DELAY;
+    body->think = BodySink;
+    #endif // not _DEMO
 
     body->die = body_die;
     body->takedamage = qtrue;
@@ -516,10 +566,9 @@ void CopyToBodyQue( gentity_t *ent, int hitLocation, vec3_t direction )
 
     body->s.pos.trBase[2] = ent->client->ps.origin[2];
 
-    VectorCopy ( body->s.pos.trBase, body->r.currentOrigin );
+    VectorCopy(body->s.pos.trBase, body->r.currentOrigin);
 
-    trap_LinkEntity (body);
-
+    trap_LinkEntity(body);
 }
 
 //======================================================================
@@ -547,6 +596,7 @@ void SetClientViewAngle( gentity_t *ent, vec3_t angle )
     VectorCopy (ent->s.angles, ent->client->ps.viewangles);
 }
 
+#ifndef _DEMO
 /*
 ================
 G_SetRespawnTimer
@@ -563,6 +613,7 @@ void G_SetRespawnTimer ( gentity_t* ent )
     // start the interval if its not already started
     ent->client->ps.respawnTimer = level.gametypeRespawnTime[ent->client->sess.team] + 1000;
 }
+#endif // not _DEMO
 
 /*
 ================
@@ -582,6 +633,7 @@ void respawn( gentity_t *ent )
 
     // When we get here the user has just accepted their fate and now
     // needs to wait for the ability to respawn
+    #ifndef _DEMO
     switch ( level.gametypeData->respawnType )
     {
         case RT_INTERVAL:
@@ -606,6 +658,12 @@ void respawn( gentity_t *ent )
         case RT_MAX:
             break;
     }
+    #else
+    if(level.gametypeData->respawnType == RT_NONE){
+        // Turn into a ghost
+        ghost = qtrue;
+    }
+    #endif // not _DEMO
 
     // If they are a ghost then give a health point, but dont respawn
     if ( ghost )
@@ -1207,6 +1265,8 @@ void ClientUserinfoChanged( int clientNum )
         s = "1";
     else
     ///End  - 08.31.06 - 12:22am
+
+    #ifndef _DEMO
     // Is auto-reload turned on?
     s = Info_ValueForKey ( userinfo, "cg_autoReload" );
     client->pers.autoReload = atoi( s )?qtrue:qfalse;
@@ -1218,6 +1278,7 @@ void ClientUserinfoChanged( int clientNum )
     {
         client->ps.pm_flags &= ~PMF_AUTORELOAD;
     }
+    #endif // not _DEMO
 
     #ifndef _GOLD
     if (level.clientMod == CL_RPM){
@@ -2038,6 +2099,9 @@ gspawn_t* G_SelectClientSpawnPoint ( gentity_t* ent,  qboolean plantsk )
     gclient_t*  client = ent->client;
     gspawn_t*   spawnPoint;
     int         team;
+    qboolean    isBot;
+
+    isBot = ent->r.svFlags & SVF_BOT;
 
     if( plantsk)
     {
@@ -2072,14 +2136,14 @@ gspawn_t* G_SelectClientSpawnPoint ( gentity_t* ent,  qboolean plantsk )
             {
                 //Ryan
                 //spawnPoint = G_SelectRandomSpawnPoint ( ent->client->sess.team );
-                spawnPoint = G_SelectRandomSpawnPoint ( (team_t)team, ent->client );
+                spawnPoint = G_SelectRandomSpawnPoint ( (team_t)team, ent->client, isBot );
                 //Ryan
             }
             else
             {
                 //Ryan
                 //spawnPoint = G_SelectRandomSafeSpawnPoint ( ent->client->sess.team, 1500 );
-                spawnPoint = G_SelectRandomSafeSpawnPoint ( (team_t)team, 1500, ent->client );
+                spawnPoint = G_SelectRandomSafeSpawnPoint ( (team_t)team, 1500, ent->client, isBot );
                 //Ryan
             }
 
@@ -2088,37 +2152,37 @@ gspawn_t* G_SelectClientSpawnPoint ( gentity_t* ent,  qboolean plantsk )
                 // don't spawn near other players if possible
                 //Ryan
                 //spawnPoint = G_SelectRandomSpawnPoint ( ent->client->sess.team );
-                spawnPoint = G_SelectRandomSpawnPoint ( (team_t)team, ent->client );
+                spawnPoint = G_SelectRandomSpawnPoint ( (team_t)team, ent->client, isBot );
                 //Ryan
             }
 
             // Spawn at any deathmatch spawn, telefrag if needed
             if ( !spawnPoint )
             {
-                spawnPoint = G_SelectRandomSpawnPoint ( TEAM_FREE, ent->client );
+                spawnPoint = G_SelectRandomSpawnPoint ( TEAM_FREE, ent->client, isBot );
             }
         }
         else
         {
             // Try deathmatch spawns first
-            spawnPoint = G_SelectRandomSafeSpawnPoint ( TEAM_FREE, 1500, ent->client );
+            spawnPoint = G_SelectRandomSafeSpawnPoint ( TEAM_FREE, 1500, ent->client, isBot );
 
             // If none found use any spawn
             if ( !spawnPoint )
             {
-                spawnPoint = G_SelectRandomSafeSpawnPoint ( (team_t)-1, 1500, ent->client );
+                spawnPoint = G_SelectRandomSafeSpawnPoint ( (team_t)-1, 1500, ent->client, isBot );
             }
 
             // Spawn at any deathmatch spawn, telefrag if needed
             if ( !spawnPoint )
             {
-                spawnPoint = G_SelectRandomSpawnPoint ( TEAM_FREE, ent->client );
+                spawnPoint = G_SelectRandomSpawnPoint ( TEAM_FREE, ent->client, isBot );
             }
 
             // Spawn at any gametype spawn, telefrag if needed
             if ( !spawnPoint )
             {
-                spawnPoint = G_SelectRandomSpawnPoint ( (team_t)-1, ent->client );
+                spawnPoint = G_SelectRandomSpawnPoint ( (team_t)-1, ent->client, isBot );
             }
         }
     }
@@ -2391,6 +2455,7 @@ void ClientSpawn(gentity_t *ent)
 
     // the respawned flag will be cleared after the attack and jump keys come up
     client->ps.pm_flags |= PMF_RESPAWNED;
+    #ifndef _DEMO
     if ( client->pers.autoReload )
     {
         client->ps.pm_flags |= PMF_AUTORELOAD;
@@ -2399,6 +2464,7 @@ void ClientSpawn(gentity_t *ent)
     {
         client->ps.pm_flags &= ~PMF_AUTORELOAD;
     }
+    #endif // not _DEMO
 
     trap_GetUsercmd( client - level.clients, &ent->client->pers.cmd );
     SetClientViewAngle( ent, spawn_angles );
@@ -2776,7 +2842,9 @@ void G_UpdateClientAnimations ( gentity_t* ent )
 
                       ent->client->ghoulLegsAngles,
                       ent->client->ghoulLowerTorsoAngles,
+                      #ifndef _DEMO
                       ent->client->ghoulUpperTorsoAngles,
+                      #endif // not _DEMO
                       ent->client->ghoulHeadAngles,
 
                       (float)(ent->client->ps.leanTime - LEAN_TIME) / LEAN_TIME * LEAN_OFFSET,

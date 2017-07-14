@@ -527,8 +527,13 @@ static qboolean BG_ParseAttackStats ( int weaponNum, attackData_t* attack, void 
         if (0 == Q_stricmp(tmpStr,"timer"))
             attack->weaponFlags |= PROJECTILE_TIMED;
 
+        #ifndef _DEMO
         trap_GPG_FindPairValue(sub, "mp_bounce||bounce", "0", tmpStr );
         attack->bounceScale = atof ( tmpStr );
+        #else
+        // In demo, this cannot be set. It is always fixed at 0.45f.
+        attack->bounceScale = 0.45f;
+        #endif // not _DEMO
 
         switch ( weaponNum )
         {
@@ -538,16 +543,24 @@ static qboolean BG_ParseAttackStats ( int weaponNum, attackData_t* attack, void 
                 break;
 
             case WP_KNIFE:
+                #ifndef _DEMO
                 if ( attack->weaponFlags & PROJECTILE_GRAVITY )
                 {
                     attack->weaponFlags &= ~PROJECTILE_GRAVITY;
                     attack->weaponFlags |= PROJECTILE_LIGHTGRAVITY;
                 }
+                #else
+                attack->weaponFlags |= PROJECTILE_GRAVITY;
+                #endif // not _DEMO
                 break;
         }
         trap_GPG_FindPairValue(sub, "mp_speed||speed", "0", tmpStr);
         attack->rV.velocity = atoi(tmpStr);
+        #ifndef _DEMO
         trap_GPG_FindPairValue(sub, "mp_timer||timer", "10", tmpStr);
+        #else
+        trap_GPG_FindPairValue(sub, "timer", "10", tmpStr);
+        #endif // not _DEMO
         attack->projectileLifetime = (int)(atof(tmpStr) * 1000);
 
         // 'trail' effect

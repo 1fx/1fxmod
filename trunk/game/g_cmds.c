@@ -494,7 +494,7 @@ void DeathmatchScoreboardMessage( gentity_t *ent )
         //Ryan may 12 2004
         //Add some info for client-side users
         //RxCxW - 1.20.2005 - NOT compatible with 0.5. #Version
-        #ifndef _GOLD
+        #if !defined (_GOLD) && !defined(_DEMO)
         if (level.clientMod == CL_RPM){
             if(ent->client->sess.rpmClient > 0.5)
             {
@@ -544,7 +544,11 @@ void DeathmatchScoreboardMessage( gentity_t *ent )
         }
         #else
         Com_sprintf(entry, sizeof(entry),
+            #ifndef _DEMO
             " %i %i %i %i %i %i %i %i %i",
+            #else
+            " %i %i %i %i %i %i %i %i",
+            #endif // not _DEMO
             level.sortedClients[i],
             cl->sess.score,
             cl->sess.kills,
@@ -552,8 +556,12 @@ void DeathmatchScoreboardMessage( gentity_t *ent )
             ping,
             (level.time - cl->pers.enterTime) / 60000,
             (ghost || cl->ps.pm_type == PM_DEAD) ? qtrue : qfalse,
+            #ifndef _DEMO
             g_entities[level.sortedClients[i]].s.gametypeitems,
             g_teamkillDamageMax.integer ? 100 * cl->sess.teamkillDamage / g_teamkillDamageMax.integer : 0
+            #else
+            g_entities[level.sortedClients[i]].s.gametypeitems
+            #endif // not _DEMO
             );
         #endif // not _GOLD
 
@@ -1461,6 +1469,7 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
     // Kill any child entities of this client to protect against grenade team changers
     G_FreeEnitityChildren ( ent ); // Henk 14/01/11 -> Fix for specnade
 
+    #ifndef _DEMO
     // Always spawn into a ctf game using a respawn timer.
     if(!level.pause)
     {
@@ -1470,6 +1479,8 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
             ghost = qtrue;
         }
     }
+    #endif // not _DEMO
+
     //Ryan
     //Ryan june 15 2003
     if(!level.pause && !client->sess.firstTime)
@@ -4042,11 +4053,13 @@ qboolean ConsoleCommand( void )
         return qtrue;
     }
 
+    #ifndef _DEMO
     if (Q_stricmp (cmd, "extendtime" ) == 0 )
     {
         Svcmd_ExtendTime_f();
         return qtrue;
     }
+    #endif // not _DEMO
 
     if (Q_stricmp (cmd, "sql_stats" ) == 0 )
     {

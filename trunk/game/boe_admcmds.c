@@ -475,6 +475,7 @@ qboolean Boe_dev_f ( gentity_t *ent )
         G_SpawnGEntityFromSpawnVars(qfalse);
 
         return qtrue;
+    #ifndef _DEMO
     }else if (Q_stricmp(arg1, "bsp") == 0){
         // Don't allow this command without cheats.
         if (!CheatsOk(ent)) {
@@ -505,6 +506,7 @@ qboolean Boe_dev_f ( gentity_t *ent )
         G_SpawnGEntityFromSpawnVars(qtrue);
 
         return qtrue;
+    #endif // not _DEMO
     }
 
     // Only do this when a non-dev is calling this function.

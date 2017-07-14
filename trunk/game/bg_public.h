@@ -38,9 +38,11 @@
 //#define   GAME_VERSION        "sof2mp-1.00.23"    sent on 4/27/2002
 #ifdef _GOLD
     #define GAME_VERSION        "sof2mp-1.03"
+#elif _DEMO
+    #define GAME_VERSION        "sof2mp-1.02t"
 #else
     #define GAME_VERSION        "sof2mp-1.00"
-#endif
+#endif // _GOLD, _DEMO or Full
 
 #define DEFAULT_GRAVITY     800
 #define ARMOR_PROTECTION    0.55
@@ -89,6 +91,7 @@
 // from the server to all connected clients.
 //
 
+#ifndef _DEMO
 // CS_SERVERINFO and CS_SYSTEMINFO are defined in q_shared.h
 
 #define CS_PLAYERS              2
@@ -147,6 +150,45 @@ enum
     CS_MAX = CS_HUDICONS + MAX_HUDICONS,
     #endif // not _GOLD
 };
+#else
+#define CS_MUSIC                2
+#define CS_MESSAGE              3       // from the map worldspawn's message field
+#define CS_MOTD                 4       // g_motd string for server message of the day
+#define CS_WARMUP               5       // server time when the match will be restarted
+#define CS_VOTE_TIME            8
+#define CS_VOTE_STRING          9
+#define CS_VOTE_YES             10
+#define CS_VOTE_NO              11
+
+#define CS_GAME_VERSION         16
+#define CS_LEVEL_START_TIME     17      // so the timer only shows the current level
+#define CS_INTERMISSION         18      // when 1, scorelimit/timelimit has been hit and intermission will start in a second or two
+#define CS_SHADERSTATE          19
+#define CS_BOTINFO              20
+
+#define CS_GAMETYPE_TIMER       21      // currently visible timer
+#define CS_GAMETYPE_MESSAGE     22      // Last gametype message
+#define CS_GAMETYPE_REDTEAM     23      // red team group name
+#define CS_GAMETYPE_BLUETEAM    24      // blue team group name
+
+#define CS_ITEMS                28      // string of 0's and 1's that tell which items are present
+
+// these are also in be_aas_def.h - argh (rjr)
+#define CS_MODELS               32
+#define CS_SOUNDS               (CS_MODELS+MAX_MODELS)
+#define CS_PLAYERS              (CS_SOUNDS+MAX_SOUNDS)
+#define CS_LOCATIONS            (CS_PLAYERS+(MAX_CLIENTS*2))
+#define CS_LADDERS              (CS_LOCATIONS + MAX_LOCATIONS)
+#define CS_BSP_MODELS           (CS_LADDERS + MAX_LADDERS)
+#define CS_TERRAINS             (CS_BSP_MODELS + MAX_SUB_BSP)
+#define CS_EFFECTS              (CS_TERRAINS+MAX_TERRAINS)
+#define CS_LIGHT_STYLES         (CS_EFFECTS + MAX_FX)
+#define CS_ICONS                (CS_LIGHT_STYLES + (MAX_LIGHT_STYLES*3))
+#define CS_TEAM_INFO            (CS_ICONS+MAX_ICONS)
+#define CS_AMBIENT_SOUNDSETS    (CS_TEAM_INFO+TEAM_NUM_TEAMS)
+
+#define CS_MAX                  (CS_AMBIENT_SOUNDSETS+MAX_AMBIENT_SOUNDSETS)
+#endif // not _DEMO
     
 /*
 #define CS_MUSIC                68
@@ -207,6 +249,7 @@ movement on the server game.
 */
 
 // animations
+#ifndef _DEMO
 typedef enum 
 {
     BOTH_DEATH_NORMAL,
@@ -334,7 +377,117 @@ typedef enum
     MAX_ANIMATIONS
 
 } animNumber_t;
+#else
+typedef enum
+{
+	BOTH_DEATH_NORMAL,
 
+	ANIM_START_DEATHS,
+
+	BOTH_DEATH_NECK,
+	BOTH_DEATH_CHEST_1,
+	BOTH_DEATH_CHEST_2,
+	BOTH_DEATH_GROIN_1,
+	BOTH_DEATH_GROIN_2,
+	BOTH_DEATH_GUT_1,
+	BOTH_DEATH_GUT_2,
+	BOTH_DEATH_HEAD_1,
+	BOTH_DEATH_HEAD_2,
+	BOTH_DEATH_SHOULDER_LEFT_1,
+	BOTH_DEATH_SHOULDER_LEFT_2,
+	BOTH_DEATH_ARMS_LEFT_1,
+	BOTH_DEATH_ARMS_LEFT_2,
+	BOTH_DEATH_LEGS_LEFT_1,
+	BOTH_DEATH_LEGS_LEFT_2,
+	BOTH_DEATH_LEGS_LEFT_3,
+	BOTH_DEATH_THIGH_LEFT_1,
+	BOTH_DEATH_THIGH_LEFT_2,
+	BOTH_DEATH_SHOULDER_RIGHT_1,
+	BOTH_DEATH_SHOULDER_RIGHT_2,
+	BOTH_DEATH_ARMS_RIGHT_1,
+	BOTH_DEATH_ARMS_RIGHT_2,
+	BOTH_DEATH_LEGS_RIGHT_1,
+	BOTH_DEATH_LEGS_RIGHT_2,
+	BOTH_DEATH_LEGS_RIGHT_3,
+	BOTH_DEATH_THIGH_RIGHT_1,
+	BOTH_DEATH_THIGH_RIGHT_2,
+
+	ANIM_END_DEATHS,
+
+	TORSO_DROP,
+	TORSO_DROP_ONEHANDED,
+	TORSO_DROP_KNIFE,
+	TORSO_RAISE,
+	TORSO_RAISE_ONEHANDED,
+	TORSO_RAISE_KNIFE,
+
+	LEGS_IDLE,
+	LEGS_IDLE_CROUCH,
+	LEGS_WALK,
+	LEGS_WALK_BACK,
+	LEGS_WALK_CROUCH,
+	LEGS_WALK_CROUCH_BACK,
+
+	LEGS_RUN,
+	LEGS_RUN_BACK,
+
+	LEGS_SWIM,
+
+	LEGS_JUMP,
+	LEGS_JUMP_BACK,
+
+	LEGS_TURN,
+
+	TORSO_IDLE_KNIFE,
+	TORSO_IDLE_PISTOL,
+	TORSO_IDLE_RIFLE,
+	TORSO_IDLE_MSG90A1,
+	TORSO_IDLE_MSG90A1_ZOOMED,
+	TORSO_IDLE_M4,
+	TORSO_IDLE_M590,
+	TORSO_IDLE_USAS12,
+	TORSO_IDLE_RPG,
+	TORSO_IDLE_M60,
+	TORSO_IDLE_MM1,
+	TORSO_IDLE_GRENADE,
+
+	TORSO_ATTACK_KNIFE,
+	TORSO_ATTACK_KNIFE_THROW,
+	TORSO_ATTACK_PISTOL,
+	TORSO_ATTACK_RIFLE,
+	TORSO_ATTACK_MSG90A1,
+	TORSO_ATTACK_MSG90A1_ZOOMED,
+	TORSO_ATTACK_M4,
+	TORSO_ATTACK_M590,
+	TORSO_ATTACK_USAS12,
+	TORSO_ATTACK_RIFLEBUTT,
+	TORSO_ATTACK_RPG,
+	TORSO_ATTACK_M60,
+	TORSO_ATTACK_MM1,
+	TORSO_ATTACK_GRENADE_START,
+	TORSO_ATTACK_GRENADE_END,
+	TORSO_ATTACK_BAYONET,
+	TORSO_ATTACK_PISTOLWHIP,
+
+	TORSO_RELOAD_M60,
+	TORSO_RELOAD_PISTOL,
+	TORSO_RELOAD_RIFLE,
+	TORSO_RELOAD_MSG90A1,
+	TORSO_RELOAD_RPG,
+	TORSO_RELOAD_USAS12,
+
+	TORSO_RELOAD_M590_START,
+	TORSO_RELOAD_M590_SHELL,
+	TORSO_RELOAD_M590_END,
+
+	TORSO_RELOAD_MM1_START,
+	TORSO_RELOAD_MM1_SHELL,
+	TORSO_RELOAD_MM1_END,
+
+	MAX_ANIMATIONS
+
+} animNumber_t;
+#endif // not _DEMO
 
 
 typedef struct animation_s {
@@ -389,6 +542,7 @@ typedef enum {
 } weaponstate_t;
 
 // pmove->pm_flags
+#ifndef _DEMO
 #define PMF_DUCKED              0x00000001
 #define PMF_BACKWARDS_JUMP      0x00000002      // go into backwards land
 #define PMF_JUMPING             0x00000004      // executing a jump
@@ -418,12 +572,40 @@ typedef enum {
 #define PMF_AUTORELOAD          0x00400000      // autoreloading enabled
 
 #define PMF_SIAMESETWINS        0x00800000  
-//Ryan
+
 #define PMF_FIRSTPERSONSPEC     0x01000000
-//Ryan
 
 #define PMF_ALL_TIMES   (PMF_TIME_WATERJUMP|PMF_TIME_LAND|PMF_TIME_KNOCKBACK)
 #define PMF_ZOOM_FLAGS  (PMF_ZOOMED|PMF_ZOOM_LOCKED|PMF_ZOOM_REZOOM|PMF_ZOOM_DEFER_RELOAD)
+#else
+#define PMF_DUCKED              0x00000001
+#define PMF_BACKWARDS_JUMP      0x00000002      // go into backwards land
+#define PMF_JUMPING             0x00000004      // executing a jump
+#define PMF_BACKWARDS_RUN       0x00000008      // coast down to backwards run
+#define PMF_TIME_LAND           0x00000010      // pm_time is time before rejump
+#define PMF_TIME_KNOCKBACK      0x00000020      // pm_time is an air-accelerate only time
+#define PMF_TIME_WATERJUMP      0x00000040      // pm_time is waterjump
+#define PMF_RESPAWNED           0x00000080      // clear after attack and jump buttons come up
+#define PMF_CAN_USE             0x00000100      // The server updated the animation, the pmove should set the ghoul2 anim to match.
+#define PMF_FOLLOW              0x00000200      // spectate following another player
+#define PMF_SCOREBOARD          0x00000400      // spectate as a scoreboard
+#define PMF_GHOST               0x00000800      // Your a ghost. scarry!!
+#define PMF_LADDER              0x00001000      // On a ladder
+#define PMF_LADDER_JUMP         0x00002000      // Jumped off a ladder
+
+#define PMF_ZOOM_LOCKED         0x00004000      // Zoom mode cant be changed
+#define PMF_ZOOM_REZOOM         0x00008000      // Rezoom after reload done
+#define PMF_ZOOM_DEFER_RELOAD   0x00010000      // Reload after zoomout
+
+#define PMF_LIMITED_INVENTORY   0x00020000      // inventory is limited for this player
+
+#define PMF_CROUCH_JUMP         0x00040000      // crouch jumping
+#define PMF_GOGGLES_ON          0x00080000      // goggles are on
+#define PMF_LEANING             0x00100000      // currently leaning
+
+#define PMF_ALL_TIMES   (PMF_TIME_WATERJUMP|PMF_TIME_LAND|PMF_TIME_KNOCKBACK)
+#define PMF_ZOOM_FLAGS  (PMF_ZOOM_LOCKED|PMF_ZOOM_REZOOM|PMF_ZOOM_DEFER_RELOAD)
+#endif // not _DEMO
 
 // pmove->pm_debounce
 
@@ -497,9 +679,10 @@ extern  pmove_t     *pm;
 #define SETANIM_FLAG_RESTART    4//Allow restarting the anim if playing the same one (weapon fires)
 #define SETANIM_FLAG_HOLDLESS   8//Set the new timer
 
-
+#ifndef _DEMO
 // if a full pmove isn't done on the client, you can just update the angles
 void PM_UpdateViewAngles( playerState_t *ps, const usercmd_t *cmd );
+#endif // not _DEMO
 void Pmove (pmove_t *pmove);
 
 //===================================================================================
@@ -634,7 +817,10 @@ typedef enum
     EV_WATER_FOOTSTEP,
     EV_WATER_TOUCH, // foot touches
     EV_WATER_LAND,  // landed in water
+    #ifndef _DEMO
+    // Event not present in demo.
     EV_WATER_CLEAR,
+    #endif // not _DEMO
 
     EV_ITEM_PICKUP,         // normal item pickups are predictable
     #ifdef _GOLD
@@ -672,7 +858,10 @@ typedef enum
     EV_BULLET_HIT_FLESH,
     EV_BULLET,              // otherEntity is the shooter
 
+    #ifndef _DEMO
+    // Event not present in demo.
     EV_EXPLOSION_HIT_FLESH,
+    #endif // not _DEMO
 
     EV_PAIN,
     EV_PAIN_WATER,
@@ -801,8 +990,11 @@ qboolean    BG_CanItemBeGrabbed( int gametype, const entityState_t *ent, const p
 #define MASK_DEADSOLID          (CONTENTS_SOLID|CONTENTS_TERRAIN|CONTENTS_PLAYERCLIP)
 #define MASK_WATER              (CONTENTS_WATER)
 #define MASK_OPAQUE             (CONTENTS_SOLID|CONTENTS_TERRAIN|CONTENTS_SLIME|CONTENTS_LAVA)
+#ifndef _DEMO
 #define MASK_SHOT               (CONTENTS_SOLID|CONTENTS_TERRAIN|CONTENTS_BODY|CONTENTS_SHOTCLIP)
-
+#else
+#define MASK_SHOT               (CONTENTS_SOLID|CONTENTS_BODY)
+#endif // not _DEMO
 
 //
 // entityState_t->eType
@@ -848,11 +1040,15 @@ void        BG_AddPredictableEventToPlayerstate( int newEvent, int eventParm, pl
 
 void        BG_PlayerStateToEntityState( playerState_t *ps, entityState_t *s, qboolean snap );
 void        BG_PlayerStateToEntityStateExtraPolate( playerState_t *ps, entityState_t *s, int time, qboolean snap );
-void        BG_PlayerAngles( vec3_t startAngles, vec3_t legs[3], 
-                         vec3_t legsAngles, vec3_t lowerTorsoAngles, vec3_t upperTorsoAngles, vec3_t headAngles,
-                         int leanOffset, int painTime, int painDirection, int currentTime,
-                         animInfo_t* torsoInfo, animInfo_t* legsInfo,
-                         int frameTime, vec3_t velocity, qboolean dead, float movementDir, void *ghoul2 );
+void		BG_PlayerAngles( vec3_t startAngles, vec3_t legs[3],
+                        #ifndef _DEMO
+                        vec3_t legsAngles, vec3_t lowerTorsoAngles, vec3_t upperTorsoAngles, vec3_t headAngles,
+                        #else
+                        vec3_t legsAngles, vec3_t lowerTorsoAngles, vec3_t headAngles,
+                        #endif // not _DEMO
+                        int leanOffset, int painTime, int painDirection, int currentTime,
+                        animInfo_t* torsoInfo, animInfo_t* legsInfo,
+                        int frameTime, vec3_t velocity, qboolean dead, float movementDir, void *ghoul2 );
 qboolean    BG_ParseAnimationFile ( const char *filename, animation_t* animations );
 
 float       BG_CalculateLeanOffset ( int leanTime );

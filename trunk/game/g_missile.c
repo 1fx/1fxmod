@@ -24,10 +24,12 @@ void G_BounceMissile( gentity_t *ent, trace_t *trace )
     int     hitTime;
 
     // nothing to do if already stationary
+    #ifndef _DEMO
     if ( ent->s.pos.trType == TR_STATIONARY )
     {
         return;
     }
+    #endif // not _DEMO
 
     // reflect the velocity on the trace plane
     hitTime = level.previousTime + ( level.time - level.previousTime ) * trace->fraction;
@@ -453,6 +455,9 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace )
                      ent->methodOfDeath, location );
             if(current_gametype.value == GT_HS && ent->methodOfDeath == 257)
                 d = 1;
+
+            #ifndef _DEMO
+            // Don't do this in demo, the client doesn't support it.
             if ( d && other->client)
             {
                 gentity_t *tent;
@@ -496,6 +501,7 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace )
                 VectorCopy ( other->r.currentOrigin, tent->s.angles );
                 SnapVector ( tent->s.angles );
             }
+            #endif // not _DEMO
         }
     }
 
@@ -745,7 +751,11 @@ void G_RunMissile( gentity_t *ent )
         }
 
         // Above it only kills it if the item has no gravity
-        if ( origin[2] > level.worldMaxs[2] && ent->s.pos.trType != TR_GRAVITY && ent->s.pos.trType != TR_LIGHTGRAVITY)
+        if ( origin[2] > level.worldMaxs[2] && ent->s.pos.trType != TR_GRAVITY
+            #ifndef _DEMO
+            && ent->s.pos.trType != TR_LIGHTGRAVITY
+            #endif // not _DEMO
+            )
         {
             G_FreeEntity( ent );
             return;

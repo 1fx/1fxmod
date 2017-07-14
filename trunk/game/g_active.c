@@ -217,6 +217,7 @@ void ClientImpacts( gentity_t *ent, pmove_t *pm ) {
 
 }
 
+#ifndef _DEMO
 /*
 ============
 G_IsClientSiameseTwin
@@ -268,6 +269,7 @@ static qboolean G_IsClientSiameseTwin ( gentity_t* ent, gentity_t* ent2 )
 
     return qtrue;
 }
+#endif // not _DEMO
 
 /*
 ============
@@ -325,6 +327,7 @@ void G_TouchTriggers( gentity_t *ent )
     {
         hit = &g_entities[touch[i]];
 
+        #ifndef _DEMO
         // pmove would have to have detected siamese twins first
         if ( hit->client && hit != ent && !hit->client->siameseTwin && (ent->client->ps.pm_flags & PMF_SIAMESETWINS) )
         {
@@ -338,6 +341,7 @@ void G_TouchTriggers( gentity_t *ent )
             ent->client->siameseTwin = hit;
             hit->client->siameseTwin = ent;
         }
+        #endif // not _DEMO
 
         if ( !( hit->r.contents & CONTENTS_TRIGGER ) )
         {
@@ -432,8 +436,10 @@ void G_TouchTriggers( gentity_t *ent )
         }
     }
 
+    #ifndef _DEMO
     // Dont bother looking for twins again unless pmove says so
     ent->client->ps.pm_flags &= (~PMF_SIAMESETWINS);
+    #endif // not _DEMO
 }
 
 
@@ -692,6 +698,7 @@ void SpectatorThink( gentity_t *ent, usercmd_t *ucmd )
     {
         G_StopFollowing( ent );
     }
+    #ifndef _DEMO
     else if (((client->buttons & BUTTON_ZOOMIN) && !( client->oldbuttons & BUTTON_ZOOMIN ))
             || ((client->buttons & BUTTON_RELOAD) && !( client->oldbuttons & BUTTON_RELOAD ))
             || ((client->buttons & BUTTON_USE) && !( client->oldbuttons & BUTTON_USE)))
@@ -711,6 +718,7 @@ void SpectatorThink( gentity_t *ent, usercmd_t *ucmd )
         }
     }
     //End
+    #endif // not _DEMO
 }
 
 /*
@@ -1529,6 +1537,7 @@ void ClientThink_real(gentity_t *ent)
     {
         pm.tracemask = MASK_PLAYERSOLID & ~CONTENTS_BODY;
     }
+    #ifndef _DEMO
     else if ( client->siameseTwin )
     {
         // Make sure we are still stuck, if so, clip through players.
@@ -1545,6 +1554,7 @@ void ClientThink_real(gentity_t *ent)
             pm.tracemask = MASK_PLAYERSOLID;
         }
     }
+    #endif // not _DEMO
     else if ( ent->r.svFlags & SVF_BOT )
     {
         pm.tracemask = MASK_PLAYERSOLID | CONTENTS_BOTCLIP;
@@ -1709,6 +1719,7 @@ void ClientThink_real(gentity_t *ent)
     ClientTimerActions( ent, msec );
 }
 
+#ifndef _DEMO
 /*
 ==================
 G_CheckClientTeamkill
@@ -1767,6 +1778,7 @@ void G_CheckClientTeamkill ( gentity_t* ent )
     //trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\" \"team killing\"\n", ent->s.number ) );
     //End - 03.01.05 - 09:45pm
 }
+#endif // not _DEMO
 
 /*
 ==================
@@ -1891,10 +1903,12 @@ void SpectatorClientEndFrame( gentity_t *ent )
 
                 ent->client->ps = cl->ps;
                 ent->client->ps.pm_flags |= PMF_FOLLOW;
+                #ifndef _DEMO
                 if ( ent->client->sess.spectatorFirstPerson )
                 {
                     ent->client->ps.pm_flags |= PMF_FIRSTPERSONSPEC;
                 }
+                #endif // not _DEMO
                 ent->client->ps.eFlags = flags;
                 ent->client->ps.persistant[PERS_SPAWN_COUNT] = count;
                 ent->client->ps.persistant[PERS_SCORE] = score; // Boe!Man 3/13/15: Fix for odd scores in spectator mode (in server info).

@@ -21,6 +21,7 @@
 #define CONTENTS_NODROP         0x00000800  // don't leave bodies or items (death fog, lava)
 #define CONTENTS_TERRAIN        0x00001000  // volume contains terrain data
 #define CONTENTS_LADDER         0x00002000
+#ifndef _DEMO
 #define CONTENTS_ABSEIL         0x00004000  // (SOF2) used like ladder to define where an NPC can abseil
 #define CONTENTS_OPAQUE         0x00008000  // defaults to on, when off, solid can be seen through
 #define CONTENTS_OUTSIDE        0x00010000  // volume is considered to be in the outside (i.e. not indoors)
@@ -29,6 +30,7 @@
 #define CONTENTS_ITEM           0x00100000  // ""
 #define CONTENTS_DETAIL         0x08000000  // brushes not used for the bsp
 #define CONTENTS_TRANSLUCENT    0x80000000  // don't consume surface fragments inside
+#endif // not _DEMO
 
 #define SURF_HINT               0x00000100  // make a primary bsp splitter
 #define SURF_SKIP               0x00000200  // completely ignore, allowing non-clused brushes

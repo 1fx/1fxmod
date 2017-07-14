@@ -182,6 +182,33 @@ qboolean BG_BuildGametypeList ( void )
 
     bg_gametypeCount = 0;
 
+    #ifdef _DEMO
+    // In demo, DM and TDM have no gametype script files.
+    // The gametype data for DM and TDM are added manually.
+
+    // Deathmatch.
+    bg_gametypeData[bg_gametypeCount].displayName = trap_VM_LocalStringAlloc("Deathmatch");
+    bg_gametypeData[bg_gametypeCount].pickupsDisabled = qfalse;
+    bg_gametypeData[bg_gametypeCount].teams = qfalse;
+    bg_gametypeData[bg_gametypeCount].showKills = qtrue;
+    bg_gametypeData[bg_gametypeCount].respawnType = RT_NORMAL;
+    bg_gametypeData[bg_gametypeCount].backpack = 25;
+    bg_gametypeData[bg_gametypeCount].script = trap_VM_LocalStringAlloc("");
+    bg_gametypeData[bg_gametypeCount].name = trap_VM_LocalStringAlloc("dm");
+    bg_gametypeCount++;
+
+    // Team Deathmatch.
+    bg_gametypeData[bg_gametypeCount].displayName = trap_VM_LocalStringAlloc("Team Deathmatch");
+    bg_gametypeData[bg_gametypeCount].pickupsDisabled = qfalse;
+    bg_gametypeData[bg_gametypeCount].teams = qtrue;
+    bg_gametypeData[bg_gametypeCount].showKills = qtrue;
+    bg_gametypeData[bg_gametypeCount].respawnType = RT_NORMAL;
+    bg_gametypeData[bg_gametypeCount].backpack = 25;
+    bg_gametypeData[bg_gametypeCount].script = trap_VM_LocalStringAlloc("");
+    bg_gametypeData[bg_gametypeCount].name = trap_VM_LocalStringAlloc("tdm");
+    bg_gametypeCount++;
+    #endif // _DEMO
+
     // Retrieve the list of gametype files.  The returned list is a
     // null separated list with the number of entries returned by the call
     filecount = trap_FS_GetFileList("scripts", ".gametype", filelist, 4096 );
