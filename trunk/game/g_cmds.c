@@ -88,8 +88,10 @@ static admCmd_t AdminCommands[] =
     {"!ff",     "friendlyfire",     &g_ff.integer,              &adm_friendlyFire,              "Enables/disables friendly fire",   "",                 NULL},
     {"!rn",     "rename",           &g_rename.integer,          &adm_Rename,                    "Renames a players' name",          "<i/n> <name>",     NULL},
     {"!swi",    "switch",           &g_forceteam.integer,       &adm_Switch,                    "Switch one to the opposite team",  "<i/n>",            "ed"},
+    #ifndef _DEMO
     {"!3rd",    "3rd",              &g_3rd.integer,             &adm_Third,                     "Toggles Thirdperson on or off",    "",                 NULL},
     {"!third",  "third",            &g_3rd.integer,             &adm_Third,                     "Toggles Thirdperson on or off",    "",                 NULL},
+    #endif // not _DEMO
     {"!wp",     "weapon",           &g_toggleweapon.integer,    &adm_toggleWeapon,              "Toggles weapon on or off",         "",                 NULL},
     {"!aca",    "anticamp",         &g_anticamp.integer,        &adm_Anticamp,                  "Toggles anticamp on or off",       "",                 NULL},
     {"!em",     "endmap",           &g_endmap.integer,          &adm_endMap,                    "Requests map to end",              "",                 NULL},
@@ -563,7 +565,7 @@ void DeathmatchScoreboardMessage( gentity_t *ent )
             g_entities[level.sortedClients[i]].s.gametypeitems
             #endif // not _DEMO
             );
-        #endif // not _GOLD
+        #endif // not _GOLD and not _DEMO
 
         j = strlen(entry);
         if (stringlength + j > 1022 )

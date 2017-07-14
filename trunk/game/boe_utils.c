@@ -1733,7 +1733,7 @@ void Boe_About( gentity_t *ent )
     trap_SendServerCommand( ent-g_entities, va("print \"%-25s SoF2 v1.02t (MP TEST)\n", "[^3Mod platform^7]"));
     #else
     trap_SendServerCommand( ent-g_entities, va("print \"%-25s SoF2 v1.00 (Full)\n", "[^3Mod platform^7]"));
-    #endif // _GOLD, _DEMO or else Full
+    #endif // _GOLD, _DEMO or Full
 
     #ifdef WIN32
     trap_SendServerCommand( ent-g_entities, va("print \"%-25s Windows (*.dll)\n", "[^3Host platform^7]"));
@@ -1751,9 +1751,13 @@ void Boe_About( gentity_t *ent )
         trap_SendServerCommand( ent-g_entities, va("print \"%-25s %i\n", "[^3Respawn interval^7]", g_respawnInterval.integer));
     }
 
+    #ifndef _DEMO
     #ifndef _GOLD
-    trap_SendServerCommand( ent-g_entities, va("print \"%-25s Yes\n", "[^3Third person^7]", (g_allowthirdperson.integer > 0) ? "Yes" : "No"));
+    trap_SendServerCommand( ent-g_entities, va("print \"%-25s Yes\n", "[^3Third person^7]", (g_allowthirdperson.integer) ? "Yes" : "No"));
+    #else
+    trap_SendServerCommand( ent-g_entities, va("print \"%-25s Yes\n", "[^3Third person^7]", (g_enforce1fxAdditions.integer && g_allowthirdperson.integer) ? "Yes" : "No"));
     #endif // not _GOLD
+    #endif // not _DEMO
     trap_SendServerCommand( ent-g_entities, va("print \"%-25s %i\n", "[^3Speed^7]", g_speed.integer));
     trap_SendServerCommand( ent-g_entities, va("print \"%-25s %i\n", "[^3Gravity^7]", g_gravity.integer));
     trap_SendServerCommand( ent-g_entities, va("print \"%-25s %i\n", "[^3Total clients^7]", level.numConnectedClients));

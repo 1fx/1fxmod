@@ -48,6 +48,7 @@ void Patch_engineCVARs()
     (*(cvar_t **)FLOODPROTECT_ADDRESS)->flags |= CVAR_ROM;
     Com_Printf("%-4ssv_floodProtect to read only.\n", " ");
 
+    #ifndef _DEMO
     // Modify sv_allowDownload with read only attribute,
     // if 1fx. Client Additions are enforced.
     // Otherwise we reset it to read/write.
@@ -58,4 +59,11 @@ void Patch_engineCVARs()
         (*(cvar_t **)ALLOWDOWNLOAD_ADDRESS)->flags &= ~CVAR_ROM;
         Com_Printf("%-4ssv_allowDownload to read/write.\n", " ");
     }
+    #else
+    // In demo, always disable sv_allowDownload.
+    trap_Cvar_Set("sv_allowDownload", "0");
+
+    (*(cvar_t **)ALLOWDOWNLOAD_ADDRESS)->flags |= CVAR_ROM;
+    Com_Printf("%-4ssv_allowDownload to read only.\n", " ");
+    #endif // not _DEMO
 }

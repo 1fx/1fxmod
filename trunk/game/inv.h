@@ -42,7 +42,7 @@
 //item numbers (make sure they are in sync with bg_itemlist in bg_misc.c)
 //pickups
 #ifndef _GOLD
-// For v1.00.
+// For v1.00/v1.02t.
 typedef enum 
 {
     MODELINDEX_NONE,

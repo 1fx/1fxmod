@@ -135,13 +135,17 @@ void G_TeamInfo (gentity_t *ent, char *team)
     if(strstr(g_gametype.string, "ctf")){
         trap_SendServerCommand( ent-g_entities, va("print \"%-25s %i\n", "[^3Respawn interval^7]", g_respawnInterval.integer));
     }
+    #ifndef _DEMO
     #ifndef _GOLD
     if (g_allowthirdperson.integer > 0){
+    #else
+    if (g_enforce1fxAdditions.integer && g_allowthirdperson.integer){
+    #endif // not _GOLD
         trap_SendServerCommand( ent-g_entities, va("print \"%-25s Yes\n", "[^3Third person^7]"));
     }else{
         trap_SendServerCommand( ent-g_entities, va("print \"%-25s No\n", "[^3Third person^7]"));
     }
-    #endif // not _GOLD
+    #endif // not _DEMO
     trap_SendServerCommand( ent-g_entities, va("print \"%-25s %i\n", "[^3Speed^7]", g_speed.integer));
     trap_SendServerCommand( ent-g_entities, va("print \"%-25s %i\n", "[^3Gravity^7]", g_gravity.integer));
     trap_SendServerCommand( ent-g_entities, va("print \"%-25s %i\n", "[^3Total clients^7]", level.numConnectedClients));

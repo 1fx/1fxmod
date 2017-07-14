@@ -254,7 +254,9 @@ vmCvar_t    g_alternateMap;
 
 // Boe!Man 1/26/11
 vmCvar_t    g_cm;
+#ifndef _DEMO
 vmCvar_t    g_3rd;
+#endif // not _DEMO
 vmCvar_t    g_enableCustomCommands;
 
 // Boe!Man 2/13/11
@@ -333,7 +335,9 @@ vmCvar_t    boe_fragWars;
 vmCvar_t    boe_deadMonkey;
 #endif // _3DServer
 
+#ifndef _DEMO
 vmCvar_t    g_allowthirdperson;
+#endif // not _DEMO
 
 vmCvar_t    g_enforce1fxAdditions;
 vmCvar_t    g_httpRefPaks;
@@ -535,7 +539,9 @@ static cvarTable_t gameCvarTable[] =
     { &g_lock,                      "g_lock",               "3",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
     { &g_clan,                      "g_clan",               "4",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
     { &g_damage,                    "g_damage",             "4",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
+    #ifndef _DEMO
     { &g_3rd,                       "g_3rd",                "4",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
+    #endif // not _DEMO
     { &g_cm,                        "g_cm",                 "4",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
     { &g_forcevote,                 "g_forcevote",          "3",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
     { &g_pause,                     "g_pause",              "3",                CVAR_ARCHIVE,   0.0f,   0.0f, 0,  qfalse },
@@ -733,7 +739,9 @@ static cvarTable_t gameCvarTable[] =
     { &boe_deadMonkey, "3d_deadMonkey", "0", CVAR_ARCHIVE | CVAR_LATCH, 0.0, 0.0, 0, qfalse },
 #endif // _3DServer
 
+    #ifndef _DEMO
     { &g_allowthirdperson, "g_allowThirdPerson", "1", CVAR_ARCHIVE | CVAR_SERVERINFO, 0.0, 0.0, 0, qfalse },
+    #endif // not _DEMO
 
     // Boe!Man 7/7/15: HTTP downloading and other client addition CVARs.
     { &g_enforce1fxAdditions,   "g_enforce1fxAdditions",    "0",    CVAR_ARCHIVE | CVAR_LATCH,                                      0.0, 0.0, 0, qfalse },
@@ -1485,7 +1493,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
     Com_Printf("Platform: SoF2 - v1.02t (MP TEST)\n");
     #else
     Com_Printf("Platform: SoF2 - v1.00 (Full)\n");
-    #endif // _GOLD, _DEMO or else Full
+    #endif // _GOLD, _DEMO or Full
 
     // Boe!Man 3/14/14: Check if we can actually start the server.
     if(G_CheckAlive()){

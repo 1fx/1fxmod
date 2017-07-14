@@ -1328,7 +1328,9 @@ extern  vmCvar_t    g_pause;
 extern  vmCvar_t    g_forcevote;
 extern  vmCvar_t    g_ff;
 extern  vmCvar_t    g_rename;
+#ifndef _DEMO
 extern  vmCvar_t    g_3rd;
+#endif // not _DEMO
 extern  vmCvar_t    g_toggleweapon;
 extern  vmCvar_t    g_anticamp;
 extern  vmCvar_t    g_endmap;
@@ -1387,7 +1389,9 @@ int             adm_Rename                          (int argNum, gentity_t *adm,
 int             adm_Map                             (int argNum, gentity_t *adm, qboolean shortCmd);
 int             adm_Rounds                          (int argNum, gentity_t *adm, qboolean shortCmd);
 int             adm_Switch                          (int argNum, gentity_t *adm, qboolean shortCmd);
+#ifndef _DEMO
 int             adm_Third                           (int argNum, gentity_t *adm, qboolean shortCmd);
+#endif // not _DEMO
 int             adm_toggleWeapon                    (int argNum, gentity_t *adm, qboolean shortCmd);
 int             adm_Anticamp                        (int argNum, gentity_t *adm, qboolean shortCmd);
 int             adm_endMap                          (int argNum, gentity_t *adm, qboolean shortCmd);
@@ -1629,7 +1633,9 @@ extern  vmCvar_t    g_minRate;
 extern  vmCvar_t    g_enforceArenaCheck;
 extern  vmCvar_t    g_checkTimeRemaining;
 
+#ifndef _DEMO
 extern  vmCvar_t    g_allowthirdperson;
+#endif // not _DEMO
 
 extern  vmCvar_t    g_enforce1fxAdditions;
 extern  vmCvar_t    g_httpRefPaks;
