@@ -473,8 +473,13 @@ static cvarTable_t gameCvarTable[] =
     { &hideSeek_availableWeapons,   "hideSeek_availableWeapons", "200000000000000022220000", CVAR_INTERNAL | CVAR_ROM, 0.0, 0.0, 0, qfalse },
     #endif // not _GOLD
     { &availableWeapons,    "availableWeapons", "2222222222211", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
-    // Henk 01/04/10
+
+    #if !defined(_GOLD) && !defined(_DEMO)
     { &g_disableNades,  "g_disableNades", "1", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
+    #else
+    // Enabled on any build except v1.00.
+    { &g_disableNades,  "g_disableNades", "0", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
+    #endif // not _GOLD and not _DEMO
     // End
     { &g_forceFollow,       "g_forceFollow",     "1",             CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
     { &g_followEnemy,       "g_followEnemy",     "1",             CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
