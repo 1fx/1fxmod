@@ -1736,12 +1736,12 @@ void Boe_About( gentity_t *ent )
     #endif // _GOLD, _DEMO or Full
 
     #ifdef WIN32
-    trap_SendServerCommand( ent-g_entities, va("print \"%-25s Windows (*.dll)\n", "[^3Host platform^7]"));
+    trap_SendServerCommand( ent-g_entities, va("print \"%-25s Windows (*.dll)\n", "[^3Host OS^7]"));
     #elif defined(__linux__)
-    trap_SendServerCommand( ent-g_entities, va("print \"%-25s Linux (*.so)\n", "[^3Host platform^7]"));
+    trap_SendServerCommand( ent-g_entities, va("print \"%-25s Linux (*.so)\n", "[^3Host OS^7]"));
     #elif defined(MACOS_X)
-    trap_SendServerCommand( ent-g_entities, va("print \"%-25s Mac OS X (*.bundle)\n", "[^3Host platform^7]"));
-    #endif // Host platform.
+    trap_SendServerCommand( ent-g_entities, va("print \"%-25s Mac OS X (*.bundle)\n", "[^3Host OS^7]"));
+    #endif // Host OS.
 
     trap_SendServerCommand( ent-g_entities, va("print \"%-25s %s\n", "[^3Instagib^7]", (g_instaGib.integer > 0) ? "Yes" : "No"));
     trap_SendServerCommand( ent-g_entities, va("print \"%-25s %s\n", "[^3Competition Mode^7]", (g_compMode.integer > 0 && cm_enabled.integer > 1) ? "Yes" : "No"));
@@ -3173,11 +3173,11 @@ void Boe_SQLStats(void)
 
     // Boe!Man 1/30/13: Hard-coded statistics, i.e. things that never change.
     #ifdef WIN32
-    Com_Printf("%-25s Windows\n", "[^3Host platform^7]");
+    Com_Printf("%-25s Windows\n", "[^3Host OS^7]");
     #elif defined(__linux__)
-    Com_Printf("%-25s Linux\n", "[^3Host platform^7]");
+    Com_Printf("%-25s Linux\n", "[^3Host OS^7]");
     #elif defined(MACOS_X)
-    Com_Printf("%-25s Mac OS X\n", "[^3Host platform^7]");
+    Com_Printf("%-25s Mac OS X\n", "[^3Host OS^7]");
     #endif // _WIN32
 
     #if defined(__linux__) && (defined(__GNUC__) && __GNUC__ < 3)
