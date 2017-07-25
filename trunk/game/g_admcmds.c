@@ -37,35 +37,20 @@ int adm_Uppercut(int argNum, gentity_t *adm, qboolean shortCmd)
     ent = g_entities + idNum;
     ent->client->ps.pm_flags |= PMF_JUMPING;
     ent->client->ps.groundEntityNum = ENTITYNUM_NONE;
-    // Boe!Man 5/3/10: We higher the uppercut.
-    if (shortCmd){
-        ucLevel = atoi(GetReason());
 
-        // Boe!Man 1/13/11: Changing uppercut levels.
-        if (ucLevel == 0){
-            ent->client->ps.velocity[2] = 1000;
-        }
-        else{
-            ent->client->ps.velocity[2] = 200 * ucLevel;
-        }
+    // Boe!Man 5/3/10: We higher the uppercut.
+    if (shortCmd && G_GetChatArgumentCount()){
+        ucLevel = atoi(G_GetChatArgument(2));
+    }else{
+        trap_Argv(argNum + 1, arg, sizeof(arg));
+        ucLevel = atoi(arg);
     }
 
-    // Boe!Man 1/28/11: Check for the uppercut level other than when called from ! commands.
-    else{
-        if (adm&&adm->client){  // If called from /adm..
-            trap_Argv(3, arg, sizeof(arg));
-        }
-        else{                   // If called from /rcon..
-            trap_Argv(2, arg, sizeof(arg));
-        }
-
-        ucLevel = atoi(arg);
-        if (ucLevel == 0){
-            ent->client->ps.velocity[2] = 1000;
-        }
-        else{
-            ent->client->ps.velocity[2] = 200 * ucLevel;
-        }
+    // Boe!Man 1/13/11: Changing uppercut levels.
+    if (ucLevel == 0){
+        ent->client->ps.velocity[2] = 1000;
+    }else{
+        ent->client->ps.velocity[2] = 200 * ucLevel;
     }
 
     // Boe!Man 11/2/10: Added client sound.
@@ -112,21 +97,13 @@ Kicks a player from the server.
 
 int adm_Kick(int argNum, gentity_t *adm, qboolean shortCmd){
     int     idNum;
-    char    reason[32];
 
     // Get the client ID.
     idNum = G_clientNumFromArg(adm, argNum, "kick", qfalse, qfalse, qfalse, shortCmd);
     if (idNum < 0) return idNum;
 
-    // Get the reason.
-    if (shortCmd){
-        strncpy(reason, GetReason(), sizeof(reason));
-    }else{
-        trap_Argv(3, reason, sizeof(reason));
-    }
-
     // Kick the player.
-    trap_SendConsoleCommand(EXEC_INSERT, va("clientkick \"%d\" \"%s\"\n", idNum, reason));
+    G_kickPlayer(&g_entities[idNum], adm, "kicked", GetReason());
 
     return idNum;
 }
@@ -195,14 +172,10 @@ static void adm_addAdmin_f(int argNum, gentity_t *adm, qboolean shortCmd, int le
         return;
     }
 
-    if (shortCmd){
-        strcpy(arg, GetReason());
+    if (shortCmd && G_GetChatArgumentCount()){
+        strcpy(arg, G_GetChatArgument(2));
     }else{
-        if (adm && adm->client){
-            trap_Argv(3, arg, sizeof(arg));
-        }else{
-            trap_Argv(2, arg, sizeof(arg));
-        }
+        trap_Argv(argNum + 1, arg, sizeof(arg));
     }
 
     if (!Q_stricmp(arg, "pass")){
@@ -621,31 +594,19 @@ int adm_Mute(int argNum, gentity_t *adm, qboolean shortCmd)
     }
 
     // Get the time the client should be muted.
-    if (shortCmd){
-        if (atoi(GetReason()) <= 0){
-            time = 5;
-        }else if (atoi(GetReason()) > 60){
-            G_printInfoMessage(adm, "The maximum time for mute is 60 minutes.");
-            time = 60;
-        }else{
-            time = atoi(GetReason());
-        }
+    if (shortCmd && G_GetChatArgumentCount()){
+        time = atoi(G_GetChatArgument(2));
     }else{
-        if (adm&&adm->client){  // If called from /adm..
-            trap_Argv(3, arg, sizeof(arg));
-            time = atoi(arg);
-            if (time <= 0)
-                time = 5;
-            else if (time > 60)
-                time = 60;
-        }else{                  // If called from /rcon..
-            trap_Argv(2, arg, sizeof(arg));
-            time = atoi(arg);
-            if (time <= 0)
-                time = 5;
-            else if (time > 60)
-                time = 60;
-        }
+        trap_Argv(argNum + 1, arg, sizeof(arg));
+        time = atoi(arg);
+    }
+
+    // Check time given (or default to 5).
+    if(time <= 0){
+        time = 5;
+    }else if(time > 60){
+        G_printInfoMessage(adm, "The maximum time for mute is 60 minutes.");
+        time = 60;
     }
 
     // Do the action.
@@ -783,7 +744,7 @@ int adm_forceTeam(int argNum, gentity_t *adm, qboolean shortCmd)
     }
 
     if (!shortCmd || shortCmd && !argc){
-        trap_Argv((shortCmd) ? argNum + 1 : argNum, str, sizeof(str));
+        trap_Argv(argNum, str, sizeof(str));
     }else{
         Q_strncpyz(str, G_GetChatArgument(1), sizeof(str));
     }
@@ -802,45 +763,25 @@ int adm_forceTeam(int argNum, gentity_t *adm, qboolean shortCmd)
     }
 
     // Set the team.
-    if (shortCmd){
-        memset(str, 0, sizeof(str));
-
-        if (argc){
-            Q_strncpyz(str, G_GetChatArgument(2), sizeof(str));
-        }else{
-            trap_Argv(argNum + 2, str, sizeof(str));
-        }
-
-        if (str[0] == 's' || str[0] == 'S'){
-            strcpy(str, "spectator");
-            xTeam = TEAM_SPECTATOR;
-        }else if (str[0] == 'r' || str[0] == 'R'){
-            strcpy(str, "red");
-            xTeam = TEAM_RED;
-        }else if (str[0] == 'b' || str[0] == 'B'){
-            strcpy(str, "blue");
-            xTeam = TEAM_BLUE;
-        }else{
-            G_printInfoMessage(adm, "Wrong team specified.");
-            return -1;
-        }
+    memset(str, 0, sizeof(str));
+    if(shortCmd && argc){
+        Q_strncpyz(str, G_GetChatArgument(2), sizeof(str));
     }else{
-        // Boe!Man 1/13/11: Fix for Forceteam not working with RCON system.
         trap_Argv(argNum + 1, str, sizeof(str));
+    }
 
-        if (str[0] == 's' || str[0] == 'S'){
-            strcpy(str, "spectator");
-            xTeam = TEAM_SPECTATOR;
-        }else if (str[0] == 'r' || str[0] == 'R'){
-            strcpy(str, "red");
-            xTeam = TEAM_RED;
-        }else if (str[0] == 'b' || str[0] == 'B'){
-            strcpy(str, "blue");
-            xTeam = TEAM_BLUE;
-        }else{
-            G_printInfoMessage(adm, "Wrong team specified: %s.", str);
-            return -1;
-        }
+    if (str[0] == 's' || str[0] == 'S'){
+        strcpy(str, "spectator");
+        xTeam = TEAM_SPECTATOR;
+    }else if (str[0] == 'r' || str[0] == 'R'){
+        strcpy(str, "red");
+        xTeam = TEAM_RED;
+    }else if (str[0] == 'b' || str[0] == 'B'){
+        strcpy(str, "blue");
+        xTeam = TEAM_BLUE;
+    }else{
+        G_printInfoMessage(adm, "Wrong team specified: %s.", str);
+        return -1;
     }
 
     // Boe!Man 4/15/13: Check if we can forceteam all.
@@ -1602,33 +1543,20 @@ Removes a clan member from the clanlist.
 
 int adm_removeClanMemberFromList(int argNum, gentity_t *adm, qboolean shortCmd)
 {
-    char    arg[32] = "\0";
-    char    buf[32] = "\0";
-    int     i = 0, count = 0;
+    char    arg[32];
 
-    if (shortCmd){
-        trap_Argv(argNum, arg, sizeof(arg));
-        if (strstr(arg, "!") && !strstr(arg, " ")){
-            trap_Argv(argNum + 1, arg, sizeof(arg));
-        }
-        for (i = StartAfterCommand(va("%s", arg)); i<strlen(arg); i++){
-            buf[count] = arg[i];
-            count += 1;
-        }
-        buf[count + 1] = '\0';
+    memset(arg, 0, sizeof(arg));
 
-        if (!strstr(buf, ".")){ // Boe!Man 2/6/13: No dot found, unban by line number.
-            Boe_removeClanMemberFromDb(adm, buf, qtrue, qfalse);
-        }else{ // Boe!Man 2/6/13: Dot found, unban by IP.
-            Boe_removeClanMemberFromDb(adm, buf, qfalse, qfalse);
-        }
+    if(shortCmd && G_GetChatArgumentCount()){
+        strncpy(arg, G_GetChatArgument(1), sizeof(arg));
     }else{
         trap_Argv(argNum, arg, sizeof(arg));
-        if (!strstr(arg, ".")){ // Boe!Man 2/6/13: No dot found, unban by line number.
-            Boe_removeClanMemberFromDb(adm, arg, qtrue, qfalse);
-        }else{ // Boe!Man 2/6/13: Dot found, unban by IP.
-            Boe_removeClanMemberFromDb(adm, arg, qfalse, qfalse);
-        }
+    }
+
+    if (!strstr(arg, ".")){ // Boe!Man 2/6/13: No dot found, unban by line number.
+        Boe_removeClanMemberFromDb(adm, arg, qtrue, qfalse);
+    }else{ // Boe!Man 2/6/13: Dot found, unban by IP.
+        Boe_removeClanMemberFromDb(adm, arg, qfalse, qfalse);
     }
 
     return -1;
@@ -1825,10 +1753,11 @@ static char *adm_checkListFilters(gentity_t *adm, int argNum, qboolean shortCmd,
     }
 
     if(adm && !shortCmd && argCount > 2 || adm && shortCmd && argCount > 0 || !adm && argCount > 1){
-        if (chatFromConsole)
-            rc = argNum + 1;
-        else
+        if(shortCmd && !chatFromConsole){
+            rc = argNum -1;
+        }else{
             rc = argNum;
+        }
 
         while(rc <= argCount){
             memset(arg, 0, sizeof(arg));
@@ -2072,12 +2001,9 @@ Bans a client.
 
 int adm_Ban(int argNum, gentity_t *adm, qboolean shortCmd)
 {
-    int             idNum, i;
-    char            reason[MAX_STRING_TOKENS] = "\0";
-    char            arg[64];
+    int             idNum;
+    char            reason[MAX_STRING_CHARS];
     char            clientName[MAX_NETNAME], admName[MAX_NETNAME];
-    char            *temp = "";
-    qboolean        first = qfalse;
     sqlite3         *db;
     int             start;
 
@@ -2086,33 +2012,25 @@ int adm_Ban(int argNum, gentity_t *adm, qboolean shortCmd)
         start = trap_Milliseconds();
     }
 
-    idNum = G_clientNumFromArg(adm, argNum, "ban", qfalse, qfalse, qfalse, shortCmd);
+    idNum = G_clientNumFromArg(adm, argNum, "ban",
+        qfalse, qfalse, qfalse, shortCmd);
     if (idNum < 0) return idNum;
 
-    if (adm && adm->client){
-        if (shortCmd){
-            strcpy(reason, GetReason());
-        }else{
-            for (i = 0; i <= 25; i++){
-                trap_Argv((argNum + 1) + i, arg, sizeof(arg));
-                if (first){
-                    temp = va("%s %s", temp, arg); // we fill this array up with 25 arguments
-                }else{
-                    temp = va("%s", arg);
-                    first = qtrue;
-                }
-            }
-            strcpy(reason, temp);
-        }
+    // Boe!Man 7/21/17: Get the reason.
+    if(shortCmd && G_GetChatArgumentCount()){
+        Q_strncpyz(reason, GetReason(), sizeof(reason));
     }else{
-        trap_Argv(argNum + 1, arg, sizeof(arg));
-        strcpy(reason, arg);
+        Q_strncpyz(reason, ConcatArgs1(argNum + 1), sizeof(reason));
     }
 
-    // Boe!Man 1/9/12: Check for unsupported characters in the reason and replace them.
+    // Boe!Man 1/9/12: Check for unsupported characters in the reason
+    // and replace them.
     Boe_convertNonSQLChars(reason);
-    // Boe!Man 12/12/12: Also check those in the names, SQLite has massive problems when using quotes in the (updated) query.
-    Q_strncpyz(clientName, g_entities[idNum].client->pers.cleanName, sizeof(clientName));
+
+    // Boe!Man 12/12/12: Also check those in the names, SQLite has massive
+    // problems when using quotes in the (updated) query.
+    Q_strncpyz(clientName, g_entities[idNum].client->pers.cleanName,
+        sizeof(clientName));
     Boe_convertNonSQLChars(clientName);
     if (adm && adm->client){
         Q_strncpyz(admName, adm->client->pers.cleanName, sizeof(admName));
@@ -2124,32 +2042,31 @@ int adm_Ban(int argNum, gentity_t *adm, qboolean shortCmd)
 
     // Boe!Man 12/12/12: Insert query.
     if (adm && adm->client){
-        if (sqlite3_exec(db, va("INSERT INTO bans (IP, name, by, reason) values ('%s', '%s', '%s', '%s')", g_entities[idNum].client->pers.ip, clientName, admName, reason), 0, 0, 0) != SQLITE_OK){
-            trap_SendServerCommand(adm-g_entities, va("print \"^1[Error] ^7bans database: %s\n", sqlite3_errmsg(db)));
+        if (sqlite3_exec(db, va("INSERT INTO bans (IP, name, by, reason) " \
+            "values ('%s', '%s', '%s', '%s')",
+            g_entities[idNum].client->pers.ip, clientName, admName, reason),
+            0, 0, 0) != SQLITE_OK)
+        {
+            trap_SendServerCommand(adm-g_entities,
+                va("print \"^1[Error] ^7bans database: %s\n",
+                sqlite3_errmsg(db)));
             return -1;
         }
     }else{
-        if (sqlite3_exec(db, va("INSERT INTO bans (IP, name, by, reason) values ('%s', '%s', '%s', '%s')", g_entities[idNum].client->pers.ip, clientName, "RCON", reason), 0, 0, 0) != SQLITE_OK){
+        if (sqlite3_exec(db, va("INSERT INTO bans (IP, name, by, reason) " \
+            "values ('%s', '%s', '%s', '%s')",
+            g_entities[idNum].client->pers.ip, clientName, "RCON", reason),
+            0, 0, 0) != SQLITE_OK)
+        {
             G_LogPrintf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
             return -1;
         }
     }
 
-    if (adm && adm->client){
-        if (!*reason){
-            trap_SendConsoleCommand(EXEC_INSERT, va("clientkick \"%d\" \"Banned by %s\"\n", idNum, adm->client->pers.cleanName));
-        }else{
-            trap_SendConsoleCommand(EXEC_INSERT, va("clientkick \"%d\" \"Banned by %s for: %s\"\n", idNum, adm->client->pers.netname, reason));
-        }
-    }else{
-        if (!*reason){
-            trap_SendConsoleCommand(EXEC_INSERT, va("clientkick \"%d\" \"Banned!\"\n", idNum));
-        }else{
-            trap_SendConsoleCommand(EXEC_INSERT, va("clientkick \"%d\" \"Banned for: %s\"\n", idNum, reason));
-        }
-    }
+    // Kick the player and inform them what happened.
+    G_kickPlayer(&g_entities[idNum], adm, "banned", reason);
 
-    if (sql_timeBench.integer){
+    if(sql_timeBench.integer){
         Com_Printf("Ban took: %ims\n", trap_Milliseconds() - start);
     }
 
@@ -2166,46 +2083,35 @@ Subnet bans a client.
 
 int adm_subnetBan(int argNum, gentity_t *adm, qboolean shortCmd)
 {
-    int         idNum, i;
-    char        reason[MAX_STRING_TOKENS] = "\0";
-    char        arg[64];
+    int         idNum;
+    char        reason[MAX_STRING_CHARS];
     char        clientName[MAX_NETNAME], admName[MAX_NETNAME];
-    char        *temp = "";
     char        ip[MAX_IP];
-    qboolean    first = qfalse;
     sqlite3     *db;
 
-    idNum = G_clientNumFromArg(adm, argNum, "subnetban", qfalse, qfalse, qfalse, shortCmd);
+    idNum = G_clientNumFromArg(adm, argNum, "subnetban", qfalse,
+        qfalse, qfalse, shortCmd);
     if (idNum < 0) return idNum;
-
-    if(adm && adm->client){
-        if(shortCmd){
-            strcpy(reason, GetReason());
-        }else{
-            for(i=0;i<=25;i++){
-            trap_Argv( (argNum+1)+i, arg, sizeof( arg ) );
-                if(first){
-                    temp = va("%s %s", temp, arg); // we fill this array up with 25 arguments
-                }else{
-                    temp = va("%s", arg);
-                    first = qtrue;
-                }
-            }
-            strcpy(reason, temp);
-        }
-    }else{
-        trap_Argv( argNum+1, arg, sizeof( arg ) );
-        strcpy(reason, arg);
-    }
 
     // Store the 'subnet' in a seperate char array.
     Q_strncpyz(ip, g_entities[idNum].client->pers.ip, 7);
 
+    // Boe!Man 7/21/17: Get the reason.
+    if(shortCmd && G_GetChatArgumentCount()){
+        Q_strncpyz(reason, GetReason(), sizeof(reason));
+    }else{
+        Q_strncpyz(reason, ConcatArgs1(argNum + 1), sizeof(reason));
+    }
+
     // Check for unsupported characters in the reason and replace them.
     Boe_convertNonSQLChars(reason);
-    // Also check those in the names, SQLite has massive problems when using quotes in the (updated) query.
-    Q_strncpyz(clientName, g_entities[idNum].client->pers.cleanName, sizeof(clientName));
+
+    // Also check those in the names, SQLite has massive problems when
+    // using quotes in the (updated) query.
+    Q_strncpyz(clientName, g_entities[idNum].client->pers.cleanName,
+        sizeof(clientName));
     Boe_convertNonSQLChars(clientName);
+
     if(adm && adm->client){
         Q_strncpyz(admName, adm->client->pers.cleanName, sizeof(admName));
         Boe_convertNonSQLChars(admName);
@@ -2216,31 +2122,27 @@ int adm_subnetBan(int argNum, gentity_t *adm, qboolean shortCmd)
 
     // Boe!Man 12/12/12: Insert query.
     if(adm && adm->client){
-        if(sqlite3_exec(db, va("INSERT INTO subnetbans (IP, name, by, reason) values ('%s', '%s', '%s', '%s')", ip, clientName, admName, reason), 0, 0, 0) != SQLITE_OK){
-            trap_SendServerCommand( adm-g_entities, va("print \"^1[Error] ^7bans database: %s\n", sqlite3_errmsg(db)));
+        if(sqlite3_exec(db, va("INSERT INTO subnetbans (IP, name, " \
+            "by, reason) values ('%s', '%s', '%s', '%s')",
+            ip, clientName, admName, reason), 0, 0, 0) != SQLITE_OK)
+        {
+            trap_SendServerCommand( adm-g_entities,
+                va("print \"^1[Error] ^7bans database: %s\n",
+                sqlite3_errmsg(db)));
             return -1;
         }
     }else{
-        if(sqlite3_exec(db, va("INSERT INTO subnetbans (IP, name, by, reason) values ('%s', '%s', '%s', '%s')", ip, clientName, "RCON", reason), 0, 0, 0) != SQLITE_OK){
+        if(sqlite3_exec(db, va("INSERT INTO subnetbans (IP, name, " \
+            "by, reason) values ('%s', '%s', '%s', '%s')",
+            ip, clientName, "RCON", reason), 0, 0, 0) != SQLITE_OK)
+        {
             G_LogPrintf("^1Error: ^7bans database: %s\n", sqlite3_errmsg(db));
             return -1;
         }
     }
 
-    if(adm && adm->client){
-        if(!*reason){
-            trap_SendConsoleCommand(EXEC_INSERT, va("clientkick \"%d\" \"Subnetbanned by %s\"\n", idNum, adm->client->pers.netname));
-        }else{
-            trap_SendConsoleCommand(EXEC_INSERT, va("clientkick \"%d\" \"Subnetbanned by %s for: %s\"\n", idNum, adm->client->pers.netname, reason));
-        }
-    }
-    else{
-        if(!*reason){
-            trap_SendConsoleCommand(EXEC_INSERT, va("clientkick \"%d\" \"Subnetbanned!\"\n", idNum));
-        }else{
-            trap_SendConsoleCommand(EXEC_INSERT, va("clientkick \"%d\" \"Subnetbanned for: %s\"\n", idNum, reason));
-        }
-    }
+    // Kick the player and inform them what happened.
+    G_kickPlayer(&g_entities[idNum], adm, "subnetbanned", reason);
 
     return idNum;
 }
@@ -2261,8 +2163,8 @@ int adm_Broadcast(int argNum, gentity_t *adm, qboolean shortCmd)
     int i, z = 0;
 
     if (shortCmd){
-        trap_Argv(1, buffer, sizeof(buffer));
-        buffer2 = ConcatArgs1(2);
+        trap_Argv(argNum - 1, buffer, sizeof(buffer));
+        buffer2 = ConcatArgs1(argNum);
         if (strlen(buffer2) < 1){
             // If someone's trying to broadcast nothing, buffer start will be 0. Don't allow admins to broadcast the actual "!br" command.
             if (StartAfterCommand(buffer) != 0){
@@ -2276,10 +2178,10 @@ int adm_Broadcast(int argNum, gentity_t *adm, qboolean shortCmd)
             strcpy(buffer1, buffer2);
         }
     }else{
-        if (adm && adm->client){
-            strcpy(buffer1, ConcatArgs1(2));
+        if(adm && adm->client){
+            strcpy(buffer1, ConcatArgs1(argNum));
         }else{
-            strcpy(buffer1, ConcatArgs1(1));
+            strcpy(buffer1, ConcatArgs1(argNum));
         }
     }
 
@@ -2341,7 +2243,7 @@ int adm_clanVsAll(int argNum, gentity_t *adm, qboolean shortCmd)
     argc = G_GetChatArgumentCount();
 
     if (!shortCmd || shortCmd && !argc){
-        trap_Argv((shortCmd) ? argNum + 1 : argNum, team, sizeof(team));
+        trap_Argv(argNum, team, sizeof(team));
     }else{
         Q_strncpyz(team, G_GetChatArgument(1), sizeof(team));
     }
@@ -2508,7 +2410,7 @@ int adm_Flash(int argNum, gentity_t *adm, qboolean shortCmd)
     float       x, y;
 
     if (!shortCmd || shortCmd && !G_GetChatArgumentCount()){
-        trap_Argv((!shortCmd) ? argNum : argNum + 1, arg, sizeof(arg));
+        trap_Argv(argNum, arg, sizeof(arg));
     }else{
         Q_strncpyz(arg, G_GetChatArgument(1), sizeof(arg));
     }
@@ -2579,7 +2481,7 @@ int adm_Gametype(int argNum, gentity_t *adm, qboolean shortCmd)
     }
 
     if (!shortCmd || shortCmd && !argc){
-        trap_Argv((!shortCmd) ? argNum : argNum + 1, arg, sizeof(arg));
+        trap_Argv(argNum, arg, sizeof(arg));
     }else{
         Q_strncpyz(arg, G_GetChatArgument(1), sizeof(arg));
     }
@@ -2779,27 +2681,17 @@ Unbans a client.
 
 int adm_Unban(int argNum, gentity_t *adm, qboolean shortCmd)
 {
-    char    arg[32] = "\0", buf[32] = "\0";
-    int     i = 0, count = 0;
+    char    arg[32];
 
-    if (shortCmd){
-        trap_Argv(argNum, arg, sizeof(arg));
-        if (strstr(arg, "!") && !strstr(arg, " ")){
-            trap_Argv(argNum + 1, arg, sizeof(arg));
-        }
+    memset(arg, 0, sizeof(arg));
 
-        for (i = StartAfterCommand(va("%s", arg)); i<strlen(arg); i++){
-            buf[count] = arg[i];
-            count += 1;
-        }
-        buf[count + 1] = '\0';
-
-        adm_unbanFromDatabase(adm, buf, qfalse);
+    if (shortCmd && G_GetChatArgumentCount()){
+        strncpy(arg, G_GetChatArgument(1), sizeof(arg));
     }else{
         trap_Argv(argNum, arg, sizeof(arg));
-
-        adm_unbanFromDatabase(adm, arg, qfalse);
     }
+
+    adm_unbanFromDatabase(adm, arg, qfalse);
 
     return -1;
 }
@@ -2814,28 +2706,17 @@ Subnet unbans a client.
 
 int adm_subnetUnban(int argNum, gentity_t *adm, qboolean shortCmd)
 {
-    char    arg[32] = "\0", buf[32] = "\0";
-    int     i = 0, count = 0;
+    char    arg[32];
 
-    if (shortCmd){
+    memset(arg, 0, sizeof(arg));
+
+    if (shortCmd && G_GetChatArgumentCount()){
+        strncpy(arg, G_GetChatArgument(1), sizeof(arg));
+    }else{
         trap_Argv(argNum, arg, sizeof(arg));
-        if (strstr(arg, "!") && !strstr(arg, " ")){
-            trap_Argv(argNum + 1, arg, sizeof(arg));
-        }
-
-        for (i = StartAfterCommand(va("%s", arg)); i<strlen(arg); i++){
-            buf[count] = arg[i];
-            count += 1;
-        }
-        buf[count + 1] = '\0';
-
-        adm_unbanFromDatabase(adm, buf, qtrue);
     }
-    else{
-        trap_Argv(argNum, arg, sizeof(arg));
 
-        adm_unbanFromDatabase(adm, arg, qtrue);
-    }
+    adm_unbanFromDatabase(adm, arg, qtrue);
 
     return -1;
 }
@@ -3140,18 +3021,14 @@ int adm_adminList(int argNum, gentity_t *adm, qboolean shortCmd)
 
     // Open users database.
     db = usersDb;
+    memset(arg, 0, sizeof(arg));
     memset(buf2, 0, sizeof(buf2));
 
     // Check for password argument.
-    if(shortCmd){
-        trap_Argv( 1, arg, sizeof( arg ) );
-        if(strstr(arg, "pass")){
-            passwordList = qtrue;
-        }else{
-            trap_Argv( 2, arg, sizeof( arg ));
-        }
+    if(shortCmd && G_GetChatArgumentCount()){
+        strncpy(arg, G_GetChatArgument(1), sizeof(arg));
     }else{
-        trap_Argv( argNum, arg, sizeof( arg ) );
+        trap_Argv(argNum, arg, sizeof(arg));
     }
 
     if(Q_stricmp(arg, "pass") == 0){
@@ -3467,10 +3344,10 @@ int adm_Rename(int argNum, gentity_t *adm, qboolean shortCmd)
     if (idNum < 0) return idNum;
 
     // Fetch the new name from the arguments given.
-    if (shortCmd){
+    if(shortCmd){
         strncpy(newName, GetReason(), sizeof(newName));
     }else{
-        trap_Argv(argNum + 1, newName, sizeof(newName));
+        strncpy(newName, ConcatArgs1(2), sizeof(newName));
     }
 
     if (!newName || !newName[0] || newName[0] == '\\' || strlen(newName) == 0){
@@ -3536,116 +3413,93 @@ Switches the server to the specified map.
 
 int adm_Map(int argNum, gentity_t *adm, qboolean shortCmd)
 {
-    char            map[64]         = "";
-    int             i;
+    char            command[64];
+    char            map[64];
+    char            gametype[8];
     fileHandle_t    f;
-    char            arg[32]         = "\0";     // increase buffer so we can process more commands
-    char            arg0[32]        = "\0";     // increase buffer so we can process more commands
-    char            gametype[8];                // The gametype we store so we can broadcast if neccesary.
-    char            *gt;                        // Gametype parameter.
-    int             altAction       = 0;        // Alternative actions such as altmaps or devmaps.
+    // Alternative actions such as altmaps or devmaps.
+    int             altAction       = 0;
 
-    trap_Argv( argNum, arg, sizeof( arg ) );
-    trap_Argv( argNum-1, arg0, sizeof( arg0 ) );
+    // Reset buffers.
+    memset(command, 0, sizeof(command));
+    memset(map, 0, sizeof(map));
+    memset(gametype, 0, sizeof(gametype));
 
-    // Pre-check if the map switch is already in progress. No need to waste resources.
-    if(level.mapSwitch == qfalse){
-        // Check if the client wishes to load an alternative ent.
-        if(shortCmd){
-            Q_strlwr(arg);
-            if(strstr(arg, "!altmap")){
-                trap_Cvar_Set( "g_alternateMap", "1");
-                trap_Cvar_Update ( &g_alternateMap );
-                altAction = 1; // alt
-            }else if(strstr(arg, "!devmap")){ //  Add support for dev maps.
-                altAction = 2; // dev
-            }
-        }else{
-            Q_strlwr(arg0);
-            if(strstr(arg0, "altmap")){
-                trap_Cvar_Set( "g_alternateMap", "1");
-                trap_Cvar_Update ( &g_alternateMap );
-                altAction = 1;
-            }else if(strstr(arg0, "devmap")){
-                altAction = 2;
-            }
-        }
-        // We get the gametype parameter. Also added support for uppercase arguments.
-        if(strlen(arg) >= 3){
-            if(shortCmd){
-                gt = Q_strlwr(GetReason());
-                for(i=0;i<=strlen(arg);i++){
-                    if(arg[i] == ' '){
-                        if(gt[0] && gt[1]){
-                            strncpy(map, arg+i+1, strlen(arg) -i - 1 - strlen(gt) - 1);
-                        }else{
-                            strncpy(map, arg+i+1, strlen(arg) -i - 1);
-                        }
-                        break;
-                    }
-                }
-                if(!map[0] || !map[1]){
-                    trap_Argv( 2, arg, sizeof( arg ) ); // Short cmd from console.
-                    strcpy(map, arg);
-                }
-                Q_strlwr(map);
-            }else{
-                strcpy(map, arg);
-                // Check for the gametype.
-                trap_Argv(3, arg, sizeof(arg));
-                Q_strlwr(map);
-                gt = Q_strlwr(arg); // So the gametype check will not fall over captials.
-            }
-            trap_FS_FOpenFile( va("maps\\%s.bsp", map), &f, FS_READ );
-            if ( !f ){
-                G_printInfoMessage(adm, "Map not found.");
-                return -1;
-            }
-            trap_FS_FCloseFile(f);
-        // There are no maps that contain less than two characters. Obviously the map isn't found.
-        }else{
-            G_printInfoMessage(adm, "Map not found.");
-            return -1;
+    // Get specified map and gametype, if given.
+    if(shortCmd && G_GetChatArgumentCount()){
+        strncpy(command, G_GetChatArgument(argNum - 2), sizeof(command));
+        strncpy(map, G_GetChatArgument(argNum - 1), sizeof(map));
+        strncpy(gametype, G_GetChatArgument(argNum), sizeof(gametype));
+    }else{
+        trap_Argv(argNum - 1, command, sizeof(command));
+        trap_Argv(argNum, map, sizeof(map));
+        trap_Argv(argNum + 1, gametype, sizeof(gametype));
+    }
+
+    // Make sure we're checking against strings that are lowercase only.
+    Q_strlwr(command);
+    Q_strlwr(map);
+    Q_strlwr(gametype);
+
+    // Check if a map switch is already in progress.
+    if(level.mapSwitch){
+        if(level.mapAction == 1 || level.mapAction == 3){
+            G_printInfoMessage(adm, "A map restart is already in progress.");
+        }else if(level.mapAction == 2 || level.mapAction == 4){
+            G_printInfoMessage(adm, "A map switch is already in progress.");
+        }else if(level.mapAction == 5){
+            G_printInfoMessage(adm, "The map is already ending.");
         }
 
-        // The map is found, did they append a gametype among with it?
-        if(strlen(gt) >= 2){ // The shortest available GT is "dm", so we check the size (is it longer than 2?) and save resouces if not.
-            if(strstr(gt, "ctf")){
-                strcpy(gametype, "ctf");
-            }else if(strstr(gt, "inf")){
-                strcpy(gametype, "inf");
-                // Boe!Man 10/4/12: Fix latch CVAR crap. It's either h&s or h&z, so ensure the latched value is GONE so we can properly reset it.
-                if(current_gametype.value == GT_HS || current_gametype.value == GT_HZ){
-                    trap_Cvar_Set("g_gametype", "h&s");
-                    trap_Cvar_Update(&g_gametype);
-                    trap_Cvar_Set("g_gametype", "h&z");
-                    trap_Cvar_Update(&g_gametype);
-                    trap_Cvar_Set("g_gametype", "inf");
-                    trap_Cvar_Update(&g_gametype);
-                }
-            }else if(strstr(gt, "tdm")){
-                strcpy(gametype, "tdm");
-            }else if(strstr(gt, "dm")){
-                strcpy(gametype, "dm");
-            }else if(strstr(gt, "elim")){
-                strcpy(gametype, "elim");
-            }else if(strstr(gt, "h&s")){
-                strcpy(gametype, "h&s");
-            }else if(strstr(gt, "h&z")){
-                strcpy(gametype, "h&z");
-            #ifdef _GOLD
-            }else if(strstr(gt, "dem")){
-                strcpy(gametype, "dem");
-            #endif // _GOLD
-            }else{
-                if(current_gametype.value == GT_HS){
-                    strcpy(gametype, "h&s");
-                }else if(current_gametype.value == GT_HZ){
-                    strcpy(gametype, "h&z");
-                }else{
-                    strcpy(gametype, g_gametype.string);
-                }
+        return -1;
+    }
+
+    // Check for alternative maps to load.
+    if(strstr(command, "altmap")){
+        trap_Cvar_Set( "g_alternateMap", "1");
+        trap_Cvar_Update ( &g_alternateMap );
+        altAction = 1;
+    }else if(strstr(command, "devmap")){
+        altAction = 2; // dev
+    }
+
+    // Check if the map exists.
+   trap_FS_FOpenFile( va("maps\\%s.bsp", map), &f, FS_READ );
+    if(!f){
+        G_printInfoMessage(adm, "Map not found.");
+        return -1;
+    }
+    trap_FS_FCloseFile(f);
+
+    // The map is found, did they append a gametype among with it?
+    if(strlen(gametype)){
+        if(strstr(gametype, "ctf")){
+            strcpy(gametype, "ctf");
+        }else if(strstr(gametype, "inf")){
+            strcpy(gametype, "inf");
+            // Boe!Man 10/4/12: Fix latch CVAR crap. It's either h&s or h&z, so ensure the latched value is GONE so we can properly reset it.
+            if(current_gametype.value == GT_HS || current_gametype.value == GT_HZ){
+                trap_Cvar_Set("g_gametype", "h&s");
+                trap_Cvar_Update(&g_gametype);
+                trap_Cvar_Set("g_gametype", "h&z");
+                trap_Cvar_Update(&g_gametype);
+                trap_Cvar_Set("g_gametype", "inf");
+                trap_Cvar_Update(&g_gametype);
             }
+        }else if(strstr(gametype, "tdm")){
+            strcpy(gametype, "tdm");
+        }else if(strstr(gametype, "dm")){
+            strcpy(gametype, "dm");
+        }else if(strstr(gametype, "elim")){
+            strcpy(gametype, "elim");
+        }else if(strstr(gametype, "h&s")){
+            strcpy(gametype, "h&s");
+        }else if(strstr(gametype, "h&z")){
+            strcpy(gametype, "h&z");
+        #ifdef _GOLD
+        }else if(strstr(gametype, "dem")){
+            strcpy(gametype, "dem");
+        #endif // _GOLD
         }else{
             if(current_gametype.value == GT_HS){
                 strcpy(gametype, "h&s");
@@ -3655,53 +3509,53 @@ int adm_Map(int argNum, gentity_t *adm, qboolean shortCmd)
                 strcpy(gametype, g_gametype.string);
             }
         }
-
-        if(g_enforceArenaCheck.integer && !Henk_DoesMapSupportGametype(gametype, map)){
-            G_printInfoMessage(adm, "This map does not support the gametype %s, please add it in the ARENA file.", gametype);
-            return -1;
-        }
-        #ifdef _GOLD
-        if(!g_enforce1fxAdditions.integer && (strcmp(gametype, "h&s") == 0 || strcmp(gametype, "h&z") == 0)){
-            G_printInfoMessage(adm, "This gametype is unavailable when you're not enforcing 1fx. Client Additions.");
-            G_printInfoMessage(adm, "Please have someone with RCON access put g_enforce1fxAdditions to 1 and restart the map.");
-
-            return -1;
-        }
-        #endif // _GOLD
-
-        trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype %s\n", gametype));
-
-        level.mapSwitch = qtrue;
-        level.mapAction = 2;
-        level.mapSwitchCount = level.time;
-        level.mapSwitchCount2 = 5; // 5 seconds remaining on the timer.
-        strcpy(level.mapSwitchName, map);
-
-        // Broadcast and logging.
-        Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-        if(altAction == 1){
-            strncpy(level.mapPrefix, G_ColorizeMessage("\\Altmap"), sizeof(level.mapPrefix));
-        }else if(altAction == 2){
-            strncpy(level.mapPrefix, G_ColorizeMessage("\\Devmap"), sizeof(level.mapPrefix));
-        }else{
-            strncpy(level.mapPrefix, G_ColorizeMessage("\\Map"), sizeof(level.mapPrefix));
-        }
-
-        if(gametype[0]){ // Boe!Man 2/26/11: If there's actually a gametype found..
-            trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Map switch to %s [%s] by %s.\n\"", map, gametype, adm->client->pers.cleanName));
-            Boe_adminLog ("map switch", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", map, gametype));
-        }else{
-            trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Map switch to %s by %s.\n\"", map, adm->client->pers.cleanName));
-            Boe_adminLog ("map switch", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), map);
-        }
     }else{
-        if(level.mapAction == 1 || level.mapAction == 3){
-            G_printInfoMessage(adm, "A map restart is already in progress.");
-        }else if(level.mapAction == 2 || level.mapAction == 4){
-            G_printInfoMessage(adm, "A map switch is already in progress.");
-        }else if(level.mapAction == 5){
-            G_printInfoMessage(adm, "The map is already ending.");
+        if(current_gametype.value == GT_HS){
+            strcpy(gametype, "h&s");
+        }else if(current_gametype.value == GT_HZ){
+            strcpy(gametype, "h&z");
+        }else{
+            strcpy(gametype, g_gametype.string);
         }
+    }
+
+    if(g_enforceArenaCheck.integer && !Henk_DoesMapSupportGametype(gametype, map)){
+        G_printInfoMessage(adm, "This map does not support the gametype %s, please add it in the ARENA file.", gametype);
+        return -1;
+    }
+    #ifdef _GOLD
+    if(!g_enforce1fxAdditions.integer && (strcmp(gametype, "h&s") == 0 || strcmp(gametype, "h&z") == 0)){
+        G_printInfoMessage(adm, "This gametype is unavailable when you're not enforcing 1fx. Client Additions.");
+        G_printInfoMessage(adm, "Please have someone with RCON access put g_enforce1fxAdditions to 1 and restart the map.");
+
+        return -1;
+    }
+    #endif // _GOLD
+
+    trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype %s\n", gametype));
+
+    level.mapSwitch = qtrue;
+    level.mapAction = 2;
+    level.mapSwitchCount = level.time;
+    level.mapSwitchCount2 = 5; // 5 seconds remaining on the timer.
+    strcpy(level.mapSwitchName, map);
+
+    // Broadcast and logging.
+    Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+    if(altAction == 1){
+        strncpy(level.mapPrefix, G_ColorizeMessage("\\Altmap"), sizeof(level.mapPrefix));
+    }else if(altAction == 2){
+        strncpy(level.mapPrefix, G_ColorizeMessage("\\Devmap"), sizeof(level.mapPrefix));
+    }else{
+        strncpy(level.mapPrefix, G_ColorizeMessage("\\Map"), sizeof(level.mapPrefix));
+    }
+
+    if(gametype[0]){ // Boe!Man 2/26/11: If there's actually a gametype found..
+        trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Map switch to %s [%s] by %s.\n\"", map, gametype, adm->client->pers.cleanName));
+        Boe_adminLog ("map switch", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", map, gametype));
+    }else{
+        trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Map switch to %s by %s.\n\"", map, adm->client->pers.cleanName));
+        Boe_adminLog ("map switch", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), map);
     }
 
     return -1;
@@ -3905,7 +3759,7 @@ int adm_toggleWeapon(int argNum, gentity_t *adm, qboolean shortCmd)
     }
 
     if(!shortCmd || shortCmd && !argc){
-        trap_Argv((!shortCmd) ? argNum : argNum + 1, arg, sizeof(arg));
+        trap_Argv(argNum, arg, sizeof(arg));
     }else{
         Q_strncpyz(arg, G_GetChatArgument(1), sizeof(arg));
     }

@@ -1016,11 +1016,13 @@ void        G_UndoAdjustedClientBBoxs(void);
 void        G_SetClientPreLeaningBBox(gentity_t *ent);
 void        G_SetClientLeaningBBox(gentity_t *ent);
 
-void        G_Broadcast                 (char *broadcast, int broadcastLevel, gentity_t *to);
-char        *G_ColorizeMessage          (char *broadcast);
-void        G_postExecuteAdminCommand   (int funcNum, int idNum, gentity_t *adm);
-void QDECL  G_printInfoMessage          (gentity_t *ent, const char *msg, ...);
-void QDECL  G_printInfoMessageToAll     (const char *msg, ...);
+void        G_kickPlayer                (gentity_t *to, gentity_t *by, char *action, char *reason );
+
+void        G_Broadcast                 ( char *broadcast, int broadcastLevel, gentity_t *to );
+char        *G_ColorizeMessage          ( char *broadcast );
+void        G_postExecuteAdminCommand   ( int funcNum, int idNum, gentity_t *adm );
+void QDECL  G_printInfoMessage          ( gentity_t *ent, const char *msg, ... );
+void QDECL  G_printInfoMessageToAll     ( const char *msg, ... );
 
 //
 // g_crash.c

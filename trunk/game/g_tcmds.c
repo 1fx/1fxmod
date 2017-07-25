@@ -137,9 +137,9 @@ void G_TeamInfo (gentity_t *ent, char *team)
     }
     #ifndef _DEMO
     #ifndef _GOLD
-    if (g_allowthirdperson.integer > 0){
+    if(g_allowthirdperson.integer){
     #else
-    if (g_enforce1fxAdditions.integer && g_allowthirdperson.integer){
+    if(g_enforce1fxAdditions.integer && g_allowthirdperson.integer){
     #endif // not _GOLD
         trap_SendServerCommand( ent-g_entities, va("print \"%-25s Yes\n", "[^3Third person^7]"));
     }else{

@@ -917,39 +917,37 @@ qboolean RemoveMutedClient(gentity_t *ent){
     return unmuted;
 }
 
-
 char *GetReason(void) {
-    static char  arg[256] = "\0"; // increase buffer so we can process more commands
-    char        *reason = "";
-    int          i, z;
-    qboolean     Do = qfalse;
+    static char reason[MAX_STRING_CHARS];
+    char        *arg;
+    int         argc, i;
 
-    trap_Argv( 1, arg, sizeof( arg ) );
-    for(i=0;i<256;i++){
-        if(arg[i] == ' '){
-            if(Do == qtrue){ // second space so its the reason
-                for(z=i+1;z<256-i;z++){
-                    if(arg[z] == ' '){
-                        arg[z] = '_';
-                    }
-                    reason = va("%s%c", reason, arg[z]);
-                }
-                if(!reason[0]){
-                    strcpy(arg ,ConcatArgs1(3));
-                    //trap_Argv( 3, arg, sizeof( arg ) );
-                    return arg;
-                }
-                return reason;
+    // Reset buffer.
+    memset(reason, 0, sizeof(reason));
+
+    // Get argument count.
+    argc = G_GetChatArgumentCount();
+
+    // Don't continue if we have no reason to fetch.
+    if(argc < 2){
+        Q_strncpyz(reason, ConcatArgs1(3), sizeof(reason));
+    }else{
+        // Append arguments to the buffer.
+        for(i = 2; i <= argc; i++){
+            // Fetch argument.
+            arg = G_GetChatArgument(i);
+
+            // Append to buffer.
+            if(i != 2){
+                strncat(reason, va(" %s", arg), sizeof(reason) - strlen(reason));
+            }else{
+                Q_strncpyz(reason, arg, sizeof(reason));
             }
-        Do = qtrue;
         }
     }
-    if(!reason[0]){
-        strcpy(arg ,ConcatArgs1(3));
-        //trap_Argv( 3, arg, sizeof( arg ) );
-        return arg;
-    }
-    return "";
+
+    // Return buffer containing the reason.
+    return reason;
 }
 
 int StartAfterCommand(char *param){

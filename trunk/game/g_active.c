@@ -1122,9 +1122,14 @@ void ClientThink_real(gentity_t *ent)
 
     // Boe!Man 7/6/15: Check if the client is using Core UI features.
     if (!(ent->r.svFlags & SVF_BOT)){
-        if (client->sess.checkClientAdditions && level.time > client->sess.clientAdditionCheckTime){
-            if (client->sess.checkClientAdditions > 10) {
-                trap_SendConsoleCommand(EXEC_INSERT, va("clientkick \"%d\" \"This server ^1requires ^7you to use the 1fx. Client Additions. You can get those by turning on ^1auto-downloading ^7and ^1reconnecting.\"\n", ent->s.number));
+        if(client->sess.checkClientAdditions
+            && level.time > client->sess.clientAdditionCheckTime)
+        {
+            if(client->sess.checkClientAdditions > 10){
+                G_kickPlayer(ent, NULL, "kicked",
+                    "This server ^1requires ^7you to use the 1fx. Client " \
+                    "Additions. You can get those by turning on " \
+                    "^1auto-downloading ^7and ^1reconnecting.");
 
                 return;
             }else{

@@ -477,7 +477,7 @@ static cvarTable_t gameCvarTable[] =
     #if !defined(_GOLD) && !defined(_DEMO)
     { &g_disableNades,  "g_disableNades", "1", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
     #else
-    // Enabled on any build except v1.00.
+    // Nades are enabled on any build except v1.00.
     { &g_disableNades,  "g_disableNades", "0", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
     #endif // not _GOLD and not _DEMO
     // End

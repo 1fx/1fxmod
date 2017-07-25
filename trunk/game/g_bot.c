@@ -493,37 +493,32 @@ void G_AddRandomBot( int team )
 G_RemoveRandomBot
 ===============
 */
-int G_RemoveRandomBot( int team )
+int G_RemoveRandomBot(int team)
 {
     int         i;
-    //char      netname[36];    ///RxCxW - 09.09.06 - 11:55pm #REMOVED #kickBot
     gclient_t   *cl;
 
-    for ( i=0 ; i< g_maxclients.integer ; i++ )
+    for (i = 0; i < g_maxclients.integer; i++)
     {
         cl = level.clients + i;
 
-        if ( cl->pers.connected != CON_CONNECTED )
+        if(cl->pers.connected != CON_CONNECTED)
         {
             continue;
         }
 
-        if ( !(g_entities[cl->ps.clientNum].r.svFlags & SVF_BOT) )
+        if(!(g_entities[cl->ps.clientNum].r.svFlags & SVF_BOT))
         {
             continue;
         }
 
-        if ( team >= 0 && cl->sess.team != team )
+        if(team >= 0 && cl->sess.team != team)
         {
             continue;
         }
 
-        ///RxCxW - 09.03.06 - 03:59pm #kickBot
-        ///strcpy(netname, cl->pers.netname);
-        ///Q_CleanStr(netname);
-        ///trap_SendConsoleCommand( EXEC_INSERT, va("kick \"%s\"\n", netname) );
-        trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%i\"\n", cl->ps.clientNum) );
-        ///End  - 09.03.06 - 03:59pm
+        // Kick the bot.
+        G_kickPlayer(&g_entities[cl->ps.clientNum], NULL, "kicked", "");
         return qtrue;
     }
 
@@ -1355,25 +1350,25 @@ void Boe_kickSpecBots(void)
     int         i;
     gclient_t   *cl;
 
-    for (i= 0; i < g_maxclients.integer; i++){
+    for(i = 0; i < g_maxclients.integer; i++){
         cl = level.clients + i;
 
-        if ( cl->pers.connected != CON_CONNECTED )
+        if(cl->pers.connected != CON_CONNECTED)
         {
             continue;
         }
 
-        if ( !(g_entities[cl->ps.clientNum].r.svFlags & SVF_BOT) )
+        if(!(g_entities[cl->ps.clientNum].r.svFlags & SVF_BOT))
         {
             continue;
         }
 
-        if (cl->sess.team != TEAM_SPECTATOR)
+        if(cl->sess.team != TEAM_SPECTATOR)
         {
             continue;
         }
 
-        // Boe!Man 1/24/13: Finally, kick them if they are in the spectator team.
-        trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%i\"\n", cl->ps.clientNum) );
+        // Finally, kick them if they are in the spectator team.
+        G_kickPlayer(&g_entities[cl->ps.clientNum], NULL, "kicked", "");
     }
 }

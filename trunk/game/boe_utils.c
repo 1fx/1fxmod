@@ -2502,10 +2502,10 @@ int G_clientNumFromArg(gentity_t *ent, int argNum, const char *action,
     }
 
     // Now fetch the argument.
-    if (!shortCmd || shortCmd && !argc){
-        trap_Argv((shortCmd) ? argNum + 1 : argNum, arg, sizeof(arg));
-    }else{
+    if (shortCmd && argc){
         Q_strncpyz(arg, G_GetChatArgument(1), sizeof(arg));
+    }else{
+        trap_Argv(argNum, arg, sizeof(arg));
     }
 
     // Check if there's a parameter specified at all.

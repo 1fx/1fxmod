@@ -2910,7 +2910,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
                 command = qtrue;
                 if(ent->client->sess.admin >= *AdminCommands[i].adminLevel){
                     // Execute the Admin command and handle the post processing (logging, broadcast, etc.) for some commands.
-                    G_postExecuteAdminCommand(i, AdminCommands[i].Function(1, ent, qtrue), ent);
+                    G_postExecuteAdminCommand(i, AdminCommands[i].Function(2, ent, qtrue), ent);
                 }else{
                     if(ent->client->sess.referee && strcmp(cmd, "!l") == 0){ // exception for referee lock
                         adm_lockTeam(1, ent, qtrue);
@@ -4128,6 +4128,23 @@ qboolean ConsoleCommand( void )
     }
 
     return qfalse;
+}
+
+/*
+==================
+G_kickPlayer
+
+Kicks player from the server. Includes who did it and the reason.
+==================
+*/
+
+void G_kickPlayer(gentity_t *to, gentity_t *by, char *action, char *reason)
+{
+    // Kick the player.
+    trap_DropClient(to - g_entities,
+        va("You were %s from the server.\nBy: %s\nReason: %s",
+        action, by ? by->client->pers.cleanName : "RCON",
+        strlen(reason) ? reason : "None given."));
 }
 
 /*
