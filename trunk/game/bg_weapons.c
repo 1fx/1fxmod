@@ -685,76 +685,6 @@ TWeaponParseInfo    weaponParseInfo[WP_MAX_WEAPONS];
 char                weaponLeftHand[MAX_QPATH];
 char                weaponRightHand[MAX_QPATH];
 
-static char *BG_BuildSideSurfaceList(char *name, char *pattern, char *sideSurfaces[], sqlite3 * db, int name_id)
-{
-    char        *output;
-    //int           length;
-    int         i = 0;
-    char query[128];
-    int rc;
-    sqlite3_stmt *stmt;
-    sprintf(query, "select * from %s where ID=%i", name, name_id);
-    rc = sqlite3_prepare(db, query, -1, &stmt, 0);
-    if(rc!=SQLITE_OK){
-        G_LogPrintf("^1Error: ^7Inview database: %s\n", sqlite3_errmsg(db));
-        return NULL;
-    }else while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
-        if(rc == SQLITE_ROW){
-            if(strstr(name,"optionalpart")){
-                if(sqlite3_column_text(stmt, 4))
-                sideSurfaces[0]=(char *)sqlite3_column_text(stmt, 4);
-                if(sqlite3_column_text(stmt, 5))
-                sideSurfaces[1]=(char *)sqlite3_column_text(stmt, 5);
-                if(sqlite3_column_text(stmt, 6))
-                sideSurfaces[2]=(char *)sqlite3_column_text(stmt, 6);
-                if(sqlite3_column_text(stmt, 7))
-                sideSurfaces[3]=(char *)sqlite3_column_text(stmt, 7);
-                if(sqlite3_column_text(stmt, 8))
-                sideSurfaces[4]=(char *)sqlite3_column_text(stmt, 8);
-            }else{
-            sideSurfaces[i]=(char *)sqlite3_column_text(stmt, 1);
-            i++;
-            }
-        }
-    }
-    // Boe!Man 1/19/13: We *do* need to finalize this statement, else SQLite will have allocated memory for this but it will *never* be freed.
-    sqlite3_finalize(stmt);
-
-    output = (char *)trap_VM_LocalAlloc(0);
-    return output;
-}
-
-/*
-static char *BG_BuildList(void *group, char *pattern)
-{
-    void        *value;
-    char        *output, *data;
-    char        fieldName[256], fieldValue[256];
-    int         length;
-
-    output = (char *)trap_VM_LocalAlloc(0);
-    length = strlen(pattern);
-
-    value = trap_GPG_GetPairs(group);
-    while(value)
-    {
-        trap_GPV_GetName(value, fieldName);
-        if (Q_stricmpn(fieldName, pattern, length) == 0)
-        {
-            trap_GPV_GetTopValue(value, fieldValue);
-            data = (char *)trap_VM_LocalAllocUnaligned(strlen(fieldValue)+1);
-            strcpy(data, fieldValue);
-        }
-        value = trap_GPV_GetNext(value);
-    }
-
-    data = (char *)trap_VM_LocalAllocUnaligned(1);
-    *data = 0;
-
-    return output;
-}
-*/
-
 #define     MAX_WEAPON_FILES    10
 
 static void *weaponFrames[MAX_WEAPON_FILES];
@@ -885,7 +815,7 @@ static void BG_CloseWeaponFrames(int upTo)
         }
     }
 
-    // Boe!Man & Henkie 1/8/13: Fix for crashing Linux server, apparently the engine does not properly flush this struct.
+    // Always flush structs for the v1.00 Linux Woody build.
     if(upTo == 0){
         memset(weaponFrames, 0, sizeof(weaponFrames));
     }
@@ -896,219 +826,200 @@ static void BG_CloseWeaponFrames(int upTo)
 
 static qboolean BG_ParseAnimGroup(weapon_t weapon, sqlite3 * db)
 {
-    //char          name[256];
     TAnimWeapon     *anim;
     TAnimInfoWeapon *info;
     char            value[256];
     int             k;
-    //int           i;
-    //char          temp[256];
-sqlite3_stmt *stmt, *stmt1;
-    int rc, rc1;
+    sqlite3_stmt *stmt, *stmtInfo;
+    int rc;
     qboolean succes = qfalse;
-    char query[128], query1[128];
-    sprintf(query, "select * from weapon_anim where WEAPON_ID=%i", (int)weapon);
+    char query[128];
+
+    strncpy(query, "SELECT * FROM weapon_anim WHERE WEAPON_ID=?",
+        sizeof(query));
+
+    // Prepare statement.
     rc = sqlite3_prepare(db, query, -1, &stmt, 0);
+    sqlite3_bind_int(stmt, 1, weapon);
+
     if(rc!=SQLITE_OK){
         G_LogPrintf("^1Error: ^7Inview database: %s\n", sqlite3_errmsg(db));
         return qfalse;
-    }else while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
-        if(rc == SQLITE_ROW){
-            anim = (TAnimWeapon *)trap_VM_LocalAlloc(sizeof(*anim));
-            memset(anim, 0, sizeof(*anim));
+    }
 
+    // Iterate through the anim group.
+    while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
+        if(rc == SQLITE_ROW){
+            // Allocate memory.
+            anim = (TAnimWeapon *)trap_VM_LocalAlloc(sizeof(*anim));
+            memset(anim, 0, sizeof(TAnimWeapon));
+
+            // Parse base info.
             anim->mNext = weaponParseInfo[weapon].mAnimList;
             weaponParseInfo[weapon].mAnimList = anim;
             strcpy(anim->mName, (char *)sqlite3_column_text(stmt, 2));
-            sprintf(query1, "select * from weapon_anim_info where ANIM_ID=%i", (int)sqlite3_column_int(stmt, 1));
-            rc1 = sqlite3_prepare(db, query1, -1, &stmt1, 0);
-            if(rc1!=SQLITE_OK){
-                G_LogPrintf("^1Error: ^7Inview database: %s\n", sqlite3_errmsg(db));
+
+            // Parse anim info.
+            strncpy(query, "SELECT * FROM weapon_anim_info WHERE ANIM_ID=?",
+                sizeof(query));
+
+            // Prepare statement.
+            rc = sqlite3_prepare(db, query, -1, &stmtInfo, 0);
+            sqlite3_bind_int(stmtInfo, 1, sqlite3_column_int(stmt, 1));
+
+            if(rc !=SQLITE_OK){
+                G_LogPrintf("^1Error: ^7Inview database: %s\n",
+                    sqlite3_errmsg(db));
                 return qfalse;
-            }else while((rc1 = sqlite3_step(stmt1)) != SQLITE_DONE){
-                if(rc1 == SQLITE_ROW){
-                    info = (TAnimInfoWeapon *)trap_VM_LocalAlloc(sizeof(*info));
-                    memset(info, 0, sizeof(*info));
+            }
+
+            // Iterate through the associated anim info.
+            while((rc = sqlite3_step(stmtInfo)) != SQLITE_DONE){
+                if(rc == SQLITE_ROW){
+                    // Allocate memory.
+                    info = (TAnimInfoWeapon *)
+                        trap_VM_LocalAlloc(sizeof(TAnimInfoWeapon));
+                    memset(info, 0, sizeof(TAnimInfoWeapon));
+
+                    // Get base info.
                     info->mNext = anim->mInfos;
                     anim->mInfos = info;
                     info->mNumChoices = 0;
-                    strcpy(info->mName, (char *)sqlite3_column_text(stmt1, 2));
-                    strcpy(info->mType, (char *)sqlite3_column_text(stmt1, 1));
-                    if ( !Q_stricmp ( info->mType, "weaponmodel" ) )
+                    strncpy(info->mName, sqlite3_column_text(stmtInfo, 2),
+                        sizeof(info->mName));
+                    strncpy(info->mType, sqlite3_column_text(stmtInfo, 1),
+                        sizeof(info->mType));
+
+                    if(!Q_stricmp(info->mType, "weaponmodel"))
                     {
                         anim->mWeaponModelInfo = info;
                     }
-                    if(sqlite3_column_double(stmt1, 16)){
-                        info->mSpeed = sqlite3_column_double(stmt1, 16);
-                    }else if(sqlite3_column_double(stmt1, 15)){
-                        info->mSpeed = sqlite3_column_double(stmt1, 15);
-                    }else
+
+                    // We first look for a multiplayer specific speed. If we
+                    // don't find a valid speed, use the single player speed
+                    // instead.
+                    if(sqlite3_column_double(stmtInfo, 16)){ // mp_speed
+                        info->mSpeed = sqlite3_column_double(stmtInfo, 16);
+                    }else if(sqlite3_column_double(stmtInfo, 15)){ // speed
+                        info->mSpeed = sqlite3_column_double(stmtInfo, 15);
+                    }else{
+                        // Default value.
                         info->mSpeed = 1.0f;
-                    if(sqlite3_column_int(stmt1, 17))
-                    info->mLODBias = sqlite3_column_int(stmt1, 17);
-                    else
+                    }
+
+
+                    if(sqlite3_column_int(stmtInfo, 17)){
+                        info->mLODBias = sqlite3_column_int(stmtInfo, 17);
+                    }else{
                         info->mLODBias = 0;
-                    memset(value, 0, sizeof(value));
+                    }
 
-                    if(sqlite3_column_text(stmt1, 3)){
-                        strcpy(value, (char *)sqlite3_column_text(stmt1, 3));
-                        info->mAnim[info->mNumChoices] = (char *)trap_VM_LocalAlloc(strlen(value)+1);
-                        strcpy(info->mAnim[info->mNumChoices], value);
+                    // Anim.
+                    if(sqlite3_column_text(stmtInfo, 3)){
+                        strncpy(value, sqlite3_column_text(stmtInfo, 3),
+                            sizeof(value));
+                        info->mAnim[info->mNumChoices] =
+                            trap_VM_LocalAlloc(strlen(value)+1);
+                        strncpy(info->mAnim[info->mNumChoices], value,
+                            strlen(value));
+
                         info->mNumChoices++;
-                    }// anim
+                    }
 
-                    for(k=1;k<=MAX_WEAPON_ANIM_CHOICES;k++){
+                    for(k = 1; k <= MAX_WEAPON_ANIM_CHOICES; k++){
                         succes = qfalse;
-                        memset(value, 0, sizeof(value));
-                        if(sqlite3_column_text(stmt1, 3+k)){ // anim 1
-                            strcpy(value, (char *)sqlite3_column_text(stmt1, 3+k));
-                            info->mAnim[info->mNumChoices] = (char *)trap_VM_LocalAlloc(strlen(value)+1);
-                            strcpy(info->mAnim[info->mNumChoices], value);
+
+                        if(sqlite3_column_text(stmtInfo, 3+k)){
+                            // anim* keys.
+                            strncpy(value, sqlite3_column_text(stmtInfo, 3+k),
+                                sizeof(value));
+                            info->mAnim[info->mNumChoices] =
+                                trap_VM_LocalAlloc(strlen(value)+1);
+                            strncpy(info->mAnim[info->mNumChoices], value,
+                                strlen(value));
+
                             succes = qtrue;
-                        }else if(sqlite3_column_text(stmt1, 7+k)){
-                            memset(value, 0, sizeof(value));
-                            strcpy(value, (char *)sqlite3_column_text(stmt1, 7+k)); // animNoLerp1
-                            info->mAnim[info->mNumChoices] = (char *)trap_VM_LocalAlloc(strlen(value)+1);
-                            strcpy(info->mAnim[info->mNumChoices], value);
+                        }else if(sqlite3_column_text(stmtInfo, 7+k)){
+                            // animNoLerp* keys.
+                            strncpy(value, sqlite3_column_text(stmtInfo, 7+k),
+                                sizeof(value));
+                            info->mAnim[info->mNumChoices] =
+                                trap_VM_LocalAlloc(strlen(value)+1);
+                            strncpy(info->mAnim[info->mNumChoices], value,
+                                strlen(value));
+
                             succes = qtrue;
                         }
 
                         if(succes){
-                        memset(value, 0, sizeof(value));
-                        if(sqlite3_column_text(stmt1, 18+k)){
-                            strcpy(value, (char *)sqlite3_column_text(stmt1, 18+k)); // transition1
-                            info->mTransition[info->mNumChoices] = (char *)trap_VM_LocalAlloc(strlen(value)+1);
-                            strcpy(info->mTransition[info->mNumChoices], value);
-                        }
+                            // transition* keys.
+                            if(sqlite3_column_text(stmtInfo, 18+k)){
+                                strncpy(value,
+                                    sqlite3_column_text(stmtInfo, 18+k),
+                                    sizeof(value));
+                                info->mTransition[info->mNumChoices] =
+                                    trap_VM_LocalAlloc(strlen(value)+1);
+                                strncpy(info->mTransition[info->mNumChoices],
+                                    value, strlen(value));
+                            }
 
-                        memset(value, 0, sizeof(value));
-                        if(sqlite3_column_text(stmt1, 21+k)){
-                            strcpy(value, (char *)sqlite3_column_text(stmt1, 21+k)); // end1
-                            info->mEnd[info->mNumChoices] = (char *)trap_VM_LocalAlloc(strlen(value)+1);
-                            strcpy(info->mEnd[info->mNumChoices], value);
-                        }
-                        info->mNumChoices++;
+                            // end* keys.
+                            if(sqlite3_column_text(stmtInfo, 21+k)){
+                                strncpy(value,
+                                    sqlite3_column_text(stmtInfo, 21+k),
+                                    sizeof(value));
+                                info->mEnd[info->mNumChoices] =
+                                    trap_VM_LocalAlloc(strlen(value)+1);
+                                strncpy(info->mEnd[info->mNumChoices], value,
+                                    strlen(value));
+                            }
+                            info->mNumChoices++;
                         }
                     }
                 }
             }
-            // Boe!Man 1/19/13: We *do* need to finalize this statement, else SQLite will have allocated memory for this but it will *never* be freed.
-            sqlite3_finalize(stmt1);
+
+            // Free allocated memory.
+            sqlite3_finalize(stmtInfo);
         }
     }
+    // Free allocated memory.
     sqlite3_finalize(stmt);
+
     return qtrue;
-}
-
-static TBoltonWeapon *BG_ParseBolton(weapon_t weapon, sqlite3 * db)
-{
-    TBoltonWeapon   *bolton;
-    //void          *sub;
-    //char          temp[256];
-    sqlite3_stmt *stmt;
-    int rc;
-    char query[128];
-
-    bolton = (TBoltonWeapon *)trap_VM_LocalAlloc(sizeof(*bolton));
-    memset(bolton, 0, sizeof(*bolton));
-    sprintf(query, "select * from weaponmodel where WEAPON_ID=%i", (int)weapon);
-    rc = sqlite3_prepare(db, query, -1, &stmt, 0);
-    if(rc!=SQLITE_OK){
-        G_LogPrintf("^1Error: ^7Inview database: %s\n", sqlite3_errmsg(db));
-        return NULL;
-    }else while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
-        if(rc == SQLITE_ROW){
-            if(sqlite3_column_text(stmt, 10))
-                strcpy(bolton->mName, (char *)sqlite3_column_text(stmt, 10));
-            if(sqlite3_column_text(stmt, 11))
-                strcpy(bolton->mModel, (char *)sqlite3_column_text(stmt, 11));
-            if(sqlite3_column_text(stmt, 13))
-                strcpy(bolton->mParent, (char *)sqlite3_column_text(stmt, 13));
-            if(sqlite3_column_text(stmt, 14))
-                strcpy(bolton->mBoltToBone, (char *)sqlite3_column_text(stmt, 14));
-            if(sqlite3_column_text(stmt, 12))
-                BG_OpenWeaponFrames((char *)sqlite3_column_text(stmt, 12));
-
-            // Boe!Man 4/8/15: Addition of bolt joints.
-            if (sqlite3_column_text(stmt, 20))
-                strcpy(bolton->mJointBone, (char *)sqlite3_column_text(stmt, 20));
-            if (sqlite3_column_text(stmt, 21))
-                strcpy(bolton->mJointParentBone, (char *)sqlite3_column_text(stmt, 21));
-            if (sqlite3_column_text(stmt, 22))
-                strcpy(bolton->mJointForward, (char *)sqlite3_column_text(stmt, 22));
-            if (sqlite3_column_text(stmt, 23))
-                strcpy(bolton->mJointRight, (char *)sqlite3_column_text(stmt, 23));
-            if (sqlite3_column_text(stmt, 24))
-                strcpy(bolton->mJointUp, (char *)sqlite3_column_text(stmt, 24));
-        }
-    }
-    sqlite3_finalize(stmt);
-
-    return bolton;
 }
 
 static qboolean BG_ParseWeaponGroup(TWeaponModel *weapon, weapon_t weaponID, sqlite3 * db)
 {
-    //void          *sub, *hand;
-    //char          name[256];
-    TOptionalWeapon *option;
-    char            temp[256];
-    sqlite3_stmt *stmt, *stmt1;
-    int rc, rc1;
-    char query[128], query1[128];
-    sprintf(query, "select * from weaponmodel where WEAPON_ID=%i", (int)weaponID);
+    char            frames[256], query[128];
+    sqlite3_stmt    *stmt;
+    int             rc;
+
+    strncpy(query, "SELECT * FROM weaponmodel where WEAPON_ID=?",
+        sizeof(query));
+
+    // Prepare the statement.
     rc = sqlite3_prepare(db, query, -1, &stmt, 0);
-    if(rc!=SQLITE_OK){
+    sqlite3_bind_int(stmt, 1, weaponID);
+
+    if(rc != SQLITE_OK){
         G_LogPrintf("^1Error: ^7Inview database: %s\n", sqlite3_errmsg(db));
         return qfalse;
-    }else while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
+    }
+
+    // Iterate through the weapon models.
+    while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
         if(rc == SQLITE_ROW){
-            strcpy(weapon->mName, (char *)sqlite3_column_text(stmt, 1));
-            strcpy(weapon->mModel, (char *)sqlite3_column_text(stmt, 2));
-            strcpy(temp, (char *)sqlite3_column_text(stmt, 3));
-            BG_OpenWeaponFrames(temp);
-            if(sqlite3_column_text(stmt, 4)){
-            strcpy(weapon->mBufferName, (char *)sqlite3_column_text(stmt, 4));
-            strcpy(weapon->mBufferModel, (char *)sqlite3_column_text(stmt, 5));
-            strcpy(weapon->mBufferBoltToBone, (char *)sqlite3_column_text(stmt, 6));
-            strcpy(weapon->mBufferMuzzle, (char *)sqlite3_column_text(stmt, 7));
-            }
-            if(sqlite3_column_text(stmt, 8))
-            strcpy(weapon->mLeftHandsBoltToBone, (char *)sqlite3_column_text(stmt, 8));
-            if(sqlite3_column_text(stmt, 9))
-            strcpy(weapon->mRightHandsBoltToBone, (char *)sqlite3_column_text(stmt, 9));
-            if((char *)sqlite3_column_text(stmt, 10))
-            weapon->mBolton = BG_ParseBolton(weaponID, db);
+            strncpy(weapon->mName, sqlite3_column_text(stmt, 1),
+                sizeof(weapon->mName));
+            strncpy(weapon->mModel, sqlite3_column_text(stmt, 2),
+                sizeof(weapon->mModel));
 
-            if(sqlite3_column_int(stmt, 16)){
-                BG_BuildSideSurfaceList("rightside", "surface", weapon->mRightSideSurfaces, db, sqlite3_column_int(stmt, 16));
-            }else if(sqlite3_column_int(stmt, 17)){
-                option = (TOptionalWeapon *)trap_VM_LocalAlloc(sizeof(*option));
-                memset(option, 0, sizeof(*option));
-                sprintf(query1, "select * from optionalpart where ID=%i", sqlite3_column_int(stmt, 17));
-                rc1 = sqlite3_prepare(db, query1, -1, &stmt1, 0);
-                if(rc1!=SQLITE_OK){
-                        G_LogPrintf("^1Error: ^7Inview database: %s\n", sqlite3_errmsg(db));
-                        return qfalse;
-                }else while((rc = sqlite3_step(stmt1)) != SQLITE_DONE){
-                    if(rc1 == SQLITE_ROW){
-                        strcpy(option->mName, (char *)sqlite3_column_text(stmt1, 1));
-                        strcpy(option->mMuzzle, (char *)sqlite3_column_text(stmt1, 3));
-                    }
-                }
-                // Boe!Man 1/19/13: We *do* need to finalize this statement, else SQLite will have allocated memory for this but it will *never* be freed.
-                sqlite3_finalize(stmt1);
-
-                BG_BuildSideSurfaceList("optionalpart", "surface", option->mSurfaces, db, sqlite3_column_int(stmt, 17));
-                option->mNext=weapon->mOptionalList;
-                weapon->mOptionalList=option;
-            }else if(sqlite3_column_int(stmt, 18)){
-                BG_BuildSideSurfaceList("leftside", "surface", weapon->mLeftSideSurfaces, db, sqlite3_column_int(stmt, 18));
-            }else if(sqlite3_column_int(stmt, 19)){
-                BG_BuildSideSurfaceList("front", "surface", weapon->mFrontSurfaces, db, sqlite3_column_int(stmt, 19));
-            }
+            strncpy(frames, sqlite3_column_text(stmt, 3), sizeof(frames));
+            BG_OpenWeaponFrames(frames);
         }
     }
+
     sqlite3_finalize(stmt);
 
     return qtrue;
@@ -1116,76 +1027,27 @@ static qboolean BG_ParseWeaponGroup(TWeaponModel *weapon, weapon_t weaponID, sql
 
 static qboolean BG_ParseWeapon(weapon_t weapon, sqlite3 * db)
 {
-    //void          *soundName, *surfaceCallbackName;
-    //void          *soundValue, *surfaceCallbackValue;
-    //char          onOffVal[256];
-    //char          name[256];
     int             i = 0;
     TAnimWeapon     *anims;
     TAnimInfoWeapon *infos;
-    //int               j;
-    //char          temp[256];
-    char            query[128];
-    sqlite3_stmt *stmt;
-    int rc;
+
+    // Clear some structures. This primarily fixes unexpected behavior on our
+    // Woody v1.00 build, namely across map restarts.
     memset(&weaponParseInfo[weapon], 0, sizeof(TWeaponParseInfo));
     weaponParseInfo[weapon].mName = bg_weaponNames[weapon];
-    sprintf(query, "select * from weapons where ID=%i", (int)weapon);
-    rc = sqlite3_prepare(db, query, -1, &stmt, 0);
-    if(rc!=SQLITE_OK){
-        G_LogPrintf("^1Error: ^7Inview database: %s\n", sqlite3_errmsg(db));
-        return qfalse;
-    }else while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
-        if(rc == SQLITE_ROW){
-            weaponParseInfo[weapon].mForeshorten = sqlite3_column_double(stmt, 2);
-            weaponParseInfo[weapon].mViewOffset[0] = sqlite3_column_int(stmt, 3);
-            weaponParseInfo[weapon].mViewOffset[1] = sqlite3_column_int(stmt, 4);
-            weaponParseInfo[weapon].mViewOffset[2] = sqlite3_column_int(stmt, 5);
-        }
-    }
-    // Boe!Man 1/19/13: We *do* need to finalize this statement, else SQLite will have allocated memory for this but it will *never* be freed.
-    sqlite3_finalize(stmt);
 
-    sprintf(query, "select * from sounds where WEAPON_ID=%i", (int)weapon);
-    rc = sqlite3_prepare(db, query, -1, &stmt, 0);
-    if(rc!=SQLITE_OK){
-        G_LogPrintf("^1Error: ^7Inview database: %s\n", sqlite3_errmsg(db));
-        return qfalse;
-    }else while((rc = sqlite3_step(stmt)) != SQLITE_DONE){
-        if(rc == SQLITE_ROW){
-            int count = 0;
-            strcpy(weaponParseInfo[weapon].mSoundNames[i], (char *)sqlite3_column_text(stmt, 1));
-            if(sqlite3_column_text(stmt, 2)){
-                strcpy(weaponParseInfo[weapon].mSounds[i][count], (char *)sqlite3_column_text(stmt, 2));
-                count++;
-            }
-            if(sqlite3_column_text(stmt, 3)){
-                strcpy(weaponParseInfo[weapon].mSounds[i][count], (char *)sqlite3_column_text(stmt, 3));
-                count++;
-            }
-            if(sqlite3_column_text(stmt, 4)){
-                strcpy(weaponParseInfo[weapon].mSounds[i][count], (char *)sqlite3_column_text(stmt, 4));
-                count++;
-            }
-            if(sqlite3_column_text(stmt, 5)){
-                strcpy(weaponParseInfo[weapon].mSounds[i][count], (char *)sqlite3_column_text(stmt, 5));
-                count++;
-            }
-            i++;
-        }
-    }
-    sqlite3_finalize(stmt);
+    // Parse weapon models.
     BG_ParseWeaponGroup(&weaponParseInfo[weapon].mWeaponModel, weapon, db);
+
+    // Parse weapon animations.
     BG_ParseAnimGroup(weapon, db);
 
+    // Iterate through fetched animations.
     anims = weaponParseInfo[weapon].mAnimList;
-    while(anims)
-    {
+    while(anims){
         infos = anims->mInfos;
-        while(infos)
-        {
-            for(i=0;i<infos->mNumChoices;i++)
-            {
+        while(infos){
+            for(i = 0; i < infos->mNumChoices; i++){
                 BG_FindWeaponFrames(infos, i);
             }
             infos = infos->mNext;
@@ -1201,31 +1063,44 @@ static qboolean BG_ParseWeapon(weapon_t weapon, sqlite3 * db)
 qboolean BG_ParseInviewFile(void)
 {
     int         i;
-    sqlite3 * db;
-    int rc;
-    //char query[128];
+    sqlite3     *db;
+    int
+        rc;
     // Boe!Man 12/5/12
-    // The file can be on two locations. The DLL should always be in the fs_game folder, however, this could be misconfigured.
-    // The Mod takes care of this problem and should load the file correctly, even if misplaced.
-    rc = sqlite3_open_v2(va("./%s", g_inviewDb.string), &db, SQLITE_OPEN_READONLY, NULL); // Boe!Man 12/5/12: *_v2 can make sure an empty database is NOT created. After all, the inview db is READ ONLY.
+    // The file can be on two locations. The DLL should always be in the
+    // fs_game folder, however, this could be misconfigured.
+    // The Mod takes care of this problem and should load the file correctly,
+    // even if misplaced.
+
+    // We use the *_v2 routine so the database isn't created if it isn't found.
+    rc = sqlite3_open_v2(va("./%s", g_inviewDb.string), &db,
+        SQLITE_OPEN_READONLY, NULL);
     if(rc){
+        // Alternate location, probably next to the binary.
         char fsGame[MAX_QPATH];
+
         trap_Cvar_VariableStringBuffer("fs_game", fsGame, sizeof(fsGame));
-        rc = sqlite3_open_v2(va("./%s/%s", fsGame, g_inviewDb.string), &db, SQLITE_OPEN_READONLY, NULL);
+        rc = sqlite3_open_v2(va("./%s/%s", fsGame, g_inviewDb.string), &db,
+            SQLITE_OPEN_READONLY, NULL);
+
         if(rc){
             G_LogPrintf("^1Error: ^7Inview database: %s\n", sqlite3_errmsg(db));
-            Com_Error(ERR_FATAL_NOLOG, "Failed to load inview database: %s", sqlite3_errmsg(db));
+            Com_Error(ERR_FATAL_NOLOG, "Failed to load inview database: %s",
+                sqlite3_errmsg(db));
         }else{
             level.altPath = qtrue;
-            Q_strncpyz(level.altString, va("./%s", fsGame), sizeof(level.altString));
+            Q_strncpyz(level.altString, va("./%s", fsGame),
+                sizeof(level.altString));
         }
     }
 
-    // Boe!Man 1/27/13: Fixed the code going out of bounds somewhere, because the availableWeapons CVAR was too large.
-    Q_strncpyz(availableWeapons.string, availableWeapons.string, level.wpNumWeapons);
+    // Make a copy of the availableWeapons string, and update CVARs accordingly.
+    Q_strncpyz(availableWeapons.string, availableWeapons.string,
+        level.wpNumWeapons);
     trap_Cvar_Update(&availableWeapons);
 
-    // Boe!Man & Henkie 1/8/13: Fix for crashing Linux server, apparently the engine does not properly flush those structs and integers.
+    // Make sure we clear everything when initializing.
+    // The Linux v1.00 Woody build does not always do this properly.
     memset(frameGroup, 0, sizeof(frameGroup));
     memset(weaponFrames, 0, sizeof(weaponFrames));
     numWeaponFiles = 0;
@@ -1241,17 +1116,17 @@ qboolean BG_ParseInviewFile(void)
     if( BG_OpenWeaponFrames("skeletons/weapons/rhand/rhand.frames"))
         numInitialFiles++;
 
-    for(i=1;i<level.wpNumWeapons;i++)
-    {
+    // Iterate through the weapons.
+    for(i = 1; i < level.wpNumWeapons; i++){
         BG_ParseWeapon((weapon_t)i, db);
     }
 
-#ifdef _DEBUG
+    #ifdef _DEBUG
     if (i == level.wpNumWeapons)
     {
         Com_Printf("BG_InitWeapons: Done\n");
     }
-#endif
+    #endif
     BG_CloseWeaponFrames(0);
 
     BG_InitAmmoStats();

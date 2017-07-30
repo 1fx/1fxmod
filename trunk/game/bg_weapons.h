@@ -414,35 +414,6 @@ extern char *modNames[WP_MAX_MODS];
 #define WP_FIRST_RANGED_WEAPON      WP_M1911A1_PISTOL   // this is the first weapon for next and prev weapon switching
 #define WP_FIRST_MELEE_WEAPON       WP_KNIFE
 
-#define MAX_WEAPON_SOUNDS       12
-#define MAX_WEAPON_SOUND_SLOTS  3
-
-#define MAX_SIDE_SURFACES 16
-
-typedef struct SOptionalWeapon
-{
-    char                    mName[MAX_QPATH];
-    char                    mMuzzle[MAX_QPATH];
-    char                    *mSurfaces[MAX_SIDE_SURFACES];
-
-    struct SOptionalWeapon  *mNext;
-} TOptionalWeapon;
-
-typedef struct SBoltonWeapon
-{
-    char                mName[MAX_QPATH];
-    char                mModel[MAX_QPATH];
-    char                mParent[MAX_QPATH];
-    char                mBoltToBone[MAX_QPATH];
-    char                *mRightSide[MAX_SIDE_SURFACES];
-
-    char                mJointBone[MAX_QPATH];
-    char                mJointParentBone[MAX_QPATH];
-    char                mJointForward[10];
-    char                mJointRight[10];
-    char                mJointUp[10];
-} TBoltonWeapon;
-
 typedef struct SNoteTrack
 {
     char                    mNote[64];
@@ -487,45 +458,11 @@ typedef struct SWeaponModel
 {
     char                        mName[MAX_QPATH];
     char                        mModel[MAX_QPATH];
-    char                        mBufferName[MAX_QPATH];
-    char                        mBufferModel[MAX_QPATH];
-    char                        mBufferBoltToBone[MAX_QPATH];
-    char                        mBufferMuzzle[MAX_QPATH];
-    char                        mBufferAltMuzzle[MAX_QPATH];
-    char                        mLeftHandsBoltToBone[MAX_QPATH];
-    char                        mRightHandsBoltToBone[MAX_QPATH];
-    char                        *mFrontSurfaces[MAX_SIDE_SURFACES],
-                                *mRightSideSurfaces[MAX_SIDE_SURFACES],
-                                *mLeftSideSurfaces[MAX_SIDE_SURFACES];
-
-    struct SOptionalWeapon      *mOptionalList;
-    struct SBoltonWeapon        *mBolton;
 } TWeaponModel;
-
-#define MAX_CALLBACK_SURFACES   4
-
-typedef struct SOnOffSurface
-{
-    char    mName[64];
-    int     mStatus;
-} TOnOffSurface;
-
-typedef struct SSurfaceCallback
-{
-    char                    mName[64];
-    struct SOnOffSurface    mOnOffSurfaces[MAX_CALLBACK_SURFACES];
-} TSurfaceCallback;
-
-#define MAX_SURFACE_CALLBACKS   2
 
 typedef struct SWeaponInfo
 {
     char                        *mName;
-    float                       mForeshorten;
-    vec3_t                      mViewOffset;
-    char                        mSoundNames[MAX_WEAPON_SOUNDS][MAX_QPATH];
-    char                        mSounds[MAX_WEAPON_SOUNDS][MAX_WEAPON_SOUND_SLOTS][MAX_QPATH];
-    struct SSurfaceCallback     mSurfaceCallbacks[MAX_SURFACE_CALLBACKS];
     struct SAnimWeapon          *mAnimList;
     struct SWeaponModel         mWeaponModel;
 } TWeaponParseInfo;
