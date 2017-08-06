@@ -106,6 +106,9 @@ vmCvar_t    g_timeextensionmultiplier;
 vmCvar_t    g_timeouttospec;
 vmCvar_t    g_roundstartdelay;
 vmCvar_t    hideSeek_roundstartdelay;
+#ifdef _DEMO
+vmCvar_t    g_availableWeaponsOutfitting;
+#endif // _DEMO
 vmCvar_t    g_availableWeapons;
 vmCvar_t    hideSeek_availableWeapons;
 vmCvar_t    availableWeapons;
@@ -465,19 +468,27 @@ static cvarTable_t gameCvarTable[] =
     { &g_roundstartdelay,   "g_roundstartdelay", "3",       CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
     { &hideSeek_roundstartdelay,    "hideSeek_roundstartdelay", "30",       CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 
-    #ifndef _GOLD
-    { &g_availableWeapons,  "g_availableWeapons", "2222222222211", CVAR_SERVERINFO | CVAR_INTERNAL | CVAR_ROM, 0.0, 0.0, 0, qfalse },
-    { &hideSeek_availableWeapons,   "hideSeek_availableWeapons", "200000000000022222222", CVAR_INTERNAL | CVAR_ROM, 0.0, 0.0, 0, qfalse },
+    #ifdef _GOLD
+    { &g_availableWeapons,              "g_available",                  "2222222222211",            CVAR_SERVERINFO | CVAR_INTERNAL | CVAR_ROM, 0.0, 0.0, 0, qfalse },
+    { &hideSeek_availableWeapons,       "hideSeek_availableWeapons",    "200000000000000022220000", CVAR_INTERNAL | CVAR_ROM, 0.0, 0.0, 0, qfalse },
+    #elif _DEMO
+    // Demo has a special "fake" availableWeapons CVAR presented to the players.
+    // This CVAR always includes at least one weapon enabled in each category,
+    // even if this is not the case in the server.
+    { &g_availableWeaponsOutfitting,    "g_availableWeapons",           "2222222222211",            CVAR_SERVERINFO | CVAR_INTERNAL | CVAR_ROM, 0.0, 0.0, 0, qfalse },
+    { &g_availableWeapons,              "g_availableWeaponsReal",       "2222222222211",            CVAR_INTERNAL | CVAR_ROM, 0.0, 0.0, 0, qfalse },
+    { &hideSeek_availableWeapons,       "hideSeek_availableWeapons",    "200000000000022222222",    CVAR_INTERNAL | CVAR_ROM, 0.0, 0.0, 0, qfalse },
     #else
-    { &g_availableWeapons,  "g_available", "2222222222211", CVAR_SERVERINFO | CVAR_INTERNAL | CVAR_ROM, 0.0, 0.0, 0, qfalse },
-    { &hideSeek_availableWeapons,   "hideSeek_availableWeapons", "200000000000000022220000", CVAR_INTERNAL | CVAR_ROM, 0.0, 0.0, 0, qfalse },
-    #endif // not _GOLD
-    { &availableWeapons,    "availableWeapons", "2222222222211", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
+    // v1.00.
+    { &g_availableWeapons,              "g_availableWeapons",           "2222222222211",            CVAR_SERVERINFO | CVAR_INTERNAL | CVAR_ROM, 0.0, 0.0, 0, qfalse },
+    { &hideSeek_availableWeapons,       "hideSeek_availableWeapons",    "200000000000022222222",    CVAR_INTERNAL | CVAR_ROM, 0.0, 0.0, 0, qfalse },
+    #endif
+    { &availableWeapons,                "availableWeapons",             "2222222222211",            CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
 
     #if !defined(_GOLD) && !defined(_DEMO)
     { &g_disableNades,  "g_disableNades", "1", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
     #else
-    // Nades are enabled on any build except v1.00.
+    // Nades are enabled by default on any build except v1.00.
     { &g_disableNades,  "g_disableNades", "0", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
     #endif // not _GOLD and not _DEMO
     // End
@@ -1102,8 +1113,19 @@ Updates the g_availableWeapons cvar using the disable cvars.
 */
 void G_UpdateAvailableWeapons ( void )
 {
-    int     weapon;
-    char    *available;
+    int         weapon;
+    char        *available;
+    int         weaponStatus;
+    #ifdef _DEMO
+    qboolean    groupAvailable[OUTFITTING_GROUP_MAX - 1];
+    int         groupWeapon[OUTFITTING_GROUP_MAX - 1] = {
+        WP_AK74_ASSAULT_RIFLE, WP_M590_SHOTGUN,
+        WP_M1911A1_PISTOL, WP_SMOHG92_GRENADE
+    };
+    int         i;
+
+    memset(groupAvailable, 0, sizeof(groupAvailable));
+    #endif // _DEMO
 
     available = calloc(level.wpNumWeapons + 1, sizeof(char));
 
@@ -1115,8 +1137,20 @@ void G_UpdateAvailableWeapons ( void )
             continue;
         }
 
-        switch ( (int)trap_Cvar_VariableValue ( va("disable_%s", item->classname ) ) )
+        // Determine weapon status.
+        weaponStatus =
+            trap_Cvar_VariableIntegerValue(va("disable_%s", item->classname));
+
+        #ifdef _DEMO
+        // See if we can mark this group as enabled.
+        if(item->outfittingGroup < OUTFITTING_GROUP_MAX - 1
+            && !groupAvailable[item->outfittingGroup])
         {
+            groupAvailable[item->outfittingGroup] = !weaponStatus;
+        }
+        #endif // _DEMO
+
+        switch(weaponStatus){
             case 0:
                 available[weapon-1] = '2';
                 break;
@@ -1131,13 +1165,31 @@ void G_UpdateAvailableWeapons ( void )
         }
     }
 
-    // 1.03 CHANGE - Rename availableWeapons Cvar which might confuse old map cycles
-    #ifndef _GOLD
-    trap_Cvar_Set ( "g_availableWeapons", available );
+    #ifdef _GOLD
+    trap_Cvar_Set("g_available", available);
+    #elif _DEMO
+    trap_Cvar_Set("g_availableWeaponsReal", available);
     #else
-    trap_Cvar_Set ( "g_available", available );
-    #endif // not _GOLD
-    trap_Cvar_Update ( &g_availableWeapons );
+    // v1.00.
+    trap_Cvar_Set("g_availableWeapons", available);
+    #endif // _DEMO, _GOLD or Full
+    trap_Cvar_Update (&g_availableWeapons);
+
+    #ifdef _DEMO
+    // In demo, we ensure at least one weapon is enabled in each group,
+    // even if this really isn't the case.
+    for(i = 0; i < OUTFITTING_GROUP_MAX - 1; i++){
+        if(!groupAvailable[i]){
+            // Mark this group available by enabling the first weapon
+            // found present in this group.
+            available[groupWeapon[i] - 1] = '2';
+        }
+    }
+
+    // Update the outfitting CVAR so it seems all required groups are enabled.
+    trap_Cvar_Set("g_availableWeapons", available);
+    trap_Cvar_Update(&g_availableWeaponsOutfitting);
+    #endif // _DEMO
 
     // Free memory allocated.
     if(available != NULL){

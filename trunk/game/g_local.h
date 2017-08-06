@@ -1602,6 +1602,9 @@ extern  vmCvar_t    g_timeextensionmultiplier;
 #endif // _DEMO
 extern  vmCvar_t    g_roundstartdelay;
 extern  vmCvar_t    hideSeek_roundstartdelay;
+#ifdef _DEMO
+extern  vmCvar_t    g_availableWeaponsOutfitting;
+#endif // _DEMO
 extern  vmCvar_t    g_availableWeapons;
 extern  vmCvar_t    hideSeek_availableWeapons;
 extern  vmCvar_t    availableWeapons;
