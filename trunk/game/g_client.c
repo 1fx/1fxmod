@@ -596,12 +596,12 @@ void SetClientViewAngle( gentity_t *ent, vec3_t angle )
     VectorCopy (ent->s.angles, ent->client->ps.viewangles);
 }
 
-#ifndef _DEMO
 /*
 ================
 G_SetRespawnTimer
 ================
 */
+
 void G_SetRespawnTimer ( gentity_t* ent )
 {
     // Start a new respawn interval if the old one has passed
@@ -613,7 +613,6 @@ void G_SetRespawnTimer ( gentity_t* ent )
     // start the interval if its not already started
     ent->client->ps.respawnTimer = level.gametypeRespawnTime[ent->client->sess.team] + 1000;
 }
-#endif // not _DEMO
 
 /*
 ================
@@ -633,7 +632,6 @@ void respawn( gentity_t *ent )
 
     // When we get here the user has just accepted their fate and now
     // needs to wait for the ability to respawn
-    #ifndef _DEMO
     switch ( level.gametypeData->respawnType )
     {
         case RT_INTERVAL:
@@ -642,15 +640,14 @@ void respawn( gentity_t *ent )
             break;
 
         case RT_NONE:
-            // Turn into a ghost
+            // Turn into a ghost.
             ghost = qtrue;
-            //Ryan april 10 2004 12:36pm
-            //keep track of the amout of time spent ghosting for the awards
-            if(!ent->client->sess.ghostStartTime)
-            {
+
+            // Keep track of the amount of time spent ghosting for the awards.
+            if(!ent->client->sess.ghostStartTime){
                 ent->client->sess.ghostStartTime = level.time;
             }
-            //Ryan
+
             break;
 
         case RT_NORMAL:
@@ -658,12 +655,6 @@ void respawn( gentity_t *ent )
         case RT_MAX:
             break;
     }
-    #else
-    if(level.gametypeData->respawnType == RT_NONE){
-        // Turn into a ghost
-        ghost = qtrue;
-    }
-    #endif // not _DEMO
 
     // If they are a ghost then give a health point, but dont respawn
     if ( ghost )

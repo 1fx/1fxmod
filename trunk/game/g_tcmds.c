@@ -132,7 +132,7 @@ void G_TeamInfo (gentity_t *ent, char *team)
     }
     trap_SendServerCommand( ent-g_entities, va("print \"%-25s %i\n", "[^3Scorelimit^7]", g_scorelimit.integer));
     trap_SendServerCommand( ent-g_entities, va("print \"%-25s %i\n", "[^3Timelimit^7]", g_timelimit.integer));
-    if(strstr(g_gametype.string, "ctf")){
+    if(current_gametype.value == GT_CTF){
         trap_SendServerCommand( ent-g_entities, va("print \"%-25s %i\n", "[^3Respawn interval^7]", g_respawnInterval.integer));
     }
     #ifndef _DEMO

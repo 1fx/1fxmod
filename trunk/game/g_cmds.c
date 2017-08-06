@@ -1471,7 +1471,6 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
     // Kill any child entities of this client to protect against grenade team changers
     G_FreeEnitityChildren ( ent ); // Henk 14/01/11 -> Fix for specnade
 
-    #ifndef _DEMO
     // Always spawn into a ctf game using a respawn timer.
     if(!level.pause)
     {
@@ -1481,7 +1480,6 @@ void SetTeam( gentity_t *ent, char *s, const char* identity, qboolean forced )
             ghost = qtrue;
         }
     }
-    #endif // not _DEMO
 
     //Ryan
     //Ryan june 15 2003

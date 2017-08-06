@@ -1267,9 +1267,7 @@ void        G_AddScore                      ( gentity_t *ent, int score );
 void        CalculateRanks                  ( void );
 qboolean    G_SpotWouldTelefrag             ( gspawn_t* spawn );
 void        G_UpdateClientAnimations        ( gentity_t* ent );
-#ifndef _DEMO
 void        G_SetRespawnTimer               ( gentity_t* ent );
-#endif // not _DEMO
 gentity_t*  G_FindNearbyClient              ( vec3_t origin, team_t team, float radius, gentity_t* ignore );
 void        G_AddClientSpawn                ( gentity_t* ent, team_t team, qboolean monkey );
 void        G_AllocateStatsMemory           ( gentity_t *ent );

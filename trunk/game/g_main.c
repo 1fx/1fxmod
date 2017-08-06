@@ -678,10 +678,10 @@ static cvarTable_t gameCvarTable[] =
     { NULL,                 "disable_pickup_weapon_F1",             "0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
     { NULL,                 "disable_pickup_weapon_L2A2",           "0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
     { NULL,                 "disable_pickup_weapon_MDN11",          "0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
-#ifdef _GOLD
+    #ifdef _GOLD
     { NULL,                 "disable_pickup_weapon_MP5",            "0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
     { NULL,                 "disable_pickup_weapon_SIG551",         "0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
-#endif // _GOLD
+    #endif // _GOLD
 
     { &g_alternateMap,  "g_alternateMap", "0", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
     #ifdef _DEMO
@@ -2039,7 +2039,9 @@ G_ShutdownGame
 */
 void G_ShutdownGame( int restart )
 {
-    char fsGame[MAX_QPATH];
+    #ifdef _WIN32
+    char    fsGame[MAX_QPATH];
+    #endif // _WIN32
 
     Com_Printf ("==== ShutdownGame ====\n");
 
@@ -2091,7 +2093,7 @@ void G_ShutdownGame( int restart )
     // Boe!Man 1/28/15: Thanks to LinuxThreads, also kill the Thread Manager. This "fixes" a crash on "new" (> Linux 2.4) systems.
     pthread_kill_other_threads_np();
     Com_Printf("Thread Manager shutdown.\n");
-    #elif WIN32
+    #elif _WIN32
     UnlockFile(lockFile, 0, 0, 0xffffff, 0xffffff);
     CloseHandle(lockFile);
 
