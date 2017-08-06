@@ -3967,21 +3967,8 @@ qboolean ConsoleCommand( void )
     trap_Argv( 1, arg1, sizeof( arg1 ) );
     trap_Argv( 2, arg2, sizeof( arg2 ) );
 
-    // Boe!Man 4/6/11: Check the altmap command prior to the admin loop.
-    if ( Q_stricmp (cmd, "altmap") == 0 )
-    {
-        if(strstr(arg2, "ctf") || strstr(arg2, "inf") || strstr(arg2, "tdm") || strstr(arg2, "dm") || strstr(arg2, "elim") || strstr(arg2, "h&s") || strstr(arg2, "h&z")){
-            trap_Cvar_Set( "g_gametype", arg2);
-            trap_Cvar_Update ( &g_gametype );
-        }
-        trap_Cvar_Set( "g_alternateMap", "1");
-        trap_Cvar_Update ( &g_alternateMap );
-        trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", arg1));
-        return qtrue;
-    }
-
-    for(i=0;i<AdminCommandsSize;i++){ // Henk 15/09/10 -> Fixed loop going outside array(causing crashes)
-        //Com_Printf("Checking %s with %s\n", arg1, AdminCommands[i].adminCmd);
+    // Check Admin commands for RCON/Console.
+    for(i = 0; i < AdminCommandsSize; i++){
         if(!Q_stricmp(cmd, AdminCommands[i].adminCmd)){
             G_postExecuteAdminCommand(i, AdminCommands[i].Function(1, NULL, qfalse), NULL);
             return qtrue;
@@ -3993,18 +3980,6 @@ qboolean ConsoleCommand( void )
         Svcmd_EntityList_f();
         return qtrue;
     }
-
-    /*if ( Q_stricmp (cmd, "forceteam") == 0 )
-    {
-        Svcmd_ForceTeam_f();
-        return qtrue;
-    }
-
-    if ( Q_stricmp ( cmd, "cancelvote" ) == 0 )
-    {
-        Svcmd_CancelVote_f();
-        return qtrue;
-    }*/
 
 #ifdef _SOF2_BOTS
 

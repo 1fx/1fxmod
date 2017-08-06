@@ -2020,11 +2020,13 @@ void Boe_mapEvents (void){
                 level.mapSwitchCount2--;
                 level.mapSwitchCount = level.time + 1000;
             }else{
+                #ifndef _DEMO
                 if(strstr(level.mapPrefix, "D^")){
                     trap_SendConsoleCommand( EXEC_APPEND, va("devmap %s\n", level.mapSwitchName));
-                }else{
+                }else
+                #endif // not _DEMO
                     trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", level.mapSwitchName));
-                }
+
 
                 // Boe!Man 7/15/13: Also re-set these values in case the map switch goes wrong.
                 level.mapSwitch = qfalse;

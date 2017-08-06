@@ -970,6 +970,10 @@ typedef struct
     int         lastSpeedCheck;         // Check speed for zombies only every other frame.
 
     int         lastTimeEndCheck;       // Checks if the level is about to exit in a couple of minutes.
+
+    #ifdef _DEMO
+    int         enableCheats;           // Re-enable cheats when the engine disables them at game start.
+    #endif // _DEMO
 } level_locals_t;
 
 //

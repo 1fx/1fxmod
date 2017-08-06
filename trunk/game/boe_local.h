@@ -482,6 +482,9 @@ extern vmCvar_t g_aliasCount;
 
 // Henkie 01/02/11
 extern vmCvar_t g_alternateMap;
+#ifdef _DEMO
+extern vmCvar_t g_developerMap;
+#endif // _DEMO
 
 // Boe!Man 1/8/10
 void Boe_serverMsg (void);

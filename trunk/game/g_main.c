@@ -253,7 +253,12 @@ vmCvar_t    cm_sb;
 // Boe!Man 12/13/10: Clonecheck CVARs.
 vmCvar_t    g_aliasCheck;
 vmCvar_t    g_aliasCount;
+
+// Extra map switch CVARs.
 vmCvar_t    g_alternateMap;
+#ifdef _DEMO
+vmCvar_t    g_developerMap;
+#endif // _DEMO
 
 // Boe!Man 1/26/11
 vmCvar_t    g_cm;
@@ -383,10 +388,10 @@ static cvarTable_t gameCvarTable[] =
     { &g_enableHash, "g_enableHash", "0", CVAR_ROM, 0.0, 0.0, 0, qfalse },
 
     // latched vars
-    { &g_gametype, "g_gametype", "dm", CVAR_SERVERINFO | CVAR_LATCH, 0.0, 0.0, 0, qfalse  },
+    { &g_gametype, "g_gametype", "dm", CVAR_SERVERINFO | CVAR_LATCH, 0.0, 0.0, 0, qfalse },
 
-    { &g_maxclients, "sv_maxclients", "8", CVAR_SERVERINFO | CVAR_CHEAT | CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
-    { &g_maxGameClients, "g_maxGameClients", "0", CVAR_SERVERINFO | CVAR_LATCH | CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
+    { &g_maxclients, "sv_maxclients", "8", CVAR_SERVERINFO | CVAR_CHEAT | CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
+    { &g_maxGameClients, "g_maxGameClients", "0", CVAR_SERVERINFO | CVAR_LATCH | CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 
     { &g_dmflags, "dmflags", "8", CVAR_SERVERINFO | CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
     #ifndef _DEMO
@@ -678,7 +683,11 @@ static cvarTable_t gameCvarTable[] =
     { NULL,                 "disable_pickup_weapon_SIG551",         "0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
 #endif // _GOLD
 
-    { &g_alternateMap, "g_alternateMap", "0", CVAR_ROM|CVAR_INTERNAL|CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse  },
+    { &g_alternateMap,  "g_alternateMap", "0", CVAR_ROM|CVAR_INTERNAL|CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
+    #ifdef _DEMO
+    { &g_developerMap,  "g_developerMap", "0", CVAR_ROM|CVAR_INTERNAL|CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
+    #endif // _DEMO
+
     { &g_enableCustomCommands, "g_enableCustomCommands", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
     { &g_customCommandsFile,            "g_customCommandsFile",         "files/CustomCommands.txt", CVAR_ARCHIVE,   0.0,    0.0,  0, qfalse  }, // Boe!Man 3/6/11: So users can change if desired.
     { &g_tipsFile,                      "g_tipsFile",                   "files/tips.txt",   CVAR_ARCHIVE,   0.0,    0.0,  0, qfalse  }, // Boe!Man 6/24/11: So users can change if desired.
@@ -1020,6 +1029,18 @@ void G_UpdateCvars( void )
                     }
                 }
 
+                #ifdef _DEMO
+                if(level.enableCheats && !Q_stricmp (cv->cvarName, "sv_cheats")
+                    && cv->modificationCount == level.enableCheats)
+                {
+                    // Re-enable the sv_cheats CVAR.
+                    trap_Cvar_Set("sv_cheats", "1");
+                    trap_Cvar_Update(&g_cheats);
+
+                    level.enableCheats = 0;
+                }
+                #endif // _DEMO
+
                 cv->modificationCount = cv->vmCvar->modificationCount;
 
                 if ( cv->trackChange )
@@ -1172,7 +1193,7 @@ void G_UpdateAvailableWeapons ( void )
     #else
     // v1.00.
     trap_Cvar_Set("g_availableWeapons", available);
-    #endif // _DEMO, _GOLD or Full
+    #endif // _GOLD, _DEMO or Full
     trap_Cvar_Update (&g_availableWeapons);
 
     #ifdef _DEMO
@@ -1693,6 +1714,22 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
         }
     }
 
+    #ifdef _DEMO
+    // Check if we should enable cheats because the user
+    // requested a developer map.
+    if(g_developerMap.integer){
+        // We enable the sv_cheats CVAR, but the engine will disable this again
+        // at the end of the game initialization.
+        // We re-enable the sv_cheats CVAR at that point.
+        trap_Cvar_Set("sv_cheats", "1");
+        trap_Cvar_Update(&g_cheats);
+        level.enableCheats = g_cheats.modificationCount;
+
+        trap_Cvar_Set("g_developerMap", "0");
+        trap_Cvar_Update(&g_developerMap);
+    }
+    #endif // _DEMO
+
     // Build the gametype list so we can verify the given gametype
     BG_BuildGametypeList ( );
 
@@ -2020,6 +2057,15 @@ void G_ShutdownGame( int restart )
             trap_Cvar_Update ( &g_alternateMap );
         }
     }
+
+    #ifdef _DEMO
+    if(g_cheats.integer){
+        // Disable cheats prior to restarting to avoid getting
+        // "CHEATS ARE ENABLED" on the loading screen.
+        trap_Cvar_Set("sv_cheats", "0");
+        trap_Cvar_Update(&g_cheats);
+    }
+    #endif // _DEMO
 
     //Henk 12/10/12 -> Detach and close memory database
     if(g_checkCountry.integer){

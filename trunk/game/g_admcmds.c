@@ -3456,11 +3456,15 @@ int adm_Map(int argNum, gentity_t *adm, qboolean shortCmd)
 
     // Check for alternative maps to load.
     if(strstr(command, "altmap")){
-        trap_Cvar_Set( "g_alternateMap", "1");
-        trap_Cvar_Update ( &g_alternateMap );
+        trap_Cvar_Set("g_alternateMap", "1");
+        trap_Cvar_Update(&g_alternateMap);
         altAction = 1;
     }else if(strstr(command, "devmap")){
-        altAction = 2; // dev
+        #ifdef _DEMO
+        trap_Cvar_Set("g_developerMap", "1");
+        trap_Cvar_Update(&g_developerMap);
+        #endif // _DEMO
+        altAction = 2;
     }
 
     // Check if the map exists.
@@ -3532,7 +3536,7 @@ int adm_Map(int argNum, gentity_t *adm, qboolean shortCmd)
     }
     #endif // _GOLD
 
-    trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype %s\n", gametype));
+    trap_SendConsoleCommand(EXEC_APPEND, va("g_gametype %s\n", gametype));
 
     level.mapSwitch = qtrue;
     level.mapAction = 2;
@@ -3541,21 +3545,35 @@ int adm_Map(int argNum, gentity_t *adm, qboolean shortCmd)
     strcpy(level.mapSwitchName, map);
 
     // Broadcast and logging.
-    Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
-    if(altAction == 1){
-        strncpy(level.mapPrefix, G_ColorizeMessage("\\Altmap"), sizeof(level.mapPrefix));
-    }else if(altAction == 2){
-        strncpy(level.mapPrefix, G_ColorizeMessage("\\Devmap"), sizeof(level.mapPrefix));
-    }else{
-        strncpy(level.mapPrefix, G_ColorizeMessage("\\Map"), sizeof(level.mapPrefix));
-    }
+    if(adm && adm->client){
+        Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+        if(altAction == 1){
+            strncpy(level.mapPrefix, G_ColorizeMessage("\\Altmap"), sizeof(level.mapPrefix));
+        }else if(altAction == 2){
+            strncpy(level.mapPrefix, G_ColorizeMessage("\\Devmap"), sizeof(level.mapPrefix));
+        }else{
+            strncpy(level.mapPrefix, G_ColorizeMessage("\\Map"), sizeof(level.mapPrefix));
+        }
 
-    if(gametype[0]){ // Boe!Man 2/26/11: If there's actually a gametype found..
-        trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Map switch to %s [%s] by %s.\n\"", map, gametype, adm->client->pers.cleanName));
-        Boe_adminLog ("map switch", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", map, gametype));
+        if(gametype[0]){ // Boe!Man 2/26/11: If there's actually a gametype found..
+            trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Map switch to %s [%s] by %s.\n\"", map, gametype, adm->client->pers.cleanName));
+            Boe_adminLog ("map switch", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), va("%s\\%s", map, gametype));
+        }else{
+            trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Map switch to %s by %s.\n\"", map, adm->client->pers.cleanName));
+            Boe_adminLog ("map switch", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), map);
+        }
     }else{
-        trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Map switch to %s by %s.\n\"", map, adm->client->pers.cleanName));
-        Boe_adminLog ("map switch", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), map);
+        // Do the logging if possible.
+        if(altAction == 1){
+            Boe_adminLog ("altmap switch", "RCON", va("%s\\%s", map, gametype));
+        }else if(altAction == 2){
+            Boe_adminLog ("devmap switch", "RCON", va("%s\\%s", map, gametype));
+        }else{
+            Boe_adminLog ("map switch", "RCON", va("%s\\%s", map, gametype));
+        }
+
+        // Immediately execute the map change.
+        trap_SendConsoleCommand(EXEC_APPEND, va("map %s\n", map));
     }
 
     return -1;
