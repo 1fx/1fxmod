@@ -683,9 +683,9 @@ static cvarTable_t gameCvarTable[] =
     { NULL,                 "disable_pickup_weapon_SIG551",         "0", CVAR_CHEAT, 0.0, 0.0, 0, qfalse },
 #endif // _GOLD
 
-    { &g_alternateMap,  "g_alternateMap", "0", CVAR_ROM|CVAR_INTERNAL|CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
+    { &g_alternateMap,  "g_alternateMap", "0", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
     #ifdef _DEMO
-    { &g_developerMap,  "g_developerMap", "0", CVAR_ROM|CVAR_INTERNAL|CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
+    { &g_developerMap,  "g_developerMap", "0", CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
     #endif // _DEMO
 
     { &g_enableCustomCommands, "g_enableCustomCommands", "0", CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue  },
