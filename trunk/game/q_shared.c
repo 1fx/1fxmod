@@ -1081,54 +1081,54 @@ void Info_NextPair( const char **head, char *key, char *value ) {
 Info_RemoveKey
 ===================
 */
+
 void Info_RemoveKey( char *s, const char *key ) {
     char    *start;
     char    pkey[MAX_INFO_KEY];
     char    value[MAX_INFO_VALUE];
     char    *o;
 
-    if ( strlen( s ) >= MAX_INFO_STRING ) {
+    if(strlen(s) >= MAX_INFO_STRING){
         Com_Error(ERR_FATAL, "Info_RemoveKey: oversize infostring");
     }
 
-    if (strchr (key, '\\')) {
+    if(strchr(key, '\\')){
         return;
     }
 
-    while (1)
-    {
+    while(1){
         start = s;
-        if (*s == '\\')
+        if(*s == '\\'){
             s++;
+        }
         o = pkey;
-        while (*s != '\\')
-        {
-            if (!*s)
+        while(*s != '\\'){
+            if(!*s){
                 return;
+            }
             *o++ = *s++;
         }
         *o = 0;
         s++;
 
         o = value;
-        while (*s != '\\' && *s)
-        {
-            if (!*s)
+        while(*s != '\\' && *s){
+            if(!*s){
                 return;
+            }
             *o++ = *s++;
         }
         *o = 0;
 
-        if (!strcmp (key, pkey) )
-        {
-            strcpy (start, s);  // remove this part
+        if(!strcmp (key, pkey)){
+            memmove(start, s, strlen(s) + 1); // remove this part
             return;
         }
 
-        if (!*s)
+        if(!*s){
             return;
+        }
     }
-
 }
 
 /*
@@ -1136,58 +1136,55 @@ void Info_RemoveKey( char *s, const char *key ) {
 Info_RemoveKey_Big
 ===================
 */
+
 void Info_RemoveKey_Big( char *s, const char *key ) {
     char    *start;
     char    pkey[BIG_INFO_KEY];
     char    value[BIG_INFO_VALUE];
     char    *o;
 
-    if ( strlen( s ) >= BIG_INFO_STRING ) {
+    if(strlen(s) >= BIG_INFO_STRING){
         Com_Error(ERR_FATAL, "Info_RemoveKey_Big: oversize infostring");
     }
 
-    if (strchr (key, '\\')) {
+    if(strchr(key, '\\')){
         return;
     }
 
-    while (1)
-    {
+    while(1){
         start = s;
-        if (*s == '\\')
+        if(*s == '\\'){
             s++;
+        }
         o = pkey;
-        while (*s != '\\')
-        {
-            if (!*s)
+        while(*s != '\\'){
+            if(!*s){
                 return;
+            }
             *o++ = *s++;
         }
         *o = 0;
         s++;
 
         o = value;
-        while (*s != '\\' && *s)
-        {
-            if (!*s)
+        while(*s != '\\' && *s){
+            if(!*s){
                 return;
+            }
             *o++ = *s++;
         }
         *o = 0;
 
-        if (!strcmp (key, pkey) )
-        {
-            strcpy (start, s);  // remove this part
+        if(!strcmp(key, pkey)){
+            memmove(start, s, strlen(s) + 1); // remove this part
             return;
         }
 
-        if (!*s)
+        if(!*s){
             return;
+        }
     }
-
 }
-
-
-
 
 /*
 ==================

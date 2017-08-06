@@ -853,12 +853,7 @@ static void G_AddBot( const char *name, float skill, const char *team, int delay
     Info_SetValueForKey( userinfo, "name", botname );
     Info_SetValueForKey( userinfo, "rate", "25000" );
     Info_SetValueForKey( userinfo, "snaps", "20" );
-    // Boe!Man 9/12/12: Personal system fix for crappy float precision using mingw32 on linux (i.e. cross compiling the DLL for win32 using linux). Debug only, since releases should properly build on win32.
-    #if (defined(__MINGW32__) && defined(_DEBUG))
-    Info_SetValueForKey( userinfo, "skill", va("%5.2f", skill) );
-    #else
     Info_SetValueForKey( userinfo, "skill", va("%1.2f", skill) );
-    #endif
 
     // Boe!Man 9/6/12: Fixed bots not auto reloading at times.
     Info_SetValueForKey( userinfo, "cg_autoReload", "1");
