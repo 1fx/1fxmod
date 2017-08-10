@@ -559,6 +559,9 @@ struct gclient_s
     int         damage_knockback;   // impact damage
     vec3_t      damage_from;        // origin for vector calculation
     qboolean    damage_fromWorld;   // if true, don't use the damage_from vector
+    #ifdef _DEMO
+    qboolean    damage_fromWorld2;  // if true, apply the centered damage the next frame
+    #endif // _DEMO
 
     int         accurateCount;      // for "impressive" reward sound
 

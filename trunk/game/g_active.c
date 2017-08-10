@@ -35,6 +35,21 @@ void P_DamageFeedback( gentity_t *player )
         return;
     }
 
+    #ifdef _DEMO
+    if(client->damage_fromWorld2){
+        // Apply the centered damage now, the next frame.
+        // This will result in the client viewing all four damage blobs,
+        // while not causing the odd knockback.
+        client->ps.damageCount = 1;
+        client->ps.damagePitch = 255;
+        client->ps.damageYaw = 255;
+        client->ps.damageEvent++;
+
+        client->damage_fromWorld2 = qfalse;
+        return;
+    }
+    #endif // _DEMO
+
     // total points of damage shot at the player this frame
     count = client->damage_blood + client->damage_armor;
     if ( count == 0 )
@@ -54,8 +69,18 @@ void P_DamageFeedback( gentity_t *player )
     // to make the blend blob centered instead of positional
     if ( client->damage_fromWorld )
     {
+        #ifndef _DEMO
         client->ps.damagePitch = 255;
         client->ps.damageYaw = 255;
+        #else
+        // In demo, centered world damage is bugged.
+        // Apply fake positional damage instead, and apply the real
+        // centered damage the next frame.
+        client->ps.damagePitch = 0;
+        client->ps.damageYaw = 0;
+
+        client->damage_fromWorld2 = qtrue;
+        #endif // not _DEMO
 
         client->damage_fromWorld = qfalse;
     }
