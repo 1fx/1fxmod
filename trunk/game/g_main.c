@@ -3660,50 +3660,51 @@ void Henk_CheckHS(void)
         level.RPGTime = 0;
     }
     // Henk 19/01/10 -> Last man standing
-if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
-    countred = level.teamAliveCount[TEAM_RED];
-    if(countred == 2 && level.lastaliveCheck[0] == qfalse){ // 2 hiders alive
-        level.lastalive[0] = -1;
-        level.lastalive[1] = -1;
-        for(i = 0; i < level.numConnectedClients; i++){
-            if (g_entities[level.sortedClients[i]].inuse){
-                if(g_entities[level.sortedClients[i]].client->sess.team == TEAM_RED && !G_IsClientDead(g_entities[level.sortedClients[i]].client) && g_entities[level.sortedClients[i]].client->pers.connected == CON_CONNECTED){
-                    if(level.lastalive[0] == -1){
-                        level.lastalive[0] = level.sortedClients[i];
-                    }else{
-                        level.lastalive[1] = level.sortedClients[i];
-                        break;
+    if(level.time > level.gametypeDelayTime && level.gametypeStartTime >= 5000){
+        countred = level.teamAliveCount[TEAM_RED];
+        if(countred == 2 && level.lastaliveCheck[0] == qfalse){ // 2 hiders alive
+            level.lastalive[0] = -1;
+            level.lastalive[1] = -1;
+            for(i = 0; i < level.numConnectedClients; i++){
+                if (g_entities[level.sortedClients[i]].inuse){
+                    if(g_entities[level.sortedClients[i]].client->sess.team == TEAM_RED && !G_IsClientDead(g_entities[level.sortedClients[i]].client) && g_entities[level.sortedClients[i]].client->pers.connected == CON_CONNECTED){
+                        if(level.lastalive[0] == -1){
+                            level.lastalive[0] = level.sortedClients[i];
+                        }else{
+                            level.lastalive[1] = level.sortedClients[i];
+                            break;
+                        }
                     }
                 }
             }
+            level.lastaliveCheck[0] = qtrue;
         }
-        level.lastaliveCheck[0] = qtrue;
-    }
-    if(countred == 1 && level.lastaliveCheck[1] == qfalse){
-        for(i = 0; i < level.numConnectedClients; i++){
-            if (g_entities[level.sortedClients[i]].inuse){
-                if(g_entities[level.sortedClients[i]].client->sess.team == TEAM_RED && !G_IsClientDead(g_entities[level.sortedClients[i]].client) && g_entities[level.sortedClients[i]].client->pers.connected == CON_CONNECTED){
-                    if(level.lastalive[0] == level.sortedClients[i]){
-                        // leave as it is
-                        break;
-                    }else if(level.lastalive[1] == level.sortedClients[i]){
-                        level.lastalive[1] = level.lastalive[0];
-                        level.lastalive[0] = level.sortedClients[i];
-                        break;
-                    }else{
-                        level.lastalive[0] = level.sortedClients[i];
-                        break;
+        if(countred == 1 && level.lastaliveCheck[1] == qfalse){
+            for(i = 0; i < level.numConnectedClients; i++){
+                if (g_entities[level.sortedClients[i]].inuse){
+                    if(g_entities[level.sortedClients[i]].client->sess.team == TEAM_RED && !G_IsClientDead(g_entities[level.sortedClients[i]].client) && g_entities[level.sortedClients[i]].client->pers.connected == CON_CONNECTED){
+                        if(level.lastalive[0] == level.sortedClients[i]){
+                            // leave as it is
+                            break;
+                        }else if(level.lastalive[1] == level.sortedClients[i]){
+                            level.lastalive[1] = level.lastalive[0];
+                            level.lastalive[0] = level.sortedClients[i];
+                            break;
+                        }else{
+                            level.lastalive[0] = level.sortedClients[i];
+                            break;
+                        }
                     }
                 }
             }
+
+            if(g_entities[level.lastalive[0]].client){
+                trap_SendServerCommand (-1, va("print\"^3[H&S] ^7%s is the last hider alive.\n\"", g_entities[level.lastalive[0]].client->pers.cleanName ));
+                G_Broadcast("You are the last \\hider alive!", BROADCAST_GAME, &g_entities[level.lastalive[0]]);
+            }
+            level.lastaliveCheck[1] = qtrue;
         }
-        //Com_Printf("Log1 RPG: %s\nM4: %s\n", g_entities[level.lastalive[0]].client->pers.cleanName, g_entities[level.lastalive[1]].client->pers.cleanName);
-        //G_LogPrintf("RPG: %s\nM4: %s\n", g_entities[level.lastalive[0]].client->pers.cleanName, g_entities[level.lastalive[1]].client->pers.cleanName);
-        trap_SendServerCommand (-1, va("print\"^3[H&S] ^7%s is the last hider alive.\n\"", g_entities[level.lastalive[0]].client->pers.cleanName ));
-        G_Broadcast("You are the last \\hider alive!", BROADCAST_GAME, &g_entities[level.lastalive[0]]);
-        level.lastaliveCheck[1] = qtrue;
     }
-}
     // Henk 22/01/10 -> Display seekers released message.
     trap_Cvar_VariableStringBuffer ( "mapname", level.mapname, MAX_QPATH );
 
