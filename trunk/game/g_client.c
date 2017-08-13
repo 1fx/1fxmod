@@ -1674,10 +1674,17 @@ void ClientUserinfoChanged( int clientNum )
     }
 
     trap_SetConfigstring( CS_PLAYERS+clientNum, s );
-    //if(!strcmp(s, userinfo))
-    //return;
-}
 
+    // Boe!Man 8/13/17: Add an additional check here,
+    // whether the name is correctly registered in the userinfo
+    // yes or no.
+    // This makes sure there are no empty server client messages.
+    trap_GetUserinfo( clientNum, userinfo, sizeof( userinfo ) );
+    if(!strlen(Info_ValueForKey(userinfo, "name"))){
+        Info_SetValueForKey(userinfo, "name", client->pers.netname);
+        trap_SetUserinfo(clientNum, userinfo);
+    }
+}
 
 /*
 ===========
