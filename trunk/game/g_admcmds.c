@@ -3236,71 +3236,30 @@ Removes an Admin from a list.
 
 int adm_adminRemove(int argNum, gentity_t *adm, qboolean shortCmd)
 {
-    char        arg[32] = "\0";
-    char        arg0[32] = "\0";
-    char        arg1[32] = "\0";
-    char        buf[32] = "\0";
-    int         i = 0;
-    int         count = 0;
+    char        ipArg[32] = "\0";
+    char        passArg[32] = "\0";
     qboolean    passAdmin = qfalse;
 
-    if(shortCmd){
-        trap_Argv( argNum, arg, sizeof( arg ) );
-        if(strstr(arg, "!") && !strstr(arg, " ")){
-            trap_Argv( argNum+1, arg, sizeof( arg ) );
-        }
-        for(i=StartAfterCommand(va("%s", arg));i<strlen(arg);i++){
-            buf[count] = arg[i];
-            count += 1;
-        }
-        buf[count+1] = '\0';
-
-        trap_Argv(1, arg1, sizeof(arg1));
-        if(strstr(arg1, "pass")){
-            if(g_passwordAdmins.integer){
-                passAdmin = qtrue;
-            }else{
-                G_printInfoMessage(adm, "Access denied: No password logins allowed by the server!");
-                return -1;
-            }
-        }else{
-            trap_Argv( 2, arg0, sizeof( arg0 ) );
-            trap_Argv( 3, arg1, sizeof( arg1 ) );
-            if(strstr(arg0, "pass") || strstr(arg1, "pass")){
-                if(g_passwordAdmins.integer){
-                    passAdmin = qtrue;
-                }else{
-                    G_printInfoMessage(adm, "Access denied: No password logins allowed by the server!");
-                    return -1;
-                }
-            }
-        }
-
-        if(!strstr(buf, ".")){ // Boe!Man 2/6/13: No dot found, unban by line number.
-            Boe_removeAdminFromDb(adm, buf, passAdmin, qtrue, qfalse);
-        }else{ // Boe!Man 2/6/13: Dot found, unban by IP.
-            Boe_removeAdminFromDb(adm, buf, passAdmin, qfalse, qfalse);
-        }
+    if(shortCmd && G_GetChatArgumentCount() > 0){
+        Q_strncpyz(ipArg, G_GetChatArgument(1), sizeof(ipArg));
+        Q_strncpyz(passArg, G_GetChatArgument(2), sizeof(passArg));
     }else{
-        trap_Argv( argNum, arg, sizeof( arg ) );
-        trap_Argv( argNum-1, arg0, sizeof( arg0 ) );
-        trap_Argv( argNum+1, arg1, sizeof( arg1 ) );
+        trap_Argv(argNum, ipArg, sizeof(ipArg));
+        trap_Argv(argNum + 1, passArg, sizeof(passArg));
+    }
 
-        if(strstr(arg, "pass") || strstr(arg0, "pass") || strstr(arg1, "pass")){
-            if(g_passwordAdmins.integer){
-                passAdmin = qtrue;
-            }else{
-                G_printInfoMessage(adm, "Access denied: No password logins allowed by the server!");
-                return -1;
-            }
-        }
-
-        if(!strstr(arg, ".")){ // Boe!Man 2/6/13: No dot found, unban by line number.
-            Boe_removeAdminFromDb(adm, arg, passAdmin, qtrue, qfalse);
-        }else{ // Boe!Man 2/6/13: Dot found, unban by IP.
-            Boe_removeAdminFromDb(adm, arg, passAdmin, qfalse, qfalse);
+    if(strstr(passArg, "pass")){
+        if(g_passwordAdmins.integer){
+            passAdmin = qtrue;
+        }else{
+            G_printInfoMessage(adm,
+                "Access denied: No password logins allowed by the server!");
+            return -1;
         }
     }
+
+    // If there's no dot found, unban by line number.
+    Boe_removeAdminFromDb(adm, ipArg, passAdmin, !strstr(ipArg, "."), qfalse);
 
     return -1;
 }
