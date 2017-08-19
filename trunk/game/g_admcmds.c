@@ -1257,26 +1257,23 @@ static void adm_toggleCVAR(gentity_t *adm, int argNum, qboolean shortCmd, char *
     #endif // _GOLD
 
     // Copy the name of the CVAR without capital.
-    strncpy(cvarNameWithoutCap, cvarName, sizeof(cvarNameWithoutCap));
+    Q_strncpyz(cvarNameWithoutCap, cvarName, sizeof(cvarNameWithoutCap));
+    memset(arg, 0, sizeof(arg));
 
-    if (shortCmd) {
-        // Grab the new cvar value.
-        cvarValue = GetArgument(argNum);
+    // Grab the new cvar value.
+    if(shortCmd && G_GetChatArgumentCount() > 0){
+        Q_strncpyz(arg, G_GetChatArgument(1), sizeof(arg));
     }else{
-        arg[0] = 0;
-
         trap_Argv(argNum, arg, sizeof(arg));
-        if (arg[0]) {
-            cvarValue = atoi(arg);
-        }else{
-            cvarValue = -1;
-        }
     }
+    cvarValue = arg[0] ? atoi(arg) : -1;
 
-    // Check if the player supplied an argument. If not, show him the current values.
+    // Check if the player supplied an argument.
+    // If not, show him the current values.
     if (cvarValue < 0){
-        if (availableInCM && g_compMode.integer > 0 && cm_enabled.integer >= 1){
-            G_printInfoMessage(adm, "Match %s is %d.", cvarNameWithoutCap, (cvar2 != NULL) ? cvar2->integer : cvar1->integer);
+        if(availableInCM && g_compMode.integer > 0 && cm_enabled.integer >= 1){
+            G_printInfoMessage(adm, "Match %s is %d.", cvarNameWithoutCap,
+                (cvar2 != NULL) ? cvar2->integer : cvar1->integer);
         }else{
             G_printInfoMessage(adm, "%s is %d.", cvarName, cvar1->integer);
         }
@@ -1284,37 +1281,50 @@ static void adm_toggleCVAR(gentity_t *adm, int argNum, qboolean shortCmd, char *
         return;
     }
 
-    // Is Competition Mode active so we can update the scrim setting vs. the global one?
-    if (availableInCM && g_compMode.integer > 0 && cm_enabled.integer >= 1){
-        if (cm_enabled.integer == 1){
-            trap_Cvar_Set(cvarNameCM, va("%i", cvarValue));
-            trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7Match %s changed to %i by %s.\n\"", cvarNameWithoutCap, cvarValue, adm->client->pers.cleanName));
-        }else if (cm_enabled.integer > 1 && cm_enabled.integer < 5){
-            trap_Cvar_Set(cvarNameCM, va("%i", cvarValue));
-            trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7Match %s changed to %i by %s.\n\"", cvarNameWithoutCap, cvarValue, adm->client->pers.cleanName));
-            Boe_setTrackedCvar(cvar1, cvarValue); // Avoid the [Rcon Action] message for the real CVAR.
+    // Is Competition Mode active so we can update
+    // the scrim setting vs. the global one?
+    if(availableInCM && g_compMode.integer > 0 && cm_enabled.integer >= 1){
+        if(cm_enabled.integer == 1){
+            trap_Cvar_Set(cvarNameCM, va("%d", cvarValue));
+            trap_SendServerCommand(-1, va("print \"^3[Admin Action] " \
+                "^7Match %s changed to %d by %s.\n\"", cvarNameWithoutCap,
+                cvarValue, adm->client->pers.cleanName));
+        }else if(cm_enabled.integer > 1 && cm_enabled.integer < 5){
+            trap_Cvar_Set(cvarNameCM, va("%d", cvarValue));
+            trap_SendServerCommand(-1, va("print \"^3[Admin Action] " \
+                "^7Match %s changed to %d by %s.\n\"", cvarNameWithoutCap,
+                cvarValue, adm->client->pers.cleanName));
+
+             // Avoid the [Rcon Action] message for the real CVAR.
+            Boe_setTrackedCvar(cvar1, cvarValue);
         }
     }else{
-        if (cvar1 != NULL){
-            Boe_setTrackedCvar(cvar1, cvarValue); // Avoid the [Rcon Action] message for the real CVAR.
-        }
-        else{
-            trap_Cvar_Set(cvarNameWithoutCap, va("%i", cvarValue));
+        if(cvar1 != NULL){
+            // Avoid the [Rcon Action] message for the real CVAR.
+            Boe_setTrackedCvar(cvar1, cvarValue);
+        }else{
+            trap_Cvar_Set(cvarNameWithoutCap, va("%d", cvarValue));
             trap_Cvar_Update(cvar1);
         }
 
-        trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7%s changed to %i by %s.\n\"", cvarName, cvarValue, adm->client->pers.cleanName));
+        trap_SendServerCommand(-1, va("print \"^3[Admin Action] " \
+            "^7%s changed to %d by %s.\n\"", cvarName, cvarValue,
+            adm->client->pers.cleanName));
     }
 
     Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
     G_Broadcast(va("\\%s %i!", cvarName, cvarValue), BROADCAST_CMD, NULL);
-    Boe_adminLog(va("%s %i", cvarName, cvarValue), va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "none");
+    Boe_adminLog(va("%s %i", cvarName, cvarValue), va("%s\\%s",
+        adm->client->pers.ip, adm->client->pers.cleanName), "none");
 
     #ifdef _GOLD
-    // Send scoreboard to all clients in ROCmod (so variables are properly instantly re-calculated).
-    for (i = 0; i < level.maxclients; i++) {
-        if (level.clients[i].pers.connected == CON_CONNECTED) {
-            DeathmatchScoreboardMessage(g_entities + i);
+    if(level.clientMod == CL_ROCMOD){
+        // Send scoreboard to all clients in ROCmod
+        // (so variables are properly instantly re-calculated).
+        for(i = 0; i < level.maxclients; i++) {
+            if(level.clients[i].pers.connected == CON_CONNECTED){
+                DeathmatchScoreboardMessage(g_entities + i);
+            }
         }
     }
     #endif // _GOLD
