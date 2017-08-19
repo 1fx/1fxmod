@@ -3478,7 +3478,7 @@ int adm_Map(int argNum, gentity_t *adm, qboolean shortCmd)
     }
 
     // Check if the map exists.
-   trap_FS_FOpenFile( va("maps\\%s.bsp", map), &f, FS_READ );
+   trap_FS_FOpenFile(va("maps/%s.bsp", map), &f, FS_READ);
     if(!f){
         G_printInfoMessage(adm, "Map not found.");
         return -1;

@@ -67,7 +67,7 @@ static qboolean vote_map(gentity_t *ent)
     Q_strlwr(arg2);
 
     // Map must be valid in order to switch to it.
-    trap_FS_FOpenFile(va("maps/%s.bsp"), &mapFile, FS_READ);
+    trap_FS_FOpenFile(va("maps/%s.bsp", arg2), &mapFile, FS_READ);
     if(mapFile == 0){
         G_printInfoMessage(ent, "Map not found.");
         return qfalse;
