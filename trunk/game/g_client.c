@@ -714,8 +714,6 @@ Returns qtrue if the client is dead and qfalse if not
 */
 qboolean G_IsClientDead ( gclient_t* client )
 {
-    if(!client) // Henk -> Debugger whines about this
-        return qfalse;
     if ( client->ps.stats[STAT_HEALTH] <= 0 )
     {
         return qtrue;

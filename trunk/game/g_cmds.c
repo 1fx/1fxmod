@@ -224,7 +224,7 @@ void EvenTeams (gentity_t *adm, qboolean aet)
 
         // Boe!Man 7/13/12: Fix crash issue with auto eventeams too soon
         // before entering the map.
-        if(lastConnected == NULL){
+        if(lastConnected == NULL || lastConnected->client == NULL){
             if((adm && adm->client) || aet == qfalse){
                 G_printInfoMessage(adm,
                     "You cannot even the teams this fast.");
@@ -232,30 +232,36 @@ void EvenTeams (gentity_t *adm, qboolean aet)
             return;
         }
 
-        if (!G_IsClientDead(lastConnected->client)){
+        if(!G_IsClientDead(lastConnected->client)){
             lastConnected->client->ps.stats[STAT_WEAPONS] = 0;
             TossClientItems( lastConnected );
         }
         G_StartGhosting( lastConnected );
 
-        if(highTeam == TEAM_RED) lastConnected->client->sess.team = TEAM_BLUE;
-        else lastConnected->client->sess.team = TEAM_RED;
+        if(highTeam == TEAM_RED){
+            lastConnected->client->sess.team = TEAM_BLUE;
+        }else{
+            lastConnected->client->sess.team = TEAM_RED;
+        }
 
-        if (lastConnected->r.svFlags & SVF_BOT) {
+        if(lastConnected->r.svFlags & SVF_BOT){
             char    userinfo[MAX_INFO_STRING];
-            trap_GetUserinfo( lastConnected->s.number, userinfo, sizeof( userinfo ) );
-            Info_SetValueForKey( userinfo, "team", lastConnected->client->sess.team == TEAM_RED?"red":"blue");
-            trap_SetUserinfo( lastConnected->s.number, userinfo );
+
+            trap_GetUserinfo(lastConnected->s.number, userinfo,
+                sizeof(userinfo));
+            Info_SetValueForKey( userinfo, "team",
+                lastConnected->client->sess.team == TEAM_RED? "red" : "blue");
+            trap_SetUserinfo(lastConnected->s.number, userinfo);
         }
 
         lastConnected->client->pers.identity = NULL;
         ClientUserinfoChanged( lastConnected->s.number );
         CalculateRanks();
 
-        G_StopFollowing( lastConnected );
-        G_StopGhosting( lastConnected );
-        trap_UnlinkEntity ( lastConnected );
-        ClientSpawn( lastConnected);
+        G_StopFollowing(lastConnected);
+        G_StopGhosting(lastConnected);
+        trap_UnlinkEntity(lastConnected);
+        ClientSpawn(lastConnected);
     }
 
 
