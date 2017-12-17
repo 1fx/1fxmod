@@ -81,11 +81,11 @@
 // Boe!Man 9/14/15: 1fx. Client Additions on Gold.
 // Those defines *MUST* be in sync with the latest core UI release.
 #ifdef _GOLD
-#define COREUI_DEFAULT_PAKNAME "1fx.additions/1fx_coreUI_1.10"
-#define COREUI_DEFAULT_PAKNUM 1810390628
+#define COREUI_DEFAULT_PAKNAME "1fx.additions/1fx_coreUI_1.20"
+#define COREUI_DEFAULT_PAKNUM -1910307189
 
-#define COREUI_ROCMOD_PAKNAME "1fx.rocmod/ROCmod_1fx_coreUI_1.10"
-#define COREUI_ROCMOD_PAKNUM -20966203
+#define COREUI_ROCMOD_PAKNAME "1fx.rocmod/ROCmod_1fx_coreUI_1.20"
+#define COREUI_ROCMOD_PAKNUM -153989226
 #endif // _GOLD
 
 // 1fx. Mod
