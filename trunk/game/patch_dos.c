@@ -41,6 +41,13 @@ qboolean Patch_dosDetour(const char *message, char *from, char *req)
     char        ip[MAX_IP];
     request_t   *request = NULL;
 
+    #ifdef _WIN32
+    // Discard any update packets we receive.
+    if(strcmp(req, "update") == 0){
+        return qfalse;
+    }
+    #endif // _WIN32
+
     // Only filter getinfo and getstatus packets.
     if(strcmp(req, "getinfo") != 0 && strcmp(req, "getstatus") != 0){
         return qtrue;
