@@ -518,15 +518,6 @@ typedef enum {
 
 } gameExport_t;
 
-// Boe!Man 3/30/10
-#define MAX_BOE_CHATS           200
-
-typedef struct chatSounds_s
-{
-    char text[MAX_SAY_TEXT];
-    int  sound;
-} chatSounds_t;
-
 typedef struct statinfo_s
 {
     int         *weapon_shots;

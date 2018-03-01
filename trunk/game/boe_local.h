@@ -360,10 +360,7 @@ extern  vmCvar_t    server_motd6;
 char    *Boe_StatColor(int stat);
 int     Boe_FindClosestTeammate(gentity_t *ent, qboolean bot);
 int     Boe_FindClosestEnemy(gentity_t *ent, qboolean bot);
-void    Boe_ParseChatSounds (void);
 void    Boe_Tokens(gentity_t *ent, char *chatText, int mode, qboolean CheckSounds);
-
-extern  chatSounds_t chatSounds[MAX_BOE_CHATS];
 
 void    Boe_ClientSound (gentity_t *ent, int soundIndex);
 void    Boe_GlobalSound (int soundIndex);

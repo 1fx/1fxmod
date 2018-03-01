@@ -966,8 +966,6 @@ typedef struct
     pthread_mutex_t countryInitLock;        // Boe!Man 12/24/15: Mutex lock for the country database initialization.
     qboolean        countryPostProcessed;   // Boe!Man 12/24/15: True when the post processing is finished after thread completion.
 
-    int         nextSound;      // Boe!Man 5/30/15: Sound index for the next sound, if found.
-
     int         customETHiderAmount[16];
 
     int         lastSpeedCheck;         // Check speed for zombies only every other frame.
@@ -1245,6 +1243,24 @@ qboolean    G_showItemLocations             ( void );
 //
 void        SnapVectorTowards               ( vec3_t v, vec3_t to );
 void        G_InitHitModels                 ( void );
+
+//
+// g_mvchat.c
+//
+
+typedef struct {
+    qboolean    shouldSoundPlay;            // If the sound is able to/should play.
+    qboolean    displayNoText;              // qtrue if the sound text should not be displayed in chat.
+
+    const char  *text;                      // The text belonging to the sound.
+    int         soundIndex;                 // The sound index to the actual sound.
+    int         stripChars;                 // How many characters should be stripped from the chat text.
+} mvchat_ChatParse_t;
+
+
+void        mvchat_parseFiles               ( void );
+void        mvchat_chatDetermineSound       ( mvchat_ChatParse_t *chatParse, char *chatText, TIdentity *identity );
+int         mvchat_chatGetNextSound         ( TIdentity *identity );
 
 //
 // g_client.c

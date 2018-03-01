@@ -311,113 +311,6 @@ void QDECL Boe_adminLog( const char *command, const char *by, const char *to, ..
 void ExitLevel( void );
 gspawn_t* G_SelectRandomSafeSpawnPoint ( team_t team, float safeDistance, gclient_t *client, qboolean isBot );
 
-chatSounds_t chatSounds[MAX_BOE_CHATS];
-
-char* defaultChatSounds[][2] =
-{
-    {"Call for reinforcements",         "sound/enemy/english/male/call_for_reinforcements.mp3"  },
-    {"Advance",                         "sound/enemy/english/male/advance.mp3"                  },
-    {"Awaiting orders",                 "sound/enemy/english/male/awaiting_orders.mp3"          },
-    {"Check the perimiter",             "sound/enemy/english/male/check_peri.mp3"               },
-    {"Go check that out",               "sound/enemy/english/male/check_that_out.mp3"           },
-    {"He's dangerous",                  "sound/enemy/english/male/dangerous.mp3"                },
-    {"Did you hear that",               "sound/enemy/english/male/did_you_hear.mp3"             },
-    {"He's disappeared",                "sound/enemy/english/male/disappeared.mp3"              },
-    {"Drop your weapon",                "sound/enemy/english/male/drop_your_weapon.mp3"         },
-    {"Eliminate target",                "sound/enemy/english/male/eliminate.mp3"                },
-    {"GET HIM",                         "sound/enemy/english/male/get_him.mp3"                  },
-    {"I got that bastard",              "sound/enemy/english/male/got_bastard.mp3"              },
-    {"Hold here",                       "sound/enemy/english/male/hold_here.mp3"                },
-    {"Hurry",                           "sound/enemy/english/male/hurry.mp3"                    },
-    {"I'm hit",                         "sound/npc/col8/blakely/imhit.mp3"                      },
-    {"Investigate that area",           "sound/enemy/english/male/investigate_area.mp3"         },
-    {"Keep looking",                    "sound/enemy/english/male/keep_looking.mp3"             },
-    {"KILL HIM",                        "sound/enemy/english/male/kill_him"                     },
-    {"I killed him",                    "sound/enemy/english/male/killed_him.mp3"               },
-    {"I lost him",                      "sound/enemy/english/male/lost_him.mp3"                 },
-    {"TAKING SERIOUS CASUALTIES",       "sound/enemy/english/male/man_down03.mp3"               },
-    {"I need help here",                "sound/enemy/english/male/need_help.mp3"                },
-    {"Medic Medic",                     "sound/enemy/english/male/medic_medic.mp3"              },
-    {"Open Fire",                       "sound/enemy/english/male/open_fire.mp3"                },
-    {"I'm out of Ammo",                 "sound/enemy/english/fmale/out_ammo.mp3"                },
-    {"He's over here",                  "sound/enemy/english/male/over_here.mp3"                },
-    {"Over there",                      "sound/enemy/english/male/over_there.mp3"               },
-    {"Plug him",                        "sound/enemy/english/male/plug_him.mp3"                 },
-    {"Position reached",                "sound/enemy/english/male/pos_reached.mp3"              },
-    {"Secure the area",                 "sound/enemy/english/male/secure_the_area.mp3"          },
-    {"We're getting slaughtered",       "sound/enemy/english/male/slaughtered.mp3"              },
-    {"Somethings not right here",       "sound/enemy/english/male/something_not_right.mp3"      },
-    {"Spread out",                      "sound/enemy/english/male/spread_out.mp3"               },
-    {"Surround him",                    "sound/enemy/english/male/surround_him.mp3"             },
-    {"Take cover",                      "sound/enemy/english/male/take_cover2.mp3"              },
-    {"Take him out",                    "sound/enemy/english/male/take_him_out.mp3"             },
-    {"Take Position",                   "sound/enemy/english/male/take_position.mp3"            },
-    {"Take them out",                   "sound/enemy/english/male/take_them_out.mp3"            },
-    {"Target has been eliminated",      "sound/enemy/english/male/target_eliminate.mp3"         },
-    {"There he is",                     "sound/enemy/english/male/there_he_is.mp3"              },
-    {"Taking alot of fire",             "sound/enemy/english/male/underfire03.mp3"              },
-    {"WATCH OUT",                       "sound/enemy/english/male/watch_out.mp3"                },
-    {"What are you doing here",         "sound/enemy/english/male/what_are_you_doing.mp3"       },
-    {"What the...",                     "sound/enemy/english/male/what_the.mp3"                 },
-    {"What was that",                   "sound/enemy/english/male/what_was_that.mp3"            },
-    {"Whats happening here",            "sound/enemy/english/male/whats_happening_here.mp3"     },
-    {"Who are you",                     "sound/enemy/english/male/who_are_you.mp3"              },
-    {"You're not supposed to be here",  "sound/enemy/english/male/youre_not_supposed.mp3"       },
-    {"Hey did you see that guy, He wet his pants ha haha ha ha..", "sound/npc/air1/guard01/01wetpants.mp3" },
-    {"Hey honey..",                     "sound/npc/air1/guard05/01honey.mp3"                    },
-    {"Huh I think i can help you",      "sound/npc/gladstone/arm1/03canhelp.mp3"                },
-    {"If you look at me 1 more time, I swear I'll BLOW YOUR HEAD OFF", "sound/npc/air1/terrorists/blowheadoff.mp3" },
-    {"How bout we see if you can dodge a BULLET", "sound/npc/air1/terrorists/dodgebullet.mp3"   },
-    {"That was a close one",            "sound/npc/fritsch/closeone.mp3"                        },
-    {"What are you lookin at",          "sound/npc/air1/terrorists/lookingat.mp3"               },
-    {"You scared?, You should be",      "sound/npc/air1/terrorists/scared02.mp3"                },
-    {"Leave me alone",                  "sound/npc/air1/woman01/01leaveme.mp3"                  },
-    {"Please just leave me be..",       "sound/npc/air1/woman01/02please.mp3"                   },
-    {"What? Please explain.. over",     "sound/npc/air4/hansen/04what.mp3"                      },
-    {"Attention",                       "sound/npc/cem1/comm/01attention.mp3"                   },
-    {"Someone call 911",                "sound/npc/civ/english/male/call_911.mp3"               },
-    {"Call the police",                 "sound/npc/civ/english/male/callpolice.mp3"             },
-    {"Comin thru..",                    "sound/npc/civ/english/male/coming_thru.mp3"            },
-    {"NICE SHOT",                       "sound/npc/col8/washington/niceshot.mp3"                },
-    {"Excuse me",                       "sound/npc/civ/english/male/excuse_me.mp3"              },
-    {"Don't hurt me",                   "sound/npc/civ/english/male/dont_hurt.mp3"              },
-    {"I don't understand",              "sound/npc/civ/english/male/dont_understand.mp3"        },
-    {"I don't have any money",          "sound/npc/civ/english/male/no_money.mp3"               },
-    {"Those men have guns",             "sound/npc/civ/english/male/thosemen.mp3"               },
-    {"Take my wallet, Just don't hurt me", "sound/npc/civ/english/male/wallet.mp3"              },
-    {"I'm unarmed",                     "sound/npc/civ/english/male/unarmed.mp3"                },
-    {"Watchout",                        "sound/npc/civ/english/male/watchout.mp3"               },
-    {"Pairup",                          "sound/npc/col2/butch/pairup.mp3"                       },
-    {"Fanout",                          "sound/npc/col2/butch/fanout.mp3"                       },
-    {"We got company, Take cover",      "sound/npc/col3/peterson/12company.mp3"                 },
-    {"Enemy has been neutralized, base camp is secure. over", "sound/npc/col3/radio/02enemy.mp3" },
-    {"BANG! Your dead",                 "sound/npc/col8/blakely/bang.mp3"                       },
-    {"DAMN! that was close",            "sound/npc/col8/blakely/close.mp3"                      },
-    {"GET DOWN",                        "sound/npc/col8/blakely/getdown.mp3"                    },
-    {"Come get some",                   "sound/npc/col8/blakely/getsome.mp3"                    },
-    {"Incoming",                        "sound/npc/col8/blakely/incoming.mp3"                   },
-    {"Go cry to mama",                  "sound/npc/col8/blakely/mama.mp3"                       },
-    {"We showed them",                  "sound/npc/col8/blakely/showed.mp3"                     },
-    {"Take that",                       "sound/npc/col8/blakely/takethat.mp3"                   },
-    {"That did it",                     "sound/npc/col8/blakely/thatdidit.mp3"                  },
-    {"You want some of this",           "sound/npc/col8/blakely/wantsome.mp3"                   },
-    {"Yeah",                            "sound/npc/col8/blakely/yeah.mp3"                       },
-    {"WOOOO",                           "sound/npc/col8/blakely/woo.mp3"                        },
-    {"Don't worry girls it'll all be over soon", "sound/npc/col8/peterson/01girls.mp3"          },
-    {"Cover my left",                   "sound/npc/col8/peterson/coverleft.mp3"                 },
-    {"Cover my right",                  "sound/npc/col8/peterson/coverright.mp3"                },
-    {"Keep your eyes open boys",        "sound/npc/col8/peterson/eyesopen.mp3"                  },
-    {"Get moving",                      "sound/npc/col8/peterson/getmoving02.mp3"               },
-    {"Shudd-up man",                    "sound/npc/col8/washington/02shuddup.mp3"               },
-    {"Eat lead sukka",                  "sound/npc/col8/washington/eatlead.mp3"                 },
-    {"Kickin ass, and takin names",     "sound/npc/col8/washington/takingnames.mp3"             },
-    {"How'd you like that",             "sound/npc/col8/washington/youlike.mp3"                 },
-    {"WoOoOo",                          "sound/npc/col8/washington/woo.mp3"                     },
-    {"O.K, lets do it",                 "sound/npc/col9/pilot/03letsdoit.mp3"                   },
-    {"We can't take much more of this", "sound/npc/col9/pilot/canttake.mp3"                     },
-    {NULL, NULL}
-};
-
 /*
 ==============
 Boe_Tokens
@@ -425,25 +318,27 @@ Boe_Tokens
 */
 void Boe_Tokens(gentity_t *ent, char *chatText, int mode, qboolean CheckSounds)
 {
-    int  i = 0, n = 0;
-    qboolean playedSound = qfalse, ghost = qfalse;
-    char location[64] = "\0";
-    char newText[MAX_SAY_TEXT] = "\0";
-    char *newTextp;
-    char *chatTextS;
-    char check;
-    gentity_t *tent;
-    qboolean text = qtrue;
-    //gitem_t* item;
 
-    if(ent->client->sess.mute)
-    {
+    char                *newTextp;
+    char                *chatTextS;
+    char                check;
+    gentity_t           *tent;
+    int                 soundIndex;
+    int                 i                       = 0;
+    int                 n                       = 0;
+    char                location[64]            = "\0";
+    char                newText[MAX_SAY_TEXT]   = "\0";
+    qboolean            playedSound             = qfalse;
+    qboolean            ghost                   = qfalse;
+    mvchat_ChatParse_t  chatParse               = {0};
+
+    if(ent->client->sess.mute){
         return;
     }
 
     newTextp = newText;
     chatTextS = chatText;
-    while(*chatText && newTextp < newText + MAX_SAY_TEXT )
+    while(*chatText && newTextp < newText + MAX_SAY_TEXT)
     {
         chatText--;
         check = *chatText;
@@ -545,54 +440,64 @@ void Boe_Tokens(gentity_t *ent, char *chatText, int mode, qboolean CheckSounds)
                     continue;
                 case 'n':
                 case 'N':
+                    // Is a motd set on the server?
+                    if(strlen(g_motd.string)){
+                        // Add the motd to the destination buffer.
                         Q_strcat(newText, MAX_SAY_TEXT, va("%s", g_motd.string));
-                        if ( ent->client->sess.voiceFloodCount >= g_voiceFloodCount.integer && g_voiceFloodCount.integer != 0) {
-                            ent->client->sess.voiceFloodCount = 0;
-                            ent->client->sess.voiceFloodTimer = 0;
-                            ent->client->sess.voiceFloodPenalty = level.time + g_voiceFloodPenalty.integer * 1000;
-                            G_printInfoMessage(ent, "Voice chat flooded, you will be able use voice chats again in %d seconds.", g_voiceFloodPenalty.integer);
-                        }else if ( ent->client->sess.voiceFloodPenalty > level.time ) {
-                            // Voice chat still flooded.
-                        }else if(!playedSound && strlen(g_motd.string) > 0){
-                            // Boe!Man 7/3/13: Check if this doesn't happen twice, in order to avoid multiple sounds in one sentence.
-                            ent->client->sess.voiceFloodCount++; // add one to floodcount as they could massively flood this
-                            if( level.gametypeData->respawnType == RT_NONE){
-                                if ( G_IsClientDead ( ent->client ) )
-                                    ghost = qtrue;
-                            }
 
-                            if(ghost){
-                                for (n = 0; n < level.numConnectedClients; n++){
-                                    tent = &g_entities[level.sortedClients[n]];
-                                    if (!tent || !tent->inuse || !tent->client)
-                                        continue;
-                                    if (!G_IsClientDead ( tent->client ) && !G_IsClientSpectating( tent->client))
-                                        continue;
+                        // Determine the next sound, if available.
+                        soundIndex = mvchat_chatGetNextSound(ent->client->pers.identity);
 
-                                    if(level.nextSound)
-                                        Boe_ClientSound(tent, chatSounds[level.nextSound].sound);
+                        // Do we have a sound available to be played?
+                        if(soundIndex != -1){
+                            // Did the user just hit the sound threshold?
+                            if(ent->client->sess.voiceFloodCount >= g_voiceFloodCount.integer && g_voiceFloodCount.integer != 0){
+                                ent->client->sess.voiceFloodCount = 0;
+                                ent->client->sess.voiceFloodTimer = 0;
+                                ent->client->sess.voiceFloodPenalty = level.time + g_voiceFloodPenalty.integer * 1000;
+                                G_printInfoMessage(ent, "Voice chat flooded, you will be able use voice chats again in %d seconds.", g_voiceFloodPenalty.integer);
+                            }else if(ent->client->sess.voiceFloodPenalty > level.time){
+                                // Voice chat still flooded.
+                            }else if(!playedSound){
+                                if(level.gametypeData->respawnType == RT_NONE){
+                                    if(G_IsClientDead(ent->client)){
+                                        ghost = qtrue;
+                                    }
                                 }
-                            }else if(ent->client->sess.team == TEAM_SPECTATOR && current_gametype.value != GT_DM){
-                                for (n = 0; n < level.numConnectedClients; n++){
-                                    tent = &g_entities[level.sortedClients[n]];
-                                    if (!tent || !tent->inuse || !tent->client)
-                                        continue;
-                                    if(tent->client->sess.team != TEAM_SPECTATOR && !G_IsClientDead(tent->client))
-                                        continue;
 
-                                    if(level.nextSound)
-                                    Boe_ClientSound(tent, chatSounds[level.nextSound].sound);
+                                // Play the sound.
+                                if(ghost){
+                                    for(n = 0; n < level.numConnectedClients; n++){
+                                        tent = &g_entities[level.sortedClients[n]];
+
+                                        if(!tent || !tent->inuse || !tent->client)
+                                            continue;
+                                        if(!G_IsClientDead ( tent->client ) && !G_IsClientSpectating( tent->client))
+                                            continue;
+
+                                        Boe_ClientSound(tent, soundIndex);
+                                    }
+                                }else if(ent->client->sess.team == TEAM_SPECTATOR && current_gametype.value != GT_DM){
+                                    for(n = 0; n < level.numConnectedClients; n++){
+                                        tent = &g_entities[level.sortedClients[n]];
+
+                                        if (!tent || !tent->inuse || !tent->client)
+                                            continue;
+                                        if(tent->client->sess.team != TEAM_SPECTATOR && !G_IsClientDead(tent->client))
+                                            continue;
+
+                                        Boe_ClientSound(tent, soundIndex);
+                                    }
+                                }else{
+                                    Boe_GlobalSound(soundIndex);
                                 }
-                            }else if(level.nextSound){
-                                Boe_GlobalSound(chatSounds[level.nextSound].sound);
-                            }
 
-                            // Check if the sound played, and if so, increment the voice flood count.
-                            if (level.nextSound) {
                                 ent->client->sess.voiceFloodCount++;
                                 playedSound = qtrue;
                             }
                         }
+                    }
+
                     chatText++;
                     continue;
                 case 'f':
@@ -689,149 +594,150 @@ void Boe_Tokens(gentity_t *ent, char *chatText, int mode, qboolean CheckSounds)
             }
         }
         if(((*chatText == '@') || (*chatText == '!') || (*chatText == '&')) && !playedSound && CheckSounds){
-        if (*chatText == '!' || *chatText == '&')
-            text = qfalse;
-        chatText++;
-        if(*chatText >= '0' && *chatText <= '9'){ // Boe!Man 2/15/13: Only continue if there are indeed sounds after the '@', '!' or '&' char. If not, the client probably meant something else.
-            chatText--;
-            if ( g_voiceFloodCount.integer ) {
-                if ( ent->client->sess.voiceFloodPenalty ) {
-                    if ( ent->client->sess.voiceFloodPenalty > level.time ) {
-                        // Boe!Man 11/5/12: Fix for no text when on flood penalty.
-                        chatText++;
-                        n = atoi(chatText) - 1;
-                        if(n > -1 && n < MAX_BOE_CHATS && *chatSounds[n].text && text) {
-                            Q_strcat(newText, MAX_SAY_TEXT, chatSounds[n].text);
-                            chatText++;
-                        }
-                        while (*chatText >= '0' && *chatText <= '9'){
-                            chatText++;
-                        }
-                        playedSound = qtrue;
-                        continue;
-                    }
-                    ent->client->sess.voiceFloodPenalty = 0;
-                }
-                if ( ent->client->sess.voiceFloodCount >= g_voiceFloodCount.integer ) {
-                    ent->client->sess.voiceFloodCount = 0;
-                    ent->client->sess.voiceFloodTimer = 0;
-                    ent->client->sess.voiceFloodPenalty = level.time + g_voiceFloodPenalty.integer * 1000;
-                    // Boe!Man 12/20/09 - Update 12/22/09 [Yellow color instead of Red].
-                    G_printInfoMessage(ent, "Voice chat flooded, you will be able use voice chats again in %d seconds.", g_voiceFloodPenalty.integer);
-                    // Boe!Man 11/5/12: Fix for no text when on flood penalty.
-                    chatText++;
-                    n = atoi(chatText) - 1;
-                    if(n > -1 && n < MAX_BOE_CHATS && *chatSounds[n].text && text) {
-                        Q_strcat(newText, MAX_SAY_TEXT, chatSounds[n].text);
-                        chatText++;
-                    }
-                    while (*chatText >= '0' && *chatText <= '9'){
-                        chatText++;
-                    }
-                    playedSound = qtrue;
-                    continue;
-                }
-                if (g_compMode.integer > 0 && cm_enabled.integer > 1){ // Boe!Man 11/20/10: Meaning the scrim already started..
-                    if (cm_devents.integer == 1){
-                        chatText++;
-                        n = atoi(chatText) - 1;
-                        if(n > -1 && n < MAX_BOE_CHATS && *chatSounds[n].text && text) {
-                            Q_strcat(newText, MAX_SAY_TEXT, chatSounds[n].text);
-                            chatText++;
-                        }
-                        while (*chatText >= '0' && *chatText <= '9'){
-                            chatText++;
-                        }
-                        G_printInfoMessage(ent, "Sounds are currently disabled in Competition Mode.");
-                        playedSound = qtrue;
-                        continue;
-                    }
-                }
-            }
-            //if(*chatText == '!') { // fix me henk
-            //  text = qfalse;
-            //}
-            chatText++;
-            i = 0;
-            n = atoi(chatText) - 1;
-            if(n > -1 && n < MAX_BOE_CHATS && chatSounds[n].sound && *chatSounds[n].text) {
-                i = chatSounds[n].sound;
-                if(text)
-                    Q_strcat(newText, MAX_SAY_TEXT, chatSounds[n].text);
-                chatText++;
-            }
-            else{
-                return;
-            }
-            if(i) {
-                if( level.gametypeData->respawnType == RT_NONE) {
-                    if ( G_IsClientDead ( ent->client ) )
-                            ghost = qtrue;
-                }
-                if(mode == SAY_TEAM) {
-                    for (n = 0; n < level.maxclients; n++) {
-                        tent = &g_entities[n];
+            // Parse the sound from the available text.
+            mvchat_chatDetermineSound(&chatParse, chatText, ent->client->pers.identity);
 
-                        if (!tent || !tent->inuse || !tent->client)
-                            continue;
-                        if ( !OnSameTeam(ent, tent) )
-                            continue;
-                        if (!G_IsClientDead ( tent->client ) && !G_IsClientSpectating( tent->client) && ghost)
-                            continue;
-                        Boe_ClientSound(tent, i);
+            // Is there a valid voice chat sound in the chat?
+            if(chatParse.shouldSoundPlay){
+                //
+                // Do some checks before actually attempting to play it.
+                // The server has a chance to block the sound from playing
+                // in this stage.
+                //
+
+                // Is voice flood protection enabled?
+                if(g_voiceFloodCount.integer){
+                    if(ent->client->sess.voiceFloodPenalty){
+                        if(ent->client->sess.voiceFloodPenalty > level.time){
+                            // The user already played too many sounds.
+                            // Don't play the requested sound.
+                            chatParse.shouldSoundPlay = qfalse;
+                        }else{
+                            // Punishment lifted.
+                            ent->client->sess.voiceFloodPenalty = 0;
+                        }
+                    }else if(ent->client->sess.voiceFloodCount >= g_voiceFloodCount.integer){
+                        // The user just hit the sound threshold.
+                        // Inform the user the system will be temporarily disabled.
+                        G_printInfoMessage(ent, "Voice chat flooded, you will be able use voice chats again in %d seconds.", g_voiceFloodPenalty.integer);
+
+                        // Set voice chat penalty.
+                        ent->client->sess.voiceFloodCount = 0;
+                        ent->client->sess.voiceFloodTimer = 0;
+                        ent->client->sess.voiceFloodPenalty = level.time + g_voiceFloodPenalty.integer * 1000;
+
+                        // Don't play the requested sound.
+                        chatParse.shouldSoundPlay = qfalse;
                     }
-                    ent->client->sess.voiceFloodCount++;
-                    playedSound = qtrue;
                 }
-                else if(mode != SAY_TELL) {
-                    if(ghost) {
-                        for (n = 0; n < level.numConnectedClients; n++){
-                            tent = &g_entities[level.sortedClients[n]];
-                            if (!tent || !tent->inuse || !tent->client)
+
+                // Is there a scrim active?
+                if(g_compMode.integer > 0 && cm_enabled.integer > 1){
+                    // The scrim is already started and active.
+                    // Don't play sounds if the server doesn't allow us to.
+                    if(cm_devents.integer){
+                        G_printInfoMessage(ent, "Sounds are currently disabled in Competition Mode.");
+                        chatParse.shouldSoundPlay = qfalse;
+                    }
+                }
+
+                //
+                // Server checks done.
+                //
+
+                // Should the sound text be seen in the chat?
+                if(!chatParse.displayNoText){
+                    // Insert the sound text.
+                    Q_strcat(newText, MAX_SAY_TEXT, chatParse.text);
+                }
+            }
+
+            // Strip the text parsed.
+            chatText += chatParse.stripChars;
+
+            // Should the sound still play?
+            if(chatParse.shouldSoundPlay){
+                // Is the player currently dead?
+                if(level.gametypeData->respawnType == RT_NONE){
+                    if(G_IsClientDead(ent->client)){
+                        ghost = qtrue;
+                    }
+                }
+
+                // Play the sound for another teammate *if* that player is supposed to hear it.
+                if(mode == SAY_TEAM){
+                    for(i = 0; i < level.maxclients; i++){
+                        tent = &g_entities[i];
+
+                        if(!tent || !tent->inuse || !tent->client)
+                            continue;
+                        if(!OnSameTeam(ent, tent))
+                            continue;
+                        if(!G_IsClientDead(tent->client) && !G_IsClientSpectating(tent->client) && ghost)
+                            continue;
+
+                        Boe_ClientSound(tent, chatParse.soundIndex);
+                    }
+
+                    // Increase voice flood count if the system is enabled.
+                    if(g_voiceFloodCount.integer){
+                        ent->client->sess.voiceFloodCount++;
+                    }
+
+                    // Don't play another sound during this chat.
+                    playedSound = qtrue;
+                }else if(mode != SAY_TELL){
+                    // Play sound for another player *if* that player is supposed to hear it.
+                    if(ghost){
+                        for(i = 0; i < level.numConnectedClients; i++){
+                            tent = &g_entities[level.sortedClients[i]];
+
+                            if(!tent || !tent->inuse || !tent->client)
                                 continue;
-                            if (!G_IsClientDead ( tent->client ) && !G_IsClientSpectating( tent->client))
+                            if(!G_IsClientDead(tent->client) && !G_IsClientSpectating(tent->client))
                                 continue;
-                            Boe_ClientSound(tent, i);
+
+                            Boe_ClientSound(tent, chatParse.soundIndex);
                         }
                     }else if(ent->client->sess.team == TEAM_SPECTATOR && current_gametype.value != GT_DM){
-                        // Boe!Man 11/10/12: New code for specs (so alive clients can't hear them, only specs and ghosts). Do note that this should not work in DM (not a team based game).
-                        for (n = 0; n < level.numConnectedClients; n++){
-                            tent = &g_entities[level.sortedClients[n]];
-                            if (!tent || !tent->inuse || !tent->client)
+                        for(i = 0; i < level.numConnectedClients; i++){
+                            tent = &g_entities[level.sortedClients[i]];
+
+                            if(!tent || !tent->inuse || !tent->client)
                                 continue;
                             if(tent->client->sess.team != TEAM_SPECTATOR && !G_IsClientDead(tent->client))
                                 continue;
-                            Boe_ClientSound(tent, i);
+
+                            Boe_ClientSound(tent, chatParse.soundIndex);
                         }
                     }else{
-                        Boe_GlobalSound(i);
+                        // Everybody can hear this sound.
+                        Boe_GlobalSound(chatParse.soundIndex);
                     }
-                    ent->client->sess.voiceFloodCount++;
+
+                    // Increase voice flood count if the system is enabled.
+                    if(g_voiceFloodCount.integer){
+                        ent->client->sess.voiceFloodCount++;
+                    }
+
+                    // Don't play another sound during this chat.
                     playedSound = qtrue;
                 }
             }
-                else {
-                    return;
-                }
-                while (*chatText >= '0' && *chatText <= '9')
-                    chatText++;
-            }else{
-                chatText--;
-            }
         }
-        while(*newTextp)
-        {newTextp++;}
 
-        if(*chatText)
-        {
+        while(*newTextp){
+            newTextp++;
+        }
+
+        if(*chatText){
             *newTextp++ = *chatText++;
-
         }
         *newTextp = '\0';
     }
-        chatText = chatTextS;
-        Q_strncpyz (chatText, newText, MAX_SAY_TEXT);
-        return;
+
+    chatText = chatTextS;
+    Q_strncpyz(chatText, newText, MAX_SAY_TEXT);
 }
 
 /*
@@ -996,94 +902,6 @@ int Boe_FindClosestEnemy(gentity_t *ent, qboolean bot)
 }
 
 /*
-===============
-Boe_ParseChatSounds
-===============
-*/
-
-void Boe_ParseChatSounds (void)
-{
-    int         fileCount, filelen, i, numSounds, number;
-    char        chatFiles[1024];
-    char        *filePtr;
-    char        *file;
-    char        text[MAX_SAY_TEXT];
-    char        sound[MAX_QPATH];
-    char        numString[8];
-    void        *GP2, *group;
-
-    G_LogPrintf("Loading Default chat Sounds\n");
-    for( numSounds = 0; defaultChatSounds[numSounds][0]; numSounds++)
-    {
-        Q_strncpyz(chatSounds[numSounds].text, defaultChatSounds[numSounds][0], MAX_SAY_TEXT);
-        chatSounds[numSounds].sound = G_SoundIndex(va("%s", defaultChatSounds[numSounds][1]));
-    }
-
-    fileCount = trap_FS_GetFileList( "", ".vchat", chatFiles, 1024 );
-    filePtr = chatFiles;
-
-    G_LogPrintf("Number of Chat sound files to Parse: %d\n", fileCount);
-
-    for( i = 0; i < fileCount && numSounds < MAX_BOE_CHATS; i++, filePtr += filelen+1 )
-    {
-        filelen = strlen(filePtr);
-        file = va("%s", filePtr);
-
-        GP2 = trap_GP_ParseFile(file, qtrue, qfalse);
-        if (!GP2)
-        {
-            G_LogPrintf("Error in file: \"%s\" or file not found.\n", file);
-            continue;
-        }
-
-        G_LogPrintf("Parsing chat file: %s\n", file);
-        group = trap_GPG_GetSubGroups(GP2);
-
-        while(group)
-        {
-            trap_GPG_FindPairValue(group, "number", "0", numString);
-            trap_GPG_FindPairValue(group, "text", "", text);
-            trap_GPG_FindPairValue(group, "sound", "", sound);
-
-            number = atoi(numString) -1;
-
-            if(number < 0 || number > MAX_BOE_CHATS - 1)
-            {
-                G_LogPrintf("Error in chat file: %s\nNumber %d out of range, must be 101 - 200.\n", file, number);
-                group = trap_GPG_GetNext(group);
-                continue;
-            }
-            if(*chatSounds[number].text || chatSounds[number].sound)
-            {
-                group = trap_GPG_GetNext(group);
-                continue;
-            }
-
-            if(*text && *sound)
-            {
-                // Check if the global NEXT sound is present.
-                if (strcmp(sound, "sound/next.mp3") == 0)
-                    level.nextSound = number;
-
-                Q_strncpyz(chatSounds[number].text, text, MAX_SAY_TEXT - 1);
-                chatSounds[number].sound = G_SoundIndex(va("%s", sound));
-                numSounds++;
-            }
-            if(numSounds == MAX_BOE_CHATS)
-            {
-                break;
-            }
-
-            group = trap_GPG_GetNext(group);
-        }
-
-        trap_GP_Delete(&GP2);
-    }
-
-    G_LogPrintf("Loaded %d sounds.\n", numSounds);
-}
-
-/*
 =============
 Boe_ClientSound
 =============
@@ -1181,6 +999,7 @@ void Boe_Display_ExtraSounds (gentity_t *ent)
     int soundIndex = 100;
     trap_SendServerCommand( ent-g_entities, va("print \"\n^3[Extra Sounds]\n\""));
     trap_SendServerCommand( ent-g_entities, va("print \"** Type @ and then a number to say the message, e.g. @21 **\n\""));
+    /*
     while(soundIndex < MAX_BOE_CHATS)
     {
         if(*chatSounds[soundIndex].text)
@@ -1189,6 +1008,7 @@ void Boe_Display_ExtraSounds (gentity_t *ent)
         }
         soundIndex++;
     }
+     */
 }
 
 /*

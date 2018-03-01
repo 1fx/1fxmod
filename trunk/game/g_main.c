@@ -1960,7 +1960,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
     }
 
     // Boe!Man 3/30/10
-    Boe_ParseChatSounds();
+    mvchat_parseFiles();
 
     // Boe!Man 1/30/14: If we're not in a game that has rounds and the user wishes to have automatic backups (enabled by default), do this every 5 minutes.
     if(sql_automaticBackup.integer && level.gametypeData->respawnType == RT_INTERVAL){

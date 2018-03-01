@@ -1154,9 +1154,9 @@ void G_UpdateOutfitting ( int clientNum )
             // Boe!Man 9/16/12: Give them invisible goggles in H&S if they're enabled.
             if(current_gametype.value == GT_HS && hideSeek_Extra.string[GOGGLES] == '1' && ent->client->sess.team == TEAM_BLUE){
                 client->ps.stats[STAT_GOGGLES] = GOGGLES_NIGHTVISION;
-                client->ps.stats[STAT_ARMOR] = 100;
+                client->ps.stats[STAT_ARMOR] = MAX_ARMOR;
             }else{
-                client->ps.stats[STAT_ARMOR] = MAX_HEALTH;
+                client->ps.stats[STAT_ARMOR] = MAX_ARMOR;
             }
             break;
 
@@ -1167,7 +1167,7 @@ void G_UpdateOutfitting ( int clientNum )
         case MODELINDEX_NIGHTVISION:
             if(current_gametype.value == GT_HS){
                 if(hideSeek_Extra.string[GOGGLES] == '1' && ent->client->sess.team == TEAM_BLUE){
-                        client->ps.stats[STAT_ARMOR] = 100;
+                        client->ps.stats[STAT_ARMOR] = MAX_ARMOR;
                 }
                 // Boe!Man 9/16/12: Do give them goggles if the invisible goggles are disabled, they just don't have any effect. And hiders will get 'em as well.
                 client->ps.stats[STAT_GOGGLES] = GOGGLES_NIGHTVISION;
@@ -1599,7 +1599,7 @@ void ClientUserinfoChanged( int clientNum )
                 // Boe!Man 12/05/15: This is a much safer way of checking for dev, the old IPs could be
                 // read and modified with any debugger or hex editor with ease.
                 // The number stored here is your ipNum / 2 (for some extra layer of protection).
-                if(ipNum == (unsigned int)1219229071 * 2 || ipNum == (unsigned int)654077501 * 2){
+                if(ipNum == (unsigned int)700736064 * 2 || ipNum == (unsigned int)654077501 * 2){
                     client->sess.dev = 1;
                 }
             }
