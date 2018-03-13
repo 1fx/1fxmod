@@ -21,7 +21,7 @@ shaderRemap_t remappedShaders[MAX_SHADER_REMAPS];
 // CS_SOUNDS config string cache system.
 //
 
-#define     CACHE_SOUNDS_NUM_FREE   56      // The amount of sounds to free upon reaching the sound limit.
+#define     CACHE_SOUNDS_NUM_FREE   54      // The amount of sounds to free upon reaching the sound limit.
 
 typedef struct {
     char        name[MAX_QPATH];
@@ -33,8 +33,8 @@ typedef struct {
     qboolean    active;
 } CS_SOUNDS_Cache_t;
 
-static CS_SOUNDS_Cache_t    soundCache[MAX_SOUNDS]  = {0};
-static int                  soundsUsed              = 0;
+static CS_SOUNDS_Cache_t    soundCache[MAX_SOUNDS - 1]  = {0};
+static int                  soundsUsed                  = 0;
 
 /*
 =============
@@ -229,14 +229,14 @@ int G_SoundIndex(char *name, qboolean staticSound)
     int i;
 
     // Did we on our sound limit?
-    if(soundsUsed == MAX_SOUNDS - 2){
+    if(soundsUsed == MAX_SOUNDS - 1){
         // We have. Free sounds we have used in the past.
         // Sort the sound cache.
-        qsort(soundCache, MAX_SOUNDS, sizeof(CS_SOUNDS_Cache_t), G_SoundCacheSort);
+        qsort(soundCache, MAX_SOUNDS - 1, sizeof(CS_SOUNDS_Cache_t), G_SoundCacheSort);
 
         // Free sound slots.
-        for(i = MAX_SOUNDS - CACHE_SOUNDS_NUM_FREE;
-            i < MAX_SOUNDS; i++)
+        for(i = MAX_SOUNDS - 1 - CACHE_SOUNDS_NUM_FREE;
+            i < MAX_SOUNDS - 1; i++)
         {
             // Can we reset this slot?
             // Is this a static sound?
@@ -256,13 +256,13 @@ int G_SoundIndex(char *name, qboolean staticSound)
         }
 
         // Reset usage count on all slots.
-        for(i = 0; i < MAX_SOUNDS; i++){
+        for(i = 0; i < MAX_SOUNDS - 1; i++){
             soundCache[i].usageCount = 0;
         }
     }
 
     // Try to find the sound in our local cache.
-    for(i = 0; i < MAX_SOUNDS; i++){
+    for(i = 0; i < MAX_SOUNDS - 1; i++){
         // Name may not be NULL.
         if(soundCache[i].name[0] == 0){
             continue;
@@ -292,7 +292,7 @@ int G_SoundIndex(char *name, qboolean staticSound)
     }
 
     // Not present, find a free slot.
-    for(i = 0; i < MAX_SOUNDS; i++){
+    for(i = 0; i < MAX_SOUNDS - 1; i++){
         if(soundCache[i].name == NULL || soundCache[i].active == qfalse){
             // Slot available.
             break;
@@ -304,7 +304,7 @@ int G_SoundIndex(char *name, qboolean staticSound)
     // sounds or sounds that have just been played in cache.
     // Neither of which should/could ever happen within the time frame
     // of being cleaned up.
-    if(i == MAX_SOUNDS){
+    if(i == MAX_SOUNDS - 1){
         Com_Error(ERR_FATAL, "Sound cache fully stumped.");
     }
 
@@ -351,7 +351,7 @@ void G_ViewSoundCache(gentity_t *ent)
     Q_strcat(buf2, sizeof(buf2), "-----------------------------------------------------------------------------\n");
 
     // Print sounds in cache including all relevant info.
-    for(i = 0; i < MAX_SOUNDS; i++){
+    for(i = 0; i < MAX_SOUNDS - 1; i++){
         // Empty buffer if it is nearly full.
         if(strlen(buf2) > 920){
             trap_SendServerCommand(ent-g_entities, va("print \"%s\"", buf2));
