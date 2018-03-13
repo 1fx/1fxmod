@@ -230,6 +230,7 @@ void mvchat_parseFiles()
                 if(langSoundGender){
                     // Male sound found.
                     // Grab the sound, if specified.
+                    memset(sSound, 0, sizeof(sSound));
                     trap_GPG_FindPairValue(langSoundGender, "sound", "", sSound);
                     if(sSound[0] != 0){
                         // Valid sound. Create an entry for this language.
@@ -252,6 +253,7 @@ void mvchat_parseFiles()
                 if(langSoundGender){
                     // Female sound found.
                     // Grab the sound, if specified.
+                    memset(sSound, 0, sizeof(sSound));
                     trap_GPG_FindPairValue(langSoundGender, "sound", "", sSound);
                     if(sSound[0] != 0){
                         // Valid sound. Create an entry for this language.
@@ -271,12 +273,14 @@ void mvchat_parseFiles()
                 }
 
                 // Is this the default language?
+                memset(sOption, 0, sizeof(sOption));
                 trap_GPG_FindPairValue(langSound, "default", "no", sOption);
                 if(Q_stricmp(sOption, "yes") == 0){
                     mvchatSound->defaultSoundLanguage = mvchatSound->sounds[x];
                 }
 
                 // Is this the next sound for the #n chat token?
+                memset(sOption, 0, sizeof(sOption));
                 trap_GPG_FindPairValue(langSound, "next", "no", sOption);
                 if(Q_stricmp(sOption, "yes") == 0){
                     mvchatSound->nextSoundLanguage = mvchatSound->sounds[x];
@@ -526,7 +530,7 @@ void mvchat_chatDetermineSound(mvchat_ChatParse_t *chatParse, char *chatText, TI
     // Set remaining base information.
     chatParse->text = mvchatSounds[num]->text;
     chatParse->shouldSoundPlay = qtrue;
-    chatParse->soundIndex = G_SoundIndex((char *)sound);
+    chatParse->soundIndex = G_SoundIndex((char *)sound, qfalse);
 }
 
 /*
@@ -592,5 +596,5 @@ int mvchat_chatGetNextSound(TIdentity *identity)
     }
 
     // Return the sound index to this sound file.
-    return G_SoundIndex((char *)sound);
+    return G_SoundIndex((char *)sound, qfalse);
 }

@@ -17,6 +17,25 @@ typedef struct
 int remapCount = 0;
 shaderRemap_t remappedShaders[MAX_SHADER_REMAPS];
 
+//
+// CS_SOUNDS config string cache system.
+//
+
+#define     CACHE_SOUNDS_NUM_FREE   56      // The amount of sounds to free upon reaching the sound limit.
+
+typedef struct {
+    char        name[MAX_QPATH];
+    int         index;
+    int         usageCount;
+    int         lastUsage;
+
+    qboolean    staticSound;
+    qboolean    active;
+} CS_SOUNDS_Cache_t;
+
+static CS_SOUNDS_Cache_t    soundCache[MAX_SOUNDS]  = {0};
+static int                  soundsUsed              = 0;
+
 /*
 =============
 VectorToCleanString
@@ -129,11 +148,6 @@ int G_ModelIndex( char *name )
     return G_FindConfigstringIndex (name, CS_MODELS, MAX_MODELS, qtrue);
 }
 
-int G_SoundIndex( char *name )
-{
-    return G_FindConfigstringIndex (name, CS_SOUNDS, MAX_SOUNDS, qtrue);
-}
-
 int G_AmbientSoundSetIndex( char *name )
 {
     return G_FindConfigstringIndex (name, CS_AMBIENT_SOUNDSETS, MAX_AMBIENT_SOUNDSETS, qtrue);
@@ -154,6 +168,212 @@ int G_BSPIndex( char *name )
 {
     return G_FindConfigstringIndex (name, CS_BSP_MODELS, MAX_SUB_BSP, qtrue);
 }
+
+/*
+================
+G_SoundCacheSort
+
+Sounds are sorted in cache
+as follows (quick sort):
+- Static sounds.
+- Sounds played very recently (within 100 msec of the request).
+- Regular sounds by usage.
+================
+*/
+
+static int QDECL G_SoundCacheSort(const void *slotPtrA, const void *slotPtrB)
+{
+    CS_SOUNDS_Cache_t   *slotA;
+    CS_SOUNDS_Cache_t   *slotB;
+
+    slotA   = (CS_SOUNDS_Cache_t *)slotPtrA;
+    slotB   = (CS_SOUNDS_Cache_t *)slotPtrB;
+
+    // Is sound slot A a static sound whilst slot B is not, or vice versa?
+    if(slotA->staticSound == qtrue && slotB->staticSound == qfalse){
+        return -1;
+    }else if(slotB->staticSound == qtrue && slotA->staticSound == qfalse){
+        return 1;
+    }
+
+    // Was sound A just requested to be played, unlike sound B, or vice versa?
+    if(level.time < slotA->lastUsage + 100 && level.time > slotB->lastUsage + 100){
+        return -1;
+    }else if(level.time < slotB->lastUsage + 100 && level.time > slotA->lastUsage + 100){
+        return 1;
+    }
+
+    // Does this sound have a higher usage count?
+    if(slotA->usageCount > slotB->usageCount){
+        return -1;
+    }
+
+    // Vice versa.
+    return 1;
+}
+
+/*
+================
+G_SoundIndex
+
+Returns the index to the configstring
+of the sound requested to play.
+
+This may either be from cache or a newly
+created configstring.
+================
+*/
+
+int G_SoundIndex(char *name, qboolean staticSound)
+{
+    int i;
+
+    // Did we on our sound limit?
+    if(soundsUsed == MAX_SOUNDS - 2){
+        // We have. Free sounds we have used in the past.
+        // Sort the sound cache.
+        qsort(soundCache, MAX_SOUNDS, sizeof(CS_SOUNDS_Cache_t), G_SoundCacheSort);
+
+        // Free sound slots.
+        for(i = MAX_SOUNDS - CACHE_SOUNDS_NUM_FREE;
+            i < MAX_SOUNDS; i++)
+        {
+            // Can we reset this slot?
+            // Is this a static sound?
+            if(soundCache[i].staticSound){
+                continue;
+            }
+            // Was this sound just requested to play?
+            if(level.time < soundCache[i].lastUsage + 100){
+                continue;
+            }
+
+            // Mark this slot as inactive to it may be reused.
+            soundCache[i].active = qfalse;
+
+            // Decrease sound slots active.
+            soundsUsed--;
+        }
+
+        // Reset usage count on all slots.
+        for(i = 0; i < MAX_SOUNDS; i++){
+            soundCache[i].usageCount = 0;
+        }
+    }
+
+    // Try to find the sound in our local cache.
+    for(i = 0; i < MAX_SOUNDS; i++){
+        // Name may not be NULL.
+        if(soundCache[i].name[0] == 0){
+            continue;
+        }
+
+        // Does the sound name match?
+        if(strcmp(soundCache[i].name, name) != 0){
+            continue;
+        }
+
+        // Yes, we found it.
+        // Increase usage.
+        soundCache[i].usageCount++;
+
+        // Make sure this sound is set to active if it was previously
+        // set as inactive.
+        if(soundCache[i].active == qfalse){
+            soundCache[i].active = qtrue;
+            soundsUsed++;
+        }
+
+        // Reset time used.
+        soundCache[i].lastUsage = level.time;
+
+        // Return the index to this slot.
+        return soundCache[i].index;
+    }
+
+    // Not present, find a free slot.
+    for(i = 0; i < MAX_SOUNDS; i++){
+        if(soundCache[i].name == NULL || soundCache[i].active == qfalse){
+            // Slot available.
+            break;
+        }
+    }
+
+    // This fatal error should never hit, but is there just in case.
+    // If this evaluates true this means we only have static
+    // sounds or sounds that have just been played in cache.
+    // Neither of which should/could ever happen within the time frame
+    // of being cleaned up.
+    if(i == MAX_SOUNDS){
+        Com_Error(ERR_FATAL, "Sound cache fully stumped.");
+    }
+
+    // Set slot information.
+    Q_strncpyz(soundCache[i].name, name, sizeof(soundCache[i].name));
+    soundCache[i].active = qtrue;
+    soundCache[i].lastUsage = level.time;
+    soundCache[i].staticSound = staticSound;
+
+    // Set initial sound index?
+    if(soundCache[i].index == 0){
+        soundCache[i].index = i + 1;
+    }
+
+    // Set actual configstring.
+    trap_SetConfigstring(CS_SOUNDS + soundCache[i].index, name);
+
+    // Increase usage and return the index.
+    soundCache[i].usageCount++;
+    soundsUsed++;
+
+    // Return the index.
+    return soundCache[i].index;
+}
+
+#if defined _DEV || defined _awesomeToAbuse
+/*
+================
+G_ViewSoundCache
+
+Lists all sounds in the
+sound cache plus all
+relevant info.
+================
+*/
+
+void G_ViewSoundCache(gentity_t *ent)
+{
+    char    buf2[1000] = {0};
+    int     i;
+
+    // Print header.
+    Q_strcat(buf2, sizeof(buf2), va(S_COLOR_RED "\n%-4s %-5s %-5s %-45s %-7s %s\n" S_COLOR_WHITE, "Slot", "Index", "Usage", "Name", "Active", "Static"));
+    Q_strcat(buf2, sizeof(buf2), "-----------------------------------------------------------------------------\n");
+
+    // Print sounds in cache including all relevant info.
+    for(i = 0; i < MAX_SOUNDS; i++){
+        // Empty buffer if it is nearly full.
+        if(strlen(buf2) > 920){
+            trap_SendServerCommand(ent-g_entities, va("print \"%s\"", buf2));
+            memset(buf2, 0, sizeof(buf2));
+        }
+
+        // Continue building the buffer.
+        Q_strcat(buf2, sizeof(buf2), va("%03d  " \
+                                        S_COLOR_RED "%03d   " \
+                                        S_COLOR_WHITE "%03d   " \
+                                        S_COLOR_RED "%-45.45s "
+                                        S_COLOR_WHITE "%-7s " \
+                                        "%s\n",
+            i, soundCache[i].index, soundCache[i].usageCount, soundCache[i].name[0] != 0 ? soundCache[i].name : "(empty)",
+            soundCache[i].active ? "YES" : "NO", soundCache[i].staticSound ? "YES" : "NO"));
+    }
+
+    // Print footer and the remaining buffer (if any).
+    trap_SendServerCommand(ent-g_entities, va("print \"%s\n" S_COLOR_RED "[Dev] "
+                                              S_COLOR_WHITE "/condump filename.txt to create a report\n\n\"", buf2));
+}
+#endif // _DEV or _awesomeToAbuse
 
 /*
 ================

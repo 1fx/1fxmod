@@ -2110,7 +2110,7 @@ void G_checkAntiCamp(gentity_t *ent)
         ent->client->sess.camperSeconds++;
 
         if (ent->client->sess.camperSeconds >= g_camperAllowTime.integer - 5 && ent->client->sess.camperSeconds < g_camperAllowTime.integer){
-            Boe_ClientSound(&g_entities[ent->s.number], G_SoundIndex("sound/movers/buttons/button03.mp3"));
+            Boe_ClientSound(&g_entities[ent->s.number], G_SoundIndex("sound/movers/buttons/button03.mp3", qfalse));
             G_Broadcast(va("You are about to be \\punished for camping!\nTime until punishment: %d seconds", g_camperAllowTime.integer - ent->client->sess.camperSeconds), BROADCAST_GAME2, ent);
         }
         else if(ent->client->sess.camperSeconds == g_camperAllowTime.integer){

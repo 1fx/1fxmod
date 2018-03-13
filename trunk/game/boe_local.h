@@ -414,9 +414,10 @@ void Boe_About( gentity_t *ent );
 qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean lineNumber, qboolean silent);
 
 #if defined _DEV || defined _awesomeToAbuse
-qboolean    Boe_dev_f       (gentity_t *ent);
-void        RPM_CalculateTMI(gentity_t *ent);
-void        Boe_Print_File  (gentity_t *ent, char *file, int idnum);
+qboolean    Boe_dev_f           ( gentity_t *ent );
+void        RPM_CalculateTMI    ( gentity_t *ent );
+void        Boe_Print_File      ( gentity_t *ent, char *file, int idnum );
+void        G_ViewSoundCache    ( gentity_t *ent );
 #endif // _DEV or _awesomeToAbuse
 
 char *GetReason(void);

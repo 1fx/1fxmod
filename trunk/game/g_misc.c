@@ -1350,26 +1350,26 @@ void G_Obituary(gentity_t *target, gentity_t *attacker, int mod, attackType_t at
     // Play the death sound, water if they drowned
     if (mod == MOD_WATER)
     {
-        Boe_ClientSound(target, G_SoundIndex("sound/pain_death/mullins/drown_dead.mp3"));
+        Boe_ClientSound(target, G_SoundIndex("sound/pain_death/mullins/drown_dead.mp3", qtrue));
     }
     else        //play a random death sound out of 3 possible sounds
     {
         switch (level.time % 3)
         {
         case 0:
-            Boe_ClientSound(target, G_SoundIndex("sound/pain_death/male/die01.mp3"));
+            Boe_ClientSound(target, G_SoundIndex("sound/pain_death/male/die01.mp3", qtrue));
             break;
 
         case 1:
-            Boe_ClientSound(target, G_SoundIndex("sound/pain_death/male/die04.mp3"));
+            Boe_ClientSound(target, G_SoundIndex("sound/pain_death/male/die04.mp3", qtrue));
             break;
 
         case 2:
-            Boe_ClientSound(target, G_SoundIndex("sound/pain_death/male/die05.mp3"));
+            Boe_ClientSound(target, G_SoundIndex("sound/pain_death/male/die05.mp3", qtrue));
             break;
 
         default:
-            Boe_ClientSound(target, G_SoundIndex("sound/pain_death/male/die01.mp3"));
+            Boe_ClientSound(target, G_SoundIndex("sound/pain_death/male/die01.mp3", qtrue));
             break;
         }
     }
@@ -1379,7 +1379,7 @@ void G_Obituary(gentity_t *target, gentity_t *attacker, int mod, attackType_t at
         //If the attacker killed themselves play the selffrag sound
         if (killer == targ)
         {
-            Boe_ClientSound(target, G_SoundIndex("sound/self_frag.mp3"));
+            Boe_ClientSound(target, G_SoundIndex("sound/self_frag.mp3", qtrue));
         }
         else if (headShot) {
             //if they use rpm client-side the client will
@@ -1395,7 +1395,7 @@ void G_Obituary(gentity_t *target, gentity_t *attacker, int mod, attackType_t at
             {
             #else
                 G_Broadcast("Headshot!", BROADCAST_GAME, attacker);
-                Boe_ClientSound(attacker, G_SoundIndex("sound/npc/col8/blakely/niceshot.mp3"));
+                Boe_ClientSound(attacker, G_SoundIndex("sound/npc/col8/blakely/niceshot.mp3", qtrue));
             #endif // not _GOLD
 
             #ifndef _GOLD
@@ -1416,7 +1416,7 @@ void G_Obituary(gentity_t *target, gentity_t *attacker, int mod, attackType_t at
         //if not headshot, suicide or tk just play the normal sound
         else
         {
-            Boe_ClientSound(attacker, G_SoundIndex("sound/frag.mp3"));
+            Boe_ClientSound(attacker, G_SoundIndex("sound/frag.mp3", qtrue));
         }
 
         //set the time here now
@@ -1785,7 +1785,7 @@ void G_unPause(gentity_t *adm)
 
         G_Broadcast(va("\\Resuming in: %d sec", level.pause), BROADCAST_GAME, NULL);
 
-        Boe_GlobalSound(G_SoundIndex("sound/misc/events/buzz02.wav"));
+        Boe_GlobalSound(G_SoundIndex("sound/misc/events/buzz02.wav", qtrue));
 
         if (!level.pause)
         {

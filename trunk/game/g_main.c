@@ -1914,8 +1914,8 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 
     if( trap_Cvar_VariableIntegerValue( "com_buildScript" ) )
     {
-        G_SoundIndex( "sound/player/gurp1.wav" );
-        G_SoundIndex( "sound/player/gurp2.wav" );
+        G_SoundIndex( "sound/player/gurp1.wav", qtrue );
+        G_SoundIndex( "sound/player/gurp2.wav", qtrue );
     }
 
 #ifdef _SOF2_BOTS
@@ -3600,7 +3600,7 @@ void Henk_CheckZombie(void){
     if(level.time >= level.gametypeStartTime+8000 && level.messagedisplay == qfalse && level.gametypeStartTime >= 5000){
         trap_SendServerCommand(-1, va("print \"^3[H&Z] ^7Shotguns distributed.\n\""));
         G_Broadcast("\\Shotguns distributed!", BROADCAST_GAME, NULL);
-        Boe_GlobalSound( G_SoundIndex("sound/misc/menus/click.wav"));
+        Boe_GlobalSound( G_SoundIndex("sound/misc/menus/click.wav", qtrue));
 
         for(i=0;i<level.numConnectedClients;i++){
             ent = &g_entities[level.sortedClients[i]];

@@ -1069,7 +1069,7 @@ void SaveRegisteredItems( void );
 // g_utils.c
 //
 int     G_ModelIndex        ( char *name );
-int     G_SoundIndex        ( char *name );
+int     G_SoundIndex        ( char *name, qboolean staticSound );
 int     G_AmbientSoundSetIndex( char *name );
 int     G_BSPIndex          ( char *name );
 int     G_IconIndex         ( char *name );

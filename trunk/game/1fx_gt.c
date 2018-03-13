@@ -161,25 +161,25 @@ void GT_Init ( void )
 
     // Boe!Man 11/30/12: Register the global sounds per gametype, and/or effects.
     if(current_gametype.value == GT_INF){
-        gametype.caseTakenSound   = G_SoundIndex ("sound/ctf_flag.mp3");
-        gametype.caseCaptureSound = G_SoundIndex ("sound/ctf_win.mp3");
-        gametype.caseReturnSound  = G_SoundIndex ("sound/ctf_return.mp3");
+        gametype.caseTakenSound   = G_SoundIndex ("sound/ctf_flag.mp3", qtrue);
+        gametype.caseCaptureSound = G_SoundIndex ("sound/ctf_win.mp3", qtrue);
+        gametype.caseReturnSound  = G_SoundIndex ("sound/ctf_return.mp3", qtrue);
     }else if(current_gametype.value == GT_CTF){
-        gametype.flagTakenSound   = G_SoundIndex ("sound/ctf_flag.mp3");
-        gametype.flagCaptureSound = G_SoundIndex ("sound/ctf_win.mp3");
-        gametype.flagReturnSound  = G_SoundIndex ("sound/ctf_return.mp3");
+        gametype.flagTakenSound   = G_SoundIndex ("sound/ctf_flag.mp3", qtrue);
+        gametype.flagCaptureSound = G_SoundIndex ("sound/ctf_win.mp3", qtrue);
+        gametype.flagReturnSound  = G_SoundIndex ("sound/ctf_return.mp3", qtrue);
     }else if(current_gametype.value == GT_ELIM){
-        gametype.captureSound     = G_SoundIndex ( "sound/ctf_win.mp3" );
+        gametype.captureSound     = G_SoundIndex ("sound/ctf_win.mp3", qtrue);
     }else if(current_gametype.value == GT_HS || current_gametype.value == GT_HZ){
-        gametype.caseCaptureSound = G_SoundIndex ("sound/ctf_win.mp3");
+        gametype.caseCaptureSound = G_SoundIndex ("sound/ctf_win.mp3", qtrue);
     }
     #ifdef _GOLD
     else if(current_gametype.value == GT_DEM){
-        gametype.bombTakenSound    = G_SoundIndex ( "sound/ctf_flag.mp3" );
-        gametype.bombExplodedSound = G_SoundIndex ( "sound/ctf_win.mp3" );
-        gametype.bombPlantedSound  = G_SoundIndex ( "sound/ctf_base.mp3" );
-        gametype.bombBeepSound     = G_SoundIndex ( "sound/misc/c4/beep" );
-        gametype.bombExplodeEffect = G_EffectIndex ( "explosions/mushroom_explosion.efx" );
+        gametype.bombTakenSound    = G_SoundIndex ("sound/ctf_flag.mp3", qtrue);
+        gametype.bombExplodedSound = G_SoundIndex ("sound/ctf_win.mp3", qtrue);
+        gametype.bombPlantedSound  = G_SoundIndex ("sound/ctf_base.mp3", qtrue);
+        gametype.bombBeepSound     = G_SoundIndex ("sound/misc/c4/beep", qtrue);
+        gametype.bombExplodeEffect = G_EffectIndex ("explosions/mushroom_explosion.efx");
     }
     #endif // _GOLD
 
@@ -239,8 +239,8 @@ void GT_Init ( void )
         triggerDef.size		= sizeof(triggerDef);
         triggerDef.use		= qtrue;
         triggerDef.useTime	= gt_bombPlantTime.integer * 1000;
-        triggerDef.useIcon	= G_IconIndex ( "gfx/menus/hud/tnt" );
-        triggerDef.useSound = G_SoundIndex ( "sound/misc/c4/c4_loop" );
+        triggerDef.useIcon	= G_IconIndex("gfx/menus/hud/tnt");
+        triggerDef.useSound = G_SoundIndex("sound/misc/c4/c4_loop", qtrue);
 
         while ( NULL != (find = G_Find ( find, FOFS(classname), "gametype_trigger" ) ) )
         {

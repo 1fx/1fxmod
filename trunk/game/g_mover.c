@@ -880,7 +880,7 @@ void InitMover( gentity_t *ent ) {
 
     // if the "loopsound" key is set, use a constant looping sound when moving
     if ( G_SpawnString( "noise", "100", &sound ) ) {
-        ent->s.loopSound = G_SoundIndex( sound );
+        ent->s.loopSound = G_SoundIndex( sound, qtrue );
     }
 
     ent->use = Use_BinaryMover;
@@ -1087,8 +1087,8 @@ void SP_func_door (gentity_t *ent) {
     vec3_t  size;
     float   lip;
 
-    ent->sound1to2 = ent->sound2to1 = G_SoundIndex("sound/movers/doors/dr1_strt.wav");
-    ent->soundPos1 = ent->soundPos2 = G_SoundIndex("sound/movers/doors/dr1_end.wav");
+    ent->sound1to2 = ent->sound2to1 = G_SoundIndex("sound/movers/doors/dr1_strt.wav", qtrue);
+    ent->soundPos1 = ent->soundPos2 = G_SoundIndex("sound/movers/doors/dr1_end.wav", qtrue);
 
     ent->blocked = Blocked_Door;
 
@@ -1259,8 +1259,8 @@ Plats are always drawn in the extended position so they will light correctly.
 void SP_func_plat (gentity_t *ent) {
     float       lip, height;
 
-    ent->sound1to2 = ent->sound2to1 = G_SoundIndex("sound/movers/plats/pt1_strt.wav");
-    ent->soundPos1 = ent->soundPos2 = G_SoundIndex("sound/movers/plats/pt1_end.wav");
+    ent->sound1to2 = ent->sound2to1 = G_SoundIndex("sound/movers/plats/pt1_strt.wav", qtrue);
+    ent->soundPos1 = ent->soundPos2 = G_SoundIndex("sound/movers/plats/pt1_end.wav", qtrue);
 
     VectorClear (ent->s.angles);
 
@@ -1342,7 +1342,7 @@ void SP_func_button( gentity_t *ent ) {
     vec3_t      size;
     float       lip;
 
-    ent->sound1to2 = G_SoundIndex("sound/movers/switches/butn2.wav");
+    ent->sound1to2 = G_SoundIndex("sound/movers/switches/butn2.wav", qtrue);
 
     if ( !ent->speed ) {
         ent->speed = 40;

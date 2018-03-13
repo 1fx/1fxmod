@@ -433,7 +433,7 @@ qboolean G_lockTeam(gentity_t *ent, qboolean referee, char *team)
         return qfalse;
     }
 
-    Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+    Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav", qtrue));
     return qtrue;
 }
 

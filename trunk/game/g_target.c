@@ -194,7 +194,7 @@ void SP_target_speaker( gentity_t *ent )
     } else {
         Q_strncpyz( buffer, s, sizeof(buffer) );
     }
-    ent->noise_index = G_SoundIndex(buffer);
+    ent->noise_index = G_SoundIndex(buffer, qtrue);
 
     // a repeating speaker can be done completely client side
     ent->s.eType = ET_SPEAKER;

@@ -266,7 +266,7 @@ void EvenTeams (gentity_t *adm, qboolean aet)
 
 
     // Boe!Man 3/31/10: We tell 'em what happened.
-    Boe_GlobalSound (G_SoundIndex("sound/misc/events/tut_lift02.mp3"));
+    Boe_GlobalSound (G_SoundIndex("sound/misc/events/tut_lift02.mp3", qtrue));
 
     if(adm && adm->client){
         G_Broadcast("\\Evening teams!", BROADCAST_CMD, NULL);
@@ -426,7 +426,7 @@ void SwapTeams (gentity_t *adm, qboolean aswap)
     }
 
     // Proper messaging/logging.
-    Boe_GlobalSound(G_SoundIndex("sound/misc/events/tut_lift02.mp3"));
+    Boe_GlobalSound(G_SoundIndex("sound/misc/events/tut_lift02.mp3", qtrue));
 
     if(!aswap){
         G_Broadcast("\\Swapteams!", BROADCAST_CMD, NULL);
@@ -2208,13 +2208,13 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
     case ADM_CHAT:
         strcpy(type, server_acprefix.string);
         if (beep == qtrue && g_specialChatSound.integer){
-            Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3"));
+            Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3", qtrue));
         }
         break;
     case SADM_CHAT:
         strcpy(type, server_scprefix.string);
         if (beep == qtrue && g_specialChatSound.integer){
-            Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3"));
+            Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3", qtrue));
         }
         break;
     case ADM_TALK:
@@ -2226,25 +2226,25 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
         strcpy(type, server_sadminprefix.string);
         }
         if (beep == qtrue){
-            Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3"));
+            Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3", qtrue));
         }
         break;
     case CADM_CHAT:
         strcpy(type, server_caprefix.string);
         if (beep == qtrue && g_specialChatSound.integer){
-            Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3"));
+            Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3", qtrue));
         }
         break;
     case CLAN_CHAT:
         strcpy(type, server_ccprefix.string);
         if (beep == qtrue && g_specialChatSound.integer){
-            Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3"));
+            Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3", qtrue));
         }
         break;
     case CLAN_TALK:
         strcpy(type, server_ctprefix.string);
         if (beep == qtrue){
-            Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3"));
+            Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3", qtrue));
         }
         break;
     default:
@@ -2961,7 +2961,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
                                         trap_SendServerCommand(-1, va("print \"^3[Custom Admin Action] ^7%s\n\"", message));
                                         G_Broadcast(broadcast, BROADCAST_CMD, NULL);
                                         memset(level.action, 0, sizeof(level.action));
-                                        Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+                                        Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav", qtrue));
                                         strcpy(level.action, action);
                                         level.customtime = level.time + 2000;
                                         level.custom = qtrue;
@@ -3935,7 +3935,7 @@ void Boe_adm_f ( gentity_t *ent )
                         G_Broadcast(broadcast, BROADCAST_CMD, NULL);
                         memset(level.action, 0, sizeof(level.action));
                         strcpy(level.action, action);
-                        Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+                        Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav", qtrue));
                         level.customtime = level.time + 2000;
                         level.custom = qtrue;
                     }
@@ -4349,7 +4349,7 @@ void G_postExecuteAdminCommand(int funcNum, int idNum, gentity_t *adm)
     }
 
     // Let users know something happened with a sound as well.
-    Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav"));
+    Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav", qtrue));
 }
 
 /*

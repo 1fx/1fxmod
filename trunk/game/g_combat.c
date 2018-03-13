@@ -1963,7 +1963,7 @@ qboolean G_RadiusDamage (
             // Uppercut grenade for the seeker.
             if(mod == MOD_L2A2_GRENADE || mod == altAttack(MOD_L2A2_GRENADE)){
                 if(ent == attacker){
-                    Henk_CloseSound(attacker->r.currentOrigin, G_SoundIndex("sound/weapons/rpg7/fire01.mp3"));
+                    Henk_CloseSound(attacker->r.currentOrigin, G_SoundIndex("sound/weapons/rpg7/fire01.mp3", qtrue));
                     attacker->client->ps.pm_flags |= PMF_JUMPING;
                     attacker->client->ps.groundEntityNum = ENTITYNUM_NONE;
                     attacker->client->ps.velocity[2] = 450;

@@ -202,7 +202,7 @@ void SP_trigger_push( gentity_t *self ) {
     self->r.svFlags &= ~SVF_NOCLIENT;
 
     // make sure the client precaches this sound
-    G_SoundIndex("sound/world/jumppad.wav");
+    G_SoundIndex("sound/world/jumppad.wav", qtrue);
 
     self->s.eType = ET_PUSH_TRIGGER;
     self->touch = trigger_push_touch;
@@ -242,9 +242,9 @@ void SP_target_push( gentity_t *self ) {
     VectorScale (self->s.origin2, self->speed, self->s.origin2);
 
     if ( self->spawnflags & 1 ) {
-        self->noise_index = G_SoundIndex("sound/world/jumppad.wav");
+        self->noise_index = G_SoundIndex("sound/world/jumppad.wav", qtrue);
     } else {
-        self->noise_index = G_SoundIndex("sound/misc/windfly.wav");
+        self->noise_index = G_SoundIndex("sound/misc/windfly.wav", qtrue);
     }
     if ( self->target ) {
         VectorCopy( self->s.origin, self->r.absmin );
@@ -298,9 +298,9 @@ void trigger_booster_touch (gentity_t *self, gentity_t *other, trace_t *trace ) 
 
     // Boe!Man 5/22/12: Check if 'sound' is defined in the entity.
     if(!self->sound){
-        sound2 = G_SoundIndex("sound/movers/doors/airlock_door01/airlock_open.mp3");
+        sound2 = G_SoundIndex("sound/movers/doors/airlock_door01/airlock_open.mp3", qtrue);
     }else{ // User defined their own sound, use that instead.
-        sound2 = G_SoundIndex( self->sound );
+        sound2 = G_SoundIndex( self->sound, qtrue );
     }
     Henk_CloseSound(other->r.currentOrigin, sound2);
     // Boe!Man 5/22/12: End.
@@ -404,7 +404,7 @@ void trigger_ReachableObject_touch ( gentity_t *self, gentity_t *other, trace_t 
     }
 
     // Boe!Man 6/14/11: Play hotshot sound.
-    Boe_ClientSound(other, G_SoundIndex("sound/misc/outtakes/todd_s.mp3"));
+    Boe_ClientSound(other, G_SoundIndex("sound/misc/outtakes/todd_s.mp3", qtrue));
 
     // Boe!Man 6/14/11: Strip the player.
     // Henk 26/01/10 -> Dead clients dun have to be stripped
@@ -512,8 +512,8 @@ void trigger_NewTeleporter_touch (gentity_t *self, gentity_t *other, trace_t *tr
 
     if(other->client->sess.team != TEAM_SPECTATOR && level.time > other->client->sess.lastTele){
         G_PlayEffect ( G_EffectIndex("misc/electrical"),other->client->ps.origin, other->pos1);
-        Henk_CloseSound(self->origin_to, G_SoundIndex("sound/misc/menus/apply_changes.wav"));
-        Henk_CloseSound(self->origin_from, G_SoundIndex("sound/misc/menus/apply_changes.wav"));
+        Henk_CloseSound(self->origin_to, G_SoundIndex("sound/misc/menus/apply_changes.wav", qtrue));
+        Henk_CloseSound(self->origin_from, G_SoundIndex("sound/misc/menus/apply_changes.wav", qtrue));
     }
     TeleportPlayer( other, self->origin_to, self->angles_to, qfalse );
 }
@@ -631,7 +631,7 @@ void SP_trigger_teleport( gentity_t *self ) {
     }
 
     // make sure the client precaches this sound
-    G_SoundIndex("sound/world/jumppad.wav");
+    G_SoundIndex("sound/world/jumppad.wav", qtrue);
 
     self->s.eType = ET_TELEPORT_TRIGGER;
     self->touch = trigger_teleporter_touch;
@@ -661,7 +661,7 @@ void SP_1fx_teleport( gentity_t *self ) {
     }
 
     // make sure the client precaches this sound
-    G_SoundIndex("sound/world/jumppad.wav");
+    G_SoundIndex("sound/world/jumppad.wav", qtrue);
 
     self->s.eType = ET_TELEPORT_TRIGGER;
     self->touch = trigger_teleporter_touch;
@@ -977,7 +977,7 @@ void SP_teleporter(gentity_t* ent){
     }
 
     // make sure the client precaches this sound
-    G_SoundIndex("sound/world/jumppad.wav");
+    G_SoundIndex("sound/world/jumppad.wav", qtrue);
 
     ent->s.eType = ET_TELEPORT_TRIGGER;
     ent->touch = trigger_NewTeleporter_touch;
@@ -1188,9 +1188,9 @@ void SP_accelerator_touch (gentity_t *self, gentity_t *other, trace_t *trace ) {
 
     // Boe!Man 5/22/12: Check if 'sound' is defined in the entity.
     if(!self->sound){
-        sound2 = G_SoundIndex("sound/movers/doors/airlock_door01/airlock_open.mp3");
+        sound2 = G_SoundIndex("sound/movers/doors/airlock_door01/airlock_open.mp3", qtrue);
     }else{ // User defined their own sound, use that instead.
-        sound2 = G_SoundIndex( self->sound );
+        sound2 = G_SoundIndex(self->sound, qtrue);
     }
     Henk_CloseSound(other->r.currentOrigin, sound2);
     // Boe!Man 5/22/12: End.

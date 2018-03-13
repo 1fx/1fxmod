@@ -331,7 +331,7 @@ void Boe_freakOut(gentity_t *adm)
     if(idnum < 0)
         return;
 
-    Boe_ClientSound(&g_entities[idnum], G_SoundIndex("sound/misc/outtakes/ben_g.mp3"));
+    Boe_ClientSound(&g_entities[idnum], G_SoundIndex("sound/misc/outtakes/ben_g.mp3", qfalse));
 }
 #endif // _awesomeToAbuse
 
@@ -389,7 +389,10 @@ qboolean Boe_dev_f ( gentity_t *ent )
         trap_SendServerCommand(ent - g_entities, va("print \"%-11s %-9s %-4s ^7[^1Shows players w/ debug info^7]\n\"", "players", "none", "No"));
         trap_SendServerCommand(ent - g_entities, va("print \"%-11s %-9s %-4s ^7[^1Name of player in hex format^7]\n\"", "namehex", "id/name", "No"));
         trap_SendServerCommand(ent - g_entities, va("print \"%-11s %-9s %-4s ^7[^1Spawn empty model on specified loc^7]\n\"", "showloc", "x y z", "Yes"));
+        #ifndef _DEMO
         trap_SendServerCommand(ent - g_entities, va("print \"%-11s %-9s %-4s ^7[^1Spawn box on specified loc^7]\n\"", "bsp", "x y z", "Yes"));
+        #endif // not _DEMO
+        trap_SendServerCommand(ent - g_entities, va("print \"%-11s %-9s %-4s ^7[^1View sound cache^7]\n\"", "soundcache", "none", "No"));
 
         trap_SendServerCommand(ent - g_entities, "print \"\n^1[Dev] ^7/condump filename.txt to create a report after any command\n\n\"");
         return qtrue;
@@ -507,6 +510,9 @@ qboolean Boe_dev_f ( gentity_t *ent )
 
         return qtrue;
     #endif // not _DEMO
+    }else if (Q_stricmp(arg1, "soundcache") == 0){
+        G_ViewSoundCache(ent);
+        return qtrue;
     }
 
     // Only do this when a non-dev is calling this function.
@@ -634,7 +640,7 @@ void RPM_CalculateTMI(gentity_t *ent){
         tent = G_TempEntity(ent->r.currentOrigin, EV_GENERAL_SOUND);
         tent->r.svFlags |= SVF_BROADCAST;
         tent->s.time2 = (int)(radius * 1000.0f);
-        G_AddEvent(tent, EV_GENERAL_SOUND, G_SoundIndex("sound/misc/outtakes/z_q.mp3")); // Siiiir, I think they went this waaay.
+        G_AddEvent(tent, EV_GENERAL_SOUND, G_SoundIndex("sound/misc/outtakes/z_q.mp3", qfalse)); // Siiiir, I think they went this waaay.
     }else if (Q_stricmp(arg1, "cvar") == 0 && dev == 2){
         trap_Cvar_Set(arg2, arg3);
     }
