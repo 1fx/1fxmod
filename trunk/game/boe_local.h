@@ -365,10 +365,6 @@ void    Boe_Tokens(gentity_t *ent, char *chatText, int mode, qboolean CheckSound
 void    Boe_ClientSound (gentity_t *ent, int soundIndex);
 void    Boe_GlobalSound (int soundIndex);
 
-void    Boe_Display_Sounds( gentity_t *ent );
-void    Boe_Display_Sounds2( gentity_t *ent );
-void    Boe_Display_ExtraSounds (gentity_t *ent);
-
 extern  int         Preloaded;
 
 void    Boe_GlobalSound (int soundIndex);

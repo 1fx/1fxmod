@@ -598,3 +598,217 @@ int mvchat_chatGetNextSound(TIdentity *identity)
     // Return the sound index to this sound file.
     return G_SoundIndex((char *)sound, qfalse);
 }
+
+/*
+================
+mvchat_listSounds
+
+List all sounds on the
+specified page.
+A page contains up
+to 100 sounds.
+================
+*/
+
+void mvchat_listSounds(gentity_t *ent, int soundPage)
+{
+    int             i, x;
+    int             start, end;
+    char            buf2[1000] = {0};
+    qboolean        soundListed;
+    mvchatSound_t   *mvsound;
+
+    //
+    // Determine start and end position.
+    //
+    start = soundPage * 100 + 1;
+    end = start + 100;
+
+    //
+    // Print header.
+    //
+    Q_strcat(buf2, sizeof(buf2),
+        va("\n" \
+           S_COLOR_WHITE "[" \
+           S_COLOR_YELLOW "Listing sounds" \
+           S_COLOR_WHITE "] %d - %d\n",
+        start, end - 1));
+
+    Q_strcat(buf2, sizeof(buf2),
+        S_COLOR_WHITE "[" \
+        S_COLOR_YELLOW "For help"
+        S_COLOR_WHITE "]       " \
+        "Use the " S_COLOR_RED "/sounds" S_COLOR_WHITE " command.\n\n");
+
+    Q_strcat(buf2, sizeof(buf2), "---------------------------------------------------------------------------\n");
+    Q_strcat(buf2, sizeof(buf2),
+        va(S_COLOR_YELLOW "|" \
+           S_COLOR_BLUE " Num "
+           S_COLOR_YELLOW "|" S_COLOR_BLUE " %-35s " \
+           S_COLOR_YELLOW "|" S_COLOR_BLUE " %-3s " \
+           S_COLOR_YELLOW "|" S_COLOR_BLUE " %-3s " \
+           S_COLOR_YELLOW "|" S_COLOR_BLUE " %-3s " \
+           S_COLOR_YELLOW "|" S_COLOR_BLUE " %-3s " \
+           S_COLOR_YELLOW "|" S_COLOR_BLUE " %-3s " \
+           S_COLOR_YELLOW "|" S_COLOR_WHITE "\n",
+        "Text", "Eng", "Spa", "Chi", "Ger", "Rus"));
+
+    Q_strcat(buf2, sizeof(buf2),
+        va(S_COLOR_YELLOW "| %3s | %35s " \
+           S_COLOR_YELLOW "|" S_COLOR_BLUE " M F " \
+           S_COLOR_YELLOW "|" S_COLOR_RED " M F " \
+           S_COLOR_YELLOW "|" S_COLOR_BLUE " M F " \
+           S_COLOR_YELLOW "|" S_COLOR_RED " M F " \
+           S_COLOR_YELLOW "|" S_COLOR_BLUE " M F " \
+           S_COLOR_YELLOW "|" S_COLOR_WHITE "\n",
+        "", ""));
+
+    Q_strcat(buf2, sizeof(buf2), "---------------------------------------------------------------------------\n");
+
+    //
+    // Print sounds in the list.
+    //
+    soundListed = qfalse;
+
+    // Iterate through the sounds.
+    for(i = start; i < end; i++){
+        // Does this slot hold a sound?
+        mvsound = mvchatSounds[i];
+        if(mvsound == NULL){
+            continue;
+        }
+
+        // Empty buffer if it is nearly full.
+        if(strlen(buf2) > 820){
+            trap_SendServerCommand(ent-g_entities, va("print \"%s\"", buf2));
+            memset(buf2, 0, sizeof(buf2));
+        }
+
+        // Copy the base information.
+        Q_strcat(buf2, sizeof(buf2),
+            va(S_COLOR_YELLOW "|" S_COLOR_BLUE " %03d " \
+               S_COLOR_YELLOW "|" S_COLOR_WHITE " %-35.35s " \
+               S_COLOR_YELLOW "|",
+            i, mvsound->text));
+
+        // Iterate through the sounds, check if the sound language is available.
+        // If so, list it as available.
+        for(x = 0; x < MVCHAT_NUM_LANGS; x++){
+            if(mvsound->sounds[x] != NULL){
+                // The color varies between languages.
+                if(x % 2 == 0){
+                    Q_strcat(buf2, sizeof(buf2), S_COLOR_BLUE);
+                }else{
+                    Q_strcat(buf2, sizeof(buf2), S_COLOR_RED);
+                }
+
+                // Is the male sound available?
+                if(mvsound->sounds[x]->maleSound != NULL){
+                    Q_strcat(buf2, sizeof(buf2), " X");
+                }else{
+                    Q_strcat(buf2, sizeof(buf2), "  ");
+                }
+
+                // Is the female sound available?
+                if(mvsound->sounds[x]->femaleSound != NULL){
+                    Q_strcat(buf2, sizeof(buf2), " X ");
+                }else{
+                    Q_strcat(buf2, sizeof(buf2), "   ");
+                }
+            }else{
+                // Sound language unavailable.
+                Q_strcat(buf2, sizeof(buf2), S_COLOR_YELLOW "     ");
+            }
+
+            Q_strcat(buf2, sizeof(buf2), S_COLOR_YELLOW "|");
+        }
+
+        // Print trailing newline character.
+        Q_strcat(buf2, sizeof(buf2), S_COLOR_WHITE "\n");
+
+        // At least one sound is properly listed.
+        soundListed = qtrue;
+    }
+
+    //
+    // Print the remaining buffer (if any) and the footer.
+    //
+    trap_SendServerCommand(ent-g_entities, va("print \"%s\"", buf2));
+
+    // Can we print a final line separator?
+    if(soundListed){
+        trap_SendServerCommand(ent-g_entities, "print \"---------------------------------------------------------------------------\n\"");
+    }
+
+    // Print footer and trailing spaces.
+    trap_SendServerCommand( ent-g_entities, "print \"\nUse " S_COLOR_YELLOW "[Page Up]" S_COLOR_WHITE " and " \
+        S_COLOR_YELLOW "[Page Down]" S_COLOR_WHITE " keys to scroll\n\n\"");
+}
+
+/*
+================
+mvchat_printHelp
+
+Explains how to use the
+MVCHAT system and gives
+instructions how to
+list sounds available.
+================
+*/
+
+void mvchat_printHelp(gentity_t *ent)
+{
+    //
+    // Print header.
+    //
+    trap_SendServerCommand(ent-g_entities, "print \"\n[" S_COLOR_YELLOW "Multilingual Voice Chat (" S_COLOR_RED "MVCHAT" S_COLOR_YELLOW ") sound system" S_COLOR_WHITE "]\n\"");
+    trap_SendServerCommand(ent-g_entities, "print \"-------------------------------------------------------\n\n");
+
+    //
+    // Print "how to use" block.
+    //
+    trap_SendServerCommand(ent-g_entities, "print \"[" S_COLOR_YELLOW "How to use" S_COLOR_WHITE "]\n\"");
+    trap_SendServerCommand(ent-g_entities, "print \"Voice chats are sounds you can use from the chat.\n\"");
+    trap_SendServerCommand(ent-g_entities, "print \"You can type the number sound, which will transform\n\"");
+    trap_SendServerCommand(ent-g_entities, "print \"into the associated text and play the specified sound.\n\n\"");
+
+    trap_SendServerCommand(ent-g_entities, "print \"You can play voice chats as such (omit the spaces):\n\n\"");
+    trap_SendServerCommand(ent-g_entities, "print \"    " S_COLOR_YELLOW "@" S_COLOR_RED " 1" S_COLOR_BLUE " en" S_COLOR_MAGENTA " :m\n\n\"");
+    trap_SendServerCommand(ent-g_entities, "print \"    " S_COLOR_YELLOW "^^" S_COLOR_RED " ^^" S_COLOR_BLUE " ^^" S_COLOR_MAGENTA "   ^^\n\"");
+    trap_SendServerCommand(ent-g_entities, "print \"    " S_COLOR_YELLOW "|" S_COLOR_RED " |" S_COLOR_BLUE " |" S_COLOR_MAGENTA "   |\n\"");
+    trap_SendServerCommand(ent-g_entities, "print \"    " S_COLOR_YELLOW "|" S_COLOR_RED " |" S_COLOR_BLUE " |" S_COLOR_MAGENTA "   ---> " S_COLOR_WHITE "(optional) The gender: " S_COLOR_MAGENTA "  m" S_COLOR_WHITE"  (male)\n\"");
+    trap_SendServerCommand(ent-g_entities, "print \"    " S_COLOR_YELLOW "|" S_COLOR_RED " |" S_COLOR_BLUE " |                                 " S_COLOR_MAGENTA "f" S_COLOR_WHITE "  (female)\n\"");
+    trap_SendServerCommand(ent-g_entities, "print \"    " S_COLOR_YELLOW "|" S_COLOR_RED " |" S_COLOR_BLUE " -------> " S_COLOR_WHITE "(optional) The language: " S_COLOR_BLUE "en" S_COLOR_WHITE " (English)\n\"");
+    trap_SendServerCommand(ent-g_entities, "print \"    " S_COLOR_YELLOW "|" S_COLOR_RED " |                                   " S_COLOR_BLUE "es" S_COLOR_WHITE " (Spanish)\n\"");
+    trap_SendServerCommand(ent-g_entities, "print \"    " S_COLOR_YELLOW "|" S_COLOR_RED " |                                   " S_COLOR_BLUE "cn" S_COLOR_WHITE " (Chinese)\n\"");
+    trap_SendServerCommand(ent-g_entities, "print \"    " S_COLOR_YELLOW "|" S_COLOR_RED " |                                   " S_COLOR_BLUE "de" S_COLOR_WHITE " (German)\n\"");
+    trap_SendServerCommand(ent-g_entities, "print \"    " S_COLOR_YELLOW "|" S_COLOR_RED " |                                   " S_COLOR_BLUE "ru" S_COLOR_WHITE " (Russian)\n\"");
+    trap_SendServerCommand(ent-g_entities, "print \"    " S_COLOR_YELLOW "|" S_COLOR_RED " ---------> " S_COLOR_WHITE "The voice chat number\n\"");
+    trap_SendServerCommand(ent-g_entities, "print \"    " S_COLOR_YELLOW "-----------> " S_COLOR_WHITE "The voice chat token:    " S_COLOR_YELLOW "@" S_COLOR_WHITE "  (display text and play sound)\n\"");
+    trap_SendServerCommand(ent-g_entities, "print \"                                          " S_COLOR_YELLOW "!" S_COLOR_WHITE "  (only play sound)\n\"");
+    trap_SendServerCommand(ent-g_entities, "print \"                                          " S_COLOR_YELLOW "&" S_COLOR_WHITE "  (only play sound)\n\"");
+    trap_SendServerCommand(ent-g_entities, "print \"\nIf you want to use the gender option, you also need to specify\n\"");
+    trap_SendServerCommand(ent-g_entities, "print \"the sound language. If no gender is specified, the system will\n\"");
+    trap_SendServerCommand(ent-g_entities, "print \"try to determine your skin gender and use it as the default.\n\n\"");
+    trap_SendServerCommand(ent-g_entities, "print \"If the specified language or gender sound is unavailable, the\n\"");
+    trap_SendServerCommand(ent-g_entities, "print \"default sound language or gender sound is played instead.\n\n\"");
+
+    //
+    // Print "list available sounds" block.
+    //
+    trap_SendServerCommand(ent-g_entities, "print \"[" S_COLOR_YELLOW "List available sounds" S_COLOR_WHITE "]\n\"");
+    trap_SendServerCommand(ent-g_entities, "print \"To list the available sounds, add the page number directly\n\"");
+    trap_SendServerCommand(ent-g_entities, "print \"to this command (no space in between). The system supports\n\"");
+    trap_SendServerCommand(ent-g_entities, "print \"up to a maximum of 1000 sound tokens.\n\n\"");
+    trap_SendServerCommand(ent-g_entities, "print \"Each page holds up to 100 sounds (if available on the server):\n\n\"");
+    trap_SendServerCommand(ent-g_entities, "print \"    /sounds" S_COLOR_RED "0" S_COLOR_WHITE ": 1-100\n\"");
+    trap_SendServerCommand(ent-g_entities, "print \"    /sounds" S_COLOR_RED "1" S_COLOR_WHITE ": 101-200\n\"");
+    trap_SendServerCommand(ent-g_entities, "print \"    /sounds" S_COLOR_RED "2" S_COLOR_WHITE ": 201-300\n\"");
+    trap_SendServerCommand(ent-g_entities, "print \"    " S_COLOR_BLUE "...\n\"");
+    trap_SendServerCommand(ent-g_entities, "print \"    /sounds" S_COLOR_RED "9" S_COLOR_WHITE ": 901-1000\n\n\"");
+
+    //
+    // Print footer and trailing spaces.
+    //
+    trap_SendServerCommand(ent-g_entities, "print \"\nUse ^3[Page Up] ^7and ^3[Page Down] ^7keys to scroll\n\n\"");
+}

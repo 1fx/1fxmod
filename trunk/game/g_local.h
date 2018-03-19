@@ -1261,6 +1261,8 @@ typedef struct {
 void        mvchat_parseFiles               ( void );
 void        mvchat_chatDetermineSound       ( mvchat_ChatParse_t *chatParse, char *chatText, TIdentity *identity );
 int         mvchat_chatGetNextSound         ( TIdentity *identity );
+void        mvchat_listSounds               ( gentity_t *ent, int soundPage );
+void        mvchat_printHelp                ( gentity_t *ent );
 
 //
 // g_client.c

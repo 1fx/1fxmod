@@ -3416,13 +3416,26 @@ void ClientCommand( int clientNum ) {
         Boe_Players ( ent );
     else if (Q_stricmp (cmd, "stats") == 0)
         Boe_Stats ( ent );
-    else if (Q_stricmp (cmd, "sounds") == 0)
-        Boe_Display_Sounds( ent );
-    else if (Q_stricmp (cmd, "sounds2") == 0)
-        Boe_Display_Sounds2( ent );
-    else if (Q_stricmp (cmd, "extrasounds") == 0)
-        Boe_Display_ExtraSounds( ent );
-    else if (Q_stricmp (cmd, "tokens") == 0)
+    else if (strncmp(cmd, "sounds", 6) == 0) {
+        int soundPage = -1;
+
+        // Determine what sound page we requested,
+        // if any.
+        if(strlen(cmd) == 7){
+            soundPage = cmd[6] - '0';
+        }
+
+        // We can safely list sounds if the sound page is valid.
+        if(soundPage > -1 && soundPage < 10){
+            // List sounds for the specified page.
+            mvchat_listSounds(ent, soundPage);
+        }else{
+            // Not a valid command or nothing appended.
+            // Give the user instructions on how to
+            // use the MVCHAT system.
+            mvchat_printHelp(ent);
+        }
+    }else if (Q_stricmp (cmd, "tokens") == 0)
         Boe_displayTokens ( ent );
 
     // Boe!Man 4/3/10
