@@ -2221,3 +2221,17 @@ qboolean G_showItemLocations()
 
     return qtrue;
 }
+
+/*
+==============
+SortAlpha
+
+Sorts char * array
+alphabetically.
+==============
+*/
+
+int QDECL SortAlpha(const void *a, const void *b)
+{
+    return strcmp(*(const char **)a, *(const char **)b);
+}

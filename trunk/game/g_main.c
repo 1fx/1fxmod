@@ -366,6 +366,9 @@ vmCvar_t    g_camperPunishment;
 vmCvar_t    g_enforceArenaCheck;
 vmCvar_t    g_checkTimeRemaining;
 
+// Boe!Man 3/19/18
+vmCvar_t    g_mvchatCheckSoundFiles;
+
 static cvarTable_t gameCvarTable[] =
 {
     // don't override the cheat state set by the system
@@ -737,6 +740,9 @@ static cvarTable_t gameCvarTable[] =
     { &g_caserun,                   "g_caserun",                "0",        CVAR_ARCHIVE|CVAR_LATCH, 0.0, 0.0, 0, qfalse },
 
     { &g_enforceArenaCheck,         "g_enforceArenaCheck",      "1",        CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue },
+
+    // Boe!Man 3/19/18: MVCHAT system.
+    { &g_mvchatCheckSoundFiles,     "g_mvchatCheckSoundFiles",  "0",                CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
 
     // Boe!Man 11/26/15: --- Anticamp CVARs, from RPM 0.75.x ---
     { &g_camperAllowTime,           "g_camperAllowTime",        "30",               CVAR_ARCHIVE, 0.0f,     0.0f,       0, qtrue },

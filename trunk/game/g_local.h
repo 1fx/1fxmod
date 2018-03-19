@@ -1238,6 +1238,8 @@ void        G_switchToNextMapInCycle        ( qboolean force );
 
 qboolean    G_showItemLocations             ( void );
 
+int QDECL   SortAlpha                       ( const void *a, const void *b );
+
 //
 // g_weapon.c
 //
@@ -1247,6 +1249,8 @@ void        G_InitHitModels                 ( void );
 //
 // g_mvchat.c
 //
+
+extern  vmCvar_t    g_mvchatCheckSoundFiles;
 
 typedef struct {
     qboolean    shouldSoundPlay;            // If the sound is able to/should play.

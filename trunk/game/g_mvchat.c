@@ -93,7 +93,8 @@ directory.
 
 void mvchat_parseFiles()
 {
-    char            mvchatFiles[4096];
+    char            **mvchatFiles;
+    char            mvchatFileBuf[4096];
     char            *mvchatPtr;
     int             mvchatCount;
     int             i, x;
@@ -105,6 +106,9 @@ void mvchat_parseFiles()
     int             maleSoundsParsed[MVCHAT_NUM_LANGS];
     int             femaleSoundsParsed[MVCHAT_NUM_LANGS];
 
+    // Variables used for checking if a sound file exists.
+    fileHandle_t    f;
+
     Com_Printf("------- MVCHAT sound system -------\n");
     Com_Printf("Multilingual voice chat sound system.\n\n");
 
@@ -115,22 +119,39 @@ void mvchat_parseFiles()
     memset(femaleSoundsParsed, 0, sizeof(int) * MVCHAT_NUM_LANGS);
 
     // Get the available .mvchat files.
-    mvchatCount = trap_FS_GetFileList("files/mvchats", ".mvchat", mvchatFiles, sizeof(mvchatFiles));
+    mvchatCount = trap_FS_GetFileList("files/mvchats", ".mvchat", mvchatFileBuf, sizeof(mvchatFileBuf));
 
     // There is no need to continue here in the
-    // absence of mvchat files.
+    // absence of .mvchat files.
     if(!mvchatCount){
         Com_Printf(S_COLOR_YELLOW "WARNING: No .mvchat files found to parse!\n");
         return;
     }
 
+    // Allocate memory to store the .mvchat filenames.
+    mvchatFiles = trap_VM_LocalAlloc(mvchatCount * sizeof(char *));
+    for(i = 0; i < mvchatCount; i++){
+        mvchatFiles[i] = trap_VM_LocalAlloc(MAX_QPATH * sizeof(char));
+        memset(mvchatFiles[i], 0, MAX_QPATH * sizeof(char));
+    }
+
+    // Fetch the actual filenames.
+    for(i = 0, mvchatPtr = mvchatFileBuf;
+        i < mvchatCount;
+        i++, mvchatPtr += fnameLen + 1)
+    {
+        fnameLen = strlen(mvchatPtr);
+        strncpy(*&mvchatFiles[i], mvchatPtr, fnameLen);
+    }
+
+    // Sort the file names alphabetically.
+    qsort(mvchatFiles, mvchatCount, sizeof(char *), SortAlpha);
+
     //
     // Start iterating through the .mvchat files.
     //
     Com_Printf("Parsing .mvchat files.\n");
-    mvchatPtr = mvchatFiles;
-
-    for(i = 0; i < mvchatCount; i++, mvchatPtr += fnameLen + 1){
+    for(i = 0; i < mvchatCount; i++){
         // GP2 mvchat file variables.
         TGenericParser2 mvchatFile;
         TGPGroup        mvchatGroup;
@@ -138,12 +159,12 @@ void mvchat_parseFiles()
         // Determine the length of the .mvchat file name.
         // We use this to increment the mvchatPtr pointer in
         // case of error or success.
-        fnameLen = strlen(mvchatPtr);
+        fnameLen = strlen(mvchatFiles[i]);
 
         // Start parsing the .mvchat file.
         // A voice chat file is required to be Generic Parser 2 compatible.
-        mvchatFile = trap_GP_ParseFile(va("files/mvchats/%s", mvchatPtr), qtrue, qfalse);
-        Com_Printf("... %s\n", mvchatPtr);
+        mvchatFile = trap_GP_ParseFile(va("files/mvchats/%s", mvchatFiles[i]), qtrue, qfalse);
+        Com_Printf("... %s\n", mvchatFiles[i]);
         if(!mvchatFile){
             Com_Printf(S_COLOR_RED "Unable to parse the voice chat file!\n");
             Com_Printf(S_COLOR_RED "Skipping this file.\n");
@@ -242,6 +263,16 @@ void mvchat_parseFiles()
                         mvchatSound->sounds[x]->maleSound = trap_VM_LocalStringAlloc(sSound);
                         soundFound = qtrue;
 
+                        // Check if this sound exists?
+                        if(g_mvchatCheckSoundFiles.integer){
+                            trap_FS_FOpenFile(mvchatSound->sounds[x]->maleSound, &f, FS_READ);
+                            if(!f){
+                                Com_Printf(S_COLOR_YELLOW "WARNING: Sound block %s: %s male sound file not found!\n", mvchatGroupName, mvchatLangs[x].langName);
+                            }else{
+                                trap_FS_FCloseFile(f);
+                            }
+                        }
+
                         // Increase statistics.
                         mvchatSoundFileCount++;
                         maleSoundsParsed[x]++;
@@ -265,6 +296,16 @@ void mvchat_parseFiles()
                         // Copy this sound.
                         mvchatSound->sounds[x]->femaleSound = trap_VM_LocalStringAlloc(sSound);
                         soundFound = qtrue;
+
+                        // Check if this sound exists?
+                        if(g_mvchatCheckSoundFiles.integer){
+                            trap_FS_FOpenFile(mvchatSound->sounds[x]->femaleSound, &f, FS_READ);
+                            if(!f){
+                                Com_Printf(S_COLOR_YELLOW "WARNING: Sound block %s: %s female sound file not found!\n", mvchatGroupName, mvchatLangs[x].langName);
+                            }else{
+                                trap_FS_FCloseFile(f);
+                            }
+                        }
 
                         // Increase statistics.
                         mvchatSoundFileCount++;

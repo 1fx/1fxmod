@@ -3932,11 +3932,6 @@ Shows the map list.
 ==================
 */
 
-static int sortAlpha(const void *a, const void *b)
-{
-    return strcmp(*(const char **)a, *(const char **)b);
-}
-
 int adm_mapList(int argNum, gentity_t *adm, qboolean shortCmd)
 {
     char        buf2[1000] = "\0";
@@ -3994,7 +3989,7 @@ int adm_mapList(int argNum, gentity_t *adm, qboolean shortCmd)
     // Allocate memory to store the map names.
     arenaNames = malloc(arenaCount * sizeof(char *));
     for(i = 0; i < arenaCount; i++){
-        arenaNames[i] = malloc(32 * sizeof(char *));
+        arenaNames[i] = malloc(32 * sizeof(char));
     }
 
     // Fetch the map names.
@@ -4002,7 +3997,7 @@ int adm_mapList(int argNum, gentity_t *adm, qboolean shortCmd)
 
     // We now got all the available maps that are defined through arena files.
     // Sort alphabetically.
-    qsort(arenaNames, arenaCount, sizeof(char *), sortAlpha);
+    qsort(arenaNames, arenaCount, sizeof(char *), SortAlpha);
 
     // Start iterating through them.
     for(i = 0; i < arenaCount; i++){
