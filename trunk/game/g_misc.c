@@ -1388,7 +1388,7 @@ void G_Obituary(gentity_t *target, gentity_t *attacker, int mod, attackType_t at
             if (attacker->client->sess.rpmClient)
             {
                 trap_SendServerCommand(attacker->s.number, va("headshot \"Headshot\n\""));
-                Boe_ClientSound(attacker, G_SoundIndex("sound/npc/col8/blakely/niceshot.mp3"));
+                Boe_ClientSound(attacker, G_SoundIndex("sound/npc/col8/blakely/niceshot.mp3", qtrue));
             }
             //if not we'll send them the sound etc..
             else// if(g_allowDeathMessages.integer)
