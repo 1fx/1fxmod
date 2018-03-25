@@ -99,6 +99,7 @@ void mvchat_parseFiles()
     int             mvchatCount;
     int             i, x;
     int             fnameLen;
+    qboolean        soundFound;
 
     // Variables used for statistics.
     int             mvchatSoundNumberCount = 0;
@@ -231,7 +232,7 @@ void mvchat_parseFiles()
 
             // Mandatory info is now stored.
             // Iterate through the available languages to use for this sound.
-            qboolean soundFound = qfalse;
+            soundFound = qfalse;
             for(x = 0; x < MVCHAT_NUM_LANGS; x++){
                 mvchatLangInfo_t    *currLang = &mvchatLangs[x];
                 TGPGroup            langSound;
