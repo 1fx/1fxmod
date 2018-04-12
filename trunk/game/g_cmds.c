@@ -2961,7 +2961,7 @@ void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
                                         trap_SendServerCommand(-1, va("print \"^3[Custom Admin Action] ^7%s\n\"", message));
                                         G_Broadcast(broadcast, BROADCAST_CMD, NULL);
                                         memset(level.action, 0, sizeof(level.action));
-                                        Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav", qtrue));
+                                        Boe_GlobalSound(level.actionSoundIndex);
                                         strcpy(level.action, action);
                                         level.customtime = level.time + 2000;
                                         level.custom = qtrue;
@@ -3948,7 +3948,7 @@ void Boe_adm_f ( gentity_t *ent )
                         G_Broadcast(broadcast, BROADCAST_CMD, NULL);
                         memset(level.action, 0, sizeof(level.action));
                         strcpy(level.action, action);
-                        Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav", qtrue));
+                        Boe_GlobalSound(level.actionSoundIndex);
                         level.customtime = level.time + 2000;
                         level.custom = qtrue;
                     }
@@ -4362,7 +4362,7 @@ void G_postExecuteAdminCommand(int funcNum, int idNum, gentity_t *adm)
     }
 
     // Let users know something happened with a sound as well.
-    Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav", qtrue));
+    Boe_GlobalSound(level.actionSoundIndex);
 }
 
 /*

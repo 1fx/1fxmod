@@ -780,8 +780,6 @@ void G_ResetGametype ( qboolean fullRestart, qboolean cagefight )
         level.RPGTime = 0;
         level.M4Time = 0;
         level.timelimithit = qfalse; // allow timelimit hit message
-        // Henkie 23/02/10 -> Cache the sounds' index
-        level.clicksound = G_SoundIndex("sound/misc/menus/click.wav", qtrue);
 
         // Boe!Man 6/29/11: Also set the appropriate message if the weapon's been disabled.
         if(hideSeek_Weapons.string[1] == '0'){ // M4
@@ -1265,7 +1263,7 @@ void CheckGametype ( void )
                 }
             }
             trap_SendServerCommand(-1, va("print \"^3[H&S] ^7Fight ended.\n\""));
-            Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav", qtrue));
+            Boe_GlobalSound(level.actionSoundIndex);
             G_Broadcast("\\Fight ended!", BROADCAST_GAME, NULL);
             #ifdef _DEBUG
             Com_Printf("Updating scores..\n");
@@ -1289,7 +1287,7 @@ void CheckGametype ( void )
                     }
                 }
                 trap_SendServerCommand(-1, va("print \"^3[H&S] ^7Fight ended.\n\""));
-                Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav", qtrue));
+                Boe_GlobalSound(level.actionSoundIndex);
                 G_Broadcast("\\Fight ended!", BROADCAST_GAME, NULL);
 
                 #ifdef _DEBUG

@@ -1935,6 +1935,9 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 
     G_RemapTeamShaders();
 
+    // Cache the global action sound index.
+    level.actionSoundIndex = G_SoundIndex("sound/misc/menus/click.wav", qtrue);
+
     // Initialize the gametype
     // Boe!Man 11/29/12: Now that the gametype is in the game, the gt can check what gametype it is using current_gametype.
     trap_GT_Init ();
@@ -3606,7 +3609,7 @@ void Henk_CheckZombie(void){
     if(level.time >= level.gametypeStartTime+8000 && level.messagedisplay == qfalse && level.gametypeStartTime >= 5000){
         trap_SendServerCommand(-1, va("print \"^3[H&Z] ^7Shotguns distributed.\n\""));
         G_Broadcast("\\Shotguns distributed!", BROADCAST_GAME, NULL);
-        Boe_GlobalSound( G_SoundIndex("sound/misc/menus/click.wav", qtrue));
+        Boe_GlobalSound(level.actionSoundIndex);
 
         for(i=0;i<level.numConnectedClients;i++){
             ent = &g_entities[level.sortedClients[i]];
@@ -3722,7 +3725,8 @@ void Henk_CheckHS(void)
 
     if(level.time >= level.gametypeDelayTime && level.messagedisplay == qfalse && level.gametypeStartTime >= 5000 && !level.crossTheBridge && level.cagefight != qtrue && level.time < level.gametypeRoundTime){
         G_Broadcast("\\Seekers released!", BROADCAST_GAME, NULL);
-        Boe_GlobalSound(level.clicksound); // Henkie 22/01/10 -> G_SoundIndex("sound/misc/menus/click.wav") index this when loading map(saves alot performance)
+        Boe_GlobalSound(level.actionSoundIndex);
+
         // give nades to all players
         SetupOutfitting();
         //G_LogPrintf("Giving away briefcase...\n");

@@ -261,7 +261,7 @@ static void adm_addAdmin_f(int argNum, gentity_t *adm, qboolean shortCmd, int le
         g_entities[idNum].client->sess.admin = level2;
     }
 
-    Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav", qtrue));
+    Boe_GlobalSound(level.actionSoundIndex);
     if (adm){
         if (!passAdmin){
             trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was made %s by %s.\n\"", g_entities[idNum].client->pers.cleanName, admLevel, adm->client->pers.cleanName));
@@ -356,7 +356,7 @@ static void adm_unPlant(int idNum, gentity_t *adm)
     ent->client->pers.planted = qfalse;
 
     Boe_ClientSound(ent, G_SoundIndex("sound/misc/confused/wood_break.mp3", qtrue));
-    Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav", qtrue));
+    Boe_GlobalSound(level.actionSoundIndex);
 
     if (adm && adm->client){
         G_Broadcast(va("%s\nwas \\unplanted\nby %s", ent->client->pers.netname, adm->client->pers.netname), BROADCAST_CMD, NULL);
@@ -488,7 +488,7 @@ int adm_mapRestart(int argNum, gentity_t *adm, qboolean shortCmd){
                 level.compMsgCount = -1;
             }
 
-            Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav", qtrue));
+            Boe_GlobalSound(level.actionSoundIndex);
             Boe_adminLog("map restart", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "none");
         }else{
             if (level.mapAction == 1 || level.mapAction == 3){
@@ -518,7 +518,7 @@ int adm_mapRestart(int argNum, gentity_t *adm, qboolean shortCmd){
                 level.compMsgCount = -1;
             }
 
-            Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav", qtrue));
+            Boe_GlobalSound(level.actionSoundIndex);
             Boe_adminLog("map restart", "RCON", "none");
         }else{
             if (level.mapAction == 1 || level.mapAction == 3){
@@ -617,7 +617,7 @@ int adm_Mute(int argNum, gentity_t *adm, qboolean shortCmd)
     }
 
     // Handle custom broadcasts for mute.
-    Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav", qtrue));
+    Boe_GlobalSound(level.actionSoundIndex);
     if (adm && adm->client){
         G_Broadcast(va("%s\nwas \\%s\nby %s", g_entities[idNum].client->pers.netname, (unMute) ? "unmuted" : "muted", adm->client->pers.netname), BROADCAST_CMD, NULL);
         trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was %s by %s%s\n\"", g_entities[idNum].client->pers.cleanName, (unMute) ? "unmuted" : "muted", adm->client->pers.cleanName, (unMute) ? "." : va(" for %i minutes.", time)));
@@ -709,7 +709,7 @@ int adm_removeAdmin(int argNum, gentity_t *adm, qboolean shortCmd)
 
     // Handle custom broadcast.
     G_Broadcast(va("%s\nis no longer an \\Admin", g_entities[idNum].client->pers.netname), BROADCAST_CMD, NULL);
-    Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav", qtrue));
+    Boe_GlobalSound(level.actionSoundIndex);
     if (adm && adm->client){
         trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7%s was removed as Admin by %s.\n\"", g_entities[idNum].client->pers.cleanName, adm->client->pers.cleanName));
     }else{
@@ -808,7 +808,7 @@ int adm_forceTeam(int argNum, gentity_t *adm, qboolean shortCmd)
         }
 
         // Custom broadcast for all.
-        Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav", qtrue));
+        Boe_GlobalSound(level.actionSoundIndex);
         if (adm){
             G_Broadcast(va("Everybody was \\forceteamed\nby %s", adm->client->pers.netname), BROADCAST_CMD, NULL);
             trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Everybody was forceteamed by %s.\n\"", adm->client->pers.cleanName));
@@ -940,7 +940,7 @@ static void adm_toggleSection(gentity_t *adm, char *sectionName, int sectionID, 
     level.autoLRMWActive[sectionID] = enabled;
 
     // Custom broadcasts.
-    Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav", qtrue));
+    Boe_GlobalSound(level.actionSoundIndex);
     G_Broadcast(va("\\%s %s!", sectionName, (enabled) ? "enabled" : "disabled"), BROADCAST_CMD, NULL);
 
     if (adm && adm->client){
@@ -1145,7 +1145,7 @@ int adm_noNades(int argNum, gentity_t *adm, qboolean shortCmd){
     }
 
     // Custom broadcasts/logging.
-    Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav", qtrue));
+    Boe_GlobalSound(level.actionSoundIndex);
     G_Broadcast(va("Nades \\%s!", (!state) ? "enabled" : "disabled"), BROADCAST_CMD, NULL);
     if (adm && adm->client){
         trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7Nades %s by %s.\n\"", (!state) ? "enabled" : "disabled", adm->client->pers.cleanName));
@@ -1312,7 +1312,7 @@ static void adm_toggleCVAR(gentity_t *adm, int argNum, qboolean shortCmd, char *
             adm->client->pers.cleanName));
     }
 
-    Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav", qtrue));
+    Boe_GlobalSound(level.actionSoundIndex);
     G_Broadcast(va("\\%s %i!", cvarName, cvarValue), BROADCAST_CMD, NULL);
     Boe_adminLog(va("%s %i", cvarName, cvarValue), va("%s\\%s",
         adm->client->pers.ip, adm->client->pers.cleanName), "none");
@@ -1386,7 +1386,7 @@ static void adm_Damage(gentity_t *adm, char *damageName, int value)
         G_UpdateOutfitting(g_entities[level.sortedClients[i]].s.number);
     }
 
-    Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav", qtrue));
+    Boe_GlobalSound(level.actionSoundIndex);
     G_Broadcast(va("\\%s!", damageName), BROADCAST_CMD, NULL);
 
     if (adm && adm->client){
@@ -1416,7 +1416,7 @@ int adm_gametypeRestart(int argNum, gentity_t *adm, qboolean shortCmd)
     }
 
     // Broadcast the change and restart it.
-    Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav", qtrue));
+    Boe_GlobalSound(level.actionSoundIndex);
     G_Broadcast("\\Gametype restart!", BROADCAST_CMD, NULL);
 
     if (adm && adm->client){
@@ -1492,7 +1492,7 @@ int adm_addClanMember(int argNum, gentity_t *adm, qboolean shortCmd)
     }
 
     g_entities[idNum].client->sess.clanMember = qtrue;
-    Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav", qtrue));
+    Boe_GlobalSound(level.actionSoundIndex);
     G_Broadcast(va("%s\nis now a \\Clan member!", g_entities[idNum].client->pers.netname), BROADCAST_CMD, NULL);
 
     if (adm && adm->client){
@@ -1531,7 +1531,7 @@ int adm_removeClanMember(int argNum, gentity_t *adm, qboolean shortCmd)
     Boe_removeClanMemberFromDb(adm, g_entities[idNum].client->pers.ip, qfalse, qtrue);
 
     // Broadcast the change and log it.
-    Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav", qtrue));
+    Boe_GlobalSound(level.actionSoundIndex);
     G_Broadcast(va("%s\nis no longer a \\Clan member!", g_entities[idNum].client->pers.netname), BROADCAST_CMD, NULL);
 
     if (adm && adm->client){
@@ -1645,7 +1645,7 @@ int adm_compMode(int argNum, gentity_t *adm, qboolean shortCmd)
     }
 
     // Broadcast the change.
-    Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav", qtrue));
+    Boe_GlobalSound(level.actionSoundIndex);
     G_Broadcast(va("\\Competition mode %s!", (enabled) ? "enabled" : "disabled"), BROADCAST_CMD, NULL);
 
     if (adm && adm->client){
@@ -2452,7 +2452,7 @@ int adm_Flash(int argNum, gentity_t *adm, qboolean shortCmd)
             missile->nextthink = level.time + 250;
         }
 
-        Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav", qtrue));
+        Boe_GlobalSound(level.actionSoundIndex);
         if (adm && adm->client){
             G_Broadcast(va("Everyone\nhas been \\flashed by %s", adm->client->pers.netname), BROADCAST_CMD, NULL);
             trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Everyone has been flashed by %s.\n\"", adm->client->pers.cleanName));
@@ -2581,7 +2581,7 @@ int adm_Gametype(int argNum, gentity_t *adm, qboolean shortCmd)
         return -1;
     }
 
-    Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav", qtrue));
+    Boe_GlobalSound(level.actionSoundIndex);
     if (adm && adm->client){
         trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7Gametype changed to %s by %s.\n\"", gametype, adm->client->pers.cleanName));
         Boe_adminLog(va("gametype - %s", gametype), va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "none");
@@ -2905,7 +2905,7 @@ int adm_passVote(int argNum, gentity_t *adm, qboolean shortCmd)
     level.forceVote = qtrue;
 
     // Let everybody know what happened.
-    Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav", qtrue));
+    Boe_GlobalSound(level.actionSoundIndex);
     G_Broadcast("\\Vote passed!", BROADCAST_CMD, NULL);
 
     if(adm && adm->client){
@@ -2939,7 +2939,7 @@ int adm_cancelVote(int argNum, gentity_t *adm, qboolean shortCmd)
     trap_SetConfigstring( CS_VOTE_TIME, "" );
 
     // Let everybody know what happened..
-    Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav", qtrue));
+    Boe_GlobalSound(level.actionSoundIndex);
     G_Broadcast("\\Vote cancelled!", BROADCAST_CMD, NULL);
 
     if(adm && adm->client){
@@ -2970,7 +2970,7 @@ int adm_mapCycle(int argNum, gentity_t *adm, qboolean shortCmd)
             level.mapSwitchCount = level.time;
             level.mapSwitchCount2 = 5; // 5 seconds remaining on the timer.
 
-            Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav", qtrue));
+            Boe_GlobalSound(level.actionSoundIndex);
             Boe_adminLog("mapcycle", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "none");
             trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Mapcycle by %s.\n\"", adm->client->pers.cleanName));
         }else{
@@ -2989,7 +2989,7 @@ int adm_mapCycle(int argNum, gentity_t *adm, qboolean shortCmd)
             level.mapSwitchCount = level.time;
             level.mapSwitchCount2 = 5; // 5 seconds remaining on the timer.
 
-            Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav", qtrue));
+            Boe_GlobalSound(level.actionSoundIndex);
             Boe_adminLog("mapcycle", "RCON", "none");
             trap_SendServerCommand(-1, "print\"^3[Rcon Action] ^7Mapcycle.\n\"");
         }else{
@@ -3280,7 +3280,7 @@ int adm_friendlyFire(int argNum, gentity_t *adm, qboolean shortCmd)
     Boe_setTrackedCvar(&g_friendlyFire, enable);
 
     // Broadcast change.
-    Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav", qtrue));
+    Boe_GlobalSound(level.actionSoundIndex);
     G_Broadcast(va("\\Friendlyfire %s", (enable) ? "enabled!" : "disabled!"), BROADCAST_CMD, NULL);
     if (adm && adm->client){
         Boe_adminLog(va("friendlyfire %s", (enable) ? "enabled" : "disabled"), va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "none");
@@ -3357,7 +3357,7 @@ int adm_Rename(int argNum, gentity_t *adm, qboolean shortCmd)
     ClientUserinfoChanged(idNum);
 
     // Log and broadcast this change.
-    Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav", qtrue));
+    Boe_GlobalSound(level.actionSoundIndex);
     G_Broadcast(va("%s\nwas \\renamed to %s!", oldName, g_entities[idNum].client->pers.netname), BROADCAST_CMD, NULL);
 
     if (adm && adm->client){
@@ -3515,7 +3515,7 @@ int adm_Map(int argNum, gentity_t *adm, qboolean shortCmd)
 
     // Broadcast and logging.
     if(adm && adm->client){
-        Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav", qtrue));
+        Boe_GlobalSound(level.actionSoundIndex);
         if(altAction == 1){
             strncpy(level.mapPrefix, G_ColorizeMessage("\\Altmap"), sizeof(level.mapPrefix));
         }else if(altAction == 2){
@@ -3566,7 +3566,7 @@ int adm_Third(int argNum, gentity_t *adm, qboolean shortCmd)
     trap_Cvar_Set("g_allowthirdperson", (enable) ? "1" : "0");
 
     // Broadcast the change.
-    Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav", qtrue));
+    Boe_GlobalSound(level.actionSoundIndex);
     G_Broadcast(va("\\Thirdperson %s!", (enable) ? "enabled" : "disabled"), BROADCAST_CMD, NULL);
     if (adm && adm->client){
         trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7Thirdperson %s by %s.\n\"", (enable) ? "enabled" : "disabled", adm->client->pers.cleanName));
@@ -3825,7 +3825,7 @@ int adm_toggleWeapon(int argNum, gentity_t *adm, qboolean shortCmd)
     }
 
     // Broadcast the change.
-    Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav", qtrue));
+    Boe_GlobalSound(level.actionSoundIndex);
     G_Broadcast(va("\\Weapon %s %s!", bg_weaponNames[wpNum], (enable) ? "enabled" : "disabled"), BROADCAST_CMD, NULL);
     if (adm && adm->client){
         trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7Weapon %s %s by %s.\n\"", bg_weaponNames[wpNum], (enable) ? "enabled" : "disabled", adm->client->pers.cleanName));
@@ -3854,7 +3854,7 @@ int adm_Anticamp(int argNum, gentity_t *adm, qboolean shortCmd)
     Boe_setTrackedCvar(&g_camperPunish, enable);
 
     // Broadcast the change.
-    Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav", qtrue));
+    Boe_GlobalSound(level.actionSoundIndex);
     G_Broadcast(va("\\Anticamp %s!", (enable) ? "enabled" : "disabled"), BROADCAST_CMD, NULL);
     if (adm && adm->client){
         trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7Anticamp %s by %s.\n\"", (enable) ? "enabled" : "disabled", adm->client->pers.cleanName));
@@ -3890,7 +3890,7 @@ int adm_endMap(int argNum, gentity_t *adm, qboolean shortCmd)
             level.mapAction = 0;
 
             // Broadcast the change.
-            Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav", qtrue));
+            Boe_GlobalSound(level.actionSoundIndex);
             G_Broadcast("\\Map end cancelled!", BROADCAST_CMD, NULL);
             if (adm && adm->client){
                 trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7Map end cancelled by %s.\n\"", adm->client->pers.cleanName));
@@ -3911,7 +3911,7 @@ int adm_endMap(int argNum, gentity_t *adm, qboolean shortCmd)
     level.mapSwitchCount2 = 5; // Boe!Man 7/22/12: 5 seconds remaining on the timer.
 
     // Broadcast the change.
-    Boe_GlobalSound(G_SoundIndex("sound/misc/menus/click.wav", qtrue));
+    Boe_GlobalSound(level.actionSoundIndex);
     G_Broadcast("\\Map ends in 5 sec!", BROADCAST_CMD, NULL);
     if (adm && adm->client){
         trap_SendServerCommand(-1, va("print \"^3[Admin Action] ^7Requested map end by %s.\n\"", adm->client->pers.cleanName));

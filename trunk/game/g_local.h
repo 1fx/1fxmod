@@ -917,8 +917,8 @@ typedef struct
     int         M4Time;
     int         MM1Time;
 
-    // Henk 22/02/10 -> Removes seeker released lag
-    int         clicksound;
+    // The static sound index to the global action sound.
+    int         actionSoundIndex;
 
     // storage for temp effects so we can delete them later on.
     int         tempent;
