@@ -751,7 +751,9 @@ void EvenTeams_HS (gentity_t *adm, qboolean aet)
         ClientSpawn( lastConnected);
     }
 
+    #ifndef _DEMO
     Boe_GlobalSound (G_SoundIndex("sound/misc/events/tut_lift02.mp3", qtrue));
+    #endif // not _DEMO
 
     if(adm && adm->client) {
         trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Eventeams by %s.\n\"", adm->client->pers.cleanName));
@@ -831,7 +833,9 @@ void EvenTeams_HZ(gentity_t *adm, qboolean aet){
         ClientSpawn(ent);
     }
 
+    #ifndef _DEMO
     Boe_GlobalSound(G_SoundIndex("sound/misc/events/tut_lift02.mp3", qtrue));
+    #endif // not _DEMO
 
     if (adm && adm->client) {
         trap_SendServerCommand(-1, va("print\"^3[Admin Action] ^7Eventeams by %s.\n\"", adm->client->pers.cleanName));
@@ -902,7 +906,9 @@ void HZ_Claymore(gentity_t *ent)
 
             // Broadcast the sound to players.
             for (i = 0; i < count; i++){
+                #ifndef _DEMO
                 Boe_ClientSound(&g_entities[clientsClose[i]], G_SoundIndex("sound/misc/events/micro_ding.mp3", qtrue));
+                #endif // not _DEMO
             }
         }
 

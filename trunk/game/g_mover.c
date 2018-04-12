@@ -1087,8 +1087,10 @@ void SP_func_door (gentity_t *ent) {
     vec3_t  size;
     float   lip;
 
+    #ifndef _DEMO
     ent->sound1to2 = ent->sound2to1 = G_SoundIndex("sound/movers/doors/dr1_strt.wav", qtrue);
     ent->soundPos1 = ent->soundPos2 = G_SoundIndex("sound/movers/doors/dr1_end.wav", qtrue);
+    #endif // not _DEMO
 
     ent->blocked = Blocked_Door;
 
@@ -1259,8 +1261,10 @@ Plats are always drawn in the extended position so they will light correctly.
 void SP_func_plat (gentity_t *ent) {
     float       lip, height;
 
+    #ifndef _DEMO
     ent->sound1to2 = ent->sound2to1 = G_SoundIndex("sound/movers/plats/pt1_strt.wav", qtrue);
     ent->soundPos1 = ent->soundPos2 = G_SoundIndex("sound/movers/plats/pt1_end.wav", qtrue);
+    #endif // not _DEMO
 
     VectorClear (ent->s.angles);
 
@@ -1342,7 +1346,9 @@ void SP_func_button( gentity_t *ent ) {
     vec3_t      size;
     float       lip;
 
+    #ifndef _DEMO
     ent->sound1to2 = G_SoundIndex("sound/movers/switches/butn2.wav", qtrue);
+    #endif // not _DEMO
 
     if ( !ent->speed ) {
         ent->speed = 40;

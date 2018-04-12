@@ -670,8 +670,12 @@ void CloneBody( gentity_t *ent, int number )
     }
 
     VectorCopy(ent->client->ps.viewangles, ent->client->sess.tempangles);
+
+    #ifndef _DEMO
     Henk_CloseSound(ent->r.currentOrigin, G_SoundIndex("sound/enemy/dog/bark03.mp3", qtrue));
     Henk_CloseSound(ent->r.currentOrigin, G_SoundIndex("sound/enemy/dog/attack01.mp3", qtrue));
+    #endif // not _DEMO
+
     // Boe!Man 1/8/12: Fix crash issues in DLL and possibily QVM by processing uninitialised vector.
     //VectorCopy(direction, vec3_origin);
     VectorCopy(vec3_origin, direction);

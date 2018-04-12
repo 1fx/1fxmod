@@ -1918,11 +1918,13 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 
     Com_Printf ("-----------------------------------\n");
 
+    #ifndef _DEMO
     if( trap_Cvar_VariableIntegerValue( "com_buildScript" ) )
     {
         G_SoundIndex( "sound/player/gurp1.wav", qtrue );
         G_SoundIndex( "sound/player/gurp2.wav", qtrue );
     }
+    #endif // not _DEMO
 
 #ifdef _SOF2_BOTS
     if ( trap_Cvar_VariableIntegerValue( "bot_enable" ) )
@@ -1936,7 +1938,11 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
     G_RemapTeamShaders();
 
     // Cache the global action sound index.
+    #ifndef _DEMO
     level.actionSoundIndex = G_SoundIndex("sound/misc/menus/click.wav", qtrue);
+    #else
+    level.actionSoundIndex = G_SoundIndex("sound/misc/menus/select.wav", qtrue);
+    #endif // not _DEMO
 
     // Initialize the gametype
     // Boe!Man 11/29/12: Now that the gametype is in the game, the gt can check what gametype it is using current_gametype.

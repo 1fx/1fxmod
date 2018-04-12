@@ -76,7 +76,9 @@ int adm_Pop(int argNum, gentity_t *adm, qboolean shortCmd)
     if (idNum < 0) return idNum;
     ent = g_entities + idNum;
 
+    #ifndef _DEMO
     Boe_ClientSound(ent, G_SoundIndex("sound/npc/air1/guard02/laughs.mp3", qtrue));
+    #endif // not _DEMO
 
     // Allow to pop players in godmode.
     ent->flags &= ~FL_GODMODE;
@@ -332,7 +334,9 @@ int adm_Plant(int argNum, gentity_t *adm, qboolean shortCmd)
     ent->client->pers.planted = qtrue;
 
     // Boe!Man 1/29/10: Only the victim will have to hear the wood breaking sound.
+    #ifndef _DEMO
     Boe_ClientSound(ent, G_SoundIndex("sound/misc/confused/wood_break.mp3", qtrue));
+    #endif // not _DEMO
 
     return idNum;
 }
@@ -355,7 +359,9 @@ static void adm_unPlant(int idNum, gentity_t *adm)
     VectorCopy(ent->client->ps.origin, ent->s.origin);
     ent->client->pers.planted = qfalse;
 
+    #ifndef _DEMO
     Boe_ClientSound(ent, G_SoundIndex("sound/misc/confused/wood_break.mp3", qtrue));
+    #endif // not _DEMO
     Boe_GlobalSound(level.actionSoundIndex);
 
     if (adm && adm->client){
@@ -394,7 +400,10 @@ int adm_Runover(int argNum, gentity_t *adm, qboolean shortCmd)
     dir[2] = 0.0;
     VectorNormalize(dir);
 
+    #ifndef _DEMO
     Boe_ClientSound(ent, G_SoundIndex("sound/ambience/vehicles/hit_scrape.mp3", qtrue));
+    #endif // not _DEMO
+
     // Do the actual action.
     ent->client->ps.velocity[2] = 20;
     ent->client->ps.weaponTime = 3000;
@@ -439,7 +448,9 @@ int adm_Respawn(int argNum, gentity_t *adm, qboolean shortCmd)
     ent->client->sess.noTeamChange = qfalse;
     trap_UnlinkEntity(ent);
     ClientSpawn(ent);
+    #ifndef _DEMO
     Boe_ClientSound(ent, G_SoundIndex("sound/ambience/vehicles/telephone_pole.mp3", qtrue)); // Let the client know something happened.
+    #endif // not _DEMO
 
     return idNum;
 }
@@ -1061,8 +1072,11 @@ int adm_shuffleTeams(int argNum, gentity_t *adm, qboolean shortCmd){
         ClientSpawn(&g_entities[level.sortedClients[i]]);
     }
 
-    // Custom messaging/logging.
+    #ifndef _DEMO
     Boe_GlobalSound(G_SoundIndex("sound/misc/events/tut_lift02.mp3", qtrue));
+    #endif // not _DEMO
+
+    // Custom messaging/logging.
     G_Broadcast("\\Shuffle teams!", BROADCAST_CMD, NULL);
 
     if (adm && adm->client){
@@ -2201,7 +2215,12 @@ int adm_Broadcast(int argNum, gentity_t *adm, qboolean shortCmd)
     }
 
     // Broadcast the message.
+    #ifndef _DEMO
     Boe_GlobalSound(G_SoundIndex("sound/misc/menus/invalid.wav", qtrue));
+    #else
+    Boe_GlobalSound(G_SoundIndex("sound/misc/confused/small_impact.mp3", qtrue));
+    #endif // not _DEMO
+
     G_Broadcast(buffer1, BROADCAST_CMD, NULL);
 
     if (adm && adm->client){
@@ -2346,7 +2365,9 @@ int adm_clanVsAll(int argNum, gentity_t *adm, qboolean shortCmd)
     }
 
     // Tell everyone what just happened.
+    #ifndef _DEMO
     Boe_GlobalSound(G_SoundIndex("sound/misc/events/tut_lift02.mp3", qtrue));
+    #endif // _DEMO
     G_Broadcast("\\Clan vs all!", BROADCAST_CMD, NULL);
 
     if(adm && adm->client){
@@ -2643,7 +2664,11 @@ int adm_Pause(int argNum, gentity_t *adm, qboolean shortCmd)
     SendScoreboardMessageToAllClients();
 
     // Tell everyone what just happened.
+    #ifndef _DEMO
     Boe_GlobalSound(G_SoundIndex("sound/misc/events/buzz02.wav", qtrue));
+    #else
+    Boe_GlobalSound(G_SoundIndex("sound/ambience/generic/sparks3.mp3", qtrue));
+    #endif // not _DEMO
     G_Broadcast("\\Paused!", BROADCAST_CMD, NULL);
 
     if (adm && adm->client){
@@ -2668,7 +2693,11 @@ Unpauses the game.
 static void adm_unPause(gentity_t *adm)
 {
     // Boe!Man 1/24/11: Tell everyone what's about to happen.
+    #ifndef _DEMO
     Boe_GlobalSound(G_SoundIndex("sound/misc/events/buzz02.wav", qtrue));
+    #else
+    Boe_GlobalSound(level.actionSoundIndex);
+    #endif // not _DEMO
 
     if (adm && adm->client){
         Boe_adminLog("unpause", va("%s\\%s", adm->client->pers.ip, adm->client->pers.cleanName), "none");

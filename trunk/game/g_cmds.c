@@ -266,7 +266,9 @@ void EvenTeams (gentity_t *adm, qboolean aet)
 
 
     // Boe!Man 3/31/10: We tell 'em what happened.
+    #ifndef _DEMO
     Boe_GlobalSound (G_SoundIndex("sound/misc/events/tut_lift02.mp3", qtrue));
+    #endif // _DEMO
 
     if(adm && adm->client){
         G_Broadcast("\\Evening teams!", BROADCAST_CMD, NULL);
@@ -426,7 +428,9 @@ void SwapTeams (gentity_t *adm, qboolean aswap)
     }
 
     // Proper messaging/logging.
+    #ifndef _DEMO
     Boe_GlobalSound(G_SoundIndex("sound/misc/events/tut_lift02.mp3", qtrue));
+    #endif // _DEMO
 
     if(!aswap){
         G_Broadcast("\\Swapteams!", BROADCAST_CMD, NULL);
@@ -2196,59 +2200,74 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
 
     switch(mode)
     {
-/*  case REF_CHAT:
-        type = "^7Ref chat";
-        Boe_ClientSound(other, G_SoundIndex("sound/misc/menus/invalid.wav"));
-        break;
-    case REF_TALK:
-        type =  "^7Ref talk";
-        Boe_ClientSound(other, G_SoundIndex("sound/misc/menus/invalid.wav"));
-        break;
-        */
-    case ADM_CHAT:
-        strcpy(type, server_acprefix.string);
-        if (beep == qtrue && g_specialChatSound.integer){
-            Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3", qtrue));
-        }
-        break;
-    case SADM_CHAT:
-        strcpy(type, server_scprefix.string);
-        if (beep == qtrue && g_specialChatSound.integer){
-            Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3", qtrue));
-        }
-        break;
-    case ADM_TALK:
-        if(ent->client->sess.admin == 2){
-        strcpy(type, server_badminprefix.string);
-        }else if(ent->client->sess.admin == 3){
-        strcpy(type, server_adminprefix.string);
-        }else if(ent->client->sess.admin == 4){
-        strcpy(type, server_sadminprefix.string);
-        }
-        if (beep == qtrue){
-            Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3", qtrue));
-        }
-        break;
-    case CADM_CHAT:
-        strcpy(type, server_caprefix.string);
-        if (beep == qtrue && g_specialChatSound.integer){
-            Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3", qtrue));
-        }
-        break;
-    case CLAN_CHAT:
-        strcpy(type, server_ccprefix.string);
-        if (beep == qtrue && g_specialChatSound.integer){
-            Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3", qtrue));
-        }
-        break;
-    case CLAN_TALK:
-        strcpy(type, server_ctprefix.string);
-        if (beep == qtrue){
-            Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3", qtrue));
-        }
-        break;
-    default:
-        break;
+        case ADM_CHAT:
+            strcpy(type, server_acprefix.string);
+            if (beep == qtrue && g_specialChatSound.integer){
+                #ifndef _DEMO
+                Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3", qtrue));
+                #else
+                Boe_ClientSound(other, level.actionSoundIndex);
+                #endif // not _DEMO
+            }
+            break;
+        case SADM_CHAT:
+            strcpy(type, server_scprefix.string);
+            if (beep == qtrue && g_specialChatSound.integer){
+                #ifndef _DEMO
+                Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3", qtrue));
+                #else
+                Boe_ClientSound(other, level.actionSoundIndex);
+                #endif // not _DEMO
+            }
+            break;
+        case ADM_TALK:
+            if(ent->client->sess.admin == 2){
+            strcpy(type, server_badminprefix.string);
+            }else if(ent->client->sess.admin == 3){
+            strcpy(type, server_adminprefix.string);
+            }else if(ent->client->sess.admin == 4){
+            strcpy(type, server_sadminprefix.string);
+            }
+            if (beep == qtrue){
+                #ifndef _DEMO
+                Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3", qtrue));
+                #else
+                Boe_ClientSound(other, level.actionSoundIndex);
+                #endif // not _DEMO
+            }
+            break;
+        case CADM_CHAT:
+            strcpy(type, server_caprefix.string);
+            if (beep == qtrue && g_specialChatSound.integer){
+                #ifndef _DEMO
+                Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3", qtrue));
+                #else
+                Boe_ClientSound(other, level.actionSoundIndex);
+                #endif // not _DEMO
+            }
+            break;
+        case CLAN_CHAT:
+            strcpy(type, server_ccprefix.string);
+            if (beep == qtrue && g_specialChatSound.integer){
+                #ifndef _DEMO
+                Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3", qtrue));
+                #else
+                Boe_ClientSound(other, level.actionSoundIndex);
+                #endif // not _DEMO
+            }
+            break;
+        case CLAN_TALK:
+            strcpy(type, server_ctprefix.string);
+            if (beep == qtrue){
+                #ifndef _DEMO
+                Boe_ClientSound(other, G_SoundIndex("sound/misc/c4/beep.mp3", qtrue));
+                #else
+                Boe_ClientSound(other, level.actionSoundIndex);
+                #endif // not _DEMO
+            }
+            break;
+        default:
+            break;
     }
 
     // Boe!Man 1/6/10 - Update 2/8/11: Finally fixing these space issues. This would be the best way for it.

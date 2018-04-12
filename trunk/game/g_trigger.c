@@ -202,7 +202,9 @@ void SP_trigger_push( gentity_t *self ) {
     self->r.svFlags &= ~SVF_NOCLIENT;
 
     // make sure the client precaches this sound
+    #ifndef _DEMO
     G_SoundIndex("sound/world/jumppad.wav", qtrue);
+    #endif // not _DEMO
 
     self->s.eType = ET_PUSH_TRIGGER;
     self->touch = trigger_push_touch;
@@ -241,11 +243,14 @@ void SP_target_push( gentity_t *self ) {
     G_SetMovedir (self->s.angles, self->s.origin2);
     VectorScale (self->s.origin2, self->speed, self->s.origin2);
 
+    #ifndef _DEMO
     if ( self->spawnflags & 1 ) {
         self->noise_index = G_SoundIndex("sound/world/jumppad.wav", qtrue);
     } else {
         self->noise_index = G_SoundIndex("sound/misc/windfly.wav", qtrue);
     }
+    #endif // not _DEMO
+
     if ( self->target ) {
         VectorCopy( self->s.origin, self->r.absmin );
         VectorCopy( self->s.origin, self->r.absmax );
@@ -297,11 +302,16 @@ void trigger_booster_touch (gentity_t *self, gentity_t *other, trace_t *trace ) 
     //G_SpawnGEntityFromSpawnVars (qtrue);
 
     // Boe!Man 5/22/12: Check if 'sound' is defined in the entity.
-    if(!self->sound){
-        sound2 = G_SoundIndex("sound/movers/doors/airlock_door01/airlock_open.mp3", qtrue);
-    }else{ // User defined their own sound, use that instead.
+    if(self->sound){
         sound2 = G_SoundIndex( self->sound, qtrue );
     }
+    #ifndef _DEMO
+    else{
+        // Use the default sound.
+        sound2 = G_SoundIndex("sound/movers/doors/airlock_door01/airlock_open.mp3", qtrue);
+    }
+    #endif // not _DEMO
+
     Henk_CloseSound(other->r.currentOrigin, sound2);
     // Boe!Man 5/22/12: End.
 
@@ -404,7 +414,9 @@ void trigger_ReachableObject_touch ( gentity_t *self, gentity_t *other, trace_t 
     }
 
     // Boe!Man 6/14/11: Play hotshot sound.
+    #ifndef _DEMO
     Boe_ClientSound(other, G_SoundIndex("sound/misc/outtakes/todd_s.mp3", qtrue));
+    #endif // not _DEMO
 
     // Boe!Man 6/14/11: Strip the player.
     // Henk 26/01/10 -> Dead clients dun have to be stripped
@@ -512,8 +524,10 @@ void trigger_NewTeleporter_touch (gentity_t *self, gentity_t *other, trace_t *tr
 
     if(other->client->sess.team != TEAM_SPECTATOR && level.time > other->client->sess.lastTele){
         G_PlayEffect ( G_EffectIndex("misc/electrical"),other->client->ps.origin, other->pos1);
+        #ifndef _DEMO
         Henk_CloseSound(self->origin_to, G_SoundIndex("sound/misc/menus/apply_changes.wav", qtrue));
         Henk_CloseSound(self->origin_from, G_SoundIndex("sound/misc/menus/apply_changes.wav", qtrue));
+        #endif // not _DEMO
     }
     TeleportPlayer( other, self->origin_to, self->angles_to, qfalse );
 }
@@ -631,7 +645,9 @@ void SP_trigger_teleport( gentity_t *self ) {
     }
 
     // make sure the client precaches this sound
+    #ifndef _DEMO
     G_SoundIndex("sound/world/jumppad.wav", qtrue);
+    #endif // not _DEMO
 
     self->s.eType = ET_TELEPORT_TRIGGER;
     self->touch = trigger_teleporter_touch;
@@ -661,7 +677,9 @@ void SP_1fx_teleport( gentity_t *self ) {
     }
 
     // make sure the client precaches this sound
+    #ifndef _DEMO
     G_SoundIndex("sound/world/jumppad.wav", qtrue);
+    #endif // not _DEMO
 
     self->s.eType = ET_TELEPORT_TRIGGER;
     self->touch = trigger_teleporter_touch;
@@ -736,7 +754,9 @@ void hurt_touch( gentity_t *self, gentity_t *other, trace_t *trace ) {
 void SP_trigger_hurt( gentity_t *self ) {
     InitTrigger (self);
 
+    #ifndef _DEMO
     self->noise_index = 0; // G_SoundIndex( "sound/world/electro.wav" );
+    #endif // not _DEMO
     self->touch = hurt_touch;
 
     if ( !self->damage ) {
@@ -977,7 +997,9 @@ void SP_teleporter(gentity_t* ent){
     }
 
     // make sure the client precaches this sound
+    #ifndef _DEMO
     G_SoundIndex("sound/world/jumppad.wav", qtrue);
+    #endif // not _DEMO
 
     ent->s.eType = ET_TELEPORT_TRIGGER;
     ent->touch = trigger_NewTeleporter_touch;
@@ -1187,11 +1209,16 @@ void SP_accelerator_touch (gentity_t *self, gentity_t *other, trace_t *trace ) {
     }
 
     // Boe!Man 5/22/12: Check if 'sound' is defined in the entity.
-    if(!self->sound){
-        sound2 = G_SoundIndex("sound/movers/doors/airlock_door01/airlock_open.mp3", qtrue);
-    }else{ // User defined their own sound, use that instead.
-        sound2 = G_SoundIndex(self->sound, qtrue);
+    if(self->sound){
+        sound2 = G_SoundIndex( self->sound, qtrue );
     }
+    #ifndef _DEMO
+    else{
+        // Use the default sound.
+        sound2 = G_SoundIndex("sound/movers/doors/airlock_door01/airlock_open.mp3", qtrue);
+    }
+    #endif // not _DEMO
+
     Henk_CloseSound(other->r.currentOrigin, sound2);
     // Boe!Man 5/22/12: End.
 

@@ -1384,7 +1384,7 @@ void G_Obituary(gentity_t *target, gentity_t *attacker, int mod, attackType_t at
         else if (headShot) {
             //if they use rpm client-side the client will
             //handle the sound etc...
-            #ifndef _GOLD
+            #if !defined(_GOLD) && !defined(_DEMO)
             if (attacker->client->sess.rpmClient)
             {
                 trap_SendServerCommand(attacker->s.number, va("headshot \"Headshot\n\""));
@@ -1393,14 +1393,15 @@ void G_Obituary(gentity_t *target, gentity_t *attacker, int mod, attackType_t at
             //if not we'll send them the sound etc..
             else// if(g_allowDeathMessages.integer)
             {
-            #else
+            #endif // not _GOLD and not _DEMO
                 G_Broadcast("Headshot!", BROADCAST_GAME, attacker);
+                #ifndef _DEMO
                 Boe_ClientSound(attacker, G_SoundIndex("sound/npc/col8/blakely/niceshot.mp3", qtrue));
-            #endif // not _GOLD
+                #endif // not _DEMO
 
-            #ifndef _GOLD
+            #if !defined(_GOLD) && !defined(_DEMO)
             }
-            #endif // not _GOLD
+            #endif // not _GOLD and not _DEMO
 
             //if we can show kills we'll display the
             //heashot message with the "you killed" message
@@ -1785,7 +1786,11 @@ void G_unPause(gentity_t *adm)
 
         G_Broadcast(va("\\Resuming in: %d sec", level.pause), BROADCAST_GAME, NULL);
 
+        #ifndef _DEMO
         Boe_GlobalSound(G_SoundIndex("sound/misc/events/buzz02.wav", qtrue));
+        #else
+        Boe_GlobalSound(level.actionSoundIndex);
+        #endif // not _DEMO
 
         if (!level.pause)
         {

@@ -1167,8 +1167,12 @@ void CheckGametype ( void )
                     G_Broadcast("You are the \\last player alive!", BROADCAST_GAME, ent);
                     G_printInfoMessageToAll("%s is the last player alive in the red team.", ent->client->pers.cleanName);
 
+                    #ifndef _DEMO
                     Boe_ClientSound(ent, G_SoundIndex("sound/misc/events/tut_door01.mp3", qtrue));
+                    #endif // not _DEMO
+
                     level.redMsgSent = qtrue;
+
                     if(current_gametype.value == GT_HZ){
                         trap_SendServerCommand(ent-g_entities, va("print \"^3[H&Z] ^7You will receive the forcefield the next round.\n\""));
                         level.lastHuman = ent->s.number;
@@ -1183,7 +1187,10 @@ void CheckGametype ( void )
                 if ( ent->client->sess.team == TEAM_BLUE && !G_IsClientDead ( ent->client )){
                     G_Broadcast("You are the \\last player alive!", BROADCAST_GAME, ent);
                     G_printInfoMessageToAll("%s is the last player alive in the blue team.", ent->client->pers.cleanName);
+                    #ifndef _DEMO
                     Boe_ClientSound(ent, G_SoundIndex("sound/misc/events/tut_door01.mp3", qtrue));
+                    #endif // not _DEMO
+
                     level.blueMsgSent = qtrue;
                 }
             }
