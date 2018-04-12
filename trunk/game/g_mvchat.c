@@ -816,7 +816,11 @@ void mvchat_printHelp(gentity_t *ent)
 
     trap_SendServerCommand(ent-g_entities, "print \"You can play voice chats as such (omit the spaces):\n\n\"");
     trap_SendServerCommand(ent-g_entities, "print \"    " S_COLOR_YELLOW "@" S_COLOR_RED " 1" S_COLOR_BLUE " en" S_COLOR_MAGENTA " :m\n\n\"");
+    #ifdef _GOLD
     trap_SendServerCommand(ent-g_entities, "print \"    " S_COLOR_YELLOW "^^" S_COLOR_RED " ^^" S_COLOR_BLUE " ^^" S_COLOR_MAGENTA "   ^^\n\"");
+    #else
+    trap_SendServerCommand(ent-g_entities, "print \"    " S_COLOR_YELLOW "^" S_COLOR_RED " ^" S_COLOR_BLUE " ^" S_COLOR_MAGENTA "   ^^\n\n\"");
+    #endif // _GOLD
     trap_SendServerCommand(ent-g_entities, "print \"    " S_COLOR_YELLOW "|" S_COLOR_RED " |" S_COLOR_BLUE " |" S_COLOR_MAGENTA "   |\n\"");
     trap_SendServerCommand(ent-g_entities, "print \"    " S_COLOR_YELLOW "|" S_COLOR_RED " |" S_COLOR_BLUE " |" S_COLOR_MAGENTA "   ---> " S_COLOR_WHITE "(optional) The gender: " S_COLOR_MAGENTA "  m" S_COLOR_WHITE"  (male)\n\"");
     trap_SendServerCommand(ent-g_entities, "print \"    " S_COLOR_YELLOW "|" S_COLOR_RED " |" S_COLOR_BLUE " |                                 " S_COLOR_MAGENTA "f" S_COLOR_WHITE "  (female)\n\"");
