@@ -62,6 +62,7 @@ typedef struct {
 
 typedef struct {
     const char          *text;                              // The text to display.
+    const char          *textClean;                         // The text without colors (for listing in console).
     mvchatSoundLang_t   *sounds[MVCHAT_NUM_LANGS];          // Array containing actual sounds per language.
 
     mvchatSoundLang_t   *defaultSoundLanguage;              // The default sound language sounds.
@@ -227,8 +228,18 @@ void mvchat_parseFiles()
             // number of languages available.
             memset(mvchatSound->sounds, 0, sizeof(mvchatSoundLang_t) * MVCHAT_NUM_LANGS);
 
+            // Strip extra color escapes from the text.
+            G_RemoveAdditionalCarets(sText);
+
             // Allocate some space for the text of this sound.
             mvchatSound->text = trap_VM_LocalStringAlloc(sText);
+
+            // Strip colors from the text.
+            Q_CleanStr(sText);
+
+            // Allocate some space for the clean text of this sound.
+            // The clean text is used when listing sounds in the console.
+            mvchatSound->textClean = trap_VM_LocalStringAlloc(sText);
 
             // Mandatory info is now stored.
             // Iterate through the available languages to use for this sound.
@@ -731,7 +742,7 @@ void mvchat_listSounds(gentity_t *ent, int soundPage)
             va(S_COLOR_YELLOW "|" S_COLOR_BLUE " %03d " \
                S_COLOR_YELLOW "|" S_COLOR_WHITE " %-35.35s " \
                S_COLOR_YELLOW "|",
-            i, mvsound->text));
+            i, mvsound->textClean));
 
         // Iterate through the sounds, check if the sound language is available.
         // If so, list it as available.
