@@ -4,7 +4,7 @@
 // Henk 20/02/10 -> Add UpdateScores()
 void ShowScores(void)
 {
-    char winner[64];
+    char    winner[64];
 
     Com_sprintf(winner, sizeof(winner), "%s ^7won the round!", level.cagewinner);
 

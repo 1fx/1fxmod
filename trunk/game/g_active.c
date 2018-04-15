@@ -1217,6 +1217,8 @@ void ClientThink_real(gentity_t *ent)
     #endif // _GOLD
     {
         ent->client->ps.pm_type = PM_FREEZE;
+        ent->client->ps.stats[STAT_HEALTH] = -1;
+
         memset(&pm, 0, sizeof(pm));
         pm.ps = &client->ps;
         pm.cmd = *ucmd;

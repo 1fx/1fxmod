@@ -1279,7 +1279,10 @@ void CheckGametype ( void )
             level.timelimithit = qfalse;
             level.cagefight = qfalse;
             level.cagefightdone = qtrue;
-            level.gametypeResetTime = level.time + 30000;
+
+            // Reset the game type timer.
+            trap_SetConfigstring(CS_GAMETYPE_TIMER, va("%d", level.time));
+
             LogExit("Cagefight is done.");
             return;
         }

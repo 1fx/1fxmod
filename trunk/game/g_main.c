@@ -3053,6 +3053,7 @@ void CheckExitRules( void )
 {
     int         i;
     gclient_t   *cl;
+    gentity_t*  tent;
 
     // if at the intermission, wait for all non-bots to
     // signal ready, then go to next level
@@ -3101,7 +3102,6 @@ void CheckExitRules( void )
                 G_printInfoMessageToAll("Timelimit hit, waiting for round to finish.");
                 level.timelimithit = qtrue;
             }else{
-                gentity_t*  tent;
                 tent = G_TempEntity( vec3_origin, EV_GAME_OVER );
                 if(cm_enabled.integer > 0){ // Boe!Man 3/18/11: Only change the entry if competition mode's enabled.
                     tent->s.eventParm = LEEG;
@@ -3137,7 +3137,6 @@ void CheckExitRules( void )
         {
             if ( level.teamScores[TEAM_RED] >= g_scorelimit.integer )
             {
-                gentity_t* tent;
                 tent = G_TempEntity( vec3_origin, EV_GAME_OVER );
                 if(cm_enabled.integer > 0){ // Boe!Man 3/18/11: Only change the entry if competition mode's enabled.
                     //if (cm_enabled.integer < 4 && cm_dr.integer == 1){
@@ -3204,7 +3203,6 @@ void CheckExitRules( void )
 
             if ( level.teamScores[TEAM_BLUE] >= g_scorelimit.integer )
             {
-                gentity_t* tent;
                 tent = G_TempEntity( vec3_origin, EV_GAME_OVER );
                 if(cm_enabled.integer > 0){ // Boe!Man 3/18/11: Only change the entry if competition mode's enabled.
                     //if (cm_enabled.integer < 4 && cm_dr.integer == 1){
@@ -3287,7 +3285,6 @@ void CheckExitRules( void )
 
                 if ( cl->sess.score >= g_scorelimit.integer )
                 {
-                    gentity_t* tent;
                     tent = G_TempEntity( vec3_origin, EV_GAME_OVER );
                     tent->s.eventParm = GAME_OVER_SCORELIMIT;
                     tent->r.svFlags = SVF_BROADCAST;
@@ -3306,6 +3303,23 @@ void CheckExitRules( void )
 
     // Boe!Man 12/28/16: Check if the map is requested to end.
     if(level.endMap && level.endMap == level.time){
+        // Let the clients know the map is ended.
+        tent = G_TempEntity(vec3_origin, EV_GAME_OVER);
+        tent->s.eventParm = LEEG;
+        tent->r.svFlags = SVF_BROADCAST;
+        tent->s.otherEntityNum = level.sortedClients[i];
+
+        // Reset the game type timer.
+        if(level.gametypeData->respawnType != RT_INTERVAL){
+            trap_SetConfigstring(CS_GAMETYPE_TIMER, va("%d", level.time));
+        }
+
+        // Update the H&S scores.
+        if(current_gametype.value == GT_HS){
+            UpdateScores();
+        }
+
+        // Begin intermission.
         LogExit("Map ended on request.");
     }
 }
@@ -3557,6 +3571,11 @@ void Henk_CheckZombie(void){
     int i, random, teamCountBlue, teamCountRed;
     gentity_t *ent = NULL;
 
+    // Don't continue if we are in intermission.
+    if(level.intermissionQueued || level.intermissiontime || level.pause || level.changemap){
+        return;
+    }
+
     teamCountBlue = TeamCount1(TEAM_BLUE);
     teamCountRed = TeamCount1(TEAM_RED);
 
@@ -3660,6 +3679,11 @@ void Henk_CheckHS(void)
     int i, random, rpgwinner = -1, m4winner = -1;
     gspawn_t    *spawnPoint;
     gentity_t   *dropped;
+
+    // Don't continue if we are in intermission.
+    if(level.intermissionQueued || level.intermissiontime || level.pause || level.changemap){
+        return;
+    }
 
     // Henk 19/02/10 -> Copy origin of dropped weapon to flare
     if(g_entities[level.MM1ent].s.pos.trType == TR_STATIONARY && level.MM1Time != 0 && level.gametypeStartTime >= 5000){
