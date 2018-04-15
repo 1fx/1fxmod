@@ -3945,6 +3945,12 @@ int adm_endMap(int argNum, gentity_t *adm, qboolean shortCmd)
         return -1;
     }
 
+    // Check if the map is already coming to an end.
+    if(level.intermissionQueued || level.intermissiontime){
+        G_printInfoMessage(adm, "The map is already ending.");
+        return -1;
+    }
+
     // Request the map to end in 5 seconds.
     level.mapSwitch = qtrue;
     level.mapAction = 5;
