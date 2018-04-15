@@ -1429,6 +1429,18 @@ int adm_gametypeRestart(int argNum, gentity_t *adm, qboolean shortCmd)
         return -1;
     }
 
+    // Cannot restart the gametype in intermission mode.
+    if(level.intermissionQueued || level.intermissiontime){
+        G_printInfoMessage(adm, "You cannot restart the gametype while being in intermission.");
+        return -1;
+    }
+
+    // Cannot restart the gametype while being paused.
+    if(level.pause){
+        G_printInfoMessage(adm, "You cannot restart the gametype while the game is paused.");
+        return -1;
+    }
+
     // Broadcast the change and restart it.
     Boe_GlobalSound(level.actionSoundIndex);
     G_Broadcast("\\Gametype restart!", BROADCAST_CMD, NULL);

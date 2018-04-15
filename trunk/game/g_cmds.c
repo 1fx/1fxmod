@@ -4061,6 +4061,24 @@ qboolean ConsoleCommand( void )
 
     if (Q_stricmp (cmd, "gametype_restart" ) == 0 )
     {
+        // Cannot restart the gametype in DM (at least, no visible effect).
+        if(current_gametype.value == GT_DM){
+            Com_Printf("You cannot restart this gametype.\n");
+            return qtrue;
+        }
+
+        // Cannot restart the gametype in intermission mode.
+        if(level.intermissionQueued || level.intermissiontime){
+            Com_Printf("You cannot restart the gametype while being in intermission.\n");
+            return qtrue;
+        }
+
+        // Cannot restart the gametype while being paused.
+        if(level.pause){
+            Com_Printf("You cannot restart the gametype while the game is paused.\n");
+            return qtrue;
+        }
+
         trap_Argv( 1, cmd, sizeof( cmd ) );
         G_ResetGametype ( (qboolean)(Q_stricmp ( cmd, "full" ) == 0), qfalse );
         return qtrue;
