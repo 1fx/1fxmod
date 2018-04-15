@@ -467,7 +467,7 @@ static cvarTable_t gameCvarTable[] =
     { &g_debugRMG, "g_debugRMG", "0", 0, 0.0f, 0.0f },
 
     { &g_timeouttospec,     "g_timeouttospec",  "15",       CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
-    { &g_roundtimelimit,    "g_roundtimelimit", "5",        CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
+    { &g_roundtimelimit,    "g_roundtimelimit", "5",        CVAR_ARCHIVE, 0.0, 0.0, 0, qtrue },
     { &g_timeextension,     "g_timeextension",  "15",       CVAR_ARCHIVE, 0.0, 0.0, 0, qfalse },
     #ifdef _DEMO
     { &g_timeextensionmultiplier,       "g_timeextensionmultiplier",    "0", 0, 0.0, 0.0, 0, qfalse },
