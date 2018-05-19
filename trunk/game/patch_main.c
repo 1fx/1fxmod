@@ -312,6 +312,11 @@ void Patch_Main()
     if(g_dosPatch.integer){
         Patch_dosProtection();
     }
+    #ifdef _WIN32
+    else{
+        Patch_updateExploitProtection();
+    }
+    #endif // _WIN32
 
     #ifndef _GOLD
     // Remove the hash command from the v1.00 and v1.02t command list.

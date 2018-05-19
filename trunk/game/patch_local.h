@@ -36,16 +36,20 @@ typedef struct patchArgs {
 #endif // _WIN32
 
 // Function definitions.
-char    *AlignDWORD                 ( long input );
-void    Patch_detourAddress         ( char *genericName, long func, long offset, qboolean jmp );
-void    Patch_writeBytes            ( char *genericName, long offset, unsigned char *buf );
+char    *AlignDWORD                     ( long input );
+void    Patch_detourAddress             ( char *genericName, long func, long offset, qboolean jmp );
+void    Patch_writeBytes                ( char *genericName, long offset, unsigned char *buf );
 
-void    Patch_autoDownloadExploit   ( void );
-void    Patch_dosProtection         ( void );
-void    Patch_rconLog               ( void );
-void    Patch_sysinfoWorkaround     ( void );
-void    Patch_q3infofix             ( void );
-void    Patch_engineCVARs           ( void );
-void    Patch_removeCommand         ( const char *cmd );
+void    Patch_autoDownloadExploit       ( void );
+void    Patch_dosProtection             ( void );
+void    Patch_rconLog                   ( void );
+void    Patch_sysinfoWorkaround         ( void );
+void    Patch_q3infofix                 ( void );
+void    Patch_engineCVARs               ( void );
+void    Patch_removeCommand             ( const char *cmd );
+
+#ifdef _WIN32
+void    Patch_updateExploitProtection   ( void );
+#endif // _WIN32
 
 #endif // _PATCH_LOCAL
