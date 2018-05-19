@@ -2562,6 +2562,7 @@ int adm_Gametype(int argNum, gentity_t *adm, qboolean shortCmd)
             trap_SendConsoleCommand(EXEC_APPEND, "g_gametype elim\n");
             strcpy(gametype, "elim");
             G_Broadcast("\\Gametype Elimination!", BROADCAST_CMD, NULL);
+        #ifndef _DEMO
         #ifdef _GOLD
         }else if (strstr(arg, "dem")){
             trap_SendConsoleCommand(EXEC_APPEND, "g_gametype dem\n");
@@ -2586,7 +2587,13 @@ int adm_Gametype(int argNum, gentity_t *adm, qboolean shortCmd)
         }else if (!g_enforce1fxAdditions.integer && (strstr(arg, "h&s") || strstr(arg, "h&z") || strstr(arg, "zombies"))){
             G_printInfoMessage(adm, "This gametype is unavailable when you're not enforcing 1fx. Client Additions.");
             G_printInfoMessage(adm, "Put g_enforce1fxAdditions to 1 and restart the map to enable the additional gametypes.");
+            return -1;
         #endif // GOLD
+        #else
+        }else if(strstr(arg, "h&s") || strstr(arg, "h&z") || strstr(arg, "zombies")){
+            G_printInfoMessage(adm, "This gametype is unavailable in the Demo version of 1fx. Mod.");
+            return -1;
+        #endif // not _DEMO
         }else{
             // Boe!Man 2/4/11: In case no argument is found we just display the current gametype.
             if (strstr(g_gametype.string, "inf")){
@@ -3537,6 +3544,7 @@ int adm_Map(int argNum, gentity_t *adm, qboolean shortCmd)
         G_printInfoMessage(adm, "This map does not support the gametype %s, please add it in the ARENA file.", gametype);
         return -1;
     }
+
     #ifdef _GOLD
     if(!g_enforce1fxAdditions.integer && (strcmp(gametype, "h&s") == 0 || strcmp(gametype, "h&z") == 0)){
         G_printInfoMessage(adm, "This gametype is unavailable when you're not enforcing 1fx. Client Additions.");
@@ -3545,6 +3553,13 @@ int adm_Map(int argNum, gentity_t *adm, qboolean shortCmd)
         return -1;
     }
     #endif // _GOLD
+
+    #ifdef _DEMO
+    if(strcmp(gametype, "h&s") == 0 || strcmp(gametype, "h&z") == 0){
+        G_printInfoMessage(adm, "This gametype is unavailable in the Demo version of 1fx. Mod.");
+        return -1;
+    }
+    #endif // _DEMO
 
     trap_SendConsoleCommand(EXEC_APPEND, va("g_gametype %s\n", gametype));
 

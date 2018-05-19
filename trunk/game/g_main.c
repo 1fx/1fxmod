@@ -1302,6 +1302,7 @@ static void G_setCurrentGametype()
 {
     if(Q_stricmp(g_gametype.string, "inf") == 0){
         trap_Cvar_Set("current_gametype", "3");
+    #ifndef _DEMO
     #ifdef _GOLD
     }else if(g_enforce1fxAdditions.integer && Q_stricmp(g_gametype.string, "h&s") == 0){
     #else
@@ -1330,6 +1331,15 @@ static void G_setCurrentGametype()
         trap_Cvar_Set("g_gametype", "inf");
         trap_Cvar_Update(&g_gametype);
     #endif // _GOLD
+    #else
+    }else if(Q_stricmp(g_gametype.string, "h&s") == 0 || Q_stricmp(g_gametype.string, "h&z") == 0){
+        Com_Printf("This gametype is unavailable in the Demo version of 1fx. Mod.\n");
+        Com_Printf("Reverting the gametype to INF.\n");
+
+        trap_Cvar_Set("current_gametype", "3");
+        trap_Cvar_Set("g_gametype", "inf");
+        trap_Cvar_Update(&g_gametype);
+    #endif // not _DEMO
     }else if(Q_stricmp(g_gametype.string, "elim") == 0){
         trap_Cvar_Set("current_gametype", "7");
     }else if(Q_stricmp(g_gametype.string, "tdm") == 0){
@@ -1363,10 +1373,14 @@ void G_SetGametype ( const char* gametype )
     char realgametype[8] = "0000";
     char mapname[MAX_QPATH];
     qboolean doit = qfalse;
-    qboolean check, check1;
-    if(current_gametype.value == GT_HS){
+    qboolean check;
+    if(current_gametype.value == GT_HS || current_gametype.value == GT_HZ){
         gametype = "inf";
-        strcpy(realgametype, "h&s");
+        if(current_gametype.value == GT_HS){
+            strcpy(realgametype, "h&s");
+        }else{
+            strcpy(realgametype, "h&z");
+        }
         doit = qtrue;
     }
     trap_Cvar_VariableStringBuffer ( "mapname", mapname, MAX_QPATH );
@@ -1383,11 +1397,9 @@ void G_SetGametype ( const char* gametype )
     //Ryan
     ///Taken from the 1.03 *unofficial* sdk
     if(doit){
-        check = qfalse;
-        check1 = Henk_DoesMapSupportGametype (realgametype, mapname);
+        check = Henk_DoesMapSupportGametype (realgametype, mapname);
     }else{
-        check1 = G_DoesMapSupportGametype (gametype);
-        if(!G_DoesMapSupportGametype (bg_gametypeData[level.gametype].basegametype))
+        if(!G_DoesMapSupportGametype(bg_gametypeData[level.gametype].basegametype))
             check = qtrue;
         else
             check = qfalse;
