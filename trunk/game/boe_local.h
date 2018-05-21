@@ -214,6 +214,7 @@
 //
 // 0.80         Release                                     4/24/17     // Sent out to public on 4/24/17
 // 0.81         Release                                     7/7/17      // Sent out to public on 7/7/17
+// 0.82         Release                                     5/21/18     // Sent out to public on 5/21/18
 
 //===================================================================
 
