@@ -626,7 +626,7 @@ void        Boe_printAliases            (gentity_t *ent, char *ip, char *name2);
 
 int         Boe_checkAdmin              (char *ip, char *name2);
 int         Boe_checkPassAdmin          (char *name2, char *pass);
-qboolean    Boe_checkPassAdmin2         (char *name2);
+int         Boe_checkPassAdmin2         (char *name2);
 void        Boe_addPasswordToDatabase   (char *ip, char *name2, char *pass);
 qboolean    Boe_checkClanMember         (char *ip, char *name2);
 

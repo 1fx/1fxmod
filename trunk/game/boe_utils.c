@@ -3037,12 +3037,14 @@ int Boe_checkPassAdmin(char *name2, char *pass)
 Boe_checkPassAdmin2
 8/25/14 - 7:49 PM
 Function that checks if the client was already added once as Passworded Admin.
+If true, this function returns the Admin level. Otherwise 0 is returned.
 ================
 */
 
-qboolean Boe_checkPassAdmin2(char *name2)
+int Boe_checkPassAdmin2(char *name2)
 {
     char            name[MAX_NETNAME]; // name2 but without unsupported characters.
+    int             adminLevel;
     sqlite3         *db;
     sqlite3_stmt    *stmt;
 
@@ -3051,14 +3053,15 @@ qboolean Boe_checkPassAdmin2(char *name2)
 
     db = usersDb;
 
-    sqlite3_prepare(db, va("SELECT ROWID from passadmins WHERE name='%s'", name), -1, &stmt, 0);
-    if (sqlite3_step(stmt) == SQLITE_DONE){ // He wasn't found on the admin table.
-        sqlite3_finalize(stmt);
-        return qfalse;
+    sqlite3_prepare(db, va("SELECT level from passadmins WHERE name='%s'", name), -1, &stmt, 0);
+    if(sqlite3_step(stmt) == SQLITE_DONE){ // He wasn't found on the admin table.
+        adminLevel = 0;
+    }else{
+        adminLevel = sqlite3_column_int(stmt, 0);
     }
 
     sqlite3_finalize(stmt);
-    return qtrue;
+    return adminLevel;
 }
 
 /*

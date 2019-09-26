@@ -3648,6 +3648,7 @@ Boe_Adm_f
 void Boe_adm_f ( gentity_t *ent )
 {
     int     i, x, adm, levelx, to, oldcolour, sendsize;
+    int     admPassLevel;
     char    arg1[MAX_STRING_TOKENS];
     char    arg2[MAX_STRING_TOKENS];
     gclient_t   *client;
@@ -3708,13 +3709,18 @@ void Boe_adm_f ( gentity_t *ent )
         return;
     }
     else if (!Q_stricmp(arg1, "pass")){
-        if (ent->client->sess.setAdminPassword || Boe_checkPassAdmin2(ent->client->pers.cleanName)){
-            if (!strlen(arg2)){
-                G_printInfoMessage(ent, "You need to enter your password with this command!");
+        admPassLevel = Boe_checkPassAdmin2(ent->client->pers.cleanName);
+        if (ent->client->sess.setAdminPassword || admPassLevel){
+            if (!ent->client->sess.admin && !ent->client->sess.setAdminPassword){
+                G_printInfoMessage(ent, "Login prior to changing your password!");
                 return;
             }
-            if (!ent->client->sess.setAdminPassword && !ent->client->sess.admin){
-                G_printInfoMessage(ent, "Login prior to changing your password!");
+            if (ent->client->sess.admin && ent->client->sess.admin != admPassLevel){
+                G_printInfoMessage(ent, "You are not authorized to change this password.");
+                return;
+            }
+            if (!strlen(arg2)){
+                G_printInfoMessage(ent, "You need to enter your password with this command!");
                 return;
             }
 
