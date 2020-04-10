@@ -320,12 +320,6 @@ typedef struct
     float               boemodClient;           // Client side mod.
     qboolean            fileChecked;            // Used for checking if the client is an Admin at connect and/or name change.
 
-    // Boe!Man 4/3/10
-    #ifdef _awesomeToAbuse
-    int                 dev;                    // If this is set to 1, the client is a Developer.
-    qboolean            henkgib;
-    #endif // _awesomeToAbuse
-
     // (c) Henk -> Ip2Country
     char                country[128]; // Netherlands,Unites States, United Kingdom etc..
     char                countryext[4]; // NL,US,UK etc..

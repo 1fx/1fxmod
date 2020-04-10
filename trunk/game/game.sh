@@ -239,7 +239,7 @@ elif [[ $choice == "3" ]] || [[ $choice == *"3"* ]]; then
         buildtype="Regular Pre-release build"
         buildoptions="$buildoptions $strip -DNDEBUG -D_PRE"
     elif [[ $choice == "2" ]] || [[ $choice == "3.2" ]]; then
-        buildoptions="$buildoptions $strip -DNDEBUG -D_PRE -D_3DServer -D_awesomeToAbuse"
+        buildoptions="$buildoptions $strip -DNDEBUG -D_PRE -D_3DServer"
         buildtype="3D-specific Pre-release build"
     elif [[ $choice == "3" ]] || [[ $choice == "3.3" ]]; then
 		buildtype="Regular Pre-release build with developer"
@@ -247,11 +247,7 @@ elif [[ $choice == "3" ]] || [[ $choice == *"3"* ]]; then
         dev=true
     elif [[ $choice == "4" ]] || [[ $choice == "3.4" ]]; then
 		buildtype="3D-specific Pre-release build with developer"
-        buildoptions="$buildoptions -DNDEBUG -D_PRE -D_DEV -D_3DServer -D_awesomeToAbuse"
-        dev=true
-    elif [[ $choice == "5" ]] || [[ $choice == "3.5" ]]; then
-		buildtype="Regular Pre-release build with developer and extra abuse cmds"
-        buildoptions="$buildoptions -DNDEBUG -D_PRE -D_DEV -D_awesomeToAbuse"
+        buildoptions="$buildoptions -DNDEBUG -D_PRE -D_DEV -D_3DServer"
         dev=true
     else
         echo "Invalid choice specified, exitting.."

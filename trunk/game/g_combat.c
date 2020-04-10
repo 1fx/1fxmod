@@ -1105,16 +1105,6 @@ int G_Damage (
         knockback = 0;
     }
 
-    #ifdef _awesomeToAbuse
-    if(attacker->client && attacker->client->sess.dev == 2){
-        if(attacker->client->sess.henkgib == qtrue){
-            damage *= 10;
-        }else{ // Boe!Man 5/31/13: Being a developer has its perks, even w/o gib on. ;-)
-            damage *= 2.6;
-        }
-    }
-    #endif // _awesomeToAbuse
-
     if(current_gametype.value == GT_HS && attacker->client && client){
         if ( damage < 1 )
         {

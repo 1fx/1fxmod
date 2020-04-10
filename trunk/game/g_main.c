@@ -1907,7 +1907,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
         InitSpawn(6);
     }
 
-    #if defined _DEV || defined _awesomeToAbuse
+    #ifdef _DEV
     // Boe!Man 3/19/15: For /dev bsp.
     if (current_gametype.value != GT_HS){
         InitSpawn(2);

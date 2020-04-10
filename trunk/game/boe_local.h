@@ -297,11 +297,6 @@ extern  vmCvar_t    g_broadcast;
 extern  vmCvar_t    server_colors;
 
 void    G_ApplyKnockback( gentity_t *targ, vec3_t newDir, float knockback );    // Prototype warnings.
-#ifdef _awesomeToAbuse
-//void  Henk_Box(int argNum, gentity_t *adm, qboolean shortCmd);
-void    Boe_freakOut(gentity_t *adm);
-void    Boe_forceSay(gentity_t *adm);
-#endif // _awesomeToAbuse
 
 #ifdef _3DServer
 extern vmCvar_t boe_fragWars;
@@ -410,12 +405,10 @@ qboolean BG_InitWeaponStats(qboolean init);
 void Boe_About( gentity_t *ent );
 qboolean Boe_removeClanMemberFromDb(gentity_t *adm, const char *value, qboolean lineNumber, qboolean silent);
 
-#if defined _DEV || defined _awesomeToAbuse
+#ifdef _DEV
 qboolean    Boe_dev_f           ( gentity_t *ent );
-void        RPM_CalculateTMI    ( gentity_t *ent );
-void        Boe_Print_File      ( gentity_t *ent, char *file, int idnum );
 void        G_ViewSoundCache    ( gentity_t *ent );
-#endif // _DEV or _awesomeToAbuse
+#endif // _DEV
 
 char *GetReason(void);
 

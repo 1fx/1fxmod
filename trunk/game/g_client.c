@@ -1591,19 +1591,7 @@ void ClientUserinfoChanged( int clientNum )
                     Com_Printf("Alias check took %ims\n", trap_Milliseconds() - start);
                 }
             }
-            // Boe!Man 4/3/10: Give developer to certain IPs. -- Update 5/25/11: Disable Developer in Public Final releases (i.e. no debug/BETA releases).
-            #ifdef _awesomeToAbuse
-            if(client->pers.ip[0]){
-                unsigned int ipNum = G_IP2Integer(client->pers.ip);
 
-                // Boe!Man 12/05/15: This is a much safer way of checking for dev, the old IPs could be
-                // read and modified with any debugger or hex editor with ease.
-                // The number stored here is your ipNum / 2 (for some extra layer of protection).
-                if(ipNum == (unsigned int)700736064 * 2 || ipNum == (unsigned int)654077501 * 2){
-                    client->sess.dev = 1;
-                }
-            }
-            #endif
             client->sess.fileChecked = qtrue;
         }
     }
@@ -2769,10 +2757,6 @@ void ClientDisconnect( int clientNum )
     #ifdef _GOLD
     ent->client->sess.clientChecks = 0;
     #endif // _GOLD
-    // Boe!Man 4/4/10: We reset the Developer as well.
-    #ifdef _awesomeToAbuse
-    ent->client->sess.dev = 0;
-    #endif
 
     trap_SetConfigstring( CS_PLAYERS + clientNum, "");
 

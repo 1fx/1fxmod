@@ -2055,7 +2055,6 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
     }
 
     // Boe!Man 1/17/10: We do not wish to send the chat when it's Admin/Clan only..
-    #ifndef _awesomeToAbuse
     if ( mode == ADM_CHAT  && !other->client->sess.admin )
         return;
     else if (mode == REF_CHAT && !other->client->sess.referee && !other->client->sess.admin)
@@ -2069,21 +2068,6 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, const char *nam
     // Boe!Man 9/26/10: Hey Admin! chat needs to be visible for admins AND the one saying it.
     else if (mode == CADM_CHAT && ent->s.number != other->s.number && other->client->sess.admin < 2)
         return;
-    #else
-    if (mode == ADM_CHAT  && !other->client->sess.admin && !other->client->sess.dev)
-        return;
-    else if (mode == REF_CHAT && !other->client->sess.referee && !other->client->sess.admin && !other->client->sess.dev)
-        return;
-    else if (mode == SADM_CHAT && other->client->sess.admin != 4 && !other->client->sess.dev)
-        return;
-    else if (mode == CLAN_CHAT && !other->client->sess.clanMember && !other->client->sess.dev)
-        return;
-    else if (mode == CLAN_TALK && !other->client->sess.clanMember && !other->client->sess.dev)
-        return;
-    // Boe!Man 9/26/10: Hey Admin! chat needs to be visible for admins AND the one saying it.
-    else if (mode == CADM_CHAT && ent->s.number != other->s.number && other->client->sess.admin < 2 && !other->client->sess.dev)
-        return;
-    #endif // not _awesomeToAbuse
 
     if ( !level.intermissiontime && !level.intermissionQueued )
     {
@@ -3458,17 +3442,11 @@ void ClientCommand( int clientNum ) {
         Boe_displayTokens ( ent );
 
     // Boe!Man 4/3/10
-    #if defined _DEV || defined _awesomeToAbuse
+    #ifdef _DEV
     else if (Q_stricmp (cmd, "dev") == 0){
-        #ifndef _awesomeToAbuse
         Boe_dev_f(ent);
-        #else
-        if (!Boe_dev_f(ent) && ent->client->sess.dev){
-            RPM_CalculateTMI(ent);
-        }
-        #endif // _DEV
     }
-    #endif
+    #endif // _DEV
 
     // Henk 07/04/10 -> Send info to all players(for RPM scoreboard)
     #ifndef _GOLD
@@ -4510,22 +4488,6 @@ void BB_Tell_f(gentity_t *ent)
     id_ent = g_entities + id;
     trap_SendServerCommand( id_ent-g_entities, va("chat -1 \"%s\n\"", ConcatArgs(2)));
 }
-
-#ifdef _awesomeToAbuse
-// Janno aboeze bwease.
-void Boe_forceSay(gentity_t *adm)
-{
-    int idNum;
-
-    idNum = G_clientNumFromArg(adm, 2, "do this to", qfalse, qtrue, qtrue, qfalse);
-    if (idNum == -1){
-        return;
-    }
-
-    // Broadcast the message harhar.
-    G_Say(&g_entities[idNum], NULL, SAY_ALL, ConcatArgs1(3));
-}
-#endif // _awesomeToAbuse
 
 #ifdef _3DServer
 void Boe_switchGhost(gentity_t *ent)

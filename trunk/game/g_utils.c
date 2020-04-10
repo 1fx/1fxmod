@@ -330,7 +330,7 @@ int G_SoundIndex(char *name, qboolean staticSound)
     return soundCache[i].index;
 }
 
-#if defined _DEV || defined _awesomeToAbuse
+#ifdef _DEV
 /*
 ================
 G_ViewSoundCache
@@ -373,7 +373,7 @@ void G_ViewSoundCache(gentity_t *ent)
     trap_SendServerCommand(ent-g_entities, va("print \"%s\n" S_COLOR_RED "[Dev] "
                                               S_COLOR_WHITE "/condump filename.txt to create a report\n\n\"", buf2));
 }
-#endif // _DEV or _awesomeToAbuse
+#endif // _DEV
 
 /*
 ================

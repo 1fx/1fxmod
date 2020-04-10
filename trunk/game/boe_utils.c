@@ -2342,14 +2342,9 @@ int G_clientNumFromArg(gentity_t *ent, int argNum, const char *action,
     if(ent && ent->client
         && ent->client->sess.admin && g_entities[clientID].client->sess.admin){
         // Don't allow to execute the command on higher level Admins.
-        #ifdef _awesomeToAbuse
         if(g_entities[clientID].client->sess.admin > ent->client->sess.admin
-            && !higherLvlAdmins && ent->client->sess.dev != 2)
-        #else
-        if(g_entities[clientID].client->sess.admin > ent->client->sess.admin
-            && !higherLvlAdmins)
-        #endif // _awesomeToAbuse
-        {
+            && !higherLvlAdmins
+        ){
             G_printInfoMessage(ent,
                 "You cannot %s higher level Admins.", action);
             return -1;

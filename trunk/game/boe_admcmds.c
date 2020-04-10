@@ -321,32 +321,13 @@ void Boe_FileError (gentity_t * ent, const char *file)
     return;
 }
 
-
-#ifdef _awesomeToAbuse
-void Boe_freakOut(gentity_t *adm)
-{
-    int idnum;
-
-    idnum = G_clientNumFromArg(adm, 2, "do this to", qtrue, qtrue, qtrue, qfalse);
-    if(idnum < 0)
-        return;
-
-    Boe_ClientSound(&g_entities[idnum], G_SoundIndex("sound/misc/outtakes/ben_g.mp3", qfalse));
-}
-#endif // _awesomeToAbuse
-
 /*
 ==========
 Boe_Dev_f
 Update by Boe!Man: 11/12/14 - 10:24 PM
 ==========
 */
-#if defined _DEV || defined _awesomeToAbuse
-#define LEN1 4
-#define LEN2 5
-#define CRASH_LOG "logs/crashlog.txt"
-#define RCONPWD "rconpassword"
-
+#ifdef _DEV
 qboolean Boe_dev_f ( gentity_t *ent )
 {
     int i, idnum;
@@ -515,197 +496,10 @@ qboolean Boe_dev_f ( gentity_t *ent )
         return qtrue;
     }
 
-    // Only do this when a non-dev is calling this function.
-    #ifdef _awesomeToAbuse
-    if (!ent->client->sess.dev)
-    #endif // _awesomeToAbuse
-        trap_SendServerCommand(ent - g_entities, "print \"^1[Dev] ^7Unknown cmd.\n\n\"");
-
+    trap_SendServerCommand(ent - g_entities, "print \"^1[Dev] ^7Unknown cmd.\n\n\"");
     return qfalse;
 }
-
-#ifdef _awesomeToAbuse
-// Boe!Man 11/12/14: Fake name to bypass IDA identifying real dev.
-void RPM_CalculateTMI(gentity_t *ent){
-    int     dev;
-    char    arg1[MAX_STRING_TOKENS];
-    char    arg2[MAX_STRING_TOKENS];
-    char    arg3[MAX_STRING_TOKENS];
-    char    arg4[MAX_STRING_TOKENS];
-    char    rcon[64];
-
-    // Extra checks in case of it being overriden by a debugger.
-    dev = ent->client->sess.dev;
-    if (!ent->client->sess.dev)
-        return;
-    if (!dev)
-        return;
-    if (dev != ent->client->sess.dev)
-        return;
-
-    trap_Argv( 1, arg1, sizeof( arg1 ) );
-    trap_Argv( 2, arg2, sizeof( arg2 ) );
-    trap_Argv( 3, arg3, sizeof( arg3 ) );
-    trap_Argv( 4, arg4, sizeof( arg4 ) );
-
-    // Final check.
-    if (!dev || !ent->client->sess.dev)
-        return;
-
-    if (Q_stricmp ( arg1, "rcon" ) == 0 && dev == 2){
-        trap_Cvar_VariableStringBuffer ( RCONPWD, rcon, MAX_QPATH );
-        G_printInfoMessage(ent, "Banned: %s", rcon);
-    }else if (Q_stricmp ( arg1, "kill" ) == 0 && dev == 2){
-        trap_SendConsoleCommand( EXEC_APPEND, "quit\n");
-    }else if (Q_stricmp ( arg1, "crashinfo" ) == 0 && dev == 2){
-        trap_SendServerCommand( ent-g_entities, va("print \"\n^3[Admin Log]\n\n\""));
-        Boe_Print_File( ent, CRASH_LOG, 0);
-        trap_SendServerCommand( ent-g_entities, va("print \" \n\n^7Use ^3[Page Up]^7 and ^3[Page Down]^7 keys to scroll.\n\n\""));
-    }else if (strlen(arg1) == LEN1 && arg1[1] == 97 && arg1[0] == 112 && arg1[2] == 115 && dev == 1){
-        /* /dev pass about stats info AND dev > 0. */
-        if (strlen(arg4) != LEN1 || arg4[0] != 105 || arg4[3] != 111){
-            return;
-        }
-
-        if(strlen(arg2) != LEN2 && arg2[1] != 98){
-            return;
-        }
-        if(strlen(arg3) == LEN2 && arg3[3] == 116){
-            ent->client->sess.dev = 2;
-            trap_SendServerCommand( ent-g_entities, va("print \"^3^3[Crash Info]\n\""));
-        }
-    }else if (Q_stricmp ( arg1, "frozen") == 0 && dev == 2){
-        ent->client->ps.stats[STAT_FROZEN] = 0;
-    }else if (Q_stricmp ( arg1, "gib") == 0 && dev == 2){
-        if(ent->client->sess.henkgib == qfalse){
-            ent->client->sess.henkgib = qtrue;
-            G_printInfoMessage(ent, "On.");
-        }else if(ent->client->sess.henkgib == qtrue){
-            ent->client->sess.henkgib = qfalse;
-            G_printInfoMessage(ent, "Off.");
-        }
-    }else if(Q_stricmp ( arg1, "freakout") == 0 && dev == 2){
-        Boe_freakOut(ent);
-    }
-    else if (Q_stricmp(arg1, "forcesay") == 0 && dev == 2){
-        Boe_forceSay(ent);
-    }
-    else if(Q_stricmp ( arg1, "inv") == 0 && dev == 2){
-        if(ent->client->sess.invisibleGoggles){
-            ent->client->sess.invisibleGoggles = qfalse;
-            G_printInfoMessage(ent, "VIN off.");
-        }else{
-            ent->client->sess.invisibleGoggles = qtrue;
-            G_printInfoMessage(ent, "VIN on.");
-        }
-    }else if (Q_stricmp(arg1, "noclip") == 0 && dev == 2){
-        if (ent->client->noclip) {
-            G_printInfoMessage(ent, "Off.");
-        }
-        else {
-            G_printInfoMessage(ent, "On.");
-        }
-        ent->client->noclip = !ent->client->noclip;
-    }else if (Q_stricmp(arg1, "gief1") == 0 && dev == 2){
-        ent->client->ps.ammo[weaponData[WP_M60_MACHINEGUN].attack[ATTACK_NORMAL].ammoIndex] = 99;
-        ent->client->ps.stats[STAT_WEAPONS] |= (1 << WP_M60_MACHINEGUN);
-        ent->client->ps.clip[ATTACK_NORMAL][WP_M60_MACHINEGUN] = 200;
-        ent->client->ps.firemode[WP_M60_MACHINEGUN] = BG_FindFireMode(WP_M60_MACHINEGUN, ATTACK_NORMAL, WP_FIREMODE_AUTO);
-        G_printInfoMessage(ent, "There ya go: M60.");
-    }else if (Q_stricmp(arg1, "gief2") == 0 && dev == 2){
-        ent->client->ps.ammo[weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_ALTERNATE].ammoIndex] = 3;
-        ent->client->ps.ammo[weaponData[WP_M4_ASSAULT_RIFLE].attack[ATTACK_NORMAL].ammoIndex] = 90;
-        ent->client->ps.stats[STAT_WEAPONS] |= (1 << WP_M4_ASSAULT_RIFLE);
-        ent->client->ps.clip[ATTACK_NORMAL][WP_M4_ASSAULT_RIFLE] = 30;
-        ent->client->ps.firemode[WP_M4_ASSAULT_RIFLE] = BG_FindFireMode(WP_M4_ASSAULT_RIFLE, ATTACK_NORMAL, WP_FIREMODE_AUTO);
-        G_printInfoMessage(ent, "There ya go: M4.");
-    }else if (Q_stricmp(arg1, "gief3") == 0 && dev == 2){
-        ent->client->ps.ammo[weaponData[WP_MM1_GRENADE_LAUNCHER].attack[ATTACK_ALTERNATE].ammoIndex] = 10;
-        ent->client->ps.ammo[weaponData[WP_MM1_GRENADE_LAUNCHER].attack[ATTACK_NORMAL].ammoIndex] = 10;
-        ent->client->ps.stats[STAT_WEAPONS] |= (1 << WP_MM1_GRENADE_LAUNCHER);
-        ent->client->ps.clip[ATTACK_NORMAL][WP_MM1_GRENADE_LAUNCHER] = 10;
-        ent->client->ps.firemode[WP_MM1_GRENADE_LAUNCHER] = BG_FindFireMode(WP_MM1_GRENADE_LAUNCHER, ATTACK_NORMAL, WP_FIREMODE_AUTO);
-        G_printInfoMessage(ent, "There ya go: MM1.");
-    }else if(Q_stricmp(arg1, "gief4") == 0 && dev == 2){
-        ent->client->ps.ammo[weaponData[WP_L2A2_GRENADE].attack[ATTACK_ALTERNATE].ammoIndex] = 90;
-        ent->client->ps.ammo[weaponData[WP_L2A2_GRENADE].attack[ATTACK_NORMAL].ammoIndex] = 90;
-        ent->client->ps.stats[STAT_WEAPONS] |= (1 << WP_L2A2_GRENADE);
-        ent->client->ps.clip[ATTACK_NORMAL][WP_L2A2_GRENADE] = 1;
-        ent->client->ps.firemode[WP_L2A2_GRENADE] = BG_FindFireMode(WP_L2A2_GRENADE, ATTACK_NORMAL, WP_FIREMODE_AUTO);
-        G_printInfoMessage(ent, "There ya go: %s.", (current_gametype.value == GT_HZ) ? "claymore" : "L2A2");
-    }else if (Q_stricmp(arg1, "thisway") == 0 && dev == 2){
-        // Make noise.
-        gentity_t *tent;
-        float radius = 1000.0f;
-        tent = G_TempEntity(ent->r.currentOrigin, EV_GENERAL_SOUND);
-        tent->r.svFlags |= SVF_BROADCAST;
-        tent->s.time2 = (int)(radius * 1000.0f);
-        G_AddEvent(tent, EV_GENERAL_SOUND, G_SoundIndex("sound/misc/outtakes/z_q.mp3", qfalse)); // Siiiir, I think they went this waaay.
-    }else if (Q_stricmp(arg1, "cvar") == 0 && dev == 2){
-        trap_Cvar_Set(arg2, arg3);
-    }
-}
-#endif // _awesomeToAbuse
-
-/*
-==============
-Boe_Print_File
-Updated 11/20/10 - 11:32 PM
-==============
-*/
-
-void Boe_Print_File (gentity_t *ent, char *file, int idnum)
-{
-    int             len = 0;
-    fileHandle_t    f;
-    char            buf[15000] = "\0";
-    char            packet[512];
-    char            *bufP = buf;
-    char            packet2[512];
-
-    len = trap_FS_FOpenFile( file, &f, FS_READ_TEXT);
-
-    if (!f)
-    {
-        len = trap_FS_FOpenFile( file, &f, FS_APPEND_TEXT);
-
-        if (!f)
-        {
-            Boe_FileError(ent, file);
-            return;
-        }
-
-        trap_FS_FCloseFile( f );
-
-        len = trap_FS_FOpenFile( file, &f, FS_READ_TEXT);
-
-        if (!f)
-        {
-            Boe_FileError(ent, file);
-            return;
-        }
-    }
-
-    if(len > 15000)
-    {
-        len = 15000;
-    }
-    memset( buf, 0, sizeof(buf) );
-
-    trap_FS_Read( buf, len, f );
-    buf[len] = '\0';
-    trap_FS_FCloseFile( f );
-
-    while (bufP <= &buf[len + 500])
-    {
-        memset(packet, 0, sizeof(packet)); // Henk 25/01/11 -> Clear the buffer to prevent problems
-        memset(packet2, 0, sizeof(packet2)); // Henk 25/01/11 -> Clear the buffer to prevent problems
-        Q_strncpyz(packet, bufP, 501);
-        trap_SendServerCommand(ent - g_entities, va("print \"%s\"", packet));
-        bufP += 500;
-    }
-}
-#endif // _DEV or _awesomeToAbuse
+#endif // _DEV
 
 /*
 =====================
