@@ -1,5 +1,25 @@
-// Copyright (C) 2001-2002 Raven Software.
-//
+/*
+===========================================================================
+Copyright (C) 2000 - 2013, Raven Software, Inc.
+Copyright (C) 2001 - 2013, Activision, Inc.
+Copyright (C) 2010 - 2020, Ane-Jouke Schat (Boe!Man)
+Copyright (C) 2010 - 2020, Jordi Epema (Henkie)
+
+This file is part of the 1fx. Mod source code.
+
+This program is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License version 2 as
+published by the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, see <http://www.gnu.org/licenses/>.
+===========================================================================
+*/
 
 /*****************************************************************************
  * name:        ai_main.c
@@ -7,7 +27,7 @@
  * desc:        Quake3 bot AI
  *
  * $Archive: /MissionPack/code/game/ai_main.c $
- * $Author: chris $ 
+ * $Author: chris $
  * $Revision: 1.1.1.1 $
  * $Modtime: 6/06/01 1:11p $
  * $Date: 2004/12/29 14:26:27 $
@@ -375,7 +395,7 @@ void BotChangeViewAngles(bot_state_t *bs, float thinktime) {
     int i;
 
     if (bs->ideal_viewangles[PITCH] > 180) bs->ideal_viewangles[PITCH] -= 360;
-    
+
     if (bs->currentEnemy && bs->frame_Enemy_Vis)
     {
         factor = bs->skills.turnspeed_combat*bs->settings.skill;
@@ -439,7 +459,7 @@ void BotInputToUserCommand(bot_input_t *bi, usercmd_t *ucmd, int delta_angles[3]
         bi->actionflags &= ~ACTION_DELAYEDJUMP;
     }
     //set the buttons
-    if (bi->actionflags & ACTION_RESPAWN) 
+    if (bi->actionflags & ACTION_RESPAWN)
     {
         ucmd->buttons = BUTTON_ATTACK;
     }
@@ -526,10 +546,10 @@ void BotUpdateInput(bot_state_t *bs, int time, int elapsed_time) {
     //retrieve the bot input
     trap_EA_GetInput(bs->client, (float) time / 1000, &bi);
     //respawn hack
-    if (bi.actionflags & ACTION_RESPAWN) 
+    if (bi.actionflags & ACTION_RESPAWN)
     {
         // IF already trying to respawn or a ghost then cancel the respawn
-        if ((bs->lastucmd.buttons & BUTTON_ATTACK) || (bs->cur_ps.pm_flags&PMF_GHOST)) 
+        if ((bs->lastucmd.buttons & BUTTON_ATTACK) || (bs->cur_ps.pm_flags&PMF_GHOST))
         {
             bi.actionflags &= ~(ACTION_RESPAWN|ACTION_ATTACK);
         }
@@ -777,7 +797,7 @@ int BotAIShutdownClient(int client, qboolean restart) {
     }
 
     trap_BotFreeMoveState(bs->ms);
-    //free the goal state`          
+    //free the goal state`
     trap_BotFreeGoalState(bs->gs);
     //free the weapon weights
     trap_BotFreeWeaponState(bs->ws);
@@ -1025,7 +1045,7 @@ float TotalTrailDistance(int start, int end, bot_state_t *bs)
         {
             return -1;
         }
-    
+
         if (gWPArray[beginat]->forceJumpTo)
         {
             if (gWPArray[beginat-1] && gWPArray[beginat-1]->origin[2]+64 < gWPArray[beginat]->origin[2])
@@ -1041,7 +1061,7 @@ float TotalTrailDistance(int start, int end, bot_state_t *bs)
             //  }
             }
         }
-        
+
     /*  if (bs->wpCurrent && gWPArray[windex]->forceJumpTo &&
             gWPArray[windex]->origin[2] > (bs->wpCurrent->origin[2]+64) &&
             bs->cur_ps.fd.forcePowerLevel[FP_LEVITATION] < gWPArray[windex]->forceJumpTo)
@@ -1784,7 +1804,7 @@ int ScanForEnemies(bot_state_t *bs)
         }
         i++;
     }
-    
+
     return bestindex;
 }
 
@@ -1836,17 +1856,17 @@ int BotGetWeaponRange(bot_state_t *bs)
         return BWEAPONRANGE_MELEE;
     case CAT_PISTOL:
         return BWEAPONRANGE_MID; //short
-    case CAT_SHOTGUN:   
+    case CAT_SHOTGUN:
         return BWEAPONRANGE_MID; //short
-    case CAT_SUB:       
+    case CAT_SUB:
         return BWEAPONRANGE_MID;
-    case CAT_ASSAULT:   
+    case CAT_ASSAULT:
         return BWEAPONRANGE_MID;
-    case CAT_SNIPER:    
+    case CAT_SNIPER:
         return BWEAPONRANGE_LONG;
-    case CAT_HEAVY:     
+    case CAT_HEAVY:
         return BWEAPONRANGE_LONG;
-    case CAT_GRENADE:   
+    case CAT_GRENADE:
         return BWEAPONRANGE_MID; //short
     default:
         return BWEAPONRANGE_MID;
@@ -2607,7 +2627,7 @@ int GetBestIdleGoal(bot_state_t *bs)
             {
                 bs->randomNav = 0;
             }
-            
+
             bs->randomNavTime = level.time + Q_irand(5000, 15000);
         }
     }
@@ -3132,7 +3152,7 @@ void CommanderBotTeamplayAI(bot_state_t *bs)
 
         i++;
     }
-    
+
     if (!squadmates)
     {
         return;
@@ -3172,7 +3192,7 @@ void CommanderBotTeamplayAI(bot_state_t *bs)
         }
 
         i++;
-    }   
+    }
 }
 
 void CommanderBotAI(bot_state_t *bs)
@@ -3436,7 +3456,7 @@ void SaberCombatHandling(bot_state_t *bs)
             groundcheck[2] -= 64;
 
             trap_Trace(&tr, bs->goalPosition, NULL, NULL, groundcheck, bs->client, MASK_SOLID);
-            
+
             if (tr.fraction == 1.0)
             { //don't back off of a ledge
                 VectorCopy(usethisvec, bs->goalPosition);
@@ -3481,30 +3501,30 @@ float BotWeaponCanLead(bot_state_t *bs)
         return 0.5;
 
     // no leading needed for any bullet weapons
-    case WP_M1911A1_PISTOL:          
-    case WP_USSOCOM_PISTOL:         
-    case WP_M4_ASSAULT_RIFLE:        
-    case WP_AK74_ASSAULT_RIFLE:      
-    case WP_M60_MACHINEGUN:          
-    case WP_MICRO_UZI_SUBMACHINEGUN: 
-    case WP_M3A1_SUBMACHINEGUN:      
-    case WP_MSG90A1:    
-    case WP_USAS_12_SHOTGUN:         
-    case WP_M590_SHOTGUN:            
+    case WP_M1911A1_PISTOL:
+    case WP_USSOCOM_PISTOL:
+    case WP_M4_ASSAULT_RIFLE:
+    case WP_AK74_ASSAULT_RIFLE:
+    case WP_M60_MACHINEGUN:
+    case WP_MICRO_UZI_SUBMACHINEGUN:
+    case WP_M3A1_SUBMACHINEGUN:
+    case WP_MSG90A1:
+    case WP_USAS_12_SHOTGUN:
+    case WP_M590_SHOTGUN:
         return 0;
     // projectile weapons lead
-    case WP_MM1_GRENADE_LAUNCHER:    
+    case WP_MM1_GRENADE_LAUNCHER:
         return 0.5;
-    case WP_RPG7_LAUNCHER:           
+    case WP_RPG7_LAUNCHER:
         return 0.5;
-    case WP_M67_GRENADE:             
-    case WP_M84_GRENADE:             
-    case WP_F1_GRENADE:              
-    case WP_L2A2_GRENADE:            
-    case WP_MDN11_GRENADE:           
-    case WP_SMOHG92_GRENADE:         
-    case WP_ANM14_GRENADE:           
-    case WP_M15_GRENADE:             
+    case WP_M67_GRENADE:
+    case WP_M84_GRENADE:
+    case WP_F1_GRENADE:
+    case WP_L2A2_GRENADE:
+    case WP_MDN11_GRENADE:
+    case WP_SMOHG92_GRENADE:
+    case WP_ANM14_GRENADE:
+    case WP_M15_GRENADE:
         return 0.7;
     }
 }
@@ -3624,7 +3644,7 @@ void BotAimOffsetGoalAngles(bot_state_t *bs)
         {
             bs->goalAngles[PITCH] += bs->aimOffsetAmtPitch;
         }
-        
+
         while (i <= 2)
         {
             if (bs->goalAngles[i] > 360)
@@ -3720,13 +3740,13 @@ int ShouldSecondaryFire(bot_state_t *bs, vec3_t eorg, vec3_t dir)
 
 #ifdef BOT_LAUNCH_ANGLES
     if ((attack->weaponFlags & PROJECTILE_FIRE) && bs->frame_Enemy_Len > MAX_PROJECTILE_DISTANCE) //don't forget to make sure the bot doesn't shoot it off in his own face!
-    {   
+    {
         // if alt-fire is projectile
         if (bs->frame_Enemy_Len < attack->rV.velocity * attack->projectileLifetime * 0.001)
-        {   
+        {
             // in range
             // 2D range
-            float range2D = max(0, SQRTFAST(dir[0]*dir[0] + dir[1]*dir[1]) - attack->splashRadius); 
+            float range2D = max(0, SQRTFAST(dir[0]*dir[0] + dir[1]*dir[1]) - attack->splashRadius);
             if (attack->weaponFlags & PROJECTILE_TIMED)
             {   // if timed projectile, let bounce for 1 sec.
                 range2D = max(0, range2D - attack->rV.velocity);
@@ -3816,7 +3836,7 @@ int CombatBotAI(bot_state_t *bs, float thinktime)
 #ifdef BOT_LAUNCH_ANGLES
             weaponData_t *weapon = &weaponData[bs->cur_ps.weapon];
             if (CAT_GRENADE == weapon->category || WP_MM1_GRENADE_LAUNCHER == bs->cur_ps.weapon)
-            {   
+            {
                 attackData_t* attack;
                 float         range2D;
 
@@ -3831,13 +3851,13 @@ int CombatBotAI(bot_state_t *bs, float thinktime)
                 }
 
                 // only 2D range since Z is for the ballistic path only
-                range2D = max(0, SQRTFAST(dir[0]*dir[0] + dir[1]*dir[1]) - attack->splashRadius); 
+                range2D = max(0, SQRTFAST(dir[0]*dir[0] + dir[1]*dir[1]) - attack->splashRadius);
                 if (attack->weaponFlags & PROJECTILE_TIMED)
-                {   
+                {
                     // if timed projectile, let bounce for 1 sec.
                     range2D = max(0, range2D - attack->rV.velocity);
                 }
-                
+
                 bs->launchAngle = CalcWeaponAngle(attack->rV.velocity, DEFAULT_GRAVITY, range2D);
                 if (bs->launchAngle < 90)
                 {
@@ -3930,7 +3950,7 @@ int BotTryAnotherWeapon(bot_state_t *bs)
 
     while (i < level.wpNumWeapons)
     {
-        if ((bs->cur_ps.ammo[weaponData[i].attack[ATTACK_NORMAL].ammoIndex] > 1 || bs->cur_ps.clip[ATTACK_NORMAL][i] > 1) && 
+        if ((bs->cur_ps.ammo[weaponData[i].attack[ATTACK_NORMAL].ammoIndex] > 1 || bs->cur_ps.clip[ATTACK_NORMAL][i] > 1) &&
             (bs->cur_ps.stats[STAT_WEAPONS] & (1 << i)))
         {
             bs->virtualWeapon = i;
@@ -3965,7 +3985,7 @@ int BotSelectIdealWeapon(bot_state_t *bs)
 
     while (i < level.wpNumWeapons)
     {
-        if ((bs->cur_ps.ammo[weaponData[i].attack[ATTACK_NORMAL].ammoIndex] > 1 || bs->cur_ps.clip[ATTACK_NORMAL][i] > 1) && 
+        if ((bs->cur_ps.ammo[weaponData[i].attack[ATTACK_NORMAL].ammoIndex] > 1 || bs->cur_ps.clip[ATTACK_NORMAL][i] > 1) &&
             (bs->botWeaponWeights[i] > bestweight) &&
             (bs->cur_ps.stats[STAT_WEAPONS] & (1 << i)))
         {
@@ -4110,7 +4130,7 @@ void BotLovedOneDied(bot_state_t *bs, bot_state_t *loved, int lovelevel)
     { //oops!
         return;
     }
-    
+
     trap_Cvar_Update(&bot_attachments);
 
     if (!bot_attachments.integer)
@@ -4644,7 +4664,7 @@ void StandardBotAI(bot_state_t *bs, float thinktime)
 
             bs->deathActivitiesDone = 1;
         }
-        
+
         bs->wpCurrent = NULL;
         bs->currentEnemy = NULL;
         bs->wpDestination = NULL;
@@ -5046,7 +5066,7 @@ void StandardBotAI(bot_state_t *bs, float thinktime)
         {
             GetIdealDestination(bs);
         }
-        
+
         if (bs->wpCurrent && bs->wpDestination)
         {
             if (TotalTrailDistance(bs->wpCurrent->index, bs->wpDestination->index, bs) == -1)
@@ -5325,7 +5345,7 @@ skipviewchecks:
                 EntityVisibleBox(bs->origin, NULL, NULL, bs->dangerousObject->r.currentOrigin, bs->client, bs->dangerousObject->s.number))
             {
                 bs->doAttack = 1;
-            }           
+            }
         }
     }
 
@@ -5365,7 +5385,7 @@ skipviewchecks:
 BotAIStartFrame
 ==================
 */
-int BotAIStartFrame(int time) 
+int BotAIStartFrame(int time)
 {
 #ifdef _SOF2_BOTS
     int i;

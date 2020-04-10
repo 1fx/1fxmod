@@ -1,5 +1,26 @@
-// Copyright (C) 2015 - Boe!Man, Henkie.
-//
+/*
+===========================================================================
+Copyright (C) 2000 - 2013, Raven Software, Inc.
+Copyright (C) 2001 - 2013, Activision, Inc.
+Copyright (C) 2003 - 2007, ROCmod contributors
+Copyright (C) 2015 - 2020, Ane-Jouke Schat (Boe!Man)
+Copyright (C) 2015 - 2020, Jordi Epema (Henkie)
+
+This file is part of the 1fx. Mod source code.
+
+This program is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License version 2 as
+published by the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, see <http://www.gnu.org/licenses/>.
+===========================================================================
+*/
 // rocmod_functions.c - Functions specific for ROCmod.
 
 //==================================================================
@@ -97,12 +118,12 @@ void ROCmod_sendExtraTeamInfo(gentity_t *ent)
 
         Com_sprintf(entry, sizeof(entry), " %i", level.sortedClients[i]);
         entrylength = strlen(entry);
-        
+
         // Get location.
         loc = Team_GetLocation(&g_entities[level.sortedClients[i]]);
 
         // Add all extra information from the client.
-        Com_sprintf(entry + entrylength, sizeof(entry) - entrylength, "h%i a%i w%i l%i g%i", 
+        Com_sprintf(entry + entrylength, sizeof(entry) - entrylength, "h%i a%i w%i l%i g%i",
             cl->ps.stats[STAT_HEALTH],
             cl->ps.stats[STAT_ARMOR],
             g_entities[level.sortedClients[i]].s.weapon,
@@ -278,7 +299,7 @@ void ROCmod_sendBestPlayerStats(void)
             Q_strncpyz(bestScoreNames[10], ent->client->pers.netname, MAX_NETNAME);
         }
     }
-    
+
     // Send the scores.
     for (i = 0; i <  level.numConnectedClients; i++)
     {
