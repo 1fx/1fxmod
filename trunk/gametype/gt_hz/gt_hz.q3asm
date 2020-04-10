@@ -1,7 +1,0 @@
--o "gt_h&z"
-
-gt_main
-bg_lib
-..\..\gt_syscalls
-q_math
-q_shared
