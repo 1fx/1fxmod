@@ -109,10 +109,10 @@ for easy compilation, namely the **game.sh** script.
 As mentioned before, MSVC is not supported, and we therefore recommend compiling
 the Mod with gcc. On Windows, this means compiling the Mod with MinGW, which can
 be easily installed in conjunction with
-[MSYS2](https://www.msys2.org/ MSYS2 installer). The old(er) MinGW/MSYS from the
+[MSYS2](https://www.msys2.org/ "MSYS2 installer"). The old(er) MinGW/MSYS from the
 [official MinGW site](http://mingw.org/ "MinGW and MSYS projects") is not
 supported anymore, and requires pthreadGC2.dll from the
-[pthreads-win32](https://sourceware.org/pthreads-win32/ POSIX Threads for Win32)
+[pthreads-win32](https://sourceware.org/pthreads-win32/ "POSIX Threads for Win32")
 project. It is recommended to just use MSYS2 instead.
 
 If no parameters are specified, the script will run in interactive mode. Prior
