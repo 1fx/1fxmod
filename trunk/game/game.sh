@@ -36,7 +36,7 @@
 #
 # Parameters are supported, the following parameters must be specified (most of them are required for proper compilation):
 # -cc: Specifies compiler name (default: "gcc").
-# -l: Specifies linker name (default: "gcc" for win32, "ld" for Linux and "cc" for OS X).
+# -l: Specifies linker name (default: "gcc" for win32, "cc" for OS X).
 # -p: Specifies platform (either "linux", "win32" or "osx").
 # -c: Compile choice, either 1-4 or 3.1/3.2/3.3/3.4.
 # -o: Output filename.
